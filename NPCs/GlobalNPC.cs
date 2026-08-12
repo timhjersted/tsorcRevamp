@@ -85,7 +85,8 @@ namespace tsorcRevamp.NPCs
     {
         Relaxed,    // gives up, wanders into Patrol a few seconds, THEN blinks. Long cooldown.
         Normal,     // blinks at the disengage point instead of patrolling (≈ legacy canTeleport). Medium cooldown.
-        Aggressive  // blinks the moment LOS is lost (short debounce), bypassing Search/Patrol. Short cooldown.
+        Aggressive, // blinks the moment LOS is lost (short debounce), bypassing Search/Patrol. Short cooldown.
+        RecoveryOnly // blinks only for a nearby, confirmed navigation failure; ordinary escape may despawn it.
     }
 
     public enum TeleportVisualStyle
@@ -205,6 +206,10 @@ namespace tsorcRevamp.NPCs
 
         //Stores the event this NPC belongs to
         public ScriptedEvent ScriptedEventOwner;
+
+        // Dynamic-event NPCs are normally pinned alive so an offscreen spawn cannot tear down its
+        // encounter. Opt specific pursuit encounters into normal distance/timeLeft despawning.
+        public bool AllowDynamicEventNaturalDespawn;
 
         //Stores which NPC in that event this is
         public int ScriptedEventIndex;
@@ -1185,6 +1190,11 @@ namespace tsorcRevamp.NPCs
         public int NavGiveUpTicks = 600;
         // When true, on losing LOS the NPC investigates LastKnownPlayerPos (Search) before patrolling.
         public bool RemembersLastKnownPos = false;
+        // Optional pursuit leash. While farther than this and continuously failing to close the gap,
+        // the NPC abandons Pursue after PursuitFallBehindTicks. Zero disables the leash.
+        public float PursuitLeashRange = 0f;
+        public int PursuitFallBehindTicks = 0;
+        public int PursuitFallBehindTimer = 0;
 
         // -- Patrol configuration --
         public PatrolMode PatrolMode = PatrolMode.Idle;
@@ -1216,6 +1226,9 @@ namespace tsorcRevamp.NPCs
         public int TeleportMaxCharges = -1;
         public int TeleportChargesRemaining = -1; // initialised from TeleportMaxCharges on first AI tick
         public int TeleportCooldownTimer = 0;     // frames until the next blink is allowed (per-style cooldown)
+        // RecoveryOnly teleports are rejected beyond this distance so escaping players are not
+        // pulled back into combat by a navigation recovery. Zero means no distance cap.
+        public float RecoveryTeleportMaxRange = 900f;
         // Bias teleport (and, later, patrol/standoff) destinations toward elevated spots with LOS — for archers
         // and high-ground hunters.
         public bool PrefersHighGround = false;
@@ -1418,7 +1431,8 @@ namespace tsorcRevamp.NPCs
             // many enemies (e.g. dungeon skeletons placed outside the dungeon) call EncourageDespawn every tick,
             // which caps timeLeft back down — so a one-time set isn't enough. Re-pin it each tick. Without this,
             // one self-despawning NPC fails the event's all-or-nothing alive check and tears the whole event down.
-            if (ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID))
+            if (!AllowDynamicEventNaturalDespawn
+                && ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID))
             {
                 npc.timeLeft = int.MaxValue;
             }
@@ -1433,7 +1447,8 @@ namespace tsorcRevamp.NPCs
             // that lands just off-screen vanishes a tick after spawning, which fails the event's all-or-nothing
             // despawn check and tears the whole event down (seen as warning dust but no NPCs, esp. multi-NPC events).
             // Scoped to dynamic (editor) events so existing hardcoded encounters keep their original despawn behavior.
-            if (ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID))
+            if (!AllowDynamicEventNaturalDespawn
+                && ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID))
             {
                 return false;
             }
@@ -1653,7 +1668,8 @@ namespace tsorcRevamp.NPCs
             // EXCLUDED: SelfDeactivatingNPCs (Marilith/Prime intros, Gwyn vision, portals, etc.) deliberately set
             // active=false mid-AI to transform into the real boss or vanish — reviving them here would fight that
             // and break the whole encounter (this broke TheMachine/Marilith when the blanket revival first shipped).
-            if (ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID) && !npc.active && npc.life > 0
+            if (!AllowDynamicEventNaturalDespawn
+                && ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID) && !npc.active && npc.life > 0
                 && !tsorcRevamp.SelfDeactivatingNPCs.Contains(npc.type))
             {
                 npc.active = true;
@@ -1967,6 +1983,7 @@ namespace tsorcRevamp.NPCs
             // FSM state — divergence here causes lasting behavioral differences on clients
             binaryWriter.Write((byte)PursuitState);
             binaryWriter.Write(DisengageTimer);
+            binaryWriter.Write(PursuitFallBehindTimer);
             binaryWriter.WriteVector2(LastKnownPlayerPos);
             binaryWriter.Write(FleeOriginX);
             binaryWriter.Write(FleeDirection);
@@ -2011,6 +2028,7 @@ namespace tsorcRevamp.NPCs
 
             PursuitState = (PursuitState)binaryReader.ReadByte();
             DisengageTimer = binaryReader.ReadInt32();
+            PursuitFallBehindTimer = binaryReader.ReadInt32();
             LastKnownPlayerPos = binaryReader.ReadVector2();
             FleeOriginX = binaryReader.ReadSingle();
             FleeDirection = binaryReader.ReadInt32();

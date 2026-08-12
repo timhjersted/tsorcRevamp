@@ -65,6 +65,28 @@ namespace tsorcRevamp.NPCs
 
             bool inAggro = npc.Distance(player.Center) <= aggroRange;
 
+            // A leash is distinct from the A* search radius: it measures whether a fleeing player
+            // is steadily opening the gap. Run this before the LOS fast-path so visible players can
+            // still escape an enemy that simply cannot keep up with them.
+            bool leashEnabled = g.PursuitState == PursuitState.Pursue
+                && g.PursuitLeashRange > 0f && g.PursuitFallBehindTicks > 0;
+            bool fallingBehind = leashEnabled
+                && npc.Distance(player.Center) > g.PursuitLeashRange
+                && !madeProgress;
+            g.PursuitFallBehindTimer = fallingBehind ? g.PursuitFallBehindTimer + 1 : 0;
+            if (g.PursuitFallBehindTimer >= g.PursuitFallBehindTicks)
+            {
+                g.PursuitFallBehindTimer = 0;
+                if (g.RemembersLastKnownPos)
+                {
+                    g.PursuitState = PursuitState.Search;
+                    g.DisengageTimer = 0;
+                }
+                else EnterPatrol(npc, g);
+                npc.netUpdate = true;
+                return g.PursuitState;
+            }
+
             // LOS (re)acquires the player: remember where, reset the clock, and pursue — but a sighting
             // from outside aggro range while patrolling shouldn't yank us back (avoids long-range pop-aggro).
             // Excluded while Fleeing: the attacker that triggered the flee is BY DEFINITION still visible
@@ -133,6 +155,7 @@ namespace tsorcRevamp.NPCs
         /// </summary>
         public static void ForceDisengage(NPC npc, tsorcRevampGlobalNPC g)
         {
+            g.PursuitFallBehindTimer = 0;
             if (g.RemembersLastKnownPos && g.PursuitState == PursuitState.Pursue)
             {
                 g.PursuitState = PursuitState.Search;
@@ -145,6 +168,7 @@ namespace tsorcRevamp.NPCs
         {
             g.PursuitState = PursuitState.Patrol;
             g.DisengageTimer = 0;
+            g.PursuitFallBehindTimer = 0;
 
             // GiveUpLocation anchors here; SpawnPoint keeps its recorded anchor (fall back to here if unset).
             if (g.PatrolAnchorSource == PatrolAnchorSource.GiveUpLocation || !g.PatrolAnchorSet)

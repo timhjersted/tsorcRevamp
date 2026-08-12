@@ -22,6 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.tileCollide = true;
             Projectile.timeLeft = 240;
             Projectile.penetrate = 1;
+            Projectile.scale = 1.08f;
         }
 
         public override bool ShouldUpdatePosition() => Projectile.ai[0] <= 0f;
@@ -42,12 +43,18 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
             Projectile.alpha = 0;
             Lighting.AddLight(Projectile.Center, 0.2f, 0.2f, 0.35f);
-            if (Main.rand.NextBool(2))
-            {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 68, 0f, 0f, 100, default, 0.8f);
-                Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity *= 0.1f;
-            }
+
+            // The player Farron Dart emits eight motes per update. Keep Kahlrun's hostile version
+            // slightly leaner for hazard readability, but give it enough body to resemble the same spell.
+            int bodyDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height,
+                68, 0f, 0f, 100, default, 0.95f);
+            Main.dust[bodyDust].noGravity = true;
+            Main.dust[bodyDust].velocity = Vector2.Zero;
+
+            int fineDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height,
+                68, 0f, 0f, 100, default, 0.5f);
+            Main.dust[fineDust].noGravity = true;
+            Main.dust[fineDust].velocity = Vector2.Zero;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -62,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void OnKill(int timeLeft)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 12; i++)
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 68,
                     Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 40, default, 0.9f);

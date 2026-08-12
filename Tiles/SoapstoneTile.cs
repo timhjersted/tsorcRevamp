@@ -127,24 +127,44 @@ namespace tsorcRevamp.Tiles
                 }
 
                 // Sticky-open dismissal. The message closes when the character walks ~16px from where
-                // it was opened, or when the mouse moves ~10% of screen width from the click point.
-                // The walk check is immediate (so a small step closes it); the mouse check waits out a
+                // it was opened, or when the mouse actually travels ~10% of screen width total. The
+                // walk check is immediate (so a small step closes it); the mouse check waits out a
                 // short grace so the click-release cursor motion can't instantly trip it.
                 if (entity.manuallyOpened)
                 {
                     if (entity.manualOpenGraceTimer > 0)
                     {
                         entity.manualOpenGraceTimer--;
+                        // Keep the travel tracker's baseline current through the grace window so the
+                        // click-release cursor motion isn't counted once grace ends.
+                        entity.lastMouseScreen = Main.MouseScreen;
                     }
 
-                    bool walkedAway = System.Math.Abs(Main.LocalPlayer.Center.X - entity.openedAtPlayerX)
-                        > SoapstoneTileEntity.MANUAL_DISMISS_WALK_DISTANCE;
-                    bool movedMouse = entity.manualOpenGraceTimer <= 0
-                        && Vector2.Distance(Main.MouseScreen, entity.clickedAtMouse)
-                            > Main.screenWidth * SoapstoneTileEntity.MANUAL_DISMISS_SCREEN_FRACTION;
+                    float walkDelta = System.Math.Abs(Main.LocalPlayer.Center.X - entity.openedAtPlayerX);
+                    bool walkedAway = walkDelta > SoapstoneTileEntity.MANUAL_DISMISS_WALK_DISTANCE;
+
+                    // Cumulative-travel mouse check (see cumulativeMouseTravel's doc comment for why
+                    // this isn't a simple distance-from-click-point check).
+                    float frameDelta = Vector2.Distance(Main.MouseScreen, entity.lastMouseScreen);
+                    entity.lastMouseScreen = Main.MouseScreen;
+                    if (entity.manualOpenGraceTimer <= 0)
+                    {
+                        entity.cumulativeMouseTravel += System.Math.Min(frameDelta, SoapstoneTileEntity.MOUSE_TRAVEL_PER_FRAME_CAP);
+                    }
+                    bool movedMouse = entity.cumulativeMouseTravel > Main.screenWidth * SoapstoneTileEntity.MANUAL_DISMISS_SCREEN_FRACTION;
+
                     if (walkedAway || movedMouse)
                     {
+                        // TEMP DEBUG — remove alongside the other soapstone debug prints once fixed.
+                        if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+                        {
+                            Main.NewText($"[Soapstone DEBUG] manuallyOpened->false: walkedAway={walkedAway} walkDelta={walkDelta:F2} " +
+                                $"(limit={SoapstoneTileEntity.MANUAL_DISMISS_WALK_DISTANCE}) movedMouse={movedMouse} " +
+                                $"cumulativeMouseTravel={entity.cumulativeMouseTravel:F1} (limit={Main.screenWidth * SoapstoneTileEntity.MANUAL_DISMISS_SCREEN_FRACTION:F1}) " +
+                                $"frameDelta={frameDelta:F1} grace={entity.manualOpenGraceTimer}", Color.Yellow);
+                        }
                         entity.manuallyOpened = false;
+                        entity.cumulativeMouseTravel = 0f;
                     }
                 }
 
@@ -276,7 +296,9 @@ namespace tsorcRevamp.Tiles
         // and the bubble is sticky. Reset to false when the player dismisses it (mouse moved
         // far from click point, or walked out of range).
         public bool manuallyOpened;
-        // Screen-space mouse position when the Show button was clicked. Used to detect dismissal.
+        // Screen-space mouse position when the Show button was clicked. Kept for the grace-period
+        // click-jitter check only — NOT used as the long-term dismiss anchor anymore (see
+        // cumulativeMouseTravel below for why).
         public Vector2 clickedAtMouse;
         // Player world-X when the Show button was clicked. The message dismisses once the character
         // walks past MANUAL_DISMISS_WALK_DISTANCE from here — independent of the mouse grace.
@@ -285,9 +307,33 @@ namespace tsorcRevamp.Tiles
         // so the click-release cursor motion can't instantly close the message. Does NOT gate the
         // walk dismiss — moving the character should always close it promptly.
         public int manualOpenGraceTimer;
-        // Fraction of screen width the mouse must travel from clickedAtMouse to dismiss the sticky
-        // bubble. ~10%: a deliberate move, large enough that normal reading motion doesn't trip it.
+        // Mouse position as of the last frame's check, and the running total of *actual* travel
+        // (sum of clamped per-frame deltas) since the grace period ended.
+        //
+        // This replaced a simpler "distance from the click point" check after field reports (with
+        // Debug Mode logging) showed the message closing with the mouse provably untouched: the
+        // absolute mouse-distance-from-anchor read a stable ~300px offset that appeared once, right
+        // around the click, and never moved again afterward — a one-time shift, not user motion.
+        // It correlated with Zoom/UI Scale settings, pointing at Terraria's raw-input-to-logical-pixel
+        // conversion (which those settings feed into) occasionally landing on a different value
+        // between the frame clickedAtMouse was captured and the frames after, rather than any actual
+        // cursor movement. Comparing to a fixed anchor point is inherently vulnerable to exactly that:
+        // one bad coordinate read poisons every distance check for the rest of the session.
+        //
+        // Tracking incremental travel instead is robust to it: a one-time jump contributes at most
+        // MOUSE_TRAVEL_PER_FRAME_CAP once, then (since the mouse isn't actually moving) subsequent
+        // frame-to-frame deltas are ~0 and the total never climbs further. A genuine "move the mouse
+        // away" gesture keeps contributing every frame and still crosses the threshold quickly.
+        public Vector2 lastMouseScreen;
+        public float cumulativeMouseTravel;
+        // Fraction of screen width the mouse must actually travel (cumulative, not anchor-distance)
+        // to dismiss the sticky bubble.
         public const float MANUAL_DISMISS_SCREEN_FRACTION = 0.10f;
+        // Per-frame cap on how much a single frame's mouse delta can contribute to
+        // cumulativeMouseTravel. Real mouse motion across consecutive frames keeps re-contributing
+        // and still adds up fast; a single coordinate-space glitch is capped to this and can't alone
+        // fake a deliberate move-away.
+        public const float MOUSE_TRAVEL_PER_FRAME_CAP = 40f;
         // Horizontal world distance the character must walk from openedAtPlayerX to dismiss.
         public const float MANUAL_DISMISS_WALK_DISTANCE = 16f;
         // Grace frames granted on each manual open (~0.4s at 60fps), mouse dismiss only.

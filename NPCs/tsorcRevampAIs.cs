@@ -622,6 +622,11 @@ namespace tsorcRevamp.NPCs
                             // Give up, wander a few seconds, THEN blink.
                             fireTeleport = fsmState == PursuitState.Patrol && globalNPC.PatrolElapsed >= 300;
                             break;
+                        case TeleportStyle.RecoveryOnly:
+                            // Navigation's confirmed-stuck paths invoke this style directly. Ordinary
+                            // Search/Patrol must remain a real disengage so distance despawning can occur.
+                            fireTeleport = false;
+                            break;
                         default: // Normal — blink at the disengage point instead of patrolling.
                             fireTeleport = fsmState == PursuitState.Patrol || fsmState == PursuitState.Search;
                             break;
@@ -2085,6 +2090,7 @@ namespace tsorcRevamp.NPCs
             {
                 TeleportStyle.Relaxed => 3600,                                                 // 60s
                 TeleportStyle.Aggressive => npc.life < npc.lifeMax / 2 ? 300 : 600,            // 10s, 5s when wounded
+                TeleportStyle.RecoveryOnly => 600,                                             // 10s between recovery blinks
                 _ => 0,                                                                        // Normal: none (preserves legacy canTeleport feel — blink whenever it gives up)
             };
             return true;

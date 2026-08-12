@@ -622,7 +622,20 @@ namespace tsorcRevamp.NPCs
                     }
                     else if (++s.StuckGiveUpFrames > 90) // ~1.5s of immobility before giving up to patrol
                     {
-                        NavBehavior.ForceDisengage(npc, g);
+                        bool nearbyRecovery = g.CanTeleport
+                            && g.TeleportStyle == TeleportStyle.RecoveryOnly
+                            && g.TeleportCooldownTimer == 0
+                            && (g.RecoveryTeleportMaxRange <= 0f
+                                || npc.Distance(player.Center) <= g.RecoveryTeleportMaxRange);
+                        if (nearbyRecovery)
+                        {
+                            if (Main.netMode != NetmodeID.MultiplayerClient
+                                && !tsorcRevampAIs.TryTeleportReacquire(npc, g))
+                            {
+                                NavBehavior.ForceDisengage(npc, g);
+                            }
+                        }
+                        else NavBehavior.ForceDisengage(npc, g);
                         s.StuckGiveUpFrames = 0;
                     }
                 }
@@ -680,14 +693,24 @@ namespace tsorcRevamp.NPCs
                         {
                             s.LastPlanResult = $"hard-stuck x={s.HardStuckCheckX / TileF:F1}";
                             s.Plan = null; s.PlanIndex = 0; s.CommitFrames = 0;
-                            if (g.CanTeleport)
+                            bool recoveryInRange = g.TeleportStyle != TeleportStyle.RecoveryOnly
+                                || (g.TeleportCooldownTimer == 0
+                                    && (g.RecoveryTeleportMaxRange <= 0f
+                                        || npc.Distance(player.Center) <= g.RecoveryTeleportMaxRange));
+                            if (g.CanTeleport && recoveryInRange)
                             {
                                 // Use the same robust reacquire search as the navigation FSM: a wider
                                 // radius, a legal sightline near the target, and normal charge/cooldown
                                 // accounting. The old blind 20-tile queue often found no destination,
                                 // reset this detector, and repeated the exact blocked/drop loop forever.
-                                if (!tsorcRevampAIs.TryTeleportReacquire(npc, g))
-                                    NavBehavior.ForceDisengage(npc, g);
+                                // Recovery-only teleports are server-authoritative; clients wait for
+                                // the resulting NPC sync instead of independently disengaging.
+                                if (g.TeleportStyle != TeleportStyle.RecoveryOnly
+                                    || Main.netMode != NetmodeID.MultiplayerClient)
+                                {
+                                    if (!tsorcRevampAIs.TryTeleportReacquire(npc, g))
+                                        NavBehavior.ForceDisengage(npc, g);
+                                }
                             }
                             else NavBehavior.ForceDisengage(npc, g);
                             s.HardStuckStrikes = 0;

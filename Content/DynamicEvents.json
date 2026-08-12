@@ -1,1 +1,4454 @@
-[]
+[
+  {
+    "EventID": "d40f3acc-9e9c-4821-8261-e44144c8fc55",
+    "CenterX": 4139.0,
+    "CenterY": 923.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 109,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Pinwheel turns its glance to you.",
+    "TextColorHex": "B22222FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Pinwheel",
+        "SpawnX": 4139.0,
+        "SpawnY": 923.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "20548bee-d487-41f7-a741-4e1898a71c0b",
+    "CenterX": 4137.0,
+    "CenterY": 895.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 173,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Black Knight appears from the shadows...",
+    "TextColorHex": "800080FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "LothricBlackKnightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/LothricBlackKnight",
+        "SpawnX": 4137.0,
+        "SpawnY": 895.0,
+        "CustomHealth": 1100,
+        "CustomDamage": 40,
+        "CustomDefense": 8,
+        "CustomSouls": 1500
+      }
+    ]
+  },
+  {
+    "EventID": "1faea9b5-71a7-448f-bf8d-be2fe1a41622",
+    "CenterX": 3591.0,
+    "CenterY": 1248.0,
+    "Radius": 9216.0,
+    "Square": false,
+    "TriggerDust": 172,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A cursed Fire Lurker appears...",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "FireLurkerPainCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/FireLurker",
+        "SpawnX": 3559.0,
+        "SpawnY": 1248.0,
+        "CustomHealth": 500,
+        "CustomDamage": 70,
+        "CustomDefense": 12,
+        "CustomSouls": 650
+      },
+      {
+        "NpcName": "tsorcRevamp/FireLurker",
+        "SpawnX": 3629.0,
+        "SpawnY": 1248.0,
+        "CustomHealth": 500,
+        "CustomDamage": 70,
+        "CustomDefense": 12,
+        "CustomSouls": 650
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/GreenBlossom"
+    ],
+    "ExtraLootAmounts": [
+      5
+    ]
+  },
+  {
+    "EventID": "cc7a70b6-3c74-40e7-bce4-c472f5f48e86",
+    "CenterX": 1066.0,
+    "CenterY": 529.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 234,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The fated day of your death has arrived.",
+    "TextColorHex": "000000FF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Death",
+        "SpawnX": 1066.0,
+        "SpawnY": 529.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "79a6482c-f602-4511-a0a6-6936654ff9d9",
+    "CenterX": 2282.0,
+    "CenterY": 1650.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 173,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Black Knight appears from the shadows...",
+    "TextColorHex": "800080FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "BlackKnightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/BlackKnight",
+        "SpawnX": 2282.0,
+        "SpawnY": 1650.0,
+        "CustomHealth": 25000,
+        "CustomDamage": 140,
+        "CustomDefense": 30,
+        "CustomSouls": 16000
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/SoulCoin",
+      "tsorcRevamp/PurgingStone"
+    ],
+    "ExtraLootAmounts": [
+      50,
+      1
+    ]
+  },
+  {
+    "EventID": "24964429-60d7-4ded-b362-8645aab130e6",
+    "CenterX": 5596.0,
+    "CenterY": 926.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 158,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Red Knight has invaded your world!",
+    "TextColorHex": "800080FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "RedKnightMountainCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/RedKnight",
+        "SpawnX": 5596.0,
+        "SpawnY": 926.0,
+        "CustomHealth": 1000,
+        "CustomDamage": 55,
+        "CustomDefense": 9,
+        "CustomSouls": 1250
+      }
+    ],
+    "ExtraLootItemNames": [
+      "GreaterHealingPotion",
+      "RagePotion",
+      "WrathPotion",
+      "tsorcRevamp/SoulCoin"
+    ],
+    "ExtraLootAmounts": [
+      4,
+      3,
+      2,
+      50
+    ]
+  },
+  {
+    "EventID": "a5c89edb-8df1-4e36-be51-a5c2256af456",
+    "CenterX": 7059.0,
+    "CenterY": 1289.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 297,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Queen Slime emerges from her Hallowed cave!",
+    "TextColorHex": "FFC0CBFF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "QueenSlimeBoss",
+        "SpawnX": 7059.0,
+        "SpawnY": 1289.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "b412cc9f-bcdf-49df-9025-d06280625292",
+    "CenterX": 7454.0,
+    "CenterY": 1413.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 173,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Black Knight appears from the shadows...",
+    "TextColorHex": "800080FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "BlackKnightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/BlackKnight",
+        "SpawnX": 7454.0,
+        "SpawnY": 1413.0,
+        "CustomHealth": 6000,
+        "CustomDamage": 80,
+        "CustomDefense": 20,
+        "CustomSouls": 5000
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/SoulCoin",
+      "tsorcRevamp/PurgingStone"
+    ],
+    "ExtraLootAmounts": [
+      50,
+      1
+    ]
+  },
+  {
+    "EventID": "5867a3de-f270-460d-8be5-ca23f839f013",
+    "CenterX": 7874.0,
+    "CenterY": 390.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 114,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Hemogoblin Shark is thirsty for blood!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "GoblinShark",
+        "SpawnX": 7874.0,
+        "SpawnY": 390.0,
+        "CustomHealth": 5000,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 15000
+      }
+    ],
+    "ExtraLootItemNames": [
+      "SuperHealingPotion",
+      "RagePotion",
+      "SharpTears"
+    ],
+    "ExtraLootAmounts": [
+      5,
+      3,
+      1
+    ]
+  },
+  {
+    "EventID": "64089f74-0c62-4bcd-a4f6-c9a5d9267523",
+    "CenterX": 2229.0,
+    "CenterY": 856.0,
+    "Radius": 2560000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Great Red Knight has invaded your world!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "SuperHardModeCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GreatRedKnight",
+        "SpawnX": 2229.0,
+        "SpawnY": 856.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 20000
+      }
+    ],
+    "ExtraLootItemNames": [
+      "RagePotion",
+      "WrathPotion",
+      "tsorcRevamp/Humanity"
+    ],
+    "ExtraLootAmounts": [
+      2,
+      2,
+      2
+    ]
+  },
+  {
+    "EventID": "0b96a256-de7e-408d-a869-8e986664612b",
+    "CenterX": 4043.0,
+    "CenterY": 143.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Ancestral Spirit has been disturbed!",
+    "TextColorHex": "0000FFFF",
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "Deerclops",
+        "SpawnX": 4043.0,
+        "SpawnY": 143.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "7ddc4a28-2f4b-4fa1-96d7-1dc923613e07",
+    "CenterX": 4979.0,
+    "CenterY": 1398.0,
+    "Radius": 1048576.0,
+    "Square": false,
+    "TriggerDust": 63,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "default",
+    "TextColorHex": "FFFFFFFF",
+    "WorldCondition": null,
+    "MapCondition": "OldManSpawnCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "OldMan",
+        "SpawnX": 4979.0,
+        "SpawnY": 1398.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "2a569e76-bd97-4138-863a-12195a309c3d",
+    "CenterX": 5563.0,
+    "CenterY": 1676.0,
+    "Radius": 65536.0,
+    "Square": false,
+    "TriggerDust": 181,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Skeletron, Lord of Graves, has awoken!",
+    "TextColorHex": "EE82EEFF",
+    "WorldCondition": null,
+    "MapCondition": "SkeletronHiddenSpawnCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "SkeletronHead",
+        "SpawnX": 5563.0,
+        "SpawnY": 1676.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "1fb9e8ab-86ba-449b-a112-ff93b5320606",
+    "CenterX": 6041.0,
+    "CenterY": 79.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 0,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Alien life form detected",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "PreMechCustomCondition",
+    "CustomAction": "AlienAmbushAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "VortexHornet",
+        "SpawnX": 6069.0,
+        "SpawnY": 69.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "VortexHornet",
+        "SpawnX": 6010.0,
+        "SpawnY": 79.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "VortexHornet",
+        "SpawnX": 6010.0,
+        "SpawnY": 79.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "VortexHornet",
+        "SpawnX": 6079.0,
+        "SpawnY": 79.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "VortexHornet",
+        "SpawnX": 6041.0,
+        "SpawnY": 69.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "VortexHornet",
+        "SpawnX": 6079.0,
+        "SpawnY": 79.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "f912f677-7352-43a2-8ab2-8b98a307647d",
+    "CenterX": 3900.0,
+    "CenterY": 1138.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 15,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Eye sees you!",
+    "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "EyeofCthulhu",
+        "SpawnX": 3900.0,
+        "SpawnY": 1138.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "3a72c5a1-be8e-41f9-98a8-99f9829171f1",
+    "CenterX": 3633.0,
+    "CenterY": 996.0,
+    "Radius": 541696.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "The Eater of Worlds is ready to feed!",
+    "TextColorHex": "800080FF",
+    "WorldCondition": null,
+    "MapCondition": "PreEoWCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "EaterofWorldsHead",
+        "SpawnX": 3633.0,
+        "SpawnY": 996.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "af5a81dc-b77d-478f-a873-8c84e23a2e61",
+    "CenterX": 5317.0,
+    "CenterY": 1800.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "What did you expect to find here human?... Your hubris will be your undoing...",
+    "TextColorHex": "9370DBFF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/AncientDemon",
+        "SpawnX": 5317.0,
+        "SpawnY": 1800.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/Humanity",
+      "tsorcRevamp/DarkSoul"
+    ],
+    "ExtraLootAmounts": [
+      1,
+      5000
+    ]
+  },
+  {
+    "EventID": "f45c1970-12a0-4f8f-b0bc-b728edaad0bc",
+    "CenterX": 364.0,
+    "CenterY": 1897.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Lich King awakens!",
+    "TextColorHex": "FFD700FF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/EarthFiendLich",
+        "SpawnX": 364.0,
+        "SpawnY": 1897.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "1e1ee757-6208-49c9-bf22-027ea8f2fff4",
+    "CenterX": 3152.0,
+    "CenterY": 1685.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Lich King awakens!",
+    "TextColorHex": "FFD700FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/EarthFiendLich",
+        "SpawnX": 3152.0,
+        "SpawnY": 1685.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "8a379937-9256-43ae-8221-4afba3bd628a",
+    "CenterX": 296.0,
+    "CenterY": 1560.0,
+    "Radius": 331776.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The hunt begins...",
+    "TextColorHex": "006400FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/TheHunter",
+        "SpawnX": 296.0,
+        "SpawnY": 1560.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "0be770ba-0bcc-4600-bec8-849264eaadbc",
+    "CenterX": 7000.0,
+    "CenterY": 1845.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 6,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Rage awakens!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/TheRage",
+        "SpawnX": 7000.0,
+        "SpawnY": 1845.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "465b3207-d8fa-4560-a35e-5c7830e9013c",
+    "CenterX": 5652.0,
+    "CenterY": 971.0,
+    "Radius": 186624.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "You foolish human... pitiful arrogance...",
+    "TextColorHex": "9370DBFF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/AncientOolacileDemon",
+        "SpawnX": 5652.0,
+        "SpawnY": 971.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/Humanity",
+      "tsorcRevamp/DarkSoul"
+    ],
+    "ExtraLootAmounts": [
+      1,
+      1500
+    ]
+  },
+  {
+    "EventID": "0e1143eb-8971-4b33-8e85-956f35a26c5c",
+    "CenterX": 7153.0,
+    "CenterY": 411.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 15,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "You're arrogant, Red. You were a fool to come here...",
+    "TextColorHex": "9370DBFF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "GoblinSummoner",
+        "SpawnX": 7153.0,
+        "SpawnY": 411.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/Humanity",
+      "tsorcRevamp/DarkSoul"
+    ],
+    "ExtraLootAmounts": [
+      1,
+      1500
+    ]
+  },
+  {
+    "EventID": "c9d0e756-6b68-4ac3-b827-4a71ef277a9b",
+    "CenterX": 7822.0,
+    "CenterY": 118.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 15,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "You think you're clever, Red?",
+    "TextColorHex": "9370DBFF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "GoblinSummoner",
+        "SpawnX": 7822.0,
+        "SpawnY": 118.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/Humanity",
+      "tsorcRevamp/DarkSoul"
+    ],
+    "ExtraLootAmounts": [
+      1,
+      1500
+    ]
+  },
+  {
+    "EventID": "8c873282-77bc-40a7-adca-7e9fb4f760e5",
+    "CenterX": 7900.0,
+    "CenterY": 868.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 76,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "8A2BE2FF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapCondition",
+    "CustomAction": "StormCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "WyvernHead",
+        "SpawnX": 7776.0,
+        "SpawnY": 829.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "IceGolem",
+        "SpawnX": 7800.0,
+        "SpawnY": 868.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "6939756c-5e61-4f1c-a1a4-7c379714c41a",
+    "CenterX": 7651.0,
+    "CenterY": 1020.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 15,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!",
+    "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "IceGolem",
+        "SpawnX": 7651.0,
+        "SpawnY": 1020.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "d7e39282-f18f-44be-8c39-d7fe5a4ff5c3",
+    "CenterX": 5995.0,
+    "CenterY": 1117.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 15,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "King Slime appears!",
+    "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "KingSlime",
+        "SpawnX": 5995.0,
+        "SpawnY": 1117.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "0c9bcf7d-cb40-4562-9dd5-abdb2affeb80",
+    "CenterX": 2108.0,
+    "CenterY": 849.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 158,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... ",
+    "TextColorHex": "FAFAD2FF",
+    "WorldCondition": null,
+    "MapCondition": "LumeliaCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/HeroofLumelia",
+        "SpawnX": 2108.0,
+        "SpawnY": 849.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "d57005d5-7996-4368-b602-3c53044f12b3",
+    "CenterX": 3245.0,
+    "CenterY": 1252.0,
+    "Radius": 20736.0,
+    "Square": false,
+    "TriggerDust": 75,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A cursed Fire Lurker appears...",
+    "TextColorHex": "800080FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "FireLurkerPainCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/FireLurker",
+        "SpawnX": 3245.0,
+        "SpawnY": 1252.0,
+        "CustomHealth": 1800,
+        "CustomDamage": 85,
+        "CustomDefense": 12,
+        "CustomSouls": 1500
+      }
+    ],
+    "ExtraLootItemNames": [
+      "RagePotion",
+      "WrathPotion"
+    ],
+    "ExtraLootAmounts": [
+      3,
+      4
+    ]
+  },
+  {
+    "EventID": "e95b284c-0bd2-4519-929a-eff894b9d091",
+    "CenterX": 3897.0,
+    "CenterY": 1219.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 158,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Black Knight has invaded your world!",
+    "TextColorHex": "800080FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "BlackKnightPainCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/BlackKnight",
+        "SpawnX": 3897.0,
+        "SpawnY": 1219.0,
+        "CustomHealth": 3560,
+        "CustomDamage": 70,
+        "CustomDefense": 15,
+        "CustomSouls": 3550
+      }
+    ],
+    "ExtraLootItemNames": [
+      "RagePotion",
+      "WrathPotion",
+      "tsorcRevamp/WorldRune"
+    ],
+    "ExtraLootAmounts": [
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "EventID": "ccca9230-0f71-4d4c-9817-5cdfcacf7de7",
+    "CenterX": 3287.0,
+    "CenterY": 495.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 158,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Red Knight has invaded your world!",
+    "TextColorHex": "800080FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "RedKnightMountainCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/RedKnight",
+        "SpawnX": 3287.0,
+        "SpawnY": 495.0,
+        "CustomHealth": 2000,
+        "CustomDamage": 55,
+        "CustomDefense": 10,
+        "CustomSouls": 2500
+      }
+    ],
+    "ExtraLootItemNames": [
+      "RagePotion",
+      "WrathPotion",
+      "AmmoReservationPotion"
+    ],
+    "ExtraLootAmounts": [
+      3,
+      4,
+      5
+    ]
+  },
+  {
+    "EventID": "7a7908be-20b4-4c67-be30-e3a67e700fa7",
+    "CenterX": 4331.0,
+    "CenterY": 1713.0,
+    "Radius": 65536.0,
+    "Square": false,
+    "TriggerDust": 75,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "You have disturbed the Ancient Wyvern of the Forgotten City!",
+    "TextColorHex": "008000FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/JungleWyvernHead",
+        "SpawnX": 4331.0,
+        "SpawnY": 1713.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "cb6e43b6-b4d1-4d27-82ca-bf121cef98af",
+    "CenterX": 7737.0,
+    "CenterY": 1546.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 221,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Seath the Scaleless rises!",
+    "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/SeathTheScalelessHead",
+        "SpawnX": 7737.0,
+        "SpawnY": 1546.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "c51e8550-48ac-4c34-9b78-b527b1f6f894",
+    "CenterX": 7192.0,
+    "CenterY": 364.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 15,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "You impress me Red! But this is where your journey ends...",
+    "TextColorHex": "E0FFFFFF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "StormCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/WyvernMage",
+        "SpawnX": 7192.0,
+        "SpawnY": 364.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/MechaDragonHead",
+        "SpawnX": 7192.0,
+        "SpawnY": 364.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "6cd13273-8093-44fb-915e-c2f9f4cc55bc",
+    "CenterX": 6192.0,
+    "CenterY": 1267.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "Slogra and Gaibon have risen from the depths!",
+    "TextColorHex": "800080FF",
+    "WorldCondition": null,
+    "MapCondition": "SlograGaibonCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Slogra",
+        "SpawnX": 6192.0,
+        "SpawnY": 1267.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/Gaibon",
+        "SpawnX": 6192.0,
+        "SpawnY": 1267.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "a45e7807-df9d-4d5c-a1a1-80ce6d3c4ea8",
+    "CenterX": 1136.0,
+    "CenterY": 956.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 221,
+    "VisibleRing": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "The Serris Triplets have been enraged!",
+    "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
+    "MapCondition": "SerrisCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/SerrisHead",
+        "SpawnX": 1186.0,
+        "SpawnY": 1042.6025,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/SerrisHead",
+        "SpawnX": 1186.0,
+        "SpawnY": 869.39746,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/SerrisHead",
+        "SpawnX": 1036.0,
+        "SpawnY": 956.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "918604b3-b9c0-4123-90ec-95abccac62dd",
+    "CenterX": 3235.0,
+    "CenterY": 1770.0,
+    "Radius": 2560000.0,
+    "Square": false,
+    "TriggerDust": 60,
+    "VisibleRing": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "default",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "MarilithCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/MarilithIntro",
+        "SpawnX": 3235.0,
+        "SpawnY": 1770.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "571121cd-22da-4a3b-8eca-ccc76079bcfa",
+    "CenterX": 305.0,
+    "CenterY": 1914.0,
+    "Radius": 2560000.0,
+    "Square": false,
+    "TriggerDust": 60,
+    "VisibleRing": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "default",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMarilithCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/MarilithIntro",
+        "SpawnX": 305.0,
+        "SpawnY": 1914.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "9475d7f2-f3dd-4b4c-982d-c1227d11322b",
+    "CenterX": 5090.0,
+    "CenterY": 1103.0,
+    "Radius": 1440000.0,
+    "Square": false,
+    "TriggerDust": 60,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "default",
+    "TextColorHex": "808080FF",
+    "WorldCondition": null,
+    "MapCondition": "PrimeCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/PrimeIntro",
+        "SpawnX": 5090.0,
+        "SpawnY": 1103.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "83089da4-46eb-4f15-9805-5df093957757",
+    "CenterX": 1821.0,
+    "CenterY": 1702.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 15,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Water Fiend rises!",
+    "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
+    "MapCondition": "SuperHardModeCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/WaterFiendKraken",
+        "SpawnX": 1821.0,
+        "SpawnY": 1702.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "a0c32b29-b40e-4014-9a05-d5b04580ea33",
+    "CenterX": 670.0,
+    "CenterY": 1164.0,
+    "Radius": 2.5599996E+16,
+    "Square": false,
+    "TriggerDust": 60,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "default",
+    "TextColorHex": "00000000",
+    "WorldCondition": null,
+    "MapCondition": "AbyssPortalCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/AbyssPortal",
+        "SpawnX": 670.0,
+        "SpawnY": 1164.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "2cce8420-79b5-436e-a9e1-554f3d38f941",
+    "CenterX": 832.0,
+    "CenterY": 1244.0,
+    "Radius": 65536.0,
+    "Square": false,
+    "TriggerDust": 158,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Gwyn has awoken to bring your journey to its final end...",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Gwyn",
+        "SpawnX": 832.0,
+        "SpawnY": 1244.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "a6a68c8f-e66c-4fcf-a951-b3110b1724e2",
+    "CenterX": 822.0,
+    "CenterY": 1241.0,
+    "Radius": 65536.0,
+    "Square": false,
+    "TriggerDust": 158,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Gwyn has awoken to bring your journey to its final end...",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Gwyn",
+        "SpawnX": 822.0,
+        "SpawnY": 1241.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "c962fcc7-cf38-4cf3-bde2-ca79f9d51448",
+    "CenterX": 6721.0,
+    "CenterY": 1905.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Grand Occultist of Oolacile shall now disembowel you...",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/AbysmalOolacileSorcerer",
+        "SpawnX": 6721.0,
+        "SpawnY": 1905.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "56c83317-7435-441d-b9c2-3a02ca8baba9",
+    "CenterX": 8239.0,
+    "CenterY": 1870.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Grand Occultist of Oolacile shall now disembowel you...",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/AbysmalOolacileSorcerer",
+        "SpawnX": 8239.0,
+        "SpawnY": 1870.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "ed8c51b2-ced9-4b99-9106-4077c66d21d8",
+    "CenterX": 2484.0,
+    "CenterY": 1795.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 158,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Witchking has been waiting for you...",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Witchking",
+        "SpawnX": 2484.0,
+        "SpawnY": 1795.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "54aab4c9-7f85-4d20-a280-b4e461ab6e89",
+    "CenterX": 2487.0,
+    "CenterY": 1803.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 75,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Witchking has been waiting for you...",
+    "TextColorHex": "008000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Witchking",
+        "SpawnX": 2487.0,
+        "SpawnY": 1803.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "d964c046-2c58-4e1f-b468-37d192ca86a6",
+    "CenterX": 6415.0,
+    "CenterY": 1888.0,
+    "Radius": 640000.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Chaos has entered this dimension!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Chaos",
+        "SpawnX": 6415.0,
+        "SpawnY": 1888.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "6f8cbdd0-749a-48b4-89bc-2af4805b6a33",
+    "CenterX": 7034.0,
+    "CenterY": 968.0,
+    "Radius": 640000.0,
+    "Square": false,
+    "TriggerDust": 173,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Chaos has entered this dimension!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Chaos",
+        "SpawnX": 7034.0,
+        "SpawnY": 968.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "841e7404-d10d-4dbd-82d5-baca02636a29",
+    "CenterX": 6432.0,
+    "CenterY": 196.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 296,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Wyvern Mage has been freed from its cage!",
+    "TextColorHex": "FF4500FF",
+    "WorldCondition": null,
+    "MapCondition": "SuperHardModeCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/WyvernMageShadow",
+        "SpawnX": 6432.0,
+        "SpawnY": 196.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "6dd4c92b-5c5c-4c3b-9d3d-e04b791198c1",
+    "CenterX": 8174.0,
+    "CenterY": 866.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 135,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Blight surfaces from the ocean!",
+    "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
+    "MapCondition": "SuperHardModeCustomCondition",
+    "CustomAction": "RainCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Blight",
+        "SpawnX": 8174.0,
+        "SpawnY": 866.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "96da79cb-9704-479e-a468-c988e111c64e",
+    "CenterX": 5828.0,
+    "CenterY": 1760.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 173,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Your shadow self has manifested from your darkest fears...",
+    "TextColorHex": "E0FFFFFF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapConditionSHM",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/DarkCloud",
+        "SpawnX": 5828.0,
+        "SpawnY": 1760.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "c5616521-1cef-460f-80a9-2ea999cbf744",
+    "CenterX": 6500.0,
+    "CenterY": 1858.0,
+    "Radius": 640000.0,
+    "Square": false,
+    "TriggerDust": 173,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Your shadow self has manifested from your darkest fears...",
+    "TextColorHex": "E0FFFFFF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapConditionSHM",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/DarkCloud",
+        "SpawnX": 6500.0,
+        "SpawnY": 1858.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "089a14c7-be08-4987-a789-0cdfeb65888a",
+    "CenterX": 5344.0,
+    "CenterY": 1692.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Artorias, the Abysswalker arrives to tear you from this plane...",
+    "TextColorHex": "FFD700FF",
+    "WorldCondition": null,
+    "MapCondition": "SuperHardModeCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Artorias",
+        "SpawnX": 5344.0,
+        "SpawnY": 1692.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "1fb604c1-a98a-4dc4-95f8-99f1f1fdcc41",
+    "CenterX": 4508.0,
+    "CenterY": 1745.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 173,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Black Knight appears from the shadows...",
+    "TextColorHex": "800080FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "BlackKnightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/BlackKnight",
+        "SpawnX": 4508.0,
+        "SpawnY": 1745.0,
+        "CustomHealth": 3000,
+        "CustomDamage": 60,
+        "CustomDefense": 10,
+        "CustomSouls": 3500
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/SoulCoin",
+      "tsorcRevamp/PurgingStone"
+    ],
+    "ExtraLootAmounts": [
+      50,
+      1
+    ]
+  },
+  {
+    "EventID": "f7e4b126-0b7c-420f-8634-ff0fb7229aac",
+    "CenterX": 1686.0,
+    "CenterY": 963.0,
+    "Radius": 640000.0,
+    "Square": false,
+    "TriggerDust": 31,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "",
+    "TextColorHex": "00000000",
+    "WorldCondition": null,
+    "MapCondition": "UndeadMerchantCondition",
+    "CustomAction": "UndeadMerchantAction",
+    "SingleNpcMarker": false,
+    "Npcs": []
+  },
+  {
+    "EventID": "b7744e63-223b-437c-8e15-ff97ab5856e3",
+    "CenterX": 4456.0,
+    "CenterY": 1744.0,
+    "Radius": 2560000.0,
+    "Square": false,
+    "TriggerDust": 31,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "",
+    "TextColorHex": "00000000",
+    "WorldCondition": null,
+    "MapCondition": "TinkererCondition",
+    "CustomAction": "TinkererAction",
+    "SingleNpcMarker": false,
+    "Npcs": []
+  },
+  {
+    "EventID": "d3f5eaea-fdbc-4d08-a26f-370d7d2eeabd",
+    "CenterX": 7707.0,
+    "CenterY": 1161.0,
+    "Radius": 640000.0,
+    "Square": false,
+    "TriggerDust": 31,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "",
+    "TextColorHex": "00000000",
+    "WorldCondition": null,
+    "MapCondition": "FairyCondition",
+    "CustomAction": "FairyAction",
+    "SingleNpcMarker": false,
+    "Npcs": []
+  },
+  {
+    "EventID": "a47efd08-dfdd-4b68-973f-467f557b218b",
+    "CenterX": 8216.0,
+    "CenterY": 1630.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 173,
+    "VisibleRing": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"",
+    "TextColorHex": "FF4500FF",
+    "WorldCondition": null,
+    "MapCondition": "AttraidiesTheSorrowCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/AttraidiesApparition",
+        "SpawnX": 8216.5,
+        "SpawnY": 1630.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "1d006857-8073-4b03-8ffa-62b6c46fe4d8",
+    "CenterX": 3245.0,
+    "CenterY": 1215.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 173,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Twin Eaters surface from the depths!",
+    "TextColorHex": "800080FF",
+    "WorldCondition": null,
+    "MapCondition": "TwinEoWCustomCondition",
+    "CustomAction": "TwinEoWAction",
+    "SingleNpcMarker": false,
+    "Npcs": []
+  },
+  {
+    "EventID": "3c80f8d1-3319-4730-b798-b5ff92a515a5",
+    "CenterX": 4666.0,
+    "CenterY": 856.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 0,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": "DundledingAmbushAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Dunlending",
+        "SpawnX": 4645.0,
+        "SpawnY": 858.0,
+        "CustomHealth": 200,
+        "CustomDamage": 65,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/Dunlending",
+        "SpawnX": 4645.0,
+        "SpawnY": 841.0,
+        "CustomHealth": 200,
+        "CustomDamage": 65,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/Dunlending",
+        "SpawnX": 4697.0,
+        "SpawnY": 858.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/DodgerollMemo"
+    ],
+    "ExtraLootAmounts": [
+      1
+    ]
+  },
+  {
+    "EventID": "c7fe045d-9f88-4458-b044-573b85cafdbf",
+    "CenterX": 4715.0,
+    "CenterY": 853.0,
+    "Radius": 12544.0,
+    "Square": false,
+    "TriggerDust": 0,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": "RemixMapCondition",
+    "MapCondition": "",
+    "CustomAction": "DundledingAmbushAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Dunlending",
+        "SpawnX": 4691.0,
+        "SpawnY": 854.0,
+        "CustomHealth": 200,
+        "CustomDamage": 65,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/Dunlending",
+        "SpawnX": 4733.0,
+        "SpawnY": 854.0,
+        "CustomHealth": 200,
+        "CustomDamage": 65,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/Dunlending",
+        "SpawnX": 4698.0,
+        "SpawnY": 853.0,
+        "CustomHealth": 200,
+        "CustomDamage": 65,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/DodgerollMemo"
+    ],
+    "ExtraLootAmounts": [
+      1
+    ]
+  },
+  {
+    "EventID": "b247958a-559e-4c7b-ae43-ef3f8ae1b9ea",
+    "CenterX": 4378.0,
+    "CenterY": 922.0,
+    "Radius": 9216.0,
+    "Square": false,
+    "TriggerDust": 0,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "",
+    "TextColorHex": "00000000",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "BoulderfallEvent1Action",
+    "SingleNpcMarker": false,
+    "Npcs": []
+  },
+  {
+    "EventID": "f28f1aa4-9b7a-421a-a185-6effad19fc26",
+    "CenterX": 3518.0,
+    "CenterY": 429.0,
+    "Radius": 1024.0,
+    "Square": false,
+    "TriggerDust": 0,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "",
+    "TextColorHex": "00000000",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "BoulderfallEvent2Action",
+    "SingleNpcMarker": false,
+    "Npcs": []
+  },
+  {
+    "EventID": "b73bf23c-4d72-4414-b5f6-762f7768262a",
+    "CenterX": 3665.0,
+    "CenterY": 360.0,
+    "Radius": 9216.0,
+    "Square": false,
+    "TriggerDust": 0,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "",
+    "TextColorHex": "00000000",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "BoulderfallEvent3Action",
+    "SingleNpcMarker": false,
+    "Npcs": []
+  },
+  {
+    "EventID": "2abb42d2-d538-4ae6-9675-a0a3f229d87f",
+    "CenterX": 3314.0,
+    "CenterY": 355.0,
+    "Radius": 295936.0,
+    "Square": false,
+    "TriggerDust": 54,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "You hear footsteps...",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "LeonhardPhase1Undefeated",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/LeonhardPhase1",
+        "SpawnX": 3314.0,
+        "SpawnY": 355.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "5181458e-ff8d-4a74-b947-2d04e8211bba",
+    "CenterX": 4422.0,
+    "CenterY": 1210.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 0,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "PreEoCCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/HollowWarrior",
+        "SpawnX": 4446.0,
+        "SpawnY": 1211.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/FirebombHollow",
+        "SpawnX": 4456.0,
+        "SpawnY": 1211.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "74e7428f-f83a-4da5-9c83-1eb0ff412348",
+    "CenterX": 5028.0,
+    "CenterY": 837.0,
+    "Radius": 82944.0,
+    "Square": false,
+    "TriggerDust": 0,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/AbandonedStump",
+        "SpawnX": 5012.0,
+        "SpawnY": 851.0,
+        "CustomHealth": 400,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "GoblinSorcerer",
+        "SpawnX": 5013.0,
+        "SpawnY": 823.0,
+        "CustomHealth": 400,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "GoblinScout",
+        "SpawnX": 5049.0,
+        "SpawnY": 839.0,
+        "CustomHealth": 400,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "TatteredCloth"
+    ],
+    "ExtraLootAmounts": [
+      1
+    ]
+  },
+  {
+    "EventID": "a22fa18e-ecc4-439a-98f5-cde34da127dd",
+    "CenterX": 4060.0,
+    "CenterY": 1418.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 75,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "PreSkeletronCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/HollowSoldier",
+        "SpawnX": 4029.0,
+        "SpawnY": 1429.0,
+        "CustomHealth": 700,
+        "CustomDamage": null,
+        "CustomDefense": 18,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/ShadowMage",
+        "SpawnX": 4074.0,
+        "SpawnY": 1399.0,
+        "CustomHealth": 700,
+        "CustomDamage": null,
+        "CustomDefense": 18,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "0d7b0bc5-795a-4742-b283-e6a9c250306c",
+    "CenterX": 4615.0,
+    "CenterY": 852.0,
+    "Radius": 9216.0,
+    "Square": false,
+    "TriggerDust": 16,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "PostEoWCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/HollowWarrior",
+        "SpawnX": 4593.0,
+        "SpawnY": 858.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/HollowSoldier",
+        "SpawnX": 4640.0,
+        "SpawnY": 858.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/ManHunter",
+        "SpawnX": 4643.0,
+        "SpawnY": 841.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/HollowSpearman",
+        "SpawnX": 4588.0,
+        "SpawnY": 858.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "59738daf-8584-419b-9535-86265611fa4b",
+    "CenterX": 5173.0,
+    "CenterY": 1750.0,
+    "Radius": 9216.0,
+    "Square": false,
+    "TriggerDust": 172,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "PreMechCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/LothricKnight",
+        "SpawnX": 5148.0,
+        "SpawnY": 1757.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 500
+      },
+      {
+        "NpcName": "tsorcRevamp/LothricSpearKnight",
+        "SpawnX": 5197.0,
+        "SpawnY": 1757.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 500
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/GreenBlossom"
+    ],
+    "ExtraLootAmounts": [
+      5
+    ]
+  },
+  {
+    "EventID": "1fe80349-83be-4935-9848-60033813af3f",
+    "CenterX": 4574.0,
+    "CenterY": 945.0,
+    "Radius": 36864.0,
+    "Square": false,
+    "TriggerDust": 172,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "PreMechCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/LothricKnight",
+        "SpawnX": 4596.0,
+        "SpawnY": 946.0,
+        "CustomHealth": null,
+        "CustomDamage": 70,
+        "CustomDefense": null,
+        "CustomSouls": 600
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/RadiantLifegem"
+    ],
+    "ExtraLootAmounts": [
+      5
+    ]
+  },
+  {
+    "EventID": "1cb3abc5-b807-4e49-a52f-ccffd7bb7e33",
+    "CenterX": 3418.0,
+    "CenterY": 364.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 0,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": "FirebombHollowAmbushAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/HollowSpearman",
+        "SpawnX": 3386.0,
+        "SpawnY": 367.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/FirebombHollow",
+        "SpawnX": 3451.0,
+        "SpawnY": 367.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "fe38a196-d0c7-42af-89cf-31ea1f285410",
+    "CenterX": 294.0,
+    "CenterY": 1366.0,
+    "Radius": 2560000.0,
+    "Square": false,
+    "TriggerDust": 31,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "",
+    "TextColorHex": "00000000",
+    "WorldCondition": null,
+    "MapCondition": "MechanicCondition",
+    "CustomAction": "MechanicAction",
+    "SingleNpcMarker": false,
+    "Npcs": []
+  },
+  {
+    "EventID": "074aabd7-d229-4c12-9d1b-6bf3d2dd9de3",
+    "CenterX": 7322.0,
+    "CenterY": 603.0,
+    "Radius": 409600.0,
+    "Square": true,
+    "TriggerDust": 31,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "",
+    "TextColorHex": "00000000",
+    "WorldCondition": null,
+    "MapCondition": "WizardCondition",
+    "CustomAction": "WizardAction",
+    "SingleNpcMarker": false,
+    "Npcs": []
+  },
+  {
+    "EventID": "cf02af18-9942-4a60-9ba5-d3201a42388a",
+    "CenterX": 4282.0,
+    "CenterY": 405.0,
+    "Radius": 10240000.0,
+    "Square": false,
+    "TriggerDust": 158,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The village is under attack! A Hellkite Dragon has come to feed...",
+    "TextColorHex": "AF4BFFFF",
+    "WorldCondition": null,
+    "MapCondition": "SuperHardModeCustomCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/HellkiteDragonHead",
+        "SpawnX": 4282.0,
+        "SpawnY": 405.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "07de5dd7-36ab-4d9e-bed0-7499dc5a4b71",
+    "CenterX": 4484.0,
+    "CenterY": 350.0,
+    "Radius": 2560000.0,
+    "Square": false,
+    "TriggerDust": 297,
+    "VisibleRing": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "The Empress of Light awakens!",
+    "TextColorHex": "FFC0CBFF",
+    "WorldCondition": null,
+    "MapCondition": "EoLDownedCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "HallowBoss",
+        "SpawnX": 4484.0,
+        "SpawnY": 350.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "3e0d83b0-0154-4251-90c9-095b2d8e5e70",
+    "CenterX": 4228.0,
+    "CenterY": 1800.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 63,
+    "VisibleRing": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "default",
+    "TextColorHex": "AF4BFFFF",
+    "WorldCondition": null,
+    "MapCondition": "PreSkeletronDungeonGuardianCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "DungeonGuardian",
+        "SpawnX": 4228.0,
+        "SpawnY": 1800.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "d1ea6aea-d6da-41ed-a765-7d7b2e7b2a97",
+    "CenterX": 2637.0,
+    "CenterY": 807.0,
+    "Radius": 20736.0,
+    "Square": false,
+    "TriggerDust": 87,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/MountedSandsprogMage",
+        "SpawnX": 2606.0,
+        "SpawnY": 806.0,
+        "CustomHealth": 400,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 300
+      },
+      {
+        "NpcName": "tsorcRevamp/MountedSandsprog",
+        "SpawnX": 2673.0,
+        "SpawnY": 817.0,
+        "CustomHealth": 400,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 300
+      }
+    ],
+    "ExtraLootItemNames": [
+      "SandBoots"
+    ],
+    "ExtraLootAmounts": [
+      1
+    ]
+  },
+  {
+    "EventID": "4f5b14ff-cb33-4c11-808f-5a5031e4d002",
+    "CenterX": 4318.0,
+    "CenterY": 768.0,
+    "Radius": 30976.0,
+    "Square": false,
+    "TriggerDust": 33,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4294.0,
+        "SpawnY": 778.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/HealingElixir"
+    ],
+    "ExtraLootAmounts": [
+      1
+    ]
+  },
+  {
+    "EventID": "8d28e313-6070-4fcb-93b4-9d37952e7539",
+    "CenterX": 4090.0,
+    "CenterY": 828.0,
+    "Radius": 30976.0,
+    "Square": false,
+    "TriggerDust": 33,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4117.0,
+        "SpawnY": 823.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/BoostPotion"
+    ],
+    "ExtraLootAmounts": [
+      2
+    ]
+  },
+  {
+    "EventID": "c0e73774-28c1-4b7b-8d7f-3f4e5187ee81",
+    "CenterX": 3690.0,
+    "CenterY": 1535.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 33,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Ambush!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/TaurusKnight",
+        "SpawnX": 3690.0,
+        "SpawnY": 1545.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/Abysswalker",
+        "SpawnX": 3675.0,
+        "SpawnY": 1545.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "ae766edb-f628-4cca-b297-8ce7aab7ce35",
+    "CenterX": 1578.0,
+    "CenterY": 1895.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 75,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapConditionSHM",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/AncientDemonOfTheAbyss",
+        "SpawnX": 1578.0,
+        "SpawnY": 1895.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "0b2ffed9-bff9-45ca-a762-4aa92a1039e3",
+    "CenterX": 2382.0,
+    "CenterY": 1882.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 75,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "OnlyAdventureMapConditionSHM",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/OolacileKnight",
+        "SpawnX": 2382.0,
+        "SpawnY": 1882.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "493b4e51-cea9-4281-9481-855a9b3fb68e",
+    "CenterX": 6761.0,
+    "CenterY": 1081.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 75,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapConditionSHM",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/AncientDemonOfTheAbyss",
+        "SpawnX": 6761.0,
+        "SpawnY": 1081.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "986effa3-d893-4a65-a427-0db294503ea3",
+    "CenterX": 1460.0,
+    "CenterY": 1364.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A strange vision has manifested itself from your fears...",
+    "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "AncientCultistSquidhead",
+        "SpawnX": 1460.0,
+        "SpawnY": 1364.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "e7ff8658-dc6b-4f92-bca6-99c0d3dbe797",
+    "CenterX": 1734.0,
+    "CenterY": 1297.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 133,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A paladin appears to smite you!",
+    "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "Paladin",
+        "SpawnX": 1734.0,
+        "SpawnY": 1297.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "274ac409-1ba3-4ddf-9ef5-a236d4b16d75",
+    "CenterX": 1040.0,
+    "CenterY": 1865.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 6,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "FFA500FF",
+    "WorldCondition": null,
+    "MapCondition": "DefaultCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/SerpentOfTheAbyssHead",
+        "SpawnX": 1040.0,
+        "SpawnY": 1865.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "4202dc3d-cfed-40d9-a667-ccc549cbeac9",
+    "CenterX": 90.0,
+    "CenterY": 1893.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 6,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "FFA500FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "MourningWood",
+        "SpawnX": 90.0,
+        "SpawnY": 1893.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "53a31e78-6467-44bd-b7b8-daf4021a613a",
+    "CenterX": 2021.0,
+    "CenterY": 351.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 269,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A powerful elemental is summoned!",
+    "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "SandElemental",
+        "SpawnX": 2021.0,
+        "SpawnY": 351.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "502e87db-0208-42e8-bf56-64aa059dc540",
+    "CenterX": 5781.0,
+    "CenterY": 1525.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 107,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "00FF00FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Abysswalker",
+        "SpawnX": 5781.0,
+        "SpawnY": 1525.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "b0e3ea92-5532-48a0-b964-c8a74347a451",
+    "CenterX": 3004.0,
+    "CenterY": 889.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 60,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "ZombieMerman",
+        "SpawnX": 2999.0,
+        "SpawnY": 889.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "EyeballFlyingFish",
+        "SpawnX": 3009.0,
+        "SpawnY": 889.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "HealingPotion",
+      "BloodRainBow",
+      "VampireFrogStaff",
+      "MoneyTrough",
+      "SharkToothNecklace",
+      "CombatBook"
+    ],
+    "ExtraLootAmounts": [
+      5,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "EventID": "e0d16f4c-b9bc-441b-8ce9-f1d0a670d1b4",
+    "CenterX": 2914.0,
+    "CenterY": 526.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 60,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Blood Eel is coming to devour you...",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "BloodEelHead",
+        "SpawnX": 2914.0,
+        "SpawnY": 526.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 7500
+      }
+    ],
+    "ExtraLootItemNames": [
+      "GreaterHealingPotion",
+      "WrathPotion",
+      "DripplerFlail"
+    ],
+    "ExtraLootAmounts": [
+      5,
+      2,
+      1
+    ]
+  },
+  {
+    "EventID": "ef131985-599c-446f-a864-7783af150bb0",
+    "CenterX": 2765.0,
+    "CenterY": 620.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 60,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Hemogoblin Shark is thirsty for blood!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "GoblinShark",
+        "SpawnX": 2765.0,
+        "SpawnY": 620.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 7500
+      }
+    ],
+    "ExtraLootItemNames": [
+      "GreaterHealingPotion",
+      "RagePotion",
+      "SharpTears"
+    ],
+    "ExtraLootAmounts": [
+      5,
+      2,
+      1
+    ]
+  },
+  {
+    "EventID": "4b98efdf-cc95-4b9c-9a2f-0bf910d2863a",
+    "CenterX": 2893.0,
+    "CenterY": 610.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 60,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Dreadnautilus, demon of the blood moon, has awakened!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": "SetBloodMoonCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "BloodNautilus",
+        "SpawnX": 2893.0,
+        "SpawnY": 610.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 12000
+      }
+    ],
+    "ExtraLootItemNames": [
+      "SuperHealingPotion",
+      "LifeforcePotion",
+      "BloodHamaxe",
+      "MagicQuiver",
+      "LavaCharm"
+    ],
+    "ExtraLootAmounts": [
+      6,
+      3,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "EventID": "f9452585-6d14-4d6e-9f52-e8680e3d8e91",
+    "CenterX": 2884.0,
+    "CenterY": 236.0,
+    "Radius": 451584.0,
+    "Square": false,
+    "TriggerDust": 15,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "008000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "Retinazer",
+        "SpawnX": 2864.0,
+        "SpawnY": 236.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "Spazmatism",
+        "SpawnX": 2904.0,
+        "SpawnY": 236.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "4f56e9b2-cef7-4e06-9eac-caa4847a3980",
+    "CenterX": 3181.0,
+    "CenterY": 1334.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 6,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/SlograII",
+        "SpawnX": 3181.0,
+        "SpawnY": 1334.0,
+        "CustomHealth": 9000,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "c166bb70-8b0b-450c-8270-5deab022f92c",
+    "CenterX": 7635.0,
+    "CenterY": 1735.0,
+    "Radius": 1081600.0,
+    "Square": false,
+    "TriggerDust": 67,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "You want to be frozen like the fools before you, Red?",
+    "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "IceQueen",
+        "SpawnX": 7635.0,
+        "SpawnY": 1735.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 10000
+      }
+    ]
+  },
+  {
+    "EventID": "bbdbd54a-760c-4f8c-b3d3-4bb9d1d36074",
+    "CenterX": 5954.0,
+    "CenterY": 401.0,
+    "Radius": 640000.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "An angry Queen Bee appears!",
+    "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "QueenBee",
+        "SpawnX": 5954.0,
+        "SpawnY": 401.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 2000
+      }
+    ],
+    "ExtraLootItemNames": [
+      "GreaterHealingPotion",
+      "RagePotion",
+      "tsorcRevamp/EternalCrystal"
+    ],
+    "ExtraLootAmounts": [
+      3,
+      1,
+      1
+    ]
+  },
+  {
+    "EventID": "7451d8ab-6037-4cf6-b16d-7ee58a189705",
+    "CenterX": 5229.0,
+    "CenterY": 1254.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 75,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "FFA500FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/OolacileKnight",
+        "SpawnX": 5229.0,
+        "SpawnY": 1254.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "1ed06d67-4412-44df-95cc-fd1f4a74ef32",
+    "CenterX": 5801.0,
+    "CenterY": 1381.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/TaurusKnight",
+        "SpawnX": 5801.0,
+        "SpawnY": 1381.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "22318fa6-6e78-4ec4-8ba7-f18184f1b78e",
+    "CenterX": 171.0,
+    "CenterY": 210.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 15,
+    "VisibleRing": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": "You can't beat what's coming, Red.",
+    "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "CultistBoss",
+        "SpawnX": 171.0,
+        "SpawnY": 210.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "CelestialSigil"
+    ],
+    "ExtraLootAmounts": [
+      1
+    ]
+  },
+  {
+    "EventID": "993c1c90-91db-43fa-94f8-7a218bca57ed",
+    "CenterX": 4749.0,
+    "CenterY": 639.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 15,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "King Slime appears!",
+    "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "KingSlime",
+        "SpawnX": 4749.0,
+        "SpawnY": 639.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "6bae3cd1-51c3-4d47-8113-4c0cecf6543f",
+    "CenterX": 7691.0,
+    "CenterY": 357.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 67,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "IceGolem",
+        "SpawnX": 7691.0,
+        "SpawnY": 357.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 10000
+      }
+    ],
+    "ExtraLootItemNames": [
+      "SuperHealingPotion",
+      "RagePotion"
+    ],
+    "ExtraLootAmounts": [
+      5,
+      3
+    ]
+  },
+  {
+    "EventID": "76fdcd75-a8ec-42f2-9004-50d33cfe8f26",
+    "CenterX": 7344.0,
+    "CenterY": 768.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Ancestral Spirit has been disturbed!",
+    "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "Deerclops",
+        "SpawnX": 7344.0,
+        "SpawnY": 768.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "b395030f-9be0-4a89-adf0-402a2cbd3dbc",
+    "CenterX": 7177.0,
+    "CenterY": 1650.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 6,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "FFA500FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "MourningWood",
+        "SpawnX": 7189.0,
+        "SpawnY": 1650.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "MourningWood",
+        "SpawnX": 7164.0,
+        "SpawnY": 1650.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "2490a8c4-b3c1-442d-b370-95efd4f4e250",
+    "CenterX": 3858.0,
+    "CenterY": 1420.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 292,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Three Wings have united again, ready to fight you!",
+    "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/TheRage",
+        "SpawnX": 3838.0,
+        "SpawnY": 1425.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 40000
+      },
+      {
+        "NpcName": "tsorcRevamp/TheSorrow",
+        "SpawnX": 3879.0,
+        "SpawnY": 1425.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 40000
+      },
+      {
+        "NpcName": "tsorcRevamp/TheHunter",
+        "SpawnX": 3858.0,
+        "SpawnY": 1410.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 40000
+      }
+    ],
+    "ExtraLootItemNames": [
+      "tsorcRevamp/EternalCrystal",
+      "tsorcRevamp/Trinity",
+      "tsorcRevamp/Trinity",
+      "tsorcRevamp/Trinity",
+      "tsorcRevamp/Trinity"
+    ],
+    "ExtraLootAmounts": [
+      3,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "EventID": "34d041d2-d105-43c7-94af-e9e08823a544",
+    "CenterX": 7022.0,
+    "CenterY": 288.0,
+    "Radius": 1849600.0,
+    "Square": false,
+    "TriggerDust": 16,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "WyvernHead",
+        "SpawnX": 7022.0,
+        "SpawnY": 288.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "89ce569d-fc35-4270-86ca-4b40b5e3c383",
+    "CenterX": 1765.0,
+    "CenterY": 1479.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 127,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Skeletron Prime, the forgotten mech, has awoken!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "SkeletronPrime",
+        "SpawnX": 1765.0,
+        "SpawnY": 1479.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ],
+    "ExtraLootItemNames": [
+      "SuperHealingPotion",
+      "tsorcRevamp/EternalCrystal"
+    ],
+    "ExtraLootAmounts": [
+      6,
+      3
+    ]
+  },
+  {
+    "EventID": "f7066f96-3202-4ca4-bc9c-564d37214647",
+    "CenterX": 950.0,
+    "CenterY": 1503.0,
+    "Radius": 123904.0,
+    "Square": false,
+    "TriggerDust": 269,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A powerful elemental is summoned!",
+    "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "SandElemental",
+        "SpawnX": 950.0,
+        "SpawnY": 1503.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "e4614e92-c2d7-4856-a819-8fc099e517d6",
+    "CenterX": 8091.0,
+    "CenterY": 557.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 234,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The fated day of your death has arrived.",
+    "TextColorHex": "000000FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Death",
+        "SpawnX": 8091.0,
+        "SpawnY": 557.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "43db01d9-e01a-41f5-bef2-93c2a68b9a3a",
+    "CenterX": 6971.0,
+    "CenterY": 1113.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 15,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A powerful mage from the Atraidies army confronts you!",
+    "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/DiscipleOfAttraidies",
+        "SpawnX": 6971.0,
+        "SpawnY": 1113.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "674863af-335a-48ed-864b-5b89e483e384",
+    "CenterX": 597.0,
+    "CenterY": 848.0,
+    "Radius": 640000.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A flying Dutchman invades the tropics!",
+    "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
+    "MapCondition": "RemixMapCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "PirateShip",
+        "SpawnX": 597.0,
+        "SpawnY": 848.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 8000
+      }
+    ]
+  },
+  {
+    "EventID": "ecaee17f-cf96-4d49-a248-14bc6a75a77e",
+    "CenterX": 3818.0,
+    "CenterY": 416.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 226,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Grand Thunder Bird appears!",
+    "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
+    "MapCondition": "ThoriumActiveCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "ThoriumMod/TheGrandThunderBird",
+        "SpawnX": 3818.0,
+        "SpawnY": 416.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "8b5e8ff6-cc05-4d3d-ace6-42599ddeee72",
+    "CenterX": 5029.0,
+    "CenterY": 770.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 226,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Grand Thunder Bird appears!",
+    "TextColorHex": "FFFF00FF",
+    "WorldCondition": null,
+    "MapCondition": "ThoriumActiveCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "ThoriumMod/TheGrandThunderBird",
+        "SpawnX": 5029.0,
+        "SpawnY": 770.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "0bcc26b4-b1fa-4024-b501-f9b5c6b577a8",
+    "CenterX": 5233.0,
+    "CenterY": 1422.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 294,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Queen Jellyfish has spotted you in the lake...",
+    "TextColorHex": "FFC0CBFF",
+    "WorldCondition": null,
+    "MapCondition": "ThoriumActiveCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "ThoriumMod/QueenJellyfish",
+        "SpawnX": 5233.0,
+        "SpawnY": 1422.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "bb7c8534-59dc-4f20-8311-f9dc6264fc9e",
+    "CenterX": 4660.0,
+    "CenterY": 1432.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 296,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "Viscount is bloodthirsty!",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "ThoriumActiveCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "ThoriumMod/Viscount",
+        "SpawnX": 4660.0,
+        "SpawnY": 1432.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "dadeed4f-af32-404e-a123-8508a75a08aa",
+    "CenterX": 5412.0,
+    "CenterY": 426.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 229,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "A Star Scouter descends from the sky...",
+    "TextColorHex": "008000FF",
+    "WorldCondition": null,
+    "MapCondition": "ThoriumActiveCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "ThoriumMod/StarScouter",
+        "SpawnX": 5412.0,
+        "SpawnY": 426.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "8735141b-3529-48f6-821b-2dbbb04da069",
+    "CenterX": 7877.0,
+    "CenterY": 855.0,
+    "Radius": 1638400.0,
+    "Square": false,
+    "TriggerDust": 135,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "!!!",
+    "TextColorHex": "00FFFFFF",
+    "WorldCondition": null,
+    "MapCondition": "ThoriumActiveCondition",
+    "CustomAction": "RainCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "ThoriumMod/BoreanStrider",
+        "SpawnX": 7877.0,
+        "SpawnY": 855.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "d4e415e8-f848-4aa5-93eb-3a0d681fcedd",
+    "CenterX": 1401.0,
+    "CenterY": 299.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 181,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Lich wants your soul...",
+    "TextColorHex": "FF0000FF",
+    "WorldCondition": null,
+    "MapCondition": "ThoriumActiveCondition",
+    "CustomAction": "SetNightCustomAction",
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "ThoriumMod/Lich",
+        "SpawnX": 1401.0,
+        "SpawnY": 299.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "46ad1693-78ce-4f6d-9232-093e557bf8ec",
+    "CenterX": 218.0,
+    "CenterY": 1027.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 173,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The Forgotten One sees you!",
+    "TextColorHex": "0000FFFF",
+    "WorldCondition": null,
+    "MapCondition": "ThoriumActiveCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "ThoriumMod/ForgottenOne",
+        "SpawnX": 218.0,
+        "SpawnY": 1027.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "783873df-b205-4aa3-8e15-5e640eec54fb",
+    "CenterX": 4527.0,
+    "CenterY": 1060.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/StuddedLeatherWarrior",
+        "SpawnX": 4532.0,
+        "SpawnY": 1069.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "7f75002e-1113-427f-8a6d-0d8f707a4611",
+    "CenterX": 4214.0,
+    "CenterY": 792.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4214.0,
+        "SpawnY": 792.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "b2d2be4b-740c-48ec-aeb9-aa39434216bf",
+    "CenterX": 4124.0,
+    "CenterY": 794.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfAHollowWarrior",
+        "SpawnX": 4124.0,
+        "SpawnY": 794.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "82088ea5-ba9e-47d5-ac35-f3939b3f94a1",
+    "CenterX": 4320.0,
+    "CenterY": 819.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfAHollowWarrior",
+        "SpawnX": 4320.0,
+        "SpawnY": 819.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "f4b09756-6ac4-45b5-a14a-42525c6e64cf",
+    "CenterX": 4269.0,
+    "CenterY": 837.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfAHollowWarrior",
+        "SpawnX": 4269.0,
+        "SpawnY": 837.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "a6782aef-8a57-43f5-8c41-472c77d5b55a",
+    "CenterX": 4375.0,
+    "CenterY": 863.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4375.0,
+        "SpawnY": 863.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "869cad51-f684-45d9-9b32-1e787ab519ce",
+    "CenterX": 4229.0,
+    "CenterY": 903.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4229.0,
+        "SpawnY": 903.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "48f327c6-299b-448c-9088-b7763ac89275",
+    "CenterX": 4341.0,
+    "CenterY": 896.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4341.0,
+        "SpawnY": 896.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "bbb000bf-d249-42d5-9e5b-5c3e5219fd77",
+    "CenterX": 4308.0,
+    "CenterY": 923.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4308.0,
+        "SpawnY": 923.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "3cb47365-685e-4161-81d0-45adae2bf110",
+    "CenterX": 4312.0,
+    "CenterY": 922.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4312.0,
+        "SpawnY": 922.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "c72fde72-595d-43b1-8a8a-eb5e3e67ec36",
+    "CenterX": 4250.0,
+    "CenterY": 920.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "SkeletonMerchant",
+        "SpawnX": 4251.0,
+        "SpawnY": 926.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "GlowingSnail",
+        "SpawnX": 4242.0,
+        "SpawnY": 926.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "GlowingSnail",
+        "SpawnX": 4255.0,
+        "SpawnY": 925.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "1aee6c02-8b9a-4a12-8bd5-a7169790f874",
+    "CenterX": 4279.0,
+    "CenterY": 1040.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/HollowWarrior",
+        "SpawnX": 4279.0,
+        "SpawnY": 1040.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "5684ee47-7465-4539-818f-8d67d64ac60f",
+    "CenterX": 4150.0,
+    "CenterY": 986.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/FirebombHollow",
+        "SpawnX": 4183.0,
+        "SpawnY": 987.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "8fa2728d-34f1-4b1d-a001-afa1fe7ede75",
+    "CenterX": 4910.0,
+    "CenterY": 859.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 61,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "Owl",
+        "SpawnX": 4910.0,
+        "SpawnY": 859.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "8bba06b5-8b10-4ada-8a57-0e61f890ab17",
+    "CenterX": 3631.0,
+    "CenterY": 585.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "KingSlime",
+        "SpawnX": 3581.0,
+        "SpawnY": 587.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/Dunlending",
+        "SpawnX": 3572.0,
+        "SpawnY": 586.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/Dunlending",
+        "SpawnX": 3590.0,
+        "SpawnY": 587.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "335aa49e-771e-4755-95bc-18730cdc80da",
+    "CenterX": 3677.0,
+    "CenterY": 464.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Kahlrun",
+        "SpawnX": 3675.0,
+        "SpawnY": 472.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 1250
+      }
+    ]
+  },
+  {
+    "EventID": "4bde8e87-17e7-45b0-bef7-9eeed6845e20",
+    "CenterX": 3664.0,
+    "CenterY": 612.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 3694.0,
+        "SpawnY": 622.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": 2,
+        "CustomSouls": 250
+      }
+    ]
+  },
+  {
+    "EventID": "2f5be1f5-8c18-4df2-9551-e83a6b85f97b",
+    "CenterX": 3828.0,
+    "CenterY": 904.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/BasiliskWalker",
+        "SpawnX": 3838.0,
+        "SpawnY": 903.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/BasiliskWalker",
+        "SpawnX": 3834.0,
+        "SpawnY": 906.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "d70002c3-736b-4b28-ba12-21952afab4f0",
+    "CenterX": 3828.0,
+    "CenterY": 1026.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "Crab",
+        "SpawnX": 3845.0,
+        "SpawnY": 1028.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "Crab",
+        "SpawnX": 3815.0,
+        "SpawnY": 1028.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "Crab",
+        "SpawnX": 3808.0,
+        "SpawnY": 1028.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "Crab",
+        "SpawnX": 3795.0,
+        "SpawnY": 1028.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "Crab",
+        "SpawnX": 3836.0,
+        "SpawnY": 1028.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "Crab",
+        "SpawnX": 3885.0,
+        "SpawnY": 1028.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "Crab",
+        "SpawnX": 3774.0,
+        "SpawnY": 1028.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "Crab",
+        "SpawnX": 3876.0,
+        "SpawnY": 1028.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "e097381b-58a8-4dce-9fe8-4e1e5e0edf29",
+    "CenterX": 3842.0,
+    "CenterY": 897.0,
+    "Radius": 6400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "GlowingSnail",
+        "SpawnX": 3862.0,
+        "SpawnY": 912.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "f6f715c8-099b-48a4-b5cd-fc7dee344375",
+    "CenterX": 3891.0,
+    "CenterY": 898.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "FairyCritterPink",
+        "SpawnX": 3915.0,
+        "SpawnY": 924.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "fad5f098-dc81-46c0-8aeb-c60566fe7471",
+    "CenterX": 4033.0,
+    "CenterY": 858.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 4039.0,
+        "SpawnY": 860.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "3d3c9619-0af2-405f-aca7-658127f28fe7",
+    "CenterX": 4129.0,
+    "CenterY": 148.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "Werewolf",
+        "SpawnX": 4108.0,
+        "SpawnY": 156.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  }
+]

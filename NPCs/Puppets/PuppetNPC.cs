@@ -309,6 +309,22 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Flash color for the spear-poke and magic-cast telegraphs.</summary>
         protected virtual Color SpearTelegraphFlashColor => Color.LightYellow;
         protected virtual Color MagicTelegraphFlashColor => Color.MediumPurple;
+        /// <summary>How many ticks before release the magic warning flash appears.</summary>
+        protected virtual int MagicTelegraphFlashLeadTicks => 30;
+        /// <summary>Opt-in for a continuous, subclass-authored staff/arm raising pose.</summary>
+        protected virtual bool UseAuthoredMagicCastPose => false;
+        /// <summary>World-facing arm angles used by the authored magic pose.</summary>
+        protected virtual float MagicCastStartRotation => 0f;
+        protected virtual float MagicCastEndRotation => -1.4f;
+        /// <summary>Draw-only correction for a magic weapon's natural texture angle.</summary>
+        protected virtual float MagicWeaponRotationOffset => 0f;
+        /// <summary>Number of recovery ticks for which the magic weapon remains visibly held.</summary>
+        protected virtual int MagicWeaponRecoveryHoldTicks => 0;
+        protected bool IsHoldingMagicWeaponDuringRecovery =>
+            Phase == AttackPhase.MagicRecovery
+            && PhaseTimer > Math.Max(0, MagicRecoveryTicks - MagicWeaponRecoveryHoldTicks);
+        /// <summary>Client-side cosmetic hook sampled after the magic staff pose updates.</summary>
+        protected virtual void DoMagicTelegraphVFX(float progress) { }
 
         // ── Fire breath (optional, opt-in per subclass) ───────────────────────────
         /// <summary>Master toggle: when true this puppet can perform a sustained fire-breath attack
@@ -1284,6 +1300,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Phase == AttackPhase.CrossbowBurstPause ||
             Phase == AttackPhase.SpearTelegraph  || Phase == AttackPhase.SpearAttack  ||
             Phase == AttackPhase.MagicTelegraph  || Phase == AttackPhase.MagicAttack  ||
+            IsHoldingMagicWeaponDuringRecovery ||
             Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
             Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery ||
             Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrow ||
@@ -2091,6 +2108,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     TeleportStyle.Aggressive => !hasLineOfSight && globalNPC.DisengageTimer >= 30,
                     TeleportStyle.Relaxed => globalNPC.PursuitState == PursuitState.Patrol && globalNPC.PatrolElapsed >= 300,
+                    TeleportStyle.RecoveryOnly => false,
                     _ => globalNPC.PursuitState == PursuitState.Patrol || globalNPC.PursuitState == PursuitState.Search,
                 };
 
@@ -3358,9 +3376,11 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.MagicTelegraph:
                     SlowDown();
                     SetDisplayWeapon(MagicWeaponItemType, swing: false);
-                    CheckAndFireFlash(MagicTelegraphFlashColor);
+                    CheckAndFireFlash(MagicTelegraphFlashColor, MagicTelegraphFlashLeadTicks);
                     if (--PhaseTimer <= 0)
                     {
+                        if (UseAuthoredMagicCastPose)
+                            _weaponRotation = MagicCastEndRotation;
                         SetDisplayWeapon(MagicWeaponItemType, swing: true);
                         DoMagicAttack();
                         // A subclass can set _magicAttackTicksOverride inside DoMagicAttack to channel a
@@ -5864,13 +5884,13 @@ namespace tsorcRevamp.NPCs.Puppets
 
         // ── Telegraph flash VFX ───────────────────────────────────────────────────
         /// <summary>
-        /// Fires the ring-flash VFX once the attack is within 30 frames.
+        /// Fires the ring-flash VFX once the attack is within the requested lead window.
         /// Call each tick during a telegraph phase; self-gates via <see cref="_flashFired"/>.
-        /// Short telegraphs (< 30 ticks) fire immediately on the first call.
+        /// Telegraphs shorter than the requested lead fire immediately on the first call.
         /// </summary>
-        private void CheckAndFireFlash(Color color)
+        private void CheckAndFireFlash(Color color, int leadTicks = 30)
         {
-            if (_flashFired || PhaseTimer > 30) return;
+            if (_flashFired || PhaseTimer > Math.Max(1, leadTicks)) return;
             SpawnTelegraphFlash(color);
             _flashFired = true;
         }
@@ -6019,16 +6039,37 @@ namespace tsorcRevamp.NPCs.Puppets
                 float magicT = MagicTelegraphTicks > 0
                     ? 1f - (float)PhaseTimer / MagicTelegraphTicks
                     : 1f;
-                // Arm rises overhead during the charge (Use1 / raised overhead pose).
-                _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.40f, 0.12f);
+                if (UseAuthoredMagicCastPose)
+                {
+                    float eased = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(magicT, 0f, 1f));
+                    _weaponRotation = MathHelper.Lerp(MagicCastStartRotation, MagicCastEndRotation, eased);
+                    DoMagicTelegraphVFX(MathHelper.Clamp(magicT, 0f, 1f));
+                }
+                else
+                {
+                    // Arm rises overhead during the charge (Use1 / raised overhead pose).
+                    _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.40f, 0.12f);
+                }
             }
             else if (Phase == AttackPhase.MagicAttack)
             {
-                float magicT = MagicAttackTicks > 0
-                    ? 1f - (float)PhaseTimer / MagicAttackTicks
-                    : 1f;
-                // Thrust forward as the spell fires.
-                _weaponRotation = MathHelper.Lerp(-1.40f, 0.20f, magicT);
+                if (UseAuthoredMagicCastPose)
+                {
+                    // Release at the completed raise angle and hold through follow-through.
+                    _weaponRotation = MagicCastEndRotation;
+                }
+                else
+                {
+                    float magicT = MagicAttackTicks > 0
+                        ? 1f - (float)PhaseTimer / MagicAttackTicks
+                        : 1f;
+                    // Thrust forward as the spell fires.
+                    _weaponRotation = MathHelper.Lerp(-1.40f, 0.20f, magicT);
+                }
+            }
+            else if (IsHoldingMagicWeaponDuringRecovery && UseAuthoredMagicCastPose)
+            {
+                _weaponRotation = MagicCastEndRotation;
             }
             else if (Phase == AttackPhase.PierceTelegraph)
             {
@@ -6736,7 +6777,9 @@ namespace tsorcRevamp.NPCs.Puppets
         private Vector2 GetWeaponWorldDirection()
         {
             float drawRotation = _weaponRotation;
-            if (DrawWeaponAsSpear)
+            if (_heldItemType == MagicWeaponItemType)
+                drawRotation += MagicWeaponRotationOffset;
+            else if (DrawWeaponAsSpear)
                 drawRotation += SpearDrawRotationOffset;
             else if (MirrorMeleeSwingRotationByFacing)
             {
@@ -7070,7 +7113,11 @@ namespace tsorcRevamp.NPCs.Puppets
             int bodyRow;
             bool isMeleeSwing = Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack;
 
-            if (Phase == AttackPhase.Healing)
+            if (IsHoldingMagicWeaponDuringRecovery)
+            {
+                bodyRow = BodyRowFromWeaponRotation(_weaponRotation, NPC.direction);
+            }
+            else if (Phase == AttackPhase.Healing)
             {
                 // Arm raised to drink — Use2 matches the "arm held up" pose
                 bodyRow = 2;
@@ -7728,6 +7775,8 @@ namespace tsorcRevamp.NPCs.Puppets
             // up with (and fight) that correction, so it's excluded here.
             if (!heldRangedLike && !holdingSpearNow)
                 drawRotation = GetMeleeDrawRotation();
+            if (_heldItemType == MagicWeaponItemType)
+                drawRotation += MagicWeaponRotationOffset;
             if (holdingSpearNow)
                 drawRotation += SpearDrawRotationOffset; // draw-only correction, direction-neutral (FlipH handles facing)
 

@@ -773,6 +773,27 @@ namespace tsorcRevamp
             }
 
             RealMouseWorld = Main.MouseWorld;
+
+            // Suppress weapon/item use while the cursor is over a soapstone's interaction zone.
+            // tsorcRevampSystems.PostDrawInterface also sets Player.mouseInterface = true on click,
+            // but that runs in the DRAW phase, which happens *after* this frame's Update() (and
+            // therefore after Player's own item-use check) already ran. That made it a no-op: every
+            // click on the "Show" button also fired whatever weapon was equipped, and if it had any
+            // forward lunge/knockback the character would visibly drift for a second or two afterward
+            // while the message was open — looking exactly like the sticky bubble closing itself with
+            // no input. Setting mouseInterface here, in PreUpdate (before item-use runs), actually
+            // suppresses it. Uses last frame's NearbySoapstone selection, which is accurate enough
+            // since position/mouse barely change frame-to-frame.
+            if (Player.whoAmI == Main.myPlayer && tsorcRevamp.NearbySoapstone != null)
+            {
+                Tiles.SoapstoneTileEntity soapstone = tsorcRevamp.NearbySoapstone;
+                Vector2 soapstoneCenter = new(soapstone.Position.X * 16 + 8, soapstone.Position.Y * 16 + 8);
+                if (Vector2.Distance(RealMouseWorld, soapstoneCenter) <= 48f)
+                {
+                    Player.mouseInterface = true;
+                }
+            }
+
             tsorcRevampPlayerAuraDrawLayers.HandleAura(this);
             //Fixes bug where switching from a better to a worse pair of wings keeps the previous wing time cap
             if (Player.wingTime > Player.wingTimeMax)

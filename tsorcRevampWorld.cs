@@ -535,9 +535,30 @@ namespace tsorcRevamp
             CustomMap = reader.ReadBoolean();
             RemixMap = reader.ReadBoolean();
             OnlyAdventureMap = reader.ReadBoolean();
+            bool priorExpandedAdventure = ExpandedAdventure;
             ExpandedAdventure = reader.ReadBoolean();
             SuperHardMode = reader.ReadBoolean();
             AbyssPortalLocation = reader.ReadVector2();
+
+            // MP CLIENT FIX: PreUpdatePlayers' first-tick init computes ExpandedAdventure locally via
+            // CheckForExpandedAdventure(), which reads Main.ActiveWorldFileData.UniqueId — likely empty on a
+            // joining client (only the host loads the .wld). If that local guess is wrong, every ScriptedEvent
+            // (including hardcoded ones like the EoW intro) gets constructed at the WRONG (legacy, untransformed)
+            // position for that client only — the host sees it fine, the client's ring is 200/400 tiles off and
+            // effectively unfindable. This is the authoritative server value arriving late; if it differs from
+            // whatever local guess was already baked into events, rebuild them now so the client catches up.
+            // Client-only: the host/singleplayer machine is the source of truth NetSend reads from, not a receiver.
+            // CAVEAT: InitializeScriptedEvents() resets each event's "already completed" tracking to false (it's
+            // meant to run exactly once at load). NetSend fires during the early join handshake, before the client
+            // has control, so in practice nothing could have been completed yet — but if this rebuild is ever
+            // retriggered later in a session it WOULD spuriously un-complete events. Safe as currently gated
+            // (fires at most once, only when the value actually changes), but don't call this pairing casually
+            // elsewhere without re-checking that assumption.
+            if (Main.netMode == NetmodeID.MultiplayerClient && ExpandedAdventure != priorExpandedAdventure)
+            {
+                tsorcScriptedEvents.InitializeScriptedEvents();
+                tsorcScriptedEvents.LoadDynamicEvents();
+            }
 
             int slainSize = reader.ReadInt32();
             for (int i = 0; i < slainSize; i++)

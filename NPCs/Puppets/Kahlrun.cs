@@ -52,26 +52,78 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override float MeleeRange => 66f;
         protected override float StabRange => 150f;
         protected override float ComboMaxStartRange => 210f;
-        protected override float MeleeEngageRange => 82f;
+        // Select melee from mid-range, but do not reveal the combo until Kahlrun has pursued
+        // inside the shortsword's real first-swing reach. This mirrors Red Knight's range-gated
+        // melee admission while keeping the approach itself neutral and reactable.
+        protected override float MeleeEngageRange => 76f;
+        protected override float ClosingDistanceSpeedMult => 1.65f;
+        protected override int ClosingDistanceMaxTicks => 110;
         protected override int MeleeComboChance => 100;
-        protected override int RangedStartMeleeComboChance => 42;
+        protected override int RangedStartMeleeComboChance => 72;
         protected override float ComboTelegraphMultiplier => 1.35f;
         protected override int MinComboTelegraphTicks => 26;
-        protected override float ComboTelegraphAdvanceSpeedMult => 0.32f;
-        protected override float ComboTelegraphAdvanceStopDistance => 54f;
+        // Red Knight keeps advancing during the readable part of its melee windup. Kahlrun does
+        // the same at a restrained speed: it catches backpedaling, but never turns through a dodge.
+        protected override float ComboTelegraphAdvanceSpeedMult => 0.8f;
+        protected override float ComboTelegraphAdvanceStopDistance => 48f;
 
         protected override float MagicRange => 620f;
         protected override float MinMagicRange => 105f;
-        protected override int MagicTelegraphTicks => 42;
+        protected override int MagicTelegraphTicks => 84;
         protected override int MagicAttackTicks => 18;
         protected override int MagicRecoveryTicks => 48;
         protected override int MagicCooldownAfterUse => 95;
-        protected override Color MagicTelegraphFlashColor => new Color(220, 55, 75);
+        protected override Color MagicTelegraphFlashColor => new Color(55, 145, 255);
+        protected override int MagicTelegraphFlashLeadTicks => MagicTelegraphTicks;
+        protected override bool UseAuthoredMagicCastPose => true;
+        protected override float MagicCastStartRotation => 0.08f;
+        protected override float MagicCastEndRotation => -1.12f;
+        protected override float MagicWeaponRotationOffset => MathHelper.PiOver4;
+        protected override int MagicWeaponRecoveryHoldTicks => 30;
+        protected override bool UseCompositeArmForAdditionalPhase =>
+            Phase == AttackPhase.MagicTelegraph
+            || Phase == AttackPhase.MagicAttack
+            || IsHoldingMagicWeaponDuringRecovery;
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Broadsword;
         protected override Vector2 MagicGripNorm => new Vector2(0.16f, 0.84f);
         protected override float GetHeldRangedDrawScale(int itemType)
             => itemType == MagicWeaponItemType ? 0.9f : base.GetHeldRangedDrawScale(itemType);
+
+        protected override void DoMagicTelegraphVFX(float progress)
+        {
+            if (Main.dedServ)
+                return;
+
+            const float staffTipReach = 43f;
+            Vector2 tip = PuppetWeaponTipPosition(staffTipReach);
+            float radius = MathHelper.Lerp(24f, 7f, progress);
+            int count = 1 + (progress > 0.5f ? 1 : 0) + (progress > 0.82f ? 1 : 0);
+
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 offset = Main.rand.NextVector2CircularEdge(radius, radius);
+                Vector2 inward = (-offset).SafeNormalize(Vector2.Zero)
+                    * MathHelper.Lerp(1.2f, 2.8f, progress);
+                float scale = Main.rand.NextFloat(
+                    MathHelper.Lerp(0.42f, 0.72f, progress),
+                    MathHelper.Lerp(0.68f, 1.12f, progress));
+                Dust mote = Dust.NewDustPerfect(
+                    tip + offset,
+                    DustID.TintableDustLighted,
+                    inward,
+                    80,
+                    Color.Lerp(new Color(55, 120, 255), new Color(120, 225, 255), progress),
+                    scale);
+                mote.noGravity = true;
+                mote.fadeIn = scale + 0.28f;
+            }
+
+            Lighting.AddLight(tip,
+                0.08f + 0.12f * progress,
+                0.18f + 0.20f * progress,
+                0.38f + 0.22f * progress);
+        }
 
         protected override Vector2 MeleeHandleNorm => new Vector2(0.14f, 0.84f);
         protected override float MeleeWeaponDrawScale => 1.1f;
@@ -189,7 +241,6 @@ namespace tsorcRevamp.NPCs.Puppets
                 Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.Silver,
                 CooldownAfterUse = 120,
-                RangedStartOnly = true,
                 MoveBrake = 0.05f,
                 Steps = new[] { SwordStep(ComboMotion.JoustDash, 34, 18, damageMult: 1.05f, forwardPushMult: 1.25f, reachMult: 1.25f) },
             },
@@ -201,7 +252,6 @@ namespace tsorcRevamp.NPCs.Puppets
                 InitialFlashColor = Color.OrangeRed,
                 CooldownAfterUse = 175,
                 HeavyCommit = true,
-                RangedStartOnly = true,
                 MoveBrake = 0f,
                 Steps = new[]
                 {
@@ -238,10 +288,14 @@ namespace tsorcRevamp.NPCs.Puppets
             globalNPC.PoiseMax = 18f;
             globalNPC.PoiseStaggerResetsAI = true;
             globalNPC.NavGiveUpTicks = 150;
+            globalNPC.PursuitLeashRange = 1400f;
+            globalNPC.PursuitFallBehindTicks = 180;
             globalNPC.CanUseRopes = true;
             globalNPC.CanTeleport = true;
-            globalNPC.TeleportStyle = TeleportStyle.Aggressive;
+            globalNPC.TeleportStyle = TeleportStyle.RecoveryOnly;
+            globalNPC.RecoveryTeleportMaxRange = 900f;
             globalNPC.TeleportVisualStyle = TeleportVisualStyle.GreySmoke;
+            globalNPC.AllowDynamicEventNaturalDespawn = true;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -296,9 +350,9 @@ namespace tsorcRevamp.NPCs.Puppets
             if (!target.active || target.dead)
                 return;
 
-            Vector2 origin = NPC.Center + new Vector2(NPC.direction * 12f, -10f);
+            Vector2 origin = KahlrunStaffTipPosition();
             Vector2 aimPoint = target.Center + target.velocity * 9f;
-            Vector2 aimVelocity = (aimPoint - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 10f;
+            Vector2 aimVelocity = (aimPoint - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 7f;
 
             switch (Main.rand.Next(4))
             {
@@ -342,6 +396,18 @@ namespace tsorcRevamp.NPCs.Puppets
                 1.5f,
                 Main.myPlayer,
                 delayTicks);
+        }
+
+        private Vector2 KahlrunStaffTipPosition()
+        {
+            if (!Main.dedServ)
+                return PuppetWeaponTipPosition(43f);
+
+            float worldAngle = NPC.direction == 1
+                ? MagicCastEndRotation
+                : MathHelper.Pi - MagicCastEndRotation;
+            Vector2 staffDirection = worldAngle.ToRotationVector2();
+            return NPC.Center + new Vector2(NPC.direction * 4f, -2f) + staffDirection * 53f;
         }
 
         protected override void DoRangedAttack() { }

@@ -64,6 +64,7 @@ namespace tsorcRevamp.UI
 
         private UIText soulsLabel;
         private UINumericInputField soulsInput;
+        private UIText soulsPreview; // live "≈ N souls/kill" readout, accounts for game mode + equipped soul-ring bonuses
 
         private UIText damageLabel;
         private UINumericInputField damageInput;
@@ -75,6 +76,8 @@ namespace tsorcRevamp.UI
         private UIEnemySearchBar spawnTextInput;
 
         private UIText editBackButton;
+        private UIText saveStatsButton;
+        private int saveStatsFlashTimer; // brief "Saved!" confirmation after clicking Save
         // ─────────────────────────────────────────────────────────────────────────
 
         // World-level gate. Stored in DynamicSpawnEvent.WorldCondition.
@@ -559,6 +562,16 @@ namespace tsorcRevamp.UI
             soulsInput.Top.Set(hidden, 0);
             panel.Append(soulsInput);
 
+            // Live "≈ N souls/kill" readout — the raw value in the field above is NOT the drop amount (it's
+            // multiplied ×10/×25 into npc.value on spawn, then divided back down by a game-mode-specific divisor on
+            // kill; the two only cancel to ~1:1 in Expert mode). This shows the actual number for your current
+            // difficulty + equipped soul rings so you don't have to do the math by hand.
+            soulsPreview = new UIText("", 0.7f);
+            soulsPreview.Left.Set(10, 0);
+            soulsPreview.Top.Set(hidden, 0);
+            soulsPreview.TextColor = Color.Gray;
+            panel.Append(soulsPreview);
+
             damageLabel = MakeStatLabel("Damage:");
             damageLabel.Top.Set(hidden, 0);
             panel.Append(damageLabel);
@@ -603,6 +616,46 @@ namespace tsorcRevamp.UI
             editBackButton.OnMouseOut += (e, el) => editBackButton.TextColor = Color.LightSkyBlue;
             editBackButton.OnLeftClick += (e, el) => HideEditPanel();
             panel.Append(editBackButton);
+
+            saveStatsButton = new UIText("[ Save ]", 0.85f);
+            saveStatsButton.Left.Set(-90f, 1f);
+            saveStatsButton.Top.Set(hidden, 0);
+            saveStatsButton.TextColor = Color.Lime;
+            saveStatsButton.OnMouseOver += (e, el) => { if (saveStatsFlashTimer <= 0) saveStatsButton.TextColor = Color.White; };
+            saveStatsButton.OnMouseOut += (e, el) => { if (saveStatsFlashTimer <= 0) saveStatsButton.TextColor = Color.Lime; };
+            saveStatsButton.OnLeftClick += (e, el) =>
+            {
+                tsorcScriptedEvents.SaveDynamicEvents();
+                RebindEditingNpc();
+                saveStatsButton.SetText("[ Saved! ]");
+                saveStatsFlashTimer = 90; // ~1.5s at 60fps
+            };
+            panel.Append(saveStatsButton);
+        }
+
+        // Recomputes soulsPreview's text from the currently-typed/committed value + the LIVE player's game mode and
+        // equipped soul-ring bonuses (via CheckSoulsMultiplier), so it always reflects what would actually drop right
+        // now. Formula mirrors tsorcScriptedEvents' spawn-time (npc.value = souls * 10, or *25 in Expert) and
+        // kill-time (enemyValue = npc.value / (divisor * 15|20|25)) conversion exactly.
+        private void RefreshSoulsPreview()
+        {
+            if (soulsPreview == null || editingNpc == null) return;
+
+            NPC temp = new NPC();
+            temp.SetDefaults(editingNpc.NpcID);
+            int baseSouls = soulsInput.Value ?? (int)(temp.value / 10);
+
+            bool expert = Main.expertMode;
+            bool master = Main.masterMode;
+            // Spawn-time: only expert mode gets the *25 branch (master falls through to *10, same as normal —
+            // this is how the actual spawn code behaves, not a simplification for the preview).
+            int npcValue = baseSouls * (expert ? 25 : 10);
+            float killDivisor = master ? 20f : (expert ? 25f : 15f);
+            float ringMultiplier = tsorcRevampPlayer.CheckSoulsMultiplier(Main.LocalPlayer);
+            int actualDrop = (int)(ringMultiplier * (npcValue / killDivisor));
+
+            string modeName = master ? "Master" : (expert ? "Expert" : "Normal");
+            soulsPreview.SetText($"~ {actualDrop} souls/kill ({modeName}{(ringMultiplier != 1f ? $", rings x{ringMultiplier:0.##}" : "")})");
         }
 
         private UIText MakeStatLabel(string text)
@@ -614,7 +667,11 @@ namespace tsorcRevamp.UI
         }
 
         // Builds a typeable numeric field, right-aligned. setValue receives the parsed value
-        // (null when the field is empty → revert to the NPC default) and is saved immediately.
+        // (null when the field is empty -> revert to the NPC default) and is applied to the in-memory NPC
+        // immediately for live preview/testing, but NOT written to disk on every keystroke — every keystroke used
+        // to trigger a full DynamicEvents.json rewrite + reload, which is both wasteful and, after tonight's data-loss
+        // incidents, an unnecessarily large risk surface to hit on every character typed. Click [Save] (or navigate
+        // away, which auto-saves as a safety net) to persist.
         private UINumericInputField MakeStatInput(Action<int?> setValue)
         {
             var input = new UINumericInputField();
@@ -625,7 +682,7 @@ namespace tsorcRevamp.UI
             input.OnValueChanged += () =>
             {
                 setValue(input.Value);
-                tsorcScriptedEvents.SaveDynamicEvents();
+                RefreshSoulsPreview();
             };
             return input;
         }
@@ -643,11 +700,11 @@ namespace tsorcRevamp.UI
         {
             editTitle,
             healthLabel, healthInput,
-            soulsLabel, soulsInput,
+            soulsLabel, soulsInput, soulsPreview,
             damageLabel, damageInput,
             defenseLabel, defenseInput,
             spawnTextLabel, spawnTextInput,
-            editBackButton
+            editBackButton, saveStatsButton
         };
 
         public void ShowEditPanel(DynamicSpawnEntry npc)
@@ -668,13 +725,18 @@ namespace tsorcRevamp.UI
 
             PositionStatRow(healthLabel, healthInput, rowY); rowY += rowH;
             PositionStatRow(soulsLabel, soulsInput, rowY); rowY += rowH;
+            soulsPreview.Top.Set(rowY, 0); rowY += 16f;
             PositionStatRow(damageLabel, damageInput, rowY); rowY += rowH;
             PositionStatRow(defenseLabel, defenseInput, rowY); rowY += rowH + 5f;
 
             spawnTextLabel.Top.Set(rowY, 0); rowY += 20f;
             spawnTextInput.Top.Set(rowY, 0); rowY += 35f;
 
-            // Back button only shown for multi-NPC (single-NPC has nothing to go back to).
+            // Save button always shown (stats no longer auto-save per keystroke). Back button only for multi-NPC.
+            saveStatsButton.Top.Set(rowY, 0);
+            saveStatsButton.SetText("[ Save ]");
+            saveStatsButton.TextColor = Color.Lime;
+            saveStatsFlashTimer = 0;
             editBackButton.Top.Set(isSingle ? -2000f : rowY, 0);
 
             // Populate fields from the NPC's custom values / defaults.
@@ -686,6 +748,7 @@ namespace tsorcRevamp.UI
             PopulateStatField(damageInput, npc.CustomDamage, temp.damage);
             PopulateStatField(defenseInput, npc.CustomDefense, temp.defense);
             spawnTextInput.Text = CurrentEvent?.TextToDisplay ?? "";
+            RefreshSoulsPreview();
 
             // For multi-NPC: hide the search section the first time to make room for the edit panel.
             if (!editPanelAttached && !isSingle)
@@ -712,6 +775,12 @@ namespace tsorcRevamp.UI
         public void HideEditPanel()
         {
             if (!editPanelAttached) return;
+
+            // Safety net: persist whatever's pending (stat fields no longer auto-save per keystroke, see
+            // MakeStatInput) before this NPC's edit state is cleared, so leaving the panel without clicking
+            // [Save] doesn't silently lose the edit. This is the ONE remaining auto-save path for stats.
+            tsorcScriptedEvents.SaveDynamicEvents();
+            RebindEditingNpc();
 
             DetachEditElements();
 
@@ -760,6 +829,16 @@ namespace tsorcRevamp.UI
             if (Visible && panel != null && panel.ContainsPoint(Main.MouseScreen))
             {
                 Main.LocalPlayer.mouseInterface = true;
+            }
+
+            if (saveStatsFlashTimer > 0)
+            {
+                saveStatsFlashTimer--;
+                if (saveStatsFlashTimer == 0 && saveStatsButton != null)
+                {
+                    saveStatsButton.SetText("[ Save ]");
+                    saveStatsButton.TextColor = Color.Lime;
+                }
             }
         }
 
@@ -928,6 +1007,16 @@ namespace tsorcRevamp.UI
                 UIText boulderItem = new UIText("Falling Boulder (From Event Action)", 0.8f);
                 boulderItem.TextColor = Color.Orange;
                 npcList.Add(boulderItem);
+            }
+
+            // TwinEoWAction spawns its 2 NPCs directly in code (offset ±100px from centerpoint), not via the
+            // declarative Npcs list — so the list above is correctly empty. Without this note it looks like the
+            // event has no configured spawns at all (reported as "shows the event but not the two EoW npcs").
+            if (!string.IsNullOrEmpty(CurrentEvent.CustomAction) && CurrentEvent.CustomAction.Contains("TwinEoWAction"))
+            {
+                UIText twinEoWItem = new UIText("2x Eater of Worlds Head (From Event Action)", 0.8f);
+                twinEoWItem.TextColor = Color.Orange;
+                npcList.Add(twinEoWItem);
             }
         }
 

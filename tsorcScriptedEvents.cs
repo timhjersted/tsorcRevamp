@@ -1838,37 +1838,25 @@ namespace tsorcRevamp
                     DynamicEventToRuntimeSpace(e);
             }
 
-            // Deduplicate dynamic events at the exact same or very close coordinates (within 2 tiles)
-            List<DynamicSpawnEvent> uniqueEvents = new List<DynamicSpawnEvent>();
-            bool changed = false;
+            // WARN (do not auto-delete) about dynamic events sitting within 2 tiles of each other. This used to
+            // silently drop one event per colliding pair and rewrite the file — but it only compared coordinates,
+            // never event identity (NPC type, condition, text, EventID...), so two genuinely DIFFERENT events placed
+            // near each other (e.g. a hand-authored event near a freshly `/dumpevents`-promoted hardcoded one, whose
+            // position is now correctly transformed and can land close to existing entries) were treated as
+            // duplicates and one was destroyed with no log of what was lost. Confirmed to have eaten a real
+            // player-authored event this way. Never silently delete user data — just flag it for a human to review.
             foreach (var ev in DynamicEvents)
             {
-                bool isDuplicate = false;
-                foreach (var unique in uniqueEvents)
+                foreach (var other in DynamicEvents)
                 {
-                    if (Math.Abs(unique.CenterX - ev.CenterX) < 2 && Math.Abs(unique.CenterY - ev.CenterY) < 2)
+                    if (ReferenceEquals(ev, other)) continue;
+                    if (Math.Abs(ev.CenterX - other.CenterX) < 2 && Math.Abs(ev.CenterY - other.CenterY) < 2)
                     {
-                        isDuplicate = true;
-                        changed = true;
-                        break;
+                        ModContent.GetInstance<tsorcRevamp>().Logger.Warn(
+                            $"[DynamicEvents] Near-duplicate coordinates (within 2 tiles): " +
+                            $"'{ev.EventID}' ({ev.CenterX},{ev.CenterY}) and '{other.EventID}' ({other.CenterX},{other.CenterY}). " +
+                            $"NOT auto-removing — review both in-game with the enemy event tome and delete manually if one is unwanted.");
                     }
-                }
-                if (!isDuplicate)
-                {
-                    uniqueEvents.Add(ev);
-                }
-            }
-            if (changed)
-            {
-                DynamicEvents = uniqueEvents;
-                try
-                {
-                    string cleanJson = SerializeDynamicEventsToLegacyJson();
-                    File.WriteAllText(fullPath, cleanJson);
-                }
-                catch (Exception)
-                {
-                    // Ignore startup write errors, it will save later anyway
                 }
             }
 
