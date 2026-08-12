@@ -131,7 +131,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.localAI[1] = 40f;
 
                 //TELEPORT MELEE
-                if (Main.rand.NextBool(12))
+                if (Main.rand.NextBool(12) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
                 {
                     tsorcRevampAIs.QueueTeleport(NPC, 25, true, 180);
                     NPC.localAI[1] = 0f;
@@ -174,7 +174,6 @@ namespace tsorcRevamp.NPCs.Bosses
         float breathTimer = 0;
         int spawnedDemons = 0;
         float boredTeleport = 0;
-        float stuckTeleport = 0;
 
         public override void AI()
         {
@@ -187,23 +186,6 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 boredTeleport = 0;
             }
-
-            if (NPC.velocity.X == 0 && breathTimer > 0)
-            {
-                stuckTeleport++;
-                if (stuckTeleport == 60)
-                {
-                    //NPC.localAI[1] = 0;
-                    tsorcRevampAIs.QueueTeleport(NPC, 60, false, 240);
-                    stuckTeleport = 0;
-                    //breathTimer = 1;
-                }
-            }
-            if (NPC.velocity.X > 0)
-            {
-                stuckTeleport = 0;
-            }
-
 
             if (!clearLineofSight)
             {
@@ -227,7 +209,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (boredTeleport == 1000)
                 {
                     NPC.localAI[1] = 0;
-                    tsorcRevampAIs.QueueTeleport(NPC, 40, true, 240);
+                    if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
+                    {
+                        tsorcRevampAIs.QueueTeleport(NPC, 40, true, 240);
+                    }
                     boredTeleport = 0;
                 }
 

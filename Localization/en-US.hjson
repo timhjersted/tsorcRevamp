@@ -11123,6 +11123,13 @@ Mods: {
 			EnemyAncientBloodLanceProj.DisplayName: Enemy Ancient Blood Lance Proj
 			RunePrison.DisplayName: Rune Prison
 			FirstRunePrison.DisplayName: First Rune Prison
+			CinderRainDrop.DisplayName: Cinder Rain Drop
+			KahlrunFarronDart.DisplayName: Kahlrun Farron Dart
+			RedCourtLancePortal.DisplayName: Red Court Lance Portal
+			RedKnightAdderSpear.DisplayName: Red Knight Adder Spear
+			RedKnightPoisonCurtainController.DisplayName: Red Knight Poison Curtain Controller
+			RedKnightPoisonRainController.DisplayName: Red Knight Poison Rain Controller
+			RedKnightTeleportFeintBlast.DisplayName: Red Knight Teleport Feint Blast
 		}
 
 		NPCs: {

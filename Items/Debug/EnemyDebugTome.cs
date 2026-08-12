@@ -89,6 +89,14 @@ namespace tsorcRevamp.Items.Debug
                         eventTooClose = true;
                         break;
                     }
+                    // Also count clicking ON the event's (often much larger) detection ring — matches the
+                    // ring-hit-test added to the left-click "open this event" branch below, same rationale.
+                    float ringRadius = (float)System.Math.Sqrt(ev.Radius);
+                    if (System.Math.Abs(dist - ringRadius) < 24)
+                    {
+                        eventTooClose = true;
+                        break;
+                    }
                 }
 
                 if (eventTooClose)
@@ -279,9 +287,10 @@ namespace tsorcRevamp.Items.Debug
                     }
                 }
 
-                // Priority 3: Check if clicking on/near an existing event center OR any placed NPC sprite.
-                // Checking sprites (not just centers) lets you click on an NPC that's far from its event's center
-                // marker to open that event, and prevents P4 from opening the Quick Add panel over existing sprites.
+                // Priority 3: Check if clicking on/near an existing event center, its detection RING, or any placed
+                // NPC sprite. Checking the ring matters because it's usually the most visually prominent part of an
+                // event (radii of dozens of tiles are common) — without it, clicking anywhere on a large ring except
+                // its exact 3-tile center silently fell through to P4 (Quick Add) instead of opening the event.
                 Vector2 mousePos = tsorcRevampPlayer.RealMouseWorld;
                 DynamicSpawnEvent closestEvent = null;
                 float closestDist = float.MaxValue;
@@ -289,11 +298,22 @@ namespace tsorcRevamp.Items.Debug
                 {
                     if (!tsorcScriptedEvents.IsEventVisibleInCurrentWorld(ev)) continue;
 
+                    Vector2 evCenter = new Vector2(ev.CenterX * 16 + 8, ev.CenterY * 16 + 8);
+                    float centerDist = Vector2.Distance(mousePos, evCenter);
+
                     // Event center / book marker
-                    float centerDist = Vector2.Distance(mousePos, new Vector2(ev.CenterX * 16 + 8, ev.CenterY * 16 + 8));
                     if (centerDist < 48 && centerDist < closestDist)
                     {
                         closestDist = centerDist;
+                        closestEvent = ev;
+                    }
+
+                    // Detection ring (click within a band around its circumference).
+                    float ringRadius = (float)System.Math.Sqrt(ev.Radius);
+                    float ringDist = System.Math.Abs(centerDist - ringRadius);
+                    if (ringDist < 24 && ringDist < closestDist)
+                    {
+                        closestDist = ringDist;
                         closestEvent = ev;
                     }
 

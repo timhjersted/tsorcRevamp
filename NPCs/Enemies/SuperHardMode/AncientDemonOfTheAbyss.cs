@@ -117,7 +117,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 NPC.localAI[1] = 50f;
 
                 //TELEPORT MELEE
-                if (Main.rand.NextBool(12))
+                if (Main.rand.NextBool(12) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
                 {
                     tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
                 }
@@ -137,7 +137,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
 
             //TELEPORT RANGED
-            if (Main.rand.NextBool(26))
+            if (Main.rand.NextBool(26) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
             {
                 tsorcRevampAIs.QueueTeleport(NPC, 20, true, 60);
                 NPC.localAI[1] = 70f;
