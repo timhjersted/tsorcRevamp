@@ -213,7 +213,7 @@ class AccessoryPrefixEditsStats
             }
             if (item.prefix == PrefixID.Armored) //default +3def
             {
-                self.endurance += ArmoredResistanceGain;
+                self.endurance += ArmoredResistanceGain / 100f;
             }
             if (item.prefix == PrefixID.Warding) //default
             {
