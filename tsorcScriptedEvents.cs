@@ -17,6 +17,7 @@ using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.NPCs.Runeterra;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
@@ -163,7 +164,7 @@ namespace tsorcRevamp
             KingSlimeEvent,
             HeroofLumeliaFight,
             FireLurkerPain,
-            BlackKnightPain,
+            RuneMage,
             RedKnightTwinMountain,
             JungleWyvernFight,
             SeathFight,
@@ -399,10 +400,8 @@ namespace tsorcRevamp
             FireLurkerPain.SetCustomStats(1800, 12, 85, 1500);
             FireLurkerPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 3, 4 });
 
-            //RED KNIGHT IN PATH OF PAIN
-            ScriptedEvent BlackKnightPain = new ScriptedEvent(new Vector2(3897, 1219), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), 27, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightPainCustomAction);
-            BlackKnightPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<WorldRune>() }, new List<int>() { 2, 3, 4 });
-            BlackKnightPain.SetCustomStats(3560, 15, 70, 3550);
+            //RUNE MAGE IN PATH OF PAIN
+            ScriptedEvent RuneMage = new ScriptedEvent(new Vector2(3897, 1219), 100, ModContent.NPCType<RuneMage>(), 27, true, false, true);
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
             ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
@@ -791,7 +790,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.KingSlimeEvent, KingSlimeEvent},
                 {ScriptedEventType.HeroofLumeliaFight, HeroofLumeliaFight},
                 {ScriptedEventType.FireLurkerPain, FireLurkerPain},
-                {ScriptedEventType.BlackKnightPain, BlackKnightPain},
+                {ScriptedEventType.RuneMage, RuneMage},
                 {ScriptedEventType.RedKnightTwinMountain, RedKnightTwinMountain},
                 {ScriptedEventType.JungleWyvernFight, JungleWyvernEvent},
                 {ScriptedEventType.SeathFight, SeathEvent},
@@ -1501,19 +1500,6 @@ namespace tsorcRevamp
                 NPCs.Enemies.FireLurker ourFireLurker = (NPCs.Enemies.FireLurker)thisEvent.eventNPCs[0].npc.ModNPC;
 
                 ourFireLurker.lostSoulDamage = 16; //was 23, then 13
-            }
-            return EventActionStatus.EndAction;
-        }
-
-        //RED KNIGHT PAIN CUSTOM ACTION
-        public static EventActionStatus BlackKnightPainCustomAction(ScriptedEvent thisEvent)
-        {
-            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>())
-            {
-                NPCs.Enemies.BlackKnight ourBlackKnightPain = (NPCs.Enemies.BlackKnight)thisEvent.eventNPCs[0].npc.ModNPC;
-                ourBlackKnightPain.redKnightsSpearDamage = 17;
-                ourBlackKnightPain.redMagicDamage = 15;
-                ourBlackKnightPain.redKnightsGreatDamage = 19;
             }
             return EventActionStatus.EndAction;
         }
