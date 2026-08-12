@@ -42,9 +42,9 @@ static class Preview
         readonly float[] r, g, b, a;
         readonly int w, h;
 
-        public Tex(string name)
+        public Tex(string name, bool previewLocal = false)
         {
-            using var bmp = new Bitmap(NoiseRoot + name + ".png");
+            using var bmp = new Bitmap((previewLocal ? "" : NoiseRoot) + name + ".png");
             w = bmp.Width; h = bmp.Height;
             r = new float[w * h]; g = new float[w * h]; b = new float[w * h]; a = new float[w * h];
             var data = bmp.LockBits(new Rectangle(0, 0, w, h), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
@@ -140,7 +140,7 @@ static class Preview
 
     // ---- Effects/RedKnightDestinedDeath.fx --------------------------------------------------
     // Sampler bindings must match RedKnightVFX.DrawDestinedDeathQuad exactly.
-    static Tex MacroSampler, DetailSampler, SolarMacroSampler, SolarDetailSampler, SolarFlameSampler, LightHandSampler;
+    static Tex MacroSampler, DetailSampler, SolarMacroSampler, SolarDetailSampler, SolarFlameSampler, StoneSampler, CrackSampler, MonolithSampler;
 
     static void LoadTextures()
     {
@@ -149,7 +149,9 @@ static class Preview
         SolarMacroSampler = new Tex("SmoothNoise");
         SolarDetailSampler = new Tex("Turbulence_06-512x512");
         SolarFlameSampler = new Tex("T_FirePanningCyl45");
-        LightHandSampler = new Tex("T_NitoGraveHand");
+        StoneSampler = new Tex("T_Noise_Wo14");
+        CrackSampler = new Tex("Vein_02-512x512");
+        MonolithSampler = new Tex(@"..\..\..\..\Textures\Particles\GigasConsecratedMonolith", previewLocal: true);
         CrimsonFlowSampler = new Tex("Turbulence_05-512x512");
     }
 
@@ -412,51 +414,56 @@ static class Preview
     }
 
     // ---- Candidate: GigasLightHand ------------------------------------------------------------
-    // Offline-only design study. Two fluted slabs rise from the ground and close toward the
-    // future seam; the white compression core only appears on the actual clap frame.
+    // Offline-only design study. Two broken stone monoliths rise from the ground and close toward
+    // the future seam. Slow light migrates inside their fractures; only the true clap seam goes hot.
     static (V3, float) GigasLightHand(V2 uv, float Time, float Progress, float Active)
     {
         const float panelW = 320f, panelH = 180f, bottom = 150f, fullHeight = 130f;
+        const float slabWidth = 74f, seamDrawWidth = 94f, seamWidth = 70f;
         float x = (uv.x - 0.5f) * panelW;
         float rise = MathF.Min(1f, Progress * 2f);
         float height = fullHeight * rise;
         float offset = 100f + (12f - 100f) * Progress * Progress;
+        float opacity = Active > 0f ? .96f : .32f + Progress * .42f;
         V3 rgb = new(0, 0, 0); float alpha = 0f;
 
-        if (Active == 0f)
+        for (int side = -1; side <= 1; side += 2)
         {
-            for (int side = -1; side <= 1; side += 2)
-            {
-                float vertical = bottom - uv.y * panelH;
-                float handU = (x - side * offset) / 74f + 0.5f;
-                if (side > 0) handU = 1f - handU;
-                float handV = 1f - vertical / MathF.Max(height, 1f);
-                float shape = handU < 0f || handU > 1f || handV < 0f || handV > 1f ? 0f : LightHandSampler.T(handU, handV).a;
-                shape *= sat((height - vertical) / 4f) * sat((vertical + 3f) / 4f);
-                float flow = SolarMacroSampler.R(new V2(handU * 1.45f + Time * 0.08f, handV * 1.35f - Time * 0.34f));
-                float fireDetail = SolarFlameSampler.R(new V2(handU * 0.88f - Time * 0.035f, handV + Time * 0.24f));
-                float edge = shape * sat(fireDetail * 1.30f - 0.08f);
-                float dx = x - side * offset;
-                float innerFace = sat((-dx * side - 7f) / 9f) * shape;
-                float material = sat(flow * 0.64f + fireDetail * 0.54f - 0.18f);
-                float hot = shape * sat(material * 1.34f - 0.18f);
-                V3 color = lerp(C(91, 51, 5), C(255, 178, 26), sat(material * 0.82f + innerFace * 0.28f));
-                color = lerp(color, C(255, 245, 190), hot * (0.20f + innerFace * 0.55f));
-                float a = shape * (0.27f + material * 0.39f + edge * 0.12f);
-                rgb = color * a + rgb * (1f - a);
-                alpha = a + alpha * (1f - a);
-            }
+            float dx = x - side * offset;
+            float vertical = bottom - uv.y * panelH;
+            float localU = dx / slabWidth + 0.5f;
+            float localV = 1f - vertical / MathF.Max(height, 1f);
+            float sampleU = side > 0 ? 1f - localU : localU;
+            V4 slab = localU < 0f || localU > 1f || localV < 0f || localV > 1f
+                ? new V4(0, 0, 0, 0) : MonolithSampler.T(sampleU, localV);
+            float flow = SolarMacroSampler.R(new V2(localU * 1.35f - Time * 0.045f, localV * 2.05f + Time * 0.17f));
+            float crack = CrackSampler.R(new V2(localU * 2.65f + Time * 0.016f, localV * 3.40f - Time * 0.025f));
+            float innerFace = sat((-side * dx / slabWidth + .14f) * 4.2f);
+            float fracture = sat((.30f - crack) * 4.4f) * sat(flow * 1.42f - .27f) * slab.a;
+            float faceLight = slab.a * innerFace * (.05f + flow * .12f);
+            V3 stone = new V3(slab.x, slab.y, slab.z) * (.78f + flow * .42f) * opacity;
+            V3 gold = C(244, 166, 26) * (fracture * .74f + faceLight) * opacity;
+            V3 emission = C(255, 246, 196) * fracture * flow * .13f * opacity;
+            float a = slab.a * opacity;
+            rgb = stone + gold + emission + rgb * (1f - a);
+            alpha = a + alpha * (1f - a);
         }
 
         if (Active > 0f)
         {
             float vertical = bottom - uv.y * panelH;
-            float seamFlow = SolarFlameSampler.R(new V2(uv.x * 1.7f + Time * 0.08f, 1f - vertical / fullHeight + Time * 0.32f));
-            float seam = sat((13f - abs(x)) / 5f) * sat((fullHeight - vertical) / 7f) * sat((vertical + 2f) / 4f);
-            float flare = sat((31f - abs(x)) / 9f) * sat((fullHeight - vertical) / 12f) * 0.32f;
-            float a = sat((seam * (0.74f + seamFlow * 0.22f) + flare) * Active);
-            V3 color = lerp(C(255, 184, 30), C(255, 250, 208), seam * (0.55f + seamFlow * 0.45f));
-            rgb = color * a + rgb * (1f - a);
+            float sx = x / seamDrawWidth + .5f;
+            float sy = 1f - vertical / fullHeight;
+            float flow = SolarMacroSampler.R(new V2(sx * 1.15f + Time * .08f, sy * 2.30f - Time * .29f));
+            float crack = CrackSampler.R(new V2(sx * 2.40f - Time * .024f, sy * 3.10f + Time * .038f));
+            float coreHalfWidth = seamWidth * .5f + (flow - .5f) * 4f;
+            float core = sat((coreHalfWidth - abs(x)) / 4f);
+            float halo = sat((coreHalfWidth + 12f - abs(x)) / 8f);
+            float agitation = sat(flow * .72f + (1f - crack) * .34f);
+            float a = sat(core * (.72f + agitation * .20f) + halo * .18f) * .92f;
+            V3 color = lerp(C(244, 166, 26), C(255, 246, 196), core * (.52f + agitation * .38f));
+            V3 emission = C(255, 246, 196) * core * agitation * .18f * .92f;
+            rgb = color * a + emission + rgb * (1f - a);
             alpha = a + alpha * (1f - a);
         }
         return (rgb, alpha);
@@ -702,9 +709,9 @@ static class Preview
         {
             FocusPanels = new[]
             {
-                new Panel("Hands emerge P=.25", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 2.4f, .25f, 0f)),
-                new Panel("Hands close P=.72", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 3.8f, .72f, 0f)),
-                new Panel("Clap seam", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 4.9f, 1f, 1f)),
+                new Panel("Slabs emerge P=.25", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 2.4f, .25f, 0f)),
+                new Panel("Slabs close P=.72", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 3.8f, .72f, 0f)),
+                new Panel("Compression seam", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 4.9f, 1f, 1f)),
             };
         }
         var panels = Panels();

@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -17,7 +19,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         const float HandStartOffset = 100f;
         const float HandHeight = 130f;
+        const float SlabWidth = 74f;
         const int ClapTicks = 10;
+        const string TextureRoot = "tsorcRevamp/Textures/";
+
+        static Asset<Effect> handEffect;
+        static Asset<Texture2D> monolithTexture;
+        static Asset<Texture2D> flowNoise;
+        static Asset<Texture2D> crackNoise;
 
         int TelegraphTicks => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 50;
         bool Clapping => Projectile.localAI[0] > TelegraphTicks;
@@ -42,6 +51,79 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool? CanDamage()
         {
             return Clapping;
+        }
+
+        static void LoadAssets()
+        {
+            handEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GigasLightHand", AssetRequestMode.ImmediateLoad);
+            monolithTexture ??= ModContent.Request<Texture2D>(TextureRoot + "Particles/GigasConsecratedMonolith", AssetRequestMode.ImmediateLoad);
+            flowNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Noise/SmoothNoise", AssetRequestMode.ImmediateLoad);
+            crackNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Noise/Vein_02-512x512", AssetRequestMode.ImmediateLoad);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            LoadAssets();
+            float progress = MathHelper.Clamp(Projectile.localAI[0] / TelegraphTicks, 0f, 1f);
+            float rise = MathHelper.Min(1f, progress * 2f);
+            float offset = MathHelper.Lerp(HandStartOffset, 12f, progress * progress);
+            float bottom = Projectile.Center.Y + HandHeight / 2f;
+            float opacity = Clapping ? 0.96f : 0.32f + progress * 0.42f;
+            Texture2D monolith = monolithTexture.Value;
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            GraphicsDevice device = Main.instance.GraphicsDevice;
+            Texture previousFlow = device.Textures[1];
+            SamplerState previousFlowSampler = device.SamplerStates[1];
+            Texture previousCrack = device.Textures[2];
+            SamplerState previousCrackSampler = device.SamplerStates[2];
+            try
+            {
+                device.Textures[1] = flowNoise.Value;
+                device.SamplerStates[1] = SamplerState.LinearWrap;
+                device.Textures[2] = crackNoise.Value;
+                device.SamplerStates[2] = SamplerState.LinearWrap;
+                Effect effect = handEffect.Value;
+                effect.Parameters["GoldColor"].SetValue(new Color(244, 166, 26).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 246, 196).ToVector3());
+                effect.Parameters["Opacity"].SetValue(opacity);
+                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                effect.CurrentTechnique = effect.Techniques["GigasLightHandSlab"];
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    //The right slab mirrors the texture, so its UV-right edge is still the physical inner face.
+                    effect.Parameters["InnerSide"].SetValue(1f);
+                    effect.CurrentTechnique.Passes[0].Apply();
+                    Main.EntitySpriteDraw(monolith, new Vector2(Projectile.Center.X + side * offset, bottom) - Main.screenPosition,
+                        null, Color.White, 0f, new Vector2(monolith.Width * 0.5f, monolith.Height),
+                        new Vector2(SlabWidth / monolith.Width, HandHeight * rise / monolith.Height),
+                        side > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
+                }
+
+                if (Clapping)
+                {
+                    const float seamDrawWidth = 94f;
+                    effect.CurrentTechnique = effect.Techniques["GigasLightHandSeam"];
+                    effect.Parameters["DrawSize"].SetValue(new Vector2(seamDrawWidth, HandHeight));
+                    effect.Parameters["SeamWidth"].SetValue(Projectile.width);
+                    effect.Parameters["Opacity"].SetValue(0.92f);
+                    effect.CurrentTechnique.Passes[0].Apply();
+                    Main.EntitySpriteDraw(flowNoise.Value, Projectile.Center - Main.screenPosition, null, Color.White, 0f,
+                        flowNoise.Value.Size() * 0.5f, new Vector2(seamDrawWidth / flowNoise.Value.Width, HandHeight / flowNoise.Value.Height),
+                        SpriteEffects.None, 0);
+                }
+            }
+            finally
+            {
+                device.Textures[1] = previousFlow;
+                device.SamplerStates[1] = previousFlowSampler;
+                device.Textures[2] = previousCrack;
+                device.SamplerStates[2] = previousCrackSampler;
+            }
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            return false;
         }
 
         public override void AI()

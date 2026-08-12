@@ -1,0 +1,4 @@
+interface:
+  display_name: "Terraria Pixel Art"
+  short_description: "Create chunky Terraria-style pixel-art assets"
+  default_prompt: "Use $terraria-pixel-art to create a chunky 2x2-brush Terraria VFX sprite."
