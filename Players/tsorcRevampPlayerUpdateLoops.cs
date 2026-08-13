@@ -1932,14 +1932,6 @@ namespace tsorcRevamp
             {
                 Player.noKnockback = false;
             }
-            if (MaxManaAmplifier > 0f)
-            {
-                Player.statManaMax2 = (int)(Player.statManaMax2 * (1f + MaxManaAmplifier / 100f));
-            }
-            if (CelestialCloak)
-            {
-                Player.thorns += 0.1f + (Player.statManaMax2 / 50f);
-            }
             Player.maxMinions *= MaxMinionTurretMultiplier;
             Player.maxTurrets *= MaxMinionTurretMultiplier;
 
@@ -2701,6 +2693,20 @@ namespace tsorcRevamp
 
         public override void PostUpdateMiscEffects()
         {
+            // Deliberately NOT in PostUpdateEquips: a Celestriad (or other max-mana source) sitting in the
+            // Active Shields 2nd slot adds to MaxManaAmplifier from tsorcRevampActiveShieldPlayer.PostUpdateEquips,
+            // a *different* ModPlayer's copy of the same hook. Hook order between two ModPlayer classes for the
+            // same hook name isn't guaranteed, so consuming the amplifier here (PostUpdateMiscEffects, which
+            // vanilla always runs after every mod's PostUpdateEquips has finished) makes this order-independent.
+            if (MaxManaAmplifier > 0f)
+            {
+                Player.statManaMax2 = (int)(Player.statManaMax2 * (1f + MaxManaAmplifier / 100f));
+            }
+            if (CelestialCloak)
+            {
+                Player.thorns += 0.1f + (Player.statManaMax2 / 50f);
+            }
+
             AbyssTransitionEffects();
             ReduceGraveyardDesaturation();
             SpawnAbyssMist();
