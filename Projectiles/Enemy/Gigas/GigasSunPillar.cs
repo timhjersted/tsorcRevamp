@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -47,6 +48,14 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool? CanDamage()
         {
             return Striking;
+        }
+
+        // The entire shader quad, including its inner filament, is occluded by terrain. Dust remains
+        // on Terraria's normal particle layer, so only the requested light column goes behind tiles.
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
+            List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindNPCsAndTiles.Add(index);
         }
 
         static void LoadAssets()

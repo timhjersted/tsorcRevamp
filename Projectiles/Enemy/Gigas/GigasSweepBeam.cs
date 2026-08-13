@@ -19,14 +19,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public const int BeamLength = 720; //45 tiles
         public const int BeamHeight = 48;  //3 tiles — jumpable
-        const int StrikeTicks = 12;
+        const int StrikeTicks = 120;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> sweepEffect;
         static Asset<Texture2D> macroNoise;
         static Asset<Texture2D> detailNoise;
 
-        int TelegraphTicks => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 40;
+        int TelegraphTicks => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 70;
         int Direction => (int)Projectile.ai[1] >= 0 ? 1 : -1;
         bool Striking => Projectile.localAI[0] > TelegraphTicks;
 

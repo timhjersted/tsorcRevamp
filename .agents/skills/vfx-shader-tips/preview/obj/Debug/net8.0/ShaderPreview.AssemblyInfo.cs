@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ShaderPreview")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+11ecca29b14b742187943df708f6195bf16277fc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1a9e347fa88028655f9759db8601d89ee9984c90")]
 [assembly: System.Reflection.AssemblyProductAttribute("ShaderPreview")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ShaderPreview")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -22,11 +24,23 @@ namespace tsorcRevamp.Projectiles.Enemy
         const int Mode_Orbit = 0;
         const int Mode_Homing = 1;
         const int Mode_Scatter = 2;
+        const string TextureRoot = "tsorcRevamp/Textures/Noise/";
+
+        static Asset<Effect> haloEffect;
+        static Asset<Texture2D> macroNoise;
+        static Asset<Texture2D> detailNoise;
 
         int ParentIndex => (int)Projectile.ai[0];
         int DetachTick => (int)Projectile.ai[1];
         float SlotAngle => (float)System.Math.Round((Projectile.ai[1] - DetachTick) * 10f) / 6f * MathHelper.TwoPi;
         int Mode { get => (int)Projectile.localAI[1]; set => Projectile.localAI[1] = value; }
+
+        static void LoadAssets()
+        {
+            haloEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GigasHaloSun", AssetRequestMode.ImmediateLoad);
+            macroNoise ??= ModContent.Request<Texture2D>(TextureRoot + "SmoothNoise", AssetRequestMode.ImmediateLoad);
+            detailNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
+        }
 
         public override void SetDefaults()
         {
@@ -90,13 +104,19 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             //The sun itself: a bright golden core with drifting flame
-            int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, 0f, 0f, 80, default, 1.6f);
-            Main.dust[dust].noGravity = true;
-            Main.dust[dust].velocity *= 0.15f;
+            for (int i = 0; i < 2; i++)
+            {
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, 0f, 0f, 80, default, 1.6f);
+                Main.dust[dust].noGravity = true;
+                Main.dust[dust].velocity *= 0.15f;
+            }
             if (Main.rand.NextBool(3))
             {
-                int sparkle = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldCoin, 0f, -0.5f, 0, default, 0.9f);
-                Main.dust[sparkle].noGravity = true;
+                for (int i = 0; i < 2; i++)
+                {
+                    int sparkle = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldCoin, 0f, -0.5f, 0, default, 0.9f);
+                    Main.dust[sparkle].noGravity = true;
+                }
             }
             Lighting.AddLight(Projectile.Center, 0.6f, 0.5f, 0.2f);
         }
@@ -113,12 +133,54 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnKill(int timeLeft)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(3f, 3f);
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, vel.X, vel.Y, 80, default, 1.3f);
                 Main.dust[dust].noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            LoadAssets();
+            Texture2D primary = macroNoise.Value;
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture = graphicsDevice.Textures[1];
+            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
+            try
+            {
+                graphicsDevice.Textures[1] = detailNoise.Value;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+
+                Effect effect = haloEffect.Value;
+                effect.CurrentTechnique = effect.Techniques["GigasHaloSun"];
+                effect.Parameters["OuterColor"].SetValue(new Color(89, 48, 5).ToVector3());
+                effect.Parameters["MiddleColor"].SetValue(new Color(248, 159, 22).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 244, 179).ToVector3());
+                effect.Parameters["Opacity"].SetValue(0.88f);
+                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["Phase"].SetValue(Projectile.ai[1] * 0.137f);
+                effect.Parameters["Active"].SetValue(Mode == Mode_Orbit ? 0f : 1f);
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White,
+                    Projectile.rotation, primary.Size() * 0.5f, new Vector2(56f / primary.Width),
+                    SpriteEffects.None, 0);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture;
+                graphicsDevice.SamplerStates[1] = previousSampler;
+            }
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            return false;
         }
     }
 }

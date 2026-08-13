@@ -44,10 +44,12 @@ namespace tsorcRevamp.NPCs.Enemies{
         const int WrathTelegraphTicks = 100;
         const int WrathStaggerableTicks = 66;  //first two thirds: hyper-armor OFF, a poise break cancels the cast
         const int WrathRecoveryTicks = 30;
-        const int SpearsCastTicks = 50;
+        const int SpearsCastTicks = 132;
         const int PillarsCastTicks = 85;
         const int HaloCastTicks = 30;
-        const int SweepCastTicks = 60;
+        const int SweepTelegraphTicks = 70;
+        const int SweepActiveTicks = 120;
+        const int SweepCastTicks = SweepTelegraphTicks + SweepActiveTicks;
         const int BoulderCastTicks = 45;
         const int HandsCastTicks = 30;
         const int LeapWindupTicks = 45;
@@ -109,6 +111,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             NPC.value = 200000f; //Dark Souls = value / 25 (GlobalNPC.OnKill) = 8000 — a bit under TheHunter's 8800
 			NPC.npcSlots = 100;
             NPC.scale = 1f;
+			DrawOffsetY = 2;
 			NPC.knockBackResist = 0.1f;
 			Main.npcFrameCount[NPC.type] = 16;
 			AnimationType = 28;
@@ -232,6 +235,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             {
                 //Slow, weighty walk — one speed, always. It never runs; its reach is its magic.
                 tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, minSurfaceWidth: 3, canWalkBackwards: true); // ~3.25-tile footprint → require 3 flat tiles
+                EscapeNarrowHighPerch(player);
                 if (NPC.lavaWet)
                 {
                     NPC.velocity.Y -= 2;
@@ -337,7 +341,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             NPC.netUpdate = true;
         }
 
-        void EndAttack(int cooldown)
+        void EndAttack(int cooldown, bool immediateFollowup = false)
         {
             LastAttack = State;
             State = AttackState.None;
@@ -345,7 +349,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             SlamPhase = 0;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                AttackCooldown = cooldown + Main.rand.Next(60);
+                AttackCooldown = immediateFollowup ? 0 : cooldown + Main.rand.Next(60);
                 NPC.netUpdate = true;
             }
         }
@@ -645,6 +649,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             //Walking cast: the giant keeps lumbering while the threat forms at the player's position
             //(no dodgeroll/pounce — the cast should read as stately, not acrobatic)
             tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 3, canWalkBackwards: true);
+            EscapeNarrowHighPerch(player);
             FootstepEffects();
             g.AttackCommitted = true;
 
@@ -657,24 +662,19 @@ namespace tsorcRevamp.NPCs.Enemies{
                 int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoldCoin, 0f, -1.5f, 0, default, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            if (AttackTimer == 12 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Span<Vector2> offsets = stackalloc Vector2[] { new Vector2(-140f, -250f), new Vector2(0f, -300f), new Vector2(140f, -250f) };
-                for (int i = 0; i < offsets.Length; i++)
+                switch (AttackTimer)
                 {
-                    //Pull the spawn point down toward the player until it's out of solid tiles (cramped caves)
-                    Vector2 pos = player.Center + offsets[i];
-                    for (int tries = 0; tries < 14 && IsSolidAt(pos); tries++)
-                    {
-                        pos.Y += 16f;
-                    }
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
-                        ModContent.ProjectileType<GigasHeavenlySpear>(), SpearDamage, 3f, Main.myPlayer, 45f + i * 15f);
+                    case 12: SpawnHeavenlySpearWave(player, 3, 140f, 300f, 45, 15, 0); break;
+                    case 42: SpawnHeavenlySpearWave(player, 5, 240f, 335f, 42, 10, 1); break;
+                    case 72: SpawnHeavenlySpearWave(player, 7, 340f, 370f, 38, 8, 2); break;
+                    case 102: SpawnHeavenlySpearWave(player, 9, 450f, 405f, 34, 6, 3); break;
                 }
             }
             if (AttackTimer >= SpearsCastTicks)
             {
-                EndAttack(300);
+                EndAttack(0, immediateFollowup: true);
             }
         }
 
@@ -743,7 +743,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                 {
                     Vector2 beamCenter = new Vector2(NPC.Center.X + lockedSweepDir * (24f + GigasSweepBeam.BeamLength / 2f), NPC.Bottom.Y - GigasSweepBeam.BeamHeight / 2f);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), beamCenter, Vector2.Zero,
-                        ModContent.ProjectileType<GigasSweepBeam>(), SweepDamage, 6f, Main.myPlayer, 40f, lockedSweepDir);
+                        ModContent.ProjectileType<GigasSweepBeam>(), SweepDamage, 6f, Main.myPlayer, SweepTelegraphTicks, lockedSweepDir);
                 }
             }
             //Crackle building at the torso while the line telegraphs
@@ -810,6 +810,30 @@ namespace tsorcRevamp.NPCs.Enemies{
             if (AttackTimer >= HandsCastTicks)
             {
                 EndAttack(330);
+            }
+        }
+
+        void SpawnHeavenlySpearWave(Player player, int count, float halfWidth, float apexHeight,
+            int hoverTicks, int hoverStep, int lengthTier)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                float fraction = count == 1 ? 0.5f : i / (float)(count - 1);
+                float x = MathHelper.Lerp(-halfWidth, halfWidth, fraction);
+                // A shallow arch keeps the long outer spears inside a readable shared canopy.
+                float y = -apexHeight + Math.Abs(fraction - 0.5f) * 80f;
+                Vector2 pos = player.Center + new Vector2(x, y);
+                for (int tries = 0; tries < 14 && IsSolidAt(pos); tries++)
+                {
+                    pos.Y += 16f;
+                }
+                if (IsSolidAt(pos))
+                {
+                    continue;
+                }
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
+                    ModContent.ProjectileType<GigasHeavenlySpear>(), SpearDamage, 3f, Main.myPlayer,
+                    hoverTicks + i * hoverStep, lengthTier);
             }
         }
 
@@ -920,6 +944,31 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         #region Helpers
 
+        // SmartFighter correctly avoids cliff-walking for a wide beast, but collision can still put
+        // its physical body on one isolated tile. If the player is well below that narrow perch,
+        // deliberately walk off toward them so gravity can recover the fight.
+        void EscapeNarrowHighPerch(Player player)
+        {
+            if (NPC.velocity.Y != 0f || player.dead || !player.active || player.Center.Y < NPC.Bottom.Y + 5 * 16f)
+            {
+                return;
+            }
+            int supportX = (int)(NPC.Center.X / 16f);
+            int supportY = (int)((NPC.Bottom.Y + 4f) / 16f);
+            if (UsefulFunctions.IsFootprintSupported(supportX, supportY, 3, 1))
+            {
+                return;
+            }
+            int dropDirection = Math.Sign(player.Center.X - NPC.Center.X);
+            if (dropDirection == 0)
+            {
+                dropDirection = NPC.direction == 0 ? 1 : NPC.direction;
+            }
+            NPC.velocity.X = dropDirection * 1.2f;
+            NPC.direction = dropDirection;
+            NPC.spriteDirection = dropDirection;
+        }
+
         ///<summary>World Y of the first solid tile top under the point (scanning down), or -1 if none in range.</summary>
         static float FindGroundY(Vector2 worldPos, int maxTilesDown)
         {
@@ -971,7 +1020,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                 Vector2 origin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height); //bottom-center
                 for (int k = NPC.oldPos.Length - 1; k > 0; k -= 2)
                 {
-                    Vector2 drawPos = NPC.oldPos[k] + new Vector2(NPC.width / 2f, NPC.height + NPC.gfxOffY + 4f) - screenPos;
+                    Vector2 drawPos = NPC.oldPos[k] + new Vector2(NPC.width / 2f, NPC.height + NPC.gfxOffY + 6f) - screenPos;
                     Color color = new Color(255, 210, 90, 0) * ((NPC.oldPos.Length - k) / (float)NPC.oldPos.Length) * 0.6f;
                     spriteBatch.Draw(texture, drawPos, NPC.frame, color, NPC.rotation, origin, NPC.scale, effects, 0f);
                 }

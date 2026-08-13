@@ -1,4 +1,7 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -17,8 +20,20 @@ namespace tsorcRevamp.Projectiles.Enemy
         public const int PatchWidth = 64;  //4 tiles
         public const int PatchHeight = 16;
         public const int PatchLifetime = 5 * 60;
+        const string TextureRoot = "tsorcRevamp/Textures/Noise/";
+
+        static Asset<Effect> groundEffect;
+        static Asset<Texture2D> macroNoise;
+        static Asset<Texture2D> detailNoise;
 
         int Lifetime => Projectile.ai[0] > 0f ? (int)Projectile.ai[0] : PatchLifetime;
+
+        static void LoadAssets()
+        {
+            groundEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GigasConsecratedGround", AssetRequestMode.ImmediateLoad);
+            macroNoise ??= ModContent.Request<Texture2D>(TextureRoot + "SmoothNoise", AssetRequestMode.ImmediateLoad);
+            detailNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
+        }
 
         public override void SetDefaults()
         {
@@ -65,6 +80,58 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.OnFire, 3 * 60);
+        }
+
+        // The lower flame tongues can disappear into the ground instead of layering over tiles;
+        // the existing dust remains on Terraria's normal particle layer above this shader.
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
+            List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindNPCsAndTiles.Add(index);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            LoadAssets();
+            Texture2D primary = macroNoise.Value;
+            float remaining = MathHelper.Clamp(Projectile.timeLeft / (float)Lifetime, 0f, 1f);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture = graphicsDevice.Textures[1];
+            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
+            try
+            {
+                graphicsDevice.Textures[1] = detailNoise.Value;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+
+                Effect effect = groundEffect.Value;
+                effect.CurrentTechnique = effect.Techniques["GigasConsecratedGround"];
+                effect.Parameters["OuterColor"].SetValue(new Color(52, 25, 3).ToVector3());
+                effect.Parameters["MiddleColor"].SetValue(new Color(222, 127, 9).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 230, 138).ToVector3());
+                effect.Parameters["Opacity"].SetValue(0.88f);
+                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["Remaining"].SetValue(remaining);
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                // 88x36 gives the shader room for its decorative canopy. Its bright bed is mapped
+                // precisely to PatchWidth x PatchHeight, so collision and telegraph stay aligned.
+                Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White,
+                    0f, primary.Size() * 0.5f, new Vector2(88f / primary.Width, 36f / primary.Height),
+                    SpriteEffects.None, 0);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture;
+                graphicsDevice.SamplerStates[1] = previousSampler;
+            }
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            return false;
         }
     }
 }

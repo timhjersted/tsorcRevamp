@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -12,6 +14,20 @@ namespace tsorcRevamp.Projectiles.Enemy
     class GigasSolarBoulder : ModProjectile
     {
         public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+
+        const string TextureRoot = "tsorcRevamp/Textures/Noise/";
+        static Asset<Effect> boulderEffect;
+        static Asset<Texture2D> macroNoise;
+        static Asset<Texture2D> detailNoise;
+        static Asset<Texture2D> meteorTexture;
+
+        static void LoadAssets()
+        {
+            boulderEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GigasSolarBoulder", AssetRequestMode.ImmediateLoad);
+            macroNoise ??= ModContent.Request<Texture2D>(TextureRoot + "SmoothNoise", AssetRequestMode.ImmediateLoad);
+            detailNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
+            meteorTexture ??= ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/SolarMeteor", AssetRequestMode.ImmediateLoad);
+        }
 
         public override void SetDefaults()
         {
@@ -93,6 +109,57 @@ namespace tsorcRevamp.Projectiles.Enemy
                     break;
                 }
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            LoadAssets();
+
+            float progress = 1f - Projectile.timeLeft / 600f;
+            Texture2D primary = macroNoise.Value;
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture = graphicsDevice.Textures[1];
+            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
+            try
+            {
+                graphicsDevice.Textures[1] = detailNoise.Value;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+
+                Effect effect = boulderEffect.Value;
+                effect.CurrentTechnique = effect.Techniques["GigasSolarBoulder"];
+                effect.Parameters["OuterColor"].SetValue(new Color(43, 23, 10).ToVector3());
+                effect.Parameters["MiddleColor"].SetValue(new Color(246, 137, 16).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 239, 166).ToVector3());
+                effect.Parameters["Opacity"].SetValue(0.92f);
+                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["Progress"].SetValue(MathHelper.Clamp(progress, 0f, 1f));
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                // The 88px VFX shell leaves room for the irregular corona. Its dense furnace body
+                // stays concentrated around the existing 36px hostile projectile; no mechanics change.
+                Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White,
+                    Projectile.rotation, primary.Size() * 0.5f, new Vector2(88f / primary.Width),
+                    SpriteEffects.None, 0);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture;
+                graphicsDevice.SamplerStates[1] = previousSampler;
+            }
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            // Solid meteor mass over the procedural furnace shell: preserve its native colour while
+            // exposing the moving shader through it at exactly 80% opacity.
+            Texture2D meteor = meteorTexture.Value;
+            Main.EntitySpriteDraw(meteor, Projectile.Center - Main.screenPosition, null,
+                new Color(255, 255, 255, 204), Projectile.rotation, meteor.Size() * 0.5f,
+                1f, SpriteEffects.None, 0);
+            return false;
         }
     }
 }

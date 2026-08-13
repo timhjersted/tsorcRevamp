@@ -469,6 +469,326 @@ static class Preview
         return (rgb, alpha);
     }
 
+    // ---- Candidate: GigasLightHandRich -------------------------------------------------------
+    // Keeps the translucent 2x2 monolith sprite as stone, then gives it an uneven inner-face glow,
+    // moving buried heat, and fractured rim glints. The bright compression seam remains distinct.
+    static (V3, float) GigasLightHandRich(V2 uv, float Time, float Progress, float Active)
+    {
+        const float panelW = 320f, panelH = 180f, bottom = 150f, fullHeight = 130f;
+        const float slabWidth = 74f, seamDrawWidth = 94f, seamWidth = 70f;
+        float x = (uv.x - .5f) * panelW;
+        float rise = MathF.Min(1f, Progress * 2f);
+        float height = fullHeight * rise;
+        float offset = 100f + (12f - 100f) * Progress * Progress;
+        float opacity = Active > 0f ? .96f : .32f + Progress * .42f;
+        V3 rgb = new(0, 0, 0); float alpha = 0f;
+
+        for (int side = -1; side <= 1; side += 2)
+        {
+            float dx = x - side * offset;
+            float vertical = bottom - uv.y * panelH;
+            float localU = dx / slabWidth + .5f;
+            float localV = 1f - vertical / MathF.Max(height, 1f);
+            float sampleU = side > 0 ? 1f - localU : localU;
+            V4 slab = localU < 0f || localU > 1f || localV < 0f || localV > 1f
+                ? new V4(0, 0, 0, 0) : MonolithSampler.T(sampleU, localV);
+
+            float flowA = SolarMacroSampler.R(new V2(localU * 1.18f - Time * .052f, localV * 1.82f + Time * .21f));
+            float flowB = SolarDetailSampler.R(new V2(localU * 4.65f + Time * .17f, localV * 2.65f - Time * .38f));
+            float crack = CrackSampler.R(new V2(localU * 2.45f + Time * .021f, localV * 3.15f - Time * .032f));
+            float flow = sat(flowA * .66f + flowB * .48f - .12f);
+            float innerFace = sat((-side * dx / slabWidth + .14f) * 4.2f);
+
+            // The sprite already owns the jagged outline. These local bands make those chipped
+            // edges catch and release light rather than becoming a uniform bright rectangle.
+            float sideRim = sat((.13f - MathF.Min(localU, 1f - localU)) * 8f);
+            float topRim = sat((.12f - localV) * 8f);
+            float rim = slab.a * sat(sideRim + topRim * .58f) * sat(flowB * .72f + flowA * .48f - .14f);
+            float veins = slab.a * sat((.38f - crack) * 3.4f) * sat(flow * 1.30f - .18f);
+            float strata = slab.a * sat(flowA * .74f + flowB * .42f - .24f);
+            float buriedGlow = slab.a * innerFace * (.08f + strata * .18f);
+
+            V3 stone = new V3(slab.x, slab.y, slab.z) * (.38f + flow * .29f + innerFace * .18f) * opacity;
+            V3 gold = C(218, 139, 19) * (veins * .88f + buriedGlow * 1.35f + rim * .44f) * opacity;
+            V3 hot = C(255, 235, 164) * (veins * .25f + rim * .30f) * opacity;
+            float a = slab.a * opacity;
+            rgb = stone + gold + hot + rgb * (1f - a);
+            alpha = a + alpha * (1f - a);
+        }
+
+        if (Active > 0f)
+        {
+            float vertical = bottom - uv.y * panelH;
+            float sx = x / seamDrawWidth + .5f;
+            float sy = 1f - vertical / fullHeight;
+            float flow = SolarMacroSampler.R(new V2(sx * 1.15f + Time * .08f, sy * 2.30f - Time * .29f));
+            float crack = CrackSampler.R(new V2(sx * 2.40f - Time * .024f, sy * 3.10f + Time * .038f));
+            float coreHalfWidth = seamWidth * .5f + (flow - .5f) * 4f;
+            float core = sat((coreHalfWidth - abs(x)) / 4f);
+            float halo = sat((coreHalfWidth + 12f - abs(x)) / 8f);
+            float agitation = sat(flow * .72f + (1f - crack) * .34f);
+            float a = sat(core * (.72f + agitation * .20f) + halo * .18f) * .92f;
+            V3 color = lerp(C(244, 166, 26), C(255, 246, 196), core * (.52f + agitation * .38f));
+            V3 emission = C(255, 246, 196) * core * agitation * .18f * .92f;
+            rgb = color * a + emission + rgb * (1f - a);
+            alpha = a + alpha * (1f - a);
+        }
+        return (rgb, alpha);
+    }
+
+    // ---- Candidate: GigasLightHandLuminous ---------------------------------------------------
+    // The stone monolith is deliberately only a translucent foreground silhouette. The actual
+    // effect is a larger, low-alpha field of moving holy light behind it: the sampled silhouette
+    // keeps the chipped profile while neighbouring samples turn that profile into a soft halo.
+    // At contact the existing Nova shader replaces the old rectangular compression seam.
+    static (V3, float) GigasLightHandLuminous(V2 uv, float Time, float Progress, float Active)
+    {
+        const float panelW = 320f, panelH = 180f, bottom = 151f, fullHeight = 130f;
+        const float slabWidth = 74f, auraWidth = 116f, auraHeight = 154f;
+        float x = (uv.x - .5f) * panelW;
+        float pixelY = uv.y * panelH;
+        float rise = MathF.Min(1f, Progress * 2f);
+        float height = fullHeight * rise;
+        float offset = 100f + (13f - 100f) * Progress * Progress;
+        V3 rgb = new(0, 0, 0); float alpha = 0f;
+
+        // The compact, decorative nova sits behind the slabs. It is intentionally much smaller
+        // than Wrath of Gold's gameplay field: it describes the impact, not a new damage shape.
+        if (Active > 0f)
+        {
+            float burstU = x / 142f + .5f;
+            float burstV = (pixelY - (bottom - fullHeight * .52f)) / 142f + .5f;
+            if (burstU >= 0f && burstU <= 1f && burstV >= 0f && burstV <= 1f)
+            {
+                var (burstRgb, burstAlpha) = GigasNovaField(new V2(burstU, burstV), Time, 1f, 1f, .68f);
+                rgb = burstRgb;
+                alpha = burstAlpha;
+            }
+        }
+
+        for (int side = -1; side <= 1; side += 2)
+        {
+            float center = side * offset;
+            float auraU = (x - center) / auraWidth + .5f;
+            float auraV = 1f - (bottom - pixelY) / (MathF.Max(height, 1f) * auraHeight / fullHeight);
+            float spriteU = (auraU - .5f) * auraWidth / slabWidth + .5f;
+            float spriteV = (auraV - .5f) * auraHeight / fullHeight + .5f;
+            float sampleU = side > 0 ? 1f - spriteU : spriteU;
+            bool inAura = spriteU >= 0f && spriteU <= 1f && spriteV >= 0f && spriteV <= 1f;
+            V4 auraSlab = inAura ? MonolithSampler.T(sampleU, spriteV) : new V4(0, 0, 0, 0);
+
+            // Four nearby alpha reads approximate the LinearClamp blur used by the in-game aura
+            // pass. They inherit the jagged sprite contour but never produce a hard rectangular edge.
+            float softMask = auraSlab.a;
+            if (inAura)
+            {
+                float left = spriteU > .070f ? MonolithSampler.T(side > 0 ? 1f - (spriteU - .070f) : spriteU - .070f, spriteV).a : 0f;
+                float right = spriteU < .930f ? MonolithSampler.T(side > 0 ? 1f - (spriteU + .070f) : spriteU + .070f, spriteV).a : 0f;
+                float up = spriteV > .045f ? MonolithSampler.T(sampleU, spriteV - .045f).a : 0f;
+                float down = spriteV < .955f ? MonolithSampler.T(sampleU, spriteV + .045f).a : 0f;
+                softMask = (softMask * 1.5f + left + right + up + down) / 5.5f;
+            }
+
+            float macro = SolarMacroSampler.R(new V2(auraU * 1.22f - Time * .075f, auraV * 1.78f + Time * .24f));
+            float detail = SolarDetailSampler.R(new V2(auraU * 4.80f + Time * .26f, auraV * 3.20f - Time * .42f));
+            float flame = sat(macro * .65f + detail * .54f - .17f);
+            float upwardTongues = sat(detail * 1.34f + macro * .42f - .30f);
+            float interior = softMask * (.62f + flame * .31f);
+            float outerFade = softMask * (.18f + upwardTongues * .26f);
+            float edgeLight = softMask * (1f - auraSlab.a) * upwardTongues;
+            float heat = auraSlab.a * sat(flame * 1.24f - .13f);
+            float auraAlpha = sat(interior + outerFade + edgeLight * .52f) * (.82f + Active * .12f);
+            V3 auraColor = lerp(C(187, 108, 12), C(255, 225, 137), flame);
+            auraColor = lerp(auraColor, C(255, 249, 211), heat * .62f);
+            V3 auraRgb = auraColor * auraAlpha + C(255, 246, 193) * (interior * .28f + heat * .54f + edgeLight * .42f);
+            rgb = auraRgb + rgb * (1f - auraAlpha);
+            alpha = auraAlpha + alpha * (1f - auraAlpha);
+
+            // The real 2x2 monolith remains on top, translucent enough that the moving light is
+            // still the thing the player reads first.
+            float localU = (x - center) / slabWidth + .5f;
+            float localV = 1f - (bottom - pixelY) / MathF.Max(height, 1f);
+            float foregroundU = side > 0 ? 1f - localU : localU;
+            bool inSprite = localU >= 0f && localU <= 1f && localV >= 0f && localV <= 1f;
+            V4 slab = inSprite ? MonolithSampler.T(foregroundU, localV) : new V4(0, 0, 0, 0);
+            float spriteGlow = slab.a * sat(macro * .58f + detail * .36f);
+            float spriteAlpha = slab.a * .22f;
+            V3 spriteRgb = new V3(slab.x, slab.y, slab.z) * .25f
+                + C(255, 225, 130) * spriteGlow * .24f;
+            rgb = spriteRgb * spriteAlpha + rgb * (1f - spriteAlpha);
+            alpha = spriteAlpha + alpha * (1f - spriteAlpha);
+        }
+        return (rgb, alpha);
+    }
+
+    // ---- Candidate: GigasSolarBoulder ---------------------------------------------------------
+    // A rough, furnace-dark miniature sun. Ordinary UV noise gives it volume; the noise only
+    // modulates the edge, never decides it, and quadFade is provably zero before the square quad.
+    static (V3, float) GigasSolarBoulder(V2 uv, float Time, float Progress)
+    {
+        V2 p = (uv - .5f) * 2f;
+        float r = length(p);
+        float macro = SolarMacroSampler.R(p * 2.15f + new V2(.5f - Time * .055f, .5f + Time * .071f));
+        float detail = SolarDetailSampler.R(p * 5.65f + new V2(.5f + Time * .19f, .5f - Time * .24f));
+        float flame = sat(macro * .72f + detail * .56f - .12f);
+
+        // reach is at most .56 and quadFade is zero at r = 1, so no flat quad cutoff is possible.
+        float quadFade = sat((1f - r) * 4.2f);
+        quadFade *= quadFade;
+        float reach = .43f + (macro - .5f) * .26f;
+        float body = sat((reach - r) * 7.2f) * quadFade;
+        float coronaReach = .61f + (macro - .5f) * .34f;
+        float coronaBand = sat((coronaReach - r) * 5.2f) * sat((r - reach * .64f) * 8.4f) * quadFade;
+        float corona = coronaBand * flame;
+        float molten = body * flame;
+        float core = sat((.18f - r) * 8.2f);
+        float pulse = .78f + Progress * .22f;
+
+        float alpha = sat(body * (.72f + molten * .18f) + corona * .34f + core * .32f) * pulse;
+        V3 stone = lerp(C(43, 23, 10), C(118, 62, 9), molten * .56f);
+        V3 rgb = stone * (body * .82f * pulse)
+            + C(246, 137, 16) * (molten * .72f + corona * .32f) * pulse
+            + C(255, 239, 166) * core * .38f * pulse;
+        return (rgb, alpha);
+    }
+
+    // ---- Candidate: GigasHaloSun --------------------------------------------------------------
+    // Small votive suns. The core stays inside the 20px hitbox; a low-alpha, irregular
+    // corona is decorative light outside it. Phase offsets will differ per halo slot in game.
+    static (V3, float) GigasHaloSun(V2 uv, float Time, float Phase, float Active)
+    {
+        V2 p = (uv - .5f) * 2f;
+        float r = length(p);
+        float macro = SolarMacroSampler.R(p * 2.85f + new V2(.5f + Time * .08f + Phase, .5f - Time * .11f));
+        float detail = SolarDetailSampler.R(p * 7.10f + new V2(.5f - Time * .21f, .5f + Time * .17f + Phase));
+        float fire = sat(macro * .70f + detail * .54f - .14f);
+        float quadFade = sat((1f - r) * 4.6f); quadFade *= quadFade;
+
+        // Bright core radius .18 = 10px in the 56px shell (the 20px hostile body). Both wider
+        // layers must still die before r=1, independent of their noise.
+        float core = sat((.18f - r) * 11f) * (.64f + detail * .36f);
+        float bodyReach = .30f + (macro - .5f) * .13f;
+        float body = sat((bodyReach - r) * 9f) * quadFade;
+        float coronaReach = .52f + (macro - .5f) * .24f;
+        float corona = sat((coronaReach - r) * 6f) * sat((r - bodyReach * .42f) * 8f) * fire * quadFade;
+        float launch = .58f + Active * .42f;
+        float alpha = sat(body * (.66f + fire * .18f) + corona * .30f + core * .48f) * launch;
+        V3 color = lerp(C(89, 48, 5), C(248, 159, 22), sat(body * .60f + fire * .40f));
+        color = lerp(color, C(255, 244, 179), core * .72f);
+        V3 emission = C(255, 244, 179) * (core * (.16f + Active * .13f)) * launch;
+        return (color * alpha + emission, alpha);
+    }
+
+    // ---- Candidate: GigasConsecratedGround ---------------------------------------------------
+    // A shallow, broken bed of sacred coals — not a circle or a decal. The bright ember bed maps
+    // exactly to the existing 64x16 hostile strip; the taller flame canopy is decorative padding.
+    static (V3, float) GigasConsecratedGround(V2 uv, float Time, float Remaining)
+    {
+        // The preview quad is 88x36, so .136..864 in X maps to the exact 64px damage span.
+        float damageX = (uv.x - .5f) * 1.375f + .5f;
+        float macro = SolarMacroSampler.R(new V2(damageX * 2.45f - Time * .10f, uv.y * 1.25f + Time * .18f));
+        float detail = SolarDetailSampler.R(new V2(damageX * 7.40f + Time * .29f, uv.y * 2.15f - Time * .64f));
+        // The bright band starts/ends at the mapped 64px boundary. Its lower edge is driven by
+        // macro noise too, so the burning scar has downward ember tongues instead of a flat cutoff.
+        float endCaps = sat((damageX) * 5.2f) * sat((1f - damageX) * 5.2f);
+        float emberBottom = .83f + macro * .12f;
+        float floorFade = sat((emberBottom - uv.y) * 18f);
+        float tongueTop = .64f - macro * .46f;
+        float tongues = sat((uv.y - tongueTop) * 10.5f) * floorFade * endCaps;
+        float emberBed = sat((uv.y - .55f) * 10.5f) * floorFade * endCaps;
+
+        // Two short, defined edge flames replace a uniform end fade. Their narrow feet remain
+        // inside the hostile 64px span, but their separate texture phase keeps them from reading
+        // as mere transparency at either side of the patch.
+        float leftFoot = sat((.18f - abs(damageX - .11f)) * 18f);
+        float rightFoot = sat((.18f - abs(damageX - .89f)) * 18f);
+        float edgeFlame = (leftFoot + rightFoot) * sat((uv.y - (.62f - detail * .22f)) * 13f) * floorFade;
+        float coals = tongues * sat(macro * .68f + detail * .58f - .14f);
+        float hotCracks = emberBed * sat((detail - .43f) * 1.75f) + edgeFlame * .35f;
+
+        float age = Remaining;
+        float alpha = sat(coals * .92f + hotCracks * .54f) * age;
+        V3 color = lerp(C(52, 25, 3), C(222, 127, 9), sat(coals * .56f + macro * .44f));
+        color = lerp(color, C(255, 230, 138), hotCracks * .70f);
+        return (color * alpha, alpha);
+    }
+
+    // ---- Candidate: GigasHeavenlySpear -------------------------------------------------------
+    // A sacred lance with a sharp, small head at the true 18px damage point and a living fire wake
+    // behind it. The wake grows by wave tier in C#; it is explicitly softer than the spearhead.
+    static (V3, float) GigasHeavenlySpear(V2 uv, float Time, float Progress, float Active)
+    {
+        float along = uv.x;
+        float across = abs(uv.y - .5f);
+        float macro = SolarMacroSampler.R(new V2(along * 2.20f - Time * .20f, uv.y * 1.45f + Time * .09f));
+        float detail = SolarDetailSampler.R(new V2(along * 6.65f + Time * .31f, uv.y * 3.10f - Time * .48f));
+
+        // The tail and tip both reach zero inside the quad. The tip is a genuine taper, rather
+        // than a rectangular beam, while macro noise only perturbs its already-solid silhouette.
+        float tail = sat(along * 27f);
+        float tipFade = sat((1f - along) * 27f);
+        float tailBlend = sat(along * 5.5f);
+        float shaftWidth = (.040f + macro * .055f) * tailBlend;
+        // A broad head occupies .66-.93, then a distinct needle projects forward from it.
+        // This lets the oncoming end keep its heavy mass without reading as a blunt laser cap.
+        float head = sat((along - .66f) * 5.5f) * sat((.93f - along) * 7.2f);
+        float needleBlend = sat((along - .84f) * 6.25f);
+        float headWidth = shaftWidth + head * (.145f + macro * .020f);
+        float needleWidth = (1f - along) * .50f;
+        float width = headWidth * (1f - needleBlend) + needleWidth * needleBlend;
+        float body = sat((width - across) * 22f) * tail * tipFade;
+        float wakeNoise = sat(macro * .66f + detail * .54f - .14f);
+        float wake = sat((shaftWidth + .040f + macro * .050f - across) * 8f) * tail * tipFade * (1f - head) * wakeNoise;
+
+        // During the harmless hover it builds outward from the head; on launch Active fully
+        // reveals it. This matches the existing inward GoldCoin gathering without changing it.
+        float forming = sat((Progress - (1f - along) * .74f) * 5.2f);
+        float reveal = forming * (1f - Active) + Active;
+        float heat = sat(macro * .64f + detail * .52f - .13f);
+
+        // The base pass deliberately stops before the narrow core and fissures. Those are restored
+        // exactly by the detail pass below, preserving the old preview's division of visual weight.
+        float alpha = sat(body * (.76f + heat * .16f) + wake * .30f) * reveal;
+        V3 color = lerp(C(57, 31, 4), C(229, 142, 16), sat(body * .48f + heat * .52f));
+        return (color * alpha, alpha);
+    }
+
+    // Second transparent pass: the detail terms from the preferred over-budget preview, isolated
+    // so they can retain their motion, narrow core, and emissive head without compromising Reach.
+    static (V3, float) GigasHeavenlySpearDetails(V2 uv, float Time, float Progress, float Active)
+    {
+        float along = uv.x;
+        float across = abs(uv.y - .5f);
+        float macro = SolarMacroSampler.R(new V2(along * 2.20f - Time * .20f, uv.y * 1.45f + Time * .09f));
+        float detail = SolarDetailSampler.R(new V2(along * 6.65f + Time * .31f, uv.y * 3.10f - Time * .48f));
+        float tail = sat(along * 27f);
+        float tipFade = sat((1f - along) * 27f);
+        float tailBlend = sat(along * 5.5f);
+        float head = sat((along - .66f) * 5.5f) * sat((.93f - along) * 7.2f);
+        float needleBlend = sat((along - .84f) * 6.25f);
+        float shaftWidth = (.040f + macro * .055f) * tailBlend;
+        float headWidth = shaftWidth + head * (.145f + macro * .020f);
+        float needleWidth = (1f - along) * .50f;
+        float width = headWidth * (1f - needleBlend) + needleWidth * needleBlend;
+        float body = sat((width - across) * 22f) * tail * tipFade;
+
+        float forming = sat((Progress - (1f - along) * .74f) * 5.2f);
+        float reveal = forming * (1f - Active) + Active;
+        float core = sat((.105f - across) * 16f) * sat((along - .68f) * 4.1f) * tail * tipFade;
+        float fissures = body * sat(detail * 1.28f - macro * .26f - .10f) * (1f - needleBlend * .55f);
+        float alpha = sat(core * .36f + fissures * .25f) * reveal;
+        V3 color = lerp(C(229, 142, 16), C(255, 238, 163), core * .72f + fissures * .25f);
+        V3 emission = C(255, 220, 118) * core * (.08f + Active * .12f) * reveal;
+        return (color * alpha + emission, alpha);
+    }
+
+    static (V3, float) GigasHeavenlySpearLayered(V2 uv, float Time, float Progress, float Active)
+    {
+        var (baseRgb, baseAlpha) = GigasHeavenlySpear(uv, Time, Progress, Active);
+        var (detailRgb, detailAlpha) = GigasHeavenlySpearDetails(uv, Time, Progress, Active);
+        return (detailRgb + baseRgb * (1f - detailAlpha), detailAlpha + baseAlpha * (1f - detailAlpha));
+    }
+
     // ---- Effects/RedKnightCrimsonVFX.fx : BombBlastPixel ------------------------------------
     // Samplers per RedKnightVFX.DrawCrimsonQuad: s1 = Turbulence_05-512x512 (FlowSampler),
     // s2 = Grainy_07-512x512 (DetailSampler). BombBlastPixel only uses FlowSampler.
@@ -712,6 +1032,68 @@ static class Preview
                 new Panel("Slabs emerge P=.25", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 2.4f, .25f, 0f)),
                 new Panel("Slabs close P=.72", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 3.8f, .72f, 0f)),
                 new Panel("Compression seam", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHand(c, 4.9f, 1f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_light_hand_rich")
+        {
+            FocusPanels = new[]
+            {
+                new Panel("Slabs emerge P=.25", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHandRich(c, 2.4f, .25f, 0f)),
+                new Panel("Slabs close P=.72", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHandRich(c, 3.8f, .72f, 0f)),
+                new Panel("Compression seam", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHandRich(c, 4.9f, 1f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_light_hand_luminous")
+        {
+            FocusPanels = new[]
+            {
+                new Panel("Approach — living light behind slabs", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHandLuminous(c, 4.4f, .72f, 0f)),
+                new Panel("Contact — compact nova burst", 320, 180, Blend.PremultipliedAlpha, c => GigasLightHandLuminous(c, 5.1f, 1f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_solar_boulder")
+        {
+            FocusPanels = new[]
+            {
+                new Panel("Early flight t=2.1", 88, 88, Blend.PremultipliedAlpha, c => GigasSolarBoulder(c, 2.1f, .72f)),
+                new Panel("Flight motion t=3.4", 88, 88, Blend.PremultipliedAlpha, c => GigasSolarBoulder(c, 3.4f, .88f)),
+                new Panel("Hot descent t=4.7", 88, 88, Blend.PremultipliedAlpha, c => GigasSolarBoulder(c, 4.7f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_halo_suns")
+        {
+            FocusPanels = new[]
+            {
+                new Panel("Orbit slot A", 56, 56, Blend.PremultipliedAlpha, c => GigasHaloSun(c, 2.2f, .08f, 0f)),
+                new Panel("Orbit slot B", 56, 56, Blend.PremultipliedAlpha, c => GigasHaloSun(c, 3.7f, .41f, 0f)),
+                new Panel("Launch flare", 56, 56, Blend.PremultipliedAlpha, c => GigasHaloSun(c, 4.9f, .73f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_consecrated_ground")
+        {
+            FocusPanels = new[]
+            {
+                new Panel("Fresh landing", 88, 36, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 2.4f, 1f)),
+                new Panel("Sustained burn", 88, 36, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 4.1f, .62f)),
+                new Panel("Last embers", 88, 36, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 5.8f, .18f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_heavenly_spears")
+        {
+            FocusPanels = new[]
+            {
+                new Panel("Harmless formation", 58, 26, Blend.PremultipliedAlpha, c => GigasHeavenlySpear(c, 2.4f, .38f, 0f)),
+                new Panel("First wave lance", 72, 28, Blend.PremultipliedAlpha, c => GigasHeavenlySpear(c, 3.8f, 1f, 1f)),
+                new Panel("Final wave wake", 160, 38, Blend.PremultipliedAlpha, c => GigasHeavenlySpear(c, 5.2f, 1f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_heavenly_spears_layered")
+        {
+            FocusPanels = new[]
+            {
+                new Panel("Formation detail", 58, 26, Blend.PremultipliedAlpha, c => GigasHeavenlySpearLayered(c, 2.4f, .38f, 0f)),
+                new Panel("First wave layered", 72, 28, Blend.PremultipliedAlpha, c => GigasHeavenlySpearLayered(c, 3.8f, 1f, 1f)),
+                new Panel("Final wake layered", 160, 38, Blend.PremultipliedAlpha, c => GigasHeavenlySpearLayered(c, 5.2f, 1f, 1f)),
             };
         }
         var panels = Panels();
