@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using Humanizer;
 using Terraria;
 using Terraria.GameContent.UI.ResourceSets;
@@ -19,14 +21,28 @@ public class ArcaneSorceryPlayer : ModPlayer
     public override void ResetEffects()
     {
         Enabled = false;
+        CeruleanFlatManaGainMult = 1f;
+        CeruleanFlaskMaxManaScalingMult = 1f;
     }
 
     public float MaxManaAmplifier = 500f;
     public int ManaCostMult = 2;
-    
-    public const float CeruleanFlaskMaxManaScaling = 25f;
+
+    public const float BaseCeruleanFlaskMaxManaScalingMult = 1.6f;
+    public float CeruleanFlaskMaxManaScalingMult = 1f;
+    public const float BaseCeruleanFlatManaGainMult = 3f;
+    public float CeruleanFlatManaGainMult = 1f;
     public float MagicDamageAmp = 15f;
     public float MagicAttackSpeedAmp = 15f;
+
+    public override void PostUpdateBuffs()
+    {
+        if (Enabled)
+        {
+            CeruleanFlaskMaxManaScalingMult = BaseCeruleanFlaskMaxManaScalingMult;
+            CeruleanFlatManaGainMult = BaseCeruleanFlatManaGainMult;
+        }
+    }
 
     public override void PostUpdateEquips()
     {
@@ -48,7 +64,10 @@ public class ArcaneSorceryPlayer : ModPlayer
 
     public override void PostUpdateMiscEffects()
     {
-        Player.manaCost *= ManaCostMult;
+        if (Enabled)
+        {
+            Player.manaCost *= ManaCostMult;
+        }
     }
 }
 
@@ -60,14 +79,6 @@ public class ArcaneSorceryItems : GlobalItem
     {
         Player player = Main.LocalPlayer;
         var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-        if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && (item.type == ItemID.ManaFlower || item.type == ItemID.ArcaneFlower || item.type == ItemID.MagnetFlower || item.type == ItemID.ManaCloak || item.type == ModContent.ItemType<CelestialCloak>()))
-        {
-            TooltipHelper.SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.BotCManaFlower", (int)CeruleanFlaskPlayer.CeruleanManaFlowerStrength));
-        }
-        if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.ManaRegenerationPotion)
-        {
-            TooltipHelper.SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaRegenerationPotionBotC").FormatWith(CeruleanFlaskPlayer.ManaRegenPotRestorationTimerBonus));
-        }
 
         if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && (item.type == ItemID.CelestialMagnet || item.type == ItemID.ManaCloak || item.type == ItemID.CelestialEmblem))
         {
@@ -128,14 +139,26 @@ class ManaStarDrawAmount
     {
         On_PlayerStatsSnapshot.ctor += CustomManaStarAmount;
     }
-
+    //the cheese below is necessary, trust
     private static void CustomManaStarAmount(On_PlayerStatsSnapshot.orig_ctor orig, ref PlayerStatsSnapshot self, Player player)
     {
-        orig(ref self, player);
         var arcaneSorceryPlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
+        var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+        int trueMaxMana = player.statManaMax2;
+        int trueMana = player.statMana;
+        
         if (arcaneSorceryPlayer.Enabled)
-        {
-            self.AmountOfManaStars = player.statManaMax2 / (int)(20f * (1f + player.GetModPlayer<tsorcRevampPlayer>().MaxManaAmplifier / 100f));
+        { //turn mana stats to "vanilla-like values" before orig so the proper amount of mana stars/bars are drawn
+            player.statMana = (int)(trueMana / (1f + modPlayer.MaxManaAmplifier / 100f));
+            player.statManaMax2 = (int)(trueMaxMana / (1f + modPlayer.MaxManaAmplifier / 100f));
+        }
+        
+        orig(ref self, player);
+        
+        if (arcaneSorceryPlayer.Enabled)
+        { //turn mana stats to back real stats after drawing is done
+            player.statManaMax2 = trueMaxMana;
+            player.statMana = trueMana;
         }
     }
 }

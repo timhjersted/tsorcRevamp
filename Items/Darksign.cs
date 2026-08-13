@@ -254,7 +254,7 @@ namespace tsorcRevamp.Items
                 case 3:
                     {
                         var arcaneSorceryPlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
-                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "CeruleanFlask", LangUtils.GetTextValue("Items.Darksign.Magic", ArcaneSorceryPlayer.CeruleanFlaskMaxManaScaling, arcaneSorceryPlayer.MagicDamageAmp, arcaneSorceryPlayer.MagicAttackSpeedAmp)));
+                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "CeruleanFlask", LangUtils.GetTextValue("Items.Darksign.Magic", ArcaneSorceryPlayer.BaseCeruleanFlaskMaxManaScalingMult, arcaneSorceryPlayer.MagicDamageAmp, arcaneSorceryPlayer.MagicAttackSpeedAmp)));
                         break;
                     }
                 case 4:

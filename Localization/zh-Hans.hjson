@@ -148,7 +148,7 @@ Mods: {
 			// SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
 			// SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
 			BotCPStone: 减少 {0}% 元素瓶的使用时间
-			BotCManaFlower: 减少 {0}% 蓝露滴圣杯瓶的使用时间
+			// CeruleanManaFlower: Decreases the time needed to drink the Cerulean Flask by {0}%
 			DSPickUpRange: 增加黑暗之魂拾取范围
 			VanityFunction: 在时装栏中也生效
 			DragoonGearCompatible: 与龙骑士套装和龙靴兼容.
@@ -850,7 +850,7 @@ Mods: {
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
 				WellFedItemsBotC: 为[c/6d8827:被诅咒者]增加 {0}% 耐力再生
-				ManaRegenerationPotionBotC: 增加 {0}% 蓝露滴圣杯瓶恢复速度
+				// CeruleanManaRegenerationPotion: Increases Cerulean Flask restoration time by {0}%
 				CelestialMagnetBotC: 魔力星只固定恢复[c/6d8827:被诅咒者]最大魔力值的 {0}%
 				MagicCuffsBotC: 只恢复[c/6d8827:被诅咒者]受到伤害 {0}% 的魔力
 				/* CoinGun:
