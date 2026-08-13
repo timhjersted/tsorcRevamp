@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Utilities;
 
@@ -266,6 +267,18 @@ public class AccuracyProjectile : GlobalProjectile
             drawParams.Texture = ourTexture;
             drawParams.SourceRectangle = ourSourceRectangle;
             return true;
+        }
+    }
+
+    public class AccuracyItems : GlobalItem
+    {
+        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+        {
+            Player player = Main.LocalPlayer;
+            if (player.GetModPlayer<AccuracyPlayer>().Enabled && item.DamageType == DamageClass.Ranged)
+            {
+                TooltipHelper.SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Ranged.CurrentAccuracy", (int)(player.GetModPlayer<AccuracyPlayer>().CurrentAccuracyPercent * 100f)));
+            }
         }
     }
     

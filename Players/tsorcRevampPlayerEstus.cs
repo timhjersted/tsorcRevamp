@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Accessories.Defensive.Rings;
 
 namespace tsorcRevamp
@@ -157,11 +158,31 @@ namespace tsorcRevamp
 
         public void UpdateDrinkingEstus()
         {
+            tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
             //estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
             //Attempt to drink if the player isn't already
             if (!isDrinking /*&& !TryDrinkEstus()*/)
             {
                 return;
+            }
+
+            //Slow player for whole duration of action
+            Player.velocity.X *= 0.9f;
+            Player.eocHit = 0;
+            
+            // Chloranthy Ring (I or II): trade the standard drink slowdown for temporary
+            // vulnerability. Without the ring, the Crippled debuff blocks extra jumps, wings,
+            // rocket boots, and reduces moveSpeed by 10% for the drink duration (ground-bound
+            // and slowed). With the ring, those mobility losses are swapped for Ichor
+            // (-15 defense + glow) — full mobility but more damage taken if you get hit.
+            if ((modPlayer.ChloranthyRing1 || modPlayer.ChloranthyRing2) && estusDrinkTimer == 0)
+            {
+                Player.AddBuff(BuffID.Ichor, (int)(estusDrinkTimerMax * 60f));
+            }
+            else if (estusDrinkTimer == 0)
+            {
+                Player.AddBuff(ModContent.BuffType<Crippled>(), (int)(estusDrinkTimerMax * 60f));
+                Player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(estusDrinkTimerMax * 60f));
             }
 
             //Progress the action
@@ -174,10 +195,6 @@ namespace tsorcRevamp
             {
                 Player.GetModPlayer<tsorcRevampPlayer>().forcedBodyFrame = PlayerFrames.Use2;
             }
-
-            //Slow player for whole duration of action
-            Player.velocity.X *= 0.9f;
-            Player.eocHit = 0;
 
             if (estusDrinkTimer >= estusDrinkTimerMax) //Once finished drinking:
             {

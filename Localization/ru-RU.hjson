@@ -148,7 +148,7 @@ Mods: {
 			// SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
 			// SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
 			BotCPStone: Сокращает время, необходимое для использования фляги эстуса на {0}%
-			BotCManaFlower: Сокращает время, необходимое для использования фляги лазурных слёз на {0}%
+			// CeruleanManaFlower: Decreases the time needed to drink the Cerulean Flask by {0}%
 			DSPickUpRange: Увеличивает дальность подбора тёмных душ
 			VanityFunction: Также работает в слотах для украшения
 			DragoonGearCompatible: Совместимо с Драгунскими ботинками и Драгунским снаряжением.
@@ -814,7 +814,7 @@ Mods: {
 				StarinaBottle: Увеличивает регенерацию маны на 10 и уменьшает задержку восстановления маны на 50%
 				ManaRegenerationBand: Увеличивает регенерацию маны на 25 и уменьшает задержку восстановления маны на 100%
 				WellFedItemsBotC: Увеличивает регенерацию выносливости на {0}% для [c/6d8827:Носителя проклятия]
-				ManaRegenerationPotionBotC: Увеличивает время восстановления лазурной фляги на {0}%
+				// CeruleanManaRegenerationPotion: Increases Cerulean Flask restoration time by {0}%
 				CelestialMagnetBotC: Подбор звёзд маны восстанавливает только {0}% от максимального количества маны [c/6d8827:носителя проклятия]
 				MagicCuffsBotC: Восстанавливает только {0}% урона, полученного [c/6d8827:носителем проклятия] до смягчения, в виде маны
 				/* CoinGun:
@@ -6118,6 +6118,7 @@ Mods: {
 					Меч, созданный для пользователей магии
 					Наносит +1 урон за каждые {1} максимальной маны, вплоть до {0} максимальной маны
 					'''
+				// Tooltip0: Deals +1 damage for every {1} max mana the user has over {0}
 			}
 
 			Murassame: {
@@ -6127,6 +6128,7 @@ Mods: {
 					Меч, созданный для пользователей магии
 					Наносит +1 урон за каждые {1} максимальной маны, вплоть до {0} максимальной маны
 					'''
+				// Tooltip0: Deals +1 damage for every {1} max mana the user has over {0}
 			}
 
 			Masamune: {

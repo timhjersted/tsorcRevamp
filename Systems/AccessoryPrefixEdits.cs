@@ -11,6 +11,8 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
 
     public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) //alter tooltips
     {
+        Player player = Main.LocalPlayer;
+        var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
         if (item.prefix == PrefixID.Hard)
         {
             int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDefense");
@@ -154,7 +156,7 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
             if (ttindex != -1)
             {
                 tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "ManaEfficiency", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Arcane", AccessoryPrefixEditsStats.ArcaneManaGain, AccessoryPrefixEditsStats.ArcaneManaCostReduction)));
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "ManaEfficiency", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Arcane", (int)((float)AccessoryPrefixEditsStats.ArcaneManaGain * (1f + modPlayer.MaxManaAmplifier / 100f)), AccessoryPrefixEditsStats.ArcaneManaCostReduction)));
             }
         }
     }

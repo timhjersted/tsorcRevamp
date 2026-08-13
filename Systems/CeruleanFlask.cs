@@ -1,8 +1,15 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Humanizer;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Accessories.Magic;
+using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Systems
 {
@@ -25,6 +32,7 @@ namespace tsorcRevamp.Systems
         public int CeruleanManaGain; //The amount of mana restored per charge
         public float CeruleanManaGainMaxManaBonus; //A bonus to the mana restored
         public float CeruleanManaGainManaRegenBonus; //A bonus to the mana restored
+        public float BaseMaxManaGain = 25f;
 
 
         public bool IsDrinking; //Whether the player is currently drinking cerulean
@@ -80,6 +88,7 @@ namespace tsorcRevamp.Systems
         public const float ManaRegenDelayBonusDivisor = 3.8f; //lower is better
         public override void PostUpdateMiscEffects()
         {
+            var arcaneSorceryPlayer = Player.GetModPlayer<ArcaneSorceryPlayer>();
             if (Player.manaFlower)
             {
                 CeruleanDrinkTimerMax = CeruleanDrinkTimerMaxBase - CeruleanDrinkTimerReductionManaFlower;
@@ -88,9 +97,13 @@ namespace tsorcRevamp.Systems
             {
                 CeruleanDrinkTimerMax = CeruleanDrinkTimerMaxBase;
             }
-            CeruleanManaGainMaxManaBonus = Player.statManaMax2 * ArcaneSorceryPlayer.CeruleanFlaskMaxManaScaling / 100f;
+            CeruleanManaGainMaxManaBonus = Player.statManaMax2 * (BaseMaxManaGain / 100f);
+            
+            CeruleanManaGainMaxManaBonus *= arcaneSorceryPlayer.CeruleanFlaskMaxManaScalingMult;
+            
             CeruleanManaGainManaRegenBonus = 1f + ((float)Player.manaRegenBonus / ManaRegenBonusDivisor); //manaRegenBonus is usually in the double digits so this is good scaling 
             CeruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / ManaRegenDelayBonusDivisor);  //manaRegenDelayBonus is given out at 1 or 0.5 by 2 sources in vanilla so this is also very good scaling
+            
             if (Player.manaRegenBuff) //so mana regen pot does something
             {
                 CeruleanRestorationTimerBonus = 1f + (ManaRegenPotRestorationTimerBonus / 100f) + (Player.manaRegenDelayBonus / (ManaRegenDelayBonusDivisor - 0.4f));
@@ -121,10 +134,37 @@ namespace tsorcRevamp.Systems
         }
         public void UpdateDrinkingCerulean()
         {
+            tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
+            var arcaneSorceryPlayer = Player.GetModPlayer<ArcaneSorceryPlayer>();
             //Attempt to drink if the player isn't already
             if (!IsDrinking /*&& !TryDrinkEstus()*/)
             {
                 return;
+            }
+            
+            if (arcaneSorceryPlayer.Enabled)
+            {
+                //Slow player for whole duration of action
+                Player.velocity.X *= 0.9f;
+                Player.eocHit = 0;
+                
+                if (CeruleanDrinkTimer == 0)
+                {
+                    // Chloranthy Ring (I or II): trade the standard drink slowdown for temporary
+                    // vulnerability. Without the ring, the Crippled debuff blocks extra jumps, wings,
+                    // rocket boots, and reduces moveSpeed by 10% for the drink duration (ground-bound
+                    // and slowed). With the ring, those mobility losses are swapped for Ichor
+                    // (-15 defense + glow) — full mobility but more damage taken if you get hit.
+                    if (modPlayer.ChloranthyRing1 || modPlayer.ChloranthyRing2)
+                    {
+                        Player.AddBuff(BuffID.Ichor, (int)(CeruleanDrinkTimerMax * 60f));
+                    }
+                    else
+                    {
+                        Player.AddBuff(ModContent.BuffType<Crippled>(), (int)(CeruleanDrinkTimerMax * 60f));
+                        Player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(CeruleanDrinkTimerMax * 60f));
+                    }
+                }
             }
 
             //Progress the action
@@ -137,9 +177,6 @@ namespace tsorcRevamp.Systems
             {
                 Player.GetModPlayer<tsorcRevampPlayer>().forcedBodyFrame = PlayerFrames.Use2;
             }
-
-            //Slow player for whole duration of action
-            Player.eocHit = 0;
 
             if (CeruleanDrinkTimer >= CeruleanDrinkTimerMax) //Once finished drinking:
             {
@@ -157,13 +194,14 @@ namespace tsorcRevamp.Systems
                 IsDrinking = false; //No longer drinking
                 CeruleanChargesCurrent--; //Remove a charge
                 CeruleanDrinkTimer = 0; //Set the timer back to 0
-                Player.ManaEffect((int)((CeruleanManaGain + CeruleanManaGainMaxManaBonus) * CeruleanManaGainManaRegenBonus * CeruleanRestorationTimerBonus)); //Show blue restoration text equal to mana gain
+                Player.ManaEffect((int)(((CeruleanManaGain * arcaneSorceryPlayer.CeruleanFlatManaGainMult) + CeruleanManaGainMaxManaBonus) * CeruleanManaGainManaRegenBonus * CeruleanRestorationTimerBonus)); //Show blue restoration text equal to mana gain
                 IsCeruleanRestoring = true; //Commence restoration process
             }
         }
 
         public override void PostUpdate()
         {
+            var arcaneSorceryPlayer = Player.GetModPlayer<ArcaneSorceryPlayer>();
             if (IsCeruleanRestoring) //Is the player's mana restoring from cerulean?
             {
                 CeruleanRestorationTimer++; //Advance the timer
@@ -171,7 +209,7 @@ namespace tsorcRevamp.Systems
                 if (CeruleanRestorationTimer <= CeruleanRestorationTimerMax && Player.statMana < Player.statManaMax2) //If the timer is less or equal to timer max and player mp is not at max
                 {
 
-                    CeruleanManaPerTick += ((CeruleanManaGain + CeruleanManaGainMaxManaBonus) * CeruleanManaGainManaRegenBonus * CeruleanRestorationTimerBonus) / CeruleanRestorationTimerMax; //Heal this much each tick
+                    CeruleanManaPerTick += (((CeruleanManaGain * arcaneSorceryPlayer.CeruleanFlatManaGainMult) + CeruleanManaGainMaxManaBonus) * CeruleanManaGainManaRegenBonus * CeruleanRestorationTimerBonus) / CeruleanRestorationTimerMax; //Heal this much each tick
 
                     if (CeruleanManaPerTick >= (int)CeruleanManaPerTick)
                     {
@@ -192,15 +230,24 @@ namespace tsorcRevamp.Systems
                 }
             }
         }
+    }
 
-
-
-
-
-
-
-
-
-
+    public class CeruleanFlaskItems : GlobalItem
+    {
+        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+        {
+            Player player = Main.LocalPlayer;
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+            if (modPlayer.SoulsMode && player.whoAmI == Main.myPlayer && (item.type == ItemID.ManaFlower || item.type == ItemID.ArcaneFlower || item.type == ItemID.MagnetFlower || item.type == ItemID.ManaCloak || item.type == ModContent.ItemType<CelestialCloak>()))
+            {
+                int add = item.type == ModContent.ItemType<CelestialCloak>() ? 10 : 2;
+                tooltips.Insert(ttindex + add, new TooltipLine(Mod, "DrinkTime", LangUtils.GetTextValue("CommonItemTooltip.CeruleanManaFlower", CeruleanFlaskPlayer.CeruleanManaFlowerStrength)));
+            }
+            if (modPlayer.SoulsMode && player.whoAmI == Main.myPlayer && item.type == ItemID.ManaRegenerationPotion && ttindex != -1)
+            {
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "RestorationTime", LangUtils.GetTextValue("Items.VanillaItems.CeruleanManaRegenerationPotion", CeruleanFlaskPlayer.ManaRegenPotRestorationTimerBonus)));
+            }
+        }
     }
 }

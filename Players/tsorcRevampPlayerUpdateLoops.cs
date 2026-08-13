@@ -1206,6 +1206,11 @@ namespace tsorcRevamp
 
         public override void PreUpdateBuffs()
         {
+            if (BearerOfTheCurse)
+            {
+                Player.GetModPlayer<ArcaneSorceryPlayer>().Enabled = true;
+            }
+            
             //Gives the DPS meter effect for free
             //Do not ask why it is called "accDreamCatcher"
             //This has to go here for it to work. Don't ask me why either. I value my sanity too much to go check.
