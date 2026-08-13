@@ -83,6 +83,10 @@ using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
 using System.Linq;
 using Terraria.Net;
+using tsorcRevamp.Items.Accessories.Defensive.Bands;
+using tsorcRevamp.Items.Accessories.Magic;
+using tsorcRevamp.Items.Armors;
+using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Systems;
 
@@ -191,6 +195,7 @@ namespace tsorcRevamp
         public static Dictionary<int, List<(int ID, int Count)>> ModifiedRecipes;
         public static Dictionary<int, Vector2> WhipTipBases;
         public static Dictionary<int, float> WhipRanges;
+        public static Dictionary<int, int> ManaIncreasingItems;
         //Active Shields Revamp: maps shield item type -> block balance data. Populated in PopulateArrays().
         public static Dictionary<int, ActiveShieldData> ActiveShieldRegistry;
         //Active Shields Revamp: NPC types that the shield "body-block" wall should stop even though they're flagged
@@ -1945,6 +1950,7 @@ namespace tsorcRevamp
             };
             #endregion
 
+            #region WormNPCs
             WormNPCs = new List<int>();
             {
                 WormNPCs.AddRange(GiantWormSegments);
@@ -1970,6 +1976,7 @@ namespace tsorcRevamp
                 WormNPCs.AddRange(LichKingSerpentSegments);
                 WormNPCs.AddRange(SeathSegments);
             }
+            #endregion
 
             #region Vanilla Melee BlackList
             VanillaMeleeBlackList = new List<int>()
@@ -1979,6 +1986,61 @@ namespace tsorcRevamp
                 ItemID.Flairon, ItemID.NorthPole,
                 ItemID.ScourgeoftheCorruptor, ItemID.VampireKnives, ItemID.Zenith
                 //ItemID.ChainKnife, ItemID.ChainGuillotines, ItemID.GolemFist, ItemID.KOCannon, ItemID.PiercingStarlight
+            };
+            #endregion
+
+            #region ManaIncreasingItems dictionary
+            ManaIncreasingItems = new Dictionary<int, int>()
+            {
+                {ItemID.HallowedHeadgear, 100},
+                {ItemID.TitaniumHeadgear, 100},
+                {ItemID.DiamondRobe, 80},
+                {ItemID.OrichalcumHeadgear, 80},
+                {ItemID.AdamantiteHeadgear, 80},
+                {ItemID.ChlorophyteHeadgear, 80},
+                {ItemID.MagicHat, 60},
+                {ItemID.GypsyRobe, 60},
+                {ItemID.EmeraldRobe, 60},
+                {ItemID.RubyRobe, 60},
+                {ItemID.AmberRobe, 60},
+                {ItemID.PalladiumHeadgear, 60},
+                {ItemID.MythrilHood, 60},
+                {ItemID.SpectreMask, 60},
+                {ItemID.NebulaHelmet, 60},
+                {ItemID.TopazRobe, 40},
+                {ItemID.SapphireRobe, 40},
+                {ItemID.JungleHat, 40},
+                {ItemID.AncientCobaltHelmet, 40},
+                {ItemID.CobaltHat, 40},
+                {ItemID.AncientBattleArmorShirt, 40},
+                {ItemID.AncientBattleArmorPants, 40},
+                {ItemID.AmethystRobe, 20},
+                {ItemID.JungleShirt, 20},
+                {ItemID.AncientCobaltBreastplate, 20},
+                {ItemID.JunglePants, 20},
+                {ItemID.AncientCobaltLeggings, 20},
+                {ItemID.BandofStarpower, 20},
+                {ItemID.ManaRegenerationBand, 20},
+                {ItemID.MagicCuffs, 20},
+                {ItemID.CelestialCuffs, 20},
+                {ModContent.ItemType<BandOfCosmicPower>(), BandOfCosmicPower.MaxManaIncrease},
+                {ModContent.ItemType<BandOfGreatCosmicPower>(), BandOfGreatCosmicPower.MaxManaIncrease},
+                {ModContent.ItemType<BandOfPhenomenalCosmicPower>(), BandOfPhenomenalCosmicPower.MaxManaIncrease},
+                {ModContent.ItemType<CelestialCloak>(), CelestialCloak.MaxMana},
+                {ModContent.ItemType<NecromancersShirt>(), NecromancersShirt.MaxMana},
+                {ModContent.ItemType<BlueHerosHat>(), BlueHerosHat.MaxMana},
+                {ModContent.ItemType<DragoonHelmet>(), DragoonHelmet.MaxMana},
+                {ModContent.ItemType<DragoonHelmet2>(), DragoonHelmet2.MaxMana},
+                {ModContent.ItemType<AnkorWatHelmet>(), AnkorWatHelmet.MaxMana},
+                {ModContent.ItemType<DragonScaleHelmet>(), DragonScaleHelmet.MaxMana},
+                {ModContent.ItemType<GenjiGreaves>(), GenjiGreaves.MaxMana},
+                {ModContent.ItemType<MimeticHat>(), MimeticHat.MaxMana},
+                {ModContent.ItemType<ArtoriasOfTheAbyssHelm>(), ArtoriasOfTheAbyssHelm.MaxMana},
+                {ModContent.ItemType<RedHerosHat>(), RedHerosHat.MaxMana},
+                {ModContent.ItemType<LudensTempest>(), LudensTempest.Mana},
+                {ModContent.ItemType<RedClothTunic>(), RedClothTunic.MaxMana},
+                {ModContent.ItemType<RedClothPants>(), RedClothTunic.MaxMana},
+                {ModContent.ItemType<RedClothHat>(), RedClothTunic.MaxMana},
             };
             #endregion
         }

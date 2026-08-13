@@ -2040,7 +2040,7 @@ namespace tsorcRevamp
         {
             if (self.magicCuffs && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                int ManaGain = (int)(info.SourceDamage * (MagicEdits.BotCManaRestorationCuffsPercentage / 100f));
+                int ManaGain = (int)(info.SourceDamage * (ArcaneSorceryItems.BotCManaRestorationCuffsPercentage / 100f));
                 self.statMana += ManaGain;
                 if (self.statMana > self.statManaMax2)
                 {
@@ -2055,7 +2055,7 @@ namespace tsorcRevamp
         {
             if ((itemToPickUp.type == ItemID.Star || itemToPickUp.type == ItemID.SugarPlum || itemToPickUp.type == ItemID.SoulCake || itemToPickUp.type == ItemID.ManaCloakStar) && self.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
             {
-                int ManaGain = (int)(self.statManaMax2 * (MagicEdits.BotCManaStarMaxManaPercentage / 100f));
+                int ManaGain = (int)(self.statManaMax2 * (ArcaneSorceryItems.BotCManaStarMaxManaPercentage / 100f));
                 SoundEngine.PlaySound(SoundID.Grab, new Vector2((int)self.position.X, (int)self.position.Y));
                 self.statMana += ManaGain;
                 self.ManaEffect(ManaGain);

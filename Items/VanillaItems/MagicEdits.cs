@@ -13,8 +13,6 @@ namespace tsorcRevamp.Items.VanillaItems
         public static int RedClothMaxManaBoost = 40;
         public static float RedClothManaCostReduction = 5f;
 
-        public const float BotCManaRestorationCuffsPercentage = 34;
-        public const float BotCManaStarMaxManaPercentage = 10;
         public override void SetDefaults(Item item)
         {
             if (item.type == ItemID.AmberStaff)
@@ -158,6 +156,7 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public override void UpdateArmorSet(Player player, string set)
         {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             if (set == "RedClothRobe")
             {
                 player.setBonus = Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RedClothRobe").FormatWith(RedClothMaxManaBoost, RedClothManaCostReduction);

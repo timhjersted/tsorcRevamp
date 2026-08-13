@@ -6151,6 +6151,7 @@ Mods: {
 					一把为魔法使用者制作的剑
 					使用者的魔力值超过 {0} 后，每 {1} 点魔力增加 1 点伤害
 					'''
+				// Tooltip0: Deals +1 damage for every {1} max mana the user has over {0}
 			}
 
 			Murassame: {
@@ -6160,6 +6161,7 @@ Mods: {
 					一把为魔法使用者制作的剑
 					使用者的魔力值超过 {0} 后，每 {1} 点魔力增加 1 点伤害
 					'''
+				// Tooltip0: Deals +1 damage for every {1} max mana the user has over {0}
 			}
 
 			Masamune: {

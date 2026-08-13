@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Body)]
     public class RedClothTunic : ModItem
     {
-        public static int FlatDmg = 2;
-        public static int MaxMana = 40;
-        public static float ManaCost = 5f;
+        public const int FlatDmg = 2;
+        public const int MaxMana = 40;
+        public const float ManaCost = 5f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(FlatDmg, MaxMana, ManaCost);
         public override void SetStaticDefaults()
         {
