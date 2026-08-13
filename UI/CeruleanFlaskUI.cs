@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.UI
 {
@@ -41,14 +42,14 @@ namespace tsorcRevamp.UI
             }
 
             Player player = Main.LocalPlayer;
-            var ceruleanPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>();
+            var ceruleanPlayer = Main.LocalPlayer.GetModPlayer<CeruleanFlaskPlayer>();
 
             if (player.whoAmI == Main.myPlayer && !Main.gameMenu)
             {
                 // Adjusting chargesFrameCount to 24 to match the max stack
                 int chargesFrameCount = 73; // Changed from 13 to 25
-                int chargesCurrent = ceruleanPlayer.ceruleanChargesCurrent;
-                int chargesMax = ceruleanPlayer.ceruleanChargesMax;
+                int chargesCurrent = ceruleanPlayer.CeruleanChargesCurrent;
+                int chargesMax = ceruleanPlayer.CeruleanChargesMax;
                 float chargesPercentage = (float)chargesCurrent / chargesMax;
                 chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
 
@@ -58,12 +59,12 @@ namespace tsorcRevamp.UI
 
                 int frameHeight = textureCharges.Height / chargesFrameCount;
                 int frame;
-                frame = ceruleanPlayer.ceruleanChargesCurrent;
+                frame = ceruleanPlayer.CeruleanChargesCurrent;
 
                 int drawFrame = frameHeight * frame;
                 Rectangle sourceRectangle = new Rectangle(0, drawFrame, textureCharges.Width, frameHeight);
                 Color numbercolor = Color.GhostWhite; // Changed color to blue
-                if (ceruleanPlayer.ceruleanChargesCurrent == 0)
+                if (ceruleanPlayer.CeruleanChargesCurrent == 0)
                 {
                     numbercolor = Color.LightPink;
                 }
@@ -83,7 +84,7 @@ namespace tsorcRevamp.UI
 
                 // Draw the number next to the sprite (new)
                 Vector2 numberPosition = new Vector2(Main.screenWidth - ConfigInstance.CeruleanFlaskPosX + scaledWidth + 8, Main.screenHeight - ConfigInstance.CeruleanFlaskPosY + (scaledHeight / 2) - 10);
-                Utils.DrawBorderString(spriteBatch, ceruleanPlayer.ceruleanChargesCurrent.ToString(), numberPosition, numbercolor, 1f);
+                Utils.DrawBorderString(spriteBatch, ceruleanPlayer.CeruleanChargesCurrent.ToString(), numberPosition, numbercolor, 1f);
             }
             base.Draw(spriteBatch);
         }

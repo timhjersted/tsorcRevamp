@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items
@@ -83,8 +84,8 @@ namespace tsorcRevamp.Items
         }
         public override bool? UseItem(Player player) // Won't consume item without this
         {
-            player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax = ((player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax - tsorcRevampEstusPlayer.DefaultEstusChargesMax) * 3) + tsorcRevampCeruleanPlayer.DefaultCeruleanChargesMax;
-            player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain = player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain - tsorcRevampEstusPlayer.DefaultEstusHealthGain + tsorcRevampCeruleanPlayer.DefaultCeruleanManaGain;
+            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax = ((player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax - tsorcRevampEstusPlayer.DefaultEstusChargesMax) * 3) + CeruleanFlaskPlayer.DefaultCeruleanChargesMax;
+            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanManaGain = player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain - tsorcRevampEstusPlayer.DefaultEstusHealthGain + CeruleanFlaskPlayer.DefaultCeruleanManaGain;
             return true;
         }
         public override void UseStyle(Player player, Rectangle rectangle)
@@ -247,12 +248,13 @@ namespace tsorcRevamp.Items
                     }
                 case 2:
                     {
-                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Accuracy", LangUtils.GetTextValue("Items.Darksign.Ranged", (int)(modPlayer.BotCAccuracyGain * 100f), (int)(modPlayer.BotCAccuracyLoss * 100f), modPlayer.BotCAccuracyMaxFlatCrit, modPlayer.BotCRangedBaseCritMult + modPlayer.BotCAccuracyMaxCritMult, modPlayer.BotCRangedBaseCritMult)));
+                        //tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Accuracy", LangUtils.GetTextValue("Items.Darksign.Ranged", (int)(modPlayer.AccuracyGain * 100f), (int)(modPlayer.AccuracyLoss * 100f), modPlayer.AccuracyMaxFlatCrit, modPlayer.AccuracyRangedBaseCritMult + modPlayer.AccuracyMaxCritMult, modPlayer.AccuracyRangedBaseCritMult)));
                         break;
                     }
                 case 3:
                     {
-                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "CeruleanFlask", LangUtils.GetTextValue("Items.Darksign.Magic", tsorcRevampPlayer.BotCCeruleanFlaskMaxManaScaling, modPlayer.BotCMagicDamageAmp, modPlayer.BotCMagicAttackSpeedAmp, (int)(modPlayer.BotCAttunementManaReduction * 100f), (int)(modPlayer.BotCAttunementManaReduction * modPlayer.BotCAttunementMaxStacks * 100f), modPlayer.BotCAttunementMaxStacks)));
+                        var arcaneSorceryPlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
+                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "CeruleanFlask", LangUtils.GetTextValue("Items.Darksign.Magic", ArcaneSorceryPlayer.CeruleanFlaskMaxManaScaling, arcaneSorceryPlayer.MagicDamageAmp, arcaneSorceryPlayer.MagicAttackSpeedAmp)));
                         break;
                     }
                 case 4:

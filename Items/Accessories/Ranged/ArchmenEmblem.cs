@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.LegacyCode;
 
 namespace tsorcRevamp.Items.Accessories.Ranged
 {
@@ -41,6 +42,7 @@ namespace tsorcRevamp.Items.Accessories.Ranged
             player.GetDamage(DamageClass.Ranged) += RangedDmg / 100f;
             player.GetDamage(DamageClass.Ranged).Flat = FlatRangedDmg;
             player.magicQuiver = true;
+            player.GetModPlayer<AttunementPlayer>().Enabled  = true;
         }
 
     }

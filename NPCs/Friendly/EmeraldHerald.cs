@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -168,13 +169,13 @@ namespace tsorcRevamp.NPCs.Friendly
                 if (player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
                 {
                     player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax += 1;
-                    player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax += 3;
+                    player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax += 3;
                     if (player.inventory[shardIndex].stack == 1) player.inventory[shardIndex].TurnToAir();
                     else player.inventory[shardIndex].stack--;
                     if (Main.netMode != NetmodeID.Server)
                     {
                         Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.EstusUpgrade") + player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax, Color.OrangeRed);
-                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.CeruleanUpgrade") + player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax, Color.RoyalBlue);
+                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.CeruleanUpgrade") + player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax, Color.RoyalBlue);
                     }
                 }
                 return;

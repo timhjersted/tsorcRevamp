@@ -507,8 +507,8 @@ Mods: {
 			SpawnRemoved: Spawn point removed!
 			AccessPiggyBank: Access Piggy Bank
 			AccessSafe: Access Safe
-			BotCHit: Hit! {0}%
-			BotCMiss: Miss! {0}%
+			AccuracyHit: Hit! {0}%
+			AccuracyMiss: Miss! {0}%
 			Rebound: Rebound!
 			MinionInfoDisplay: "{0} / {1} Minion Slots"
 			SentryInfoDisplay: "{0} / {1} Sentry Slots"
@@ -6182,8 +6182,8 @@ Mods: {
 					'''
 					The blade almost cannot be seen it cuts so fast, ripping enemies to shreds in seconds
 					Has the power to shoot a magical water flame from its blade
-					Deals +1 damage for every {1} max mana the user has over {0}
 					'''
+				Tooltip0: Deals +1 damage for every {1} max mana the user has over {0}
 			}
 
 			MeteorShower: {
@@ -10194,6 +10194,16 @@ Mods: {
 				DisplayName: Spell Flux Debuff
 				Description: Mods.tsorcRevamp.Buffs.SpellFluxDebuff.Description
 			}
+
+			AccuracyBuff: {
+				DisplayName: Accuracy Buff
+				Description: Mods.tsorcRevamp.Buffs.AccuracyBuff.Description
+			}
+
+			AttunementBuff: {
+				DisplayName: Attunement Buff
+				Description: Mods.tsorcRevamp.Buffs.AttunementBuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -11130,6 +11140,7 @@ Mods: {
 			RedKnightPoisonCurtainController.DisplayName: Red Knight's Poison Curtain
 			RedKnightPoisonRainController.DisplayName: Red Knight's Poison Rain
 			RedKnightTeleportFeintBlast.DisplayName: Red Knight's Teleport Feint Blast
+			GigasNovaTelegraph.DisplayName: Gigas Nova Telegraph
 		}
 
 		NPCs: {

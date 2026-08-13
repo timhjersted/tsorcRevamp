@@ -15,7 +15,9 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.LegacyCode;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
+using tsorcRevamp.Systems;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -121,7 +123,7 @@ namespace tsorcRevamp.Items
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if ((player.GetModPlayer<tsorcRevampPlayer>().isDodging && !player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging) || player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking || player.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking)
+                if ((player.GetModPlayer<tsorcRevampPlayer>().isDodging && !player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging) || player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking || player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
                 {
                     return false;
                 }
@@ -566,26 +568,6 @@ namespace tsorcRevamp.Items
                 if (hit.Crit)
                 {
                     player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
-                }
-            }
-            // Attunement: magic builds the same Conqueror stacks, but cashes them out as a mana-cost
-            // reduction instead of summon damage (see tsorcRevampPlayer.ModifyManaCost). Magic's
-            // scarcity in Souls mode is mana, not damage — passive regen is pinned off and every point
-            // comes from a Cerulean charge — so the reward is more casts per charge, not bigger hits.
-            if (item.DamageType == DamageClass.Magic && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                if (modPlayer.BotCAttunementStacks < modPlayer.BotCAttunementMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, player.Center);
-                }
-                else if (modPlayer.BotCAttunementStacks == modPlayer.BotCAttunementMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
-                }
-                player.AddBuff(ModContent.BuffType<Buffs.Runeterra.Magic.Attunement>(), player.GetModPlayer<tsorcRevampPlayer>().BotCAttunementDuration * 60);
-                if (hit.Crit)
-                {
-                    player.AddBuff(ModContent.BuffType<Buffs.Runeterra.Magic.Attunement>(), player.GetModPlayer<tsorcRevampPlayer>().BotCAttunementDuration * 60);
                 }
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && tsorcRevamp.EnemiesOOA.Contains(target.type))

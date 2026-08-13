@@ -507,8 +507,8 @@ Mods: {
 			SpawnRemoved: 重生点已移除！
 			AccessPiggyBank: 打开猪猪存钱罐
 			AccessSafe: 打开保险箱
-			BotCHit: 中！{0}%
-			BotCMiss: 马… {0}%
+			// AccuracyHit: Hit! {0}%
+			// AccuracyMiss: Miss! {0}%
 			Rebound: 反弹！
 			MinionInfoDisplay: "{0}/{1} 召唤栏"
 			SentryInfoDisplay: "{0}/{1} 哨兵栏"
@@ -6170,6 +6170,7 @@ Mods: {
 					拥有从刀刃上射出魔法水焰的力量
 					使用者的魔力值超过 {0} 后，每 {1} 点魔力增加 1 点伤害
 					'''
+				// Tooltip0: Deals +1 damage for every {1} max mana the user has over {0}
 			}
 
 			MeteorShower: {
@@ -10169,6 +10170,16 @@ Mods: {
 				// DisplayName: Spell Flux Debuff
 				// Description: Mods.tsorcRevamp.Buffs.SpellFluxDebuff.Description
 			}
+
+			AccuracyBuff: {
+				// DisplayName: Accuracy Buff
+				// Description: Mods.tsorcRevamp.Buffs.AccuracyBuff.Description
+			}
+
+			AttunementBuff: {
+				// DisplayName: Attunement Buff
+				// Description: Mods.tsorcRevamp.Buffs.AttunementBuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -11105,6 +11116,7 @@ Mods: {
 			// RedKnightPoisonCurtainController.DisplayName: Red Knight's Poison Curtain
 			// RedKnightPoisonRainController.DisplayName: Red Knight's Poison Rain
 			// RedKnightTeleportFeintBlast.DisplayName: Red Knight's Teleport Feint Blast
+			// GigasNovaTelegraph.DisplayName: Gigas Nova Telegraph
 		}
 
 		NPCs: {

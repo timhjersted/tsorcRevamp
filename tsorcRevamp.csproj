@@ -10,7 +10,7 @@
 
 	<!-- References -->
 	<ItemGroup>
-
+	  <Folder Include="Systems\Player\" />
 	</ItemGroup>
 
 	<!-- Unported 1.3-era assets: kept for reference/art, excluded from compilation

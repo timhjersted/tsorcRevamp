@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 {
@@ -53,7 +54,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             }
             if (player.statMana <= manaCost)
             {
-                if (!player.GetModPlayer<tsorcRevampCeruleanPlayer>().isCeruleanRestoring && !player.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking)
+                if (!player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
                 {
                     MethodSwaps.TryUseQuickMana(player);
                 }

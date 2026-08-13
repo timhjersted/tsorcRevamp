@@ -507,8 +507,8 @@ Mods: {
 			SpawnRemoved: Точка возрождения удалена!
 			AccessPiggyBank: Доступ к Копилке
 			AccessSafe: Доступ к сейфу
-			BotCHit: Попадание! {0}%
-			BotCMiss: Промах! {0}%
+			// AccuracyHit: Hit! {0}%
+			// AccuracyMiss: Miss! {0}%
 			Rebound: Отскок!
 			MinionInfoDisplay: "{0} / {1} Слотов призываемых существ"
 			SentryInfoDisplay: "{0} / {1} Слотов часовых"
@@ -6137,6 +6137,7 @@ Mods: {
 					Обладает способностью выбрасывать из своего лезвия магическое водяное пламя
 					Наносит +1 урон за каждые {1} максимальной маны, вплоть до {0} максимальной маны
 					'''
+				// Tooltip0: Deals +1 damage for every {1} max mana the user has over {0}
 			}
 
 			MeteorShower: {
@@ -10132,6 +10133,16 @@ Mods: {
 				// DisplayName: Spell Flux Debuff
 				// Description: Mods.tsorcRevamp.Buffs.SpellFluxDebuff.Description
 			}
+
+			AccuracyBuff: {
+				// DisplayName: Accuracy Buff
+				// Description: Mods.tsorcRevamp.Buffs.AccuracyBuff.Description
+			}
+
+			AttunementBuff: {
+				// DisplayName: Attunement Buff
+				// Description: Mods.tsorcRevamp.Buffs.AttunementBuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -11068,6 +11079,7 @@ Mods: {
 			// RedKnightPoisonCurtainController.DisplayName: Red Knight's Poison Curtain
 			// RedKnightPoisonRainController.DisplayName: Red Knight's Poison Rain
 			// RedKnightTeleportFeintBlast.DisplayName: Red Knight's Teleport Feint Blast
+			// GigasNovaTelegraph.DisplayName: Gigas Nova Telegraph
 		}
 
 		NPCs: {

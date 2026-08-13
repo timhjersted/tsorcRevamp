@@ -1,6 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Players;
+using tsorcRevamp;
 
 namespace tsorcRevamp.Buffs.Armor
 {

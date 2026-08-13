@@ -6,7 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Armor;
 
-namespace tsorcRevamp.Players
+namespace tsorcRevamp
 {
     public class CursedDragonArmorPlayer : ModPlayer
     {

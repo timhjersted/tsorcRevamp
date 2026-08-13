@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Textures;
 
 namespace tsorcRevamp
@@ -402,7 +403,7 @@ namespace tsorcRevamp
                 // stamina at all, and overdrawing banks the shortfall as debt you must repay before acting again.
                 // The old hard gate was the odd one out, and it made the roll silently unresponsive rather than
                 // letting the player make the risky call themselves.
-                && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 0 && !Player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking && !Player.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking
+                && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 0 && !Player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking && !Player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking
                 && !Player.HasBuff(BuffID.Frozen) && !Player.HasBuff(ModContent.BuffType<Hold>()) && !Player.HasBuff(BuffID.Stoned) && !Player.HasBuff(ModContent.BuffType<Stiff>()))
             {
                 QueueDodgeroll(0.25f, (sbyte)KeyDirection(Player));

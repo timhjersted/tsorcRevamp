@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -42,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         //Only one allowed at a time
         public override bool CanUseItem(Player player)
         {
-            if (player.statMana <= 0 && !player.GetModPlayer<tsorcRevampCeruleanPlayer>().isCeruleanRestoring && !player.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking)
+            if (player.statMana <= 0 && !player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
             {
                 MethodSwaps.TryUseQuickMana(player);
             }

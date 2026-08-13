@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Items
 {
@@ -46,9 +47,9 @@ namespace tsorcRevamp.Items
             if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain < 300)
             {
                 player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain += 30;
-                player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain += 30;
+                player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanManaGain += 30;
                 Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.EstusFlaskPotency") + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain, Color.OrangeRed);
-                Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.CeruleanFlaskPotency") + Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain, Color.RoyalBlue);
+                Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.CeruleanFlaskPotency") + Main.LocalPlayer.GetModPlayer<CeruleanFlaskPlayer>().CeruleanManaGain, Color.RoyalBlue);
                 return true;
             }
             return false;

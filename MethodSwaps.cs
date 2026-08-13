@@ -38,6 +38,7 @@ using tsorcRevamp.Projectiles.Enemy.Triad;
 using tsorcRevamp.Projectiles.Enemy.WyvernMage;
 using tsorcRevamp.Projectiles.Magic;
 using tsorcRevamp.Projectiles.VFX;
+using tsorcRevamp.Systems;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -3089,14 +3090,14 @@ namespace tsorcRevamp
 
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
-            tsorcRevampCeruleanPlayer ceruleanPlayer = player.GetModPlayer<tsorcRevampCeruleanPlayer>();
-            if (modPlayer.SoulsMode && player.statMana < player.statManaMax2 && ceruleanPlayer.ceruleanChargesCurrent > 0)
+            CeruleanFlaskPlayer ceruleanFlaskPlayer = player.GetModPlayer<CeruleanFlaskPlayer>();
+            if (modPlayer.SoulsMode && player.statMana < player.statManaMax2 && ceruleanFlaskPlayer.CeruleanChargesCurrent > 0)
             {
-                if (player == Main.LocalPlayer && !player.mouseInterface && ceruleanPlayer.ceruleanChargesCurrent > 0 && player.itemAnimation == 0
-                && !modPlayer.isDodging && !ceruleanPlayer.isDrinking && !player.CCed && !estusPlayer.isDrinking && !ceruleanPlayer.isCeruleanRestoring)
+                if (player == Main.LocalPlayer && !player.mouseInterface && ceruleanFlaskPlayer.CeruleanChargesCurrent > 0 && player.itemAnimation == 0
+                && !modPlayer.isDodging && !ceruleanFlaskPlayer.IsDrinking && !player.CCed && !estusPlayer.isDrinking && !ceruleanFlaskPlayer.IsCeruleanRestoring)
                 {
-                    ceruleanPlayer.isDrinking = true;
-                    ceruleanPlayer.ceruleanDrinkTimer = 0;
+                    ceruleanFlaskPlayer.IsDrinking = true;
+                    ceruleanFlaskPlayer.CeruleanDrinkTimer = 0;
 
                     // Cerulean drinks intentionally apply NO mobility/defense debuffs — drinking for
                     // mana shouldn't lock the player down. The Chloranthy ring's "trade slowdown for
@@ -3159,12 +3160,12 @@ namespace tsorcRevamp
 
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
-            tsorcRevampCeruleanPlayer ceruleanPlayer = player.GetModPlayer<tsorcRevampCeruleanPlayer>();
+            CeruleanFlaskPlayer ceruleanFlaskPlayer = player.GetModPlayer<CeruleanFlaskPlayer>();
 
             if (modPlayer.SoulsMode && player.statLife < player.statLifeMax2)
             {
                 if (player == Main.LocalPlayer && !player.mouseInterface && estusPlayer.estusChargesCurrent > 0 && player.itemAnimation == 0
-                && !modPlayer.isDodging && !estusPlayer.isDrinking && !player.CCed && !ceruleanPlayer.isDrinking)
+                && !modPlayer.isDodging && !estusPlayer.isDrinking && !player.CCed && !ceruleanFlaskPlayer.IsDrinking)
                 {
                     estusPlayer.isDrinking = true;
                     estusPlayer.estusDrinkTimer = 0;

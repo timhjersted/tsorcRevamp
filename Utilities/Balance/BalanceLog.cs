@@ -6,6 +6,7 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Utilities.Balance
 {
@@ -382,7 +383,7 @@ namespace tsorcRevamp.Utilities.Balance
         {
             try
             {
-                return player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesCurrent;
+                return player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesCurrent;
             }
             catch
             {

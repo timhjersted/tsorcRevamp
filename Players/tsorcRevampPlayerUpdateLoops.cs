@@ -32,6 +32,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.Projectiles.Summon.YoungHunter;
 using tsorcRevamp.Projectiles.Pets;
+using tsorcRevamp.Systems;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -121,38 +122,11 @@ namespace tsorcRevamp
         public int BotCLethalTempoMaxStacks = 6;
         public float BotCLethalTempoBonus = 0.07f;
 
-        public float BotCRangedBaseCritMult = 0.5f;
-        public float BotCCurrentAccuracyPercent = 0f;
-        public float BotcAccuracyPercentMax = 1f;
-        // 10, not 8.5, so each of the ten 10% accuracy bands is worth exactly 1% crit — the buff icon shows
-        // which band you're in, and "one frame = one percent" is a rule the player can hold in their head.
-        public float BotCAccuracyMaxFlatCrit = 10f;
-        /// <summary>Which 10% band the accuracy meter was in last frame, for the buff icon frame and to fire
-        /// combat text only on band changes instead of on every projectile. -1 = uninitialised.</summary>
-        public int BotCLastAccuracyBand = -1;
-        public float BotCAccuracyMaxCritMult = 0.75f;
-        public float BotCAccuracyGain = 0.04f;
-        public float BotCAccuracyLoss = 0.08f;
-        public float CurrentTotalRangedCritChance;
-
-        public const float BotCCeruleanFlaskMaxManaScaling = 25f;
-        public float BotCMagicDamageAmp = 15f;
-        public float BotCMagicAttackSpeedAmp = 15f;
-
         public float BotCSummonBaseDamageMult = 0.4f;
         public int BotCConquerorDuration = 4;
         public float BotCConquerorStacks = 0;
         public int BotCConquerorMaxStacks = 10;
         public float BotCConquerorBonus = 0.06f;
-
-        // Attunement (magic). Its own counter rather than sharing Conqueror's, so the two buffs can
-        // each describe themselves accurately and a magic/summon hybrid isn't paid twice per stack.
-        /// <summary>Mana cost reduction per stack. At the 10-stack cap this is 30% off, roughly 1.43x
-        /// the casts out of one Cerulean charge — a real stretch without trivialising the flask economy.</summary>
-        public float BotCAttunementManaReduction = 0.03f;
-        public int BotCAttunementDuration = 4;
-        public float BotCAttunementStacks = 0;
-        public int BotCAttunementMaxStacks = 10;
         public float BotCFullConquerorBonusTagDuration = 0.1f;
 
         public bool SteraksGage = false;
@@ -391,25 +365,6 @@ namespace tsorcRevamp
         // True for either Unkindled or Bearer of the Curse — gate Souls-system features (Estus/Cerulean UI,
         // bonfire refills, drop bonuses, recipe conditions) on this. BotC-only features keep checking BearerOfTheCurse.
         public bool SoulsMode => Unkindled || BearerOfTheCurse;
-
-        /// <summary>
-        /// Attunement payout: Conqueror stacks make magic cheaper to cast.
-        ///
-        /// Restricted to magic so it can't quietly discount summon staves, which already benefit from
-        /// the same stacks through Conqueror's damage bonus and would otherwise be paid twice.
-        /// </summary>
-        public override void ModifyManaCost(Item item, ref float reduce, ref float mult)
-        {
-            if (!BearerOfTheCurse || BotCAttunementStacks <= 0 || item.DamageType != DamageClass.Magic)
-            {
-                return;
-            }
-
-            float reduction = Math.Min(
-                BotCAttunementStacks * BotCAttunementManaReduction,
-                BotCAttunementMaxStacks * BotCAttunementManaReduction);
-            mult *= 1f - reduction;
-        }
 
         // Weapon stamina usage. Classic pays none either way.
         //
@@ -1437,18 +1392,6 @@ namespace tsorcRevamp
                 Player.noKnockback = true;
             }
 
-            // Accuracy meter readout. Unlike its stack-based siblings this isn't granted by landing a hit — it's
-            // a persistent meter, so the buff is refreshed every frame (2 ticks to avoid flicker) rather than
-            // given a duration. Shown while you're holding a ranged weapon OR the meter is above zero, so a
-            // ranged build always has the readout while a melee BotC never sees it on their buff bar.
-            if (BearerOfTheCurse
-                && (BotCCurrentAccuracyPercent > 0f
-                    || (Player.HeldItem != null && !Player.HeldItem.IsAir
-                        && Player.HeldItem.DamageType == DamageClass.Ranged && Player.HeldItem.damage > 0)))
-            {
-                Player.AddBuff(ModContent.BuffType<Buffs.Runeterra.Ranged.Accuracy>(), 2);
-            }
-
             if (Player.HasBuff(BuffID.WellFed))
             {
                 Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += MinorEdits.BotCWellFedStaminaRegen / 100f;
@@ -1487,16 +1430,6 @@ namespace tsorcRevamp
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 Player.GetAttackSpeed(DamageClass.Melee) *= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus);
-
-                CurrentTotalRangedCritChance = Player.GetTotalCritChance(DamageClass.Ranged) + Player.HeldItem.crit; //catch total ranged crit chance
-                Player.GetCritChance(DamageClass.Ranged) -= Player.GetTotalCritChance(DamageClass.Ranged) + Player.HeldItem.crit; //subtract total ranged crit chance from ranged crit chance because you can't alter total ranged crit chance
-                Player.GetCritChance(DamageClass.Ranged) += (CurrentTotalRangedCritChance + (BotCCurrentAccuracyPercent * BotCAccuracyMaxFlatCrit)) * (BotCRangedBaseCritMult + (BotCCurrentAccuracyPercent * BotCAccuracyMaxCritMult)); //return total ranged crit chance in a way that lets you multiply it with accuracy
-
-                if (!Player.HasBuff(BuffID.ManaSickness))
-                {
-                    Player.GetDamage(DamageClass.Magic) *= 1f + (BotCMagicDamageAmp / 100f);
-                    Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (BotCMagicAttackSpeedAmp / 100f);
-                }
 
                 Player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) /= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus); //neutralizing Lethal Tempo attack speed changes
                 Player.GetDamage(DamageClass.Summon) *= BotCSummonBaseDamageMult + (BotCConquerorStacks * BotCConquerorBonus);
@@ -2755,9 +2688,9 @@ namespace tsorcRevamp
                 tsorcRevampEstusPlayer estusPlayer = Player.GetModPlayer<tsorcRevampEstusPlayer>();
                 estusPlayer.isDrinking = false;
                 estusPlayer.estusDrinkTimer = 0;
-                tsorcRevampCeruleanPlayer ceruleanPlayer = Player.GetModPlayer<tsorcRevampCeruleanPlayer>();
-                ceruleanPlayer.isDrinking = false;
-                ceruleanPlayer.ceruleanDrinkTimer = 0;
+                var ceruleanPlayer = Player.GetModPlayer<CeruleanFlaskPlayer>();
+                ceruleanPlayer.IsDrinking = false;
+                ceruleanPlayer.CeruleanDrinkTimer = 0;
             }
 
             if (Player.respawnTimer > 240 && !tsorcRevampWorld.BossAlive && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Special.AbyssCataclysm>()))

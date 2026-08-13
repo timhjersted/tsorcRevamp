@@ -4,7 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Players;
+using tsorcRevamp;
 
 namespace tsorcRevamp.Items.Accessories.Damage
 {

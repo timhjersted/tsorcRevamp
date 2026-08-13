@@ -10,7 +10,9 @@ using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.LegacyCode;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -159,9 +161,9 @@ namespace tsorcRevamp.Items.VanillaItems
                 SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.BotCNoHeal"));
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.DamageType == DamageClass.Ranged)
+            if (player.GetModPlayer<AccuracyPlayer>().Enabled && item.DamageType == DamageClass.Ranged)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Ranged.CurrentAccuracy", (int)(player.GetModPlayer<tsorcRevampPlayer>().BotCCurrentAccuracyPercent * 100f)));
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Ranged.CurrentAccuracy", (int)(player.GetModPlayer<AccuracyPlayer>().CurrentAccuracyPercent * 100f)));
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.type == ModContent.ItemType<AaronsProtectionStone>())
@@ -176,7 +178,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && (item.type == ItemID.ManaFlower || item.type == ItemID.ArcaneFlower || item.type == ItemID.MagnetFlower || item.type == ItemID.ManaCloak || item.type == ModContent.ItemType<CelestialCloak>()))
             {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.BotCManaFlower", (int)tsorcRevampCeruleanPlayer.ceruleanManaFlowerStrength));
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.BotCManaFlower", (int)CeruleanFlaskPlayer.CeruleanManaFlowerStrength));
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed)
@@ -201,7 +203,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.ManaRegenerationPotion)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaRegenerationPotionBotC").FormatWith(tsorcRevampCeruleanPlayer.ManaRegenPotRestorationTimerBonus));
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaRegenerationPotionBotC").FormatWith(CeruleanFlaskPlayer.ManaRegenPotRestorationTimerBonus));
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && (item.type == ItemID.CelestialMagnet || item.type == ItemID.ManaCloak || item.type == ItemID.CelestialEmblem))

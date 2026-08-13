@@ -29,6 +29,7 @@ using tsorcRevamp.Utilities;
 using MiakodaCrescent = tsorcRevamp.Projectiles.Pets.MiakodaCrescent;
 using MiakodaNew = tsorcRevamp.Projectiles.Pets.MiakodaNew;
 using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.LegacyCode;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -79,8 +80,6 @@ namespace tsorcRevamp.Projectiles
         public static float WhipPitch = 0.3f;
         public bool AppliedLethalTempo = false;
         public bool AppliedConqueror = false;
-        public bool IgnoresAccuracyOrSpecialCase = false;
-        public bool HitSomething = false;
         public bool ModdedWhip = false;
         public bool ChargedWhip = false;
         public bool ModdedFlail = false;
@@ -754,77 +753,6 @@ namespace tsorcRevamp.Projectiles
             }
             #endregion
 
-            #region Accuracy            
-            if (!IsAccuracySpecialCase(projectile))
-            {
-                HitSomething = true;
-            }
-            #endregion
-        }
-
-        /// <summary>
-        /// Simply returns true if the projectile is a special case that isn't supposed to count for or against accuracy (like explosions, projectiles spawned by projectiles, homing ones, purely visual ones, etc
-        /// Projectile *types* that are always special cases should just go in PopulateAccuracySpecialCases(), this is mainly for more complex stuff (like checking the projectile's ai[] fields)
-        /// </summary>
-        /// <param name="projectile"></param>
-        /// <returns></returns>
-        public static bool IsAccuracySpecialCase(Projectile projectile)
-        {
-            return AccuracySpecialCaseList.Contains(projectile.type) || (projectile.type == ProjectileID.Bone && projectile.ai[2] == 1);
-        }
-
-
-        //This loads the list automatically the first time someone tries to access it
-        //It works by checking if the list is null, loading it if it is, then returning it        
-        public static List<int> AccuracySpecialCaseList
-        {
-            get
-            {
-                if (AccuracySpecialCases == null)
-                {
-                    PopulateAccuracySpecialCases();
-                }
-
-                return AccuracySpecialCases;
-            }
-        }
-
-        /// <summary>
-        /// This is where the list of all accuracy special case projectiles go
-        /// Works like all the other PopulateX() functions we have
-        /// </summary>
-        private static void PopulateAccuracySpecialCases()
-        {
-            AccuracySpecialCases = new List<int>()
-            {
-               ModContent.ProjectileType<ElfinArrow>(), ModContent.ProjectileType<ToxicCatExplosion>(), ModContent.ProjectileType<VirulentCatExplosion>(), ModContent.ProjectileType<BiohazardExplosion>(),
-               ModContent.ProjectileType<KrakenTsunamiShark>(), ProjectileID.CrystalShard, ModContent.ProjectileType<ShulletBellDark>(),  ModContent.ProjectileType<ShulletBellLight>(),
-               ProjectileID.ChlorophyteBullet, ProjectileID.ChlorophyteArrow, ProjectileID.HallowStar, ProjectileID.DD2BetsyArrow, ProjectileID.Xenopopper,
-               ProjectileID.DD2PhoenixBow
-            };
-        }
-
-        public static List<int> AccuracySpecialCases;
-
-        public override void OnHitPlayer(Projectile projectile, Player target, Player.HurtInfo info)
-        {
-            if (projectile.type == ProjectileID.EyeLaser && projectile.ai[0] == 1)
-            {
-                target.AddBuff(BuffID.Slow, 3 * 60);
-            }
-
-            if (projectile.type == ProjectileID.DemonSickle)
-            {
-                target.AddBuff(ModContent.BuffType<Crippled>(), 15);
-                target.AddBuff(BuffID.Slow, 3 * 60);
-                target.AddBuff(BuffID.Darkness, 3 * 60);
-            }
-            if (projectile.type == ProjectileID.Bubble)
-            {
-                SoundEngine.PlaySound(SoundID.Drown, target.Center);
-                target.AddBuff(BuffID.Chilled, 8 * 60);
-                target.AddBuff(ModContent.BuffType<Gilled>(), 16 * 60);
-            }
         }
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)
         {
@@ -924,44 +852,6 @@ namespace tsorcRevamp.Projectiles
                     modPlayer.GoredrinkerSwung = false;
                 }
 
-                if (!IsAccuracySpecialCase(projectile) && projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse && projectile.damage != 0)
-                {
-                    if (HitSomething)
-                    {
-                        modPlayer.BotCCurrentAccuracyPercent += modPlayer.BotCAccuracyGain;
-                    }
-                    else
-                    {
-                        modPlayer.BotCCurrentAccuracyPercent -= modPlayer.BotCAccuracyLoss;
-                    }
-                    if (modPlayer.BotCCurrentAccuracyPercent > modPlayer.BotcAccuracyPercentMax)
-                    {
-                        modPlayer.BotCCurrentAccuracyPercent = modPlayer.BotcAccuracyPercentMax;
-                    }
-                    if (modPlayer.BotCCurrentAccuracyPercent < 0)
-                    {
-                        modPlayer.BotCCurrentAccuracyPercent = 0;
-                    }
-
-                    // Combat text fires only when the meter crosses into a new 10% band — the same bands the
-                    // Accuracy buff icon shows — instead of once per projectile. That's roughly a tenth of the
-                    // text, and what remains actually means something: your crit tier changed. The exact
-                    // percentage now lives permanently in the buff tooltip rather than scrolling past.
-                    // The two extremes always announce themselves, since bottoming out and capping are the
-                    // states worth noticing.
-                    int band = Buffs.Runeterra.Ranged.Accuracy.BandOf(modPlayer.BotCCurrentAccuracyPercent);
-                    bool atExtreme = modPlayer.BotCCurrentAccuracyPercent <= 0f
-                                     || modPlayer.BotCCurrentAccuracyPercent >= modPlayer.BotcAccuracyPercentMax;
-                    if ((band != modPlayer.BotCLastAccuracyBand || atExtreme)
-                        && owner.whoAmI == Main.myPlayer
-                        && ModContent.GetInstance<tsorcRevampConfig>().AccuracyCombatText)
-                    {
-                        CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue(
-                            HitSomething ? "UI.BotCHit" : "UI.BotCMiss",
-                            (int)(modPlayer.BotCCurrentAccuracyPercent * 100f)));
-                    }
-                    modPlayer.BotCLastAccuracyBand = band;
-                }
             }
 
             if (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] != 0)

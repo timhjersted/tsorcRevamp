@@ -12,6 +12,7 @@ using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Melee;
 using tsorcRevamp.Projectiles.Melee.Spears;
 using tsorcRevamp.Projectiles.Summon.ShatteredReflection;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp
 {
@@ -175,7 +176,7 @@ namespace tsorcRevamp
                 return drawInfo.drawPlayer.HeldItem.ModItem.Mod == mod;
             else if (drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking)
                 return true;
-            else if (drawInfo.drawPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking)
+            else if (drawInfo.drawPlayer.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
                 return true;
             return false;
         }
@@ -459,8 +460,8 @@ namespace tsorcRevamp
             }
             #endregion
             #region cerulean flask
-            tsorcRevampCeruleanPlayer ceruleanPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>();
-            if (!ceruleanPlayer.Player.dead)
+            CeruleanFlaskPlayer ceruleanFlaskPlayer = drawInfo.drawPlayer.GetModPlayer<CeruleanFlaskPlayer>();
+            if (!ceruleanFlaskPlayer.Player.dead)
             {
                 int ceruleanFrameCount = 3;
                 float ceruleanScale = 0.8f;
@@ -471,8 +472,8 @@ namespace tsorcRevamp
                 int drawY = (int)(drawInfo.Position.Y + drawInfo.drawPlayer.height / 2f - Main.screenPosition.Y);
                 int frameHeight = texture.Height / ceruleanFrameCount;
                 int frame;
-                if (ceruleanPlayer.ceruleanChargesCurrent == ceruleanPlayer.ceruleanChargesMax) { frame = 0; }
-                else if (ceruleanPlayer.ceruleanChargesCurrent == 1) { frame = 2; }
+                if (ceruleanFlaskPlayer.CeruleanChargesCurrent == ceruleanFlaskPlayer.CeruleanChargesMax) { frame = 0; }
+                else if (ceruleanFlaskPlayer.CeruleanChargesCurrent == 1) { frame = 2; }
                 else { frame = 1; }
 
                 int startY = frameHeight * frame;
@@ -488,7 +489,7 @@ namespace tsorcRevamp
 
                 // Threshold matches the body-frame threshold in tsorcRevampPlayerCerulean.cs so the
                 // flask sprite and the player's arm-up pose appear together at the start of the channel.
-                if (ceruleanPlayer.ceruleanDrinkTimer >= ceruleanPlayer.ceruleanDrinkTimerMax * 0.05f)
+                if (ceruleanFlaskPlayer.CeruleanDrinkTimer >= ceruleanFlaskPlayer.CeruleanDrinkTimerMax * 0.05f)
                 {
                     drawInfo.DrawDataCache.Add(new DrawData(
                             texture, // The texture to render.
@@ -507,7 +508,7 @@ namespace tsorcRevamp
             }
             else
             {
-                ceruleanPlayer.isDrinking = false;
+                ceruleanFlaskPlayer.IsDrinking = false;
             }
             #endregion
         }

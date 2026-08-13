@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Projectiles.Magic
 {
@@ -105,7 +106,7 @@ namespace tsorcRevamp.Projectiles.Magic
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/LaserLoopable") with { Volume = 0.5f }, Projectile.Center);
             }
 
-            if (owner.statMana <= 0 && !owner.GetModPlayer<tsorcRevampCeruleanPlayer>().isCeruleanRestoring && !owner.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking)
+            if (owner.statMana <= 0 && !owner.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !owner.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
             {
                 MethodSwaps.TryUseQuickMana(owner);
             }

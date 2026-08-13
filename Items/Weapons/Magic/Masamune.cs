@@ -1,16 +1,19 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Humanizer;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
     class Masamune : ModItem
     {
-        public const int MaxManaSubtract = 200;
-        public const int MaxManaDivisor = 6;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxManaSubtract, MaxManaDivisor);
+        public const int MaxManaSubtractBase = 200;
+        public const int MaxManaDivisorBase = 6;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxManaSubtractBase, MaxManaDivisorBase);
         public override void SetStaticDefaults()
         {
         }
@@ -50,9 +53,36 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
-            if (player.statManaMax2 >= MaxManaSubtract)
+            var arcaneSorceryPlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
+            int maxManaSubtract = MaxManaSubtractBase;
+            int maxManaDivisor = MaxManaDivisorBase;
+            int maxMana = player.statManaMax2;
+            if (arcaneSorceryPlayer.Enabled)
             {
-                damage.Flat += (player.statManaMax2 - MaxManaSubtract) / 6;
+                maxManaSubtract *= arcaneSorceryPlayer.MaxManaMult;
+                maxManaDivisor *= arcaneSorceryPlayer.MaxManaMult;
+            }
+            if (maxMana >= maxManaSubtract)
+            {
+                damage.Flat += (maxMana - maxManaSubtract) / maxManaDivisor;
+            }
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            Player player = Main.LocalPlayer;
+            var arcaneSorceryPlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
+            int maxManaSubtract = MaxManaSubtractBase;
+            int maxManaDivisor = MaxManaDivisorBase;
+            if (arcaneSorceryPlayer.Enabled)
+            {
+                maxManaSubtract *= arcaneSorceryPlayer.MaxManaMult;
+                maxManaDivisor *= arcaneSorceryPlayer.MaxManaMult;
+            }
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip1");
+            if (ttindex != -1)
+            {
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Proper Scaling", Language.GetTextValue(Tooltip.Key + "0").FormatWith(maxManaSubtract, maxManaDivisor)));
             }
         }
     }
