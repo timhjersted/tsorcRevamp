@@ -2041,6 +2041,7 @@ namespace tsorcRevamp
                 {ModContent.ItemType<RedClothTunic>(), RedClothTunic.MaxMana},
                 {ModContent.ItemType<RedClothPants>(), RedClothTunic.MaxMana},
                 {ModContent.ItemType<RedClothHat>(), RedClothTunic.MaxMana},
+                {ModContent.ItemType<FirelinkHelm>(), FirelinkHelm.MaxMana}
             };
             #endregion
         }
