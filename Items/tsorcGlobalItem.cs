@@ -10,6 +10,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Armors;
@@ -112,7 +113,13 @@ namespace tsorcRevamp.Items
             if (soulsPlayer.UsesWeaponStamina && item.damage >= 1 && !item.accessory && !exemptFromStaminaGate)
             {
                 tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-                if (staminaPlayer.staminaResourceCurrent <= 0f)
+                var arcanePlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
+                if (player.HeldItem.DamageType == DamageClass.Magic && arcanePlayer.Enabled &&
+                    staminaPlayer.staminaResourceCurrent <= 0f)
+                {
+                    player.AddBuff(ModContent.BuffType<ManaBurn>(), 2 * 60);
+                }
+                if (staminaPlayer.staminaResourceCurrent <= 0f && !player.HasBuff(ModContent.BuffType<ManaBurn>()))
                 {
                     // No "Tired" floating text — the weapon simply not swinging, plus the empty stamina bar,
                     // already communicates this. The text fired on every attempted swing while empty, which is

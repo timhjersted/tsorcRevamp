@@ -179,11 +179,20 @@ namespace tsorcRevamp
             {
 
                 tsorcRevampStaminaPlayer modPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                var arcanePlayer = Player.GetModPlayer<ArcaneSorceryPlayer>();
+                
+                
                 float mult = Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
                 int scaledUseAnimation = (int)(item.useAnimation / Player.GetAttackSpeed(item.DamageType));
 
                 bool startedAnimation = (Player.itemAnimation > oldItemAnimation && Player.itemAnimationMax > 0);
                 oldItemAnimation = Player.itemAnimation;
+
+                if (Player.HeldItem.DamageType == DamageClass.Magic && arcanePlayer.Enabled &&
+                    modPlayer.staminaResourceCurrent <= 0f)
+                {
+                    return true;
+                }
 
                 if (!startedAnimation && item.type != ItemID.Harpoon && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()
                      && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>()

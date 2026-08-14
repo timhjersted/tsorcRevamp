@@ -21,12 +21,17 @@ public class ArcaneSorceryPlayer : ModPlayer
     public override void ResetEffects()
     {
         Enabled = false;
+        ManaBurn = false;
         CeruleanFlatManaGainMult = 1f;
         CeruleanFlaskMaxManaScalingMult = 1f;
     }
 
-    public float MaxManaAmplifier = 500f;
-    public int ManaCostMult = 2;
+    public float MaxManaAmplifier = 400f;
+    public float ManaCostMult = 2f;
+    public bool ManaBurn = false;
+    public float ManaBurnStaminaThreshold = 10f;
+    public float ManaBurnCostMult = 2f;
+    public float ManaBurnBadResistance = 25f;
 
     public const float BaseCeruleanFlaskMaxManaScalingMult = 1.6f;
     public float CeruleanFlaskMaxManaScalingMult = 1f;
@@ -48,13 +53,11 @@ public class ArcaneSorceryPlayer : ModPlayer
     {
         if (Enabled)
         {
-            if (!Player.HasBuff(BuffID.ManaSickness))
+            if (!Player.HasBuff(BuffID.ManaSickness) && ManaBurn)
             {
                 Player.GetDamage(DamageClass.Magic) *= 1f + (MagicDamageAmp / 100f);
                 Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (MagicAttackSpeedAmp / 100f);
             }
-
-            MaxManaAmplifier = 400f;
 
             var tsorcPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
             tsorcPlayer.MaxManaAmplifier *= 1f + MaxManaAmplifier / 100f; //if anything buffs your max mana, this will multiply that properly
@@ -67,6 +70,10 @@ public class ArcaneSorceryPlayer : ModPlayer
         if (Enabled)
         {
             Player.manaCost *= ManaCostMult;
+        }
+        if (ManaBurn)
+        {
+            Player.manaCost *= ManaBurnCostMult;
         }
     }
 }

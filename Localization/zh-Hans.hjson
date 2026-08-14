@@ -10199,6 +10199,11 @@ Mods: {
 				// DisplayName: Attunement Buff
 				// Description: Mods.tsorcRevamp.Buffs.AttunementBuff.Description
 			}
+
+			ManaBurn: {
+				// DisplayName: Mana Burn
+				// Description: Mods.tsorcRevamp.Buffs.ManaBurn.Description
+			}
 		}
 
 		Projectiles: {
