@@ -13,10 +13,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public static float damageResistance = 35f;
         public static int manaCost = 90;
-        public static float MaxManaPercentIncrease = 50f;
+        public static int MaxManaFlatIncrease = 100;
         public static int regenDelay = 13;
         public static float BadDmgMultiplier = 25f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(damageResistance, manaCost, MaxManaPercentIncrease, regenDelay, BadDmgMultiplier);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(damageResistance, manaCost, MaxManaFlatIncrease, regenDelay, BadDmgMultiplier);
         public override void SetStaticDefaults()
         {
         }
@@ -45,10 +45,13 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            // Kept in both modes (and in either slot): the max-mana boost. The stamina-regen bonus was removed —
-            // this is a mana ward, and stamina regen belongs to the Chloranthy line rather than being sprinkled
-            // onto accessories that have nothing to do with it.
-            player.GetModPlayer<tsorcRevampPlayer>().MaxManaAmplifier += MaxManaPercentIncrease;
+            // Kept in both modes (and in either slot): the max-mana boost. Flat rather than percent-based so it
+            // doesn't depend on MaxManaAmplifier being consumed after every equip source has contributed to it —
+            // a flat add to statManaMax2 is safe regardless of ModPlayer/UpdateEquip hook ordering (accessory
+            // slot vs. the Active Shields 2nd slot, see tsorcRevampPlayerUpdateLoops.PostUpdateMiscEffects).
+            // The stamina-regen bonus was removed — this is a mana ward, and stamina regen belongs to the
+            // Chloranthy line rather than being sprinkled onto accessories that have nothing to do with it.
+            player.statManaMax2 += MaxManaFlatIncrease;
 
             // Under Active Shields Revamp this ward blocks on demand (held, via FreeDodge, 360°, mana + a stamina
             // sip) — no passive mana-tank, no DR, and the damage penalty is dropped so other classes can use it.

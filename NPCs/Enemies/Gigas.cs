@@ -27,13 +27,14 @@ namespace tsorcRevamp.NPCs.Enemies{
         {
             None = 0,
             SunlightSlam,   // high jump → apex hang → trailing dive → ground slam + shockwaves
+            WrathApproach,  // committed leap into threat range before Wrath of Gold can telegraph
             WrathOfGold,    // long standing channel → expanding nova ring (the staggerable cast)
             HeavenlySpears, // walking cast: spears materialize around the player and lance in
-            SunPillars,     // three chained columns of judgment light under the player
+            SunPillars,     // detached 2/4/6/8-pillar judgment sequence, layered over the next move
             HaloVolley,     // summons the orbiting sun halo, which detaches sun by sun
             LightningSweep, // low horizontal blade of golden lightning — jump or roll through
             SolarBoulder,   // huge lobbed sun → bouncing embers + consecrated ground
-            GraspingHands,  // two light hands rise at the player's flanks and clap
+            SolarSlabs,     // two solar monoliths hold wide, then converge in a nova clap
             LedgeLeap,      // anti-camping: telegraphed super-jump to a perch, lands as a slam
         }
 
@@ -42,16 +43,17 @@ namespace tsorcRevamp.NPCs.Enemies{
         const int SlamApexTicks = 16;
         const int SlamRecoveryTicks = 35;
         const int WrathTelegraphTicks = 100;
+        const int WrathApproachWindupTicks = 24;
         const int WrathStaggerableTicks = 66;  //first two thirds: hyper-armor OFF, a poise break cancels the cast
         const int WrathRecoveryTicks = 30;
         const int SpearsCastTicks = 132;
-        const int PillarsCastTicks = 85;
+        const int PillarsCastTicks = 12;
         const int HaloCastTicks = 30;
         const int SweepTelegraphTicks = 70;
         const int SweepActiveTicks = 120;
         const int SweepCastTicks = SweepTelegraphTicks + SweepActiveTicks;
         const int BoulderCastTicks = 45;
-        const int HandsCastTicks = 30;
+        const int SolarSlabsCastTicks = 30;
         const int LeapWindupTicks = 45;
 
         //Projectile damage, tuned for a LATE-HARDMODE boss event (hostile projectiles deal 2x this
@@ -64,7 +66,7 @@ namespace tsorcRevamp.NPCs.Enemies{
         int HaloSunDamage => ScaleDamage(38);
         int SweepDamage => ScaleDamage(70);
         int BoulderDamage => ScaleDamage(60);
-        int HandsDamage => ScaleDamage(70);
+        int SolarSlabsDamage => ScaleDamage(70);
         int CometDamage => ScaleDamage(40);
         int ConsecratedDamage => ScaleDamage(25);
 
@@ -90,6 +92,17 @@ namespace tsorcRevamp.NPCs.Enemies{
         int FootstepTimer;
         bool SHM;               //SuperHardMode encounter: escalated stats + projectile damage
         bool statsInitialized;  //one-shot world-state stat application on the first AI tick
+        bool HolyShieldActive;  //independent distance ability, never an attack state
+        float HolyShieldVisualProgress;
+        readonly GigasTerrainNavigation TerrainNavigation = new GigasTerrainNavigation();
+        bool WrathApproachLaunched;
+        float WrathApproachVelocityX;
+        //Navigation-only long leap. SmartFighter4 handles normal routes and local jumps; this is the
+        //giant's deliberate answer to a whole house / wall separating it from a valid landing near the player.
+        int TerrainLeapTicks;
+        int TerrainLeapCooldown;
+        float TerrainLeapVelocityX;
+        float TerrainLeapLandingX;
 
         public override void SetStaticDefaults()
         {
@@ -111,7 +124,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             NPC.value = 200000f; //Dark Souls = value / 25 (GlobalNPC.OnKill) = 8000 — a bit under TheHunter's 8800
 			NPC.npcSlots = 100;
             NPC.scale = 1f;
-			DrawOffsetY = 2;
+			DrawOffsetY = 4;
 			NPC.knockBackResist = 0.1f;
 			Main.npcFrameCount[NPC.type] = 16;
 			AnimationType = 28;
@@ -124,6 +137,9 @@ namespace tsorcRevamp.NPCs.Enemies{
 			g.NavSearchRadius = 60; // larger window so A* can find valid flat ledges above/across to jump to
 			g.MaxJumpPower = 9f;
 			g.MaxJumpBoost = 5f;
+			// A two-tile support core may straddle exactly one tile of descent. This keeps the
+			// giant visually centered over a stair-step instead of treating it as a ledge.
+			g.MaxSurfaceStep = 1;
 			// On-hit evasion: lumber back to reset spacing, or telegraph a hyper-armored charge back in.
 			EvasiveProfile.HeavyBeast(g);
 			// Phase 1 (beast positioner): never stand still — when it can't path to you it falls back to a large
@@ -171,6 +187,10 @@ namespace tsorcRevamp.NPCs.Enemies{
             writer.Write(TeleportUsed);
             writer.Write(SunfallActive);
             writer.Write(SHM);
+            writer.Write(HolyShieldActive);
+            writer.Write(WrathApproachLaunched);
+            writer.Write(WrathApproachVelocityX);
+            TerrainNavigation.Send(writer);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -183,6 +203,10 @@ namespace tsorcRevamp.NPCs.Enemies{
             TeleportUsed = reader.ReadBoolean();
             SunfallActive = reader.ReadBoolean();
             SHM = reader.ReadBoolean();
+            HolyShieldActive = reader.ReadBoolean();
+            WrathApproachLaunched = reader.ReadBoolean();
+            WrathApproachVelocityX = reader.ReadSingle();
+            TerrainNavigation.Receive(reader);
         }
 
         ///<summary>Poise break (only reachable in neutral or the Wrath of Gold staggerable window): the cast
@@ -216,6 +240,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             //Attack-phase flags are re-set every tick by whichever attack is running
             g.AttackTelegraphing = false;
             g.AttackCommitted = false;
+            UpdateHolyShieldAbility(player);
 
             //Staggered (poise broken): the global system roots it; sell it with a slumped lean + falling motes
             if (g.StaggerTimer > 0)
@@ -233,9 +258,17 @@ namespace tsorcRevamp.NPCs.Enemies{
 
             if (State == AttackState.None)
             {
+                //A committed terrain leap owns horizontal motion until it reaches the landing that was
+                //validated at launch. Do not let the regular fighter mover sand its velocity away mid-arc.
+                if (TerrainNavigation.Update(NPC))
+                {
+                    FootstepEffects();
+                }
+                else
+                {
                 //Slow, weighty walk — one speed, always. It never runs; its reach is its magic.
-                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, minSurfaceWidth: 3, canWalkBackwards: true); // ~3.25-tile footprint → require 3 flat tiles
-                EscapeNarrowHighPerch(player);
+                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, minSurfaceWidth: 2, canWalkBackwards: true); // Two-tile flat support core; wide sprite edges use the bounded ground sink.
+                bool recoveringFromNarrowPerch = TerrainNavigation.RecoverFromNarrowPerch(NPC, g, player);
                 if (NPC.lavaWet)
                 {
                     NPC.velocity.Y -= 2;
@@ -243,14 +276,19 @@ namespace tsorcRevamp.NPCs.Enemies{
                 FootstepEffects();
                 LedgeCampCheck(player);
 
-                if (AttackCooldown > 0)
+                //Only launch across terrain after the ordinary SmartFighter mover has had a chance to
+                //solve a local step. A rejected leap is harmless: it has a fully clear arc and a flat,
+                //body-width landing as hard requirements.
+                bool terrainLeapStarted = !recoveringFromNarrowPerch && TerrainNavigation.TryBegin(NPC, player);
+                if (!terrainLeapStarted && AttackCooldown > 0)
                 {
                     AttackCooldown--;
                 }
-                if (Main.netMode != NetmodeID.MultiplayerClient && AttackCooldown <= 0 && NPC.velocity.Y == 0f
+                if (!terrainLeapStarted && !recoveringFromNarrowPerch && Main.netMode != NetmodeID.MultiplayerClient && AttackCooldown <= 0 && NPC.velocity.Y == 0f
                     && !player.dead && player.active && NPC.Distance(player.Center) < 1100f)
                 {
                     PickAttack(player);
+                }
                 }
             }
             else
@@ -291,8 +329,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             if (!TeleportUsed && NPC.life < NPC.lifeMax / 2)
             {
                 TeleportUsed = true;
-                TeleportBehind(player);
-                StartAttack(AttackState.WrathOfGold);
+                StartAttack(AttackState.WrathApproach);
                 return;
             }
 
@@ -305,7 +342,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                 (AttackState.SunlightSlam,   distTiles < 40f ? 1f : 0.3f),
                 (AttackState.WrathOfGold,    distTiles < 16f ? 1.2f : 0.2f),
                 (AttackState.LightningSweep, distTiles < 40f && sameLevel ? 0.9f : 0f),
-                (AttackState.GraspingHands,  distTiles < 45f ? 0.8f : 0f),
+                (AttackState.SolarSlabs,     distTiles < 45f ? 0.8f : 0f),
                 (AttackState.HeavenlySpears, 0.8f),
                 (AttackState.SunPillars,     0.8f),
                 (AttackState.HaloVolley,     0.7f),
@@ -326,7 +363,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                 roll -= pool[i].weight;
                 if (roll <= 0f)
                 {
-                    StartAttack(pool[i].state);
+                    StartAttack(pool[i].state == AttackState.WrathOfGold ? AttackState.WrathApproach : pool[i].state);
                     return;
                 }
             }
@@ -338,6 +375,8 @@ namespace tsorcRevamp.NPCs.Enemies{
             State = state;
             AttackTimer = 0;
             SlamPhase = 0;
+            WrathApproachLaunched = false;
+            WrathApproachVelocityX = 0f;
             NPC.netUpdate = true;
         }
 
@@ -414,13 +453,14 @@ namespace tsorcRevamp.NPCs.Enemies{
             {
                 case AttackState.SunlightSlam: RunSlam(g, player, LeapVariant: false); break;
                 case AttackState.LedgeLeap: RunSlam(g, player, LeapVariant: true); break;
+                case AttackState.WrathApproach: RunWrathApproach(g, player); break;
                 case AttackState.WrathOfGold: RunWrathOfGold(g); break;
                 case AttackState.HeavenlySpears: RunHeavenlySpears(g, player); break;
                 case AttackState.SunPillars: RunSunPillars(g, player); break;
                 case AttackState.HaloVolley: RunHaloVolley(g); break;
                 case AttackState.LightningSweep: RunLightningSweep(g); break;
                 case AttackState.SolarBoulder: RunSolarBoulder(g, player); break;
-                case AttackState.GraspingHands: RunGraspingHands(g, player); break;
+                case AttackState.SolarSlabs: RunSolarSlabs(g, player); break;
             }
         }
 
@@ -539,9 +579,11 @@ namespace tsorcRevamp.NPCs.Enemies{
                         continue;
                     }
                     float strength = 1f - tile / 16f;
-                    for (int i = 0; i < 3; i++)
+                    // Taller 152px flames need a little more material, not larger square motes:
+                    // 4 smaller plumes per tile replace the previous 3 oversized ones.
+                    for (int i = 0; i < 4; i++)
                     {
-                        int dust = Dust.NewDust(new Vector2(basePos.X - 6f, groundY - 6f), 12, 4, DustID.GoldFlame, 0f, 0f, 80, default, 1.2f + strength);
+                        int dust = Dust.NewDust(new Vector2(basePos.X - 6f, groundY - 6f), 12, 4, DustID.GoldFlame, 0f, 0f, 80, default, 0.72f + strength * 0.58f);
                         Main.dust[dust].noGravity = true;
                         Main.dust[dust].velocity = new Vector2(dir * 0.5f, Main.rand.NextFloat(-7f, -3f) * (0.4f + strength));
                     }
@@ -554,15 +596,54 @@ namespace tsorcRevamp.NPCs.Enemies{
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Bottom + new Vector2(dir * 24f, -21f), Vector2.Zero,
                         ModContent.ProjectileType<GigasShockwave>(), ShockwaveDamage, 4f, Main.myPlayer, dir, 12f);
-                    //Sanctified patches make the landing zone hostile for a while
-                    Vector2 patchPos = NPC.Bottom + new Vector2(dir * 40f, 0f);
-                    float patchGround = FindGroundY(patchPos - new Vector2(0f, 32f), 6);
-                    if (patchGround > 0f)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(patchPos.X, patchGround - GigasConsecratedGround.PatchHeight / 2f), Vector2.Zero,
-                            ModContent.ProjectileType<GigasConsecratedGround>(), ConsecratedDamage, 0f, Main.myPlayer);
-                    }
                 }
+                // The lingering field follows the slam's impact outward: 0, left, right, then
+                // progressively farther terrain tiles. Every module anchors to its own floor.
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X, NPC.Bottom.Y), Vector2.Zero,
+                    ModContent.ProjectileType<GigasSolarBoulderGroundSpread>(), ConsecratedDamage, 0f, Main.myPlayer,
+                    GigasConsecratedGround.SlamVariant, GigasConsecratedGround.SlamSpanTiles, 7f);
+            }
+        }
+
+        // Wrath is an area-denial threat, not a distant spell turret. It gets one unmistakable
+        // heavy leap into the player's space first; the existing 100-tick telegraph only begins
+        // after that leap lands, so its timing and damage window remain unchanged.
+        void RunWrathApproach(tsorcRevampGlobalNPC g, Player player)
+        {
+            g.AttackCommitted = true;
+            if (!WrathApproachLaunched)
+            {
+                NPC.velocity.X *= 0.70f;
+                if (AttackTimer == 1)
+                {
+                    SoundEngine.PlaySound(SoundID.DeerclopsRubbleAttack with { Volume = 0.75f, Pitch = -0.22f }, NPC.Bottom);
+                }
+                if (AttackTimer >= WrathApproachWindupTicks)
+                {
+                    float dx = player.Center.X - NPC.Center.X;
+                    WrathApproachVelocityX = MathHelper.Clamp(dx / 52f, -11f, 11f);
+                    NPC.velocity.Y = -15f;
+                    NPC.velocity.X = WrathApproachVelocityX;
+                    NPC.direction = Math.Sign(WrathApproachVelocityX);
+                    NPC.spriteDirection = NPC.direction;
+                    WrathApproachLaunched = true;
+                    NPC.netUpdate = true;
+                }
+                return;
+            }
+
+            // Lock the horizontal impulse during the rise and fall; without this the normal fighter
+            // steering can sand off the leap and leave Wrath safely out of range.
+            NPC.velocity.X = WrathApproachVelocityX;
+            if ((NPC.collideY && NPC.velocity.Y >= 0f) || (AttackTimer > WrathApproachWindupTicks + 6 && NPC.velocity.Y == 0f))
+            {
+                StartAttack(AttackState.WrathOfGold);
+            }
+            else if (AttackTimer > WrathApproachWindupTicks + 150)
+            {
+                //A cramped ceiling or pit cannot hold the encounter hostage; cancel cleanly and let
+                //navigation pick a different position rather than firing the nova from long range.
+                EndAttack(90);
             }
         }
 
@@ -588,7 +669,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                            ModContent.ProjectileType<GigasNovaTelegraph>(), 0, 0f, Main.myPlayer, 270f, NPC.whoAmI);
+                            ModContent.ProjectileType<GigasNovaTelegraph>(), 0, 0f, Main.myPlayer, 300f, NPC.whoAmI);
                     }
                 }
                 if (AttackTimer == WrathStaggerableTicks)
@@ -629,7 +710,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                            ModContent.ProjectileType<GigasNovaRing>(), NovaDamage, 8f, Main.myPlayer, 270f);
+                            ModContent.ProjectileType<GigasNovaRing>(), NovaDamage, 8f, Main.myPlayer, 300f);
                     }
                 }
             }
@@ -648,8 +729,8 @@ namespace tsorcRevamp.NPCs.Enemies{
         {
             //Walking cast: the giant keeps lumbering while the threat forms at the player's position
             //(no dodgeroll/pounce — the cast should read as stately, not acrobatic)
-            tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 3, canWalkBackwards: true);
-            EscapeNarrowHighPerch(player);
+            tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 2, canWalkBackwards: true);
+            TerrainNavigation.RecoverFromNarrowPerch(NPC, g, player);
             FootstepEffects();
             g.AttackCommitted = true;
 
@@ -686,20 +767,29 @@ namespace tsorcRevamp.NPCs.Enemies{
             {
                 SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.7f, Pitch = -0.4f }, NPC.Center);
             }
-            //Chained columns walking with the player; the third leads their escape direction
-            if ((AttackTimer == 15 || AttackTimer == 40 || AttackTimer == 65) && Main.netMode != NetmodeID.MultiplayerClient)
+            // Each pillar owns its delayed telegraph and 90-tick active window. Scheduling the whole
+            // sequence here leaves Gigas free to choose a new attack while the judgment continues.
+            if (AttackTimer == 8 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                float x = player.Center.X + (AttackTimer == 65 ? player.velocity.X * 30f : 0f);
-                float groundY = FindGroundY(new Vector2(x, player.Bottom.Y - 8f), 25);
-                if (groundY > 0f)
+                int pillarCount = NPC.life < NPC.lifeMax / 2
+                    ? Main.rand.Next(2, 5) * 2 // phase two: 4, 6, or 8
+                    : Main.rand.Next(1, 4) * 2; // phase one: 2, 4, or 6
+                for (int i = 0; i < pillarCount; i++)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(x, groundY - GigasSunPillar.PillarHeight / 2f), Vector2.Zero,
-                        ModContent.ProjectileType<GigasSunPillar>(), PillarDamage, 2f, Main.myPlayer, 45f);
+                    int side = i % 2 == 0 ? 1 : -1;
+                    float lane = i == 0 ? 0f : side * ((i + 1) / 2) * 72f;
+                    float x = player.Center.X + lane + player.velocity.X * i * 10f;
+                    float groundY = FindGroundY(new Vector2(x, player.Bottom.Y - 8f), 25);
+                    if (groundY > 0f)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(x, groundY - GigasSunPillar.PillarHeight / 2f), Vector2.Zero,
+                            ModContent.ProjectileType<GigasSunPillar>(), PillarDamage, 2f, Main.myPlayer, 45f, i * 24f);
+                    }
                 }
             }
             if (AttackTimer >= PillarsCastTicks)
             {
-                EndAttack(330);
+                EndAttack(0, immediateFollowup: true);
             }
         }
 
@@ -798,19 +888,168 @@ namespace tsorcRevamp.NPCs.Enemies{
             }
         }
 
-        void RunGraspingHands(tsorcRevampGlobalNPC g, Player player)
+        void RunSolarSlabs(tsorcRevampGlobalNPC g, Player player)
         {
             g.AttackCommitted = true;
             NPC.velocity.X *= 0.8f;
             if (AttackTimer == 8 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), player.Center, Vector2.Zero,
-                    ModContent.ProjectileType<GigasLightHand>(), HandsDamage, 6f, Main.myPlayer, 50f);
+                    ModContent.ProjectileType<GigasLightHand>(), SolarSlabsDamage, 6f, Main.myPlayer, 50f);
             }
-            if (AttackTimer >= HandsCastTicks)
+            if (AttackTimer >= SolarSlabsCastTicks)
             {
                 EndAttack(330);
             }
+        }
+
+        ///<summary>Hydra-style distance ward, independent of the attack state. Hydra begins at 500px;
+        ///Gigas begins at 600px and drops only after the player returns inside 540px, preventing flicker
+        ///at the threshold while any normal attack is free to run.</summary>
+        void UpdateHolyShieldAbility(Player player)
+        {
+            if (player?.active != true || player.dead)
+            {
+                HolyShieldActive = false;
+                HolyShieldVisualProgress = Math.Max(0f, HolyShieldVisualProgress - 0.12f);
+                return;
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                float distance = NPC.Distance(player.Center);
+                bool shouldActivate = HolyShieldActive ? distance > 540f : distance > 600f;
+                if (HolyShieldActive != shouldActivate)
+                {
+                    HolyShieldActive = shouldActivate;
+                    NPC.netUpdate = true;
+                    if (shouldActivate && Main.netMode != NetmodeID.Server)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.72f, Pitch = 0.18f }, NPC.Center);
+                    }
+                }
+            }
+
+            HolyShieldVisualProgress = HolyShieldActive
+                ? Math.Min(1f, HolyShieldVisualProgress + 1f / 45f)
+                : Math.Max(0f, HolyShieldVisualProgress - 0.08f);
+
+            if (HolyShieldVisualProgress > 0f && Main.rand.NextBool(2))
+            {
+                Vector2 pos = NPC.position + new Vector2(Main.rand.NextFloat(NPC.width), Main.rand.NextFloat(NPC.height));
+                Dust mote = Dust.NewDustPerfect(pos, DustID.GoldCoin, new Vector2(0f, -Main.rand.NextFloat(0.5f, 1.6f)),
+                    60, default, Main.rand.NextFloat(0.55f, 0.9f));
+                mote.noGravity = true;
+            }
+            if (HolyShieldVisualProgress > 0f)
+            {
+                Lighting.AddLight(NPC.Center, 0.8f * HolyShieldVisualProgress, 0.66f * HolyShieldVisualProgress,
+                    0.2f * HolyShieldVisualProgress);
+            }
+            if (HolyShieldActive && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                AbsorbShieldProjectiles(player);
+            }
+        }
+
+        void AbsorbShieldProjectiles(Player player)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile incoming = Main.projectile[i];
+                if (!incoming.active || !incoming.friendly || incoming.hostile || incoming.damage <= 0
+                    || !incoming.Hitbox.Intersects(NPC.Hitbox))
+                {
+                    continue;
+                }
+
+                Vector2 impact = incoming.Center;
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), impact, Vector2.Zero,
+                    ModContent.ProjectileType<GigasHolyShieldVortex>(), 0, 0f, Main.myPlayer, -1f, 0f);
+
+                if (TryFindShieldVortexPosition(player, impact, out Vector2 output))
+                {
+                    int damage = Math.Max(1, (int)(player.statLifeMax2 * 0.20f));
+                    // Keep the real player projectile alive but frozen and hidden in the output
+                    // vortex. At release it is converted exactly as Hydra's shield does, preserving
+                    // the original projectile type/visual while making it hostile and wall-piercing.
+                    float returnSpeed = Math.Max(incoming.velocity.Length(), 14f);
+                    incoming.friendly = false;
+                    incoming.hostile = false;
+                    incoming.hide = true;
+                    incoming.tileCollide = false;
+                    incoming.velocity = Vector2.Zero;
+                    incoming.damage = damage;
+                    // The output begins 400px behind the player; retain ample post-telegraph life
+                    // for even a slow reflected projectile to reach its target through terrain.
+                    incoming.timeLeft = Math.Max(incoming.timeLeft, 180);
+                    incoming.netUpdate = true;
+
+                    Projectile outputVortex = Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), output, Vector2.Zero,
+                        ModContent.ProjectileType<GigasHolyShieldVortex>(), 0, 0f, player.whoAmI, incoming.whoAmI,
+                        GigasHolyShieldVortex.OutputMode);
+                    outputVortex.localAI[1] = returnSpeed;
+                    outputVortex.netUpdate = true;
+                }
+                else
+                {
+                    incoming.Kill();
+                }
+            }
+        }
+
+        bool TryFindShieldVortexPosition(Player player, Vector2 impact, out Vector2 position)
+        {
+            int facing = player.direction == 0 ? NPC.direction : player.direction;
+            Vector2 behindPlayer = player.Center - new Vector2(facing * 400f, 0f);
+            float heightT = MathHelper.Clamp((impact.Y - NPC.Top.Y) / NPC.height, 0f, 1f);
+            float desiredY = behindPlayer.Y + MathHelper.Lerp(-90f, 90f, heightT);
+            float bestScore = float.MaxValue;
+            position = Vector2.Zero;
+
+            // Eight staggered slots fill a 60px-spaced 200x100px envelope. A new portal is only
+            // allowed into a vacant slot, so rapid-fire weapons never make unreadable stacked vortices.
+            float[] verticalSlots = { -90f, -30f, 30f, 90f };
+            float[] lateralSlots = { -30f, 30f };
+            int vortexType = ModContent.ProjectileType<GigasHolyShieldVortex>();
+            foreach (float yOffset in verticalSlots)
+            {
+                foreach (float xOffset in lateralSlots)
+                {
+                    Vector2 candidate = behindPlayer + new Vector2(xOffset, yOffset);
+                    bool occupied = false;
+                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    {
+                        Projectile portal = Main.projectile[i];
+                        if (portal.active && portal.type == vortexType && portal.owner == player.whoAmI
+                            && portal.ai[1] == GigasHolyShieldVortex.OutputMode
+                            && Vector2.DistanceSquared(portal.Center, candidate) < 54f * 54f)
+                        {
+                            occupied = true;
+                            break;
+                        }
+                    }
+                    if (!occupied)
+                    {
+                        float score = Math.Abs(candidate.Y - desiredY) + Math.Abs(xOffset) * 0.1f;
+                        if (score < bestScore)
+                        {
+                            bestScore = score;
+                            position = candidate;
+                        }
+                    }
+                }
+            }
+            return bestScore < float.MaxValue;
+        }
+
+        public override bool? CanBeHitByProjectile(Projectile projectile)
+        {
+            if (HolyShieldActive && projectile.friendly && !projectile.hostile)
+            {
+                return false;
+            }
+            return base.CanBeHitByProjectile(projectile);
         }
 
         void SpawnHeavenlySpearWave(Player player, int count, float halfWidth, float apexHeight,
@@ -944,29 +1183,226 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         #region Helpers
 
-        // SmartFighter correctly avoids cliff-walking for a wide beast, but collision can still put
-        // its physical body on one isolated tile. If the player is well below that narrow perch,
-        // deliberately walk off toward them so gravity can recover the fight.
-        void EscapeNarrowHighPerch(Player player)
+        // A* intentionally keeps its calibrated jumps conservative (the shared table tops out at ten tiles).
+        // Gigas is the exception: it may leap an entire building, but only after proving that its actual full
+        // rectangle can follow the arc and end on a flat four-tile landing. This stays navigation-only: no
+        // hitbox, attack state, or VFX is attached to it.
+        bool UpdateTerrainLeap(Player player)
         {
-            if (NPC.velocity.Y != 0f || player.dead || !player.active || player.Center.Y < NPC.Bottom.Y + 5 * 16f)
+            if (TerrainLeapCooldown > 0)
+            {
+                TerrainLeapCooldown--;
+            }
+            if (TerrainLeapTicks <= 0)
+            {
+                return false;
+            }
+
+            TerrainLeapTicks--;
+            NPC.velocity.X = TerrainLeapVelocityX;
+            int direction = Math.Sign(TerrainLeapVelocityX);
+            NPC.direction = direction;
+            NPC.spriteDirection = direction;
+
+            //The collision frame comes back with zero vertical velocity after Terraria resolves the landing.
+            if ((NPC.collideY && NPC.velocity.Y >= 0f) || (NPC.velocity.Y == 0f && TerrainLeapTicks < 100))
+            {
+                LogTerrainLeap("landed", $"x={NPC.Center.X / 16f:F1} target={TerrainLeapLandingX / 16f:F1}");
+                TerrainLeapTicks = 0;
+                TerrainLeapCooldown = 90;
+                NPC.netUpdate = true;
+                return false;
+            }
+            if (TerrainLeapTicks <= 0)
+            {
+                LogTerrainLeap("timeout", $"x={NPC.Center.X / 16f:F1} target={TerrainLeapLandingX / 16f:F1}");
+                TerrainLeapCooldown = 120;
+                NPC.netUpdate = true;
+                return false;
+            }
+            return true;
+        }
+
+        bool TryStartTerrainLeap(Player player)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || TerrainLeapCooldown > 0 || NPC.velocity.Y != 0f
+                || !player.active || player.dead)
+            {
+                return false;
+            }
+
+            float horizontalDistance = player.Center.X - NPC.Center.X;
+            if (Math.Abs(horizontalDistance) < 240f || Math.Abs(horizontalDistance) > 1120f)
+            {
+                return false;
+            }
+
+            //Do not replace ordinary walking just because a wall happens to be in the way. This specifically
+            //answers a collision at the body's leading edge, or a substantial solid structure between combatants.
+            bool blocked = NPC.collideX || !Collision.CanHitLine(NPC.position, NPC.width, NPC.height, player.position, player.width, player.height);
+            if (!blocked)
+            {
+                return false;
+            }
+
+            int direction = Math.Sign(horizontalDistance);
+            if (!TryFindTerrainLeapLanding(player, direction, out Vector2 landingPosition, out float flightTime, out float launchVelocityY))
+            {
+                TerrainLeapCooldown = 45;
+                LogTerrainLeap("rejected", "blocked but no clear full-body arc / flat landing");
+                return false;
+            }
+
+            TerrainLeapVelocityX = (landingPosition.X - NPC.position.X) / flightTime;
+            TerrainLeapLandingX = landingPosition.X + NPC.width * 0.5f;
+            TerrainLeapTicks = (int)Math.Ceiling(flightTime + 24f);
+            TerrainLeapCooldown = 0;
+            NPC.velocity.Y = launchVelocityY;
+            NPC.velocity.X = TerrainLeapVelocityX;
+            NPC.direction = direction;
+            NPC.spriteDirection = direction;
+            NPC.netUpdate = true;
+            LogTerrainLeap("launch", $"from=({NPC.Center.X / 16f:F1},{NPC.Bottom.Y / 16f:F1}) to=({TerrainLeapLandingX / 16f:F1},{(landingPosition.Y + NPC.height) / 16f:F1}) t={flightTime:F0} vel=({TerrainLeapVelocityX:F2},{launchVelocityY:F2})");
+            return true;
+        }
+
+        bool TryFindTerrainLeapLanding(Player player, int direction, out Vector2 landingPosition, out float flightTime, out float launchVelocityY)
+        {
+            landingPosition = Vector2.Zero;
+            flightTime = 0f;
+            launchVelocityY = 0f;
+
+            //Search near the player, beginning on the side closest to Gigas. It makes the move read as a chase
+            //instead of an unfair overshoot, while the existing two-tile support rule keeps the giant off
+            //the one-tile roof edges that make its large body look as though it is floating.
+            int playerTileX = (int)(player.Center.X / 16f);
+            const int footprintWidth = 2;
+            float searchStartY = player.Bottom.Y - 20f * 16f;
+            for (int offset = 0; offset <= 16; offset++)
+            {
+                int signedOffset = offset == 0 ? 0 : -direction * offset;
+                int landingTileX = playerTileX + signedOffset;
+                float groundY = FindGroundY(new Vector2(landingTileX * 16f + 8f, searchStartY), 48);
+                if (groundY <= 0f || !UsefulFunctions.IsFootprintSupported(landingTileX, (int)(groundY / 16f), footprintWidth))
+                {
+                    continue;
+                }
+
+                Vector2 candidate = new Vector2(landingTileX * 16f + 8f - NPC.width * 0.5f, groundY - NPC.height);
+                float dx = candidate.X - NPC.position.X;
+                if (Math.Sign(dx) != direction || Math.Abs(dx) < 192f || Math.Abs(dx) > 1120f
+                    || Collision.SolidCollision(candidate, NPC.width, NPC.height))
+                {
+                    continue;
+                }
+
+                //A high, slow arc clears the igloo-sized structures the generic jump table intentionally does
+                //not cover. Its height is still physically simulated against the Gigas body before acceptance.
+                float time = MathHelper.Clamp(Math.Abs(dx) / 10f, 82f, 110f);
+                float gravity = NPC.gravity > 0f ? NPC.gravity : 0.3f;
+                float velocityY = (candidate.Y - NPC.position.Y - gravity * time * (time - 1f) * 0.5f) / time;
+                float velocityX = dx / time;
+                if (velocityY < -18f || velocityY > -10f || Math.Abs(velocityX) > 12f)
+                {
+                    continue;
+                }
+                if (HasTerrainLeapClearance(candidate, velocityX, velocityY, gravity, (int)Math.Ceiling(time)))
+                {
+                    landingPosition = candidate;
+                    flightTime = time;
+                    launchVelocityY = velocityY;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool HasTerrainLeapClearance(Vector2 landingPosition, float velocityX, float velocityY, float gravity, int flightTicks)
+        {
+            Vector2 simulatedPosition = NPC.position;
+            Vector2 simulatedVelocity = new Vector2(velocityX, velocityY);
+            for (int tick = 0; tick < flightTicks; tick++)
+            {
+                simulatedPosition += simulatedVelocity;
+                simulatedVelocity.Y += gravity;
+                //The intended final rectangle rests exactly above its supporting tiles; test the approach through
+                //the previous frame, then test the final landing rectangle separately to avoid rejecting its floor.
+                if (tick < flightTicks - 1 && Collision.SolidCollision(simulatedPosition, NPC.width, NPC.height))
+                {
+                    return false;
+                }
+            }
+            return Vector2.DistanceSquared(simulatedPosition, landingPosition) < 20f * 20f
+                && !Collision.SolidCollision(landingPosition, NPC.width, NPC.height);
+        }
+
+        void LogTerrainLeap(string action, string detail)
+        {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode || Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
+            }
+            try
+            {
+                string directory = Main.SavePath + Path.DirectorySeparatorChar + "Logs";
+                Directory.CreateDirectory(directory);
+                string line = $"[{DateTime.Now:HH:mm:ss}] {NPC.TypeName}#{NPC.whoAmI} [gigas-leap] {action} {detail}";
+                File.AppendAllText(directory + Path.DirectorySeparatorChar + "tsorcRevamp-smartfighter4.log", line + Environment.NewLine);
+            }
+            catch { }
+        }
+
+        // Navigation rejects narrow landing surfaces, but collision can still leave Gigas physically
+        // balanced on one after a jump. Do not make it ghost through tiles: its existing bounded
+        // ground-sink owns normal slopes. Instead hop toward the nearest genuine three-tile flat
+        // landing, so a one-tile perch is always temporary and never reads as floating.
+        bool RecoverFromNarrowPerch(tsorcRevampGlobalNPC g, Player player)
+        {
+            if (NPC.velocity.Y != 0f)
+            {
+                return false;
             }
             int supportX = (int)(NPC.Center.X / 16f);
             int supportY = (int)((NPC.Bottom.Y + 4f) / 16f);
-            if (UsefulFunctions.IsFootprintSupported(supportX, supportY, 3, 1))
+            if (UsefulFunctions.IsFootprintSupported(supportX, supportY, 2))
             {
-                return;
+                return false;
             }
-            int dropDirection = Math.Sign(player.Center.X - NPC.Center.X);
-            if (dropDirection == 0)
+
+            int playerDirection = player.active && !player.dead ? Math.Sign(player.Center.X - NPC.Center.X) : NPC.direction;
+            if (playerDirection == 0)
             {
-                dropDirection = NPC.direction == 0 ? 1 : NPC.direction;
+                playerDirection = NPC.direction == 0 ? 1 : NPC.direction;
             }
-            NPC.velocity.X = dropDirection * 1.2f;
-            NPC.direction = dropDirection;
-            NPC.spriteDirection = dropDirection;
+
+            int direction = FindNearestFlatLandingDirection(supportX, supportY, playerDirection);
+            NPC.velocity.Y = -g.MaxJumpPower * 0.85f;
+            NPC.velocity.X = direction * g.MaxJumpBoost * 0.75f;
+            NPC.direction = direction;
+            NPC.spriteDirection = direction;
+            NPC.netUpdate = true;
+            return true;
+        }
+
+        int FindNearestFlatLandingDirection(int supportX, int supportY, int preferredDirection)
+        {
+            // Search the preferred side first, then the other side. A landing may be up to three
+            // tiles lower, but every accepted candidate is still a fully flat two-tile footprint.
+            for (int pass = 0; pass < 2; pass++)
+            {
+                int direction = pass == 0 ? preferredDirection : -preferredDirection;
+                for (int distance = 3; distance <= 10; distance++)
+                {
+                    for (int stepDown = 0; stepDown <= 3; stepDown++)
+                    {
+                        if (UsefulFunctions.IsFootprintSupported(supportX + direction * distance, supportY + stepDown, 2))
+                        {
+                            return direction;
+                        }
+                    }
+                }
+            }
+            return preferredDirection;
         }
 
         ///<summary>World Y of the first solid tile top under the point (scanning down), or -1 if none in range.</summary>
@@ -1010,6 +1446,13 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         ///<summary>Golden afterimage trail during the slam dive (and any other high-speed moment, e.g. the
         ///HeavyBeast charge) — same oldPos technique as Leonhard's dash.</summary>
+        public override Color? GetAlpha(Color drawColor)
+        {
+            return HolyShieldVisualProgress > 0f
+                ? Color.Lerp(drawColor, new Color(255, 218, 112), HolyShieldVisualProgress * 0.56f)
+                : null;
+        }
+
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             bool diving = (State == AttackState.SunlightSlam || State == AttackState.LedgeLeap) && SlamPhase == 3;
@@ -1023,6 +1466,33 @@ namespace tsorcRevamp.NPCs.Enemies{
                     Vector2 drawPos = NPC.oldPos[k] + new Vector2(NPC.width / 2f, NPC.height + NPC.gfxOffY + 6f) - screenPos;
                     Color color = new Color(255, 210, 90, 0) * ((NPC.oldPos.Length - k) / (float)NPC.oldPos.Length) * 0.6f;
                     spriteBatch.Draw(texture, drawPos, NPC.frame, color, NPC.rotation, origin, NPC.scale, effects, 0f);
+                }
+            }
+
+            if (HolyShieldVisualProgress > 0f)
+            {
+                // Hydra's Magic Shield language, rebuilt around Gigas's fixed sprite as a warm radial
+                // halo and echoes. The standard NPC draw remains untouched, preserving its ground anchor.
+                Texture2D texture = TextureAssets.Npc[NPC.type].Value;
+                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                Vector2 origin = NPC.frame.Size() * 0.5f;
+                Vector2 drawPos = NPC.Center - screenPos + new Vector2(0f, NPC.gfxOffY + 6f);
+                float intensity = HolyShieldVisualProgress;
+                for (int i = 0; i < 12; i++)
+                {
+                    Vector2 haloOffset = new Vector2(18f * intensity, 0f).RotatedBy(MathHelper.TwoPi * i / 12f);
+                    spriteBatch.Draw(texture, drawPos + haloOffset, NPC.frame, new Color(255, 187, 44, 0) * (0.12f + intensity * 0.18f),
+                        NPC.rotation, origin, NPC.scale * (1f + intensity * 0.035f), effects, 0f);
+                }
+                for (int k = NPC.oldPos.Length - 1; k >= 1; k -= 2)
+                {
+                    if (NPC.oldPos[k] == Vector2.Zero)
+                    {
+                        continue;
+                    }
+                    Vector2 echo = NPC.oldPos[k] + new Vector2(NPC.width * 0.5f, NPC.height + NPC.gfxOffY + 6f) - screenPos;
+                    float alpha = (NPC.oldPos.Length - k) / (float)NPC.oldPos.Length * 0.25f * intensity;
+                    spriteBatch.Draw(texture, echo, NPC.frame, new Color(255, 179, 36, 0) * alpha, NPC.rotation, origin, NPC.scale, effects, 0f);
                 }
             }
             return true;

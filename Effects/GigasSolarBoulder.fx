@@ -1,5 +1,6 @@
 // Gigas's slow lobbed miniature sun. The dark furnace body gives the projectile real mass, while
 // two independently scrolling fields push holy flame through its cracks and irregular corona.
+#include "PixelShaderCommon.fxh"
 sampler MacroNoise : register(s0);
 sampler DetailNoise : register(s1);
 
@@ -9,9 +10,12 @@ float3 CoreColor;
 float Opacity;
 float Time;
 float Progress;
+float2 DrawSize;
+float PixelBlockSize;
 
 float4 GigasSolarBoulderPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+    coords = PixelateShaderUV(coords, DrawSize, PixelBlockSize);
     float2 p = (coords - 0.5) * 2.0;
     float r = length(p);
     // Ordinary UV space is intentional: ring-space turns a voluminous sun into radial spokes.

@@ -28,6 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         int HoverTicks => (int)Projectile.ai[0];
         int LengthTier => Math.Clamp((int)Projectile.ai[1], 0, 3);
         bool Diving => Projectile.localAI[0] > HoverTicks;
+        float FlightProgress => MathHelper.Clamp((Projectile.localAI[0] - HoverTicks) / (14f + LengthTier * 2f), 0f, 1f);
 
         static void LoadAssets()
         {
@@ -118,11 +119,18 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
+            // Telegraph is intentionally only the converging circular dust formation from AI().
+            // Drawing a partly revealed horizontal lance here made the future spear look exposed
+            // and flat before it had actually launched.
+            if (!Diving)
+            {
+                return false;
+            }
+
             LoadAssets();
             Texture2D primary = macroNoise.Value;
-            float progress = MathHelper.Clamp(Projectile.localAI[0] / (float)HoverTicks, 0f, 1f);
-            float visualLength = Diving ? 72f + LengthTier * 29f : 58f;
-            float visualHeight = Diving ? 28f + LengthTier * 3.3f : 26f;
+            float visualLength = MathHelper.Lerp(22f, 72f + LengthTier * 29f, FlightProgress);
+            float visualHeight = MathHelper.Lerp(14f, 28f + LengthTier * 3.3f, FlightProgress);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
@@ -141,18 +149,19 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["OuterColor"].SetValue(new Color(57, 31, 4).ToVector3());
                 effect.Parameters["MiddleColor"].SetValue(new Color(229, 142, 16).ToVector3());
                 effect.Parameters["CoreColor"].SetValue(new Color(255, 238, 163).ToVector3());
-                effect.Parameters["Opacity"].SetValue(Diving ? 0.92f : 0.72f);
+                effect.Parameters["Opacity"].SetValue(0.92f);
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-                effect.Parameters["Progress"].SetValue(progress);
-                effect.Parameters["Active"].SetValue(Diving ? 1f : 0f);
+                effect.Parameters["Progress"].SetValue(1f);
+                effect.Parameters["Active"].SetValue(1f);
                 effect.Parameters["Phase"].SetValue(Projectile.whoAmI * 0.173f + LengthTier * 0.31f);
+                effect.Parameters["DrawSize"].SetValue(new Vector2(visualLength, visualHeight));
                 effect.CurrentTechnique.Passes[0].Apply();
 
                 // During flight x=.93 (the heavy head) sits on the existing 18px damage body;
                 // only the short needle leads it. The longer left-side wake remains decorative.
-                Vector2 origin = Diving ? new Vector2(primary.Width * 0.93f, primary.Height * 0.5f) : primary.Size() * 0.5f;
+                Vector2 origin = new Vector2(primary.Width * 0.93f, primary.Height * 0.5f);
                 Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White,
-                    Diving ? Projectile.rotation : 0f, origin,
+                    Projectile.rotation, origin,
                     new Vector2(visualLength / primary.Width, visualHeight / primary.Height), SpriteEffects.None, 0);
 
                 // The second pass restores the old preview's moving fissures and bright narrow
@@ -160,7 +169,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.CurrentTechnique = effect.Techniques["GigasHeavenlySpearDetails"];
                 effect.CurrentTechnique.Passes[0].Apply();
                 Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White,
-                    Diving ? Projectile.rotation : 0f, origin,
+                    Projectile.rotation, origin,
                     new Vector2(visualLength / primary.Width, visualHeight / primary.Height), SpriteEffects.None, 0);
             }
             finally

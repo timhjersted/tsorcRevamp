@@ -167,6 +167,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
                 effect.Parameters["Phase"].SetValue(Projectile.ai[1] * 0.137f);
                 effect.Parameters["Active"].SetValue(Mode == Mode_Orbit ? 0f : 1f);
+                effect.Parameters["DrawSize"].SetValue(new Vector2(56f));
+                effect.Parameters["PixelBlockSize"].SetValue(2f);
                 effect.CurrentTechnique.Passes[0].Apply();
 
                 Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White,

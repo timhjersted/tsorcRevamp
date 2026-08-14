@@ -19,6 +19,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 
 static class Preview
@@ -27,7 +28,10 @@ static class Preview
     // Harness. You should not need to touch anything above "YOUR SHADERS".
     // ---------------------------------------------------------------------------------------------
 
-    const string NoiseRoot = @"..\..\..\..\Textures\Noise\";
+    // An explicit root lets a staged preview build run outside the repository while continuing to
+    // sample the exact game textures. The default preserves the normal in-place workflow.
+    static string NoiseRoot => Environment.GetEnvironmentVariable("PREVIEW_NOISE_ROOT") ?? @"..\..\..\..\Textures\Noise\";
+    static string TextureRoot => Environment.GetEnvironmentVariable("PREVIEW_TEXTURE_ROOT") ?? @"..\..\..\..\Textures\";
 
     /// A texture sampled the way the GPU will sample it.
     ///
@@ -124,6 +128,12 @@ static class Preview
     static float length(V2 p) => MathF.Sqrt(p.x * p.x + p.y * p.y);
     static float abs(float v) => MathF.Abs(v);
     static V3 lerp(V3 a, V3 b, float t) => new(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
+    static V2 PixelateShaderUV(V2 uv, int width, int height, float pixelBlockSize = 2f)
+    {
+        float xBlock = pixelBlockSize / width;
+        float yBlock = pixelBlockSize / height;
+        return new V2((MathF.Floor(uv.x / xBlock) + .5f) * xBlock, (MathF.Floor(uv.y / yBlock) + .5f) * yBlock);
+    }
     /// Author colours the way the C# VFX helper does, so you can paste the palette straight across.
     static V3 C(int r, int g, int b) => new(r / 255f, g / 255f, b / 255f);
 
@@ -151,7 +161,7 @@ static class Preview
         SolarFlameSampler = new Tex("T_FirePanningCyl45");
         StoneSampler = new Tex("T_Noise_Wo14");
         CrackSampler = new Tex("Vein_02-512x512");
-        MonolithSampler = new Tex(@"..\..\..\..\Textures\Particles\GigasConsecratedMonolith", previewLocal: true);
+        MonolithSampler = new Tex(Path.Combine(TextureRoot, "Particles", "GigasConsecratedMonolith"), previewLocal: true);
         CrimsonFlowSampler = new Tex("Turbulence_05-512x512");
     }
 
@@ -361,8 +371,9 @@ static class Preview
     }
 
     // ---- Effects/GigasNovaRing.fx ------------------------------------------------------------
-    static (V3, float) GigasNovaSun(V2 uv, float Time, float Opacity)
+    static (V3, float) GigasNovaSun(V2 uv, float Time, float Opacity, bool pixelated = true)
     {
+        if (pixelated) uv = PixelateShaderUV(uv, 616, 616);
         float radius = length((uv - 0.5f) * 616f);
         float macro = SolarMacroSampler.R(uv * 1.75f + new V2(-Time * 0.10f, Time * 0.14f));
         float detail = SolarDetailSampler.R(uv * 5.20f + new V2(Time * 0.23f, -Time * 0.31f));
@@ -379,8 +390,9 @@ static class Preview
         return (color * alpha + C(255, 245, 190) * (hotPockets * 0.17f + edge * 0.04f) * Opacity, alpha);
     }
 
-    static (V3, float) GigasNovaCorona(V2 uv, float Time, float Opacity)
+    static (V3, float) GigasNovaCorona(V2 uv, float Time, float Opacity, bool pixelated = true)
     {
+        if (pixelated) uv = PixelateShaderUV(uv, 768, 768);
         float radius = length((uv - 0.5f) * 768f);
         float macro = SolarMacroSampler.R(uv * 1.18f + new V2(Time * 0.045f, -Time * 0.072f));
         float flame = SolarFlameSampler.R(uv * 0.94f + new V2(-Time * 0.035f, Time * 0.235f));
@@ -395,10 +407,11 @@ static class Preview
         return (color * alpha + C(255, 245, 190) * crown * heat * 0.11f * Opacity, alpha);
     }
 
-    static (V3, float) GigasNovaField(V2 uv, float Time, float Progress, float Active, float Opacity)
+    static (V3, float) GigasNovaField(V2 uv, float Time, float Progress, float Active, float Opacity, bool pixelated = true)
     {
         if (Active == 0f)
         {
+            if (pixelated) uv = PixelateShaderUV(uv, 572, 572);
             float radius = length((uv - 0.5f) * 572f);
             float edge = sat((8f - abs(radius - 270f * Progress)) / 5f);
             float fill = sat((270f * Progress - radius) / 16f) * 0.09f;
@@ -407,9 +420,9 @@ static class Preview
         }
 
         V2 bodyUV = new((uv.x - 0.5f) / (616f / 768f) + 0.5f, (uv.y - 0.5f) / (616f / 768f) + 0.5f);
-        var (coronaRgb, coronaAlpha) = GigasNovaCorona(uv, Time, Opacity);
+        var (coronaRgb, coronaAlpha) = GigasNovaCorona(uv, Time, Opacity, pixelated);
         if (bodyUV.x < 0f || bodyUV.x > 1f || bodyUV.y < 0f || bodyUV.y > 1f) return (coronaRgb, coronaAlpha);
-        var (bodyRgb, bodyAlpha) = GigasNovaSun(bodyUV, Time, Opacity);
+        var (bodyRgb, bodyAlpha) = GigasNovaSun(bodyUV, Time, Opacity, pixelated);
         return (coronaRgb + bodyRgb * (1f - coronaAlpha), coronaAlpha + bodyAlpha * (1f - coronaAlpha));
     }
 
@@ -680,36 +693,32 @@ static class Preview
     }
 
     // ---- Candidate: GigasConsecratedGround ---------------------------------------------------
-    // A shallow, broken bed of sacred coals — not a circle or a decal. The bright ember bed maps
-    // exactly to the existing 64x16 hostile strip; the taller flame canopy is decorative padding.
-    static (V3, float) GigasConsecratedGround(V2 uv, float Time, float Remaining)
+    // One of the Solar Boulder fire modules: tall bright-yellow tongues with a fade that continues
+    // into the ground padding. The real caller is 52x180, with its lower padding occluded by terrain.
+    static (V3, float) GigasConsecratedGround(V2 uv, float Time, float Remaining, bool pixelated = true)
     {
-        // The preview quad is 88x36, so .136..864 in X maps to the exact 64px damage span.
-        float damageX = (uv.x - .5f) * 1.375f + .5f;
-        float macro = SolarMacroSampler.R(new V2(damageX * 2.45f - Time * .10f, uv.y * 1.25f + Time * .18f));
-        float detail = SolarDetailSampler.R(new V2(damageX * 7.40f + Time * .29f, uv.y * 2.15f - Time * .64f));
-        // The bright band starts/ends at the mapped 64px boundary. Its lower edge is driven by
-        // macro noise too, so the burning scar has downward ember tongues instead of a flat cutoff.
-        float endCaps = sat((damageX) * 5.2f) * sat((1f - damageX) * 5.2f);
-        float emberBottom = .83f + macro * .12f;
-        float floorFade = sat((emberBottom - uv.y) * 18f);
-        float tongueTop = .64f - macro * .46f;
-        float tongues = sat((uv.y - tongueTop) * 10.5f) * floorFade * endCaps;
-        float emberBed = sat((uv.y - .55f) * 10.5f) * floorFade * endCaps;
+        if (pixelated)
+        {
+            uv = PixelateShaderUV(uv, 52, 180);
+        }
+        float macro = SolarMacroSampler.R(new V2(uv.x * 1.10f - Time * .08f, uv.y * .72f + Time * .13f));
+        float detail = SolarDetailSampler.R(new V2(uv.x * 4.40f + Time * .25f, uv.y * 1.70f - Time * .52f));
+        float flameHalfWidth = (.04f + .30f * sat(uv.y * 1.45f))
+            * (.86f + macro * .18f) * sat((1f - uv.y) * 5f);
+        float flameBody = sat((flameHalfWidth - abs(uv.x - .5f)) * 12f);
+        float emberBottom = .78f + macro * .08f;
+        float floorFade = sat((emberBottom - uv.y) * 10f);
+        float tongueTop = .76f - macro * .70f;
+        float tongues = sat((uv.y - tongueTop) * 6.8f) * floorFade * flameBody;
+        float emberBed = sat((uv.y - .60f) * 7.6f) * floorFade * flameBody;
 
-        // Two short, defined edge flames replace a uniform end fade. Their narrow feet remain
-        // inside the hostile 64px span, but their separate texture phase keeps them from reading
-        // as mere transparency at either side of the patch.
-        float leftFoot = sat((.18f - abs(damageX - .11f)) * 18f);
-        float rightFoot = sat((.18f - abs(damageX - .89f)) * 18f);
-        float edgeFlame = (leftFoot + rightFoot) * sat((uv.y - (.62f - detail * .22f)) * 13f) * floorFade;
-        float coals = tongues * sat(macro * .68f + detail * .58f - .14f);
-        float hotCracks = emberBed * sat((detail - .43f) * 1.75f) + edgeFlame * .35f;
+        float coals = tongues * (.62f + macro * .38f);
+        float hotCracks = emberBed * sat((detail - .20f) * 1.25f) * (.45f + macro * .55f);
 
         float age = Remaining;
         float alpha = sat(coals * .92f + hotCracks * .54f) * age;
-        V3 color = lerp(C(52, 25, 3), C(222, 127, 9), sat(coals * .56f + macro * .44f));
-        color = lerp(color, C(255, 230, 138), hotCracks * .70f);
+        V3 color = lerp(C(92, 50, 3), C(255, 183, 20), sat(coals * .56f + macro * .44f));
+        color = lerp(color, C(255, 249, 190), hotCracks * .82f);
         return (color * alpha, alpha);
     }
 
@@ -1020,9 +1029,10 @@ static class Preview
         {
             FocusPanels = new[]
             {
-                new Panel("Telegraph P=0.35", 572, 572, Blend.PremultipliedAlpha, c => GigasNovaField(c, 2.5f, .35f, 0f, .58f)),
-                new Panel("Telegraph P=0.80", 572, 572, Blend.PremultipliedAlpha, c => GigasNovaField(c, 3.7f, .80f, 0f, .58f)),
-                new Panel("Layered molten sun", 768, 768, Blend.PremultipliedAlpha, c => GigasNovaField(c, 4.9f, 1f, 1f, 1f)),
+                new Panel("Smooth telegraph", 572, 572, Blend.PremultipliedAlpha, c => GigasNovaField(c, 3.7f, .80f, 0f, .58f, false)),
+                new Panel("2px telegraph", 572, 572, Blend.PremultipliedAlpha, c => GigasNovaField(c, 3.7f, .80f, 0f, .58f)),
+                new Panel("Smooth molten sun", 768, 768, Blend.PremultipliedAlpha, c => GigasNovaField(c, 4.9f, 1f, 1f, 1f, false)),
+                new Panel("2px molten sun", 768, 768, Blend.PremultipliedAlpha, c => GigasNovaField(c, 4.9f, 1f, 1f, 1f)),
             };
         }
         if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_light_hand")
@@ -1073,9 +1083,10 @@ static class Preview
         {
             FocusPanels = new[]
             {
-                new Panel("Fresh landing", 88, 36, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 2.4f, 1f)),
-                new Panel("Sustained burn", 88, 36, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 4.1f, .62f)),
-                new Panel("Last embers", 88, 36, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 5.8f, .18f)),
+                new Panel("Unfiltered fresh", 52, 180, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 2.4f, 1f, false)),
+                new Panel("2px pixel fresh", 52, 180, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 2.4f, 1f)),
+                new Panel("2px pixel sustained", 52, 180, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 4.1f, .62f)),
+                new Panel("2px pixel embers", 52, 180, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 5.8f, .18f)),
             };
         }
         if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_heavenly_spears")
@@ -1167,7 +1178,13 @@ static class Preview
         }
 
         string outputName = $"{safePreviewName}-{DateTime.Now:yyyyMMdd-HHmmss}.png";
-        sheet.Save(outputName, ImageFormat.Png);
-        Console.WriteLine($"wrote {outputName} ({panels.Length} panels)");
+        string outputDirectory = Environment.GetEnvironmentVariable("PREVIEW_OUTPUT_DIR");
+        string outputPath = string.IsNullOrWhiteSpace(outputDirectory) ? outputName : Path.Combine(outputDirectory, outputName);
+        if (!string.IsNullOrWhiteSpace(outputDirectory))
+        {
+            Directory.CreateDirectory(outputDirectory);
+        }
+        sheet.Save(outputPath, ImageFormat.Png);
+        Console.WriteLine($"wrote {outputPath} ({panels.Length} panels)");
     }
 }

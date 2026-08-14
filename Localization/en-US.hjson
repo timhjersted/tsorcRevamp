@@ -1446,7 +1446,7 @@ Mods: {
 					'''
 					[c/ffbf00:Focuses the user's mana into a protective shield]
 					{$CommonItemTooltip.DRStat}, but drains {1} mana per hit
-					[c/00ffd4:{$CommonItemTooltip.IncreasesMaxManaByPercent@2}]
+					[c/00ffd4:{$CommonItemTooltip.IncreasesMaxManaBy@2}]
 					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.SecondDuration@3})
 					Reduces ranged, magic and summon damage by {4}% multiplicatively
 					'''
@@ -11133,6 +11133,9 @@ Mods: {
 			RedKnightPoisonRainController.DisplayName: Red Knight's Poison Rain
 			RedKnightTeleportFeintBlast.DisplayName: Red Knight's Teleport Feint Blast
 			GigasNovaTelegraph.DisplayName: Gigas Nova Telegraph
+			GigasHolyShieldVortex.DisplayName: Gigas Holy Shield Vortex
+			GigasHolyShieldBolt.DisplayName: Gigas Holy Shield Bolt
+			GigasSolarBoulderGroundSpread.DisplayName: Gigas Solar Boulder Ground Spread
 		}
 
 		NPCs: {
@@ -13240,7 +13243,7 @@ Mods: {
 					Tooltip:
 						'''
 						Hides the minimap and overlay map during normal gameplay, while keeping your
-						selected map mode visible when the inventory is open. Defaults to On.
+						selected map mode visible when the inventory is open. Defaults to Off.
 						'''
 				}
 

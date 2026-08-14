@@ -1,5 +1,6 @@
 // Gigas's heavenly spear. The needle (right side of its local quad) is anchored at the projectile's
 // real 18px damage point; the long broken wake trails behind and grows only as decorative spectacle.
+#include "PixelShaderCommon.fxh"
 sampler MacroNoise : register(s0);
 sampler DetailNoise : register(s1);
 
@@ -11,13 +12,18 @@ float Time;
 float Progress;
 float Active;
 float Phase;
+float2 DrawSize;
 
 float4 GigasHeavenlySpearPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+    // This shader is close to the Reach ps_2_0 instruction ceiling.  The spear is
+    // always rendered with a 2px block setting, so use the compact equivalent
+    // here rather than the defensive shared helper.
+    float2 pixelGrid = DrawSize * 0.5;
+    coords = floor(coords * pixelGrid) / pixelGrid;
     float along = coords.x;
     float across = abs(coords.y - 0.5);
     float macro = tex2D(MacroNoise, float2(along * 2.20 - Time * 0.20 + Phase, coords.y * 1.45 + Time * 0.09)).r;
-    float detail = tex2D(DetailNoise, float2(along * 6.65 + Time * 0.31, coords.y * 3.10 - Time * 0.48 + Phase)).r;
 
     // Both ends taper to zero before the quad's boundary. The broad head ends at .93, then a
     // separate needle continues to the real impact point at x=1: it cannot read as a blunt beam.
@@ -31,17 +37,15 @@ float4 GigasHeavenlySpearPixel(float4 sampleColor : COLOR0, float2 coords : TEXC
     float needleWidth = (1.0 - along) * 0.50;
     float width = lerp(headWidth, needleWidth, needleBlend);
     float body = saturate((width - across) * 22.0) * tail * tipFade;
-    float wakeNoise = saturate(macro * 0.66 + detail * 0.54 - 0.14);
-    float wake = saturate((shaftWidth + 0.040 + macro * 0.050 - across) * 8.0) * tail * tipFade * (1.0 - head) * wakeNoise;
 
     // The harmless hover grows from the future tip backward; the committed dive is fully revealed.
     float forming = saturate((Progress - (1.0 - along) * 0.74) * 5.2);
     float reveal = lerp(forming, 1.0, Active);
-    float heat = saturate(macro * 0.64 + detail * 0.52 - 0.13);
+    float heat = macro;
 
     // The narrow core/fissures deliberately live in the second pass, preserving this pass's
     // portable body silhouette and leaving it well below Reach's arithmetic limit.
-    float alpha = saturate(body * (0.76 + heat * 0.16) + wake * 0.30) * reveal * Opacity;
+    float alpha = body * (0.76 + heat * 0.16) * reveal * Opacity;
     float3 color = lerp(OuterColor, MiddleColor, saturate(body * 0.48 + heat * 0.52));
     return float4(sampleColor.rgb * color * alpha, sampleColor.a * alpha);
 }
@@ -50,6 +54,9 @@ float4 GigasHeavenlySpearPixel(float4 sampleColor : COLOR0, float2 coords : TEXC
 // ps_2_0 budget. It repeats the same silhouette only to guarantee its cracks cannot escape it.
 float4 GigasHeavenlySpearDetailsPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+    // The primary silhouette is snapped to 2px. This optional, additive detail
+    // pass remains smooth so it fits Reach's 64-slot shader cap and retains the
+    // spear's animated hairline fissures.
     float along = coords.x;
     float across = abs(coords.y - 0.5);
     float macro = tex2D(MacroNoise, float2(along * 2.20 - Time * 0.20 + Phase, coords.y * 1.45 + Time * 0.09)).r;

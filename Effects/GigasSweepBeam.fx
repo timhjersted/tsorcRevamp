@@ -1,5 +1,6 @@
 // Gigas's ground-hugging blade of judgment. The 48px bright body matches the hostile beam height;
 // the wider 72px draw quad exists only to give the non-damaging halo a clean place to fade.
+#include "PixelShaderCommon.fxh"
 sampler MacroNoise : register(s0);
 sampler DetailNoise : register(s1);
 
@@ -11,17 +12,20 @@ float Time;
 float Progress;
 float Active;
 float Direction;
+float2 DrawSize;
 
 float4 GigasSweepBeamPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+    // Fixed 2px grid, written locally to keep this Reach-limited effect compact.
+    float2 pixelGrid = DrawSize * 0.5;
+    coords = floor(coords * pixelGrid) / pixelGrid;
     float along = coords.x;
     float across = abs(coords.y - 0.5);
 
     // Long-frequency flow establishes a coherent horizontal blade; the finer field moves against
     // it so the gold filaments travel through the beam instead of becoming a scrolling texture.
     float macro = tex2D(MacroNoise, float2(along * 1.15 - Time * 0.82 * Direction, coords.y * 2.55 + Time * 0.10)).r;
-    float detail = tex2D(DetailNoise, float2(along * 5.30 + Time * 2.10 * Direction, coords.y * 6.40 - Time * 0.34)).r;
-    float shimmer = saturate(macro * 0.66 + detail * 0.58 - 0.12);
+    float shimmer = macro;
 
     // 0.333 across is 48px in the 72px visual quad: the broad bright body tells the truth about
     // the hostile rectangle. The halo reaches only 0.46 and therefore vanishes before the quad edge.

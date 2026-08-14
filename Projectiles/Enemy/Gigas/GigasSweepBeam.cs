@@ -135,6 +135,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Progress"].SetValue(progress);
                 effect.Parameters["Active"].SetValue(active);
                 effect.Parameters["Direction"].SetValue(Direction);
+                effect.Parameters["DrawSize"].SetValue(new Vector2(752f, 72f));
                 effect.CurrentTechnique.Passes[0].Apply();
 
                 // The 72px visual shell permits a soft halo; the 48px gold body is kept within

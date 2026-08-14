@@ -1,5 +1,6 @@
 // Wrath of Gold: a filled circle collision field with a molten solar body. The telegraph is a
 // separate light-weight technique so the live effect can afford a billowing corona under Reach.
+#include "PixelShaderCommon.fxh"
 sampler MacroNoise : register(s0);
 sampler DetailNoise : register(s1);
 sampler FlameNoise : register(s2);
@@ -11,9 +12,11 @@ float Time;
 float2 DrawSize;
 float RingRadius;
 float Progress;
+float PixelBlockSize;
 
 float4 GigasNovaTelegraphPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+    coords = PixelateShaderUV(coords, DrawSize, PixelBlockSize);
     float radius = length((coords - 0.5) * DrawSize);
     float edge = saturate((8.0 - abs(radius - RingRadius * Progress)) / 5.0);
     float fill = saturate((RingRadius * Progress - radius) / 16.0) * 0.09;
@@ -23,6 +26,7 @@ float4 GigasNovaTelegraphPixel(float4 sampleColor : COLOR0, float2 coords : TEXC
 
 float4 GigasNovaSunPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+    coords = PixelateShaderUV(coords, DrawSize, PixelBlockSize);
     float radius = length((coords - 0.5) * DrawSize);
 
     // Counter-flowing planar samples form the molten body. Macro alone also pushes/pulls the
@@ -48,11 +52,14 @@ float4 GigasNovaSunPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0)
 // envelope; the dense solar body stays in the first pass so this reads as flame around a sun.
 float4 GigasNovaCoronaPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+    coords = PixelateShaderUV(coords, DrawSize, PixelBlockSize);
     float radius = length((coords - 0.5) * DrawSize);
     float macro = tex2D(MacroNoise, coords * 1.18 + float2(Time * 0.045, -Time * 0.072)).r;
     float flame = tex2D(FlameNoise, coords * 0.94 + float2(-Time * 0.035, Time * 0.235)).r;
     float tongues = saturate(flame * 1.24 + macro * 0.46 - 0.23);
-    float reach = RingRadius + 18.0 + tongues * 74.0;
+    // Scale the corona travel with the actual field. This also lets Solar Slabs reuse the same
+    // molten-nova burst at a compact contact size instead of sampling a 270px-only envelope.
+    float reach = RingRadius + 18.0 + tongues * RingRadius * 0.275;
     float crown = saturate((reach - radius) / 10.0)
         * saturate((radius - RingRadius + 18.0) / 14.0);
     float rim = saturate((10.0 - abs(radius - RingRadius)) / 6.0);

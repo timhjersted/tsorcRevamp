@@ -9,9 +9,10 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy
 {
     ///<summary>
-    ///Gigas Wrath of Gold nova: an expanding annular blast. The hitbox is a true ring — Colliding()
-    ///only registers players intersecting the current radius band, so standing inside the wave after
-    ///it passes (or rolling through it) is safe. Drawn entirely with a dust ring. ai[0] = max radius (px).
+    ///Gigas Wrath of Gold nova: an expanding filled solar field. Its 300px radius makes the true
+    ///damage diameter 600px; each player may only be hit once. ai[0] = max radius (px), ai[1] =
+    ///optional duration; ai[2] marks a visual-only nested layer. Solar Slabs supplies a 24-tick
+    ///outer damage nova plus a simultaneous 75%-scale visual core; Wrath keeps its normal expansion.
     ///</summary>
     class GigasNovaRing : ModProjectile
     {
@@ -26,13 +27,18 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> flameNoise;
         readonly bool[] hitPlayers = new bool[Main.maxPlayers];
 
-        float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 260f;
-        float Radius => Projectile.localAI[0];
+        float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 300f;
+        int Duration => Projectile.ai[1] > 0f ? (int)Projectile.ai[1] : (int)(MaxRadius / ExpandSpeed) + 2;
+        float Radius => MaxRadius * MathHelper.Clamp(Projectile.localAI[0] / Duration, 0f, 1f);
+        // Long scripted novas fade over their last 30 ticks. A 24-tick Solar Slabs burst instead
+        // holds at full brightness, then sheds quickly over its last ~8 ticks.
+        float FadeTicks => Projectile.ai[1] > 0f ? Math.Min(30f, Math.Max(6f, Duration * 0.35f)) : 5f;
+        bool VisualOnly => Projectile.ai[2] > 0.5f;
 
         public override void SetDefaults()
         {
             Projectile.hostile = true;
-            Projectile.width = 600; //broadphase box; real collision is the ring in Colliding()
+            Projectile.width = 600; // broadphase matches the 600px maximum damage diameter
             Projectile.height = 600;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
@@ -42,16 +48,17 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            Projectile.timeLeft = (int)(MaxRadius / ExpandSpeed) + 2;
+            Projectile.timeLeft = Duration;
+            Projectile.hostile = !VisualOnly;
         }
 
         public override void AI()
         {
             Projectile.velocity = Vector2.Zero;
-            Projectile.localAI[0] += ExpandSpeed;
+            Projectile.localAI[0]++;
 
             //Dust ring at the current radius — denser near the start so the burst reads as a flash
-            int points = 36;
+            int points = Duration > 60 ? 20 : 36;
             for (int i = 0; i < points; i++)
             {
                 float angle = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -101,13 +108,14 @@ namespace tsorcRevamp.Projectiles.Enemy
                 graphicsDevice.SamplerStates[2] = SamplerState.LinearWrap;
                 Effect effect = novaEffect.Value;
                 effect.CurrentTechnique = effect.Techniques["GigasNovaSun"];
-                effect.Parameters["OuterColor"].SetValue(new Color(105, 61, 5).ToVector3());
-                effect.Parameters["MiddleColor"].SetValue(new Color(255, 176, 25).ToVector3());
+                effect.Parameters["OuterColor"].SetValue((VisualOnly ? new Color(136, 79, 6) : new Color(105, 61, 5)).ToVector3());
+                effect.Parameters["MiddleColor"].SetValue((VisualOnly ? new Color(255, 205, 55) : new Color(255, 176, 25)).ToVector3());
                 effect.Parameters["CoreColor"].SetValue(new Color(255, 245, 190).ToVector3());
-                effect.Parameters["Opacity"].SetValue(MathHelper.Clamp(Projectile.timeLeft / 5f, 0f, 1f));
+                effect.Parameters["Opacity"].SetValue(MathHelper.Clamp(Projectile.timeLeft / FadeTicks, 0f, 1f));
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
                 effect.Parameters["DrawSize"].SetValue(new Vector2(diameter));
                 effect.Parameters["RingRadius"].SetValue(Radius);
+                effect.Parameters["PixelBlockSize"].SetValue(2f);
                 effect.CurrentTechnique.Passes[0].Apply();
                 Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White, 0f,
                     primary.Size() * 0.5f, diameter / (float)primary.Width, SpriteEffects.None, 0);
@@ -115,6 +123,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.CurrentTechnique = effect.Techniques["GigasNovaCorona"];
                 float coronaDiameter = diameter + 152f;
                 effect.Parameters["DrawSize"].SetValue(new Vector2(coronaDiameter));
+                effect.Parameters["PixelBlockSize"].SetValue(2f);
                 effect.CurrentTechnique.Passes[0].Apply();
                 Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White, 0f,
                     primary.Size() * 0.5f, coronaDiameter / primary.Width, SpriteEffects.None, 0);
@@ -132,6 +141,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            if (VisualOnly)
+            {
+                return false;
+            }
             //Distance from the field center to the closest point of the target's hitbox.
             Vector2 closest = new Vector2(
                 MathHelper.Clamp(Projectile.Center.X, targetHitbox.Left, targetHitbox.Right),
@@ -140,7 +153,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             return distClosest <= Radius;
         }
 
-        public override bool CanHitPlayer(Player target) => !hitPlayers[target.whoAmI];
+        public override bool CanHitPlayer(Player target) => !VisualOnly && !hitPlayers[target.whoAmI];
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {

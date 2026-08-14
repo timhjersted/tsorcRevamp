@@ -140,6 +140,8 @@ namespace tsorcRevamp.NPCs.Enemies
         ///<summary>True while Heart of Winter has the body vanished (fake death → pile → pre-rebirth).</summary>
         bool HeartHidden => State == AttackState.HeartOfWinter && AttackTimer < HeartRebirthTick;
 
+        readonly GigasTerrainNavigation TerrainNavigation = new GigasTerrainNavigation();
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
@@ -171,6 +173,8 @@ namespace tsorcRevamp.NPCs.Enemies
             g.NavSearchRadius = 60; // larger window so A* can find valid flat ledges above/across to jump to (mirrors Gigas)
             g.MaxJumpPower = 9f;
             g.MaxJumpBoost = 5f;
+			// Match Holy Gigas: one shallow stair-step is safe support for the two-tile core.
+			g.MaxSurfaceStep = 1;
             // On-hit evasion: lumber back to reset spacing, or telegraph a hyper-armored charge back in.
             EvasiveProfile.HeavyBeast(g);
             // Phase 1 (beast positioner): never stand still — oscillate in a large band when it can't path; wander
@@ -247,6 +251,7 @@ namespace tsorcRevamp.NPCs.Enemies
             writer.Write(SHM);
             writer.Write((byte)WardStored);
             writer.Write(HeartUsed);
+            TerrainNavigation.Send(writer);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -263,6 +268,7 @@ namespace tsorcRevamp.NPCs.Enemies
             SHM = reader.ReadBoolean();
             WardStored = reader.ReadByte();
             HeartUsed = reader.ReadBoolean();
+            TerrainNavigation.Receive(reader);
         }
 
         ///<summary>Chained-into moves cast faster: half telegraph.</summary>
@@ -342,19 +348,27 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (State == AttackState.None)
             {
+                if (TerrainNavigation.Update(NPC))
+                {
+                    FootstepEffects();
+                }
+                else
+                {
                 //Slow, weighty walk — one speed, always. The arena gets faster, not the giant.
-                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, minSurfaceWidth: 3, canWalkBackwards: true); // ~3.25-tile footprint → require 3 flat tiles
+                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, minSurfaceWidth: 2, canWalkBackwards: true);
+                bool recoveringFromNarrowPerch = TerrainNavigation.RecoverFromNarrowPerch(NPC, g, player);
                 if (NPC.lavaWet)
                 {
                     NPC.velocity.Y -= 2;
                 }
                 FootstepEffects();
 
-                if (AttackCooldown > 0)
+                bool terrainLeapStarted = !recoveringFromNarrowPerch && TerrainNavigation.TryBegin(NPC, player);
+                if (!terrainLeapStarted && AttackCooldown > 0)
                 {
                     AttackCooldown--;
                 }
-                if (Main.netMode != NetmodeID.MultiplayerClient && NPC.velocity.Y == 0f && !player.dead && player.active)
+                if (!terrainLeapStarted && !recoveringFromNarrowPerch && Main.netMode != NetmodeID.MultiplayerClient && NPC.velocity.Y == 0f && !player.dead && player.active)
                 {
                     //The 50% crack event takes priority the moment it's grounded
                     if (!Cracked && NPC.life < NPC.lifeMax / 2)
@@ -366,6 +380,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         PickAttack(player);
                     }
+                }
                 }
             }
             else
@@ -743,7 +758,8 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             int gather = Tel(CrownGatherTicks);
             //Walking cast: keeps lumbering (no dodge/pounce — stately) while the crown does the work
-            tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 3, canWalkBackwards: true);
+            tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 2, canWalkBackwards: true);
+            TerrainNavigation.RecoverFromNarrowPerch(NPC, g, Main.player[NPC.target]);
             FootstepEffects();
             g.AttackCommitted = AttackTimer <= gather + CrownVolleyTicks;
 
@@ -1326,7 +1342,8 @@ namespace tsorcRevamp.NPCs.Enemies
         void RunCrystalCanopy(tsorcRevampGlobalNPC g, Player player)
         {
             //Walking cast like the crown — the threat is in the sky, not the body
-            tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 3, canWalkBackwards: true);
+            tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 2, canWalkBackwards: true);
+            TerrainNavigation.RecoverFromNarrowPerch(NPC, g, player);
             FootstepEffects();
             g.AttackCommitted = AttackTimer <= 35;
 

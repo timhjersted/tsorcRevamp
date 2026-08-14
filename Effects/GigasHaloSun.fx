@@ -1,5 +1,6 @@
 // Gigas's orbiting votive suns. A 20px bright core remains inside the projectile's real hostile
 // body; the wider broken corona is a deliberately faint, decorative shell behind its dust.
+#include "PixelShaderCommon.fxh"
 sampler MacroNoise : register(s0);
 sampler DetailNoise : register(s1);
 
@@ -10,9 +11,12 @@ float Opacity;
 float Time;
 float Phase;
 float Active;
+float2 DrawSize;
+float PixelBlockSize;
 
 float4 GigasHaloSunPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+    coords = PixelateShaderUV(coords, DrawSize, PixelBlockSize);
     float2 p = (coords - 0.5) * 2.0;
     float r = length(p);
     float macro = tex2D(MacroNoise, p * 2.85 + float2(0.5 + Time * 0.08 + Phase, 0.5 - Time * 0.11)).r;

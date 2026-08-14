@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Effect> novaEffect;
         static Asset<Texture2D> macroNoise;
         static Asset<Texture2D> detailNoise;
-        float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 270f;
+        float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 300f;
         int GigasIndex => (int)Projectile.ai[1];
 
         public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
@@ -66,6 +66,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["DrawSize"].SetValue(new Vector2(diameter));
                 effect.Parameters["RingRadius"].SetValue(MaxRadius);
                 effect.Parameters["Progress"].SetValue(MathHelper.Clamp(Projectile.localAI[0] / TelegraphTicks, 0f, 1f));
+                effect.Parameters["PixelBlockSize"].SetValue(2f);
                 effect.CurrentTechnique.Passes[0].Apply();
                 Main.EntitySpriteDraw(macroNoise.Value, Projectile.Center - Main.screenPosition, null, Color.White,
                     0f, macroNoise.Value.Size() * 0.5f, diameter / (float)macroNoise.Value.Width, SpriteEffects.None, 0);

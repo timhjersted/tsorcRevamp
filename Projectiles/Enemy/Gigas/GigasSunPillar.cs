@@ -11,7 +11,8 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///<summary>
     ///Gigas sun pillar: a column of judgment light. Spawned with its bottom on the ground under the
     ///player. Telegraphs with faint rising motes for ai[0] ticks, then the beam slams down — dense
-    ///golden column, damaging for the strike window only. Stationary; dodge sideways.
+    ///golden column, damaging for the strike window only. ai[1] is a dormant start delay, letting
+    ///a parent attack schedule an entire sequence and safely continue with another move.
     ///</summary>
     class GigasSunPillar : ModProjectile
     {
@@ -19,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public const int PillarWidth = 44;
         public const int PillarHeight = 480;
-        const int StrikeTicks = 25;
+        const int StrikeTicks = 90;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> pillarEffect;
@@ -27,7 +28,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> detailNoise;
 
         int TelegraphTicks => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 45;
-        bool Striking => Projectile.localAI[0] > TelegraphTicks;
+        int StartDelayTicks => (int)Projectile.ai[1];
+        int StartedAge => (int)Projectile.localAI[0] - StartDelayTicks;
+        bool Started => StartedAge > 0;
+        bool Striking => Started && StartedAge > TelegraphTicks;
 
         public override void SetDefaults()
         {
@@ -42,7 +46,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            Projectile.timeLeft = TelegraphTicks + StrikeTicks;
+            Projectile.timeLeft = StartDelayTicks + TelegraphTicks + StrikeTicks;
         }
 
         public override bool? CanDamage()
@@ -69,6 +73,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.velocity = Vector2.Zero;
             Projectile.localAI[0]++;
+            if (!Started)
+            {
+                return;
+            }
             float groundY = Projectile.position.Y + Projectile.height;
 
             if (!Striking)
@@ -90,7 +98,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
                 Lighting.AddLight(new Vector2(Projectile.Center.X, groundY - 20f), 0.5f, 0.45f, 0.15f);
 
-                if (Projectile.localAI[0] >= TelegraphTicks)
+                if (StartedAge >= TelegraphTicks)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Thunder with { Volume = 0.45f, Pitch = 0.3f }, new Vector2(Projectile.Center.X, groundY));
                 }
@@ -130,7 +138,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             LoadAssets();
 
-            float progress = MathHelper.Clamp(Projectile.localAI[0] / TelegraphTicks, 0f, 1f);
+            if (!Started)
+            {
+                return false;
+            }
+
+            float progress = MathHelper.Clamp(StartedAge / (float)TelegraphTicks, 0f, 1f);
             float active = Striking ? 1f : 0f;
             float fadeOut = Striking ? MathHelper.Clamp(Projectile.timeLeft / 5f, 0f, 1f) : 1f;
             float opacity = (Striking ? 0.92f : 0.70f) * fadeOut;
@@ -157,6 +170,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
                 effect.Parameters["Progress"].SetValue(progress);
                 effect.Parameters["Active"].SetValue(active);
+                effect.Parameters["DrawSize"].SetValue(new Vector2(80f, 520f));
+                effect.Parameters["PixelBlockSize"].SetValue(2f);
                 effect.CurrentTechnique.Passes[0].Apply();
 
                 // 80px shell gives the soft halo room; the shader's 44px gold body is contained in

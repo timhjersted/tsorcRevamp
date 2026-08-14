@@ -91,24 +91,12 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel, ModContent.ProjectileType<GigasSolarEmber>(), (int)(Projectile.damage * 0.5f), 0f, Main.myPlayer, 0.25f);
             }
 
-            //Consecrate the ground below the impact
-            int tileX = (int)(Projectile.Center.X / 16f);
-            int tileY = (int)(Projectile.Center.Y / 16f);
-            for (int d = 0; d < 6; d++)
-            {
-                int y = tileY + d;
-                if (y >= Main.maxTilesY)
-                {
-                    break;
-                }
-                Tile tile = Main.tile[tileX, y];
-                if (tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType])
-                {
-                    Vector2 patchCenter = new Vector2(tileX * 16f + 8f, y * 16f - GigasConsecratedGround.PatchHeight / 2f);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), patchCenter, Vector2.Zero, ModContent.ProjectileType<GigasConsecratedGround>(), (int)(Projectile.damage * 0.4f), 0f, Main.myPlayer);
-                    break;
-                }
-            }
+            // Start at the impact and add one terrain-aligned tile each tick, so the fire fans
+            // outward instead of all sixteen modules erupting at once.
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
+                ModContent.ProjectileType<GigasSolarBoulderGroundSpread>(), (int)(Projectile.damage * 0.4f),
+                0f, Main.myPlayer, GigasConsecratedGround.BoulderVariant,
+                GigasConsecratedGround.BoulderSpanTiles, 10f);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -138,6 +126,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Opacity"].SetValue(0.92f);
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
                 effect.Parameters["Progress"].SetValue(MathHelper.Clamp(progress, 0f, 1f));
+                effect.Parameters["DrawSize"].SetValue(new Vector2(88f));
+                effect.Parameters["PixelBlockSize"].SetValue(2f);
                 effect.CurrentTechnique.Passes[0].Apply();
 
                 // The 88px VFX shell leaves room for the irregular corona. Its dense furnace body

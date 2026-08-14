@@ -1,5 +1,6 @@
 // Gigas's column of judgment. The bright core remains inside the 44px damage lane; the broader
 // gold body is decorative light behind the existing GoldFlame / GoldCoin dust.
+#include "PixelShaderCommon.fxh"
 sampler MacroNoise : register(s0);
 sampler DetailNoise : register(s1);
 
@@ -10,9 +11,12 @@ float Opacity;
 float Time;
 float Progress;
 float Active;
+float2 DrawSize;
+float PixelBlockSize;
 
 float4 GigasSunPillarPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+    coords = PixelateShaderUV(coords, DrawSize, PixelBlockSize);
     float2 uv = coords;
     float across = abs(uv.x - 0.5);
 

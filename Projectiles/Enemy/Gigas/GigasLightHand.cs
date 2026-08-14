@@ -9,40 +9,54 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy
 {
     ///<summary>
-    ///Gigas grasping light: two tall slabs of golden light rise from the ground at the player's
-    ///flanks and converge, clapping together at the point where the player was standing. Damage is
-    ///only in the seam during the clap window — walk/roll out sideways before they meet.
-    ///ai[0] = telegraph (converge) ticks. One projectile manages both hands as dust sculptures.
+    ///Gigas Solar Slabs: two tall solar monoliths rise far from the player's flanks, hold their
+    ///position for a readable pause, then converge in a nova clap. The inner seam and compact nova
+    ///body are hostile; the larger flame envelope and nova corona are decorative. ai[0] = movement ticks after the hold.
     ///</summary>
     class GigasLightHand : ModProjectile
     {
         public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
 
-        const float HandStartOffset = 100f;
-        const float HandHeight = 130f;
-        const float SlabWidth = 74f;
-        const float AuraWidth = 116f;
-        const float AuraHeight = 154f;
-        const float NovaDamageRadius = 72f;
-        const int ClapTicks = 10;
+        // The pair begins 800px apart: each slab is 400px from the committed strike point.
+        const float HandStartOffset = 400f;
+        const float HandHeight = 182f;
+        const float SlabWidth = 104f;
+        const float AuraWidth = 221f;
+        const float AuraHeight = 305f;
+        const float NovaDamageRadius = 300f;
+        const int PreAppearanceTelegraphTicks = 60;
+        const int HoldTicks = 60;
+        const int RiseTicks = 18;
+        // The double nova is a sharp release, not a long lingering field: it reaches full size
+        // and clears in under half a second. The inner 75% layer provides density without damage.
+        const int ClapTicks = 24;
         const string TextureRoot = "tsorcRevamp/Textures/";
 
         static Asset<Effect> handEffect;
-        static Asset<Effect> novaEffect;
         static Asset<Texture2D> monolithTexture;
         static Asset<Texture2D> flowNoise;
         static Asset<Texture2D> crackNoise;
-        static Asset<Texture2D> novaDetailNoise;
-        static Asset<Texture2D> novaFlameNoise;
 
-        int TelegraphTicks => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 50;
-        bool Clapping => Projectile.localAI[0] > TelegraphTicks;
+        int MovementTicks => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 50;
+        int TotalTelegraphTicks => PreAppearanceTelegraphTicks + HoldTicks + MovementTicks;
+        bool Clapping => Projectile.localAI[0] > TotalTelegraphTicks;
+        bool SlabsConverging => !Clapping && Projectile.localAI[0] > PreAppearanceTelegraphTicks + HoldTicks;
+        float MovementProgress => MathHelper.Clamp((Projectile.localAI[0] - PreAppearanceTelegraphTicks - HoldTicks) / MovementTicks, 0f, 1f);
+        float AppearanceProgress => MathHelper.Clamp((Projectile.localAI[0] - PreAppearanceTelegraphTicks) / RiseTicks, 0f, 1f);
+        float SlabBottom => Projectile.Center.Y + 24f;
+        float CurrentSlabOffset => MathHelper.Lerp(HandStartOffset, 12f, MovementProgress * MovementProgress);
+
+        Rectangle SlabBody(int side) => new Rectangle(
+            (int)(Projectile.Center.X + side * CurrentSlabOffset - SlabWidth * 0.5f),
+            (int)(SlabBottom - HandHeight), (int)SlabWidth, (int)HandHeight);
 
         public override void SetDefaults()
         {
             Projectile.hostile = true;
-            Projectile.width = 70;
-            Projectile.height = 130;
+            // Broadphase covers the two real slab bodies at their furthest separation. The separate
+            // 600px GigasNovaRing owns the clap's circular damage and draw pass.
+            Projectile.width = (int)(HandStartOffset * 2f + SlabWidth + 16f);
+            Projectile.height = (int)Math.Max(NovaDamageRadius * 2f, HandHeight);
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.aiStyle = 0;
@@ -51,55 +65,53 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            Projectile.timeLeft = TelegraphTicks + ClapTicks;
+            Projectile.timeLeft = TotalTelegraphTicks + ClapTicks;
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.6f, Pitch = -0.5f }, Projectile.Center);
         }
 
         public override bool? CanDamage()
         {
-            return Clapping;
+            return SlabsConverging || Clapping;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (!Clapping)
+            // The actual monolith sprites, rather than their yellow flame envelopes, own the
+            // moving contact damage. They remain harmful once the bodies overlap at the clap.
+            for (int side = -1; side <= 1; side += 2)
             {
-                return false;
+                if (SlabBody(side).Intersects(targetHitbox))
+                {
+                    return true;
+                }
             }
 
-            // The original vertical clap seam remains dangerous, and the expanding nova hitbox
-            // follows the visible solar body rather than granting its decorative corona damage.
-            if (projHitbox.Intersects(targetHitbox))
-            {
-                return true;
-            }
-            Vector2 closestPoint = new Vector2(
-                MathHelper.Clamp(Projectile.Center.X, targetHitbox.Left, targetHitbox.Right),
-                MathHelper.Clamp(Projectile.Center.Y, targetHitbox.Top, targetHitbox.Bottom));
-            float clapProgress = MathHelper.Clamp((Projectile.localAI[0] - TelegraphTicks) / ClapTicks, 0f, 1f);
-            float novaRadius = MathHelper.Lerp(NovaDamageRadius * 0.48f, NovaDamageRadius, clapProgress);
-            return Vector2.DistanceSquared(Projectile.Center, closestPoint) <= novaRadius * novaRadius;
+            return false;
         }
 
         static void LoadAssets()
         {
             handEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GigasLightHand", AssetRequestMode.ImmediateLoad);
-            novaEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GigasNovaRing", AssetRequestMode.ImmediateLoad);
             monolithTexture ??= ModContent.Request<Texture2D>(TextureRoot + "Particles/GigasConsecratedMonolith", AssetRequestMode.ImmediateLoad);
             flowNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Noise/SmoothNoise", AssetRequestMode.ImmediateLoad);
             crackNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Noise/Vein_02-512x512", AssetRequestMode.ImmediateLoad);
-            novaDetailNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Noise/Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
-            novaFlameNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Noise/T_FirePanningCyl45", AssetRequestMode.ImmediateLoad);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             LoadAssets();
-            float progress = MathHelper.Clamp(Projectile.localAI[0] / TelegraphTicks, 0f, 1f);
-            float rise = MathHelper.Min(1f, progress * 2f);
+            float progress = MovementProgress;
+            float rise = AppearanceProgress;
+            if (rise <= 0f)
+            {
+                return false;
+            }
             float offset = MathHelper.Lerp(HandStartOffset, 12f, progress * progress);
-            float bottom = Projectile.Center.Y + HandHeight / 2f;
-            float opacity = Clapping ? 0.94f : 0.48f + progress * 0.32f;
+            float bottom = SlabBottom;
+            float clapFade = Clapping
+                ? 1f - MathHelper.Clamp((Projectile.localAI[0] - TotalTelegraphTicks) / ClapTicks, 0f, 1f)
+                : 1f;
+            float opacity = (Clapping ? 0.94f : 0.56f + rise * 0.24f) * clapFade;
             Texture2D monolith = monolithTexture.Value;
 
             Main.spriteBatch.End();
@@ -121,7 +133,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["CoreColor"].SetValue(new Color(255, 249, 211).ToVector3());
                 effect.Parameters["Opacity"].SetValue(opacity);
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-                effect.Parameters["PrimaryTextureSize"].SetValue(monolith.Size());
+                effect.Parameters["DrawSize"].SetValue(new Vector2(AuraWidth, AuraHeight * rise));
+                effect.Parameters["PixelBlockSize"].SetValue(2f);
                 effect.CurrentTechnique = effect.Techniques["GigasLightHandAura"];
                 for (int side = -1; side <= 1; side += 2)
                 {
@@ -132,10 +145,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                         side > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
                 }
 
-                if (Clapping)
-                {
-                    DrawImpactNova(device);
-                }
             }
             finally
             {
@@ -152,44 +161,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             for (int side = -1; side <= 1; side += 2)
             {
                 Main.EntitySpriteDraw(monolith, new Vector2(Projectile.Center.X + side * offset, bottom) - Main.screenPosition,
-                    null, new Color(255, 234, 177, 112), 0f, new Vector2(monolith.Width * 0.5f, monolith.Height),
+                    null, new Color(255, 234, 177, (int)(112f * clapFade)), 0f, new Vector2(monolith.Width * 0.5f, monolith.Height),
                     new Vector2(SlabWidth / monolith.Width, HandHeight * rise / monolith.Height),
                     side > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
             }
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             return false;
-        }
-
-        void DrawImpactNova(GraphicsDevice device)
-        {
-            float clapProgress = MathHelper.Clamp((Projectile.localAI[0] - TelegraphTicks) / ClapTicks, 0f, 1f);
-            float novaRadius = MathHelper.Lerp(NovaDamageRadius * 0.48f, NovaDamageRadius, clapProgress);
-            int diameter = (int)Math.Ceiling((novaRadius + 30f) * 2f);
-            Effect effect = novaEffect.Value;
-            Texture2D primary = flowNoise.Value;
-            device.Textures[1] = novaDetailNoise.Value;
-            device.SamplerStates[1] = SamplerState.LinearWrap;
-            device.Textures[2] = novaFlameNoise.Value;
-            device.SamplerStates[2] = SamplerState.LinearWrap;
-            float opacity = 0.94f - clapProgress * 0.42f;
-            effect.Parameters["OuterColor"].SetValue(new Color(105, 61, 5).ToVector3());
-            effect.Parameters["MiddleColor"].SetValue(new Color(255, 176, 25).ToVector3());
-            effect.Parameters["CoreColor"].SetValue(new Color(255, 245, 190).ToVector3());
-            effect.Parameters["Opacity"].SetValue(opacity);
-            effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["DrawSize"].SetValue(new Vector2(diameter));
-            effect.Parameters["RingRadius"].SetValue(novaRadius);
-            effect.CurrentTechnique = effect.Techniques["GigasNovaSun"];
-            effect.CurrentTechnique.Passes[0].Apply();
-            Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White, 0f,
-                primary.Size() * 0.5f, diameter / (float)primary.Width, SpriteEffects.None, 0);
-
-            int coronaDiameter = diameter + 48;
-            effect.Parameters["DrawSize"].SetValue(new Vector2(coronaDiameter));
-            effect.CurrentTechnique = effect.Techniques["GigasNovaCorona"];
-            effect.CurrentTechnique.Passes[0].Apply();
-            Main.EntitySpriteDraw(primary, Projectile.Center - Main.screenPosition, null, Color.White, 0f,
-                primary.Size() * 0.5f, coronaDiameter / (float)primary.Width, SpriteEffects.None, 0);
         }
 
         public override void AI()
@@ -199,32 +176,36 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (!Clapping)
             {
-                //Two converging hand-slabs of light, rising from the ground line
-                float progress = Projectile.localAI[0] / (float)TelegraphTicks;
+                // For 60 ticks, gold motes gather at the future slab positions while the slabs stay
+                // completely invisible. They then fade/rise in over 18 ticks, hold for 60, and converge.
+                float progress = MovementProgress;
+                float rise = AppearanceProgress;
                 float offset = MathHelper.Lerp(HandStartOffset, 12f, progress * progress); //accelerating convergence
-                float bottom = Projectile.Center.Y + HandHeight / 2f;
+                float bottom = SlabBottom;
                 for (int side = -1; side <= 1; side += 2)
                 {
                     float x = Projectile.Center.X + side * offset;
-                    for (int i = 0; i < 3; i++)
+                    int dustCount = rise > 0f ? 3 : 1;
+                    for (int i = 0; i < dustCount; i++)
                     {
-                        //Rise the slab in with progress: dust only up to the current height
-                        float y = bottom - Main.rand.NextFloat(HandHeight * MathHelper.Min(1f, progress * 2f));
+                        float y = bottom - Main.rand.NextFloat(HandHeight * Math.Max(rise, 0.18f));
                         int dust = Dust.NewDust(new Vector2(x - 5f, y), 10, 4, DustID.GoldFlame, 0f, 0f, 90, default, 1.3f);
                         Main.dust[dust].noGravity = true;
-                        Main.dust[dust].velocity = new Vector2(-side * 0.4f, -0.8f);
+                        Main.dust[dust].velocity = rise > 0f
+                            ? new Vector2(-side * 0.4f, -0.8f)
+                            : new Vector2(-side * 0.18f, -1.25f);
                     }
                     //"Fingers": brighter sparkles crowning the slab
-                    if (Main.rand.NextBool(2))
+                    if (rise > 0f && Main.rand.NextBool(2))
                     {
-                        float y = bottom - HandHeight * MathHelper.Min(1f, progress * 2f);
+                        float y = bottom - HandHeight * rise;
                         int sparkle = Dust.NewDust(new Vector2(x - 6f, y), 12, 6, DustID.GoldCoin, 0f, -1f, 0, default, 1f);
                         Main.dust[sparkle].noGravity = true;
                     }
                 }
-                Lighting.AddLight(Projectile.Center, 0.5f * progress, 0.45f * progress, 0.2f * progress);
+                Lighting.AddLight(Projectile.Center, 0.5f * rise, 0.45f * rise, 0.2f * rise);
 
-                if (Projectile.localAI[0] >= TelegraphTicks)
+                if (Projectile.localAI[0] >= TotalTelegraphTicks)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.7f, Pitch = 0.3f }, Projectile.Center);
                     UsefulFunctions.ScreenShake(Projectile.Center, 5f, 12);
@@ -232,14 +213,24 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            //Clap: a single blazing seam where the hands met
-            if (Projectile.localAI[0] == TelegraphTicks + 1)
+            // The impact is two simultaneous pixel-filtered solar novas: the 600px outer field owns
+            // damage, while the 450px inner field is visual-only and makes the brief burst feel dense.
+            if (Projectile.localAI[0] == TotalTelegraphTicks + 1)
             {
                 SpawnImpactBurst();
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero,
+                        ModContent.ProjectileType<GigasNovaRing>(), Projectile.damage, Projectile.knockBack,
+                        Main.myPlayer, NovaDamageRadius, ClapTicks);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero,
+                        ModContent.ProjectileType<GigasNovaRing>(), 0, 0f,
+                        Main.myPlayer, NovaDamageRadius * 0.75f, ClapTicks, 1f);
+                }
             }
             for (int i = 0; i < 10; i++)
             {
-                Vector2 pos = new Vector2(Projectile.Center.X + Main.rand.NextFloat(-14f, 14f), Projectile.position.Y + Main.rand.NextFloat(Projectile.height));
+                Vector2 pos = Projectile.Center + Main.rand.NextVector2Circular(18f, HandHeight * 0.5f);
                 int dust = Dust.NewDust(pos, 4, 4, DustID.GoldFlame, 0f, 0f, 50, default, Main.rand.NextFloat(1.6f, 2.2f));
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity = new Vector2(Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(-5f, -2f));
