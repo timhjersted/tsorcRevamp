@@ -612,6 +612,120 @@ namespace tsorcRevamp
 
         #region CampfireToBonfire (Is also Skelly Loot Cache replacement code)
 
+        /// <summary>Chops down any tree trunk tile in the given box (one KillTile per trunk fells the whole
+        /// tree). Used to clear the area around world spawn BEFORE searching for Emerald Herald's spot, so a
+        /// spawn point in/near forest doesn't push her search radius out further than the terrain itself would -
+        /// every candidate near a tree would otherwise get skipped, same underlying issue the bonfire footprint
+        /// fix addressed for placement.</summary>
+        private static void ClearTreesInArea(int centerX, int centerY, int radiusX, int radiusY)
+        {
+            int minX = Math.Max(0, centerX - radiusX);
+            int maxX = Math.Min(Main.maxTilesX - 1, centerX + radiusX);
+            int minY = Math.Max(0, centerY - radiusY);
+            int maxY = Math.Min(Main.maxTilesY - 1, centerY + radiusY);
+
+            for (int x = minX; x <= maxX; x++)
+            {
+                for (int y = minY; y <= maxY; y++)
+                {
+                    Tile tile = Main.tile[x, y];
+                    if (tile != null && tile.HasTile && TileID.Sets.IsATreeTrunk[tile.TileType])
+                    {
+                        WorldGen.KillTile(x, y, false, false, true);
+                    }
+                }
+            }
+        }
+
+        /// <summary>Places a 3-wide, 4-tall Bonfire Checkpoint with its bottom row flush against solid ground at
+        /// (centerX, bottomY) - the same tile-writing shape PlaceModdedTiles uses when converting a map-authored
+        /// Campfire into a bonfire, but usable directly (e.g. spawning one near Emerald Herald in sandbox worlds)
+        /// rather than only as a side effect of finding a Campfire. bottomY should be a solid ground row, e.g. from
+        /// UsefulFunctions.TryFindBonfireGroundSpot. Refuses to place (returns false, no tiles touched) if any
+        /// tile in the footprint is already occupied.</summary>
+        private static bool PlaceBonfireCheckpoint(int centerX, int bottomY)
+        {
+            if (centerX < 5 || centerX > Main.maxTilesX - 5 || bottomY < 5 || bottomY > Main.maxTilesY - 5)
+            {
+                return false;
+            }
+
+            // Clear obstructions out of the footprint first: decorative junk (grass tufts, flowers, vines) that
+            // scatters across basically all natural terrain, and trees, which the ground-search deliberately
+            // allows through here (see TryFindBonfireGroundSpot's ignoreTrees search) rather than requiring
+            // already-tree-free ground, which forest terrain may never offer within range. Chopping one trunk
+            // tile fells the whole tree, so this doesn't need to walk the full trunk height itself.
+            for (int i = centerX - 1; i < centerX + 2; i++)
+            {
+                for (int j = bottomY - 3; j < bottomY + 1; j++)
+                {
+                    Tile junkTile = Main.tile[i, j];
+                    bool isTree = junkTile != null && junkTile.HasTile && TileID.Sets.IsATreeTrunk[junkTile.TileType];
+                    bool isDecoration = junkTile != null && junkTile.HasTile && !Main.tileSolid[junkTile.TileType];
+                    if (isTree || isDecoration)
+                    {
+                        WorldGen.KillTile(i, j, false, false, true);
+                    }
+                }
+            }
+
+            // Only the 3 rows ABOVE the ground row need to be empty - bottomY itself is expected to already
+            // hold the solid ground tile that got us here (see TryFindBonfireGroundSpot), and the write loop
+            // below intentionally overwrites it with the structure's base tile. Checking bottomY here too would
+            // mean this can never pass: real ground always HasTile, so this always came back false and silently
+            // cancelled every placement even after a valid spot was found and its trees/junk cleared.
+            bool footprintClear = true;
+            for (int i = centerX - 1; i < centerX + 2; i++)
+            {
+                for (int j = bottomY - 3; j < bottomY; j++)
+                {
+                    if (Main.tile[i, j] == null)
+                    {
+                        Main.tile[i, j].ClearTile();
+                    }
+                    if (Main.tile[i, j].HasTile || Main.tile[i, j].LiquidAmount > 0)
+                    {
+                        footprintClear = false;
+                    }
+                }
+                if (Main.tile[i, bottomY + 1] == null)
+                {
+                    Main.tile[i, bottomY + 1].ClearTile();
+                }
+            }
+
+            if (!footprintClear)
+            {
+                return false;
+            }
+
+            ushort type = (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>();
+            for (int k = -3; k <= 0; k++)
+            {
+                short frameY = (short)((3 + k) * 18);
+
+                Tile tile = Main.tile[centerX - 1, bottomY + k];
+                tile.HasTile = true;
+                tile.TileFrameY = frameY;
+                tile.TileFrameX = 0;
+                tile.TileType = type;
+
+                tile = Main.tile[centerX, bottomY + k];
+                tile.HasTile = true;
+                tile.TileFrameY = frameY;
+                tile.TileFrameX = 18;
+                tile.TileType = type;
+
+                tile = Main.tile[centerX + 1, bottomY + k];
+                tile.HasTile = true;
+                tile.TileFrameY = frameY;
+                tile.TileFrameX = 36;
+                tile.TileType = type;
+            }
+
+            return true;
+        }
+
         public static void PlaceModdedTiles()
         {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
@@ -1306,6 +1420,249 @@ namespace tsorcRevamp
             return BonfireList;
         }
 
+        /// <summary>Same scan as GetActiveBonfires, but WITHOUT the "must be lit" filter. Freshly-placed
+        /// bonfires (via PlaceBonfireCheckpoint) start unlit, so GetActiveBonfires alone can't tell whether a
+        /// spot already has one - using it for that would make every sandbox-bonfire target think nothing
+        /// exists and rescan the whole map on every single world load, forever.</summary>
+        private static List<Vector2> GetAllBonfireTiles()
+        {
+            List<Vector2> bonfireList = new List<Vector2>();
+            int bonfireType = ModContent.TileType<Tiles.BonfireCheckpoint>();
+
+            for (int i = 1; i < (Main.tile.Width - 1); i += 3)
+            {
+                for (int j = 1; j < (Main.tile.Height - 1); j += 4)
+                {
+                    if (Main.tile[i, j] != null && Main.tile[i, j].HasTile && Main.tile[i, j].TileType == bonfireType)
+                    {
+                        bonfireList.Add(new Vector2(i, j));
+                    }
+                }
+            }
+
+            return bonfireList;
+        }
+
+        /// <summary>One-time-per-successful-placement sandbox world-gen pass: seeds bonfires around the map so
+        /// a sandbox character always has rest points within reach without needing to find/craft one first.
+        /// One right next to Emerald Herald; four more on the surface (both ocean-edge beaches, plus a desert
+        /// and a jungle spot - together roughly spanning the map's width); one per major underground biome in
+        /// a cave-like opening (~6 tiles of headroom); three more spread through the underworld.
+        ///
+        /// Every target is independently idempotent via AnyBonfireNear, so a spot that fails to find valid
+        /// ground (e.g. no clean opening within its search radius) just gets retried on the next world load
+        /// instead of blocking the rest, and a target that already succeeded won't be re-attempted.
+        ///
+        /// NOT included: Hallow. It doesn't exist at world generation - it's created when Hardmode starts - so
+        /// there's nothing to search for here yet. Adding it later would need its own hook into the
+        /// hardmode-start moment rather than living in this world-load pass.
+        /// </summary>
+        private static void SpawnSandboxBonfires()
+        {
+            List<Vector2> existingBonfires = GetAllBonfireTiles();
+
+            int heraldIndex = NPC.FindFirstNPC(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
+            int heraldAnchorX = heraldIndex >= 0 ? (int)(Main.npc[heraldIndex].Center.X / 16) : Main.spawnTileX;
+            int heraldAnchorY = heraldIndex >= 0 ? (int)(Main.npc[heraldIndex].Center.Y / 16) : Main.spawnTileY;
+            TryPlaceSandboxBonfire(existingBonfires, heraldAnchorX + 2, heraldAnchorY, 15, underground: false);
+
+            int surfaceMinX = (int)(Main.maxTilesX * 0.12);
+            int surfaceMaxX = (int)(Main.maxTilesX * 0.88);
+
+            // Deep underground bonfires (biomes that also have a surface counterpart) deliberately search this
+            // band - cavern layer down toward the underworld - rather than the shallow band right below the
+            // surface. Both twins are also teleport waypoints once lit, so a spot just a few tiles under its
+            // surface counterpart would undercut the whole point of going and finding the underground one -
+            // this forces real vertical separation.
+            int deepUndergroundMinY = (int)Main.rockLayer;
+            int deepUndergroundMaxY = Main.UnderworldLayer - 100;
+
+            // Every OTHER surface bonfire below must land at least this far (in tiles) from the player's own
+            // bonfire - otherwise a small world's ocean-edge/biome search can easily turn up something only a
+            // few dozen tiles from spawn, which defeats the point of it being a separate, distant destination.
+            const int minSurfaceDistanceFromPlayer = 400;
+
+            // --- Surface: ocean-edge beaches + desert + jungle + corruption/crimson, roughly spanning the
+            // map's width ---
+            if (TryFindEdgeBeachColumn(fromLeft: true, out int westX, out int westY))
+            {
+                TryPlaceSandboxBonfire(existingBonfires, westX, westY, 40, underground: false, avoidNearPlayerX: heraldAnchorX, minDistanceFromPlayer: minSurfaceDistanceFromPlayer);
+            }
+            if (TryFindEdgeBeachColumn(fromLeft: false, out int eastX, out int eastY))
+            {
+                TryPlaceSandboxBonfire(existingBonfires, eastX, eastY, 40, underground: false, avoidNearPlayerX: heraldAnchorX, minDistanceFromPlayer: minSurfaceDistanceFromPlayer);
+            }
+
+            bool foundDesertSurface = UsefulFunctions.TryFindSurfaceBiomeColumn(surfaceMinX, surfaceMaxX, 4, IsDesertTile, out int desertSurfX, out int desertSurfY);
+            if (foundDesertSurface)
+            {
+                TryPlaceSandboxBonfire(existingBonfires, desertSurfX, desertSurfY, 40, underground: false, avoidNearPlayerX: heraldAnchorX, minDistanceFromPlayer: minSurfaceDistanceFromPlayer);
+            }
+
+            bool foundJungleSurface = UsefulFunctions.TryFindSurfaceBiomeColumn(surfaceMinX, surfaceMaxX, 4, IsJungleTile, out int jungleSurfX, out int jungleSurfY);
+            if (foundJungleSurface)
+            {
+                TryPlaceSandboxBonfire(existingBonfires, jungleSurfX, jungleSurfY, 40, underground: false, avoidNearPlayerX: heraldAnchorX, minDistanceFromPlayer: minSurfaceDistanceFromPlayer);
+            }
+
+            // A world only ever generates one evil biome, never both - WorldGen.crimson says which.
+            Func<ushort, bool> isEvilTile = WorldGen.crimson ? IsCrimsonTile : IsCorruptionTile;
+            bool foundEvilSurface = UsefulFunctions.TryFindSurfaceBiomeColumn(surfaceMinX, surfaceMaxX, 4, isEvilTile, out int evilSurfX, out int evilSurfY);
+            if (foundEvilSurface)
+            {
+                TryPlaceSandboxBonfire(existingBonfires, evilSurfX, evilSurfY, 40, underground: false, avoidNearPlayerX: heraldAnchorX, minDistanceFromPlayer: minSurfaceDistanceFromPlayer);
+            }
+
+            // --- Sky: a floating platform well above the surface. No biome-tile check needed - up here, the
+            // only solid ground that naturally exists at all IS a sky island. Horizontal position isn't tied
+            // to anything else, so just scan the full map width.
+            int skyMinY = (int)(Main.maxTilesY * 0.02);
+            int skyMaxY = (int)(Main.worldSurface * 0.3);
+            if (UsefulFunctions.TryFindSkyIslandSpot(10, Main.maxTilesX - 10, skyMinY, skyMaxY, 4, out int skyX, out int skyY))
+            {
+                TryPlaceSandboxBonfire(existingBonfires, skyX, skyY, 40, underground: false, avoidNearPlayerX: heraldAnchorX, minDistanceFromPlayer: minSurfaceDistanceFromPlayer);
+            }
+
+            // --- Underground: one per major biome, in a cave-like opening ---
+            int evilUndergroundMinX = foundEvilSurface ? evilSurfX - 200 : 10;
+            int evilUndergroundMaxX = foundEvilSurface ? evilSurfX + 200 : Main.maxTilesX - 10;
+            if (UsefulFunctions.TryFindUndergroundBiomeColumn(evilUndergroundMinX, evilUndergroundMaxX, deepUndergroundMinY, deepUndergroundMaxY, 4, isEvilTile, out int evilUgX, out int evilUgY))
+            {
+                TryPlaceSandboxBonfire(existingBonfires, evilUgX, evilUgY, 60, underground: true, minHeadroom: 6);
+            }
+
+            int jungleUndergroundMinX = foundJungleSurface ? jungleSurfX - 200 : 10;
+            int jungleUndergroundMaxX = foundJungleSurface ? jungleSurfX + 200 : Main.maxTilesX - 10;
+            if (UsefulFunctions.TryFindUndergroundBiomeColumn(jungleUndergroundMinX, jungleUndergroundMaxX, deepUndergroundMinY, deepUndergroundMaxY, 4, IsJungleTile, out int jungleUgX, out int jungleUgY))
+            {
+                TryPlaceSandboxBonfire(existingBonfires, jungleUgX, jungleUgY, 60, underground: true, minHeadroom: 6);
+            }
+
+            int desertUndergroundMinX = foundDesertSurface ? desertSurfX - 150 : 10;
+            int desertUndergroundMaxX = foundDesertSurface ? desertSurfX + 150 : Main.maxTilesX - 10;
+            if (UsefulFunctions.TryFindUndergroundBiomeColumn(desertUndergroundMinX, desertUndergroundMaxX, deepUndergroundMinY, deepUndergroundMaxY, 4, IsDesertTile, out int desertUgX, out int desertUgY))
+            {
+                TryPlaceSandboxBonfire(existingBonfires, desertUgX, desertUgY, 60, underground: true, minHeadroom: 6);
+            }
+
+            // Temple: deep in the jungle's underground band. Searched separately from ordinary jungle tiles
+            // since Lihzahrd Brick is far rarer and sits much deeper (near the cavern/underworld boundary).
+            // The narrow window (anchored on the SURFACE jungle edge, which can be far from the temple itself
+            // in a large world) is tried first since it's cheap; a full-width fallback with finer row sampling
+            // catches it if that misses, at the cost of a slower scan.
+            int templeMinY = (int)Main.rockLayer;
+            int templeMaxY = Main.UnderworldLayer - 30;
+            bool foundTemple = UsefulFunctions.TryFindUndergroundBiomeColumn(jungleUndergroundMinX, jungleUndergroundMaxX, templeMinY, templeMaxY, 4, IsTempleBrick, out int templeX, out int templeY);
+            if (!foundTemple)
+            {
+                foundTemple = UsefulFunctions.TryFindUndergroundBiomeColumn(10, Main.maxTilesX - 10, templeMinY, templeMaxY, 4, IsTempleBrick, out templeX, out templeY);
+            }
+            if (foundTemple)
+            {
+                TryPlaceSandboxBonfire(existingBonfires, templeX, templeY, 60, underground: true, minHeadroom: 6);
+            }
+
+            // Dungeon: Main.dungeonX/Y mark its entrance - but the dungeon itself winds off in ONE direction
+            // (randomized at world gen) for potentially 700+ tiles, so a window biased toward only one side can
+            // easily miss it entirely. Search both directions and deeper than the entrance.
+            if (UsefulFunctions.TryFindUndergroundBiomeColumn(Main.dungeonX - 500, Main.dungeonX + 500, Main.dungeonY, Main.dungeonY + 500, 3, IsDungeonBrick, out int dungeonBrickX, out int dungeonBrickY))
+            {
+                TryPlaceSandboxBonfire(existingBonfires, dungeonBrickX, dungeonBrickY, 60, underground: true, minHeadroom: 6);
+            }
+
+            // Underworld: three spots spread across its width.
+            int underworldY = Main.UnderworldLayer + 80;
+            TryPlaceSandboxBonfire(existingBonfires, (int)(Main.maxTilesX * 0.25), underworldY, 100, underground: true, minHeadroom: 6);
+            TryPlaceSandboxBonfire(existingBonfires, (int)(Main.maxTilesX * 0.50), underworldY, 100, underground: true, minHeadroom: 6);
+            TryPlaceSandboxBonfire(existingBonfires, (int)(Main.maxTilesX * 0.75), underworldY, 100, underground: true, minHeadroom: 6);
+        }
+
+        private static bool IsDesertTile(ushort t) => t == TileID.Sand || t == TileID.HardenedSand || t == TileID.Sandstone;
+        private static bool IsJungleTile(ushort t) => t == TileID.JungleGrass || t == TileID.Mud;
+        private static bool IsCorruptionTile(ushort t) => t == TileID.Ebonstone || t == TileID.Ebonsand || t == TileID.CorruptGrass;
+        private static bool IsCrimsonTile(ushort t) => t == TileID.Crimstone || t == TileID.Crimsand || t == TileID.CrimsonGrass;
+        private static bool IsDungeonBrick(ushort t) => t == TileID.BlueDungeonBrick || t == TileID.GreenDungeonBrick || t == TileID.PinkDungeonBrick;
+        private static bool IsTempleBrick(ushort t) => t == TileID.LihzahrdBrick;
+
+        /// <summary>Scans inward from a world edge for the first DRY solid surface tile - i.e. past the ocean,
+        /// on the beach proper. "Dry" is checked via the tile directly above having no liquid, since a
+        /// submerged column's topmost solid tile still sits under standing ocean water.</summary>
+        private static bool TryFindEdgeBeachColumn(bool fromLeft, out int foundX, out int foundY)
+        {
+            int start = fromLeft ? 40 : Main.maxTilesX - 40;
+            int end = fromLeft ? 500 : Main.maxTilesX - 500;
+            int step = fromLeft ? 2 : -2;
+            int scanBottom = (int)Main.worldSurface + 60;
+
+            for (int x = start; fromLeft ? x <= end : x >= end; x += step)
+            {
+                if (x < 10 || x >= Main.maxTilesX - 10)
+                {
+                    continue;
+                }
+
+                for (int y = 10; y < scanBottom; y++)
+                {
+                    Tile tile = Main.tile[x, y];
+                    if (tile.HasTile && Main.tileSolid[tile.TileType] && !TileID.Sets.Platforms[tile.TileType])
+                    {
+                        bool dry = y == 0 || Main.tile[x, y - 1] == null || Main.tile[x, y - 1].LiquidAmount == 0;
+                        if (dry)
+                        {
+                            foundX = x;
+                            foundY = y;
+                            return true;
+                        }
+                        break; //wet ground here - still over the ocean, move to the next column
+                    }
+                }
+            }
+
+            foundX = 0;
+            foundY = 0;
+            return false;
+        }
+
+        /// <param name="avoidNearPlayerX">If set (>int.MinValue) together with minDistanceFromPlayer, a found
+        /// spot within that X distance of the player's own bonfire is rejected rather than placed - keeps
+        /// every OTHER surface bonfire a real distance from spawn instead of one coincidentally landing right
+        /// next to the player (e.g. a small world's ocean-edge search finding dry ground a few dozen tiles out,
+        /// which is still "at spawn" for practical purposes). Retried on the next world load same as any other
+        /// failed search, rather than settling for a spot that's too close.</param>
+        private static void TryPlaceSandboxBonfire(List<Vector2> existingBonfires, int centerX, int centerY, int searchRadius, bool underground, int minHeadroom = 4, int avoidNearPlayerX = int.MinValue, int minDistanceFromPlayer = 0)
+        {
+            if (UsefulFunctions.AnyBonfireNear(existingBonfires, centerX, centerY, 50))
+            {
+                return;
+            }
+
+            bool found;
+            int spotX, spotY;
+            if (underground)
+            {
+                found = UsefulFunctions.TryFindUndergroundBonfireSpot(centerX, centerY, searchRadius, minHeadroom, out spotX, out spotY);
+            }
+            else
+            {
+                found = UsefulFunctions.TryFindBonfireGroundSpot(centerX, centerY, searchRadius, out spotX, out spotY);
+            }
+
+            if (!found)
+            {
+                return;
+            }
+
+            if (avoidNearPlayerX > int.MinValue && Math.Abs(spotX - avoidNearPlayerX) < minDistanceFromPlayer)
+            {
+                return;
+            }
+
+            if (PlaceBonfireCheckpoint(spotX, spotY))
+            {
+                existingBonfires.Add(new Vector2(spotX, spotY));
+            }
+        }
+
         Asset<Texture2D> SHMSun1 = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun1");
         Asset<Texture2D> SHMSun2 = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun2");
         Asset<Texture2D> SHMSun3 = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun1");
@@ -1570,6 +1927,26 @@ namespace tsorcRevamp
                     {
                         UsefulFunctions.BroadcastText(LangUtils.GetTextValue("UI.AdvModeAutoDisabled"), Color.GreenYellow);
                         ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = false;
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        // Sandbox worlds have no hand-placed map, so Emerald Herald doesn't get a fixed coordinate
+                        // like she does on the custom map - find her a spot near world spawn instead, since that
+                        // ground may have been dug out or built over by the time this runs. Trees near spawn are
+                        // cleared FIRST (same as the bonfire footprint fix) so they can't push her search radius
+                        // out further than the terrain itself would - previously a spawn point in/near forest
+                        // could land her 30+ tiles away purely because every closer candidate had a tree on it.
+                        // Falls back to spawning directly on the raw spawn tile if nothing suitable turns up
+                        // nearby, so she never just fails to appear.
+                        if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()))
+                        {
+                            ClearTreesInArea(Main.spawnTileX, Main.spawnTileY, 40, 30);
+                            UsefulFunctions.TryFindNPCGroundSpot(Main.spawnTileX, Main.spawnTileY, 25, 3, out int heraldSpawnX, out int heraldSpawnY);
+                            NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), heraldSpawnX * 16, heraldSpawnY * 16, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
+                        }
+
+                        SpawnSandboxBonfires();
                     }
                 }
             }

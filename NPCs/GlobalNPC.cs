@@ -1165,6 +1165,22 @@ namespace tsorcRevamp.NPCs
         public int DisengageTimer = 0;
         // Last position the NPC had line of sight to the player; target for the Search state.
         public Vector2 LastKnownPlayerPos = Vector2.Zero;
+
+        // === FSM diagnostics (DebugMode logging only; never synced, never read by behavior) ===
+        // The nav logs record PursuitState/DisengageTimer at LOG time, which is the END of the frame —
+        // long after NavBehavior.UpdateState ran and after any downstream code (SF4's stuck detectors,
+        // the beast stale-wander overlay, an enemy's own AI) may have overwritten them. That made it
+        // impossible to tell "the FSM decided this" from "the FSM decided X and something clobbered it".
+        // These capture the FSM's own entry/exit values plus the last out-of-FSM mutation, so a single
+        // log line shows the whole chain: entry -> FSM branch -> exit -> who changed it afterwards.
+        public int FsmTick = -1;                    // GameUpdateCount of the last UpdateState call (-1 = never)
+        public PursuitState FsmEntryState;          // PursuitState on entering UpdateState
+        public int FsmEntryDisengage;               // DisengageTimer on entering UpdateState
+        public PursuitState FsmExitState;           // PursuitState UpdateState returned
+        public int FsmExitDisengage;                // DisengageTimer UpdateState returned
+        public string FsmBranch = "-";              // which UpdateState branch made the call
+        public int FsmMutationTick = -1;            // GameUpdateCount of the last ForceDisengage/EnterPatrol
+        public string FsmMutationBy = "-";          // caller member + line that did it
         // Generalizes BeastUnreachableFrames to ANY SF4 (NavSearchRadius > 0) enemy: consecutive frames spent
         // Pursuing with no A* plan and unable to engage (maintained by SmartFighter4AI, alongside its own
         // StuckGiveUpFrames give-up counter). Used as the "genuinely can't reach this player" signal for Flee.

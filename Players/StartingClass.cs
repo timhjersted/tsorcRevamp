@@ -6,6 +6,7 @@ namespace tsorcRevamp
         Melee = 1,
         Ranged = 2,
         Magic = 3,
-        Summoner = 4
+        Summoner = 4,
+        Deprived = 5
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -56,6 +57,14 @@ namespace tsorcRevamp.NPCs
         public static PursuitState UpdateState(
             NPC npc, tsorcRevampGlobalNPC g, Player player, bool hasLos, bool madeProgress, float aggroRange)
         {
+            // Diagnostics: snapshot what the FSM was handed, so the nav log can tell the FSM's own
+            // decision apart from a later overwrite by the movement layer. See the Fsm* fields on
+            // tsorcRevampGlobalNPC. Pure bookkeeping — nothing below reads these.
+            g.FsmTick = (int)Main.GameUpdateCount;
+            g.FsmEntryState = g.PursuitState;
+            g.FsmEntryDisengage = g.DisengageTimer;
+            g.FsmBranch = "-";
+
             // Record the spawn anchor once, the first time we ever tick.
             if (!g.PatrolAnchorSet && g.PatrolAnchorSource == PatrolAnchorSource.SpawnPoint)
             {
@@ -74,7 +83,12 @@ namespace tsorcRevamp.NPCs
                 && npc.Distance(player.Center) > g.PursuitLeashRange
                 && !madeProgress;
             g.PursuitFallBehindTimer = fallingBehind ? g.PursuitFallBehindTimer + 1 : 0;
-            if (g.PursuitFallBehindTimer >= g.PursuitFallBehindTicks)
+            // `leashEnabled` is REQUIRED here, not just an optimization. The default lever values are
+            // PursuitLeashRange 0 / PursuitFallBehindTicks 0, so an enemy that never opted into a leash
+            // (i.e. every enemy except the one this was built for) evaluates `0 >= 0` as TRUE and force-
+            // disengages EVERY FRAME — returning before the LOS re-acquire and before the state switch,
+            // so it can never reach Pursue and its give-up clock is pinned at 0.
+            if (leashEnabled && g.PursuitFallBehindTimer >= g.PursuitFallBehindTicks)
             {
                 g.PursuitFallBehindTimer = 0;
                 if (g.RemembersLastKnownPos)
@@ -84,7 +98,7 @@ namespace tsorcRevamp.NPCs
                 }
                 else EnterPatrol(npc, g);
                 npc.netUpdate = true;
-                return g.PursuitState;
+                return FsmExit(g, "leash");
             }
 
             // LOS (re)acquires the player: remember where, reset the clock, and pursue — but a sighting
@@ -102,13 +116,14 @@ namespace tsorcRevamp.NPCs
                 {
                     g.DisengageTimer = 0;
                     g.PursuitState = PursuitState.Pursue;
-                    return g.PursuitState;
+                    return FsmExit(g, "los-reaquire");
                 }
             }
 
             switch (g.PursuitState)
             {
                 case PursuitState.Pursue:
+                    g.FsmBranch = madeProgress ? "pursue-progress" : "pursue-noprogress";
                     // Give-up clock advances only while we're NOT making headway (lost LOS AND stuck/no
                     // progress). Actively chasing the player around a corner keeps it at zero.
                     if (madeProgress) g.DisengageTimer = 0;
@@ -131,20 +146,48 @@ namespace tsorcRevamp.NPCs
                 case PursuitState.Search:
                     g.DisengageTimer++;
                     bool reachedLastKnown = npc.Distance(g.LastKnownPlayerPos) < ReachLastKnownPx;
+                    g.FsmBranch = reachedLastKnown ? "search-arrived" : "search-tick";
                     if (reachedLastKnown || g.DisengageTimer >= SearchTimeoutTicks + (npc.whoAmI % 31))
                         EnterPatrol(npc, g);
                     break;
 
                 case PursuitState.Patrol:
                     // Stay patrolling; re-aggro is handled by the hasLos branch above.
+                    g.FsmBranch = "patrol-hold";
                     break;
 
                 case PursuitState.Flee:
                     // Fully driven by RunFlee (movement + the Flee->Patrol handoff at max distance/an
                     // obstacle); nothing to advance here.
+                    g.FsmBranch = "flee-hold";
                     break;
             }
 
+            return FsmExit(g, g.FsmBranch);
+        }
+
+        /// <summary>
+        /// Diagnostics only: stamp the state UpdateState is actually returning, tagged with the branch
+        /// that produced it. Compared against the live PursuitState/DisengageTimer at log time to expose
+        /// downstream overwrites.
+        /// </summary>
+        /// <summary>
+        /// Diagnostics only: record who last forced a state change from OUTSIDE the FSM's own switch.
+        /// The caller attribution is what distinguishes "SF4's stuck detector gave up" from "the beast
+        /// stale-wander overlay forced Patrol" from "an enemy's own AI did it" — all three land on the
+        /// same two fields and were previously indistinguishable in the log.
+        /// </summary>
+        private static void StampMutation(tsorcRevampGlobalNPC g, string entry, string by, int line)
+        {
+            g.FsmMutationTick = (int)Main.GameUpdateCount;
+            g.FsmMutationBy = $"{entry}<-{by}:{line}";
+        }
+
+        private static PursuitState FsmExit(tsorcRevampGlobalNPC g, string branch)
+        {
+            g.FsmBranch = branch;
+            g.FsmExitState = g.PursuitState;
+            g.FsmExitDisengage = g.DisengageTimer;
             return g.PursuitState;
         }
 
@@ -153,8 +196,10 @@ namespace tsorcRevamp.NPCs
         /// detector — blocked against a wall it can't get past, regardless of LOS, so a visible-but-
         /// unreachable player never traps it pressing the wall.
         /// </summary>
-        public static void ForceDisengage(NPC npc, tsorcRevampGlobalNPC g)
+        public static void ForceDisengage(NPC npc, tsorcRevampGlobalNPC g,
+            [CallerMemberName] string by = "?", [CallerLineNumber] int line = 0)
         {
+            StampMutation(g, "ForceDisengage", by, line);
             g.PursuitFallBehindTimer = 0;
             if (g.RemembersLastKnownPos && g.PursuitState == PursuitState.Pursue)
             {
@@ -164,8 +209,10 @@ namespace tsorcRevamp.NPCs
             else EnterPatrol(npc, g);
         }
 
-        public static void EnterPatrol(NPC npc, tsorcRevampGlobalNPC g)
+        public static void EnterPatrol(NPC npc, tsorcRevampGlobalNPC g,
+            [CallerMemberName] string by = "?", [CallerLineNumber] int line = 0)
         {
+            StampMutation(g, "EnterPatrol", by, line);
             g.PursuitState = PursuitState.Patrol;
             g.DisengageTimer = 0;
             g.PursuitFallBehindTimer = 0;

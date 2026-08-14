@@ -577,6 +577,10 @@ namespace tsorcRevamp.NPCs
                     if (globalNPC.PursuitState != PursuitState.Patrol) NavBehavior.EnterPatrol(npc, globalNPC);
                     globalNPC.PursuitState = PursuitState.Patrol;
                     fsmState = PursuitState.Patrol;
+                    // This branch SKIPS UpdateState entirely, so LOS can never re-aggro while BeastStale is
+                    // set (only a hit clears it, via RegisterHitForBeast). Name the bypass in the log rather
+                    // than leaving it to be inferred from a stale fsm age.
+                    globalNPC.FsmBranch = "beast-stale-bypass";
                 }
                 else
                 {
@@ -1466,13 +1470,25 @@ namespace tsorcRevamp.NPCs
                 // timeline (Pursue/Search nav lines from LogFrame + these FSM-layer lines for Patrol / combat-seize
                 // frames where the SF4 mover is skipped). The `[fsm]` tag distinguishes the two line formats.
                 string logPath = logDir + separator + (globalNPC.NavSearchRadius > 0 ? "tsorcRevamp-smartfighter4.log" : "tsorcRevamp-nav.log");
+                SmartFighter4AI.WriteNavLogHeader(logPath);
                 Player player = Main.player[npc.target];
-                string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI} [fsm] pos=({npc.Center.X / 16f:F1},{npc.Center.Y / 16f:F1}) player=({player.Center.X / 16f:F1},{player.Center.Y / 16f:F1}) vel=({npc.velocity.X:F2},{npc.velocity.Y:F2}) g={!airborne} cx={npc.collideX} cy={npc.collideY} dist={npc.Distance(player.Center):F0} los={lineOfSight} yDiff={player.Center.Y - npc.Center.Y:F0} pursuit={globalNPC.PursuitState} disengage={globalNPC.DisengageTimer}/{globalNPC.NavGiveUpTicks} patrol={globalNPC.PatrolMode}/idle{globalNPC.PatrolIdleTimer}/leg{globalNPC.PatrolLegRemaining}/dir{globalNPC.PatrolDirection}/elapsed{globalNPC.PatrolElapsed} immobile={globalNPC.StuckTimer} tp={(globalNPC.CanTeleport ? $"{globalNPC.TeleportStyle}/ch{(globalNPC.TeleportChargesRemaining == int.MaxValue ? "inf" : globalNPC.TeleportChargesRemaining.ToString())}/cd{globalNPC.TeleportCooldownTimer}/cnt{globalNPC.TeleportCountdown}" : "off")} stopFire={globalNPC.CanStopToFire}";
+                string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI} [fsm] pos=({npc.Center.X / 16f:F1},{npc.Center.Y / 16f:F1}) player=({player.Center.X / 16f:F1},{player.Center.Y / 16f:F1}) vel=({npc.velocity.X:F2},{npc.velocity.Y:F2}) g={!airborne} cx={npc.collideX} cy={npc.collideY} dist={npc.Distance(player.Center):F0} los={lineOfSight} yDiff={player.Center.Y - npc.Center.Y:F0} pursuit={globalNPC.PursuitState} disengage={globalNPC.DisengageTimer}/{globalNPC.NavGiveUpTicks} patrol={globalNPC.PatrolMode}/idle{globalNPC.PatrolIdleTimer}/leg{globalNPC.PatrolLegRemaining}/dir{globalNPC.PatrolDirection}/elapsed{globalNPC.PatrolElapsed} immobile={globalNPC.StuckTimer} tp={(globalNPC.CanTeleport ? $"{globalNPC.TeleportStyle}/ch{(globalNPC.TeleportChargesRemaining == int.MaxValue ? "inf" : globalNPC.TeleportChargesRemaining.ToString())}/cd{globalNPC.TeleportCooldownTimer}/cnt{globalNPC.TeleportCountdown}" : "off")} stopFire={globalNPC.CanStopToFire}"
+                    + SmartFighter4AI.DiagnosticBlock(npc, globalNPC);
                 File.AppendAllText(logPath, line + Environment.NewLine);
             }
-            catch
+            catch (Exception e)
             {
-                // Debug logging should never affect NPC AI.
+                // Debug logging should never affect NPC AI — but it must not fail SILENTLY either, or an
+                // empty log is indistinguishable from a logger that was never reached.
+                try
+                {
+                    File.AppendAllText(
+                        Main.SavePath + Path.DirectorySeparatorChar + "Logs" + Path.DirectorySeparatorChar
+                            + (globalNPC.NavSearchRadius > 0 ? "tsorcRevamp-smartfighter4.log" : "tsorcRevamp-nav.log"),
+                        $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI} [fsm] LOG-FAILED "
+                            + $"{e.GetType().Name}: {e.Message}" + Environment.NewLine);
+                }
+                catch { }
             }
         }
 

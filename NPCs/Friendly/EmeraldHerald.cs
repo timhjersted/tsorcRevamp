@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Friendly
@@ -253,6 +254,10 @@ namespace tsorcRevamp.NPCs.Friendly
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.AdventurersCard>());
                 }
+
+                // Everyone starts with only the vanilla Copper Pickaxe (Deprived excepted) - the mining upgrade
+                // is earned here instead of handed out for free at spawn.
+                player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DiamondPickaxe>());
 
                 if (Main.netMode == NetmodeID.MultiplayerClient)
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ItemID.WormholePotion, 5);

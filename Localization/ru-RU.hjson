@@ -486,6 +486,14 @@ Mods: {
 			// StartingClassRanged: Ranged
 			// StartingClassMagic: Magic
 			// StartingClassSummoner: Summoner
+			// StartingClassDeprived: Deprived
+			// StartingClassNoWeapons: None - pickaxe only
+			/* StartingClassTooltip:
+				'''
+				Health {0}   Mana {1}   Stamina {2}
+				Weapons: {3}
+				Norman's Ring: {4}
+				''' */
 			TSORCMap: Новая карта приключений Story of Red Cloud
 			VanillaMap: Новая ванильная карта
 			TSORCXelvaaRemix: Новая карта Story of Red Cloud Remix
@@ -2050,6 +2058,11 @@ Mods: {
 						'''
 						+{0}% summon damage
 						+{4}% whip range
+						''' */
+					/* Deprived:
+						'''
+						+{5}% movement speed
+						+{6}% stamina regen
 						''' */
 					// None: Choose a starting class to awaken this ring's power
 				}
@@ -4517,7 +4530,7 @@ Mods: {
 					Rolling costs stamina and makes you briefly invulnerable.
 					Learn the timing and you can pass straight through an attack.
 					Rolling in the air allows you to cross bigger gaps and reverse your momentum instantly.
-					A perfect dodge refunds half its cost.
+					A perfect dodge refunds half its cost and briefly boosts stamina regen and critical strike chance.
 					''' */
 				// Heading7: Estus, Cerulean and Bonfires
 				/* Page7:
@@ -7570,6 +7583,10 @@ Mods: {
 					Возможно, вам не стоит его использовать
 					Может быть размещён только разработчиками
 					'''
+				// NextCost/CanAffordCondition unused while the doubling-cost system is disabled (see
+				// Items/Placeable/BonfirePlaceable.cs) - left in place in case it's re-enabled later.
+				// NextCost: "[c/ffbf00:Costs {0} Dark Souls to craft next - doubles with each one you craft]"
+				// CanAffordCondition: You don't have enough Dark Souls to craft another bonfire yet
 			}
 
 			FlameJetItem: {

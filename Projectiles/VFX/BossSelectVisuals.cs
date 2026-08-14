@@ -378,8 +378,13 @@ namespace tsorcRevamp.Projectiles.VFX
                         // Undefeated boss within the current critical-path window: show its "Where to
                         // find:" clue so the player can hunt it. Bosses beyond the next critical path
                         // stay fully hidden (no clue) until that critical path is defeated.
-                        int clueIndex = encounterEntry?.ClueIndex ?? currentRarityList[i];
-                        mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + clueIndex);
+                        // Clue text describes locations on the custom adventure map, which don't exist in a
+                        // sandbox world - skip it there rather than pointing the player at nothing.
+                        if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                        {
+                            int clueIndex = encounterEntry?.ClueIndex ?? currentRarityList[i];
+                            mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + clueIndex);
+                        }
                     }
                     continue;
                 }
@@ -434,14 +439,19 @@ namespace tsorcRevamp.Projectiles.VFX
                             : currentDownedList[i].rarity;
                         EncounterPresentationRegistry.TryGet(primaryNpcType, out mouseOverEntry);
                         mouseOverDefeated = true;
-                        if (mouseOverEntry?.AlwaysRevealClue == true)
+                        // Same adventure-map-only gating as the undefeated-boss clue above - leave
+                        // mouseOverGuideText empty (no clue text) in sandbox worlds.
+                        if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                         {
-                            mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + mouseOverEntry.ClueIndex);
-                        }
-                        else
-                        {
-                            int nextBoss = mouseOverEntry?.FollowingClueIndex ?? baseRarity + 1;
-                            mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Next") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + nextBoss);
+                            if (mouseOverEntry?.AlwaysRevealClue == true)
+                            {
+                                mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + mouseOverEntry.ClueIndex);
+                            }
+                            else
+                            {
+                                int nextBoss = mouseOverEntry?.FollowingClueIndex ?? baseRarity + 1;
+                                mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Next") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + nextBoss);
+                            }
                         }
                         if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
                         {

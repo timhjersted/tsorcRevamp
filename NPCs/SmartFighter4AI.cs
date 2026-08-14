@@ -4,6 +4,7 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs
 {
@@ -926,13 +927,19 @@ namespace tsorcRevamp.NPCs
             }
             BuildEdges(spans, playerFeetY, s.BadEdgeTargets);
 
+            s.LastReplanTick = now;
             Span start = FindContainingSpan(spans, npcCx, npcFeetY);
             Span goal = FindContainingSpan(spans, playerCx, playerFeetY);
             if (start == null || goal == null)
             {
                 s.Plan = null; s.PlanIndex = 0;
                 s.NoAStarPath = true;
-                s.LastPlanResult = start == null ? "no-start-span" : "no-goal-span";
+                // Which end failed, and the window it searched: a missing START span means the NPC's OWN
+                // footing was rejected (the beast flat-ground gate / headroom rule), a missing GOAL span
+                // means the player wasn't standing on anything (airborne, roped, flying).
+                s.LastPlanResult = s.LastReplanResult = start == null
+                    ? $"no-start-span spans={spans.Count} me=({npcCx},{npcFeetY}) msw={_minSurfaceWidth} ch={_clearanceHeight}"
+                    : $"no-goal-span spans={spans.Count} goal=({playerCx},{playerFeetY})";
                 return;
             }
 
@@ -941,7 +948,8 @@ namespace tsorcRevamp.NPCs
             {
                 s.Plan = null; s.PlanIndex = 0;
                 s.NoAStarPath = true;
-                s.LastPlanResult = $"no-path spans={spans.Count}";
+                s.LastPlanResult = s.LastReplanResult =
+                    $"no-path spans={spans.Count} bade={s.BadEdgeTargets.Count} r={radius}";
                 return;
             }
 
@@ -951,7 +959,7 @@ namespace tsorcRevamp.NPCs
             s.StepTimer = StepTimeoutFrames;
             s.CommitFrames = 0;
             s.JumpFiredThisStep = false;
-            s.LastPlanResult = $"plan steps={s.Plan.Count} spans={spans.Count} pathLen={path.Count}";
+            s.LastPlanResult = s.LastReplanResult = $"plan steps={s.Plan.Count} spans={spans.Count} pathLen={path.Count}";
         }
 
         // ================================================================================
@@ -3364,7 +3372,67 @@ namespace tsorcRevamp.NPCs
         //  Logging
         // ================================================================================
 
-        private static int _lastLogTick;
+        /// <summary>
+        /// Shared FSM/navigation diagnostic block, appended to every nav log line by BOTH loggers so the
+        /// two files describe the same thing. Answers, in order:
+        ///  fsm=  entryState:entryDisengage -> exitState:exitDisengage @branch, and `age` = frames since
+        ///        UpdateState last ran (age>0 on a movement frame means the FSM did NOT tick — the state
+        ///        being acted on is stale). If the LIVE pursuit=/disengage= fields disagree with the exit
+        ///        values, something overwrote the FSM's decision after it ran.
+        ///  mut=  the last ForceDisengage/EnterPatrol, as entryPoint&lt;-callerMember:line, plus its age.
+        ///        This is the direct answer to "who keeps zeroing DisengageTimer".
+        ///  gate= the SF4 STATIC per-frame stash (minSurfaceWidth / maxSurfaceStep / clearanceHeight).
+        ///        These are shared across all NPCs and refilled at the top of Run; if a Dworc ever logs a
+        ///        beast's values (msw&gt;0, ch&gt;3) they leaked from another NPC and every ordinary tile is
+        ///        being rejected as unstandable.
+        ///  unreach=/beast= the give-up counters that decide disengage-vs-persist.
+        /// </summary>
+        internal static string DiagnosticBlock(NPC npc, tsorcRevampGlobalNPC g)
+        {
+            // Self-contained failure: a diagnostic must never be able to take down the line it annotates.
+            // The callers' outer try/catch is silent, so without this a throw in here would look exactly
+            // like "the logger never ran" — which is an hour of debugging the debugger.
+            try
+            {
+                int now = (int)Main.GameUpdateCount;
+                string fsmAge = g.FsmTick < 0 ? "never" : (now - g.FsmTick).ToString();
+                string mutAge = g.FsmMutationTick < 0 ? "never" : (now - g.FsmMutationTick).ToString();
+                bool clobbered = g.FsmTick >= 0
+                    && (g.PursuitState != g.FsmExitState || g.DisengageTimer != g.FsmExitDisengage);
+                return $" fsm={g.FsmEntryState}:{g.FsmEntryDisengage}->{g.FsmExitState}:{g.FsmExitDisengage}"
+                    + $"@{g.FsmBranch} age={fsmAge}{(clobbered ? " CLOBBERED" : "")}"
+                    + $" mut={g.FsmMutationBy} mutAge={mutAge}"
+                    + $" gate=msw{_minSurfaceWidth}/mss{_maxSurfaceStep}/ch{_clearanceHeight}"
+                    + $" unreach={g.UnreachableFrames} beast={g.BeastStale}/{g.BeastUnreachableFrames}"
+                    + $" tpApp={g.TeleportAppearanceTimer} stag={g.StaggerTimer}";
+            }
+            catch (Exception e)
+            {
+                return $" fsm=<diag-failed:{e.GetType().Name}>";
+            }
+        }
+
+        /// <summary>
+        /// Emitted once per session on the first line written to a nav log, so an EMPTY log is
+        /// unambiguous: header present + no lines = the loggers ran but every enemy was filtered out;
+        /// no header at all = the logging path was never reached (no SF4 enemy engaged, or the AI
+        /// never got that far). Without this, "no file" has half a dozen indistinguishable causes.
+        /// </summary>
+        private static bool _navLogHeaderWritten;
+        internal static void WriteNavLogHeader(string path)
+        {
+            if (_navLogHeaderWritten) return;
+            _navLogHeaderWritten = true;
+            try
+            {
+                File.AppendAllText(path,
+                    $"[{DateTime.Now:HH:mm:ss}] ==== nav log opened (tick {Main.GameUpdateCount}, "
+                    + $"DebugMode={ModContent.GetInstance<tsorcRevampConfig>().DebugMode}) ===="
+                    + Environment.NewLine);
+            }
+            catch { }
+        }
+
         private static void LogFrame(NPC npc, Player player, NavState s, bool grounded, bool los,
             bool attack, string action, string reason)
         {
@@ -3374,14 +3442,16 @@ namespace tsorcRevamp.NPCs
             bool ropeContext = npc.noGravity
                 || (s.Plan != null && s.PlanIndex < s.Plan.Count && s.Plan[s.PlanIndex].Kind == StepKind.RopeClimb);
             int interval = ropeContext ? 3 : 12;
-            if (now - _lastLogTick < interval) return;
-            _lastLogTick = now;
+            // Per-NPC, not global: several SF4 enemies alive must each get their own sample cadence.
+            if (now - s.LastLogTick < interval) return;
+            s.LastLogTick = now;
             try
             {
                 string sep = Path.DirectorySeparatorChar.ToString();
                 string dir = Main.SavePath + sep + "Logs";
                 Directory.CreateDirectory(dir);
                 string path = dir + sep + "tsorcRevamp-smartfighter4.log";
+                WriteNavLogHeader(path);
                 string planStr = "none";
                 if (s.Plan != null)
                 {
@@ -3442,8 +3512,13 @@ namespace tsorcRevamp.NPCs
                     + $" stepT={s.StepTimer} commit={s.CommitFrames} air={s.AirCommitDirX}/{s.AirCommitTimer}"
                     + $" rcd={s.ReplanCooldown} pdrop={s.PlatformPassActive}/{s.PlatformPassTimer}"
                     + $" plan=\"{s.LastPlanResult}\""
+                    // The A* verdict on its own, with its age in frames — LastPlanResult is clobbered by
+                    // the rope fallback within the same frame and never showed why pathing actually failed.
+                    + $" astar=\"{s.LastReplanResult}\"@{(s.LastReplanTick < 0 ? "never" : (now - s.LastReplanTick).ToString())}"
+                    + $" noPath={s.NoAStarPath} giveup={s.StuckGiveUpFrames} hard={s.HardStuckStrikes}/{s.HardStuckFrames}"
                     + $" pursuit={g.PursuitState}"
                     + $" disengage={g.DisengageTimer}/{g.NavGiveUpTicks}"
+                    + DiagnosticBlock(npc, g)
                     + $" patrol={g.PatrolMode}/idle{g.PatrolIdleTimer}/leg{g.PatrolLegRemaining}/dir{g.PatrolDirection}/elapsed{g.PatrolElapsed}"
                     // Combat-layer state folded in from tsorcRevamp-nav.log so the smart log is a single superset
                     // for SF4 enemies: teleport (style/charges/cooldown/countdown) + stop-to-fire intent.
@@ -3454,7 +3529,20 @@ namespace tsorcRevamp.NPCs
                     + ropeStr;
                 File.AppendAllText(path, line + Environment.NewLine);
             }
-            catch { }
+            catch (Exception e)
+            {
+                // Never silent again: a bare `catch {}` here means a throw anywhere in the line build
+                // produces an EMPTY log, indistinguishable from "the logger never ran".
+                try
+                {
+                    File.AppendAllText(
+                        Main.SavePath + Path.DirectorySeparatorChar + "Logs"
+                            + Path.DirectorySeparatorChar + "tsorcRevamp-smartfighter4.log",
+                        $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI} LOG-FAILED "
+                            + $"{e.GetType().Name}: {e.Message}" + Environment.NewLine);
+                }
+                catch { }
+            }
         }
 
         private static string DescribePlan(NavState s)
@@ -3566,6 +3654,16 @@ namespace tsorcRevamp.NPCs
             // and re-snapping X to the rope center before the step-off velocity can carry it clear.
             public bool RopeDismounting;
             public string LastPlanResult = "";
+            // LastPlanResult is overwritten later in the SAME frame by the rope fallback, so Replan's own
+            // verdict (no-start-span / no-goal-span / no-path spans=N / plan steps=N) never survived to the
+            // log line — every frame read "rope-none". Keep the A* verdict on its own field, with the tick it
+            // was produced, so the log can show WHY pathing failed instead of what the rope fallback said.
+            public string LastReplanResult = "";
+            public int LastReplanTick = -1;
+            // Per-NPC log throttle. The previous single static tick meant that with several SF4 enemies
+            // alive they COMPETED for one 12-frame sample slot, so each enemy was sampled erratically and
+            // the log silently interleaved them (this is why timers appeared to jump by 12 per line).
+            public int LastLogTick = -1000;
             // True when the last A* attempt found no path to the player (no-goal-span / no-path).
             // Cleared when A* successfully builds a plan. Guards TryShaftEscape / TryLocalTerrain
             // from firing jumps that loop forever against an impassable wall with no route through.

@@ -316,12 +316,14 @@ namespace tsorcRevamp
         public bool MiakodaNewDust1;
         public bool MiakodaNewDust2;
 
-        internal bool gotPickaxe;
         internal bool gotDarksign;
         public bool FirstEncounter;
         public bool ReceivedGift;
         public bool ReceivedHuntingTome;
         public int heraldChatState;
+        /// <summary>Times this player has crafted a Bonfire Placeable. Drives its doubling Dark Soul cost -
+        /// see Items.Placeable.BonfirePlaceable.GetDarkSoulCost.</summary>
+        public int BonfiresCrafted;
 
         public bool[] PermanentBuffToggles;
         public static Dictionary<int, float> DamageDir;

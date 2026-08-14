@@ -219,12 +219,12 @@ namespace tsorcRevamp
             tag.Add("townWarpY", townWarpY);
             tag.Add("townWarpWorld", townWarpWorld);
             tag.Add("townWarpSet", townWarpSet);
-            tag.Add("gotPickaxe", gotPickaxe);
             tag.Add("gotDarksign", gotDarksign);
             tag.Add("FirstEncounter", FirstEncounter);
             tag.Add("ReceivedGift", ReceivedGift);
             tag.Add("ReceivedHuntingTome", ReceivedHuntingTome);
             tag.Add("heraldChatState", heraldChatState);
+            tag.Add("BonfiresCrafted", BonfiresCrafted);
             tag.Add("BearerOfTheCurse", BearerOfTheCurse);
             tag.Add("Unkindled", Unkindled);
             tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
@@ -325,12 +325,12 @@ namespace tsorcRevamp
             townWarpY = tag.GetInt("townWarpY");
             townWarpWorld = tag.GetInt("townWarpWorld");
             townWarpSet = tag.GetBool("townWarpSet");
-            gotPickaxe = tag.GetBool("gotPickaxe");
             gotDarksign = tag.GetBool("gotDarksign");
             FirstEncounter = tag.GetBool("FirstEncounter");
             ReceivedGift = tag.GetBool("ReceivedGift");
             ReceivedHuntingTome = tag.GetBool("ReceivedHuntingTome");
             heraldChatState = tag.GetInt("heraldChatState");
+            BonfiresCrafted = tag.GetInt("BonfiresCrafted");
             startingClass = (StartingClass)tag.GetInt("StartingClass");
             appliedStartingClassStats = tag.GetBool("AppliedStartingClassStats");
             appliedStartingClassStatsVersion = tag.ContainsKey("AppliedStartingClassStatsVersion") ? tag.GetInt("AppliedStartingClassStatsVersion") : (appliedStartingClassStats ? 1 : 0);
@@ -1115,12 +1115,31 @@ namespace tsorcRevamp
                     startingItems.Add(CreateStartingItem(ModContent.ItemType<RustedChain>(), prefix: PrefixID.Terrible));
                     startingItems.Add(CreateStartingItem(ItemID.BabyBirdStaff, prefix: PrefixID.Terrible));
                     break;
+                case StartingClass.Deprived:
+                    // No bonus weapon added here - Deprived's "weapon" is the vanilla Copper Shortsword, which
+                    // OnEnterWorld leaves in place instead of stripping it like it does for every other class.
+                    break;
                 case StartingClass.Melee:
                 default:
                     startingItems.Add(CreateStartingItem(ModContent.ItemType<ForgottenRuneAxe>(), prefix: PrefixID.Dull));
                     startingItems.Add(CreateStartingItem(ItemID.WoodenBoomerang, prefix: PrefixID.Dull));
                     break;
             }
+        }
+
+        /// <summary>Item types of the bonus weapon(s) a class starts with, for display purposes (e.g. the
+        /// starting-class selection tooltip). Kept in sync by hand with <see cref="AddClassStartingItems"/> —
+        /// prefixes/stack sizes don't matter here, only which items to name.</summary>
+        internal static int[] GetClassStartingWeaponTypes(StartingClass startingClass)
+        {
+            return startingClass switch
+            {
+                StartingClass.Ranged => new[] { ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>(), ItemID.IronShortsword },
+                StartingClass.Magic => new[] { ModContent.ItemType<ApprenticesWand>(), ItemID.BorealWoodSword },
+                StartingClass.Summoner => new[] { ModContent.ItemType<RustedChain>(), ItemID.BabyBirdStaff },
+                StartingClass.Deprived => new[] { (int)ItemID.CopperShortsword },
+                StartingClass.Melee or _ => new[] { ModContent.ItemType<ForgottenRuneAxe>(), ItemID.WoodenBoomerang },
+            };
         }
         public override IEnumerable<Item> AddStartingItems(bool mediumCoreDeath)
         {
@@ -2581,9 +2600,21 @@ namespace tsorcRevamp
         // straight to our own tag data and never passes through vanilla's save path — but it follows the same
         // shape: every class converges on StaminaVessel.PermanentStaminaCap (200), and the starting value only
         // decides how many vessels it takes to get there (Melee 14, Ranged 15, Summoner 16, Magic 17).
-        internal float GetStartingClassBaseStamina()
+        internal float GetStartingClassBaseStamina() => GetBaseStaminaForClass(GetResolvedStartingClass());
+
+        internal int GetStartingClassBaseLife() => GetBaseLifeForClass(GetResolvedStartingClass());
+
+        internal int GetStartingClassBaseMana() => GetBaseManaForClass(GetResolvedStartingClass());
+
+        // Static, class-keyed versions of the above so UI (e.g. the starting-class selection tooltip) can read
+        // a class's base stats without needing a resolved player instance. Deprived deliberately has no case in
+        // any of these three switches — it falls to the shared "_" default (Life 100 / Mana 20 / Stamina 125),
+        // which is also what an unresolved/None class gets. That's intentional: Deprived's whole identity is
+        // "no specialization," so it sits on the same unbiased baseline the game already uses as its default,
+        // rather than needing invented numbers of its own.
+        internal static float GetBaseStaminaForClass(StartingClass startingClass)
         {
-            return GetResolvedStartingClass() switch
+            return startingClass switch
             {
                 StartingClass.Melee => 130,
                 StartingClass.Magic => 115,
@@ -2592,9 +2623,9 @@ namespace tsorcRevamp
             };
         }
 
-        internal int GetStartingClassBaseLife()
+        internal static int GetBaseLifeForClass(StartingClass startingClass)
         {
-            return GetResolvedStartingClass() switch
+            return startingClass switch
             {
                 StartingClass.Melee => 120,
                 StartingClass.Ranged => 90,
@@ -2603,9 +2634,9 @@ namespace tsorcRevamp
             };
         }
 
-        internal int GetStartingClassBaseMana()
+        internal static int GetBaseManaForClass(StartingClass startingClass)
         {
-            return GetResolvedStartingClass() switch
+            return startingClass switch
             {
                 StartingClass.Melee => 10,
                 StartingClass.Ranged => 20,
@@ -2636,20 +2667,19 @@ namespace tsorcRevamp
 
         public override void OnEnterWorld()
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe)
-            { //sandbox mode only, and only once
-                Player.QuickSpawnItem(Player.GetSource_Loot(), ModContent.ItemType<DiamondPickaxe>());
-                gotPickaxe = true;
-            }
-
             if (!gotDarksign)
             { // Fresh character: start in Unkindled mode and strip junk starter items.
                 gotDarksign = true;
                 if (!BearerOfTheCurse) Unkindled = true;
 
+                // Everyone starts with just the vanilla Copper Pickaxe - no bonus Copper Axe, and no Copper
+                // Shortsword unless you're Deprived, whose whole starting weapon IS the copper shortsword.
+                // A better pickaxe (Diamond) is earned later as an Emerald Herald gift instead of handed out here.
                 for (int i = 0; i < Player.inventory.Length; i++)
                 {
-                    if (Player.inventory[i].type == ItemID.CopperShortsword || Player.inventory[i].type == ItemID.CopperAxe)
+                    bool isJunkAxe = Player.inventory[i].type == ItemID.CopperAxe;
+                    bool isJunkSword = Player.inventory[i].type == ItemID.CopperShortsword && startingClass != StartingClass.Deprived;
+                    if (isJunkAxe || isJunkSword)
                         Player.inventory[i].TurnToAir();
                 }
 

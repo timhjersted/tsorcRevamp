@@ -1621,6 +1621,350 @@ namespace tsorcRevamp
         }
 
         /// <summary>
+        /// Searches outward from (centerX, centerY) in tile coordinates for a spot with solid, flat ground and
+        /// enough clear space above it to stand an NPC - used to place an NPC near a fixed reference point (e.g.
+        /// world spawn) whose terrain isn't guaranteed to stay the way it was at map-gen time (the player can dig
+        /// it out or build over it). Checks the nearest column first, then alternates left/right at increasing
+        /// distance. Returns false (with spawnTileX/Y left at the raw center) if nothing suitable turns up within
+        /// searchRadius tiles.
+        /// </summary>
+        public static bool TryFindNPCGroundSpot(int centerX, int centerY, int searchRadius, int npcHeightInTiles, out int spawnTileX, out int spawnTileY)
+        {
+            int minY = Math.Max(10, centerY - searchRadius);
+            int maxY = Math.Min(Main.maxTilesY - 10, centerY + searchRadius);
+
+            for (int radius = 0; radius <= searchRadius; radius++)
+            {
+                int[] xOffsets = radius == 0 ? new[] { 0 } : new[] { -radius, radius };
+                foreach (int dx in xOffsets)
+                {
+                    int x = centerX + dx;
+                    if (x < 10 || x >= Main.maxTilesX - 10)
+                    {
+                        continue;
+                    }
+
+                    for (int y = minY; y <= maxY; y++)
+                    {
+                        if (!IsPartOfValidSurface(x, y, 2) || !HasClearSpaceAbove(x, y, npcHeightInTiles))
+                        {
+                            continue;
+                        }
+
+                        spawnTileX = x;
+                        spawnTileY = y - 1; //Stand on top of the surface tile, not inside it
+                        return true;
+                    }
+                }
+            }
+
+            spawnTileX = centerX;
+            spawnTileY = centerY;
+            return false;
+        }
+
+        /// <summary>
+        /// Searches outward from (centerX, centerY) for solid, flat ground wide/clear enough for the 3-wide,
+        /// 4-tall Bonfire Checkpoint structure. Unlike TryFindNPCGroundSpot, the output row is NOT "stand on
+        /// top of the ground" - it's the raw solid ground row itself, since that's the anchor
+        /// tsorcRevampWorld.PlaceBonfireCheckpoint expects (its bottom tile row is written flush against solid
+        /// ground, matching how it's placed when converting a map-authored Campfire into a bonfire). Returns
+        /// false (spot left at center) if nothing suitable turns up within searchRadius tiles.
+        /// </summary>
+        public static bool TryFindBonfireGroundSpot(int centerX, int centerY, int searchRadius, out int spotX, out int spotY)
+        {
+            int minY = Math.Max(10, centerY - searchRadius);
+            int maxY = Math.Min(Main.maxTilesY - 10, centerY + searchRadius);
+
+            for (int radius = 0; radius <= searchRadius; radius++)
+            {
+                int[] xOffsets = radius == 0 ? new[] { 0 } : new[] { -radius, radius };
+                foreach (int dx in xOffsets)
+                {
+                    int x = centerX + dx;
+                    if (x < 12 || x >= Main.maxTilesX - 12)
+                    {
+                        continue;
+                    }
+
+                    for (int y = minY; y <= maxY; y++)
+                    {
+                        if (!IsPartOfValidSurface(x, y, 3))
+                        {
+                            continue;
+                        }
+
+                        bool footprintClear = true;
+                        for (int i = -1; i <= 1 && footprintClear; i++)
+                        {
+                            if (!HasClearSpaceAbove(x + i, y, 4, ignoreTrees: true, rejectAnyLiquid: true))
+                            {
+                                footprintClear = false;
+                            }
+                        }
+                        if (!footprintClear)
+                        {
+                            continue;
+                        }
+
+                        spotX = x;
+                        spotY = y;
+                        return true;
+                    }
+                }
+            }
+
+            spotX = centerX;
+            spotY = centerY;
+            return false;
+        }
+
+        /// <summary>
+        /// Underground counterpart to TryFindBonfireGroundSpot: same 3-wide solid-floor requirement, but a
+        /// caller-chosen headroom (underground ceilings are often taller) and no tree-clearance handling (moot
+        /// underground). Two passes: the first also requires open space a few tiles to either side (a cheap
+        /// stand-in for "opens into a cavern" - a real flood-fill connectivity check would be far more
+        /// expensive to run at world-init scale), the second drops that preference if nothing cavern-like
+        /// turned up nearby. Returns false (spot left at center) if nothing suitable turns up within radius.
+        /// </summary>
+        public static bool TryFindUndergroundBonfireSpot(int centerX, int centerY, int searchRadius, int minHeadroom, out int spotX, out int spotY)
+        {
+            int minY = Math.Max(10, centerY - searchRadius);
+            int maxY = Math.Min(Main.maxTilesY - 10, centerY + searchRadius);
+
+            for (int pass = 0; pass < 2; pass++)
+            {
+                bool preferCavern = pass == 0;
+                for (int radius = 0; radius <= searchRadius; radius++)
+                {
+                    int[] xOffsets = radius == 0 ? new[] { 0 } : new[] { -radius, radius };
+                    foreach (int dx in xOffsets)
+                    {
+                        int x = centerX + dx;
+                        if (x < 12 || x >= Main.maxTilesX - 12)
+                        {
+                            continue;
+                        }
+
+                        for (int y = minY; y <= maxY; y++)
+                        {
+                            if (!IsPartOfValidSurface(x, y, 3))
+                            {
+                                continue;
+                            }
+
+                            bool footprintClear = true;
+                            for (int i = -1; i <= 1 && footprintClear; i++)
+                            {
+                                if (!HasClearSpaceAbove(x + i, y, minHeadroom, rejectAnyLiquid: true))
+                                {
+                                    footprintClear = false;
+                                }
+                            }
+                            if (!footprintClear)
+                            {
+                                continue;
+                            }
+
+                            if (preferCavern && !HasOpenSidesNearby(x, y, minHeadroom))
+                            {
+                                continue;
+                            }
+
+                            spotX = x;
+                            spotY = y;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            spotX = centerX;
+            spotY = centerY;
+            return false;
+        }
+
+        private static bool HasOpenSidesNearby(int x, int groundY, int headroom)
+        {
+            int midY = groundY - Math.Max(1, headroom / 2);
+            return !IsBlockedTile(x - 3, midY) && !IsBlockedTile(x + 3, midY);
+        }
+
+        private static bool IsBlockedTile(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= Main.tile.Width || y >= Main.tile.Height)
+            {
+                return true;
+            }
+            Tile tile = Main.tile[x, y];
+            return tile.HasTile && Main.tileSolid[tile.TileType] && !TileID.Sets.Platforms[tile.TileType];
+        }
+
+        /// <summary>
+        /// Scans [minX, maxX] x [minY, maxY] (stepping by `step` columns) for the first spot with solid, flat,
+        /// 3-wide ground and clear headroom - no biome-tile requirement, just "is there a floating platform
+        /// here." Intended for a Y band well above Main.worldSurface (the sky/space layer), where the only
+        /// solid ground that naturally exists at all is sky islands - a plain floor+headroom check is enough to
+        /// land on one without needing to recognize their specific tile types.
+        /// </summary>
+        public static bool TryFindSkyIslandSpot(int minX, int maxX, int minY, int maxY, int step, out int spotX, out int spotY)
+        {
+            minX = Math.Max(10, minX);
+            maxX = Math.Min(Main.maxTilesX - 10, maxX);
+
+            for (int x = minX; x <= maxX; x += step)
+            {
+                for (int y = minY; y <= maxY; y++)
+                {
+                    if (!IsPartOfValidSurface(x, y, 3))
+                    {
+                        continue;
+                    }
+
+                    bool footprintClear = true;
+                    for (int i = -1; i <= 1 && footprintClear; i++)
+                    {
+                        if (!HasClearSpaceAbove(x + i, y, 4, rejectAnyLiquid: true))
+                        {
+                            footprintClear = false;
+                        }
+                    }
+                    if (!footprintClear)
+                    {
+                        continue;
+                    }
+
+                    spotX = x;
+                    spotY = y;
+                    return true;
+                }
+            }
+
+            spotX = 0;
+            spotY = 0;
+            return false;
+        }
+
+        /// <summary>
+        /// Scans a surface-height band across [minX, maxX] (stepping by `step` columns) for the first column
+        /// whose topmost solid, non-platform tile satisfies isBiomeTile. Used to find a representative surface
+        /// spot for a biome (desert, jungle, ...) without needing a player standing in it.
+        /// </summary>
+        public static bool TryFindSurfaceBiomeColumn(int minX, int maxX, int step, Func<ushort, bool> isBiomeTile, out int foundX, out int foundY)
+        {
+            int scanBottom = (int)Main.worldSurface + 60;
+            for (int x = minX; x <= maxX; x += step)
+            {
+                if (x < 10 || x >= Main.maxTilesX - 10)
+                {
+                    continue;
+                }
+
+                for (int y = 10; y < scanBottom; y++)
+                {
+                    Tile tile = Main.tile[x, y];
+                    if (tile.HasTile && Main.tileSolid[tile.TileType] && !TileID.Sets.Platforms[tile.TileType])
+                    {
+                        if (isBiomeTile(tile.TileType))
+                        {
+                            foundX = x;
+                            foundY = y;
+                            return true;
+                        }
+                        break; //hit ground here but wrong biome, move to the next column
+                    }
+                }
+            }
+
+            foundX = 0;
+            foundY = 0;
+            return false;
+        }
+
+        /// <summary>
+        /// Scans [minX, maxX] x [minY, maxY] (sampling every `step` columns and every 4 rows, since underground
+        /// bands can be huge) for the first tile matching isBiomeTile. Used to find a representative underground
+        /// spot for a biome/structure (corruption, jungle, dungeon brick, ...) to anchor a cave-opening search
+        /// around, without needing a player to have been there.
+        /// </summary>
+        public static bool TryFindUndergroundBiomeColumn(int minX, int maxX, int minY, int maxY, int step, Func<ushort, bool> isBiomeTile, out int foundX, out int foundY)
+        {
+            minX = Math.Max(10, minX);
+            maxX = Math.Min(Main.maxTilesX - 10, maxX);
+            minY = Math.Max(10, minY);
+            maxY = Math.Min(Main.maxTilesY - 10, maxY);
+
+            for (int x = minX; x <= maxX; x += step)
+            {
+                for (int y = minY; y <= maxY; y += 4)
+                {
+                    Tile tile = Main.tile[x, y];
+                    if (tile.HasTile && isBiomeTile(tile.TileType))
+                    {
+                        foundX = x;
+                        foundY = y;
+                        return true;
+                    }
+                }
+            }
+
+            foundX = 0;
+            foundY = 0;
+            return false;
+        }
+
+        /// <summary>True if any position in `tilePositions` (tile coordinates) is within `toleranceTiles` of
+        /// (x, y) on both axes. Used so each sandbox-bonfire placement target is independently idempotent -
+        /// skip it if something's already there, but don't let one missing spot block the others.</summary>
+        public static bool AnyBonfireNear(List<Vector2> tilePositions, int x, int y, int toleranceTiles)
+        {
+            if (tilePositions == null)
+            {
+                return false;
+            }
+
+            foreach (Vector2 pos in tilePositions)
+            {
+                if (Math.Abs(pos.X - x) <= toleranceTiles && Math.Abs(pos.Y - y) <= toleranceTiles)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <param name="ignoreTrees">When true, tree trunk tiles (TileID.Sets.IsATreeTrunk) don't count as
+        /// blocking - use this for callers that will chop through trees at placement time instead of needing to
+        /// find ground that's already tree-free (which forest terrain may not offer at all).</param>
+        /// <param name="rejectAnyLiquid">When true, ANY standing liquid (water/honey, not just lava) counts as
+        /// blocking. Default (false) only rejects lava, matching the original NPC-placement behavior - an NPC
+        /// standing in shallow water is fine. Bonfire callers pass true so a structure can't end up sitting in
+        /// a flooded cave or underwater ledge.</param>
+        private static bool HasClearSpaceAbove(int x, int groundY, int heightInTiles, bool ignoreTrees = false, bool rejectAnyLiquid = false)
+        {
+            for (int i = 1; i <= heightInTiles; i++)
+            {
+                int y = groundY - i;
+                if (y < 0)
+                {
+                    return false;
+                }
+
+                Tile tile = Main.tile[x, y];
+                if (tile.HasTile && Main.tileSolid[tile.TileType] && !TileID.Sets.Platforms[tile.TileType]
+                    && !(ignoreTrees && TileID.Sets.IsATreeTrunk[tile.TileType]))
+                {
+                    return false;
+                }
+                if (tile.LiquidAmount > 0 && (rejectAnyLiquid || tile.LiquidType == LiquidID.Lava))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
         /// True if a `width`-tile flat walkable floor sits CENTERED under `centerX` at row `targetY`.
         /// Stricter than IsPartOfValidSurface: that one accepts `centerX` anywhere inside a wide-enough run, so a
         /// large enemy can stand at the run's EDGE with its body hanging off the lip. This requires the enemy's
