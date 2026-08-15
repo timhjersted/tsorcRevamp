@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -22,6 +23,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.Magic;
             Projectile.friendly = false;
             Projectile.hostile = false;
+            Projectile.ContinuouslyUpdateDamageStats = true;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -130,7 +132,7 @@ namespace tsorcRevamp.Projectiles
                     }
 
                     //Drain Souls-mode players' stamina (Unkindled pays 75%)
-                    if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
+                    if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina && !player.HasBuff(ModContent.BuffType<ManaBurn>()))
                     {
                         player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= staminaCost;
                     }
@@ -166,7 +168,7 @@ namespace tsorcRevamp.Projectiles
                 }
 
                 //Drain Souls-mode players' stamina (Unkindled pays 75%)
-                if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
+                if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina && !player.HasBuff(ModContent.BuffType<ManaBurn>()))
                 {
                     player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= staminaCost / 5f;
                 }
