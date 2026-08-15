@@ -248,8 +248,8 @@ Mods: {
 				WhipKnockback: Increases whip knockback
 				AtkSpeed: Increases summon attack speed by {0}%
 				WhipDmg: Increases whip damage by {0}%
-				WhipCritDmg: Increases the damage of whip crits by {0}%
-				WhipCritHitbox: Increases the Whip Tip Crit Hitbox Size to {0}x
+				WhipTipDmg: Increases the damage of tip hits by {0}%
+				WhipTipHitbox: Increases the Whip Tip Hitbox Size to {0}x
 				TagStrength: Increases Summon Tag Damage, Armor Pen, and Crit by {0}%
 				BadTagStrengthMult: Decreases Summon Tag Damage, Armor Pen and Crit by {0}% multiplicatively
 				TagDuration: Increases the duration of Summon Tag effects by {0}%
@@ -2045,7 +2045,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedCritChance}
-					{$CommonItemTooltip.Summon.WhipCritHitbox@1}
+					{$CommonItemTooltip.Summon.WhipTipHitbox@1}
 					'''
 			}
 
@@ -2133,7 +2133,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedSummonDamage@0}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@2}
-					{$CommonItemTooltip.Summon.WhipCritHitbox@3}
+					{$CommonItemTooltip.Summon.WhipTipHitbox@3}
 					{$CommonItemTooltip.Summon.WhipKnockback}
 					{$CommonItemTooltip.MeleeWhipAutoswing}
 					{$CommonItemTooltip.AggroBoost}
@@ -3336,7 +3336,7 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagDuration@1}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesWhipRangeByPercent@2}
 					{$CommonItemTooltip.Summon.AtkSpeed@3}
-					{$CommonItemTooltip.LifeThreshold@4}Whip Tip Crits trigger nasty explosions
+					{$CommonItemTooltip.LifeThreshold@4}Whip Tip Hits trigger nasty explosions
 					'''
 			}
 
@@ -7396,8 +7396,9 @@ Mods: {
 				DisplayName: Dragoon Lash
 				Tooltip:
 					'''
-					Breathe fire at enemies struck by this whip and a minion on a cooldown
-					Refresh the cooldown by whipping an enemy
+					Breathe fire at enemies struck by this whip or a minion on a cooldown
+					Lower the cooldown by whipping an enemy
+					Whip tip hits instantly breathe empowered flames at the enemy
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -7500,7 +7501,7 @@ Mods: {
 				Tooltip:
 					'''
 					This whip ignores {1} defense
-					{$CommonItemTooltip.Summon.WhipCritDmg}
+					{$CommonItemTooltip.Summon.WhipTipDmg}
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -8618,8 +8619,9 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentSummonTagCritChance}
 					Reforged to its full potential
-					Breathe rainbow flames at enemies struck by this whip and a minion on a cooldown
-					Refresh the cooldown by whipping an enemy
+					Breathe rainbow flames at enemies struck by this whip or a minion on a cooldown
+					Lower the cooldown by whipping an enemy
+					Whip tip hits instantly breathe empowered rainbow flames at the enemy
 					{$CommonItemTooltip.Whips}
 					'''
 			}

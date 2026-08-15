@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void UpdateEquip(Player player)
         {
             player.GetCritChance(DamageClass.Generic) += CriticalStrikeChance;
-            player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize = WhipCritHitboxSize;
+            player.GetModPlayer<tsorcRevampPlayer>().WhipTipHitboxSize = WhipCritHitboxSize;
         }
         public override void AddRecipes()
         {

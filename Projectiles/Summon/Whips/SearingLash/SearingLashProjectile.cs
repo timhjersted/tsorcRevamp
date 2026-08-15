@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.SearingLash
             var modPlayer = Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             if (Main.myPlayer == player.whoAmI && TimesHitThisSwing < 6 + 1) //6 Bats can be spawned each swing max
             {
-                int BatDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(SearingLashItem.BaseDamage * SearingLashItem.BatDmgScaling / 100f * MathF.Max(ChargeTime / (MaxChargeTime / MaxChargeDmgMultiplier * 1.25f), 1f));
+                int BatDamage = (int)(hit.SourceDamage * SearingLashItem.BatDmgScaling / 100f);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, player.Center.DirectionTo(target.Center).SafeNormalize(Vector2.Zero) * 3.5f, ModContent.ProjectileType<SearingLashBat>(), BatDamage, 0, Main.myPlayer);
             }
         }

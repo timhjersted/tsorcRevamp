@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class EnchantedWhip : ModItem
     {
         public const int BaseDamage = 18;
-        public static float StarDamageScaling = 45;
+        public const float StarDamageScaling = 45f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StarDamageScaling);
         public override void SetStaticDefaults()
         {

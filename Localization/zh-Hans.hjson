@@ -248,8 +248,8 @@ Mods: {
 				WhipKnockback: 增加鞭子击退
 				AtkSpeed: 增加 {0}% 召唤攻击速度
 				WhipDmg: 增加 {0}% 鞭子伤害
-				WhipCritDmg: 增加 {0}% 鞭子暴击伤害
-				WhipCritHitbox: 增加 {0} 倍鞭子尖端暴击判定大小
+				// WhipTipDmg: Increases the damage of tip hits by {0}%
+				// WhipTipHitbox: Increases the Whip Tip Hitbox Size to {0}x
 				TagStrength: 乘算增加 {0}% 召唤标记伤害、护甲穿透和暴击率
 				BadTagStrengthMult: 乘算减少 {0}% 召唤标记伤害、护甲穿透和暴击率
 				TagDuration: 增加 {0}% 召唤标记持续时间

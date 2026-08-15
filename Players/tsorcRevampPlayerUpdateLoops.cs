@@ -200,7 +200,7 @@ namespace tsorcRevamp
         public bool Shunpo = false;
         public float ShunpoTimer = 0;
         public Vector2 ShunpoVelocity;
-        public float WhipCritHitboxSize = 1f;
+        public float WhipTipHitboxSize = 1f;
 
         public int SteelTempestStacks = 0;
         public int SweepingBladeTimer = 0;
@@ -583,7 +583,7 @@ namespace tsorcRevamp
             MythrilOrichalcumCritDamage = false;
             PilgrimSpontoonBuff = false;
             Shunpo = false;
-            WhipCritHitboxSize = 1;
+            WhipTipHitboxSize = 1;
 
             PhoenixSkull = false;
             Trinity = false;

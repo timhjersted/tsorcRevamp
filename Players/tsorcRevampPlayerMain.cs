@@ -1466,8 +1466,8 @@ namespace tsorcRevamp
                 return true;
             }
             Vector2 TipBase = tsorcRevamp.WhipTipBases[projectile.type];
-            if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], TipBase * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize).Intersects(targetHitbox) || 
-                Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], TipBase * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize).Intersects(targetHitbox))
+            if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], TipBase * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipTipHitboxSize).Intersects(targetHitbox) || 
+                Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], TipBase * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipTipHitboxSize).Intersects(targetHitbox))
             {
                 return true;
             }

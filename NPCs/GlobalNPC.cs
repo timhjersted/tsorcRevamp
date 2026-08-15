@@ -3046,22 +3046,6 @@ namespace tsorcRevamp.NPCs
                 modPlayerProjectileOwner.OverCrit((int)FinalSummonCriticalStrikeChance, projectile.DamageType, ref modifiers, out CritColorTier);
 
             }
-            if (markedByDragoonLash && (projectile.IsMinionOrSentryRelated || ProjectileID.Sets.IsAWhip[projectile.type])) //has to be outside of the main if since this is supposed to also be procced on whip-hit
-            {
-                int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(DragoonLash.BaseDamage);
-                if (projectileOwner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer >= 1 && Main.myPlayer == projectileOwner.whoAmI)
-                {
-                    Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer, 1);
-                }
-            }
-            if (markedBySupremeDragoonLash && (projectile.IsMinionOrSentryRelated || ProjectileID.Sets.IsAWhip[projectile.type])) //has to be outside of the main if since this is supposed to also be procced on whip-hit
-            {
-                int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(SupremeDragoonLash.BaseDamage);
-                if (projectileOwner.GetModPlayer<tsorcRevampPlayer>().SupremeDragoonLashFireBreathTimer >= 1 && Main.myPlayer == projectileOwner.whoAmI)
-                {
-                    Projectile RgbFireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.RainbowRodBullet, WhipDamage, 1f, Main.myPlayer, 1);
-                }
-            }
             #endregion
 
             #region BotC Whip Debuff Damage Scaling (disabled)
@@ -3283,6 +3267,48 @@ namespace tsorcRevamp.NPCs
             {
                 modPlayer.CustomCombatText(npc.Hitbox, damageDone, CritColorTier, hit.Crit);
             }
+            
+            if (markedByDragoonLash && projectile.IsMinionOrSentryRelated)
+            {
+                int WhipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(DragoonLash.BaseDamage);
+                if (modPlayer.DragoonLashFireBreathTimer >= 1 && Main.myPlayer == player.whoAmI)
+                {
+                    Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, (npc.Center - player.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer, 1);
+                }
+            }
+            if (markedByDragoonLash && projectile.type == ModContent.ProjectileType<DragoonLashProjectile>()) //has to be outside of the main if since this is supposed to also be procced on whip-hit
+            {
+                int WhipDamage = hit.SourceDamage;
+                if (modPlayer.WhipTipHit(projectile, projectile.WhipPointsForCollision, npc.Hitbox))
+                {                    
+                    Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, (npc.Center - player.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer, 1);
+                }
+                else if (modPlayer.DragoonLashFireBreathTimer >= 1 && Main.myPlayer == player.whoAmI)
+                {
+                    Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, (npc.Center - player.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer, 1);
+                }
+            }
+            if (markedBySupremeDragoonLash && projectile.IsMinionOrSentryRelated)
+            {
+                int WhipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(SupremeDragoonLash.BaseDamage);
+                if (modPlayer.SupremeDragoonLashFireBreathTimer >= 1 && Main.myPlayer == player.whoAmI)
+                {
+                    Projectile RgbFireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, (npc.Center - player.Center) * 0.1f, ProjectileID.RainbowRodBullet, WhipDamage, 1f, Main.myPlayer, 1);
+                }
+            }
+            if (markedBySupremeDragoonLash && projectile.type == ModContent.ProjectileType<SupremeDragoonLashProjectile>()) //has to be outside of the main if since this is supposed to also be procced on whip-hit
+            {
+                int WhipDamage = hit.SourceDamage;
+                if (modPlayer.WhipTipHit(projectile, projectile.WhipPointsForCollision, npc.Hitbox))
+                {                    
+                    Projectile RgbFireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, (npc.Center - player.Center) * 0.1f, ProjectileID.RainbowRodBullet, WhipDamage, 1f, Main.myPlayer, 1);
+                }
+                else if (modPlayer.SupremeDragoonLashFireBreathTimer >= 1 && Main.myPlayer == player.whoAmI)
+                {
+                    Projectile RgbFireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, (npc.Center - player.Center) * 0.1f, ProjectileID.RainbowRodBullet, WhipDamage, 1f, Main.myPlayer, 1);
+                }
+            }
+            
             //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
             if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
             {
