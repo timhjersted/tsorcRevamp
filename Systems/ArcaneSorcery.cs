@@ -29,16 +29,16 @@ public class ArcaneSorceryPlayer : ModPlayer
     public float MaxManaAmplifier = 400f;
     public float ManaCostMult = 2f;
     public bool ManaBurn = false;
-    public float ManaBurnStaminaThreshold = 10f;
+    public float ManaBurnStaminaThreshold = 50f;
     public float ManaBurnCostMult = 2f;
-    public float ManaBurnBadResistance = 25f;
+    public float ManaBurnBadResistance = 40f;
 
     public const float BaseCeruleanFlaskMaxManaScalingMult = 1.6f;
     public float CeruleanFlaskMaxManaScalingMult = 1f;
     public const float BaseCeruleanFlatManaGainMult = 3f;
     public float CeruleanFlatManaGainMult = 1f;
-    public float MagicDamageAmp = 15f;
-    public float MagicAttackSpeedAmp = 15f;
+    public float MagicDamageAmp = 20f;
+    public float MagicAttackSpeedAmp = 20f;
 
     public override void PostUpdateBuffs()
     {

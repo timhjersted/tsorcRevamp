@@ -115,7 +115,7 @@ namespace tsorcRevamp.Items
                 tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
                 var arcanePlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
                 if (player.HeldItem.DamageType == DamageClass.Magic && arcanePlayer.Enabled &&
-                    staminaPlayer.staminaResourceCurrent <= 0f)
+                    staminaPlayer.staminaResourceCurrent <= staminaPlayer.staminaResourceMax2 * arcanePlayer.ManaBurnStaminaThreshold / 100f)
                 {
                     player.AddBuff(ModContent.BuffType<ManaBurn>(), 2 * 60);
                 }
