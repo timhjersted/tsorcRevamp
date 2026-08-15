@@ -189,7 +189,7 @@ namespace tsorcRevamp
                 oldItemAnimation = Player.itemAnimation;
 
                 if (Player.HeldItem.DamageType == DamageClass.Magic && arcanePlayer.Enabled &&
-                    modPlayer.staminaResourceCurrent <= 0f)
+                    modPlayer.staminaResourceCurrent <= modPlayer.staminaResourceMax2 * arcanePlayer.ManaBurnStaminaThreshold / 100f)
                 {
                     return true;
                 }
