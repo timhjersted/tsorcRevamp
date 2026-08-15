@@ -243,23 +243,24 @@ namespace tsorcRevamp.Items
             {
                 case 1:
                     {
-                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("Items.Darksign.Melee", (int)(modPlayer.BotCMeleeBaseAttackSpeedMult * 100f), (int)(modPlayer.BotCLethalTempoBonus * 100f), (int)(modPlayer.BotCLethalTempoBonus * modPlayer.BotCLethalTempoMaxStacks * 100f), (int)modPlayer.BotCLethalTempoMaxStacks)));
+                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("Items.Darksign.Melee", (int)(modPlayer.LethalTempoMeleeBaseAttackSpeedMult * 100f), (int)(modPlayer.LethalTempoBonusAttackSpeedPerStack * 100f), (int)(modPlayer.LethalTempoBonusAttackSpeedPerStack * modPlayer.LethalTempoMaxStacks * 100f), (int)modPlayer.LethalTempoMaxStacks)));
                         break;
                     }
                 case 2:
                     {
-                        //tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Accuracy", LangUtils.GetTextValue("Items.Darksign.Ranged", (int)(modPlayer.AccuracyGain * 100f), (int)(modPlayer.AccuracyLoss * 100f), modPlayer.AccuracyMaxFlatCrit, modPlayer.AccuracyRangedBaseCritMult + modPlayer.AccuracyMaxCritMult, modPlayer.AccuracyRangedBaseCritMult)));
+                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Electrocute", LangUtils.GetTextValue("Items.Darksign.Ranged")));
                         break;
                     }
                 case 3:
                     {
-                        var arcaneSorceryPlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
-                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "CeruleanFlask", LangUtils.GetTextValue("Items.Darksign.Magic", ArcaneSorceryPlayer.BaseCeruleanFlaskMaxManaScalingMult, arcaneSorceryPlayer.MagicDamageAmp, arcaneSorceryPlayer.MagicAttackSpeedAmp)));
+                        var arcanePlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
+                        var ceruleanPlayer = player.GetModPlayer<CeruleanFlaskPlayer>();
+                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "ArcaneSorcery", LangUtils.GetTextValue("Items.Darksign.Magic", arcanePlayer.MaxManaAmplifier, arcanePlayer.ManaCostMult, ArcaneSorceryPlayer.BaseCeruleanFlatManaGainMult, ArcaneSorceryPlayer.BaseCeruleanFlaskMaxManaScalingMult * ceruleanPlayer.BaseMaxManaGain, arcanePlayer.ManaBurnStaminaThreshold, arcanePlayer.ManaBurnMagicDamageAmp, arcanePlayer.ManaBurnMagicAttackSpeedAmp, arcanePlayer.ManaBurnBadResistance, arcanePlayer.ManaBurnCostMult)));
                         break;
                     }
                 case 4:
                     {
-                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("Items.Darksign.Summon", (int)(modPlayer.BotCSummonBaseDamageMult * 100f), (int)(modPlayer.BotCConquerorBonus * 100f), Math.Round((modPlayer.BotCConquerorMaxStacks * modPlayer.BotCConquerorBonus * 100f)), (int)(modPlayer.BotCConquerorMaxStacks), (int)((modPlayer.BotCFullConquerorBonusTagDuration) * 100f))));
+                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("Items.Darksign.Summon", (int)(modPlayer.ConquerorSummonBaseDamageMult * 100f), (int)(modPlayer.ConquerorBonusDmgPerStack * 100f), Math.Round((modPlayer.ConquerorMaxStacks * modPlayer.ConquerorBonusDmgPerStack * 100f)), (int)(modPlayer.ConquerorMaxStacks), (int)((modPlayer.FullConquerorBonusTagDuration) * 100f))));
                         break;
                     }
             }

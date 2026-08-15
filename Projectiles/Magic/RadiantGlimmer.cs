@@ -3,6 +3,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Projectiles.Magic
 {
@@ -20,7 +22,11 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.knockBack = 0f;
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.idStaticNPCHitCooldown = 4;
+            Projectile.ContinuouslyUpdateDamageStats = true;
         }
+        
+        private bool JustShot = true;
+        public float RestManaCost = 0f;
 
         float radius = 25;
         Vector2 targetPoint = Vector2.Zero;
@@ -45,6 +51,16 @@ namespace tsorcRevamp.Projectiles.Magic
                 }
             }
             Main.NewText(count);*/
+            Player player = Main.player[Projectile.owner];
+            
+            float manaCostBase = (float)player.GetManaCost(player.HeldItem) / 20f;
+            float fullManaCost = RestManaCost + manaCostBase;
+            RestManaCost = 0;
+            int tickManaCost = (int)fullManaCost;
+            if (!JustShot)
+            {
+                RestManaCost += fullManaCost - tickManaCost;
+            }
 
             //Target the position of its owners mouse
             if (Projectile.owner == Main.myPlayer)
@@ -68,9 +84,23 @@ namespace tsorcRevamp.Projectiles.Magic
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, UsefulFunctions.Aim(Projectile.Center, Main.MouseWorld, Math.Min(dist / 20, 20)), 0.2f);
             }
 
-            Player player = Main.player[Projectile.owner];
+            
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
+                var arcanePlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
+                var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                if (arcanePlayer.Enabled && staminaPlayer.staminaResourceCurrent <
+                    staminaPlayer.staminaResourceMax2 * arcanePlayer.ManaBurnStaminaThreshold / 100f)
+                {
+                    player.AddBuff(ModContent.BuffType<ManaBurn>(), 2 * 60);
+                }
+                else
+                {
+                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1;
+                }
+            }
 
-            if (!player.channel || player.noItems || player.CCed || player.statMana <= 0)
+            if (!player.channel || player.noItems || player.CCed || (player.statMana < tickManaCost && !JustShot) || player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent <= 0)
             {
                 if (Projectile.timeLeft > 30)
                 {
@@ -80,9 +110,13 @@ namespace tsorcRevamp.Projectiles.Magic
             else
             {
                 Projectile.timeLeft++;
-                if (Main.GameUpdateCount % 2 == 0)
+                if (Main.GameUpdateCount % 20 == 0)
                 {
-                    player.statMana--;
+                    JustShot = false;
+                }
+                if (!JustShot)
+                {
+                    player.statMana -= tickManaCost;
                 }
                 player.manaRegenDelay = 180;
 

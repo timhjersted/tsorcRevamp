@@ -94,7 +94,7 @@ namespace tsorcRevamp
         public bool NecromanticScroll = false;
         public bool PapyrusScarab = false;
 
-        public float WhipTipCritBonusDamage = 35f;
+        public float WhipTipHitBonusDamage = 35f;
         public bool FinishedChargingWhip = false;
 
         public int CurseLevel = 1;
@@ -116,18 +116,18 @@ namespace tsorcRevamp
 
         public int MaxMinionTurretMultiplier;
 
-        public float BotCMeleeBaseAttackSpeedMult = 0.83f;
-        public int BotCLethalTempoDuration = 3;
-        public float BotCLethalTempoStacks = 0;
-        public int BotCLethalTempoMaxStacks = 6;
-        public float BotCLethalTempoBonus = 0.07f;
+        public float LethalTempoMeleeBaseAttackSpeedMult = 0.83f;
+        public int LethalTempoDuration = 3;
+        public float LethalTempoStacks = 0;
+        public int LethalTempoMaxStacks = 6;
+        public float LethalTempoBonusAttackSpeedPerStack = 0.07f;
 
-        public float BotCSummonBaseDamageMult = 0.4f;
-        public int BotCConquerorDuration = 4;
-        public float BotCConquerorStacks = 0;
-        public int BotCConquerorMaxStacks = 10;
-        public float BotCConquerorBonus = 0.06f;
-        public float BotCFullConquerorBonusTagDuration = 0.1f;
+        public float ConquerorSummonBaseDamageMult = 0.4f;
+        public int ConquerorDuration = 3;
+        public float ConquerorStacks = 0;
+        public int ConquerorMaxStacks = 10;
+        public float ConquerorBonusDmgPerStack = 0.06f;
+        public float FullConquerorBonusTagDuration = 0.1f;
 
         public bool SteraksGage = false;
         public bool InfinityEdge = false;
@@ -1437,15 +1437,15 @@ namespace tsorcRevamp
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                Player.GetAttackSpeed(DamageClass.Melee) *= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus);
-
-                Player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) /= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus); //neutralizing Lethal Tempo attack speed changes
-                Player.GetDamage(DamageClass.Summon) *= BotCSummonBaseDamageMult + (BotCConquerorStacks * BotCConquerorBonus);
-                Player.GetDamage(DamageClass.MagicSummonHybrid) /= BotCSummonBaseDamageMult + (BotCConquerorStacks * BotCConquerorBonus); //neutralizing Conqueror damage changes
-                Player.GetDamage(DamageClass.MagicSummonHybrid) *= 1f + BotCConquerorStacks * BotCConquerorBonus / 4.5f; //adding small benefit for usage of Conqueror
-                if (BotCConquerorStacks == BotCConquerorMaxStacks)
+                Player.GetAttackSpeed(DamageClass.Melee) *= LethalTempoMeleeBaseAttackSpeedMult + (LethalTempoStacks * LethalTempoBonusAttackSpeedPerStack);
+                Player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) /= LethalTempoMeleeBaseAttackSpeedMult + (LethalTempoStacks * LethalTempoBonusAttackSpeedPerStack); //neutralizing Lethal Tempo attack speed changes for whips
+                
+                Player.GetDamage(DamageClass.Summon) *= ConquerorSummonBaseDamageMult + (ConquerorStacks * ConquerorBonusDmgPerStack);
+                Player.GetDamage(DamageClass.MagicSummonHybrid) /= ConquerorSummonBaseDamageMult + (ConquerorStacks * ConquerorBonusDmgPerStack); //neutralizing Conqueror damage changes
+                Player.GetDamage(DamageClass.MagicSummonHybrid) *= 1f + ConquerorStacks * ConquerorBonusDmgPerStack / 4.5f; //adding small benefit for usage of Conqueror
+                if (ConquerorStacks == ConquerorMaxStacks)
                 {
-                    SummonTagDuration += BotCFullConquerorBonusTagDuration;
+                    SummonTagDuration += FullConquerorBonusTagDuration;
                 }
             }
 
@@ -1465,11 +1465,7 @@ namespace tsorcRevamp
             //       Cerulean Flask remains the active recovery option; passive regen is intentionally weak.
             if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
             {
-                if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                {
-                    Player.manaRegenDelay = 100;
-                }
-                else if (Player.GetModPlayer<tsorcRevampPlayer>().Unkindled)
+                if (Player.GetModPlayer<tsorcRevampPlayer>().Unkindled)
                 {
                     // Dampen gear scaling first. Vanilla's regen rate is multiplied by (1 + manaRegenBonus/100),
                     // and late-game items/armor inflate manaRegenBonus enough that a flat subtraction alone can't

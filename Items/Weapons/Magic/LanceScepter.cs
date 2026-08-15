@@ -68,11 +68,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             return Vector2.Zero;
         }
-        public override void ModifyManaCost(Player player, ref float reduce, ref float mult)
-        {
-            player.manaRegenDelay = 180;
-            mult = 0;
-        }
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {

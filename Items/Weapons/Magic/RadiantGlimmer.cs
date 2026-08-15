@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.rare = ModContent.RarityType<OrangeRed>();
             Item.shootSpeed = (float)20;
             Item.crit = 2;
-            Item.mana = 100;
+            Item.mana = 30;
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;

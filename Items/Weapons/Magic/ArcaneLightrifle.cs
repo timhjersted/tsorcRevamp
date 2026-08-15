@@ -42,8 +42,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void ModifyManaCost(Player player, ref float reduce, ref float mult)
         {
-            player.manaRegenDelay = 180;
-            mult = 0;
         }
 
         public override Vector2? HoldoutOffset()
@@ -53,14 +51,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool CanUseItem(Player player)
         {
-            if(player.statMana <= (int)(50 * player.manaCost))
+            float staminaCost = 30 / player.GetWeaponAttackSpeed(player.HeldItem);
+            if (player.statMana <= player.GetManaCost(player.HeldItem) && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && !player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
             {
-                if (!player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
-                {
-                    MethodSwaps.TryUseQuickMana(player);
-                }
+                MethodSwaps.TryUseQuickMana(player);
             }
-            if (player.statMana <= (int)(50 * player.manaCost) || player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 30)
+            if (player.statMana <= player.GetManaCost(player.HeldItem) || (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < staminaCost))
             {
                 return false;
             }

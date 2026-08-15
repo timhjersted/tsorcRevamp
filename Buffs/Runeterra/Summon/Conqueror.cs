@@ -27,20 +27,20 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
         public override void Update(Player player, ref int buffIndex)
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.BotCConquerorStacks == 0)
+            if (modPlayer.ConquerorStacks == 0)
             {
-                modPlayer.BotCConquerorStacks = 1;
+                modPlayer.ConquerorStacks = 1;
             }
             if (player.buffTime[buffIndex] == 1)
             {
-                if (modPlayer.BotCConquerorStacks > 1)
+                if (modPlayer.ConquerorStacks > 1)
                 {
-                    modPlayer.BotCConquerorStacks--;
-                    player.buffTime[buffIndex] = (int)(((float)modPlayer.BotCConquerorDuration / 6f) * 60f);
+                    modPlayer.ConquerorStacks--;
+                    player.buffTime[buffIndex] = (int)(((float)modPlayer.ConquerorDuration / 6f) * 60f);
                 }
                 else
                 {
-                    modPlayer.BotCConquerorStacks = 0;
+                    modPlayer.ConquerorStacks = 0;
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFallOff") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0107f }, player.Center);
                 }
             }
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
             // Use our animation spritesheet.
             Texture2D ourTexture = animatedTexture.Value;
             // Choose the frame to display, here based on constants and the game's tick count.
-            Rectangle ourSourceRectangle = animatedTexture.Frame(verticalFrames: FrameCount, frameY: (int)Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BotCConquerorStacks - 1);
+            Rectangle ourSourceRectangle = animatedTexture.Frame(verticalFrames: FrameCount, frameY: (int)Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().ConquerorStacks - 1);
 
             // Other stuff you can do in this hook
             /*
@@ -91,9 +91,9 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
         public override bool ReApply(Player player, int time, int buffIndex)
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks)
+            if (modPlayer.ConquerorStacks < modPlayer.ConquerorMaxStacks)
             {
-                modPlayer.BotCConquerorStacks++;
+                modPlayer.ConquerorStacks++;
             }
 
             return false;

@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Projectiles.Magic
 {
@@ -23,14 +25,18 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.DamageType = DamageClass.Magic;
             Projectile.friendly = true;
             Projectile.hostile = false;
+            Projectile.ContinuouslyUpdateDamageStats = true;
         }
 
         int charge = 0;
+        bool FirstShot = true;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            float staminaCost = 30 / player.GetWeaponAttackSpeed(player.HeldItem);
             //Stop the BotC player from using the Glaive Beam if they have either 120 stamina or are full (ensures they can still use it even if they don't have stamina vessels)
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 30)
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaDebt > 0)
             {
                 player.channel = false;
 
@@ -44,10 +50,19 @@ namespace tsorcRevamp.Projectiles.Magic
                 UpdateAim(rrp, player.HeldItem.shootSpeed);
 
                 bool stillInUse = player.channel;
+                
+                if(player.statMana <= player.GetManaCost(player.HeldItem) && !FirstShot && !modPlayer.SoulsMode)
+                {
+                    if (!player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
+                    {
+                        MethodSwaps.TryUseQuickMana(player);
+                    }
+                }
 
-                if (player.noItems || player.CCed || player.statMana < (int)(50 * player.manaCost))
+                if (player.noItems || player.CCed || (player.statMana < player.GetManaCost(player.HeldItem) && !FirstShot))
                 {
                     stillInUse = false;
+                    player.channel = false;
                 }
 
                 if (!stillInUse)
@@ -96,13 +111,24 @@ namespace tsorcRevamp.Projectiles.Magic
             {
                 //Consume mana etc
                 charge = 0;
-                player.statMana -= (int)(50 * player.manaCost);
-                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                if (!FirstShot)
                 {
-                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
-                    if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 0)
+                    player.statMana -= player.GetManaCost(player.HeldItem);
+                }
+                if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && !player.HasBuff(ModContent.BuffType<ManaBurn>()))
+                {
+                    var arcanePlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
+                    var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                    
+                    if (staminaPlayer.staminaResourceCurrent < staminaCost)
                     {
-                        player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = 0;
+                        float stamina = staminaPlayer.staminaResourceCurrent;
+                        staminaPlayer.staminaResourceCurrent = 0;
+                        staminaPlayer.staminaDebt += staminaCost - stamina;
+                    }
+                    else
+                    {
+                        player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= staminaCost;
                     }
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45);
@@ -192,6 +218,7 @@ namespace tsorcRevamp.Projectiles.Magic
                 if (Main.myPlayer == Projectile.owner)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision2, colVel3, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 3f), 0, Projectile.owner, colVel3.Length(), 2);
+                    FirstShot = false;
                 }
             }
 

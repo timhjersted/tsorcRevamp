@@ -1427,11 +1427,11 @@ namespace tsorcRevamp
             }
             if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !Player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung && ProjectileID.Sets.IsAWhip[proj.type])
             {
-                modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f / 3f; //guaranteed crit is in overcrit
+                modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f / 3f;
             }
-            if (ProjectileID.Sets.IsAWhip[proj.type] && WhipTipCrit(proj, proj.WhipPointsForCollision, target.Hitbox))
+            if (ProjectileID.Sets.IsAWhip[proj.type] && WhipTipHit(proj, proj.WhipPointsForCollision, target.Hitbox))
             {
-                modifiers.SourceDamage += WhipTipCritBonusDamage / 100f;
+                modifiers.SourceDamage += WhipTipHitBonusDamage / 100f;
             }
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {
@@ -1458,9 +1458,13 @@ namespace tsorcRevamp
                 scale += Player.GetModPlayer<tsorcRevampPlayer>().TitanSizeScaling * TitanMeleeSize / 100f;
             }
         }
-        public bool WhipTipCrit(in Projectile projectile, in List<Vector2> points, in Rectangle targetHitbox)
+        public bool WhipTipHit(in Projectile projectile, in List<Vector2> points, in Rectangle targetHitbox)
         {
             Player player = Main.player[projectile.owner];
+            if (Goredrinker && !Player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung)
+            {
+                return true;
+            }
             Vector2 TipBase = tsorcRevamp.WhipTipBases[projectile.type];
             if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], TipBase * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize).Intersects(targetHitbox) || 
                 Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], TipBase * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize).Intersects(targetHitbox))
@@ -1682,7 +1686,7 @@ namespace tsorcRevamp
             Player owner = Main.player[proj.owner];
             if (ProjectileID.Sets.IsAWhip[proj.type])
             {
-                CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit, WhipTipCrit(proj, proj.WhipPointsForCollision, target.Hitbox));
+                CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit, WhipTipHit(proj, proj.WhipPointsForCollision, target.Hitbox));
             }
             else if (!proj.IsMinionOrSentryRelated)
             {

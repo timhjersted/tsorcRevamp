@@ -6,7 +6,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
@@ -608,7 +610,8 @@ namespace tsorcRevamp
         // Lets do all our logic for the custom resource here, such as limiting it, increasing it and so on.
         private void UpdateResource()
         {
-
+            var staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            var arcanePlayer = Player.GetModPlayer<ArcaneSorceryPlayer>();
             //Main.NewText("Stamina: " + staminaResourceCurrent + "/" + staminaResourceMax2);
             //Main.NewText("Stamina regen rate: " + staminaResourceRegenRate);
             //Main.NewText("Stamina regen gain mult: " + staminaResourceGainMult);
@@ -616,6 +619,7 @@ namespace tsorcRevamp
 
             for (int p = 0; p < 1000; p++) //To-do add a check before this making this loop only run if there are actually any projectiles in the array
             {
+                var proj = Main.projectile[p];
                 if (Player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
                 {
                     // Apply the active Souls Mode class cost (legacy or experimental config) to held-weapon drains.
@@ -645,6 +649,12 @@ namespace tsorcRevamp
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= BoomerangDrainPerFrame;
                         break;
                     }*/
+                    if (Player.HeldItem.DamageType == DamageClass.Magic &&
+                        staminaPlayer.staminaResourceCurrent < staminaPlayer.staminaResourceMax2 *
+                        arcanePlayer.ManaBurnStaminaThreshold / 100f && arcanePlayer.Enabled)
+                    {
+                        Player.AddBuff(ModContent.BuffType<ManaBurn>(), 2 * 60);
+                    }
 
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.VortexBeater
                         || Main.projectile[p].type == ProjectileID.Celeb2Weapon || Main.projectile[p].type == ProjectileID.FlyingKnife))
@@ -656,13 +666,13 @@ namespace tsorcRevamp
                             Main.projectile[p].Kill();
                         }
                     }
-
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.Terragrim || Main.projectile[p].type == ProjectileID.Arkhalis
-                        || Main.projectile[p].type == ProjectileID.ChargedBlasterCannon || Main.projectile[p].type == ProjectileID.MedusaHead
-                        || Main.projectile[p].type == ProjectileID.ChainKnife || Main.projectile[p].type == ProjectileID.LastPrism
-                        || Main.projectile[p].type == ProjectileID.LaserMachinegun
-                        || Main.projectile[p].type == ProjectileID.DD2PhoenixBow || Main.projectile[p].type == ProjectileID.DD2PhoenixBowShot
-                        || Main.projectile[p].type == ProjectileID.Phantasm))
+                    if (!Player.HasBuff(ModContent.BuffType<ManaBurn>())
+                        && Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.Terragrim || Main.projectile[p].type == ProjectileID.Arkhalis
+                            || Main.projectile[p].type == ProjectileID.ChargedBlasterCannon || Main.projectile[p].type == ProjectileID.MedusaHead
+                            || Main.projectile[p].type == ProjectileID.ChainKnife || Main.projectile[p].type == ProjectileID.LastPrism
+                            || Main.projectile[p].type == ProjectileID.LaserMachinegun || proj.type == ProjectileID.ChargedBlasterCannon
+                            || Main.projectile[p].type == ProjectileID.DD2PhoenixBow || Main.projectile[p].type == ProjectileID.DD2PhoenixBowShot
+                            || Main.projectile[p].type == ProjectileID.Phantasm))
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= HeldProjectileDrainPerFrame * mult;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;

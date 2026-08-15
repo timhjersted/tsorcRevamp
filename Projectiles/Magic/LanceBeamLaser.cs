@@ -3,9 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent.Tile_Entities;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Projectiles.Magic
@@ -25,6 +27,7 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.timeLeft = 999;
+            Projectile.ContinuouslyUpdateDamageStats = true;
 
             FollowHost = true;
             LaserOrigin = Main.npc[HostIdentifier].Center;
@@ -57,16 +60,33 @@ namespace tsorcRevamp.Projectiles.Magic
                 return Main.player[Projectile.owner];
             }
         }
+
+        private bool JustShot = true;
+        public float RestManaCost = 0f;
         public override void AI()
         {
             base.AI();
+            float manaCostBase = (float)owner.GetManaCost(owner.HeldItem) / 20f;
+            float fullManaCost = RestManaCost + manaCostBase;
+            RestManaCost = 0;
+            int tickManaCost = (int)fullManaCost;
+            if (!JustShot)
+            {
+                RestManaCost += fullManaCost - tickManaCost;
+            }
+            
+            
+            
+            float staminaCost = 20 / owner.GetWeaponAttackSpeed(owner.HeldItem);
 
             if (IsAtMaxCharge)
             {
                 //Drain BotC players stamina
-                if (owner.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                var arcanePlayer = owner.GetModPlayer<ArcaneSorceryPlayer>();
+                var staminaPlayer = owner.GetModPlayer<tsorcRevampStaminaPlayer>();
+                if (owner.GetModPlayer<tsorcRevampPlayer>().SoulsMode && Main.GameUpdateCount % 20 == 0 && !owner.HasBuff(ModContent.BuffType<ManaBurn>()))
                 {
-                    owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1;
+                    owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= staminaCost;
                 }
 
                 Vector2 endpoint = GetOrigin() + Projectile.velocity * Distance;
@@ -111,7 +131,7 @@ namespace tsorcRevamp.Projectiles.Magic
                 MethodSwaps.TryUseQuickMana(owner);
             }
 
-            if (!owner.channel || owner.noItems || owner.CCed || owner.statMana <= 0 || owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent <= 0)
+            if (!owner.channel || owner.noItems || owner.CCed || (owner.statMana < tickManaCost && !JustShot) || owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent <= 0)
             {
                 Projectile.damage = 0;
 
@@ -148,9 +168,14 @@ namespace tsorcRevamp.Projectiles.Magic
                 if (FiringTimeLeft > 0)
                 {
                     FiringTimeLeft++;
-                    if (Main.GameUpdateCount % 2 == 0)
+                    if (Main.GameUpdateCount % 20 == 0)
                     {
-                        owner.statMana--;
+                        JustShot = false;
+                    }
+
+                    if (!JustShot)
+                    {
+                        owner.statMana -= tickManaCost;
                     }
                 }
             }
