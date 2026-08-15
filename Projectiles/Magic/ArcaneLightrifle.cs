@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Magic
         {
             Player player = Main.player[Projectile.owner];
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            float staminaCost = 30 / player.GetWeaponAttackSpeed(player.HeldItem);
+            float staminaCost = (30 * modPlayer.WeaponStaminaMult) / player.GetWeaponAttackSpeed(player.HeldItem);
             //Stop the BotC player from using the Glaive Beam if they have either 120 stamina or are full (ensures they can still use it even if they don't have stamina vessels)
             if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaDebt > 0)
             {

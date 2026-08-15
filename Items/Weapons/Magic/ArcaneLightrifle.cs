@@ -51,7 +51,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool CanUseItem(Player player)
         {
-            float staminaCost = 30 / player.GetWeaponAttackSpeed(player.HeldItem);
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            float staminaCost = (30 * modPlayer.WeaponStaminaMult) / player.GetWeaponAttackSpeed(player.HeldItem);
             if (player.statMana <= player.GetManaCost(player.HeldItem) && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && !player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
             {
                 MethodSwaps.TryUseQuickMana(player);

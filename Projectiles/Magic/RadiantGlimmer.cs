@@ -87,17 +87,16 @@ namespace tsorcRevamp.Projectiles.Magic
             
             if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
             {
-                var arcanePlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
+                var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
                 var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-                if (arcanePlayer.Enabled && staminaPlayer.staminaResourceCurrent <
-                    staminaPlayer.staminaResourceMax2 * arcanePlayer.ManaBurnStaminaThreshold / 100f)
+                float staminaCost = (10f * modPlayer.WeaponStaminaMult) / player.GetWeaponAttackSpeed(player.HeldItem);
+
+                if (!player.HasBuff(ModContent.BuffType<ManaBurn>()) && Main.GameUpdateCount % 20 == 0)
                 {
-                    player.AddBuff(ModContent.BuffType<ManaBurn>(), 2 * 60);
+                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= staminaCost;
                 }
-                else
-                {
-                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1;
-                }
+
+                staminaPlayer.staminaRegenDelayTimer = 2;
             }
 
             if (!player.channel || player.noItems || player.CCed || (player.statMana < tickManaCost && !JustShot) || player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent <= 0)

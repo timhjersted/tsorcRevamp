@@ -3111,7 +3111,7 @@ namespace tsorcRevamp
                 return;
             }
             Item selectedItem = player.QuickMana_GetItemToUse();
-            if (player.HasItem(ModContent.ItemType<Items.Potions.SupremeManaPotion>()))
+            if (player.HasItemInInventoryOrOpenVoidBag(ModContent.ItemType<Items.Potions.SupremeManaPotion>()))
             {
                 for (int i = 0; i < player.inventory.Length; i++)
                 {

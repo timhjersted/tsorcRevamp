@@ -43,7 +43,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
         //Only one allowed at a time
         public override bool CanUseItem(Player player)
         {
-            if (player.statMana <= 0 && !player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            float staminaCost = (15 * modPlayer.WeaponStaminaMult) / player.GetWeaponAttackSpeed(player.HeldItem);
+            if (player.statMana <= 0 && !player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking && player.manaFlower)
             {
                 MethodSwaps.TryUseQuickMana(player);
             }
@@ -53,7 +55,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             }
 
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Magic.LanceBeamLaser>()] == 0 &&
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 15)
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > staminaCost)
             {
                 return true;
             }

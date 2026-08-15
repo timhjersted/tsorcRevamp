@@ -76,8 +76,8 @@ namespace tsorcRevamp.Projectiles.Magic
             }
             
             
-            
-            float staminaCost = 20 / owner.GetWeaponAttackSpeed(owner.HeldItem);
+            var modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();
+            float staminaCost = (15 * modPlayer.WeaponStaminaMult) / owner.GetWeaponAttackSpeed(owner.HeldItem);
 
             if (IsAtMaxCharge)
             {
@@ -126,7 +126,7 @@ namespace tsorcRevamp.Projectiles.Magic
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/LaserLoopable") with { Volume = 0.5f }, Projectile.Center);
             }
 
-            if (owner.statMana <= 0 && !owner.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !owner.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
+            if (owner.statMana <= 0 && !owner.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !owner.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking && owner.manaFlower)
             {
                 MethodSwaps.TryUseQuickMana(owner);
             }
