@@ -30,6 +30,9 @@ namespace tsorcRevamp.NPCs
         private const int WanderCommitFramesMin = 240; // ~4s committed to a wander direction (anti-jitter)
         private const int WanderCommitFramesMax = 480; // ~8s
         private const int CliffLookDownTiles = 4;      // a drop deeper than this = turn around (don't walk off)
+        private const int PatrolJumpSearchTiles = 6;
+        private static readonly int[] PatrolJumpLandingOffsets = { 0, -1, -2, -3, -4, 1, 2 };
+        private const int TerrainLeashReplanTicks = 60;
 
         // -- Flee tunables --
         private const float FleeMaxTiles = 40f;         // safety distance before settling into Patrol
@@ -354,8 +357,22 @@ namespace tsorcRevamp.NPCs
         private static void RunWander(NPC npc, tsorcRevampGlobalNPC g, float topSpeed, float acceleration)
         {
             if (g.PatrolDirection == 0) g.PatrolDirection = Main.rand.NextBool() ? 1 : -1;
+            if (g.PatrolTerrainRecoveryTimer > 0) g.PatrolTerrainRecoveryTimer--;
             bool beyond = BeyondLeash(npc, g);
-            if (beyond) g.PatrolDirection = AnchorDirection(npc, g);
+            if (beyond && g.PatrolTerrainRecoveryTimer <= 0) g.PatrolDirection = AnchorDirection(npc, g);
+
+            // EnterPatrol deliberately begins Wander moving immediately. Seed its first *committed*
+            // leg here, before a terrain check can reverse it, so one rejected edge cannot produce
+            // a one-frame step left followed by a player-biased turn straight back to that same edge.
+            if (g.PatrolIdleTimer <= 0)
+                g.PatrolIdleTimer = GetWanderCommitFrames(g, topSpeed);
+
+            if (g.PatrolCanTerrainJump)
+            {
+                RunTerrainWander(npc, g, topSpeed, acceleration, beyond);
+                return;
+            }
+
             if (!StepAlong(npc, g.PatrolDirection, topSpeed, acceleration))
             {
                 g.PatrolDirection = -g.PatrolDirection; // turned at a gap/wall
@@ -365,10 +382,177 @@ namespace tsorcRevamp.NPCs
                 if (g.PatrolIdleTimer > 0) g.PatrolIdleTimer--;
                 else
                 {
-                    if (Main.rand.NextBool(2)) g.PatrolDirection = -g.PatrolDirection;
-                    g.PatrolIdleTimer = Main.rand.Next(WanderCommitFramesMin, WanderCommitFramesMax + 1);
+                    ChooseNextWanderDirection(npc, g);
+                    g.PatrolIdleTimer = GetWanderCommitFrames(g, topSpeed);
                 }
             }
+        }
+
+        // Opt-in variant for creatures such as Eland. It keeps the shared patrol's range and
+        // direction-commit rhythm: shallow drops are walked, while any solid rise requires a
+        // real clear landing before a forward jump is committed.
+        private static void RunTerrainWander(NPC npc, tsorcRevampGlobalNPC g, float topSpeed, float acceleration, bool beyond)
+        {
+            int direction = g.PatrolDirection;
+            if (npc.velocity.Y != 0f)
+            {
+                g.PatrolTerrainAction = "air-commit";
+                npc.direction = direction;
+                npc.spriteDirection = direction;
+                float jumpSpeed = Math.Max(topSpeed, g.MaxJumpBoost);
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, direction * jumpSpeed, 0.25f);
+                return;
+            }
+
+            if (!StepAlongTerrain(npc, g, direction, topSpeed, acceleration))
+            {
+                g.PatrolDirection = -direction;
+                if (beyond)
+                {
+                    // The normal leash rule would overwrite this reversal on the next frame and pin
+                    // Eland motionless against the same edge. Let it actively sample the other side
+                    // for one second, then make a fresh anchorward attempt.
+                    g.PatrolTerrainRecoveryTimer = TerrainLeashReplanTicks;
+                    g.PatrolTerrainAction = "leash-replan";
+                }
+                else
+                {
+                    // A genuine no-landing obstruction should send Eland on a meaningful opposite-side
+                    // roam, not let the player-direction bias bounce it back against the same obstacle.
+                    g.PatrolIdleTimer = GetBlockedTurnCommitFrames(g, topSpeed);
+                }
+                return;
+            }
+
+            if (!beyond)
+            {
+                if (g.PatrolIdleTimer > 0) g.PatrolIdleTimer--;
+                else
+                {
+                    ChooseNextWanderDirection(npc, g);
+                    g.PatrolIdleTimer = GetWanderCommitFrames(g, topSpeed);
+                }
+            }
+        }
+
+        private static void ChooseNextWanderDirection(NPC npc, tsorcRevampGlobalNPC g)
+        {
+            if (g.PatrolTargetDirectionBias >= 0f && npc.HasValidTarget)
+            {
+                int playerDirection = Math.Sign(Main.player[npc.target].Center.X - npc.Center.X);
+                if (playerDirection != 0 && Main.rand.NextFloat() < g.PatrolTargetDirectionBias)
+                {
+                    g.PatrolDirection = playerDirection;
+                    return;
+                }
+            }
+
+            if (Main.rand.NextBool(2)) g.PatrolDirection = -g.PatrolDirection;
+        }
+
+        private static int GetWanderCommitFrames(tsorcRevampGlobalNPC g, float topSpeed, int minimumTiles = 0)
+        {
+            if (g.PatrolWanderMaxTiles > 0)
+            {
+                int minTiles = Math.Max(Math.Max(1, g.PatrolWanderMinTiles), minimumTiles);
+                int maxTiles = Math.Max(minTiles, g.PatrolWanderMaxTiles);
+                int legTiles = Main.rand.Next(minTiles, maxTiles + 1);
+                float patrolSpeed = Math.Max(0.1f, topSpeed * PatrolSpeedMult);
+                return (int)Math.Ceiling(legTiles * TileF / patrolSpeed);
+            }
+
+            return Main.rand.Next(WanderCommitFramesMin, WanderCommitFramesMax + 1);
+        }
+
+        private static int GetBlockedTurnCommitFrames(tsorcRevampGlobalNPC g, float topSpeed)
+        {
+            // Fifteen tiles is enough to make a failed route read as a decision rather than a pacing
+            // bug, while ordinary Eland legs remain the requested 5-50 tile range.
+            int recoveryMinimum = g.PatrolWanderMaxTiles > 0
+                ? Math.Min(15, g.PatrolWanderMaxTiles)
+                : 0;
+            return GetWanderCommitFrames(g, topSpeed, recoveryMinimum);
+        }
+
+        private static bool StepAlongTerrain(NPC npc, tsorcRevampGlobalNPC g, int direction, float topSpeed, float acceleration)
+        {
+            if (direction == 0) direction = 1;
+            bool wall = WallAhead(npc, direction);
+            int floorDepth = FloorDepthAhead(npc, direction);
+            bool floor = floorDepth >= 0;
+
+            if (wall || !floor)
+            {
+                if (!TryStartTerrainJump(npc, g, direction, topSpeed))
+                {
+                    g.PatrolTerrainAction = wall ? "blocked-wall-no-landing" : "blocked-drop-no-landing";
+                    Brake(npc);
+                    return false;
+                }
+                return true;
+            }
+
+            // A depth of one is the ordinary stair-step down reported in the playtest. It is walked
+            // straight through; only a drop with no floor in the four-tile safety window becomes a jump.
+            g.PatrolTerrainAction = floorDepth > 0 ? $"walk-down-{floorDepth}" : "walk-level";
+            ApplyPatrolWalk(npc, direction, topSpeed, acceleration);
+            SmartFighter4AI.AutoStepUp(npc);
+            return true;
+        }
+
+        private static void ApplyPatrolWalk(NPC npc, int direction, float topSpeed, float acceleration)
+        {
+            npc.direction = direction;
+            npc.spriteDirection = direction;
+            float target = direction * topSpeed * PatrolSpeedMult;
+            if (npc.velocity.X < target) npc.velocity.X = Math.Min(npc.velocity.X + acceleration, target);
+            else if (npc.velocity.X > target) npc.velocity.X = Math.Max(npc.velocity.X - acceleration, target);
+        }
+
+        private static bool TryStartTerrainJump(NPC npc, tsorcRevampGlobalNPC g, int direction, float topSpeed)
+        {
+            int startTileX = (int)(npc.Center.X / TileF);
+            int feetY = (int)((npc.Bottom.Y - 1f) / TileF);
+            for (int forwardTiles = 2; forwardTiles <= PatrolJumpSearchTiles; forwardTiles++)
+            {
+                int landingTileX = startTileX + direction * forwardTiles;
+                foreach (int tileOffsetY in PatrolJumpLandingOffsets)
+                {
+                    int landingTileY = feetY + tileOffsetY;
+                    if (landingTileY <= 0 || !WorldGen.InWorld(landingTileX, landingTileY)
+                        || !SolidBlock(landingTileX, landingTileY))
+                    {
+                        continue;
+                    }
+
+                    Vector2 landingPosition = new Vector2(landingTileX * TileF + TileF * 0.5f - npc.width * 0.5f,
+                        landingTileY * TileF - npc.height);
+                    if (Collision.SolidCollision(landingPosition, npc.width, npc.height))
+                        continue;
+
+                    npc.direction = direction;
+                    npc.spriteDirection = direction;
+                    npc.velocity = new Vector2(direction * Math.Max(topSpeed, g.MaxJumpBoost), -g.MaxJumpPower);
+                    g.PatrolTerrainAction = $"jump-{forwardTiles}t-land{tileOffsetY}";
+                    npc.netUpdate = true;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>Compact terrain probe for an opt-in patrol's server-side debug log.</summary>
+        internal static string DescribeTerrainWander(NPC npc, tsorcRevampGlobalNPC g)
+        {
+            int direction = g.PatrolDirection == 0 ? 1 : g.PatrolDirection;
+            int frontX = LeadingTileX(npc, direction);
+            int feetY = (int)((npc.Bottom.Y - 1f) / TileF);
+            int floorDepth = FloorDepthAhead(npc, direction);
+            float fromAnchor = (npc.Center.X - g.PatrolAnchor.X) / TileF;
+            return $" terrain={g.PatrolTerrainAction} front=({frontX},{feetY})"
+                + $" wall={WallAhead(npc, direction)} drop={floorDepth}"
+                + $" anchorDx={fromAnchor:F1}/{g.PatrolRange} replan={g.PatrolTerrainRecoveryTimer}";
         }
 
         // ReturnToSpawn: walk to the anchor, then idle there.
@@ -383,7 +567,7 @@ namespace tsorcRevamp.NPCs
         }
 
         // =====================================================================================
-        //  Locomotion + terrain helpers (self-contained; patrol never jumps)
+        //  Locomotion + terrain helpers (walk-only by default; opt-in terrain jumps above)
         // =====================================================================================
 
         /// <summary>Walk one tick in `dir` toward `topSpeed * speedMult`. Returns false if blocked by a wall
@@ -423,7 +607,7 @@ namespace tsorcRevamp.NPCs
         // Solid (non-platform) tile blocking the body at head/torso height just ahead.
         private static bool WallAhead(NPC npc, int dir)
         {
-            int frontX = (int)(npc.Center.X / TileF) + dir;
+            int frontX = LeadingTileX(npc, dir);
             int feetY = (int)((npc.Bottom.Y - 1f) / TileF);
             return SolidBlock(frontX, feetY - 1) || SolidBlock(frontX, feetY - 2);
         }
@@ -431,12 +615,25 @@ namespace tsorcRevamp.NPCs
         // Is there standable ground continuing ahead, or a cliff we'd walk off?
         private static bool FloorAhead(NPC npc, int dir)
         {
-            int frontX = (int)(npc.Center.X / TileF) + dir;
+            return FloorDepthAhead(npc, dir) >= 0;
+        }
+
+        // Returns how many tiles down the next standable surface is, or -1 for a true cliff.
+        private static int FloorDepthAhead(NPC npc, int dir)
+        {
+            int frontX = LeadingTileX(npc, dir);
             int feetY = (int)((npc.Bottom.Y - 1f) / TileF);
             for (int d = 0; d <= CliffLookDownTiles; d++)
-                if (Standable(frontX, feetY + d)) return true;
-            return false; // nothing within CliffLookDownTiles -> treat as a cliff, turn around
+                if (Standable(frontX, feetY + d)) return d;
+            return -1; // nothing within CliffLookDownTiles -> treat as a cliff, turn around
         }
+
+        // Probe at the leading edge of the actual hitbox, not its centre. A 30px-wide Eland can
+        // otherwise discover a one-tile descent after its body has already reached the edge.
+        private static int LeadingTileX(NPC npc, int dir)
+            => dir > 0
+                ? (int)((npc.Right.X + 2f) / TileF)
+                : (int)((npc.Left.X - 2f) / TileF);
 
         private static bool SolidBlock(int x, int y)
         {

@@ -18,6 +18,7 @@ namespace tsorcRevamp
 
         public const int SupersonicWings2FlightTime = 600;
         public const int WingsOfSeathFlightTime = 1200;
+        public const int WingsOfSeathSuppressedFlightTime = 180;
 
         public const float SupersonicWingsFlightSpeed = 6.25f;
         public const float SupersonicWingsFlightAcceleration = 0.12f;

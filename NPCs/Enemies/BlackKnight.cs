@@ -137,6 +137,9 @@ namespace tsorcRevamp.NPCs.Enemies
             blackKnightGlobalNPC.CanTeleport = true;
             blackKnightGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
             blackKnightGlobalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Plague;
+            // See GreatBlackKnight: 30 + SmokeFireTeleportSnapTicks (30) hidden, then he emerges with ~2s of
+            // the 180-tick plague cloud still going, rather than after it has already finished.
+            blackKnightGlobalNPC.TeleportTelegraphTime = 30;
             EvasiveProfile.RedKnight(blackKnightGlobalNPC); // shared knight-family evasion: hop/leap/dash/blink away
 
             // Poise: sturdier than the Red Knight (40) — takes more to stagger. Tunable lever.
@@ -542,8 +545,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ominous-creature2") with { Volume = 0.8f }, NPC.Center);
                 }
+                // These three jump/dash flourishes set NPC.velocity directly and had no idea a teleport
+                // could be in flight, so they could fire mid-hold and overwrite the velocity-freeze the
+                // teleport code applies every tick — a real position kick, read as the knight vibrating
+                // a few pixels back and forth while it should be sitting perfectly still and invisible.
+                bool teleportHold = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0;
+
                 // Chance to jump forward
-                if (NPC.Distance(player.Center) > 250 && NPC.velocity.Y == 0f && Main.rand.NextBool(300) && (NPC.ai[1] <= 150f || NPC.ai[1] >= 476f))
+                if (!teleportHold && NPC.Distance(player.Center) > 250 && NPC.velocity.Y == 0f && Main.rand.NextBool(300) && (NPC.ai[1] <= 150f || NPC.ai[1] >= 476f))
                 {
                     NPC.velocity.Y = Main.rand.NextFloat(-4, -8f);
                     NPC.TargetClosest(true);
@@ -553,7 +562,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.netUpdate = true;
                 }
                 // Chance to dash step forward
-                if (NPC.Distance(player.Center) > 200 && NPC.velocity.Y == 0f && Main.rand.NextBool(140) && (NPC.ai[1] <= 220f || NPC.ai[1] >= 276f))
+                if (!teleportHold && NPC.Distance(player.Center) > 200 && NPC.velocity.Y == 0f && Main.rand.NextBool(140) && (NPC.ai[1] <= 220f || NPC.ai[1] >= 276f))
                 {
                     NPC.velocity.Y = -4f;
                     NPC.velocity.X = NPC.velocity.X * 4f; // burst forward
@@ -569,7 +578,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.netUpdate = true;
                 }
                 // Offensive jump before 3 attacks
-                if ((NPC.ai[1] == 145 || NPC.ai[1] == 275 || NPC.ai[1] == 890) && NPC.velocity.Y <= 0f && Main.rand.NextBool(4))
+                if (!teleportHold && (NPC.ai[1] == 145 || NPC.ai[1] == 275 || NPC.ai[1] == 890) && NPC.velocity.Y <= 0f && Main.rand.NextBool(4))
                 {
                     NPC.velocity.Y = Main.rand.NextFloat(-6, -10f);
                     NPC.netUpdate = true;
@@ -619,8 +628,8 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
                         {
                             storedPlayerPosition = Main.player[targetPlayer].Center;
-                            NPC.netUpdate = true;
-                            NPC.netUpdate = true;
+                            // SendExtraAI only rides along with a netUpdate, and clients draw the held
+                            // spear/bomb against this point. (Was written three times in a row here.)
                             NPC.netUpdate = true;
                         }
                     }
@@ -853,6 +862,10 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
                         {
                             storedPlayerPosition = Main.player[targetPlayer].Center;
+                            // Was missing: only the first of the three store sites flagged a netUpdate, so
+                            // this attack's aim point never reached clients and they kept drawing the held
+                            // weapon against a stale one left over from an earlier attack.
+                            NPC.netUpdate = true;
                         }
                     }
 
@@ -991,6 +1004,10 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
                         {
                             storedPlayerPosition = Main.player[targetPlayer].Center;
+                            // Was missing: only the first of the three store sites flagged a netUpdate, so
+                            // this attack's aim point never reached clients and they kept drawing the held
+                            // weapon against a stale one left over from an earlier attack.
+                            NPC.netUpdate = true;
                         }
                     }
 

@@ -612,11 +612,33 @@ namespace tsorcRevamp
 
         #region CampfireToBonfire (Is also Skelly Loot Cache replacement code)
 
-        /// <summary>Chops down any tree trunk tile in the given box (one KillTile per trunk fells the whole
-        /// tree). Used to clear the area around world spawn BEFORE searching for Emerald Herald's spot, so a
-        /// spawn point in/near forest doesn't push her search radius out further than the terrain itself would -
-        /// every candidate near a tree would otherwise get skipped, same underlying issue the bonfire footprint
-        /// fix addressed for placement.</summary>
+        /// <summary>Removes a tree without WorldGen.KillTile's chop dust/sound/item drop - just silently clears
+        /// tiles. Scans both up AND down the trunk from (x, y) since that's wherever the tree happened to be
+        /// hit, not necessarily its base, clearing every contiguous trunk tile (mirrors how chopping any single
+        /// point fells the whole tree). Used for terrain prep at world-load time, where a burst of trees
+        /// visibly exploding as the player loads in reads as a bug, not deliberate clearing.</summary>
+        private static void RemoveTreeSilently(int x, int y)
+        {
+            for (int direction = -1; direction <= 1; direction += 2)
+            {
+                int scanY = y;
+                while (scanY >= 0 && scanY < Main.tile.Height)
+                {
+                    Tile tile = Main.tile[x, scanY];
+                    if (tile == null || !tile.HasTile || !TileID.Sets.IsATreeTrunk[tile.TileType])
+                    {
+                        break;
+                    }
+                    tile.ClearTile();
+                    scanY += direction;
+                }
+            }
+        }
+
+        /// <summary>Chops down any tree in the given box (silently - see RemoveTreeSilently). Called with a
+        /// small box right at Emerald Herald's chosen spot AFTER the search - the search itself tolerates trees
+        /// in the headroom (ignoreTrees), so this only ever needs to clear whatever tree actually ended up
+        /// overlapping the one spot she's using, not a wide swath of forest around spawn.</summary>
         private static void ClearTreesInArea(int centerX, int centerY, int radiusX, int radiusY)
         {
             int minX = Math.Max(0, centerX - radiusX);
@@ -631,18 +653,18 @@ namespace tsorcRevamp
                     Tile tile = Main.tile[x, y];
                     if (tile != null && tile.HasTile && TileID.Sets.IsATreeTrunk[tile.TileType])
                     {
-                        WorldGen.KillTile(x, y, false, false, true);
+                        RemoveTreeSilently(x, y);
                     }
                 }
             }
         }
 
         /// <summary>Places a 3-wide, 4-tall Bonfire Checkpoint with its bottom row flush against solid ground at
-        /// (centerX, bottomY) - the same tile-writing shape PlaceModdedTiles uses when converting a map-authored
-        /// Campfire into a bonfire, but usable directly (e.g. spawning one near Emerald Herald in sandbox worlds)
-        /// rather than only as a side effect of finding a Campfire. bottomY should be a solid ground row, e.g. from
-        /// UsefulFunctions.TryFindBonfireGroundSpot. Refuses to place (returns false, no tiles touched) if any
-        /// tile in the footprint is already occupied.</summary>
+        /// (centerX, bottomY) - a 4-tall column of open air with the base's TALL frame at bottomY, sitting
+        /// directly on top of the solid ground at bottomY+1 (not overwriting it). bottomY should be the OPEN
+        /// row immediately above solid ground - e.g. what UsefulFunctions.TryFindBonfireGroundSpot returns.
+        /// Refuses to place (returns false, no tiles touched) if any tile in the footprint (including bottomY)
+        /// is already occupied.</summary>
         private static bool PlaceBonfireCheckpoint(int centerX, int bottomY)
         {
             if (centerX < 5 || centerX > Main.maxTilesX - 5 || bottomY < 5 || bottomY > Main.maxTilesY - 5)
@@ -657,27 +679,28 @@ namespace tsorcRevamp
             // tile fells the whole tree, so this doesn't need to walk the full trunk height itself.
             for (int i = centerX - 1; i < centerX + 2; i++)
             {
-                for (int j = bottomY - 3; j < bottomY + 1; j++)
+                for (int j = bottomY - 3; j <= bottomY; j++)
                 {
                     Tile junkTile = Main.tile[i, j];
                     bool isTree = junkTile != null && junkTile.HasTile && TileID.Sets.IsATreeTrunk[junkTile.TileType];
                     bool isDecoration = junkTile != null && junkTile.HasTile && !Main.tileSolid[junkTile.TileType];
-                    if (isTree || isDecoration)
+                    if (isTree)
+                    {
+                        RemoveTreeSilently(i, j);
+                    }
+                    else if (isDecoration)
                     {
                         WorldGen.KillTile(i, j, false, false, true);
                     }
                 }
             }
 
-            // Only the 3 rows ABOVE the ground row need to be empty - bottomY itself is expected to already
-            // hold the solid ground tile that got us here (see TryFindBonfireGroundSpot), and the write loop
-            // below intentionally overwrites it with the structure's base tile. Checking bottomY here too would
-            // mean this can never pass: real ground always HasTile, so this always came back false and silently
-            // cancelled every placement even after a valid spot was found and its trees/junk cleared.
+            // All 4 rows (bottomY-3 .. bottomY) are open air that the structure will occupy - bottomY+1, the
+            // solid ground itself, is left untouched as the actual floor underneath.
             bool footprintClear = true;
             for (int i = centerX - 1; i < centerX + 2; i++)
             {
-                for (int j = bottomY - 3; j < bottomY; j++)
+                for (int j = bottomY - 3; j <= bottomY; j++)
                 {
                     if (Main.tile[i, j] == null)
                     {
@@ -1933,16 +1956,17 @@ namespace tsorcRevamp
                     {
                         // Sandbox worlds have no hand-placed map, so Emerald Herald doesn't get a fixed coordinate
                         // like she does on the custom map - find her a spot near world spawn instead, since that
-                        // ground may have been dug out or built over by the time this runs. Trees near spawn are
-                        // cleared FIRST (same as the bonfire footprint fix) so they can't push her search radius
-                        // out further than the terrain itself would - previously a spawn point in/near forest
-                        // could land her 30+ tiles away purely because every closer candidate had a tree on it.
-                        // Falls back to spawning directly on the raw spawn tile if nothing suitable turns up
-                        // nearby, so she never just fails to appear.
+                        // ground may have been dug out or built over by the time this runs. The search tolerates
+                        // trees in the headroom (same as the bonfire search) instead of requiring already
+                        // tree-free ground - a spot with a tree overhead only gets that ONE tree chopped once
+                        // it's actually chosen, rather than clearing a wide swath of forest around spawn up
+                        // front just so the search wouldn't get pushed away from every nearby candidate. Falls
+                        // back to spawning directly on the raw spawn tile if nothing suitable turns up nearby,
+                        // so she never just fails to appear.
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()))
                         {
-                            ClearTreesInArea(Main.spawnTileX, Main.spawnTileY, 40, 30);
-                            UsefulFunctions.TryFindNPCGroundSpot(Main.spawnTileX, Main.spawnTileY, 25, 3, out int heraldSpawnX, out int heraldSpawnY);
+                            UsefulFunctions.TryFindNPCGroundSpot(Main.spawnTileX, Main.spawnTileY, 25, 3, out int heraldSpawnX, out int heraldSpawnY, ignoreTrees: true);
+                            ClearTreesInArea(heraldSpawnX, heraldSpawnY, 1, 3);
                             NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), heraldSpawnX * 16, heraldSpawnY * 16, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
                         }
 

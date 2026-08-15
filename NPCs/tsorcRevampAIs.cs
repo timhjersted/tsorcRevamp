@@ -1022,6 +1022,10 @@ namespace tsorcRevamp.NPCs
                     }
                 }
             }
+            // Deliberately does NOT include AttackTelegraphing/AttackCommitted: an enemy winding up an attack
+            // keeps its movement. Enemies whose attacks need to own the body drive it themselves from their
+            // own state machine (see GreatBlackKnight.RunSpearMeleeApproach), which composes with the mover
+            // instead of freezing it.
             intent.SeizesBody = combatMeleeSeizesBody || guardPressureRecoveryHold || teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DodgeRecoveryTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0 || dashTelegraphHold || globalNPC.EvasiveRetreating;
         }
 
@@ -1074,7 +1078,7 @@ namespace tsorcRevamp.NPCs
             Vector2 spawnPosition = npc.position;
             spawnPosition.Y += npc.height;
             spawnPosition.X += Main.rand.NextFloat(npc.width);
-            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, new Vector2(0, 2), ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer);
+            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, new Vector2(0, 2), ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(globalNPC.PounceTelegraphColor));
         }
 
         private static void LaunchHighArcPounce(NPC npc, float topSpeed)
@@ -2171,11 +2175,28 @@ namespace tsorcRevamp.NPCs
                             {
                                 if (visualStyle == TeleportVisualStyle.Plague)
                                 {
-                                    // Plague telegraph cloud must outlast the full countdown so there's no gap
-                                    // before ExecuteQueuedTeleport spawns the real clouds. Cap at LifetimeTicks
-                                    // so we don't exceed the projectile's intended maximum duration.
-                                    int plagueTelegraphLife = Math.Min(TeleportTelegraphTime, PlagueTeleportCloud.LifetimeTicks);
-                                    var srcCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 0f, PlagueTeleportCloud.MaxCloudRadius);
+                                    // ONE pair of clouds for the WHOLE sequence — countdown AND the
+                                    // appearance/reveal phase after it — not two. This used to spawn a
+                                    // telegraph pair here, let them die right as the countdown hit zero,
+                                    // and immediately spawn an near-identical SECOND pair in
+                                    // ExecuteQueuedTeleport for the reveal phase, which read exactly like
+                                    // the whole teleport firing twice in a row. Life now covers
+                                    // TeleportTelegraphTime + the reveal snap (SmokeFireTeleportSnapTicks),
+                                    // capped at the projectile's own max duration.
+                                    //
+                                    // The clouds are now deliberately DECOUPLED from the hidden window and
+                                    // always run their full lifetime. Tying them to
+                                    // TeleportTelegraphTime + SmokeFireTeleportSnapTicks meant the reveal
+                                    // landed exactly as the clouds expired, so the visible effect finished
+                                    // and then a knight faded in next to the empty space where it had been.
+                                    // Running long instead lets him step OUT of a cloud that is still
+                                    // billowing — shorten TeleportTelegraphTime (the knights use 30) to
+                                    // control how early he emerges, without shortening the effect itself.
+                                    int plagueTelegraphLife = PlagueTeleportCloud.LifetimeTicks;
+                                    // Departure cloud carries the curse for the full duration now (ai0=1)
+                                    // instead of only appearing for the last stretch — thematically the
+                                    // ground stays contaminated the whole time the knight is phasing out.
+                                    var srcCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 1f, PlagueTeleportCloud.MaxCloudRadius);
                                     srcCloud.timeLeft = plagueTelegraphLife;
                                     var dstCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 0f, PlagueTeleportCloud.MaxCloudRadius);
                                     dstCloud.timeLeft = plagueTelegraphLife;
@@ -2344,16 +2365,11 @@ namespace tsorcRevamp.NPCs
             {
                 if (globalNPC.TeleportVisualStyle == TeleportVisualStyle.Plague)
                 {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        var exitCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 1f, PlagueTeleportCloud.MaxCloudRadius);
-                        exitCloud.timeLeft = PlagueTeleportCloud.LifetimeTicks;
-
-                        var entryCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 0f, PlagueTeleportCloud.MaxCloudRadius);
-                        entryCloud.timeLeft = PlagueTeleportCloud.LifetimeTicks;
-                    }
+                    // Deliberately spawns NOTHING here. QueueTeleport already spawned one departure +
+                    // one destination cloud (see the comment there) sized to outlast this entire
+                    // reveal phase too, so there is exactly one entry and one exit for the whole
+                    // sequence. Spawning a second identical-looking pair here — which this used to do —
+                    // is what read as the teleport firing twice in a row.
                 }
                 else
                 {

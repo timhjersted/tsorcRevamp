@@ -11,9 +11,9 @@ namespace tsorcRevamp.Projectiles.Enemy
     /// corrosive splash was entirely cosmetic - it promised a wide area of effect over a 14px spit
     /// that had already resolved. This gives the visible splat a matching hitbox.
     ///
-    /// Deliberately brief: it arms for a short window at the moment of impact so it reads as the
-    /// splash connecting, rather than becoming a lingering damage zone (StickySpitCloud already fills
-    /// that role for the sticky variant).
+    /// Combo B deliberately keeps its landed cloud dangerous for a full second; every other poison
+    /// ball retains the brief impact window. The paired shader burst can keep fading after either
+    /// window ends, so the harmless visual residue never lies about ongoing damage.
     /// </summary>
     public class ElandVenomSplash : ModProjectile
     {
@@ -22,7 +22,11 @@ namespace tsorcRevamp.Projectiles.Enemy
         // Matches the 92px draw size of the ElandVenomImpact burst.
         const float Radius = 46f;
         const int ActiveStart = 2;
-        const int ActiveEnd = 14;
+        public const int DefaultDamageTicks = 13;
+        public const int ComboBDamageTicks = 60;
+
+        int DamageTicks => Projectile.ai[1] > 0f ? (int)Projectile.ai[1] : DefaultDamageTicks;
+        int ActiveEnd => ActiveStart + DamageTicks - 1;
 
         public override void SetDefaults()
         {
@@ -33,8 +37,15 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = ActiveEnd + 2;
+            // Combo B supplies its longer damage duration in ai[1]. Defaults have to cover that
+            // maximum because the ai values arrive with the projectile spawn packet.
+            Projectile.timeLeft = ActiveStart + ComboBDamageTicks + 2;
             Projectile.DamageType = DamageClass.Magic;
+        }
+
+        public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+        {
+            Projectile.timeLeft = ActiveStart + DamageTicks + 2;
         }
 
         public override bool ShouldUpdatePosition() => false;

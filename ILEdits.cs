@@ -244,9 +244,7 @@ namespace tsorcRevamp
                     return false;
                 }
 
-                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                return modPlayer.SlowfallWingActive
-                    || (player.controlJump && player.velocity.Y > 0f && player.wingsLogic > 0);
+                return tsorcRevampPlayer.IsWingFallProtected(player);
             });
         }
 

@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -51,15 +50,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                     120, default, Main.rand.NextFloat(0.5f, 0.75f));
                 drip.noGravity = true;
             }
-        }
-
-        public override bool PreDraw(ref Color lightColor)
-        {
-            // Divisor must match the 10*60 lifetime set in SetDefaults (was 480f, so progress
-            // started negative and the cloud faded in late instead of landing at full strength).
-            float progress = 1f - Projectile.timeLeft / (10f * 60f);
-            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * 44f, progress, true);
-            return true;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

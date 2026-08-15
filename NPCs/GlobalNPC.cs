@@ -313,6 +313,8 @@ namespace tsorcRevamp.NPCs
         public int PounceTimer;
         public int PounceCooldown;
         public PounceStyle PounceStyle = PounceStyle.HighArcPounce;
+        /// <summary>Color used by the shared high-arc pounce telegraph. Defaults to the legacy white flash.</summary>
+        public Color PounceTelegraphColor = Color.White;
         public Vector2 PounceTarget;
         public int DirectPounceAfterimageTimer;
         public int DirectPounceRecoveryTimer;
@@ -1217,6 +1219,15 @@ namespace tsorcRevamp.NPCs
         public PatrolAnchorSource PatrolAnchorSource = PatrolAnchorSource.SpawnPoint;
         // Leash radius (tiles) for Pace/Wander around PatrolAnchor.
         public int PatrolRange = 30;
+        // Opt-in for animals that should use the patrol mover but still clear ordinary terrain.
+        // Most passive NPCs retain the conservative walk-only patrol behaviour.
+        public bool PatrolCanTerrainJump = false;
+        // Optional per-creature Wander leg override. A max of 0 retains NavBehavior's default timing.
+        public int PatrolWanderMinTiles = 0;
+        public int PatrolWanderMaxTiles = 0;
+        // Negative retains unbiased legacy patrol turns; otherwise choose the player's direction
+        // with this probability when a Wander leg completes.
+        public float PatrolTargetDirectionBias = -1f;
         // World-space anchor the patrol centres on; set per PatrolAnchorSource.
         public Vector2 PatrolAnchor = Vector2.Zero;
         public bool PatrolAnchorSet = false;
@@ -1226,6 +1237,12 @@ namespace tsorcRevamp.NPCs
         public int PatrolLegRemaining = 0;  // frames left on the current walking leg before pausing/reconsidering
         public int PatrolIdleTimer = 0;     // sub-timer driving the idle stand/walk routine
         public int PatrolElapsed = 0;       // frames spent in the current Patrol stint (drives Relaxed-teleport delay)
+        // Server-side diagnostic label for opt-in terrain patrols. It is never behavior input or synced;
+        // it only makes a recorded turn/jump explainable in the Eland debug stream.
+        public string PatrolTerrainAction = "none";
+        // Brief local route-replan window after the anchorward side proves impassable. Without it,
+        // an out-of-leash wander would force that same blocked direction every frame and freeze.
+        public int PatrolTerrainRecoveryTimer = 0;
         // Last frame's distance to the pursuit target; drives the FSM "made progress" (closing distance) test.
         public float LastPursuitDist = 0f;
         // Reference position for the position-immobility anti-stuck (robust to wall-bouncing / LOS flicker).

@@ -58,11 +58,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             // telegraph brightness despite being a real damaging cloud. Real progress over its 600t
             // life now drives the shader's hold-then-fade curve.
             float progress = 1f - Projectile.timeLeft / 600f;
-            // Smaller (36 -> 26) so the gas hugs the sprite instead of ballooning past it, and rotated
-            // by the projectile's own spin so the shader's noise churns with the cloud rather than
-            // sitting frozen behind a rotating sprite.
-            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * 26f, progress, true,
-                Projectile.rotation);
+            // The spinning core needs a symmetric aura. The larger ground fog is deliberately
+            // lopsided and looks offset when it is wrapped around this 16px PoisonSmog sprite.
+            EnemyVFX.DrawElandPoisonBurstAura(Projectile.Center, progress);
             return true;
         }
 

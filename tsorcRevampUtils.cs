@@ -1620,6 +1620,46 @@ namespace tsorcRevamp
             return false;
         }
 
+        /// <summary>Solid and non-platform, but WITHOUT IsValidWalkableTile's flatness requirement (no slope,
+        /// no half-block). Natural grass surfaces are rarely flat for 3+ tiles in a row - slope transition
+        /// tiles are common even on otherwise gentle terrain - so requiring pre-existing flatness pushed the
+        /// bonfire search past the visible surface entirely, landing it a tile or more into the ground on the
+        /// first spot that happened to be flat. A bonfire overwrites whatever tile it lands on with its own
+        /// flat sprite regardless, so the pre-existing tile's slope doesn't matter - only that something solid
+        /// is actually there.</summary>
+        private static bool IsSolidGroundIgnoringSlope(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= Main.tile.Width || y >= Main.tile.Height)
+            {
+                return false;
+            }
+            Tile tile = Main.tile[x, y];
+            return tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType] && !TileID.Sets.Platforms[tile.TileType];
+        }
+
+        /// <summary>IsPartOfValidSurface's slope-tolerant counterpart - see IsSolidGroundIgnoringSlope.</summary>
+        public static bool IsPartOfSolidFootprintIgnoringSlope(int targetX, int targetY, int minWidth)
+        {
+            for (int offset = 0; offset < minWidth; offset++)
+            {
+                bool windowValid = true;
+                for (int i = 0; i < minWidth; i++)
+                {
+                    int x = targetX - offset + i;
+                    if (!IsSolidGroundIgnoringSlope(x, targetY))
+                    {
+                        windowValid = false;
+                        break;
+                    }
+                }
+                if (windowValid)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// Searches outward from (centerX, centerY) in tile coordinates for a spot with solid, flat ground and
         /// enough clear space above it to stand an NPC - used to place an NPC near a fixed reference point (e.g.
@@ -1628,7 +1668,12 @@ namespace tsorcRevamp
         /// distance. Returns false (with spawnTileX/Y left at the raw center) if nothing suitable turns up within
         /// searchRadius tiles.
         /// </summary>
-        public static bool TryFindNPCGroundSpot(int centerX, int centerY, int searchRadius, int npcHeightInTiles, out int spawnTileX, out int spawnTileY)
+        /// <param name="ignoreTrees">When true, tree trunk tiles in the headroom don't count as blocking - use
+        /// this when the caller will chop through any tree actually overlapping the final spot afterward,
+        /// rather than needing ground that's already tree-free (which forest terrain may not offer nearby at
+        /// all, and which previously required clearing trees over a much wider area just to keep the search
+        /// from drifting away from them).</param>
+        public static bool TryFindNPCGroundSpot(int centerX, int centerY, int searchRadius, int npcHeightInTiles, out int spawnTileX, out int spawnTileY, bool ignoreTrees = false)
         {
             int minY = Math.Max(10, centerY - searchRadius);
             int maxY = Math.Min(Main.maxTilesY - 10, centerY + searchRadius);
@@ -1646,7 +1691,7 @@ namespace tsorcRevamp
 
                     for (int y = minY; y <= maxY; y++)
                     {
-                        if (!IsPartOfValidSurface(x, y, 2) || !HasClearSpaceAbove(x, y, npcHeightInTiles))
+                        if (!IsPartOfValidSurface(x, y, 2) || !HasClearSpaceAbove(x, y, npcHeightInTiles, ignoreTrees: ignoreTrees))
                         {
                             continue;
                         }
@@ -1665,11 +1710,11 @@ namespace tsorcRevamp
 
         /// <summary>
         /// Searches outward from (centerX, centerY) for solid, flat ground wide/clear enough for the 3-wide,
-        /// 4-tall Bonfire Checkpoint structure. Unlike TryFindNPCGroundSpot, the output row is NOT "stand on
-        /// top of the ground" - it's the raw solid ground row itself, since that's the anchor
-        /// tsorcRevampWorld.PlaceBonfireCheckpoint expects (its bottom tile row is written flush against solid
-        /// ground, matching how it's placed when converting a map-authored Campfire into a bonfire). Returns
-        /// false (spot left at center) if nothing suitable turns up within searchRadius tiles.
+        /// 4-tall Bonfire Checkpoint structure. The output row is the OPEN row directly above solid ground -
+        /// same "stand on top of the ground" convention as TryFindNPCGroundSpot - which is the anchor
+        /// tsorcRevampWorld.PlaceBonfireCheckpoint expects (its base tile sits on top of solid ground rather
+        /// than replacing it). Returns false (spot left at center) if nothing suitable turns up within
+        /// searchRadius tiles.
         /// </summary>
         public static bool TryFindBonfireGroundSpot(int centerX, int centerY, int searchRadius, out int spotX, out int spotY)
         {
@@ -1689,7 +1734,7 @@ namespace tsorcRevamp
 
                     for (int y = minY; y <= maxY; y++)
                     {
-                        if (!IsPartOfValidSurface(x, y, 3))
+                        if (!IsPartOfSolidFootprintIgnoringSlope(x, y, 3))
                         {
                             continue;
                         }
@@ -1708,7 +1753,7 @@ namespace tsorcRevamp
                         }
 
                         spotX = x;
-                        spotY = y;
+                        spotY = y - 1; //Open row directly above solid ground - the structure sits ON TOP of it
                         return true;
                     }
                 }
@@ -1748,7 +1793,7 @@ namespace tsorcRevamp
 
                         for (int y = minY; y <= maxY; y++)
                         {
-                            if (!IsPartOfValidSurface(x, y, 3))
+                            if (!IsPartOfSolidFootprintIgnoringSlope(x, y, 3))
                             {
                                 continue;
                             }
@@ -1772,7 +1817,7 @@ namespace tsorcRevamp
                             }
 
                             spotX = x;
-                            spotY = y;
+                            spotY = y - 1; //Open row directly above solid ground - the structure sits ON TOP of it
                             return true;
                         }
                     }
@@ -1816,7 +1861,7 @@ namespace tsorcRevamp
             {
                 for (int y = minY; y <= maxY; y++)
                 {
-                    if (!IsPartOfValidSurface(x, y, 3))
+                    if (!IsPartOfSolidFootprintIgnoringSlope(x, y, 3))
                     {
                         continue;
                     }
@@ -1835,7 +1880,7 @@ namespace tsorcRevamp
                     }
 
                     spotX = x;
-                    spotY = y;
+                    spotY = y - 1; //Open row directly above solid ground - the structure sits ON TOP of it
                     return true;
                 }
             }

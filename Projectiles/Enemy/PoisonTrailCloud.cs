@@ -20,13 +20,14 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.width = MinSize;
             Projectile.height = MinSize;
-            Projectile.hostile = true;
+            Projectile.hostile = false;
             Projectile.friendly = false;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.hide = false; //transparent placeholder; shader is drawn in PreDraw
             Projectile.light = 0.4f;
+            Projectile.damage = 0;
             Projectile.timeLeft = 6 * 60;
         }
 
@@ -53,7 +54,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Poisoned, 0f, 0f, 100, default, 2f);
+                    // 40% smaller than the original 2.0 scale (max 1.44 after vanilla's jitter),
+                    // so the shader remains the continuous smog body while these stay fine motes.
+                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Poisoned, 0f, 0f, 100, default, 1.2f);
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].velocity *= 0.3f;
                 }
@@ -66,6 +69,18 @@ namespace tsorcRevamp.Projectiles.Enemy
                 + Main.GlobalTimeWrappedHourly * 0.8f) * 0.10f;
 
             Lighting.AddLight(Projectile.Center, 0.05f, 0.3f, 0.05f);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player target = Main.player[i];
+                    if (target.active && !target.dead && IsInsideCore(target.Hitbox))
+                    {
+                        target.AddBuff(ToxicGasNovaFog.NovaDebuffType, ToxicGasNovaFog.NovaDebuffDuration, false);
+                    }
+                }
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -74,15 +89,24 @@ namespace tsorcRevamp.Projectiles.Enemy
             // started at -1 and the shader's fade curve rendered the cloud completely INVISIBLE for
             // its first ~1.5s - it only became visible during its back half.
             float progress = 1f - Projectile.timeLeft / (6f * 60f);
-            // Drawn well wider than the 48px hitbox so consecutive puffs physically overlap and blend
-            // into a continuous bank of gas; the shader's circular cutoff keeps the extra size soft.
-            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * 92f, progress, true, PuffRotation);
+            // A broad, low-opacity envelope lets 20-tick puffs knit into one continuous poison smog
+            // bank rather than revealing individual circular stamps. The 48px hitbox is unchanged.
+            EnemyVFX.DrawElandToxicField(Projectile.Center, Vector2.One * 92f, progress, true,
+                PuffRotation, visualScale: 1.8f, opacity: 0.56f);
             return true;
         }
 
-        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        public override bool? CanDamage() => false;
+
+        // The shader is deliberately broader and softer than the harmful gas core, so repeated
+        // puffs merge into smog without expanding the actual gameplay footprint.
+        bool IsInsideCore(Rectangle targetHitbox)
         {
-            target.AddBuff(BuffID.Poisoned, 12 * 60, false);
+            const float radius = MinSize * 0.5f;
+            Vector2 closest = Vector2.Clamp(Projectile.Center,
+                new Vector2(targetHitbox.Left, targetHitbox.Top),
+                new Vector2(targetHitbox.Right, targetHitbox.Bottom));
+            return Vector2.DistanceSquared(Projectile.Center, closest) <= radius * radius;
         }
     }
 }

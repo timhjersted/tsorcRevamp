@@ -59,8 +59,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             // hitbox so the whole visible splash actually connects.
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                // ai[1] carries Combo B's 60-tick cloud damage window. Other volleys leave it at
+                // zero and retain ElandVenomSplash's short impact-only damage timing.
                 Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-                    ModContent.ProjectileType<ElandVenomSplash>(), Projectile.damage, 0f, Projectile.owner);
+                    ModContent.ProjectileType<ElandVenomSplash>(), Projectile.damage, 0f, Projectile.owner,
+                    0f, Projectile.ai[1]);
             }
             for (int i = 0; i < 8; i++)
             {

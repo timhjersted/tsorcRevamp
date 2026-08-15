@@ -151,6 +151,7 @@ static class Preview
     // ---- Effects/RedKnightDestinedDeath.fx --------------------------------------------------
     // Sampler bindings must match RedKnightVFX.DrawDestinedDeathQuad exactly.
     static Tex MacroSampler, DetailSampler, SolarMacroSampler, SolarDetailSampler, SolarFlameSampler, StoneSampler, CrackSampler, MonolithSampler;
+    static Tex ElandPrimarySampler, ElandDetailSampler;
 
     static void LoadTextures()
     {
@@ -163,6 +164,8 @@ static class Preview
         CrackSampler = new Tex("Vein_02-512x512");
         MonolithSampler = new Tex(Path.Combine(TextureRoot, "Particles", "GigasConsecratedMonolith"), previewLocal: true);
         CrimsonFlowSampler = new Tex("Turbulence_05-512x512");
+        ElandPrimarySampler = new Tex("Voronoi_10-512x512");
+        ElandDetailSampler = new Tex("T_CloudNoise_Tiled");
     }
 
     // Palettes, copied from the C# helper.
@@ -882,6 +885,104 @@ static class Preview
         return (rgb, acc);
     }
 
+    // ---- Effects/ElandToxicVFX.fx ------------------------------------------------------------
+    // Kept in lockstep with ElandToxicVFX: the field and impact use AlphaBlend, so their RGB is
+    // explicitly premultiplied here. These panels use the exact draw sizes from EnemyVFX.
+    static V2 ElandPixelate(V2 uv, float width, float height)
+    {
+        float bx = 2f / MathF.Max(width, 1f), by = 2f / MathF.Max(height, 1f);
+        return new V2((MathF.Floor(uv.x / bx) + .5f) * bx, (MathF.Floor(uv.y / by) + .5f) * by);
+    }
+
+    static (V3, float) ElandToxicField(V2 c, float drawSize, float Time, float Progress, float Active, float Opacity, float direction)
+    {
+        V2 uv = ElandPixelate(c, drawSize, drawSize);
+        float r = length(uv - .5f);
+        float n1 = ElandDetailSampler.R(uv * 1.9f + new V2(Time * .031f, -Time * .052f));
+        float n2 = ElandDetailSampler.R(uv * 3.7f + new V2(-Time * .043f, Time * .028f));
+        float bubbles = ElandPrimarySampler.R(uv * 2.4f + new V2(Time * .017f, -Time * .075f));
+        float billow = sat(n1 * .72f + n2 * .54f - .16f);
+        float damageEdge = .5f * direction;
+        float feather = MathF.Max(.5f - damageEdge, .02f);
+        float cloudReach = damageEdge + feather * (.38f + n1 * .70f);
+        float damageBody = sat((damageEdge - r) * 8f);
+        float cloudBody = sat((cloudReach - r) * 8f);
+        float radial = MathF.Max(damageBody * .82f, cloudBody * (.46f + billow * .54f));
+        float quadFade = sat((.5f - r) * 9f);
+        radial *= quadFade * quadFade;
+        float density = sat(radial * (.42f + billow * .95f) + sat(bubbles - .72f) * radial * .55f);
+        float d3 = density * density * density;
+        V3 color = lerp(C(8, 25, 8), C(66, 176, 54), density);
+        color = lerp(color, C(213, 255, 133), d3 * (.35f + Active * .5f));
+        float hold = MathF.Min(Progress * 9f, 1f) - MathF.Max(Progress - .72f, 0f) * 3.57f;
+        float alpha = density * Opacity * MathF.Max(hold, 0f) * (.5f + Active * .5f);
+        return (color * alpha, alpha);
+    }
+
+    static (V3, float) ElandPoisonBurstAura(V2 c, float drawSize, float Time, float Progress, float Opacity)
+    {
+        V2 uv = ElandPixelate(c, drawSize, drawSize);
+        float r = length(uv - .5f);
+        float n1 = ElandDetailSampler.R(uv * 2.2f + new V2(Time * .045f, -Time * .034f));
+        float n2 = ElandDetailSampler.R(uv * 4.1f + new V2(-Time * .071f, Time * .053f));
+        float cells = ElandPrimarySampler.R(uv * 3f + new V2(Time * .03f, -Time * .06f));
+        float churn = sat(n1 * .70f + n2 * .46f - .14f);
+        float body = sat((.38f - r) * 6.4f);
+        float outer = sat((.50f - r) * 8f); outer *= outer;
+        float density = body * (.46f + churn * .54f + sat(cells - .72f) * .22f) * outer;
+        float core = sat((.19f - r) * 8.5f) * (.55f + cells * .45f);
+        float fadeIn = MathF.Min(Progress * 12f, 1f);
+        float fadeOut = sat((1f - Progress) * 2.22f + r * .001f);
+        float life = fadeIn * fadeOut;
+        V3 color = lerp(C(8, 25, 8), C(66, 176, 54), density);
+        color = lerp(color, C(213, 255, 133), sat(core + density * density * .25f));
+        float alpha = sat(density + core * .42f) * Opacity * life;
+        float energy = density * .72f + core * 1.05f;
+        return (color * (energy * alpha), alpha);
+    }
+
+    static (V3, float) ElandVenomGlob(V2 c, float width, float height, float Time, float Opacity)
+    {
+        V2 uv = ElandPixelate(c, width, height);
+        float x = uv.x, y = MathF.Abs(uv.y - .5f);
+        float flow = ElandDetailSampler.R(new V2(x * 2.4f - Time * 1.15f, uv.y * 2f + Time * .22f));
+        float cells = ElandPrimarySampler.R(uv * new V2(2.6f, 3.4f) + new V2(-Time * .95f, Time * .18f));
+        float headField = sat((.34f + flow * .10f - length(new V2((x - .58f) * 1.06f, uv.y - .5f))) * 6f);
+        float smear = sat((.58f - x) * 3f) * sat(x * 5f);
+        float tailField = sat(((.17f + flow * .16f) * smear - y) * 7f);
+        float shape = MathF.Max(headField, tailField);
+        float body = shape * sat(.40f + flow * .55f + cells * .30f);
+        float rim = sat(shape * 3.2f) * (1f - sat((shape - .28f) * 3.4f));
+        float core = sat((headField - .48f) * 2.6f) * (.55f + cells * .6f);
+        V3 color = lerp(C(8, 25, 8), C(66, 176, 54), body);
+        color = lerp(color, C(213, 255, 133), sat(core + rim * .45f));
+        float energy = body * .75f + core * 1.35f + rim * .5f;
+        float alpha = sat(body + core + rim * .7f) * Opacity;
+        return (color * (energy * alpha), alpha);
+    }
+
+    static (V3, float) ElandVenomImpact(V2 c, float drawSize, float Time, float Progress, float Opacity)
+    {
+        V2 uv = ElandPixelate(c, drawSize, drawSize);
+        float r = length(uv - .5f);
+        float cells = ElandPrimarySampler.R(uv * 2.2f + new V2(Time * .02f, -Time * .05f));
+        float haze = ElandDetailSampler.R(uv * 2.8f - new V2(Time * .06f, Time * .04f));
+        float grow = Progress * (2f - Progress);
+        float splatR = .15f + grow * .28f + (cells - .5f) * .13f;
+        float blob = sat((splatR - r) * 2.6f);
+        float rimD = MathF.Abs(r - splatR);
+        float rim = sat((.15f - rimD) * 5f) * (.45f + cells * .8f);
+        float mist = sat((splatR + .22f - r) * 2f) * sat(haze * 1.5f - .45f);
+        float outer = sat((.5f - r) * 3.6f); outer *= outer;
+        float dens = sat(blob * (.45f + haze * .6f) + mist * .55f) * (1f - Progress * .30f) * outer;
+        rim *= outer;
+        V3 color = lerp(C(8, 25, 8), C(66, 176, 54), dens);
+        color = lerp(color, C(213, 255, 133), sat(rim * .55f + sat(dens - .78f)));
+        float alpha = sat(dens + rim * .7f) * Opacity;
+        float energy = dens * .8f + rim * 1.15f;
+        return (color * (energy * alpha), alpha);
+    }
+
     static Panel[] Panels() => FocusPanels ?? AllPanels();
 
     // Set from Main via the FOCUS env var to render a single technique big.
@@ -947,6 +1048,30 @@ static class Preview
         string safePreviewName = string.Concat(previewName.Select(c =>
             char.IsLetterOrDigit(c) || c == '-' || c == '_' ? c : '-')).Trim('-');
         if (string.IsNullOrWhiteSpace(safePreviewName)) safePreviewName = "shader-preview";
+        if (Environment.GetEnvironmentVariable("FOCUS") == "eland")
+        {
+            FocusPanels = new[]
+            {
+                // Big nova uses its 400px damage radius plus the 1.3x visual envelope.
+                new Panel("Nova telegraph P=.45", 1040, 1040, Blend.PremultipliedAlpha,
+                    c => ElandToxicField(c, 1040f, 3.2f, .45f, 0f, .68f, 1f / 1.3f)),
+                new Panel("Nova active P=.55", 1040, 1040, Blend.PremultipliedAlpha,
+                    c => ElandToxicField(c, 1040f, 4.7f, .55f, 1f, .78f, 1f / 1.3f)),
+                // Trail puffs deliberately reserve a larger, dimmer envelope for seamless overlap.
+                new Panel("Trail smog P=.45", 166, 166, Blend.PremultipliedAlpha,
+                    c => ElandToxicField(c, 166f, 4.1f, .45f, 1f, .56f, 1f / 1.8f)),
+                new Panel("Burst aura P=.20", 38, 38, Blend.PremultipliedAlpha,
+                    c => ElandPoisonBurstAura(c, 38f, 3.7f, .20f, .66f)),
+                new Panel("Burst aura P=.70", 38, 38, Blend.PremultipliedAlpha,
+                    c => ElandPoisonBurstAura(c, 38f, 3.7f, .70f, .66f)),
+                new Panel("Burst aura P=.92", 38, 38, Blend.PremultipliedAlpha,
+                    c => ElandPoisonBurstAura(c, 38f, 3.7f, .92f, .66f)),
+                new Panel("Venom glob", 34, 27, Blend.PremultipliedAlpha,
+                    c => ElandVenomGlob(c, 34f, 27f, 3.8f, .9f)),
+                new Panel("Venom impact P=.45", 92, 92, Blend.PremultipliedAlpha,
+                    c => ElandVenomImpact(c, 92f, 4.6f, .45f, .9f)),
+            };
+        }
         if (Environment.GetEnvironmentVariable("FOCUS") == "wall")
         {
             // The wall/shockwave sizes after the widening that the softer end-taper needs.

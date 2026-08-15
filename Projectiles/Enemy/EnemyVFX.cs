@@ -412,16 +412,29 @@ namespace tsorcRevamp.Projectiles.Enemy
         /// for free (the fog is radially symmetric, so nothing else is affected).
         /// </param>
         internal static void DrawElandToxicField(Vector2 center, Vector2 size, float progress, bool active,
-            float rotation = 0f)
+            float rotation = 0f, float visualScale = FogVisualScale, float opacity = -1f)
         {
             LoadAssets();
             // Direction carries the damage-radius ratio (see ElandToxicVFX.fx ToxicField) - it is no
             // longer a circular/box flag. Every poison cloud is round now; the old box path is what
             // rendered those hard white squares on screen.
             Draw(elandToxicVFX, "ElandToxicField", voronoiNoise, cloudNoise,
-                center, size * FogVisualScale, rotation, ToxicDark, ToxicMid, ToxicCore,
-                active ? 0.78f : 0.68f, progress, active ? 1f : 0f, 1f / FogVisualScale,
+                center, size * visualScale, rotation, ToxicDark, ToxicMid, ToxicCore,
+                opacity >= 0f ? opacity : (active ? 0.78f : 0.68f), progress, active ? 1f : 0f, 1f / visualScale,
                 BlendState.AlphaBlend);
+        }
+
+        /// <summary>
+        /// Soft, centred aura for Eland's spinning PoisonSmog projectile. Keep this separate from
+        /// the deliberately asymmetric ToxicField used by the large fog attacks: that irregular
+        /// silhouette looks right for ground gas but reads as an offset when wrapped around a core.
+        /// </summary>
+        internal static void DrawElandPoisonBurstAura(Vector2 center, float progress)
+        {
+            LoadAssets();
+            Draw(elandToxicVFX, "ElandPoisonBurstAura", voronoiNoise, cloudNoise,
+                center, Vector2.One * 38f, 0f, ToxicDark, ToxicMid, ToxicCore,
+                0.66f, progress, 1f, 1f, BlendState.AlphaBlend);
         }
 
         internal static void DrawElandVenomProjectile(Vector2 center, Vector2 velocity, Vector2 size, float opacity = 0.8f)
@@ -430,7 +443,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             LoadAssets();
             Draw(elandToxicVFX, "ElandVenomGlob", voronoiNoise, cloudNoise,
                 center - direction * size.X * 0.28f, size, direction.ToRotation(),
-                ToxicDark, ToxicMid, ToxicCore, opacity, 0.5f, 1f, 1f);
+                ToxicDark, ToxicMid, ToxicCore, opacity, 0.5f, 1f, 1f, BlendState.AlphaBlend);
         }
 
         internal static void DrawQuaraCast(Vector2 center, float progress, int pattern)
@@ -658,6 +671,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Active"]?.SetValue(active);
                 effect.Parameters["Direction"]?.SetValue(direction);
                 effect.Parameters["DrawSize"]?.SetValue(actualSize);
+                effect.Parameters["PixelDrawSize"]?.SetValue(drawSize);
                 effect.Parameters["PrimaryTextureSize"]?.SetValue(primaryTexture.Size());
                 effect.Parameters["uSourceRect"]?.SetValue(uSourceRect);
                 effect.CurrentTechnique.Passes[0].Apply();
@@ -687,14 +701,23 @@ namespace tsorcRevamp.Projectiles.Enemy
             EnemyVFXBurstKind.DemonSpiritSoulBurst => 18,
             EnemyVFXBurstKind.QuaraWaterBurst => 18,
             EnemyVFXBurstKind.EvilEyeGhostBurst => 34,
-            // Poison should hang in the air rather than blink out - the default 14t splash read as
-            // an instant pop, which is off-theme for a corrosive hit. 40t still went too quickly to
-            // appreciate the squiggly rim, so it now lingers for well over a second.
-            EnemyVFXBurstKind.ElandVenomImpact => 75,
+            // Combo B's dark poison splats need time to merge into a readable cloud after the
+            // balls land. Damage is handled separately by ElandVenomSplash (14 ticks only), so
+            // this longer lifetime is purely a harmless visual residue.
+            EnemyVFXBurstKind.ElandVenomImpact => 135,
             // User's explicit ask: long enough to actually see it (~60t), independent of
             // DemonSpiritSoulBurst's own 18t so DemonSpirit's real explosion is untouched.
             EnemyVFXBurstKind.EvilEyeTeleportBurst => 60,
             _ => 14
+        };
+
+        int FadeDuration => Kind switch
+        {
+            // Let Eland's impact cloud diffuse away over 1.25 seconds instead of dropping out in
+            // the generic five-tick burst fade. This makes successive Combo B impacts overlap as
+            // lingering poison smog. The fade starts as Combo B's paired 60-tick damage window ends.
+            EnemyVFXBurstKind.ElandVenomImpact => 75,
+            _ => 5
         };
 
         public static void Spawn(Terraria.DataStructures.IEntitySource source, Vector2 center, EnemyVFXBurstKind kind)
@@ -734,7 +757,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreDraw(ref Color lightColor)
         {
             float progress = MathHelper.Clamp(Projectile.localAI[0] / Duration, 0f, 1f);
-            float fade = MathHelper.Clamp(Projectile.timeLeft / 5f, 0f, 1f);
+            float fade = MathHelper.SmoothStep(0f, 1f,
+                MathHelper.Clamp(Projectile.timeLeft / (float)FadeDuration, 0f, 1f));
             EnemyVFX.DrawBurst(Kind, Projectile.Center, progress, fade);
             return false;
         }

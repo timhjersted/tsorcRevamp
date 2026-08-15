@@ -31,8 +31,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.HitSound = SoundID.NPCHit1;
-            // value/25 = expert-mode soul drop (see GlobalNPC.OnKill's Dark Souls formula) — 5000 -> 200 souls.
-            NPC.value = 5000;
+            // Expert drops use value / 25 before the player's soul bonuses: 7000 -> 280 base souls.
+            NPC.value = 7000;
             // No AnimationType: the sheet's layout (0=idle, 1=jump, 2..=walk) doesn't match any
             // vanilla NPC's, so framing is driven explicitly in FindFrame below.
 
@@ -42,14 +42,23 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 7500; // -> 300 souls in expert mode
             }
 
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 40; // SmartFighter4AI movement
+            tsorcRevampGlobalNPC elandGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            elandGlobalNPC.NavSearchRadius = 40; // SmartFighter4AI movement
+            elandGlobalNPC.PounceTelegraphColor = Color.LimeGreen;
+            elandGlobalNPC.PatrolMode = PatrolMode.Wander;
+            elandGlobalNPC.PatrolRange = 75;
+            elandGlobalNPC.PatrolCanTerrainJump = true;
+            elandGlobalNPC.PatrolWanderMinTiles = 5;
+            elandGlobalNPC.PatrolWanderMaxTiles = 50;
+            elandGlobalNPC.PatrolTargetDirectionBias = 0.60f;
         }
 
         // Rare pre-hardmode, slightly more common in hardmode; jungle biome, underground (dirt or rock layer) only.
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player p = spawnInfo.Player;
-            bool undergroundJungle = p.ZoneJungle && (p.ZoneDirtLayerHeight || p.ZoneRockLayerHeight);
+            bool undergroundJungle = p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson
+                && (p.ZoneDirtLayerHeight || p.ZoneRockLayerHeight);
             if (!undergroundJungle)
                 return 0f;
 
@@ -97,14 +106,31 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, topSpeed: npcSPD, acceleration: npcAcSPD);
+            if (!provoked)
+            {
+                UpdatePassiveWander();
+                UpdatePoisonTrail();
+                UpdatePassiveGasNova();
+                return;
+            }
 
+            tsorcRevampAIs.FighterAI(NPC, topSpeed: npcSPD, acceleration: npcAcSPD, canDodgeroll: false);
             UpdatePoisonTrail();
             UpdateSpitAttacks();
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            writer.Write(provoked);
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            writer.Write(globalNPC.PatrolDirection);
+            writer.Write(globalNPC.PatrolIdleTimer);
+            writer.Write(globalNPC.PatrolTerrainRecoveryTimer);
+            writer.Write(globalNPC.PatrolAnchorSet);
+            writer.Write(globalNPC.PatrolAnchor.X);
+            writer.Write(globalNPC.PatrolAnchor.Y);
+            writer.Write((byte)passiveNovaState);
+            writer.Write(passiveNovaTimer);
             writer.Write((byte)spitState);
             writer.Write((byte)activeSpit);
             writer.Write(spitTimer);
@@ -124,6 +150,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            provoked = reader.ReadBoolean();
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.PatrolDirection = reader.ReadInt32();
+            globalNPC.PatrolIdleTimer = reader.ReadInt32();
+            globalNPC.PatrolTerrainRecoveryTimer = reader.ReadInt32();
+            globalNPC.PatrolAnchorSet = reader.ReadBoolean();
+            globalNPC.PatrolAnchor = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            passiveNovaState = (PassiveNovaState)reader.ReadByte();
+            passiveNovaTimer = reader.ReadInt32();
             spitState = (SpitState)reader.ReadByte();
             activeSpit = (SpitAttack)reader.ReadByte();
             spitTimer = reader.ReadInt32();
@@ -161,6 +196,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 target.AddBuff(BuffID.Poisoned, 4 * 60, false);
             }
         }
+
+        // A calm Eland's environmental poison is its only danger. Its body itself does not deal
+        // contact damage until the player has struck it and it has entered its hostile state.
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot) => provoked;
 
         // ================================================================================
         //  Poison trail — floating gas puffs dropped behind Eland while it walks. Runs on its own
@@ -210,7 +249,7 @@ namespace tsorcRevamp.NPCs.Enemies
             float behindX = -NPC.direction * (NPC.width * 0.5f + 24f);
             Vector2 spawn = NPC.Center + new Vector2(behindX, -8f) - new Vector2(size, size) * 0.5f;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.PoisonTrailCloud>(), Tiered(20, 40, 60), 0f, Main.myPlayer);
+                ModContent.ProjectileType<Projectiles.Enemy.PoisonTrailCloud>(), 0, 0f, Main.myPlayer);
         }
 
         // ================================================================================
@@ -229,7 +268,12 @@ namespace tsorcRevamp.NPCs.Enemies
         const float ChargeMaxRange = 650f;   // "long"
 
         static readonly Vector2[] ThreeSpread = { new Vector2(-24, 0), new Vector2(0, 0), new Vector2(24, 0) };
-        static readonly Vector2[] TwoSpread = { new Vector2(-16, 0), new Vector2(16, 0) };
+        // Combo C is an enrage-area denial pattern. Its pairs deliberately bracket the frozen player
+        // in distinct front/back lanes instead of repeatedly stacking all sixteen splats at their feet.
+        static readonly Vector2[] ComboCNearSpread = { new Vector2(-72, 0), new Vector2(72, 0) };
+        static readonly Vector2[] ComboCMediumSpread = { new Vector2(-144, 0), new Vector2(144, 0) };
+        static readonly Vector2[] ComboCFarSpread = { new Vector2(-240, 0), new Vector2(240, 0) };
+        static readonly Vector2[] ComboCFarthestSpread = { new Vector2(-288, 0), new Vector2(288, 0) };
         // Sticky Spit's 8 single-shot offsets: floor center/sides, then upper/wall angles, for max
         // ground+wall+ceiling coverage around the frozen target.
         static readonly Vector2[] StickyCoverage =
@@ -249,14 +293,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
         SpitState spitState = SpitState.Idle;
         SpitAttack activeSpit;
+        // Cosmetic-only: every client emits its own burst on seeing the nova telegraph.
+        bool novaTelegraphDustEmitted;
 
         /// <summary>
         /// DebugMode above-head readout (see IDebugAttackLabel). Shows both the chosen attack and
         /// which half of it is running, since the telegraph/fire split is the whole counterplay.
         /// </summary>
-        public string DebugAttackLabel => spitState == SpitState.Idle
-            ? "Idle"
-            : $"{DebugLabels.Humanize(activeSpit.ToString())} ({spitState})";
+        public string DebugAttackLabel => !provoked
+            ? passiveNovaState == PassiveNovaState.Telegraph ? "Wandering Gas Nova (Telegraph)" : "Wandering"
+            : spitState == SpitState.Idle ? "Idle" : $"{DebugLabels.Humanize(activeSpit.ToString())} ({spitState})";
 
         int spitTimer;
         int recoveryTimer; // shared FSM lockout after any attack finishes
@@ -286,6 +332,9 @@ namespace tsorcRevamp.NPCs.Enemies
             Player target = Main.player[NPC.target];
             if (target.dead)
                 return;
+
+            if (spitState != SpitState.Telegraph || activeSpit != SpitAttack.ToxicGasNova)
+                novaTelegraphDustEmitted = false;
 
             switch (spitState)
             {
@@ -338,15 +387,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 case SpitState.Telegraph:
                     NPC.velocity.X *= 0.7f; // plant to spit
                     spitTimer++;
-                    if (activeSpit == SpitAttack.ToxicGasNova)
+                    if (activeSpit == SpitAttack.ToxicGasNova && !novaTelegraphDustEmitted)
                     {
-                        // Ring pulses AT the true detonation radius the whole telegraph (doesn't grow into it) —
-                        // shows exactly where the blast will land. Matches ToxicGasNovaGlow's own pulse.
-                        if (spitTimer % 4 == 0)
-                        {
-                            float pulse = 0.85f + 0.15f * (float)Math.Sin(spitTimer * 0.3f);
-                            UsefulFunctions.DustRingPrecise(NPC.Center, NovaRadius, DustID.Poisoned, 24, 0f, 120, pulse * 1.3f);
-                        }
+                        SpawnToxicGasNovaTelegraphBurst();
+                        novaTelegraphDustEmitted = true;
                     }
                     if (spitTimer >= TelegraphTicks(activeSpit))
                     {
@@ -411,15 +455,169 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity,
-                    ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer,
-                    UsefulFunctions.ColorToFloat(Color.LimeGreen));
+                if (attack != SpitAttack.ToxicGasNova)
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity,
+                        ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer,
+                        UsefulFunctions.ColorToFloat(Color.LimeGreen));
+            }
+        }
 
-                if (attack == SpitAttack.ToxicGasNova)
+        // ================================================================================
+        //  Passive wandering - Eland lives in the jungle rather than hunting the player. A real
+        //  player hit permanently provokes it, then the established FighterAI/combo logic takes
+        //  over. We intentionally do not override CheckActive or refresh timeLeft, preserving the
+        //  usual Terraria off-screen despawn behaviour.
+        // ================================================================================
+        bool provoked;
+
+        enum PassiveNovaState { CoolingDown, Telegraph }
+
+        const float PassiveWanderSpeed = 1.25f;
+        const float PatrolSpeedMultiplier = 0.6f; // NavBehavior's shared patrol amble multiplier.
+        const int PassiveNovaTelegraphTicks = 60;
+        const int PassiveNovaCooldownTicks = 16 * 60;
+        PassiveNovaState passiveNovaState;
+        int passiveNovaTimer = 4 * 60;
+        bool passiveNovaDustEmitted;
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            if (!Main.dedServ)
+                SpawnHitBloodDust(hit.HitDirection);
+            BecomeProvoked();
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            if (!Main.dedServ)
+                SpawnHitBloodDust(hit.HitDirection);
+            if (projectile.friendly)
+                BecomeProvoked();
+        }
+
+        void BecomeProvoked()
+        {
+            if (provoked || Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            provoked = true;
+            passiveNovaState = PassiveNovaState.CoolingDown;
+            passiveNovaTimer = PassiveNovaCooldownTicks;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().PursuitState = PursuitState.Pursue;
+            NPC.TargetClosest(false);
+            NPC.netUpdate = true;
+        }
+
+        void UpdatePassiveWander()
+        {
+            // Selecting a target only lets passive abilities find a nearby player; the shared
+            // NavBehavior patrol below never uses it as a pursuit target.
+            NPC.TargetClosest(false);
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            if (!globalNPC.PatrolAnchorSet)
+            {
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                    return;
+
+                NavBehavior.EnterPatrol(NPC, globalNPC);
+                NPC.netUpdate = true;
+            }
+
+            int patrolDirection = globalNPC.PatrolDirection;
+            NavBehavior.RunPatrol(NPC, globalNPC, PassiveWanderSpeed / PatrolSpeedMultiplier, npcAcSPD);
+            bool turned = patrolDirection != globalNPC.PatrolDirection;
+            if (Main.netMode != NetmodeID.MultiplayerClient && turned)
+                NPC.netUpdate = true;
+
+            LogPassiveWanderDebug(globalNPC, turned);
+        }
+
+        // Separate from the generic fighter stream because passive Eland does not run FighterAI. Its
+        // terrain decision, probe, leash distance, and committed leg are all present on each line.
+        void LogPassiveWanderDebug(tsorcRevampGlobalNPC globalNPC, bool turned)
+        {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode || Main.netMode == NetmodeID.MultiplayerClient
+                || !NPC.HasValidTarget)
+            {
+                return;
+            }
+
+            int now = (int)Main.GameUpdateCount;
+            bool terrainEvent = globalNPC.PatrolTerrainAction != "walk-level";
+            int interval = (turned || terrainEvent) ? 6 : 30;
+            if (now - globalNPC.LastNavDebugLogTick < interval)
+                return;
+
+            globalNPC.LastNavDebugLogTick = now;
+            try
+            {
+                string directory = Main.SavePath + Path.DirectorySeparatorChar + "Logs";
+                Directory.CreateDirectory(directory);
+                string path = directory + Path.DirectorySeparatorChar + "tsorcRevamp-smartfighter4.log";
+                SmartFighter4AI.WriteNavLogHeader(path);
+                Player player = Main.player[NPC.target];
+                string line = $"[{DateTime.Now:HH:mm:ss}] {NPC.TypeName}#{NPC.whoAmI} [eland-wander]"
+                    + $" pos=({NPC.Center.X / 16f:F1},{NPC.Center.Y / 16f:F1})"
+                    + $" player=({player.Center.X / 16f:F1},{player.Center.Y / 16f:F1})"
+                    + $" vel=({NPC.velocity.X:F2},{NPC.velocity.Y:F2})"
+                    + $" dir={NPC.direction}/{globalNPC.PatrolDirection} turn={turned}"
+                    + $" leg={globalNPC.PatrolIdleTimer}"
+                    + NavBehavior.DescribeTerrainWander(NPC, globalNPC);
+                File.AppendAllText(path, line + Environment.NewLine);
+            }
+            catch { }
+        }
+
+        void UpdatePassiveGasNova()
+        {
+            if (passiveNovaState != PassiveNovaState.Telegraph)
+                passiveNovaDustEmitted = false;
+
+            if (passiveNovaState == PassiveNovaState.CoolingDown)
+            {
+                if (passiveNovaTimer > 0)
+                    passiveNovaTimer--;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && passiveNovaTimer <= 0 && NPC.HasValidTarget
+                    && NPC.Distance(Main.player[NPC.target].Center) <= NovaRadius)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.VFX.ToxicGasNovaGlow>(), 0, 0f, Main.myPlayer, NPC.whoAmI, NovaRadius);
+                    passiveNovaState = PassiveNovaState.Telegraph;
+                    passiveNovaTimer = 0;
+                    NPC.netUpdate = true;
                 }
+                return;
+            }
+
+            NPC.velocity.X *= 0.7f;
+            passiveNovaTimer++;
+            if (!passiveNovaDustEmitted)
+            {
+                SpawnToxicGasNovaTelegraphBurst();
+                passiveNovaDustEmitted = true;
+            }
+
+            if (passiveNovaTimer == PassiveNovaTelegraphTicks)
+                DetonateToxicGasNova();
+
+            if (passiveNovaTimer >= PassiveNovaTelegraphTicks && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                passiveNovaState = PassiveNovaState.CoolingDown;
+                passiveNovaTimer = PassiveNovaCooldownTicks;
+                NPC.netUpdate = true;
+            }
+        }
+
+        void SpawnToxicGasNovaTelegraphBurst()
+        {
+            const int dustCount = 42;
+            for (int i = 0; i < dustCount; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(1.8f, 4.4f);
+                Dust dust = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(10f, 10f),
+                    DustID.Poisoned, velocity, 90, new Color(140, 255, 95), Main.rand.NextFloat(1.15f, 1.65f));
+                dust.noGravity = true;
+                dust.fadeIn = Main.rand.NextFloat(0.65f, 1.05f);
             }
         }
 
@@ -449,14 +647,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 case SpitAttack.ComboC:
                     return new List<(int, Vector2[])>
                     {
-                        (0, TwoSpread),
-                        (40, TwoSpread),
-                        (55, TwoSpread),
-                        (70, TwoSpread),
-                        (85, TwoSpread),
-                        (100, TwoSpread),
-                        (115, TwoSpread),
-                        (130, TwoSpread),
+                        (0, ComboCNearSpread),
+                        (40, ComboCMediumSpread),
+                        (55, ComboCFarSpread),
+                        (70, ComboCFarthestSpread),
+                        (85, ComboCMediumSpread),
+                        (100, ComboCNearSpread),
+                        (115, ComboCFarSpread),
+                        (130, ComboCFarthestSpread),
                     };
 
                 // Sticky Spit: 8 single shots, 5 ticks apart, fanned for ground/wall/ceiling coverage.
@@ -546,40 +744,47 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 Vector2 aimPoint = frozenTarget + offset;
                 Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, aimPoint, currentSpeed, currentGravity);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, currentProjType, currentDamage, 0f, Main.myPlayer, currentGravity);
+                float cloudDamageTicks = activeSpit == SpitAttack.ComboB
+                    ? Projectiles.Enemy.ElandVenomSplash.ComboBDamageTicks
+                    : 0f;
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, currentProjType,
+                    currentDamage, 0f, Main.myPlayer, currentGravity, cloudDamageTicks);
             }
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f }, NPC.Center);
         }
 
         // ================================================================================
-        //  Toxic Gas Nova — close range only. Telegraph (60 ticks, a full-radius pulsing dust ring +
-        //  matching green shader glow via ToxicGasNovaGlow, both showing the true blast size the whole
-        //  time) ends in a poison fog explosion filling the entire 400px radius: an instant scattered
-        //  burst + damage/12s Poisoned to whoever's still inside, followed by a few seconds of lingering
-        //  fog (ToxicGasNovaFog) that keeps poisoning anyone who walks into it afterward.
+        //  Toxic Gas Nova: close range only. Telegraph (60 ticks, one green poison-dust burst from
+        //  Eland's centre) ends in a poison fog explosion filling the entire 400px radius. The nova
+        //  itself never deals a hit; ToxicGasNovaFog owns the tiered debuff while a player remains in it.
         // ================================================================================
         void UpdateToxicGasNovaFiring(Player target)
         {
             if (spitTimer == 0)
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < Main.maxPlayers; i++)
-                    {
-                        Player blastTarget = Main.player[i];
-                        if (!blastTarget.active || blastTarget.dead || NPC.Distance(blastTarget.Center) > NovaRadius + 20f)
-                            continue;
+                DetonateToxicGasNova();
+            }
 
-                        int hitDir = blastTarget.Center.X < NPC.Center.X ? -1 : 1;
-                        blastTarget.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), Tiered(30, 50, 70), hitDir, dodgeable: true);
-                        blastTarget.AddBuff(BuffID.Poisoned, 12 * 60, false);
-                    }
+            spitTimer++;
+            if (spitTimer >= 20) // brief linger so the pop is visible before returning to idle
+            {
+                FinishAttack();
+            }
+        }
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.Enemy.ToxicGasNovaFog>(), Tiered(20, 40, 60), 0f, Main.myPlayer);
-                }
+        // Shared by the hostile close-range attack and the passive wandering release. The visual
+        // telegraph and detonation are non-damaging: the spawned fog applies its debuff by occupancy.
+        void DetonateToxicGasNova()
+        {
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.ToxicGasNovaFog>(), 0, 0f, Main.myPlayer);
+            }
 
-                // Instant "boom": dust scattered across the WHOLE disc, not just the ring edge.
+            if (Main.netMode != NetmodeID.Server)
+            {
+                // Instant "boom": dust scattered across the whole disc, not just the ring edge.
                 for (int i = 0; i < 48; i++)
                 {
                     Vector2 spot = NPC.Center + Main.rand.NextVector2Circular(NovaRadius, NovaRadius);
@@ -588,12 +793,6 @@ namespace tsorcRevamp.NPCs.Enemies
                     Main.dust[dust].velocity = Main.rand.NextVector2Circular(1.2f, 1.2f);
                 }
                 SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.6f }, NPC.Center);
-            }
-
-            spitTimer++;
-            if (spitTimer >= 20) // brief linger so the pop is visible before returning to idle
-            {
-                FinishAttack();
             }
         }
 
@@ -699,11 +898,43 @@ namespace tsorcRevamp.NPCs.Enemies
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("ElandGore3").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("ElandGore2").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("ElandGore3").Type, 1f);
+                SpawnDeathBloodDust();
             }
             // Drops commented out
 
             // Death burst: a ring of poison gas puffs (double-size PoisonSmog, see PoisonBurstCloud).
             SpawnPoisonBurst(NPC.Center);
+        }
+
+        // Dense but tile-scale-safe death spray: 500 requested blood motes at 0.55-1.0 scale
+        // (1.2 maximum with vanilla dust jitter). Blood retains gravity so this reads as gore,
+        // not a hovering red cloud; Terraria substitutes clouds when Blood & Gore is disabled.
+        void SpawnDeathBloodDust()
+        {
+            const int bloodDustCount = 500;
+            for (int i = 0; i < bloodDustCount; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2CircularEdge(1f, 1f);
+                Vector2 position = NPC.Center + Main.rand.NextVector2Circular(NPC.width * 0.45f, NPC.height * 0.35f);
+                Vector2 velocity = direction * Main.rand.NextFloat(2.8f, 12.4f) + NPC.velocity * 0.18f;
+                Dust.NewDustPerfect(position, DustID.Blood, velocity, 40, default, Main.rand.NextFloat(0.55f, 1f));
+            }
+        }
+
+        // A hit sprays away from the impact direction with an upward bias, then gravity pulls the
+        // individual motes down. It is visual-only and intentionally independent of damage amount.
+        void SpawnHitBloodDust(int hitDirection)
+        {
+            const int bloodDustCount = 15;
+            int direction = hitDirection == 0 ? NPC.direction : hitDirection;
+            Vector2 sprayDirection = new Vector2(direction, -0.45f).SafeNormalize(Vector2.UnitY);
+            for (int i = 0; i < bloodDustCount; i++)
+            {
+                Vector2 position = NPC.Center + Main.rand.NextVector2Circular(NPC.width * 0.35f, NPC.height * 0.3f);
+                Vector2 velocity = sprayDirection.RotatedByRandom(0.8f) * Main.rand.NextFloat(1.1f, 4.2f)
+                    + NPC.velocity * 0.12f;
+                Dust.NewDustPerfect(position, DustID.Blood, velocity, 55, default, Main.rand.NextFloat(0.5f, 0.9f));
+            }
         }
     }
 }

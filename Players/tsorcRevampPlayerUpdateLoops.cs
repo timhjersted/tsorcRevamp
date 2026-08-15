@@ -179,6 +179,7 @@ namespace tsorcRevamp
         public float FallDist;
         public float fallStartY;
         public int fallStart_old = -1;
+        private float lastWingFallGravityDirection = 1f;
 
         public int JaggedFlatCritDmgBonus = 0;
         public int RashBadLifeRegenPerSec = 0;
@@ -2197,7 +2198,7 @@ namespace tsorcRevamp
                         || isSeath;
                     if (hasSuppressedWings)
                     {
-                        int suppressedWingTime = isSeath ? 180 : 90; // 1.5s, or 3s for Wings of Seath
+                        int suppressedWingTime = isSeath ? SoulsModeMobility.WingsOfSeathSuppressedFlightTime : 90; // 1.5s, or 3s for Wings of Seath
                         Player.wingTimeMax = Math.Min(Player.wingTimeMax, suppressedWingTime);
                         if (Player.wingTime > Player.wingTimeMax)
                         {
@@ -2600,15 +2601,74 @@ namespace tsorcRevamp
 
             return LangUtils.GetTextValue("DeathText.Tip") + text;
         }
+        internal static bool IsSeathWingFallImmune(Player player)
+        {
+            return player.controlDown
+                && player.equippedWings != null
+                && player.equippedWings.type == ModContent.ItemType<Items.Accessories.Mobility.Wings.WingsOfSeath>();
+        }
+
+        internal static bool IsWingFallProtected(Player player)
+        {
+            bool activelyGliding = player.controlJump
+                && player.velocity.Y > 0f
+                && player.wingsLogic > 0;
+            bool activelyHovering = player.controlJump
+                && player.TryingToHoverDown
+                && player.wingTime > 0f
+                && player.wingsLogic > 0
+                && !player.merman;
+
+            return player.GetModPlayer<tsorcRevampPlayer>().SlowfallWingActive
+                || activelyGliding
+                || activelyHovering
+                || IsSeathWingFallImmune(player);
+        }
+
+        internal static int GetPredictedFallDamage(Player player)
+        {
+            if (player.noFallDmg || player.velocity.Y * player.gravDir <= 0f)
+            {
+                return 0;
+            }
+
+            int safeFallDistance = 25 + player.extraFall;
+            int fallDistance = ((int)(player.position.Y / 16f) - player.fallStart) * (int)player.gravDir;
+            int rawDamage = Math.Max(0, fallDistance - safeFallDistance) * 10;
+            return player.equippedWings != null ? rawDamage / 2 : rawDamage;
+        }
+
         public override void PreUpdateMovement()
         {
             // This is the last tModLoader player hook before vanilla resolves collision and fall damage.
             // Wings normally set noFallDmg for their entire equipped duration; retain it only while the
-            // player is actively gliding downward (or has the Wings of Seath slow-fall toggle enabled).
-            bool activelyGliding = Player.controlJump
-                && Player.velocity.Y > 0f
-                && Player.wingsLogic > 0;
-            Player.noFallDmg = SlowfallWingActive || activelyGliding;
+            // player actively glides or hovers, or has the Wings of Seath slow-fall toggle enabled.
+            Player.noFallDmg = IsWingFallProtected(Player);
+
+            // Gravity Alignment can reverse gravity while the player already has a vertical velocity.
+            // That makes the previous ascent look like a new descent to vanilla's fall-distance counter
+            // unless the baseline is re-armed at the exact direction change.
+            bool gravityDirectionChanged = lastWingFallGravityDirection != Player.gravDir;
+            lastWingFallGravityDirection = Player.gravDir;
+
+            // Winged players can fall 15 additional tiles before the intentional wing fall-damage
+            // penalty begins. This stacks with vanilla accessory bonuses such as Frog Leg.
+            if (Player.equippedWings != null)
+            {
+                Player.extraFall += 15;
+
+                // The wing penalty must measure only the current unsoftened descent. Vanilla wings
+                // never needed this because they always negated fall damage, but after gliding,
+                // hovering, or ascending the old fallStart could otherwise be carried into a later fall.
+                bool wingFlightInputActive = Player.controlJump
+                    && Player.wingsLogic > 0
+                    && Player.wingTime > 0f;
+                if (gravityDirectionChanged || Player.velocity.Y * Player.gravDir <= 0f || wingFlightInputActive || IsWingFallProtected(Player))
+                {
+                    Player.fallStart = (int)(Player.position.Y / 16f);
+                    Player.fallStart2 = Player.fallStart;
+                }
+            }
 
             if (ImpaleFreezeTimer > 0)
             {

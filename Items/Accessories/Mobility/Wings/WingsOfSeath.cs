@@ -83,7 +83,10 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             }
             if (SoulsModeMobility.Enabled(Main.LocalPlayer))
             {
-                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitWingsOfSeath", SoulsModeMobility.WingsOfSeathRunSpeed, SoulsModeMobility.WingsOfSeathFlightSpeed, SoulsModeMobility.WingsOfSeathHoverFlightSpeed, SoulsModeMobility.WingsOfSeathFlightTime / 60)));
+                int flightTime = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().Suppressed
+                    ? SoulsModeMobility.WingsOfSeathSuppressedFlightTime
+                    : SoulsModeMobility.WingsOfSeathFlightTime;
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitWingsOfSeath", SoulsModeMobility.WingsOfSeathRunSpeed, SoulsModeMobility.WingsOfSeathFlightSpeed, SoulsModeMobility.WingsOfSeathHoverFlightSpeed, flightTime / 60)));
             }
         }
 

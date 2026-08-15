@@ -7,9 +7,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     // The lingering fog left behind when Eland's Toxic Gas Nova detonates. It is no longer a
     // fully-formed cloud that simply fades: it EXPANDS out of Eland over four seconds, holds at full
-    // size for four more, then dissipates over three - and it stops damaging one second before it
-    // finishes fading, so the tail end of the visual is safe to walk through. That growth window is
-    // the counterplay: you can see the edge coming and outrun it.
+    // size for four more, then dissipates over three. It has no direct hit damage: being within its
+    // active volume refreshes a tiered poison/acid-venom debuff, while the final visual wisps are safe.
     //
     // Collision is a true circle against the *current animated* radius (Colliding below) rather than
     // the square Projectile hitbox, so it only ever hits someone genuinely inside the visible gas.
@@ -25,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         const int GrowTicks = 4 * 60;      // expand out of Eland
         const int HoldTicks = 4 * 60;      // full size
         const int FadeTicks = 3 * 60;      // dissipate
-        const int DamageStopTicks = GrowTicks + HoldTicks + 2 * 60; // harmless for the last second
+        const int DebuffStopTicks = GrowTicks + HoldTicks + 2 * 60; // harmless for the last second
         const int TotalTicks = GrowTicks + HoldTicks + FadeTicks;
 
         int Age => TotalTicks - Projectile.timeLeft;
@@ -47,13 +46,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             // Kept at the maximum extent for broadphase; the real hit-test is the circle below.
             Projectile.width = Diameter;
             Projectile.height = Diameter;
-            Projectile.hostile = true;
+            Projectile.hostile = false;
             Projectile.friendly = false;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.hide = false; //transparent placeholder; shader is drawn in PreDraw
             Projectile.light = 0.4f;
+            Projectile.damage = 0;
             Projectile.timeLeft = TotalTicks;
         }
 
@@ -71,7 +71,25 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             Lighting.AddLight(Projectile.Center, 0.1f, 0.4f, 0.1f);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient && Age < DebuffStopTicks)
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player target = Main.player[i];
+                    if (target.active && !target.dead && IsInsideCloud(target.Hitbox))
+                    {
+                        target.AddBuff(NovaDebuffType, NovaDebuffDuration, false);
+                    }
+                }
+            }
         }
+
+        internal static int NovaDebuffType => Main.hardMode ? BuffID.Venom : BuffID.Poisoned;
+
+        internal static int NovaDebuffDuration => !Main.hardMode
+            ? 20 * 60
+            : tsorcRevampWorld.SuperHardMode ? 15 * 60 : 10 * 60;
 
         public override bool PreDraw(ref Color lightColor)
         {
@@ -83,23 +101,21 @@ namespace tsorcRevamp.Projectiles.Enemy
             return true;
         }
 
-        // Harmless for the final second of the dissipate, so the last wisps can't chip you.
-        public override bool? CanDamage() => Age < DamageStopTicks;
+        // This field applies its debuff manually in AI, never Terraria hit damage.
+        public override bool? CanDamage() => false;
 
         // True circular hit-test against the CURRENT radius instead of the square AABB, so only
         // players genuinely inside the visible gas (not just inside its bounding box) take the hit.
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+            => IsInsideCloud(targetHitbox);
+
+        bool IsInsideCloud(Rectangle targetHitbox)
         {
             float radius = CurrentRadius;
             Vector2 closest = Vector2.Clamp(Projectile.Center,
                 new Vector2(targetHitbox.Left, targetHitbox.Top),
                 new Vector2(targetHitbox.Right, targetHitbox.Bottom));
             return Vector2.DistanceSquared(Projectile.Center, closest) <= radius * radius;
-        }
-
-        public override void OnHitPlayer(Player target, Player.HurtInfo info)
-        {
-            target.AddBuff(BuffID.Poisoned, 12 * 60, false);
         }
     }
 }

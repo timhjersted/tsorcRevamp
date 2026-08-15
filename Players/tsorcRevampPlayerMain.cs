@@ -529,6 +529,13 @@ namespace tsorcRevamp
 
         public override bool ImmuneTo(PlayerDeathReason damageSource, int cooldownCounter, bool dodgeable)
         {
+            // Seath's wings deliberately use Down to fast-fall. Holding it is always an intentional
+            // attempt to control the descent, so it fully negates ordinary fall damage.
+            if (damageSource.SourceOtherIndex == 0 && IsSeathWingFallImmune(Player))
+            {
+                return true;
+            }
+
             if (Player == Main.LocalPlayer)
             {
                 if (Player.HasBuff(ModContent.BuffType<Invincible>()))
@@ -612,6 +619,13 @@ namespace tsorcRevamp
 
         public override void ModifyHurt(ref Player.HurtModifiers modifiers)
         {
+            // The custom wing fall-damage rule should be less punishing than vanilla fall damage.
+            // SourceOtherIndex 0 is Terraria's ordinary fall-damage source.
+            if (modifiers.DamageSource != null && modifiers.DamageSource.SourceOtherIndex == 0 && Player.equippedWings != null)
+            {
+                modifiers.FinalDamage *= 0.5f;
+            }
+
             if (!ModContent.GetInstance<tsorcRevampConfig>().UseOriginalPlayerHurtSounds)
             {
                 modifiers.DisableSound();

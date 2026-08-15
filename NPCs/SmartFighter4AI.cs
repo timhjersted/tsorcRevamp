@@ -3017,7 +3017,7 @@ namespace tsorcRevamp.NPCs
         // <=1-tile step or half-block, instantly lift the physics position onto it and offset gfxOffY so the
         // SPRITE glides up over the next few frames instead of jumping or snapping. Call each grounded frame
         // after velocity.X is set. Mirrors how the player and vanilla walking enemies handle small bumps.
-        private static void AutoStepUp(NPC npc)
+        internal static void AutoStepUp(NPC npc)
         {
             if (npc.velocity.Y < 0f) return; // only while grounded / descending, like vanilla
             int offset = 0;

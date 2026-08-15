@@ -3674,10 +3674,10 @@ namespace tsorcRevamp.NPCs
         //BLOCKED NPCS
         public override void AI(NPC npc)
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-            {
-                //Block vanilla enemies in certain regions/conditions
-                if (Main.hardMode)
+            // The curated vanilla-spawn blocklist applies to both Adventure and sandbox worlds.
+            // Adventure-only town-NPC protection remains explicitly gated below.
+            //Block vanilla enemies in certain regions/conditions
+            if (Main.hardMode)
                 {
                     if (npc.type == NPCID.AngryBones //All these pre-hardmode dungeon spawns take up a million spawn slots and die in one hit
                         || npc.type == NPCID.DarkCaster
@@ -3816,7 +3816,7 @@ namespace tsorcRevamp.NPCs
                         }
                     }
 
-            if (npc.townNPC && npc.friendly)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && npc.townNPC && npc.friendly)
                 {
                     bool gwynAlive = NPC.AnyNPCs(ModContent.NPCType<Gwyn>());
 
@@ -3833,7 +3833,6 @@ namespace tsorcRevamp.NPCs
                         npc.lifeRegen = 6;
                     }
                 }
-            }
         }
         public override bool PreAI(NPC npc)
         {

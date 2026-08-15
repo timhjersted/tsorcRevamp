@@ -125,6 +125,56 @@ namespace tsorcRevamp
         }
     }
 
+    // Fall danger appears as a warm cached afterimage trail. Each echo represents a higher
+    // predicted landing hit, based on the exact fall-distance calculation used by gameplay.
+    class tsorcRevampPlayerFallDamageDrawLayer : PlayerDrawLayer
+    {
+        public override Position GetDefaultPosition()
+        {
+            return new AfterParent(PlayerDrawLayers.FrontAccFront);
+        }
+
+        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+        {
+            return drawInfo.drawPlayer.whoAmI == Main.myPlayer && !drawInfo.drawPlayer.dead;
+        }
+
+        protected override void Draw(ref PlayerDrawSet drawInfo)
+        {
+            Player player = drawInfo.drawPlayer;
+            int predictedDamage = tsorcRevampPlayer.GetPredictedFallDamage(player);
+            if (predictedDamage <= 0 || player.availableAdvancedShadowsCount <= 0)
+            {
+                return;
+            }
+
+            int trailCount = Math.Min(6, 1 + predictedDamage / 50);
+            int cacheCount = drawInfo.DrawDataCache.Count;
+            Color dangerColor = new Color(255, 95, 45);
+
+            for (int trailIndex = trailCount - 1; trailIndex >= 0; trailIndex--)
+            {
+                // Consecutive samples keep the echoes compact, like Leonhard's dash trail,
+                // instead of spreading them into detached silhouettes up the fall path.
+                int shadowIndex = trailIndex + 1;
+                if (shadowIndex > player.availableAdvancedShadowsCount)
+                {
+                    continue;
+                }
+
+                Vector2 offset = player.GetAdvancedShadow(shadowIndex).Position - player.position;
+                float opacity = 0.08f + 0.025f * (trailCount - trailIndex);
+                for (int drawIndex = 0; drawIndex < cacheCount; drawIndex++)
+                {
+                    DrawData data = drawInfo.DrawDataCache[drawIndex];
+                    Color color = Color.Lerp(data.color, dangerColor, 0.55f) * opacity;
+                    Main.EntitySpriteDraw(data.texture, data.position + offset, data.sourceRect, color,
+                        data.rotation, data.origin, data.scale, data.effect, 0);
+                }
+            }
+        }
+    }
+
     class tsorcRevampPlayerReflectionDrawLayers : PlayerDrawLayer
     {
         public override Position GetDefaultPosition()

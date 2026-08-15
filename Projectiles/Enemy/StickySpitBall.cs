@@ -39,16 +39,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            // Short + fat: was 60x20, which read as a thin green line rather than a blob of poison liquid.
-            EnemyVFX.DrawElandVenomProjectile(Projectile.Center, Projectile.velocity, new Vector2(34f, 27f), 0.9f);
-            return true;
-        }
-
         public override void OnKill(int timeLeft)
         {
-            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.ElandVenomImpact);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
