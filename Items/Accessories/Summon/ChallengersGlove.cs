@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
             player.GetAttackSpeed(DamageClass.Summon) += SummonAttackSpeed / 100f;
             player.whipRangeMultiplier += WhipRangeIncrease / 100f;
             player.aggro += 400;
-            player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize = WhipCritHitboxSize;
+            player.GetModPlayer<tsorcRevampPlayer>().WhipTipHitboxSize = WhipCritHitboxSize;
         }
         public override void AddRecipes()
         {

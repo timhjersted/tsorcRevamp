@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.scale = 1f;
             Item.rare = ModContent.RarityType<OrangeRed>();
             Item.shootSpeed = 44;
-            Item.mana = 40;
+            Item.mana = 50;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.DyingStarHoldout>();
@@ -41,20 +41,21 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
         public override void ModifyManaCost(Player player, ref float reduce, ref float mult)
         {
-            player.manaRegenDelay = 180;
-            mult = 0;
+            if (player.altFunctionUse == 2)
+            {
+                mult = 0.8f;
+            }
         }
 
         public override bool CanUseItem(Player player)
         {
-            int manaCost = (int)(50 * player.manaCost);
-            if (player.altFunctionUse == 2)
-            {
-                manaCost = (int)(5 * player.manaCost);
-            }
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            float staminaCost = (30 * modPlayer.WeaponStaminaMult) / player.GetWeaponAttackSpeed(player.HeldItem);
+            int manaCost = player.GetManaCost(player.HeldItem);
             if (player.statMana <= manaCost)
             {
-                if (!player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
+                if (!player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking && player.manaFlower)
                 {
                     MethodSwaps.TryUseQuickMana(player);
                 }
@@ -62,6 +63,11 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
                 {
                     return false;
                 }
+            }
+
+            if ((player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < staminaCost))
+            {
+                return false;
             }
             return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.DyingStarHoldout>()] <= 0;
         }

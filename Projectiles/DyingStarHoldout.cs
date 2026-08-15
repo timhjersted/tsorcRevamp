@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -22,6 +23,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.Magic;
             Projectile.friendly = false;
             Projectile.hostile = false;
+            Projectile.ContinuouslyUpdateDamageStats = true;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -29,12 +31,17 @@ namespace tsorcRevamp.Projectiles
             target.AddBuff(BuffID.Daybreak, 300);
         }
 
+        private bool FirstShot = true;
+
         int charge = 0;
         int altFunctionTimer = 0;
         public override void AI()
         {
             altFunctionTimer++;
             Player player = Main.player[Projectile.owner];
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            int manaCost = player.GetManaCost(player.HeldItem);
+            float staminaCost = (30 * modPlayer.WeaponStaminaMult) / player.GetWeaponAttackSpeed(player.HeldItem);
             Vector2 rrp = player.RotatedRelativePoint(player.MountedCenter, true);
             float trueChargeTime = (MaxCharge * (player.HeldItem.useTime / 5f));
             charge++;
@@ -113,22 +120,26 @@ namespace tsorcRevamp.Projectiles
                         Dust.NewDustPerfect(player.Center + dustOffset, DustID.InfernoFork, diff, 200, default, 1.8f).noGravity = true;
                     }
 
-                    player.statMana -= (int)(50 * player.manaCost);
+                    if (!FirstShot)
+                    {
+                        player.statMana -= manaCost;
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45);
                     if (Main.myPlayer == Projectile.owner)
                     {
                         Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision, Vector2.Zero, ModContent.ProjectileType<Projectiles.FireballInferno2>(), Projectile.damage, 0, Projectile.owner);
+                        FirstShot  = false;
                     }
 
                     //Drain Souls-mode players' stamina (Unkindled pays 75%)
-                    if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
+                    if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina && !player.HasBuff(ModContent.BuffType<ManaBurn>()))
                     {
-                        player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30 * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
+                        player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= staminaCost;
                     }
                 }
             }
             //If not, move up the animation sheet as the weapon charges
-            else if (player.altFunctionUse == 2 && altFunctionTimer % 4 == 0 && player.statMana >= 5)
+            else if (player.altFunctionUse == 2 && altFunctionTimer % 4 == 0)
             {
                 float radius = 64;
 
@@ -150,16 +161,16 @@ namespace tsorcRevamp.Projectiles
                 Vector2 velocity = Projectile.velocity;
                 velocity.Normalize();
                 velocity *= 30;
-                player.statMana -= (int)(5 * player.manaCost);
                 if (Main.myPlayer == Projectile.owner)
                 {
                     Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Projectile.damage / 30, 0, Projectile.owner).rotation = velocity.ToRotation() + MathHelper.PiOver2;
+                    FirstShot = false;
                 }
 
                 //Drain Souls-mode players' stamina (Unkindled pays 75%)
-                if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
+                if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina && !player.HasBuff(ModContent.BuffType<ManaBurn>()))
                 {
-                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 6 * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
+                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= staminaCost / 5f;
                 }
             }
 
@@ -177,12 +188,8 @@ namespace tsorcRevamp.Projectiles
                 {
                     stillInUse = false;
                 }
-
-                if (player.altFunctionUse == 2 && player.statMana <= (int)(5 * player.manaCost))
-                {
-                    stillInUse = false;
-                }
-                if (player.altFunctionUse != 2 && player.statMana <= (int)(50 * player.manaCost))
+                var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                if (player.altFunctionUse != 2 && ((player.statMana <= manaCost && !FirstShot) || staminaPlayer.staminaDebt > 0))
                 {
                     stillInUse = false;
                 }

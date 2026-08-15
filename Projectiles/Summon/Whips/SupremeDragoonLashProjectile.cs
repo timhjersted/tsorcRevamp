@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.WitherLightning, 0f, 0f, 150, default, 1f);
             if (Main.myPlayer == player.whoAmI && player.ownedProjectileCounts[ModContent.ProjectileType<SupremeDragoonLashTrail>()] == 0)
             {
-                Projectile Trail = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, Projectile.WhipPointsForCollision[points.Count - 1], ModContent.ProjectileType<SupremeDragoonLashTrail>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, 0, player.itemAnimationMax, ChargeTime);
+                Projectile Trail = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, Projectile.WhipPointsForCollision[points.Count - 1], ModContent.ProjectileType<SupremeDragoonLashTrail>(), 0, Projectile.knockBack, Main.myPlayer, 0, player.itemAnimationMax, ChargeTime);
                 player.ownedProjectileCounts[ModContent.ProjectileType<SupremeDragoonLashTrail>()]++; //without this it'd spawn two trails because of extraupdate spawning them in the same tick, before their owned number increases
                 Trail.netUpdate = true;
             }

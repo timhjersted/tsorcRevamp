@@ -114,11 +114,6 @@ namespace tsorcRevamp.Items
             {
                 tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
                 var arcanePlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
-                if (player.HeldItem.DamageType == DamageClass.Magic && arcanePlayer.Enabled &&
-                    staminaPlayer.staminaResourceCurrent <= staminaPlayer.staminaResourceMax2 * arcanePlayer.ManaBurnStaminaThreshold / 100f)
-                {
-                    player.AddBuff(ModContent.BuffType<ManaBurn>(), 2 * 60);
-                }
                 if (staminaPlayer.staminaResourceCurrent <= 0f && !player.HasBuff(ModContent.BuffType<ManaBurn>()))
                 {
                     // No "Tired" floating text — the weapon simply not swinging, plus the empty stamina bar,
@@ -541,53 +536,41 @@ namespace tsorcRevamp.Items
             #region Lethal Tempo
             if ((item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if (modPlayer.BotCLethalTempoStacks < modPlayer.BotCLethalTempoMaxStacks - 1)
+                if (modPlayer.LethalTempoStacks < modPlayer.LethalTempoMaxStacks - 1)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.002f }, player.Center);
                 }
-                else if (modPlayer.BotCLethalTempoStacks == modPlayer.BotCLethalTempoMaxStacks - 1)
+                else if (modPlayer.LethalTempoStacks == modPlayer.LethalTempoMaxStacks - 1)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.003f }, player.Center);
                 }
-                player.AddBuff(ModContent.BuffType<LethalTempo>(), player.GetModPlayer<tsorcRevampPlayer>().BotCLethalTempoDuration * 60);
+                player.AddBuff(ModContent.BuffType<LethalTempo>(), player.GetModPlayer<tsorcRevampPlayer>().LethalTempoDuration * 60);
             }
             #endregion
             #region Conqueror
             if (item.DamageType == DamageClass.SummonMeleeSpeed && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 1 && !hit.Crit)
+                if (modPlayer.ConquerorStacks < modPlayer.ConquerorMaxStacks - 1)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, player.Center);
                 }
-                else if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 2 && hit.Crit)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.008f }, player.Center);
-                }
-                else if (modPlayer.BotCConquerorStacks == modPlayer.BotCConquerorMaxStacks - 1)
+                else if (modPlayer.ConquerorStacks == modPlayer.ConquerorMaxStacks - 1)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
                 }
-                else if (modPlayer.BotCConquerorStacks == modPlayer.BotCConquerorMaxStacks - 2 && hit.Crit)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
-                }
-                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
-                if (hit.Crit)
-                {
-                    player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
-                }
+                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().ConquerorDuration * 60);
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && tsorcRevamp.EnemiesOOA.Contains(target.type))
             {
-                if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 1)
+                if (modPlayer.ConquerorStacks < modPlayer.ConquerorMaxStacks - 1)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, player.Center);
                 }
-                else if (modPlayer.BotCConquerorStacks == modPlayer.BotCConquerorMaxStacks - 1)
+                else if (modPlayer.ConquerorStacks == modPlayer.ConquerorMaxStacks - 1)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
                 }
-                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
+                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().ConquerorDuration * 60);
             }
             #endregion
             // Pick/axe/hammer combat surcharge: the swing itself already paid ToolSwingStaminaMult in

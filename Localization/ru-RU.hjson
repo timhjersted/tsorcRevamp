@@ -248,8 +248,8 @@ Mods: {
 				WhipKnockback: Увеличиват отбрасывание хлыстом
 				AtkSpeed: Увеличивает скорость атаки миньонов на {0}%
 				WhipDmg: Увеличивает урон хлыста на {0}%
-				WhipCritDmg: Увеличивает урон крит. ударов хлыста на {0}%
-				WhipCritHitbox: Увеличивает хитбокс наконечника хлыста для нанесения крит. удара в {0}x
+				// WhipTipDmg: Increases the damage of tip hits by {0}%
+				// WhipTipHitbox: Increases the Whip Tip Hitbox Size to {0}x
 				TagStrength: Увеличивает урон от метки призыва, пробивание брони, и крит. урон на {0}%
 				BadTagStrengthMult: Мультипликативно уменьшает урон от метки призыва, пробивание брони, и крит. урон на {0}%
 				TagDuration: Увеличивает продолжительность действия метки призыва на {0}%
@@ -4394,6 +4394,11 @@ Mods: {
 				// State_Classic: "[c/aaaaaa:Currently:] Classic [c/aaaaaa:— click to become] [c/6d8827:Unkindled]"
 				// State_Unkindled: "[c/6d8827:Currently:] Unkindled [c/aaaaaa:— click to take up the] [c/dd3333:Curse]"
 				// State_BotC: "[c/dd3333:Currently:] Bearer of the Curse [c/aaaaaa:— click to return to] [c/aaaaaa:Classic]"
+				/* UnkindledCerulean:
+					'''
+					[c/ea00ea:mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time.]
+					[c/ea00ea:Mana Potions still work and resting at a Bonfire will restore mana, drinking the Cerulean Flask also cures Mana Sickness.]
+					''' */
 				Melee:
 					'''
 					[c/ff8400:Базовая скорость атаки в ближнем бою снижена до {0}%.]
@@ -9912,6 +9917,17 @@ Mods: {
 					Every ranged shot that connects raises your accuracy by {0}%; every one that misses lowers it by {1}%.
 					At full accuracy you gain {2}% critical strike chance and {3}% critical damage.
 					Currently [c/deb887:{4}%] accuracy: [c/ea00ea:+{5}% crit chance, +{6}% crit damage]
+					''' */
+				/* OldDarksignTooltip:
+					'''
+						[c/22dd96:Ranged critical strike chance is now dependant on your accuracy,]
+						[c/22dd96:missing shots will decrease it, while hitting shots will increase it.]
+						[c/22dd96:A ranged projectile only needs to hit once to count as hit, ]
+						[c/22dd96:can't increase your accuracy multiple times and can also only miss once.]
+						[c/22dd96:Homing projectiles can't increase your accuracy.]
+						[c/22dd96:A hit will increase your accuracy by {0}%, while missing will decrease your accuracy by {1}%.]
+						[c/22dd96:You can gain up to {2}% crit chance flat and a {3}x multiplier at 100% accuracy,]
+						[c/22dd96: or have a {4}x multiplier to your total crit at 0% accuracy.]
 					''' */
 			}
 

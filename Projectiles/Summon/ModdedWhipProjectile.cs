@@ -221,15 +221,11 @@ namespace tsorcRevamp.Projectiles.Summon
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[Main.myPlayer];
-            Vector2 WhipTip = WhipTipBase * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
+            Vector2 WhipTip = WhipTipBase * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipTipHitboxSize;
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (MaxChargeTime > 0)
             {
                 modifiers.SourceDamage *= MathF.Max(ChargeTime / (MaxChargeTime / MaxChargeDmgMultiplier), 1f);
-            }
-            if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
-            {
-                modifiers.SetCrit();
             }
             CustomModifyHitNPC(target, ref modifiers);
         }

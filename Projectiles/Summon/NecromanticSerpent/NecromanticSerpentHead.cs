@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Summon.NecromanticSerpent
             ProjectileID.Sets.MinionSacrificable[Type] = false;
             ProjectileID.Sets.CultistIsResistantTo[Type] = true;
         }
-        public static DamageClass DamageType => DamageClass.Magic;
+        public static DamageClass DamageType => DamageClass.MagicSummonHybrid;
         public Projectile tail => body[body.Length - 1];
         public Projectile[] body;
         public float[] oldRotations;

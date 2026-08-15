@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Linq;
 using Humanizer;
 using Terraria;
 using Terraria.GameContent.UI.ResourceSets;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs;
 using tsorcRevamp.Items.Accessories.Magic;
 using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.VanillaItems;
@@ -35,10 +37,12 @@ public class ArcaneSorceryPlayer : ModPlayer
 
     public const float BaseCeruleanFlaskMaxManaScalingMult = 1.6f;
     public float CeruleanFlaskMaxManaScalingMult = 1f;
+    
     public const float BaseCeruleanFlatManaGainMult = 3f;
     public float CeruleanFlatManaGainMult = 1f;
-    public float MagicDamageAmp = 20f;
-    public float MagicAttackSpeedAmp = 20f;
+    
+    public float ManaBurnMagicDamageAmp = 20f;
+    public float ManaBurnMagicAttackSpeedAmp = 20f;
 
     public override void PostUpdateBuffs()
     {
@@ -52,11 +56,16 @@ public class ArcaneSorceryPlayer : ModPlayer
     public override void PostUpdateEquips()
     {
         if (Enabled)
-        {
-            if (!Player.HasBuff(BuffID.ManaSickness) && ManaBurn)
+        {            
+            if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
             {
-                Player.GetDamage(DamageClass.Magic) *= 1f + (MagicDamageAmp / 100f);
-                Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (MagicAttackSpeedAmp / 100f);
+                Player.manaRegenDelay = 100; //effectively disables mana regen outside of bonfires
+            }
+            
+            if (ManaBurn)
+            {
+                Player.GetDamage(DamageClass.Magic) *= 1f + (ManaBurnMagicDamageAmp / 100f);
+                Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (ManaBurnMagicAttackSpeedAmp / 100f);
             }
 
             var tsorcPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
@@ -154,18 +163,14 @@ class ManaStarDrawAmount
         int trueMaxMana = player.statManaMax2;
         int trueMana = player.statMana;
         
-        if (arcaneSorceryPlayer.Enabled)
-        { //turn mana stats to "vanilla-like values" before orig so the proper amount of mana stars/bars are drawn
-            player.statMana = (int)(trueMana / (1f + modPlayer.MaxManaAmplifier / 100f));
-            player.statManaMax2 = (int)(trueMaxMana / (1f + modPlayer.MaxManaAmplifier / 100f));
-        }
+        //turn mana stats to "vanilla-like values" before orig so the proper amount of mana stars/bars are drawn
+        player.statMana = (int)(trueMana / (1f + modPlayer.MaxManaAmplifier / 100f));
+        player.statManaMax2 = (int)(trueMaxMana / (1f + modPlayer.MaxManaAmplifier / 100f));
         
         orig(ref self, player);
         
-        if (arcaneSorceryPlayer.Enabled)
-        { //turn mana stats to back real stats after drawing is done
-            player.statManaMax2 = trueMaxMana;
-            player.statMana = trueMana;
-        }
+        //turn mana stats to back real stats after drawing is done
+        player.statManaMax2 = trueMaxMana;
+        player.statMana = trueMana;
     }
 }

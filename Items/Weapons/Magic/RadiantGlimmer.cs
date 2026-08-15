@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.rare = ModContent.RarityType<OrangeRed>();
             Item.shootSpeed = (float)20;
             Item.crit = 2;
-            Item.mana = 100;
+            Item.mana = 30;
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
@@ -106,6 +106,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             dustCount = 100;
             float dustRadius = frame.Width / 2.5f;
+            position += new Vector2(-114, -60);
             if (psuedoDusts == null || psuedoDusts.Length != dustCount)
             {
                 psuedoDusts = new PsuedoDust[dustCount];
@@ -172,6 +173,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Lighting.AddLight(Item.Center, new Vector3(0, 0.4f, 1f));
 
+            Vector2 itemPosition = Item.position + new Vector2(267, 125);
+
             float lightingQuality = 50;
             for (float i = 0; i < lightingQuality; i++)
             {
@@ -187,7 +190,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 psuedoDusts = new PsuedoDust[dustCount];
                 for (int i = 0; i < dustCount - 1; i++)
                 {
-                    Vector2 drawPosition = Item.position;
+                    Vector2 drawPosition = itemPosition;
                     if (Main.rand.NextBool(5))
                     {
                         drawPosition += Main.rand.NextVector2Circular(dustRadius, dustRadius);
@@ -207,8 +210,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 ScissorTestEnable = true
             };
 
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
+            //spriteBatch.End();
+            //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
 
             {
                 int i = 0;
@@ -218,7 +221,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
                     psuedoDusts[i].size -= 0.01f;
                     if (psuedoDusts[i].size <= 0)
                     {
-                        Vector2 drawPosition = Item.position;
+                        Vector2 drawPosition = itemPosition;
                         if (Main.rand.NextBool(5))
                         {
                             psuedoDusts[i] = new PsuedoDust(drawPosition + Main.rand.NextVector2Circular(dustRadius, dustRadius), Main.rand.NextFloatDirection(), 2 * Main.rand.NextFloat() / 1.4f, DustID.PurificationPowder, Main.rand.Next(0, 3));
@@ -232,10 +235,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 } while (i < dustCount - 1);
 
             }
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
+            //spriteBatch.End();
+            //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
 
-            return false;
+            return true;
         }
 
         public override void AddRecipes()
@@ -276,7 +279,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public PsuedoDust(Vector2 Center, float Rotation, float Size, int Type, int Style, Color? LightingColor = null)
         {
-            center = Center;
+            center = Center + new Vector2(100, 45);
             rotation = Rotation;
             size = Size;
             type = Type;

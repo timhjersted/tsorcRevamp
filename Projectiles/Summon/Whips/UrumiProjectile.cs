@@ -32,7 +32,12 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.ArmorPenetration += Urumi.WhipArmorPen;
-            modifiers.CritDamage *= 1f + (Urumi.CritDamage / 100);
+            Player player = Main.player[Projectile.owner];
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (modPlayer.WhipTipHit(Projectile, Projectile.WhipPointsForCollision, target.Hitbox))
+            {
+                modifiers.SourceDamage += Urumi.TipDamage / 100;
+            }
         }
         public override bool PreDraw(ref Color lightColor)
         {

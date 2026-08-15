@@ -40,10 +40,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10;
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-            Projectile.originalDamage = TerraFallItem.BaseDamage;
-        }
         public override bool? CanCutTiles()
         {
             return false;
@@ -54,8 +50,16 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
         {
             return true;
         }
+
+        private bool AppliedOnSpawn = false;
         public override void AI()
         {
+            if (!AppliedOnSpawn)
+            {
+                Projectile.originalDamage = TerraFallItem.BaseDamage;
+                AppliedOnSpawn = true;
+            }
+            
             List<int> ai156_blacklistedTargets = _ai156_blacklistedTargets;
             Player player = Main.player[Projectile.owner];
             if (player.dead || !player.active)
@@ -255,8 +259,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
                     {
                         num = num2;
                         result = i;
+                        return result; //focus enemies in range that don't have tag debuff yet first without suffering brain damage
                     }
-                    return result;
                 }
             }
             if (ownerMinionAttackTargetNPC != null && ownerMinionAttackTargetNPC.CanBeChasedBy(Projectile))

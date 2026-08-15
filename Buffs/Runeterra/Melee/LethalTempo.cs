@@ -28,20 +28,20 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
         public override void Update(Player player, ref int buffIndex)
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.BotCLethalTempoStacks == 0)
+            if (modPlayer.LethalTempoStacks == 0)
             {
-                modPlayer.BotCLethalTempoStacks = 1;
+                modPlayer.LethalTempoStacks = 1;
             }
             if (player.buffTime[buffIndex] == 1)
             {
-                if (modPlayer.BotCLethalTempoStacks > 1)
+                if (modPlayer.LethalTempoStacks > 1)
                 {
-                    modPlayer.BotCLethalTempoStacks--;
-                    player.buffTime[buffIndex] = (int)(((float)modPlayer.BotCLethalTempoDuration / 6f) * 60f);
+                    modPlayer.LethalTempoStacks--;
+                    player.buffTime[buffIndex] = (int)(((float)modPlayer.LethalTempoDuration / 6f) * 60f);
                 }
                 else
                 {
-                    modPlayer.BotCLethalTempoStacks = 0;
+                    modPlayer.LethalTempoStacks = 0;
                 }
             }
         }
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
             // Use our animation spritesheet.
             Texture2D ourTexture = animatedTexture.Value;
             // Choose the frame to display, here based on constants and the game's tick count.
-            Rectangle ourSourceRectangle = animatedTexture.Frame(verticalFrames: FrameCount, frameY: (int)Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BotCLethalTempoStacks - 1);
+            Rectangle ourSourceRectangle = animatedTexture.Frame(verticalFrames: FrameCount, frameY: (int)Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().LethalTempoStacks - 1);
 
             // Other stuff you can do in this hook
             /*
@@ -90,9 +90,9 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
         public override bool ReApply(Player player, int time, int buffIndex)
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.BotCLethalTempoStacks < modPlayer.BotCLethalTempoMaxStacks)
+            if (modPlayer.LethalTempoStacks < modPlayer.LethalTempoMaxStacks)
             {
-                modPlayer.BotCLethalTempoStacks++;
+                modPlayer.LethalTempoStacks++;
             }
 
             return false;
