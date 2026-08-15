@@ -109,6 +109,12 @@ namespace tsorcRevamp.NPCs
     {
         HighArcPounce,
         DirectPounce,
+        /// <summary>
+        /// DirectPounce's approach and leap, but the LANDING is the attack: a ground slam that emits a
+        /// dodgeable shockwave and staggers whoever it catches. For heavy enemies whose threat is
+        /// commitment rather than speed — the leap is slow and honest, the payoff is the impact.
+        /// </summary>
+        HeavyPounce,
         None
     }
 
@@ -315,6 +321,10 @@ namespace tsorcRevamp.NPCs
         public PounceStyle PounceStyle = PounceStyle.HighArcPounce;
         /// <summary>Color used by the shared high-arc pounce telegraph. Defaults to the legacy white flash.</summary>
         public Color PounceTelegraphColor = Color.White;
+        // HeavyPounce only: set on launch, consumed when the slam lands so the impact fires exactly once.
+        // Not synced — the slam is spawned server-side and its projectile carries itself to clients.
+        public bool HeavyPounceAirborne = false;
+        public int HeavyPounceSlamDamage = 0;
         public Vector2 PounceTarget;
         public int DirectPounceAfterimageTimer;
         public int DirectPounceRecoveryTimer;
@@ -328,6 +338,9 @@ namespace tsorcRevamp.NPCs
         public float DodgeSpeed;
         public int DodgeTotalTicks;
         public bool LastDodgeWasForward;
+        // Client-side visual throttle for EnemyImpactVFX. Gameplay hits still occur at full rate;
+        // only the small decorative dust spray is capped to protect Terraria's shared dust budget.
+        internal int LastEnemyImpactVFXTick = -10;
         // Opt-in for the forward/backward terrain-aware roll planner used by RK/GRK.
         public bool DirectionalDodgeRolls;
         public int FighterPostAttackPauseTimer;
@@ -4926,6 +4939,11 @@ namespace tsorcRevamp.NPCs
         }
         public override void HitEffect(NPC npc, NPC.HitInfo hit)
         {
+            if (!Main.dedServ)
+            {
+                EnemyImpactVFX.Spawn(npc, hit, this);
+            }
+
             Player LocalPlayer = Main.LocalPlayer;
             if (npc.active && !npc.friendly && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)) && npc.life <= 0)
             {

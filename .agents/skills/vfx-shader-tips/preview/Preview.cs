@@ -32,6 +32,7 @@ static class Preview
     // sample the exact game textures. The default preserves the normal in-place workflow.
     static string NoiseRoot => Environment.GetEnvironmentVariable("PREVIEW_NOISE_ROOT") ?? @"..\..\..\..\Textures\Noise\";
     static string TextureRoot => Environment.GetEnvironmentVariable("PREVIEW_TEXTURE_ROOT") ?? @"..\..\..\..\Textures\";
+    static string ProjectRoot => Environment.GetEnvironmentVariable("PREVIEW_PROJECT_ROOT") ?? @"..\..\..\..\";
 
     /// A texture sampled the way the GPU will sample it.
     ///
@@ -128,6 +129,13 @@ static class Preview
     static float length(V2 p) => MathF.Sqrt(p.x * p.x + p.y * p.y);
     static float abs(float v) => MathF.Abs(v);
     static V3 lerp(V3 a, V3 b, float t) => new(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
+    /// HLSL smoothstep, including the descending-edge case (edge0 > edge1), which several shaders
+    /// here rely on to invert a falloff without a separate 1-x.
+    static float smoothstep(float edge0, float edge1, float x)
+    {
+        float t = sat((x - edge0) / (edge1 - edge0));
+        return t * t * (3f - 2f * t);
+    }
     static V2 PixelateShaderUV(V2 uv, int width, int height, float pixelBlockSize = 2f)
     {
         float xBlock = pixelBlockSize / width;
@@ -152,6 +160,12 @@ static class Preview
     // Sampler bindings must match RedKnightVFX.DrawDestinedDeathQuad exactly.
     static Tex MacroSampler, DetailSampler, SolarMacroSampler, SolarDetailSampler, SolarFlameSampler, StoneSampler, CrackSampler, MonolithSampler;
     static Tex ElandPrimarySampler, ElandDetailSampler;
+    // Effects/BlackKnightHexCrystal.fx "Seal" family. Bindings must match
+    // EnemyVFX.DrawBlackKnightHexCrystal: Draw(..., perlinTiled, veinNoise, ...) => s0, s1.
+    static Tex HexPrimarySampler, HexDetailSampler;
+    // Effects/QuaraTideRush.fx. The live helper binds circle to s0 (unused by the procedural
+    // water form) and T_Noise_Wf4 to s1.
+    static Tex QuaraDetailSampler, QuaraCrestPrimarySampler, QuaraWaterPrimarySampler;
 
     static void LoadTextures()
     {
@@ -166,6 +180,11 @@ static class Preview
         CrimsonFlowSampler = new Tex("Turbulence_05-512x512");
         ElandPrimarySampler = new Tex("Voronoi_10-512x512");
         ElandDetailSampler = new Tex("T_CloudNoise_Tiled");
+        HexPrimarySampler = new Tex("T_PerlinNoise_Tiled");
+        HexDetailSampler = new Tex("Vein_07-512x512");
+        QuaraDetailSampler = new Tex("T_Noise_Wf4");
+        QuaraWaterPrimarySampler = new Tex("T_VFX_CircleFit1");
+        QuaraCrestPrimarySampler = new Tex(Path.Combine(ProjectRoot, "Projectiles", "Enemy", "Quara", "QuaraTidalCrest"), previewLocal: true);
     }
 
     // Palettes, copied from the C# helper.
@@ -983,6 +1002,310 @@ static class Preview
         return (color * (energy * alpha), alpha);
     }
 
+    // ---- Effects/BlackKnightHexCrystal.fx : the seal behind the homing crystal ------------------
+    // Palette from EnemyVFX: HexGoldDark(8,4,12) / HexGoldMid(210,140,25) / HexGoldCore(255,215,110).
+    // Call site sizes: dormant 74x74 @ Opacity .74, active 48x40 @ Opacity .90. Progress is
+    // dormantProgress = clamp(timer/60).
+    static readonly V3 HexDark = C(8, 4, 12), HexMid = C(210, 140, 25), HexCore = C(255, 215, 110);
+    static readonly V3 WaterDark = C(5, 25, 52), WaterMid = C(32, 150, 221), WaterCore = C(213, 249, 255);
+
+    // CURRENT shipped Seal(), for side-by-side. Noise only scales BRIGHTNESS here — the silhouette
+    // is a perfect circle at every angle, which is exactly the complaint.
+    static (V3, float) HexSealCurrent(V2 c, int w, int h, float Time, float Progress, float Opacity)
+    {
+        V2 p = new(c.x - .5f, c.y - .5f);
+        float r = length(p);
+        V2 dir = new(p.x / MathF.Max(r, .0005f), p.y / MathF.Max(r, .0005f));
+
+        float n1 = HexDetailSampler.R(dir.x * (.40f + r * .26f) + .5f + Time * .035f, dir.y * (.40f + r * .26f) + .5f - Time * .028f);
+        float n2 = HexPrimarySampler.R(dir.x * (.25f - r * .14f) + .5f - Time * .024f, dir.y * (.25f - r * .14f) + .5f + Time * .019f);
+        float rot = sat(n1 * .85f + n2 * .60f - .24f);
+
+        float radius = .38f + (.24f - .38f) * Progress;
+        float dist = abs(r - radius);
+        float softGlow = smoothstep(.24f, 0f, dist) * (.35f + rot * .65f);
+        float softCenter = smoothstep(radius, 0f, r) * (.20f + rot * .30f);
+        float f = smoothstep(.5f, .05f, r);
+        softGlow *= f; softCenter *= f;
+
+        float body = sat(softCenter + softGlow * .7f);
+        V3 color = lerp(HexDark, HexMid, body);
+        color = lerp(color, HexCore, softGlow * softGlow);
+        float alpha = sat(body * .85f + softGlow * .5f) * Opacity;
+        return (color, alpha);
+    }
+
+    // Plague palette (EnemyVFX.PlagueDark/Mid/Core) — what DrawBlackKnightCurseWard feeds Corona.
+    static readonly V3 PlagueDark = C(10, 6, 16), PlagueMid = C(86, 40, 122), PlagueCore = C(196, 182, 206);
+
+    // A — SealBlackCorona. `plague` swaps the palette for the Curse Ward's use of the same technique.
+    static (V3, float) HexSealCorona(V2 c, int w, int h, float Time, float Progress, float Opacity, bool plague = false)
+    {
+        V3 mid = plague ? PlagueMid : HexMid;
+        V3 core = plague ? PlagueCore : HexCore;
+        c = PixelateShaderUV(c, w, h);
+        V2 p = new(c.x - .5f, c.y - .5f);
+        float r = length(p);
+        V2 dir = new(p.x / MathF.Max(r, .0005f), p.y / MathF.Max(r, .0005f));
+
+        float n1 = HexDetailSampler.R(dir.x * .46f + .5f + Time * .085f, dir.y * .46f + .5f - Time * .062f);
+        float n2 = HexPrimarySampler.R(dir.x * .74f + .5f - Time * .051f, dir.y * .74f + .5f + Time * .097f);
+        float flame = sat(n1 * .88f + n2 * .56f - .20f);
+
+        float d = r - (.38f + (.24f - .38f) * Progress + (flame - .44f) * .21f);
+
+        float quadFade = sat((.5f - r) * 4.4f);
+        float ad = abs(d);
+        float body = sat(-d * 6.4f);
+        float rim = sat((.06f - ad) * 14f) * (.28f + flame * .86f);
+        float glow = sat((.19f - ad) * 3f) * flame;
+
+        V3 color = new(mid.x * (rim * .9f + glow * .5f) + core.x * rim * rim * 1.15f,
+                       mid.y * (rim * .9f + glow * .5f) + core.y * rim * rim * 1.15f,
+                       mid.z * (rim * .9f + glow * .5f) + core.z * rim * rim * 1.15f);
+        float alpha = sat(body * .80f + rim * .95f + glow * .34f) * quadFade * Opacity;
+        return (color, alpha);
+    }
+
+    // B — SealVoidHalo
+    static (V3, float) HexSealVoid(V2 c, int w, int h, float Time, float Progress, float Opacity)
+    {
+        c = PixelateShaderUV(c, w, h);
+        V2 p = new(c.x - .5f, c.y - .5f);
+        float r = length(p);
+        V2 dir = new(p.x / MathF.Max(r, .0005f), p.y / MathF.Max(r, .0005f));
+
+        float n1 = HexDetailSampler.R(dir.x * .58f + .5f + Time * .043f, dir.y * .58f + .5f - Time * .036f);
+        float n2 = HexPrimarySampler.R(dir.x * .27f + .5f - Time * .029f, dir.y * .27f + .5f + Time * .055f);
+        float flame = sat(n1 * .80f + n2 * .62f - .24f);
+
+        float d = r - (.38f + (.24f - .38f) * Progress + (flame - .46f) * .085f);
+
+        float quadFade = sat((.5f - r) * 5f);
+        float ad = abs(d);
+        float voidCore = sat(-d * 4.2f);
+        float halo = sat((.038f - ad) * 22f) * (.55f + flame * .55f);
+        float bloom = sat((.13f - ad) * 5.2f) * (.20f + flame * .44f);
+
+        V3 color = new(HexMid.x * bloom * 1.05f + HexCore.x * halo * 1.45f,
+                       HexMid.y * bloom * 1.05f + HexCore.y * halo * 1.45f,
+                       HexMid.z * bloom * 1.05f + HexCore.z * halo * 1.45f);
+        float alpha = sat(voidCore * .86f + halo + bloom * .30f) * quadFade * Opacity;
+        return (color, alpha);
+    }
+
+    // ---- Effects/QuaraTideRush.fx ------------------------------------------------------------
+    // Real call size: the 18x45 Hydromancer frame is expanded by 1.6, producing a 29x72 water
+    // envelope. These ports intentionally show the legacy alpha-blend bug alongside the two new
+    // pixel-filtered candidates on both sky and cave backgrounds.
+    static (V3, float) QuaraTideRushCurrent(V2 uv, int w, int h, float Time, float Opacity, float Direction)
+    {
+        V2 puddle = new(uv.x - .5f, uv.y - .5f);
+        puddle.x *= .45f;
+        puddle.y *= 2.2f;
+        float puddleR = length(puddle);
+        float edgeNoise = QuaraDetailSampler.R(uv * .6f + new V2(-Time * .15f * Direction, Time * .03f));
+        float puddleEdge = .42f + edgeNoise * .12f;
+        float puddleMask = sat((puddleEdge - puddleR) * 7f);
+        float n1 = QuaraDetailSampler.R(uv * .7f + new V2(-Time * .35f * Direction, Time * .04f));
+        float n2 = QuaraDetailSampler.R(uv * new V2(.9f, .5f) + new V2(-Time * .55f * Direction, Time * .08f));
+        float body = sat(n1 * 1.2f + n2 * .5f - .35f);
+        float foam = sat(n2 * 1.6f - .5f) * sat(1f - puddleR * 2f);
+        float leading = sat(1f - abs(puddle.x * 2.2f - Direction * .3f) * 3f) * puddleMask;
+        V3 color = lerp(WaterDark, WaterMid, body);
+        color = lerp(color, WaterCore, foam * .8f + leading * .4f);
+        V3 finalColor = color * (1f + foam * .5f + leading * .6f);
+        float alpha = puddleMask * Opacity * sat(body * .8f + foam + .3f);
+        // This deliberately mirrors the shipped bug: rgb is not multiplied by alpha even though
+        // the draw uses BlendState.AlphaBlend, so the full quad becomes visibly tinted.
+        return (finalColor, alpha);
+    }
+
+    static V2 QuaraPixelate(V2 uv, int w, int h) => PixelateShaderUV(uv, w, h);
+    static float QuaraShift(float Progress, float Active) => Progress * (1f - Active) + (1f - Progress) * Active;
+
+    // A — Flowing Water Form (must stay in lockstep with TideRush()).
+    static (V3, float) QuaraTideRushFlowing(V2 c, int w, int h, float Time, float Progress, float Active, float Opacity, float Direction)
+    {
+        V2 uv = QuaraPixelate(c, w, h);
+        float shift = QuaraShift(Progress, Active);
+        float edge = QuaraDetailSampler.R(uv * new V2(1.55f, 1.08f) + new V2(-Time * .16f * Direction, Time * .07f));
+        float detail = QuaraDetailSampler.R(uv * new V2(3.65f, 2.40f) + new V2(-Time * .43f * Direction, Time * .19f));
+        float topFade = sat((uv.y - .07f) * 7.5f), floorFade = sat((.96f - uv.y) * 9f);
+        float falling = topFade * floorFade, pool = sat((uv.y - .66f) * 4.1f) * floorFade;
+        float columnWidth = (.205f + edge * .105f) * falling;
+        float poolWidth = .355f + edge * .085f;
+        float width = columnWidth + (poolWidth - columnWidth) * pool;
+        float body = sat((width - abs(uv.x - .5f)) * 12f) * falling;
+        float quadFade = sat((.48f - abs(uv.x - .5f)) * 12f) * topFade * floorFade;
+        body *= quadFade;
+        float churn = sat(edge * .74f + detail * .52f - .16f);
+        float foam = pool * body * sat(detail * 1.38f - .38f);
+        float alpha = sat(body * (.74f + churn * .17f) + foam * .37f) * Opacity * shift;
+        V3 color = lerp(WaterDark, WaterMid, churn);
+        color = lerp(color, WaterCore, foam * .74f);
+        return (color * alpha, alpha);
+    }
+
+    // B — Undertow (must stay in lockstep with TideRushUndertow()).
+    static (V3, float) QuaraTideRushUndertow(V2 c, int w, int h, float Time, float Progress, float Active, float Opacity, float Direction)
+    {
+        V2 uv = QuaraPixelate(c, w, h);
+        float shift = QuaraShift(Progress, Active);
+        float macro = QuaraDetailSampler.R(uv * new V2(1.20f, 1.46f) + new V2(-Time * .22f * Direction, Time * .10f));
+        float ripple = QuaraDetailSampler.R(uv * new V2(4.10f, 2.05f) + new V2(-Time * .56f * Direction, -Time * .14f));
+        float rise = sat((uv.y - .08f) * 8f) * sat((.95f - uv.y) * 10f);
+        float pool = sat((uv.y - .70f) * 4.5f);
+        float lean = Direction * (.07f + (1f - uv.y) * .075f);
+        float columnWidth = (.185f + macro * .090f) * rise;
+        float poolWidth = .360f + macro * .075f;
+        float width = columnWidth + (poolWidth - columnWidth) * pool;
+        float body = sat((width - abs(uv.x - .5f - lean)) * 13f) * rise;
+        float quadFade = sat((.47f - abs(uv.x - .5f)) * 13f) * rise;
+        body *= quadFade;
+        float flow = sat(macro * .70f + ripple * .56f - .14f);
+        float crest = pool * body * sat((Direction * (uv.x - .5f) + .16f) * 5.8f) * sat(ripple * 1.18f - .18f);
+        float alpha = sat(body * (.68f + flow * .21f) + crest * .35f) * Opacity * shift;
+        V3 color = lerp(WaterDark, WaterMid, flow);
+        color = lerp(color, WaterCore, crest * .76f);
+        V3 emission = WaterCore * crest * .24f;
+        return (color * alpha + emission * (Opacity * shift), alpha);
+    }
+
+    // ---- Effects/QuaraTidalCrest.fx ----------------------------------------------------------
+    // The real 194x464 texture holds four 194x116 wave frames. The helper draws one frame at
+    // .42 scale, so these previews use its real ~81x49 final quad and an actual atlas frame.
+    static V4 QuaraCrestFrame(V2 uv, int frame) => QuaraCrestPrimarySampler.T(uv.x, (frame + uv.y) * .25f);
+    static V3 QuaraCrestRgb(V4 c) => new(c.x, c.y, c.z);
+
+    static (V3, float) QuaraCrestCurrent(V2 uv, int frame, float Time, float Opacity, float Direction)
+    {
+        V4 wave = QuaraCrestFrame(uv, frame);
+        float mask = wave.a;
+        float texelX = 1f / 194f, texelY = 1f / 464f;
+        float neighbor = MathF.Min(
+            MathF.Min(QuaraCrestPrimarySampler.T(uv.x + texelX, (frame + uv.y) * .25f).a,
+                      QuaraCrestPrimarySampler.T(uv.x - texelX, (frame + uv.y) * .25f).a),
+            MathF.Min(QuaraCrestPrimarySampler.T(uv.x, (frame + uv.y) * .25f + texelY).a,
+                      QuaraCrestPrimarySampler.T(uv.x, (frame + uv.y) * .25f - texelY).a));
+        float edge = sat((mask - neighbor) * 4f);
+        float n1 = QuaraDetailSampler.R(uv * new V2(.6f, .45f) + new V2(-Time * .18f * Direction, Time * .03f));
+        float n2 = QuaraDetailSampler.R(uv * new V2(.85f, .65f) + new V2(-Time * .28f * Direction, Time * .06f));
+        float body = sat(n1 * 1.1f + n2 * .6f - .25f);
+        float foam = sat(n2 * 1.5f - .4f) * sat(1f - uv.y * 1.8f);
+        V3 color = lerp(WaterDark, WaterMid, body);
+        color = lerp(color, WaterCore, foam * .7f + edge * .8f);
+        V3 finalColor = lerp(QuaraCrestRgb(wave), color, .75f) + WaterCore * (foam * .5f + edge * .6f);
+        float alpha = mask * Opacity;
+        // Exact legacy AlphaBlend mismatch: this un-premultiplied return paints the whole 81x49 quad.
+        return (finalColor, alpha);
+    }
+
+    // A — Flowing Crest (must stay in lockstep with TidalCrest()).
+    static (V3, float) QuaraCrestFlowing(V2 c, int w, int h, int frame, float Time, float Opacity, float Direction)
+    {
+        V2 uv = QuaraPixelate(c, w, h);
+        V4 wave = QuaraCrestFrame(uv, frame);
+        float n1 = QuaraDetailSampler.R(uv * new V2(1.55f, 1.10f) + new V2(-Time * .13f * Direction, Time * .06f));
+        float n2 = QuaraDetailSampler.R(uv * new V2(3.40f, 2.35f) + new V2(-Time * .33f * Direction, Time * .16f));
+        float flow = sat(n1 * .72f + n2 * .54f - .16f);
+        float crest = sat(1f - uv.y * 1.45f);
+        float foam = wave.a * crest * sat(n2 * 1.26f + n1 * .22f - .32f);
+        V3 water = lerp(WaterDark, WaterMid, flow);
+        water = lerp(water, WaterCore, foam * .72f);
+        V3 color = lerp(QuaraCrestRgb(wave), water, .45f);
+        float alpha = wave.a * Opacity * (.78f + foam * .22f);
+        return (color * alpha, alpha);
+    }
+
+    // B — Deep Curl (must stay in lockstep with TidalCrestDeepCurl()).
+    static (V3, float) QuaraCrestDeepCurl(V2 c, int w, int h, int frame, float Time, float Opacity, float Direction)
+    {
+        V2 uv = QuaraPixelate(c, w, h);
+        V4 wave = QuaraCrestFrame(uv, frame);
+        float macro = QuaraDetailSampler.R(uv * new V2(1.18f, 1.42f) + new V2(-Time * .17f * Direction, Time * .09f));
+        float ripple = QuaraDetailSampler.R(uv * new V2(3.72f, 1.86f) + new V2(-Time * .41f * Direction, -Time * .12f));
+        float depth = sat(macro * .76f + ripple * .42f - .12f);
+        float crest = sat(1f - uv.y * 1.70f);
+        float front = sat((Direction * (uv.x - .5f) + .08f) * 3.8f);
+        float foam = wave.a * crest * front * sat(ripple * 1.22f - macro * .12f - .24f);
+        V3 water = lerp(WaterDark, WaterMid, depth * .76f);
+        water = lerp(water, WaterCore, foam * .84f);
+        V3 color = lerp(QuaraCrestRgb(wave) * .72f, water, .74f);
+        float alpha = wave.a * Opacity * (.80f + foam * .20f);
+        return (color * alpha, alpha);
+    }
+
+    // ---- Effects/QuaraWaterProjectile.fx ------------------------------------------------------
+    // The burst and bubble shell are both AlphaBlend passes. "Current" deliberately preserves the
+    // old un-premultiplied RGB return so the square fringe is visible in the comparison.
+    static (V3, float) QuaraWaterBurstCurrent(V2 c, float Time, float Progress, float Opacity)
+    {
+        float circle = QuaraWaterPrimarySampler.T(c).a;
+        V2 p = (c - .5f) * 2f;
+        float r = length(p);
+        float edge = sat(MathF.Pow(1f - sat(r), 2f));
+        float n = QuaraDetailSampler.R(c * 2.8f + new V2(-Time * .3f, Time * .25f));
+        float waveRadius = .1f + .75f * Progress;
+        float shock = sat(1f - abs(r - waveRadius) * 4.5f);
+        float spray = sat(1f - r * 1.1f) * sat(n * 1.8f - .4f) * (1f - Progress);
+        float body = shock * 1.2f + spray * 1.5f;
+        V3 color = lerp(WaterDark, WaterMid, spray);
+        color = lerp(color, WaterCore, shock);
+        float alpha = sat(body) * edge * circle * Opacity * (1f - Progress * .5f);
+        return (color * (1.3f + shock * .7f), alpha);
+    }
+
+    static (V3, float) QuaraWaterBurstFiltered(V2 c, int w, int h, float Time, float Opacity)
+    {
+        V2 uv = QuaraPixelate(c, w, h);
+        V2 p = (uv - .5f) * 2f;
+        float r = length(p);
+        float edge = sat((1f - r) * 3.1f);
+        float foam = sat(QuaraDetailSampler.R(uv * 2.65f + new V2(-Time * .26f, Time * .18f)) * 1.48f - .26f);
+        float churn = sat(foam * 1.55f - .18f);
+        float core = sat(1f - r * 1.36f) * (.40f + foam * .60f);
+        float alpha = edge * sat(churn * .86f + foam * .52f + core * .24f) * Opacity;
+        V3 color = lerp(WaterMid, WaterCore, foam);
+        color = lerp(WaterDark, color, churn);
+        return (color * alpha, alpha);
+    }
+
+    static (V3, float) QuaraBubbleCurrent(V2 c, float Time, float Opacity, float Active)
+    {
+        float circle = QuaraWaterPrimarySampler.T(c).a;
+        V2 p = (c - .5f) * 2f;
+        float r = length(p);
+        float edge = sat(MathF.Pow(1f - sat(r), 2.5f));
+        float n1 = QuaraDetailSampler.R(c * 2.2f + new V2(Time * .18f, -Time * .32f));
+        float n2 = QuaraDetailSampler.R(c * 3.5f + new V2(-Time * .28f, Time * .22f));
+        float intensity = sat(n1 * 1.3f + n2 * .8f - .4f);
+        float body = MathF.Pow(intensity, 1.3f) * sat(1f - r * .6f);
+        float rim = sat(1f - abs(r - .72f) * 5f);
+        float core = sat(1f - r * 1.8f);
+        V3 color = lerp(WaterDark, WaterMid, body);
+        color = lerp(color, WaterCore, core + rim * .6f);
+        float alpha = sat(body * 1.3f + rim * .8f + core) * edge * circle * Opacity;
+        return (color * (1.2f + core * .8f), alpha);
+    }
+
+    static (V3, float) QuaraBubbleFiltered(V2 c, int w, int h, float Time, float Opacity, float Active)
+    {
+        V2 uv = QuaraPixelate(c, w, h);
+        float circle = QuaraWaterPrimarySampler.T(uv).a;
+        V2 p = (uv - .5f) * 2f;
+        float r = length(p);
+        float edge = sat((1f - r) * 3.4f) * circle;
+        float n = QuaraDetailSampler.R(uv * 3.25f + new V2(Time * .18f, -Time * .24f));
+        float body = sat(1f - r * .94f) * sat(n * 1.06f - .13f);
+        float rim = sat(1f - abs(r - (.67f + (n - .5f) * .10f)) * 7.8f);
+        float core = sat(1f - r * 2.12f) * (.46f + n * .40f);
+        V3 color = lerp(WaterDark, WaterMid, body * .88f + rim * .18f);
+        color = lerp(color, WaterCore, sat(rim * (.48f + Active * .18f) + core * .42f));
+        float alpha = sat(body * .80f + rim * (.64f + Active * .10f) + core * .20f) * edge * Opacity;
+        return (color * alpha, alpha);
+    }
+
     static Panel[] Panels() => FocusPanels ?? AllPanels();
 
     // Set from Main via the FOCUS env var to render a single technique big.
@@ -1048,7 +1371,44 @@ static class Preview
         string safePreviewName = string.Concat(previewName.Select(c =>
             char.IsLetterOrDigit(c) || c == '-' || c == '_' ? c : '-')).Trim('-');
         if (string.IsNullOrWhiteSpace(safePreviewName)) safePreviewName = "shader-preview";
-        if (Environment.GetEnvironmentVariable("FOCUS") == "eland")
+        if (Environment.GetEnvironmentVariable("FOCUS") == "hexseal")
+        {
+            // Real call-site sizes/opacities from EnemyVFX.DrawBlackKnightHexCrystal. Rendered at
+            // several Progress values because the seal is meant to TIGHTEN as the crystal closes —
+            // a variant that only looks right at P=1 has broken the thing being kept.
+            FocusPanels = new[]
+            {
+                new Panel("CURRENT dormant P=.15", 74, 74, Blend.PremultipliedAlpha,
+                    c => HexSealCurrent(c, 74, 74, 2.2f, .15f, .74f)),
+                new Panel("CURRENT dormant P=1", 74, 74, Blend.PremultipliedAlpha,
+                    c => HexSealCurrent(c, 74, 74, 3.1f, 1f, .74f)),
+                new Panel("CURRENT active", 48, 40, Blend.PremultipliedAlpha,
+                    c => HexSealCurrent(c, 48, 40, 4.4f, 1f, .90f)),
+
+                new Panel("A Corona dormant P=.15", 74, 74, Blend.PremultipliedAlpha,
+                    c => HexSealCorona(c, 74, 74, 2.2f, .15f, .74f)),
+                new Panel("A Corona dormant P=1", 74, 74, Blend.PremultipliedAlpha,
+                    c => HexSealCorona(c, 74, 74, 3.1f, 1f, .74f)),
+                new Panel("A Corona active", 48, 40, Blend.PremultipliedAlpha,
+                    c => HexSealCorona(c, 48, 40, 4.4f, 1f, .90f)),
+
+                new Panel("B Void dormant P=.15", 74, 74, Blend.PremultipliedAlpha,
+                    c => HexSealVoid(c, 74, 74, 2.2f, .15f, .74f)),
+                new Panel("B Void dormant P=1", 74, 74, Blend.PremultipliedAlpha,
+                    c => HexSealVoid(c, 74, 74, 3.1f, 1f, .74f)),
+                new Panel("B Void active", 48, 40, Blend.PremultipliedAlpha,
+                    c => HexSealVoid(c, 48, 40, 4.4f, 1f, .90f)),
+
+                // Curse Ward: the SAME Corona technique at an oval draw size. Sizes/progress from
+                // EnemyVFX.DrawBlackKnightCurseWard — rise 0.35 (coming up) and 1.0 (held), which feeds
+                // progress = 1 - rise, and the plague palette instead of the crystal's gold.
+                new Panel("Ward rising 54x69", 54, 69, Blend.PremultipliedAlpha,
+                    c => HexSealCorona(c, 54, 69, 2.6f, .65f, .32f, plague: true)),
+                new Panel("Ward held 54x112", 54, 112, Blend.PremultipliedAlpha,
+                    c => HexSealCorona(c, 54, 112, 3.9f, 0f, .90f, plague: true)),
+            };
+        }
+        else if (Environment.GetEnvironmentVariable("FOCUS") == "eland")
         {
             FocusPanels = new[]
             {
@@ -1230,6 +1590,92 @@ static class Preview
                 new Panel("Formation detail", 58, 26, Blend.PremultipliedAlpha, c => GigasHeavenlySpearLayered(c, 2.4f, .38f, 0f)),
                 new Panel("First wave layered", 72, 28, Blend.PremultipliedAlpha, c => GigasHeavenlySpearLayered(c, 3.8f, 1f, 1f)),
                 new Panel("Final wake layered", 160, 38, Blend.PremultipliedAlpha, c => GigasHeavenlySpearLayered(c, 5.2f, 1f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "quara_tide_rush")
+        {
+            // The helper expands the Hydromancer's 18x45 frame by 1.6, so its actual water-form
+            // draw envelope is 29x72. These three states match dissolve, full-speed surge, and
+            // reformation; each is shown over both backgrounds by the shared compositor.
+            FocusPanels = new[]
+            {
+                new Panel("CURRENT dissolve P=.55", 29, 72, Blend.PremultipliedAlpha,
+                    c => QuaraTideRushCurrent(c, 29, 72, 2.4f, .92f, 1f)),
+                new Panel("CURRENT surge P=1", 29, 72, Blend.PremultipliedAlpha,
+                    c => QuaraTideRushCurrent(c, 29, 72, 4.1f, .92f, 1f)),
+                new Panel("CURRENT reform P=.55", 29, 72, Blend.PremultipliedAlpha,
+                    c => QuaraTideRushCurrent(c, 29, 72, 5.6f, .92f, 1f)),
+
+                new Panel("A Flowing dissolve P=.55", 29, 72, Blend.PremultipliedAlpha,
+                    c => QuaraTideRushFlowing(c, 29, 72, 2.4f, .55f, 0f, .92f, 1f)),
+                new Panel("A Flowing surge P=1", 29, 72, Blend.PremultipliedAlpha,
+                    c => QuaraTideRushFlowing(c, 29, 72, 4.1f, 1f, 0f, .92f, 1f)),
+                new Panel("A Flowing reform P=.55", 29, 72, Blend.PremultipliedAlpha,
+                    c => QuaraTideRushFlowing(c, 29, 72, 5.6f, .55f, 1f, .92f, 1f)),
+
+                new Panel("B Undertow dissolve P=.55", 29, 72, Blend.PremultipliedAlpha,
+                    c => QuaraTideRushUndertow(c, 29, 72, 2.4f, .55f, 0f, .92f, 1f)),
+                new Panel("B Undertow surge P=1", 29, 72, Blend.PremultipliedAlpha,
+                    c => QuaraTideRushUndertow(c, 29, 72, 4.1f, 1f, 0f, .92f, 1f)),
+                new Panel("B Undertow reform P=.55", 29, 72, Blend.PremultipliedAlpha,
+                    c => QuaraTideRushUndertow(c, 29, 72, 5.6f, .55f, 1f, .92f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "quara_tidal_crest")
+        {
+            // The four-frame crest plays at 81x49 world pixels. Frames 0, 1 and 3 are enough to
+            // show the curl advancing without pretending this still preview captures its movement.
+            FocusPanels = new[]
+            {
+                new Panel("CURRENT frame 0", 81, 49, Blend.PremultipliedAlpha,
+                    c => QuaraCrestCurrent(c, 0, 2.3f, .92f, 1f)),
+                new Panel("CURRENT frame 1", 81, 49, Blend.PremultipliedAlpha,
+                    c => QuaraCrestCurrent(c, 1, 3.1f, .92f, 1f)),
+                new Panel("CURRENT frame 3", 81, 49, Blend.PremultipliedAlpha,
+                    c => QuaraCrestCurrent(c, 3, 4.2f, .92f, 1f)),
+
+                new Panel("A Flowing frame 0", 81, 49, Blend.PremultipliedAlpha,
+                    c => QuaraCrestFlowing(c, 81, 49, 0, 2.3f, .92f, 1f)),
+                new Panel("A Flowing frame 1", 81, 49, Blend.PremultipliedAlpha,
+                    c => QuaraCrestFlowing(c, 81, 49, 1, 3.1f, .92f, 1f)),
+                new Panel("A Flowing frame 3", 81, 49, Blend.PremultipliedAlpha,
+                    c => QuaraCrestFlowing(c, 81, 49, 3, 4.2f, .92f, 1f)),
+
+                new Panel("B Deep Curl frame 0", 81, 49, Blend.PremultipliedAlpha,
+                    c => QuaraCrestDeepCurl(c, 81, 49, 0, 2.3f, .92f, 1f)),
+                new Panel("B Deep Curl frame 1", 81, 49, Blend.PremultipliedAlpha,
+                    c => QuaraCrestDeepCurl(c, 81, 49, 1, 3.1f, .92f, 1f)),
+                new Panel("B Deep Curl frame 3", 81, 49, Blend.PremultipliedAlpha,
+                    c => QuaraCrestDeepCurl(c, 81, 49, 3, 4.2f, .92f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "quara_bubble_burst")
+        {
+            // The same effect is used at 104px when the casting bubble pops, 38px while it is
+            // pressurising, and 24px behind each launched Bubble sprite. These real call-site sizes
+            // make it obvious whether the new 2px grid still reads at gameplay scale.
+            FocusPanels = new[]
+            {
+                new Panel("CURRENT burst early", 104, 104, Blend.PremultipliedAlpha,
+                    c => QuaraWaterBurstCurrent(c, 2.4f, .18f, .92f)),
+                new Panel("CURRENT burst peak", 104, 104, Blend.PremultipliedAlpha,
+                    c => QuaraWaterBurstCurrent(c, 2.9f, .55f, .92f)),
+                new Panel("CURRENT burst tail", 104, 104, Blend.PremultipliedAlpha,
+                    c => QuaraWaterBurstCurrent(c, 3.4f, .88f, .70f)),
+
+                new Panel("NEW pixel splash early", 104, 104, Blend.PremultipliedAlpha,
+                    c => QuaraWaterBurstFiltered(c, 104, 104, 2.4f, .92f)),
+                new Panel("NEW pixel splash peak", 104, 104, Blend.PremultipliedAlpha,
+                    c => QuaraWaterBurstFiltered(c, 104, 104, 2.9f, .92f)),
+                new Panel("NEW pixel splash tail", 104, 104, Blend.PremultipliedAlpha,
+                    c => QuaraWaterBurstFiltered(c, 104, 104, 3.4f, .70f)),
+
+                new Panel("CURRENT casting bubble", 38, 38, Blend.PremultipliedAlpha,
+                    c => QuaraBubbleCurrent(c, 3.1f, .88f, 1f)),
+                new Panel("NEW casting bubble", 38, 38, Blend.PremultipliedAlpha,
+                    c => QuaraBubbleFiltered(c, 38, 38, 3.1f, .88f, 1f)),
+                new Panel("NEW launched-bubble shell", 24, 24, Blend.PremultipliedAlpha,
+                    c => QuaraBubbleFiltered(c, 24, 24, 3.7f, .88f, 0f)),
             };
         }
         var panels = Panels();

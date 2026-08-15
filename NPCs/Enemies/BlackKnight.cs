@@ -16,16 +16,20 @@ using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class BlackKnight : ModNPC, IHumanoidMeleeHitEffects, IDebugAttackLabel
+    // Split across BlackKnight.Attacks.cs, which owns the bag-driven attack state machine that replaced the
+    // old ai[1]/ai[2] conveyor. Partial rather than a standalone controller (the Red Knight pattern) because
+    // the attacks need direct access to this class's gravefall wave state, SpawnSpearProjectile and the
+    // combo-followup helpers — a separate class would need a large callback surface to reach all of it, and
+    // unlike RedKnightAttackController it would only ever serve one enemy.
+    partial class BlackKnight : ModNPC, IHumanoidMeleeHitEffects, IDebugAttackLabel, IStaggerable, Projectiles.Enemy.Weapons.ISpearMeleeWielder
     {
         public int redKnightsSpearDamage = 15;
         const int HomingComboMoveKey = -10;
         const int BombComboMoveKey = -11;
 
         /// <summary>
-        /// DebugMode above-head readout (see IDebugAttackLabel). This enemy has no attack enum - its
-        /// moves are windows on the ai[1]/ai[2] clocks - so the ranges below mirror the firing points
-        /// in AI(). Keep them in sync if those timings move.
+        /// DebugMode above-head readout (see IDebugAttackLabel). Now reads the attack state machine directly
+        /// instead of mirroring conveyor tick ranges that had to be hand-kept in sync with AI().
         /// </summary>
         public string DebugAttackLabel
         {
@@ -40,27 +44,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     return "Melee Combo";
                 }
-                // ai[2] clock: the half-health Ultrakill channel and the air-dropped death waves.
-                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 235f)
+                string attackName = CurrentAttackDebugName;
+                if (attackName != null)
                 {
-                    return NPC.ai[2] < 200f ? "Ultrakill (Telegraph)" : "Ultrakill Barrage";
-                }
-                if ((NPC.ai[2] >= 70f && NPC.ai[2] <= 105f) || (NPC.ai[2] >= 520f && NPC.ai[2] <= 605f))
-                {
-                    return "Death From Above";
-                }
-                // ai[1] clock: spear 155->180, homing 300->375, bomb 900->925 (windups precede each).
-                if (NPC.ai[1] >= 120f && NPC.ai[1] <= 200f)
-                {
-                    return NPC.ai[1] < 155f ? "Spear Throw (Windup)" : "Spear Throw";
-                }
-                if (NPC.ai[1] >= 270f && NPC.ai[1] <= 400f)
-                {
-                    return NPC.ai[1] < 300f ? "Homing Volley (Windup)" : "Homing Volley";
-                }
-                if (NPC.ai[1] >= 865f && NPC.ai[1] <= 950f)
-                {
-                    return NPC.ai[1] < 900f ? "Bomb Throw (Windup)" : "Bomb Throw";
+                    return InCommittedAttack(globalNPC) ? attackName : $"{attackName} (Windup)";
                 }
                 return "Idle";
             }
@@ -129,38 +116,57 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.BlackKnightBanner>();
             //UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 9, SoundID.Item17);
 
+            // Identity: a slow, hulking plague-mage knight whose threat is commitment and area denial, not
+            // speed — with rare, surprising bursts of agility rather than constant nimbleness. The settings
+            // below used to describe an agile duelist (double jump, hop/dash evasion, a fast direct pounce),
+            // which fought that read.
             tsorcRevampGlobalNPC blackKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            blackKnightGlobalNPC.Agility = 0.5f;
+            blackKnightGlobalNPC.Agility = 0.25f; // halved: he still dodges, just rarely enough to surprise
             blackKnightGlobalNPC.Aggression = 1f;
             blackKnightGlobalNPC.Patience = 2f;
-            blackKnightGlobalNPC.PounceStyle = NPCs.PounceStyle.DirectPounce;
+            // Heavy slam landing instead of a nimble tackle: the leap is slow and honest, the payoff is the
+            // impact shockwave (see PounceStyle.HeavyPounce / LandHeavyPounce).
+            blackKnightGlobalNPC.PounceStyle = NPCs.PounceStyle.HeavyPounce;
+            blackKnightGlobalNPC.PounceTelegraphColor = new Color(24, 10, 34); // plague black
+            blackKnightGlobalNPC.HeavyPounceSlamDamage = redKnightsGreatDamage;
             blackKnightGlobalNPC.CanTeleport = true;
             blackKnightGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
             blackKnightGlobalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Plague;
             // See GreatBlackKnight: 30 + SmokeFireTeleportSnapTicks (30) hidden, then he emerges with ~2s of
             // the 180-tick plague cloud still going, rather than after it has already finished.
             blackKnightGlobalNPC.TeleportTelegraphTime = 30;
-            EvasiveProfile.RedKnight(blackKnightGlobalNPC); // shared knight-family evasion: hop/leap/dash/blink away
+            // NOT EvasiveProfile.RedKnight: that grants hop + dash + blink, which is duelist footwork. A
+            // hulking mage keeps only the blink — a heavy thing does not scramble out of the way, it
+            // removes itself by magic. Set directly rather than via a profile since no other enemy wants
+            // this combination yet.
+            blackKnightGlobalNPC.EvasiveTeleportAway = true;
 
             // Poise: sturdier than the Red Knight (40) — takes more to stagger. Tunable lever.
             blackKnightGlobalNPC.PoiseMax = 60f;
-            blackKnightGlobalNPC.PoiseStaggerResetsAI = true; // a stagger cancels a windup attack → neutral
+            // NOT PoiseStaggerResetsAI: that generic path writes ai[2] = -100, and ai[2] now holds the attack
+            // ENUM rather than a free-running timer, so it would leave the knight holding an invalid attack.
+            // IStaggerable.OnStagger below clears exactly this enemy's own state instead, and takes priority
+            // when both are present. Same reason GreatBlackKnight implements the interface.
 
             // Navigation tuning: high jumps, double jump, and ledge routing
             blackKnightGlobalNPC.MaxJumpPower = 11f;
             blackKnightGlobalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
             blackKnightGlobalNPC.CanUseRopes = true;
             blackKnightGlobalNPC.MaxJumpBoost = 7f;
-            blackKnightGlobalNPC.CanDoubleJump = true;
-            blackKnightGlobalNPC.DoubleJumpPower = 7f;
-            // Item/close-range hits restore this anti-melee spacing band. Distant projectile hits temporarily
-            // collapse it to zero so the knight closes in; the attack pool remains distance-aware in both postures.
-            // Min dropped 8->2 and looseness pushed way up (0.28->0.9): the old values read as rigidly
-            // holding a fixed distance band. At 0.9 the knight backs off far less often per re-roll
-            // window, so melee can actually close and the spacing feels like a preference, not a wall.
+            // No double jump. Nothing reads as heavy while it is kicking off thin air mid-leap; he routes
+            // terrain with one honest jump or he goes around.
+            blackKnightGlobalNPC.CanDoubleJump = false;
+            // Spacing band. Posture itself is handled by the shared kite-threat system (GlobalNPC.KiteThreat):
+            // aggressive by DEFAULT, a melee hit opens a ~4s kite window, and a distant projectile hit clears
+            // that window and snaps him back to pursuit. So he already chases players who answer him at range.
+            //
+            // Looseness went 0.28 -> 0.9 because retreating read as skittish, but 0.9 meant he declined to back
+            // off on ~90% of re-rolls — the band existed on paper only. The real problem was that retreating
+            // cost the player nothing. Now every retreat drops a curse patch (RunPlagueTrail), so backing off
+            // is zoning rather than fleeing, and the frequency can come back up to something meaningful.
             blackKnightGlobalNPC.KiteRangeMin = 2f;
             blackKnightGlobalNPC.KiteRangeMax = 15f;
-            blackKnightGlobalNPC.KiteLooseness = 0.9f;
+            blackKnightGlobalNPC.KiteLooseness = 0.6f;
 
             int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>();
             HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Elite(
@@ -172,12 +178,21 @@ namespace tsorcRevamp.NPCs.Enemies
                 guardPressureTelegraphTicks: 90,
                 openerCondition: npc => npc.ai[1] >= 60f && npc.ai[1] < 90f);
             blackKnightGlobalNPC.ConfigureHumanoidMelee(meleeProfile);
+            // Spacing duelist. The bands used to overlap heavily (spear/homing both 120+, bomb 160+), so at
+            // most ranges every option was live and the choice was pure weight — which made the kiting read
+            // as him being skittish rather than as a preferred engagement range.
+            //
+            // Now they partition around the kite band (KiteRangeMin/Max = 2..15 tiles = ~32..240px):
+            //   inside the band  -> melee answers, and the spear is his only ranged option
+            //   at the band edge -> bomb, the tool for someone sitting just outside his reach
+            //   beyond the band  -> homing volley, the punish for trying to disengage
+            // Weights shifted with them so each range genuinely has a signature answer.
             CombatTempoProfile.Elite(blackKnightGlobalNPC,
                 new CombatComboMove(spearProjectileType, 120f, float.MaxValue, canRepeat: true, weight: 1.2f),
-                new CombatComboMove(HomingComboMoveKey, 120f, 900f, canRepeat: false, weight: 1f),
-                new CombatComboMove(BombComboMoveKey, 160f, 900f, canRepeat: false, weight: 1.05f),
-                new CombatComboMove(CombatComboMoveKey.CloseHopMelee, 0f, 90f, canRepeat: true, weight: 0.8f),
-                new CombatComboMove(CombatComboMoveKey.LongHopMelee, 112f, 280f, canRepeat: false, weight: 0.75f));
+                new CombatComboMove(HomingComboMoveKey, 300f, 900f, canRepeat: false, weight: 1.25f),
+                new CombatComboMove(BombComboMoveKey, 190f, 620f, canRepeat: false, weight: 1.15f),
+                new CombatComboMove(CombatComboMoveKey.CloseHopMelee, 0f, 100f, canRepeat: true, weight: 1.1f),
+                new CombatComboMove(CombatComboMoveKey.LongHopMelee, 100f, 300f, canRepeat: false, weight: 0.95f));
         }
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -192,6 +207,41 @@ namespace tsorcRevamp.NPCs.Enemies
             return 0;
         }
         #endregion
+
+        /// <summary>
+        /// Curse Ward absorption: projectiles arriving from the warded side are eaten almost entirely.
+        /// </summary>
+        /// <remarks>
+        /// Sidedness is taken from where the projectile CAME FROM (its previous position), not from its
+        /// current one — by the time a hit registers it is usually already overlapping him, so the current
+        /// position tells you nothing about which side it approached from.
+        ///
+        /// This is deliberately not total immunity: chip damage still lands, so a player who has no way to
+        /// flank is slowed rather than hard-walled.
+        /// </remarks>
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            if (!CurseWardActive)
+            {
+                return;
+            }
+            bool fromWardedSide = (projectile.oldPosition.X + projectile.width * 0.5f - NPC.Center.X) * CurseWardFacing > 0f;
+            if (!fromWardedSide)
+            {
+                return; // flanked — the ward does nothing, which is the intended counterplay
+            }
+
+            modifiers.FinalDamage *= 0.12f;
+            modifiers.Knockback *= 0f;
+            // The ward drinks it. Charges the release volley in ReleaseWard, so shooting the front of it is
+            // actively wrong rather than merely wasted DPS. Accumulated from the projectile's base damage
+            // rather than the post-mitigation result, since what matters is how hard the player committed.
+            RegisterWardAbsorption(projectile.damage);
+            if (Main.rand.NextBool(3))
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f, Volume = 0.6f }, NPC.Center);
+            }
+        }
 
         #region Hit Logic
         // Hit logic is stored in GlobalNPC
@@ -283,19 +333,31 @@ namespace tsorcRevamp.NPCs.Enemies
             return targets;
         }
 
-        private void FireGravefallWave()
+        /// <summary>
+        /// One wave of the black rain barrage, sized by the barrage's own escalation state.
+        /// </summary>
+        /// <remarks>
+        /// Escalates a little each wave — more drops, wider spread — so a 2-3 wave barrage doesn't just
+        /// repeat the same shape.
+        /// </remarks>
+        private void FireGravefallWave() => FireGravefallWave(
+            count: (gravefallWide ? 6 : 4) + gravefallWaveIndex,
+            spreadDeg: 45f + gravefallWaveIndex * 12f,
+            radius: 260f + gravefallWaveIndex * 25f,
+            knockback: gravefallWide ? 4f : 3f);
+
+        /// <summary>
+        /// Explicitly-sized rain wave. Split out from the barrage so other attacks can borrow the rain
+        /// without inheriting its escalation state — the Curse Ward fires deliberately sparse waves, and
+        /// fudging gravefallWaveIndex to get them would corrupt any barrage already in flight.
+        /// </summary>
+        private void FireGravefallWave(int count, float spreadDeg, float radius, float knockback)
         {
             List<Player> targets = GetGravefallTargets();
-            if (targets.Count == 0)
+            if (targets.Count == 0 || count <= 0)
             {
                 return;
             }
-
-            // Escalates a little each wave — more drops, wider spread — so a 2-3 wave barrage doesn't
-            // just repeat the same shape.
-            int count = (gravefallWide ? 6 : 4) + gravefallWaveIndex;
-            float spreadDeg = 45f + gravefallWaveIndex * 12f;
-            float radius = 260f + gravefallWaveIndex * 25f;
 
             foreach (Player target in targets)
             {
@@ -326,7 +388,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, fallVelocity,
                             ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage,
-                            gravefallWide ? 4f : 3f, Main.myPlayer, 1f);
+                            knockback, Main.myPlayer, 1f);
 
                         // Brief "portal opening" flash at the same spawn point — a fast pre-cue riding
                         // on top of the drop's own longer frozen-spin windup.
@@ -352,7 +414,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (globalNPC.GetActiveGuardPressureSequenceStacks(NPC) >= tsorcRevampGlobalNPC.GuardPressureMaxBlocks)
                 {
                     globalNPC.SetActiveAttackDefenseTraits(NPC, AttackDefenseTraits.BypassesActiveShield);
-                    NPC.ai[1] = 89f; // increments to 90 below: 90 held-spear ticks before release at 180
+                    // Forced unblockable spear. Used to be addressed by dropping the conveyor to ai[1] = 89
+                    // so it landed in the long-windup branch; now it just starts the attack, which reads
+                    // ActiveAttackBypassesShield itself and picks the 90-tick tell (SpearWindup).
+                    BeginAttack(BlackKnightAttack.SpearThrow, globalNPC);
                     globalNPC.AttackTelegraphing = true;
                     globalNPC.AttackCommitted = false;
                     tsorcRevampAIs.SpawnTelegraphFlash(NPC, Color.Red);
@@ -361,36 +426,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            float timer = NPC.ai[1];
-            float telegraphBoundary;
-            float nextExactEvent;
-
-            if (timer < 125f)
-            {
-                telegraphBoundary = 125f;
-                nextExactEvent = timer < 120f ? 120f : 125f;
-            }
-            else if (timer > 180f && timer < 270f)
-            {
-                telegraphBoundary = 270f;
-                nextExactEvent = timer < 265f ? 265f : 270f;
-            }
-            else if (timer > 375f && timer < 870f)
-            {
-                telegraphBoundary = 870f;
-                nextExactEvent = 870f;
-            }
-            else
+            // Guard pressure used to buy the knight a fast-forward through the conveyor's dead air so his
+            // next attack arrived sooner. With attacks bag-selected there is no dead air to skip — the
+            // equivalent reward is simply shortening the cooldown before the next opener.
+            if (AttackActive || attackCooldown <= 0)
             {
                 return;
             }
-
-            int remainingNeutralTicks = Math.Max(0, (int)Math.Floor(telegraphBoundary - timer));
-            int maximumSafeSkip = Math.Max(0, (int)Math.Floor(nextExactEvent - timer) - 1);
-            int skippedTicks = globalNPC.TryGetGuardPressureNeutralSkip(NPC, remainingNeutralTicks, maximumSafeSkip);
+            int skippedTicks = globalNPC.TryGetGuardPressureNeutralSkip(NPC, attackCooldown, attackCooldown);
             if (skippedTicks > 0)
             {
-                NPC.ai[1] += skippedTicks;
+                attackCooldown = Math.Max(0, attackCooldown - skippedTicks);
                 NPC.netUpdate = true;
             }
         }
@@ -435,18 +481,22 @@ namespace tsorcRevamp.NPCs.Enemies
                 return true;
             }
 
-            int timerBeforeWindup;
+            // Maps a queued CombatComboMove onto a real attack. This is the seam between the two systems:
+            // CombatTempo still chooses FOLLOWUPS (weighted, range-banded, damage-urgency scaled), the bag
+            // only chooses openers. Previously this "addressed" an attack by dropping the conveyor to the
+            // tick just before its window (124 / 269 / 869) and letting the belt run into it.
+            BlackKnightAttack queuedAttack;
             if (moveKey == ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>())
             {
-                timerBeforeWindup = 124;
+                queuedAttack = BlackKnightAttack.SpearThrow;
             }
             else if (moveKey == HomingComboMoveKey)
             {
-                timerBeforeWindup = 269;
+                queuedAttack = BlackKnightAttack.HomingVolley;
             }
             else if (moveKey == BombComboMoveKey)
             {
-                timerBeforeWindup = 869;
+                queuedAttack = BlackKnightAttack.BombThrow;
             }
             else
             {
@@ -455,8 +505,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             globalNPC.TryConsumePendingCombatComboMove(moveKey);
-            NPC.ai[1] = timerBeforeWindup;
-            NPC.netUpdate = true;
+            BeginAttack(queuedAttack, globalNPC);
             return false;
         }
 
@@ -487,54 +536,46 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            // Hyper-armor window: FLASH telegraph → fire only. Windup excluded so a stagger can interrupt it.
-            // Spear 155→180, poison 300→375, bomb 900→925.
-            bool spearUnblockable = globalNPC.ActiveAttackBypassesShield;
-            globalNPC.AttackCommitted = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
-                                        (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
-                                        (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f);
-
-            // The unblockable spear adds a full 90-tick held-weapon tell without shortening the ordinary tell.
-            globalNPC.AttackTelegraphing = (spearUnblockable
-                                               ? NPC.ai[1] >= 89f && NPC.ai[1] < 155f
-                                               : NPC.ai[1] >= 125f && NPC.ai[1] < 155f) ||
-                                           (NPC.ai[1] >= 270f && NPC.ai[1] < 300f) ||
-                                           (NPC.ai[1] >= 870f && NPC.ai[1] < 900f);
+            // Hyper-armor / telegraph windows. These used to be hardcoded ai[1] tick ranges (spear 155→180,
+            // poison 300→375, bomb 900→925 and so on) that had to be kept in sync by hand with the conveyor;
+            // they are now asked of the attack state machine, which owns the real answer. See
+            // BlackKnight.Attacks.cs — InCommittedAttack is deliberately the FLASH→fire span only, so a
+            // stagger can still interrupt a windup.
+            globalNPC.AttackCommitted = InCommittedAttack(globalNPC);
+            globalNPC.AttackTelegraphing = InAttackTelegraph(globalNPC);
             if (!globalNPC.AttackTelegraphing && !globalNPC.AttackCommitted
-                && !globalNPC.HasPendingCombatComboMove && !globalNPC.InCombatComboRecovery
-                && (NPC.ai[2] < 100f || NPC.ai[2] > 235f))
+                && !globalNPC.HasPendingCombatComboMove && !globalNPC.InCombatComboRecovery)
             {
                 TryCompressGuardPressureNeutral(globalNPC);
             }
 
             if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0)
             {
-                bool inProtectedAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
-                                          (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
-                                          (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f) ||
-                                          (NPC.ai[2] >= 165f && NPC.ai[2] <= 235f);
-                if (!inProtectedAttack)
+                // A busy state cancels a windup but never a committed attack — same carve-out as before,
+                // minus the magic numbers. PlagueAmbush reports committed for its whole duration precisely so
+                // its own teleport cannot cancel it here.
+                if (!InCommittedAttack(globalNPC))
                 {
                     NPC.ai[1] = 60f;
-                    NPC.ai[2] = -100f;
+                    EndAttackExternally();
                     globalNPC.ResetCombatTempoSequence(clearRecovery: true);
                 }
             }
 
             if (Main.netMode != 1 && !Main.player[NPC.target].dead)
             {
-                // Freeze the attack timer while staggered so the ~1s stun holds (and a reset windup stays neutral).
+                // ai[1] is now ONLY the cadence clock the melee opener and combo followups read (60..90 opener
+                // window; followups reset it to 60). It no longer addresses attacks, so it just needs to keep
+                // ticking and wrap rather than climbing forever.
                 if (globalNPC.StaggerTimer <= 0)
                 {
                     NPC.ai[1]++;
-                    NPC.ai[2]++;
+                    if (NPC.ai[1] > 1200f)
+                    {
+                        NPC.ai[1] = 60f;
+                    }
                 }
                 NPC.knockBackResist = globalNPC.BaseKnockBackResist; // restore the SetDefaults value; poise scales it to a light flinch
-
-                bool inActiveAttack = (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f) ||
-                                       (NPC.ai[1] >= 300f && NPC.ai[1] <= 375f) ||
-                                       (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f) ||
-                                       (NPC.ai[2] >= 165f && NPC.ai[2] <= 235f);
 
                 // Gate all projectile firing on LOS — prevents shooting through floors/ceilings
                 bool hasPlayerLOS = Collision.CanHitLine(NPC.Center, 1, 1, player.Center, 1, 1);
@@ -551,8 +592,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 // a few pixels back and forth while it should be sitting perfectly still and invisible.
                 bool teleportHold = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0;
 
+                // The ai[1] range checks these used to carry ("only flourish in the conveyor's dead zones")
+                // are now just "don't flourish during an attack" — the attack state machine knows, and the
+                // throws drive their own movement anyway (RunThrowMovement), which these would fight.
+                bool attackBusy = AttackActive || globalNPC.HasPendingCombatComboMove || globalNPC.CombatMeleeActive;
+
                 // Chance to jump forward
-                if (!teleportHold && NPC.Distance(player.Center) > 250 && NPC.velocity.Y == 0f && Main.rand.NextBool(300) && (NPC.ai[1] <= 150f || NPC.ai[1] >= 476f))
+                if (!teleportHold && !attackBusy && NPC.Distance(player.Center) > 250 && NPC.velocity.Y == 0f && Main.rand.NextBool(300))
                 {
                     NPC.velocity.Y = Main.rand.NextFloat(-4, -8f);
                     NPC.TargetClosest(true);
@@ -562,7 +608,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.netUpdate = true;
                 }
                 // Chance to dash step forward
-                if (!teleportHold && NPC.Distance(player.Center) > 200 && NPC.velocity.Y == 0f && Main.rand.NextBool(140) && (NPC.ai[1] <= 220f || NPC.ai[1] >= 276f))
+                if (!teleportHold && !attackBusy && NPC.Distance(player.Center) > 200 && NPC.velocity.Y == 0f && Main.rand.NextBool(140))
                 {
                     NPC.velocity.Y = -4f;
                     NPC.velocity.X = NPC.velocity.X * 4f; // burst forward
@@ -571,485 +617,27 @@ namespace tsorcRevamp.NPCs.Enemies
                         NPC.velocity.X = (float)NPC.direction * 4;
 
                     // Chance to jump after dash
-                    if (Main.rand.NextBool(6) && (NPC.ai[1] <= 150f || NPC.ai[1] >= 476f))
+                    if (Main.rand.NextBool(6))
                     {
                         NPC.velocity.Y = -8f;
                     }
                     NPC.netUpdate = true;
                 }
-                // Offensive jump before 3 attacks
-                if (!teleportHold && (NPC.ai[1] == 145 || NPC.ai[1] == 275 || NPC.ai[1] == 890) && NPC.velocity.Y <= 0f && Main.rand.NextBool(4))
-                {
-                    NPC.velocity.Y = Main.rand.NextFloat(-6, -10f);
-                    NPC.netUpdate = true;
-                }
                 #endregion
-
-                // Skip spear if player is at melee range — it's a ranged weapon
-                if (NPC.ai[1] == 120f && NPC.Distance(player.Center) < 120f && !globalNPC.ActiveAttackBypassesShield)
-                {
-                    NPC.ai[1] = 200f;
-                    NPC.netUpdate = true;
-                }
+                // (The old "offensive jump before 3 attacks" flourish is gone: it keyed off the conveyor ticks
+                // 145/275/890, and the throws now choose a real, terrain-validated hop instead — see
+                // ChooseThrowMovement. The "skip spear inside 120px" guard is likewise now a range band on
+                // the bag candidate itself, SpearMinRange.)
 
                 // Increment the frames since we stored the player's position
                 framesSinceStoredPosition++;
 
-                #region Spear Attack
-                // Spear Attack: Get targetPosition 
-                if (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f)
-                {
-                    NPC.knockBackResist = 0f;
-                    // Calculate the direction towards the stored player position.
-                    int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
-
-                    // Use the stored player's position from 25 frames ago to calculate the targetPosition.
-                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
-                }
-
-                // Spear Telegraph
-                if (NPC.ai[1] == 155f)
-                {
-                    Vector2 spawnPosition = NPC.position;
-                    if (NPC.direction == 1)
-                    {
-                        spawnPosition.X += NPC.width;
-                    }
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(globalNPC.ActiveAttackBypassesShield ? Color.Red : Color.OrangeRed));
-                    }
-
-                    // Store the player's center
-                    if (framesSinceStoredPosition >= 25)
-                    {
-                        framesSinceStoredPosition = 0;
-                        int targetPlayer = NPC.target;
-                        if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
-                        {
-                            storedPlayerPosition = Main.player[targetPlayer].Center;
-                            // SendExtraAI only rides along with a netUpdate, and clients draw the held
-                            // spear/bomb against this point. (Was written three times in a row here.)
-                            NPC.netUpdate = true;
-                        }
-                    }
-                }
-
-                // Spear Attack Far
-                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) > 400 && hasPlayerLOS)
-                {
-                    NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(16, 18f);
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
-                    //speed += Main.rand.NextVector2Circular(-6, -2);
-                    //speed.Y += Main.rand.NextFloat(-2f, 2f); //adds random variation from -1 to 2
-                    speed += Main.player[NPC.target].velocity;
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        SpawnSpearProjectile(speed, globalNPC);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
-
-                    // Reset the targetPosition 
-                    targetPosition = Vector2.Zero;
-
-                    // Move closer to next attack
-                    NPC.ai[1] = 200f;
-
-                    CompleteSpearAttack(globalNPC);
-                }
-                // Spear Attack Close
-                if (NPC.ai[1] == 180f && NPC.Distance(player.Center) <= 400 && hasPlayerLOS)
-                {
-                    NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(12, 14f);
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
-                    //speed += Main.rand.NextVector2Circular(-6, -2);
-                    //speed.Y += Main.rand.NextFloat(-1f, 1f); //adds random variation from -1 to 2
-                    speed += Main.player[NPC.target].velocity;
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        SpawnSpearProjectile(speed, globalNPC);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
-
-                    // Reset the targetPosition 
-                    targetPosition = Vector2.Zero;
-
-                    // Move closer to next attack
-                    NPC.ai[1] = 200f;
-
-                    CompleteSpearAttack(globalNPC);
-                }
-                if (NPC.ai[1] == 180f && !hasPlayerLOS)
-                {
-                    globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
-                    // STUCK-HELD-WEAPON FIX: this used to leave ai[1] sitting at 180 with nothing to
-                    // reset it. Since ai[1] then just kept climbing past every range check below
-                    // (they're all exact-tick `==` matches), the knight stayed frozen holding the
-                    // spear pose indefinitely — only rescued by an unrelated teleport/dodge/flee
-                    // event, which is why it eventually "resolved" after several random seconds.
-                    NPC.ai[1] = 0f;
-                    NPC.netUpdate = true;
-                }
-
-                #endregion
-
-                #region Homing Attack
-                // Poison Attack 1 Telegraph 
-                // Part 1: Dusts
-                if (NPC.ai[1] >= 265 && NPC.ai[1] <= 325)
-                {
-                    if (Main.rand.NextBool(2))
-                    {
-                        int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, DustID.ShadowbeamStaff, Color.DarkSlateGray, 0.5f);
-                        Main.dust[dust2].noGravity = true;
-                    }
-                }
-
-                // Part 2: Flash 
-                if (NPC.ai[1] == 300)
-                {
-                    Vector2 spawnPosition = NPC.position;
-                    if (NPC.direction == 1)
-                    {
-                        spawnPosition.X += NPC.width;
-                    }
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Orange));
-                    }
-                }
-
-                // Homing Attack 1
-                if (NPC.ai[1] == 325 && hasPlayerLOS)
-                {
-                    float projectileSpeed = 15f;
-                    float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
-                    int numProjectiles = 1; // Number of projectiles to shoot
-
-                    for (int i = 0; i < numProjectiles; i++)
-                    {
-                        float angle = i * projectileSpread - (projectileSpread * (numProjectiles - 1)) / 2f;
-
-                        // Adjust the angle to cover only the upward half of the circle (from 0 to 180 degrees)
-                        if (angle > MathHelper.PiOver2)
-                        {
-                            angle = MathHelper.Pi - angle;
-                        }
-
-                        Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, projectileSpeed, 2.1f, highAngle: true, fallback: true);
-                        speed2 += Main.player[NPC.target].velocity; //was 4
-                        speed2 = speed2.RotatedBy(angle); // Rotate the projectile speed vector by the angle
-
-                        if (((speed2.X < 0f) && (NPC.direction < 0)) || ((speed2.X > 0f) && (NPC.direction > 0)))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
-                            }
-                        }
-                    }
-
-                    // Reset the targetPosition
-                    targetPosition = Vector2.Zero;
-
-                }
-
-                // Homing Attack 2 Telegraph
-                if (NPC.ai[1] == 350)
-                {
-                    Vector2 spawnPosition = NPC.position;
-                    if (NPC.direction == 1)
-                    {
-                        spawnPosition.X += NPC.width;
-                    }
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Orange));
-                    }
-                }
-
-                // Homing Attack 2
-                if (NPC.ai[1] == 375 && hasPlayerLOS)
-                {
-                    float projectileSpeed = 18f;
-                    float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
-                    int numProjectiles = 2; // Number of projectiles to shoot
-
-                    for (int i = 0; i < numProjectiles; i++)
-                    {
-                        float angle = i * projectileSpread - (projectileSpread * (numProjectiles - 1)) / 2f;
-
-                        // Adjust the angle to cover only the upward half of the circle (from 0 to 180 degrees)
-                        if (angle > MathHelper.PiOver2)
-                        {
-                            angle = MathHelper.Pi - angle;
-                        }
-
-                        Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, projectileSpeed, 1.1f, highAngle: true, fallback: true);
-                        //speed2 += Main.player[NPC.target].velocity / 2; //was 4
-                        speed2 = speed2.RotatedBy(angle); // Rotate the projectile speed vector by the angle
-
-                        if (((speed2.X < 0f) && (NPC.direction < 0)) || ((speed2.X > 0f) && (NPC.direction > 0)))
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
-                            }
-                        }
-                    }
-
-                    if (!TryQueueComboFollowup(globalNPC, HomingComboMoveKey))
-                    {
-                        // Preserve the authored variable pause when the combo ends here.
-                        if (Main.rand.NextBool(2))
-                        {
-                            NPC.ai[1] = 700f;
-                            NPC.netUpdate = true;
-                        }
-                        else
-                        {
-                            NPC.ai[1] = 800f;
-                            NPC.netUpdate = true;
-                        }
-                    }
-                }
-                if (NPC.ai[1] == 375f && !hasPlayerLOS)
-                {
-                    globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
-                    // Same stuck-timer fix as the spear/bomb LOS-abandon branches — see that comment.
-                    NPC.ai[1] = 0f;
-                    NPC.netUpdate = true;
-                }
-
-                #endregion
-
-                #region Bomb Attack
-                // Code for Bomb Telegraph & Attack: 
-                if (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f)
-                {
-                    NPC.knockBackResist = 0f;
-                    // Calculate the direction towards the stored player position.
-                    int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
-
-                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y); //trying + 10 again
-
-                }
-
-                // Bomb Telegraph
-                if (NPC.ai[1] == 900f)
-                {
-                    Terraria.Audio.SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center); // lit fuse
-                    Vector2 spawnPosition = NPC.position;
-                    if (NPC.direction == 1)
-                    {
-                        spawnPosition.X += NPC.width;
-                    }
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.OrangeRed));
-                        Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
-                    }
-
-                    // Store the player's center
-                    if (framesSinceStoredPosition >= 25)
-                    {
-                        framesSinceStoredPosition = 0;
-                        int targetPlayer = NPC.target;
-                        if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
-                        {
-                            storedPlayerPosition = Main.player[targetPlayer].Center;
-                            // Was missing: only the first of the three store sites flagged a netUpdate, so
-                            // this attack's aim point never reached clients and they kept drawing the held
-                            // weapon against a stale one left over from an earlier attack.
-                            NPC.netUpdate = true;
-                        }
-                    }
-
-                }
-                // Bomb Attack Far
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) > 400 && hasPlayerLOS)
-                {
-                    float bombProjectileSpeed = 8f;
-
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-
-                    //speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
-                    speed += Main.player[NPC.target].velocity;
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
-
-                    // Reset targetPosition 
-                    targetPosition = Vector2.Zero;
-
-                    // Reset attack counter
-                    NPC.ai[1] = 0f;
-
-                    TryQueueComboFollowup(globalNPC, BombComboMoveKey);
-                }
-                // Bomb Attack Close
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) <= 400 && hasPlayerLOS)
-                {
-                    float bombProjectileSpeed = 5f;
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-
-                    speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
-
-                    // Reset targetPosition 
-                    targetPosition = Vector2.Zero;
-
-                    NPC.ai[1] = 0f;
-
-                    TryQueueComboFollowup(globalNPC, BombComboMoveKey);
-                }
-                if (NPC.ai[1] == 925f && !hasPlayerLOS)
-                {
-                    globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
-                    // STUCK-BOMB FIX. Same class of bug as the spear/homing LOS-abandon branches
-                    // above: this used to leave ai[1] sitting at 925 with nothing to reset it, and
-                    // the bomb draw condition (`NPC.ai[1] >= 865`) has no upper bound, so the knight
-                    // kept climbing ai[1] forever while still visibly holding the bomb. The only thing
-                    // that ever rescued it was an unrelated teleport/dodge/flee event resetting ai[1]
-                    // to 60 as a side effect — which is why it "eventually cycled" after several
-                    // random seconds instead of never.
-                    NPC.ai[1] = 0f;
-                    NPC.netUpdate = true;
-                }
-
-                #endregion
-
-                #region AI 2 Attacks
-                // Black rain barrage. Each drop now carries its own frozen-and-spinning windup
-                // (EnemyBlackCursedBreath), so a single call here fires wave 1 immediately and
-                // schedules 1-2 more waves internally (ticked below, GravefallWaveCooldown apart) —
-                // the separate "release 3-25 ticks later" event this used to need is gone.
-                if ((NPC.ai[2] == 72 || NPC.ai[2] == 97 || NPC.ai[2] == 522 || NPC.ai[2] == 547 || NPC.ai[2] == 572 || NPC.ai[2] == 597) && !inActiveAttack && NPC.Distance(player.Center) > 250 && hasPlayerLOS)
-                {
-                    bool wideWave = NPC.ai[2] == 97 || NPC.ai[2] == 547 || NPC.ai[2] == 597;
-                    StartGravefallBarrage(wideWave);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
-                    NPC.netUpdate = true;
-                }
-
-                // Scheduled follow-up waves for whatever barrage StartGravefallBarrage began above.
-                if (gravefallWavesRemaining > 0)
-                {
-                    gravefallWaveTimer++;
-                    if (gravefallWaveTimer >= GravefallWaveCooldown)
-                    {
-                        gravefallWaveTimer = 0;
-                        gravefallWaveIndex++;
-                        gravefallWavesRemaining--;
-                        FireGravefallWave();
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
-                    }
-                }
-
-                // Breather before reset
-                if (NPC.ai[2] >= 1200)
-                {
-                    NPC.ai[2] = 0;
-                }
-
-                // Ultrakill Telegraph: Shrinking Dust Circle
-                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 200f)
-                {
-                    if (NPC.ai[2] == 100f)
-                    {
-                        globalNPC.ResetCombatTempoSequence(clearRecovery: true);
-                    }
-                    NPC.knockBackResist = 0f;
-                    NPC.ai[1] = -130;
-                    if (Main.rand.NextBool(4))
-                    {
-                        float collapse = MathHelper.Clamp((200f - NPC.ai[2]) / 100f, 0f, 1f);
-                        Vector2 offset = Main.rand.NextVector2CircularEdge(240f, 240f) * collapse;
-                        Dust mote = Dust.NewDustPerfect(NPC.Center + offset, DustID.BoneTorch, -offset * 0.025f, 120, default, 0.9f);
-                        mote.noGravity = true;
-                    }
-                    Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1.2f);
-                    NPC.velocity.X *= 0.85f;
-                }
-                // Ultrakill Telegraph: Flash
-                if (NPC.ai[2] == 165f)
-                {
-                    Vector2 spawnPosition = NPC.position;
-                    if (NPC.direction == 1)
-                    {
-                        spawnPosition.X += NPC.width;
-                    }
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.OrangeRed));
-
-                    }
-                    // Store the player's center
-                    if (framesSinceStoredPosition >= 25)
-                    {
-                        framesSinceStoredPosition = 0;
-                        int targetPlayer = NPC.target;
-                        if (Main.player[targetPlayer].active && !Main.player[targetPlayer].dead)
-                        {
-                            storedPlayerPosition = Main.player[targetPlayer].Center;
-                            // Was missing: only the first of the three store sites flagged a netUpdate, so
-                            // this attack's aim point never reached clients and they kept drawing the held
-                            // weapon against a stale one left over from an earlier attack.
-                            NPC.netUpdate = true;
-                        }
-                    }
-
-                }
-                // Ultrakill Attack
-                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 235f)
-                {
-                    NPC.velocity.X *= 0.25f;
-
-                    // Calculate the direction towards the stored player position.
-                    int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
-
-                    // Set targetPosition with an offset of 10f * direction units from the storedPlayerPosition along the X-axis.
-                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
-
-                    // Death Skulls
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 2f, fallback: true);
-                    speed += Main.rand.NextVector2Circular(1, 5);//was -12, -16
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer, 1f);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center); //Play flame sound
-
-                    // Black Breath
-                    Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 2, fallback: true);
-                    speed2 += Main.rand.NextVector2Circular(-5, 5);//was -4, -2, then -12, -16
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer, 2f);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.9f, PitchVariance = 2f }, NPC.Center);
-                    NPC.netUpdate = true;
-                }
-                // After Ultrakill attack completes
-                if (NPC.ai[2] == 246f)
-                {
-                    // Reset the targetPosition 
-                    targetPosition = Vector2.Zero;
-                }
-
-                #endregion
+                // ── Attacks ──────────────────────────────────────────────────────────────────────
+                // Everything that used to live here as four #regions of tick-window checks (spear at
+                // ai[1] 120-200, homing at 265-375, bomb at 865-925, and black rain / death seal on
+                // the separate ai[2] belt) is now an explicit state machine with bag-selected openers
+                // in BlackKnight.Attacks.cs. See that file's header for the ai[] layout.
+                TickAttacks(globalNPC, hasPlayerLOS);
 
                 // Shadow Crystal Storm — Phase 3 at 1/3 health
                 // Telegraph: shadow dust spirals inward for 20 frames before the burst
@@ -1258,14 +846,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
         void DrawBlackKnightMagicOverlays()
         {
-            if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 100f && NPC.ai[2] <= 200f)
+            // Death Seal's gathering sigil + aim thread. These read the attack's own clock now; ai[2] holds
+            // the attack enum, so the old `ai[2] >= 100` window would never be true again.
+            if (CurrentAttack == BlackKnightAttack.DeathSeal)
             {
-                float progress = MathHelper.Clamp((NPC.ai[2] - 100f) / 100f, 0f, 1f);
-                Projectiles.Enemy.EnemyVFX.DrawBlackKnightDeathSeal(NPC.Center, progress);
-                if (NPC.ai[2] >= 165f && storedPlayerPosition != Vector2.Zero)
+                int t = AttackTimer;
+                Projectiles.Enemy.EnemyVFX.DrawBlackKnightDeathSeal(NPC.Center,
+                    MathHelper.Clamp(t / (float)DeathSealTelegraphTicks, 0f, 1f));
+                if (t >= DeathSealFlashTick && storedPlayerPosition != Vector2.Zero)
                 {
                     Projectiles.Enemy.EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition,
-                        MathHelper.Clamp((NPC.ai[2] - 165f) / 35f, 0f, 1f));
+                        MathHelper.Clamp((t - DeathSealFlashTick) / (float)(DeathSealTelegraphTicks - DeathSealFlashTick), 0f, 1f));
                 }
             }
 
@@ -1322,11 +913,19 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            // Spear
-            if (NPC.ai[1] >= (globalNPC.ActiveAttackBypassesShield ? 90f : 120f) && NPC.ai[1] <= 180f)
+            // Held props are now driven by the attack state machine rather than by conveyor tick ranges.
+            // Aim snaps to the predicted point once the attack commits (the flash), matching what the throw
+            // itself will actually use; before that the weapon just tracks the body's facing.
+            bool committed = InCommittedAttack(globalNPC);
+
+            // Spear. SpearMeleeActive covers LeapStrike (from launch until the apex throw) and the counter
+            // check, so the weapon is visibly in hand for the whole arc rather than appearing from nowhere
+            // when it is released. Those two aim along the body; only the throw leads a predicted point.
+            if (CurrentAttack == BlackKnightAttack.SpearThrow || SpearMeleeActive)
             {
                 float spriteScale = HeldSpearScale;
-                Vector2 spearAim = NPC.ai[1] >= 155f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
+                bool leadsAim = CurrentAttack == BlackKnightAttack.SpearThrow && committed;
+                Vector2 spearAim = leadsAim ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = spearAim.ToRotation() + MathHelper.PiOver2;
                 Vector2 handWorld = CurrentThrowSpearWorld() - Main.screenPosition;
                 DrawHeldSpear(spriteBatch, handWorld, rotation, drawColor, globalNPC, spriteScale,
@@ -1334,17 +933,41 @@ namespace tsorcRevamp.NPCs.Enemies
                 DrawHandOverlay(spriteBatch, drawColor);
             }
             // Bomb
-            if (NPC.ai[1] >= 865)
+            if (CurrentAttack == BlackKnightAttack.BombThrow)
             {
-                Vector2 bombAim = NPC.ai[1] >= 900f ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
+                Vector2 bombAim = committed ? UsefulFunctions.Aim(NPC.Center, storedPlayerPosition, 1) : new Vector2(NPC.spriteDirection, 0f);
                 float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
                 Vector2 handWorld = CurrentHandWorld() - Main.screenPosition;
-                float fuseProgress = MathHelper.Clamp((NPC.ai[1] - 865f) / 60f, 0f, 1f);
+                float fuseProgress = MathHelper.Clamp(AttackTimer / (float)BombWindupTicks, 0f, 1f);
                 // The Moonfury shader used to be drawn here and sat visibly offset from the bomb
                 // sprite. Replaced with a red fuse spark, which cannot drift out of alignment.
                 spriteBatch.Draw(bombTexture, handWorld, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
                 Projectiles.Enemy.EnemyVFX.SpawnBombFuseSparks(handWorld + Main.screenPosition, fuseProgress);
                 DrawHandOverlay(spriteBatch, drawColor);
+            }
+
+            // Staff, for the Plague Seals cast. Vanilla's Amethyst Staff rather than a bespoke sprite: it is
+            // a wooden shaft with a purple head, which is exactly the brief, and vanilla magic-staff item
+            // sprites are already drawn on the up-right diagonal — so rotation 0 with the grip as the origin
+            // IS the 45-degree hold, with no per-frame angle maths to drift out of sync with the hand.
+            if (CastingStaff)
+            {
+                Texture2D staff = Terraria.GameContent.TextureAssets.Item[ItemID.AmethystStaff].Value;
+                Vector2 grip = CurrentHandWorld() - Main.screenPosition;
+                SpriteEffects staffFlip = NPC.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                spriteBatch.Draw(staff, grip, null, drawColor, 0f,
+                    new Vector2(0f, staff.Height), NPC.scale, staffFlip, 0f);
+                DrawHandOverlay(spriteBatch, drawColor);
+            }
+
+            // Curse Ward plane. Drawn AFTER the body so the barrier reads as standing between him and the
+            // player rather than being worn; it is anchored to the locked facing (CurseWardFacing), NOT to
+            // spriteDirection, so it visibly stays put on the committed side — which is the whole tell that
+            // flanking works.
+            float wardRise = CurseWardRise;
+            if (wardRise > 0.001f)
+            {
+                Projectiles.Enemy.EnemyVFX.DrawBlackKnightCurseWard(NPC.Center, CurseWardFacing, wardRise, 0.9f * wardRise);
             }
 
             DrawBlackKnightMagicOverlays();

@@ -37,9 +37,13 @@ cd .agents/skills/vfx-shader-tips/preview
 $env:PREVIEW_NAME = 'GigasSunPillar'; dotnet run  # archives GigasSunPillar-YYYYMMDD-HHMMSS.png
 ```
 
-Port each pixel-shader function to C# (the helpers are named `sat` / `lerp` / `V2` / `V3` / `C(r,g,b)`
-so it is close to copy-paste), list it in `Panels()` with its **real** draw size and blend mode, and
-run. Set `PREVIEW_NAME` to the shader or effect family being examined: it is embedded in the sheet
+Port each pixel-shader function to C# (the helpers are named `sat` / `lerp` / `smoothstep` / `V2` /
+`V3` / `C(r,g,b)` so it is close to copy-paste), list it in `Panels()` with its **real** draw size
+and blend mode, and run. `smoothstep` matches HLSL including the descending-edge form
+(`smoothstep(hi, lo, x)`), which several shaders here use to invert a falloff without a `1 - x`.
+
+Set `FOCUS=<name>` to render one family big instead of the whole sheet; see `Main()` for the
+existing blocks. Set `PREVIEW_NAME` to the shader or effect family being examined: it is embedded in the sheet
 and filename, so each render is retained instead of overwriting `preview.png`. Each panel renders
 over a bright daytime sky **and** a dark cave, side by side.
 
@@ -60,6 +64,11 @@ That two-background split is the point. See §42–§43 of `../SKILL.md` for why
 - Port the maths **verbatim**, including magic numbers. A preview of a shader you half-remember is
   worse than no preview.
 - Re-sync after every HLSL edit. They diverge within about three tweaks.
+- **Re-render after optimising for instruction slots, before you ship.** Slot cuts are not cosmetic:
+  dropping a near-black colour term, folding a mask into alpha, or removing a radial term from a
+  sample scale all change the image. On the Black Knight seal those cuts happened to *improve* it
+  (angular-only noise gave cleaner tongues) — which is exactly why you look rather than assume. The
+  approved preview and the shipped shader were not the same shader.
 - Render at more than one `Progress`. A shader that looks right at `P=1` is regularly invisible or
   solid at `P=0.2`, and that is a caller/curve bug worth finding here.
 - It is a **preview, not a proof**. It says nothing about slot count, draw order, `PostDrawTiles`

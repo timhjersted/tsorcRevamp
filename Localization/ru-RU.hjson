@@ -11107,6 +11107,11 @@ Mods: {
 			// GigasHolyShieldVortex.DisplayName: Gigas Holy Shield Vortex
 			// GigasHolyShieldBolt.DisplayName: Gigas Holy Shield Bolt
 			// GigasSolarBoulderGroundSpread.DisplayName: Gigas Solar Boulder Ground Spread
+			// BlackKnightPlagueColumn.DisplayName: Black Knight Plague Column
+			// HeavyPounceShockwave.DisplayName: Heavy Pounce Shockwave
+			// QuaraFrostColumn.DisplayName: Quara Frost Column
+			// QuaraFrostSprite.DisplayName: Quara Frost Sprite
+			// QuaraWaterResidue.DisplayName: Quara Water Residue
 		}
 
 		NPCs: {

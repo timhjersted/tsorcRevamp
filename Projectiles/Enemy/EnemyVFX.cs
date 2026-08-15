@@ -169,10 +169,42 @@ namespace tsorcRevamp.Projectiles.Enemy
                     center - direction * 36f, new Vector2(96f, 30f), direction.ToRotation(),
                     HexGoldDark, HexGoldMid, HexGoldCore, 0.82f, dormantProgress, 1f, 1f);
             }
-            Draw(blackKnightHexCrystal, "BlackKnightHexSeal", perlinTiled, veinNoise,
+            // Seal technique = "Corona" (black flame). The original smooth-ring "BlackKnightHexSeal"
+            // and the alternate "BlackKnightHexSealVoid" (a tight bright halo around a deeper void)
+            // both remain compiled in the .xnb — swapping this string is the whole change, no other
+            // edit needed. Void is being held for another effect.
+            //
+            // Note this helper also backs the sub-1/3-health crystal storm overlay on both knights
+            // and GreatBlackKnight's homing telegraph, so all four uses move together — intentional,
+            // they are one visual family.
+            Draw(blackKnightHexCrystal, "BlackKnightHexSealCorona", perlinTiled, veinNoise,
                 center, active ? new Vector2(48f, 40f) : Vector2.One * 74f, 0f,
                 HexGoldDark, HexGoldMid, HexGoldCore, active ? 0.9f : 0.74f,
                 dormantProgress, active ? 1f : 0f, 1f);
+        }
+
+        /// <summary>
+        /// The Curse Ward plane: the black-flame seal drawn as a tall OVAL standing in front of the knight.
+        /// </summary>
+        /// <remarks>
+        /// Reuses "BlackKnightHexSealCorona" completely unchanged. That technique measures
+        /// <c>r = length(c - 0.5)</c> in UV space, which is a circle in UV but an ELLIPSE on screen as soon
+        /// as the quad is non-square — so an oval needs a draw size, not a new shader. Its pixel grid comes
+        /// from <c>drawSize</c> too, so the 2px blocks stay square whatever the aspect.
+        ///
+        /// Plague palette rather than the crystal's gold, and `progress` runs BACKWARDS relative to the
+        /// crystal's use of it: the technique tightens its ring as progress rises, so feeding it 1 -> 0
+        /// makes the ward bloom outward as it comes up.
+        /// </remarks>
+        internal static void DrawBlackKnightCurseWard(Vector2 center, int facing, float rise, float opacity)
+        {
+            LoadAssets();
+            // Grows to full height as it rises so it reads as a plane being raised, not popped into place.
+            Vector2 size = new Vector2(54f, MathHelper.Lerp(46f, 112f, rise));
+            Draw(blackKnightHexCrystal, "BlackKnightHexSealCorona", perlinTiled, veinNoise,
+                center + new Vector2(facing * 26f, -2f), size, 0f,
+                PlagueDark, PlagueMid, PlagueCore, opacity,
+                1f - rise, 1f, facing);
         }
 
         internal static void DrawBlackKnightDeathSeal(Vector2 center, float progress)
@@ -672,6 +704,15 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Direction"]?.SetValue(direction);
                 effect.Parameters["DrawSize"]?.SetValue(actualSize);
                 effect.Parameters["PixelDrawSize"]?.SetValue(drawSize);
+                // Pre-divided 2px pixel grid: xy = block count across the quad, zw = its reciprocal.
+                // Deliberately computed HERE rather than in HLSL. A raw ps_2_0 entry point has no
+                // preshader, so uniform-only math (the max() and the reciprocal) is emitted per pixel
+                // — measured at 12 arithmetic slots for BlackKnightHexCrystal's seal techniques, which
+                // is the difference between fitting the 64-slot Reach budget and not. Any technique
+                // that wants pixelation should take this rather than re-deriving it from a size.
+                Vector2 pixelBlocks = Vector2.Max(drawSize, Vector2.One) * 0.5f;
+                effect.Parameters["PixelGrid"]?.SetValue(
+                    new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                 effect.Parameters["PrimaryTextureSize"]?.SetValue(primaryTexture.Size());
                 effect.Parameters["uSourceRect"]?.SetValue(uSourceRect);
                 effect.CurrentTechnique.Passes[0].Apply();

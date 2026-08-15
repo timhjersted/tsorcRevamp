@@ -27,6 +27,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float SpriteScale = 0.42f;  //194px art vs a 40px hitbox — generous visual, tight hitbox
 
         const float WaveSpeed = 5f;
+        // Matches EnemyVFX's 104px QuaraWaterBurst quad. This is a debuff-only release: the wave
+        // already owns the damaging travel lane, while the splash makes its final water mass matter.
+        const float ExitSplashRadius = 52f;
+        const int ExitSplashBuffTime = 6 * 60;
 
         int Direction => (int)Projectile.ai[0] >= 0 ? 1 : -1;
 
@@ -169,12 +173,66 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.5f }, Projectile.Center);
-            for (int i = 0; i < 12; i++)
+            Vector2 splashCenter = new Vector2(Projectile.Center.X, Projectile.Bottom.Y - 6f);
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), splashCenter, EnemyVFXBurstKind.QuaraWaterBurst);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.7f, Pitch = -0.15f }, splashCenter);
+
+            // MIDGROUND BODY — 36 medium water motes make the release read as a broad, forward
+            // breaking splash. Max scale is 1.2 * 1.35 = 1.62, safely below blocky territory.
+            for (int i = 0; i < 36; i++)
             {
-                Vector2 vel = Main.rand.NextVector2Circular(3f, 3f);
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Water, vel.X, vel.Y - 1f, 60, default, 1.2f);
-                Main.dust[dust].noGravity = true;
+                Vector2 position = splashCenter + new Vector2(Main.rand.NextFloat(-30f, 30f), Main.rand.NextFloat(-5f, 4f));
+                Vector2 velocity = new Vector2(Direction * Main.rand.NextFloat(-1.5f, 4.5f), Main.rand.NextFloat(-5.6f, -1.2f));
+                Dust water = Dust.NewDustPerfect(position, DustID.Water, velocity, Main.rand.Next(45, 95), default,
+                    Main.rand.NextFloat(0.75f, 1.35f));
+                water.noGravity = true;
+            }
+
+            // FOREGROUND DETAIL — 18 small, fast blue droplets give the breaking lip a crisp edge
+            // without turning the splash into a single oversized dust square.
+            for (int i = 0; i < 18; i++)
+            {
+                Vector2 position = splashCenter + new Vector2(Direction * Main.rand.NextFloat(4f, 34f), Main.rand.NextFloat(-12f, 4f));
+                Vector2 velocity = new Vector2(Direction * Main.rand.NextFloat(2.5f, 6.8f), Main.rand.NextFloat(-6.8f, -2.2f));
+                Dust droplet = Dust.NewDustPerfect(position, DustID.BubbleBurst_Blue, velocity, Main.rand.Next(35, 85), default,
+                    Main.rand.NextFloat(0.45f, 0.85f));
+                droplet.noGravity = true;
+            }
+
+            // BACKGROUND RESIDUE — 14 slow droplets start small and grow toward 1.2, lingering
+            // after the bright burst so the attack does not visually stop on a hard cut.
+            for (int i = 0; i < 14; i++)
+            {
+                Vector2 position = splashCenter + new Vector2(Main.rand.NextFloat(-42f, 42f), Main.rand.NextFloat(-3f, 6f));
+                Dust mist = Dust.NewDustPerfect(position, DustID.Water,
+                    new Vector2(Direction * Main.rand.NextFloat(-0.7f, 1.5f), Main.rand.NextFloat(-1.6f, -0.25f)),
+                    Main.rand.Next(125, 175), default, Main.rand.NextFloat(0.50f, 0.80f));
+                mist.noGravity = true;
+                mist.fadeIn = Main.rand.NextFloat(1.05f, 1.25f);
+            }
+
+            // The burst shader is 104px across, so this true circle is radius 52. Apply its debuffs
+            // only on the server, once, and without additional damage; the travelling crest remains
+            // the attack's sole damaging band.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player player = Main.player[i];
+                    if (!player.active || player.dead)
+                    {
+                        continue;
+                    }
+
+                    Vector2 closest = Vector2.Clamp(splashCenter,
+                        new Vector2(player.Hitbox.Left, player.Hitbox.Top),
+                        new Vector2(player.Hitbox.Right, player.Hitbox.Bottom));
+                    if (Vector2.DistanceSquared(splashCenter, closest) <= ExitSplashRadius * ExitSplashRadius)
+                    {
+                        player.AddBuff(BuffID.Wet, ExitSplashBuffTime);
+                        player.AddBuff(BuffID.Chilled, ExitSplashBuffTime);
+                    }
+                }
             }
         }
     }

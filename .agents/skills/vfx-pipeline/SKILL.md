@@ -71,6 +71,61 @@ float grow = Progress * (2.0 - Progress) * 0.9;             // GOOD — callers 
 float flash = saturate((0.16 - r) * 6.0 - Progress * 3.0);  // GOOD — uniform biases a per-pixel term
 ```
 
+#### Uniform-only math is NOT free at `ps_2_0` — it costs per-pixel slots
+
+A raw `ps_2_0` entry point has **no preshader**, so an expression that depends only on uniforms is
+still emitted per pixel. This is counter-intuitive and it is expensive enough to be the difference
+between fitting the 64-slot budget and not.
+
+Measured on `BlackKnightHexCrystal.fx`'s seal techniques. This helper — the ElandToxicVFX-style
+in-shader pixel filter — cost **12 arithmetic slots**, not the ~4 it looks like, because the `max()`
+and the reciprocal were re-evaluated for every pixel:
+
+```hlsl
+float2 PixelateSealUV(float2 uv)                  // 12 slots
+{
+    float2 blockUV = 2.0 / max(PixelDrawSize, float2(1.0, 1.0));
+    return (floor(uv / blockUV) + 0.5) * blockUV;
+}
+```
+
+The fix is to pre-divide on the **C# side** and pass the finished numbers. `EnemyVFX.Draw` now sets
+`float4 PixelGrid` (xy = block count across the quad, zw = its reciprocal), leaving:
+
+```hlsl
+float2 PixelateSealUV(float2 uv)                  // ~6 slots
+{
+    return (floor(uv * PixelGrid.xy) + 0.5) * PixelGrid.zw;
+}
+```
+
+Generalise: **any `max`, `rcp`, `normalize`, or division over pure uniforms should be computed in C#
+and passed as a uniform.** Rewriting it in HLSL to "help the compiler" does nothing — see below.
+
+#### When you are over budget, BISECT. Do not guess.
+
+Three rounds of plausible micro-optimisation on the above (hoisting into locals, folding the `+0.5`
+into a mad, `rsqrt` instead of a divide, dropping radial terms from sample scales) moved 74 → 68 and
+made the sibling technique **one slot worse**. Every one of those was already being done by the
+compiler.
+
+What actually located the cost took one command — comment out the suspect line and recompile:
+
+```bash
+sed 's|^    c = PixelateSealUV(c);|    // &|' Effect.fx > t.fx
+MSYS2_ARG_CONV_EXCL="*" ./fxc.exe t.fx /T ps_2_0 /E MyEntry /Cc     # 56 vs 68 -> the filter is 12
+```
+
+`fxc` reports a number for a compiling shader and an over-limit count for a failing one, so a
+bisect gives a usable delta either way. Reach for it immediately rather than after the guessing.
+
+Two cuts that are usually available once you know where to look, both taken here:
+- **A near-black colour term.** `DarkColor * 0.22` where `DarkColor` is `(8,4,12)` paints nothing
+  visible but costs slots. Under premultiplied alpha the dark interior is carried by **alpha**
+  (`rgb≈0, a>0` → `dst * (1-a)`), not by painting a dark colour — so delete the term, not the look.
+- **A `quadFade`-style mask applied to each component.** Fold it into `alpha` once instead; because
+  the return is premultiplied (`color * alpha`), the result is near-identical for ~4 fewer slots.
+
 #### Round-trip the toolchain before trusting it
 Compile an **unmodified** `.fx` and `cmp` against the checked-in `.xnb`. Expect ~3 differing bytes of
 uninitialised padding immediately after null-terminated strings in the XNB string table; identical
@@ -240,10 +295,28 @@ resolution-independent.
 ## Effect parameter contract
 
 `EnemyVFX.Draw(...)` / the per-boss VFX helpers set a fixed uniform set — `DarkColor`, `MidColor`,
-`CoreColor`, `Opacity`, `Time`, `Progress`, `Active`, `Direction`, `DrawSize`, `PrimaryTextureSize`
-(all via `?.SetValue`, so a shader may declare only what it uses). Keeping technique names and this
-uniform set stable means a shader can be rewritten **without touching a single C# call site** — the
-preferred way to iterate on visuals.
+`CoreColor`, `Opacity`, `Time`, `Progress`, `Active`, `Direction`, `DrawSize`, `PrimaryTextureSize`,
+`PixelDrawSize`, `PixelGrid`, `uSourceRect` (all via `?.SetValue`, so a shader may declare only what
+it uses). Keeping technique names and this uniform set stable means a shader can be rewritten
+**without touching a single C# call site** — the preferred way to iterate on visuals.
+
+Three of those are size-like and are **not** interchangeable:
+
+| Uniform | Is | Use it for |
+|---|---|---|
+| `DrawSize` | the source **texture** size (legacy EnemyVFX UV contract) | `uSourceRect` frame maths |
+| `PixelDrawSize` | the final **on-screen quad** size | anything that must stay stable at gameplay scale |
+| `PixelGrid` | `float4`: xy = 2px block count across the quad, zw = its reciprocal | pixelation — already divided, see the budget note above |
+
+Reaching for `DrawSize` to build a pixel grid gives blocks that scale with the texture rather than
+the screen. Deriving the grid from `PixelDrawSize` in HLSL is correct but costs 12 slots at
+`ps_2_0`; take `PixelGrid` instead.
+
+**Adding a new technique costs nothing at the call site, and both alternates can ship.**
+`BlackKnightHexCrystal.fx` carries three seal variants (`…HexSeal`, `…HexSealCorona`,
+`…HexSealVoid`) in one `.xnb`; choosing between them is a one-string change in the C# helper with no
+recompile. Prefer that to deleting a rejected candidate — the runner-up is usually wanted later for
+something else.
 
 `Direction` and `Active` are effectively free per-technique scratch parameters; if you repurpose one,
 say so in a comment at both ends. Worked example: `VesselSoulTrail` takes a **per-skull random phase**

@@ -2890,40 +2890,12 @@ namespace tsorcRevamp.NPCs
             ApproachHorizontalSpeed(npc, Direction, recoverySpeed, acceleration);
         }
 
+        // See TryFindGround above — implementation moved to KnightHopPlanner. The red tuning constants are
+        // passed explicitly so this stays byte-for-byte the same arc it always was.
         static bool HasSafeRedThrowHop(NPC npc, Vector2 target, int facing, int travelDirection,
             float horizontalSpeed, bool advancing)
-        {
-            int flightTicks = (int)Math.Ceiling(2f * RedThrowHopSpeedY / RedThrowGravity);
-            float landingX = npc.Center.X + travelDirection * horizontalSpeed * flightTicks;
-            if (advancing
-                && (target.X - landingX) * facing < RedThrowMinimumForwardClearance)
-            {
-                return false;
-            }
-
-            // Check the whole body along the predicted parabola, not just a headroom ray. This
-            // rejects low ceilings, walls and ledges that cannot actually receive the knight.
-            for (int tick = 4; tick < flightTicks; tick += 4)
-            {
-                float x = npc.Center.X + travelDirection * horizontalSpeed * tick;
-                float y = npc.Center.Y - RedThrowHopSpeedY * tick
-                    + 0.5f * RedThrowGravity * tick * tick;
-                Vector2 topLeft = new Vector2(x - npc.width * 0.5f, y - npc.height * 0.5f);
-                if (Collision.SolidCollision(topLeft, npc.width, npc.height))
-                {
-                    return false;
-                }
-            }
-
-            if (!TryFindGround(new Vector2(landingX, npc.Bottom.Y), 5, 8, out Vector2 surface)
-                || Math.Abs(surface.Y - npc.Bottom.Y) > 64f)
-            {
-                return false;
-            }
-            Vector2 landingTopLeft = new Vector2(landingX - npc.width * 0.5f,
-                surface.Y - npc.height - 2f);
-            return !Collision.SolidCollision(landingTopLeft, npc.width, npc.height);
-        }
+            => KnightHopPlanner.HasSafeHop(npc, target, facing, travelDirection, horizontalSpeed, advancing,
+                RedThrowHopSpeedY, RedThrowGravity, RedThrowMinimumForwardClearance);
 
         static bool IsMobileMeleeAttack(KnightSpecialAttack attack)
         {
@@ -2933,18 +2905,10 @@ namespace tsorcRevamp.NPCs
                 || attack == KnightSpecialAttack.StormbreakerEdict;
         }
 
+        // See TryFindGround above — implementation moved to KnightHopPlanner, forwarder kept so no call site
+        // here changes.
         static void ApproachHorizontalSpeed(NPC npc, int direction, float speed, float acceleration)
-        {
-            float target = direction * speed;
-            if (npc.velocity.X < target)
-            {
-                npc.velocity.X = Math.Min(npc.velocity.X + acceleration, target);
-            }
-            else if (npc.velocity.X > target)
-            {
-                npc.velocity.X = Math.Max(npc.velocity.X - acceleration, target);
-            }
-        }
+            => KnightHopPlanner.ApproachHorizontalSpeed(npc, direction, speed, acceleration);
 
         static void SpawnLunge(NPC npc, int damage, float reach, float height, int duration, float knockback)
         {
@@ -3045,29 +3009,11 @@ namespace tsorcRevamp.NPCs
             return false;
         }
 
+        // Implementation now lives in KnightHopPlanner so the Black Knight family can share it. Kept as a
+        // forwarder rather than updating the ~15 call sites here (and SurfaceFlameHelper's), so this
+        // extraction cannot change Red Knight's behaviour.
         internal static bool TryFindGround(Vector2 around, int searchUpTiles, int searchDownTiles, out Vector2 surface)
-        {
-            int tileX = Utils.Clamp((int)(around.X / 16f), 2, Main.maxTilesX - 3);
-            int originY = Utils.Clamp((int)(around.Y / 16f), 5, Main.maxTilesY - 10);
-            int startY = Utils.Clamp(originY - searchUpTiles, 5, Main.maxTilesY - 10);
-            int endY = Utils.Clamp(originY + searchDownTiles, 5, Main.maxTilesY - 5);
-            for (int tileY = startY; tileY <= endY; tileY++)
-            {
-                Tile tile = Framing.GetTileSafely(tileX, tileY);
-                bool standable = tile.HasTile && !tile.IsActuated
-                    && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]);
-                Tile above = Framing.GetTileSafely(tileX, tileY - 1);
-                bool blockedAbove = above.HasTile && !above.IsActuated
-                    && Main.tileSolid[above.TileType] && !Main.tileSolidTop[above.TileType];
-                if (standable && !blockedAbove)
-                {
-                    surface = new Vector2(tileX * 16f + 8f, tileY * 16f - 2f);
-                    return true;
-                }
-            }
-            surface = Vector2.Zero;
-            return false;
-        }
+            => KnightHopPlanner.TryFindGround(around, searchUpTiles, searchDownTiles, out surface);
 
         public void Send(BinaryWriter writer)
         {

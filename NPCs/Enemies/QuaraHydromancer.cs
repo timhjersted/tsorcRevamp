@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Projectiles.Enemy.Quara;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -36,6 +37,9 @@ namespace tsorcRevamp.NPCs.Enemies
             BurstBubble,   // long staggerable cast → big drifting bubble, pops into droplets
             InkGeyser,     // the payoff: ink cloud at the player's position (Wet doubles its stick)
             TideRush,      // repositioning surge: retreat, or flank to the player's far side
+            IceArcVolley,  // half-ring gather -> six upward arcing, briefly guided frost shards
+            IceOverflight, // spiral gather -> shards route over and behind before their pursuit line
+            FrostSprites,  // delayed, terrain-safe frost sprites seed light-homing shard clumps
         }
 
         //Timings (ticks)
@@ -47,6 +51,12 @@ namespace tsorcRevamp.NPCs.Enemies
         const int RushDissolveTicks = 15;
         const int RushMaxSurgeTicks = 60;
         const int RushReformTicks = 10;
+        const int IceTelegraphTicks = 40;
+        const int IceRecoveryTicks = 20;
+        const float IceGuidedThirty = 1f;
+        const float IceOverflightThirty = 2f;
+        const float IceGuidedSixty = 3f;
+        const float IceWaterIgniter = 4f;
 
         AttackState State = AttackState.None;
         AttackState LastAttack = AttackState.None;
@@ -54,6 +64,9 @@ namespace tsorcRevamp.NPCs.Enemies
         int AttackCooldown = 90;
         int rushDir = 1;          //surge direction, locked at dissolve end
         float rushDestX;          //where the surge re-forms
+        Vector2 rushStartGround;  //server-authoritative target for Tide Rush's returning ice volley
+        int lastRushWaterTileX = int.MinValue;
+        bool rushIceVolleyFired;
         bool statsInitialized;
         bool HM;
         bool SHM;
@@ -65,6 +78,7 @@ namespace tsorcRevamp.NPCs.Enemies
         int CrestDamage => SHM ? 50 : HM ? 40 : 30;
         int BurstDamage => SHM ? 55 : HM ? 45 : 35;
         int InkDamage => SHM ? 55 : HM ? 45 : 33;
+        int IceDamage => SHM ? 38 : HM ? 30 : 22;
 
         public override void SetStaticDefaults()
         {
@@ -156,6 +170,9 @@ namespace tsorcRevamp.NPCs.Enemies
             AttackState.BurstBubble => "Burst Bubble",
             AttackState.InkGeyser => "Ink Geyser",
             AttackState.TideRush => "Tide Rush",
+            AttackState.IceArcVolley => "Ice Arc Volley",
+            AttackState.IceOverflight => "Ice Overflight",
+            AttackState.FrostSprites => "Frost Sprite Barrage",
             _ => "Neutral"
         };
 
@@ -268,6 +285,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 (AttackState.BurstBubble,   0.6f),
                 (AttackState.InkGeyser,     InkUnlocked ? 0.7f : 0f),
                 (AttackState.TideRush,      distTiles < 10f ? 2.5f : 1.2f),
+                (AttackState.IceArcVolley,  distTiles < 34f ? 0.9f : 0.35f),
+                (AttackState.IceOverflight, distTiles < 38f ? 0.7f : 0.25f),
+                (AttackState.FrostSprites,  distTiles < 32f ? 0.45f : 0f),
             };
             float total = 0f;
             for (int i = 0; i < pool.Length; i++)
@@ -338,6 +358,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 case AttackState.BurstBubble: RunBurstBubble(g); break;
                 case AttackState.InkGeyser: RunInkGeyser(g, player); break;
                 case AttackState.TideRush: RunTideRush(g, player); break;
+                case AttackState.IceArcVolley: RunIceArcVolley(g, player); break;
+                case AttackState.IceOverflight: RunIceOverflight(g, player); break;
+                case AttackState.FrostSprites: RunFrostSprites(g, player); break;
             }
         }
 
@@ -489,6 +512,156 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
+        void RunIceArcVolley(tsorcRevampGlobalNPC g, Player player)
+        {
+            g.AttackCommitted = AttackTimer <= IceTelegraphTicks;
+            NPC.velocity.X *= 0.8f;
+            if (AttackTimer <= IceTelegraphTicks)
+            {
+                EmitIceTelegraph(halfRing: true, spiral: false, AttackTimer);
+                if (AttackTimer == IceTelegraphTicks && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 aim = (player.Center - StaffTip).SafeNormalize(new Vector2(NPC.direction, 0f));
+                    for (int i = 0; i < 6; i++)
+                    {
+                        float spread = i - 2.5f;
+                        // Middle shards climb the highest; the six trajectories read as an upside-down U
+                        // before their short 30-tick course correction begins.
+                        Vector2 velocity = new Vector2(aim.X * 6f + spread * 1.15f,
+                            -8.2f + Math.Abs(spread) * 1.25f);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTip, velocity,
+                            ModContent.ProjectileType<GigasIceShard>(), IceDamage, 1f, Main.myPlayer,
+                            0.10f, IceGuidedThirty, NPC.target);
+                    }
+                    SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.65f, Pitch = 0.15f }, StaffTip);
+                }
+            }
+            else if (AttackTimer >= IceTelegraphTicks + IceRecoveryTicks)
+            {
+                EndAttack(210);
+            }
+        }
+
+        void RunIceOverflight(tsorcRevampGlobalNPC g, Player player)
+        {
+            g.AttackCommitted = AttackTimer <= IceTelegraphTicks;
+            NPC.velocity.X *= 0.8f;
+            if (AttackTimer <= IceTelegraphTicks)
+            {
+                EmitIceTelegraph(halfRing: false, spiral: true, AttackTimer);
+                if (AttackTimer == IceTelegraphTicks && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int towardPlayer = Math.Sign(player.Center.X - StaffTip.X);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        float spread = i - 1.5f;
+                        Vector2 velocity = new Vector2(towardPlayer * (6.2f + spread * 0.45f), -9f + Math.Abs(spread));
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTip, velocity,
+                            ModContent.ProjectileType<GigasIceShard>(), IceDamage, 1f, Main.myPlayer,
+                            0f, IceOverflightThirty, NPC.target);
+                    }
+                    SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.65f, Pitch = -0.05f }, StaffTip);
+                }
+            }
+            else if (AttackTimer >= IceTelegraphTicks + IceRecoveryTicks)
+            {
+                EndAttack(230);
+            }
+        }
+
+        void RunFrostSprites(tsorcRevampGlobalNPC g, Player player)
+        {
+            g.AttackCommitted = AttackTimer <= IceTelegraphTicks;
+            NPC.velocity.X *= 0.82f;
+            if (AttackTimer <= IceTelegraphTicks)
+            {
+                EmitIceTelegraph(halfRing: false, spiral: false, AttackTimer);
+                if (AttackTimer == IceTelegraphTicks && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int spawned = 0;
+                    for (int attempt = 0; attempt < 32 && spawned < 8; attempt++)
+                    {
+                        if (!TryFindFrostSpritePosition(player, out Vector2 spawn))
+                        {
+                            continue;
+                        }
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
+                            ModContent.ProjectileType<QuaraFrostSprite>(), IceDamage, 1f, Main.myPlayer,
+                            spawned * 15f, NPC.target);
+                        spawned++;
+                    }
+                    SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f, Pitch = -0.35f }, StaffTip);
+                }
+            }
+            // The seeded frost sprites own their own 3-second warning and delayed shots, so Quara
+            // may return to its normal move pool after this short recovery.
+            else if (AttackTimer >= IceTelegraphTicks + IceRecoveryTicks)
+            {
+                EndAttack(260);
+            }
+        }
+
+        void EmitIceTelegraph(bool halfRing, bool spiral, int timer)
+        {
+            if (timer == 1)
+            {
+                SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.5f, Pitch = -0.55f }, StaffTip);
+            }
+            float progress = timer / (float)IceTelegraphTicks;
+            int count = 1 + (int)(progress * 3f);
+            for (int i = 0; i < count; i++)
+            {
+                float angle = spiral
+                    ? progress * MathHelper.TwoPi * 2.5f + Main.rand.NextFloat(-0.55f, 0.55f)
+                    : halfRing
+                        ? Main.rand.NextFloat(MathHelper.Pi, MathHelper.TwoPi)
+                        : Main.rand.NextFloat(MathHelper.TwoPi);
+                Vector2 position = StaffTip + angle.ToRotationVector2() * Main.rand.NextFloat(10f, 34f);
+                Dust dust = Dust.NewDustPerfect(position, DustID.Frost, (StaffTip - position) * (0.10f + progress * 0.10f), 80, default,
+                    Main.rand.NextFloat(0.65f, 1.05f));
+                dust.noGravity = true;
+                if (i == 0)
+                {
+                    Dust glint = Dust.NewDustPerfect(position, DustID.IceTorch, dust.velocity * 0.55f, 100, default,
+                        Main.rand.NextFloat(0.45f, 0.75f));
+                    glint.noGravity = true;
+                }
+            }
+            Lighting.AddLight(StaffTip, 0.18f * progress, 0.30f * progress, 0.52f * progress);
+        }
+
+        static bool TryFindFrostSpritePosition(Player player, out Vector2 spawn)
+        {
+            for (int attempt = 0; attempt < 12; attempt++)
+            {
+                int tileX = (int)(player.Center.X / 16f) + Main.rand.Next(-12, 13);
+                // A seven-tile (112px) tall band high above the player leaves the requested 15
+                // clear tiles underneath it in ordinary ground arenas, instead of rejecting every
+                // location merely because the player is standing on a floor.
+                int tileY = (int)(player.Center.Y / 16f) - Main.rand.Next(16, 23);
+                if (!WorldGen.InWorld(tileX, tileY, 16) || !HasClearTilesBelow(tileX, tileY, 15))
+                {
+                    continue;
+                }
+                spawn = new Vector2(tileX * 16f + 8f, tileY * 16f + 8f);
+                return true;
+            }
+            spawn = Vector2.Zero;
+            return false;
+        }
+
+        static bool HasClearTilesBelow(int tileX, int tileY, int tiles)
+        {
+            for (int y = tileY; y <= tileY + tiles; y++)
+            {
+                if (!WorldGen.InWorld(tileX, y, 16) || WorldGen.SolidTile(tileX, y))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         void RunTideRush(tsorcRevampGlobalNPC g, Player player)
         {
             if (AttackTimer <= RushDissolveTicks)
@@ -497,6 +670,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.X *= 0.7f;
                 if (AttackTimer == 1)
                 {
+                    rushStartGround = NPC.Bottom;
+                    lastRushWaterTileX = int.MinValue;
+                    rushIceVolleyFired = false;
                     SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.7f }, NPC.Center);
                     for (int i = 0; i < 15; i++)
                     {
@@ -534,6 +710,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 //Soaks anyone it flows through (no contact damage — NPC.damage is 0)
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    SpawnRushWaterMarker();
                     for (int i = 0; i < Main.maxPlayers; i++)
                     {
                         Player soakedPlayer = Main.player[i];
@@ -564,11 +741,67 @@ namespace tsorcRevamp.NPCs.Enemies
                         Main.dust[dust].noGravity = true;
                     }
                 }
-                if (AttackTimer >= RushDissolveTicks + RushMaxSurgeTicks + RushReformTicks)
+                int iceTelegraphStart = RushDissolveTicks + RushMaxSurgeTicks + RushReformTicks;
+                if (AttackTimer > iceTelegraphStart && AttackTimer <= iceTelegraphStart + IceTelegraphTicks)
                 {
-                    EndAttack(0);
+                    g.AttackCommitted = true;
+                    EmitIceTelegraph(halfRing: false, spiral: false, AttackTimer - iceTelegraphStart);
+                    if (AttackTimer == iceTelegraphStart + IceTelegraphTicks && !rushIceVolleyFired
+                        && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        rushIceVolleyFired = true;
+                        Vector2 target = FindGroundPoint(rushStartGround, 8);
+                        if (target == Vector2.Zero)
+                        {
+                            target = rushStartGround;
+                        }
+                        for (int i = 0; i < 4; i++)
+                        {
+                            Vector2 velocity = (target - StaffTip).SafeNormalize(new Vector2(NPC.direction, 0f))
+                                .RotatedBy((i - 1.5f) * 0.10f) * Main.rand.NextFloat(8.5f, 10.5f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTip, velocity,
+                                ModContent.ProjectileType<GigasIceShard>(), IceDamage, 1f, Main.myPlayer,
+                                0.12f, IceWaterIgniter, -1f);
+                        }
+                        SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.72f, Pitch = -0.15f }, StaffTip);
+                    }
+                }
+                else if (AttackTimer >= iceTelegraphStart + IceTelegraphTicks + IceRecoveryTicks)
+                {
+                    EndAttack(250);
                 }
             }
+        }
+
+        void SpawnRushWaterMarker()
+        {
+            int tileX = (int)(NPC.Center.X / 16f);
+            if (tileX == lastRushWaterTileX)
+            {
+                return;
+            }
+            lastRushWaterTileX = tileX;
+            Vector2 ground = FindGroundPoint(NPC.Bottom, 4);
+            if (ground == Vector2.Zero)
+            {
+                return;
+            }
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), ground - new Vector2(0f, 8f), Vector2.Zero,
+                ModContent.ProjectileType<QuaraWaterResidue>(), IceDamage, 0f, Main.myPlayer);
+        }
+
+        static Vector2 FindGroundPoint(Vector2 worldPosition, int maxTilesDown)
+        {
+            int tileX = (int)(worldPosition.X / 16f);
+            int startY = (int)(worldPosition.Y / 16f);
+            for (int y = startY; y <= startY + maxTilesDown; y++)
+            {
+                if (WorldGen.InWorld(tileX, y, 16) && WorldGen.SolidTile(tileX, y))
+                {
+                    return new Vector2(tileX * 16f + 8f, y * 16f);
+                }
+            }
+            return Vector2.Zero;
         }
 
         //On-hit evasion only from true neutral — recovery frames stay punishable

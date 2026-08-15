@@ -14,7 +14,7 @@ using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    public class GreatBlackKnight : ModNPC, IStaggerable, IFlailAnchor, IDebugAttackLabel, IHumanoidMeleeHitEffects
+    public class GreatBlackKnight : ModNPC, IStaggerable, IFlailAnchor, IDebugAttackLabel, IHumanoidMeleeHitEffects, Projectiles.Enemy.Weapons.ISpearMeleeWielder
     {
         public int redKnightsSpearDamage = 45;
         public int redMagicDamage = 40;

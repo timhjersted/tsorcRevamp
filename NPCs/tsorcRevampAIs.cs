@@ -849,7 +849,7 @@ namespace tsorcRevamp.NPCs
 
                 SpawnHighArcPounceTelegraph(npc, globalNPC);
 
-                if (globalNPC.PounceStyle == PounceStyle.DirectPounce)
+                if (globalNPC.PounceStyle == PounceStyle.DirectPounce || globalNPC.PounceStyle == PounceStyle.HeavyPounce)
                 {
                     RunDirectPounce(npc, globalNPC, topSpeed);
                 }
@@ -871,6 +871,13 @@ namespace tsorcRevamp.NPCs
                 }
 
                 globalNPC.DirectPounceAfterimageTimer--;
+            }
+
+            // HeavyPounce's payoff. Checked BEFORE the recovery damping below so the slam fires on the
+            // first grounded frame rather than a tick into the slide.
+            if (globalNPC.HeavyPounceAirborne && npc.velocity.Y == 0f)
+            {
+                LandHeavyPounce(npc, globalNPC);
             }
 
             if (globalNPC.DirectPounceRecoveryTimer > 0)
@@ -1168,6 +1175,52 @@ namespace tsorcRevamp.NPCs
             globalNPC.DirectPounceAfterimageTimer = globalNPC.DirectPounceAfterimages ? 8 : 0;
             globalNPC.DirectPounceRecoveryTimer = 18;
             globalNPC.PounceTarget = Vector2.Zero;
+            if (globalNPC.PounceStyle == PounceStyle.HeavyPounce)
+            {
+                // Arms the slam. Cleared by LandHeavyPounce on the first grounded frame, so a pounce that
+                // is interrupted mid-air (staggered, teleported) simply never pays off.
+                globalNPC.HeavyPounceAirborne = true;
+            }
+            npc.netUpdate = true;
+        }
+
+        /// <summary>
+        /// HeavyPounce impact: a mirrored PAIR of shockwave gusts raking outward along the floor, plus the
+        /// screen-shake and grit of something heavy arriving.
+        /// </summary>
+        /// <remarks>
+        /// The pair is spawned from the NPC's FEET rather than its centre so both gusts ride the surface it
+        /// actually landed on. Damage comes from HeavyPounceSlamDamage (set by the enemy) rather than
+        /// npc.damage, so a heavy slam can hit harder than the same enemy's contact damage without
+        /// inflating everything else it does.
+        /// </remarks>
+        private static void LandHeavyPounce(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        {
+            globalNPC.HeavyPounceAirborne = false;
+            npc.velocity.X *= 0.25f;   // it plants; it does not skid onward
+
+            SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.75f, Pitch = -0.6f }, npc.Center);
+            SoundEngine.PlaySound(SoundID.NPCDeath43 with { Volume = 0.5f, Pitch = -0.4f }, npc.Center);
+            if (Main.netMode != NetmodeID.Server)
+            {
+                UsefulFunctions.ScreenShake(npc.Center, 3.2f, 10, distanceFalloff: 520f,
+                    uniqueIdentity: "HeavyPounceSlam");
+            }
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            int damage = globalNPC.HeavyPounceSlamDamage > 0 ? globalNPC.HeavyPounceSlamDamage : npc.damage;
+            for (int side = 0; side < 2; side++)
+            {
+                float direction = side == 0 ? -1f : 1f;
+                Projectile.NewProjectile(npc.GetSource_FromThis(),
+                    npc.Bottom + new Vector2(direction * 10f, -4f), new Vector2(direction * 7.2f, 0f),
+                    ModContent.ProjectileType<Projectiles.Enemy.HeavyPounceShockwave>(),
+                    damage, 6f, Main.myPlayer, direction, side);
+            }
             npc.netUpdate = true;
         }
 
@@ -1274,6 +1327,9 @@ namespace tsorcRevamp.NPCs
                     switch (globalNPC.PounceStyle)
                     {
                         case PounceStyle.DirectPounce:
+                        case PounceStyle.HeavyPounce:
+                            // HeavyPounce shares DirectPounce's approach-and-leap wholesale; only the
+                            // LANDING differs (see LandHeavyPounce).
                             TryStartDirectPounce(npc, globalNPC);
                             break;
                         case PounceStyle.HighArcPounce:

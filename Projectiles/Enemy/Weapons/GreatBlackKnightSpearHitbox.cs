@@ -8,7 +8,22 @@ using tsorcRevamp.NPCs.Enemies;
 namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
     /// <summary>
-    /// Invisible, source-anchored hitbox for the Great Black Knight's spear jab.
+    /// State contract for an enemy driving a bespoke spear-melee window, so
+    /// <see cref="GreatBlackKnightSpearHitbox"/> can serve the whole Black Knight family rather than
+    /// one class. Implemented by GreatBlackKnight (its SpearMelee AttackKind) and BlackKnight (the
+    /// LeapStrike attack's outbound arc).
+    /// </summary>
+    public interface ISpearMeleeWielder
+    {
+        /// <summary>The spear is out and the hitbox should exist at all.</summary>
+        bool SpearMeleeActive { get; }
+
+        /// <summary>The strike is live and the hitbox should actually deal damage.</summary>
+        bool SpearMeleeHitWindow { get; }
+    }
+
+    /// <summary>
+    /// Invisible, source-anchored hitbox for a Black Knight family spear strike.
     /// </summary>
     /// <remarks>
     /// Deliberately NOT <see cref="HumanoidMeleeHitbox"/>: that one is hard-coupled to the shared
@@ -50,7 +65,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override bool ShouldUpdatePosition() => false;
 
-        private bool TryGetKnight(out NPC sourceNPC, out GreatBlackKnight knight)
+        private bool TryGetKnight(out NPC sourceNPC, out ISpearMeleeWielder knight)
         {
             knight = null;
             tsorcGlobalProjectile globalProjectile = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>();
@@ -58,13 +73,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             {
                 return false;
             }
-            knight = sourceNPC.ModNPC as GreatBlackKnight;
+            knight = sourceNPC.ModNPC as ISpearMeleeWielder;
             return knight != null;
         }
 
         public override void AI()
         {
-            if (!TryGetKnight(out NPC sourceNPC, out GreatBlackKnight knight) || !knight.SpearMeleeActive)
+            if (!TryGetKnight(out NPC sourceNPC, out ISpearMeleeWielder knight) || !knight.SpearMeleeActive)
             {
                 Projectile.Kill();
                 return;
@@ -77,7 +92,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override bool? CanDamage()
         {
-            return TryGetKnight(out _, out GreatBlackKnight knight) && knight.SpearMeleeHitWindow;
+            return TryGetKnight(out _, out ISpearMeleeWielder knight) && knight.SpearMeleeHitWindow;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
