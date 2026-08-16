@@ -106,13 +106,20 @@ namespace tsorcRevamp.NPCs.Enemies
 
         // ── CounterCheck ────────────────────────────────────────────────────────────────────────────────
         // Not a bag attack: proximity-triggered, so closing on him is what causes it.
-        private const int CounterWindupTicks = 12;   // deliberately short — this is a punish, not a telegraph
+        // Deliberately short — this is a punish, not a telegraph. The windup is the accelerate-in ramp.
         private const int CounterStrikeTick = 12;
-        private const int CounterHitTicks = 9;
-        private const int CounterTicks = 34;
+        private const int CounterHitTicks = 12;
+        private const int CounterTicks = 44;
         private const float CounterTriggerRange = 112f;
         private const float CounterReach = 86f;
         private const float CounterHeight = 42f;
+        // The counter DASHES. Its hitbox is source-anchored (it rides the knight), so a jab thrown from a
+        // standing stop only connects if the player is already touching him — which is why it read as "he
+        // holds the spear out and nothing happens". Leonhard-style commit: wind up by accelerating in, then
+        // burst forward with a small ballistic hop so it has to be dodged rather than walked out of.
+        private const float CounterWindupSpeed = 3.4f;
+        private const float CounterDashSpeed = 10f;
+        private const float CounterDashHop = -3f;
         private const int CounterCooldownTicks = 210;
         private int counterCooldown;
 
@@ -185,12 +192,17 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         // ── PlagueSeals ─────────────────────────────────────────────────────────────────────────────────
-        private const int SealCastTicks = 60;              // caster telegraph before the seals are placed
-        private const int SealCastTotalTicks = 84;
+        // 90, up from 60: this is his slowest, most committed cast and the payoff removes a chunk of the
+        // arena, so the read on it should be long and unmistakable. Everything below derives from it —
+        // the staff-hold window, the committed-attack window and the charge ramp on the casting dust.
+        private const int SealCastTicks = 90;              // caster telegraph before the seals are placed
+        private const int SealCastTotalTicks = 114;
         private const int SealFirstTelegraphTicks = 26;    // floor warning on the column under the player
         private const int SealDelayedTelegraphTicks = 180; // 3s, per design — the follow-up pair
-        private const float SealFarOffset = 300f;          // how far past the player the pair lands
-        private const float SealPairSpacing = 44f;
+        // The delayed pair FLANKS the player, one column each side at this distance. It was previously both
+        // columns on the far side 44px apart, which at a 32px column width put them practically touching and
+        // read as a single doubled pillar rather than a pincer.
+        private const float SealFlankOffset = 500f;
         private const float SealMinRange = 180f;
         private const float SealMaxRange = 950f;
 
@@ -1169,21 +1181,40 @@ namespace tsorcRevamp.NPCs.Enemies
         private void TickCounterCheck(int t, tsorcRevampGlobalNPC globalNPC)
         {
             NPC.knockBackResist = 0f;
+
             if (t < CounterStrikeTick)
             {
-                NPC.velocity.X *= 0.72f;   // plant for the check
-                return;
-            }
-            if (t != CounterStrikeTick)
-            {
+                // Wind up by CLOSING, not by planting: the ramp is the tell, and it means the dash launches
+                // from a body already moving toward the player rather than from a standstill.
+                int facing = player.Center.X >= NPC.Center.X ? 1 : -1;
+                NPC.direction = facing;
+                NPC.spriteDirection = facing;
+                float ramp = t / (float)MathF.Max(1f, CounterStrikeTick);
+                KnightHopPlanner.ApproachHorizontalSpeed(NPC, facing,
+                    MathHelper.Lerp(1.2f, CounterWindupSpeed, ramp), 0.34f);
                 return;
             }
 
-            int direction = player.Center.X >= NPC.Center.X ? 1 : -1;
-            NPC.direction = direction;
-            NPC.spriteDirection = direction;
-            SpawnSpearHitbox(direction, CounterReach, CounterHeight, globalNPC);
-            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.95f, Pitch = 0.15f }, NPC.Center);
+            if (t == CounterStrikeTick)
+            {
+                int direction = player.Center.X >= NPC.Center.X ? 1 : -1;
+                NPC.direction = direction;
+                NPC.spriteDirection = direction;
+                // Committed burst with a small hop, mirroring RedKnightAttackController.LeonhardDashVelocity.
+                // The hop is what makes it read as a lunge rather than a slide, and it carries the anchored
+                // hitbox onto the player instead of waiting for them to walk into it.
+                NPC.velocity = new Vector2(direction * CounterDashSpeed, CounterDashHop);
+                SpawnSpearHitbox(direction, CounterReach, CounterHeight, globalNPC);
+                SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.95f, Pitch = 0.15f }, NPC.Center);
+                NPC.netUpdate = true;
+                return;
+            }
+
+            // Committed: no air control through the strike, then shed the dash on landing.
+            if (t > CounterStrikeTick + CounterHitTicks && NPC.velocity.Y == 0f)
+            {
+                NPC.velocity.X *= 0.80f;
+            }
         }
 
         /// <summary>
@@ -1240,6 +1271,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
+            if (t >= LeapBackTick)
+            {
+                // Keep him FACING the player for the whole retreat. He is leaping backwards with the spear
+                // cocked and about to throw it — turning his back would read as fleeing, and the apex throw
+                // would appear to come out of the back of his head. Both direction and spriteDirection are
+                // set: vanilla's AnimationType re-derives spriteDirection from direction on any grounded
+                // frame, so setting only the sprite would snap back the moment he lands.
+                int facePlayer = player.Center.X >= NPC.Center.X ? 1 : -1;
+                NPC.direction = facePlayer;
+                NPC.spriteDirection = facePlayer;
+            }
+
             if (t == LeapBackTick)
             {
                 // Backleap, spear still in hand. Away from the player, not away from his facing, so a
@@ -1255,9 +1298,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 // Apex throw. Aimed live rather than at the stored prediction: he can see the player from
                 // up here, and a lead-predicted throw from mid-air reads as a miss the player did not cause.
-                NPC.TargetClosest(true);
-                int facing = player.Center.X >= NPC.Center.X ? 1 : -1;
-                NPC.spriteDirection = facing;
+                NPC.TargetClosest(true); // facing is already held on the player by the backleap block above
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center,
@@ -1403,15 +1444,16 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             int columnType = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightPlagueColumn>();
-            int away = player.Center.X >= NPC.Center.X ? 1 : -1;
 
             // 1) Under the player, on a short floor warning so it is still dodgeable.
             SpawnPlagueColumn(columnType, player.Bottom.X, SealFirstTelegraphTicks);
 
-            // 2+3) The cut-off pair, past the player and offset in time.
-            float farX = player.Center.X + away * SealFarOffset;
-            SpawnPlagueColumn(columnType, farX - SealPairSpacing * 0.5f, SealDelayedTelegraphTicks);
-            SpawnPlagueColumn(columnType, farX + SealPairSpacing * 0.5f, SealDelayedTelegraphTicks);
+            // 2+3) The pincer: one column each side, offset in time. Flanking rather than stacking on the
+            // far side means BOTH horizontal escapes get sealed, so the answer is to commit to a side early
+            // (while only the centre column is live) rather than drift — which is the whole point of a
+            // placed attack on a slow caster.
+            SpawnPlagueColumn(columnType, player.Center.X - SealFlankOffset, SealDelayedTelegraphTicks);
+            SpawnPlagueColumn(columnType, player.Center.X + SealFlankOffset, SealDelayedTelegraphTicks);
             NPC.netUpdate = true;
         }
 

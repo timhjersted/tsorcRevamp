@@ -47,6 +47,10 @@ static class Preview
         readonly float[] r, g, b, a;
         readonly int w, h;
 
+        /// Source dimensions, for ports that draw a SPRITE at a scale rather than filling the quad.
+        public int Width => w;
+        public int Height => h;
+
         public Tex(string name, bool previewLocal = false)
         {
             using var bmp = new Bitmap((previewLocal ? "" : NoiseRoot) + name + ".png");
@@ -182,6 +186,7 @@ static class Preview
         ElandDetailSampler = new Tex("T_CloudNoise_Tiled");
         HexPrimarySampler = new Tex("T_PerlinNoise_Tiled");
         HexDetailSampler = new Tex("Vein_07-512x512");
+        UnblockableSpriteSampler = new Tex(Path.Combine("..", "..", "..", "..", "Projectiles", "Enemy", "BlackThrowingSpear"), previewLocal: true);
         QuaraDetailSampler = new Tex("T_Noise_Wf4");
         QuaraWaterPrimarySampler = new Tex("T_VFX_CircleFit1");
         QuaraCrestPrimarySampler = new Tex(Path.Combine(ProjectRoot, "Projectiles", "Enemy", "Quara", "QuaraTidalCrest"), previewLocal: true);
@@ -1261,13 +1266,17 @@ static class Preview
         V2 uv = QuaraPixelate(c, w, h);
         V2 p = (uv - .5f) * 2f;
         float r = length(p);
-        float edge = sat((1f - r) * 3.1f);
-        float foam = sat(QuaraDetailSampler.R(uv * 2.65f + new V2(-Time * .26f, Time * .18f)) * 1.48f - .26f);
-        float churn = sat(foam * 1.55f - .18f);
-        float core = sat(1f - r * 1.36f) * (.40f + foam * .60f);
-        float alpha = edge * sat(churn * .86f + foam * .52f + core * .24f) * Opacity;
-        V3 color = lerp(WaterMid, WaterCore, foam);
-        color = lerp(WaterDark, color, churn);
+        float water = sat(QuaraDetailSampler.R(uv * 2.10f + new V2(-Time * .18f, Time * .11f)) * 1.34f + .02f);
+        V2 absP = new V2(MathF.Abs(p.x), MathF.Abs(p.y));
+        float cardinal = sat(1f - MathF.Min(absP.x, absP.y) * 9.5f);
+        float diagonal = sat(1f - MathF.Abs(absP.x - absP.y) * 11f);
+        float spokes = MathF.Max(cardinal, diagonal);
+        float slash = spokes * sat(r * 2f) * sat((1f - r) * 3f) * sat(water * 1.35f - .06f);
+        float core = sat(1f - r * 2.35f) * (.42f + water * .50f);
+        float foam = sat(water * 1.68f - .52f) * (slash * .82f + core * .36f);
+        float alpha = sat(slash * .94f + core * .85f + foam * .36f) * Opacity;
+        V3 color = lerp(WaterDark, WaterMid, sat(slash * 1.15f + core * .75f));
+        color = lerp(color, WaterCore, foam * .95f + core * .35f);
         return (color * alpha, alpha);
     }
 
@@ -1304,6 +1313,73 @@ static class Preview
         color = lerp(color, WaterCore, sat(rim * (.48f + Active * .18f) + core * .42f));
         float alpha = sat(body * .80f + rim * (.64f + Active * .10f) + core * .20f) * edge * Opacity;
         return (color * alpha, alpha);
+    }
+
+    // ---- Effects/UnblockableGlow.fx + Utilities/AttackTelegraphDraw.DrawUnblockableWeaponAura ---------
+    // This technique is meaningless on its own: the .fx just recolours whatever alpha it is handed, and the
+    // EFFECT is the multi-draw the helper wraps it in — the weapon sprite stamped 8 times around a pulsing
+    // ring as a flat red silhouette, then once more centred with a hot core. So the port reproduces the
+    // composite, not just the pixel function, or the preview would show a solid red spear and tell us nothing.
+    static Tex UnblockableSpriteSampler;
+
+    static readonly V2[] GlowDirections =
+    {
+        new(1, 0), new(-1, 0), new(0, 1), new(0, -1),
+        new(0.70710678f, 0.70710678f), new(0.70710678f, -0.70710678f),
+        new(-0.70710678f, 0.70710678f), new(-0.70710678f, -0.70710678f),
+    };
+
+    /// One stamp of the shader: alpha comes from the SOURCE SPRITE, colour is a flat uniform lerp.
+    static (V3 rgb, float a) UnblockableGlowPixel(V2 uv, float coreAmount, float opacity)
+    {
+        // Outside the sprite there is nothing to light up — matches sampling past the quad in game.
+        if (uv.x < 0f || uv.x > 1f || uv.y < 0f || uv.y > 1f)
+        {
+            return (new V3(0, 0, 0), 0f);
+        }
+        float sourceAlpha = UnblockableSpriteSampler.T(uv).w; // .a * sampleColor.a, and callers pass White
+        float alpha = sat(sourceAlpha * opacity);
+        V3 glowColor = new(1f, 0.015f, 0.01f);
+        V3 coreColor = new(1f, 0.9f, 0.72f);
+        // The line that could not compile was saturate(coreAmount) — a pure-uniform argument. Callers
+        // already pass 0..1, so dropping it is behaviourally identical; this port matches the fixed shader.
+        V3 outputColor = lerp(glowColor, coreColor, coreAmount);
+        return (outputColor, alpha);
+    }
+
+    /// The whole telegraph. `pulse` is the shader's own 8Hz sine, frozen at a chosen phase.
+    /// Returns PREMULTIPLIED accumulation with a = 1, because additive blending composites
+    /// dst + sum(rgb_i * a_i) across the nine draws — returning a summed alpha instead would double-apply it.
+    static (V3, float) UnblockableAura(V2 c, int w, int h, float pulse, float scale)
+    {
+        float outlineRadius = (1.6f + (2.8f - 1.6f) * pulse) * MathF.Max(1f, scale);
+        // Sprite is drawn at `scale` centred in the panel; convert panel UV -> sprite UV.
+        float spriteW = UnblockableSpriteSampler.Width * scale;
+        float spriteH = UnblockableSpriteSampler.Height * scale;
+        V2 centrePx = new(c.x * w - w * 0.5f, c.y * h - h * 0.5f);
+
+        V3 total = new(0, 0, 0);
+
+        // Ring pass: 8 offset stamps, coreAmount 0 (pure red silhouette).
+        float ringOpacity = 0.76f + (1f - 0.76f) * pulse;
+        for (int i = 0; i < GlowDirections.Length; i++)
+        {
+            V2 offset = new(GlowDirections[i].x * outlineRadius, GlowDirections[i].y * outlineRadius);
+            V2 spriteUV = new((centrePx.x - offset.x) / spriteW + 0.5f, (centrePx.y - offset.y) / spriteH + 0.5f);
+            var (rgb, a) = UnblockableGlowPixel(spriteUV, 0f, ringOpacity);
+            total = new V3(total.x + rgb.x * a, total.y + rgb.y * a, total.z + rgb.z * a);
+        }
+
+        // Core pass: one centred stamp, hot core mixed in.
+        float coreAmount = 0.42f + (0.72f - 0.42f) * pulse;
+        float coreOpacity = 0.82f + (1f - 0.82f) * pulse;
+        {
+            V2 spriteUV = new(centrePx.x / spriteW + 0.5f, centrePx.y / spriteH + 0.5f);
+            var (rgb, a) = UnblockableGlowPixel(spriteUV, coreAmount, coreOpacity);
+            total = new V3(total.x + rgb.x * a, total.y + rgb.y * a, total.z + rgb.z * a);
+        }
+
+        return (total, 1f);
     }
 
     static Panel[] Panels() => FocusPanels ?? AllPanels();
@@ -1371,7 +1447,18 @@ static class Preview
         string safePreviewName = string.Concat(previewName.Select(c =>
             char.IsLetterOrDigit(c) || c == '-' || c == '_' ? c : '-')).Trim('-');
         if (string.IsNullOrWhiteSpace(safePreviewName)) safePreviewName = "shader-preview";
-        if (Environment.GetEnvironmentVariable("FOCUS") == "hexseal")
+        if (Environment.GetEnvironmentVariable("FOCUS") == "unblockable")
+        {
+            // Additive, matching UsefulFunctions.StartAdditiveSpritebatch in the helper. Rendered at both
+            // pulse extremes because the ring radius, opacity and core mix all ride the same 8Hz sine.
+            FocusPanels = new[]
+            {
+                new Panel("Aura pulse=0 (tight)", 96, 96, Blend.Additive, c => UnblockableAura(c, 96, 96, 0f, 1f)),
+                new Panel("Aura pulse=1 (wide)", 96, 96, Blend.Additive, c => UnblockableAura(c, 96, 96, 1f, 1f)),
+                new Panel("Aura pulse=.5 x", 96, 96, Blend.Additive, c => UnblockableAura(c, 96, 96, 0.5f, 2f)),
+            };
+        }
+        else         if (Environment.GetEnvironmentVariable("FOCUS") == "hexseal")
         {
             // Real call-site sizes/opacities from EnemyVFX.DrawBlackKnightHexCrystal. Rendered at
             // several Progress values because the seal is meant to TIGHTEN as the crystal closes —
@@ -1651,7 +1738,7 @@ static class Preview
         }
         if (Environment.GetEnvironmentVariable("FOCUS") == "quara_bubble_burst")
         {
-            // The same effect is used at 104px when the casting bubble pops, 38px while it is
+            // The burst is 132px when the tidal crest expires, 104px when the casting bubble pops, 38px while it is
             // pressurising, and 24px behind each launched Bubble sprite. These real call-site sizes
             // make it obvious whether the new 2px grid still reads at gameplay scale.
             FocusPanels = new[]
@@ -1663,12 +1750,12 @@ static class Preview
                 new Panel("CURRENT burst tail", 104, 104, Blend.PremultipliedAlpha,
                     c => QuaraWaterBurstCurrent(c, 3.4f, .88f, .70f)),
 
-                new Panel("NEW pixel splash early", 104, 104, Blend.PremultipliedAlpha,
-                    c => QuaraWaterBurstFiltered(c, 104, 104, 2.4f, .92f)),
-                new Panel("NEW pixel splash peak", 104, 104, Blend.PremultipliedAlpha,
-                    c => QuaraWaterBurstFiltered(c, 104, 104, 2.9f, .92f)),
-                new Panel("NEW pixel splash tail", 104, 104, Blend.PremultipliedAlpha,
-                    c => QuaraWaterBurstFiltered(c, 104, 104, 3.4f, .70f)),
+                new Panel("NEW tidal splash early", 132, 132, Blend.PremultipliedAlpha,
+                    c => QuaraWaterBurstFiltered(c, 132, 132, 2.4f, .92f)),
+                new Panel("NEW tidal splash peak", 132, 132, Blend.PremultipliedAlpha,
+                    c => QuaraWaterBurstFiltered(c, 132, 132, 2.9f, .92f)),
+                new Panel("NEW tidal splash tail", 132, 132, Blend.PremultipliedAlpha,
+                    c => QuaraWaterBurstFiltered(c, 132, 132, 3.4f, .70f)),
 
                 new Panel("CURRENT casting bubble", 38, 38, Blend.PremultipliedAlpha,
                     c => QuaraBubbleCurrent(c, 3.1f, .88f, 1f)),

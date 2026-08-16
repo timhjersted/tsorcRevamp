@@ -616,8 +616,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                         opacity, progress, 1f, 1f, BlendState.AlphaBlend);
                     break;
                 case EnemyVFXBurstKind.QuaraWaterBurst:
-                    Draw(quaraWaterProjectile, "QuaraWaterBurst", circle, smoothNoise,
-                        center, Vector2.One * 104f, 0f, WaterDark, WaterMid, WaterCore,
+                    Draw(quaraWaterProjectile, "QuaraWaterBurst", circle, wavyDetailNoise,
+                        center, Vector2.One * 132f, 0f, WaterDark, WaterMid, WaterCore,
                         opacity, progress, 1f, 1f, BlendState.AlphaBlend);
                     break;
                 case EnemyVFXBurstKind.QuaraInkBurst:
@@ -740,7 +740,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             // fireball/cool-down curve in BlackKnightMoonfury.fx's Blast technique is actually visible.
             EnemyVFXBurstKind.BlackKnightMoonfuryBlast => 50,
             EnemyVFXBurstKind.DemonSpiritSoulBurst => 18,
-            EnemyVFXBurstKind.QuaraWaterBurst => 18,
+            // Hold long enough for the gravity-driven impact spray to visibly arc and fall.
+            EnemyVFXBurstKind.QuaraWaterBurst => 48,
             EnemyVFXBurstKind.EvilEyeGhostBurst => 34,
             // Combo B's dark poison splats need time to merge into a readable cloud after the
             // balls land. Damage is handled separately by ElandVenomSplash (14 ticks only), so
@@ -758,6 +759,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             // the generic five-tick burst fade. This makes successive Combo B impacts overlap as
             // lingering poison smog. The fade starts as Combo B's paired 60-tick damage window ends.
             EnemyVFXBurstKind.ElandVenomImpact => 75,
+            EnemyVFXBurstKind.QuaraWaterBurst => 18,
             _ => 5
         };
 

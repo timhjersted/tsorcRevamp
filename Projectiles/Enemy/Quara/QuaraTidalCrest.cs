@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float SpriteScale = 0.42f;  //194px art vs a 40px hitbox — generous visual, tight hitbox
 
         const float WaveSpeed = 5f;
-        // Matches EnemyVFX's 104px QuaraWaterBurst quad. This is a debuff-only release: the wave
+        // The shader visual is wider than this true gameplay circle. This is a debuff-only release: the wave
         // already owns the damaging travel lane, while the splash makes its final water mass matter.
         const float ExitSplashRadius = 52f;
         const int ExitSplashBuffTime = 6 * 60;
@@ -177,15 +177,18 @@ namespace tsorcRevamp.Projectiles.Enemy
             EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), splashCenter, EnemyVFXBurstKind.QuaraWaterBurst);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.7f, Pitch = -0.15f }, splashCenter);
 
-            // MIDGROUND BODY — 36 medium water motes make the release read as a broad, forward
-            // breaking splash. Max scale is 1.2 * 1.35 = 1.62, safely below blocky territory.
-            for (int i = 0; i < 36; i++)
+            // The actual water slash: 100 low-scale droplets leave the impact by roughly 100px,
+            // then fall under gravity. Max scale = 1.2 * 1.05 = 1.26, not blocky.
+            const int WaterSlashDustCount = 100;
+            for (int i = 0; i < WaterSlashDustCount; i++)
             {
-                Vector2 position = splashCenter + new Vector2(Main.rand.NextFloat(-30f, 30f), Main.rand.NextFloat(-5f, 4f));
-                Vector2 velocity = new Vector2(Direction * Main.rand.NextFloat(-1.5f, 4.5f), Main.rand.NextFloat(-5.6f, -1.2f));
-                Dust water = Dust.NewDustPerfect(position, DustID.Water, velocity, Main.rand.Next(45, 95), default,
-                    Main.rand.NextFloat(0.75f, 1.35f));
-                water.noGravity = true;
+                float angle = MathHelper.TwoPi * i / WaterSlashDustCount + Main.rand.NextFloat(-0.065f, 0.065f);
+                Vector2 velocity = angle.ToRotationVector2() * Main.rand.NextFloat(7.5f, 10.5f);
+                // Downward droplets still leave the core cleanly; the rest arc upward before falling.
+                velocity.Y = MathHelper.Min(velocity.Y, 2.5f);
+                Dust.NewDustPerfect(splashCenter + Main.rand.NextVector2Circular(8f, 5f), DustID.Water,
+                    velocity, Main.rand.Next(45, 100), default, Main.rand.NextFloat(0.62f, 1.05f));
+                // noGravity is deliberately left false: these are physical thrown droplets.
             }
 
             // FOREGROUND DETAIL — 18 small, fast blue droplets give the breaking lip a crisp edge
@@ -199,19 +202,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 droplet.noGravity = true;
             }
 
-            // BACKGROUND RESIDUE — 14 slow droplets start small and grow toward 1.2, lingering
-            // after the bright burst so the attack does not visually stop on a hard cut.
-            for (int i = 0; i < 14; i++)
-            {
-                Vector2 position = splashCenter + new Vector2(Main.rand.NextFloat(-42f, 42f), Main.rand.NextFloat(-3f, 6f));
-                Dust mist = Dust.NewDustPerfect(position, DustID.Water,
-                    new Vector2(Direction * Main.rand.NextFloat(-0.7f, 1.5f), Main.rand.NextFloat(-1.6f, -0.25f)),
-                    Main.rand.Next(125, 175), default, Main.rand.NextFloat(0.50f, 0.80f));
-                mist.noGravity = true;
-                mist.fadeIn = Main.rand.NextFloat(1.05f, 1.25f);
-            }
-
-            // The burst shader is 104px across, so this true circle is radius 52. Apply its debuffs
+            // The visual burst is 132px across, while this true gameplay circle remains radius 52. Apply its debuffs
             // only on the server, once, and without additional damage; the travelling crest remains
             // the attack's sole damaging band.
             if (Main.netMode != NetmodeID.MultiplayerClient)

@@ -60,21 +60,25 @@ float4 Droplet(float4 v : COLOR0, float2 c : TEXCOORD0) : COLOR0
     return float4(color * alpha, alpha) * v;
 }
 
-// The 18-tick impact burst. Its silhouette is procedural instead of trusting the primary texture's
-// alpha, which can be opaque across its whole quad; this is what guarantees no square splash field.
+// The impact burst is a set of outward water slashes, with a small turbulent core. It has no
+// sampled alpha edge, so a texture border can never make a rectangular seam around the splash.
 float4 WaterBurst(float4 v : COLOR0, float2 c : TEXCOORD0) : COLOR0
 {
     c = PixelateWaterUV(c);
     float2 p = (c - 0.5) * 2.0;
     float r = length(p);
-    float edge = saturate((1.0 - r) * 3.1);
-    float2 foamUV = c * 2.65 + float2(-Time * 0.26, Time * 0.18);
-    float foam = saturate(tex2D(DetailSampler, foamUV).r * 1.48 - 0.26);
-    float churn = saturate(foam * 1.55 - 0.18);
-    float core = saturate(1.0 - r * 1.36) * (0.40 + foam * 0.60);
-    float alpha = edge * saturate(churn * 0.86 + foam * 0.52 + core * 0.24) * Opacity;
-    float3 color = lerp(MidColor, CoreColor, foam);
-    color = lerp(DarkColor, color, churn);
+    float2 flowUV = c * 2.10 + float2(-Time * 0.18, Time * 0.11);
+    float water = saturate(tex2D(DetailSampler, flowUV).r * 1.34 + 0.02);
+    float2 absP = abs(p);
+    float cardinal = saturate(1.0 - min(absP.x, absP.y) * 9.5);
+    float diagonal = saturate(1.0 - abs(absP.x - absP.y) * 11.0);
+    float spokes = max(cardinal, diagonal);
+    float slash = spokes * saturate(r * 2.0) * saturate((1.0 - r) * 3.0) * saturate(water * 1.35 - 0.06);
+    float core = saturate(1.0 - r * 2.35) * (0.42 + water * 0.50);
+    float foam = saturate(water * 1.68 - 0.52) * (slash * 0.82 + core * 0.36);
+    float alpha = saturate(slash * 0.94 + core * 0.85 + foam * 0.36) * Opacity;
+    float3 color = lerp(DarkColor, MidColor, saturate(slash * 1.15 + core * 0.75));
+    color = lerp(color, CoreColor, foam * 0.95 + core * 0.35);
     return float4(color * alpha, alpha) * v;
 }
 
