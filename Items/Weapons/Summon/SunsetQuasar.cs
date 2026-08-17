@@ -29,7 +29,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.value = Item.buyPrice(0, 50, 0, 0);
             Item.rare = ModContent.RarityType<CDW_SunsetQuasar>();
             Item.UseSound = SoundID.Item44;
-            Item.mana = 10;
 
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;

@@ -17,10 +17,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
     {
         public override int ProjFrames => 1;
         public override int Width => 98;
-        public override int Height => 50;
+        public override int Height => 34;
         public override int TrailWidth => 45;
         public override int TrailPointLimit => 900;
-        public override int TrailMaxLength => 500; //333
+        public override int TrailMaxLength => 200;
         public override string EffectType => "tsorcRevamp/Effects/InterstellarVessel";
         public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/";
         public override int BuffType => ModContent.BuffType<InterstellarCommander>();
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
             {
                 modifiers.SourceDamage += ScorchingPoint.SuperBurnDmgAmp / 100f;
             }
-            if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            if (owner.GetModPlayer<tsorcRevampPlayer>().Turboboost)
             {
                 modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * InterstellarVesselGauntlet.BoostPercentHPDmg / 100f, InterstellarVesselGauntlet.BoostPercentHPDmgCap);
             }
@@ -63,14 +63,14 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
         }
         public override void SetEffectParameters(Effect effect)
         {
-            trailWidth = 45;
-            trailMaxLength = 500;
+            trailWidth = TrailWidth;
+            trailMaxLength = TrailMaxLength;
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
             effect.Parameters["length"].SetValue(trailCurrentLength);
             float hostVel = 0;
             hostVel = Projectile.velocity.Length();
-            float modifiedTime = 0.001f * hostVel;
+            float modifiedTime = 0.0015f * hostVel;
 
             if (Main.gamePaused)
             {
@@ -127,9 +127,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
 
                 Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
                 Vector2 origin = sourceRectangle.Size() / 2f;
+                float rotationAdd = 0.18f;
 
-                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.Lerp(lightColor, Color.Orange, 0.25f), Projectile.rotation, origin, 1, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(glowTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, 1, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.Lerp(lightColor, Color.Orange, 0.25f), Projectile.rotation + rotationAdd, origin, 1, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(glowTexture, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation + rotationAdd, origin, 1, SpriteEffects.None, 0f);
 
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

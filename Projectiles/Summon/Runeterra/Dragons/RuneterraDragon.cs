@@ -315,7 +315,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[Projectile.owner];
-            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            if (player.GetModPlayer<tsorcRevampPlayer>().Turboboost)
             {
                 modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * InterstellarVesselGauntlet.BoostPercentHPDmg / 100f, InterstellarVesselGauntlet.BoostPercentHPDmgCap);
             }
@@ -365,10 +365,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         }
         public override void AI()
         {
-            if (Main.GameUpdateCount % 120 == 0)
-            {
-                Projectile.netUpdate = true;
-            }
             Player player = Main.player[Projectile.owner];
             if (player.HasBuff(BuffType))
             {
@@ -384,7 +380,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().CursorPosition = Main.MouseWorld;
 
-            if (Main.netMode == NetmodeID.MultiplayerClient && Main.GameUpdateCount % 6 == 0)
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 ModPacket cursorPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                 cursorPacket.Write(tsorcPacketID.SyncOwnerCursor);
@@ -394,7 +390,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             }
 
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            if (player.GetModPlayer<tsorcRevampPlayer>().Turboboost)
             {
                 Projectile.localNPCHitCooldown = BaseAttackSpeed / 2;
             }
@@ -403,7 +399,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 Projectile.localNPCHitCooldown = BaseAttackSpeed; 
             }
 
-            Vector2 offset = new Vector2(125, 0);
+            Vector2 offset = new Vector2(0, 0); //I have no idea why there was an offset, it just made it feel way jankier to use
             Vector2 movementVec = player.GetModPlayer<tsorcRevampPlayer>().CursorPosition + offset - Projectile.Center;
 
 

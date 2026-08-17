@@ -368,7 +368,7 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (item.DamageType == DamageClass.SummonMeleeSpeed && item.type != ModContent.ItemType<DarkSword>())
             {
-                player.whipRangeMultiplier += player.GetAdjustedItemScale(player.HeldItem) - 1f;
+                player.whipRangeMultiplier += player.GetAdjustedItemScale(player.HeldItem) - 1f; //apply weapon size modifiers to whip range
             }
         }
         public static int FlinxFurMaxMinionIncrease = 1;

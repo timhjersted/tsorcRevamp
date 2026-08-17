@@ -17,6 +17,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public const int BaseDmg = 100;
         public static List<CenterOfTheUniverseStar> projectiles = null;
         public static int processedProjectilesCount = 0;
+        public static List<CenterOfTheUniverseStar2> projectiles2 = null;
+        public static int processedProjectilesCount2 = 0;
         public override float SoundVolumeAbstract => 1f;
         public static float SoundVolume;
         public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/";
@@ -36,6 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public override void CustomSetDefaults()
         {
             projectiles = new List<CenterOfTheUniverseStar>() { };
+            projectiles2 = new List<CenterOfTheUniverseStar2>() { };
             SoundVolume = SoundVolumeAbstract;
         }
         public override bool? UseItem(Player player)
@@ -55,18 +58,33 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             // repose projectiles relatively to the first one so they are evenly spread on the radial circumference
             List<CenterOfTheUniverseStar> projectileList = new List<CenterOfTheUniverseStar>();
             processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<CenterOfTheUniverseStar>()];
+            
+            List<CenterOfTheUniverseStar2> projectileList2 = new List<CenterOfTheUniverseStar2>();
+            processedProjectilesCount2 = player.ownedProjectileCounts[ModContent.ProjectileType<CenterOfTheUniverseStar2>()];
+            
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (Main.projectile[i].type == ModContent.ProjectileType<CenterOfTheUniverseStar>() && Main.projectile[i].owner == player.whoAmI)
                 {
                     projectileList.Add((CenterOfTheUniverseStar)Main.projectile[i].ModProjectile);
                 }
+                
+                if (Main.projectile[i].type == ModContent.ProjectileType<CenterOfTheUniverseStar2>() && Main.projectile[i].owner == player.whoAmI)
+                {
+                    projectileList2.Add((CenterOfTheUniverseStar2)Main.projectile[i].ModProjectile);
+                }
             }
 
             for (int i = 1; i < processedProjectilesCount; ++i)
             {
-                projectileList[i].currentAngle = projectileList[i - 1].currentAngle + 2f * (float)Math.PI / processedProjectilesCount;
+                float currentAngle = projectileList[i - 1].currentAngle +
+                                     2f * (float)Math.PI / processedProjectilesCount;
+                projectileList[i].currentAngle = currentAngle;
+                projectileList2[i].currentAngle = currentAngle;
             }
+        }
+        public static void ReposeProjectiles2(Player player)
+        {
         }
         public override void AddRecipes()
         {

@@ -41,15 +41,16 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             Projectile.width = Width;
             Projectile.height = Height;
             Projectile.tileCollide = false;
-
-            Projectile.friendly = true;
-            Projectile.minion = true;
-            Projectile.DamageType = DamageClass.Summon;
-            Projectile.minionSlots = 1f;
-            Projectile.penetrate = -1;
             Projectile.extraUpdates = 1;
-            Projectile.ContinuouslyUpdateDamageStats = true;
+            Projectile.penetrate = -1;
             Projectile.ignoreWater = true;
+            
+            Projectile.minion = true;
+            Projectile.minionSlots = 1f;
+            
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Summon;
+            Projectile.ContinuouslyUpdateDamageStats = true;
 
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
@@ -64,6 +65,13 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             collisionFrequency = 5;
             noFadeOut = true;
             customEffect = ModContent.Request<Effect>(EffectType, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            
+            CustomSetDefaults();
+        }
+
+        public virtual void CustomSetDefaults()
+        {
+            
         }
         public override bool? CanCutTiles()
         {
@@ -107,6 +115,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             }
             CustomOnHitNPC(target);
         }
+        
         public virtual void CustomOnHitNPC(NPC target)
         {
 
@@ -119,15 +128,14 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             Player player = Main.player[Projectile.owner];
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            if (angularSpeed > 0.03f)
-            {
-                trailIntensity = 2;
-            }
-
-
-            if (trailIntensity > 1)
+            if (trailIntensity > 1.05f)
             {
                 trailIntensity -= 0.05f;
+            }
+            
+            if (modPlayer.Turboboost)
+            {
+                trailIntensity = 2;
             }
 
 
@@ -136,23 +144,24 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
                 return;
             }
 
-            if (modPlayer.InterstellarBoost)
+            if (modPlayer.Turboboost)
             {
                 angularSpeed = BaseSpeed * 1.5f;
             }
-            if (!modPlayer.InterstellarBoost)
+            else
             {
                 angularSpeed = BaseSpeed;
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                {
-                    ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                    minionPacket.Write(tsorcPacketID.SyncMinionRadius);
-                    minionPacket.Write((byte)player.whoAmI);
-                    minionPacket.Write(modPlayer.MinionCircleRadius);
-                    minionPacket.Write(modPlayer.InterstellarBoost);
-                    //minionPacket.WriteVector2(modPlayer.CursorPosition);
-                    minionPacket.Send();
-                }
+            }
+            
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                minionPacket.Write(tsorcPacketID.SyncMinionRadius);
+                minionPacket.Write((byte)player.whoAmI);
+                minionPacket.Write(modPlayer.MinionCircleRadius);
+                minionPacket.Write(modPlayer.Turboboost);
+                //minionPacket.WriteVector2(modPlayer.CursorPosition);
+                minionPacket.Send();
             }
 
             currentAngle += (angularSpeed / (modPlayer.MinionCircleRadius * 0.001f + 1f));

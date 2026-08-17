@@ -148,7 +148,11 @@ Mods: {
 			SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
 			SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
 			BotCPStone: Decreases the time needed to drink the Estus Flask by {0}%
-			CeruleanManaFlower: Decreases the time needed to drink the Cerulean Flask by {0}%
+			CeruleanManaFlower:
+				'''
+				Decreases the time needed to drink the Cerulean Flask by {0}%
+				Tip: Automatic drinking can always be disabled in the mod config
+				'''
 			DSPickUpRange: " increases Dark Soul pick-up range"
 			VanityFunction: Also works in vanity slots
 			DragoonGearCompatible: Compatible with Dragoon Boots and Dragoon Gear.
@@ -308,7 +312,7 @@ Mods: {
 			12: If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction
 			13: Soapstones offer many important hints
 			14: Use the Guide Slot in your inventory to easily see what your loot can be transformed into
-			15: Hitting enemies with the tip of a whip will always result in a crit
+			15: Hitting enemies with the tip of a whip will deal extra damage
 			16: Lao Tzu: "Let your workings remain a mystery. Just show people the results."
 			PermaPot2: Some perma potions can be strengthened, and eventually surpass their normal variants.
 			17: Some vanilla recipes have been removed. You must find these items in the world by exploring
@@ -3336,7 +3340,8 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagDuration@1}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesWhipRangeByPercent@2}
 					{$CommonItemTooltip.Summon.AtkSpeed@3}
-					{$CommonItemTooltip.LifeThreshold@4}Whip Tip Hits trigger nasty explosions
+					{$CommonItemTooltip.LifeThreshold@4}Whip Tip Hits trigger nasty explosions,
+					{$Items.DarkSword.DisplayName} triggers these on-hit
 					'''
 			}
 
@@ -7990,12 +7995,12 @@ Mods: {
 					[c/7fffd4:'Adjusting trajectory for ASOL-13!']
 					'''
 				Keybind1: "Press "
-				Keybind2: " to activate [c/7fffd4:Turboboost], overclocking the [c/b22222:vessel] and it's [c/b22222:spaceships]"
+				Keybind2: " to activate/deactivate [c/7fffd4:Turboboost], overclocking the [c/b22222:vessel] and it's [c/b22222:spaceships]"
 				Details:
 					'''
 					[c/7fffd4:Turboboost increases spaceships movement speed and increases the vessel's attack speed]
 					[c/7fffd4:Turboboost adds {2}% max health damage on-hit, up to {3}]
-					[c/7fffd4:Turboboost will actively drain your mana and will be cancelled by Mana Sickness]
+					[c/7fffd4:Turboboost({$CommonItemTooltip.Cooldown@7}) gets refunded if it is deactivated early]
 					The [c/b22222:vessel] itself uses half a minion slot and scales with the amount of [c/b22222:spaceships] summoned
 					[c/b22222:Vessel's hits apply the Shocked debuff and can mark enemies]
 					Each hit has a {0}% [c/b22222:chance to add a mark], 6 Marks can be [c/b22222:detonated by hitting the enemy with a spaceship]
@@ -8013,20 +8018,20 @@ Mods: {
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
 					The [c/b22222:stars] scale with {0}% Tag Damage, but the [c/b22222:Star Forger] only with {1}% Tag Damage
 					{$Items.CenterOfTheUniverse.Keybind1}Special Ability{$Items.CenterOfTheUniverse.Keybind2}
-					Gain [c/00008b:Stardust] every time you detonate a [c/b22222:mark]
-					<right> to summon a [c/00008b:Grand Comet] at your cursor's location for [c/00008b:10 Stardust]
-					[c/00008b:'Leave them in awe at the sight of the Star Forger']
+					Gain [c/493dff:Stardust] every time you detonate a [c/b22222:mark]
+					<right> to summon a [c/493dff:Grand Comet] at your cursor's location for [c/493dff:10 Stardust]
+					[c/493dff:'Leave them in awe at the sight of the Star Forger']
 					'''
 				Keybind1: "Press "
-				Keybind2: " to activate [c/7fffd4:Turboboost], accelerating the [c/b22222:Star Forger] and it's [c/b22222:stars]"
+				Keybind2: " to activate/deactivate [c/7fffd4:Turboboost], accelerating the [c/b22222:Star Forger] and it's [c/b22222:stars]"
 				Details:
 					'''
-					[c/00008b:Grand Comet deals massive damage in a huge area and leaves behind a shockwave]
-					[c/00008b:Grand Comet applies the Awestruck debuff]({$CommonItemTooltip.SecondDuration@4})
+					[c/493dff:Grand Comet deals massive damage in a huge area and leaves behind a shockwave]
+					[c/493dff:Grand Comet applies the Awestruck debuff]({$CommonItemTooltip.SecondDuration@4})
 					This increases star damage even further beyond and deals massive damage over time(+{5}%)
 					[c/7fffd4:Turboboost increases star movement speed and increases the Star Forger's attack speed]
 					[c/7fffd4:Turboboost adds {2}% max health damage on-hit, up to {3}]
-					[c/7fffd4:Turboboost will actively drain your mana and will be cancelled by Mana Sickness]
+					[c/7fffd4:Turboboost({$CommonItemTooltip.Cooldown@7}) gets refunded if it is deactivated early]
 					The [c/b22222:Star Forger] itself uses half a minion slot and scales with the amount of [c/b22222:stars] summoned
 					[c/b22222:Star Forger's hits apply the Sunburnt debuff and can mark enemies]
 					Each hit has a {0}% [c/b22222:chance to add a mark], 6 Marks can be [c/b22222:detonated by hitting the enemy with a star]
@@ -10233,7 +10238,27 @@ Mods: {
 
 			ManaBurn: {
 				DisplayName: Mana Burn
-				Description: Mods.tsorcRevamp.Buffs.ManaBurn.Description
+				Description: You are burning your mana!
+			}
+
+			Turboboost: {
+				DisplayName: Turboboost
+				Description: Your ships are moving at maximum speed!
+			}
+
+			TurboboostCooldown: {
+				DisplayName: Turboboost Cooldown
+				Description: Your ships are cooling down.
+			}
+
+			TurboboostUniversal: {
+				DisplayName: Turboboost Universal
+				Description: Your stars are moving at maximum speed!
+			}
+
+			TurboboostUniversalCooldown: {
+				DisplayName: Turboboost Universal Cooldown
+				Description: Your stars are cooling down.
 			}
 		}
 
@@ -11180,6 +11205,7 @@ Mods: {
 			QuaraFrostColumn.DisplayName: Quara Frost Column
 			QuaraFrostSprite.DisplayName: Quara Frost Sprite
 			QuaraWaterResidue.DisplayName: Quara Water Residue
+			CenterOfTheUniverseStar2.DisplayName: Center Of The Universe Star2
 		}
 
 		NPCs: {
@@ -13023,7 +13049,7 @@ Mods: {
 			"Dragoon Boots.DisplayName": Dragoon Boots
 			"Reflection Shift.DisplayName": Reflection Shift
 			"Dodge Roll.DisplayName": Dodge Roll
-			"Special Ability.DisplayName": Special Ability
+			"Special Ability.DisplayName": Weapon Ability
 			"Wolf Ring.DisplayName": Wolf Ring
 			"Wings of Seath speed toggle.DisplayName": Wings of Seath Speed toggle
 			Shunpo.DisplayName: Shunpo

@@ -25,8 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
             Item.width = 34;
             Item.height = 10;
             Item.damage = 35; // Since it's a sentry any player could have minimum 2 summons
-            Item.DamageType = DamageClass.Summon;
-            Item.mana = 10;
+            Item.DamageType = DamageClass.MagicSummonHybrid;
+            Item.mana = 40;
             Item.knockBack = 2f;
             Item.rare = ItemRarityID.LightPurple;
             Item.value = PriceByRarity.LightPurple_6;

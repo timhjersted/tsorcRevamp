@@ -38,7 +38,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
             Item.UseSound = SoundID.Item44;
-            Item.mana = 10;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<EtherianWyvernBuff>();
             Item.shoot = ModContent.ProjectileType<EtherianWyvernProjectile>();

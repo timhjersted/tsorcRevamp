@@ -21,7 +21,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
             modPlayer.RuneterraMinionHitSoundCooldown--;
-            modPlayer.InterstellarBoostCooldown--;
+            modPlayer.TurboboostControlsCooldown--;
 
             // If the minions exist reset the buff time, otherwise remove the buff from the player
             if (player.ownedProjectileCounts[ModContent.ProjectileType<CenterOfTheUniverseStar>()] > 0)
@@ -34,16 +34,6 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
             {
                 player.DelBuff(buffIndex);
                 buffIndex--;
-            }
-            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost && player.statMana >= InterstellarCommander.BoostManaCostPerTick)
-            {
-                player.statMana -= InterstellarCommander.BoostManaCostPerTick;
-                player.manaRegenDelay = MeleeEdits.ManaDelay;
-            }
-            else if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost && (player.statMana < InterstellarCommander.BoostManaCostPerTick || player.HasBuff(BuffID.ManaSickness)))
-            {
-                player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = CenterOfTheUniverse.SoundVolume });
             }
         }
     }

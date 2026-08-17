@@ -215,8 +215,8 @@ namespace tsorcRevamp
         public Vector2 SpiritRushVelocity;
 
         public int RuneterraMinionHitSoundCooldown = 0;
-        public bool InterstellarBoost = false;
-        public int InterstellarBoostCooldown = 0;
+        public bool Turboboost = false;
+        public int TurboboostControlsCooldown = 0; //so you don't accidentally active it while trying to adjust radius
         public int MinimumMinionCircleRadius = 150;
         public int MaximumMinionCircleRadius = 500;
         public float MinionCircleRadius = 150;

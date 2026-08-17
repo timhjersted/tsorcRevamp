@@ -13,14 +13,17 @@ using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
 {
+    /// <summary>
+    /// Main star, deals damage, yellow trail
+    /// </summary>
     public class CenterOfTheUniverseStar : RuneterraCirclingProjectiles
     {
         public override int ProjFrames => 1;
         public override int Width => 98;
-        public override int Height => 50;
-        public override int TrailWidth => 45; //35
+        public override int Height => 40;
+        public override int TrailWidth => 40;
         public override int TrailPointLimit => 900;
-        public override int TrailMaxLength => 500; //250
+        public override int TrailMaxLength => 200;
         public override string EffectType => "tsorcRevamp/Effects/InterstellarVessel";
         public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/";
         public override int BuffType => ModContent.BuffType<CenterOfTheUniverseBuff>();
@@ -28,12 +31,24 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
         public override string Texture => "tsorcRevamp/Projectiles/Summon/Runeterra/CirclingProjectiles/CenterOfTheUniverseStar";
         public override void OnSpawn(IEntitySource source)
         {
+            Player player = Main.player[Projectile.owner];
             CenterOfTheUniverse.projectiles.Add(this);
+            Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<CenterOfTheUniverseStar2>(), 0, 0, Main.myPlayer);
         }
         public override void OnKill(int timeLeft)
         {
             CenterOfTheUniverse.projectiles.Remove(this);
         }
+        public override void CustomCheckActive()
+        {
+            CenterOfTheUniverse.projectiles.Clear();
+        }
+        public override void CustomSetDefaults()
+        {
+            Projectile.minionSlots = 0.5f; //shares slots with Star2 to sync with it properly
+        }
+
+
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player owner = Main.player[Projectile.owner];
@@ -41,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
             {
                 modifiers.SourceDamage += ScorchingPoint.SuperBurnDmgAmp / 100f;
             }
-            if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            if (owner.GetModPlayer<tsorcRevampPlayer>().Turboboost)
             {
                 modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * InterstellarVesselGauntlet.BoostPercentHPDmg / 100f, InterstellarVesselGauntlet.BoostPercentHPDmgCap);
             }
@@ -72,14 +87,20 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
         }
         public override void SetEffectParameters(Effect effect)
         {
-            trailWidth = 35;
-            trailMaxLength = 250;
+            trailWidth = TrailWidth;
+            trailMaxLength = TrailMaxLength;
+
+            trailIntensity = 0.85f;
+            if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().Turboboost)
+            {
+                trailIntensity = 1.2f;
+            }
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
             effect.Parameters["length"].SetValue(trailCurrentLength);
             float hostVel = 0;
             hostVel = Projectile.velocity.Length();
-            float modifiedTime = 0.001f * hostVel;
+            float modifiedTime = 0.0001f * hostVel;
 
             if (Main.gamePaused)
             {
@@ -87,7 +108,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
             }
             samplePointOffset1.X += (modifiedTime * 2);
             samplePointOffset1.Y -= (0.001f);
-            samplePointOffset2.X += (modifiedTime * 3.01f);
+            samplePointOffset2.X += (modifiedTime * 300000.01f);
             samplePointOffset2.Y += (0.001f);
 
             samplePointOffset1.X += modifiedTime;
@@ -102,13 +123,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
             effect.Parameters["fadeOut"].SetValue(trailIntensity);
             effect.Parameters["speed"].SetValue(hostVel);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["shaderColor"].SetValue(new Color(2.52f, 1.87f, 0.7f, 1f).ToVector4());
-            effect.Parameters["secondaryColor"].SetValue(new Color(0f, 0f, 2.52f, 0.7f).ToVector4());
+            effect.Parameters["shaderColor"].SetValue(new Color(2f, 1f, 0f, 1f).ToVector4());
+            effect.Parameters["secondaryColor"].SetValue(new Color(0.1f, 0.05f, 0f, 0.00f).ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
-        }
-        public override void CustomCheckActive()
-        {
-            CenterOfTheUniverse.projectiles.Clear();
         }
         public override bool PreDraw(ref Color lightColor)
         {

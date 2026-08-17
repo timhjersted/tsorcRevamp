@@ -2461,7 +2461,7 @@ namespace tsorcRevamp
                         byte player = reader.ReadByte(); //player.whoAmI
                         tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
                         modPlayer.MinionCircleRadius = reader.ReadSingle();
-                        modPlayer.InterstellarBoost = reader.ReadBoolean();
+                        modPlayer.Turboboost = reader.ReadBoolean();
                         //modPlayer.CursorPosition = reader.ReadVector2();
 
                         //If the server recieved this from a client, then forward it to all the other clients
@@ -2471,7 +2471,7 @@ namespace tsorcRevamp
                             minionPacket.Write(tsorcPacketID.SyncMinionRadius);
                             minionPacket.Write(player);
                             minionPacket.Write(modPlayer.MinionCircleRadius);
-                            minionPacket.Write(modPlayer.InterstellarBoost);
+                            minionPacket.Write(modPlayer.Turboboost);
                             //minionPacket.WriteVector2(modPlayer.CursorPosition);
                             minionPacket.Send();
                         }

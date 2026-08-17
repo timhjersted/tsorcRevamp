@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
             Item.value = Item.buyPrice(1, 0, 0, 0);
             Item.rare = ItemRarityID.Purple;
             Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
-            Item.mana = 10;
+            Item.mana = 40;
             Item.sentry = true;
             Item.noMelee = true;
             Item.DamageType = DamageClass.MagicSummonHybrid; //this is part of the reference, this also allows mages in shm to go for some sentry slots on the side if they like or just use this weapon for a bit of extra dps similar to nimbus rod, magnet sphere etc.

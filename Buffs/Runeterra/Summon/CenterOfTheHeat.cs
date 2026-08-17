@@ -18,7 +18,6 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
             modPlayer.RuneterraMinionHitSoundCooldown--;
-            modPlayer.InterstellarBoostCooldown--;
 
             // If the minions exist reset the buff time, otherwise remove the buff from the player
             if (player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()] > 0)

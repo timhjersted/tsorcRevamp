@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
         public override int Height => 28;
         public override int TrailWidth => 45;
         public override int TrailPointLimit => 900;
-        public override int TrailMaxLength => 400; //111
+        public override int TrailMaxLength => 250; 
         public override string EffectType => "tsorcRevamp/Effects/CursedTormentor";
         public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/";
         public override int BuffType => ModContent.BuffType<CenterOfTheHeat>();
@@ -60,14 +60,14 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
         }
         public override void SetEffectParameters(Effect effect)
         {
-            trailWidth = 45;
-            trailMaxLength = 400;
+            trailWidth = TrailWidth;
+            trailMaxLength = TrailMaxLength;
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
             effect.Parameters["length"].SetValue(trailCurrentLength);
             float hostVel = 0;
             hostVel = Projectile.velocity.Length();
-            float modifiedTime = 0.001f * hostVel;
+            float modifiedTime = 0.0015f * hostVel;
 
             if (Main.gamePaused)
             {

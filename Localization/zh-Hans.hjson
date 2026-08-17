@@ -148,7 +148,11 @@ Mods: {
 			// SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
 			// SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
 			BotCPStone: 减少 {0}% 元素瓶的使用时间
-			// CeruleanManaFlower: Decreases the time needed to drink the Cerulean Flask by {0}%
+			/* CeruleanManaFlower:
+				'''
+				Decreases the time needed to drink the Cerulean Flask by {0}%
+				Tip: Automatic drinking can always be disabled in the mod config
+				''' */
 			DSPickUpRange: 增加黑暗之魂拾取范围
 			VanityFunction: 在时装栏中也生效
 			DragoonGearCompatible: 与龙骑士套装和龙靴兼容.
@@ -10218,7 +10222,27 @@ Mods: {
 
 			ManaBurn: {
 				// DisplayName: Mana Burn
-				// Description: Mods.tsorcRevamp.Buffs.ManaBurn.Description
+				// Description: You are burning your mana!
+			}
+
+			Turboboost: {
+				// DisplayName: Turboboost
+				// Description: Your ships are moving at maximum speed!
+			}
+
+			TurboboostCooldown: {
+				// DisplayName: Turboboost Cooldown
+				// Description: Your ships are cooling down.
+			}
+
+			TurboboostUniversal: {
+				// DisplayName: Turboboost Universal
+				// Description: Your stars are moving at maximum speed!
+			}
+
+			TurboboostUniversalCooldown: {
+				// DisplayName: Turboboost Universal Cooldown
+				// Description: Your stars are cooling down.
 			}
 		}
 
@@ -11165,6 +11189,7 @@ Mods: {
 			// QuaraFrostColumn.DisplayName: Quara Frost Column
 			// QuaraFrostSprite.DisplayName: Quara Frost Sprite
 			// QuaraWaterResidue.DisplayName: Quara Water Residue
+			// CenterOfTheUniverseStar2.DisplayName: Center Of The Universe Star2
 		}
 
 		NPCs: {

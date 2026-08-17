@@ -14,8 +14,8 @@ namespace tsorcRevamp.Items.Armors.Summon
         public static float TagDuration = 12f;
         public static float WhipRange = 30f;
         public static float AtkSpeed = 16f;
-        public static float LifeThreshold = 50f;
-        public const int ExplosionBaseDmg = 20;
+        public static float LifeThreshold = 75f;
+        public const int ExplosionBaseDmg = 25;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, TagDuration, WhipRange, AtkSpeed, LifeThreshold);
         public override void SetStaticDefaults()
         {

@@ -37,10 +37,9 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.useTime = 40;
             Item.damage = 50;
             Item.crit = BaseCritChance;
-            Item.knockBack = 2f;
+            Item.knockBack = 8f;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;
-            Item.mana = 10;
             Item.DamageType = DamageClass.SummonMeleeSpeed;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
@@ -53,8 +52,9 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void ModifyItemScale(Player player, ref float scale)
         {
-            scale = player.whipRangeMultiplier + (player.meleeScaleGlove ? 0.1f : 0f);
+            scale += player.whipRangeMultiplier - 1f + (player.meleeScaleGlove ? 0.1f : 0f);
         }
+
         public override bool AltFunctionUse(Player player)
         {
             if (!Main.mouseLeft)

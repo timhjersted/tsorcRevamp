@@ -36,6 +36,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public const float SuperBurnDmgAmp = 125f;
         public const float MarkDetonationCritDmgAmp = 4f;
 
+        public const int BoostDuration = 5;
+        public const int BoostCooldown = 25;
         public const float BoostPercentHPDmg = 0.05f;
         public const int BoostPercentHPDmgCap = (int)(500000f * BoostPercentHPDmg / 100f);
 
@@ -63,7 +65,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             Item.useTurn = false;
             Item.value = Value;
             Item.rare = Rarity;
-            Item.mana = 10;
 
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
@@ -149,7 +150,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details", ScorchingPoint.MarkChance, ScorchingPoint.SuperBurnDuration, InterstellarVesselGauntlet.BoostPercentHPDmg, InterstellarVesselGauntlet.BoostPercentHPDmgCap, CenterOfTheUniverse.AwestruckDebuffDuration, CenterOfTheUniverse.AwestruckStarDamageAmp, ScorchingPoint.SuperBurnDmgAmp)));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details", ScorchingPoint.MarkChance, ScorchingPoint.SuperBurnDuration,
+                        InterstellarVesselGauntlet.BoostPercentHPDmg, InterstellarVesselGauntlet.BoostPercentHPDmgCap, CenterOfTheUniverse.AwestruckDebuffDuration, CenterOfTheUniverse.AwestruckStarDamageAmp,
+                        ScorchingPoint.SuperBurnDmgAmp, InterstellarVesselGauntlet.BoostCooldown)));
                 }
             }
             else

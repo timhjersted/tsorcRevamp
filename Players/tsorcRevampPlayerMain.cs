@@ -1551,10 +1551,6 @@ namespace tsorcRevamp
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
             }
             SpendArtoriasAbysswalkerPoise(target, hit);
-            if (DemonPower && hit.DamageType == DamageClass.SummonMeleeSpeed && hit.Crit && Main.myPlayer == Player.whoAmI)
-            {
-                Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI, 1);
-            }
             if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
             {
                 Player.HealEffect((int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
@@ -1669,7 +1665,10 @@ namespace tsorcRevamp
         }
         public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
         {
-            CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit);  
+            if (item.DamageType != DamageClass.Default)
+            {
+                CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit); 
+            }
             if (MeleeArmorVamp10)
             {
                 if (Main.rand.NextBool(10))
@@ -1678,7 +1677,14 @@ namespace tsorcRevamp
                     Player.statLife += 10;
                 }
             }
-
+            if (DemonPower && hit.DamageType == DamageClass.SummonMeleeSpeed && Main.myPlayer == Player.whoAmI)
+            {
+                Projectile SummonMeleeBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Bottom, 
+                    Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, 
+                    (int)Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI, 1);
+                SummonMeleeBoom.position -= new Vector2(0, SummonMeleeBoom.height / 2f);
+                SummonMeleeBoom.netUpdate = true;
+            }
         }
 
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
@@ -1687,8 +1693,17 @@ namespace tsorcRevamp
             if (ProjectileID.Sets.IsAWhip[proj.type])
             {
                 CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit, WhipTipHit(proj, proj.WhipPointsForCollision, target.Hitbox));
+                
+                if (DemonPower && WhipTipHit(proj, proj.WhipPointsForCollision, target.Hitbox) && Main.myPlayer == Player.whoAmI)
+                {
+                    Projectile WhipTipBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Bottom, 
+                        Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, 
+                        (int)Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI, 1);
+                    WhipTipBoom.position -= new Vector2(0, WhipTipBoom.height / 2f);
+                    WhipTipBoom.netUpdate = true;
+                }
             }
-            else if (!proj.IsMinionOrSentryRelated)
+            else if (!proj.IsMinionOrSentryRelated && proj.DamageType != DamageClass.Default)
             {
                 CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit);
             }
@@ -2157,41 +2172,49 @@ namespace tsorcRevamp
                 }
                 #endregion
 
-                #region Interstellar Boost
-                bool holdingControlsAndOrSummonWeapon = (Player.HasItem(ModContent.ItemType<InterstellarVesselGauntlet>()) || Player.HasItem(ModContent.ItemType<CenterOfTheUniverse>())) && (player.HeldItem.DamageType == DamageClass.SummonMeleeSpeed || player.HeldItem.DamageType == DamageClass.Summon);
-                bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                if (holdingControlsAndOrSummonWeapon && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && InterstellarBoostCooldown < 0)
+                #region Turboboost
+                bool holdingControlsAndOrSummonWeapon = (player.HasItem(ModContent.ItemType<InterstellarVesselGauntlet>()) || player.HasItem(ModContent.ItemType<CenterOfTheUniverse>())) 
+                                                        && (player.HeldItem.DamageType == DamageClass.SummonMeleeSpeed || player.HeldItem.DamageType == DamageClass.Summon);
+                bool hasBuff = player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
+                bool hasBoost = player.HasBuff(ModContent.BuffType<Turboboost>())
+                                          || player.HasBuff(ModContent.BuffType<TurboboostUniversal>());
+                bool hasCooldown = player.HasBuff(ModContent.BuffType<TurboboostCooldown>())
+                                   || player.HasBuff(ModContent.BuffType<TurboboostUniversalCooldown>());
+                
+                if (holdingControlsAndOrSummonWeapon && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) 
+                    && !hasBoost && !hasCooldown && TurboboostControlsCooldown < 0)
                 {
-                    player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
-                    bool HasCenterOfTheUniverse = player.HasItem(ModContent.ItemType<CenterOfTheUniverse>());
-                    if (!HasCenterOfTheUniverse && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                    bool hasCenterOfTheUniverse = player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
+                    
+                    if (!hasCenterOfTheUniverse)
                     {
+                        player.AddBuff(ModContent.BuffType<Turboboost>(), RuneterraGauntlets.BoostDuration * 60);
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });
                     }
-                    else if (!HasCenterOfTheUniverse && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
-                    {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });
-                    }
 
-                    if (HasCenterOfTheUniverse && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                    if (hasCenterOfTheUniverse)
                     {
+                        player.AddBuff(ModContent.BuffType<TurboboostUniversal>(), RuneterraGauntlets.BoostDuration * 60);
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation") with { Volume = CenterOfTheUniverse.SoundVolume });
                     }
-                    else if (HasCenterOfTheUniverse && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                }
+                else if (holdingControlsAndOrSummonWeapon && hasBuff 
+                         && !(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && hasBoost)
+                {
+                    bool hasCenterOfTheUniverse = player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
+                    
+                    if (!hasCenterOfTheUniverse)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = CenterOfTheUniverse.SoundVolume });
+                        int buffIndex = player.FindBuffIndex(ModContent.BuffType<Turboboost>());
+                        Buffs.Runeterra.Summon.Turboboost.OnRemoval(buffIndex, player);
+                        player.DelBuff(buffIndex);
                     }
 
-                    //Every time the player releases the button, sync this info to everyone else
-                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    if (hasCenterOfTheUniverse)
                     {
-                        ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                        minionPacket.Write(tsorcPacketID.SyncMinionRadius);
-                        minionPacket.Write((byte)Player.whoAmI);
-                        minionPacket.Write(MinionCircleRadius);
-                        minionPacket.Write(InterstellarBoost);
-                        //minionPacket.WriteVector2(CursorPosition);
-                        minionPacket.Send();
+                        int buffIndex = player.FindBuffIndex(ModContent.BuffType<TurboboostUniversal>());
+                        Buffs.Runeterra.Summon.TurboboostUniversal.OnRemoval(buffIndex, player);
+                        player.DelBuff(buffIndex);
                     }
                 }
                 #endregion
@@ -2200,7 +2223,10 @@ namespace tsorcRevamp
 
 
 
-            if (tsorcRevamp.specialAbility.Current && (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()))
+            if (tsorcRevamp.specialAbility.Current && (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) 
+                                                   && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() 
+                                                       || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() 
+                                                       || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()))
             {
                 if (player.direction == 1)
                 {
@@ -2219,7 +2245,7 @@ namespace tsorcRevamp
                     }
                 }
                 Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
-                InterstellarBoostCooldown = 61; //so you don't accidentally activate Interstellar Boost when you jsut wanted to adjust the circle radius
+                TurboboostControlsCooldown = 61; //so you don't accidentally activate Interstellar Boost when you jsut wanted to adjust the circle radius
             }
         }
 
