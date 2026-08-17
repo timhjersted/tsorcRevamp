@@ -3744,7 +3744,21 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.Eyezor
                     || npc.type == NPCID.BoundGoblin
                     || npc.type == NPCID.BoundMechanic
-                    || npc.type == NPCID.BoundWizard)
+                    || npc.type == NPCID.BoundWizard
+                    // Town slimes and their bound (rescuable) forms. Same reasoning as the Bound NPCs
+                    // above: they are a light-hearted 1.4.4 town-pet system that does not fit the mod's
+                    // tone, and the bound variants occupy world-spawn slots waiting to be rescued.
+                    || npc.type == NPCID.BoundTownSlimeOld
+                    || npc.type == NPCID.BoundTownSlimePurple
+                    || npc.type == NPCID.BoundTownSlimeYellow
+                    || npc.type == NPCID.TownSlimeBlue
+                    || npc.type == NPCID.TownSlimeCopper
+                    || npc.type == NPCID.TownSlimeGreen
+                    || npc.type == NPCID.TownSlimeOld
+                    || npc.type == NPCID.TownSlimePurple
+                    || npc.type == NPCID.TownSlimeRainbow
+                    || npc.type == NPCID.TownSlimeRed
+                    || npc.type == NPCID.TownSlimeYellow)
                 {
                     npc.active = false;
                 }
