@@ -89,6 +89,7 @@ using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.ArcaneSorcery;
 
 namespace tsorcRevamp
 {
@@ -371,7 +372,6 @@ namespace tsorcRevamp
             
             WeaponPrefixEdits.ApplyWeaponPrefixEdits();
             AccessoryPrefixEditsStats.ApplyAccessoryPrefixEdits();
-            ManaStarDrawAmount.ApplyManaStarAmount();
             
             ApplyILs();
             PopulateArrays();

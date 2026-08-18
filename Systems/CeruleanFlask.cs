@@ -9,6 +9,7 @@ using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Accessories.Magic;
 using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Systems
@@ -142,7 +143,7 @@ namespace tsorcRevamp.Systems
                 return;
             }
             
-            if (arcaneSorceryPlayer.Enabled)
+            if (arcaneSorceryPlayer.ArcaneSorcerer)
             {
                 //Slow player for whole duration of action
                 Player.velocity.X *= 0.9f;

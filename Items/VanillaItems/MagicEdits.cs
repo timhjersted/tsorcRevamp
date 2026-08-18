@@ -1,10 +1,12 @@
 using Humanizer;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent.UI.ResourceSets;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Armors.Magic;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -12,6 +14,7 @@ namespace tsorcRevamp.Items.VanillaItems
     {
         public static int RedClothMaxManaBoost = 40;
         public static float RedClothManaCostReduction = 5f;
+        
 
         public override void SetDefaults(Item item)
         {
@@ -184,6 +187,7 @@ namespace tsorcRevamp.Items.VanillaItems
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             Player player = Main.player[Main.myPlayer];
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             if (item.DamageType == DamageClass.MagicSummonHybrid && item.damage > 0)
             {
                 int ttindex = tooltips.FindIndex(t => t.Name == "Damage");
@@ -193,6 +197,43 @@ namespace tsorcRevamp.Items.VanillaItems
                     tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} " + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicSummonHybridDamageClass")));
                 }
             }
+            bool isWearingMagicHatGypsyRobe = player.armor[0].type == ItemID.MagicHat &&
+                                              player.armor[1].type == ItemID.GypsyRobe && item.type == player.armor[2].type;
+            if (tsorcRevamp.ManaIncreasingItems.ContainsKey(item.type) | isWearingMagicHatGypsyRobe)
+            {
+                List<int> setBonusKeys = new List<int>()
+                {
+                    ItemID.MagicHat, ItemID.GypsyRobe, ModContent.ItemType<RedClothTunic>(), ModContent.ItemType<RedClothHat>(), ModContent.ItemType<RedClothPants>()
+                };
+                int manaIncrease = !isWearingMagicHatGypsyRobe ? tsorcRevamp.ManaIncreasingItems[item.type] : tsorcRevamp.ManaIncreasingItems[ItemID.MagicHat];;
+            
+                if (item.type == ItemID.GypsyRobe &&
+                    player.armor[0].type == ModContent.ItemType<RedClothHat>() &&
+                    player.armor[2].type == ModContent.ItemType<RedClothPants>())
+                {
+                    manaIncrease = tsorcRevamp.ManaIncreasingItems[ModContent.ItemType<RedClothTunic>()];
+                }
+                bool isSetBonus = setBonusKeys.Contains(item.type) | isWearingMagicHatGypsyRobe;
+                string setBonusAdd = isSetBonus ? LangUtils.GetTextValue("CommonItemTooltip.SetBonus") : "";
+                int ttindex = tooltips.FindIndex(t => t.Text.Contains(manaIncrease.ToString()));
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "MaxManaIncreaseScaled", setBonusAdd + Language.GetTextValue("CommonItemTooltip.IncreasesMaxManaBy", (int)((float)manaIncrease * (1f + modPlayer.MaxManaAmplifier / 100f)))));
+                }
+
+                if (tsorcRevamp.ManaIncreasingItems.ContainsKey(item.type) && isWearingMagicHatGypsyRobe)
+                {
+                    int manaIncrease2 = tsorcRevamp.ManaIncreasingItems[item.type];
+                    int ttindex1 = tooltips.FindIndex(t => t.Text.Contains(manaIncrease2.ToString()));
+                    if (ttindex1 != -1)
+                    {
+                        tooltips.RemoveAt(ttindex1);
+                        tooltips.Insert(ttindex1, new TooltipLine(Mod, "MaxManaIncreaseScaled", Language.GetTextValue("CommonItemTooltip.IncreasesMaxManaBy", (int)((float)manaIncrease2 * (1f + modPlayer.MaxManaAmplifier / 100f)))));
+                    }
+                }
+            }
+
         }
         public override void ModifyHitNPC(Item item, Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
@@ -201,5 +242,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 modifiers.FinalDamage -= 0.5f;
             }
         }
+        
+    
     }
 }

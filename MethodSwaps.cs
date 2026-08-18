@@ -39,6 +39,7 @@ using tsorcRevamp.Projectiles.Enemy.WyvernMage;
 using tsorcRevamp.Projectiles.Magic;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -184,9 +185,7 @@ namespace tsorcRevamp
 
             On_Recipe.CollectItemsToCraftWithFrom += Recipe_CollectItemsToCraftWithFrom;
 
-            On_Player.PickupItem += On_Player_PickupItem;
 
-            On_Player.OnHurt_Part2 += On_Player_OnHurt_Part2;
 
             On_Player.ItemCheck_ApplyManaRegenDelay += On_Player_ItemCheck_ApplyManaRegenDelay;
 
@@ -2035,38 +2034,6 @@ namespace tsorcRevamp
             {
                 self.manaRegenDelay = MeleeEdits.ManaDelay;
             }
-        }
-        private static void On_Player_OnHurt_Part2(On_Player.orig_OnHurt_Part2 orig, Player self, Player.HurtInfo info)
-        {
-            if (self.magicCuffs && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                int ManaGain = (int)(info.SourceDamage * (ArcaneSorceryItems.BotCManaRestorationCuffsPercentage / 100f));
-                self.statMana += ManaGain;
-                if (self.statMana > self.statManaMax2)
-                {
-                    self.statMana = self.statManaMax2;
-                }
-                self.ManaEffect(ManaGain);
-                return;
-            }
-            orig(self, info);
-        }
-        private static Item On_Player_PickupItem(On_Player.orig_PickupItem orig, Player self, int playerIndex, int worldItemArrayIndex, Item itemToPickUp)
-        {
-            if ((itemToPickUp.type == ItemID.Star || itemToPickUp.type == ItemID.SugarPlum || itemToPickUp.type == ItemID.SoulCake || itemToPickUp.type == ItemID.ManaCloakStar) && self.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
-            {
-                int ManaGain = (int)(self.statManaMax2 * (ArcaneSorceryItems.BotCManaStarMaxManaPercentage / 100f));
-                SoundEngine.PlaySound(SoundID.Grab, new Vector2((int)self.position.X, (int)self.position.Y));
-                self.statMana += ManaGain;
-                self.ManaEffect(ManaGain);
-                if (self.statMana > self.statManaMax2)
-                {
-                    self.statMana = self.statManaMax2;
-                }
-                itemToPickUp.type = ItemID.None;
-                return itemToPickUp;
-            }
-            return orig(self, playerIndex, worldItemArrayIndex, itemToPickUp);
         }
 
         private static void StopLunarApocalypse(Terraria.On_WorldGen.orig_TriggerLunarApocalypse orig)

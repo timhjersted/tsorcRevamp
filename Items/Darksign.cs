@@ -9,6 +9,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.Electrocute;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items
@@ -248,14 +250,20 @@ namespace tsorcRevamp.Items
                     }
                 case 2:
                     {
-                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Electrocute", LangUtils.GetTextValue("Items.Darksign.Ranged")));
+                        if (Electrocute.Enabled)
+                        {
+                            tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Electrocute", LangUtils.GetTextValue("ElectrocuteExplanation")));
+                        }
                         break;
                     }
                 case 3:
                     {
                         var arcanePlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
                         var ceruleanPlayer = player.GetModPlayer<CeruleanFlaskPlayer>();
-                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "ArcaneSorcery", LangUtils.GetTextValue("Items.Darksign.Magic", arcanePlayer.MaxManaAmplifier, arcanePlayer.ManaCostMult, ArcaneSorceryPlayer.BaseCeruleanFlatManaGainMult, ArcaneSorceryPlayer.BaseCeruleanFlaskMaxManaScalingMult * ceruleanPlayer.BaseMaxManaGain, arcanePlayer.ManaBurnStaminaThreshold, arcanePlayer.ManaBurnMagicDamageAmp, arcanePlayer.ManaBurnMagicAttackSpeedAmp, arcanePlayer.ManaBurnBadResistance, arcanePlayer.ManaBurnCostMult)));
+                        if (ArcaneSorcery.Enabled)
+                        {                        
+                            tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "ArcaneSorcery", LangUtils.GetTextValue("ArcaneSorceryExplanation", arcanePlayer.MaxManaAmplifier, arcanePlayer.ManaCostMult, ArcaneSorceryPlayer.BaseCeruleanFlatManaGainMult, ArcaneSorceryPlayer.BaseCeruleanFlaskMaxManaScalingMult * ceruleanPlayer.BaseMaxManaGain, arcanePlayer.ManaBurnStaminaThreshold, arcanePlayer.ManaBurnMagicDamageAmp, arcanePlayer.ManaBurnMagicAttackSpeedAmp, arcanePlayer.ManaBurnBadResistance, arcanePlayer.ManaBurnCostMult)));
+                        }
                         break;
                     }
                 case 4:

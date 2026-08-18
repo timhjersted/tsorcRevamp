@@ -28,6 +28,25 @@ Mods: {
 			// DashEffect: Double-tap a direction to dash
 		}
 
+		/* ArcaneSorceryExplanation:
+			'''
+			[c/ea00ea:Arcane Sorcery: Maximum mana is increased by {0}%, ]
+			[c/ea00ea:mana costs are multiplied by {1}, mana regeneration is disabled.]
+			[c/ea00ea:Cerulean Flask is buffed to restore {2}x the default and {3}% of your maximum mana, ]
+			[c/ea00ea:but drinking the Cerulean Flask stunts your mobility like the Estus Flask.]
+			[c/ea00ea:When trying to use a magic weapon under {4}% of your maximum stamina, activate Mana Burn.]
+			[c/ea00ea:Mana Burn multiplicatively increases magic damage by {5}% and attack speed by {6}%, ]
+			[c/ea00ea:but decreases your Resistance by {7} and multiplies your mana costs by another {8}x.]
+			''' */
+		/* ElectrocuteExplanation:
+			'''
+			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 different ranged projectile types in a span of 1.5 seconds,]
+			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. 10 sec cooldown. ]
+			[c/22dd96:Uses highest crit chance of the 3 projectiles. Can pierce infinitely but only stays for a second. Only hits an enemy once.]
+			[c/22dd96:Ranged damage is reduced by 10%.?]
+			[c/22dd96:Weapons that automatically shoot multiple different projectiles types are counted as 2 hits at most.]
+			''' */
+
 		CommonItemTooltip: {
 			AccessoryPrefixes: {
 				/* Hard:
@@ -4450,24 +4469,6 @@ Mods: {
 					[c/ff8400:攻击敌人会增加致命节拍堆叠层数]
 					[c/ff8400:堆叠层数增加你的近战攻速，如果一段时间没有刷新则层数会减少]
 					[c/ff8400:每层增加 {1}% 近战攻速，最高到 {3} 层获得 {2}% 加成]
-					'''
-				Ranged:
-					'''
-					[c/22dd96:远程暴击率将取决于你的射击准确度]
-					[c/22dd96:命中时增加 {0}% 准确度，未命中则减少 {1}% 准确度，每次只需命中一个敌人]
-					[c/22dd96:穿透敌人的射弹，多次命中只计算一次]
-					[c/22dd96:未命中的容错也只有一次]
-					[c/22dd96:自动追踪的射弹，命中时不会增加准确度]
-					[c/22dd96:实际暴击率= (原有暴击率 +准确度x{2}%) x ({4} +准确度x0.75)]
-					[c/22dd96:满准确度时增加 {2}% 暴击率，同时再将总暴击率额外乘算 {3}]
-					[c/22dd96:准确度为 0% 时将总暴击率额外乘算 {4}]
-					'''
-				Magic:
-					'''
-					[c/ea00ea:不受魔力病减益时，乘算增加 {1}% 魔法伤害、 {2}% 攻击速度]
-					[c/ea00ea:禁用魔力的自然回复，作为补偿你获得了蓝露滴圣杯瓶，每次使用回复 {0}% 最大魔力值]
-					[c/ea00ea:魔力再生速度 转化为 增加回复的总魔力值，魔力再生延迟减少 转化为 减少回复总魔力值所需的时间]
-					[c/ea00ea:魔力药水仍然有效，在篝火旁会快速回复魔力值，使用蓝露滴圣杯瓶可以治愈魔力病]
 					'''
 				Summon:
 					'''
@@ -10146,6 +10147,11 @@ Mods: {
 				DisplayName: 电击减益
 			}
 
+			Electrocute: {
+				// DisplayName: Electrocute
+				// Description: Mods.tsorcRevamp.Buffs.Electrocute.Description
+			}
+
 			YoungHunterBuff: {
 				// DisplayName: Young Hunter
 				// Description: The Young Hunter will hunt for you!
@@ -10243,6 +10249,16 @@ Mods: {
 			TurboboostUniversalCooldown: {
 				// DisplayName: Turboboost Universal Cooldown
 				// Description: Your stars are cooling down.
+			}
+
+			ArcaneSorcery: {
+				// DisplayName: Arcane Sorcery
+				// Description: Mods.tsorcRevamp.Buffs.ArcaneSorcery.Description
+			}
+
+			ElectrocuteCooldown: {
+				// DisplayName: Electrocute Cooldown
+				// Description: Mods.tsorcRevamp.Buffs.ElectrocuteCooldown.Description
 			}
 		}
 

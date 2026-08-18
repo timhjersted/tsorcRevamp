@@ -28,6 +28,25 @@ Mods: {
 			DashEffect: Double-tap a direction to dash
 		}
 
+		ArcaneSorceryExplanation:
+			'''
+			[c/ea00ea:Arcane Sorcery: Maximum mana is increased by {0}%, ]
+			[c/ea00ea:mana costs are multiplied by {1}, mana regeneration is disabled.]
+			[c/ea00ea:Cerulean Flask is buffed to restore {2}x the default and {3}% of your maximum mana, ]
+			[c/ea00ea:but drinking the Cerulean Flask stunts your mobility like the Estus Flask.]
+			[c/ea00ea:When trying to use a magic weapon under {4}% of your maximum stamina, activate Mana Burn.]
+			[c/ea00ea:Mana Burn multiplicatively increases magic damage by {5}% and attack speed by {6}%, ]
+			[c/ea00ea:but decreases your Resistance by {7} and multiplies your mana costs by another {8}x.]
+			'''
+		ElectrocuteExplanation:
+			'''
+			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 different ranged projectile types in a span of 1.5 seconds,]
+			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. 10 sec cooldown. ]
+			[c/22dd96:Uses highest crit chance of the 3 projectiles. Can pierce infinitely but only stays for a second. Only hits an enemy once.]
+			[c/22dd96:Ranged damage is reduced by 10%.?]
+			[c/22dd96:Weapons that automatically shoot multiple different projectiles types are counted as 2 hits at most.]
+			'''
+
 		CommonItemTooltip: {
 			AccessoryPrefixes: {
 				Hard:
@@ -4460,23 +4479,6 @@ Mods: {
 					[c/ff8400:Hitting enemies with melee attacks will grant stacks of Lethal Tempo,]
 					[c/ff8400:these increase your attack speed temporarily and fall off after a few seconds, if not refreshed.]
 					[c/ff8400:Each stack grants {1}% attack speed, up to {2}% at the maximum of {3} stacks.]
-					'''
-				Ranged:
-					'''
-					[c/22dd96:Electrocute(Unimplemented): Whenever you hit an enemy with 3 different ranged projectile types in a span of 1.5 seconds,]
-					[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. 10 sec cooldown. ]
-					[c/22dd96:Uses highest crit chance of the 3 projectiles. Can pierce infinitely but only stays for a second. Only hits an enemy once.]
-					[c/22dd96:Ranged damage is reduced by 10%.?]
-					[c/22dd96:Weapons that automatically shoot multiple different projectiles types are counted as 2 hits at most.]
-					'''
-				Magic:
-					'''
-					[c/ea00ea:Arcane Sorcery: Maximum mana is increased by {0}%, mana costs are multiplied by {1}, mana regeneration is disabled.]
-					[c/ea00ea:Cerulean Flask is buffed to restore {2}x the default and {3}% of your maximum mana, ]
-					[c/ea00ea:but drinking the Cerulean Flask stunts your mobility like the Estus Flask.]
-					[c/ea00ea:When trying to use a magic weapon under {4}% of your maximum stamina, activate Mana Burn.]
-					[c/ea00ea:Mana Burn multiplicatively increases magic damage by {5}% and attack speed by {6}%, ]
-					[c/ea00ea:but decreases your Resistance by {7} and multiplies your mana costs by another {8}x.]
 					'''
 				Summon:
 					'''
@@ -10162,6 +10164,11 @@ Mods: {
 				DisplayName: Electrocuted Buff2
 			}
 
+			Electrocute: {
+				DisplayName: Electrocute
+				Description: Mods.tsorcRevamp.Buffs.Electrocute.Description
+			}
+
 			YoungHunterBuff: {
 				DisplayName: Young Hunter
 				Description: The Young Hunter will hunt for you!
@@ -10259,6 +10266,16 @@ Mods: {
 			TurboboostUniversalCooldown: {
 				DisplayName: Turboboost Universal Cooldown
 				Description: Your stars are cooling down.
+			}
+
+			ArcaneSorcery: {
+				DisplayName: Arcane Sorcery
+				Description: Mods.tsorcRevamp.Buffs.ArcaneSorcery.Description
+			}
+
+			ElectrocuteCooldown: {
+				DisplayName: Electrocute Cooldown
+				Description: Mods.tsorcRevamp.Buffs.ElectrocuteCooldown.Description
 			}
 		}
 

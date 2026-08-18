@@ -1,12 +1,12 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Systems;
 
-namespace tsorcRevamp.Buffs.Debuffs;
+namespace tsorcRevamp.Systems.ArcaneSorcery;
 
 public class ManaBurn : ModBuff
 {
+    public const int Duration = 5;
     public override void SetStaticDefaults()
     {
         Main.debuff[Type] = true;

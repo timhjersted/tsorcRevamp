@@ -28,6 +28,25 @@ Mods: {
 			// DashEffect: Double-tap a direction to dash
 		}
 
+		/* ArcaneSorceryExplanation:
+			'''
+			[c/ea00ea:Arcane Sorcery: Maximum mana is increased by {0}%, ]
+			[c/ea00ea:mana costs are multiplied by {1}, mana regeneration is disabled.]
+			[c/ea00ea:Cerulean Flask is buffed to restore {2}x the default and {3}% of your maximum mana, ]
+			[c/ea00ea:but drinking the Cerulean Flask stunts your mobility like the Estus Flask.]
+			[c/ea00ea:When trying to use a magic weapon under {4}% of your maximum stamina, activate Mana Burn.]
+			[c/ea00ea:Mana Burn multiplicatively increases magic damage by {5}% and attack speed by {6}%, ]
+			[c/ea00ea:but decreases your Resistance by {7} and multiplies your mana costs by another {8}x.]
+			''' */
+		/* ElectrocuteExplanation:
+			'''
+			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 different ranged projectile types in a span of 1.5 seconds,]
+			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. 10 sec cooldown. ]
+			[c/22dd96:Uses highest crit chance of the 3 projectiles. Can pierce infinitely but only stays for a second. Only hits an enemy once.]
+			[c/22dd96:Ranged damage is reduced by 10%.?]
+			[c/22dd96:Weapons that automatically shoot multiple different projectiles types are counted as 2 hits at most.]
+			''' */
+
 		CommonItemTooltip: {
 			AccessoryPrefixes: {
 				/* Hard:
@@ -4409,24 +4428,6 @@ Mods: {
 					[c/ff8400:Нанося удары по врагам в ближнем бою, вы получаете стаки смертоносного темпа,]
 					[c/ff8400:которые временно увеличивают скорость вашей атаки и спадают через несколько секунд, если их не обновить.]
 					[c/ff8400:Каждый стак увеличивает скорость атаки на {1}%, максимум до {2}% при {3} стаках.]
-					'''
-				Ranged:
-					'''
-					[c/22dd96:Шанс критического удара дальнего боя теперь зависит от вашей точности,]
-					[c/22dd96:промахи снизят, а попадания в цель увеличат его.]
-					[c/22dd96:Снаряду дальнего боя достаточно попасть только один раз, чтобы засчитаться как попадание, ]
-					[c/22dd96:он не может многократно увеличить вашу точность и также может промахнуться только один раз.]
-					[c/22dd96:Самонаводящиеся снаряды не могут увеличить вашу точность.]
-					[c/22dd96:Попадание увеличит вашу точность на {0}%, в то время как промах снизит вашу точность на {1}%.]
-					[c/22dd96:Вы можете увеличить вероятность критического удара до {2}% и умножить коэффициент критического удара на {3} при 100% точности,]
-					[c/22dd96: или умножить коэффициент критического удара на {4} при 0% точности.]
-					'''
-				Magic:
-					'''
-					[c/ea00ea:Магический урон увеличивается на {1}%, а скорость атаки - на {2}% мультипликативно, пока игрок не страдает от мановой болезни.]
-					[c/ea00ea:Регенерация маны отключена, но дает лазурную колбу для восстановления маны, которая увеличивает свой объём на {0}% от максимального запаса маны,]
-					[c/ea00ea:бонусы за восстановление маны увеличивают общее количество восстановленной маны, а штрафы за задержку восстановления маны увеличивают общее время восстановления маны.]
-					[c/ea00ea:Зелья маны всё еще действуют, и отдых у костра восстановит ману, а выпивание из лазурной фляги также излечит Мановую болезнь.]
 					'''
 				Summon:
 					'''
@@ -10109,6 +10110,11 @@ Mods: {
 				// DisplayName: Electrocuted Buff2
 			}
 
+			Electrocute: {
+				// DisplayName: Electrocute
+				// Description: Mods.tsorcRevamp.Buffs.Electrocute.Description
+			}
+
 			YoungHunterBuff: {
 				// DisplayName: Young Hunter
 				// Description: The Young Hunter will hunt for you!
@@ -10206,6 +10212,16 @@ Mods: {
 			TurboboostUniversalCooldown: {
 				// DisplayName: Turboboost Universal Cooldown
 				// Description: Your stars are cooling down.
+			}
+
+			ArcaneSorcery: {
+				// DisplayName: Arcane Sorcery
+				// Description: Mods.tsorcRevamp.Buffs.ArcaneSorcery.Description
+			}
+
+			ElectrocuteCooldown: {
+				// DisplayName: Electrocute Cooldown
+				// Description: Mods.tsorcRevamp.Buffs.ElectrocuteCooldown.Description
 			}
 		}
 

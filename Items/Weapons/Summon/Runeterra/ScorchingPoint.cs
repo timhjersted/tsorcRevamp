@@ -35,7 +35,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BallSummonTagDmgMult, DragonSummonTagDmgMult);
         public override void CustomSetDefaults()
         {
-            Item.mana = 10;
             projectiles = new List<ScorchingPointFireball>() { };
             SoundVolume = SoundVolumeAbstract;
         }

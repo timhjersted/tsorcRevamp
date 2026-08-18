@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.UI.ResourceSets;
 using Terraria.ID;
 using Terraria.ModLoader;
 using TerraUI.Objects;
@@ -14,6 +15,10 @@ namespace tsorcRevamp
     //UI
     public partial class tsorcRevampPlayer
     {
+        public override void Load()
+        {
+            On_PlayerStatsSnapshot.ctor += ManaStarAmountUiEdit;
+        }
         internal static bool SoulSlotCondition(Item item)
         {
             if (item.type != ModContent.ItemType<DarkSoul>())
@@ -199,6 +204,24 @@ namespace tsorcRevamp
 
             Main.inventoryScale = origScale;
 
+        }
+        
+        //the cheese below is necessary, trust
+        private static void ManaStarAmountUiEdit(On_PlayerStatsSnapshot.orig_ctor orig, ref PlayerStatsSnapshot self, Player player)
+        {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            int trueMaxMana = player.statManaMax2;
+            int trueMana = player.statMana;
+        
+            //turn mana stats to "vanilla-like values" before orig so the proper amount of mana stars/bars are drawn
+            player.statMana = (int)(trueMana / (1f + modPlayer.MaxManaAmplifier / 100f));
+            player.statManaMax2 = (int)(trueMaxMana / (1f + modPlayer.MaxManaAmplifier / 100f));
+        
+            orig(ref self, player);
+        
+            //turn mana stats to back real stats after drawing is done
+            player.statManaMax2 = trueMaxMana;
+            player.statMana = trueMana;
         }
     }
 }

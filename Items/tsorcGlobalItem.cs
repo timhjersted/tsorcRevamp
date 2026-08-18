@@ -19,6 +19,7 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.LegacyCode;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 

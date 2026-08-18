@@ -6,6 +6,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.ArcaneSorcery;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -51,7 +52,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             int maxManaSubtract = MaxManaSubtractBase;
             int maxManaDivisor = MaxManaDivisorBase;
             int maxMana = player.statManaMax2;
-            if (arcaneSorceryPlayer.Enabled)
+            if (arcaneSorceryPlayer.ArcaneSorcerer)
             {
                 maxManaSubtract *= (int)(arcaneSorceryPlayer.MaxManaAmplifier / 100f);
                 maxManaDivisor *= (int)(arcaneSorceryPlayer.MaxManaAmplifier / 100f);
@@ -68,7 +69,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             var arcaneSorceryPlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
             int maxManaSubtract = MaxManaSubtractBase;
             int maxManaDivisor = MaxManaDivisorBase;
-            if (arcaneSorceryPlayer.Enabled)
+            if (arcaneSorceryPlayer.ArcaneSorcerer)
             {
                 maxManaSubtract *= (int)(arcaneSorceryPlayer.MaxManaAmplifier / 100f);
                 maxManaDivisor *= (int)(arcaneSorceryPlayer.MaxManaAmplifier / 100f);

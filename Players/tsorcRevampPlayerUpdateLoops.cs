@@ -33,6 +33,7 @@ using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.Projectiles.Summon.YoungHunter;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -1209,11 +1210,6 @@ namespace tsorcRevamp
 
         public override void PreUpdateBuffs()
         {
-            if (BearerOfTheCurse)
-            {
-                Player.GetModPlayer<ArcaneSorceryPlayer>().Enabled = true;
-            }
-            
             //Gives the DPS meter effect for free
             //Do not ask why it is called "accDreamCatcher"
             //This has to go here for it to work. Don't ask me why either. I value my sanity too much to go check.

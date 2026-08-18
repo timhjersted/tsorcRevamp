@@ -10,6 +10,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Textures;
 
 namespace tsorcRevamp
@@ -188,7 +189,7 @@ namespace tsorcRevamp
                 bool startedAnimation = (Player.itemAnimation > oldItemAnimation && Player.itemAnimationMax > 0);
                 oldItemAnimation = Player.itemAnimation;
 
-                if (Player.HeldItem.DamageType == DamageClass.Magic && arcanePlayer.Enabled &&
+                if (Player.HasBuff(ModContent.BuffType<ArcaneSorcery>()) &&
                     modPlayer.staminaResourceCurrent <= modPlayer.staminaResourceMax2 * arcanePlayer.ManaBurnStaminaThreshold / 100f)
                 {
                     return true;

@@ -9,6 +9,7 @@ using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
@@ -649,11 +650,10 @@ namespace tsorcRevamp
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= BoomerangDrainPerFrame;
                         break;
                     }*/
-                    if (Player.HeldItem.DamageType == DamageClass.Magic &&
-                        staminaPlayer.staminaResourceCurrent < staminaPlayer.staminaResourceMax2 *
-                        arcanePlayer.ManaBurnStaminaThreshold / 100f && arcanePlayer.Enabled)
+                    if (Player.HasBuff(ModContent.BuffType<ArcaneSorcery>()) 
+                        && staminaPlayer.staminaResourceCurrent < staminaPlayer.staminaResourceMax2 * arcanePlayer.ManaBurnStaminaThreshold / 100f)
                     {
-                        Player.AddBuff(ModContent.BuffType<ManaBurn>(), 2 * 60);
+                        Player.AddBuff(ModContent.BuffType<ManaBurn>(), ManaBurn.Duration * 60);
                     }
 
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.VortexBeater
