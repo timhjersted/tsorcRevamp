@@ -1735,7 +1735,7 @@ namespace tsorcRevamp
             DrawBar(startY, healthCurrent, visualLife, healthMax, new Color(230, 45, 45), new Color(255, 130, 120), new Color(140, 20, 45), new Color(45, 10, 10, 180));
 
             // Mana (Blue)
-            DrawBar(startY + barHeight + gap, manaCurrent, visualMana, (int)(manaMax / (1f + modPlayer.MaxManaAmplifier / 100f)), new Color(30, 110, 230), new Color(100, 175, 255), new Color(20, 45, 140), new Color(10, 20, 50, 180));
+            DrawBar(startY + barHeight + gap, (int)(manaCurrent / (1f + modPlayer.MaxManaAmplifier / 100f)), (int)(visualMana / (1f + modPlayer.MaxManaAmplifier / 100f)), (int)(manaMax / (1f + modPlayer.MaxManaAmplifier / 100f)), new Color(30, 110, 230), new Color(100, 175, 255), new Color(20, 45, 140), new Color(10, 20, 50, 180));
 
             // Stamina (Green)
             int stamY = startY + (barHeight + gap) * 2;
