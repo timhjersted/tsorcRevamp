@@ -1579,16 +1579,20 @@ namespace tsorcRevamp
         private static void DrawCustomResourceBars(SpriteBatch spriteBatch)
         {
             Player player = Main.LocalPlayer;
+            
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            float staminaCurrent = staminaPlayer.staminaResourceCurrent;
+            float staminaMax = staminaPlayer.staminaResourceMax2;
+            
             if (player == null || !player.active || player.dead) return;
+            
 
             int healthCurrent = player.statLife;
             int healthMax = player.statLifeMax2;
             int manaCurrent = player.statMana;
             int manaMax = player.statManaMax2;
 
-            var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-            float staminaCurrent = staminaPlayer.staminaResourceCurrent;
-            float staminaMax = staminaPlayer.staminaResourceMax2;
 
             // Dimensions
             int barHeight = 12;
@@ -1617,7 +1621,6 @@ namespace tsorcRevamp
                 if (value <= 500f) return 400f + (value - 400f) * 0.8f;
                 return 480f + (value - 500f) * 0.7f;
             }
-
             int GetBarWidth(float maxVal) => (int)ScaleResource(maxVal);
 
             // Uses the same mapping as the casing, so one point of health is the same number of pixels wherever
@@ -1732,7 +1735,7 @@ namespace tsorcRevamp
             DrawBar(startY, healthCurrent, visualLife, healthMax, new Color(230, 45, 45), new Color(255, 130, 120), new Color(140, 20, 45), new Color(45, 10, 10, 180));
 
             // Mana (Blue)
-            DrawBar(startY + barHeight + gap, manaCurrent, visualMana, manaMax, new Color(30, 110, 230), new Color(100, 175, 255), new Color(20, 45, 140), new Color(10, 20, 50, 180));
+            DrawBar(startY + barHeight + gap, manaCurrent, visualMana, (int)(manaMax / (1f + modPlayer.MaxManaAmplifier / 100f)), new Color(30, 110, 230), new Color(100, 175, 255), new Color(20, 45, 140), new Color(10, 20, 50, 180));
 
             // Stamina (Green)
             int stamY = startY + (barHeight + gap) * 2;
