@@ -2801,6 +2801,10 @@ namespace tsorcRevamp.NPCs
                     {
                         debuffCounter++;
                     }
+                    if (buffType == ModContent.BuffType<Hemorrhage>())
+                    {
+                        debuffCounter++;
+                    }
                 }
                 if (debuffCounter > 1)
                 {
