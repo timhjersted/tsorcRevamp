@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies
             elandGlobalNPC.PatrolTargetDirectionBias = 0.60f;
         }
 
-        // Rare pre-hardmode, slightly more common in hardmode; jungle biome, underground (dirt or rock layer) only.
+        // Rare pre-hardmode, slightly more common in hardmode; jungle biome, underground (dirt or rock layer) only. //Hopefully won't spawn in anymore for now
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player p = spawnInfo.Player;
@@ -106,6 +106,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
+            NPC.active = false; //this deletes it instantly, comment out while working on it or once you finish it and make sure it stays out of pre-hardmode
             if (!provoked)
             {
                 UpdatePassiveWander();
