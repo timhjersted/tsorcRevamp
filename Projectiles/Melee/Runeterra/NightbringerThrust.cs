@@ -118,7 +118,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
             DelegateMethods.tileCutIgnore = Terraria.ID.TileID.Sets.TileCutIgnore.None;
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 24f * player.GetAdjustedItemScale(player.HeldItem);
+            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 21.5f * player.GetAdjustedItemScale(player.HeldItem);
             Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
         }
 
@@ -126,7 +126,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         {
             Player player = Main.player[Projectile.owner];
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity * 24f * player.GetAdjustedItemScale(player.HeldItem);
+            Vector2 end = start + Projectile.velocity * 21.5f * player.GetAdjustedItemScale(player.HeldItem);
             float collisionPoint = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
         }
