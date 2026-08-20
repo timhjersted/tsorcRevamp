@@ -91,12 +91,12 @@ namespace tsorcRevamp.Projectiles.Summon.PhotonicDownpour
             Vector2 targetCoords = new Vector2(99999, 99999);
             if (owner.whoAmI == Main.myPlayer && Main.GameUpdateCount % 60 == Projectile.ai[0] * 60f / ownedCount)
             {
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile other in Main.ActiveProjectiles)
                 {
-                    if (Main.projectile[i].Center.Distance(Projectile.Center) < targetCoords.Distance(Projectile.Center) && UsefulFunctions.IsProjectileSafeToFuckWith(i))
+                    if (other.Center.Distance(Projectile.Center) < targetCoords.Distance(Projectile.Center) && UsefulFunctions.IsProjectileSafeToFuckWith(other.whoAmI))
                     {
                         foundProjTarget = true;
-                        targetCoords = Main.projectile[i].Center;
+                        targetCoords = other.Center;
                     }
                 }
             }

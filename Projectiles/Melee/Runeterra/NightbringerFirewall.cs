@@ -82,16 +82,26 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             {
                 Projectile.velocity = Vector2.Zero;
             }
+
+            foreach (var other in Main.ActiveProjectiles)
+            {
+                if (Main.myPlayer == Projectile.owner && other.whoAmI != Projectile.whoAmI
+                    && Projectile.Colliding(Projectile.Hitbox, other.Hitbox) 
+                    && UsefulFunctions.IsProjectileSafeToFuckWith(other.whoAmI))
+                {
+                    Dust.NewDust(other.position, other.width * 2, other.height * 2, DustID.Torch);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallHit") with { Volume = 1f }, Projectile.position);
+                    
+                    other.Kill();
+                    NetMessage.SendData(MessageID.KillProjectile, number: other.whoAmI);
+                    NetMessage.SendData(MessageID.SyncProjectile, number: other.whoAmI);
+                    
+                }
+            }
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile other = Main.projectile[i];
 
-                if (i != Projectile.whoAmI && other.active && !other.friendly && Projectile.Hitbox.Intersects(other.Hitbox) && UsefulFunctions.IsProjectileSafeToFuckWith(i))
-                {
-                    Dust.NewDust(other.position, other.width * 2, other.height * 2, DustID.Torch);
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallHit") with { Volume = 1f });
-                    other.Kill();
-                }
             }
             float frameSpeed = 5f;
 

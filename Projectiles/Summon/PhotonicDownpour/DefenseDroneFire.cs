@@ -49,19 +49,17 @@ namespace tsorcRevamp.Projectiles.Summon.PhotonicDownpour
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33 with { Volume = 0.5f }, Projectile.Center);
                 playedSound = true;
             }
-
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (var other in Main.ActiveProjectiles)
             {
-                if (UsefulFunctions.IsProjectileSafeToFuckWith(i) && Main.projectile[i].Colliding(Main.projectile[i].Hitbox, Projectile.Hitbox))
-                {
-                    if (Main.myPlayer == Projectile.owner)
-                    {
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Main.projectile[i].Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Projectile.owner, 300, 30);
-                    }
-
-                    Main.projectile[i].Kill();
-                    NetMessage.SendData(MessageID.KillProjectile, number: i);
-                    NetMessage.SendData(MessageID.SyncProjectile, number: i);
+                if (Main.myPlayer == Projectile.owner && other.whoAmI != Projectile.whoAmI
+                    && UsefulFunctions.IsProjectileSafeToFuckWith(other.whoAmI) 
+                    && other.Colliding(other.Hitbox, Projectile.Hitbox))
+                {                        
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), other.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Projectile.owner, 300, 30);
+                    
+                    other.Kill();
+                    NetMessage.SendData(MessageID.KillProjectile, number: other.whoAmI);
+                    NetMessage.SendData(MessageID.SyncProjectile, number: other.whoAmI);
 
                     Projectile.Kill();
                     NetMessage.SendData(MessageID.KillProjectile, number: Projectile.whoAmI);

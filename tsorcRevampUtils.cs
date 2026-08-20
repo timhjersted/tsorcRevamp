@@ -1111,7 +1111,7 @@ namespace tsorcRevamp
         }
 
         ///<summary> 
-        ///Checks if a projectile is safe to fuck with (destroy, reflect, etc)
+        ///Checks if a projectile is hostile and safe to fuck with (destroy, reflect, etc)
         ///</summary>
         ///<param name="type">The type of projectile being checked</param>
         public static bool IsProjectileSafeToFuckWith(int type)
