@@ -44,8 +44,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().WolfRing = true;
-            player.GetModPlayer<tsorcRevampPlayer>().ZirconRing = true;
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.WolfRing = true;
+            modPlayer.ZirconRing = true;
 
             //Ring of Clarity inheritance
             player.lifeRegen += RingOfClarity.LifeRegen;
@@ -66,12 +67,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             player.buffImmune[BuffID.Obstructed] = true;
             player.buffImmune[BuffID.Venom] = true;
             player.buffImmune[ModContent.BuffType<Frostbite>()] = true;
-
-            //Wolf Ring inheritance
-            if (Main.bloodMoon)
-            { // Apparently this is the flag used in the Abyss?
-                player.statDefense += WolfRing.AbyssDef;
-            }
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)

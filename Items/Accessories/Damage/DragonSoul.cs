@@ -13,9 +13,8 @@ namespace tsorcRevamp.Items.Accessories.Damage
 {
     public class DragonSoul : ModItem
     {
-        public static int Potency = 5;
         public static float DamageIncrease = 8f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Potency, DamageIncrease);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DragonStone.Potency, DamageIncrease);
         public override void SetStaticDefaults()
         {
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(8, 4));
@@ -53,8 +52,9 @@ namespace tsorcRevamp.Items.Accessories.Damage
 
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().DragonStoneImmunity = true;
-            tsorcRevampPlayer.DragonStonePotency = true;
+            var modPlayer  = player.GetModPlayer<DragonStonePlayer>();
+            modPlayer.DragonStoneImmunity = true;
+            modPlayer.DragonStonePotency = true;
             player.GetModPlayer<tsorcRevampPlayer>().DragonSoulEffect = true;
             player.GetDamage(DamageClass.Generic) += DamageIncrease / 100f;     
         }

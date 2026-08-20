@@ -1424,6 +1424,15 @@ namespace tsorcRevamp
         }
         public override void PostUpdateEquips()
         {
+            if (WolfRing && EnterTheAbyss)
+            {
+                Player.statDefense += Items.Accessories.Defensive.Rings.WolfRing.AbyssDef;
+            }
+
+            if (CovenantOfArtoriasEquipped && Player.HasBuff(ModContent.BuffType<Abyss>()))
+            {
+                UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<Abyss>(), -99999999);
+            }
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 Player.GetAttackSpeed(DamageClass.Melee) *= LethalTempoMeleeBaseAttackSpeedMult + (LethalTempoStacks * LethalTempoBonusAttackSpeedPerStack);

@@ -21,13 +21,6 @@ namespace tsorcRevamp.Buffs.Debuffs
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.EnterTheAbyss = true;
 
-            if (modPlayer.CovenantOfArtoriasEquipped)
-            {
-                player.DelBuff(buffIndex);
-                buffIndex--;
-                return;
-            }
-
             // Weak (vanilla BuffID.Weak numbers). meleeDamage/meleeSpeed are internal on Player and not
             // accessible from mod code, so use the public GetDamage/GetAttackSpeed accessors instead - same
             // underlying StatModifier/float, just reached through the public API.

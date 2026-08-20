@@ -29,10 +29,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         public override void UpdateEquip(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().WolfRing = true;
-            if (Main.bloodMoon)
-            { // Apparently this is the flag used in the Abyss?
-                player.statDefense += AbyssDef;
-            }
             player.buffImmune[BuffID.Frozen] = true;
             player.buffImmune[BuffID.Blackout] = true;
             player.buffImmune[BuffID.Obstructed] = true;
