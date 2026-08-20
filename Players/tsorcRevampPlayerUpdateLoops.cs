@@ -62,8 +62,6 @@ namespace tsorcRevamp
         public bool BeastMode1 = false;
         public bool SilverSerpentRing = false;
         public bool SoulSerpentRing = false;
-        public bool DragonStoneImmunity = false;
-        public static bool DragonStonePotency = false;
         public int SoulReaper = 5;
         public bool TornWings = false;
         public bool Crippled = false;
@@ -545,11 +543,6 @@ namespace tsorcRevamp
             BeastMode1 = false;
             SilverSerpentRing = false;
             SoulSerpentRing = false;
-            DragonStoneImmunity = false;
-            if (Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.SinglePlayer)
-            {
-                DragonStonePotency = false;
-            }
             SoulReaper = 5;
 
             DragoonBoots = false;

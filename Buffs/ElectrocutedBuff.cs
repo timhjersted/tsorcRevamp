@@ -7,6 +7,7 @@ namespace tsorcRevamp.Buffs
 {
     public class ElectrocutedBuff : ModBuff
     {
+        public const int BaseDoT = 6;
         //Generic texture since this buff is enemy-only
         public override string Texture => "Terraria/Images/Buff";
 

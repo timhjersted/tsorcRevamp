@@ -6,6 +6,7 @@ namespace tsorcRevamp.Buffs
 {
     public class CrescentMoonlight : ModBuff
     {
+        public const int BaseDoT = 26;
         //Generic texture since this buff is enemy-only
         public override string Texture => "Terraria/Images/Buff";
         

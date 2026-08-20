@@ -6,7 +6,9 @@ namespace tsorcRevamp.Items.Potions
 {
     public class CrimsonPotion : ModItem
     {
-        public static int Duration = 300;
+        public const int Duration = 300;
+        public const int BaseDoT = 20;
+        public const int DefenseReduction = 5;
         public override void SetStaticDefaults()
         {
         }

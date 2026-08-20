@@ -6,6 +6,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 {
     public class AbyssalSinking : ModBuff
     {
+        public const int BadDefense = 24;
         public override string Texture => "Terraria/Images/Buff";
         public override void SetStaticDefaults()
         {

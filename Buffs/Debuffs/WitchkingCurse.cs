@@ -7,6 +7,9 @@ namespace tsorcRevamp.Buffs.Debuffs
 {
     public class WitchkingCurse : ModBuff
     {
+        public const int BaseDoT = 400;
+        public const int BadDefense = 40;
+        public const float DamageReduction = 20f;
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;

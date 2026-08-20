@@ -15,6 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
     {
         public const float SlotsRequired = 4f;
         public const int BaseCritChance = 96; //default crit is 4 so this is 100 total
+        public const int BaseDoT = 100;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
         public override void SetStaticDefaults()
         {

@@ -12,6 +12,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public static float MeleeDmg = 20f;
         public static int OnHitDmg = 3;
+        public const int BaseDoT = 20;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg, OnHitDmg);
         public override void SetStaticDefaults()
         {

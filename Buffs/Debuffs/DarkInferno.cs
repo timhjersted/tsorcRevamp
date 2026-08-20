@@ -6,6 +6,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 {
     public class DarkInferno : ModBuff
     {
+        public const int BaseDoT = 30;
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;

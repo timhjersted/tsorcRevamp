@@ -6,6 +6,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 {
     public class AbyssInferno : ModBuff
     {
+        public const int BaseDoT = 150;
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;

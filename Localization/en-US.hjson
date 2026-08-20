@@ -1753,7 +1753,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases the potency of most weak debuffs on enemies by {0}x
-					Potency increase is 2x less effective with strong debuffs 
+					Potency increase is {1}x less effective with strong debuffs 
 					'''
 			}
 
