@@ -47,6 +47,7 @@ Sapharan / two enemies
 Mratitherat / Radiant Strand and Sundered Moon sprites
 LuckyLuke / Enchanted Moon Charm, Upgraded Mirror, and Oil Pot sprites
 Zedotagger / Gravelord Nito sprite and main menu art
+Manticore258 / Tested and examined code to aid with finding/fixing bugs
 
 ORIGINAL 2012 MOD 
 -------------------------------

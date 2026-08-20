@@ -1871,7 +1871,7 @@ namespace tsorcRevamp
             
             if (!Player.HasBuff(ModContent.BuffType<WitchkingScreamCooldown>()) && Witch)
             {
-                DoWitchScream(player);
+                DoWitchkingScream(player);
             }
         }
 
@@ -1924,7 +1924,7 @@ namespace tsorcRevamp
             }
         }
 
-        public void DoWitchScream(Player player)
+        public void DoWitchkingScream(Player player)
         {
                         player.AddBuff(ModContent.BuffType<WitchkingScreamCooldown>(), 20 * 60);
                         
@@ -1967,11 +1967,11 @@ namespace tsorcRevamp
                                 Main.dust[dustIndex].noGravity = true; 
                             }
 
-                            float radius = 30 * 16; 
-                            for (int i = 0; i < Main.maxNPCs; i++)
+                            float radius = 30 * 16;
+                            foreach (var npc in Main.ActiveNPCs)
                             {
-                                NPC npc = Main.npc[i];
-                                if (npc.active && !npc.friendly && npc.Distance(Player.Center) <= radius)
+                                bool killable = !npc.dontTakeDamage && !npc.immortal && !tsorcRevamp.UntargetableNPCs.Contains(npc.type);
+                                if (!npc.friendly && killable && npc.Distance(Player.Center) <= radius)
                                 {
                                     npc.AddBuff(ModContent.BuffType<WitchkingCurse>(), 6 * 60); // 6 seconds
                                     npc.AddBuff(BuffID.Confused, 4 * 60);
@@ -2067,7 +2067,7 @@ namespace tsorcRevamp
             }
             if (tsorcRevamp.WitchScream.JustReleased && !Player.HasBuff(ModContent.BuffType<WitchkingScreamCooldown>()) && Witch)
                 {
-                    DoWitchScream(player);
+                    DoWitchkingScream(player);
                 }
 
             if (tsorcRevamp.KrakensCast.JustReleased && Kraken)
