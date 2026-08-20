@@ -1,37 +1,35 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Throwing;
 
-namespace tsorcRevamp.Items.Weapons.Throwing
+namespace tsorcRevamp.Items.Weapons.Classless
 {
-    class Firebomb : ModItem
+    class OilPot : ModItem
     {
+        public const int OiledDurationInSeconds = 15;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Firebomb");
-            // Tooltip.SetDefault("Explodes, dealing damage in a small area");
         }
         public override void SetDefaults()
         {
-
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarityID.Green;
             Item.width = 22;
-            Item.damage = 100;
+            Item.damage = 10;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.knockBack = 8f;
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = 500;
-            Item.shoot = ModContent.ProjectileType<FirebombProj>();
-            Item.shootSpeed = 6.5f;
+            Item.shoot = ModContent.ProjectileType<OilPotProjectile>();
+            Item.shootSpeed = 9.5f;
             Item.useAnimation = 50;
             Item.useTime = 50;
             Item.UseSound = SoundID.Item1;
             Item.consumable = true;
             Item.maxStack = Item.CommonMaxStack;
-            Item.DamageType = DamageClass.Ranged;
+            Item.DamageType = DamageClass.Default;
         }
     }
 }

@@ -8,6 +8,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Classless;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.EnemySpriteRendering;

@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Weapons.Classless;
 using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.Items.Weapons.Throwing;
 using tsorcRevamp.Projectiles;

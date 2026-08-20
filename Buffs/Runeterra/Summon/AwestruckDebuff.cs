@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Buffs.Runeterra.Summon
 {
@@ -9,7 +10,9 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
     {
         public override void SetStaticDefaults()
         {
-            BuffID.Sets.IsATagBuff[Type] = true;
+            Main.debuff[Type] = true;
+            BuffID.Sets.IsATagBuff[Type] = true; //DoT part in GlobalNPC is restricted by a bool that checks whether the NPC is immune to regular debuffs
+            tsorcFactory.NonWhipTagBuff[Type] = true;
         }
 
         public override void Update(NPC npc, ref int buffIndex)

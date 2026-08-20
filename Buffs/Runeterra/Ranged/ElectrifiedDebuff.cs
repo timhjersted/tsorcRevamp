@@ -9,7 +9,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
     {
         public override void SetStaticDefaults()
         {
-            BuffID.Sets.IsATagBuff[Type] = false;
+            Main.debuff[Type] = true;
         }
 
         public override void Update(NPC npc, ref int buffIndex)

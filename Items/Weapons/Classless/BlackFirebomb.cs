@@ -2,9 +2,10 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Throwing;
 using tsorcRevamp.Projectiles;
 
-namespace tsorcRevamp.Items.Weapons.Throwing
+namespace tsorcRevamp.Items.Weapons.Classless
 {
     class BlackFirebomb : ModItem
     {
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.UseSound = SoundID.Item1;
             Item.consumable = true;
             Item.maxStack = Item.CommonMaxStack;
-            Item.DamageType = DamageClass.Ranged;
+            Item.DamageType = DamageClass.Default;
         }
         public override void AddRecipes()
         {

@@ -12,9 +12,9 @@ namespace tsorcRevamp.Buffs
 
         public override void SetStaticDefaults()
         {
-            Main.debuff[Type] = false;
+            /*Main.debuff[Type] = false; these 3 are generally unnecessary to bother with on an enemy debuff, but leaving it here for clarification
             Main.buffNoSave[Type] = true;
-            Main.buffNoTimeDisplay[Type] = false;
+            Main.buffNoTimeDisplay[Type] = false;*/
         }
 
         public override void Update(NPC npc, ref int buffIndex)

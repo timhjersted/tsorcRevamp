@@ -51,7 +51,9 @@ using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 using tsorcRevamp;
+using tsorcRevamp.Items.Weapons.Classless;
 using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs
 {
@@ -2773,35 +2775,11 @@ namespace tsorcRevamp.NPCs
                 float debuffCounter = 0;
                 foreach (int buffType in npc.buffType)
                 {
-                    if (Main.debuff[buffType] && !(BuffID.Sets.IsATagBuff[buffType]))
+                    if (Main.debuff[buffType] && !BuffID.Sets.IsATagBuff[buffType])
                     {
                         debuffCounter++;
                     }
-                    if (buffType == ModContent.BuffType<MythrilRamDebuff>())
-                    {
-                        debuffCounter++;
-                    }
-                    if (buffType == ModContent.BuffType<ScorchingDebuff>())
-                    {
-                        debuffCounter++;
-                    }
-                    if (buffType == ModContent.BuffType<ShockedDebuff>())
-                    {
-                        debuffCounter++;
-                    }
-                    if (buffType == ModContent.BuffType<SunburnDebuff>())
-                    {
-                        debuffCounter++;
-                    }
-                    if (buffType == ModContent.BuffType<Heatstroke>())
-                    {
-                        debuffCounter++;
-                    }
-                    if (buffType == ModContent.BuffType<Charmed>())
-                    {
-                        debuffCounter++;
-                    }
-                    if (buffType == ModContent.BuffType<Hemorrhage>())
+                    if (tsorcFactory.NonWhipTagBuff[buffType])
                     {
                         debuffCounter++;
                     }
@@ -2919,16 +2897,7 @@ namespace tsorcRevamp.NPCs
                 #region Minion effects
                 foreach (int buffType in npc.buffType)
                 {
-                    List<int> NonWhipTagBuffs = new List<int>()
-                    {
-                        ModContent.BuffType<MythrilRamDebuff>(),
-                        ModContent.BuffType<ScorchingDebuff>(),
-                        ModContent.BuffType<ShockedDebuff>(),
-                        ModContent.BuffType<SunburnDebuff>(),
-                        ModContent.BuffType<Heatstroke>(),
-                        ModContent.BuffType<Charmed>()
-                    };
-                    if (BuffID.Sets.IsATagBuff[buffType] && !NonWhipTagBuffs.Contains(buffType))
+                    if (BuffID.Sets.IsATagBuff[buffType] && !tsorcFactory.NonWhipTagBuff[buffType])
                     {
                         SummonTagFlatDamage += modPlayerProjectileOwner.EncouragingSummonTagDmg;
                         break;
@@ -4358,11 +4327,6 @@ namespace tsorcRevamp.NPCs
 
             if (ToxicCatDrain)
             {
-                if (npc.lifeRegen > 0)
-                {
-                    npc.lifeRegen = 0;
-                }
-
                 int ToxicCatShotCount = 0;
 
                 for (int i = 0; i < 1000; i++)
@@ -4373,31 +4337,34 @@ namespace tsorcRevamp.NPCs
                         ToxicCatShotCount++;
                     }
                 }
-                if (ToxicCatShotCount >= 4)
-                { //this is to make it worth the players time stickying more than 3 times
-                    npc.lifeRegen -= ToxicCatShotCount * 3 * 3; //Use 1st N for damage, second N can be used to make it tick faster.
-                    if (damage < ToxicCatShotCount * 1)
-                    {
-                        damage = ToxicCatShotCount * 1;
-                    }
-                }
-                else
+
+                if (!NPCID.Sets.ImmuneToRegularBuffs[npc.type])
                 {
-                    npc.lifeRegen -= ToxicCatShotCount * 2 * 3;
-                    if (damage < ToxicCatShotCount * 1)
+                    if (npc.lifeRegen > 0)
                     {
-                        damage = ToxicCatShotCount * 1;
+                        npc.lifeRegen = 0;
+                    }
+                    if (ToxicCatShotCount >= 4)
+                    { //this is to make it worth the players time stickying more than 3 times
+                        npc.lifeRegen -= ToxicCatShotCount * 3 * 3; //Use 1st N for damage, second N can be used to make it tick faster.
+                        if (damage < ToxicCatShotCount * 1)
+                        {
+                            damage = ToxicCatShotCount * 1;
+                        }
+                    }
+                    else
+                    {
+                        npc.lifeRegen -= ToxicCatShotCount * 2 * 3;
+                        if (damage < ToxicCatShotCount * 1)
+                        {
+                            damage = ToxicCatShotCount * 1;
+                        }
                     }
                 }
             }
 
             if (ViruCatDrain)
             {
-                if (npc.lifeRegen > 0)
-                {
-                    npc.lifeRegen = 0;
-                }
-
                 int ViruCatShotCount = 0;
 
                 for (int i = 0; i < 1000; i++)
@@ -4408,31 +4375,34 @@ namespace tsorcRevamp.NPCs
                         ViruCatShotCount++;
                     }
                 }
-                if (ViruCatShotCount >= 4)
+
+                if (!NPCID.Sets.ImmuneToRegularBuffs[npc.type])
                 {
-                    npc.lifeRegen -= ViruCatShotCount * 3 * 5; //I use 1st N for damage, second N can be used to make it tick faster.
-                    if (damage < ViruCatShotCount * 1)
+                    if (npc.lifeRegen > 0)
                     {
-                        damage = ViruCatShotCount * 1;
+                        npc.lifeRegen = 0;
                     }
-                }
-                else
-                {
-                    npc.lifeRegen -= ViruCatShotCount * 2 * 5;
-                    if (damage < ViruCatShotCount * 1)
+                    if (ViruCatShotCount >= 4)
                     {
-                        damage = ViruCatShotCount * 1;
+                        npc.lifeRegen -= ViruCatShotCount * 3 * 5; //I use 1st N for damage, second N can be used to make it tick faster.
+                        if (damage < ViruCatShotCount * 1)
+                        {
+                            damage = ViruCatShotCount * 1;
+                        }
+                    }
+                    else
+                    {
+                        npc.lifeRegen -= ViruCatShotCount * 2 * 5;
+                        if (damage < ViruCatShotCount * 1)
+                        {
+                            damage = ViruCatShotCount * 1;
+                        }
                     }
                 }
             }
 
             if (BiohazardDrain)
             {
-                if (npc.lifeRegen > 0)
-                {
-                    npc.lifeRegen = 0;
-                }
-
                 int BiohazardShotCount = 0;
 
                 for (int i = 0; i < 1000; i++)
@@ -4443,20 +4413,28 @@ namespace tsorcRevamp.NPCs
                         BiohazardShotCount++;
                     }
                 }
-                if (BiohazardShotCount >= 4)
+
+                if (!NPCID.Sets.ImmuneToRegularBuffs[npc.type])
                 {
-                    npc.lifeRegen -= BiohazardShotCount * 12 * 2; //I use 1st N for damage, second N can be used to make it tick faster.
-                    if (damage < BiohazardShotCount * 1)
+                    if (npc.lifeRegen > 0)
                     {
-                        damage = BiohazardShotCount * 1;
+                        npc.lifeRegen = 0;
                     }
-                }
-                else
-                {
-                    npc.lifeRegen -= BiohazardShotCount * 9 * 2;
-                    if (damage < BiohazardShotCount * 1)
+                    if (BiohazardShotCount >= 4)
                     {
-                        damage = BiohazardShotCount * 1;
+                        npc.lifeRegen -= BiohazardShotCount * 12 * 2; //I use 1st N for damage, second N can be used to make it tick faster.
+                        if (damage < BiohazardShotCount * 1)
+                        {
+                            damage = BiohazardShotCount * 1;
+                        }
+                    }
+                    else
+                    {
+                        npc.lifeRegen -= BiohazardShotCount * 9 * 2;
+                        if (damage < BiohazardShotCount * 1)
+                        {
+                            damage = BiohazardShotCount * 1;
+                        }
                     }
                 }
             }

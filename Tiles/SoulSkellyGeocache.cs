@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Items.Weapons.Classless;
 
 
 namespace tsorcRevamp.Tiles
@@ -150,7 +151,7 @@ namespace tsorcRevamp.Tiles
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3541, 1242, 3, 3), ModContent.ItemType<Items.StaminaVessel>(), 1));
 
             //By bonfire leading up to Earth Temple EoC arena, by shortcut
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4170, 1133, 3, 3), ModContent.ItemType<Items.Weapons.Throwing.Firebomb>(), 7));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4170, 1133, 3, 3), ModContent.ItemType<Firebomb>(), 7));
 
             //Ceiling of Red Knight event arena in Path of Ambition/Pain
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3897, 1195, 3, 3), ModContent.ItemType<Items.PurgingStone>(), 1));

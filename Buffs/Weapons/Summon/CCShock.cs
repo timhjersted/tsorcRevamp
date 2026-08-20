@@ -8,6 +8,10 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
 {
     public class CCShock : ModBuff
     {
+        public override void SetStaticDefaults()
+        {
+            Main.debuff[Type] = true;
+        }
         public override void Update(NPC npc, ref int buffIndex)
         {
             npc.GetGlobalNPC<tsorcRevampGlobalNPC>().CCShocked = true;

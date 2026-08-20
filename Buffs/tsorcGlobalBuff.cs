@@ -2,12 +2,24 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs
 {
     public class tsorcGlobalBuff : GlobalBuff
     {
+        public static bool FirstTimeLoad = true;
+        public override void SetStaticDefaults()
+        {
+            if (!FirstTimeLoad) return;
+            Main.debuff[BuffID.Daybreak] = true;
+            Main.debuff[BuffID.BloodButcherer] = true;
+            Main.debuff[BuffID.TentacleSpike] = true;
+            Main.debuff[BuffID.Oiled] = true;
+            FirstTimeLoad = false;
+        }
+
         public const float EnduranceResistBonus = 1f;
         public const float IceBarrierResistBonus = 8f;
         public const float SolarDR = 25f;
@@ -77,6 +89,14 @@ namespace tsorcRevamp.Buffs
             if (type == BuffID.BeetleEndurance3)
             {
                 player.endurance += BeetleDR * 3f / 100f;
+            }
+        }
+
+        public override void Update(int type, NPC npc, ref int buffIndex)
+        {
+            if (type == BuffID.Oiled)
+            {
+                Main.NewText(Main.debuff[type]);
             }
         }
 

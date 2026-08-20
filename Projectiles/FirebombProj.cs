@@ -17,9 +17,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 240;
             Projectile.penetrate = -1;
             Projectile.knockBack = 9;
-            Projectile.DamageType = DamageClass.Throwing;
+            Projectile.DamageType = DamageClass.Default;
             Projectile.scale = .8f;
-            Projectile.ContinuouslyUpdateDamageStats = true;
 
             // These 2 help the projectile hitbox be centered on the projectile sprite.
             DrawOffsetX = -5;

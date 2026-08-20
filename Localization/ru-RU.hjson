@@ -35,7 +35,8 @@ Mods: {
 			[c/ea00ea:Cerulean Flask is buffed to restore {2}x the default and {3}% of your maximum mana, ]
 			[c/ea00ea:but drinking the Cerulean Flask stunts your mobility like the Estus Flask.]
 			[c/ea00ea:When trying to use a magic weapon under {4}% of your maximum stamina, activate Mana Burn.]
-			[c/ea00ea:Mana Burn multiplicatively increases magic damage by {5}% and attack speed by {6}%, ]
+			[c/ea00ea:Mana Burn stops weapons from using stamina, ]
+			[c/ea00ea:multiplicatively increases magic damage by {5}% and attack speed by {6}%, ]
 			[c/ea00ea:but decreases your Resistance by {7} and multiplies your mana costs by another {8}x.]
 			''' */
 		/* ElectrocuteExplanation:

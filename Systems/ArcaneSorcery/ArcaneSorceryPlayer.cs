@@ -25,7 +25,6 @@ public class ArcaneSorceryPlayer : ModPlayer
     
     public float ManaBurnMagicDamageAmp = 20f;
     public float ManaBurnMagicAttackSpeedAmp = 20f;
-
     public override void ResetEffects()
     {
         ArcaneSorcerer = false;

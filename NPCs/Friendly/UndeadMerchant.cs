@@ -7,6 +7,7 @@ using Terraria.Utilities;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Classless;
 using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Friendly
@@ -86,7 +87,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Throwing.Firebomb>())
+            shop.Add(new Item(ModContent.ItemType<Firebomb>())
             {
                 shopCustomPrice = 5,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -184,7 +185,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
 
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Throwing.BlackFirebomb>())
+            shop.Add(new Item(ModContent.ItemType<BlackFirebomb>())
             {
                 shopCustomPrice = 50,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
