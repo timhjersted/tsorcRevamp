@@ -4048,6 +4048,10 @@ namespace tsorcRevamp.NPCs
                     dotBase *= 2.5f;
                     DoTPerS += DoDamageOverTime(npc, dotBase, false, true);
                 }
+                else
+                {
+                    DoTPerS += DoDamageOverTime(npc, dotBase, false, true);
+                }
 
                 var N = npc;
                 for (int j = 0; j < 5; j++)
