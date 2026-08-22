@@ -83,8 +83,8 @@ using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
 using System.Linq;
 using Terraria.Net;
-using tsorcRevamp.Items.Accessories.Defensive.Bands;
 using tsorcRevamp.Items.Accessories.Magic;
+using tsorcRevamp.Items.Accessories.Magic.Bands;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.VanillaItems;
@@ -2019,10 +2019,10 @@ namespace tsorcRevamp
                 {ItemID.AncientCobaltBreastplate, 20},
                 {ItemID.JunglePants, 20},
                 {ItemID.AncientCobaltLeggings, 20},
-                {ItemID.BandofStarpower, 20},
-                {ItemID.ManaRegenerationBand, 20},
-                {ItemID.MagicCuffs, 20},
-                {ItemID.CelestialCuffs, 20},
+                {ItemID.BandofStarpower, 40},
+                {ItemID.ManaRegenerationBand, 40},
+                {ItemID.MagicCuffs, 40},
+                {ItemID.CelestialCuffs, 40},
                 {ModContent.ItemType<BandOfCosmicPower>(), BandOfCosmicPower.MaxManaIncrease},
                 {ModContent.ItemType<BandOfGreatCosmicPower>(), BandOfGreatCosmicPower.MaxManaIncrease},
                 {ModContent.ItemType<BandOfPhenomenalCosmicPower>(), BandOfPhenomenalCosmicPower.MaxManaIncrease},

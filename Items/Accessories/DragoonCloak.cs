@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Accessories
             Lighting.AddLight(i2, j2, 0.92f, 0.8f, 0.65f);
 
             player.GetModPlayer<tsorcRevampPlayer>().ShadowmoonCloak = true;
-            player.lifeRegen += LightCloak.LifeRegen1;
+            player.lifeRegen += (int)LightCloak.LifeRegen1;
             player.starCloakItem = new Item(ItemID.StarCloak);
             player.GetCritChance(DamageClass.Generic) += ShadowmoonCloak.DamageAndCritIncrease1;
             player.GetDamage(DamageClass.Generic) += ShadowmoonCloak.DamageAndCritIncrease1 / 100f;
@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.Accessories
 
             if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))
             {
-                player.lifeRegen += LightCloak.LifeRegen2 - LightCloak.LifeRegen1;
+                player.lifeRegen += (int)(LightCloak.LifeRegen2 - LightCloak.LifeRegen1);
                 player.statDefense += DarkCloak.Defense2;
                 player.manaRegenBonus += ShadowmoonCloak.ManaRegenBonus;
                 player.GetCritChance(DamageClass.Generic) += ShadowmoonCloak.DamageAndCritIncrease2;

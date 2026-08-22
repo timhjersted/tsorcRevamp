@@ -9,12 +9,12 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Body)]
     public class BlackBeltGiTop : ModItem
     {
-        public static float Dmg = 20f;
-        public static float AtkSpeed = 16f;
-        public static int MaxDefense = 30;
-        public static int LifeRegen = 13;
-        public static float DRToMoveSpeedRatio = 1.25f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, AtkSpeed, MaxDefense, LifeRegen, DRToMoveSpeedRatio);
+        public const float Dmg = 20f;
+        public const float AtkSpeed = 16f;
+        public const int MaxDefense = 30;
+        public const float LifeRegen = 13f;
+        public const float ResistanceToMoveSpeedRatio = 1.25f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, AtkSpeed, MaxDefense, LifeRegen / 2f, ResistanceToMoveSpeedRatio);
         public override void SetStaticDefaults()
         {
         }
@@ -45,8 +45,8 @@ namespace tsorcRevamp.Items.Armors.Melee
                 player.statDefense *= 0;
                 player.statDefense += MaxDefense;
             }
-            player.lifeRegen += LifeRegen;
-            player.moveSpeed += player.endurance * DRToMoveSpeedRatio;
+            player.lifeRegen += (int)LifeRegen;
+            player.moveSpeed += player.endurance * ResistanceToMoveSpeedRatio;
             player.endurance = 0f;
         }
 

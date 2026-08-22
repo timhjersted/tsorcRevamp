@@ -9,13 +9,13 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     class AbyssalNinjaMask : ModItem
     {
-        public static float CritChance = 30f;
-        public static float Dmg = 15f;
-        public static float AtkSpeed = 30f;
-        public static int MaxDefense = 60;
-        public static int LifeRegen = 25;
-        public static float DRToMoveSpeedRatio = 2f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance, Dmg, AtkSpeed, MaxDefense, LifeRegen, DRToMoveSpeedRatio);
+        public const float CritChance = 30f;
+        public const float Dmg = 15f;
+        public const float AtkSpeed = 30f;
+        public const int MaxDefense = 60;
+        public const float LifeRegen = 25f;
+        public const float ResistanceToMoveSpeedRatio = 2f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance, Dmg, AtkSpeed, MaxDefense, LifeRegen / 2f, ResistanceToMoveSpeedRatio);
         public override void SetStaticDefaults()
         {
         }
@@ -45,8 +45,8 @@ namespace tsorcRevamp.Items.Armors
                 player.statDefense *= 0;
                 player.statDefense += MaxDefense;
             }
-            player.lifeRegen += LifeRegen;
-            player.moveSpeed += player.endurance * DRToMoveSpeedRatio;
+            player.lifeRegen += (int)LifeRegen;
+            player.moveSpeed += player.endurance * ResistanceToMoveSpeedRatio;
             player.endurance = 0f;
         }
         public override void AddRecipes()

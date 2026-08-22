@@ -11,12 +11,12 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class DragoonHelmet2 : ModItem
     {
-        public static int MaxMana = 200;
-        public static float ManaCost = 17f;
-        public static int ManaRegen = 11;
-        public static float CritChance = 32f;
-        public static int LifeRegen = 3;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance, LifeRegen);
+        public const int MaxMana = 200;
+        public const float ManaCost = 17f;
+        public const int ManaRegen = 11;
+        public const float CritChance = 32f;
+        public const float LifeRegen = 3f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance, LifeRegen / 2f);
         public override void SetStaticDefaults()
         {
         }
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Armors
             player.manaCost -= ManaCost / 100f;
             player.manaRegenBonus += ManaRegen;
             player.pStone = true;
-            player.lifeRegen += LifeRegen;
+            player.lifeRegen += (int)LifeRegen;
         }
  
         public override bool IsArmorSet(Item head, Item body, Item legs)

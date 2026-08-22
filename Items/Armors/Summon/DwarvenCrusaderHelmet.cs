@@ -10,13 +10,13 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Head)]
     class DwarvenCrusaderHelmet : ModItem
     {
-        public static float WhipDmg = 16f;
-        public static float AtkSpeed = 8f;
-        public static float TagDuration = 8f;
-        public static float CritChance = 7f;
-        public static float WhipRange = 30f;
-        public static int LifeRegen = 3;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, AtkSpeed, TagDuration, WhipRange, LifeRegen, CritChance);
+        public const float WhipDmg = 16f;
+        public const float AtkSpeed = 8f;
+        public const float TagDuration = 8f;
+        public const float CritChance = 7f;
+        public const float WhipRange = 30f;
+        public const float LifeRegen = 3f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, AtkSpeed, TagDuration, WhipRange, LifeRegen / 2f, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -54,11 +54,11 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             player.onHitDodge = true;
 
-            player.lifeRegen += LifeRegen;
+            player.lifeRegen += (int)LifeRegen;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.lifeRegen += LifeRegen;
+                player.lifeRegen += (int)LifeRegen;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Gold, 1.0f);
                 Main.dust[dust].noGravity = true;

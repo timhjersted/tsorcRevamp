@@ -9,12 +9,12 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Head)]
     class ShadowNinjaMask : ModItem
     {
-        public static float MeleeCrit = 30f;
-        public static float MeleeSpeed = 30f;
-        public static int MaxDefense = 40;
-        public static int LifeRegen = 18;
-        public static float DRToMoveSpeedRatio = 1.5f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeCrit, MeleeSpeed, MaxDefense, LifeRegen, DRToMoveSpeedRatio);
+        public const float MeleeCrit = 30f;
+        public const float MeleeSpeed = 30f;
+        public const int MaxDefense = 40;
+        public const float LifeRegen = 18f;
+        public const float ResistanceToMoveSpeedRatio = 1.5f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeCrit, MeleeSpeed, MaxDefense, LifeRegen / 2f, ResistanceToMoveSpeedRatio);
         public override void SetStaticDefaults()
         {
         }
@@ -44,8 +44,8 @@ namespace tsorcRevamp.Items.Armors.Melee
                 player.statDefense *= 0;
                 player.statDefense += MaxDefense;
             }
-            player.lifeRegen += LifeRegen;
-            player.moveSpeed += player.endurance * DRToMoveSpeedRatio;
+            player.lifeRegen += (int)LifeRegen;
+            player.moveSpeed += player.endurance * ResistanceToMoveSpeedRatio;
             player.endurance = 0f;
         }
         public override void AddRecipes()

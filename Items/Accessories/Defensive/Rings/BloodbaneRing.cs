@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 {
     public class BloodbaneRing : ModItem
     {
-        public static int LifeRegen = 1;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen);
+        public const float LifeRegen = 1f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen / 2f);
         public override void SetStaticDefaults()
         {
         }
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         {
             player.buffImmune[BuffID.Poisoned] = true;
             player.buffImmune[BuffID.Bleeding] = true;
-            player.lifeRegen += LifeRegen;
+            player.lifeRegen += (int)LifeRegen;
         }
 
     }

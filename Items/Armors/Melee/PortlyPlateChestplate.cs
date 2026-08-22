@@ -14,11 +14,11 @@ namespace tsorcRevamp.Items.Armors.Melee
     public class PortlyPlateChestplate : ModItem
     {
         public const float DamageIncrease = 12f;
-        public const int LifeRegen1 = 2;
+        public const float LifeRegen1 = 2f;
         public const float LifeThreshold = 25f;
-        public const int LifeRegen2 = 3;
+        public const float LifeRegen2 = 3f;
         public const int BaseDamage = 45;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, LifeRegen1, LifeThreshold, LifeRegen2);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, LifeRegen1 / 2f, LifeThreshold, LifeRegen2 / 2f);
         public override void SetStaticDefaults()
         {
         }
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.lifeRegen += LifeRegen1;
+            player.lifeRegen += (int)LifeRegen1;
             player.noKnockback = true;
             player.GetModPlayer<tsorcRevampPlayer>().PortlyPlateArmor = true;
             if (player.ownedProjectileCounts[ModContent.ProjectileType<PortlyPlateRollHitbox>()] == 0 && Main.myPlayer == player.whoAmI)
@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items.Armors.Melee
             }
             if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))
             {
-                player.lifeRegen += LifeRegen2;
+                player.lifeRegen += (int)LifeRegen2;
                 Dust.NewDust(player.Center, 10, 10, DustID.AmberBolt);
             }
         }

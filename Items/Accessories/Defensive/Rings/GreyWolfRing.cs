@@ -4,7 +4,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Accessories.Defensive.Bands;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 
@@ -49,7 +48,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             modPlayer.ZirconRing = true;
 
             //Ring of Clarity inheritance
-            player.lifeRegen += RingOfClarity.LifeRegen;
+            player.lifeRegen += (int)RingOfClarity.LifeRegen;
             player.endurance += CrackedDragonStone.DR / 100f;
             player.noKnockback = true;
             player.fireWalk = true;

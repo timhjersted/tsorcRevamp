@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class DragoonHelmet : ModItem
     {
-        public static int MaxMana = 140;
-        public static float ManaCost = 14f;
-        public static int ManaRegen = 9;
-        public static float CritChance = 24f;
+        public const int MaxMana = 140;
+        public const float ManaCost = 14f;
+        public const int ManaRegen = 9;
+        public const float CritChance = 24f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance);
         public override void SetStaticDefaults()
         {

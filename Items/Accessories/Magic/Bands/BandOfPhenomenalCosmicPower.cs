@@ -4,16 +4,18 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Accessories.Defensive.Bands
+namespace tsorcRevamp.Items.Accessories.Magic.Bands
 {
     [AutoloadEquip(EquipType.HandsOn)]
-    public class BandOfCosmicPower : ModItem
+
+    [LegacyName("BandOfSupremeCosmicPower")]
+    public class BandOfPhenomenalCosmicPower : ModItem
     {
-        public static int LifeRegen = 2;
-        public static int MaxManaIncrease = 40;
-        public static int ManaRegen = 25;
-        public static float ManaRegenDelay = 100f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen, MaxManaIncrease, ManaRegen, ManaRegenDelay);
+        public const float LifeRegen = 5f;
+        public const int MaxManaIncrease = 80;
+        public const int ManaRegen = 45;
+        public const float ManaRegenDelay = 130f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen / 2f, MaxManaIncrease, ManaRegen, ManaRegenDelay);
         public override void SetStaticDefaults()
         {
         }
@@ -23,15 +25,16 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Bands
             Item.width = 28;
             Item.height = 28;
             Item.accessory = true;
-            Item.value = PriceByRarity.Blue_1;
-            Item.rare = ItemRarityID.Blue;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.rare = ItemRarityID.LightRed;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.ManaRegenerationBand);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+            recipe.AddIngredient(ModContent.ItemType<BandOfGreatCosmicPower>());
+            recipe.AddIngredient(ItemID.SoulofLight, 5);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 16000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -39,7 +42,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Bands
 
         public override void UpdateEquip(Player player)
         {
-            player.lifeRegen += LifeRegen;
+            player.lifeRegen += (int)LifeRegen;
             player.statManaMax2 += MaxManaIncrease;
             player.manaRegenBonus += ManaRegen;
             player.manaRegenDelayBonus += ManaRegenDelay / 100f;

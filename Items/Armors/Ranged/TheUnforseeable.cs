@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Body)]
     public class TheUnforseeable : ModItem
     {
-        public static float Dmg = 16f;
-        public static int LifeRegen = 2;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, LifeRegen);
+        public const float Dmg = 16f;
+        public const float LifeRegen = 2f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, LifeRegen / 2f);
         public override void SetStaticDefaults()
         {
         }
@@ -28,12 +28,12 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Ranged) += Dmg / 100f;
-            player.lifeRegen += LifeRegen;
+            player.lifeRegen += (int)LifeRegen;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
                 player.GetDamage(DamageClass.Ranged) += Dmg / 100f;
-                player.lifeRegen += LifeRegen;
+                player.lifeRegen += (int)LifeRegen;
             }
         }
 

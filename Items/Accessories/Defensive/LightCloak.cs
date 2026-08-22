@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class LightCloak : ModItem
     {
-        public static int LifeRegen1 = 4;
-        public static float LifeThreshold = 40f;
-        public static int LifeRegen2 = 6;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen1, LifeThreshold, LifeRegen2);
+        public const float LifeRegen1 = 4f;
+        public const float LifeThreshold = 40f;
+        public const float LifeRegen2 = 6f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen1 / 2f, LifeThreshold, LifeRegen2 / 2f);
         public override void SetStaticDefaults()
         {
         }
@@ -38,10 +38,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.lifeRegen += LifeRegen1;
+            player.lifeRegen += (int)LifeRegen1;
             if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))
             {
-                player.lifeRegen += LifeRegen2 - LifeRegen1;
+                player.lifeRegen += (int)(LifeRegen2 - LifeRegen1);
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.White, 1.0f);
                 Main.dust[dust].noGravity = true;

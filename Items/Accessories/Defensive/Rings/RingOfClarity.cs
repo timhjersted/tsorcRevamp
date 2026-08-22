@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 {
     class RingOfClarity : ModItem
     {
-        public static int LifeRegen = 2;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CrackedDragonStone.DR, LifeRegen);
+        public const float LifeRegen = 2f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CrackedDragonStone.DR, LifeRegen / 2f);
         public override void SetStaticDefaults()
         {
         }
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             player.buffImmune[BuffID.Poisoned] = true;
             player.buffImmune[ModContent.BuffType<Frostbite>()] = true;
             player.endurance += CrackedDragonStone.DR / 100f;
-            player.lifeRegen += LifeRegen;
+            player.lifeRegen += (int)LifeRegen;
         }
     }
 }

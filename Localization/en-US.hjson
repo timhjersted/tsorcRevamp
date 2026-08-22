@@ -202,8 +202,8 @@ Mods: {
 				Has 1/8 chance to reflect projectiles
 				Not compatible with other weapon imbues
 				'''
-			LifeRegen: Increases life regeneration by {0}
-			BadLifeRegen: Decreases life regeneration by {0}
+			LifeRegen: Increases life regeneration by {0} per second
+			BadLifeRegen: Decreases life regeneration by {0} per second
 			BadDefense: Decreases defense by {0}
 			BadDmg: Decreases damage dealt by {0}%
 			ArmorPen: Increases armor penetration by {0}
@@ -876,7 +876,7 @@ Mods: {
 				IncinerationHex: Deals more damage and applies a incineration hex if Hellkite Dragon has been defeated
 				MartianBuff: Deals more damage and electrocutes enemies if the Martians have been defeated
 				StarinaBottle: Increases mana regen by 10 and decreases mana regen delay by 50%
-				ManaRegenerationBand: Increases mana regen by 25 and decreases mana regen delay by 100%
+				ManaRegenerationBand: Increases mana regen by 30 and decreases mana regen delay by 100%
 				WellFedItemsBotC: Increases stamina regen by {0}% for the [c/6d8827:Bearer of the Curse]
 				CeruleanManaRegenerationPotion: Increases Cerulean Flask restoration time by {0}%
 				CelestialMagnetBotC: Mana Star pickups only restore {0}% of the [c/6d8827:Bearer of the Curse's] maximum mana

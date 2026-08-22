@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class BrassHelmet : ModItem
     {
-        public static float BadDmg = 25f;
-        public static int LifeRegen = 3;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadDmg, LifeRegen);
+        public const float BadDmg = 25f;
+        public const float LifeRegen = 3f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadDmg, LifeRegen / 2f);
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Generic) -= BadDmg / 100f;
-            player.lifeRegen += LifeRegen;
+            player.lifeRegen += (int)LifeRegen;
         }
         public override void AddRecipes()
         {
