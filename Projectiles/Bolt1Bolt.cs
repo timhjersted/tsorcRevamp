@@ -31,14 +31,19 @@ namespace tsorcRevamp.Projectiles
                 target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 120);
             }
         }
+
+        public bool AppliedOnSpawn = false;
         public override void AI()
         {
             //keep a portion of the projectile's velocity when spawned, so we canmake sure it has the right knockback
-            if (Projectile.ai[0] == 0)
+            if (!AppliedOnSpawn)
             {
                 Projectile.velocity.X *= 0.001f;
                 Projectile.velocity.Y *= 0.001f;
-                Projectile.ai[0] = 1;
+                if (Projectile.ai[0] == 1f)
+                {
+                    Projectile.DamageType = DamageClass.Ranged;
+                }
             }
             Projectile.frameCounter++;
             Projectile.frame = (int)Math.Floor((double)Projectile.frameCounter / 4);

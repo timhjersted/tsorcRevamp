@@ -62,8 +62,14 @@ namespace tsorcRevamp.Projectiles.Magic
         }
 
         public static SoundStyle ThunderSoundStyle = new SoundStyle("Terraria/Sounds/Thunder_0");
+        public bool AppliedOnSpawn = false;
         public override void AI()
         {
+            if (!AppliedOnSpawn && Projectile.ai[0] == 1f)
+            {
+                Projectile.DamageType = DamageClass.Ranged;
+                AppliedOnSpawn =  true;
+            }
             System.Diagnostics.Stopwatch thisWatch = new System.Diagnostics.Stopwatch();
             thisWatch.Start();
             if (IsAtMaxCharge)

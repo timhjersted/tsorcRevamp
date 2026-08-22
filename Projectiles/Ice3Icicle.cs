@@ -31,8 +31,16 @@ namespace tsorcRevamp.Projectiles
                 }
             }
         }
+
+        public bool AppliedOnSpawn = false;
         public override void AI()
         {
+            if (!AppliedOnSpawn && Projectile.ai[0] == 1f)
+            {
+                Projectile.DamageType = DamageClass.Ranged;
+                AppliedOnSpawn = true;
+            }
+            Main.NewText(Projectile.DamageType);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
         }
 

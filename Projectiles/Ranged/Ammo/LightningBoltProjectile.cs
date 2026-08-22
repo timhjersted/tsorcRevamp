@@ -61,7 +61,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
                     ModContent.ProjectileType<Bolt1Bolt>(),
                     boltDamage,
                     Projectile.knockBack,
-                    Projectile.owner
+                    Projectile.owner,
+                    1f
                 );
 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit53, Projectile.position);
@@ -80,7 +81,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
                     ModContent.ProjectileType<Bolt1Bolt>(),
                     boltDamage,
                     Projectile.knockBack,
-                    Projectile.owner
+                    Projectile.owner,
+                    1f
                 );
 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit53, Projectile.position);

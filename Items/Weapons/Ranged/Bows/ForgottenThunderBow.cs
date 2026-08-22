@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.Magic.Bolt3Lightning>(), (int)(player.GetTotalDamage(DamageClass.Ranged).ApplyTo(Item.damage) * 1.9f), knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.Magic.Bolt3Lightning>(), (int)(player.GetTotalDamage(DamageClass.Ranged).ApplyTo(Item.damage) * 1.9f), knockback, player.whoAmI, 1f);
 
             Vector2 lowPos = position + new Vector2(0, 22);
             Projectile.NewProjectile(source, lowPos, velocity, type, damage, knockback, player.whoAmI);

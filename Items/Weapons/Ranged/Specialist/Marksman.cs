@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 
         public override void SetDefaults()
         {
-            Item.damage = 70;
+            Item.damage = 500;
             Item.DamageType = DamageClass.Ranged;
             Item.width = 52;
             Item.height = 42;
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 
-            //recipe.Register();
+            recipe.Register();
         }
 
         public override Vector2? HoldoutOffset()

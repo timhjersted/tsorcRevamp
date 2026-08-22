@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                     //Check if any projectiles hit the coin
 
                     Rectangle otherHitbox = Main.projectile[i].Hitbox;
-                    int hitboxMultiplier = 1;
+                    int hitboxMultiplier = 3;
                     float reflectionSpeed = 20;
                     if (Main.projectile[i].type == ModContent.ProjectileType<AntiMaterialRound>())
                     {
@@ -62,7 +62,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                             Main.projectile[i].friendly = true;
                             Main.projectile[i].hostile = false;
                             Main.projectile[i].velocity = UsefulFunctions.Aim(Main.projectile[i].Center, GetTarget(), reflectionSpeed);
-                            Main.projectile[i].CritChance = 100;
+                            Main.projectile[i].CritChance += 100;
                             Main.projectile[i].damage *= 2;
                         }
                         else
