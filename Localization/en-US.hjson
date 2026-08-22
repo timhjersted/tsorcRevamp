@@ -7801,7 +7801,7 @@ Mods: {
 					'''
 					Converts seeds into [c/ba55d3:Toxic Shots] and allows you to gather Seeds from grass
 					[c/ba55d3:Toxic Shots] apply a short burst of [c/ba55d3:Venom] and home into enemies
-					Also uses all darts as ammo, but Poison Darts deal {0}x damage
+					Also uses all darts as ammo, but Poison Darts deal {0}x damage and gain {1} pierce
 					[c/ba55d3:Inhibits player movement conditionally] whilst being used
 					[c/ba55d3:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
@@ -7828,7 +7828,7 @@ Mods: {
 					'''
 					Converts seeds into [c/ba55d3:Alien Lasers] and allows you to gather Seeds from grass
 					[c/ba55d3:Alien Lasers] apply a short burst of [c/ba55d3:Electrified] and home into enemies
-					Also uses all darts as ammo, but Poison Darts deal {0}x damage
+					Also uses all darts as ammo, but Poison Darts deal {0}x damage and gain {1} pierce
 					[c/ba55d3:Inhibits player movement conditionally] whilst being used
 					[c/ba55d3:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
@@ -7856,7 +7856,7 @@ Mods: {
 					'''
 					Converts seeds into [c/ba55d3:Radioactive Darts] and allows you to gather Seeds from grass
 					[c/ba55d3:Radioactive Darts] apply a short burst of [c/ba55d3:Radiation] and home into enemies
-					Also uses all darts as ammo, but Poison Darts deal {0}x damage
+					Also uses all darts as ammo, but Poison Darts deal {0}x damage and gain {1} pierce
 					[c/ba55d3:Inhibits player movement conditionally] whilst being used
 					[c/ba55d3:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}

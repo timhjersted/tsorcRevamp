@@ -9,6 +9,7 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.NPCs;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
@@ -39,6 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public const int ScoutsBoost2Duration = 5;
         public const int ScoutsBoost2Cooldown = 25;
         public static float PoisonDartDmgMult = 1.5f;
+        public const int PoisonDartPierceBonus = 3;
 
         public const float BlindingLaserDmgMult = 3;
         public static int BlindingLaserSeedDmgMult = 2;
@@ -238,6 +240,73 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                 return true;
             }
             return false;
+        }
+    }
+
+    public class PosionDartsEdit : GlobalProjectile
+    {
+        public override bool InstancePerEntity => true;
+        public bool AppliedAlready = false;
+
+        public override void AI(Projectile projectile)
+        {
+            Player player = Main.player[projectile.owner];
+            bool isPoisonDart = projectile.type == ProjectileID.PoisonDartBlowgun;
+            bool holdingWeapon = player.HeldItem.type == ModContent.ItemType<ToxicShot>() || player.HeldItem.type == ModContent.ItemType<AlienGun>() || player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>();
+            if (!AppliedAlready && isPoisonDart && holdingWeapon)
+            {
+                projectile.penetrate += RuneterraDarts.PoisonDartPierceBonus;
+                projectile.usesLocalNPCImmunity = true;
+                projectile.localNPCHitCooldown = -1;
+                AppliedAlready = true;
+            }
+        }
+        public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Player player = Main.player[projectile.owner];
+            bool isPoisonDart = projectile.type == ProjectileID.PoisonDartBlowgun;
+            if (isPoisonDart)
+            {
+                if (player.HeldItem.type == ModContent.ItemType<ToxicShot>())
+                {
+                    if (hit.Crit)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/ShotCrit") with { Volume = 0.5f }, target.Center);
+                    }
+                    else
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/ShotHit") with { Volume = 0.5f }, target.Center);
+                    }
+                    target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
+                    target.AddBuff(ModContent.BuffType<VenomDebuff>(), 2 * 60);
+                } 
+                else if (player.HeldItem.type == ModContent.ItemType<AlienGun>())
+                {
+                    if (hit.Crit)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/ShotCrit") with { Volume = 0.5f }, target.Center);
+                    }
+                    else
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/ShotHit") with { Volume = 0.5f }, target.Center);
+                    }
+                    target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
+                    target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 2 * 60);
+                }
+                else if (player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
+                {
+                    if (hit.Crit)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShotCrit") with { Volume = 0.5f }, target.Center);
+                    }
+                    else
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShotHit") with { Volume = 0.5f }, target.Center);
+                    }
+                    target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
+                    target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 2 * 60);
+                }
+            }
         }
     }
 }

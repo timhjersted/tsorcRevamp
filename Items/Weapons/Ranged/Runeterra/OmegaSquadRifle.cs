@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public override int BlindingProjectileType => ModContent.ProjectileType<RadioactiveBlindingLaser>();
         public override int BlindingProjectileCooldownType => ModContent.BuffType<RadioactiveBlindingLaserCooldown>();
         public const int BaseDamage = 350;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ToxicShot.PoisonDartDmgMult);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ToxicShot.PoisonDartDmgMult, PoisonDartPierceBonus);
         public override void CustomSetDefaults()
         {
             Item.damage = BaseDamage;

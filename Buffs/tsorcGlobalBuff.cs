@@ -94,10 +94,6 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(int type, NPC npc, ref int buffIndex)
         {
-            if (type == BuffID.Oiled)
-            {
-                Main.NewText(Main.debuff[type]);
-            }
         }
 
         public override void ModifyBuffText(int type, ref string buffName, ref string tip, ref int rare)

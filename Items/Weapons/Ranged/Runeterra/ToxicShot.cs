@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public override float ShootSoundVolume => 0.5f;
         public override int BlindingProjectileType => throw new System.NotImplementedException();
         public override int BlindingProjectileCooldownType => throw new System.NotImplementedException();
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PoisonDartDmgMult);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PoisonDartDmgMult, PoisonDartPierceBonus);
         public const int BaseDamage = 33;
         public override void CustomSetDefaults()
         {

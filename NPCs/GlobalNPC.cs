@@ -3892,6 +3892,7 @@ namespace tsorcRevamp.NPCs
 
         public override void UpdateLifeRegen(NPC npc, ref int damage)
         {
+            DragonStoneNPC.CustomUpdateLifeRegen(npc, ref damage);
             float dotBase;
             float DoTPerS = 0;
             if (Ignited)
@@ -3908,7 +3909,7 @@ namespace tsorcRevamp.NPCs
             if (Electrified)
             {
                 dotBase = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)AlienGun.BaseDamage * 1.5f) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)AlienGun.BaseDamage * 1.5f);
-                DoTPerS = DoDamageOverTime(npc, dotBase, false, false);
+                DoTPerS += DoDamageOverTime(npc, dotBase, false, false);
             }
 
             if (Irradiated)
@@ -4178,9 +4179,15 @@ namespace tsorcRevamp.NPCs
                     Main.dust[dustIndex].fadeIn = 1.2f;
                 }
             }
-
-            npc.lifeRegen -= (int)(DoTPerS * 2f);
-            damage += (int)DoTPerS;
+            npc.lifeRegen -= (int)Math.Round(DoTPerS * 2f);
+            if (damage <= 0 && DoTPerS > 0)
+            {
+                damage += (int)Math.Round(DoTPerS) + 1;
+            }
+            else
+            {
+                damage += (int)Math.Round(DoTPerS);
+            }
         }
         public override void OnHitPlayer(NPC npc, Player target, Player.HurtInfo hurtInfo)
         {

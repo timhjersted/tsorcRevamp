@@ -1478,7 +1478,7 @@ namespace tsorcRevamp
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (MagmaArmor && target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3))
+            if (MagmaArmor && (target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3)))
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
             }

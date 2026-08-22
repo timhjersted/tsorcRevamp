@@ -175,6 +175,7 @@ namespace tsorcRevamp.Items.Accessories.Damage
         /// <param name="npcType"></param>
         /// <param name="dotBase"></param>
         /// <param name="needsNerf"></param>
+        /// <param name="isFire"></param>
         /// <returns></returns>
         public static float AddDragonStonePotencyDoT(in NPC npcType, in float dotBase, bool needsNerf = false, bool isFire = true)
         {
@@ -213,7 +214,7 @@ namespace tsorcRevamp.Items.Accessories.Damage
             return oiledDoTBonus + finalDoTPerS;
         }
 
-        public int StackingDebuffDoT(in NPC npc, in int projType, in int dotBase)
+        public static int StackingDebuffDoT(in NPC npc, in int projType, in int dotBase)
         {
             int stacks = 0;
             foreach (var proj in Main.ActiveProjectiles)
@@ -226,8 +227,9 @@ namespace tsorcRevamp.Items.Accessories.Damage
             return stacks * dotBase;
         }
 
-        public override void UpdateLifeRegen(NPC npc, ref int damage)
+        public static void CustomUpdateLifeRegen(NPC npc, ref int damage)
         {
+            var dragonNpc = npc.GetGlobalNPC<DragonStoneNPC>();
             float DotPerS = 0;
             if (npc.onFire)
             {
@@ -279,11 +281,12 @@ namespace tsorcRevamp.Items.Accessories.Damage
             if (npc.daybreak)
             {
                 int dotBase = StackingDebuffDoT(npc, ProjectileID.Daybreak, 100);
-                DotPerS += AddDragonStonePotencyDoT(npc, 100, true);
+                DotPerS += AddDragonStonePotencyDoT(npc, dotBase, true);
             }
 
             npc.lifeRegen -= (int)(DotPerS * 2f);
             damage += (int)DotPerS;
+            dragonNpc.OiledFirstApplication = false;
         }
     }
 }
