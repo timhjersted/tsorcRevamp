@@ -49,6 +49,13 @@ namespace tsorcRevamp.NPCs.Special
             NPC.rarity = 1;
         }
 
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
+        {
+            base.ApplyDifficultyAndPlayerScaling(numPlayers, balance, bossAdjustment);
+            int lifeMax = NPC.lifeMax;
+            NPC.lifeMax = (int)(lifeMax * balance * bossAdjustment);
+        }
+
         public override void HitEffect(NPC.HitInfo hit)
         {
             if (hit.Crit)

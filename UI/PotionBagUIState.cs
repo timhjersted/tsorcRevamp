@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Items.Potions.PermanentPotions;
+using tsorcRevamp.Items.Weapons.Throwing;
 
 
 namespace tsorcRevamp.UI
@@ -139,6 +140,10 @@ namespace tsorcRevamp.UI
 
             //Was going to remove this, but also lmao //why this is cringe
             if (item.type == Terraria.ID.ItemID.ToxicFlask)
+            {
+                valid = false;
+            }
+            if (item.type == ModContent.ItemType<FireFlask>())
             {
                 valid = false;
             }
