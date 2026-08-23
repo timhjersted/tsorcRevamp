@@ -611,7 +611,22 @@ namespace tsorcRevamp.NPCs
                 if (noPathToTarget && g.CanPassThroughWalls && g.UnreachableFrames >= 60)
                 {
                     int awayDir = Math.Sign(npc.Center.X - player.Center.X);
-                    g.PatrolDirection = awayDir != 0 ? awayDir : (npc.direction != 0 ? npc.direction : 1);
+
+                    // Fall back down the chain when the player is exactly X-aligned (awayDir 0): keep the
+                    // current facing, else right. A 0 here would leave the patrol sweep with no direction.
+                    if (awayDir != 0)
+                    {
+                        g.PatrolDirection = awayDir;
+                    }
+                    else if (npc.direction != 0)
+                    {
+                        g.PatrolDirection = npc.direction;
+                    }
+                    else
+                    {
+                        g.PatrolDirection = 1;
+                    }
+
                     g.GhostUnreachableWanderTimer = Math.Max(g.GhostUnreachableWanderTimer, 300);
                 }
                 if (noPathToTarget)
@@ -1026,7 +1041,23 @@ namespace tsorcRevamp.NPCs
                         bool touching = b.LeftX <= a.RightX + 1 && b.RightX >= a.LeftX - 1;
                         if (!touching) continue;
                         // Walk transitions need body clearance at the JOIN column too.
-                        int joinX = b.LeftX > a.RightX ? b.LeftX : b.RightX < a.LeftX ? b.RightX : a.LeftX;
+                        // Column where the two spans meet: b's near edge when b sits clear to one side of
+                        // a, otherwise (the spans overlap in X) a's left edge.
+                        int joinX;
+
+                        if (b.LeftX > a.RightX)
+                        {
+                            joinX = b.LeftX;
+                        }
+                        else if (b.RightX < a.LeftX)
+                        {
+                            joinX = b.RightX;
+                        }
+                        else
+                        {
+                            joinX = a.LeftX;
+                        }
+
                         int joinY = Math.Min(a.Y, b.Y);
                         if (!HasBodyClearanceAtRow(joinX, joinY)) continue;
                         // Stepping UP one row (dy == -1, b is higher) is only a real WALK if there's a
@@ -1137,7 +1168,7 @@ namespace tsorcRevamp.NPCs
                         {
                             // Case 1: ride up to bb's level, step off sideways onto the ledge.
                             valid = true;
-                            landX = x < bb.LeftX ? bb.LeftX : (x > bb.RightX ? bb.RightX : x);
+                            landX = Math.Clamp(x, bb.LeftX, bb.RightX);
                         }
                         else if (bb.Y < ropeTopY)
                         {
@@ -1219,7 +1250,7 @@ namespace tsorcRevamp.NPCs
         // onto the ledge. Returns false if bb is directly above the rope (that's a jump-up, not a side step).
         private static bool RopeSideExitClear(int ropeCol, Span bb)
         {
-            int sideX = ropeCol < bb.LeftX ? bb.LeftX : (ropeCol > bb.RightX ? bb.RightX : ropeCol);
+            int sideX = Math.Clamp(ropeCol, bb.LeftX, bb.RightX);
             if (sideX == ropeCol) return false; // bb sits over the rope column — not a sideways exit
             return IsStandableTile(sideX, bb.Y + 1) && HasBodyClearanceAtRow(sideX, bb.Y);
         }
@@ -1543,7 +1574,15 @@ namespace tsorcRevamp.NPCs
         {
             if (s.BeastPhasing)
             {
-                int dir = s.BeastPhaseDir != 0 ? s.BeastPhaseDir : (npc.velocity.X >= 0f ? 1 : -1);
+                // Direction latched when the phase began. It should never be 0 here; fall back to current
+                // travel so a stale 0 can't stall the body inside the wall.
+                int dir = s.BeastPhaseDir;
+
+                if (dir == 0)
+                {
+                    dir = npc.velocity.X >= 0f ? 1 : -1;
+                }
+
                 npc.position.Y = s.BeastPhaseFloorY - npc.height; // hold the entry floor level
                 npc.velocity.Y = 0f;
                 // Commit to the latched direction so a mid-phase plan/velocity flip can't strand it inside the wall.
@@ -1565,22 +1604,37 @@ namespace tsorcRevamp.NPCs
 
             // Consider STARTING a phase: grounded and walking into something.
             if (npc.velocity.Y != 0f) return false;
-            int d = npc.velocity.X > 0.1f ? 1 : (npc.velocity.X < -0.1f ? -1 : 0);
-            if (d == 0) return false;
+            // Which way we're walking. 0.1f deadzone: under that, friction jitter flips the sign every
+            // frame. 0 means "not really moving", which is not a phase attempt.
+            int moveDirection = 0;
 
-            int dist = BeastClearColumnDistance(npc, d, g.BeastPhaseMaxWidth + 1);
+            if (npc.velocity.X > 0.1f)
+            {
+                moveDirection = 1;
+            }
+            else if (npc.velocity.X < -0.1f)
+            {
+                moveDirection = -1;
+            }
+
+            if (moveDirection == 0)
+            {
+                return false;
+            }
+
+            int dist = BeastClearColumnDistance(npc, moveDirection, g.BeastPhaseMaxWidth + 1);
             if (dist <= 0) return false;                 // body isn't actually blocked ahead
             if (dist > g.BeastPhaseMaxWidth) return false; // a real wall → let A* handle it
 
             // It still needs ground on the far side (it phases the obstruction, not into a pit).
             int feetY = GetFeetTileY(npc);
-            int startX = d > 0 ? (int)((npc.Right.X + 1f) / TileF) : (int)((npc.Left.X - 1f) / TileF);
-            int farX = startX + d * dist;
+            int startX = moveDirection > 0 ? (int)((npc.Right.X + 1f) / TileF) : (int)((npc.Left.X - 1f) / TileF);
+            int farX = startX + moveDirection * dist;
             if (!IsNavigationSolid(farX, feetY + 1) && !IsNavigationSolid(farX, feetY + 2)) return false;
 
             s.BeastPhasing = true;
             s.BeastPhaseFrames = 0;
-            s.BeastPhaseDir = d;
+            s.BeastPhaseDir = moveDirection;
             s.BeastPhaseFloorY = npc.Bottom.Y;
             npc.noTileCollide = true;
             npc.velocity.Y = 0f;
@@ -1817,8 +1871,26 @@ namespace tsorcRevamp.NPCs
                 if (x < sp.LeftX - 1 || x > sp.RightX + 1) continue;
                 int dy = Math.Abs(sp.Y - feetY);
                 if (dy > 3) continue;
-                int score = dy * 10 + (x < sp.LeftX ? sp.LeftX - x : x > sp.RightX ? x - sp.RightX : 0);
-                if (score < bestScore) { bestScore = score; best = sp; }
+                // Horizontal gap from x to this span, 0 when x already sits inside it. Vertical distance
+                // is weighted 10x so a span on our own row always beats one a row off.
+                int horizontalGap = 0;
+
+                if (x < sp.LeftX)
+                {
+                    horizontalGap = sp.LeftX - x;
+                }
+                else if (x > sp.RightX)
+                {
+                    horizontalGap = x - sp.RightX;
+                }
+
+                int score = dy * 10 + horizontalGap;
+
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    best = sp;
+                }
             }
             if (best != null) return best;
 
@@ -1828,7 +1900,18 @@ namespace tsorcRevamp.NPCs
             int bestDist = int.MaxValue;
             foreach (var sp in spans)
             {
-                int dx = x < sp.LeftX ? sp.LeftX - x : x > sp.RightX ? x - sp.RightX : 0;
+                // Horizontal gap from x to this span, 0 when x already sits inside it.
+                int dx = 0;
+
+                if (x < sp.LeftX)
+                {
+                    dx = sp.LeftX - x;
+                }
+                else if (x > sp.RightX)
+                {
+                    dx = x - sp.RightX;
+                }
+
                 int dy = Math.Abs(sp.Y - feetY);
                 // Cap so we don't reach into far rooms. The vertical cap scales with this NPC's jump power,
                 // so high-jump experiments can still select a valid ledge span as their goal.
@@ -1935,7 +2018,7 @@ namespace tsorcRevamp.NPCs
             if (spanPath.Count > 0)
             {
                 Span last = spanPath[spanPath.Count - 1];
-                int finalX = playerX < last.LeftX ? last.LeftX : playerX > last.RightX ? last.RightX : playerX;
+                int finalX = Math.Clamp(playerX, last.LeftX, last.RightX);
                 steps.Add(new PlanStep(StepKind.Walk, finalX, last.Y, finalX));
             }
             return steps;
@@ -2812,7 +2895,22 @@ namespace tsorcRevamp.NPCs
                     }
                 }
                 npc.velocity.X *= 0.4f;
-                action = "blocked"; reason = oh > 6 ? "too-tall" : (s.NoAStarPath ? "no-astar-path" : "no-headroom");
+                action = "blocked";
+
+                // Diagnostic label only — tells the nav log which of the three gates above rejected the jump.
+                if (oh > 6)
+                {
+                    reason = "too-tall";
+                }
+                else if (s.NoAStarPath)
+                {
+                    reason = "no-astar-path";
+                }
+                else
+                {
+                    reason = "no-headroom";
+                }
+
                 return true;
             }
             int drop = GetDropDepth(frontX, feetY, 6);

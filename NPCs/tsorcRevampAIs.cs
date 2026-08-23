@@ -539,7 +539,22 @@ namespace tsorcRevamp.NPCs
                             globalNPC.PursuitState = PursuitState.Flee;
                             globalNPC.FleeOriginX = npc.Center.X;
                             int awayDir = Math.Sign(npc.Center.X - fsmPlayer.Center.X);
-                            globalNPC.FleeDirection = awayDir != 0 ? awayDir : (npc.direction != 0 ? npc.direction : 1);
+
+                            // Fall back down the chain when the player is exactly X-aligned (awayDir 0): keep
+                            // the current facing, else right. A 0 here would leave the flee with no direction.
+                            if (awayDir != 0)
+                            {
+                                globalNPC.FleeDirection = awayDir;
+                            }
+                            else if (npc.direction != 0)
+                            {
+                                globalNPC.FleeDirection = npc.direction;
+                            }
+                            else
+                            {
+                                globalNPC.FleeDirection = 1;
+                            }
+
                             globalNPC.FleeElapsedFrames = 0;
                         }
                     }

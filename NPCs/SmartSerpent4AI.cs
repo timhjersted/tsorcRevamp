@@ -431,8 +431,26 @@ namespace tsorcRevamp.NPCs
                 if (x < sp.LeftX - 1 || x > sp.RightX + 1) continue;
                 int dy = Math.Abs(sp.Y - bodyY);
                 if (dy > 3) continue;
-                int score = dy * 10 + (x < sp.LeftX ? sp.LeftX - x : x > sp.RightX ? x - sp.RightX : 0);
-                if (score < bestScore) { bestScore = score; best = sp; }
+                // Horizontal gap from x to this span, 0 when x already sits inside it. Vertical distance
+                // is weighted 10x so a span on our own row always beats one a row off.
+                int horizontalGap = 0;
+
+                if (x < sp.LeftX)
+                {
+                    horizontalGap = sp.LeftX - x;
+                }
+                else if (x > sp.RightX)
+                {
+                    horizontalGap = x - sp.RightX;
+                }
+
+                int score = dy * 10 + horizontalGap;
+
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    best = sp;
+                }
             }
             if (best != null) return best;
 
@@ -441,7 +459,18 @@ namespace tsorcRevamp.NPCs
             int bestDist = int.MaxValue;
             foreach (var sp in spans)
             {
-                int dx = x < sp.LeftX ? sp.LeftX - x : x > sp.RightX ? x - sp.RightX : 0;
+                // Horizontal gap from x to this span, 0 when x already sits inside it.
+                int dx = 0;
+
+                if (x < sp.LeftX)
+                {
+                    dx = sp.LeftX - x;
+                }
+                else if (x > sp.RightX)
+                {
+                    dx = x - sp.RightX;
+                }
+
                 int dy = Math.Abs(sp.Y - bodyY);
                 if (dx > 16 || dy > WallScaleMaxTiles) continue;
                 int d = dx + dy * 2;
