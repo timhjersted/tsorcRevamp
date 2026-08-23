@@ -41,8 +41,8 @@ Mods: {
 			''' */
 		/* ElectrocuteExplanation:
 			'''
-			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 different ranged projectile types in a span of {0} seconds,]
-			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. {$CommonItemTooltip.Cooldown@1}]
+			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 unique ranged projectiles in a span of {0} seconds,]
+			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. ({$CommonItemTooltip.Cooldown@1})]
 			[c/22dd96:Uses highest crit chance of the 3 projectiles. ]
 			[c/22dd96:Ranged damage is reduced by {2}% while Electrocute is not on cooldown.]
 			''' */
@@ -10110,11 +10110,6 @@ Mods: {
 				// DisplayName: Electrocuted Buff2
 			}
 
-			Electrocute: {
-				// DisplayName: Electrocute
-				// Description: Mods.tsorcRevamp.Buffs.Electrocute.Description
-			}
-
 			YoungHunterBuff: {
 				// DisplayName: Young Hunter
 				// Description: The Young Hunter will hunt for you!
@@ -10219,9 +10214,14 @@ Mods: {
 				// Description: Mods.tsorcRevamp.Buffs.ArcaneSorcery.Description
 			}
 
+			Electrocute: {
+				// DisplayName: Electrocute
+				// Description: Electrocute is ready!
+			}
+
 			ElectrocuteCooldown: {
 				// DisplayName: Electrocute Cooldown
-				// Description: Mods.tsorcRevamp.Buffs.ElectrocuteCooldown.Description
+				// Description: Electrocute is on cooldown.
 			}
 		}
 

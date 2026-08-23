@@ -58,10 +58,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
                         break;
                     }
             }
-            player.statMana -= (int)(OmegaSquadRifle.BaseShroomManaCost * player.manaCost);
-            player.ManaEffect(-(int)(OmegaSquadRifle.BaseShroomManaCost * player.manaCost));
-            player.manaRegenDelay = MeleeEdits.ManaDelay;
-            Projectile.OriginalCritChance = 100;
+            Projectile.OriginalCritChance = RuneterraDarts.ShroomBonusCritChance;
         }
         public override void AI()
         {
