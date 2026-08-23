@@ -21,12 +21,15 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float ExpandSpeed = 10f;
         const float RingHalfThickness = 30f;
         const float FlameTrailLength = 58f;
-        const float DrawPadding = 8f;
+        //The shader's outermost term is the lip, which dies 3px past RingRadius + RingHalfThickness.
+        //12px of padding leaves the feather four times the room it needs and nothing can clip.
+        const float DrawPadding = 12f;
+        const float PixelBlockSize = 2f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> cinderNovaEffect;
-        static Asset<Texture2D> smoothNoise;
-        static Asset<Texture2D> brokenNoise;
+        static Asset<Texture2D> shapeNoise;
+        static Asset<Texture2D> detailNoise;
         static Asset<Texture2D> ignitionFlare;
 
         float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 420f;
@@ -88,8 +91,11 @@ namespace tsorcRevamp.Projectiles.Enemy
         static void LoadAssets()
         {
             cinderNovaEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GwynCinderNova", AssetRequestMode.ImmediateLoad);
-            smoothNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
-            brokenNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Noise41", AssetRequestMode.ImmediateLoad);
+            //Both fields are seamless under a 2x2 tile check. The previous pair were not: T_VFX_NoiseF1
+            //shows its tile boundary outright, and T_VFX_Noise41 is posterized blobs, which is most of
+            //why the ring used to read as a flat hoop rather than as fire.
+            shapeNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
+            detailNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_07-512x512", AssetRequestMode.ImmediateLoad);
             ignitionFlare ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Flare_616", AssetRequestMode.ImmediateLoad);
         }
 
@@ -103,11 +109,18 @@ namespace tsorcRevamp.Projectiles.Enemy
             Rectangle source = new Rectangle(0, 0, drawDiameter, drawDiameter);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
+            //Two passes with different blend states. The ignition flash is honestly just light, so it
+            //stays additive; the ring is fire with a sooty body, which only premultiplied alpha can
+            //render — additive cannot produce a saturated colour over the daytime sky, and that is
+            //exactly why this effect used to wash out to a pale hoop.
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
             DrawIgnitionFlash(drawPosition);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             DrawShaderRing(drawPosition, source, opacity);
 
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
@@ -136,22 +149,34 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             try
             {
-                graphicsDevice.Textures[1] = brokenNoise.Value;
+                graphicsDevice.Textures[1] = detailNoise.Value;
                 graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
 
-                effect.Parameters["OuterColor"].SetValue(new Color(255, 44, 4).ToVector3());
-                effect.Parameters["FlameColor"].SetValue(new Color(255, 137, 18).ToVector3());
-                effect.Parameters["CoreColor"].SetValue(new Color(255, 244, 184).ToVector3());
+                Vector2 drawSize = source.Size();
+                //Pre-divided so the shader does not repeat a max() and two reciprocals for every
+                //pixel. Uniform-only maths is NOT free at ps_2_0 — there is no preshader — and this
+                //form costs ~2 slots against ~12 for the same arithmetic written in HLSL.
+                Vector2 pixelBlocks = drawSize / PixelBlockSize;
+                Vector4 pixelGrid = new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y);
+
+                //OuterColor is a dark ember red, not a bright one. Under premultiplied alpha the
+                //trailing soot is meant to OCCLUDE the sky; a bright outer tone there just makes the
+                //whole ring a glowing donut with no burnt tail.
+                effect.CurrentTechnique = effect.Techniques["GwynCinderNova"];
+                effect.Parameters["OuterColor"].SetValue(new Color(58, 9, 3).ToVector3());
+                effect.Parameters["FlameColor"].SetValue(new Color(255, 122, 16).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 238, 176).ToVector3());
                 effect.Parameters["Opacity"].SetValue(opacity);
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-                effect.Parameters["DrawSize"].SetValue(source.Size());
-                effect.Parameters["PrimaryTextureSize"].SetValue(smoothNoise.Value.Size());
+                effect.Parameters["DrawSize"].SetValue(drawSize);
+                effect.Parameters["CoordScale"].SetValue(shapeNoise.Value.Size() / drawSize);
+                effect.Parameters["PixelGrid"].SetValue(pixelGrid);
                 effect.Parameters["RingRadius"].SetValue(Radius);
                 effect.Parameters["RingHalfThickness"].SetValue(RingHalfThickness);
                 effect.Parameters["TrailLength"].SetValue(FlameTrailLength);
                 effect.CurrentTechnique.Passes[0].Apply();
 
-                Main.EntitySpriteDraw(smoothNoise.Value, drawPosition, source, Color.White, 0f,
+                Main.EntitySpriteDraw(shapeNoise.Value, drawPosition, source, Color.White, 0f,
                     source.Size() * 0.5f, 1f, SpriteEffects.None, 0);
             }
             finally

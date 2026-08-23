@@ -23,11 +23,17 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float PullSpeedCap = 6.5f;  //never accelerates a player beyond this toward him
         const float InnerDeadzone = 90f;  //no pull once you're already delivered
         const int SpiralSourceSize = 320;
+        //The field fades to nothing over the last ~120px before PullRadius, so it never reaches the
+        //quad edge. The padding is margin for that feather, not a home for a rim band.
+        const float FieldDrawPadding = 30f;
+        //4px rather than the usual 2px. The quad is ~1580px across, so 2px blocks are sub-perceptible
+        //at gameplay zoom on a field this large — the filter has to scale with the effect to read.
+        const float PixelBlockSize = 4f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> solarVortexEffect;
-        static Asset<Texture2D> smoothNoise;
-        static Asset<Texture2D> brokenNoise;
+        static Asset<Texture2D> webNoise;
+        static Asset<Texture2D> churnNoise;
         static Asset<Texture2D> spiralCore;
 
         int ParentIndex => (int)Projectile.ai[0];
@@ -115,8 +121,14 @@ namespace tsorcRevamp.Projectiles.Enemy
         static void LoadAssets()
         {
             solarVortexEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GwynSolarVortex", AssetRequestMode.ImmediateLoad);
-            smoothNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
-            brokenNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Noise41", AssetRequestMode.ImmediateLoad);
+            //Two fields again, because the interference between them IS the pattern — the shader
+            //lights the contour where they are equal. What was wrong before was not the pairing but
+            //the PLANAR sampling: across a 1520px quad it tiled a 512px texture ~10 times and showed
+            //a ~146px grid. Ring space fixes that without giving up the structure. VoronoiNoise
+            //supplies hard cell boundaries; T_VFX_Noise41 (the original's own second field)
+            //supplies posterized blobs, and crossing them gives distinct filament shapes.
+            webNoise ??= ModContent.Request<Texture2D>(TextureRoot + "VoronoiNoise", AssetRequestMode.ImmediateLoad);
+            churnNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Noise41", AssetRequestMode.ImmediateLoad);
             spiralCore ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Spiral07", AssetRequestMode.ImmediateLoad);
         }
 
@@ -129,11 +141,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             float opacity = fadeIn * fadeOut;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
+            //The spiral core is a plain glow sprite and stays additive. The field is premultiplied
+            //alpha so its rim can hold a saturated orange over a bright sky, which additive cannot.
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
             DrawSpiralCore(drawPosition, opacity);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             DrawVortexField(drawPosition, opacity);
 
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
@@ -152,15 +169,19 @@ namespace tsorcRevamp.Projectiles.Enemy
         void DrawVortexField(Vector2 drawPosition, float opacity)
         {
             Effect effect = solarVortexEffect.Value;
-            int fieldDiameter = (int)(PullRadius * 2f);
+            int fieldDiameter = (int)((PullRadius + FieldDrawPadding) * 2f);
             Rectangle source = new Rectangle(0, 0, fieldDiameter, fieldDiameter);
+            Vector2 drawSize = source.Size();
+            Vector2 pixelBlocks = drawSize / PixelBlockSize;
+            Vector4 pixelGrid = new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y);
+
             GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
             Texture previousTexture = graphicsDevice.Textures[1];
             SamplerState previousSampler = graphicsDevice.SamplerStates[1];
 
             try
             {
-                graphicsDevice.Textures[1] = brokenNoise.Value;
+                graphicsDevice.Textures[1] = churnNoise.Value;
                 graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
 
                 effect.CurrentTechnique = effect.Techniques["GwynSolarVortex"];
@@ -169,14 +190,15 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["CoreColor"].SetValue(new Color(255, 244, 180).ToVector3());
                 effect.Parameters["Opacity"].SetValue(opacity);
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-                effect.Parameters["DrawSize"].SetValue(source.Size());
-                effect.Parameters["PrimaryTextureSize"].SetValue(smoothNoise.Value.Size());
+                effect.Parameters["DrawSize"].SetValue(drawSize);
+                effect.Parameters["CoordScale"].SetValue(webNoise.Value.Size() / drawSize);
+                effect.Parameters["PixelGrid"].SetValue(pixelGrid);
                 effect.Parameters["PullRadius"].SetValue(PullRadius);
                 effect.Parameters["InnerRadius"].SetValue(InnerDeadzone);
                 effect.CurrentTechnique.Passes[0].Apply();
 
-                Main.EntitySpriteDraw(smoothNoise.Value, drawPosition, source, Color.White, 0f,
-                    source.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(webNoise.Value, drawPosition, source, Color.White, 0f,
+                    drawSize * 0.5f, 1f, SpriteEffects.None, 0);
             }
             finally
             {

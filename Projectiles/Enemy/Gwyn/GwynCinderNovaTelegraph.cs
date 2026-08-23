@@ -15,12 +15,17 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float StartRadius = 155f;
         const float EndRadius = 18f;
         const float RingHalfThickness = 12f;
-        const float DrawPadding = 10f;
+        //Fixed, not derived from the current radius: the shader's iris is an annulus whose outer
+        //wall maxes at (34 + RingRadius * 0.22) * 1.60, so at the 155px start it reaches radius 264.
+        //320 leaves 56px of clear quad at every stage of the collapse, and a constant quad means the
+        //2px pixel grid does not resize under the effect while it plays.
+        const float DrawRadius = 320f;
+        const float PixelBlockSize = 2f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> cinderNovaEffect;
-        static Asset<Texture2D> smoothNoise;
-        static Asset<Texture2D> brokenNoise;
+        static Asset<Texture2D> shapeNoise;
+        static Asset<Texture2D> detailNoise;
 
         int GwynIndex => (int)Projectile.ai[0];
         int TotalTicks => Math.Max(1, (int)Projectile.ai[1]);
@@ -61,21 +66,22 @@ namespace tsorcRevamp.Projectiles.Enemy
         static void LoadAssets()
         {
             cinderNovaEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GwynCinderNova", AssetRequestMode.ImmediateLoad);
-            smoothNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
-            brokenNoise ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Noise41", AssetRequestMode.ImmediateLoad);
+            shapeNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
+            detailNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_07-512x512", AssetRequestMode.ImmediateLoad);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             LoadAssets();
 
-            float drawRadius = StartRadius + RingHalfThickness + DrawPadding;
-            int drawDiameter = (int)Math.Ceiling(drawRadius * 2f);
+            int drawDiameter = (int)(DrawRadius * 2f);
             Rectangle source = new Rectangle(0, 0, drawDiameter, drawDiameter);
             float opacity = MathHelper.Lerp(0.42f, 0.95f, Progress);
 
+            //Premultiplied alpha, matching the blast. The windup shares the blast's palette and its
+            //fire maths on purpose — it is the same flame — and differs only in which edge is crisp.
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             Effect effect = cinderNovaEffect.Value;
@@ -85,22 +91,27 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             try
             {
-                graphicsDevice.Textures[1] = brokenNoise.Value;
+                graphicsDevice.Textures[1] = detailNoise.Value;
                 graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
 
-                effect.Parameters["OuterColor"].SetValue(new Color(166, 28, 4).ToVector3());
-                effect.Parameters["FlameColor"].SetValue(new Color(255, 112, 14).ToVector3());
-                effect.Parameters["CoreColor"].SetValue(new Color(255, 232, 154).ToVector3());
+                Vector2 drawSize = source.Size();
+                Vector2 pixelBlocks = drawSize / PixelBlockSize;
+                Vector4 pixelGrid = new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y);
+
+                effect.CurrentTechnique = effect.Techniques["GwynCinderNovaCharge"];
+                effect.Parameters["OuterColor"].SetValue(new Color(58, 9, 3).ToVector3());
+                effect.Parameters["FlameColor"].SetValue(new Color(255, 122, 16).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 238, 176).ToVector3());
                 effect.Parameters["Opacity"].SetValue(opacity);
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-                effect.Parameters["DrawSize"].SetValue(source.Size());
-                effect.Parameters["PrimaryTextureSize"].SetValue(smoothNoise.Value.Size());
+                effect.Parameters["DrawSize"].SetValue(drawSize);
+                effect.Parameters["CoordScale"].SetValue(shapeNoise.Value.Size() / drawSize);
+                effect.Parameters["PixelGrid"].SetValue(pixelGrid);
                 effect.Parameters["RingRadius"].SetValue(Radius);
                 effect.Parameters["RingHalfThickness"].SetValue(RingHalfThickness);
-                effect.Parameters["TrailLength"].SetValue(28f);
                 effect.CurrentTechnique.Passes[0].Apply();
 
-                Main.EntitySpriteDraw(smoothNoise.Value, Projectile.Center - Main.screenPosition, source,
+                Main.EntitySpriteDraw(shapeNoise.Value, Projectile.Center - Main.screenPosition, source,
                     Color.White, 0f, source.Size() * 0.5f, 1f, SpriteEffects.None, 0);
             }
             finally

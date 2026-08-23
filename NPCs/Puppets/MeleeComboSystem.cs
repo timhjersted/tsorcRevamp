@@ -101,6 +101,13 @@ namespace tsorcRevamp.NPCs.Puppets
         public ComboRangeBand Preferred;
         public Color          InitialFlashColor;
         public int            CooldownAfterUse;
+        /// <summary>Recovery ticks after this combo's final step, i.e. how long the puppet is
+        /// committed and punishable before it can act again. 0 = use the puppet's flat
+        /// <c>MeleeRecoveryTicks</c>. This is the main lever for attack RHYTHM: a light swing that
+        /// recovers in 14 ticks and re-threatens feels nothing like a heavy that leaves a 48-tick
+        /// opening, and a moveset where every attack recovers identically reads as flat no matter
+        /// how varied the swings themselves are.</summary>
+        public int            RecoveryTicks;
         public bool           HeavyCommit;   // HP-escalation multiplier applies to these
         public bool           HyperArmor;    // commit (no stagger) holds through inter-step pauses, not just active frames
         /// <summary>Only eligible outside normal melee engagement range. Used for committed

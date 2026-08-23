@@ -192,6 +192,13 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int MeleeAttackTicks     => DefaultWeaponAnimMax;
         protected virtual int MeleeRecoveryTicks   => 25;
 
+        /// <summary>Recovery for the combo that just finished. Prefers the combo's own
+        /// <see cref="MeleeCombo.RecoveryTicks"/> and falls back to the flat
+        /// <see cref="MeleeRecoveryTicks"/>, so combo tables that do not set it are unchanged.
+        /// Single-clock V2 clips already carry their own recovery and never reach this.</summary>
+        private int ActiveComboRecoveryTicks =>
+            _activeMeleeCombo.RecoveryTicks > 0 ? _activeMeleeCombo.RecoveryTicks : MeleeRecoveryTicks;
+
         protected virtual int StabTelegraphTicks   => 38;
         protected virtual int StabAttackTicks      => 8;
         protected virtual int StabRecoveryTicks    => 32;
@@ -4495,7 +4502,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         if (continueCombo)
                             EnterPhase(AttackPhase.MeleeComboPause, Math.Max(1, step.PostStepPause));
                         else
-                            EnterPhase(AttackPhase.MeleeComboRecovery, MeleeRecoveryTicks);
+                            EnterPhase(AttackPhase.MeleeComboRecovery, ActiveComboRecoveryTicks);
                     }
                     break;
                 }

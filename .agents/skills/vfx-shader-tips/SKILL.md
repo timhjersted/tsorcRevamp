@@ -15,6 +15,9 @@ This skill provides advanced principles, pipelines, and mathematical techniques 
 > - §31–41 — field notes: how effects here actually broke, in game.
 > - §42–48 — look at it before you ship it: the preview harness and what it immediately exposed.
 > - §49–50 — ring-space is for rims not bodies; cheap swirl and the slot savings that actually land.
+> - §51 — ring-space also CURES tiling repeats on large radial quads (the Gwyn pass); the inverted
+>   interference contour; pixel-block size scales with the quad; plus the
+>   `Time`-scaling phase-jump trap and three slot cuts that reliably land.
 >
 > §43 additionally carries the **failure signature** for forgetting to premultiply on an
 > alpha-blended technique: a flat tinted rectangle exactly the size of the draw quad. That one
@@ -903,3 +906,107 @@ payoff, extending §36):
 When still over budget, cut a **decorative** term (a bloom, a pulse, an `Active` brightening the C#
 already conveys through opacity/size) — never the shape math. A plainer effect reads fine; a
 half-drawn silhouette reads as broken.
+
+---
+
+## 51. Ring Space Also CURES Tiling Repeats — the Gwyn Pass
+
+§49 frames ring space as a tradeoff (continuity around the circle, radial smear as the price). It has
+a second property that is not a tradeoff at all, and it is the fix for the most visible defect a large
+radial effect can have.
+
+**A planar sample over a big quad tiles, and you will see the grid.** `GwynSolarVortex` sampled at
+`fieldPoint * (3.4 + radial01 * 1.8)` — about five texture units from centre to rim — so a 512px noise
+repeated roughly ten times across its 1520px quad and rendered as an unmistakable ~146px lattice of
+cells. Enlarging the sample scale only makes the lattice bigger. Picking a "more seamless" texture
+does nothing: the tile boundary is invisible, the *repetition* is what reads.
+
+**Ring space cannot repeat.** `dir * k + 0.5` never leaves a disc of radius `k` around the texture
+centre, whatever the quad's size — there is no second tile to reach. Both Gwyn ring effects moved to
+it and the repeat is gone by construction, not by tuning.
+
+So the decision is: is the radial smear a defect or the subject?
+
+- **Gravity of the Sun** — the smeared features *are* the inflow streams. Ring space, no notes.
+- **Cinder Nova blast** — an annulus, which is §49's blessed case.
+- **Cinder Nova charge** — the smear read as a firework of spikes, i.e. an explosion, which is the
+  opposite of the gather it telegraphs. Two failed attempts before the fix, both instructive:
+  - Ring space **cannot** be tuned into arcs. Tangential frequency is `2*pi*k` and radial is `dk/dr`,
+    so the ratio is bounded by `1/(2*pi)` no matter what you choose for `k`. Do not go looking.
+  - The shape that worked was the blast's own band **mirrored** — crisp edge on the INSIDE, ragged
+    outside, so a hole closes instead of a front expanding. Reusing a sibling technique's geometry
+    with the anchor flipped is cheap, and it makes the two beats read as the same element.
+
+### 51a. Never scale `Time` by anything that changes during the effect
+
+`Time` is `Main.GlobalTimeWrappedHourly`, a free-running clock in the thousands. `Time * (0.55 +
+Progress * 0.75)` looks like "the swirl accelerates with the windup"; it actually jumps the phase by
+tens of scroll periods the instant `Progress` moves, because the multiplier applies to the whole
+elapsed hour. Accelerating scroll needs an **accumulator on the caller** (`phase += speed` per tick,
+passed as a uniform), or it needs to not be a feature. Constant speed is almost always the right call.
+
+### 51b. Accumulate colour tiers instead of chaining lerps
+
+`lerp(a, b, t)` then `lerp(that, c, u)` then a separate emissive is ~24 float3 ops. The Marilith-style
+accumulation in the pipeline skill is ~9, and under premultiplied alpha the sum is *already* the
+premultiplied colour, so the return is just `float4(color * Opacity, alpha)`:
+
+```hlsl
+float3 color = OuterColor * (sheath * 0.90)
+    + FlameColor * (heat * 0.85)
+    + CoreColor * (core * core * 1.10 + ember * 0.90);
+```
+
+That single change bought ~6 slots on each Gwyn technique. Weights need re-tuning after the swap —
+the first pass lost its white-hot lip because `core * core * 0.50` was doing what a `lerp` to
+`CoreColor` had done at full strength.
+
+### 51c. `PixelateShaderUV` has a pre-divided overload — use it
+
+`PixelShaderCommon.fxh` now carries `PixelateShaderUV(uv, float4 pixelGrid)` alongside the
+`(uv, drawSize, blockSize)` form. `ps_2_0` has no preshader, so the `max()` and reciprocals in the
+old form are re-evaluated per pixel at ~12 slots; passing `xy = drawSize / block`, `zw = block /
+drawSize` from C# costs ~2. Same for `CoordScale` (`PrimaryTextureSize / DrawSize`) — divide in C#.
+
+### 51d. Two shapes built from the same distance field are one shape
+
+The nova blast had a hot `band` and a sooty `wake`, both derived from the same `front` and the same
+macro sample, feathered to slightly different depths. That is 8 slots for a boundary nobody can see.
+One `sheath` mask plus a `towardLip` term in the **colour ramp** gives the identical read. Before
+cutting a feature to fit the budget, check whether two features are secretly the same one.
+
+### 51e. `abs(a - b)` lights the WRONG half — invert it
+
+Two-field interference is the cheapest way to get structure that exists in neither texture, and it is
+what gave `GwynSolarVortex` its cellular character. But `abs(a - b)` is **large across most of the
+disc** — two unrelated noise fields differ almost everywhere — so thresholding it upward
+(`saturate(d * 2.6 - 0.28)`) paints a solid glowing blob with a few dark specks, not filaments.
+
+The filaments are the **contour where the two fields are equal**:
+
+```hlsl
+float d = abs(tex2D(WebNoise, pointA).r - tex2D(ChurnNoise, pointB).r);
+float filaments = saturate(1.0 - d * 9.0);   // thin iso-lines, NOT saturate(d * k - bias)
+```
+
+Higher `k` = thinner walls. Counter-twist the two sample points so the contour drifts instead of
+sitting as one stamped pattern. Pair a **hard-edged** field with a **soft** one — `VoronoiNoise` x
+`T_VFX_Noise41` gives distinct filament shapes; two soft fields give mush.
+
+### 51f. A pixel filter has to scale with the quad
+
+`PixelBlockSize = 2` is right at typical effect sizes and **invisible** on a 1580px screen-covering
+field — the blocks are below what the eye resolves at gameplay zoom. `GwynGravityWell` uses 4.
+If someone says the pixel filter is missing and the code plainly sets it, check the quad size before
+checking the wiring.
+
+### 51g. Removing a defect is not the same job as making it good
+
+The vortex's first rewrite deleted the tiling repeat, correctly — and deleted the interference
+pattern with it, leaving one smooth noise field and a hard analytic rim. It was defensible on every
+individual point and worse overall. When a complaint names a specific defect ("it repeats"), find out
+what the effect is doing that's WORTH KEEPING before rebuilding around the fix.
+
+Also from that round: **a hard analytic band marking a radius reads as a circle drawn on top of the
+effect**, not as part of it. Reserve it for boundaries that are genuinely mechanical — a damage edge,
+the nova's lip. A pull field that deals no damage wants a soft ~120px fade instead.

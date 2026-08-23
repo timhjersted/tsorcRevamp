@@ -170,6 +170,9 @@ static class Preview
     // Effects/QuaraTideRush.fx. The live helper binds circle to s0 (unused by the procedural
     // water form) and T_Noise_Wf4 to s1.
     static Tex QuaraDetailSampler, QuaraCrestPrimarySampler, QuaraWaterPrimarySampler;
+    // Effects/GwynCinderNova.fx and Effects/GwynSolarVortex.fx. Bindings must match
+    // GwynCinderNova.DrawShaderRing: Turbulence_06 to s0 (macro shape), Turbulence_07 to s1 (detail).
+    static Tex GwynShapeSampler, GwynDetailSampler;
 
     static void LoadTextures()
     {
@@ -190,6 +193,14 @@ static class Preview
         QuaraDetailSampler = new Tex("T_Noise_Wf4");
         QuaraWaterPrimarySampler = new Tex("T_VFX_CircleFit1");
         QuaraCrestPrimarySampler = new Tex(Path.Combine(ProjectRoot, "Projectiles", "Enemy", "Quara", "QuaraTidalCrest"), previewLocal: true);
+        GwynShapeSampler = new Tex("Turbulence_06-512x512");
+        GwynDetailSampler = new Tex("Turbulence_07-512x512");
+        OldNovaSmoothSampler = new Tex("T_VFX_NoiseF1");
+        OldNovaBrokenSampler = new Tex("T_VFX_Noise41");
+        VortexWebSampler = new Tex("SplotchyNoise");
+        VortexChurnSampler = new Tex("VoronoiNoise");
+        SlashSpriteSampler = new Tex(Path.Combine(ProjectRoot, "Items", "Weapons", "Melee", "Broadswords",
+            "BroadswordRework", "Common", "Melee", "Slash"), previewLocal: true);
     }
 
     // Palettes, copied from the C# helper.
@@ -1382,6 +1393,260 @@ static class Preview
         return (total, 1f);
     }
 
+    // ---- Effects/GwynCinderNova.fx ------------------------------------------------------------
+    // Verbatim port of both techniques. The live shader recovers 0..1 quad UV via CoordScale before
+    // pixelating; the harness already hands over 0..1, so the port starts at the pixelate.
+    static readonly V3 NovaOuter = C(58, 9, 3);      // sooty ember red — dark so the wake OCCLUDES
+    static readonly V3 NovaFlame = C(255, 122, 16);
+    static readonly V3 NovaCore = C(255, 238, 176);
+
+    static (V3, float) GwynCinderNovaBlast(V2 c, int quad, float RingRadius, float RingHalfThickness,
+        float TrailLength, float Time, float Opacity, bool pixelated = true)
+    {
+        V2 uv = pixelated ? PixelateShaderUV(c, quad, quad) : c;
+        V2 fromCenter = (uv - 0.5f) * (float)quad;
+        float radius = length(fromCenter);
+        V2 dir = fromCenter / MathF.Max(radius, 1f);
+        V2 swirl = new(-dir.y, dir.x);
+        float front = radius - RingRadius;
+
+        float depth = front * 0.0042f;
+        V2 shapePoint = (dir + swirl * (Time * 0.085f)) * (0.36f + depth) + 0.5f;
+        V2 detailPoint = (dir - swirl * (Time * 0.150f)) * (0.83f + depth * 3.1f) + 0.5f;
+        float shape = GwynShapeSampler.R(shapePoint);
+        float detail = GwynDetailSampler.R(detailPoint);
+
+        float lip = sat((RingHalfThickness - front) * 0.34f);
+        float reach = RingHalfThickness * 0.85f + TrailLength * (0.35f + shape * 1.05f);
+        float sheath = lip * sat((front + reach) * 0.028f);
+
+        float towardLip = sat((front + RingHalfThickness * 1.10f) * 0.030f);
+        float heat = sheath * towardLip * (0.55f + detail * 0.62f);
+        float core = sheath * sat((front + RingHalfThickness * 0.35f) * 0.045f);
+        float ember = sat(detail * 1.85f - 1.05f) * heat;
+
+        float alpha = sat(sheath * 0.90f + core * 0.30f) * Opacity;
+        V3 color = NovaOuter * (sheath * 0.90f)
+            + NovaFlame * (heat * 0.85f)
+            + NovaCore * (core * core * 1.10f + ember * 0.90f);
+        return (color * Opacity, alpha);
+    }
+
+    static (V3, float) GwynCinderNovaCharge(V2 c, int quad, float RingRadius, float RingHalfThickness,
+        float Progress, float Time, float Opacity, bool pixelated = true)
+    {
+        V2 uv = pixelated ? PixelateShaderUV(c, quad, quad) : c;
+        V2 fromCenter = (uv - 0.5f) * (float)quad;
+        float radius = length(fromCenter);
+        V2 dir = fromCenter / MathF.Max(radius, 1f);
+        V2 swirl = new(-dir.y, dir.x);
+
+        float front = radius - RingRadius;
+
+        V2 shapePoint = (dir + swirl * (Time * 0.110f)) * (0.40f + front * 0.0035f) + 0.5f;
+        V2 detailPoint = (dir - swirl * (Time * 0.190f)) * (0.90f + front * 0.0090f) + 0.5f;
+        float shape = GwynShapeSampler.R(shapePoint);
+        float detail = GwynDetailSampler.R(detailPoint);
+
+        float mouth = sat(front * 0.30f);
+        float wall = (34f + RingRadius * 0.22f) * (0.55f + shape * 1.05f);
+        float iris = mouth * sat((wall - front) * 0.030f);
+
+        float shellRaw = front * 0.030f + Time * 0.85f;
+        float shellPhase = shellRaw - MathF.Floor(shellRaw);
+        float shells = 0.55f + sat((0.42f - shellPhase) * 2.60f) * 0.75f;
+
+        float rim = iris * sat(1f - front * 0.055f);
+        float body = iris * shells * (0.45f + detail * 0.80f);
+
+        float alpha = sat(iris * 0.55f + body * 0.75f + rim * 0.65f) * Opacity;
+        V3 color = NovaOuter * (iris * 0.85f)
+            + NovaFlame * (body * 1.15f)
+            + NovaCore * (rim * rim * 0.55f);
+        return (color * Opacity, alpha);
+    }
+
+    // ---- Effects/GwynCinderTrail.fx, technique GwynCinderSlash --------------------------------
+    static readonly V3 SlashCinder = C(64, 8, 2);
+    static readonly V3 SlashFlame = C(255, 116, 14);
+    static readonly V3 SlashCore = C(255, 236, 172);
+
+    static (V3, float) GwynCinderSlash(V2 c, int w, int h, float Progress, float Time, float Opacity,
+        bool pixelated = true)
+    {
+        V2 uv = pixelated ? PixelateShaderUV(c, w, h) : c;
+        V2 p = uv * 2f - 1f;
+
+        float d = length(p - new V2(-0.62f, 0f)) - 1.16f;
+
+        float sweepY = Progress * 2.35f - 1.15f;
+        float behind = sweepY - p.y;
+        float lead01 = sat(behind * 3.40f);
+        float age = sat(1f - behind * 0.42f);
+
+        float halfWidth = 0.34f * (1f - p.y * p.y) * lead01;
+
+        V2 flowUV = new(d * 1.30f - Time * 0.55f, p.y * 0.55f + Time * 0.10f);
+        float shape = GwynShapeSampler.R(flowUV);
+        float detail = GwynDetailSampler.R(flowUV * 1.90f + new V2(Time * 0.31f, -Time * 0.12f));
+
+        float lead = sat((halfWidth - d) * 13f);
+        float tail = sat((d + halfWidth * (0.85f + shape * 2.30f)) * 3.20f);
+        float blade = lead * tail;
+
+        float tipHeat = blade * lead01 * (1f - lead01) * 4f;
+
+        float body = blade * (0.30f + age * 0.70f);
+        float heat = body * (0.42f + detail * 0.85f) + tipHeat * 0.55f;
+        float edge = body * sat((halfWidth * 0.55f - abs(d)) * 6f) + tipHeat * 0.70f;
+
+        float alpha = sat(body * 1.25f + edge * 0.35f) * Opacity;
+        V3 color = SlashCinder * (body * 0.95f)
+            + SlashFlame * (heat * 0.85f)
+            + SlashCore * (edge * edge * 0.95f);
+        return (color * Opacity, alpha);
+    }
+
+    // ---- Effects/GwynSolarVortex.fx ------------------------------------------------------------
+    static readonly V3 VortexBoundary = C(255, 117, 16);
+    static readonly V3 VortexStream = C(255, 196, 62);
+    static readonly V3 VortexCore = C(255, 244, 180);
+
+    // The web/churn pairing and the pixel block are the two things being chosen here, so both are
+    // parameters rather than baked in — one sheet can then A/B every candidate at its real size.
+    static Tex VortexWebSampler, VortexChurnSampler;
+
+    static (V3, float) GwynSolarVortex(V2 c, int quad, float PullRadius, float InnerRadius,
+        float Time, float Opacity, Tex web, Tex churn, float contourK = 6.5f, float pixelBlock = 3f)
+    {
+        V2 uv = pixelBlock > 0f ? PixelateShaderUV(c, quad, quad, pixelBlock) : c;
+        V2 fromCenter = (uv - 0.5f) * (float)quad;
+        float radius = length(fromCenter);
+        V2 dir = fromCenter / MathF.Max(radius, 1f);
+        V2 swirl = new(-dir.y, dir.x);
+        float radial01 = sat(radius / PullRadius);
+
+        float inflowRaw = Time * 0.30f;
+        float inflow = inflowRaw - MathF.Floor(inflowRaw);
+
+        float twistA = (1f - radial01) * 0.42f + Time * 0.13f;
+        float twistB = (1f - radial01) * 0.75f - Time * 0.09f;
+        V2 pointA = dir * (0.70f + radial01 * 0.80f + inflow) + swirl * twistA + 0.5f;
+        V2 pointB = dir * (1.05f + radial01 * 1.25f + inflow) + swirl * twistB + 0.5f;
+        float webRaw = abs(web.R(pointA) - churn.R(pointB));
+        float filaments = sat(1f - webRaw * contourK);
+
+        float insideField = sat((PullRadius - radius) * 0.0085f);
+        float outsideCore = sat((radius - InnerRadius) * 0.016f);
+        float field = insideField * outsideCore;
+
+        float flow = filaments * field * (0.26f + (1f - radial01) * 1.05f);
+
+        float alpha = sat(flow * 0.85f + field * 0.05f) * Opacity;
+        V3 color = VortexBoundary * (field * 0.055f)
+            + VortexStream * (flow * 0.80f)
+            + VortexCore * (flow * flow * 0.60f);
+        return (color * Opacity, alpha);
+    }
+
+    // The shipped vortex, for A/B. Planar sampling at ~5 texture units across the field, which is
+    // where the visible ~146px tiling repeat comes from.
+    static (V3, float) GwynSolarVortexOld(V2 c, int quad, float PullRadius, float InnerRadius,
+        float Time, float Opacity)
+    {
+        V2 uv = c;
+        V2 pixelFromCenter = (uv - 0.5f) * (float)quad;
+        float radialDistance = length(pixelFromCenter);
+        float safePullRadius = MathF.Max(PullRadius, 1f);
+        V2 fieldPoint = pixelFromCenter / safePullRadius;
+        float radial01 = sat(radialDistance / safePullRadius);
+
+        float outerBoundary = sat((9f - abs(radialDistance - PullRadius)) / 6.5f);
+        float innerBoundary = sat((8f - abs(radialDistance - InnerRadius)) / 6f);
+        float insideField = sat((PullRadius - radialDistance) / 12f);
+        float outsideCore = sat((radialDistance - InnerRadius) / 34f);
+        float fieldMask = insideField * outsideCore;
+
+        V2 tangent = new(-fieldPoint.y, fieldPoint.x);
+        V2 spiralPoint = fieldPoint * (3.4f + radial01 * 1.8f) + tangent * (1.25f - radial01 * 0.65f);
+        float broadNoise = OldNovaSmoothSampler.R(spiralPoint + new V2(-Time * 0.18f, Time * 0.62f));
+        float brokenNoise = OldNovaBrokenSampler.R(new V2(spiralPoint.y, spiralPoint.x) * 1.85f + new V2(Time * 0.27f, Time * 0.88f));
+        float streams = sat(abs(broadNoise - brokenNoise) * 2.6f - 0.34f) * fieldMask;
+
+        float radialFalloff = 1f - radial01;
+        float coreHalo = sat((InnerRadius - radialDistance) / MathF.Max(InnerRadius * 0.65f, 1f));
+        float intensity = streams * (0.18f + radialFalloff * 0.68f)
+            + outerBoundary * 0.38f + innerBoundary * 0.16f + coreHalo * 0.22f;
+        V3 color = lerp(C(255, 117, 16), C(255, 196, 62), sat(streams * 1.7f + radialFalloff * 0.25f));
+        color = lerp(color, C(255, 244, 180), coreHalo * 0.72f);
+
+        float alpha = sat(streams * 0.68f + outerBoundary * 0.42f
+            + innerBoundary * 0.16f + coreHalo * 0.20f) * Opacity;
+        return (color * intensity, alpha);
+    }
+
+    // The shipped GwynCinderBlade slash, for A/B: the `Slash` sprite tinted, edge-detected and drawn
+    // additively. Its 1-texel rim is sub-pixel at this draw size, so `edge` contributes nothing.
+    static Tex SlashSpriteSampler;
+
+    static (V3, float) GwynCinderSlashOld(V2 c, int row, float Time, float Opacity)
+    {
+        // The caller frames the 1x3 sheet, so row selection is part of what the shader sees.
+        V2 coords = new(c.x, (row + c.y) / 3f);
+        V4 sprite = SlashSpriteSampler.T(coords);
+        V2 texel = new(1f / SlashSpriteSampler.Width, 1f / SlashSpriteSampler.Height);
+        float neighborAlpha = MathF.Min(
+            MathF.Min(SlashSpriteSampler.T(coords + new V2(texel.x, 0f)).w,
+                      SlashSpriteSampler.T(coords - new V2(texel.x, 0f)).w),
+            MathF.Min(SlashSpriteSampler.T(coords + new V2(0f, texel.y)).w,
+                      SlashSpriteSampler.T(coords - new V2(0f, texel.y)).w));
+        float edge = sat((sprite.w - neighborAlpha) * 4f);
+        float flow = GwynDetailSampler.R(coords * 2.2f + new V2(-Time * 0.48f, Time * 0.31f));
+        float luminance = sprite.x * 0.299f + sprite.y * 0.587f + sprite.z * 0.114f;
+        float heat = sprite.w * (0.42f + flow * 0.62f + luminance * 0.22f) + edge * 1.15f;
+
+        V3 color = lerp(C(255, 32, 2), C(255, 126, 12), sat(flow * 0.92f + luminance * 0.28f));
+        color = lerp(color, C(255, 238, 174), edge);
+        float alpha = sprite.w * sat(0.52f + flow * 0.62f + edge) * Opacity;
+        return (color * heat, alpha);
+    }
+
+    // The shipped nova shader, for side-by-side A/B. Additive, one combined noise field, planar
+    // samples bent by radius — this is what the rewrite is replacing.
+    static (V3, float) GwynCinderNovaOld(V2 c, int quad, float RingRadius, float RingHalfThickness,
+        float TrailLength, float Time, float Opacity)
+    {
+        V2 uv = c;
+        V2 pixelFromCenter = (uv - 0.5f) * (float)quad;
+        float radialDistance = length(pixelFromCenter);
+        float frontDistance = radialDistance - RingRadius;
+
+        V2 centeredUV = uv - 0.5f;
+        V2 broadPoint = centeredUV * 2.35f
+            + new V2(radialDistance * 0.008f - Time * 0.16f, -radialDistance * 0.012f - Time * 0.42f);
+        V2 detailPoint = new V2(centeredUV.y, centeredUV.x) * 5.10f
+            + new V2(-radialDistance * 0.018f + Time * 0.21f, radialDistance * 0.026f + Time * 0.30f);
+        float broadNoise = OldNovaSmoothSampler.R(broadPoint);
+        float detailNoise = OldNovaBrokenSampler.R(detailPoint);
+        float breakup = sat(broadNoise * 0.85f + detailNoise * 0.55f - 0.38f);
+
+        float absoluteFrontDistance = abs(frontDistance);
+        float band = sat((RingHalfThickness - absoluteFrontDistance) / MathF.Max(RingHalfThickness * 0.28f, 1f));
+        float core = sat((RingHalfThickness * 0.28f - absoluteFrontDistance) / MathF.Max(RingHalfThickness * 0.28f - 3f, 1f));
+        float wakeDistance = sat(-frontDistance / MathF.Max(TrailLength, 1f));
+        float wakeEnvelope = sat((wakeDistance - 0.02f) / 0.16f) * sat((1f - wakeDistance) / 0.45f);
+        float wake = wakeEnvelope * breakup;
+
+        float body = band * (0.62f + breakup * 0.65f);
+        float heat = MathF.Max(MathF.Max(body, wake * 0.72f), core * 1.35f);
+        V3 color = lerp(C(255, 44, 4), C(255, 137, 18), sat(band * 0.82f + breakup * 0.22f));
+        color = lerp(color, C(255, 244, 184), core);
+        float alpha = sat(band * 0.82f + core * 0.90f + wake * 0.48f) * Opacity;
+        return (color * heat, alpha);
+    }
+
+    static Tex OldNovaSmoothSampler, OldNovaBrokenSampler;
+
     static Panel[] Panels() => FocusPanels ?? AllPanels();
 
     // Set from Main via the FOCUS env var to render a single technique big.
@@ -1435,7 +1700,10 @@ static class Preview
     // Compositing + sheet layout.
     // ---------------------------------------------------------------------------------------------
 
-    const int Zoom = 2;          // effects are small; nobody can judge a 74px puff at 1:1
+    // Effects are small; nobody can judge a 74px puff at 1:1. But a boss-scale field (Gwyn's nova
+    // quad reaches 980px) squares that into a multi-minute SetPixel run and an unreadable sheet, so
+    // ZOOM=1 is an escape hatch for the big ones.
+    static readonly int Zoom = int.TryParse(Environment.GetEnvironmentVariable("ZOOM"), out int z) && z > 0 ? z : 2;
     const int CellPad = 14;
     const int LabelH = 18;
     const int SheetTitleH = 22;
@@ -1605,6 +1873,103 @@ static class Preview
                 new Panel("2px telegraph", 572, 572, Blend.PremultipliedAlpha, c => GigasNovaField(c, 3.7f, .80f, 0f, .58f)),
                 new Panel("Smooth molten sun", 768, 768, Blend.PremultipliedAlpha, c => GigasNovaField(c, 4.9f, 1f, 1f, 1f, false)),
                 new Panel("2px molten sun", 768, 768, Blend.PremultipliedAlpha, c => GigasNovaField(c, 4.9f, 1f, 1f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gwyn_vortex")
+        {
+            // Gravity of the Sun at its real size (2 * (760 + 30) = 1580). Run with ZOOM=1.
+            // Four candidate web/churn pairings for the interference, all at a 3px block.
+            Tex splotchy = new Tex("SplotchyNoise");
+            Tex voronoi = new Tex("VoronoiNoise");
+            Tex cellWeb = new Tex("T_Noise_Wf4");
+            Tex posterized = new Tex("T_VFX_Noise41");
+            Tex turbulence = new Tex("Turbulence_07-512x512");
+            Tex softCells = new Tex("T_NKQ443");
+
+            FocusPanels = new[]
+            {
+                new Panel("OLD vortex (tiling repeat)", 1580, 1580, Blend.Additive,
+                    c => GwynSolarVortexOld(c, 1520, 760f, 90f, 3.4f, 0.90f)),
+                // SHIPPED settings: VoronoiNoise x T_VFX_Noise41, contour k = 9, 4px blocks. Three
+                // times sample the drift, since the filaments move as the two layers counter-twist.
+                new Panel("NEW t=2.1", 1580, 1580, Blend.PremultipliedAlpha,
+                    c => GwynSolarVortex(c, 1580, 760f, 90f, 2.1f, 0.90f, voronoi, posterized, 9f, 4f)),
+                new Panel("NEW t=3.4", 1580, 1580, Blend.PremultipliedAlpha,
+                    c => GwynSolarVortex(c, 1580, 760f, 90f, 3.4f, 0.90f, voronoi, posterized, 9f, 4f)),
+                new Panel("NEW t=4.8", 1580, 1580, Blend.PremultipliedAlpha,
+                    c => GwynSolarVortex(c, 1580, 760f, 90f, 4.8f, 0.90f, voronoi, posterized, 9f, 4f)),
+                new Panel("NEW t=3.4 fade-in 0.35", 1580, 1580, Blend.PremultipliedAlpha,
+                    c => GwynSolarVortex(c, 1580, 760f, 90f, 3.4f, 0.35f, voronoi, posterized, 9f, 4f)),
+                new Panel("NEW t=3.4 unfiltered (px off)", 1580, 1580, Blend.PremultipliedAlpha,
+                    c => GwynSolarVortex(c, 1580, 760f, 90f, 3.4f, 0.90f, voronoi, posterized, 9f, 0f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gwyn_slash")
+        {
+            // Gwyn's ComboReachBase * 0.7 lands the common swing near 100px of blade reach, so the
+            // procedural quad is 1.5 x 1.9 of that: 150 x 190. The old sprite draw is shown at the
+            // size it really used — the 1x3 frame scaled by reach / 30 * 0.88, i.e. about 88px wide.
+            FocusPanels = new[]
+            {
+                new Panel("OLD sprite frame 0", 88, 88, Blend.Additive,
+                    c => GwynCinderSlashOld(c, 0, 3.1f, 0.55f)),
+                new Panel("OLD sprite frame 1", 88, 88, Blend.Additive,
+                    c => GwynCinderSlashOld(c, 1, 3.4f, 0.90f)),
+                new Panel("OLD sprite frame 2", 88, 88, Blend.Additive,
+                    c => GwynCinderSlashOld(c, 2, 3.7f, 0.55f)),
+
+                new Panel("NEW slash P=.20", 150, 190, Blend.PremultipliedAlpha,
+                    c => GwynCinderSlash(c, 150, 190, 0.20f, 3.1f, 1f)),
+                new Panel("NEW slash P=.50", 150, 190, Blend.PremultipliedAlpha,
+                    c => GwynCinderSlash(c, 150, 190, 0.50f, 3.4f, 1f)),
+                new Panel("NEW slash P=.85", 150, 190, Blend.PremultipliedAlpha,
+                    c => GwynCinderSlash(c, 150, 190, 0.85f, 3.7f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gwyn_nova_charge")
+        {
+            // The windup alone, across the 60-tick collapse. It has to read as "he is drawing fire
+            // in", never as a small copy of the blast — hence its own technique.
+            FocusPanels = new[]
+            {
+                new Panel("OLD charge r=145", 414, 414, Blend.Additive,
+                    c => GwynCinderNovaOld(c, 414, 145f, 12f, 28f, 2.6f, 0.50f)),
+                new Panel("OLD charge r=90", 414, 414, Blend.Additive,
+                    c => GwynCinderNovaOld(c, 414, 90f, 12f, 28f, 3.6f, 0.71f)),
+                new Panel("OLD charge r=22", 414, 414, Blend.Additive,
+                    c => GwynCinderNovaOld(c, 414, 22f, 12f, 28f, 4.5f, 0.93f)),
+                new Panel("NEW charge P=.15 r=145", 640, 640, Blend.PremultipliedAlpha,
+                    c => GwynCinderNovaCharge(c, 640, 145f, 12f, 0.15f, 2.6f, 0.50f)),
+                new Panel("NEW charge P=.55 r=90", 640, 640, Blend.PremultipliedAlpha,
+                    c => GwynCinderNovaCharge(c, 640, 90f, 12f, 0.55f, 3.6f, 0.71f)),
+                new Panel("NEW charge P=.95 r=22", 640, 640, Blend.PremultipliedAlpha,
+                    c => GwynCinderNovaCharge(c, 640, 22f, 12f, 0.95f, 4.5f, 0.93f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "gwyn_nova")
+        {
+            // Real call-site geometry. The blast quad is 2*(radius + 30 half-thickness + 40 padding);
+            // the charge quad is fixed at 2*(155 + 12 + 40) = 414 while its hoop collapses 155 -> 18.
+            // Run with ZOOM=1 — a 940px panel at 2x is unreadable and takes minutes to composite.
+            FocusPanels = new[]
+            {
+                new Panel("OLD blast r=260 (additive)", 620, 620, Blend.Additive,
+                    c => GwynCinderNovaOld(c, 620, 260f, 30f, 58f, 4.1f, 1f)),
+                new Panel("NEW blast r=120 early", 380, 380, Blend.PremultipliedAlpha,
+                    c => GwynCinderNovaBlast(c, 380, 120f, 30f, 58f, 3.2f, 1f)),
+                new Panel("NEW blast r=260 mid", 620, 620, Blend.PremultipliedAlpha,
+                    c => GwynCinderNovaBlast(c, 620, 260f, 30f, 58f, 4.1f, 1f)),
+                new Panel("NEW blast r=400 late", 940, 940, Blend.PremultipliedAlpha,
+                    c => GwynCinderNovaBlast(c, 940, 400f, 30f, 58f, 5.0f, 0.62f)),
+
+                new Panel("OLD charge r=90 (additive)", 414, 414, Blend.Additive,
+                    c => GwynCinderNovaOld(c, 414, 90f, 12f, 28f, 3.6f, 0.68f)),
+                new Panel("NEW charge P=.15 r=145", 640, 640, Blend.PremultipliedAlpha,
+                    c => GwynCinderNovaCharge(c, 640, 145f, 12f, 0.15f, 2.6f, 0.50f)),
+                new Panel("NEW charge P=.55 r=90", 640, 640, Blend.PremultipliedAlpha,
+                    c => GwynCinderNovaCharge(c, 640, 90f, 12f, 0.55f, 3.6f, 0.71f)),
+                new Panel("NEW charge P=.95 r=22", 640, 640, Blend.PremultipliedAlpha,
+                    c => GwynCinderNovaCharge(c, 640, 22f, 12f, 0.95f, 4.5f, 0.93f)),
             };
         }
         if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_light_hand")

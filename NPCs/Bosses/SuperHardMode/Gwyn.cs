@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -87,7 +88,53 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // ── Greatsword reach (bigger than a normal blade) + combat feel ──────────
         protected override float MeleeRange => 110f;
         protected override float StabRange => 180f;
-        protected override float ComboMaxStartRange => 340f;
+        //480 rather than 340 so the RangedStartOnly approach pool is reachable from the spacing a
+        //player actually kites at. MeleeEngageRange is deliberately NOT raised: it is inherited as
+        //MeleeRange + 24 = 134, and his real blade reach is ComboReachBase * 0.7 * 1.1 = 96px, so
+        //starting standing swings any further out would whiff.
+        protected override float ComboMaxStartRange => 480f;
+
+        // ── Aggression ───────────────────────────────────────────────────────────
+        // Gwyn is a melee-first boss whose ranged kit exists to punctuate the pressure, not to
+        // replace it. Everything here was inherited at a value tuned for ordinary puppets and read
+        // as passivity on him. In particular the first two were doing real damage to the fight:
+        // ApplyComboTelegraphPressure is a NO-OP at 0, so he never chased a player backing out of a
+        // windup; and CasualStroll only triggers beyond StabRange + 40 = 220px, which is exactly the
+        // band where he should be closing — and the melee-combo intercept does not run during that
+        // phase while his bespoke ranged attacks do, making it a ranged-only window at 0.35x speed.
+        protected override float ComboTelegraphAdvanceSpeedMult => 0.85f;
+        protected override int   CasualStrollChance             => 0;
+        protected override int   ClosingDistanceMaxTicks        => 150;
+        protected override float ClosingDistanceSpeedMult       => 1.75f;
+
+        ///<summary>Melee gets 85-95% of ticks when he is already on top of the player, but only 60%
+        ///when he is not. This is the valve that keeps the ranged kit alive. Gwyn's bespoke ranged
+        ///attacks (Firestorm, Descent, Spear Storm, Gravity of the Sun, ...) only roll while the
+        ///phase is Idle, and entering ClosingDistance locks the phase for up to 150 ticks — so
+        ///inheriting the in-range chance out here would hand melee ~90% of the out-of-range ticks
+        ///and reduce a boss with thirteen ranged set-pieces to a chaser. 60 leaves a real share of
+        ///ticks for them while still meaning most gaps end in him arriving.</summary>
+        protected override int   RangedStartMeleeComboChance    => 60;
+        // Restores the authored 12-44 telegraph spread. At the inherited Max(30, tel * 1.35) every
+        // windup below 23 ticks was flattened to the same 30, so his quick swings, pressure strings
+        // and heavy punishes all opened identically and there was no rhythm to read.
+        protected override int   MinComboTelegraphTicks         => 20;
+        protected override float ComboTelegraphMultiplier       => 1.15f;
+
+        ///<summary>SF4's attackRange is its aggro radius, not a preferred fighting distance. The
+        ///inherited default is RangedRange (520), which lets a kiting player drift out of the
+        ///pursuit FSM's engagement band. 800 keeps a melee-first boss coming.</summary>
+        protected override void RunMovementAI(float speedMult)
+        {
+            var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.RemembersLastKnownPos = true;
+
+            SmartFighter4AI.Run(NPC,
+                topSpeed: TopSpeed * speedMult,
+                acceleration: Acceleration,
+                doorBreakingDamage: 4,
+                attackRange: 800f);
+        }
         // The sword's authored arc now drives the arm, weapon, swept collision, and slash VFX.
         // Alternating the arc would muddy the explicit Backhand and Guillotine telegraphs.
         protected override bool UseSwingEasing => true;
@@ -110,19 +157,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Flash colors are the Lord of Cinder's fire — orange bread & butter, red heavy commits.
         const int CB_CLEAVE = 0, CB_UNDEROVER = 1, CB_LEAP = 2, CB_SLIDE = 3, CB_SPIN = 4,
                   CB_CINDERFALL = 5, CB_GUILLOTINE = 6, CB_BACKHAND = 7, CB_THREEHIT = 8,
-                  CB_ROLLCATCH = 9, CB_FLURRY = 10;
+                  CB_ROLLCATCH = 9, CB_FLURRY = 10, CB_PURSUIT = 11;
 
         static MeleeComboStep GS(ComboMotion m, int tel, int atk, int pause, float dmg = 1f, float reach = 1f, float push = 0f)
             => new MeleeComboStep { Motion = m, TelegraphTicks = tel, AttackTicks = atk, PostStepPause = pause, DamageMult = dmg, ReachMult = reach, ForwardPushMult = push };
 
         // Complete grounded strikes use the single-clock runtime. Movement attacks and linked
         // strings stay on MeleeCombo because their locomotion and continuation are the behavior.
+        // Windup/recovery across the four clips is deliberately spread 20/26/34/44 and 12/16/40/48.
+        // They were all 30-ish windup and 16-30 recovery, which made a "quick re-engaging sweep" and
+        // a "respect me" heavy punish open and end at the same speed — the moveset had no rhythm to
+        // read regardless of how different the arcs looked.
         static readonly PuppetAttackClip CleaveV2 = new PuppetAttackClip(
             name: "Cleave",
             pose: PuppetPosePreset.TwoHandedSwing,
-            windupTicks: 30,
+            windupTicks: 26,
             activeTicks: 24,
-            recoveryTicks: 20,
+            recoveryTicks: 16,
             oppositeWindupRotation: 0.85f,
             attackStartRotation: -0.75f,
             attackEndRotation: 0.85f,
@@ -137,7 +188,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             pose: PuppetPosePreset.TwoHandedSwing,
             windupTicks: 34,
             activeTicks: 28,
-            recoveryTicks: 26,
+            recoveryTicks: 40,
             oppositeWindupRotation: 1.10f,
             attackStartRotation: -1.70f,
             attackEndRotation: 1.25f,
@@ -150,9 +201,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static readonly PuppetAttackClip GuillotineV2 = new PuppetAttackClip(
             name: "Guillotine",
             pose: PuppetPosePreset.TwoHandedSwing,
-            windupTicks: 40,
+            windupTicks: 44,
             activeTicks: 30,
-            recoveryTicks: 30,
+            recoveryTicks: 48,
             oppositeWindupRotation: 1.10f,
             attackStartRotation: -1.75f,
             attackEndRotation: 1.15f,
@@ -165,9 +216,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static readonly PuppetAttackClip BackhandV2 = new PuppetAttackClip(
             name: "Backhand Step",
             pose: PuppetPosePreset.TwoHandedSwing,
-            windupTicks: 30,
-            activeTicks: 20,
-            recoveryTicks: 16,
+            windupTicks: 20,
+            activeTicks: 18,
+            recoveryTicks: 12,
             oppositeWindupRotation: -0.65f,
             attackStartRotation: 0.80f,
             attackEndRotation: -0.65f,
@@ -177,66 +228,99 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             maxAimCorrection: 0.30f,
             aimLockTicksBeforeActive: 10);
 
+        // TWO POOLS, split by RangedStartOnly. This is the single most important thing about this
+        // table. A combo's Preferred band is only a x2.0 / x0.4 weight, and a combo can only START
+        // within MeleeEngageRange (MeleeRange + 24 = 134) — which is below closeMax (MeleeRange + 30
+        // = 140). So for a puppet with everything in one pool the band is ALWAYS Close, and every
+        // Mid-preferred gap-closer eats the 0.4x penalty on every roll forever. Cindering Leap,
+        // Sliding Thrust, Cinderfall and Roll-Catch shared 8.3% of picks between them; Gwyn was
+        // effectively six standing swings.
+        //
+        // RangedStartOnly combos are drawn from a SEPARATE call made only when he is out of reach,
+        // so approach attacks are picked in the situation they were designed for and the in-your-
+        // face pool is all Close-preferred. Cinderfall moved to Close because it never travelled —
+        // it is a stationary ground slam and its Mid tag was simply wrong.
         static readonly MeleeCombo[] GwynCombos = new[]
         {
             // 0 — Cleave: the bread-and-butter wide swing
             new MeleeCombo { Name = "Cleave", BaseWeight = 100, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Orange, CooldownAfterUse = 40, RuntimeV2Clip = CleaveV2,
-                Steps = new[] { GS(ComboMotion.HorizontalSweep, 15, 18, 0, 1.0f, 1.1f) } },
+                Steps = new[] { GS(ComboMotion.HorizontalSweep, 15, 18, 0, 1.0f, 1.1f, 0.55f) } },
             // 1 — Under-Over juggle: rising launch into an overhead chop
             new MeleeCombo { Name = "Under-Over", BaseWeight = 70, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.Gold, CooldownAfterUse = 130,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = 130, RecoveryTicks = 24,
                 Steps = new[] {
-                    GS(ComboMotion.UnderhandArc, 15, 20, 12, 1.0f, 1.1f, 0.4f),
-                    GS(ComboMotion.OverheadArc,   0, 22,  0, 1.3f, 1.15f),
+                    GS(ComboMotion.UnderhandArc, 15, 20, 12, 1.0f, 1.1f, 0.50f),
+                    GS(ComboMotion.OverheadArc,   0, 22,  0, 1.3f, 1.15f, 0.65f),
                 } },
             // 2 — Cindering Leap Overhead: tracking leap that reaches, then the 170° chop (roll it on landing)
             new MeleeCombo { Name = "Cindering Leap", BaseWeight = 55, Preferred = ComboRangeBand.Mid,
-                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 150, HeavyCommit = true,
+                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 150, RecoveryTicks = 30,
+                HeavyCommit = true, RangedStartOnly = true,
                 Steps = new[] { GS(ComboMotion.LeapSlam, 25, 24, 0, 1.5f, 1.2f) } },
             // 3 — Sliding Thrust: low dash pierce, gap-closer
             new MeleeCombo { Name = "Sliding Thrust", BaseWeight = 55, Preferred = ComboRangeBand.Mid,
-                InitialFlashColor = Color.Yellow, CooldownAfterUse = 130,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 130, RecoveryTicks = 22,
+                RangedStartOnly = true,
                 Steps = new[] { GS(ComboMotion.JoustDash, 20, 16, 0, 1.2f, 1.4f, 1.8f) } },
             // 4 — Sunspin: 360° sweep, anti-flank
             new MeleeCombo { Name = "Sunspin", BaseWeight = 45, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.Yellow, CooldownAfterUse = 170, HeavyCommit = true,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 170, RecoveryTicks = 34,
+                HeavyCommit = true,
                 Steps = new[] { GS(ComboMotion.Spin, 20, 26, 0, 1.1f, 1.15f, 0.6f) } },
             // 5 — Cinderfall: committed ground cleave + fire AoE
-            new MeleeCombo { Name = "Cinderfall", BaseWeight = 40, Preferred = ComboRangeBand.Mid,
+            new MeleeCombo { Name = "Cinderfall", BaseWeight = 40, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true, RuntimeV2Clip = CinderfallV2,
-                Steps = new[] { GS(ComboMotion.GroundSlam, 25, 24, 0, 1.6f, 1.3f) } },
+                Steps = new[] { GS(ComboMotion.GroundSlam, 25, 24, 0, 1.6f, 1.3f, 0.40f) } },
             // 6 — Guillotine Drop: heavy standing overhead, the "respect me" punish
             new MeleeCombo { Name = "Guillotine", BaseWeight = 45, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true, RuntimeV2Clip = GuillotineV2,
-                Steps = new[] { GS(ComboMotion.OverheadArc, 30, 22, 0, 1.8f, 1.15f) } },
+                Steps = new[] { GS(ComboMotion.OverheadArc, 30, 22, 0, 1.8f, 1.15f, 0.35f) } },
             // 7 — Backhand + Step: quick re-engaging sweep, denies a roll-back
             new MeleeCombo { Name = "Backhand Step", BaseWeight = 60, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Orange, CooldownAfterUse = 70, RuntimeV2Clip = BackhandV2,
-                Steps = new[] { GS(ComboMotion.HorizontalSweep, 12, 16, 0, 0.9f, 1.1f, 0.8f) } },
-            // 8 — 3-Hit Standard: the staple pressure string
+                Steps = new[] { GS(ComboMotion.HorizontalSweep, 12, 16, 0, 0.9f, 1.1f, 0.85f) } },
+            // 8 — 3-Hit Standard: the staple pressure string. Push RISES per step so the string
+            //     walks him through a player trying to back out of it rather than whiffing behind them.
             new MeleeCombo { Name = "3-Hit", BaseWeight = 55, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 180,
+                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 180, RecoveryTicks = 28,
                 Steps = new[] {
-                    GS(ComboMotion.HorizontalSweep, 14, 18, 12, 0.9f),
-                    GS(ComboMotion.HorizontalSweep,  0, 18, 12, 0.9f, 1.05f),
-                    GS(ComboMotion.OverheadArc,      0, 22,  0, 1.3f, 1.1f),
+                    GS(ComboMotion.HorizontalSweep, 14, 18, 12, 0.9f, 1f,     0.45f),
+                    GS(ComboMotion.HorizontalSweep,  0, 18, 12, 0.9f, 1.05f,  0.55f),
+                    GS(ComboMotion.OverheadArc,      0, 22,  0, 1.3f, 1.1f,   0.70f),
                 } },
             // 9 — Roll-Catch: leap in, then the flip slam lands where a panicked roll ends
             new MeleeCombo { Name = "Roll-Catch", BaseWeight = 30, Preferred = ComboRangeBand.Mid,
-                InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 240, RecoveryTicks = 40,
+                HeavyCommit = true, RangedStartOnly = true,
                 Steps = new[] {
                     GS(ComboMotion.LeapSlam,   25, 22, 14, 1.3f, 1.2f),
-                    GS(ComboMotion.GroundSlam,  0, 24,  0, 1.5f, 1.3f),
+                    GS(ComboMotion.GroundSlam,  0, 24,  0, 1.5f, 1.3f, 0.35f),
                 } },
             // 10 — Wrath Flurry: the enrage full-commit chain (weighted up only at low HP)
             new MeleeCombo { Name = "Wrath Flurry", BaseWeight = 25, Preferred = ComboRangeBand.Any,
-                InitialFlashColor = Color.Red, CooldownAfterUse = 300, HeavyCommit = true, HyperArmor = true,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 300, RecoveryTicks = 45,
+                HeavyCommit = true, HyperArmor = true,
                 Steps = new[] {
                     GS(ComboMotion.JoustDash,    22, 14, 8,  1.0f, 1.2f, 1.5f),
-                    GS(ComboMotion.UnderhandArc,  0, 16, 8,  0.9f, 1.1f),
-                    GS(ComboMotion.OverheadArc,   0, 16, 8,  1.1f, 1.15f),
-                    GS(ComboMotion.Spin,          0, 24, 0,  1.2f, 1.15f, 0.6f),
+                    GS(ComboMotion.UnderhandArc,  0, 16, 8,  0.9f, 1.1f, 0.55f),
+                    GS(ComboMotion.OverheadArc,   0, 16, 8,  1.1f, 1.15f, 0.60f),
+                    GS(ComboMotion.Spin,          0, 24, 0,  1.2f, 1.15f, 0.60f),
+                } },
+            // 11 — Sunlight Pursuit: the long-range answer, and the only attack that crosses a
+            //      whole arena. He drops the greatsword low and BEHIND him and sprints — the run
+            //      itself is the telegraph, held for as long as the chase takes — then tears it up
+            //      through the player on arrival. LowAxeRun ends the moment he is inside
+            //      MeleeRange * 1.05, so the run is exactly as long as the gap requires.
+            //      Ported from StuddedLeatherWarrior's "Rising Pursuit"; both motions were already
+            //      weapon-agnostic, so this is a data entry plus the VFX guards in the tick hooks.
+            new MeleeCombo { Name = "Sunlight Pursuit", BaseWeight = 55, Preferred = ComboRangeBand.Any,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 300, RecoveryTicks = 34,
+                HeavyCommit = true, HyperArmor = true, RangedStartOnly = true,
+                Steps = new[] {
+                    GS(ComboMotion.LowAxeRun,          32, 140, 1, 0f),
+                    // Safety timeout only; the step normally ends 30 ticks after the leap apex.
+                    GS(ComboMotion.RisingUppercutLeap,  0, 150, 0, 1.35f, 1.20f),
                 } },
         };
 
@@ -271,19 +355,32 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             bool rollingAway = rolling && Math.Sign(player.velocity.X) == awaySign && Math.Abs(player.velocity.X) > 2f;
             bool rollingThrough = rolling && dist < MeleeRange + 20f;         // dodging through him at point-blank
 
-            // Player popped into the air → leap up and catch them with the overhead
-            if (launched && Ready(ready, CB_LEAP))
+            // Every branch below has to offer an answer from BOTH pools, because this runs for the
+            // approach pool as well as the close one and `ready` is already filtered to whichever is
+            // live. Naming a combo from the other pool just falls through to the weighted roll, so a
+            // read with only one answer silently stops being reactive at half its distances — which
+            // is what the old `dist > StabRange` roll-catch branch did: it could never fire, since
+            // combos only ever started at 134px back when nothing was RangedStartOnly.
+            if (launched)
             {
-                return CB_LEAP;
+                // Popped into the air: catch them with the tracking leap, or juggle if already close.
+                if (Ready(ready, CB_LEAP)) { return CB_LEAP; }
+                if (Ready(ready, CB_UNDEROVER)) { return CB_UNDEROVER; }
             }
             // Player rolled through/behind at close range → spin covers every side
             if (rollingThrough && Ready(ready, CB_SPIN))
             {
                 return CB_SPIN;
             }
-            // Player rolling away → chase: a slide up close, the roll-catch leap from farther out
+            // Player rolling away → chase. Answer scales with the gap they just opened: the
+            // full-arena run from far, the roll-catch leap at mid, a slide or the re-engaging
+            // backhand when they only bought themselves a few pixels.
             if (rollingAway)
             {
+                if (dist > StabRange + 90f && Ready(ready, CB_PURSUIT))
+                {
+                    return CB_PURSUIT;
+                }
                 if (dist > StabRange && Ready(ready, CB_ROLLCATCH))
                 {
                     return CB_ROLLCATCH;
@@ -292,18 +389,77 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     return CB_SLIDE;
                 }
+                if (Ready(ready, CB_BACKHAND))
+                {
+                    return CB_BACKHAND;
+                }
             }
             return -1; // no live read — let the weighted roll pick a standard swing
         }
 
         static bool Ready(int[] ready, int idx) => idx >= 0 && idx < ready.Length && ready[idx] > 0;
 
+        ///<summary>Hard reach gate for the approach pool. Preferred bands are only a x2.0 / x0.4
+        ///weight, so a gap-closer stays selectable well past the distance it can physically cross —
+        ///and raising ComboMaxStartRange to 480 put every one of them in that position:
+        ///
+        ///  Cindering Leap / Roll-Catch  LeapAttackUpSpeed 9.5 gives 2*9.5/0.3 = 63 ticks aloft, and
+        ///                               horizontal speed is capped at TopSpeed * 1.7 = 4.42 px/t,
+        ///                               so the arc tops out near 280px however far the target is.
+        ///  Sliding Thrust               ForwardPushMult 1.8 over 16 attack ticks is only ~75px of
+        ///                               dash, plus ~50px of telegraph pressure.
+        ///
+        ///Past those numbers the move lands short and the "gap closer" becomes a whiff in front of
+        ///the player. Sunlight Pursuit is deliberately ungated: its run step ends the moment he is
+        ///inside MeleeRange * 1.05, so it crosses whatever the gap actually is.</summary>
+        protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
+        {
+            if (combo.Name == "Cindering Leap" || combo.Name == "Roll-Catch")
+            {
+                return distance <= 300f;
+            }
+            if (combo.Name == "Sliding Thrust")
+            {
+                return distance <= 260f;
+            }
+            return true;
+        }
+
         // ── Kept systems (original distances) ────────────────────────────────────
         const float DefenseRingRadius = 1000f; // beyond this: defense 9999
         const int FightableDefense = 130;      // the old post-sword value; the sword mechanic is removed
         const float CowardRingRadius = 2000f;  // beyond this: Coward's Affliction (after grace)
-        const float RainOfDeathRange = 600f;   // the old whyAreYouRunning
+        // ── Rain of Death: anchored to the ARENA, not to Gwyn ────────────────────
+        // The trigger used to be NPC.Distance(player), which meant the hazard switched on and off
+        // as Gwyn's own pathing drifted toward or away from a stationary player — the player could
+        // not learn where it was safe to stand, because "safe" moved with the boss. Capturing the
+        // spawn point once and measuring from there gives a fixed, learnable arena boundary, the
+        // same contract Artorias uses for its ring (see Artorias.OnSpawn / _ringCenter).
+        const float RainOfDeathRange = 600f;   // distance from the ARENA CENTRE, not from Gwyn
         const int BaseRainOfDeathDamage = 77;  // the old herosArrowDamage
+        //One orb every 12 ticks = 10 per 2 seconds; every 8 ticks (15 per 2s) once Wrath ignites.
+        const int RainIntervalTicks = 12;
+        const int RainIntervalTicksWrath = 8;
+        //Half-width of the band the orbs fall through, so the full spread is 1000px.
+        const float RainHalfWidth = 500f;
+        const float RainSpawnHeight = -650f;
+
+        Vector2 _arenaCenter;
+        bool _arenaCenterSet;
+        int _rainTimer;
+        bool _rainAnnounced;
+
+        ///<summary>Centre of the horizontal band the orbs fall through. Anchored to the PLAYER, not
+        ///to the arena centre, because the two cannot both be arena-anchored: the rain only starts
+        ///once the player is more than RainOfDeathRange (600px) from the centre, so a band of
+        ///+-RainHalfWidth (500px) around that same centre would never contain the person it is
+        ///meant to punish. Trigger stays arena-anchored so "where is it safe to stand" is fixed and
+        ///learnable; coverage tracks the player so the hazard actually reaches them.</summary>
+        float RainBandCenterX => Main.player[NPC.target].Center.X;
+
+        ///<summary>The fixed arena centre, captured the first tick Gwyn exists. Falls back to his
+        ///live position until then so nothing can read a zero vector.</summary>
+        Vector2 ArenaCenter => _arenaCenterSet ? _arenaCenter : NPC.Center;
         const int TooEarlyDamage = 10000;
         const float ProximityDebuffRange = 700f;
 
@@ -372,6 +528,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 target.AddBuff(BuffID.Weak, 10 * 60, false);
                 target.AddBuff(BuffID.BrokenArmor, 3 * 60, false);
             }
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            //Captured here rather than in SetDefaults: SetDefaults runs before the NPC is placed,
+            //so NPC.Center is not yet the arena position.
+            _arenaCenter = NPC.Center;
+            _arenaCenterSet = true;
+            NPC.netUpdate = true;
+            base.OnSpawn(source);
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(_arenaCenterSet);
+            writer.WriteVector2(_arenaCenter);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            _arenaCenterSet = reader.ReadBoolean();
+            _arenaCenter = reader.ReadVector2();
         }
 
         public override void AI()
@@ -1237,12 +1417,38 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             float progress = elapsed / (float)Math.Max(1, total - 1);
             float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+
+            // The pursuit run is a CARRY, not a swing: the blade is held low and trailing and deals
+            // no damage. Drawing the slash crescent across it would advertise a hit that does not
+            // exist. It still shows embers, which is the whole point of dragging a burning
+            // greatsword — they just stream off the tip instead of leading it.
+            if (step.Motion == ComboMotion.LowAxeRun)
+            {
+                if (elapsed == 0)
+                {
+                    SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.6f, Pitch = -0.4f }, NPC.Center);
+                }
+                EmitPursuitDragEmbers(bladeReach, elapsed);
+                return;
+            }
+
             ArmFireSlash(progress, bladeReach);
             EmitSwingFireDust(bladeReach, elapsed);
 
             // Leap hits resolve on landing; emitting their fire at takeoff would contradict the
-            // telegraph. All other attacks shed cinders as the authored blade crosses forward.
-            if (step.Motion != ComboMotion.LeapSlam && elapsed == total / 2)
+            // telegraph. The rising uppercut is the opposite case: its blade sweep is over within a
+            // single weapon animation and the rest of its 150-tick step is the ascent and the
+            // falling hold, so the mid-phase default would throw the crescent from mid-air long
+            // after the hit had already resolved.
+            if (step.Motion == ComboMotion.RisingUppercutLeap)
+            {
+                if (elapsed == 4)
+                {
+                    SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.9f, Pitch = -0.1f }, NPC.Center);
+                    EmitComboCinders(step);
+                }
+            }
+            else if (step.Motion != ComboMotion.LeapSlam && elapsed == total / 2)
             {
                 EmitComboCinders(step);
             }
@@ -1252,8 +1458,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float _fireSlashProgress;
         float _fireSlashReach;
         static Asset<Effect> fireSlashEffect;
-        static Asset<Texture2D> fireSlashTexture;
-        static Asset<Texture2D> fireSlashNoise;
+        static Asset<Texture2D> fireSlashShapeNoise;
+        static Asset<Texture2D> fireSlashDetailNoise;
+        //Quad proportions the GwynCinderSlash technique's geometry is authored against: its arc apex
+        //sits at local x = 0.90, so the quad has to be 1.5x the blade reach wide and centred
+        //0.325 * reach ahead of the hand for the apex to land exactly on the weapon tip.
+        const float FireSlashQuadWidth = 1.5f;
+        const float FireSlashQuadHeight = 1.9f;
+        const float FireSlashQuadOffset = 0.325f;
+        const float FireSlashPixelBlockSize = 2f;
 
         void ArmFireSlash(float progress, float reach)
         {
@@ -1282,31 +1495,66 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        ///<summary>Embers shed by the greatsword dragged low and behind during Sunlight Pursuit.
+        ///They fall off the blade and drift BACKWARD out of his run, so the trail marks where he has
+        ///been — the opposite read from a swing's dust, which leads the edge toward where it will
+        ///hit. Emitted every 3rd tick so a run of arbitrary length stays cheap.</summary>
+        void EmitPursuitDragEmbers(float bladeReach, int elapsed)
+        {
+            if (Main.netMode == NetmodeID.Server || elapsed % 3 != 0)
+                return;
+
+            Vector2 hand = PuppetHandPosition;
+            Vector2 tip = PuppetWeaponTipPosition(bladeReach);
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2 position = Vector2.Lerp(hand, tip, Main.rand.NextFloat(0.55f, 1f))
+                    + Main.rand.NextVector2Circular(5f, 5f);
+                int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                Vector2 velocity = new Vector2(-NPC.direction * Main.rand.NextFloat(0.8f, 2.2f),
+                    Main.rand.NextFloat(-1.1f, -0.2f));
+                Dust dust = Dust.NewDustPerfect(position, type, velocity,
+                    60, default, Main.rand.NextFloat(0.9f, 1.45f));
+                dust.noGravity = true;
+            }
+
+            Lighting.AddLight(tip, 0.9f, 0.45f, 0.12f);
+        }
+
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (!_drawFireSlash || _fireSlashReach <= 0f)
                 return;
 
             fireSlashEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GwynCinderTrail", AssetRequestMode.ImmediateLoad);
-            fireSlashTexture ??= ModContent.Request<Texture2D>(
-                "tsorcRevamp/Items/Weapons/Melee/Broadswords/BroadswordRework/Common/Melee/Slash",
-                AssetRequestMode.ImmediateLoad);
-            fireSlashNoise ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
+            fireSlashShapeNoise ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
+            fireSlashDetailNoise ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/Turbulence_07-512x512", AssetRequestMode.ImmediateLoad);
 
-            Texture2D texture = fireSlashTexture.Value;
-            var frame = new SpriteFrame(1, 3) { CurrentRow = (byte)Math.Min(2, (int)(_fireSlashProgress * 3f)) };
-            Rectangle source = frame.GetSourceRectangle(texture);
+            //The arc is procedural now. It used to be the shared 3-frame `Slash` sprite tinted orange
+            //and drawn twice, additively — a soft pale crescent with a hard white outline that washed
+            //out over anything bright, which is what made it read as a smear rather than as fire.
+            Texture2D noiseTexture = fireSlashShapeNoise.Value;
+            int quadWidth = Math.Max(2, (int)(_fireSlashReach * FireSlashQuadWidth));
+            int quadHeight = Math.Max(2, (int)(_fireSlashReach * FireSlashQuadHeight));
+            Rectangle source = new Rectangle(0, 0, quadWidth, quadHeight);
+            Vector2 quadSize = source.Size();
+
             Vector2 hand = PuppetHandPosition;
             Vector2 tip = PuppetWeaponTipPosition(_fireSlashReach);
             Vector2 direction = (tip - hand).SafeNormalize(new Vector2(NPC.direction, 0f));
-            Vector2 position = NPC.Center + direction * 3f - Main.screenPosition;
+            Vector2 position = hand + direction * (_fireSlashReach * FireSlashQuadOffset) - Main.screenPosition;
             float rotation = direction.ToRotation();
-            float scale = _fireSlashReach / 30f * 0.88f * PuppetDrawScale;
+            //The flip mirrors the shader's local Y, which mirrors the sweep with Gwyn's facing.
             SpriteEffects effects = NPC.direction > 0 ? SpriteEffects.FlipVertically : SpriteEffects.None;
-            float envelope = (float)Math.Sin(_fireSlashProgress * MathHelper.Pi);
+            //Hold full strength through the swing and fade only over the last fifth, so the arc does
+            //not pop out of existence on the final frame. Per-pixel cooling is the shader's `age`.
+            float opacity = 0.95f * MathHelper.Clamp((1f - _fireSlashProgress) * 5f, 0f, 1f);
+
+            Vector2 pixelBlocks = quadSize / FireSlashPixelBlockSize;
+            Vector4 pixelGrid = new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             Effect effect = fireSlashEffect.Value;
@@ -1315,21 +1563,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             SamplerState previousSampler = graphicsDevice.SamplerStates[1];
             try
             {
-                graphicsDevice.Textures[1] = fireSlashNoise.Value;
+                graphicsDevice.Textures[1] = fireSlashDetailNoise.Value;
                 graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
-                effect.CurrentTechnique = effect.Techniques["GwynCinderBlade"];
-                effect.Parameters["CinderColor"].SetValue(new Color(255, 32, 2).ToVector3());
-                effect.Parameters["FlameColor"].SetValue(new Color(255, 126, 12).ToVector3());
-                effect.Parameters["CoreColor"].SetValue(new Color(255, 238, 174).ToVector3());
-                effect.Parameters["Opacity"].SetValue(0.9f * envelope);
+                effect.CurrentTechnique = effect.Techniques["GwynCinderSlash"];
+                effect.Parameters["CinderColor"].SetValue(new Color(64, 8, 2).ToVector3());
+                effect.Parameters["FlameColor"].SetValue(new Color(255, 116, 14).ToVector3());
+                effect.Parameters["CoreColor"].SetValue(new Color(255, 236, 172).ToVector3());
+                effect.Parameters["Opacity"].SetValue(opacity);
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-                effect.Parameters["PrimaryTextureSize"].SetValue(texture.Size());
+                effect.Parameters["Progress"].SetValue(_fireSlashProgress);
+                effect.Parameters["DrawSize"].SetValue(quadSize);
+                effect.Parameters["CoordScale"].SetValue(noiseTexture.Size() / quadSize);
+                effect.Parameters["PixelGrid"].SetValue(pixelGrid);
                 effect.CurrentTechnique.Passes[0].Apply();
 
-                Main.EntitySpriteDraw(texture, position, source, Color.White * 0.42f, rotation,
-                    source.Size() * 0.5f, scale * 1.12f, effects, 0);
-                Main.EntitySpriteDraw(texture, position, source, Color.White, rotation,
-                    source.Size() * 0.5f, scale, effects, 0);
+                Main.EntitySpriteDraw(noiseTexture, position, source, Color.White, rotation,
+                    quadSize * 0.5f, 1f, effects, 0);
             }
             finally
             {
@@ -1372,6 +1621,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     ComboMotion.OverheadArc => 3f,
                     ComboMotion.GroundSlam => 3f,
                     ComboMotion.UnderhandArc => -3f,
+                    //The pursuit finisher tears upward through the target, so its crescent rises too.
+                    ComboMotion.RisingUppercutLeap => -3f,
                     _ => 0f,
                 };
                 float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
@@ -1717,8 +1968,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        ///<summary>KEPT (&gt;600px): running keeps you under a random rain of death orbs falling from
-        ///above your own position — ranged builds don't get a free fight.</summary>
+        ///<summary>Leave the arena and it starts raining. A steady, even drip of death orbs across a
+        ///1000px band — ranged builds don't get a free fight, but every individual orb is dodgeable.
+        ///
+        ///This replaced three overlapping random-chance tiers that each dumped a burst of 3, 6 or 8
+        ///orbs at once (1-in-400, 1-in-180 and 1-in-120 per tick). Rolling a burst gave the hazard a
+        ///lumpy rhythm — long empty stretches, then an undodgeable wall arriving in a single frame —
+        ///and because the tiers overlapped, two could fire on the same tick for 14 orbs at once. A
+        ///fixed interval produces the same average pressure with none of the spikes.</summary>
         void TickRainOfDeath()
         {
             Player player = Main.player[NPC.target];
@@ -1727,47 +1984,54 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            if (NPC.Distance(player.Center) > RainOfDeathRange && Main.rand.NextBool(400))
+            if (Vector2.Distance(player.Center, ArenaCenter) <= RainOfDeathRange)
             {
-                SpawnDeathRain(player, 3, -100f, 200, -600f, 2f);
+                //Reset rather than freeze, so re-crossing the boundary always gets a full interval
+                //of grace instead of an orb the instant a player clips the edge.
+                _rainTimer = 0;
+                _rainAnnounced = false;
+                return;
             }
 
-            if (NPC.life >= NPC.lifeMax / 10 * 2 && NPC.Distance(player.Center) > 650f && Main.rand.NextBool(180))
+            if (!_rainAnnounced)
             {
-                if (Main.rand.NextBool(20))
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.RainsDeath"), 175, 75, 255);
-                }
-
-                SpawnDeathRain(player, 6, -600f, 600, -650f, 1f);
+                _rainAnnounced = true;
+                string key = _wrathActive ? "NPCs.Gwyn.TidalWave" : "NPCs.Gwyn.RainsDeath";
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue(key), 175, 75, 255);
             }
 
-            if (NPC.life <= NPC.lifeMax / 10 * 2 && NPC.Distance(player.Center) > 580f && NPC.Distance(player.Center) < 1199f && Main.rand.NextBool(120))
+            int interval = _wrathActive ? RainIntervalTicksWrath : RainIntervalTicks;
+            if (++_rainTimer < interval)
             {
-                if (Main.rand.NextBool(16))
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.TidalWave"), 175, 75, 255);
-                }
-
-                SpawnDeathRain(player, 8, -800f, 800, -650f, 1f);
+                return;
             }
+
+            _rainTimer = 0;
+            SpawnDeathRainOrb(player);
         }
 
-        void SpawnDeathRain(Player player, int count, float horizontalOffset, int horizontalRange, float verticalOffset, float knockback)
+        ///<summary>One orb, at a random point across the full band. The old helper took an offset
+        ///plus a range and every caller but the first passed a negative offset equal to the range
+        ///(-600/600, -800/800), which put the entire spread on the player's LEFT — the rain only
+        ///ever fell to one side and running right was strictly safer. The band here is symmetric by
+        ///construction.</summary>
+        void SpawnDeathRainOrb(Player player)
         {
-            for (int i = 0; i < count; i++)
+            Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(),
-                        player.position.X + horizontalOffset + Main.rand.Next(horizontalRange), player.position.Y + verticalOffset,
-                        (-50 + Main.rand.Next(100)) / 10f, 0.5f,
-                        ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), RainOfDeathDamage, knockback, Main.myPlayer);
-                }
-                Lighting.AddLight(NPC.Center, Color.White.ToVector3());
-                SoundEngine.PlaySound(SoundID.Zombie53 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center);
+                float spawnX = RainBandCenterX + Main.rand.NextFloat(-RainHalfWidth, RainHalfWidth);
+                float spawnY = player.position.Y + RainSpawnHeight;
+                //Slight horizontal drift so the column is not a perfectly vertical line of pixels.
+                Vector2 velocity = new Vector2(Main.rand.NextFloat(-2.2f, 2.2f), 0.5f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(spawnX, spawnY), velocity,
+                    ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(),
+                    RainOfDeathDamage, 1f, Main.myPlayer);
             }
+
+            Lighting.AddLight(NPC.Center, Color.White.ToVector3());
+            SoundEngine.PlaySound(SoundID.Zombie53 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center);
         }
 
         ///<summary>KEPT (700px): standing in the Lord's presence — no wings, no grapple.</summary>
