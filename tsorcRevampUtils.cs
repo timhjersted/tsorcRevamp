@@ -2052,6 +2052,66 @@ namespace tsorcRevamp
             return anchored; // need at least one flush column so the physics body rests at the feet row
         }
 
+        /// <summary>
+        /// Smooth vanilla-style auto-step (ported from MNPC.cs / vanilla NPC movement): when walking into a
+        /// &lt;=1-tile step or half-block, instantly lift the physics position onto it and offset gfxOffY so the
+        /// SPRITE glides up over the next few frames instead of jumping or snapping. Call each grounded frame
+        /// after velocity.X is set. Mirrors how the player and vanilla walking enemies handle small bumps.
+        /// <para>
+        /// Lives here (not in SmartFighter4AI) so SF4 and NavBehavior can both reach it without NavBehavior
+        /// calling back up into SF4. NOTE: <see cref="NPCs.tsorcRevampAIs.AutoStepUp"/> is a separate,
+        /// beast-gated variant that additionally refuses the step when RequiresFlatGround is set and the
+        /// target tile is not part of a MinSurfaceWidth-wide run. The two are NOT interchangeable.
+        /// </para>
+        /// </summary>
+        public static void AutoStepUp(NPC npc)
+        {
+            if (npc.velocity.Y < 0f) return; // only while grounded / descending, like vanilla
+            int offset = 0;
+            if (npc.velocity.X < 0f) offset = -1;
+            else if (npc.velocity.X > 0f) offset = 1;
+            if (offset == 0) return;
+
+            Vector2 pos = npc.position;
+            pos.X += npc.velocity.X;
+            int tileX = (int)((pos.X + (npc.width / 2) + ((npc.width / 2 + 1) * offset)) / 16f);
+            int tileY = (int)((pos.Y + npc.height - 1f) / 16f);
+            if (!WorldGen.InWorld(tileX, tileY, 5)) return;
+
+            Tile t = Main.tile[tileX, tileY];
+            Tile tU1 = Main.tile[tileX, tileY - 1];
+            Tile tU2 = Main.tile[tileX, tileY - 2];
+            Tile tU3 = Main.tile[tileX, tileY - 3];
+            Tile tU4 = Main.tile[tileX, tileY - 4];
+            Tile tBackU3 = Main.tile[tileX - offset, tileY - 3];
+
+            bool stepBlock = (t.HasUnactuatedTile && !t.TopSlope && !tU1.TopSlope && Main.tileSolid[t.TileType] && !Main.tileSolidTop[t.TileType])
+                             || (tU1.IsHalfBlock && tU1.HasUnactuatedTile);
+            bool clearU1 = !tU1.HasUnactuatedTile || !Main.tileSolid[tU1.TileType] || Main.tileSolidTop[tU1.TileType]
+                           || (tU1.IsHalfBlock && (!tU4.HasUnactuatedTile || !Main.tileSolid[tU4.TileType] || Main.tileSolidTop[tU4.TileType]));
+            bool clearU2 = !tU2.HasUnactuatedTile || !Main.tileSolid[tU2.TileType] || Main.tileSolidTop[tU2.TileType];
+            bool clearU3 = !tU3.HasUnactuatedTile || !Main.tileSolid[tU3.TileType] || Main.tileSolidTop[tU3.TileType];
+            bool clearBehind = !tBackU3.HasUnactuatedTile || !Main.tileSolid[tBackU3.TileType];
+
+            if ((float)(tileX * 16) < pos.X + npc.width && (float)(tileX * 16 + 16) > pos.X
+                && stepBlock && clearU1 && clearU2 && clearU3 && clearBehind)
+            {
+                float tileWorldY = tileY * 16f;
+                if (t.IsHalfBlock) tileWorldY += 8f;
+                if (tU1.IsHalfBlock) tileWorldY -= 8f;
+                if (tileWorldY < pos.Y + npc.height)
+                {
+                    float tileWorldYHeight = pos.Y + npc.height - tileWorldY;
+                    if (tileWorldYHeight <= 16.1f)
+                    {
+                        npc.gfxOffY += npc.position.Y + npc.height - tileWorldY;
+                        npc.position.Y = tileWorldY - npc.height;
+                        npc.stepSpeed = tileWorldYHeight >= 9.0f ? 2f : 1f;
+                    }
+                }
+            }
+        }
+
         public static tsorcRevampPlayer ModPlayer(Player player) => player.GetModPlayer<tsorcRevampPlayer>();
     }
 }

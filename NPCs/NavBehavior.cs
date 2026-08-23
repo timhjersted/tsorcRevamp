@@ -496,7 +496,7 @@ namespace tsorcRevamp.NPCs
             // straight through; only a drop with no floor in the four-tile safety window becomes a jump.
             g.PatrolTerrainAction = floorDepth > 0 ? $"walk-down-{floorDepth}" : "walk-level";
             ApplyPatrolWalk(npc, direction, topSpeed, acceleration);
-            SmartFighter4AI.AutoStepUp(npc);
+            UsefulFunctions.AutoStepUp(npc);
             return true;
         }
 
