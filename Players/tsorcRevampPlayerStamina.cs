@@ -7,6 +7,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
@@ -440,6 +442,7 @@ namespace tsorcRevamp
 
         public override void PostUpdateMiscEffects()
         {
+            Player.GetModPlayer<RuneterraDartsPlayer>().CustomPostUpdateMiscEffects();
             UpdateResource();
         }
 

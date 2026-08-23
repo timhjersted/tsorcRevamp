@@ -41,11 +41,10 @@ Mods: {
 			'''
 		ElectrocuteExplanation:
 			'''
-			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 different ranged projectile types in a span of 1.5 seconds,]
-			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. 10 sec cooldown. ]
-			[c/22dd96:Uses highest crit chance of the 3 projectiles. Can pierce infinitely but only stays for a second. Only hits an enemy once.]
-			[c/22dd96:Ranged damage is reduced by 10%.?]
-			[c/22dd96:Weapons that automatically shoot multiple different projectiles types are counted as 2 hits at most.]
+			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 unique ranged projectiles in a span of {0} seconds,]
+			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. ({$CommonItemTooltip.Cooldown@1})]
+			[c/22dd96:Uses highest crit chance of the 3 projectiles. ]
+			[c/22dd96:Ranged damage is reduced by {2}% while Electrocute is not on cooldown.]
 			'''
 
 		CommonItemTooltip: {
@@ -102,7 +101,7 @@ Mods: {
 				Rash:
 					'''
 					[c/6cac6c:+{0}% attack speed]
-					[c/9b6263:-{1} life regen]
+					[c/9b6263:-{1} life regen per second]
 					'''
 				Intrepid:
 					'''
@@ -7812,12 +7811,13 @@ Mods: {
 				Details:
 					'''
 					[c/ba55d3:Venom] applied by [c/ba55d3:Toxic Shots] scales with ranged damage and critical strike chance
-					Grants [c/ba55d3:Scouts Boost] passively while being held:{$CommonItemTooltip.MoveSpeedMult} and,
+					Grants [c/ba55d3:Scouts Boost] passively while being held:
+					{$CommonItemTooltip.MoveSpeedMult} and,
 					multiplicatively increases stamina regeneration by {1}%
 					[c/ba55d3:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@2}
 					Using the weapon with [c/ba55d3:Scouts Boost] active passively will slow you down
 					Using it when [c/ba55d3:Scouts Boost] is on cooldown will root you briefly
-					[c/ba55d3:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.SecondDuration@3}
+					[c/ba55d3:Activated Ability] removes movement penalties unconditionally for a {$CommonItemTooltip.SecondDuration@3}
 					[c/ba55d3:Activated Ability] doubles the movement speed and stamina regeneration boosts
 					'''
 			}
@@ -7832,7 +7832,7 @@ Mods: {
 					[c/ba55d3:Inhibits player movement conditionally] whilst being used
 					[c/ba55d3:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					<right> to shoot a homing [c/00ffff:Blinding Laser] using Mana which inflicts confusion
+					<right> to shoot a homing [c/00ffff:Blinding Laser] which inflicts confusion
 					[c/00ffff:'Armed and ready']
 					'''
 				Details:
@@ -7840,12 +7840,13 @@ Mods: {
 					[c/00ffff:Blinding Laser] deals {4}x damage, multiplied by {5} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@6})
 					[c/00ffff:Blinding Laser] gains {7}% bonus critical strike chance and {8}% max health damage on-hit, up to {9}
 					[c/ba55d3:Electrification] applied by [c/ba55d3:Alien Lasers] scales with ranged damage and critical strike chance
-					Grants [c/ba55d3:Scouts Boost] passively while being held:{$CommonItemTooltip.MoveSpeedMult} and,
+					Grants [c/ba55d3:Scouts Boost] passively while being held:
+					{$CommonItemTooltip.MoveSpeedMult} and,
 					multiplicatively increases stamina regeneration by {1}%
 					[c/ba55d3:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@2}
 					Using the weapon with [c/ba55d3:Scouts Boost] active passively will slow you down
 					Using it when [c/ba55d3:Scouts Boost] is on cooldown will root you briefly
-					[c/ba55d3:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.SecondDuration@3}
+					[c/ba55d3:Activated Ability] removes movement penalties unconditionally for a {$CommonItemTooltip.SecondDuration@3}
 					[c/ba55d3:Activated Ability] doubles the movement speed and stamina regeneration boosts
 					'''
 			}
@@ -7860,12 +7861,12 @@ Mods: {
 					[c/ba55d3:Inhibits player movement conditionally] whilst being used
 					[c/ba55d3:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					<right> to shoot a homing [c/00ffff:Blinding Laser] using Mana which inflicts confusion
+					<right> to shoot a homing [c/00ffff:Blinding Laser] which inflicts confusion
 					{$Items.OmegaSquadRifle.Keybind1}Special Ability{$Items.OmegaSquadRifle.Keybind2}
 					[c/adff2f:'There's a mushroom out there with your name on it']
 					'''
 				Keybind1: "Press Left/Right Alt + "
-				Keybind2: " to drop a [c/adff2f:Nuclear Mushroom] using Mana"
+				Keybind2: " to drop a [c/adff2f:Nuclear Mushroom]"
 				Details:
 					'''
 					[c/adff2f:Nuclear Mushroom] needs {10} seconds to arm itself after being dropped({$CommonItemTooltip.Cooldown@11})
@@ -7874,12 +7875,13 @@ Mods: {
 					[c/00ffff:Blinding Laser] deals {4}x damage, multiplied by {5} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@6})
 					[c/00ffff:Blinding Laser] gains {7}% bonus critical strike chance and {8}% max health damage on-hit, up to {9}
 					[c/ba55d3:Radiation] applied by [c/ba55d3:Radioactive Darts] scales with ranged damage and critical strike chance
-					Grants [c/ba55d3:Scouts Boost] passively while being held:{$CommonItemTooltip.MoveSpeedMult} and,
+					Grants [c/ba55d3:Scouts Boost] passively while being held:
+					{$CommonItemTooltip.MoveSpeedMult} and,
 					multiplicatively increases stamina regeneration by {1}%
 					[c/ba55d3:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@2}
 					Using the weapon with [c/ba55d3:Scouts Boost] active passively will slow you down
 					Using it when [c/ba55d3:Scouts Boost] is on cooldown will root you briefly
-					[c/ba55d3:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.SecondDuration@3}
+					[c/ba55d3:Activated Ability] removes movement penalties unconditionally for a {$CommonItemTooltip.SecondDuration@3}
 					[c/ba55d3:Activated Ability] doubles the movement speed and stamina regeneration boosts
 					'''
 			}
@@ -10165,11 +10167,6 @@ Mods: {
 				DisplayName: Electrocuted Buff2
 			}
 
-			Electrocute: {
-				DisplayName: Electrocute
-				Description: Mods.tsorcRevamp.Buffs.Electrocute.Description
-			}
-
 			YoungHunterBuff: {
 				DisplayName: Young Hunter
 				Description: The Young Hunter will hunt for you!
@@ -10274,9 +10271,14 @@ Mods: {
 				Description: Mods.tsorcRevamp.Buffs.ArcaneSorcery.Description
 			}
 
+			Electrocute: {
+				DisplayName: Electrocute
+				Description: Electrocute is ready!
+			}
+
 			ElectrocuteCooldown: {
 				DisplayName: Electrocute Cooldown
-				Description: Mods.tsorcRevamp.Buffs.ElectrocuteCooldown.Description
+				Description: Electrocute is on cooldown.
 			}
 		}
 
@@ -11224,6 +11226,7 @@ Mods: {
 			QuaraFrostSprite.DisplayName: Quara Frost Sprite
 			QuaraWaterResidue.DisplayName: Quara Water Residue
 			CenterOfTheUniverseStar2.DisplayName: Center Of The Universe Star2
+			ElectrocuteProjectile.DisplayName: Electrocute Projectile
 		}
 
 		NPCs: {

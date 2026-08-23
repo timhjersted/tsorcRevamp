@@ -30,31 +30,29 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public abstract int BlindingProjectileCooldownType { get; }
 
         public int ShootTimer = 0;
-        public int ShootCooldown = 60;
+        public const int ShootCooldownBase = 50;
         public int ShootSoundStyle = 0;
         public const int DebuffDuration = 5;
 
-        public static float ScoutsBoostMoveSpeedMult = 30f;
-        public static float ScoutsBoostStaminaRegenMult = 15f;
+        public const float ScoutsBoostMoveSpeedMult = 30f;
+        public const float ScoutsBoostStaminaRegenMult = 15f;
         public const int ScoutsBoostOnHitCooldown = 3;
         public const int ScoutsBoost2Duration = 5;
         public const int ScoutsBoost2Cooldown = 25;
-        public static float PoisonDartDmgMult = 1.5f;
+        public const float PoisonDartDmgMult = 1.5f;
         public const int PoisonDartPierceBonus = 3;
 
         public const float BlindingLaserDmgMult = 3;
         public static int BlindingLaserSeedDmgMult = 2;
         public const int BlindingLaserCooldown = 5;
         public const int BlindingLaserBonusCritChance = 100;
-        public const float BlindingLaserPercentHPDmg = 0.8f;
-        public const int BlindingLaserHPDmgCap = (int)(450000f * BlindingLaserPercentHPDmg / 100f);
-        public static int BaseLaserManaCost;
+        public const float BlindingLaserPercentHpDmg = 0.8f;
+        public const int BlindingLaserHpDmgCap = (int)(450000f * BlindingLaserPercentHpDmg / 100f);
 
         public const int ShroomCooldown = 5;
         public const int ShroomBonusCritChance = 100;
         public const int ShroomSetupTime = 3;
         public const int ShroomIrradiationDuration = 10;
-        public const int BaseShroomManaCost = 100;
         public override void SetStaticDefaults()
         {
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
@@ -106,7 +104,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                             break;
                         }
                 }
-                ShootTimer = (int)((float)ShootCooldown / ((float)player.GetTotalAttackSpeed(DamageClass.Ranged)));
+                ShootTimer = (int)((float)ShootCooldownBase / ((float)player.GetTotalAttackSpeed(DamageClass.Ranged)));
             }
             else
             {
@@ -135,37 +133,26 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override void HoldItem(Player player)
         {
+            var modPlayer = player.GetModPlayer<RuneterraDartsPlayer>();
+            switch (Tier)
+            {
+                case 1:
+                {
+                    modPlayer.ScoutsHeldItem = true;
+                    break;
+                }
+                case 2:
+                {
+                    modPlayer.AlienScoutsHeldItem = true;
+                    break;
+                }
+                case 3:
+                {
+                    modPlayer.OmegaScoutsHeldItem = true;
+                    break;
+                }
+            }
             ShootTimer--;
-            if (Tier < 3)
-            {
-                if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
-                {
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
-                }
-                if (player.itemAnimation > 18 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boost 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
-                {
-                    player.velocity *= 0.92f;
-                }
-                else if (player.itemAnimation > 18 && player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
-                {
-                    player.velocity *= 0.01f;
-                }
-            }
-            else
-            {
-                if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldownOmega>()) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2Omega>()))
-                {
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1); //ScoutsBoost buff itself does nto play any sounds in it's code so I didn't need to make an Omega version
-                }
-                if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boost 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
-                {
-                    player.velocity *= 0.92f;
-                }
-                else if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoostCooldownOmega>()))
-                {
-                    player.velocity *= 0.01f;
-                }
-            }
         }
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
@@ -192,7 +179,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             {
                 return false;
             }
-            if ((ShootTimer <= 0 && !Main.mouseRight) || (Main.mouseRight && !Main.mouseLeft && !player.HasBuff(BlindingProjectileCooldownType) && (player.statMana >= (int)(player.manaCost * BaseLaserManaCost))))
+            if ((ShootTimer <= 0 && !Main.mouseRight) || (Main.mouseRight && !Main.mouseLeft && !player.HasBuff(BlindingProjectileCooldownType)))
             {
                 return true;
             }
@@ -220,7 +207,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                 if (ttindex != -1)
                 {
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details").FormatWith(ScoutsBoostMoveSpeedMult, ScoutsBoostStaminaRegenMult, ScoutsBoostOnHitCooldown, ScoutsBoost2Duration,  //Toxic Shot
-                        BlindingLaserDmgMult, BlindingLaserSeedDmgMult, BlindingLaserCooldown, BlindingLaserBonusCritChance, BlindingLaserPercentHPDmg, BlindingLaserHPDmgCap, //Alien Gun
+                        BlindingLaserDmgMult, BlindingLaserSeedDmgMult, BlindingLaserCooldown, BlindingLaserBonusCritChance, BlindingLaserPercentHpDmg, BlindingLaserHpDmgCap, //Alien Gun
                         ShroomSetupTime, ShroomCooldown))); //Omega Squad Rifle
                 }
             }
@@ -243,16 +230,80 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
     }
 
-    public class PosionDartsEdit : GlobalProjectile
+    public class RuneterraDartsPlayer : ModPlayer
+    {
+        public bool ScoutsHeldItem;
+        public bool AlienScoutsHeldItem;
+        public bool OmegaScoutsHeldItem;
+        public bool ScoutsBoostPassive;
+        public bool ScoutsBoostActive;
+        public override void ResetEffects()
+        {
+            ScoutsHeldItem  = false;
+            AlienScoutsHeldItem  = false;
+            OmegaScoutsHeldItem = false;
+            ScoutsBoostPassive = false;
+            ScoutsBoostActive = false;
+        }
+        public void CustomPostUpdateMiscEffects()
+        {
+            float velocityMult1 = 0.93f;
+            float velocityMult2 = 0;
+            if (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() || Player.HeldItem.type == ModContent.ItemType<AlienGun>())
+            {
+                if (!Player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()) && !Player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
+                {
+                    Player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 2);
+                }
+                if (Player.itemAnimation > 1 && Player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boost 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
+                {
+                    Player.velocity.X *= velocityMult1;
+                }
+                else if (Player.itemAnimation > 1 && Player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
+                {
+                    Player.velocity.X *= velocityMult2;
+                }
+            }
+            if (Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
+            {
+                if (!Player.HasBuff(ModContent.BuffType<ScoutsBoostCooldownOmega>()) && !Player.HasBuff(ModContent.BuffType<ScoutsBoost2Omega>()))
+                {
+                    Player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 2); //ScoutsBoost buff itself does not play any sounds in it's code so I didn't need to make an Omega version
+                }
+                if (Player.itemAnimation > 1 && Player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boost 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
+                {
+                    Player.velocity.X *= velocityMult1;
+                }
+                else if (Player.itemAnimation > 1 && Player.HasBuff(ModContent.BuffType<ScoutsBoostCooldownOmega>()))
+                {
+                    Player.velocity.X *= velocityMult2;
+                }
+            }
+            if (ScoutsBoostPassive)
+            {
+                Player.moveSpeed *= 1f + ToxicShot.ScoutsBoostMoveSpeedMult / 100f;
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + ToxicShot.ScoutsBoostStaminaRegenMult / 100f; //this runs right before stamina regen is calculated, meaning it will multiply all of your additive bonuses properly
+            }
+
+            if (ScoutsBoostActive)
+            {
+                Player.moveSpeed *= 1f + ToxicShot.ScoutsBoostMoveSpeedMult * 2f / 100f;
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + ToxicShot.ScoutsBoostStaminaRegenMult * 2f / 100f;
+            }
+        }
+    }
+
+    public class PoisonDartsEdit : GlobalProjectile
     {
         public override bool InstancePerEntity => true;
-        public bool AppliedAlready = false;
+        public bool AppliedAlready;
 
         public override void AI(Projectile projectile)
         {
             Player player = Main.player[projectile.owner];
+            var modPlayer = player.GetModPlayer<RuneterraDartsPlayer>();
             bool isPoisonDart = projectile.type == ProjectileID.PoisonDartBlowgun;
-            bool holdingWeapon = player.HeldItem.type == ModContent.ItemType<ToxicShot>() || player.HeldItem.type == ModContent.ItemType<AlienGun>() || player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>();
+            bool holdingWeapon = modPlayer.ScoutsHeldItem || modPlayer.AlienScoutsHeldItem || modPlayer.OmegaScoutsHeldItem;
             if (!AppliedAlready && isPoisonDart && holdingWeapon)
             {
                 projectile.penetrate += RuneterraDarts.PoisonDartPierceBonus;
@@ -264,10 +315,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[projectile.owner];
+            var modPlayer = player.GetModPlayer<RuneterraDartsPlayer>();
             bool isPoisonDart = projectile.type == ProjectileID.PoisonDartBlowgun;
             if (isPoisonDart)
             {
-                if (player.HeldItem.type == ModContent.ItemType<ToxicShot>())
+                if (modPlayer.ScoutsHeldItem)
                 {
                     if (hit.Crit)
                     {
@@ -280,7 +332,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                     target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
                     target.AddBuff(ModContent.BuffType<VenomDebuff>(), 2 * 60);
                 } 
-                else if (player.HeldItem.type == ModContent.ItemType<AlienGun>())
+                else if (modPlayer.AlienScoutsHeldItem)
                 {
                     if (hit.Crit)
                     {
@@ -293,7 +345,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                     target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
                     target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 2 * 60);
                 }
-                else if (player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
+                else if (modPlayer.OmegaScoutsHeldItem)
                 {
                     if (hit.Crit)
                     {

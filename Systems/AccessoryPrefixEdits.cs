@@ -8,174 +8,22 @@ namespace tsorcRevamp.Systems;
 
 public class AccessoryPrefixTooltipEdits : GlobalItem
 {
-
-    public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) //alter tooltips
+    public override void Load()
     {
-        Player player = Main.LocalPlayer;
-        var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-        if (item.prefix == PrefixID.Hard)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDefense");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "Thorns", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Hard", AccessoryPrefixEditsStats.HardDefense, (int)AccessoryPrefixEditsStats.HardThornsGain)));
-            }
-        }
-        if (item.prefix == PrefixID.Guarding)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDefense");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "StaminaBonuses", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Guarding", AccessoryPrefixEditsStats.GuardingDefense, (int)AccessoryPrefixEditsStats.GuardingStaminaRegenBonus)));
-            }
-        }
-        if (item.prefix == PrefixID.Armored)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDefense");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "RealDR", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Armored", (int)AccessoryPrefixEditsStats.ArmoredResistanceGain)));
-            }
-        }
-        //Warding unchanged
-        if (item.prefix == PrefixID.Jagged)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDamage");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "FlatCritDmg", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Jagged", AccessoryPrefixEditsStats.JaggedFlatCritDmgBonus)));
-            }
-        }
-        if (item.prefix == PrefixID.Spiked)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDamage");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "NastyThorns", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Spiked", (int)AccessoryPrefixEditsStats.SpikedThornsGain, AccessoryPrefixEditsStats.SpikedBadDefense)));
-            }
-        }
-        if (item.prefix == PrefixID.Angry)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDamage");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "RAWR", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Angry", (int)AccessoryPrefixEditsStats.AngryDmg, (int)AccessoryPrefixEditsStats.AngryStaminaRegenBonus)));
-            }
-        }
-        //Menacing unchanged
-        if (item.prefix == PrefixID.Precise)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccCritChance");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "RangedCritChance", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Precise", (int)AccessoryPrefixEditsStats.PreciseRangedCritChance)));
-            }
-        }
-        if (item.prefix == PrefixID.Lucky)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccCritChance");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "RealLuckyCrits", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Lucky", (int)AccessoryPrefixEditsStats.LuckyCritChance, (int)AccessoryPrefixEditsStats.LuckyPercentLuck)));
-            }
-        }
-        if (item.prefix == PrefixID.Brisk)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMoveSpeed");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "QuickButSharpTone", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Brisk", (int)AccessoryPrefixEditsStats.BriskMoveSpeed, (int)AccessoryPrefixEditsStats.BriskDmg)));
-            }
-        }
-        if (item.prefix == PrefixID.Fleeting)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMoveSpeed");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "FleetingTruly", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Fleeting", (int)AccessoryPrefixEditsStats.FleetingMovespeed, (int)AccessoryPrefixEditsStats.FleetingBadResistance)));
-            }
-        }
-        if (item.prefix == PrefixID.Hasty2)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMoveSpeed");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "CanGoTooFast", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Hasty", (int)AccessoryPrefixEditsStats.HastyMovespeed, (int)AccessoryPrefixEditsStats.HastyBadCrit)));
-            }
-        }
-        if (item.prefix == PrefixID.Quick2)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMoveSpeed");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "RealCritChance", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Quick", (int)AccessoryPrefixEditsStats.QuickMovespeed)));
-            }
-        }
-        if (item.prefix == PrefixID.Wild)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMeleeSpeed");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "AbsolutelyWild", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Wild", (int)AccessoryPrefixEditsStats.WildAttackSpeed, (int)AccessoryPrefixEditsStats.WildBadResistance)));
-            }
-        }
-        if (item.prefix == PrefixID.Rash)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMeleeSpeed");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "UrSick", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Rash", (int)AccessoryPrefixEditsStats.RashAttackSpeed, AccessoryPrefixEditsStats.RashBadLifeRegenPerSec)));
-            }
-        }
-        if (item.prefix == PrefixID.Intrepid)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMeleeSpeed");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "CourageousFearlessIDK", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Intrepid", (int)AccessoryPrefixEditsStats.IntrepidAttackSpeed, AccessoryPrefixEditsStats.IntrepidDefense)));
-            }
-        }
-        if (item.prefix == PrefixID.Arcane)
-        {
-            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMaxMana");
-            if (ttindex != -1)
-            {
-                tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "ManaEfficiency", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Arcane", (int)((float)AccessoryPrefixEditsStats.ArcaneManaGain * (1f + modPlayer.MaxManaAmplifier / 100f)), AccessoryPrefixEditsStats.ArcaneManaCostReduction)));
-            }
-        }
+        On_Player.GrantPrefixBenefits += CustomAccessoryPrefixStats;
     }
-}
-
-class AccessoryPrefixEditsStats
-{
     public const int HardDefense = 2;
     public const float HardThornsGain = 10f;
     public const int GuardingDefense = 1;
     public const float GuardingStaminaRegenBonus = 5f;
-    public const float ArmoredResistanceGain = 3f;
+    public const float ArmoredResistanceGain = 4f;
     //Warding unchanged
     public const int JaggedFlatCritDmgBonus = 4;
     public const float SpikedThornsGain = 25f;
     public const int SpikedBadDefense = 2;
     public const float AngryDmg = 2f;
-    //Menacing unchanged
     public const float AngryStaminaRegenBonus = 3f;
+    //Menacing unchanged
     public const float PreciseRangedCritChance = 5f;
     public const float LuckyCritChance = 4f;
     public const float LuckyPercentLuck = 4f;
@@ -188,17 +36,12 @@ class AccessoryPrefixEditsStats
     public const float QuickMovespeed = 5f;
     public const float WildAttackSpeed = 3f;
     public const float WildBadResistance = 3f;
-    public const float RashAttackSpeed = 4f;
-    public const int RashBadLifeRegenPerSec = 2;
+    public const float RashAttackSpeed = 5f;
+    public const float RashBadLifeRegen = 1f;
     public const float IntrepidAttackSpeed = 1f;
     public const int IntrepidDefense = 1;
-    public const int ArcaneManaGain = 40;
+    public const int ArcaneManaGain = 20;
     public const float ArcaneManaCostReduction = 4f;
-    internal static void ApplyAccessoryPrefixEdits()
-    {
-        On_Player.GrantPrefixBenefits += CustomAccessoryPrefixStats;
-    }        
-    //determines the stats gained by accessory prefixes
         private static void CustomAccessoryPrefixStats(On_Player.orig_GrantPrefixBenefits orig, Player self, Item item)
         {
             var modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
@@ -275,7 +118,7 @@ class AccessoryPrefixEditsStats
             if (item.prefix == PrefixID.Rash) //default 2% melee speed
             {
                 self.GetAttackSpeed(DamageClass.Generic) += RashAttackSpeed / 100f;
-                modPlayer.RashBadLifeRegenPerSec += RashBadLifeRegenPerSec;
+                modPlayer.RashBadLifeRegen += (int)RashBadLifeRegen;
             }
             if (item.prefix == PrefixID.Intrepid) //default 3% melee speed
             {
@@ -293,4 +136,156 @@ class AccessoryPrefixEditsStats
             }
             PrefixLoader.ApplyAccessoryEffects(self, item);
         }
+
+    public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) //alter tooltips
+    {
+        Player player = Main.LocalPlayer;
+        var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+        if (item.prefix == PrefixID.Hard)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDefense");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "Thorns", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Hard", HardDefense, (int)HardThornsGain)));
+            }
+        }
+        if (item.prefix == PrefixID.Guarding)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDefense");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "StaminaBonuses", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Guarding", GuardingDefense, (int)GuardingStaminaRegenBonus)));
+            }
+        }
+        if (item.prefix == PrefixID.Armored)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDefense");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "RealDR", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Armored", (int)ArmoredResistanceGain)));
+            }
+        }
+        //Warding unchanged
+        if (item.prefix == PrefixID.Jagged)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDamage");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "FlatCritDmg", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Jagged", JaggedFlatCritDmgBonus)));
+            }
+        }
+        if (item.prefix == PrefixID.Spiked)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDamage");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "NastyThorns", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Spiked", (int)SpikedThornsGain, SpikedBadDefense)));
+            }
+        }
+        if (item.prefix == PrefixID.Angry)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDamage");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "RAWR", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Angry", (int)AngryDmg, (int)AngryStaminaRegenBonus)));
+            }
+        }
+        //Menacing unchanged
+        if (item.prefix == PrefixID.Precise)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccCritChance");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "RangedCritChance", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Precise", (int)PreciseRangedCritChance)));
+            }
+        }
+        if (item.prefix == PrefixID.Lucky)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccCritChance");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "RealLuckyCrits", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Lucky", (int)LuckyCritChance, (int)LuckyPercentLuck)));
+            }
+        }
+        if (item.prefix == PrefixID.Brisk)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMoveSpeed");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "QuickButSharpTone", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Brisk", (int)BriskMoveSpeed, (int)BriskDmg)));
+            }
+        }
+        if (item.prefix == PrefixID.Fleeting)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMoveSpeed");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "FleetingTruly", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Fleeting", (int)FleetingMovespeed, (int)FleetingBadResistance)));
+            }
+        }
+        if (item.prefix == PrefixID.Hasty2)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMoveSpeed");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "CanGoTooFast", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Hasty", (int)HastyMovespeed, (int)HastyBadCrit)));
+            }
+        }
+        if (item.prefix == PrefixID.Quick2)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMoveSpeed");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "RealCritChance", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Quick", (int)QuickMovespeed)));
+            }
+        }
+        if (item.prefix == PrefixID.Wild)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMeleeSpeed");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "AbsolutelyWild", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Wild", (int)WildAttackSpeed, (int)WildBadResistance)));
+            }
+        }
+        if (item.prefix == PrefixID.Rash)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMeleeSpeed");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "UrSick", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Rash", (int)RashAttackSpeed, RashBadLifeRegen / 2f)));
+            }
+        }
+        if (item.prefix == PrefixID.Intrepid)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMeleeSpeed");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "CourageousFearlessIDK", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Intrepid", (int)IntrepidAttackSpeed, IntrepidDefense)));
+            }
+        }
+        if (item.prefix == PrefixID.Arcane)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccMaxMana");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "ManaEfficiency", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Arcane", (int)((float)ArcaneManaGain * (1f + modPlayer.MaxManaAmplifier / 100f)), ArcaneManaCostReduction)));
+            }
+        }
+    }
 }

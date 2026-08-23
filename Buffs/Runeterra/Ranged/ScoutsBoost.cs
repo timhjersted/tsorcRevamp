@@ -16,11 +16,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.moveSpeed *= 1f + ToxicShot.ScoutsBoostMoveSpeedMult / 100f;
-            // Additive on gainMult, not multiplicative on regenRate — see the convention on
-            // tsorcRevampStaminaPlayer.staminaResourceGainMult. regenRate is a separate channel that sits
-            // outside the additive gear pool.
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ToxicShot.ScoutsBoostStaminaRegenMult / 100f;
+            player.GetModPlayer<RuneterraDartsPlayer>().ScoutsBoostPassive = true;
         }
     }
 }

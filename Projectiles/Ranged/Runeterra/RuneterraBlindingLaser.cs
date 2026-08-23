@@ -37,9 +37,6 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             var player = Main.player[Projectile.owner];
             player.AddBuff(CooldownType, AlienGun.BlindingLaserCooldown * 60);
             Projectile.CritChance += AlienGun.BlindingLaserBonusCritChance;
-            player.statMana -= (int)(RuneterraDarts.BaseLaserManaCost * player.manaCost);
-            player.ManaEffect(-(int)(RuneterraDarts.BaseLaserManaCost * player.manaCost));
-            player.manaRegenDelay = MeleeEdits.ManaDelay / 2;
         }
 
         public override void AI()
@@ -56,7 +53,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.SourceDamage *= AlienGun.BlindingLaserDmgMult;
-            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * AlienGun.BlindingLaserPercentHPDmg / 100f, AlienGun.BlindingLaserHPDmgCap);
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * AlienGun.BlindingLaserPercentHpDmg / 100f, AlienGun.BlindingLaserHpDmgCap);
         }
     }
 }

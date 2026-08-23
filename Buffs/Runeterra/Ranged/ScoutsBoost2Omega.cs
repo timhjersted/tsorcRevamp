@@ -21,8 +21,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/SuperBuffCast") with { Volume = 1f }, player.Center);
             }
-            player.moveSpeed *= 1f + ToxicShot.ScoutsBoostMoveSpeedMult * 2f / 100f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ToxicShot.ScoutsBoostStaminaRegenMult * 2f / 100f;
+            player.GetModPlayer<RuneterraDartsPlayer>().ScoutsBoostActive = true;
             if (player.buffTime[buffIndex] == 1)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/SuperBuffEnd") with { Volume = 1f }, player.Center);

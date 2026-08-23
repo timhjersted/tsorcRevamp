@@ -181,7 +181,7 @@ namespace tsorcRevamp
         private float lastWingFallGravityDirection = 1f;
 
         public int JaggedFlatCritDmgBonus = 0;
-        public int RashBadLifeRegenPerSec = 0;
+        public int RashBadLifeRegen = 0;
         public float EncouragingSummonTagDmg = 0f;
 
         public bool MeleeArmorVamp10 = false;
@@ -556,7 +556,7 @@ namespace tsorcRevamp
             Goredrinker = false;
 
             JaggedFlatCritDmgBonus = 0;
-            RashBadLifeRegenPerSec = 0;
+            RashBadLifeRegen = 0;
             EncouragingSummonTagDmg = 0f;
 
             MaskOfTheFather = false;
@@ -2418,7 +2418,7 @@ namespace tsorcRevamp
             // the intent. Removing the extra penalty is what puts them on parity; do not re-add a
             // class-specific multiplier here without first making the halving above class-gated.
 
-            Player.lifeRegen -= RashBadLifeRegenPerSec * 2;
+            Player.lifeRegen -= RashBadLifeRegen * 2;
         }
 
 

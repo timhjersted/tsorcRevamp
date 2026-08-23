@@ -28,7 +28,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public override void CustomSetDefaults()
         {
             Item.damage = BaseDamage;
-            BaseLaserManaCost = 20;
         }
         public override Vector2? HoldoutOffset()
         {

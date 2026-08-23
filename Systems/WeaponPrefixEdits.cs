@@ -5,9 +5,9 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Systems;
 
-class WeaponPrefixEdits
+public class WeaponPrefixEdits : ModSystem
 {
-    internal static void ApplyWeaponPrefixEdits()
+    public override void Load()
     {
         On_Item.TryGetPrefixStatMultipliersForItem += CustomWeaponPrefixStats; //applies weapon prefix stats and correctly alters tooltips
     }
