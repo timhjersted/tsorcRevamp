@@ -7,7 +7,7 @@ namespace tsorcRevamp.Systems.Electrocute;
 
 public class Electrocute : ModBuff
 {
-    public const bool Enabled = false; //for easy switching on or off of the system
+    public const bool Enabled = true; //for easy switching on or off of the system
     public const int Cooldown = 10;
     public override void SetStaticDefaults()
     {

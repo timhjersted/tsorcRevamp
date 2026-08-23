@@ -41,11 +41,10 @@ Mods: {
 			''' */
 		/* ElectrocuteExplanation:
 			'''
-			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 different ranged projectile types in a span of 1.5 seconds,]
-			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. 10 sec cooldown. ]
-			[c/22dd96:Uses highest crit chance of the 3 projectiles. Can pierce infinitely but only stays for a second. Only hits an enemy once.]
-			[c/22dd96:Ranged damage is reduced by 10%.?]
-			[c/22dd96:Weapons that automatically shoot multiple different projectiles types are counted as 2 hits at most.]
+			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 different ranged projectile types in a span of {0} seconds,]
+			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. {$CommonItemTooltip.Cooldown@1}]
+			[c/22dd96:Uses highest crit chance of the 3 projectiles. ]
+			[c/22dd96:Ranged damage is reduced by {2}% while Electrocute is not on cooldown.]
 			''' */
 
 		CommonItemTooltip: {
@@ -11170,6 +11169,7 @@ Mods: {
 			// QuaraFrostSprite.DisplayName: Quara Frost Sprite
 			// QuaraWaterResidue.DisplayName: Quara Water Residue
 			// CenterOfTheUniverseStar2.DisplayName: Center Of The Universe Star2
+			// ElectrocuteProjectile.DisplayName: Electrocute Projectile
 		}
 
 		NPCs: {
