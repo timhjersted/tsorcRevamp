@@ -355,8 +355,8 @@ namespace tsorcRevamp.NPCs
                 }
                 else
                 {
-                    float t = nav.AirCommitDirX * topSpeed * 1.05f;
-                    npc.velocity.X = MathHelper.Clamp(t, -topSpeed * 1.3f, topSpeed * 1.3f);
+                    float targetVx = nav.AirCommitDirX * topSpeed * 1.05f;
+                    npc.velocity.X = MathHelper.Clamp(targetVx, -topSpeed * 1.3f, topSpeed * 1.3f);
                 }
             }
 
@@ -735,8 +735,8 @@ namespace tsorcRevamp.NPCs
                     if (Math.Abs(npc.Center.X - nav.MoveCheckX) > 2f) { nav.MoveCheckX = npc.Center.X; nav.StepNoMoveFrames = 0; }
                     else if (++nav.StepNoMoveFrames > 40)
                     {
-                        var bs = nav.Plan[nav.PlanIndex];
-                        nav.BadEdgeTargets[(bs.TargetX, bs.TargetY)] = (int)Main.GameUpdateCount + 480;
+                        var blockedStep = nav.Plan[nav.PlanIndex];
+                        nav.BadEdgeTargets[(blockedStep.TargetX, blockedStep.TargetY)] = (int)Main.GameUpdateCount + 480;
                         nav.Plan = null; nav.PlanIndex = 0; nav.CommitFrames = 0; nav.ReplanCooldown = 0;
                         nav.StepNoMoveFrames = 0;
                     }
@@ -1347,11 +1347,11 @@ namespace tsorcRevamp.NPCs
         private static bool IsRopeTile(int x, int y)
         {
             if (!WorldGen.InWorld(x, y)) return false;
-            Tile t = Main.tile[x, y];
-            if (!t.HasTile || t.IsActuated) return false;
-            int ty = t.TileType;
-            return ty == TileID.Rope || ty == TileID.SilkRope || ty == TileID.WebRope
-                || ty == TileID.VineRope || ty == TileID.Chain;
+            Tile tile = Main.tile[x, y];
+            if (!tile.HasTile || tile.IsActuated) return false;
+            int tileType = tile.TileType;
+            return tileType == TileID.Rope || tileType == TileID.SilkRope || tileType == TileID.WebRope
+                || tileType == TileID.VineRope || tileType == TileID.Chain;
         }
 
         // Finds a rope column at x whose vertical extent comes within `reach` tiles of feetY
@@ -1368,11 +1368,11 @@ namespace tsorcRevamp.NPCs
                 if (IsRopeTile(x, y)) { seed = y; break; }
             }
             if (seed == int.MinValue) return false;
-            int b = seed, t = seed;
-            for (int y = seed + 1; y <= seed + MaxRopeClimb; y++) { if (IsRopeTile(x, y)) b = y; else break; }
-            for (int y = seed - 1; y >= seed - MaxRopeClimb; y--) { if (IsRopeTile(x, y)) t = y; else break; }
-            if (b - t < 2) return false; // need at least 3 contiguous rope tiles
-            bottomY = b; topY = t;
+            int bottomRow = seed, topRow = seed;
+            for (int y = seed + 1; y <= seed + MaxRopeClimb; y++) { if (IsRopeTile(x, y)) bottomRow = y; else break; }
+            for (int y = seed - 1; y >= seed - MaxRopeClimb; y--) { if (IsRopeTile(x, y)) topRow = y; else break; }
+            if (bottomRow - topRow < 2) return false; // need at least 3 contiguous rope tiles
+            bottomY = bottomRow; topY = topRow;
             return true;
         }
 
@@ -1829,9 +1829,9 @@ namespace tsorcRevamp.NPCs
                 // Skip open-air cliff overhangs (no terrain at or above feet level)
                 if (!IsNavigationSolid(x, restRow) && !IsNavigationSolid(x, restRow - 1)) continue;
 
-                for (int d = 0; d <= sinkCap; d++)
+                for (int sinkDepth = 0; sinkDepth <= sinkCap; sinkDepth++)
                 {
-                    if (IsNavigationSolid(x, restRow + d)) { if (d > deepest) deepest = d; break; }
+                    if (IsNavigationSolid(x, restRow + sinkDepth)) { if (sinkDepth > deepest) deepest = sinkDepth; break; }
                 }
             }
             if (deepest <= 0) return;
@@ -1866,8 +1866,8 @@ namespace tsorcRevamp.NPCs
             for (int i = 0; i < 2; i++)
             {
                 int x = edgeX - side * i; // outermost column, then one inward
-                for (int d = 1; d <= sinkCap + 1; d++)
-                    if (IsNavigationSolid(x, feetY + d)) return false; // ground close below this column → not floating
+                for (int belowOffset = 1; belowOffset <= sinkCap + 1; belowOffset++)
+                    if (IsNavigationSolid(x, feetY + belowOffset)) return false; // ground close below this column → not floating
             }
             return true;
         }
@@ -1980,15 +1980,15 @@ namespace tsorcRevamp.NPCs
             int feetY = GetFeetTileY(npc);
             int startX = (int)(npc.Center.X / TileF);
             int reachable = 0;
-            for (int d = 1; d <= StandoffMinTiles; d++)
+            for (int stepOut = 1; stepOut <= StandoffMinTiles; stepOut++)
             {
-                int x = startX + dir * d;
+                int x = startX + dir * stepOut;
                 if (GetObstacleHeight(x, feetY) > 1) break;   // wall this way -> can't walk farther
                 if (GetDropDepth(x, feetY, 4) >= 4) break;     // cliff this way -> can't walk farther
-                reachable = d;
+                reachable = stepOut;
                 Vector2 spot = new Vector2(x * TileF + 8f, npc.Center.Y);
                 if (HasStrictLineOfSight(spot, player.Center))
-                    return 100 + (StandoffMinTiles - d);       // LOS opens at d tiles; nearer = higher score
+                    return 100 + (StandoffMinTiles - stepOut);       // LOS opens at stepOut tiles; nearer = higher score
             }
             return reachable;
         }
@@ -2047,8 +2047,8 @@ namespace tsorcRevamp.NPCs
                 // Cap so we don't reach into far rooms. The vertical cap scales with this NPC's jump power,
                 // so high-jump experiments can still select a valid ledge span as their goal.
                 if (dx > 16 || dy > Math.Max(12, MaxPlanRiseTiles())) continue;
-                int d = dx + dy * 2;
-                if (d < bestDist) { bestDist = d; best = sp; }
+                int weightedDist = dx + dy * 2;
+                if (weightedDist < bestDist) { bestDist = weightedDist; best = sp; }
             }
             return best;
         }
@@ -2161,14 +2161,14 @@ namespace tsorcRevamp.NPCs
 
         private static bool IsAligned(NPC npc, int launchX)
         {
-            float c = launchX * TileF + 8f;
-            return Math.Abs(npc.Center.X - c) <= AlignTolerancePx;
+            float launchCenterX = launchX * TileF + 8f;
+            return Math.Abs(npc.Center.X - launchCenterX) <= AlignTolerancePx;
         }
 
         private static int AlignDir(NPC npc, int launchX)
         {
-            float c = launchX * TileF + 8f;
-            return npc.Center.X < c ? 1 : -1;
+            float launchCenterX = launchX * TileF + 8f;
+            return npc.Center.X < launchCenterX ? 1 : -1;
         }
 
         private static bool ExecuteStep(NavState nav, NPC npc, Player player, float topSpeed, float acceleration,
@@ -2299,16 +2299,16 @@ namespace tsorcRevamp.NPCs
                 npc.direction = aDir; npc.spriteDirection = aDir;
                 nav.RopeStallFrames = 0; nav.LastRopeFeetY = feetY; nav.RopeEngaged = false;
                 int aFrontX = GetFrontTileX(npc, aDir);
-                int oh = GetObstacleHeight(aFrontX, feetY);
-                if (oh == 2 && npc.collideX && HasHeadroomForJump(npc, aDir, oh)
-                    && ComputeJumpArc(2, oh, npc.gravity, jumpCeil, topSpeed + boostCeil, out float hp, out float hvx))
+                int obstacleHeight = GetObstacleHeight(aFrontX, feetY);
+                if (obstacleHeight == 2 && npc.collideX && HasHeadroomForJump(npc, aDir, obstacleHeight)
+                    && ComputeJumpArc(2, obstacleHeight, npc.gravity, jumpCeil, topSpeed + boostCeil, out float hp, out float hvx))
                 {
                     FireJump(nav, npc, aDir, hp, hvx, 16, 12);
                     nav.AlignStallFrames = 0;
-                    action = "align-rope-hop"; reason = $"oh={oh}";
+                    action = "align-rope-hop"; reason = $"oh={obstacleHeight}";
                     return true;
                 }
-                if (npc.collideX && oh > 2)
+                if (npc.collideX && obstacleHeight > 2)
                 {
                     nav.AlignStallFrames++;
                     if (nav.AlignStallFrames > 18) { nav.StepTimer = 0; nav.AlignStallFrames = 0; }
@@ -2777,16 +2777,16 @@ namespace tsorcRevamp.NPCs
             // the first power that fits is the lowest (least floaty) feasible arc.
             float chosenVx = float.MaxValue;
             float chosenPower = startPower;
-            for (float p = startPower; p <= maxJumpPower + 1e-3f; p += 0.1f)
+            for (float power = startPower; power <= maxJumpPower + 1e-3f; power += 0.1f)
             {
-                float disc = p * p + 2f * gravity * landingDeltaY;
+                float disc = power * power + 2f * gravity * landingDeltaY;
                 if (disc < 0f) continue;            // can't reach that height at this power
-                float airtime = (p + (float)Math.Sqrt(disc)) / gravity; // descending-branch landing
+                float airtime = (power + (float)Math.Sqrt(disc)) / gravity; // descending-branch landing
                 if (airtime <= 0f) continue;
                 float vx = dxPx / airtime;
                 if (vx <= maxLaunchVx)
                 {
-                    chosenPower = p;
+                    chosenPower = power;
                     chosenVx = vx;
                     break;
                 }
@@ -2814,11 +2814,11 @@ namespace tsorcRevamp.NPCs
         {
             // Pick the closest table entry by Manhattan distance in (dx, dy) space.
             int bestKeyDist = int.MaxValue;
-            (float p, float b) best = (jumpCeil, boostCeil * 0.5f);
+            (float power, float boost) best = (jumpCeil, boostCeil * 0.5f);
             foreach (var kv in JumpArcs)
             {
-                int d = Math.Abs(kv.Key.dx - absDx) + Math.Abs(kv.Key.dy - dy);
-                if (d < bestKeyDist) { bestKeyDist = d; best = kv.Value; }
+                int keyDist = Math.Abs(kv.Key.dx - absDx) + Math.Abs(kv.Key.dy - dy);
+                if (keyDist < bestKeyDist) { bestKeyDist = keyDist; best = kv.Value; }
             }
             return best;
         }
@@ -2934,13 +2934,13 @@ namespace tsorcRevamp.NPCs
         // Clear vertical tiles straight up from the feet row in column `col` (capped at 8).
         private static int ColumnUpClear(int col, int feetY)
         {
-            int n = 0;
-            for (int u = 1; u <= 8; u++)
+            int clearRows = 0;
+            for (int rowsUp = 1; rowsUp <= 8; rowsUp++)
             {
-                if (IsNavigationSolid(col, feetY - u)) break;
-                n = u;
+                if (IsNavigationSolid(col, feetY - rowsUp)) break;
+                clearRows = rowsUp;
             }
-            return n;
+            return clearRows;
         }
 
         // Clear vertical room straight up across the NPC's FULL body width (min over every column the body occupies).
@@ -2951,8 +2951,8 @@ namespace tsorcRevamp.NPCs
             int leftCol = (int)(npc.position.X / TileF);
             int rightCol = (int)((npc.position.X + npc.width - 1f) / TileF);
             int minClear = 8;
-            for (int c = leftCol; c <= rightCol; c++)
-                minClear = Math.Min(minClear, ColumnUpClear(c, feetY));
+            for (int col = leftCol; col <= rightCol; col++)
+                minClear = Math.Min(minClear, ColumnUpClear(col, feetY));
             return minClear;
         }
 
@@ -3005,23 +3005,23 @@ namespace tsorcRevamp.NPCs
             int frontX = GetFrontTileX(npc, direction);
             int feetY = GetFeetTileY(npc);
             float maxLaunchVx = topSpeed + boostCeil;
-            int oh = GetObstacleHeight(frontX, feetY);
-            // oh == 1 (a single-tile step) is now handled by the smooth AutoStepUp glide during the walk,
+            int obstacleHeight = GetObstacleHeight(frontX, feetY);
+            // obstacleHeight == 1 (a single-tile step) is now handled by the smooth AutoStepUp glide during the walk,
             // so we only JUMP for obstacles 2+ tiles tall. This is why the enemy no longer mini-hops over
             // every little bump.
-            if (oh > 1)
+            if (obstacleHeight > 1)
             {
                 // Cap raised 4 -> 6 to match this NPC's jump power (MaxJumpPower 9 ≈ 8 tiles of height).
                 // It was giving up ("too-tall") on walls it can actually clear; ComputeJumpArc still gates
                 // feasibility, so an unmakeable jump falls through to the blocked brake below.
                 // Skip when NoAStarPath: a wall the span graph can't route through won't be cleared
                 // by a jump — just brake so the stuck clock can disengage to patrol.
-                if (!nav.NoAStarPath && oh <= 6 && HasHeadroomForJump(npc, direction, oh))
+                if (!nav.NoAStarPath && obstacleHeight <= 6 && HasHeadroomForJump(npc, direction, obstacleHeight))
                 {
-                    if (ComputeJumpArc(2, oh, npc.gravity, jumpCeil, maxLaunchVx, out float op, out float ovx))
+                    if (ComputeJumpArc(2, obstacleHeight, npc.gravity, jumpCeil, maxLaunchVx, out float obstaclePower, out float obstacleVx))
                     {
-                        FireJump(nav, npc, direction, op, ovx, 26, 30);
-                        action = "obstacle-jump"; reason = $"h={oh} p{op:F1}/vx{ovx:F2}";
+                        FireJump(nav, npc, direction, obstaclePower, obstacleVx, 26, 30);
+                        action = "obstacle-jump"; reason = $"h={obstacleHeight} p{obstaclePower:F1}/vx{obstacleVx:F2}";
                         return true;
                     }
                 }
@@ -3029,7 +3029,7 @@ namespace tsorcRevamp.NPCs
                 action = "blocked";
 
                 // Diagnostic label only — tells the nav log which of the three gates above rejected the jump.
-                if (oh > 6)
+                if (obstacleHeight > 6)
                 {
                     reason = "too-tall";
                 }
@@ -3164,16 +3164,16 @@ namespace tsorcRevamp.NPCs
 
         private static void ApplyChase(NPC npc, int direction, float topSpeed, float acceleration)
         {
-            float t = topSpeed * direction;
-            if (npc.velocity.X < t)
+            float targetVx = topSpeed * direction;
+            if (npc.velocity.X < targetVx)
             {
                 npc.velocity.X += acceleration;
-                if (npc.velocity.X > t) npc.velocity.X = t;
+                if (npc.velocity.X > targetVx) npc.velocity.X = targetVx;
             }
-            else if (npc.velocity.X > t)
+            else if (npc.velocity.X > targetVx)
             {
                 npc.velocity.X -= acceleration;
-                if (npc.velocity.X < t) npc.velocity.X = t;
+                if (npc.velocity.X < targetVx) npc.velocity.X = targetVx;
             }
         }
 
@@ -3225,8 +3225,8 @@ namespace tsorcRevamp.NPCs
         private static bool IsStandableTile(int x, int y)
         {
             if (!WorldGen.InWorld(x, y)) return false;
-            Tile t = Main.tile[x, y];
-            if (!t.HasTile || t.IsActuated) return false;
+            Tile tile = Main.tile[x, y];
+            if (!tile.HasTile || tile.IsActuated) return false;
             if (!(IsNavigationSolid(x, y) || IsPlatformTile(x, y))) return false;
             // Beast flat-ground gate: a large enemy (MinSurfaceWidth > 0) may only treat this as standable if its
             // full footprint sits CENTERED on a flat run that wide — so it stands fully on, never edge-perched, and
@@ -3283,8 +3283,8 @@ namespace tsorcRevamp.NPCs
 
         private static int GetDropDepth(int x, int feetY, int maxDepth)
         {
-            for (int d = 0; d <= maxDepth; d++)
-                if (IsStandableTile(x, feetY + d)) return d;
+            for (int depth = 0; depth <= maxDepth; depth++)
+                if (IsStandableTile(x, feetY + depth)) return depth;
             return maxDepth + 1;
         }
 
@@ -3295,24 +3295,24 @@ namespace tsorcRevamp.NPCs
             // Diagnostic trail so a cliff-halt caused by this scan finding NOTHING within 7 tiles can be
             // told apart (in the log) from one where a landing existed but got rejected downstream — every
             // offset's (drop, clearance) is recorded regardless of pass/fail. Cheap: at most 7 iterations.
-            var sb = new System.Text.StringBuilder();
-            for (int o = 1; o <= 7; o++)
+            var diagBuilder = new System.Text.StringBuilder();
+            for (int offset = 1; offset <= 7; offset++)
             {
-                int cx = frontX + direction * o;
-                int d = GetDropDepth(cx, feetY, 5);
+                int cx = frontX + direction * offset;
+                int depth = GetDropDepth(cx, feetY, 5);
                 // HasBodyClearanceAtRow expects the row ABOVE the landing floor (see its other call sites
                 // at BuildSpans/867 and 1114: "IsStandableTile(x, y+1) && HasBodyClearanceAtRow(x, y)").
-                // GetDropDepth/IsStandableTile's own convention makes feetY+d the FLOOR tile's row itself,
+                // GetDropDepth/IsStandableTile's own convention makes feetY+depth the FLOOR tile's row itself,
                 // so passing that straight through made the clearance scan include the solid landing tile
                 // as its own top row — genuine solid ground (anything that isn't a jump-through platform)
                 // then always "failed clearance" no matter how much headroom actually existed. This is why
                 // gap-jump/gap-halt never fired for any gap width: -1 aligns it to the body row above the
                 // floor, matching every other clearance check in this file.
-                bool clear = d <= 2 && HasBodyClearanceAtRow(cx, feetY + d - 1);
-                sb.Append(o).Append(':').Append(d).Append(clear ? "c" : "x").Append(' ');
-                if (clear && gapTiles == 0) { gapTiles = o; landingDrop = d; landingX = cx; }
+                bool clear = depth <= 2 && HasBodyClearanceAtRow(cx, feetY + depth - 1);
+                diagBuilder.Append(offset).Append(':').Append(depth).Append(clear ? "c" : "x").Append(' ');
+                if (clear && gapTiles == 0) { gapTiles = offset; landingDrop = depth; landingX = cx; }
             }
-            diag = sb.ToString().TrimEnd();
+            diag = diagBuilder.ToString().TrimEnd();
             return gapTiles > 0;
         }
 
@@ -3332,17 +3332,17 @@ namespace tsorcRevamp.NPCs
         // (landX == lx) has no horizontal escape from EITHER side, so both neighbors must be clear. Checks the body's
         // full height (3 rows up from the feet row) where the wedge actually happens; higher tiles are the lip the
         // arc clears, not a launch obstruction.
-        private static bool LaunchTrailClear(int lx, int landX, int feetY)
+        private static bool LaunchTrailClear(int launchCol, int landX, int feetY)
         {
-            int landDir = Math.Sign(landX - lx);
+            int landDir = Math.Sign(landX - launchCol);
             const int rows = 3; // body footprint height in tiles
             for (int y = feetY; y > feetY - rows; y--)
             {
                 if (landDir == 0)
                 {
-                    if (IsNavigationSolid(lx - 1, y) || IsNavigationSolid(lx + 1, y)) return false;
+                    if (IsNavigationSolid(launchCol - 1, y) || IsNavigationSolid(launchCol + 1, y)) return false;
                 }
-                else if (IsNavigationSolid(lx - landDir, y)) return false; // trailing side = opposite the landing
+                else if (IsNavigationSolid(launchCol - landDir, y)) return false; // trailing side = opposite the landing
             }
             return true;
         }
@@ -3372,14 +3372,14 @@ namespace tsorcRevamp.NPCs
                 int oMax = Math.Min(a.RightX, b.RightX);
                 int mid = (oMin + oMax) / 2;
                 launches.Add(mid);
-                for (int o = 1; o <= 4 && launches.Count < 6; o++)
+                for (int offset = 1; offset <= 4 && launches.Count < 6; offset++)
                 {
-                    if (mid + o <= oMax) launches.Add(mid + o);
-                    if (mid - o >= oMin) launches.Add(mid - o);
+                    if (mid + offset <= oMax) launches.Add(mid + offset);
+                    if (mid - offset >= oMin) launches.Add(mid - offset);
                 }
             }
 
-            foreach (int lx in launches)
+            foreach (int launchCol in launches)
             {
                 // Generate candidate landing columns within span B.
                 List<int> lands = new List<int>();
@@ -3408,28 +3408,28 @@ namespace tsorcRevamp.NPCs
                     // launch column is row b.Y + 1 — spans store the FEET row, floor one below.)
                     if (dy > 0)
                     {
-                        bool cleanVertical = IsPlatformTile(lx, b.Y + 1);
-                        if (cleanVertical) lands.Add(lx);            // straight-up through a platform first
+                        bool cleanVertical = IsPlatformTile(launchCol, b.Y + 1);
+                        if (cleanVertical) lands.Add(launchCol);            // straight-up through a platform first
                         // Solid lip: PREFER a flatter up-and-over (adx=2) — launching 2 tiles back, the arc rises over
                         // the pit and clears the lip's vertical FACE, instead of a steep adx=1 arc that drifts into the
                         // lip base and wedges (cx=True). Fall back to adx=1, then a last-resort vertical.
-                        if (lx + 2 <= oMax) lands.Add(lx + 2);
-                        if (lx - 2 >= oMin) lands.Add(lx - 2);
-                        if (lx + 1 <= oMax) lands.Add(lx + 1);
-                        if (lx - 1 >= oMin) lands.Add(lx - 1);
-                        if (!cleanVertical) lands.Add(lx);           // vertical only as last resort over solid
+                        if (launchCol + 2 <= oMax) lands.Add(launchCol + 2);
+                        if (launchCol - 2 >= oMin) lands.Add(launchCol - 2);
+                        if (launchCol + 1 <= oMax) lands.Add(launchCol + 1);
+                        if (launchCol - 1 >= oMin) lands.Add(launchCol - 1);
+                        if (!cleanVertical) lands.Add(launchCol);           // vertical only as last resort over solid
                     }
                     else
                     {
-                        lands.Add(lx); // same column = pure vertical
-                        if (lx + 1 <= oMax) lands.Add(lx + 1);
-                        if (lx - 1 >= oMin) lands.Add(lx - 1);
+                        lands.Add(launchCol); // same column = pure vertical
+                        if (launchCol + 1 <= oMax) lands.Add(launchCol + 1);
+                        if (launchCol - 1 >= oMin) lands.Add(launchCol - 1);
                     }
                 }
 
                 foreach (int la in lands)
                 {
-                    int adx = Math.Abs(la - lx);
+                    int adx = Math.Abs(la - launchCol);
                     // SF4: propose the edge only if this NPC can physically make the arc
                     // (gravity + jump/boost limits). Replaces the static-table membership test,
                     // so flat wide gaps (no table entry) are now correctly considered.
@@ -3441,9 +3441,9 @@ namespace tsorcRevamp.NPCs
                     // so A* picks one backed off the wall (clear trailing side) that arcs UP-AND-OVER the lip instead —
                     // i.e. walk back 1-2 tiles, then jump out. Now applies to ALL enemies (was ghost-only): non-ghosts
                     // wedge in pits the same way (e.g. the Dworc that hopped straight into the lip on the bumped side).
-                    if (dy >= 1 && adx <= 1 && !LaunchTrailClear(lx, la, a.Y)) continue;
-                    if (!HasTrajectoryClearance(lx, a.Y, la, b.Y, dy)) continue;
-                    launchX = lx; landX = la; absDx = adx;
+                    if (dy >= 1 && adx <= 1 && !LaunchTrailClear(launchCol, la, a.Y)) continue;
+                    if (!HasTrajectoryClearance(launchCol, a.Y, la, b.Y, dy)) continue;
+                    launchX = launchCol; landX = la; absDx = adx;
                     return true;
                 }
             }
@@ -3510,34 +3510,34 @@ namespace tsorcRevamp.NPCs
         private static bool IsPlatformTile(int x, int y)
         {
             if (!WorldGen.InWorld(x, y)) return false;
-            Tile t = Main.tile[x, y];
-            if (!t.HasTile || t.IsActuated) return false;
+            Tile tile = Main.tile[x, y];
+            if (!tile.HasTile || tile.IsActuated) return false;
             // A "platform" for navigation = anything solid only on its top: wood platforms AND solid-top
             // furniture (tables, fireplaces, work benches, etc.). Gameplay-wise these can all be stood on,
             // jumped up through, and dropped down through — but they aren't in TileID.Sets.Platforms and are
             // tileFrameImportant, so IsNavigationSolid rejects them. Without this the planner saw a table as
             // neither solid nor platform: NPCs couldn't path onto one and stood frozen on top (the stuck-on-
             // table report), and couldn't drop through one to reach a lower target.
-            return TileID.Sets.Platforms[t.TileType] || Main.tileSolidTop[t.TileType];
+            return TileID.Sets.Platforms[tile.TileType] || Main.tileSolidTop[tile.TileType];
         }
 
         private static bool IsNavigationSolid(int x, int y)
         {
             if (!WorldGen.InWorld(x, y)) return false;
-            Tile t = Main.tile[x, y];
-            if (!t.HasTile || t.IsActuated || TileID.Sets.Platforms[t.TileType]) return false;
-            if (!Main.tileSolid[t.TileType]) return false;
+            Tile tile = Main.tile[x, y];
+            if (!tile.HasTile || tile.IsActuated || TileID.Sets.Platforms[tile.TileType]) return false;
+            if (!Main.tileSolid[tile.TileType]) return false;
 
             // A closed door blocks navigation only for an enemy that can't open one. Door-openers
             // (_canOpenDoors, from Run's doorBreakingDamage) must see straight through it, or the span graph
             // builds no edge across the doorway and A* reports no-path through every interior wall. Opening
             // itself is unaffected — TryDoor/TryFindClosedDoor match TileType directly, not this predicate.
-            if (t.TileType == TileID.ClosedDoor)
+            if (tile.TileType == TileID.ClosedDoor)
             {
                 return !_canOpenDoors;
             }
 
-            return !Main.tileFrameImportant[t.TileType];
+            return !Main.tileFrameImportant[tile.TileType];
         }
 
         private static bool TryFindClosedDoor(int frontX, int feetY, out int doorX, out int doorY)
@@ -3654,8 +3654,8 @@ namespace tsorcRevamp.NPCs
                     planStr = $"{nav.PlanIndex}/{nav.Plan.Count}";
                     if (nav.PlanIndex < nav.Plan.Count)
                     {
-                        var st = nav.Plan[nav.PlanIndex];
-                        planStr += $" {st.Kind}->{st.TargetX},{st.TargetY}@launch{st.LaunchX}";
+                        var planStep = nav.Plan[nav.PlanIndex];
+                        planStr += $" {planStep.Kind}->{planStep.TargetX},{planStep.TargetY}@launch{planStep.LaunchX}";
                     }
                 }
 
@@ -3669,15 +3669,15 @@ namespace tsorcRevamp.NPCs
                 string ropeStr = "";
                 if (nav.Plan != null && nav.PlanIndex < nav.Plan.Count && nav.Plan[nav.PlanIndex].Kind == StepKind.RopeClimb)
                 {
-                    var rs = nav.Plan[nav.PlanIndex];
-                    int lx = rs.LaunchX;
+                    var ropeStep = nav.Plan[nav.PlanIndex];
+                    int launchCol = ropeStep.LaunchX;
                     int feetY = GetFeetTileY(npc);
-                    bool descend = nav.RopeDirLatched ? nav.RopeDescend : rs.TargetY > feetY;
-                    bool atEnd = nav.RopeEngaged && (descend ? !IsRopeTile(lx, feetY + 1) : !IsRopeTile(lx, feetY - 1));
-                    bool reached = descend ? feetY >= rs.TargetY : feetY <= rs.TargetY;
-                    ropeStr = $" [rope {(descend ? "DN" : "UP")} toY={rs.TargetY} feetY={feetY} lastFeetY={nav.LastRopeFeetY}"
-                        + $" ropeU1={IsRopeTile(lx, feetY - 1)} ropeHead={IsRopeTile(lx, feetY - 2)} ropeD1={IsRopeTile(lx, feetY + 1)}"
-                        + $" solidU2={IsNavigationSolid(lx, feetY - 2)} solidU3={IsNavigationSolid(lx, feetY - 3)}"
+                    bool descend = nav.RopeDirLatched ? nav.RopeDescend : ropeStep.TargetY > feetY;
+                    bool atEnd = nav.RopeEngaged && (descend ? !IsRopeTile(launchCol, feetY + 1) : !IsRopeTile(launchCol, feetY - 1));
+                    bool reached = descend ? feetY >= ropeStep.TargetY : feetY <= ropeStep.TargetY;
+                    ropeStr = $" [rope {(descend ? "DN" : "UP")} toY={ropeStep.TargetY} feetY={feetY} lastFeetY={nav.LastRopeFeetY}"
+                        + $" ropeU1={IsRopeTile(launchCol, feetY - 1)} ropeHead={IsRopeTile(launchCol, feetY - 2)} ropeD1={IsRopeTile(launchCol, feetY + 1)}"
+                        + $" solidU2={IsNavigationSolid(launchCol, feetY - 2)} solidU3={IsNavigationSolid(launchCol, feetY - 3)}"
                         + $" eng={nav.RopeEngaged} latch={nav.RopeDirLatched} dismount={nav.RopeDismounting}"
                         + $" stall={nav.RopeStallFrames} atEnd={atEnd} reached={reached}]";
                 }
@@ -3888,7 +3888,7 @@ namespace tsorcRevamp.NPCs
         {
             public StepKind Kind;
             public int TargetX, TargetY, LaunchX;
-            public PlanStep(StepKind k, int tx, int ty, int lx) { Kind = k; TargetX = tx; TargetY = ty; LaunchX = lx; }
+            public PlanStep(StepKind kind, int targetX, int targetY, int launchX) { Kind = kind; TargetX = targetX; TargetY = targetY; LaunchX = launchX; }
         }
 
         private enum EdgeKind { Walk, JumpUp, JumpGap, Drop, PlatformDrop, RopeClimb }
@@ -3919,10 +3919,10 @@ namespace tsorcRevamp.NPCs
                 int i = heap.Count - 1;
                 while (i > 0)
                 {
-                    int p = (i - 1) / 2;
-                    if (heap[p].prio <= heap[i].prio) break;
-                    (heap[p], heap[i]) = (heap[i], heap[p]);
-                    i = p;
+                    int parent = (i - 1) / 2;
+                    if (heap[parent].prio <= heap[i].prio) break;
+                    (heap[parent], heap[i]) = (heap[i], heap[parent]);
+                    i = parent;
                 }
             }
             public T Pop()
