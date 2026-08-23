@@ -101,7 +101,7 @@ Mods: {
 				Rash:
 					'''
 					[c/6cac6c:+{0}% attack speed]
-					[c/9b6263:-{1} life regen]
+					[c/9b6263:-{1} life regen per second]
 					'''
 				Intrepid:
 					'''
