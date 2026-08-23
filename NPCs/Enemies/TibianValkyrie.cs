@@ -19,6 +19,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetDefaults()
         {
+            // Kept alongside the FindFrame override below (same pairing as TibianValkyrieSmart4, which is
+            // verified good): tModLoader runs vanilla's framing FIRST, then the override. Vanilla still
+            // advances frameCounter/spriteDirection — which the override's walk cycle reads — while the
+            // override replaces vanilla's idle/jump pose choice, whose exact `velocity != 0f` compares
+            // showed the jump frame while she stood still.
             AnimationType = NPCID.Skeleton;
             NPC.aiStyle = -1;
             NPC.height = 40;
@@ -156,6 +161,49 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
         #endregion
+
+        // Custom framing for this sheet's layout (15 frames):
+        //   frame 0      = jump
+        //   frame 6 (7th)= standing / idle (feet together)
+        //   frames 1..14 = walk cycle
+        // Ported from TibianValkyrieSmart4 (which renders from THIS sheet, so the layout is identical and
+        // its frame indices are verified good). Vanilla's Skeleton framing showed the jump pose on ~2/3 of
+        // stationary frames and held a mid-walk pose at rest instead of the feet-together idle.
+        private const int IdleFrameIndex = 6;
+        private const int JumpFrameIndex = 0;
+        public override void FindFrame(int frameHeight)
+        {
+            int frameCount = Main.npcFrameCount[NPC.type];
+            // Airborne -> jump frame. 0.1f deadzone, mirroring the horizontal one below: a body resting on
+            // ground keeps a few hundredths of residual Y velocity from gravity that collision never zeroes,
+            // so an exact != 0f compare showed the jump pose while she stood visibly still.
+            if (System.Math.Abs(NPC.velocity.Y) > 0.1f)
+            {
+                NPC.frame.Y = JumpFrameIndex * frameHeight;
+                return;
+            }
+            // Idle: grounded and essentially stationary -> standing frame.
+            // NOTE: do NOT reset frameCounter here. The AI frequently dips velocity below this threshold
+            // for a frame or two while maneuvering; zeroing the counter on every dip pinned the walk cycle
+            // to frame 1 ("stuck walking"). Holding the counter lets the cycle resume seamlessly.
+            if (System.Math.Abs(NPC.velocity.X) < 0.2f)
+            {
+                NPC.frame.Y = IdleFrameIndex * frameHeight;
+                return;
+            }
+            // Walking -> the standard vanilla fighter walk cycle over frames 1..frameCount-1, speed-paced.
+            NPC.frameCounter += 1.0 + System.Math.Abs(NPC.velocity.X) * 0.5;
+            if (NPC.frameCounter > 6.0)
+            {
+                NPC.frame.Y += frameHeight;
+                NPC.frameCounter = 0.0;
+            }
+            int walkIndex = NPC.frame.Y / frameHeight;
+            if (walkIndex < 1 || walkIndex >= frameCount)
+            {
+                NPC.frame.Y = frameHeight; // wrap to the first walk frame (frame 0 is reserved for the jump pose)
+            }
+        }
 
         public override void AI()
         {

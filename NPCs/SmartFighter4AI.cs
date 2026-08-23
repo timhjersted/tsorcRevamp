@@ -41,6 +41,24 @@ namespace tsorcRevamp.NPCs
         private const int MaxDropDepth = 24;
         private const int MaxJumpRiseTiles = 30;
         private const int StepTimeoutFrames = 180;
+        // No-path recovery cadence. Every NoPathRetryFrames of standing still with no plan counts one strike;
+        // strikes below the allowance wipe bad-edge memory and force a replan, and only the last one disengages.
+        // Allowance = NavGiveUpTicks / NoPathRetryFrames, clamped to MaxNoPathRetries so a 600-tick lever gives
+        // ~6s of trying rather than a full 10s of standing at a wall. NavGiveUpTicks 90 still yields 1 strike,
+        // preserving the old instant-give-up for anything deliberately tuned that way.
+        private const int NoPathRetryFrames = 90;
+        private const int MaxNoPathRetries = 4;
+        // Progress-based stall detection. Every OTHER anti-stuck guard in Run measures X displacement, which a
+        // two-policy ping-pong defeats: in the igloo log the NPC covered 26 tiles of X travel in 30s (plan pulling
+        // left to a jump launch column, the no-plan chase pulling right off the roof) while never closing on the
+        // player, so all three guards read "moving" and reset. This one measures the only thing that matters —
+        // did the distance to the player actually improve. 32px = 2 tiles of real closing per 240-frame (~4s) window.
+        private const int ProgressStallFrames = 240;
+        private const float ProgressEpsilonPx = 32f;
+        // After a plan is torn up, hold off the no-plan cliff-drop chase this long (~0.5s). A one-frame plan gap
+        // used to hand control straight to "walk off the ledge toward the player", which undid the alignment the
+        // plan had just built and drove the oscillation.
+        private const int PlanGraceDuration = 30;
         private const float TileF = 16f;
         private const float AlignTolerancePx = 12f;
         // Minimum acceleration used when settling onto a jump launch column (see ExecJump). Decouples
@@ -272,6 +290,7 @@ namespace tsorcRevamp.NPCs
             _clearanceHeight = globalNPC.MinSurfaceWidth > 0 ? Math.Max(3, (int)Math.Ceiling(npc.height / 16f)) : 3;
             _canUseRopes = globalNPC.CanUseRopes; // per-enemy rope opt-in (default off)
             _canPassWalls = globalNPC.CanPassThroughWalls; // ghosts: refuse wall-wedging near-vertical jump launches (pit escape)
+            _canOpenDoors = doorBreakingDamage > 0; // door-openers must not see a closed door as a wall (see IsNavigationSolid)
             float jumpCeil = Math.Max(globalNPC.MaxJumpPower, 5f);
             float boostCeil = Math.Max(globalNPC.MaxJumpBoost, 2f);
 
@@ -438,9 +457,13 @@ namespace tsorcRevamp.NPCs
                     // while grounded and actively setting up a jump step, suppress the replan. The escape hatch
                     // is ExecJump's own StepTimer: a jump that can't be completed times out (<=3s), bad-edges
                     // its target, and forces a clean reroute — deliberate commit, then reroute, never churn.
-                    bool approachingJump = nav.Plan != null && nav.PlanIndex < nav.Plan.Count
-                        && (nav.Plan[nav.PlanIndex].Kind == StepKind.JumpUp || nav.Plan[nav.PlanIndex].Kind == StepKind.JumpGap);
-                    if (!nav.IsCommitted && !approachingJump && grounded && nav.ReplanCooldown == 0 && ShouldReplan(nav, npc, player))
+                    // Widened from jump steps to ANY step in progress. The same abandon-and-restart churn applies
+                    // to a Walk leg of a long way-around route: a plan whose first steps lead AWAY from the player
+                    // (out of a dead end, around a building) is the most valuable kind and the easiest to lose,
+                    // because any rebuild re-picks the short direct route that already failed. Staleness stays
+                    // bounded by ExecuteStep's own StepTimer (<=3s), which bad-edges the target and reroutes.
+                    bool executingStep = nav.Plan != null && nav.PlanIndex < nav.Plan.Count;
+                    if (!nav.IsCommitted && !executingStep && grounded && nav.ReplanCooldown == 0 && ShouldReplan(nav, npc, player))
                     {
                         Replan(nav, npc, player, topSpeed);
                         nav.ReplanCooldown = ReplanCooldown;
@@ -537,7 +560,11 @@ namespace tsorcRevamp.NPCs
                             int frontXc = GetFrontTileX(npc, dir);
                             int feetYc = GetFeetTileY(npc);
                             bool dropLands = GetDropDepth(frontXc, feetYc, MaxDropDepth) <= MaxDropDepth;
-                            bool allowCliffDrop = playerBelow && dropLands;
+                            // PlanGraceFrames: a plan was just torn up. Walking off the ledge toward the player
+                            // right now is what undid the alignment the plan had built (the igloo-roof ping-pong),
+                            // so hold the cliff-halt for ~0.5s and let the replan land first. Only the DROP is
+                            // suppressed — ordinary chasing on this level continues.
+                            bool allowCliffDrop = playerBelow && dropLands && nav.PlanGraceFrames == 0;
                             actionHandled = TryLocalTerrain(nav, npc, dir, jumpCeil, boostCeil, topSpeed,
                                 allowCliffDrop, out actionLabel, out reasonLabel);
                             if (!actionHandled)
@@ -636,26 +663,58 @@ namespace tsorcRevamp.NPCs
                         nav.StuckCheckX = npc.Center.X;
                         nav.StuckGiveUpFrames = 0;
                     }
-                    else if (++nav.StuckGiveUpFrames > 90) // ~1.5s of immobility before giving up to patrol
+                    else if (++nav.StuckGiveUpFrames > NoPathRetryFrames)
                     {
-                        bool nearbyRecovery = globalNPC.CanTeleport
-                            && globalNPC.TeleportStyle == TeleportStyle.RecoveryOnly
-                            && globalNPC.TeleportCooldownTimer == 0
-                            && (globalNPC.RecoveryTeleportMaxRange <= 0f
-                                || npc.Distance(player.Center) <= globalNPC.RecoveryTeleportMaxRange);
-                        if (nearbyRecovery)
+                        nav.StuckGiveUpFrames = 0;
+                        nav.NoPathStrikes++;
+
+                        // Escalate rather than quit outright. The sibling StepNoMoveFrames guard only runs while a
+                        // plan EXISTS, so an enemy that never gets a plan (A* connectivity failure) skipped the
+                        // reroute stage entirely and hit this give-up after a single 1.5s window. Strikes 1..N-1 are
+                        // RECOVERY attempts: wipe the bad-edge memory (its 480-frame expiry far outlives this window,
+                        // so one failed step can keep the only good route banned) and force an immediate replan.
+                        int retriesAllowed = Math.Clamp(globalNPC.NavGiveUpTicks / NoPathRetryFrames, 1, MaxNoPathRetries);
+                        bool retrying = nav.NoPathStrikes < retriesAllowed;
+
+                        if (retrying)
                         {
-                            if (Main.netMode != NetmodeID.MultiplayerClient
-                                && !tsorcRevampAIs.TryTeleportReacquire(npc, globalNPC))
+                            nav.BadEdgeTargets.Clear();
+                            nav.Plan = null;
+                            nav.PlanIndex = 0;
+                            nav.CommitFrames = 0;
+                            nav.ReplanCooldown = 0;
+                            nav.LastPlanResult = $"no-path retry {nav.NoPathStrikes}/{retriesAllowed}";
+                        }
+                        else
+                        {
+                            // Retries exhausted: blink out if this enemy has a recovery teleport, else disengage.
+                            nav.NoPathStrikes = 0;
+                            bool nearbyRecovery = globalNPC.CanTeleport
+                                && globalNPC.TeleportStyle == TeleportStyle.RecoveryOnly
+                                && globalNPC.TeleportCooldownTimer == 0
+                                && (globalNPC.RecoveryTeleportMaxRange <= 0f
+                                    || npc.Distance(player.Center) <= globalNPC.RecoveryTeleportMaxRange);
+                            if (nearbyRecovery)
+                            {
+                                if (Main.netMode != NetmodeID.MultiplayerClient
+                                    && !tsorcRevampAIs.TryTeleportReacquire(npc, globalNPC))
+                                {
+                                    NavBehavior.ForceDisengage(npc, globalNPC);
+                                }
+                            }
+                            else
                             {
                                 NavBehavior.ForceDisengage(npc, globalNPC);
                             }
                         }
-                        else NavBehavior.ForceDisengage(npc, globalNPC);
-                        nav.StuckGiveUpFrames = 0;
                     }
                 }
-                else { nav.StuckCheckX = npc.Center.X; nav.StuckGiveUpFrames = 0; }
+                else
+                {
+                    nav.StuckCheckX = npc.Center.X;
+                    nav.StuckGiveUpFrames = 0;
+                    nav.NoPathStrikes = 0;
+                }
 
                 // Plan-execution immobility guard (the "stuck till I hit it" freeze). The per-step
                 // StepTimer escape is defeated for Walk steps because every replan (player twitch → A*
@@ -735,6 +794,46 @@ namespace tsorcRevamp.NPCs
                     }
                 }
                 else { nav.HardStuckCheckX = float.MaxValue; nav.HardStuckFrames = 0; nav.HardStuckStrikes = 0; }
+
+                // Progress stall catch-all (see ProgressStallFrames). The guards above all ask "did the body
+                // move?"; this one asks "did the body get CLOSER?". An oscillation between two competing
+                // policies satisfies the first and fails the second, which is exactly the igloo-roof loop.
+                // Reaction is deliberately mild: ban the step we kept failing so A* stops re-proposing it, tear
+                // up the plan, and open a grace window so the no-plan chase doesn't immediately undo it. Repeated
+                // stalls therefore pile up bad edges until A* genuinely reports no-path, at which point the
+                // NoPathStrikes escalation owns the disengage decision — one give-up path, not two.
+                if (pstate == PursuitState.Pursue && !canEngage && !activeRopeRide)
+                {
+                    float distToPlayer = npc.Distance(player.Center);
+
+                    if (distToPlayer < nav.PursuitBestDist - ProgressEpsilonPx)
+                    {
+                        nav.PursuitBestDist = distToPlayer;
+                        nav.PursuitStallFrames = 0;
+                    }
+                    else if (++nav.PursuitStallFrames > ProgressStallFrames)
+                    {
+                        if (nav.Plan != null && nav.PlanIndex < nav.Plan.Count)
+                        {
+                            PlanStep stalledStep = nav.Plan[nav.PlanIndex];
+                            nav.BadEdgeTargets[(stalledStep.TargetX, stalledStep.TargetY)] = (int)Main.GameUpdateCount + 480;
+                        }
+
+                        nav.Plan = null;
+                        nav.PlanIndex = 0;
+                        nav.CommitFrames = 0;
+                        nav.ReplanCooldown = 0;
+                        nav.PursuitStallFrames = 0;
+                        nav.PursuitBestDist = distToPlayer; // re-baseline so the next window judges the new route
+                        nav.PlanGraceFrames = PlanGraceDuration;
+                        nav.LastPlanResult = $"progress-stall d={distToPlayer / TileF:F1}";
+                    }
+                }
+                else
+                {
+                    nav.PursuitBestDist = float.MaxValue;
+                    nav.PursuitStallFrames = 0;
+                }
             }
 
             // Phase 2: a large beast bulls straight through a thin (<= BeastPhaseMaxWidth) body/head obstruction
@@ -834,6 +933,7 @@ namespace tsorcRevamp.NPCs
             if (nav.ReplanCooldown > 0) nav.ReplanCooldown--;
             if (nav.PlatformPassTimer > 0) nav.PlatformPassTimer--;
             if (nav.RepositionTimer > 0) nav.RepositionTimer--;
+            if (nav.PlanGraceFrames > 0) nav.PlanGraceFrames--;
         }
 
         // Stand-and-fire tuning: brief stand (~1 attack), then a longer reposition window so the
@@ -910,6 +1010,12 @@ namespace tsorcRevamp.NPCs
         // LaunchTrailClear in TryFindJumpEdge) — so a ghost pinned in a pit backs off to a clear launch column and
         // arcs up-and-over instead of re-committing to an unmakeable wall-hug jump forever (the pit-wedge loop).
         private static bool _canPassWalls = false;
+        // Can this enemy get through a closed door this frame (set in Run from the doorBreakingDamage arg)? A door
+        // is only a wall to something that can't open it. IsNavigationSolid used to count ClosedDoor as solid
+        // unconditionally, so the span graph never built a Walk/Jump edge through ANY doorway — while TryDoor
+        // happily opened doors during local walking. Result: A* reported no-path across every interior wall with a
+        // door in it, and the no-plan give-up disengaged the pursuit. Default false (a plain caller passing 0).
+        private static bool _canOpenDoors = false;
 
         private static void Replan(NavState nav, NPC npc, Player player, float topSpeed)
         {
@@ -966,8 +1072,30 @@ namespace tsorcRevamp.NPCs
             {
                 nav.Plan = null; nav.PlanIndex = 0;
                 nav.NoAStarPath = true;
+                // Which KIND of connectivity failure this is. Flood the edge graph from start: "reach" is how many
+                // of the spans are reachable at all. reach≈1-2 means the NPC's own footing is walled off (local
+                // problem — a doorway, a lip, a too-tall step); reach≈spans means the graph is healthy and the goal
+                // side is specifically cut off (a barrier between the two rooms). Only runs on failure, so the
+                // flood costs nothing on the normal path.
+                HashSet<Span> reached = new HashSet<Span> { start };
+                Stack<Span> frontier = new Stack<Span>();
+                frontier.Push(start);
+                while (frontier.Count > 0)
+                {
+                    Span at = frontier.Pop();
+                    foreach (Edge edge in at.Edges)
+                    {
+                        if (reached.Add(edge.To))
+                        {
+                            frontier.Push(edge.To);
+                        }
+                    }
+                }
+
                 nav.LastPlanResult = nav.LastReplanResult =
-                    $"no-path spans={spans.Count} bade={nav.BadEdgeTargets.Count} r={radius}";
+                    $"no-path spans={spans.Count} reach={reached.Count} bade={nav.BadEdgeTargets.Count} r={radius}"
+                    + $" start=({start.LeftX}-{start.RightX}@{start.Y})/e{start.Edges.Count}"
+                    + $" goal=({goal.LeftX}-{goal.RightX}@{goal.Y})/e{goal.Edges.Count}";
                 return;
             }
 
@@ -3399,7 +3527,17 @@ namespace tsorcRevamp.NPCs
             Tile t = Main.tile[x, y];
             if (!t.HasTile || t.IsActuated || TileID.Sets.Platforms[t.TileType]) return false;
             if (!Main.tileSolid[t.TileType]) return false;
-            return !Main.tileFrameImportant[t.TileType] || t.TileType == TileID.ClosedDoor;
+
+            // A closed door blocks navigation only for an enemy that can't open one. Door-openers
+            // (_canOpenDoors, from Run's doorBreakingDamage) must see straight through it, or the span graph
+            // builds no edge across the doorway and A* reports no-path through every interior wall. Opening
+            // itself is unaffected — TryDoor/TryFindClosedDoor match TileType directly, not this predicate.
+            if (t.TileType == TileID.ClosedDoor)
+            {
+                return !_canOpenDoors;
+            }
+
+            return !Main.tileFrameImportant[t.TileType];
         }
 
         private static bool TryFindClosedDoor(int frontX, int feetY, out int doorX, out int doorY)
@@ -3574,6 +3712,10 @@ namespace tsorcRevamp.NPCs
                     // the rope fallback within the same frame and never showed why pathing actually failed.
                     + $" astar=\"{nav.LastReplanResult}\"@{(nav.LastReplanTick < 0 ? "never" : (now - nav.LastReplanTick).ToString())}"
                     + $" noPath={nav.NoAStarPath} giveup={nav.StuckGiveUpFrames} hard={nav.HardStuckStrikes}/{nav.HardStuckFrames}"
+                    // stall = frames since the distance-to-player last improved / best distance in tiles;
+                    // grace = frames left with the no-plan cliff-drop chase suppressed. A rising stall with a
+                    // flat best-dist is the oscillation signature the X-displacement guards can't see.
+                    + $" stall={nav.PursuitStallFrames}/{(nav.PursuitBestDist == float.MaxValue ? "-" : (nav.PursuitBestDist / TileF).ToString("F1"))} grace={nav.PlanGraceFrames}"
                     + $" pursuit={globalNPC.PursuitState}"
                     + $" disengage={globalNPC.DisengageTimer}/{globalNPC.NavGiveUpTicks}"
                     + DiagnosticBlock(npc, globalNPC)
@@ -3634,6 +3776,15 @@ namespace tsorcRevamp.NPCs
             // patrols instead of pressing forever (the "stands at the wall" bug).
             public float LastPursuitDist = float.MaxValue;
             public int StuckGiveUpFrames;
+            // Consecutive NoPathRetryFrames windows spent with no plan and no X movement. Cleared the moment a
+            // plan appears or the NPC actually moves; drives the retry-then-disengage escalation in Run.
+            public int NoPathStrikes;
+            // Best (smallest) distance to the player achieved during this pursuit, and how long since it last
+            // improved. float.MaxValue = window not open. Drives the progress stall catch-all in Run.
+            public float PursuitBestDist = float.MaxValue;
+            public int PursuitStallFrames;
+            // Frames left in which the no-plan cliff-drop chase stays suppressed after a plan was torn up.
+            public int PlanGraceFrames;
             public float StuckCheckX = float.MaxValue; // NPC X at the last anti-stuck checkpoint
             // Hard-stuck catch-all (Fix C): raw X-immobility while trying to move, independent of canEngage/LOS, so a
             // wedged-but-"engaged" NPC (no-headroom pit with the player adjacent) still escapes via blink/disengage.

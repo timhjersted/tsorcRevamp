@@ -120,8 +120,10 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void FindFrame(int frameHeight)
         {
             int frameCount = Main.npcFrameCount[NPC.type];
-            // Airborne -> jump frame.
-            if (NPC.velocity.Y != 0f)
+            // Airborne -> jump frame. 0.1f deadzone, mirroring the horizontal one below: a body resting on
+            // ground keeps a few hundredths of residual Y velocity from gravity that collision never zeroes,
+            // so an exact != 0f compare showed the jump pose while she stood visibly still.
+            if (System.Math.Abs(NPC.velocity.Y) > 0.1f)
             {
                 NPC.frame.Y = JumpFrameIndex * frameHeight;
                 return;
