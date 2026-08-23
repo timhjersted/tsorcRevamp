@@ -1082,8 +1082,8 @@ namespace tsorcRevamp.NPCs
                 frontier.Push(start);
                 while (frontier.Count > 0)
                 {
-                    Span at = frontier.Pop();
-                    foreach (Edge edge in at.Edges)
+                    Span reachedSpan = frontier.Pop();
+                    foreach (Edge edge in reachedSpan.Edges)
                     {
                         if (reached.Add(edge.To))
                         {
@@ -1120,8 +1120,8 @@ namespace tsorcRevamp.NPCs
                 int spanStart = -1;
                 for (int x = xMin; x <= xMax; x++)
                 {
-                    bool ok = IsStandableTile(x, y + 1) && HasBodyClearanceAtRow(x, y);
-                    if (ok)
+                    bool standable = IsStandableTile(x, y + 1) && HasBodyClearanceAtRow(x, y);
+                    if (standable)
                     {
                         if (spanStart == -1) spanStart = x;
                     }
@@ -1154,10 +1154,10 @@ namespace tsorcRevamp.NPCs
         private static void BuildEdges(List<Span> spans, int playerY, Dictionary<(int x, int y), int> badEdges)
         {
             Dictionary<int, List<Span>> byY = new Dictionary<int, List<Span>>();
-            foreach (var sp in spans)
+            foreach (var span in spans)
             {
-                if (!byY.TryGetValue(sp.Y, out var bucket)) { bucket = new List<Span>(); byY[sp.Y] = bucket; }
-                bucket.Add(sp);
+                if (!byY.TryGetValue(span.Y, out var bucket)) { bucket = new List<Span>(); byY[span.Y] = bucket; }
+                bucket.Add(span);
             }
 
             foreach (var a in spans)
@@ -1270,7 +1270,7 @@ namespace tsorcRevamp.NPCs
 
                 // ---- ROPE-CLIMB edges ----
                 // Model what a PLAYER can actually do with a rope, so the NPC only commits to ropes it can truly
-                // use to get off toward the player. A rope is only a valid edge to span bb if bb is reachable by
+                // use to get off toward the player. A rope is only a valid edge to span landingSpan if landingSpan is reachable by
                 // one of the two real dismount options:
                 //   (1) SIDE EXIT — the rope runs up PAST a ledge/platform; ride to that level and step off
                 //       left/right onto it. Works at ANY height the rope passes a standable ledge.
@@ -1284,41 +1284,41 @@ namespace tsorcRevamp.NPCs
                 {
                     if (!FindRopeSpan(x, a.Y, 5, out int ropeBottomY, out int ropeTopY)) continue;
                     if (ropeTopY >= a.Y) continue; // rope must extend above this span to climb
-                    foreach (var bb in spans)
+                    foreach (var landingSpan in spans)
                     {
-                        if (bb == a) continue;
-                        int dyClimb = a.Y - bb.Y;
+                        if (landingSpan == a) continue;
+                        int dyClimb = a.Y - landingSpan.Y;
                         if (dyClimb < 2 || dyClimb > MaxRopeClimb) continue;
-                        if (x < bb.LeftX - 1 || x > bb.RightX + 1) continue; // rope must sit under/adjacent the landing span
+                        if (x < landingSpan.LeftX - 1 || x > landingSpan.RightX + 1) continue; // rope must sit under/adjacent the landing span
 
                         bool valid = false;
                         int extra = 0;
                         int landX = x;
 
-                        if (bb.Y >= ropeTopY && bb.Y <= ropeBottomY && RopeSideExitClear(x, bb))
+                        if (landingSpan.Y >= ropeTopY && landingSpan.Y <= ropeBottomY && RopeSideExitClear(x, landingSpan))
                         {
-                            // Case 1: ride up to bb's level, step off sideways onto the ledge.
+                            // Case 1: ride up to landingSpan's level, step off sideways onto the ledge.
                             valid = true;
-                            landX = Math.Clamp(x, bb.LeftX, bb.RightX);
+                            landX = Math.Clamp(x, landingSpan.LeftX, landingSpan.RightX);
                         }
-                        else if (bb.Y < ropeTopY)
+                        else if (landingSpan.Y < ropeTopY)
                         {
                             // Case 2: ride to the rope top, jump straight up onto the platform above it.
-                            int jumpRise = ropeTopY - bb.Y;
-                            if (jumpRise >= 1 && RopeTopJumpClear(x, ropeTopY, bb)
+                            int jumpRise = ropeTopY - landingSpan.Y;
+                            if (jumpRise >= 1 && RopeTopJumpClear(x, ropeTopY, landingSpan)
                                 && ComputeJumpArc(0, jumpRise, _planGravity, _planJumpCeil, _planMaxLaunchVx, out _, out _))
                             {
                                 valid = true;
                                 extra = 2 + jumpRise; // top jumps cost a bit more than a plain side step
-                                landX = Math.Clamp(x, bb.LeftX, bb.RightX);
+                                landX = Math.Clamp(x, landingSpan.LeftX, landingSpan.RightX);
                             }
                         }
 
                         if (!valid) continue;
-                        int badP = BadEdgePenalty(x, bb.Y, badEdges);
+                        int badP = BadEdgePenalty(x, landingSpan.Y, badEdges);
                         // No break: register an edge to EVERY valid exit on this rope (each floor / the top jump).
                         // A* then picks the exit on the cheapest path to the player — i.e. the floor nearest them.
-                        a.Edges.Add(new Edge(bb, EdgeKind.RopeClimb, 3 + dyClimb / 2 + extra + badP, x, landX));
+                        a.Edges.Add(new Edge(landingSpan, EdgeKind.RopeClimb, 3 + dyClimb / 2 + extra + badP, x, landX));
                     }
                 }
             }
@@ -1379,27 +1379,27 @@ namespace tsorcRevamp.NPCs
         // Case 1 validation — can step sideways off a rope (column ropeCol) onto span bb at bb's level. The tile
         // beside the rope toward bb must be standable (floor below + body clearance) so the NPC walks straight off
         // onto the ledge. Returns false if bb is directly above the rope (that's a jump-up, not a side step).
-        private static bool RopeSideExitClear(int ropeCol, Span bb)
+        private static bool RopeSideExitClear(int ropeCol, Span landingSpan)
         {
-            int sideX = Math.Clamp(ropeCol, bb.LeftX, bb.RightX);
-            if (sideX == ropeCol) return false; // bb sits over the rope column — not a sideways exit
-            return IsStandableTile(sideX, bb.Y + 1) && HasBodyClearanceAtRow(sideX, bb.Y);
+            int sideX = Math.Clamp(ropeCol, landingSpan.LeftX, landingSpan.RightX);
+            if (sideX == ropeCol) return false; // landingSpan sits over the rope column — not a sideways exit
+            return IsStandableTile(sideX, landingSpan.Y + 1) && HasBodyClearanceAtRow(sideX, landingSpan.Y);
         }
 
-        // Case 2 validation — from the rope top, can jump straight up onto span bb above it. The vertical path
+        // Case 2 validation — from the rope top, can jump straight up onto span landingSpan above it. The vertical path
         // must be free of SOLID tiles (jump-through platforms are fine — you can pass up through them), and there
-        // must be room to land/stand on bb: a 3-wide x 2-tall clear footprint over a standable floor at the rope
+        // must be room to land/stand on landingSpan: a 3-wide x 2-tall clear footprint over a standable floor at the rope
         // column. A solid block anywhere in the path makes this impossible (you can't jump through solid).
-        private static bool RopeTopJumpClear(int ropeCol, int ropeTopY, Span bb)
+        private static bool RopeTopJumpClear(int ropeCol, int ropeTopY, Span landingSpan)
         {
-            for (int y = ropeTopY - 1; y >= bb.Y; y--)
+            for (int y = ropeTopY - 1; y >= landingSpan.Y; y--)
             {
                 if (IsNavigationSolid(ropeCol, y)) return false; // solid in the way — can't jump through it
             }
-            if (!IsStandableTile(ropeCol, bb.Y + 1)) return false; // must actually land on the platform above the rope
+            if (!IsStandableTile(ropeCol, landingSpan.Y + 1)) return false; // must actually land on the platform above the rope
             for (int dx = -1; dx <= 1; dx++)
             {
-                if (IsNavigationSolid(ropeCol + dx, bb.Y) || IsNavigationSolid(ropeCol + dx, bb.Y - 1)) return false;
+                if (IsNavigationSolid(ropeCol + dx, landingSpan.Y) || IsNavigationSolid(ropeCol + dx, landingSpan.Y - 1)) return false;
             }
             return true;
         }
@@ -1441,12 +1441,12 @@ namespace tsorcRevamp.NPCs
             for (int dx = -8; dx <= 8; dx++)
             {
                 int x = npcCx + dx;
-                if (!FindRopeSpan(x, npcFeetY, 5, out int rb, out int rt)) continue;
+                if (!FindRopeSpan(x, npcFeetY, 5, out int ropeBottomY, out int ropeTopY)) continue;
                 // Rope must extend in the direction of the player.
-                if (goUp && rt >= npcFeetY - 1) continue;   // no rope above us
-                if (!goUp && rb <= npcFeetY + 1) continue;  // no rope below us
-                int tY = goUp ? Math.Max(rt, playerFeetY)   // up: toward player, capped at top
-                              : Math.Min(rb, playerFeetY);  // down: toward player, capped at bottom
+                if (goUp && ropeTopY >= npcFeetY - 1) continue;   // no rope above us
+                if (!goUp && ropeBottomY <= npcFeetY + 1) continue;  // no rope below us
+                int tY = goUp ? Math.Max(ropeTopY, playerFeetY)   // up: toward player, capped at top
+                              : Math.Min(ropeBottomY, playerFeetY);  // down: toward player, capped at bottom
                 // Skip ropes recently marked dead — they couldn't actually deliver us to the player
                 // (e.g. rope ends below a solid roof). Prevents re-picking the same on/off-loop rope.
                 if (IsRopeFallbackBadEdged(nav, x, tY, now)) continue;
@@ -1660,9 +1660,9 @@ namespace tsorcRevamp.NPCs
             }
             else if (nav.KiteRerollTimer <= 0)
             {
-                float lo = globalNPC.KiteRangeMin > 0 ? globalNPC.KiteRangeMin : 6f;
-                float hi = globalNPC.KiteRangeMax > 0 ? globalNPC.KiteRangeMax : 20f;
-                nav.KiteTargetDist = MathHelper.Lerp(lo, hi, Main.rand.NextFloat());
+                float bandMin = globalNPC.KiteRangeMin > 0 ? globalNPC.KiteRangeMin : 6f;
+                float bandMax = globalNPC.KiteRangeMax > 0 ? globalNPC.KiteRangeMax : 20f;
+                nav.KiteTargetDist = MathHelper.Lerp(bandMin, bandMax, Main.rand.NextFloat());
                 nav.KiteHoldDrift = Main.rand.NextBool() ? 1 : -1;
                 nav.KiteRerollTimer = Main.rand.Next(90, 240); // ~1.5-4s committed
             }
@@ -1997,22 +1997,22 @@ namespace tsorcRevamp.NPCs
         {
             // Strict pass: must contain x (Â±1) and be within 3 rows.
             Span best = null; int bestScore = int.MaxValue;
-            foreach (var sp in spans)
+            foreach (var span in spans)
             {
-                if (x < sp.LeftX - 1 || x > sp.RightX + 1) continue;
-                int dy = Math.Abs(sp.Y - feetY);
+                if (x < span.LeftX - 1 || x > span.RightX + 1) continue;
+                int dy = Math.Abs(span.Y - feetY);
                 if (dy > 3) continue;
                 // Horizontal gap from x to this span, 0 when x already sits inside it. Vertical distance
                 // is weighted 10x so a span on our own row always beats one a row off.
                 int horizontalGap = 0;
 
-                if (x < sp.LeftX)
+                if (x < span.LeftX)
                 {
-                    horizontalGap = sp.LeftX - x;
+                    horizontalGap = span.LeftX - x;
                 }
-                else if (x > sp.RightX)
+                else if (x > span.RightX)
                 {
-                    horizontalGap = x - sp.RightX;
+                    horizontalGap = x - span.RightX;
                 }
 
                 int score = dy * 10 + horizontalGap;
@@ -2020,7 +2020,7 @@ namespace tsorcRevamp.NPCs
                 if (score < bestScore)
                 {
                     bestScore = score;
-                    best = sp;
+                    best = span;
                 }
             }
             if (best != null) return best;
@@ -2029,26 +2029,26 @@ namespace tsorcRevamp.NPCs
             // This catches the airborne-player case so we still get a plan toward
             // where the player most likely is/will be.
             int bestDist = int.MaxValue;
-            foreach (var sp in spans)
+            foreach (var span in spans)
             {
                 // Horizontal gap from x to this span, 0 when x already sits inside it.
                 int dx = 0;
 
-                if (x < sp.LeftX)
+                if (x < span.LeftX)
                 {
-                    dx = sp.LeftX - x;
+                    dx = span.LeftX - x;
                 }
-                else if (x > sp.RightX)
+                else if (x > span.RightX)
                 {
-                    dx = x - sp.RightX;
+                    dx = x - span.RightX;
                 }
 
-                int dy = Math.Abs(sp.Y - feetY);
+                int dy = Math.Abs(span.Y - feetY);
                 // Cap so we don't reach into far rooms. The vertical cap scales with this NPC's jump power,
                 // so high-jump experiments can still select a valid ledge span as their goal.
                 if (dx > 16 || dy > Math.Max(12, MaxPlanRiseTiles())) continue;
                 int weightedDist = dx + dy * 2;
-                if (weightedDist < bestDist) { bestDist = weightedDist; best = sp; }
+                if (weightedDist < bestDist) { bestDist = weightedDist; best = span; }
             }
             return best;
         }
@@ -2072,21 +2072,21 @@ namespace tsorcRevamp.NPCs
                 if (cur == goal)
                 {
                     var path = new List<Span>();
-                    Span c = cur;
-                    while (c != null) { path.Add(c); cameFrom.TryGetValue(c, out c); }
+                    Span node = cur;
+                    while (node != null) { path.Add(node); cameFrom.TryGetValue(node, out node); }
                     path.Reverse();
                     return path;
                 }
                 int curG = gScore[cur];
-                foreach (var e in cur.Edges)
+                foreach (var edge in cur.Edges)
                 {
-                    int tentative = curG + e.Cost;
-                    if (!gScore.TryGetValue(e.To, out int existing) || tentative < existing)
+                    int tentative = curG + edge.Cost;
+                    if (!gScore.TryGetValue(edge.To, out int existing) || tentative < existing)
                     {
-                        gScore[e.To] = tentative;
-                        cameFrom[e.To] = cur;
-                        int f = tentative + Heuristic(e.To, goalX, goalY);
-                        open.Push(e.To, f);
+                        gScore[edge.To] = tentative;
+                        cameFrom[edge.To] = cur;
+                        int fScore = tentative + Heuristic(edge.To, goalX, goalY);
+                        open.Push(edge.To, fScore);
                     }
                 }
             }
@@ -2096,11 +2096,11 @@ namespace tsorcRevamp.NPCs
         // Heuristic prefers being at the player's vertical level. Vertical mismatch
         // is weighted 5Ã— horizontal so the planner won't volunteer to drop a floor
         // unnecessarily when chasing.
-        private static int Heuristic(Span sp, int goalX, int goalY)
+        private static int Heuristic(Span span, int goalX, int goalY)
         {
-            int dx = sp.LeftX > goalX ? sp.LeftX - goalX
-                   : goalX > sp.RightX ? goalX - sp.RightX : 0;
-            int dy = Math.Abs(sp.Y - goalY);
+            int dx = span.LeftX > goalX ? span.LeftX - goalX
+                   : goalX > span.RightX ? goalX - span.RightX : 0;
+            int dy = Math.Abs(span.Y - goalY);
             return dx + dy * 5;
         }
 
@@ -2116,8 +2116,16 @@ namespace tsorcRevamp.NPCs
                 Span from = spanPath[i];
                 Span to = spanPath[i + 1];
                 Edge edge = null;
-                foreach (var e in from.Edges)
-                    if (e.To == to) { edge = e; break; }
+
+                foreach (var candidate in from.Edges)
+                {
+                    if (candidate.To == to)
+                    {
+                        edge = candidate;
+                        break;
+                    }
+                }
+
                 if (edge == null) continue;
 
                 int entry;
@@ -2301,9 +2309,9 @@ namespace tsorcRevamp.NPCs
                 int aFrontX = GetFrontTileX(npc, aDir);
                 int obstacleHeight = GetObstacleHeight(aFrontX, feetY);
                 if (obstacleHeight == 2 && npc.collideX && HasHeadroomForJump(npc, aDir, obstacleHeight)
-                    && ComputeJumpArc(2, obstacleHeight, npc.gravity, jumpCeil, topSpeed + boostCeil, out float hp, out float hvx))
+                    && ComputeJumpArc(2, obstacleHeight, npc.gravity, jumpCeil, topSpeed + boostCeil, out float hopPower, out float hopVx))
                 {
-                    FireJump(nav, npc, aDir, hp, hvx, 16, 12);
+                    FireJump(nav, npc, aDir, hopPower, hopVx, 16, 12);
                     nav.AlignStallFrames = 0;
                     action = "align-rope-hop"; reason = $"oh={obstacleHeight}";
                     return true;
@@ -2424,15 +2432,15 @@ namespace tsorcRevamp.NPCs
                 if (!descend && (atRopeEnd || forceDismount) && rise >= 2 && !solidAbove)
                 {
                     ComputeJumpArc(0, rise, npc.gravity, jumpCeil, topSpeed + boostCeil,
-                                   out float vp, out _);
+                                   out float dismountPower, out _);
                     npc.position.X = RopeSnapX(npc, step.LaunchX, ropeCenter, feetY);
                     npc.velocity.X = 0f;
-                    npc.velocity.Y = -Math.Max(vp, 6f);
+                    npc.velocity.Y = -Math.Max(dismountPower, 6f);
                     nav.AirCommitDirX = 0; nav.AirCommitTimer = 0; nav.CommittedLaunchVx = 0f;
                     nav.CommitFrames = 24;
                     nav.RopeDismounting = true; // don't let Phase 2 re-grab/re-snap while leaving
                     if (forceDismount) nav.RopeJumpedThisStep = true;
-                    action = "rope-jumpup"; reason = $"rise={rise} p={Math.Max(vp, 6f):F1}";
+                    action = "rope-jumpup"; reason = $"rise={rise} p={Math.Max(dismountPower, 6f):F1}";
                     return true;
                 }
 
@@ -3065,10 +3073,10 @@ namespace tsorcRevamp.NPCs
                 // Physics gates the gap now (not a hardcoded <=5 cap): jump only if makeable.
                 if (gapFound && gap >= 1 && gap <= 7 && landDrop <= 2)
                 {
-                    if (ComputeJumpArc(gap, -landDrop, npc.gravity, jumpCeil, maxLaunchVx, out float gp, out float gvx))
+                    if (ComputeJumpArc(gap, -landDrop, npc.gravity, jumpCeil, maxLaunchVx, out float gapPower, out float gapVx))
                     {
-                        FireJump(nav, npc, direction, gp, gvx, 26, 30);
-                        action = "gap-jump"; reason = $"gap={gap},drop={landDrop} p{gp:F1}/vx{gvx:F2}";
+                        FireJump(nav, npc, direction, gapPower, gapVx, 26, 30);
+                        action = "gap-jump"; reason = $"gap={gap},drop={landDrop} p{gapPower:F1}/vx{gapVx:F2}";
                         return true;
                     }
                     // Not makeable — halt at the edge rather than committing to a fall.
@@ -3253,9 +3261,9 @@ namespace tsorcRevamp.NPCs
         private static int GetObstacleHeight(int frontX, int feetY)
         {
             if (!IsNavigationSolid(frontX, feetY)) return 0; // open at foot level -> nothing to climb
-            int h = 1;
-            while (h <= 6 && IsNavigationSolid(frontX, feetY - h)) h++;
-            return h; // contiguous solid height in front, from the floor up
+            int height = 1;
+            while (height <= 6 && IsNavigationSolid(frontX, feetY - height)) height++;
+            return height; // contiguous solid height in front, from the floor up
         }
 
         private static bool HasHeadroomForJump(NPC npc, int direction, int obstacleHeight)
@@ -3298,8 +3306,8 @@ namespace tsorcRevamp.NPCs
             var diagBuilder = new System.Text.StringBuilder();
             for (int offset = 1; offset <= 7; offset++)
             {
-                int cx = frontX + direction * offset;
-                int depth = GetDropDepth(cx, feetY, 5);
+                int columnX = frontX + direction * offset;
+                int depth = GetDropDepth(columnX, feetY, 5);
                 // HasBodyClearanceAtRow expects the row ABOVE the landing floor (see its other call sites
                 // at BuildSpans/867 and 1114: "IsStandableTile(x, y+1) && HasBodyClearanceAtRow(x, y)").
                 // GetDropDepth/IsStandableTile's own convention makes feetY+depth the FLOOR tile's row itself,
@@ -3308,9 +3316,9 @@ namespace tsorcRevamp.NPCs
                 // then always "failed clearance" no matter how much headroom actually existed. This is why
                 // gap-jump/gap-halt never fired for any gap width: -1 aligns it to the body row above the
                 // floor, matching every other clearance check in this file.
-                bool clear = depth <= 2 && HasBodyClearanceAtRow(cx, feetY + depth - 1);
+                bool clear = depth <= 2 && HasBodyClearanceAtRow(columnX, feetY + depth - 1);
                 diagBuilder.Append(offset).Append(':').Append(depth).Append(clear ? "c" : "x").Append(' ');
-                if (clear && gapTiles == 0) { gapTiles = offset; landingDrop = depth; landingX = cx; }
+                if (clear && gapTiles == 0) { gapTiles = offset; landingDrop = depth; landingX = columnX; }
             }
             diag = diagBuilder.ToString().TrimEnd();
             return gapTiles > 0;
@@ -3427,9 +3435,9 @@ namespace tsorcRevamp.NPCs
                     }
                 }
 
-                foreach (int la in lands)
+                foreach (int landCol in lands)
                 {
-                    int adx = Math.Abs(la - launchCol);
+                    int adx = Math.Abs(landCol - launchCol);
                     // SF4: propose the edge only if this NPC can physically make the arc
                     // (gravity + jump/boost limits). Replaces the static-table membership test,
                     // so flat wide gaps (no table entry) are now correctly considered.
@@ -3441,9 +3449,9 @@ namespace tsorcRevamp.NPCs
                     // so A* picks one backed off the wall (clear trailing side) that arcs UP-AND-OVER the lip instead —
                     // i.e. walk back 1-2 tiles, then jump out. Now applies to ALL enemies (was ghost-only): non-ghosts
                     // wedge in pits the same way (e.g. the Dworc that hopped straight into the lip on the bumped side).
-                    if (dy >= 1 && adx <= 1 && !LaunchTrailClear(launchCol, la, a.Y)) continue;
-                    if (!HasTrajectoryClearance(launchCol, a.Y, la, b.Y, dy)) continue;
-                    launchX = launchCol; landX = la; absDx = adx;
+                    if (dy >= 1 && adx <= 1 && !LaunchTrailClear(launchCol, landCol, a.Y)) continue;
+                    if (!HasTrajectoryClearance(launchCol, a.Y, landCol, b.Y, dy)) continue;
+                    launchX = launchCol; landX = landCol; absDx = adx;
                     return true;
                 }
             }
@@ -3898,15 +3906,15 @@ namespace tsorcRevamp.NPCs
             public EdgeKind Kind;
             public int Cost;
             public int LaunchX, LandX;
-            public Edge(Span to, EdgeKind k, int cost, int launchX = 0, int landX = 0)
-            { To = to; Kind = k; Cost = cost; LaunchX = launchX; LandX = landX; }
+            public Edge(Span to, EdgeKind kind, int cost, int launchX = 0, int landX = 0)
+            { To = to; Kind = kind; Cost = cost; LaunchX = launchX; LandX = landX; }
         }
 
         private class Span
         {
             public int LeftX, RightX, Y;
             public List<Edge> Edges = new List<Edge>();
-            public Span(int l, int r, int y) { LeftX = l; RightX = r; Y = y; }
+            public Span(int left, int right, int y) { LeftX = left; RightX = right; Y = y; }
         }
 
         private class PriorityQueue<T>
@@ -3933,12 +3941,12 @@ namespace tsorcRevamp.NPCs
                 int i = 0;
                 while (true)
                 {
-                    int l = i * 2 + 1, r = l + 1, m = i;
-                    if (l < heap.Count && heap[l].prio < heap[m].prio) m = l;
-                    if (r < heap.Count && heap[r].prio < heap[m].prio) m = r;
-                    if (m == i) break;
-                    (heap[m], heap[i]) = (heap[i], heap[m]);
-                    i = m;
+                    int leftChild = i * 2 + 1, rightChild = leftChild + 1, smallest = i;
+                    if (leftChild < heap.Count && heap[leftChild].prio < heap[smallest].prio) smallest = leftChild;
+                    if (rightChild < heap.Count && heap[rightChild].prio < heap[smallest].prio) smallest = rightChild;
+                    if (smallest == i) break;
+                    (heap[smallest], heap[i]) = (heap[i], heap[smallest]);
+                    i = smallest;
                 }
                 return top;
             }
