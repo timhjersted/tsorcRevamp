@@ -4599,7 +4599,14 @@ namespace tsorcRevamp.NPCs
                 numPlayers -= 1;
             }
 
-            if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
+            // Puppet enemies are included even when they aren't bosses: they only entered this
+            // pipeline at all because PostSetupContent flags them NeedsExpertScaling (see
+            // EnablePuppetDifficultyScaling), and without the halving below vanilla's 2x expert
+            // life multiplier would silently double every puppet's authored lifeMax.
+            bool isModNPC = npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp");
+            bool scalesLikeBoss = npc.boss || npc.ModNPC is Puppets.PuppetNPC;
+
+            if (isModNPC && scalesLikeBoss)
             {
                 //Counter expert mode automatic scaling
                 npc.lifeMax = (int)Math.Round(npc.lifeMax / 2f);

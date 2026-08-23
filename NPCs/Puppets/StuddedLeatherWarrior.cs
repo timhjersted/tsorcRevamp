@@ -732,13 +732,6 @@ namespace tsorcRevamp.NPCs.Puppets
             ShieldProfile.LothricKnight(globalNPC);
         }
         
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) //idk what it is with puppetnpcs but it looks like it isn't even running this function
-        {
-            base.ApplyDifficultyAndPlayerScaling(numPlayers, balance, bossAdjustment);
-            int lifeMax = NPC.lifeMax;
-            NPC.lifeMax = (int)(lifeMax * balance * bossAdjustment);
-        }
-
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             // Guaranteed: the full studded leather set it wears + the iron shield it carries.

@@ -2744,10 +2744,34 @@ namespace tsorcRevamp
         }
         public static bool VanillaBossesRemadeEnabled = false;
         public static StartingClass PendingStartingClass = StartingClass.None;
+        /// <summary>
+        /// Force every PuppetNPC into vanilla's difficulty-scaling pipeline. Puppets deal all their
+        /// damage through weapon hitboxes and so set NPC.damage = 0 — which trips the early-out at
+        /// the top of NPC.ScaleStats ("lifeMax &lt;= 5 || damage == 0 || friendly || townNPC"), and
+        /// that return happens BEFORE the ApplyDifficultyAndPlayerScaling call further down. Result:
+        /// no puppet was ever scaled, by this mod's GlobalNPC hook or its own override. Setting
+        /// NeedsExpertScaling flips the guard's first clause false so the whole pipeline runs.
+        ///
+        /// Done centrally rather than per-NPC because PuppetNPC has no SetStaticDefaults of its own
+        /// and eleven subclasses override theirs independently — a base implementation would be
+        /// silently skipped by any that forgot to call base.
+        /// </summary>
+        private void EnablePuppetDifficultyScaling()
+        {
+            for (int npcType = NPCID.Count; npcType < NPCLoader.NPCCount; npcType++)
+            {
+                if (NPCLoader.GetNPC(npcType) is NPCs.Puppets.PuppetNPC)
+                {
+                    NPCID.Sets.NeedsExpertScaling[npcType] = true;
+                }
+            }
+        }
+
         public override void PostSetupContent()
         {
             ApplyFirstRunControlDefaults();
             EncounterPresentationRegistry.Initialize();
+            EnablePuppetDifficultyScaling();
 
             #region Summoners Association Compatibility
 
