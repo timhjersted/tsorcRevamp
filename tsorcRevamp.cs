@@ -370,9 +370,6 @@ namespace tsorcRevamp
 
             ApplyMethodSwaps();
             
-            WeaponPrefixEdits.ApplyWeaponPrefixEdits();
-            AccessoryPrefixEditsStats.ApplyAccessoryPrefixEdits();
-            
             ApplyILs();
             PopulateArrays();
 
