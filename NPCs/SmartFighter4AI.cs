@@ -134,17 +134,17 @@ namespace tsorcRevamp.NPCs
 
         public static bool HasActiveMovementPlan(NPC npc)
         {
-            if (!States.TryGetValue(npc.whoAmI, out NavState s))
+            if (!States.TryGetValue(npc.whoAmI, out NavState nav))
             {
                 return false;
             }
 
-            return s.IsCommitted
-                || s.AirCommitTimer > 0
-                || s.PlatformPassActive
-                || s.RopeEngaged
-                || s.RopeDismounting
-                || (s.Plan != null && s.PlanIndex < s.Plan.Count);
+            return nav.IsCommitted
+                || nav.AirCommitTimer > 0
+                || nav.PlatformPassActive
+                || nav.RopeEngaged
+                || nav.RopeDismounting
+                || (nav.Plan != null && nav.PlanIndex < nav.Plan.Count);
         }
 
         /// <summary>
@@ -154,46 +154,46 @@ namespace tsorcRevamp.NPCs
         /// </summary>
         internal static void ReleaseRopeTraversal(NPC npc, bool abandonRopeStep = true)
         {
-            if (!States.TryGetValue(npc.whoAmI, out NavState s))
+            if (!States.TryGetValue(npc.whoAmI, out NavState nav))
             {
                 return;
             }
 
-            bool activeRopeStep = s.Plan != null && s.PlanIndex < s.Plan.Count
-                && s.Plan[s.PlanIndex].Kind == StepKind.RopeClimb;
-            bool ownsRopePhysics = npc.noGravity || s.RopeEngaged || s.RopeDismounting || activeRopeStep;
+            bool activeRopeStep = nav.Plan != null && nav.PlanIndex < nav.Plan.Count
+                && nav.Plan[nav.PlanIndex].Kind == StepKind.RopeClimb;
+            bool ownsRopePhysics = npc.noGravity || nav.RopeEngaged || nav.RopeDismounting || activeRopeStep;
             if (!ownsRopePhysics)
             {
                 return;
             }
 
-            bool physicsChanged = npc.noGravity || (npc.noTileCollide && !s.PlatformPassActive);
+            bool physicsChanged = npc.noGravity || (npc.noTileCollide && !nav.PlatformPassActive);
             npc.noGravity = false;
-            if (!s.PlatformPassActive)
+            if (!nav.PlatformPassActive)
             {
                 npc.noTileCollide = false;
             }
 
-            s.RopeEngaged = false;
-            s.RopeDirLatched = false;
-            s.RopeDescend = false;
-            s.RopeDismounting = false;
-            s.RopeJumpedThisStep = false;
-            s.RopeStallFrames = 0;
-            s.LastRopeFeetY = 0;
+            nav.RopeEngaged = false;
+            nav.RopeDirLatched = false;
+            nav.RopeDescend = false;
+            nav.RopeDismounting = false;
+            nav.RopeJumpedThisStep = false;
+            nav.RopeStallFrames = 0;
+            nav.LastRopeFeetY = 0;
 
             if (abandonRopeStep)
             {
                 if (activeRopeStep)
                 {
-                    s.Plan = null;
-                    s.PlanIndex = 0;
+                    nav.Plan = null;
+                    nav.PlanIndex = 0;
                 }
-                s.CommitFrames = 0;
-                s.AirCommitTimer = 0;
-                s.AirCommitDirX = 0;
-                s.CommittedLaunchVx = 0f;
-                s.ReplanCooldown = 0;
+                nav.CommitFrames = 0;
+                nav.AirCommitTimer = 0;
+                nav.AirCommitDirX = 0;
+                nav.CommittedLaunchVx = 0f;
+                nav.ReplanCooldown = 0;
             }
             if (physicsChanged)
             {
@@ -204,15 +204,15 @@ namespace tsorcRevamp.NPCs
         /// <summary>Returns the latest movement decision in a compact form for puppet attack telemetry.</summary>
         internal static bool TryGetTelemetryState(NPC npc, out string action, out string reason, out string plan)
         {
-            if (!States.TryGetValue(npc.whoAmI, out NavState s))
+            if (!States.TryGetValue(npc.whoAmI, out NavState nav))
             {
                 action = reason = plan = "";
                 return false;
             }
 
-            action = s.LastAction ?? "";
-            reason = s.LastReason ?? "";
-            plan = s.LastTelemetryPlan ?? "none";
+            action = nav.LastAction ?? "";
+            reason = nav.LastReason ?? "";
+            plan = nav.LastTelemetryPlan ?? "none";
             return true;
         }
 
@@ -244,7 +244,7 @@ namespace tsorcRevamp.NPCs
         // movementOnly (Phase 2 Step 4): act as BasicAI's pluggable MOVEMENT substrate instead of a standalone
         // driver. When true, BasicAI already advanced the shared FSM and fired combat this frame, so SF4 must NOT
         // re-run UpdateState (side effects → double give-up clock) or fire its own attacks (double shot) — it
-        // reads g.PursuitState and only moves. holdForAttack = combat wants to stop-and-fire → hold this frame.
+        // reads globalNPC.PursuitState and only moves. holdForAttack = combat wants to stop-and-fire → hold this frame.
         // Defaults false → standalone behavior (Puppets, TibianValkyrieSmart4 testbed) still owns its own
         // combat, but shares the grounded overspeed brake below.
         public static void Run(NPC npc, float topSpeed = 1.55f, float acceleration = 0.10f,
@@ -263,22 +263,22 @@ namespace tsorcRevamp.NPCs
                 return;
             }
 
-            NavState s = GetState(npc);
-            tsorcRevampGlobalNPC g = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            _minSurfaceWidth = g.MinSurfaceWidth; // beast flat-ground gate for IsStandableTile this frame (0 = off)
-            _maxSurfaceStep = g.MaxSurfaceStep;   // tolerated footprint unevenness (Deerclops-clip failsafe)
+            NavState nav = GetState(npc);
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            _minSurfaceWidth = globalNPC.MinSurfaceWidth; // beast flat-ground gate for IsStandableTile this frame (0 = off)
+            _maxSurfaceStep = globalNPC.MaxSurfaceStep;   // tolerated footprint unevenness (Deerclops-clip failsafe)
             // Headroom: beasts (MinSurfaceWidth > 0) require their full sprite height of clearance; others keep the
             // old fixed 3 tiles. Auto-derived from the sprite so a tall beast won't path into a too-short space.
-            _clearanceHeight = g.MinSurfaceWidth > 0 ? Math.Max(3, (int)Math.Ceiling(npc.height / 16f)) : 3;
-            _canUseRopes = g.CanUseRopes; // per-enemy rope opt-in (default off)
-            _canPassWalls = g.CanPassThroughWalls; // ghosts: refuse wall-wedging near-vertical jump launches (pit escape)
-            float jumpCeil = Math.Max(g.MaxJumpPower, 5f);
-            float boostCeil = Math.Max(g.MaxJumpBoost, 2f);
+            _clearanceHeight = globalNPC.MinSurfaceWidth > 0 ? Math.Max(3, (int)Math.Ceiling(npc.height / 16f)) : 3;
+            _canUseRopes = globalNPC.CanUseRopes; // per-enemy rope opt-in (default off)
+            _canPassWalls = globalNPC.CanPassThroughWalls; // ghosts: refuse wall-wedging near-vertical jump launches (pit escape)
+            float jumpCeil = Math.Max(globalNPC.MaxJumpPower, 5f);
+            float boostCeil = Math.Max(globalNPC.MaxJumpBoost, 2f);
 
-            TickTimers(s);
-            ManagePlatformPass(s, npc);
-            bool activeRopeStep = s.Plan != null && s.PlanIndex < s.Plan.Count
-                && s.Plan[s.PlanIndex].Kind == StepKind.RopeClimb;
+            TickTimers(nav);
+            ManagePlatformPass(nav, npc);
+            bool activeRopeStep = nav.Plan != null && nav.PlanIndex < nav.Plan.Count
+                && nav.Plan[nav.PlanIndex].Kind == StepKind.RopeClimb;
             if (npc.noGravity && !activeRopeStep)
             {
                 // Defensive recovery for a shared-AI early return that abandoned a rope between SF4 frames.
@@ -287,7 +287,7 @@ namespace tsorcRevamp.NPCs
             // Safety: never leave noTileCollide stuck on outside an active platform pass OR a rope
             // climb (noGravity), or the NPC can phase through solid walls (the "passed through a
             // wall" bug). Rope climb legitimately uses noTileCollide and is excluded here.
-            if (npc.noTileCollide && !s.PlatformPassActive && !npc.noGravity) npc.noTileCollide = false;
+            if (npc.noTileCollide && !nav.PlatformPassActive && !npc.noGravity) npc.noTileCollide = false;
             bool grounded = IsGrounded(npc);
 
             // ── Reactive evasion (armed by EvasiveOnHit; inert without an EvasiveProfile) ──────
@@ -295,22 +295,22 @@ namespace tsorcRevamp.NPCs
             // tick the rate-limit cooldown + the sustained-window driver, hold during a RunningDash
             // telegraph, yield to a RetreatAndShoot back-off, and apply the dash burst's speed
             // multiplier.  Fully inert for enemies that never arm an evasion.
-            if (g.FighterEvasionCooldown > 0)
-                g.FighterEvasionCooldown--;
-            tsorcRevampAIs.UpdateEvasion(npc, g);
-            if (g.InSustainedEvasion)
+            if (globalNPC.FighterEvasionCooldown > 0)
+                globalNPC.FighterEvasionCooldown--;
+            tsorcRevampAIs.UpdateEvasion(npc, globalNPC);
+            if (globalNPC.InSustainedEvasion)
             {
-                if (g.CurrentEvasion == EvasiveBehavior.RunningDash && g.EvasiveTelegraphing)
+                if (globalNPC.CurrentEvasion == EvasiveBehavior.RunningDash && globalNPC.EvasiveTelegraphing)
                 {
                     npc.velocity.X *= 0.6f; // hold position while the dash telegraph flashes
                     return;
                 }
-                if (g.CurrentEvasion == EvasiveBehavior.RetreatAndShoot)
+                if (globalNPC.CurrentEvasion == EvasiveBehavior.RetreatAndShoot)
                     return; // UpdateEvasion already drives the grounded back-off — don't fight it
-                if (g.CurrentEvasion == EvasiveBehavior.RunningDash)
-                    topSpeed *= g.EvasiveDashSpeedMult; // burst: keep pursuing, but fast
+                if (globalNPC.CurrentEvasion == EvasiveBehavior.RunningDash)
+                    topSpeed *= globalNPC.EvasiveDashSpeedMult; // burst: keep pursuing, but fast
             }
-            else if (!grounded && g.FighterEvasionCooldown > 30)
+            else if (!grounded && globalNPC.FighterEvasionCooldown > 30)
             {
                 // A one-shot evasion hop (LeapForward / RetreatDash / RetreatJump / TeleportAway)
                 // just launched — let the ballistic arc carry it instead of re-steering toward the
@@ -328,15 +328,15 @@ namespace tsorcRevamp.NPCs
             // physics arc lands where intended. (SF3 clamped to topSpeed*1.3 here, which erased
             // the horizontal launch speed every frame and made the NPC fall short of gaps.)
             // Drops and other commits with no computed arc fall back to the old gentle clamp.
-            if (!grounded && s.AirCommitTimer > 0 && s.AirCommitDirX != 0)
+            if (!grounded && nav.AirCommitTimer > 0 && nav.AirCommitDirX != 0)
             {
-                if (s.CommittedLaunchVx != 0f)
+                if (nav.CommittedLaunchVx != 0f)
                 {
-                    npc.velocity.X = s.CommittedLaunchVx;
+                    npc.velocity.X = nav.CommittedLaunchVx;
                 }
                 else
                 {
-                    float t = s.AirCommitDirX * topSpeed * 1.05f;
+                    float t = nav.AirCommitDirX * topSpeed * 1.05f;
                     npc.velocity.X = MathHelper.Clamp(t, -topSpeed * 1.3f, topSpeed * 1.3f);
                 }
             }
@@ -346,14 +346,14 @@ namespace tsorcRevamp.NPCs
             // a lip that sits IN its path; this late-drift is the only way out. Cleared when we land.
             if (grounded)
             {
-                s.ShaftEscapeDir = 0;
+                nav.ShaftEscapeDir = 0;
             }
-            else if (s.ShaftEscapeDir != 0)
+            else if (nav.ShaftEscapeDir != 0)
             {
                 int escFeetY = GetFeetTileY(npc);
                 // Column just past the body's LEADING edge in the drift direction (full-width aware, so a wide body
                 // only drifts once its actual edge — not just the center+1 column — has cleared the lip).
-                int escSide = s.ShaftEscapeDir > 0
+                int escSide = nav.ShaftEscapeDir > 0
                     ? (int)((npc.position.X + npc.width) / TileF)
                     : (int)(npc.position.X / TileF) - 1;
                 bool sideClear = !IsNavigationSolid(escSide, escFeetY)
@@ -361,7 +361,7 @@ namespace tsorcRevamp.NPCs
                               && !IsNavigationSolid(escSide, escFeetY - 2);
                 // Drift a touch faster than the (possibly low health-scaled) top speed so it reliably carries onto
                 // the ledge before gravity pulls it back past the lip.
-                npc.velocity.X = sideClear ? s.ShaftEscapeDir * Math.Max(topSpeed, 2.5f) : 0f;
+                npc.velocity.X = sideClear ? nav.ShaftEscapeDir * Math.Max(topSpeed, 2.5f) : 0f;
             }
 
             // ---- Macro-state FSM (Pursue / Search / Patrol) ----
@@ -371,14 +371,14 @@ namespace tsorcRevamp.NPCs
             // Progress = closing on the player, OR actively executing a path (so a multi-tile reroute
             // that temporarily moves away isn't read as "stuck" and made to give up mid-route).
             float distNow = npc.Distance(player.Center);
-            bool madeProgress = distNow < s.LastPursuitDist - 1f
-                || (s.Plan != null && s.PlanIndex < s.Plan.Count);
-            s.LastPursuitDist = distNow;
+            bool madeProgress = distNow < nav.LastPursuitDist - 1f
+                || (nav.Plan != null && nav.PlanIndex < nav.Plan.Count);
+            nav.LastPursuitDist = distNow;
             // movementOnly: BasicAI already advanced the shared FSM this frame; calling UpdateState again would
             // double-step its side effects (give-up clock, re-aggro, last-known-pos). Read the state it set.
             PursuitState pstate = movementOnly
-                ? g.PursuitState
-                : NavBehavior.UpdateState(npc, g, player, los, madeProgress, attackRange);
+                ? globalNPC.PursuitState
+                : NavBehavior.UpdateState(npc, globalNPC, player, los, madeProgress, attackRange);
 
             string actionLabel = "idle", reasonLabel = "";
             bool actionHandled = false;
@@ -388,7 +388,7 @@ namespace tsorcRevamp.NPCs
             // Suppressed while a plan step is in progress: the NPC should finish navigating to its destination
             // before standing still to shoot. Without this guard an archer on a raised tile zeroes its own X
             // velocity before it can step down, bouncing on the ledge edge indefinitely.
-            bool hasPlanStep = s.Plan != null && s.PlanIndex < s.Plan.Count;
+            bool hasPlanStep = nav.Plan != null && nav.PlanIndex < nav.Plan.Count;
             int holdDir = player.Center.X >= npc.Center.X ? 1 : -1;
             bool needsStepUp = grounded && !hasPlanStep && HasOneTileStepAhead(npc, holdDir);
             bool navigationRequiresHold = TryGetFiringHoldReason(npc, player, holdDir, los, out string holdReason);
@@ -405,10 +405,10 @@ namespace tsorcRevamp.NPCs
             {
                 // Gave up the chase: patrol instead of pathing/standing-forever. Drop any stale plan.
                 ReleaseRopeTraversal(npc);
-                s.Plan = null; s.PlanIndex = 0; s.CommitFrames = 0; s.StuckGiveUpFrames = 0;
-                NavBehavior.RunPatrol(npc, g, topSpeed, acceleration);
+                nav.Plan = null; nav.PlanIndex = 0; nav.CommitFrames = 0; nav.StuckGiveUpFrames = 0;
+                NavBehavior.RunPatrol(npc, globalNPC, topSpeed, acceleration);
                 actionHandled = true;
-                actionLabel = "patrol"; reasonLabel = g.PatrolMode.ToString();
+                actionLabel = "patrol"; reasonLabel = globalNPC.PatrolMode.ToString();
             }
             else
             {
@@ -416,19 +416,19 @@ namespace tsorcRevamp.NPCs
                 // from a same-level player; a large beast bobs back out of melee after a touch (anti sprite-center
                 // glitch). Either takes priority over the pursuit plan + reactive chase below. For a beast this only
                 // fires during the post-contact back-off window — otherwise A* still navigates it in to touch.
-                bool kiting = grounded && !s.IsCommitted &&
-                    (g.RequiresFlatGround
-                        ? TryBeastContactBackoff(s, npc, player, g, acceleration, out actionLabel, out reasonLabel)
-                        : TryRangedKite(s, npc, player, g, topSpeed, acceleration, los, out actionLabel, out reasonLabel));
+                bool kiting = grounded && !nav.IsCommitted &&
+                    (globalNPC.RequiresFlatGround
+                        ? TryBeastContactBackoff(nav, npc, player, globalNPC, acceleration, out actionLabel, out reasonLabel)
+                        : TryRangedKite(nav, npc, player, globalNPC, topSpeed, acceleration, los, out actionLabel, out reasonLabel));
                 if (kiting)
                 {
                     actionHandled = true;
-                    if (s.Plan != null) { s.Plan = null; s.PlanIndex = 0; } // drop the pursue-into-melee plan
+                    if (nav.Plan != null) { nav.Plan = null; nav.PlanIndex = 0; } // drop the pursue-into-melee plan
                 }
 
                 // PURSUE / SEARCH. Replan only when pathfinding is enabled (NavSearchRadius > 0) and not
                 // mid-commit. Radius 0 = no global pathfinding: clear any plan and chase on sight.
-                if (!kiting && g.NavSearchRadius > 0)
+                if (!kiting && globalNPC.NavSearchRadius > 0)
                 {
                     // Commit to a jump in progress: IsCommitted only covers the airborne arc, NOT the grounded
                     // "walk to the launch column + settle" setup. Without this guard, every replan window (the
@@ -438,31 +438,31 @@ namespace tsorcRevamp.NPCs
                     // while grounded and actively setting up a jump step, suppress the replan. The escape hatch
                     // is ExecJump's own StepTimer: a jump that can't be completed times out (<=3s), bad-edges
                     // its target, and forces a clean reroute — deliberate commit, then reroute, never churn.
-                    bool approachingJump = s.Plan != null && s.PlanIndex < s.Plan.Count
-                        && (s.Plan[s.PlanIndex].Kind == StepKind.JumpUp || s.Plan[s.PlanIndex].Kind == StepKind.JumpGap);
-                    if (!s.IsCommitted && !approachingJump && grounded && s.ReplanCooldown == 0 && ShouldReplan(s, npc, player))
+                    bool approachingJump = nav.Plan != null && nav.PlanIndex < nav.Plan.Count
+                        && (nav.Plan[nav.PlanIndex].Kind == StepKind.JumpUp || nav.Plan[nav.PlanIndex].Kind == StepKind.JumpGap);
+                    if (!nav.IsCommitted && !approachingJump && grounded && nav.ReplanCooldown == 0 && ShouldReplan(nav, npc, player))
                     {
-                        Replan(s, npc, player, topSpeed);
-                        s.ReplanCooldown = ReplanCooldown;
+                        Replan(nav, npc, player, topSpeed);
+                        nav.ReplanCooldown = ReplanCooldown;
                     }
                 }
-                else if (!kiting && s.Plan != null) { s.Plan = null; s.PlanIndex = 0; }
+                else if (!kiting && nav.Plan != null) { nav.Plan = null; nav.PlanIndex = 0; }
 
-                if (!kiting && s.Plan != null && s.PlanIndex < s.Plan.Count)
+                if (!kiting && nav.Plan != null && nav.PlanIndex < nav.Plan.Count)
                 {
-                    if (g.RequiresFlatGround) g.BeastUnreachableFrames = 0; // reachable: A* is navigating us in to touch
-                    g.UnreachableFrames = 0; // generalized version of the line above — has a real plan, so reachable
-                    actionHandled = ExecuteStep(s, npc, player, topSpeed, acceleration,
-                        jumpCeil, boostCeil, grounded, doorBreakingDamage, g,
+                    if (globalNPC.RequiresFlatGround) globalNPC.BeastUnreachableFrames = 0; // reachable: A* is navigating us in to touch
+                    globalNPC.UnreachableFrames = 0; // generalized version of the line above — has a real plan, so reachable
+                    actionHandled = ExecuteStep(nav, npc, player, topSpeed, acceleration,
+                        jumpCeil, boostCeil, grounded, doorBreakingDamage, globalNPC,
                         out actionLabel, out reasonLabel);
                 }
-                else if (!kiting && grounded && g.RequiresFlatGround)
+                else if (!kiting && grounded && globalNPC.RequiresFlatGround)
                 {
                     // Large beast with no path to the player: NEVER stand still. Oscillate in/out within the large
                     // preferred band instead of the standoff / halt-attack / hold-aligned / chase branches below
                     // (which would freeze or pace robotically under the player). BeastUnreachableFrames ticks here,
                     // feeding the BasicAI stale-wander give-up.
-                    BeastOscillate(s, npc, player, g, topSpeed, acceleration, out actionLabel, out reasonLabel);
+                    BeastOscillate(nav, npc, player, globalNPC, topSpeed, acceleration, out actionLabel, out reasonLabel);
                     actionHandled = true;
                 }
                 else if (!kiting && grounded)
@@ -475,18 +475,18 @@ namespace tsorcRevamp.NPCs
                     // Safety net for cases the span graph misses (the "just stands at the base" bug).
                     bool inRange = npc.Distance(player.Center) <= attackRange;
 
-                    if (TryGrabNearbyRope(s, npc, player))
+                    if (TryGrabNearbyRope(nav, npc, player))
                     {
                         npc.velocity.X *= 0.7f; // settle this frame; executor takes over next frame
                         actionLabel = "rope-grab"; reasonLabel = "fallback";
                         actionHandled = true;
                     }
-                    else if (TryShaftEscape(s, npc, player, jumpCeil, topSpeed, acceleration, out actionLabel, out reasonLabel))
+                    else if (TryShaftEscape(nav, npc, player, jumpCeil, topSpeed, acceleration, out actionLabel, out reasonLabel))
                     {
                         // Boxed under an overhang with the player above → rise straight up the shaft, then drift out.
                         actionHandled = true;
                     }
-                    else if (TryRangedStandoff(npc, player, g, topSpeed, acceleration, los, inRange,
+                    else if (TryRangedStandoff(npc, player, globalNPC, topSpeed, acceleration, los, inRange,
                         out actionLabel, out reasonLabel))
                     {
                         // Can shoot but can't reach (player on a different level) — hold an angle & fire.
@@ -496,26 +496,26 @@ namespace tsorcRevamp.NPCs
                     {
                         // A navigation hazard may justify a short standing-fire window. Even then, the
                         // halt budget eventually forces a reposition attempt instead of camping forever.
-                        bool nearPlayer = inRange && g.AttackList.Count > 0;
+                        bool nearPlayer = inRange && globalNPC.AttackList.Count > 0;
                         string firingHazardReason = "";
                         bool firingHazard = nearPlayer && player.Center.Y <= npc.Center.Y + 24f
                             && TryGetFiringHoldReason(npc, player, dir, los, out firingHazardReason);
-                        if (firingHazard && s.RepositionTimer == 0)
+                        if (firingHazard && nav.RepositionTimer == 0)
                         {
-                            s.HaltFrames++;
-                            if (s.HaltFrames >= HaltMaxFrames)
+                            nav.HaltFrames++;
+                            if (nav.HaltFrames >= HaltMaxFrames)
                             {
-                                s.HaltFrames = 0;
-                                s.RepositionTimer = RepositionFrames;
+                                nav.HaltFrames = 0;
+                                nav.RepositionTimer = RepositionFrames;
                             }
                         }
                         else if (!firingHazard)
                         {
-                            s.HaltFrames = 0;
+                            nav.HaltFrames = 0;
                         }
 
                         // Never stand-and-fire at a player below us; descend to pursue instead.
-                        bool doHalt = firingHazard && s.RepositionTimer == 0;
+                        bool doHalt = firingHazard && nav.RepositionTimer == 0;
                         if (doHalt)
                         {
                             // Brake to a FULL stop so the idle (feet-together) frame shows instead of
@@ -524,7 +524,7 @@ namespace tsorcRevamp.NPCs
                             else npc.velocity.X *= 0.6f;
                             npc.direction = dir; npc.spriteDirection = dir;
                             actionLabel = "halt-attack";
-                            reasonLabel = $"{firingHazardReason} d={npc.Distance(player.Center):F0} h={s.HaltFrames}";
+                            reasonLabel = $"{firingHazardReason} d={npc.Distance(player.Center):F0} h={nav.HaltFrames}";
                             actionHandled = true;
                         }
                         else
@@ -538,7 +538,7 @@ namespace tsorcRevamp.NPCs
                             int feetYc = GetFeetTileY(npc);
                             bool dropLands = GetDropDepth(frontXc, feetYc, MaxDropDepth) <= MaxDropDepth;
                             bool allowCliffDrop = playerBelow && dropLands;
-                            actionHandled = TryLocalTerrain(s, npc, dir, jumpCeil, boostCeil, topSpeed,
+                            actionHandled = TryLocalTerrain(nav, npc, dir, jumpCeil, boostCeil, topSpeed,
                                 allowCliffDrop, out actionLabel, out reasonLabel);
                             if (!actionHandled)
                             {
@@ -581,8 +581,8 @@ namespace tsorcRevamp.NPCs
                 }
                 else
                 {
-                    actionLabel = s.AirCommitTimer > 0 ? "air-commit" : "airborne";
-                    reasonLabel = s.AirCommitTimer > 0 ? $"dirX={s.AirCommitDirX} t={s.AirCommitTimer}" : "no-commit";
+                    actionLabel = nav.AirCommitTimer > 0 ? "air-commit" : "airborne";
+                    reasonLabel = nav.AirCommitTimer > 0 ? $"dirX={nav.AirCommitDirX} t={nav.AirCommitTimer}" : "no-commit";
                 }
 
                 // Anti-stuck give-up — keyed on the NPC's OWN immobility, not player distance. The old
@@ -602,13 +602,13 @@ namespace tsorcRevamp.NPCs
                 // unreachable target. Preserve legitimate ranged standing-fire and any attack already in progress,
                 // but let a neutral melee-only fighter with no path reach the normal give-up flow.
                 bool canEngage = los && npc.Distance(player.Center) <= attackRange
-                    && (g.AttackList.Count > 0 || g.InAttack);
-                bool noPathToTarget = pstate == PursuitState.Pursue && !s.IsCommitted && s.Plan == null && !canEngage;
+                    && (globalNPC.AttackList.Count > 0 || globalNPC.InAttack);
+                bool noPathToTarget = pstate == PursuitState.Pursue && !nav.IsCommitted && nav.Plan == null && !canEngage;
                 // Generalizes BeastUnreachableFrames to every SF4 enemy — how long this pursuit has had
                 // no path at all. Read by the shared FSM (tsorcRevampAIs.cs) to decide whether a hit landed
                 // by an unreachable attacker should trigger Flee instead of a normal re-aggro.
-                g.UnreachableFrames = noPathToTarget ? Math.Min(g.UnreachableFrames + 1, 100000) : 0;
-                if (noPathToTarget && g.CanPassThroughWalls && g.UnreachableFrames >= 60)
+                globalNPC.UnreachableFrames = noPathToTarget ? Math.Min(globalNPC.UnreachableFrames + 1, 100000) : 0;
+                if (noPathToTarget && globalNPC.CanPassThroughWalls && globalNPC.UnreachableFrames >= 60)
                 {
                     int awayDir = Math.Sign(npc.Center.X - player.Center.X);
 
@@ -616,46 +616,46 @@ namespace tsorcRevamp.NPCs
                     // current facing, else right. A 0 here would leave the patrol sweep with no direction.
                     if (awayDir != 0)
                     {
-                        g.PatrolDirection = awayDir;
+                        globalNPC.PatrolDirection = awayDir;
                     }
                     else if (npc.direction != 0)
                     {
-                        g.PatrolDirection = npc.direction;
+                        globalNPC.PatrolDirection = npc.direction;
                     }
                     else
                     {
-                        g.PatrolDirection = 1;
+                        globalNPC.PatrolDirection = 1;
                     }
 
-                    g.GhostUnreachableWanderTimer = Math.Max(g.GhostUnreachableWanderTimer, 300);
+                    globalNPC.GhostUnreachableWanderTimer = Math.Max(globalNPC.GhostUnreachableWanderTimer, 300);
                 }
                 if (noPathToTarget)
                 {
-                    if (Math.Abs(npc.Center.X - s.StuckCheckX) > 2f)
+                    if (Math.Abs(npc.Center.X - nav.StuckCheckX) > 2f)
                     {
-                        s.StuckCheckX = npc.Center.X;
-                        s.StuckGiveUpFrames = 0;
+                        nav.StuckCheckX = npc.Center.X;
+                        nav.StuckGiveUpFrames = 0;
                     }
-                    else if (++s.StuckGiveUpFrames > 90) // ~1.5s of immobility before giving up to patrol
+                    else if (++nav.StuckGiveUpFrames > 90) // ~1.5s of immobility before giving up to patrol
                     {
-                        bool nearbyRecovery = g.CanTeleport
-                            && g.TeleportStyle == TeleportStyle.RecoveryOnly
-                            && g.TeleportCooldownTimer == 0
-                            && (g.RecoveryTeleportMaxRange <= 0f
-                                || npc.Distance(player.Center) <= g.RecoveryTeleportMaxRange);
+                        bool nearbyRecovery = globalNPC.CanTeleport
+                            && globalNPC.TeleportStyle == TeleportStyle.RecoveryOnly
+                            && globalNPC.TeleportCooldownTimer == 0
+                            && (globalNPC.RecoveryTeleportMaxRange <= 0f
+                                || npc.Distance(player.Center) <= globalNPC.RecoveryTeleportMaxRange);
                         if (nearbyRecovery)
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient
-                                && !tsorcRevampAIs.TryTeleportReacquire(npc, g))
+                                && !tsorcRevampAIs.TryTeleportReacquire(npc, globalNPC))
                             {
-                                NavBehavior.ForceDisengage(npc, g);
+                                NavBehavior.ForceDisengage(npc, globalNPC);
                             }
                         }
-                        else NavBehavior.ForceDisengage(npc, g);
-                        s.StuckGiveUpFrames = 0;
+                        else NavBehavior.ForceDisengage(npc, globalNPC);
+                        nav.StuckGiveUpFrames = 0;
                     }
                 }
-                else { s.StuckCheckX = npc.Center.X; s.StuckGiveUpFrames = 0; }
+                else { nav.StuckCheckX = npc.Center.X; nav.StuckGiveUpFrames = 0; }
 
                 // Plan-execution immobility guard (the "stuck till I hit it" freeze). The per-step
                 // StepTimer escape is defeated for Walk steps because every replan (player twitch → A*
@@ -665,7 +665,7 @@ namespace tsorcRevamp.NPCs
                 // progress for ~0.66s, bad-edge the step target and drop the plan: the next replan routes
                 // AROUND it. If every route is genuinely walled, the bad-edges pile up until A* finds no
                 // path → the no-plan StuckGiveUpFrames above then disengages to patrol.
-                bool execMove = s.Plan != null && s.PlanIndex < s.Plan.Count && grounded
+                bool execMove = nav.Plan != null && nav.PlanIndex < nav.Plan.Count && grounded
                     && (actionLabel == "walk" || actionLabel == "align-jump" || actionLabel == "align-drop"
                         || actionLabel == "align-pdrop" || actionLabel == "obstacle-jump"
                         // Fix B: a "blocked" no-headroom/too-tall wall braking in place counts as a wedged step, so
@@ -673,16 +673,16 @@ namespace tsorcRevamp.NPCs
                         || actionLabel == "blocked");
                 if (execMove)
                 {
-                    if (Math.Abs(npc.Center.X - s.MoveCheckX) > 2f) { s.MoveCheckX = npc.Center.X; s.StepNoMoveFrames = 0; }
-                    else if (++s.StepNoMoveFrames > 40)
+                    if (Math.Abs(npc.Center.X - nav.MoveCheckX) > 2f) { nav.MoveCheckX = npc.Center.X; nav.StepNoMoveFrames = 0; }
+                    else if (++nav.StepNoMoveFrames > 40)
                     {
-                        var bs = s.Plan[s.PlanIndex];
-                        s.BadEdgeTargets[(bs.TargetX, bs.TargetY)] = (int)Main.GameUpdateCount + 480;
-                        s.Plan = null; s.PlanIndex = 0; s.CommitFrames = 0; s.ReplanCooldown = 0;
-                        s.StepNoMoveFrames = 0;
+                        var bs = nav.Plan[nav.PlanIndex];
+                        nav.BadEdgeTargets[(bs.TargetX, bs.TargetY)] = (int)Main.GameUpdateCount + 480;
+                        nav.Plan = null; nav.PlanIndex = 0; nav.CommitFrames = 0; nav.ReplanCooldown = 0;
+                        nav.StepNoMoveFrames = 0;
                     }
                 }
-                else { s.MoveCheckX = npc.Center.X; s.StepNoMoveFrames = 0; }
+                else { nav.MoveCheckX = npc.Center.X; nav.StepNoMoveFrames = 0; }
 
                 // Fix C v3: ground-navigation hard-stuck catch-all keyed on PERIODIC horizontal progress. A wedged NPC LURCHES a variable
                 // distance toward the lip each failed jump then falls back, so any per-frame/instantaneous check is
@@ -692,28 +692,28 @@ namespace tsorcRevamp.NPCs
                 // (e.g. an overhanging/watery pit the jump can't clear) → blink out (CanTeleport) else disengage. The
                 // !canEngage gate keeps a legitimately-firing enemy from being yanked off its spot. An engaged
                 // rope ride is excluded: it intentionally has no X progress and already owns vertical stall/end checks.
-                bool activeRopeRide = s.Plan != null && s.PlanIndex < s.Plan.Count
-                    && s.Plan[s.PlanIndex].Kind == StepKind.RopeClimb
-                    && (s.RopeEngaged || npc.noGravity);
+                bool activeRopeRide = nav.Plan != null && nav.PlanIndex < nav.Plan.Count
+                    && nav.Plan[nav.PlanIndex].Kind == StepKind.RopeClimb
+                    && (nav.RopeEngaged || npc.noGravity);
                 if (pstate == PursuitState.Pursue && !canEngage && !activeRopeRide
-                    && (s.Plan != null || actionLabel == "blocked"))
+                    && (nav.Plan != null || actionLabel == "blocked"))
                 {
-                    if (s.HardStuckCheckX == float.MaxValue) s.HardStuckCheckX = npc.Center.X; // open a fresh window
-                    if (++s.HardStuckFrames >= 120) // ~2s window elapsed
+                    if (nav.HardStuckCheckX == float.MaxValue) nav.HardStuckCheckX = npc.Center.X; // open a fresh window
+                    if (++nav.HardStuckFrames >= 120) // ~2s window elapsed
                     {
-                        if (Math.Abs(npc.Center.X - s.HardStuckCheckX) > 48f) s.HardStuckStrikes = 0; // made real ground
-                        else s.HardStuckStrikes++;                                                    // confined this window
-                        s.HardStuckCheckX = npc.Center.X; // next window measures from here
-                        s.HardStuckFrames = 0;
-                        if (s.HardStuckStrikes >= 2) // ~4s with no net progress
+                        if (Math.Abs(npc.Center.X - nav.HardStuckCheckX) > 48f) nav.HardStuckStrikes = 0; // made real ground
+                        else nav.HardStuckStrikes++;                                                    // confined this window
+                        nav.HardStuckCheckX = npc.Center.X; // next window measures from here
+                        nav.HardStuckFrames = 0;
+                        if (nav.HardStuckStrikes >= 2) // ~4s with no net progress
                         {
-                            s.LastPlanResult = $"hard-stuck x={s.HardStuckCheckX / TileF:F1}";
-                            s.Plan = null; s.PlanIndex = 0; s.CommitFrames = 0;
-                            bool recoveryInRange = g.TeleportStyle != TeleportStyle.RecoveryOnly
-                                || (g.TeleportCooldownTimer == 0
-                                    && (g.RecoveryTeleportMaxRange <= 0f
-                                        || npc.Distance(player.Center) <= g.RecoveryTeleportMaxRange));
-                            if (g.CanTeleport && recoveryInRange)
+                            nav.LastPlanResult = $"hard-stuck x={nav.HardStuckCheckX / TileF:F1}";
+                            nav.Plan = null; nav.PlanIndex = 0; nav.CommitFrames = 0;
+                            bool recoveryInRange = globalNPC.TeleportStyle != TeleportStyle.RecoveryOnly
+                                || (globalNPC.TeleportCooldownTimer == 0
+                                    && (globalNPC.RecoveryTeleportMaxRange <= 0f
+                                        || npc.Distance(player.Center) <= globalNPC.RecoveryTeleportMaxRange));
+                            if (globalNPC.CanTeleport && recoveryInRange)
                             {
                                 // Use the same robust reacquire search as the navigation FSM: a wider
                                 // radius, a legal sightline near the target, and normal charge/cooldown
@@ -721,27 +721,27 @@ namespace tsorcRevamp.NPCs
                                 // reset this detector, and repeated the exact blocked/drop loop forever.
                                 // Recovery-only teleports are server-authoritative; clients wait for
                                 // the resulting NPC sync instead of independently disengaging.
-                                if (g.TeleportStyle != TeleportStyle.RecoveryOnly
+                                if (globalNPC.TeleportStyle != TeleportStyle.RecoveryOnly
                                     || Main.netMode != NetmodeID.MultiplayerClient)
                                 {
-                                    if (!tsorcRevampAIs.TryTeleportReacquire(npc, g))
-                                        NavBehavior.ForceDisengage(npc, g);
+                                    if (!tsorcRevampAIs.TryTeleportReacquire(npc, globalNPC))
+                                        NavBehavior.ForceDisengage(npc, globalNPC);
                                 }
                             }
-                            else NavBehavior.ForceDisengage(npc, g);
-                            s.HardStuckStrikes = 0;
-                            s.HardStuckCheckX = float.MaxValue;
+                            else NavBehavior.ForceDisengage(npc, globalNPC);
+                            nav.HardStuckStrikes = 0;
+                            nav.HardStuckCheckX = float.MaxValue;
                         }
                     }
                 }
-                else { s.HardStuckCheckX = float.MaxValue; s.HardStuckFrames = 0; s.HardStuckStrikes = 0; }
+                else { nav.HardStuckCheckX = float.MaxValue; nav.HardStuckFrames = 0; nav.HardStuckStrikes = 0; }
             }
 
             // Phase 2: a large beast bulls straight through a thin (<= BeastPhaseMaxWidth) body/head obstruction
             // (single block, skinny pillar, low overhang) instead of being stopped or forced to jump by it. While
             // phasing it runs with noTileCollide + the feet pinned to the entry floor; real walls (wider than the
             // cap) are NOT phased — A* still routes around/over them. Takes the place of the auto-step this frame.
-            bool beastPhasing = g.RequiresFlatGround && TryBeastPhase(s, npc, g);
+            bool beastPhasing = globalNPC.RequiresFlatGround && TryBeastPhase(nav, npc, globalNPC);
 
             // Vanilla-style smooth auto-step: glide over <=1-tile bumps/half-blocks via gfxOffY (no jump),
             // exactly how the player and vanilla walkers move. Runs after the action sets velocity, only
@@ -755,16 +755,16 @@ namespace tsorcRevamp.NPCs
             // Phase 3: a beast sinks its sprite to follow the ground under it (drawn on top), so its overhang clips
             // into a slope/hill instead of floating. Cosmetic gfxOffY offset; physics still rests on the core. Plus a
             // light nudge so a near-stationary beast doesn't park its body floating off a cliff edge.
-            if (g.RequiresFlatGround && !beastPhasing)
+            if (globalNPC.RequiresFlatGround && !beastPhasing)
             {
-                ApplyBeastGroundSink(npc, g);
-                ApplyBeastAntiFloat(npc, g);
+                ApplyBeastGroundSink(npc, globalNPC);
+                ApplyBeastAntiFloat(npc, globalNPC);
             }
 
             // ArcherAI sets bow/aim frames before SF4 movement runs. If the movement step then faces toward
             // a launch column/rope/path target, the bow frame can flash facing away for one tick. While the
             // archer animation is active, let movement keep its velocity but make the sprite face the player.
-            if (movementOnly && g.ArcherAimDirection != 0f)
+            if (movementOnly && globalNPC.ArcherAimDirection != 0f)
             {
                 int aimFace = player.Center.X >= npc.Center.X ? 1 : -1;
                 npc.direction = aimFace;
@@ -774,33 +774,33 @@ namespace tsorcRevamp.NPCs
             // Attacks (reuse the LOS computed above for the FSM).
             // Attacks are allowed on the rope: SF4 forces CanStopToFire=false below, so firing
             // never halts the climb/descent. (Attacking mid-rope is fine per design.)
-            bool canAttack = g.AttackList.Count > 0 && los && npc.Distance(player.Center) <= attackRange;
+            bool canAttack = globalNPC.AttackList.Count > 0 && los && npc.Distance(player.Center) <= attackRange;
             // movementOnly: BasicAI's RunFighterCombat already fired this enemy's attacks — SF4 must NOT also fire
             // (double shot). Standalone (Invader/testbed) still fires its own AttackList here.
-            if (!movementOnly && g.AttackList.Count > 0)
+            if (!movementOnly && globalNPC.AttackList.Count > 0)
             {
-                bool oldStop = g.CanStopToFire;
-                g.CanStopToFire = false;
+                bool oldStop = globalNPC.CanStopToFire;
+                globalNPC.CanStopToFire = false;
                 tsorcRevampAIs.SimpleProjectile(npc, canAttack);
-                g.CanStopToFire = oldStop;
+                globalNPC.CanStopToFire = oldStop;
             }
 
-            s.LastAction = actionLabel;
-            s.LastReason = reasonLabel;
-            s.LastTelemetryPlan = DescribePlan(s);
-            LogFrame(npc, player, s, grounded, los, canAttack, actionLabel, reasonLabel);
+            nav.LastAction = actionLabel;
+            nav.LastReason = reasonLabel;
+            nav.LastTelemetryPlan = DescribePlan(nav);
+            LogFrame(npc, player, nav, grounded, los, canAttack, actionLabel, reasonLabel);
         }
 
         public static void OnHit(NPC npc)
         {
             ReleaseRopeTraversal(npc);
-            if (States.TryGetValue(npc.whoAmI, out NavState s))
+            if (States.TryGetValue(npc.whoAmI, out NavState nav))
             {
                 // Damage unlocks commitment and forces a fresh replan.
-                s.Plan = null;
-                s.PlanIndex = 0;
-                s.CommitFrames = 0;
-                s.ReplanCooldown = 0;
+                nav.Plan = null;
+                nav.PlanIndex = 0;
+                nav.CommitFrames = 0;
+                nav.ReplanCooldown = 0;
             }
         }
 
@@ -810,13 +810,13 @@ namespace tsorcRevamp.NPCs
 
         private static NavState GetState(NPC npc)
         {
-            if (!States.TryGetValue(npc.whoAmI, out NavState s))
+            if (!States.TryGetValue(npc.whoAmI, out NavState nav))
             {
-                s = new NavState();
-                States[npc.whoAmI] = s;
+                nav = new NavState();
+                States[npc.whoAmI] = nav;
             }
             if (Main.GameUpdateCount % 3600 == 0 && States.Count > 64) Prune();
-            return s;
+            return nav;
         }
 
         private static void Prune()
@@ -826,14 +826,14 @@ namespace tsorcRevamp.NPCs
             foreach (int id in dead) States.Remove(id);
         }
 
-        private static void TickTimers(NavState s)
+        private static void TickTimers(NavState nav)
         {
-            if (s.AirCommitTimer > 0) s.AirCommitTimer--;
-            if (s.CommitFrames > 0) s.CommitFrames--;
-            if (s.StepTimer > 0) s.StepTimer--;
-            if (s.ReplanCooldown > 0) s.ReplanCooldown--;
-            if (s.PlatformPassTimer > 0) s.PlatformPassTimer--;
-            if (s.RepositionTimer > 0) s.RepositionTimer--;
+            if (nav.AirCommitTimer > 0) nav.AirCommitTimer--;
+            if (nav.CommitFrames > 0) nav.CommitFrames--;
+            if (nav.StepTimer > 0) nav.StepTimer--;
+            if (nav.ReplanCooldown > 0) nav.ReplanCooldown--;
+            if (nav.PlatformPassTimer > 0) nav.PlatformPassTimer--;
+            if (nav.RepositionTimer > 0) nav.RepositionTimer--;
         }
 
         // Stand-and-fire tuning: brief stand (~1 attack), then a longer reposition window so the
@@ -841,17 +841,17 @@ namespace tsorcRevamp.NPCs
         private const int HaltMaxFrames = 180;    // ~3s max standing-and-firing, then forced to move
         private const int RepositionFrames = 180; // ~3s moving before it may halt again
 
-        private static void ManagePlatformPass(NavState s, NPC npc)
+        private static void ManagePlatformPass(NavState nav, NPC npc)
         {
-            if (!s.PlatformPassActive) return;
-            bool timerDone = s.PlatformPassTimer <= 0;
-            bool clearedAndFalling = npc.velocity.Y > 0.5f && npc.Bottom.Y > s.PlatformPassStartY + 18f;
+            if (!nav.PlatformPassActive) return;
+            bool timerDone = nav.PlatformPassTimer <= 0;
+            bool clearedAndFalling = npc.velocity.Y > 0.5f && npc.Bottom.Y > nav.PlatformPassStartY + 18f;
             bool landed = npc.collideY && npc.velocity.Y >= 0f;
             if (timerDone || clearedAndFalling || landed)
             {
                 npc.noTileCollide = false;
-                s.PlatformPassActive = false;
-                s.PlatformPassTimer = 0;
+                nav.PlatformPassActive = false;
+                nav.PlatformPassTimer = 0;
             }
         }
 
@@ -859,10 +859,10 @@ namespace tsorcRevamp.NPCs
         //  Replan
         // ================================================================================
 
-        private static bool ShouldReplan(NavState s, NPC npc, Player player)
+        private static bool ShouldReplan(NavState nav, NPC npc, Player player)
         {
-            if (s.Plan == null) return true;
-            if (s.PlanIndex >= s.Plan.Count) return true;
+            if (nav.Plan == null) return true;
+            if (nav.PlanIndex >= nav.Plan.Count) return true;
             // NOTE: do NOT replan here on StepTimer == 0. The replan check runs BEFORE ExecuteStep each
             // frame, so triggering a rebuild on timeout would reset StepTimer to full and skip ExecuteStep's
             // timeout handler — which is what records the failed step's target in BadEdgeTargets. The result
@@ -870,8 +870,8 @@ namespace tsorcRevamp.NPCs
             // loop). Let the timeout fall through to ExecuteStep: it bad-edges the target and nulls the plan,
             // and the (Plan == null) check above then drives a clean replan that routes AROUND the bad edge.
             // Big drift = player switched rooms / floors â†’ replan.
-            float planEndX = s.Plan[s.Plan.Count - 1].TargetX * TileF;
-            float planEndY = s.Plan[s.Plan.Count - 1].TargetY * TileF;
+            float planEndX = nav.Plan[nav.Plan.Count - 1].TargetX * TileF;
+            float planEndY = nav.Plan[nav.Plan.Count - 1].TargetY * TileF;
             if (Math.Abs(player.Center.X - planEndX) > 16 * TileF) return true;
             if (Math.Abs(player.Center.Y - planEndY) > 10 * TileF) return true;
             return false;
@@ -889,29 +889,29 @@ namespace tsorcRevamp.NPCs
             float apexTiles = (_planJumpCeil * _planJumpCeil) / (2f * gravity * TileF);
             return Math.Min(Math.Max((int)Math.Floor(apexTiles - 1f), 1), MaxJumpRiseTiles);
         }
-        // Beast flat-ground constraint (set per-frame in Run from g.MinSurfaceWidth). When > 0, IsStandableTile
+        // Beast flat-ground constraint (set per-frame in Run from globalNPC.MinSurfaceWidth). When > 0, IsStandableTile
         // requires a flat run >= this many tiles wide, CENTERED under the enemy, so A* only builds spans / lands
         // jumps on surfaces a large enemy can actually stand FULLY on (no 1-tile-ledge hopping, no edge-perching).
         // Single-threaded main loop → static stash is safe.
         private static int _minSurfaceWidth = 0;
-        // Tolerated footprint unevenness for the beast gate (set per-frame from g.MaxSurfaceStep). 1 = a foot may dip
+        // Tolerated footprint unevenness for the beast gate (set per-frame from globalNPC.MaxSurfaceStep). 1 = a foot may dip
         // one tile into a step (the Deerclops-clip failsafe); 0 = strictly flat. Only used when _minSurfaceWidth > 0.
         private static int _maxSurfaceStep = 1;
         // Required vertical headroom in tiles for the body clearance check (HasBodyClearanceAtRow). Default 3 (the
         // old fixed value); for beasts it's auto-derived from sprite height in Run, so a tall beast won't path
         // into a space too short for it.
         private static int _clearanceHeight = 3;
-        // May this enemy climb ropes this frame (set in Run from g.CanUseRopes)? Default off — gates both the
+        // May this enemy climb ropes this frame (set in Run from globalNPC.CanUseRopes)? Default off — gates both the
         // RopeClimb edge planner and the no-plan TryGrabNearbyRope fallback.
         private static bool _canUseRopes = false;
-        // Does this enemy pass through walls this frame (set in Run from g.CanPassThroughWalls)? Ghosts walk into
+        // Does this enemy pass through walls this frame (set in Run from globalNPC.CanPassThroughWalls)? Ghosts walk into
         // walls and teleport through (see GlobalNPC.TryGhostWallTeleport). Default off. When on, the jump planner
         // refuses near-vertical jump launches that would wedge the body against a wall on its trailing side (see
         // LaunchTrailClear in TryFindJumpEdge) — so a ghost pinned in a pit backs off to a clear launch column and
         // arcs up-and-over instead of re-committing to an unmakeable wall-hug jump forever (the pit-wedge loop).
         private static bool _canPassWalls = false;
 
-        private static void Replan(NavState s, NPC npc, Player player, float topSpeed)
+        private static void Replan(NavState nav, NPC npc, Player player, float topSpeed)
         {
             // Capture this NPC's jump physics so BuildEdges/TryFindJumpEdge only propose
             // edges this enemy can actually clear (gravity-aware, gap-width-aware).
@@ -937,25 +937,25 @@ namespace tsorcRevamp.NPCs
             List<Span> spans = BuildSpans(xMin, xMax, yMin, yMax);
             // Prune expired bad-edge entries before building.
             int now = (int)Main.GameUpdateCount;
-            if (s.BadEdgeTargets.Count > 0)
+            if (nav.BadEdgeTargets.Count > 0)
             {
                 List<(int, int)> dead = new List<(int, int)>();
-                foreach (var kv in s.BadEdgeTargets) if (kv.Value <= now) dead.Add(kv.Key);
-                foreach (var k in dead) s.BadEdgeTargets.Remove(k);
+                foreach (var kv in nav.BadEdgeTargets) if (kv.Value <= now) dead.Add(kv.Key);
+                foreach (var k in dead) nav.BadEdgeTargets.Remove(k);
             }
-            BuildEdges(spans, playerFeetY, s.BadEdgeTargets);
+            BuildEdges(spans, playerFeetY, nav.BadEdgeTargets);
 
-            s.LastReplanTick = now;
+            nav.LastReplanTick = now;
             Span start = FindContainingSpan(spans, npcCx, npcFeetY);
             Span goal = FindContainingSpan(spans, playerCx, playerFeetY);
             if (start == null || goal == null)
             {
-                s.Plan = null; s.PlanIndex = 0;
-                s.NoAStarPath = true;
+                nav.Plan = null; nav.PlanIndex = 0;
+                nav.NoAStarPath = true;
                 // Which end failed, and the window it searched: a missing START span means the NPC's OWN
                 // footing was rejected (the beast flat-ground gate / headroom rule), a missing GOAL span
                 // means the player wasn't standing on anything (airborne, roped, flying).
-                s.LastPlanResult = s.LastReplanResult = start == null
+                nav.LastPlanResult = nav.LastReplanResult = start == null
                     ? $"no-start-span spans={spans.Count} me=({npcCx},{npcFeetY}) msw={_minSurfaceWidth} ch={_clearanceHeight}"
                     : $"no-goal-span spans={spans.Count} goal=({playerCx},{playerFeetY})";
                 return;
@@ -964,20 +964,20 @@ namespace tsorcRevamp.NPCs
             List<Span> path = AStar(start, goal, playerCx, playerFeetY);
             if (path == null)
             {
-                s.Plan = null; s.PlanIndex = 0;
-                s.NoAStarPath = true;
-                s.LastPlanResult = s.LastReplanResult =
-                    $"no-path spans={spans.Count} bade={s.BadEdgeTargets.Count} r={radius}";
+                nav.Plan = null; nav.PlanIndex = 0;
+                nav.NoAStarPath = true;
+                nav.LastPlanResult = nav.LastReplanResult =
+                    $"no-path spans={spans.Count} bade={nav.BadEdgeTargets.Count} r={radius}";
                 return;
             }
 
-            s.NoAStarPath = false;
-            s.Plan = ConvertToSteps(path, playerCx, playerFeetY);
-            s.PlanIndex = 0;
-            s.StepTimer = StepTimeoutFrames;
-            s.CommitFrames = 0;
-            s.JumpFiredThisStep = false;
-            s.LastPlanResult = s.LastReplanResult = $"plan steps={s.Plan.Count} spans={spans.Count} pathLen={path.Count}";
+            nav.NoAStarPath = false;
+            nav.Plan = ConvertToSteps(path, playerCx, playerFeetY);
+            nav.PlanIndex = 0;
+            nav.StepTimer = StepTimeoutFrames;
+            nav.CommitFrames = 0;
+            nav.JumpFiredThisStep = false;
+            nav.LastPlanResult = nav.LastReplanResult = $"plan steps={nav.Plan.Count} spans={spans.Count} pathLen={path.Count}";
         }
 
         // ================================================================================
@@ -1297,16 +1297,16 @@ namespace tsorcRevamp.NPCs
         // Fallback used when there is no plan and the player is on a different level: find the
         // nearest grabbable rope column within ±8 tiles and synthesize a one-step RopeClimb plan.
         // Handles BOTH directions — climb up to a player above, descend to a player below.
-        private static bool TryGrabNearbyRope(NavState s, NPC npc, Player player)
+        private static bool TryGrabNearbyRope(NavState nav, NPC npc, Player player)
         {
             if (!_canUseRopes) return false;  // ropes are a per-enemy opt-in (CanUseRopes)
-            if (s.Plan != null) return false; // only as a no-plan fallback
+            if (nav.Plan != null) return false; // only as a no-plan fallback
             int now = (int)Main.GameUpdateCount;
             int npcCx = (int)(npc.Center.X / TileF);
             int npcFeetY = GetFeetTileY(npc);
             int playerFeetY = (int)((player.Bottom.Y - 1f) / TileF);
             int vdelta = playerFeetY - npcFeetY; // < 0 player above, > 0 player below
-            if (Math.Abs(vdelta) < 3) { s.RopeFallbackFails = 0; s.LastPlanResult = "rope-skip same-level"; return false; }
+            if (Math.Abs(vdelta) < 3) { nav.RopeFallbackFails = 0; nav.LastPlanResult = "rope-skip same-level"; return false; }
             bool goUp = vdelta < 0;
 
             int bestX = int.MinValue, bestTargetY = 0, bestDist = int.MaxValue;
@@ -1321,46 +1321,46 @@ namespace tsorcRevamp.NPCs
                               : Math.Min(rb, playerFeetY);  // down: toward player, capped at bottom
                 // Skip ropes recently marked dead — they couldn't actually deliver us to the player
                 // (e.g. rope ends below a solid roof). Prevents re-picking the same on/off-loop rope.
-                if (IsRopeFallbackBadEdged(s, x, tY, now)) continue;
+                if (IsRopeFallbackBadEdged(nav, x, tY, now)) continue;
                 int dist = Math.Abs(dx);
                 if (dist < bestDist) { bestDist = dist; bestX = x; bestTargetY = tY; }
             }
-            if (bestX == int.MinValue) { s.LastPlanResult = $"rope-none up={goUp} d={vdelta}"; return false; }
+            if (bestX == int.MinValue) { nav.LastPlanResult = $"rope-none up={goUp} d={vdelta}"; return false; }
 
             // Retry memory: re-synthesizing the SAME rope within ~3s means the previous climb didn't
             // get us to the player (we're back at the base asking again — the on/off loop). After two
             // such retries, bad-edge this rope so we stop looping and fall through to stand-and-fire.
-            if (bestX == s.RopeFallbackX && now - s.RopeFallbackTick < 180)
+            if (bestX == nav.RopeFallbackX && now - nav.RopeFallbackTick < 180)
             {
-                s.RopeFallbackFails++;
-                if (s.RopeFallbackFails >= 2)
+                nav.RopeFallbackFails++;
+                if (nav.RopeFallbackFails >= 2)
                 {
-                    s.BadEdgeTargets[(bestX, bestTargetY)] = now + 600; // ~10s before we'll try it again
-                    s.RopeFallbackFails = 0;
-                    s.LastPlanResult = $"rope-deadend-baded x={bestX} toY={bestTargetY}";
+                    nav.BadEdgeTargets[(bestX, bestTargetY)] = now + 600; // ~10s before we'll try it again
+                    nav.RopeFallbackFails = 0;
+                    nav.LastPlanResult = $"rope-deadend-baded x={bestX} toY={bestTargetY}";
                     return false;
                 }
             }
-            else s.RopeFallbackFails = 0;
-            s.RopeFallbackX = bestX;
-            s.RopeFallbackTick = now;
+            else nav.RopeFallbackFails = 0;
+            nav.RopeFallbackX = bestX;
+            nav.RopeFallbackTick = now;
 
             // This is a pursuit waypoint, not necessarily a legal dismount. ExecRopeClimb validates that
             // the adjacent tile is a real landing before allowing reachedTarget to release the rope.
             int targetX = bestX + (player.Center.X >= bestX * TileF + 8f ? 1 : -1);
-            s.Plan = new List<PlanStep> { new PlanStep(StepKind.RopeClimb, targetX, bestTargetY, bestX) };
-            s.PlanIndex = 0;
-            s.StepTimer = StepTimeoutFrames;
-            s.CommitFrames = 0;
-            s.RopeEngaged = false; s.RopeDirLatched = false; s.RopeDismounting = false;
-            s.LastPlanResult = $"rope-fallback {(goUp ? "up" : "down")} toY={bestTargetY} x={bestX}";
+            nav.Plan = new List<PlanStep> { new PlanStep(StepKind.RopeClimb, targetX, bestTargetY, bestX) };
+            nav.PlanIndex = 0;
+            nav.StepTimer = StepTimeoutFrames;
+            nav.CommitFrames = 0;
+            nav.RopeEngaged = false; nav.RopeDirLatched = false; nav.RopeDismounting = false;
+            nav.LastPlanResult = $"rope-fallback {(goUp ? "up" : "down")} toY={bestTargetY} x={bestX}";
             return true;
         }
 
         // True if a rope column/target was recently bad-edged (within ±1 tile X, ±2 tile Y, not expired).
-        private static bool IsRopeFallbackBadEdged(NavState s, int x, int y, int now)
+        private static bool IsRopeFallbackBadEdged(NavState nav, int x, int y, int now)
         {
-            foreach (var kv in s.BadEdgeTargets)
+            foreach (var kv in nav.BadEdgeTargets)
                 if (kv.Value > now && Math.Abs(kv.Key.x - x) <= 1 && Math.Abs(kv.Key.y - y) <= 2) return true;
             return false;
         }
@@ -1371,22 +1371,22 @@ namespace tsorcRevamp.NPCs
         // so normal pursuit closes the gap. Looseness: a drifting target distance + an occasional "let them close" window are re-rolled
         // every ~1.5-4s so spacing is non-robotic and melee can sometimes rush in. Returns true if it took control
         // this frame (which suppresses the pursuit plan). Firing itself is the attack block's job; this only positions.
-        private static bool TryRangedKite(NavState s, NPC npc, Player player, tsorcRevampGlobalNPC g,
+        private static bool TryRangedKite(NavState nav, NPC npc, Player player, tsorcRevampGlobalNPC globalNPC,
             float topSpeed, float acceleration, bool los, out string action, out string reason)
         {
             action = ""; reason = "";
             // KiteRangeMax is the explicit opt-in. Bespoke timeline enemies such as Red Knight have a real ranged
             // pool even though AttackList is intentionally empty.
-            if (g.KiteRangeMax <= 0f) return false;
+            if (globalNPC.KiteRangeMax <= 0f) return false;
 
             // Distant projectile pressure temporarily disables the preferred kite band. Returning false hands
             // movement back to ordinary pursuit/pathfinding, whose effective target distance is zero. Existing
             // distance-aware attacks can claim the body naturally when their melee or ranged band becomes valid.
-            if (g.IsClosingOnRangedThreat(npc, player))
+            if (globalNPC.IsClosingOnRangedThreat(npc, player))
             {
-                s.KiteTargetDist = 0f;
-                s.KiteRerollTimer = 0;
-                s.KiteLetClose = false;
+                nav.KiteTargetDist = 0f;
+                nav.KiteRerollTimer = 0;
+                nav.KiteLetClose = false;
                 return false;
             }
 
@@ -1395,23 +1395,23 @@ namespace tsorcRevamp.NPCs
             if (Math.Abs(player.Center.Y - npc.Center.Y) > 48f) return false;
 
             float distTiles = npc.Distance(player.Center) / TileF;
-            if (distTiles > g.KiteRangeMax) return false; // too far → let pursuit close in (don't take control)
+            if (distTiles > globalNPC.KiteRangeMax) return false; // too far → let pursuit close in (don't take control)
 
             int faceP = player.Center.X >= npc.Center.X ? 1 : -1;
             npc.direction = faceP; npc.spriteDirection = faceP; // always face the player to shoot
 
             // Re-roll the drifting target distance + the looseness window occasionally → non-robotic spacing.
-            if (s.KiteRerollTimer <= 0)
+            if (nav.KiteRerollTimer <= 0)
             {
-                s.KiteTargetDist = MathHelper.Lerp(g.KiteRangeMin, g.KiteRangeMax, Main.rand.NextFloat());
-                s.KiteLetClose = Main.rand.NextFloat() < g.KiteLooseness;
-                s.KiteHoldDrift = Main.rand.NextBool() ? 1 : -1; // +1 = forward toward player, -1 = backward from player
-                s.KiteRerollTimer = Main.rand.Next(90, 240); // ~1.5-4s
+                nav.KiteTargetDist = MathHelper.Lerp(globalNPC.KiteRangeMin, globalNPC.KiteRangeMax, Main.rand.NextFloat());
+                nav.KiteLetClose = Main.rand.NextFloat() < globalNPC.KiteLooseness;
+                nav.KiteHoldDrift = Main.rand.NextBool() ? 1 : -1; // +1 = forward toward player, -1 = backward from player
+                nav.KiteRerollTimer = Main.rand.Next(90, 240); // ~1.5-4s
             }
-            else s.KiteRerollTimer--;
+            else nav.KiteRerollTimer--;
 
             const float deadband = 1.5f; // hysteresis so it doesn't jitter at the target ring
-            if (distTiles < s.KiteTargetDist - deadband && !s.KiteLetClose)
+            if (distTiles < nav.KiteTargetDist - deadband && !nav.KiteLetClose)
             {
                 // Too close → back off, but don't reverse into a wall/cliff (hold + fire if cornered).
                 int away = -faceP;
@@ -1425,15 +1425,15 @@ namespace tsorcRevamp.NPCs
                 {
                     ApplyChase(npc, away, topSpeed, acceleration); // ApplyChase toward `away` = backpedal
                     npc.spriteDirection = faceP;                   // keep facing the player while moving back
-                    action = "kite-back"; reason = $"d={distTiles:F0}<t{s.KiteTargetDist:F0}";
+                    action = "kite-back"; reason = $"d={distTiles:F0}<t{nav.KiteTargetDist:F0}";
                 }
                 return true;
             }
 
             // In the band (or a let-close window) → creep forward/back slowly and fire.
             const float holdDriftSpeedMult = 0.35f;
-            if (s.KiteHoldDrift == 0) s.KiteHoldDrift = -1;
-            int drift = s.KiteHoldDrift;
+            if (nav.KiteHoldDrift == 0) nav.KiteHoldDrift = -1;
+            int drift = nav.KiteHoldDrift;
             int driftDir = drift * faceP;
             int driftFrontX = GetFrontTileX(npc, driftDir);
             if (IsCliffAhead(npc, driftDir) || GetObstacleHeight(driftFrontX, GetFeetTileY(npc)) > 1)
@@ -1442,7 +1442,7 @@ namespace tsorcRevamp.NPCs
                 int otherFrontX = GetFrontTileX(npc, otherDir);
                 if (!IsCliffAhead(npc, otherDir) && GetObstacleHeight(otherFrontX, GetFeetTileY(npc)) <= 1)
                 {
-                    s.KiteHoldDrift *= -1;
+                    nav.KiteHoldDrift *= -1;
                     driftDir = otherDir;
                     drift *= -1;
                 }
@@ -1452,20 +1452,20 @@ namespace tsorcRevamp.NPCs
             if (IsCliffAhead(npc, driftDir) || GetObstacleHeight(driftFrontX, GetFeetTileY(npc)) > 1)
             {
                 if (Math.Abs(npc.velocity.X) < 0.3f) npc.velocity.X = 0f; else npc.velocity.X *= 0.6f;
-                action = "kite-hold"; reason = s.KiteLetClose ? $"d={distTiles:F0} let-close blocked" : $"d={distTiles:F0} band blocked";
+                action = "kite-hold"; reason = nav.KiteLetClose ? $"d={distTiles:F0} let-close blocked" : $"d={distTiles:F0} band blocked";
             }
             else
             {
                 ApplyChase(npc, driftDir, topSpeed * holdDriftSpeedMult, acceleration);
                 npc.spriteDirection = faceP;
                 action = drift > 0 ? "kite-drift-forward" : "kite-drift-back";
-                reason = s.KiteLetClose ? $"d={distTiles:F0} let-close" : $"d={distTiles:F0} band";
+                reason = nav.KiteLetClose ? $"d={distTiles:F0} let-close" : $"d={distTiles:F0} band";
             }
             return true;
         }
 
         // ── Large-beast positioner (Phase 1) ────────────────────────────────────────────────────────────────────
-        // Two pieces, both gated on g.RequiresFlatGround by the caller:
+        // Two pieces, both gated on globalNPC.RequiresFlatGround by the caller:
         //   TryBeastContactBackoff — runs as the "kiting" pre-empt; bobs the beast back out of melee for a window
         //                            after each touch so it doesn't grind centered on the player (sprite glitch /
         //                            "trapped on top of you"). Returns false when there's no active back-off so A*
@@ -1478,10 +1478,10 @@ namespace tsorcRevamp.NPCs
         // unchanged — it stays BasicAI's job; this only positions.
         private const int BeastHitWindow = 180; // ~3s ramp for the hit-recency retreat-speed scaling
 
-        private static float BeastRetreatSpeed(tsorcRevampGlobalNPC g)
+        private static float BeastRetreatSpeed(tsorcRevampGlobalNPC globalNPC)
         {
-            float hitRecency = MathHelper.Clamp(1f - g.FramesSinceHit / (float)BeastHitWindow, 0f, 1f);
-            return MathHelper.Lerp(g.BeastRetreatSpeedCalm, g.BeastRetreatSpeedHit, hitRecency);
+            float hitRecency = MathHelper.Clamp(1f - globalNPC.FramesSinceHit / (float)BeastHitWindow, 0f, 1f);
+            return MathHelper.Lerp(globalNPC.BeastRetreatSpeedCalm, globalNPC.BeastRetreatSpeedHit, hitRecency);
         }
 
         // Won't step a beast off a cliff or grind it into a wall: prefer `desired`, else the opposite if it's open,
@@ -1496,49 +1496,49 @@ namespace tsorcRevamp.NPCs
             return faceP;
         }
 
-        private static bool TryBeastContactBackoff(NavState s, NPC npc, Player player, tsorcRevampGlobalNPC g,
+        private static bool TryBeastContactBackoff(NavState nav, NPC npc, Player player, tsorcRevampGlobalNPC globalNPC,
             float acceleration, out string action, out string reason)
         {
             action = ""; reason = "";
             int faceP = player.Center.X >= npc.Center.X ? 1 : -1;
             bool touching = npc.Hitbox.Intersects(player.Hitbox)
                 || npc.Distance(player.Center) <= (npc.width + player.width) * 0.5f + 8f;
-            if (touching) s.BeastContactBackoff = g.BeastContactBackoffTicks;
-            if (s.BeastContactBackoff <= 0) return false;
+            if (touching) nav.BeastContactBackoff = globalNPC.BeastContactBackoffTicks;
+            if (nav.BeastContactBackoff <= 0) return false;
 
-            s.BeastContactBackoff--;
-            g.BeastUnreachableFrames = 0; // we just reached them — not stale
+            nav.BeastContactBackoff--;
+            globalNPC.BeastUnreachableFrames = 0; // we just reached them — not stale
             int away = BeastStepDir(npc, -faceP, faceP);
-            ApplyChase(npc, away, BeastRetreatSpeed(g), acceleration);
+            ApplyChase(npc, away, BeastRetreatSpeed(globalNPC), acceleration);
             npc.direction = faceP; npc.spriteDirection = faceP; // keep facing the player while bobbing out
-            action = "beast-backoff"; reason = $"t={s.BeastContactBackoff}";
+            action = "beast-backoff"; reason = $"t={nav.BeastContactBackoff}";
             return true;
         }
 
-        private static void BeastOscillate(NavState s, NPC npc, Player player, tsorcRevampGlobalNPC g,
+        private static void BeastOscillate(NavState nav, NPC npc, Player player, tsorcRevampGlobalNPC globalNPC,
             float topSpeed, float acceleration, out string action, out string reason)
         {
-            g.BeastUnreachableFrames++;
+            globalNPC.BeastUnreachableFrames++;
             int faceP = player.Center.X >= npc.Center.X ? 1 : -1;
             npc.direction = faceP; npc.spriteDirection = faceP;
             float distTiles = npc.Distance(player.Center) / TileF;
-            bool closeOnRangedThreat = g.IsClosingOnRangedThreat(npc, player);
+            bool closeOnRangedThreat = globalNPC.IsClosingOnRangedThreat(npc, player);
 
             // Re-roll the band target occasionally so it can't reverse course every frame (hysteresis).
             if (closeOnRangedThreat)
             {
-                s.KiteTargetDist = 0f;
-                s.KiteRerollTimer = 0;
+                nav.KiteTargetDist = 0f;
+                nav.KiteRerollTimer = 0;
             }
-            else if (s.KiteRerollTimer <= 0)
+            else if (nav.KiteRerollTimer <= 0)
             {
-                float lo = g.KiteRangeMin > 0 ? g.KiteRangeMin : 6f;
-                float hi = g.KiteRangeMax > 0 ? g.KiteRangeMax : 20f;
-                s.KiteTargetDist = MathHelper.Lerp(lo, hi, Main.rand.NextFloat());
-                s.KiteHoldDrift = Main.rand.NextBool() ? 1 : -1;
-                s.KiteRerollTimer = Main.rand.Next(90, 240); // ~1.5-4s committed
+                float lo = globalNPC.KiteRangeMin > 0 ? globalNPC.KiteRangeMin : 6f;
+                float hi = globalNPC.KiteRangeMax > 0 ? globalNPC.KiteRangeMax : 20f;
+                nav.KiteTargetDist = MathHelper.Lerp(lo, hi, Main.rand.NextFloat());
+                nav.KiteHoldDrift = Main.rand.NextBool() ? 1 : -1;
+                nav.KiteRerollTimer = Main.rand.Next(90, 240); // ~1.5-4s committed
             }
-            else s.KiteRerollTimer--;
+            else nav.KiteRerollTimer--;
 
             const float deadband = 2f;
             bool approachBlocked = IsBeastStepBlocked(npc, faceP);
@@ -1547,25 +1547,25 @@ namespace tsorcRevamp.NPCs
             {
                 desired = faceP; speed = topSpeed;                                // pressure posture: approach-only
             }
-            else if (!approachBlocked && distTiles > s.KiteTargetDist + deadband)
+            else if (!approachBlocked && distTiles > nav.KiteTargetDist + deadband)
             {
                 desired = faceP; speed = topSpeed;                              // too far → close as far as terrain allows
             }
-            else if (distTiles < s.KiteTargetDist - deadband)
+            else if (distTiles < nav.KiteTargetDist - deadband)
             {
-                desired = -faceP; speed = BeastRetreatSpeed(g);                 // too close → back off (hit-scaled)
+                desired = -faceP; speed = BeastRetreatSpeed(globalNPC);                 // too close → back off (hit-scaled)
             }
             else
             {
-                desired = s.KiteHoldDrift * faceP;                              // in band (or approach blocked) → slow drift in/out
-                speed = Math.Max(topSpeed * 0.45f, g.BeastRetreatSpeedCalm);
+                desired = nav.KiteHoldDrift * faceP;                              // in band (or approach blocked) → slow drift in/out
+                speed = Math.Max(topSpeed * 0.45f, globalNPC.BeastRetreatSpeedCalm);
             }
 
             int moveDir = BeastStepDir(npc, desired, faceP);
             ApplyChase(npc, moveDir, speed, acceleration);
             npc.spriteDirection = faceP;
             action = closeOnRangedThreat ? "beast-ranged-pursuit" : "beast-oscillate";
-            reason = $"d={distTiles:F0} t={s.KiteTargetDist:F0}";
+            reason = $"d={distTiles:F0} t={nav.KiteTargetDist:F0}";
         }
 
         // ── Phase 2: bull through thin (<= BeastPhaseMaxWidth) body/head obstructions ─────────────────────────────
@@ -1573,20 +1573,20 @@ namespace tsorcRevamp.NPCs
         // phasing it runs noTileCollide and pins its feet to the entry floor (so gravity doesn't drop it through the
         // obstruction's base); it still needs valid floor on the far side. Real walls (wider than the cap) are NOT
         // phased — A* routes around/over them. Returns true on any frame it is phasing (the caller skips auto-step).
-        private static bool TryBeastPhase(NavState s, NPC npc, tsorcRevampGlobalNPC g)
+        private static bool TryBeastPhase(NavState nav, NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
-            if (s.BeastPhasing)
+            if (nav.BeastPhasing)
             {
                 // Direction latched when the phase began. It should never be 0 here; fall back to current
                 // travel so a stale 0 can't stall the body inside the wall.
-                int dir = s.BeastPhaseDir;
+                int dir = nav.BeastPhaseDir;
 
                 if (dir == 0)
                 {
                     dir = npc.velocity.X >= 0f ? 1 : -1;
                 }
 
-                npc.position.Y = s.BeastPhaseFloorY - npc.height; // hold the entry floor level
+                npc.position.Y = nav.BeastPhaseFloorY - npc.height; // hold the entry floor level
                 npc.velocity.Y = 0f;
                 // Commit to the latched direction so a mid-phase plan/velocity flip can't strand it inside the wall.
                 if (Math.Abs(npc.velocity.X) < 1f || Math.Sign(npc.velocity.X) != dir) npc.velocity.X = dir * 1.5f;
@@ -1595,10 +1595,10 @@ namespace tsorcRevamp.NPCs
                 // Exit once the body is fully clear (out the far side) and nothing is blocking the next column —
                 // or the safety cap trips (so a bad detection can never strand it phasing).
                 bool clear = !BeastBodyInsideSolid(npc) && BeastClearColumnDistance(npc, dir, 1) <= 0;
-                if (clear || ++s.BeastPhaseFrames > 90)
+                if (clear || ++nav.BeastPhaseFrames > 90)
                 {
-                    s.BeastPhasing = false;
-                    s.BeastPhaseFrames = 0;
+                    nav.BeastPhasing = false;
+                    nav.BeastPhaseFrames = 0;
                     npc.noTileCollide = false;
                     return false;
                 }
@@ -1625,9 +1625,9 @@ namespace tsorcRevamp.NPCs
                 return false;
             }
 
-            int dist = BeastClearColumnDistance(npc, moveDirection, g.BeastPhaseMaxWidth + 1);
+            int dist = BeastClearColumnDistance(npc, moveDirection, globalNPC.BeastPhaseMaxWidth + 1);
             if (dist <= 0) return false;                 // body isn't actually blocked ahead
-            if (dist > g.BeastPhaseMaxWidth) return false; // a real wall → let A* handle it
+            if (dist > globalNPC.BeastPhaseMaxWidth) return false; // a real wall → let A* handle it
 
             // It still needs ground on the far side (it phases the obstruction, not into a pit).
             int feetY = GetFeetTileY(npc);
@@ -1635,10 +1635,10 @@ namespace tsorcRevamp.NPCs
             int farX = startX + moveDirection * dist;
             if (!IsNavigationSolid(farX, feetY + 1) && !IsNavigationSolid(farX, feetY + 2)) return false;
 
-            s.BeastPhasing = true;
-            s.BeastPhaseFrames = 0;
-            s.BeastPhaseDir = moveDirection;
-            s.BeastPhaseFloorY = npc.Bottom.Y;
+            nav.BeastPhasing = true;
+            nav.BeastPhaseFrames = 0;
+            nav.BeastPhaseDir = moveDirection;
+            nav.BeastPhaseFloorY = npc.Bottom.Y;
             npc.noTileCollide = true;
             npc.velocity.Y = 0f;
             return true;
@@ -1682,13 +1682,13 @@ namespace tsorcRevamp.NPCs
         // BeastSinkMaxTiles. On a slope/hill the overhang then clips DOWN into the ground instead of floating in air;
         // the physics body still rests on the support core (MinSurfaceWidth), so combat/footing are unchanged. Only
         // raises gfxOffY (never lowers it) so the vanilla auto-step glide isn't fought on flat ground.
-        private static void ApplyBeastGroundSink(NPC npc, tsorcRevampGlobalNPC g)
+        private static void ApplyBeastGroundSink(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
             if (npc.velocity.Y != 0f) return; // only while grounded
             int restRow = GetFeetTileY(npc) + 1; // the floor row the support core actually stands on
             int leftX = (int)(npc.Left.X / TileF);
             int rightX = (int)(npc.Right.X / TileF);
-            int sinkCap = Math.Max(0, g.BeastSinkMaxTiles);
+            int sinkCap = Math.Max(0, globalNPC.BeastSinkMaxTiles);
             if (sinkCap == 0) return;
 
             // Deepest ground under the footprint, measured in tiles BELOW the resting floor (capped). On flat
@@ -1717,16 +1717,16 @@ namespace tsorcRevamp.NPCs
         // clip it in) instead of floating off a cliff edge. Only acts when nearly stopped, so it never fights active
         // pursuit/oscillation — and never steps off the opposite edge. The deeper "refuse to perch over air" nav fix
         // is intentionally NOT done here (it risks breaking drop-pursuit); this is the cheap, safe mitigation.
-        private static void ApplyBeastAntiFloat(NPC npc, tsorcRevampGlobalNPC g)
+        private static void ApplyBeastAntiFloat(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
             if (npc.velocity.Y != 0f || Math.Abs(npc.velocity.X) > 0.6f) return;
-            int sinkCap = Math.Max(1, g.BeastSinkMaxTiles);
+            int sinkCap = Math.Max(1, globalNPC.BeastSinkMaxTiles);
             bool leftAir = BeastSideOverhangsAir(npc, -1, sinkCap);
             bool rightAir = BeastSideOverhangsAir(npc, 1, sinkCap);
             if (leftAir == rightAir) return; // both float (narrow perch) or both grounded → no clearly better side
             int toGround = leftAir ? 1 : -1;
             if (!IsBeastStepBlocked(npc, toGround))
-                ApplyChase(npc, toGround, Math.Max(0.6f, g.BeastRetreatSpeedCalm), 0.1f);
+                ApplyChase(npc, toGround, Math.Max(0.6f, globalNPC.BeastRetreatSpeedCalm), 0.1f);
         }
 
         // True if the outer two columns on `side` of the sprite have no ground within ~sinkCap tiles below the feet
@@ -1788,7 +1788,7 @@ namespace tsorcRevamp.NPCs
         }
 
         private const int StandoffMinTiles = 10; // walk out this far for a firing angle (clears most structures)
-        private static bool TryRangedStandoff(NPC npc, Player player, tsorcRevampGlobalNPC g,
+        private static bool TryRangedStandoff(NPC npc, Player player, tsorcRevampGlobalNPC globalNPC,
             float topSpeed, float acceleration, bool los, bool inRange, out string action, out string reason)
         {
             action = ""; reason = "";
@@ -1797,7 +1797,7 @@ namespace tsorcRevamp.NPCs
             // NOTE: LOS is NOT required to enter — we may need to step aside to FIND a sightline; we bail
             // below only if we neither have LOS nor can reach one by stepping.
             bool playerAbove = npc.Center.Y - player.Center.Y > 48f; // > 3 tiles up
-            if (!(g.AttackList.Count > 0 && inRange && playerAbove)) return false;
+            if (!(globalNPC.AttackList.Count > 0 && inRange && playerAbove)) return false;
 
             float dxToPlayer = npc.Center.X - player.Center.X; // > 0 => NPC is to the player's right
             float offsetTiles = Math.Abs(dxToPlayer) / TileF;
@@ -2043,11 +2043,11 @@ namespace tsorcRevamp.NPCs
             return npc.Center.X < c ? 1 : -1;
         }
 
-        private static bool ExecuteStep(NavState s, NPC npc, Player player, float topSpeed, float acceleration,
-            float jumpCeil, float boostCeil, bool grounded, int doorDamage, tsorcRevampGlobalNPC g,
+        private static bool ExecuteStep(NavState nav, NPC npc, Player player, float topSpeed, float acceleration,
+            float jumpCeil, float boostCeil, bool grounded, int doorDamage, tsorcRevampGlobalNPC globalNPC,
             out string action, out string reason)
         {
-            PlanStep step = s.Plan[s.PlanIndex];
+            PlanStep step = nav.Plan[nav.PlanIndex];
             int feetY = GetFeetTileY(npc);
 
             // ---- Step completion ----
@@ -2073,30 +2073,30 @@ namespace tsorcRevamp.NPCs
             {
                 // Restore any rope-climb suspended gravity.
                 ReleaseRopeTraversal(npc, abandonRopeStep: false);
-                s.PlanIndex++;
-                s.StepTimer = StepTimeoutFrames;
-                s.CommitFrames = 0;
-                s.AirCommitTimer = 0;
-                s.JumpFiredThisStep = false;
-                s.RopeEngaged = false; s.RopeDirLatched = false; s.RopeDismounting = false;
+                nav.PlanIndex++;
+                nav.StepTimer = StepTimeoutFrames;
+                nav.CommitFrames = 0;
+                nav.AirCommitTimer = 0;
+                nav.JumpFiredThisStep = false;
+                nav.RopeEngaged = false; nav.RopeDirLatched = false; nav.RopeDismounting = false;
                 action = "step-done";
-                reason = $"#{s.PlanIndex - 1}={step.Kind}";
+                reason = $"#{nav.PlanIndex - 1}={step.Kind}";
                 return false;
             }
 
             // ---- Step failure timeout ----
-            if (s.StepTimer == 0)
+            if (nav.StepTimer == 0)
             {
                 ReleaseRopeTraversal(npc, abandonRopeStep: false);
                 // Bad-edge memory: remember this failed step's target span so the
                 // next replan doesn't immediately pick the same route.
                 int expiry = (int)Main.GameUpdateCount + 480; // 8 seconds
-                s.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
-                s.Plan = null;
-                s.PlanIndex = 0;
-                s.CommitFrames = 0;
-                s.JumpFiredThisStep = false;
-                s.RopeEngaged = false; s.RopeDirLatched = false; s.RopeDismounting = false;
+                nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                nav.Plan = null;
+                nav.PlanIndex = 0;
+                nav.CommitFrames = 0;
+                nav.JumpFiredThisStep = false;
+                nav.RopeEngaged = false; nav.RopeDirLatched = false; nav.RopeDismounting = false;
                 action = "step-timeout";
                 reason = $"{step.Kind} target=({step.TargetX},{step.TargetY})";
                 return false;
@@ -2106,16 +2106,16 @@ namespace tsorcRevamp.NPCs
             switch (step.Kind)
             {
                 case StepKind.Walk:
-                    return ExecWalk(s, npc, step, topSpeed, acceleration, jumpCeil, boostCeil, doorDamage, g, grounded, out action, out reason);
+                    return ExecWalk(nav, npc, step, topSpeed, acceleration, jumpCeil, boostCeil, doorDamage, globalNPC, grounded, out action, out reason);
                 case StepKind.JumpUp:
                 case StepKind.JumpGap:
-                    return ExecJump(s, npc, step, topSpeed, acceleration, jumpCeil, boostCeil, grounded, feetY, out action, out reason);
+                    return ExecJump(nav, npc, step, topSpeed, acceleration, jumpCeil, boostCeil, grounded, feetY, out action, out reason);
                 case StepKind.Drop:
-                    return ExecDrop(s, npc, step, topSpeed, acceleration, grounded, out action, out reason);
+                    return ExecDrop(nav, npc, step, topSpeed, acceleration, grounded, out action, out reason);
                 case StepKind.PlatformDrop:
-                    return ExecPlatformDrop(s, npc, step, topSpeed, acceleration, grounded, out action, out reason);
+                    return ExecPlatformDrop(nav, npc, step, topSpeed, acceleration, grounded, out action, out reason);
                 case StepKind.RopeClimb:
-                    return ExecRopeClimb(s, npc, step, topSpeed, acceleration, jumpCeil, boostCeil, grounded, out action, out reason);
+                    return ExecRopeClimb(nav, npc, step, topSpeed, acceleration, jumpCeil, boostCeil, grounded, out action, out reason);
             }
             action = "?"; reason = "";
             return false;
@@ -2128,7 +2128,7 @@ namespace tsorcRevamp.NPCs
         //             making upward progress so tall ropes don't hit the step timeout.
         //   Phase 3 — at the step-off height, restore gravity and hop toward the landing span;
         //             the standard "grounded + near target" completion check then advances the plan.
-        private static bool ExecRopeClimb(NavState s, NPC npc, PlanStep step, float topSpeed, float acceleration,
+        private static bool ExecRopeClimb(NavState nav, NPC npc, PlanStep step, float topSpeed, float acceleration,
             float jumpCeil, float boostCeil, bool grounded, out string action, out string reason)
         {
             float ropeCenter = step.LaunchX * TileF + 8f;
@@ -2139,16 +2139,16 @@ namespace tsorcRevamp.NPCs
             // dismount take the "up" branch and pop the NPC back up a tile — then descend re-armed
             // and it rode back down: that frame-by-frame flip was the on-rope vibration at the
             // target. Latch once we commit to the ride (Phase 2) and hold it for the whole step.
-            bool descend = s.RopeDirLatched ? s.RopeDescend : step.TargetY > feetY; // target below -> ride down
+            bool descend = nav.RopeDirLatched ? nav.RopeDescend : step.TargetY > feetY; // target below -> ride down
 
             // Mark engagement once feet are actually within the rope tiles. Lets the NPC float
             // up to (or drop onto) a rope whose end hangs away from its starting position without
             // the end-of-rope check firing prematurely.
             if (IsRopeTile(step.LaunchX, feetY) || IsRopeTile(step.LaunchX, feetY - 1))
-                s.RopeEngaged = true;
+                nav.RopeEngaged = true;
 
             // Reset per-step flags whenever we're grounded and off the rope (fresh entry).
-            if (grounded && !onRope) { s.RopeJumpedThisStep = false; s.RopeDirLatched = false; s.RopeDismounting = false; }
+            if (grounded && !onRope) { nav.RopeJumpedThisStep = false; nav.RopeDirLatched = false; nav.RopeDismounting = false; }
 
             // If a rope tile is at our feet AND we're within a tile of the column, we're close enough to
             // grab — skip alignment and let Phase 2 engage (it glide-snaps X onto the rope). Crucial: do
@@ -2169,33 +2169,33 @@ namespace tsorcRevamp.NPCs
             {
                 int aDir = npc.Center.X < ropeCenter ? 1 : -1;
                 npc.direction = aDir; npc.spriteDirection = aDir;
-                s.RopeStallFrames = 0; s.LastRopeFeetY = feetY; s.RopeEngaged = false;
+                nav.RopeStallFrames = 0; nav.LastRopeFeetY = feetY; nav.RopeEngaged = false;
                 int aFrontX = GetFrontTileX(npc, aDir);
                 int oh = GetObstacleHeight(aFrontX, feetY);
                 if (oh == 2 && npc.collideX && HasHeadroomForJump(npc, aDir, oh)
                     && ComputeJumpArc(2, oh, npc.gravity, jumpCeil, topSpeed + boostCeil, out float hp, out float hvx))
                 {
-                    FireJump(s, npc, aDir, hp, hvx, 16, 12);
-                    s.AlignStallFrames = 0;
+                    FireJump(nav, npc, aDir, hp, hvx, 16, 12);
+                    nav.AlignStallFrames = 0;
                     action = "align-rope-hop"; reason = $"oh={oh}";
                     return true;
                 }
                 if (npc.collideX && oh > 2)
                 {
-                    s.AlignStallFrames++;
-                    if (s.AlignStallFrames > 18) { s.StepTimer = 0; s.AlignStallFrames = 0; }
+                    nav.AlignStallFrames++;
+                    if (nav.AlignStallFrames > 18) { nav.StepTimer = 0; nav.AlignStallFrames = 0; }
                 }
-                else s.AlignStallFrames = 0;
+                else nav.AlignStallFrames = 0;
                 // Same alignment-precision floor as the jump launch column (see ExecJump): a low chase accel
                 // shouldn't make the rope-column approach oscillate.
                 ApplyChase(npc, aDir, topSpeed, Math.Max(acceleration, AlignAccelFloor));
                 action = "align-rope"; reason = $"ropeX={step.LaunchX} cx={npc.Center.X / TileF:F1} {(descend ? "down" : "up")}";
                 return true;
             }
-            s.AlignStallFrames = 0;
+            nav.AlignStallFrames = 0;
 
             // End-of-rope: only meaningful once engaged. Up = no rope above; down = no rope below.
-            bool atRopeEnd = s.RopeEngaged && (descend
+            bool atRopeEnd = nav.RopeEngaged && (descend
                 ? !IsRopeTile(step.LaunchX, feetY + 1)
                 : !IsRopeTile(step.LaunchX, feetY - 1));
             bool reachedTarget = descend ? feetY >= step.TargetY : feetY <= step.TargetY;
@@ -2207,21 +2207,21 @@ namespace tsorcRevamp.NPCs
             // Climbing up into a SOLID (non-rope) ceiling at head height. The ride uses noTileCollide so the
             // body would otherwise phase up into the blocks above the rope. Treat this as a stop point so the
             // dismount logic resolves it instead of riding into the solid.
-            bool ceilingCapped = !descend && s.RopeEngaged
+            bool ceilingCapped = !descend && nav.RopeEngaged
                 && IsNavigationSolid(step.LaunchX, feetY - 2) && !IsRopeTile(step.LaunchX, feetY - 2);
 
             // Stall detection: blocked in the travel direction with no progress.
-            bool noProgress = descend ? feetY <= s.LastRopeFeetY : feetY >= s.LastRopeFeetY;
+            bool noProgress = descend ? feetY <= nav.LastRopeFeetY : feetY >= nav.LastRopeFeetY;
             bool blocked = onRope && npc.collideY && noProgress;
-            if (blocked) s.RopeStallFrames++;
-            else s.RopeStallFrames = 0;
-            bool forceDismount = s.RopeStallFrames > 12;
+            if (blocked) nav.RopeStallFrames++;
+            else nav.RopeStallFrames = 0;
+            bool forceDismount = nav.RopeStallFrames > 12;
 
             // PURSUE on the rope: if the player is hanging on THIS rope, don't ride to a stale fixed
             // target and dismount into the void; keep climbing toward the player's live position.
             // This fixes the rope on/off free-fall loop when the player is mid-rope (no landing there).
             // Stateless: as soon as the player leaves the rope, normal dismount logic resumes.
-            if (onRope && s.RopeEngaged && !atRopeEnd && !forceDismount && !ceilingCapped)
+            if (onRope && nav.RopeEngaged && !atRopeEnd && !forceDismount && !ceilingCapped)
             {
                 Player ropePlayer = Main.player[npc.target];
                 int pFeetY = (int)((ropePlayer.Bottom.Y - 1f) / TileF);
@@ -2237,17 +2237,17 @@ namespace tsorcRevamp.NPCs
                     if (feetY > holdFeetY && IsRopeTile(step.LaunchX, feetY - 1))
                     {
                         npc.velocity.Y = -RopeClimbSpeed;
-                        s.RopeDescend = false; // if the player leaves now, keep going toward the upper exit
+                        nav.RopeDescend = false; // if the player leaves now, keep going toward the upper exit
                     }
                     else if (feetY < holdFeetY && IsRopeTile(step.LaunchX, feetY + 1))
                     {
                         npc.velocity.Y = RopeClimbSpeed;
-                        s.RopeDescend = true; // if the player leaves now, keep going toward the lower exit
+                        nav.RopeDescend = true; // if the player leaves now, keep going toward the lower exit
                     }
                     else npc.velocity.Y = 0f;
-                    s.StepTimer = StepTimeoutFrames; // live pursuit progress should not bad-edge the rope
-                    s.CommitFrames = Math.Max(s.CommitFrames, 8);
-                    s.RopeStallFrames = 0; s.LastRopeFeetY = feetY; s.RopeDismounting = false;
+                    nav.StepTimer = StepTimeoutFrames; // live pursuit progress should not bad-edge the rope
+                    nav.CommitFrames = Math.Max(nav.CommitFrames, 8);
+                    nav.RopeStallFrames = 0; nav.LastRopeFeetY = feetY; nav.RopeDismounting = false;
                     action = npc.velocity.Y < 0f ? "rope-pursue-up"
                         : npc.velocity.Y > 0f ? "rope-pursue-down"
                         : "rope-caught-up";
@@ -2261,7 +2261,7 @@ namespace tsorcRevamp.NPCs
             {
                 npc.noGravity = false;
                 npc.noTileCollide = false; // re-enable collision before any horizontal dismount motion
-                s.RopeStallFrames = 0;
+                nav.RopeStallFrames = 0;
                 int rise = feetY - step.TargetY; // > 0 means the target is still above us
 
                 // DEAD END (up): a solid ceiling is above us and we have NOT reached the (higher) target — this
@@ -2271,19 +2271,19 @@ namespace tsorcRevamp.NPCs
                 // retry the same dead-end rope.
                 if (!descend && !reachedTarget && IsNavigationSolid(step.LaunchX, feetY - 2))
                 {
-                    s.BadEdgeTargets[(step.TargetX, step.TargetY)] = (int)Main.GameUpdateCount + 480;
-                    s.Plan = null; s.PlanIndex = 0; s.CommitFrames = 0;
-                    s.RopeEngaged = false;
+                    nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = (int)Main.GameUpdateCount + 480;
+                    nav.Plan = null; nav.PlanIndex = 0; nav.CommitFrames = 0;
+                    nav.RopeEngaged = false;
                     action = "rope-deadend"; reason = $"toY={step.TargetY} ropeTop~{feetY} solidAbove";
                     return false;
                 }
 
                 // Second forced dismount = real ceiling/floor block, not a jump-through platform.
-                if (forceDismount && s.RopeJumpedThisStep)
+                if (forceDismount && nav.RopeJumpedThisStep)
                 {
                     int expiry = (int)Main.GameUpdateCount + 480;
-                    s.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
-                    s.Plan = null; s.PlanIndex = 0; s.CommitFrames = 0;
+                    nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                    nav.Plan = null; nav.PlanIndex = 0; nav.CommitFrames = 0;
                     action = "rope-abort"; reason = $"blocked toY={step.TargetY}";
                     return false;
                 }
@@ -2300,10 +2300,10 @@ namespace tsorcRevamp.NPCs
                     npc.position.X = RopeSnapX(npc, step.LaunchX, ropeCenter, feetY);
                     npc.velocity.X = 0f;
                     npc.velocity.Y = -Math.Max(vp, 6f);
-                    s.AirCommitDirX = 0; s.AirCommitTimer = 0; s.CommittedLaunchVx = 0f;
-                    s.CommitFrames = 24;
-                    s.RopeDismounting = true; // don't let Phase 2 re-grab/re-snap while leaving
-                    if (forceDismount) s.RopeJumpedThisStep = true;
+                    nav.AirCommitDirX = 0; nav.AirCommitTimer = 0; nav.CommittedLaunchVx = 0f;
+                    nav.CommitFrames = 24;
+                    nav.RopeDismounting = true; // don't let Phase 2 re-grab/re-snap while leaving
+                    if (forceDismount) nav.RopeJumpedThisStep = true;
                     action = "rope-jumpup"; reason = $"rise={rise} p={Math.Max(vp, 6f):F1}";
                     return true;
                 }
@@ -2315,11 +2315,11 @@ namespace tsorcRevamp.NPCs
                 npc.velocity.Y = descend ? 0.5f : -3.2f; // down: let gravity settle; up: small pop
                 npc.velocity.X = offDir * Math.Max(1.4f, topSpeed);
                 npc.direction = offDir; npc.spriteDirection = offDir;
-                s.AirCommitDirX = offDir;
-                s.AirCommitTimer = 14;
-                s.CommittedLaunchVx = 0f;
-                s.CommitFrames = 14;
-                s.RopeDismounting = true; // don't let Phase 2 re-grab/re-snap while stepping off
+                nav.AirCommitDirX = offDir;
+                nav.AirCommitTimer = 14;
+                nav.CommittedLaunchVx = 0f;
+                nav.CommitFrames = 14;
+                nav.RopeDismounting = true; // don't let Phase 2 re-grab/re-snap while stepping off
                 action = descend ? "rope-exit-down" : "rope-exit"; reason = $"toY={step.TargetY} dir={offDir}";
                 return true;
             }
@@ -2336,9 +2336,9 @@ namespace tsorcRevamp.NPCs
             // the rope — Phase 2 hard-snaps X back to the rope center, which was erasing the step-off
             // and pinning the NPC on the rope (the dismount that "never took"). Let the committed
             // dismount velocity carry it clear; the step completes once grounded near the target.
-            if (!onRope && (s.RopeDismounting || (s.RopeEngaged && !atRopeNow)))
+            if (!onRope && (nav.RopeDismounting || (nav.RopeEngaged && !atRopeNow)))
             {
-                action = "rope-detached"; reason = s.RopeDismounting ? "dismounting" : "off-rope";
+                action = "rope-detached"; reason = nav.RopeDismounting ? "dismounting" : "off-rope";
                 return false;
             }
 
@@ -2365,9 +2365,9 @@ namespace tsorcRevamp.NPCs
                     ComputeJumpArc(0, riseToGrab, npc.gravity, jumpCeil, topSpeed + boostCeil,
                         out float grabPower, out _);
                     int facing = npc.direction != 0 ? npc.direction : 1;
-                    FireJump(s, npc, facing, Math.Max(grabPower, 5f), 0f, 18, 24);
-                    s.AirCommitDirX = 0;
-                    s.CommittedLaunchVx = 0f;
+                    FireJump(nav, npc, facing, Math.Max(grabPower, 5f), 0f, 18, 24);
+                    nav.AirCommitDirX = 0;
+                    nav.CommittedLaunchVx = 0f;
                     action = "rope-grab-hop";
                     reason = $"bottom={ropeBottomY} rise={riseToGrab} p={Math.Max(grabPower, 5f):F1}";
                     return true;
@@ -2379,7 +2379,7 @@ namespace tsorcRevamp.NPCs
             }
 
             // Commit the travel direction for the rest of this step now that we're actually riding.
-            if (!s.RopeDirLatched) { s.RopeDescend = descend; s.RopeDirLatched = true; }
+            if (!nav.RopeDirLatched) { nav.RopeDescend = descend; nav.RopeDirLatched = true; }
 
             // Phase 2: steady vertical ride. noTileCollide lets the body ignore blocks beside the
             // rope (and the solid underside of a destination ledge the rope passes), mimicking how
@@ -2398,14 +2398,14 @@ namespace tsorcRevamp.NPCs
             npc.position.X = Math.Abs(dxToRope) <= RopeSnapStep ? ropeLeft : npc.position.X + Math.Sign(dxToRope) * RopeSnapStep;
             npc.velocity.X = 0f;
             npc.velocity.Y = descend ? RopeClimbSpeed : -RopeClimbSpeed;
-            s.CommitFrames = Math.Max(s.CommitFrames, 8);
+            nav.CommitFrames = Math.Max(nav.CommitFrames, 8);
             // Refresh the step timeout ONLY while making progress toward the target. If the ride
             // stalls (blocked), let StepTimer run down so the step times out and replans.
-            bool progressed = descend ? feetY > s.LastRopeFeetY : feetY < s.LastRopeFeetY;
-            if (progressed) s.StepTimer = StepTimeoutFrames;
-            s.LastRopeFeetY = feetY;
+            bool progressed = descend ? feetY > nav.LastRopeFeetY : feetY < nav.LastRopeFeetY;
+            if (progressed) nav.StepTimer = StepTimeoutFrames;
+            nav.LastRopeFeetY = feetY;
             action = descend ? "rope-descend" : "rope-climb";
-            reason = $"feetY={feetY}->toY={step.TargetY} eng={s.RopeEngaged} stall={s.RopeStallFrames}"
+            reason = $"feetY={feetY}->toY={step.TargetY} eng={nav.RopeEngaged} stall={nav.RopeStallFrames}"
                 + (reachedTarget && !targetExitSafe ? " unsafeTarget=continue" : "");
             return true;
         }
@@ -2419,8 +2419,8 @@ namespace tsorcRevamp.NPCs
                 && HasBodyClearanceAtRow(step.TargetX, step.TargetY);
         }
 
-        private static bool ExecWalk(NavState s, NPC npc, PlanStep step, float topSpeed, float acceleration,
-            float jumpCeil, float boostCeil, int doorDamage, tsorcRevampGlobalNPC g, bool grounded,
+        private static bool ExecWalk(NavState nav, NPC npc, PlanStep step, float topSpeed, float acceleration,
+            float jumpCeil, float boostCeil, int doorDamage, tsorcRevampGlobalNPC globalNPC, bool grounded,
             out string action, out string reason)
         {
             float tgtPx = step.TargetX * TileF + 8f;
@@ -2430,14 +2430,14 @@ namespace tsorcRevamp.NPCs
             npc.direction = dir; npc.spriteDirection = dir;
             if (!grounded) { action = "walk-air"; reason = ""; return false; }
             // Step-hop / door pass â€” but if a tall wall blocks, mark this walk as failed.
-            if (doorDamage > 0 && TryDoor(npc, dir, doorDamage, g, out action, out reason)) return true;
+            if (doorDamage > 0 && TryDoor(npc, dir, doorDamage, globalNPC, out action, out reason)) return true;
             // Walk steps never legitimately descend a cliff (those are Drop/JumpGap steps) → keep cliff-halt.
-            if (TryLocalTerrain(s, npc, dir, jumpCeil, boostCeil, topSpeed, false, out action, out reason))
+            if (TryLocalTerrain(nav, npc, dir, jumpCeil, boostCeil, topSpeed, false, out action, out reason))
             {
                 if (action == "blocked")
                 {
                     // Walk step can't progress â€” abort step so the planner reroutes.
-                    s.StepTimer = 0;
+                    nav.StepTimer = 0;
                 }
                 return true;
             }
@@ -2446,7 +2446,7 @@ namespace tsorcRevamp.NPCs
             return true;
         }
 
-        private static bool ExecJump(NavState s, NPC npc, PlanStep step, float topSpeed, float acceleration,
+        private static bool ExecJump(NavState nav, NPC npc, PlanStep step, float topSpeed, float acceleration,
             float jumpCeil, float boostCeil, bool grounded, int feetY, out string action, out string reason)
         {
             if (!grounded)
@@ -2457,11 +2457,11 @@ namespace tsorcRevamp.NPCs
                 if (npc.collideX && Math.Abs(npc.velocity.Y) < 0.5f && Math.Abs(npc.velocity.X) < 0.5f)
                 {
                     int expiry = (int)Main.GameUpdateCount + 480;
-                    s.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
-                    s.StepTimer = Math.Min(s.StepTimer, 8);
+                    nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                    nav.StepTimer = Math.Min(nav.StepTimer, 8);
                 }
                 action = "jump-air";
-                reason = $"commit={s.CommitFrames} cx={npc.collideX}";
+                reason = $"commit={nav.CommitFrames} cx={npc.collideX}";
                 return false;
             }
             // Grounded again after this step already fired its jump arc, yet the step didn't complete
@@ -2469,10 +2469,10 @@ namespace tsorcRevamp.NPCs
             // its target span. Don't re-align and re-fire (that's the ~3s / 3-jump shuffle); bad-edge this
             // target and reroute now, after the single committed attempt (~1s). A makeable jump completes on
             // the first aligned try, so this only trips on bad proposals.
-            if (s.JumpFiredThisStep)
+            if (nav.JumpFiredThisStep)
             {
-                s.BadEdgeTargets[(step.TargetX, step.TargetY)] = (int)Main.GameUpdateCount + 480;
-                s.StepTimer = 0; // ExecuteStep nulls the plan next frame → clean replan around the bad edge
+                nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = (int)Main.GameUpdateCount + 480;
+                nav.StepTimer = 0; // ExecuteStep nulls the plan next frame → clean replan around the bad edge
                 npc.velocity.X *= 0.5f;
                 action = "jump-missed"; reason = $"undershot target=({step.TargetX},{step.TargetY})";
                 return true;
@@ -2520,13 +2520,13 @@ namespace tsorcRevamp.NPCs
                 // it, so collideX flickers false every other frame and the old gate never reached the abort
                 // (the permanent align-jump freeze in the log). Track raw X progress toward the column
                 // instead — no movement for ~18 frames = wedged.
-                if (Math.Abs(npc.Center.X - s.AlignLastX) > 1.5f) { s.AlignLastX = npc.Center.X; s.AlignStallFrames = 0; }
-                else if (++s.AlignStallFrames > 18) { s.StepTimer = 0; s.AlignStallFrames = 0; }
+                if (Math.Abs(npc.Center.X - nav.AlignLastX) > 1.5f) { nav.AlignLastX = npc.Center.X; nav.AlignStallFrames = 0; }
+                else if (++nav.AlignStallFrames > 18) { nav.StepTimer = 0; nav.AlignStallFrames = 0; }
                 action = "align-jump";
-                reason = $"launch={step.LaunchX} cx={npc.Center.X / TileF:F1} stall={s.AlignStallFrames}";
+                reason = $"launch={step.LaunchX} cx={npc.Center.X / TileF:F1} stall={nav.AlignStallFrames}";
                 return true;
             }
-            s.AlignStallFrames = 0;
+            nav.AlignStallFrames = 0;
             // For vertical jumps, additionally require near-zero residual velocity.
             // Without this, the airborne arc drifts off-column.
             if (isVertical && Math.Abs(npc.velocity.X) > 0.4f)
@@ -2552,8 +2552,8 @@ namespace tsorcRevamp.NPCs
                 if (solidBelow)
                 {
                     int expiry = (int)Main.GameUpdateCount + 480;
-                    s.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
-                    s.StepTimer = 0;
+                    nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                    nav.StepTimer = 0;
                     action = "jump-dropdown-blocked"; reason = "solid-below";
                     return true;
                 }
@@ -2563,12 +2563,12 @@ namespace tsorcRevamp.NPCs
                 npc.noTileCollide = true;
                 npc.velocity.X = 0f;
                 npc.velocity.Y = Math.Max(npc.velocity.Y, 2.0f);
-                s.PlatformPassActive = true;
-                s.PlatformPassTimer = 24;
-                s.PlatformPassStartY = npc.Bottom.Y;
-                s.CommitFrames = 25;
-                s.AirCommitDirX = 0;
-                s.CommittedLaunchVx = 0f;
+                nav.PlatformPassActive = true;
+                nav.PlatformPassTimer = 24;
+                nav.PlatformPassStartY = npc.Bottom.Y;
+                nav.CommitFrames = 25;
+                nav.AirCommitDirX = 0;
+                nav.CommittedLaunchVx = 0f;
                 action = "jump-dropdown"; reason = $"down rise={rise} plat={platformBelow}";
                 return true;
             }
@@ -2584,22 +2584,22 @@ namespace tsorcRevamp.NPCs
                 // Not makeable for this NPC's gravity / jump ceiling — abort the step so the
                 // planner reroutes instead of leaping into the pit. (This is the guarantee:
                 // SF4 only commits to a jump it can physically complete.)
-                s.StepTimer = 0;
+                nav.StepTimer = 0;
                 npc.velocity.X *= 0.5f;
                 action = "jump-abort";
                 reason = $"infeasible dx={absDx} rise={rise} g={npc.gravity:F2} maxVx={maxLaunchVx:F1}";
                 return true;
             }
             int airCommitFrames = EstimateJumpAirFrames(power, rise, npc.gravity);
-            FireJump(s, npc, launchDir, power, launchVx, airCommitFrames, airCommitFrames + 10);
-            s.JumpFiredThisStep = true;
+            FireJump(nav, npc, launchDir, power, launchVx, airCommitFrames, airCommitFrames + 10);
+            nav.JumpFiredThisStep = true;
             if (isVertical)
             {
                 // Kill horizontal velocity and disable the airborne X-lock so we go
                 // straight up — the "stop and jump straight up" capability.
                 npc.velocity.X = 0f;
-                s.AirCommitDirX = 0;
-                s.CommittedLaunchVx = 0f;
+                nav.AirCommitDirX = 0;
+                nav.CommittedLaunchVx = 0f;
             }
             action = "jump-fire";
             reason = $"phys dx={absDx} rise={rise} g={npc.gravity:F2} => p{power:F1}/vx{launchVx:F2} dir={launchDir}";
@@ -2618,8 +2618,8 @@ namespace tsorcRevamp.NPCs
         //    dxTiles      : horizontal launch->landing distance (tiles, >= 0)
         //    riseTiles    : vertical gain (tiles). >0 = landing higher; <0 = drop.
         //    gravity      : npc.gravity (px/frame^2)
-        //    maxJumpPower : ceiling on launch vertical speed (g.MaxJumpPower)
-        //    maxLaunchVx  : ceiling on launch horizontal speed (topSpeed + g.MaxJumpBoost)
+        //    maxJumpPower : ceiling on launch vertical speed (globalNPC.MaxJumpPower)
+        //    maxLaunchVx  : ceiling on launch horizontal speed (topSpeed + globalNPC.MaxJumpBoost)
         //  Returns true with out jumpPower/launchVx if a feasible arc exists; false if the
         //  gap is too wide or the rise too high for this NPC's limits.
         // ================================================================================
@@ -2695,7 +2695,7 @@ namespace tsorcRevamp.NPCs
             return best;
         }
 
-        private static bool ExecDrop(NavState s, NPC npc, PlanStep step, float topSpeed, float acceleration,
+        private static bool ExecDrop(NavState nav, NPC npc, PlanStep step, float topSpeed, float acceleration,
             bool grounded, out string action, out string reason)
         {
             if (!grounded) { action = "drop-air"; reason = ""; return false; }
@@ -2721,8 +2721,8 @@ namespace tsorcRevamp.NPCs
                 // Drop edge is invalid here (solid floor, nothing to fall through) — abort so the
                 // planner reroutes instead of shuffling in place (the oscillating "drop" from the log).
                 int expiry = (int)Main.GameUpdateCount + 480;
-                s.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
-                s.StepTimer = 0;
+                nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                nav.StepTimer = 0;
                 action = "drop-blocked"; reason = "solid-below";
                 return true;
             }
@@ -2745,30 +2745,30 @@ namespace tsorcRevamp.NPCs
                 npc.noTileCollide = true;
                 npc.velocity.X = 0f;
                 npc.velocity.Y = Math.Max(npc.velocity.Y, 1.6f);
-                s.PlatformPassActive = true;
-                s.PlatformPassTimer = 18;
-                s.PlatformPassStartY = npc.Bottom.Y;
-                s.AirCommitDirX = 0;
-                s.CommittedLaunchVx = 0f;
-                s.CommitFrames = 25;
+                nav.PlatformPassActive = true;
+                nav.PlatformPassTimer = 18;
+                nav.PlatformPassStartY = npc.Bottom.Y;
+                nav.AirCommitDirX = 0;
+                nav.CommittedLaunchVx = 0f;
+                nav.CommitFrames = 25;
             }
             else
             {
                 // Free-fall through an open gap — drift toward the target column (no walls here).
                 ApplyChase(npc, descend, topSpeed, acceleration);
-                s.AirCommitDirX = descend;
-                s.AirCommitTimer = 25;
-                s.CommitFrames = 25;
-                s.CommittedLaunchVx = 0f;
+                nav.AirCommitDirX = descend;
+                nav.AirCommitTimer = 25;
+                nav.CommitFrames = 25;
+                nav.CommittedLaunchVx = 0f;
             }
             action = "drop"; reason = $"toY={step.TargetY} plat={platformBelow}";
             return true;
         }
 
-        private static bool ExecPlatformDrop(NavState s, NPC npc, PlanStep step, float topSpeed, float acceleration,
+        private static bool ExecPlatformDrop(NavState nav, NPC npc, PlanStep step, float topSpeed, float acceleration,
             bool grounded, out string action, out string reason)
         {
-            if (!grounded || s.PlatformPassActive)
+            if (!grounded || nav.PlatformPassActive)
             {
                 action = "pdrop-air"; reason = "";
                 return false;
@@ -2783,10 +2783,10 @@ namespace tsorcRevamp.NPCs
             }
             npc.noTileCollide = true;
             npc.velocity.Y = Math.Max(npc.velocity.Y, 1.6f);
-            s.PlatformPassActive = true;
-            s.PlatformPassTimer = 18;
-            s.PlatformPassStartY = npc.Bottom.Y;
-            s.CommitFrames = 25;
+            nav.PlatformPassActive = true;
+            nav.PlatformPassTimer = 18;
+            nav.PlatformPassStartY = npc.Bottom.Y;
+            nav.CommitFrames = 25;
             action = "platform-drop"; reason = $"toY={step.TargetY}";
             return true;
         }
@@ -2828,13 +2828,13 @@ namespace tsorcRevamp.NPCs
             return minClear;
         }
 
-        private static bool TryShaftEscape(NavState s, NPC npc, Player player, float jumpCeil, float topSpeed, float acceleration, out string action, out string reason)
+        private static bool TryShaftEscape(NavState nav, NPC npc, Player player, float jumpCeil, float topSpeed, float acceleration, out string action, out string reason)
         {
             action = ""; reason = "";
             if (player.Center.Y >= npc.Center.Y - 2f * TileF) return false; // player not meaningfully above
             // No A* path to the player means they're behind an impassable wall. Jumping straight up
             // will only loop the NPC against the wall forever — skip and let the stuck clock disengage.
-            if (s.NoAStarPath) return false;
+            if (nav.NoAStarPath) return false;
             int feetY = GetFeetTileY(npc);
             int col = (int)(npc.Center.X / TileF);
 
@@ -2850,11 +2850,11 @@ namespace tsorcRevamp.NPCs
             if (curUp >= 4)
             {
                 // On a launch column → rise straight up; drift toward the player's side once above the lip.
-                FireJump(s, npc, driftDir, jumpCeil, 0f, 35, 45);
+                FireJump(nav, npc, driftDir, jumpCeil, 0f, 35, 45);
                 npc.velocity.X = 0f;   // pure vertical rise; the sideways drift comes later (ShaftEscapeDir, in Run)
-                s.AirCommitDirX = 0;   // disable the normal airborne X-lock so we don't drift early into the lip
-                s.CommittedLaunchVx = 0f;
-                s.ShaftEscapeDir = driftDir;
+                nav.AirCommitDirX = 0;   // disable the normal airborne X-lock so we don't drift early into the lip
+                nav.CommittedLaunchVx = 0f;
+                nav.ShaftEscapeDir = driftDir;
                 action = "shaft-escape"; reason = $"up={curUp} drift={driftDir}";
                 return true;
             }
@@ -2871,7 +2871,7 @@ namespace tsorcRevamp.NPCs
             return true;
         }
 
-        private static bool TryLocalTerrain(NavState s, NPC npc, int direction, float jumpCeil,
+        private static bool TryLocalTerrain(NavState nav, NPC npc, int direction, float jumpCeil,
             float boostCeil, float topSpeed, bool allowCliffDrop, out string action, out string reason)
         {
             int frontX = GetFrontTileX(npc, direction);
@@ -2888,11 +2888,11 @@ namespace tsorcRevamp.NPCs
                 // feasibility, so an unmakeable jump falls through to the blocked brake below.
                 // Skip when NoAStarPath: a wall the span graph can't route through won't be cleared
                 // by a jump — just brake so the stuck clock can disengage to patrol.
-                if (!s.NoAStarPath && oh <= 6 && HasHeadroomForJump(npc, direction, oh))
+                if (!nav.NoAStarPath && oh <= 6 && HasHeadroomForJump(npc, direction, oh))
                 {
                     if (ComputeJumpArc(2, oh, npc.gravity, jumpCeil, maxLaunchVx, out float op, out float ovx))
                     {
-                        FireJump(s, npc, direction, op, ovx, 26, 30);
+                        FireJump(nav, npc, direction, op, ovx, 26, 30);
                         action = "obstacle-jump"; reason = $"h={oh} p{op:F1}/vx{ovx:F2}";
                         return true;
                     }
@@ -2905,7 +2905,7 @@ namespace tsorcRevamp.NPCs
                 {
                     reason = "too-tall";
                 }
-                else if (s.NoAStarPath)
+                else if (nav.NoAStarPath)
                 {
                     reason = "no-astar-path";
                 }
@@ -2939,7 +2939,7 @@ namespace tsorcRevamp.NPCs
                 {
                     if (ComputeJumpArc(gap, -landDrop, npc.gravity, jumpCeil, maxLaunchVx, out float gp, out float gvx))
                     {
-                        FireJump(s, npc, direction, gp, gvx, 26, 30);
+                        FireJump(nav, npc, direction, gp, gvx, 26, 30);
                         action = "gap-jump"; reason = $"gap={gap},drop={landDrop} p{gp:F1}/vx{gvx:F2}";
                         return true;
                     }
@@ -2981,7 +2981,7 @@ namespace tsorcRevamp.NPCs
             return GetObstacleHeight(frontX, feetY) == 1;
         }
 
-        private static bool TryDoor(NPC npc, int direction, int doorDamage, tsorcRevampGlobalNPC g,
+        private static bool TryDoor(NPC npc, int direction, int doorDamage, tsorcRevampGlobalNPC globalNPC,
             out string action, out string reason)
         {
             int frontX = GetFrontTileX(npc, direction);
@@ -3001,11 +3001,11 @@ namespace tsorcRevamp.NPCs
             }
             if (Main.GameUpdateCount % 30 == 0)
             {
-                g.DoorBreakProgress += doorDamage;
+                globalNPC.DoorBreakProgress += doorDamage;
                 WorldGen.KillTile(dx, dy, true, true);
-                if (g.DoorBreakProgress >= 10)
+                if (globalNPC.DoorBreakProgress >= 10)
                 {
-                    g.DoorBreakProgress = 0;
+                    globalNPC.DoorBreakProgress = 0;
                     WorldGen.OpenDoor(dx, openY, direction);
                 }
             }
@@ -3018,7 +3018,7 @@ namespace tsorcRevamp.NPCs
         //  Movement primitives
         // ================================================================================
 
-        private static void FireJump(NavState s, NPC npc, int direction, float jumpPower, float launchVx,
+        private static void FireJump(NavState nav, NPC npc, int direction, float jumpPower, float launchVx,
             int airCommitFrames, int planCommitFrames)
         {
             npc.velocity.Y = -jumpPower;
@@ -3027,10 +3027,10 @@ namespace tsorcRevamp.NPCs
             npc.velocity.X = launchVx * direction;
             npc.direction = direction;
             npc.spriteDirection = direction;
-            s.AirCommitDirX = direction;
-            s.AirCommitTimer = airCommitFrames;
-            s.CommitFrames = planCommitFrames;
-            s.CommittedLaunchVx = launchVx * direction;
+            nav.AirCommitDirX = direction;
+            nav.AirCommitTimer = airCommitFrames;
+            nav.CommitFrames = planCommitFrames;
+            nav.CommittedLaunchVx = launchVx * direction;
             npc.netUpdate = true;
         }
 
@@ -3366,10 +3366,16 @@ namespace tsorcRevamp.NPCs
             return true;
         }
 
-        private static bool IsSpanOnPlatformOnly(Span s)
+        private static bool IsSpanOnPlatformOnly(Span span)
         {
-            for (int x = s.LeftX; x <= s.RightX; x++)
-                if (!IsPlatformTile(x, s.Y + 1)) return false;
+            for (int x = span.LeftX; x <= span.RightX; x++)
+            {
+                if (!IsPlatformTile(x, span.Y + 1))
+                {
+                    return false;
+                }
+            }
+
             return true;
         }
 
@@ -3439,7 +3445,7 @@ namespace tsorcRevamp.NPCs
         ///        being rejected as unstandable.
         ///  unreach=/beast= the give-up counters that decide disengage-vs-persist.
         /// </summary>
-        internal static string DiagnosticBlock(NPC npc, tsorcRevampGlobalNPC g)
+        internal static string DiagnosticBlock(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
             // Self-contained failure: a diagnostic must never be able to take down the line it annotates.
             // The callers' outer try/catch is silent, so without this a throw in here would look exactly
@@ -3447,16 +3453,16 @@ namespace tsorcRevamp.NPCs
             try
             {
                 int now = (int)Main.GameUpdateCount;
-                string fsmAge = g.FsmTick < 0 ? "never" : (now - g.FsmTick).ToString();
-                string mutAge = g.FsmMutationTick < 0 ? "never" : (now - g.FsmMutationTick).ToString();
-                bool clobbered = g.FsmTick >= 0
-                    && (g.PursuitState != g.FsmExitState || g.DisengageTimer != g.FsmExitDisengage);
-                return $" fsm={g.FsmEntryState}:{g.FsmEntryDisengage}->{g.FsmExitState}:{g.FsmExitDisengage}"
-                    + $"@{g.FsmBranch} age={fsmAge}{(clobbered ? " CLOBBERED" : "")}"
-                    + $" mut={g.FsmMutationBy} mutAge={mutAge}"
+                string fsmAge = globalNPC.FsmTick < 0 ? "never" : (now - globalNPC.FsmTick).ToString();
+                string mutAge = globalNPC.FsmMutationTick < 0 ? "never" : (now - globalNPC.FsmMutationTick).ToString();
+                bool clobbered = globalNPC.FsmTick >= 0
+                    && (globalNPC.PursuitState != globalNPC.FsmExitState || globalNPC.DisengageTimer != globalNPC.FsmExitDisengage);
+                return $" fsm={globalNPC.FsmEntryState}:{globalNPC.FsmEntryDisengage}->{globalNPC.FsmExitState}:{globalNPC.FsmExitDisengage}"
+                    + $"@{globalNPC.FsmBranch} age={fsmAge}{(clobbered ? " CLOBBERED" : "")}"
+                    + $" mut={globalNPC.FsmMutationBy} mutAge={mutAge}"
                     + $" gate=msw{_minSurfaceWidth}/mss{_maxSurfaceStep}/ch{_clearanceHeight}"
-                    + $" unreach={g.UnreachableFrames} beast={g.BeastStale}/{g.BeastUnreachableFrames}"
-                    + $" tpApp={g.TeleportAppearanceTimer} stag={g.StaggerTimer}";
+                    + $" unreach={globalNPC.UnreachableFrames} beast={globalNPC.BeastStale}/{globalNPC.BeastUnreachableFrames}"
+                    + $" tpApp={globalNPC.TeleportAppearanceTimer} stag={globalNPC.StaggerTimer}";
             }
             catch (Exception e)
             {
@@ -3485,18 +3491,18 @@ namespace tsorcRevamp.NPCs
             catch { }
         }
 
-        private static void LogFrame(NPC npc, Player player, NavState s, bool grounded, bool los,
+        private static void LogFrame(NPC npc, Player player, NavState nav, bool grounded, bool los,
             bool attack, string action, string reason)
         {
-            tsorcRevampGlobalNPC g = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             int now = (int)Main.GameUpdateCount;
             // Sample finer while on/working a rope so fast vibration & phasing are actually captured between lines.
             bool ropeContext = npc.noGravity
-                || (s.Plan != null && s.PlanIndex < s.Plan.Count && s.Plan[s.PlanIndex].Kind == StepKind.RopeClimb);
+                || (nav.Plan != null && nav.PlanIndex < nav.Plan.Count && nav.Plan[nav.PlanIndex].Kind == StepKind.RopeClimb);
             int interval = ropeContext ? 3 : 12;
             // Per-NPC, not global: several SF4 enemies alive must each get their own sample cadence.
-            if (now - s.LastLogTick < interval) return;
-            s.LastLogTick = now;
+            if (now - nav.LastLogTick < interval) return;
+            nav.LastLogTick = now;
             try
             {
                 string sep = Path.DirectorySeparatorChar.ToString();
@@ -3505,12 +3511,12 @@ namespace tsorcRevamp.NPCs
                 string path = dir + sep + "tsorcRevamp-smartfighter4.log";
                 WriteNavLogHeader(path);
                 string planStr = "none";
-                if (s.Plan != null)
+                if (nav.Plan != null)
                 {
-                    planStr = $"{s.PlanIndex}/{s.Plan.Count}";
-                    if (s.PlanIndex < s.Plan.Count)
+                    planStr = $"{nav.PlanIndex}/{nav.Plan.Count}";
+                    if (nav.PlanIndex < nav.Plan.Count)
                     {
-                        var st = s.Plan[s.PlanIndex];
+                        var st = nav.Plan[nav.PlanIndex];
                         planStr += $" {st.Kind}->{st.TargetX},{st.TargetY}@launch{st.LaunchX}";
                     }
                 }
@@ -3523,34 +3529,34 @@ namespace tsorcRevamp.NPCs
                 //  - eng/stall/lastFeetY + the feetY trend across lines = whether the ride is progressing or
                 //    flip-flopping (dismount->regrab). atEnd/reached show which dismount branch is about to fire.
                 string ropeStr = "";
-                if (s.Plan != null && s.PlanIndex < s.Plan.Count && s.Plan[s.PlanIndex].Kind == StepKind.RopeClimb)
+                if (nav.Plan != null && nav.PlanIndex < nav.Plan.Count && nav.Plan[nav.PlanIndex].Kind == StepKind.RopeClimb)
                 {
-                    var rs = s.Plan[s.PlanIndex];
+                    var rs = nav.Plan[nav.PlanIndex];
                     int lx = rs.LaunchX;
                     int feetY = GetFeetTileY(npc);
-                    bool descend = s.RopeDirLatched ? s.RopeDescend : rs.TargetY > feetY;
-                    bool atEnd = s.RopeEngaged && (descend ? !IsRopeTile(lx, feetY + 1) : !IsRopeTile(lx, feetY - 1));
+                    bool descend = nav.RopeDirLatched ? nav.RopeDescend : rs.TargetY > feetY;
+                    bool atEnd = nav.RopeEngaged && (descend ? !IsRopeTile(lx, feetY + 1) : !IsRopeTile(lx, feetY - 1));
                     bool reached = descend ? feetY >= rs.TargetY : feetY <= rs.TargetY;
-                    ropeStr = $" [rope {(descend ? "DN" : "UP")} toY={rs.TargetY} feetY={feetY} lastFeetY={s.LastRopeFeetY}"
+                    ropeStr = $" [rope {(descend ? "DN" : "UP")} toY={rs.TargetY} feetY={feetY} lastFeetY={nav.LastRopeFeetY}"
                         + $" ropeU1={IsRopeTile(lx, feetY - 1)} ropeHead={IsRopeTile(lx, feetY - 2)} ropeD1={IsRopeTile(lx, feetY + 1)}"
                         + $" solidU2={IsNavigationSolid(lx, feetY - 2)} solidU3={IsNavigationSolid(lx, feetY - 3)}"
-                        + $" eng={s.RopeEngaged} latch={s.RopeDirLatched} dismount={s.RopeDismounting}"
-                        + $" stall={s.RopeStallFrames} atEnd={atEnd} reached={reached}]";
+                        + $" eng={nav.RopeEngaged} latch={nav.RopeDirLatched} dismount={nav.RopeDismounting}"
+                        + $" stall={nav.RopeStallFrames} atEnd={atEnd} reached={reached}]";
                 }
                 int facePlayer = player.Center.X >= npc.Center.X ? 1 : -1;
                 bool wrongAimFace = npc.ai[2] != 0f && npc.spriteDirection != facePlayer;
                 string combatStr = "";
-                if (g.CombatTempo != null || g.KiteRangeMax > 0f || g.BlockedRecently > 0)
+                if (globalNPC.CombatTempo != null || globalNPC.KiteRangeMax > 0f || globalNPC.BlockedRecently > 0)
                 {
-                    string meleeState = g.CombatMeleeActive
-                        ? $"{g.ActiveCombatMeleeKey}@{g.ActiveCombatMeleeTimer}/t{g.ActiveCombatMeleeTelegraphTicks}"
+                    string meleeState = globalNPC.CombatMeleeActive
+                        ? $"{globalNPC.ActiveCombatMeleeKey}@{globalNPC.ActiveCombatMeleeTimer}/t{globalNPC.ActiveCombatMeleeTelegraphTicks}"
                         : "off";
                     combatStr = $" ai1={npc.ai[1]:F0} melee={meleeState}"
-                        + $" pending={g.PendingCombatMoveKey}@{g.PendingCombatMoveGapTimer} combo={g.CombatComboStep}/{g.CombatComboMaximum}/rec{g.CombatComboRecoveryTimer}"
-                        + $" guard={g.BlockedRecently}/{tsorcRevampGlobalNPC.GuardPressureMaxBlocks}/unblock{g.ActiveAttackBypassesShield}"
-                        + $" kite={g.KiteRangeMin:F1}-{g.KiteRangeMax:F1}/threat{g.KiteRangedThreatTimer}"
-                        + $"/advance{g.IsAdvanceAndShootActive(npc, player)}"
-                        + $"/movingFire{g.CanUseMovingFireDuringAdvance(npc, player)}";
+                        + $" pending={globalNPC.PendingCombatMoveKey}@{globalNPC.PendingCombatMoveGapTimer} combo={globalNPC.CombatComboStep}/{globalNPC.CombatComboMaximum}/rec{globalNPC.CombatComboRecoveryTimer}"
+                        + $" guard={globalNPC.BlockedRecently}/{tsorcRevampGlobalNPC.GuardPressureMaxBlocks}/unblock{globalNPC.ActiveAttackBypassesShield}"
+                        + $" kite={globalNPC.KiteRangeMin:F1}-{globalNPC.KiteRangeMax:F1}/threat{globalNPC.KiteRangedThreatTimer}"
+                        + $"/advance{globalNPC.IsAdvanceAndShootActive(npc, player)}"
+                        + $"/movingFire{globalNPC.CanUseMovingFireDuringAdvance(npc, player)}";
                 }
                 string line = $"[{DateTime.Now:HH:mm:ss}] {npc.TypeName}#{npc.whoAmI}"
                     + $" pos=({npc.Center.X / TileF:F1},{npc.Center.Y / TileF:F1})"
@@ -3561,21 +3567,21 @@ namespace tsorcRevamp.NPCs
                     + $" g={grounded} cx={npc.collideX} cy={npc.collideY}"
                     + $" pass=({npc.noTileCollide},{npc.noGravity}) los={los}"
                     + $" plan={planStr}"
-                    + $" stepT={s.StepTimer} commit={s.CommitFrames} air={s.AirCommitDirX}/{s.AirCommitTimer}"
-                    + $" rcd={s.ReplanCooldown} pdrop={s.PlatformPassActive}/{s.PlatformPassTimer}"
-                    + $" plan=\"{s.LastPlanResult}\""
+                    + $" stepT={nav.StepTimer} commit={nav.CommitFrames} air={nav.AirCommitDirX}/{nav.AirCommitTimer}"
+                    + $" rcd={nav.ReplanCooldown} pdrop={nav.PlatformPassActive}/{nav.PlatformPassTimer}"
+                    + $" plan=\"{nav.LastPlanResult}\""
                     // The A* verdict on its own, with its age in frames — LastPlanResult is clobbered by
                     // the rope fallback within the same frame and never showed why pathing actually failed.
-                    + $" astar=\"{s.LastReplanResult}\"@{(s.LastReplanTick < 0 ? "never" : (now - s.LastReplanTick).ToString())}"
-                    + $" noPath={s.NoAStarPath} giveup={s.StuckGiveUpFrames} hard={s.HardStuckStrikes}/{s.HardStuckFrames}"
-                    + $" pursuit={g.PursuitState}"
-                    + $" disengage={g.DisengageTimer}/{g.NavGiveUpTicks}"
-                    + DiagnosticBlock(npc, g)
-                    + $" patrol={g.PatrolMode}/idle{g.PatrolIdleTimer}/leg{g.PatrolLegRemaining}/dir{g.PatrolDirection}/elapsed{g.PatrolElapsed}"
+                    + $" astar=\"{nav.LastReplanResult}\"@{(nav.LastReplanTick < 0 ? "never" : (now - nav.LastReplanTick).ToString())}"
+                    + $" noPath={nav.NoAStarPath} giveup={nav.StuckGiveUpFrames} hard={nav.HardStuckStrikes}/{nav.HardStuckFrames}"
+                    + $" pursuit={globalNPC.PursuitState}"
+                    + $" disengage={globalNPC.DisengageTimer}/{globalNPC.NavGiveUpTicks}"
+                    + DiagnosticBlock(npc, globalNPC)
+                    + $" patrol={globalNPC.PatrolMode}/idle{globalNPC.PatrolIdleTimer}/leg{globalNPC.PatrolLegRemaining}/dir{globalNPC.PatrolDirection}/elapsed{globalNPC.PatrolElapsed}"
                     // Combat-layer state folded in from tsorcRevamp-nav.log so the smart log is a single superset
                     // for SF4 enemies: teleport (style/charges/cooldown/countdown) + stop-to-fire intent.
-                    + $" tp={(g.CanTeleport ? $"{g.TeleportStyle}/ch{(g.TeleportChargesRemaining == int.MaxValue ? "inf" : g.TeleportChargesRemaining.ToString())}/cd{g.TeleportCooldownTimer}/cnt{g.TeleportCountdown}" : "off")}"
-                    + $" stopFire={g.CanStopToFire}"
+                    + $" tp={(globalNPC.CanTeleport ? $"{globalNPC.TeleportStyle}/ch{(globalNPC.TeleportChargesRemaining == int.MaxValue ? "inf" : globalNPC.TeleportChargesRemaining.ToString())}/cd{globalNPC.TeleportCooldownTimer}/cnt{globalNPC.TeleportCountdown}" : "off")}"
+                    + $" stopFire={globalNPC.CanStopToFire}"
                     + $" action={action} reason={reason} attack={attack}"
                     + combatStr
                     + ropeStr;
@@ -3597,14 +3603,14 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        private static string DescribePlan(NavState s)
+        private static string DescribePlan(NavState nav)
         {
-            if (s.Plan == null)
+            if (nav.Plan == null)
                 return "none";
-            string value = $"{s.PlanIndex}/{s.Plan.Count}";
-            if (s.PlanIndex < s.Plan.Count)
+            string value = $"{nav.PlanIndex}/{nav.Plan.Count}";
+            if (nav.PlanIndex < nav.Plan.Count)
             {
-                PlanStep step = s.Plan[s.PlanIndex];
+                PlanStep step = nav.Plan[nav.PlanIndex];
                 value += $" {step.Kind}->{step.TargetX},{step.TargetY}@launch{step.LaunchX}";
             }
             return value;
