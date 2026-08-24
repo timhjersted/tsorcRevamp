@@ -291,9 +291,11 @@ namespace tsorcRevamp.Utilities
             string outputFileName = GetNpcImageFileName(wormGroup.Head);
             try
             {
-                List<Portrait> pieces = wormGroup.Pieces.Select(CreateNpcPortrait).ToList();
-                const int gap = 2;
-                int width = pieces.Sum(piece => piece.Width) + gap * (pieces.Count - 1);
+                List<Portrait> pieces = wormGroup.Pieces
+                    .Select(npc => RotatePortraitCounterClockwise(CreateNpcPortrait(npc, padding: 0)))
+                    .ToList();
+                const int overlap = 1;
+                int width = pieces.Sum(piece => piece.Width) - overlap * (pieces.Count - 1);
                 int height = pieces.Max(piece => piece.Height);
                 var combinedPixels = new Color[width * height];
                 int x = 0;
@@ -305,7 +307,7 @@ namespace tsorcRevamp.Utilities
                     {
                         Array.Copy(piece.Pixels, row * piece.Width, combinedPixels, (y + row) * width + x, piece.Width);
                     }
-                    x += piece.Width + gap;
+                    x += piece.Width - overlap;
                 }
 
                 SavePortrait(imagesDirectory, outputFileName, new Portrait { Pixels = combinedPixels, Width = width, Height = height });
@@ -316,7 +318,7 @@ namespace tsorcRevamp.Utilities
             }
         }
 
-        private Portrait CreateNpcPortrait(ModNPC modNPC)
+        private Portrait CreateNpcPortrait(ModNPC modNPC, int padding = 2)
         {
             Texture2D sourceTexture = TextureAssets.Npc[modNPC.Type].Value;
             int frameCount = PortraitFrameCountOverrides.TryGetValue(modNPC.Name, out int frameCountOverride)
@@ -330,7 +332,7 @@ namespace tsorcRevamp.Utilities
 
             Color[] framePixels = new Color[sourceTexture.Width * frameHeight];
             sourceTexture.GetData(0, new Rectangle(0, 0, sourceTexture.Width, frameHeight), framePixels, 0, framePixels.Length);
-            Rectangle visibleArea = GetVisibleArea(framePixels, sourceTexture.Width, frameHeight, padding: 2);
+            Rectangle visibleArea = GetVisibleArea(framePixels, sourceTexture.Width, frameHeight, padding);
             var portraitPixels = new Color[visibleArea.Width * visibleArea.Height];
             for (int y = 0; y < visibleArea.Height; y++)
             {
@@ -338,6 +340,25 @@ namespace tsorcRevamp.Utilities
             }
 
             return new Portrait { Pixels = portraitPixels, Width = visibleArea.Width, Height = visibleArea.Height };
+        }
+
+        private static Portrait RotatePortraitCounterClockwise(Portrait source)
+        {
+            var rotatedPixels = new Color[source.Pixels.Length];
+            int rotatedWidth = source.Height;
+            int rotatedHeight = source.Width;
+
+            for (int y = 0; y < source.Height; y++)
+            {
+                for (int x = 0; x < source.Width; x++)
+                {
+                    int rotatedX = y;
+                    int rotatedY = source.Width - 1 - x;
+                    rotatedPixels[rotatedY * rotatedWidth + rotatedX] = source.Pixels[y * source.Width + x];
+                }
+            }
+
+            return new Portrait { Pixels = rotatedPixels, Width = rotatedWidth, Height = rotatedHeight };
         }
 
         private static void SavePortrait(string imagesDirectory, string outputFileName, Portrait portrait)
