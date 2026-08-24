@@ -88,14 +88,32 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             age++;
             bool bossAlive = NPC.AnyNPCs(ModContent.NPCType<VesselOfSouls>());
             int despawnAge = Mode == 1 ? 360 : 1200;
-            if (!bossAlive) { DisperseAndDie(); return; }        // boss gone → quiet disperse (no blast)
-            if (age >= despawnAge) { Detonate(); return; }        // timed out → detonate
+            // boss gone → quiet disperse (no blast)
+            if (!bossAlive)
+            {
+                DisperseAndDie();
+                return;
+            }
+
+            // timed out → detonate
+            if (age >= despawnAge)
+            {
+                Detonate();
+                return;
+            }
             bool charging = age >= despawnAge - DetonateWindup;   // last 2.5s: telegraphed dust buildup
-            if (charging) DetonateCharge(despawnAge - age);
+            if (charging)
+            {
+                DetonateCharge(despawnAge - age);
+            }
 
             NPC.TargetClosest(false);
             Player player = Main.player[NPC.target];
-            if (!player.active || player.dead) { NPC.velocity *= 0.95f; return; }
+            if (!player.active || player.dead)
+            {
+                NPC.velocity *= 0.95f;
+                return;
+            }
             float dist = Vector2.Distance(NPC.Center, player.Center);
             bool los = Collision.CanHitLine(NPC.Center, 1, 1, player.Center, 1, 1);
 
@@ -104,14 +122,20 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 Vector2 to = Anchor - NPC.Center;
                 Vector2 seek = to.Length() > 4f ? to.SafeNormalize(Vector2.Zero) * MathHelper.Min(to.Length() * 0.06f, 9f) : Vector2.Zero;
                 NPC.velocity = Vector2.Lerp(NPC.velocity, seek, 0.08f);
-                if (!charging) SentinelFireLogic(player, dist, los);
+                if (!charging)
+                {
+                    SentinelFireLogic(player, dist, los);
+                }
             }
             else
             {
                 ServantLogic(player, dist, los, charging);
             }
 
-            if (!charging) Lighting.AddLight(NPC.Center, 0.4f, 0.1f, 0.5f);
+            if (!charging)
+            {
+                Lighting.AddLight(NPC.Center, 0.4f, 0.1f, 0.5f);
+            }
         }
 
         void ServantLogic(Player player, float dist, bool los, bool charging)
@@ -130,15 +154,27 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             // inside 5 tiles. Each rank flies a DIFFERENT pattern (arc / figure-8 / upper circle).
             Vector2 desired = ServantDesired(player, alive, rank, converge);
             Vector2 seek = (desired - NPC.Center) * 0.06f;
-            if (seek.Length() > ServantSpeedCap) seek = seek.SafeNormalize(Vector2.Zero) * ServantSpeedCap;
+            if (seek.Length() > ServantSpeedCap)
+            {
+                seek = seek.SafeNormalize(Vector2.Zero) * ServantSpeedCap;
+            }
             seek += Separation();
-            if (dist < MinFireDist) seek += (NPC.Center - player.Center).SafeNormalize(Vector2.UnitY) * 3.5f;
+            if (dist < MinFireDist)
+            {
+                seek += (NPC.Center - player.Center).SafeNormalize(Vector2.UnitY) * 3.5f;
+            }
             NPC.velocity = Vector2.Lerp(NPC.velocity, seek, 0.06f);
 
-            if (charging) return; // charging to detonate — no shots
+            if (charging)
+            {
+                return;  // charging to detonate — no shots
+            }
 
             bool canFire = myTurn && los && dist >= MinFireDist;
-            if (canFire && windowPos >= ServantFire - 18 && !Main.dedServ) TelegraphTick();
+            if (canFire && windowPos >= ServantFire - 18 && !Main.dedServ)
+            {
+                TelegraphTick();
+            }
             if (canFire && windowPos == ServantFire - 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 float speed = MathHelper.Lerp(3.2f, 6.5f, MathHelper.Clamp((dist - MinFireDist) / 320f, 0f, 1f)); // slower up close
@@ -149,7 +185,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         void SentinelFireLogic(Player player, float dist, bool los)
         {
             fireTimer++;
-            if (fireTimer == SentinelFire - 18 && los && !Main.dedServ) TelegraphTick();
+            if (fireTimer == SentinelFire - 18 && los && !Main.dedServ)
+            {
+                TelegraphTick();
+            }
             if (fireTimer >= SentinelFire && los && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 fireTimer = 0;
@@ -167,22 +206,40 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         float OrbitSpeedFactor()
         {
-            int b = NPC.FindFirstNPC(ModContent.NPCType<VesselOfSouls>());
-            if (b < 0) return 1f;
-            float frac = Main.npc[b].life / (float)Main.npc[b].lifeMax;
-            return frac <= 0.25f ? 1.6f : (frac <= 0.5f ? 1.3f : 1f);
+            int vesselIndex = NPC.FindFirstNPC(ModContent.NPCType<VesselOfSouls>());
+            if (vesselIndex < 0)
+            {
+                return 1f;
+            }
+            float frac = Main.npc[vesselIndex].life / (float)Main.npc[vesselIndex].lifeMax;
+            // The watcher gets more aggressive as the vessel's health drops.
+            if (frac <= 0.25f)
+            {
+                return 1.6f;
+            }
+
+            if (frac <= 0.5f)
+            {
+                return 1.3f;
+            }
+
+            return 1f;
         }
 
         void ComputeRank(out int alive, out int rank)
         {
-            alive = 0; rank = 0;
+            alive = 0;
+            rank = 0;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                NPC n = Main.npc[i];
-                if (n.active && n.type == NPC.type && (int)n.ai[2] == 0)
+                NPC other = Main.npc[i];
+                if (other.active && other.type == NPC.type && (int)other.ai[2] == 0)
                 {
                     alive++;
-                    if (i < NPC.whoAmI) rank++;
+                    if (i < NPC.whoAmI)
+                    {
+                        rank++;
+                    }
                 }
             }
         }
@@ -193,37 +250,40 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         Vector2 ServantDesired(Player player, int alive, int rank, float converge)
         {
             float radius = KiteRadius - converge * 45f;
-            float t = orbitPhase;
+            float phase = orbitPhase;
             Vector2 offset;
             switch (rank % 3)
             {
                 default: // 0 — swaying arc slot (spread across the group)
                 {
                     float spread = alive <= 1 ? 0f : MathHelper.Lerp(-1.3f, 1.3f, rank / (float)(alive - 1));
-                    float bearing = spread + (float)Math.Sin(t) * 0.5f;
+                    float bearing = spread + (float)Math.Sin(phase) * 0.5f;
                     offset = new Vector2((float)Math.Sin(bearing), -(float)Math.Cos(bearing)) * radius;
                     break;
                 }
                 case 1: // horizontal figure-8 above the player
-                    offset = new Vector2((float)Math.Sin(t) * radius, -(0.55f + 0.35f * (float)Math.Abs(Math.Sin(t * 2f))) * radius);
+                    offset = new Vector2((float)Math.Sin(phase) * radius, -(0.55f + 0.35f * (float)Math.Abs(Math.Sin(phase * 2f))) * radius);
                     break;
                 case 2: // circle that stays in the upper hemisphere
-                    offset = new Vector2((float)Math.Cos(t) * radius, -(0.5f + 0.5f * (float)Math.Abs(Math.Sin(t))) * radius);
+                    offset = new Vector2((float)Math.Cos(phase) * radius, -(0.5f + 0.5f * (float)Math.Abs(Math.Sin(phase))) * radius);
                     break;
             }
-            Vector2 pt = player.Center + offset;
+            Vector2 anchorPoint = player.Center + offset;
 
             float wph = NPC.whoAmI * 1.7f;
-            pt += new Vector2((float)Math.Sin(t * 2.3f + wph) * 18f, (float)Math.Cos(t * 1.9f + wph) * 14f);
+            anchorPoint += new Vector2((float)Math.Sin(phase * 2.3f + wph) * 18f, (float)Math.Cos(phase * 1.9f + wph) * 14f);
 
             for (int i = 0; i < 10; i++)
             {
-                bool solid = Collision.SolidCollision(pt - new Vector2(NPC.width / 2f, NPC.height / 2f), NPC.width, NPC.height);
-                bool los = Collision.CanHitLine(pt, 1, 1, player.Center, 1, 1);
-                if (!solid && los) break;
-                pt = Vector2.Lerp(pt, player.Center, 0.14f);
+                bool solid = Collision.SolidCollision(anchorPoint - new Vector2(NPC.width / 2f, NPC.height / 2f), NPC.width, NPC.height);
+                bool los = Collision.CanHitLine(anchorPoint, 1, 1, player.Center, 1, 1);
+                if (!solid && los)
+                {
+                    break;
+                }
+                anchorPoint = Vector2.Lerp(anchorPoint, player.Center, 0.14f);
             }
-            return pt;
+            return anchorPoint;
         }
 
         Vector2 Separation()
@@ -231,13 +291,22 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             Vector2 push = Vector2.Zero;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                NPC n = Main.npc[i];
-                if (i == NPC.whoAmI || !n.active || n.type != NPC.type) continue;
-                Vector2 d = NPC.Center - n.Center;
-                float dd = d.Length();
-                if (dd > 0.5f && dd < 80f) push += d.SafeNormalize(Vector2.Zero) * (1f - dd / 80f) * 2.5f;
+                NPC other = Main.npc[i];
+                if (i == NPC.whoAmI || !other.active || other.type != NPC.type)
+                {
+                    continue;
+                }
+                Vector2 toWatcher = NPC.Center - other.Center;
+                float distance = toWatcher.Length();
+                if (distance > 0.5f && distance < 80f)
+                {
+                    push += toWatcher.SafeNormalize(Vector2.Zero) * (1f - distance / 80f) * 2.5f;
+                }
             }
-            if (push.Length() > 3f) push = push.SafeNormalize(Vector2.Zero) * 3f;
+            if (push.Length() > 3f)
+            {
+                push = push.SafeNormalize(Vector2.Zero) * 3f;
+            }
             return push;
         }
 
@@ -248,10 +317,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             {
                 float ang = Main.rand.NextFloat(MathHelper.TwoPi);
                 Vector2 from = NPC.Center + ang.ToRotationVector2() * Main.rand.NextFloat(28f, 46f);
-                int d = Dust.NewDust(from, 4, 4, i == 0 ? DustID.Shadowflame : DustID.PurpleTorch, 0f, 0f, 80, default, Main.rand.NextFloat(1.4f, 2f));
-                Main.dust[d].noGravity = true;
-                Main.dust[d].velocity = (NPC.Center - from) * 0.15f;
-                Main.dust[d].fadeIn = 0.4f;
+                int dustIndex = Dust.NewDust(from, 4, 4, i == 0 ? DustID.Shadowflame : DustID.PurpleTorch, 0f, 0f, 80, default, Main.rand.NextFloat(1.4f, 2f));
+                Main.dust[dustIndex].noGravity = true;
+                Main.dust[dustIndex].velocity = (NPC.Center - from) * 0.15f;
+                Main.dust[dustIndex].fadeIn = 0.4f;
             }
             Lighting.AddLight(NPC.Center, 0.7f, 0.15f, 0.9f);
         }
@@ -264,34 +333,43 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.6f, Pitch = -0.2f }, NPC.Center);
                 for (int i = 0; i < 14; i++)
                 {
-                    int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame, 0f, 0f, 100, default, 1.2f);
-                    Main.dust[d].noGravity = true;
+                    int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame, 0f, 0f, 100, default, 1.2f);
+                    Main.dust[dustIndex].noGravity = true;
                 }
             }
             NPC.active = false;
-            if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPC.whoAmI);
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPC.whoAmI);
+            }
         }
 
         // The last 2.5s of a timed-out watcher: purple/red dust sucks inward and swells, light pulses,
         // a rising whine — a clear "kill me or I blow" tell.
         void DetonateCharge(int ticksLeft)
         {
-            if (Main.dedServ) return;
-            float p = 1f - ticksLeft / (float)DetonateWindup; // 0 → 1
-            int count = 1 + (int)(p * 4f);
+            if (Main.dedServ)
+            {
+                return;
+            }
+            float progress = 1f - ticksLeft / (float)DetonateWindup; // 0 → 1
+            int count = 1 + (int)(progress * 4f);
             for (int i = 0; i < count; i++)
             {
                 float ang = Main.rand.NextFloat(MathHelper.TwoPi);
-                float rad = MathHelper.Lerp(80f, 8f, p) + Main.rand.NextFloat(24f);
+                float rad = MathHelper.Lerp(80f, 8f, progress) + Main.rand.NextFloat(24f);
                 Vector2 from = NPC.Center + ang.ToRotationVector2() * rad;
                 int type = Main.rand.NextBool(3) ? DustID.RedTorch : DustID.PurpleTorch;
-                int d = Dust.NewDust(from, 4, 4, type, 0f, 0f, 100, default, 1f + p * 1.6f);
-                Main.dust[d].noGravity = true;
-                Main.dust[d].velocity = (NPC.Center - from) * 0.12f;
-                Main.dust[d].fadeIn = 0.3f;
+                int dustIndex = Dust.NewDust(from, 4, 4, type, 0f, 0f, 100, default, 1f + progress * 1.6f);
+                Main.dust[dustIndex].noGravity = true;
+                Main.dust[dustIndex].velocity = (NPC.Center - from) * 0.12f;
+                Main.dust[dustIndex].fadeIn = 0.3f;
             }
-            Lighting.AddLight(NPC.Center, 0.4f + p, 0.1f, 0.5f + p * 0.5f);
-            if (age % 24 == 0) SoundEngine.PlaySound(SoundID.Item15 with { Volume = 0.4f, Pitch = -0.6f + p }, NPC.Center);
+            Lighting.AddLight(NPC.Center, 0.4f + progress, 0.1f, 0.5f + progress * 0.5f);
+            if (age % 24 == 0)
+            {
+                SoundEngine.PlaySound(SoundID.Item15 with { Volume = 0.4f, Pitch = -0.6f + progress }, NPC.Center);
+            }
         }
 
         // Timed-out detonation: gores + a big purple/red soul-cloud + a radial skull burst (the damage
@@ -308,14 +386,14 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 for (int i = 0; i < 46; i++)
                 {
                     Vector2 vel = Main.rand.NextVector2Circular(7f, 7f);
-                    int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame, vel.X, vel.Y, 70, default, Main.rand.NextFloat(1.4f, 2.2f));
-                    Main.dust[d].noGravity = true;
+                    int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame, vel.X, vel.Y, 70, default, Main.rand.NextFloat(1.4f, 2.2f));
+                    Main.dust[dustIndex].noGravity = true;
                 }
                 for (int i = 0; i < 24; i++)
                 {
                     Vector2 vel = Main.rand.NextVector2Circular(6f, 6f);
-                    int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.RedTorch, vel.X, vel.Y, 90, default, 1.6f);
-                    Main.dust[d].noGravity = true;
+                    int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.RedTorch, vel.X, vel.Y, 90, default, 1.6f);
+                    Main.dust[dustIndex].noGravity = true;
                 }
             }
             // Damage radius: a dense radial skull burst (~40% bigger than a normal volley).
@@ -324,28 +402,37 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
                     ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselSoulRuptureVFX>(),
                     0, 0f, Main.myPlayer, 105f, 1f, 20f);
-                int n = 12;
-                for (int i = 0; i < n; i++)
+                int ringCount = 12;
+                for (int i = 0; i < ringCount; i++)
                 {
                     // Timed-out Watcher death burst: 25% slower than before (6-8.5 -> 4.5-6.375).
-                    Vector2 vel = (MathHelper.TwoPi * i / n).ToRotationVector2() * Main.rand.NextFloat(4.5f, 6.375f);
+                    Vector2 vel = (MathHelper.TwoPi * i / ringCount).ToRotationVector2() * Main.rand.NextFloat(4.5f, 6.375f);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
                         ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.PurpleSkull>(), 15, 2f, Main.myPlayer, 0f);
                 }
             }
             NPC.active = false;
-            if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPC.whoAmI);
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPC.whoAmI);
+            }
         }
 
         public override void FindFrame(int frameHeight)
         {
-            if (Main.dedServ) return;
+            if (Main.dedServ)
+            {
+                return;
+            }
             Player player = Main.player[NPC.target];
             int frame = 0;
             if (player.active && !player.dead)
             {
                 float ang = (player.Center - NPC.Center).ToRotation();
-                if (ang < 0f) ang += MathHelper.TwoPi;
+                if (ang < 0f)
+                {
+                    ang += MathHelper.TwoPi;
+                }
                 frame = ((int)Math.Round(ang / (MathHelper.TwoPi / 8f)) + GazeFrameOffset) & 7;
             }
             NPC.frame.Y = frame * frameHeight;
@@ -387,23 +474,29 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             Vector2 origin = NPC.frame.Size() / 2f;
             for (int k = NPC.oldPos.Length - 1; k > 0; k--)
             {
-                if (NPC.oldPos[k] == Vector2.Zero) continue;
-                Vector2 dp = NPC.oldPos[k] + NPC.Size / 2f - screenPos;
-                float f = (NPC.oldPos.Length - k) / (float)NPC.oldPos.Length;
-                Color c = new Color(150, 60, 200, 0) * f * 0.35f;
-                spriteBatch.Draw(tex, dp, NPC.frame, c, NPC.rotation, origin, 1f, SpriteEffects.None, 0f);
+                if (NPC.oldPos[k] == Vector2.Zero)
+                {
+                    continue;
+                }
+                Vector2 trailPos = NPC.oldPos[k] + NPC.Size / 2f - screenPos;
+                float fade = (NPC.oldPos.Length - k) / (float)NPC.oldPos.Length;
+                Color c = new Color(150, 60, 200, 0) * fade * 0.35f;
+                spriteBatch.Draw(tex, trailPos, NPC.frame, c, NPC.rotation, origin, 1f, SpriteEffects.None, 0f);
             }
             return true;
         }
 
         public override void HitEffect(NPC.HitInfo hit)
         {
-            if (Main.dedServ || NPC.life > 0) return;
+            if (Main.dedServ || NPC.life > 0)
+            {
+                return;
+            }
             for (int i = 0; i < 18; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(5f, 5f);
-                int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame, vel.X, vel.Y, 100, default, 1.4f);
-                Main.dust[d].noGravity = true;
+                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame, vel.X, vel.Y, 100, default, 1.4f);
+                Main.dust[dustIndex].noGravity = true;
             }
         }
     }

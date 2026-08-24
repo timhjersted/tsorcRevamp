@@ -65,7 +65,7 @@ namespace tsorcRevamp.NPCs
             public StepKind Kind;
             public int TargetX, TargetY;   //tile coords of the waypoint (TargetY = the row the head occupies; floor at +1)
             public int LaunchX;            //reference column on the departing span (wall base / gap lip)
-            public PlanStep(StepKind k, int tx, int ty, int lx) { Kind = k; TargetX = tx; TargetY = ty; LaunchX = lx; }
+            public PlanStep(StepKind kind, int targetX, int targetY, int launchX) { Kind = kind; TargetX = targetX; TargetY = targetY; LaunchX = launchX; }
         }
 
         enum EdgeKind { Slither, Climb, WallScale, SpanGap }
@@ -76,8 +76,8 @@ namespace tsorcRevamp.NPCs
             public EdgeKind Kind;
             public int Cost;
             public int LaunchX, LandX;
-            public Edge(Span to, EdgeKind k, int cost, int launchX = 0, int landX = 0)
-            { To = to; Kind = k; Cost = cost; LaunchX = launchX; LandX = landX; }
+            public Edge(Span to, EdgeKind kind, int cost, int launchX = 0, int landX = 0)
+            { To = to; Kind = kind; Cost = cost; LaunchX = launchX; LandX = landX; }
         }
 
         //A horizontal run of "the head could rest here" (floor below, row itself open). Species-agnostic --
@@ -86,7 +86,7 @@ namespace tsorcRevamp.NPCs
         {
             public int LeftX, RightX, Y;
             public List<Edge> Edges = new List<Edge>();
-            public Span(int l, int r, int y) { LeftX = l; RightX = r; Y = y; }
+            public Span(int left, int right, int y) { LeftX = left; RightX = right; Y = y; }
         }
 
         // ================================================================================
@@ -213,8 +213,14 @@ namespace tsorcRevamp.NPCs
                 return true;
             }
             PlanStep last = data.Plan[data.Plan.Count - 1];
-            if (Math.Abs(player.Center.X - last.TargetX * TileSize) > PlanStaleXTiles * TileSize) return true;
-            if (Math.Abs(player.Center.Y - last.TargetY * TileSize) > PlanStaleYTiles * TileSize) return true;
+            if (Math.Abs(player.Center.X - last.TargetX * TileSize) > PlanStaleXTiles * TileSize)
+            {
+                return true;
+            }
+            if (Math.Abs(player.Center.Y - last.TargetY * TileSize) > PlanStaleYTiles * TileSize)
+            {
+                return true;
+            }
             return false;
         }
 
@@ -248,8 +254,17 @@ namespace tsorcRevamp.NPCs
             if (data.BadEdges.Count > 0)
             {
                 List<(int, int)> dead = new List<(int, int)>();
-                foreach (var kv in data.BadEdges) if (kv.Value <= now) dead.Add(kv.Key);
-                foreach (var k in dead) data.BadEdges.Remove(k);
+                foreach (var kv in data.BadEdges)
+                {
+                    if (kv.Value <= now)
+                    {
+                        dead.Add(kv.Key);
+                    }
+                }
+                foreach (var key in dead)
+                {
+                    data.BadEdges.Remove(key);
+                }
             }
 
             List<Span> spans = BuildSpans(xMin, xMax, yMin, yMax);
@@ -303,7 +318,10 @@ namespace tsorcRevamp.NPCs
                 {
                     if (IsSerpentStandable(x, y))
                     {
-                        if (spanStart == -1) spanStart = x;
+                        if (spanStart == -1)
+                        {
+                            spanStart = x;
+                        }
                     }
                     else if (spanStart != -1)
                     {
@@ -311,7 +329,10 @@ namespace tsorcRevamp.NPCs
                         spanStart = -1;
                     }
                 }
-                if (spanStart != -1) spans.Add(new Span(spanStart, xMax, y));
+                if (spanStart != -1)
+                {
+                    spans.Add(new Span(spanStart, xMax, y));
+                }
             }
             return spans;
         }
@@ -345,7 +366,10 @@ namespace tsorcRevamp.NPCs
             {
                 foreach (var b in spans)
                 {
-                    if (b == a) continue;
+                    if (b == a)
+                    {
+                        continue;
+                    }
 
                     int rise = a.Y - b.Y; //positive = b is above a
                     bool touching = b.LeftX <= a.RightX + 1 && b.RightX >= a.LeftX - 1;
@@ -412,12 +436,18 @@ namespace tsorcRevamp.NPCs
         ///overlap's start. Used as the wall/lip reference column for vertical and slither edges.</summary>
         static int JoinColumn(Span a, Span b)
         {
-            if (b.LeftX > a.RightX) return b.LeftX;
-            if (b.RightX < a.LeftX) return b.RightX;
+            if (b.LeftX > a.RightX)
+            {
+                return b.LeftX;
+            }
+            if (b.RightX < a.LeftX)
+            {
+                return b.RightX;
+            }
             return Math.Max(a.LeftX, b.LeftX);
         }
 
-        static int ClampToSpan(int x, Span sp) => Math.Clamp(x, sp.LeftX, sp.RightX);
+        static int ClampToSpan(int x, Span span) => Math.Clamp(x, span.LeftX, span.RightX);
 
         static Span FindContainingSpan(List<Span> spans, int x, int feetY)
         {
@@ -426,22 +456,28 @@ namespace tsorcRevamp.NPCs
             int bodyY = feetY - 1;
             Span best = null;
             int bestScore = int.MaxValue;
-            foreach (var sp in spans)
+            foreach (var span in spans)
             {
-                if (x < sp.LeftX - 1 || x > sp.RightX + 1) continue;
-                int dy = Math.Abs(sp.Y - bodyY);
-                if (dy > 3) continue;
+                if (x < span.LeftX - 1 || x > span.RightX + 1)
+                {
+                    continue;
+                }
+                int dy = Math.Abs(span.Y - bodyY);
+                if (dy > 3)
+                {
+                    continue;
+                }
                 // Horizontal gap from x to this span, 0 when x already sits inside it. Vertical distance
                 // is weighted 10x so a span on our own row always beats one a row off.
                 int horizontalGap = 0;
 
-                if (x < sp.LeftX)
+                if (x < span.LeftX)
                 {
-                    horizontalGap = sp.LeftX - x;
+                    horizontalGap = span.LeftX - x;
                 }
-                else if (x > sp.RightX)
+                else if (x > span.RightX)
                 {
-                    horizontalGap = x - sp.RightX;
+                    horizontalGap = x - span.RightX;
                 }
 
                 int score = dy * 10 + horizontalGap;
@@ -449,32 +485,42 @@ namespace tsorcRevamp.NPCs
                 if (score < bestScore)
                 {
                     bestScore = score;
-                    best = sp;
+                    best = span;
                 }
             }
-            if (best != null) return best;
+            if (best != null)
+            {
+                return best;
+            }
 
             //Permissive fallback (airborne player / head mid-climb): nearest span by weighted Manhattan
             //distance. Vertical cap scales with the serpent's wall-scale reach, not a biped jump.
             int bestDist = int.MaxValue;
-            foreach (var sp in spans)
+            foreach (var span in spans)
             {
                 // Horizontal gap from x to this span, 0 when x already sits inside it.
                 int dx = 0;
 
-                if (x < sp.LeftX)
+                if (x < span.LeftX)
                 {
-                    dx = sp.LeftX - x;
+                    dx = span.LeftX - x;
                 }
-                else if (x > sp.RightX)
+                else if (x > span.RightX)
                 {
-                    dx = x - sp.RightX;
+                    dx = x - span.RightX;
                 }
 
-                int dy = Math.Abs(sp.Y - bodyY);
-                if (dx > 16 || dy > WallScaleMaxTiles) continue;
-                int d = dx + dy * 2;
-                if (d < bestDist) { bestDist = d; best = sp; }
+                int dy = Math.Abs(span.Y - bodyY);
+                if (dx > 16 || dy > WallScaleMaxTiles)
+                {
+                    continue;
+                }
+                int weightedDist = dx + dy * 2;
+                if (weightedDist < bestDist)
+                {
+                    bestDist = weightedDist;
+                    best = span;
+                }
             }
             return best;
         }
@@ -498,20 +544,24 @@ namespace tsorcRevamp.NPCs
                 if (cur == goal)
                 {
                     var path = new List<Span>();
-                    Span c = cur;
-                    while (c != null) { path.Add(c); cameFrom.TryGetValue(c, out c); }
+                    Span node = cur;
+                    while (node != null)
+                    {
+                        path.Add(node);
+                        cameFrom.TryGetValue(node, out node);
+                    }
                     path.Reverse();
                     return path;
                 }
                 int curG = gScore[cur];
-                foreach (var e in cur.Edges)
+                foreach (var edge in cur.Edges)
                 {
-                    int tentative = curG + e.Cost;
-                    if (!gScore.TryGetValue(e.To, out int existing) || tentative < existing)
+                    int tentative = curG + edge.Cost;
+                    if (!gScore.TryGetValue(edge.To, out int existing) || tentative < existing)
                     {
-                        gScore[e.To] = tentative;
-                        cameFrom[e.To] = cur;
-                        open.Push(e.To, tentative + Heuristic(e.To, goalX, goalY));
+                        gScore[edge.To] = tentative;
+                        cameFrom[edge.To] = cur;
+                        open.Push(edge.To, tentative + Heuristic(edge.To, goalX, goalY));
                     }
                 }
             }
@@ -520,11 +570,11 @@ namespace tsorcRevamp.NPCs
 
         //SF4 weights vertical mismatch x5 (a biped hates changing floors). The serpent climbs/wall-scales far
         //more readily, so a lighter x3 routes more naturally (plan doc suggests 2-3; retune from playtest logs).
-        static int Heuristic(Span sp, int goalX, int goalY)
+        static int Heuristic(Span span, int goalX, int goalY)
         {
-            int dx = sp.LeftX > goalX ? sp.LeftX - goalX
-                   : goalX > sp.RightX ? goalX - sp.RightX : 0;
-            int dy = Math.Abs(sp.Y - goalY);
+            int dx = span.LeftX > goalX ? span.LeftX - goalX
+                   : goalX > span.RightX ? goalX - span.RightX : 0;
+            int dy = Math.Abs(span.Y - goalY);
             return dx + dy * 3;
         }
 
@@ -540,9 +590,16 @@ namespace tsorcRevamp.NPCs
                 Span from = spanPath[i];
                 Span to = spanPath[i + 1];
                 Edge edge = null;
-                foreach (var e in from.Edges)
-                    if (e.To == to) { edge = e; break; }
-                if (edge == null) continue;
+                foreach (var candidate in from.Edges)
+                    if (candidate.To == to)
+                    {
+                        edge = candidate;
+                        break;
+                    }
+                if (edge == null)
+                {
+                    continue;
+                }
 
                 switch (edge.Kind)
                 {
@@ -589,10 +646,13 @@ namespace tsorcRevamp.NPCs
                 int i = heap.Count - 1;
                 while (i > 0)
                 {
-                    int p = (i - 1) / 2;
-                    if (heap[p].prio <= heap[i].prio) break;
-                    (heap[p], heap[i]) = (heap[i], heap[p]);
-                    i = p;
+                    int parent = (i - 1) / 2;
+                    if (heap[parent].prio <= heap[i].prio)
+                    {
+                        break;
+                    }
+                    (heap[parent], heap[i]) = (heap[i], heap[parent]);
+                    i = parent;
                 }
             }
             public T Pop()
@@ -603,12 +663,21 @@ namespace tsorcRevamp.NPCs
                 int i = 0;
                 while (true)
                 {
-                    int l = i * 2 + 1, r = l + 1, m = i;
-                    if (l < heap.Count && heap[l].prio < heap[m].prio) m = l;
-                    if (r < heap.Count && heap[r].prio < heap[m].prio) m = r;
-                    if (m == i) break;
-                    (heap[m], heap[i]) = (heap[i], heap[m]);
-                    i = m;
+                    int leftChild = i * 2 + 1, rightChild = leftChild + 1, smallest = i;
+                    if (leftChild < heap.Count && heap[leftChild].prio < heap[smallest].prio)
+                    {
+                        smallest = leftChild;
+                    }
+                    if (rightChild < heap.Count && heap[rightChild].prio < heap[smallest].prio)
+                    {
+                        smallest = rightChild;
+                    }
+                    if (smallest == i)
+                    {
+                        break;
+                    }
+                    (heap[smallest], heap[i]) = (heap[i], heap[smallest]);
+                    i = smallest;
                 }
                 return top;
             }

@@ -75,7 +75,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         int BreathDamage => ScaleDamage(15);
         int NovaDamage => ScaleDamage(16);
         int PlungeDamage => ScaleDamage(14);
-        int ScaleDamage(int b) => SHM ? (int)(b * 1.3f * tsorcRevampWorld.SHMScale) : b;
+        int ScaleDamage(int baseDamage) => SHM ? (int)(baseDamage * 1.3f * tsorcRevampWorld.SHMScale) : baseDamage;
 
         // ── State ──
         VesselState State = VesselState.Idle;
@@ -166,23 +166,47 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         }
 
         // ── Networking ──
-        public override void SendExtraAI(BinaryWriter w)
+        public override void SendExtraAI(BinaryWriter writer)
         {
-            w.Write((byte)State); w.Write((byte)Mood); w.Write((byte)CurrentAttack);
-            w.Write(AttackTimer); w.Write(AttackCooldown); w.Write(AttackPhase); w.Write(ChargesLeft);
-            w.Write(LockedAim.X); w.Write(LockedAim.Y);
-            w.Write(OrbitAngle); w.Write((sbyte)OrbitDir); w.Write(OrbitRadius);
-            w.Write(DriftAnchor.X); w.Write(DriftAnchor.Y);
-            w.Write(MouthOpen); w.Write(Phase2); w.Write(SHM); w.Write(_hideBody);
+            writer.Write((byte)State);
+            writer.Write((byte)Mood);
+            writer.Write((byte)CurrentAttack);
+            writer.Write(AttackTimer);
+            writer.Write(AttackCooldown);
+            writer.Write(AttackPhase);
+            writer.Write(ChargesLeft);
+            writer.Write(LockedAim.X);
+            writer.Write(LockedAim.Y);
+            writer.Write(OrbitAngle);
+            writer.Write((sbyte)OrbitDir);
+            writer.Write(OrbitRadius);
+            writer.Write(DriftAnchor.X);
+            writer.Write(DriftAnchor.Y);
+            writer.Write(MouthOpen);
+            writer.Write(Phase2);
+            writer.Write(SHM);
+            writer.Write(_hideBody);
         }
-        public override void ReceiveExtraAI(BinaryReader r)
+        public override void ReceiveExtraAI(BinaryReader reader)
         {
-            State = (VesselState)r.ReadByte(); Mood = (MoveMood)r.ReadByte(); CurrentAttack = (VesselAttack)r.ReadByte();
-            AttackTimer = r.ReadInt32(); AttackCooldown = r.ReadInt32(); AttackPhase = r.ReadInt32(); ChargesLeft = r.ReadInt32();
-            LockedAim.X = r.ReadSingle(); LockedAim.Y = r.ReadSingle();
-            OrbitAngle = r.ReadSingle(); OrbitDir = r.ReadSByte(); OrbitRadius = r.ReadSingle();
-            DriftAnchor.X = r.ReadSingle(); DriftAnchor.Y = r.ReadSingle();
-            MouthOpen = r.ReadBoolean(); Phase2 = r.ReadBoolean(); SHM = r.ReadBoolean(); _hideBody = r.ReadBoolean();
+            State = (VesselState)reader.ReadByte();
+            Mood = (MoveMood)reader.ReadByte();
+            CurrentAttack = (VesselAttack)reader.ReadByte();
+            AttackTimer = reader.ReadInt32();
+            AttackCooldown = reader.ReadInt32();
+            AttackPhase = reader.ReadInt32();
+            ChargesLeft = reader.ReadInt32();
+            LockedAim.X = reader.ReadSingle();
+            LockedAim.Y = reader.ReadSingle();
+            OrbitAngle = reader.ReadSingle();
+            OrbitDir = reader.ReadSByte();
+            OrbitRadius = reader.ReadSingle();
+            DriftAnchor.X = reader.ReadSingle();
+            DriftAnchor.Y = reader.ReadSingle();
+            MouthOpen = reader.ReadBoolean();
+            Phase2 = reader.ReadBoolean();
+            SHM = reader.ReadBoolean();
+            _hideBody = reader.ReadBoolean();
         }
 
         // ── Poise / stagger ──
@@ -194,8 +218,8 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 for (int i = 0; i < 22; i++)
                 {
                     Vector2 vel = Main.rand.NextVector2Circular(4f, 4f);
-                    int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Shadowflame, vel.X, vel.Y, 120, default, 1.4f);
-                    Main.dust[d].noGravity = true;
+                    int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Shadowflame, vel.X, vel.Y, 120, default, 1.4f);
+                    Main.dust[dustIndex].noGravity = true;
                 }
             }
             // Never interrupt the swallow set-piece or the death sequence.
@@ -217,11 +241,11 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             InitializeStats();
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
-            tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             Player player = Main.player[NPC.target];
 
-            g.AttackTelegraphing = false;
-            g.AttackCommitted = false;
+            globalNPC.AttackTelegraphing = false;
+            globalNPC.AttackCommitted = false;
             BobPhase += 0.05f;
 
             // Contact damage ONLY while it's physically ramming (Vessel Lunge dash / Void Plunge dive);
@@ -243,15 +267,18 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             bool preReveal = State == VesselState.PhaseTransition && AttackTimer < SwallowFadeDone;
             bool voidShouldBeOn = Phase2 && !preReveal && State != VesselState.Dying;
             TickVoid(voidShouldBeOn);
-            if (voidShouldBeOn && !Main.dedServ) SpawnVoidFog(player);
+            if (voidShouldBeOn && !Main.dedServ)
+            {
+                SpawnVoidFog(player);
+            }
 
-            if (g.StaggerTimer > 0 && State != VesselState.PhaseTransition && State != VesselState.Dying)
+            if (globalNPC.StaggerTimer > 0 && State != VesselState.PhaseTransition && State != VesselState.Dying)
             {
                 NPC.velocity *= 0.9f;
                 if (Main.rand.NextBool(3))
                 {
-                    int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Shadowflame, 0f, 1f, 120, default, 1f);
-                    Main.dust[d].velocity *= 0.3f;
+                    int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Shadowflame, 0f, 1f, 120, default, 1f);
+                    Main.dust[dustIndex].velocity *= 0.3f;
                 }
                 UpdateAura();
                 return;
@@ -263,10 +290,22 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
             switch (State)
             {
-                case VesselState.Idle: RunIdle(g, player); break;
-                case VesselState.Attack: RunAttack(g, player); break;
-                case VesselState.PhaseTransition: RunSwallow(player); break;
-                case VesselState.Dying: RunDying(player); break;
+                case VesselState.Idle:
+                    RunIdle(globalNPC, player);
+                    break;
+
+                case VesselState.Attack:
+                    RunAttack(globalNPC, player);
+                    break;
+
+                case VesselState.PhaseTransition:
+                    RunSwallow(player);
+                    break;
+
+                case VesselState.Dying:
+                    RunDying(player);
+                    break;
+
             }
 
             UpdateRotation(player);
@@ -276,7 +315,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         void InitializeStats()
         {
-            if (statsInitialized) return;
+            if (statsInitialized)
+            {
+                return;
+            }
             statsInitialized = true;
             _contactDamage = NPC.damage;
             if (tsorcRevampWorld.SuperHardMode)
@@ -293,7 +335,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         #region Idle — movement + mood + attack picking
 
-        void RunIdle(tsorcRevampGlobalNPC g, Player player)
+        void RunIdle(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             MouthOpen = false;
             if (player.dead || !player.active)
@@ -307,12 +349,15 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
             if (Main.rand.NextBool(3))
             {
-                int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PurpleTorch, 0f, -0.6f, 160, default, 0.8f);
-                Main.dust[d].noGravity = true;
-                Main.dust[d].velocity *= 0.3f;
+                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PurpleTorch, 0f, -0.6f, 160, default, 0.8f);
+                Main.dust[dustIndex].noGravity = true;
+                Main.dust[dustIndex].velocity *= 0.3f;
             }
 
-            if (AttackCooldown > 0) AttackCooldown--;
+            if (AttackCooldown > 0)
+            {
+                AttackCooldown--;
+            }
             if (Main.netMode != NetmodeID.MultiplayerClient && AttackCooldown <= 0 && NPC.Distance(player.Center) < 1000f)
                 PickAttack(player);
         }
@@ -320,9 +365,20 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         void UpdateMood(Player player)
         {
             float distTiles = NPC.Distance(player.Center) / 16f;
-            if (distTiles < 10f && Mood != MoveMood.Retreat) { SetMood(MoveMood.Retreat, 40); return; }
-            if (MoodTimer > 0) { MoodTimer--; return; }
-            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            if (distTiles < 10f && Mood != MoveMood.Retreat)
+            {
+                SetMood(MoveMood.Retreat, 40);
+                return;
+            }
+            if (MoodTimer > 0)
+            {
+                MoodTimer--;
+                return;
+            }
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
 
             Span<(MoveMood mood, float weight)> pool = stackalloc (MoveMood, float)[]
             {
@@ -332,7 +388,14 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 (MoveMood.Retreat, distTiles < 18f ? 0.6f : 0.15f),
             };
             float total = 0f;
-            for (int i = 0; i < pool.Length; i++) { if (pool[i].mood == Mood) pool[i].weight *= 0.4f; total += pool[i].weight; }
+            for (int i = 0; i < pool.Length; i++)
+            {
+                if (pool[i].mood == Mood)
+                {
+                    pool[i].weight *= 0.4f;
+                }
+                total += pool[i].weight;
+            }
             float roll = Main.rand.NextFloat(total);
             for (int i = 0; i < pool.Length; i++)
             {
@@ -355,9 +418,18 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         {
             Mood = mood;
             MoodTimer = duration;
-            if (mood == MoveMood.Orbit && Main.rand.NextBool(2)) OrbitDir = -OrbitDir;
-            if (mood == MoveMood.Orbit) OrbitRadius = Main.rand.NextFloat(340f, 500f);
-            if (mood == MoveMood.Drift) DriftAnchor = Main.rand.NextVector2Circular(360f, 300f) - new Vector2(0f, 120f);
+            if (mood == MoveMood.Orbit && Main.rand.NextBool(2))
+            {
+                OrbitDir = -OrbitDir;
+            }
+            if (mood == MoveMood.Orbit)
+            {
+                OrbitRadius = Main.rand.NextFloat(340f, 500f);
+            }
+            if (mood == MoveMood.Drift)
+            {
+                DriftAnchor = Main.rand.NextVector2Circular(360f, 300f) - new Vector2(0f, 120f);
+            }
             NPC.netUpdate = true;
         }
 
@@ -412,31 +484,42 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         void PickAttack(Player player)
         {
-            float dt = NPC.Distance(player.Center) / 16f;
-            Span<(VesselAttack a, float w)> pool = Phase2
+            float distTiles = NPC.Distance(player.Center) / 16f;
+            Span<(VesselAttack a, float weight)> pool = Phase2
                 ? stackalloc (VesselAttack, float)[]
                 {
-                    (VesselAttack.VesselLunge, (dt > 20f && dt < 55f) ? 1.0f : 0.3f),
+                    (VesselAttack.VesselLunge, (distTiles > 20f && distTiles < 55f) ? 1.0f : 0.3f),
                     (VesselAttack.SoulSpew,    1.0f),
-                    (VesselAttack.GravityWell, dt < 40f ? 0.5f : 1.0f),
+                    (VesselAttack.GravityWell, distTiles < 40f ? 0.5f : 1.0f),
                     (VesselAttack.WatchingWall,0.8f),
                     (VesselAttack.SoulNova,    0.9f),
                     (VesselAttack.VoidPlunge,  0.9f),
                 }
                 : stackalloc (VesselAttack, float)[]
                 {
-                    (VesselAttack.VesselLunge,  (dt > 20f && dt < 55f) ? 1.1f : 0.4f),
+                    (VesselAttack.VesselLunge,  (distTiles > 20f && distTiles < 55f) ? 1.1f : 0.4f),
                     (VesselAttack.SoulSpew,     1.0f),
-                    (VesselAttack.GravemawTug,  dt < 45f ? 1.0f : 0.5f),
+                    (VesselAttack.GravemawTug,  distTiles < 45f ? 1.0f : 0.5f),
                     (VesselAttack.SpawnWatchers,0.7f),
                 };
             float total = 0f;
-            for (int i = 0; i < pool.Length; i++) { if (pool[i].a == LastAttack) pool[i].w *= 0.5f; total += pool[i].w; }
+            for (int i = 0; i < pool.Length; i++)
+            {
+                if (pool[i].a == LastAttack)
+                {
+                    pool[i].weight *= 0.5f;
+                }
+                total += pool[i].weight;
+            }
             float roll = Main.rand.NextFloat(total);
             for (int i = 0; i < pool.Length; i++)
             {
-                roll -= pool[i].w;
-                if (roll <= 0f) { StartAttack(pool[i].a); return; }
+                roll -= pool[i].weight;
+                if (roll <= 0f)
+                {
+                    StartAttack(pool[i].a);
+                    return;
+                }
             }
             StartAttack(pool[0].a);
         }
@@ -447,7 +530,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             CurrentAttack = a;
             AttackTimer = 0;
             AttackPhase = 0;
-            if (a == VesselAttack.VesselLunge) ChargesLeft = Main.rand.Next(1, Phase2 ? 4 : 3);
+            if (a == VesselAttack.VesselLunge)
+            {
+                ChargesLeft = Main.rand.Next(1, Phase2 ? 4 : 3);
+            }
             NPC.netUpdate = true;
         }
 
@@ -470,28 +556,57 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         #region Attack execution
 
-        void RunAttack(tsorcRevampGlobalNPC g, Player player)
+        void RunAttack(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            if (player.dead || !player.active) { EndAttack(60); return; }
+            if (player.dead || !player.active)
+            {
+                EndAttack(60);
+                return;
+            }
             AttackTimer++;
             switch (CurrentAttack)
             {
-                case VesselAttack.VesselLunge: RunVesselLunge(g, player); break;
-                case VesselAttack.SoulSpew: RunSoulSpew(g, player); break;
-                case VesselAttack.GravemawTug: RunGravemawTug(g, player); break;
-                case VesselAttack.SpawnWatchers: RunSpawnWatchers(g, player); break;
-                case VesselAttack.GravityWell: RunGravityWell(g, player); break;
-                case VesselAttack.WatchingWall: RunWatchingWall(g, player); break;
-                case VesselAttack.SoulNova: RunSoulNova(g, player); break;
-                case VesselAttack.VoidPlunge: RunVoidPlunge(g, player); break;
-                default: EndAttack(120); break;
+                case VesselAttack.VesselLunge:
+                    RunVesselLunge(globalNPC, player);
+                    break;
+
+                case VesselAttack.SoulSpew:
+                    RunSoulSpew(globalNPC, player);
+                    break;
+
+                case VesselAttack.GravemawTug:
+                    RunGravemawTug(globalNPC, player);
+                    break;
+
+                case VesselAttack.SpawnWatchers:
+                    RunSpawnWatchers(globalNPC, player);
+                    break;
+
+                case VesselAttack.GravityWell:
+                    RunGravityWell(globalNPC, player);
+                    break;
+
+                case VesselAttack.WatchingWall:
+                    RunWatchingWall(globalNPC, player);
+                    break;
+
+                case VesselAttack.SoulNova:
+                    RunSoulNova(globalNPC, player);
+                    break;
+
+                case VesselAttack.VoidPlunge:
+                    RunVoidPlunge(globalNPC, player);
+                    break;
+
+                default: EndAttack(120);
+                break;
             }
         }
 
         // A1 — Vessel Lunge: recoil windup → committed dash → (chain) → recovery.
-        void RunVesselLunge(tsorcRevampGlobalNPC g, Player player)
+        void RunVesselLunge(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = true;
+            globalNPC.AttackCommitted = true;
             switch (AttackPhase)
             {
                 case 0: // windup
@@ -501,7 +616,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     // Dynamic retreat speed: back up stronger if close to maintain minimum charging distance (~380px)
                     float retreatSpeed = MathHelper.Lerp(12f, 4f, MathHelper.Clamp(currentDist / 380f, 0f, 1f));
                     NPC.velocity = Vector2.Lerp(NPC.velocity, away * retreatSpeed, 0.15f);
-                    if (AttackTimer == 1) SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.5f, Pitch = -0.2f }, NPC.Center);
+                    if (AttackTimer == 1)
+                    {
+                        SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.5f, Pitch = -0.2f }, NPC.Center);
+                    }
                     SpawnInhaleMote();
                     // Pink "dash incoming" flash at the mouth, ~25 ticks before the dash launches.
                     if (AttackTimer == Math.Max(1, LungeWindupTicks - 25) && Main.netMode != NetmodeID.MultiplayerClient)
@@ -510,16 +628,18 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     if (!Main.dedServ && AttackTimer >= LungeWindupTicks - 25 && Main.rand.NextBool(3))
                     {
                         Vector2 pinkMouth = Mouth();
-                        int pd = Dust.NewDust(pinkMouth - new Vector2(6f), 12, 12, DustID.PinkTorch, 0f, 0f, 100, default, 1.4f);
-                        Main.dust[pd].noGravity = true;
-                        Main.dust[pd].velocity *= 0.3f;
+                        int pinkDust = Dust.NewDust(pinkMouth - new Vector2(6f), 12, 12, DustID.PinkTorch, 0f, 0f, 100, default, 1.4f);
+                        Main.dust[pinkDust].noGravity = true;
+                        Main.dust[pinkDust].velocity *= 0.3f;
                     }
                     if (AttackTimer >= LungeWindupTicks)
                     {
                         LockedAim = (player.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
                         NPC.velocity = LockedAim * 17f;
                         SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.8f, Pitch = 0.1f }, NPC.Center);
-                        AttackPhase = 1; AttackTimer = 0; NPC.netUpdate = true;
+                        AttackPhase = 1;
+                        AttackTimer = 0;
+                        NPC.netUpdate = true;
                     }
                     break;
                 case 1: // dash
@@ -528,31 +648,46 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     if (AttackTimer >= LungeDashTicks)
                     {
                         ChargesLeft--;
-                        if (ChargesLeft > 0) { AttackPhase = 0; AttackTimer = 0; NPC.netUpdate = true; }
+                        if (ChargesLeft > 0)
+                        {
+                            AttackPhase = 0;
+                            AttackTimer = 0;
+                            NPC.netUpdate = true;
+                        }
                         else { AttackPhase = 2; AttackTimer = 0; NPC.netUpdate = true; }
                     }
                     break;
                 default: // recovery (no armor)
                     MouthOpen = false;
                     NPC.velocity *= 0.9f;
-                    if (AttackTimer >= LungeRecoveryTicks) EndAttack(Phase2 ? 200 : 260);
+                    if (AttackTimer >= LungeRecoveryTicks)
+                    {
+                        EndAttack(Phase2 ? 200 : 260);
+                    }
                     break;
             }
         }
 
         // A2 — Soul Spew: inhale telegraph → sweeping fan of homing skulls.
-        void RunSoulSpew(tsorcRevampGlobalNPC g, Player player)
+        void RunSoulSpew(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = true;
+            globalNPC.AttackCommitted = true;
             MouthOpen = true;
             NPC.velocity *= 0.92f;
-            if (AttackTimer == 1) SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.6f, Pitch = -0.3f }, NPC.Center);
-            if (AttackTimer <= SpewTelegraphTicks) { MouthChargeTelegraph(); return; }
-
-            int k = AttackTimer - SpewTelegraphTicks; // 1..
-            if (k % 5 == 1 && k <= 36 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (AttackTimer == 1)
             {
-                int idx = (k - 1) / 5; // 0..6
+                SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.6f, Pitch = -0.3f }, NPC.Center);
+            }
+            if (AttackTimer <= SpewTelegraphTicks)
+            {
+                MouthChargeTelegraph();
+                return;
+            }
+
+            int spewTick = AttackTimer - SpewTelegraphTicks; // 1..
+            if (spewTick % 5 == 1 && spewTick <= 36 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int idx = (spewTick - 1) / 5; // 0..6
                 Vector2 mouth = Mouth();
                 float baseAng = (player.Center - mouth).ToRotation();
                 float spread = MathHelper.ToRadians((idx - 3) * 9f);
@@ -561,17 +696,27 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.PurpleSkull>(), SkullDamage, 1f, Main.myPlayer, 0.02f);
                 SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.35f, Pitch = 0.2f }, NPC.Center);
             }
-            if (AttackTimer >= SpewTelegraphTicks + 45) EndAttack(210);
+            if (AttackTimer >= SpewTelegraphTicks + 45)
+            {
+                EndAttack(210);
+            }
         }
 
         // A3 — Gravemaw Tug: gentle pull → point-blank Black Nip cone.
-        void RunGravemawTug(tsorcRevampGlobalNPC g, Player player)
+        void RunGravemawTug(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = true;
+            globalNPC.AttackCommitted = true;
             MouthOpen = true;
             NPC.velocity *= 0.9f;
-            if (AttackTimer == 1) SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center);
-            if (AttackTimer <= TugTelegraphTicks) { MouthChargeTelegraph(); return; }
+            if (AttackTimer == 1)
+            {
+                SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center);
+            }
+            if (AttackTimer <= TugTelegraphTicks)
+            {
+                MouthChargeTelegraph();
+                return;
+            }
             if (AttackTimer == TugTelegraphTicks + 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), Mouth(), Vector2.Zero,
@@ -591,16 +736,23 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 }
                 SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.5f, Pitch = -0.2f }, NPC.Center);
             }
-            if (AttackTimer >= TugTelegraphTicks + 80) EndAttack(240);
+            if (AttackTimer >= TugTelegraphTicks + 80)
+            {
+                EndAttack(240);
+            }
         }
 
         // A4 — Spawn the Watchers: conjure servant eyes.
-        void RunSpawnWatchers(tsorcRevampGlobalNPC g, Player player)
+        void RunSpawnWatchers(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = true;
+            globalNPC.AttackCommitted = true;
             MouthOpen = true;
             NPC.velocity *= 0.9f;
-            if (AttackTimer <= WatchersTelegraphTicks) { MouthChargeTelegraph(); return; }
+            if (AttackTimer <= WatchersTelegraphTicks)
+            {
+                MouthChargeTelegraph();
+                return;
+            }
             if (AttackTimer == WatchersTelegraphTicks + 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 int count = 3;
@@ -611,18 +763,21 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 }
                 SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.7f, Pitch = 0.1f }, NPC.Center);
             }
-            if (AttackTimer >= WatchersTelegraphTicks + 30) EndAttack(300);
+            if (AttackTimer >= WatchersTelegraphTicks + 30)
+            {
+                EndAttack(300);
+            }
         }
 
         // A5 — Gravity Well → Black Breath (the staggerable channel).
-        void RunGravityWell(tsorcRevampGlobalNPC g, Player player)
+        void RunGravityWell(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             MouthOpen = true;
             NPC.velocity *= 0.85f;
 
             if (AttackTimer <= WellTelegraphTicks)
             {
-                g.AttackTelegraphing = true; // interruptible — a poise break here cancels it (OnStagger)
+                globalNPC.AttackTelegraphing = true; // interruptible — a poise break here cancels it (OnStagger)
                 if (AttackTimer == 1)
                 {
                     SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.9f, Pitch = -0.7f }, NPC.Center);
@@ -635,9 +790,9 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             }
             else
             {
-                g.AttackCommitted = true;
-                int c = AttackTimer - WellTelegraphTicks;
-                if (c == 1)
+                globalNPC.AttackCommitted = true;
+                int wellTick = AttackTimer - WellTelegraphTicks;
+                if (wellTick == 1)
                 {
                     // Commit cue: "too late to interrupt" — kill the pull, flash, breathe.
                     KillOwnedWells();
@@ -648,7 +803,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                             ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.MediumPurple));
                 }
                 // Black Breath: wide cone waves fired where the pull left the player.
-                if ((c == 2 || c == 12 || c == 22) && Main.netMode != NetmodeID.MultiplayerClient)
+                if ((wellTick == 2 || wellTick == 12 || wellTick == 22) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 mouth = Mouth();
                     float baseAng = (player.Center - mouth).ToRotation();
@@ -662,20 +817,30 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     }
                     SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.6f, Pitch = -0.4f }, NPC.Center);
                 }
-                if (c >= WellCommittedTicks)
+                if (wellTick >= WellCommittedTicks)
                 {
                     MouthOpen = false;
-                    if (AttackTimer >= WellTelegraphTicks + WellCommittedTicks + WellRecoveryTicks) EndAttack(360);
+                    if (AttackTimer >= WellTelegraphTicks + WellCommittedTicks + WellRecoveryTicks)
+                    {
+                        EndAttack(360);
+                    }
                 }
             }
         }
 
         // A6 — The Watching Wall: a ring of sentinel eyes firing inward.
-        void RunWatchingWall(tsorcRevampGlobalNPC g, Player player)
+        void RunWatchingWall(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = true;
+            globalNPC.AttackCommitted = true;
             NPC.velocity *= 0.9f;
-            if (AttackTimer <= WallTelegraphTicks) { if (Main.rand.NextBool(2)) SpawnInhaleMote(); return; }
+            if (AttackTimer <= WallTelegraphTicks)
+            {
+                if (Main.rand.NextBool(2))
+                {
+                    SpawnInhaleMote();
+                }
+                return;
+            }
             if (AttackTimer == WallTelegraphTicks + 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 int count = 10;
@@ -688,29 +853,35 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 }
                 SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.7f, Pitch = -0.2f }, NPC.Center);
             }
-            if (AttackTimer >= WallTelegraphTicks + 120) EndAttack(360);
+            if (AttackTimer >= WallTelegraphTicks + 120)
+            {
+                EndAttack(360);
+            }
         }
 
         // A7 — Soul Nova: orbiting skulls lock, then an expanding annulus + radial burst.
-        void RunSoulNova(tsorcRevampGlobalNPC g, Player player)
+        void RunSoulNova(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = true;
+            globalNPC.AttackCommitted = true;
             MouthOpen = true;
             NPC.velocity *= 0.9f;
             if (AttackTimer <= NovaTelegraphTicks)
             {
                 // orbit read
-                float r = MathHelper.Lerp(140f, 60f, AttackTimer / (float)NovaTelegraphTicks);
+                float radius = MathHelper.Lerp(140f, 60f, AttackTimer / (float)NovaTelegraphTicks);
                 for (int i = 0; i < 2; i++)
                 {
-                    float a = Main.rand.NextFloat(MathHelper.TwoPi);
-                    Vector2 pos = NPC.Center + a.ToRotationVector2() * r;
-                    int d = Dust.NewDust(pos, 4, 4, DustID.PurpleTorch, 0f, 0f, 100, default, 1.2f);
-                    Main.dust[d].noGravity = true;
-                    Main.dust[d].velocity = a.ToRotationVector2() * 1.5f;
+                    float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    Vector2 pos = NPC.Center + angle.ToRotationVector2() * radius;
+                    int dustIndex = Dust.NewDust(pos, 4, 4, DustID.PurpleTorch, 0f, 0f, 100, default, 1.2f);
+                    Main.dust[dustIndex].noGravity = true;
+                    Main.dust[dustIndex].velocity = angle.ToRotationVector2() * 1.5f;
                 }
                 MouthChargeTelegraph();
-                if (AttackTimer == 1) SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.7f, Pitch = 0f }, NPC.Center);
+                if (AttackTimer == 1)
+                {
+                    SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.7f, Pitch = 0f }, NPC.Center);
+                }
                 return;
             }
             if (AttackTimer == NovaTelegraphTicks + 1)
@@ -729,13 +900,16 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     }
                 }
             }
-            if (AttackTimer >= NovaTelegraphTicks + 40) EndAttack(300);
+            if (AttackTimer >= NovaTelegraphTicks + 40)
+            {
+                EndAttack(300);
+            }
         }
 
         // A8 — Void Plunge: rise → crashing dive → radial skull shockwave.
-        void RunVoidPlunge(tsorcRevampGlobalNPC g, Player player)
+        void RunVoidPlunge(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = true;
+            globalNPC.AttackCommitted = true;
             switch (AttackPhase)
             {
                 case 0: // rise + aim
@@ -743,12 +917,18 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     Vector2 above = player.Center + new Vector2(0f, -420f);
                     Steer(above, 12f, 0.09f);
                     MouthChargeTelegraph();
-                    if (AttackTimer == 1) { UsefulFunctions.ScreenShake(NPC.Center, 4f, 10); SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.7f, Pitch = -0.4f }, NPC.Center); }
+                    if (AttackTimer == 1)
+                    {
+                        UsefulFunctions.ScreenShake(NPC.Center, 4f, 10);
+                        SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.7f, Pitch = -0.4f }, NPC.Center);
+                    }
                     if (AttackTimer >= PlungeRiseTicks)
                     {
                         LockedAim = (player.Center - NPC.Center).SafeNormalize(Vector2.UnitY);
                         NPC.velocity = LockedAim * 20f;
-                        AttackPhase = 1; AttackTimer = 0; NPC.netUpdate = true;
+                        AttackPhase = 1;
+                        AttackTimer = 0;
+                        NPC.netUpdate = true;
                     }
                     break;
                 case 1: // dive
@@ -770,13 +950,18 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                                     ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.PurpleSkull>(), PlungeDamage, 1f, Main.myPlayer, 0f);
                             }
                         }
-                        AttackPhase = 2; AttackTimer = 0; NPC.netUpdate = true;
+                        AttackPhase = 2;
+                        AttackTimer = 0;
+                        NPC.netUpdate = true;
                     }
                     break;
                 default: // recovery
                     MouthOpen = false;
                     NPC.velocity *= 0.88f;
-                    if (AttackTimer >= 45) EndAttack(330);
+                    if (AttackTimer >= 45)
+                    {
+                        EndAttack(330);
+                    }
                     break;
             }
         }
@@ -836,7 +1021,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             // Capture: remember where to drop the player later; implode into the mouth.
             if (AttackTimer == SwallowCapture)
             {
-                if (local != null && local.active && !local.dead) _swallowReturnPos = local.Center;
+                if (local != null && local.active && !local.dead)
+                {
+                    _swallowReturnPos = local.Center;
+                }
                 if (!Main.dedServ)
                 {
                     SoundEngine.PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
@@ -861,7 +1049,8 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     localMp.ImpaleWorldPosition = Mouth();
                     local.velocity = Vector2.Zero;
                 }
-                SpawnInhaleMote(); SpawnInhaleMote();
+                SpawnInhaleMote();
+                SpawnInhaleMote();
                 VesselOfSoulsFadeSystem.FadeAlpha = (AttackTimer - SwallowCapture) / (float)(SwallowFadeDone - SwallowCapture);
             }
 
@@ -872,9 +1061,16 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 if (localMp != null && local.active && !local.dead)
                 {
                     localMp.SwallowHidden = false;
-                    if (_swallowReturnPos != Vector2.Zero) { local.Center = _swallowReturnPos; local.velocity = Vector2.Zero; }
+                    if (_swallowReturnPos != Vector2.Zero)
+                    {
+                        local.Center = _swallowReturnPos;
+                        local.velocity = Vector2.Zero;
+                    }
                 }
-                if (player.active && !player.dead) NPC.Center = player.Center + new Vector2(0f, -360f);
+                if (player.active && !player.dead)
+                {
+                    NPC.Center = player.Center + new Vector2(0f, -360f);
+                }
                 NPC.velocity = Vector2.Zero;
                 _hideBody = true; // vanished — reforms from dust below
                 NPC.netUpdate = true;
@@ -898,8 +1094,8 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     for (int i = 0; i < 18; i++)
                     {
                         Vector2 vel = Main.rand.NextVector2Circular(9f, 9f);
-                        int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.Shadowflame : DustID.PurpleTorch, vel.X, vel.Y, 80, default, 1.9f);
-                        Main.dust[d].noGravity = true;
+                        int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.Shadowflame : DustID.PurpleTorch, vel.X, vel.Y, 80, default, 1.9f);
+                        Main.dust[dustIndex].noGravity = true;
                     }
             }
 
@@ -921,7 +1117,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         public override bool CheckDead()
         {
-            if (_deathSpectacleDone) return true;
+            if (_deathSpectacleDone)
+            {
+                return true;
+            }
             if (State != VesselState.Dying)
             {
                 NPC.life = 1;
@@ -931,7 +1130,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 AttackTimer = 0;
                 MouthOpen = true;
                 KillOwnedWells();
-                if (Main.netMode != NetmodeID.MultiplayerClient) NPC.netUpdate = true;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.netUpdate = true;
+                }
                 SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 1f, Pitch = -0.6f }, NPC.Center);
             }
             NPC.life = 1;
@@ -966,8 +1168,8 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 for (int i = 0; i < 1; i++)
                 {
                     Vector2 vel = Main.rand.NextVector2Circular(4f + grow * 6f, 4f + grow * 6f);
-                    int d = Dust.NewDust(NPC.Center - new Vector2(20f), 40, 40, Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame, vel.X, vel.Y, 80, default, 1.2f + grow);
-                    Main.dust[d].noGravity = true;
+                    int dustIndex = Dust.NewDust(NPC.Center - new Vector2(20f), 40, 40, Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame, vel.X, vel.Y, 80, default, 1.2f + grow);
+                    Main.dust[dustIndex].noGravity = true;
                 }
             }
             Lighting.AddLight(NPC.Center, 0.8f, 0.2f, 1f);
@@ -986,8 +1188,8 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                         Vector2 dir = Main.rand.NextFloat(MathHelper.TwoPi).ToRotationVector2();
                         Vector2 pos = NPC.Center + dir * Main.rand.NextFloat(0f, 340f); // spread across a big radius
                         Vector2 vel = dir * Main.rand.NextFloat(3f, 22f);               // flung far outward
-                        int d = Dust.NewDust(pos, 4, 4, Main.rand.NextBool() ? DustID.Shadowflame : DustID.PurpleTorch, vel.X, vel.Y, 60, default, Main.rand.NextFloat(1.6f, 2.6f));
-                        Main.dust[d].noGravity = true;
+                        int dustIndex = Dust.NewDust(pos, 4, 4, Main.rand.NextBool() ? DustID.Shadowflame : DustID.PurpleTorch, vel.X, vel.Y, 60, default, Main.rand.NextFloat(1.6f, 2.6f));
+                        Main.dust[dustIndex].noGravity = true;
                     }
                 }
                 // The real kill is server-authoritative (RunDying runs in AI() on every client).
@@ -1012,37 +1214,43 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         void SpawnInhaleMote()
         {
-            if (Main.dedServ || !Main.rand.NextBool(3)) return;
+            if (Main.dedServ || !Main.rand.NextBool(3))
+            {
+                return;
+            }
             Vector2 mouth = Mouth();
             Vector2 from = mouth + Main.rand.NextVector2Circular(140f, 140f);
-            int d = Dust.NewDust(from, 4, 4, Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.PurpleTorch, 0f, 0f, 120, default, 1.1f);
-            Main.dust[d].noGravity = true;
-            Main.dust[d].velocity = (mouth - from) * 0.06f;
+            int dustIndex = Dust.NewDust(from, 4, 4, Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.PurpleTorch, 0f, 0f, 120, default, 1.1f);
+            Main.dust[dustIndex].noGravity = true;
+            Main.dust[dustIndex].velocity = (mouth - from) * 0.06f;
         }
 
         ///<summary>The prominent pre-shot telegraph: purple dust sucking INWARD to the mouth (every
         ///projectile attack shows this for its windup) plus dark/black dust churning in the mouth hole.</summary>
         void MouthChargeTelegraph()
         {
-            if (Main.dedServ) return;
+            if (Main.dedServ)
+            {
+                return;
+            }
             Vector2 mouth = Mouth();
             // Purple inward suck — dense and fast enough to read clearly.
             for (int i = 0; i < 1; i++)
             {
                 float ang = Main.rand.NextFloat(MathHelper.TwoPi);
                 Vector2 from = mouth + ang.ToRotationVector2() * Main.rand.NextFloat(60f, 160f);
-                int d = Dust.NewDust(from, 4, 4, DustID.PurpleTorch, 0f, 0f, 100, default, Main.rand.NextFloat(1.3f, 1.9f));
-                Main.dust[d].noGravity = true;
-                Main.dust[d].velocity = (mouth - from) * 0.10f;
-                Main.dust[d].fadeIn = 0.3f;
+                int dustIndex = Dust.NewDust(from, 4, 4, DustID.PurpleTorch, 0f, 0f, 100, default, Main.rand.NextFloat(1.3f, 1.9f));
+                Main.dust[dustIndex].noGravity = true;
+                Main.dust[dustIndex].velocity = (mouth - from) * 0.10f;
+                Main.dust[dustIndex].fadeIn = 0.3f;
             }
             // Black dust roiling in the hole.
             for (int i = 0; i < 1; i++)
             {
                 Vector2 pos = mouth + Main.rand.NextVector2Circular(26f, 26f);
-                int d = Dust.NewDust(pos, 4, 4, Main.rand.NextBool() ? DustID.Shadowflame : DustID.Smoke, 0f, 0f, 220, default, 1.4f);
-                Main.dust[d].noGravity = true;
-                Main.dust[d].velocity *= 0.15f;
+                int dustIndex = Dust.NewDust(pos, 4, 4, Main.rand.NextBool() ? DustID.Shadowflame : DustID.Smoke, 0f, 0f, 220, default, 1.4f);
+                Main.dust[dustIndex].noGravity = true;
+                Main.dust[dustIndex].velocity *= 0.15f;
             }
             Lighting.AddLight(mouth, 0.5f, 0.1f, 0.65f);
         }
@@ -1050,12 +1258,15 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         // Slow, large red/black motes drifting across the arena view during phase 2.
         void SpawnVoidFog(Player player)
         {
-            if (!player.active || !Main.rand.NextBool(8)) return;
+            if (!player.active || !Main.rand.NextBool(8))
+            {
+                return;
+            }
             Vector2 pos = player.Center + Main.rand.NextVector2Circular(760f, 540f);
-            int d = Dust.NewDust(pos, 8, 8, Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.RedTorch, 0f, 0f, 190, default, Main.rand.NextFloat(1.7f, 2.8f));
-            Main.dust[d].noGravity = true;
-            Main.dust[d].velocity = new Vector2(Main.rand.NextFloat(-0.6f, 0.6f), Main.rand.NextFloat(-0.45f, 0.2f));
-            Main.dust[d].fadeIn = 0.5f;
+            int dustIndex = Dust.NewDust(pos, 8, 8, Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.RedTorch, 0f, 0f, 190, default, Main.rand.NextFloat(1.7f, 2.8f));
+            Main.dust[dustIndex].noGravity = true;
+            Main.dust[dustIndex].velocity = new Vector2(Main.rand.NextFloat(-0.6f, 0.6f), Main.rand.NextFloat(-0.45f, 0.2f));
+            Main.dust[dustIndex].fadeIn = 0.5f;
         }
 
         void SpawnWatcher(Vector2 pos, Vector2 anchor, int mode, int fireOffset)
@@ -1071,8 +1282,11 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             int type = ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselGravityWell>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                Projectile p = Main.projectile[i];
-                if (p.active && p.type == type && (int)p.ai[0] == NPC.whoAmI) p.Kill();
+                Projectile proj = Main.projectile[i];
+                if (proj.active && proj.type == type && (int)proj.ai[0] == NPC.whoAmI)
+                {
+                    proj.Kill();
+                }
             }
         }
 
@@ -1084,7 +1298,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 VoidWasOn = true;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    if (VoidRefresh > 0) VoidRefresh--;
+                    if (VoidRefresh > 0)
+                    {
+                        VoidRefresh--;
+                    }
                     if (VoidRefresh <= 0)
                     {
                         VoidRefresh = 40;
@@ -1098,7 +1315,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             {
                 VoidWasOn = false;
                 for (int i = 0; i < Main.maxPlayers; i++)
-                    if (Main.player[i].active) Main.player[i].ClearBuff(ModContent.BuffType<VesselVoid>());
+                    if (Main.player[i].active)
+                    {
+                        Main.player[i].ClearBuff(ModContent.BuffType<VesselVoid>());
+                    }
             }
         }
 
@@ -1108,7 +1328,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         void UpdateRotation(Player player)
         {
-            if (State == VesselState.Dying) return; // Dying spins freely
+            if (State == VesselState.Dying)
+            {
+                return;  // Dying spins freely
+            }
             float target;
             bool diving = (CurrentAttack == VesselAttack.VesselLunge && AttackPhase == 1)
                        || (CurrentAttack == VesselAttack.VoidPlunge && AttackPhase == 1);
@@ -1128,8 +1351,14 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         void UpdateAura()
         {
             float intensity = 0.25f + 0.5f * (1f - NPC.life / (float)NPC.lifeMax);
-            if (State == VesselState.Attack && AttackTimer < 20) intensity += 0.5f;
-            if (State == VesselState.PhaseTransition || State == VesselState.Dying) intensity += 0.6f;
+            if (State == VesselState.Attack && AttackTimer < 20)
+            {
+                intensity += 0.5f;
+            }
+            if (State == VesselState.PhaseTransition || State == VesselState.Dying)
+            {
+                intensity += 0.6f;
+            }
             Lighting.AddLight(NPC.Center, intensity * 0.55f, intensity * 0.15f, intensity * 0.7f);
         }
 
@@ -1142,10 +1371,17 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         public override void FindFrame(int frameHeightUnused)
         {
-            if (Main.dedServ) return;
+            if (Main.dedServ)
+            {
+                return;
+            }
             int frameHeight = TextureAssets.Npc[NPC.type].Height() / Main.npcFrameCount[NPC.type];
             FrameTimer++;
-            if (FrameTimer >= 8) { FrameTimer = 0; FrameIndex = (FrameIndex + 1) % 3; }
+            if (FrameTimer >= 8)
+            {
+                FrameTimer = 0;
+                FrameIndex = (FrameIndex + 1) % 3;
+            }
             int baseFrame = MouthOpen ? 3 : 0;
             NPC.frame.Width = TextureAssets.Npc[NPC.type].Width();
             NPC.frame.Height = frameHeight;
@@ -1255,7 +1491,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
             DrawBossVFX();
 
-            if (_hideBody) return false; // reforming from dust
+            if (_hideBody)
+            {
+                return false;  // reforming from dust
+            }
 
             bool fast = NPC.velocity.Length() > 9f
                 || (CurrentAttack == VesselAttack.VesselLunge && AttackPhase == 1)
@@ -1276,12 +1515,15 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         public override void HitEffect(NPC.HitInfo hit)
         {
-            if (Main.dedServ || NPC.life > 0) return;
+            if (Main.dedServ || NPC.life > 0)
+            {
+                return;
+            }
             for (int i = 0; i < 20; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(6f, 6f);
-                int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.Shadowflame : DustID.PurpleTorch, vel.X, vel.Y, 80, default, 1.6f);
-                Main.dust[d].noGravity = true;
+                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, Main.rand.NextBool() ? DustID.Shadowflame : DustID.PurpleTorch, vel.X, vel.Y, 80, default, 1.6f);
+                Main.dust[dustIndex].noGravity = true;
             }
         }
 
@@ -1291,7 +1533,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             if (!NPC.downedBoss1)
             {
                 NPC.downedBoss1 = true;
-                if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.WorldData);
+                }
             }
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -1299,12 +1544,18 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 if (!tsorcRevampWorld.NewSlain.ContainsKey(def))
                 {
                     tsorcRevampWorld.NewSlain.Add(def, 1);
-                    if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.WorldData);
+                    }
                 }
             }
             // Safety: clear the void from every player so no one is stranded in the render.
             for (int i = 0; i < Main.maxPlayers; i++)
-                if (Main.player[i].active) Main.player[i].ClearBuff(ModContent.BuffType<VesselVoid>());
+                if (Main.player[i].active)
+                {
+                    Main.player[i].ClearBuff(ModContent.BuffType<VesselVoid>());
+                }
             VesselOfSoulsFadeSystem.FadeAlpha = 0f;
             // TODO(polish): gores, BossBag / unique weapon loot, souls economy tuning, boss music.
         }

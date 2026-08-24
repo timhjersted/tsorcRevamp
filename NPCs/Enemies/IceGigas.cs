@@ -169,20 +169,20 @@ namespace tsorcRevamp.NPCs.Enemies
             // Phase 2: SmartFighter4AI movement + beast levers (mirrors Gigas). minSurfaceWidth (in AI)
             // keeps it off 1-tile ledges; NavSearchRadius enables A*; MaxJumpPower modestly above the 8 default
             // for a strong jump (NPC.gravity is read-only, so no true heavy "weighty" fall). Tune to taste.
-            tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            g.NavSearchRadius = 60; // larger window so A* can find valid flat ledges above/across to jump to (mirrors Gigas)
-            g.MaxJumpPower = 9f;
-            g.MaxJumpBoost = 5f;
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.NavSearchRadius = 60; // larger window so A* can find valid flat ledges above/across to jump to (mirrors Gigas)
+            globalNPC.MaxJumpPower = 9f;
+            globalNPC.MaxJumpBoost = 5f;
 			// Match Holy Gigas: one shallow stair-step is safe support for the two-tile core.
-			g.MaxSurfaceStep = 1;
+			globalNPC.MaxSurfaceStep = 1;
             // On-hit evasion: lumber back to reset spacing, or telegraph a hyper-armored charge back in.
-            EvasiveProfile.HeavyBeast(g);
+            EvasiveProfile.HeavyBeast(globalNPC);
             // Phase 1 (beast positioner): never stand still — oscillate in a large band when it can't path; wander
             // off if it can't reach you AND you stop hitting it for ~10s. Tune the band to taste.
-            g.KiteRangeMin = 0f;
-            g.KiteRangeMax = 30f;
-            g.KiteLooseness = 0.3f;
-            g.PatrolMode = NPCs.PatrolMode.Wander;
+            globalNPC.KiteRangeMin = 0f;
+            globalNPC.KiteRangeMax = 30f;
+            globalNPC.KiteLooseness = 0.3f;
+            globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
         }
 
         //On-hit evasion only from true neutral: recovery frames and combo exhaustion are deliberate
@@ -309,7 +309,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             Player player = Main.player[NPC.target];
             InitializeStats();
             if (LastHitTimer < 9999)
@@ -317,12 +317,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 LastHitTimer++;
             }
 
-            g.AttackTelegraphing = false;
-            g.AttackCommitted = false;
+            globalNPC.AttackTelegraphing = false;
+            globalNPC.AttackCommitted = false;
 
             //The 30% surprise, once per fight: interrupts anything except Absolute Zero's committed
             //tail (the channel already promised the nova) and can't fire while the body is staggered.
-            if (!HeartUsed && Main.netMode != NetmodeID.MultiplayerClient && g.StaggerTimer <= 0
+            if (!HeartUsed && Main.netMode != NetmodeID.MultiplayerClient && globalNPC.StaggerTimer <= 0
                 && NPC.life < NPC.lifeMax * 0.3f && State != AttackState.HeartOfWinter
                 && !(State == AttackState.AbsoluteZero && AttackTimer >= ZeroStaggerableTicks && AttackTimer <= ZeroChannelTicks))
             {
@@ -333,7 +333,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //Staggered: rooted by the global system; slumped lean + falling frost
-            if (g.StaggerTimer > 0)
+            if (globalNPC.StaggerTimer > 0)
             {
                 NPC.rotation = MathHelper.Lerp(NPC.rotation, -NPC.direction * 0.18f, 0.08f);
                 if (Main.rand.NextBool(3))
@@ -356,7 +356,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                 //Slow, weighty walk — one speed, always. The arena gets faster, not the giant.
                 tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, minSurfaceWidth: 2, canWalkBackwards: true);
-                bool recoveringFromNarrowPerch = TerrainNavigation.RecoverFromNarrowPerch(NPC, g, player);
+                bool recoveringFromNarrowPerch = TerrainNavigation.RecoverFromNarrowPerch(NPC, globalNPC, player);
                 if (NPC.lavaWet)
                 {
                     NPC.velocity.Y -= 2;
@@ -385,7 +385,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             else
             {
-                RunAttack(g, player);
+                RunAttack(globalNPC, player);
             }
 
             UpdateAura();
@@ -429,6 +429,33 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
+            // Three weights need more than a single condition, so they are resolved here rather than
+            // nested inline in the table below.
+            float blackIceWeight = 0.5f;
+
+            if (glazeActive)
+            {
+                blackIceWeight = 0f;      // already glazed: no point re-applying
+            }
+            else if (Cracked)
+            {
+                blackIceWeight = 1f;      // phase 2 leans on it
+            }
+
+            float absoluteZeroWeight = 0f;
+
+            if (Cracked)
+            {
+                absoluteZeroWeight = distTiles < 18f ? 1.1f : 0.3f;
+            }
+
+            float glacialStampedeWeight = 0f;
+
+            if (Cracked)
+            {
+                glacialStampedeWeight = distTiles > 18f && sameLevel ? 1f : 0.3f;
+            }
+
             Span<(AttackState state, float weight)> pool = stackalloc (AttackState, float)[]
             {
                 (AttackState.GlacialSlam,     distTiles < 30f ? 1f : 0.4f),
@@ -442,10 +469,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 (AttackState.HoarfrostCreep,  distTiles < 22f ? 0.85f : 0.2f),
                 (AttackState.Undertow,        distTiles > 10f && distTiles < 35f && sameLevel ? 0.8f : 0f),
                 (AttackState.CrystalCanopy,   0.8f),
-                (AttackState.BlackIce,        glazeActive ? 0f : Cracked ? 1f : 0.5f),
-                (AttackState.AbsoluteZero,    !Cracked ? 0f : distTiles < 18f ? 1.1f : 0.3f),
+                (AttackState.BlackIce,        blackIceWeight),
+                (AttackState.AbsoluteZero,    absoluteZeroWeight),
                 (AttackState.IcePrison,       Cracked ? 0.7f : 0f),
-                (AttackState.GlacialStampede, !Cracked ? 0f : distTiles > 18f && sameLevel ? 1f : 0.3f),
+                (AttackState.GlacialStampede, glacialStampedeWeight),
                 (AttackState.MirrorOfWinter,  Cracked ? 0.35f : 0f),
             };
             float total = 0f;
@@ -542,7 +569,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         #region Attack execution
 
-        void RunAttack(tsorcRevampGlobalNPC g, Player player)
+        void RunAttack(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             if (player.dead || !player.active)
             {
@@ -561,34 +588,91 @@ namespace tsorcRevamp.NPCs.Enemies
             AttackTimer++;
             switch (State)
             {
-                case AttackState.GlacialSlam: RunGlacialSlam(g); break;
-                case AttackState.FrostBreath: RunFrostBreath(g, player); break;
-                case AttackState.HailstoneVolley: RunHailstoneVolley(g, player); break;
-                case AttackState.IcicleCrown: RunIcicleCrown(g); break;
-                case AttackState.RimefangSpikes: RunRimefangSpikes(g, player); break;
-                case AttackState.FrozenEcho: RunFrozenEcho(g); break;
-                case AttackState.WintersGrasp: RunWintersGrasp(g, player); break;
-                case AttackState.AbsoluteZero: RunAbsoluteZero(g); break;
-                case AttackState.IcePrison: RunIcePrison(g, player); break;
-                case AttackState.GlacialStampede: RunGlacialStampede(g); break;
-                case AttackState.MirrorOfWinter: RunMirrorOfWinter(g, player); break;
-                case AttackState.CrackTransition: RunCrackTransition(g); break;
-                case AttackState.ComboRecovery: RunComboRecovery(); break;
-                case AttackState.RimeWard: RunRimeWard(g); break;
-                case AttackState.HoarfrostCreep: RunHoarfrostCreep(g, player); break;
-                case AttackState.Undertow: RunUndertow(g, player); break;
-                case AttackState.CrystalCanopy: RunCrystalCanopy(g, player); break;
-                case AttackState.BlackIce: RunBlackIce(g, player); break;
-                case AttackState.HeartOfWinter: RunHeartOfWinter(g, player); break;
+                case AttackState.GlacialSlam:
+                    RunGlacialSlam(globalNPC);
+                    break;
+
+                case AttackState.FrostBreath:
+                    RunFrostBreath(globalNPC, player);
+                    break;
+
+                case AttackState.HailstoneVolley:
+                    RunHailstoneVolley(globalNPC, player);
+                    break;
+
+                case AttackState.IcicleCrown:
+                    RunIcicleCrown(globalNPC);
+                    break;
+
+                case AttackState.RimefangSpikes:
+                    RunRimefangSpikes(globalNPC, player);
+                    break;
+
+                case AttackState.FrozenEcho:
+                    RunFrozenEcho(globalNPC);
+                    break;
+
+                case AttackState.WintersGrasp:
+                    RunWintersGrasp(globalNPC, player);
+                    break;
+
+                case AttackState.AbsoluteZero:
+                    RunAbsoluteZero(globalNPC);
+                    break;
+
+                case AttackState.IcePrison:
+                    RunIcePrison(globalNPC, player);
+                    break;
+
+                case AttackState.GlacialStampede:
+                    RunGlacialStampede(globalNPC);
+                    break;
+
+                case AttackState.MirrorOfWinter:
+                    RunMirrorOfWinter(globalNPC, player);
+                    break;
+
+                case AttackState.CrackTransition:
+                    RunCrackTransition(globalNPC);
+                    break;
+
+                case AttackState.ComboRecovery:
+                    RunComboRecovery();
+                    break;
+
+                case AttackState.RimeWard:
+                    RunRimeWard(globalNPC);
+                    break;
+
+                case AttackState.HoarfrostCreep:
+                    RunHoarfrostCreep(globalNPC, player);
+                    break;
+
+                case AttackState.Undertow:
+                    RunUndertow(globalNPC, player);
+                    break;
+
+                case AttackState.CrystalCanopy:
+                    RunCrystalCanopy(globalNPC, player);
+                    break;
+
+                case AttackState.BlackIce:
+                    RunBlackIce(globalNPC, player);
+                    break;
+
+                case AttackState.HeartOfWinter:
+                    RunHeartOfWinter(globalNPC, player);
+                    break;
+
             }
         }
 
-        void RunGlacialSlam(tsorcRevampGlobalNPC g)
+        void RunGlacialSlam(tsorcRevampGlobalNPC globalNPC)
         {
             int tel = Tel(SlamTelegraphTicks);
             if (AttackTimer <= tel)
             {
-                g.AttackCommitted = true;
+                globalNPC.AttackCommitted = true;
                 NPC.velocity.X *= 0.8f;
                 if (AttackTimer == 1)
                 {
@@ -633,10 +717,10 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunFrostBreath(tsorcRevampGlobalNPC g, Player player)
+        void RunFrostBreath(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             int inhale = Tel(BreathInhaleTicks);
-            g.AttackCommitted = AttackTimer <= inhale + BreathExhaleTicks;
+            globalNPC.AttackCommitted = AttackTimer <= inhale + BreathExhaleTicks;
             NPC.velocity.X *= 0.8f;
             Vector2 mouth = NPC.Center + new Vector2(NPC.direction * 26f, -28f);
 
@@ -659,14 +743,14 @@ namespace tsorcRevamp.NPCs.Enemies
             else if (AttackTimer <= inhale + BreathExhaleTicks)
             {
                 //Exhale: sweeping cone, raking from low to high
-                int t = AttackTimer - inhale;
-                if (t == 1)
+                int tick = AttackTimer - inhale;
+                if (tick == 1)
                 {
                     SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.7f, Pitch = -0.4f }, NPC.Center);
                 }
-                if (Main.netMode != NetmodeID.MultiplayerClient && t % 3 == 0)
+                if (Main.netMode != NetmodeID.MultiplayerClient && tick % 3 == 0)
                 {
-                    float sweep = MathHelper.Lerp(0.45f, -0.6f, t / (float)BreathExhaleTicks); //radians below/above horizontal
+                    float sweep = MathHelper.Lerp(0.45f, -0.6f, tick / (float)BreathExhaleTicks); //radians below/above horizontal
                     for (int i = 0; i < 2; i++)
                     {
                         float angle = sweep + Main.rand.NextFloat(-0.1f, 0.1f);
@@ -686,10 +770,10 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunHailstoneVolley(tsorcRevampGlobalNPC g, Player player)
+        void RunHailstoneVolley(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             int gather = Tel(VolleyGatherTicks);
-            g.AttackCommitted = AttackTimer <= gather + 40;
+            globalNPC.AttackCommitted = AttackTimer <= gather + 40;
             NPC.velocity.X *= 0.8f;
             Vector2 origin = NPC.Center + new Vector2(0f, -90f);
 
@@ -754,14 +838,14 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunIcicleCrown(tsorcRevampGlobalNPC g)
+        void RunIcicleCrown(tsorcRevampGlobalNPC globalNPC)
         {
             int gather = Tel(CrownGatherTicks);
             //Walking cast: keeps lumbering (no dodge/pounce — stately) while the crown does the work
             tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 2, canWalkBackwards: true);
-            TerrainNavigation.RecoverFromNarrowPerch(NPC, g, Main.player[NPC.target]);
+            TerrainNavigation.RecoverFromNarrowPerch(NPC, globalNPC, Main.player[NPC.target]);
             FootstepEffects();
-            g.AttackCommitted = AttackTimer <= gather + CrownVolleyTicks;
+            globalNPC.AttackCommitted = AttackTimer <= gather + CrownVolleyTicks;
 
             if (AttackTimer == 1)
             {
@@ -783,9 +867,9 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunRimefangSpikes(tsorcRevampGlobalNPC g, Player player)
+        void RunRimefangSpikes(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = AttackTimer <= Tel(RimefangCastTicks) - 30; //tail of the cast is already recovery
+            globalNPC.AttackCommitted = AttackTimer <= Tel(RimefangCastTicks) - 30; //tail of the cast is already recovery
             NPC.velocity.X *= 0.8f;
             int start = Tel(15);
             if (AttackTimer == 1)
@@ -814,9 +898,9 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunFrozenEcho(tsorcRevampGlobalNPC g)
+        void RunFrozenEcho(tsorcRevampGlobalNPC globalNPC)
         {
-            g.AttackCommitted = AttackTimer <= EchoGatherTicks;
+            globalNPC.AttackCommitted = AttackTimer <= EchoGatherTicks;
             NPC.velocity.X *= 0.8f;
             if (AttackTimer <= EchoGatherTicks)
             {
@@ -854,10 +938,10 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunWintersGrasp(tsorcRevampGlobalNPC g, Player player)
+        void RunWintersGrasp(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             int cast = Tel(GraspCastTicks);
-            g.AttackCommitted = AttackTimer <= cast;
+            globalNPC.AttackCommitted = AttackTimer <= cast;
             NPC.velocity.X *= 0.8f;
             if (AttackTimer == 1)
             {
@@ -881,7 +965,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunAbsoluteZero(tsorcRevampGlobalNPC g)
+        void RunAbsoluteZero(tsorcRevampGlobalNPC globalNPC)
         {
             //NOT halved on chain — it never chains, and the channel IS the stagger window
             if (AttackTimer <= ZeroChannelTicks)
@@ -889,11 +973,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.X *= 0.75f;
                 if (AttackTimer < ZeroStaggerableTicks)
                 {
-                    g.AttackTelegraphing = true; //staggerable: a normal poise break cancels the channel
+                    globalNPC.AttackTelegraphing = true; //staggerable: a normal poise break cancels the channel
                 }
                 else
                 {
-                    g.AttackCommitted = true;
+                    globalNPC.AttackCommitted = true;
                 }
                 if (AttackTimer == 1)
                 {
@@ -948,10 +1032,10 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunIcePrison(tsorcRevampGlobalNPC g, Player player)
+        void RunIcePrison(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             int cast = Tel(PrisonCastTicks);
-            g.AttackCommitted = AttackTimer <= cast;
+            globalNPC.AttackCommitted = AttackTimer <= cast;
             NPC.velocity.X *= 0.8f;
             if (AttackTimer == 1)
             {
@@ -980,12 +1064,12 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunGlacialStampede(tsorcRevampGlobalNPC g)
+        void RunGlacialStampede(tsorcRevampGlobalNPC globalNPC)
         {
             int tel = Tel(StampedeTelegraphTicks);
             if (AttackTimer <= tel)
             {
-                g.AttackCommitted = true;
+                globalNPC.AttackCommitted = true;
                 NPC.velocity.X *= 0.8f;
                 lockedDir = NPC.direction;
                 //Stomping rumble building to the charge
@@ -1003,10 +1087,10 @@ namespace tsorcRevamp.NPCs.Enemies
             else if (AttackTimer <= tel + StampedeChargeTicks)
             {
                 //The charge: its only fast move, saved for the phase where it's shocking
-                g.AttackCommitted = true;
+                globalNPC.AttackCommitted = true;
                 NPC.velocity.X = lockedDir * 4f;
-                int t = AttackTimer - tel;
-                if (t % 10 == 0)
+                int tick = AttackTimer - tel;
+                if (tick % 10 == 0)
                 {
                     SoundEngine.PlaySound(SoundID.DeerclopsStep with { Volume = 0.6f, Pitch = -0.1f }, NPC.Bottom);
                     UsefulFunctions.ScreenShake(NPC.Bottom, 2f, 6, 6f, 350f);
@@ -1017,7 +1101,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
                 //Hail shaken loose from the ceiling ahead
-                if (t % 15 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (tick % 15 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float aheadX = NPC.Center.X + lockedDir * 96f;
                     float ceilingY = FindCeilingY(new Vector2(aheadX, NPC.Center.Y), 12);
@@ -1028,7 +1112,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
                 //Ran into a wall: skip straight to the recovery
-                if (NPC.collideX && t > 10)
+                if (NPC.collideX && tick > 10)
                 {
                     AttackTimer = tel + StampedeChargeTicks;
                     NPC.netUpdate = true;
@@ -1050,10 +1134,10 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunMirrorOfWinter(tsorcRevampGlobalNPC g, Player player)
+        void RunMirrorOfWinter(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             int cast = Tel(MirrorCastTicks);
-            g.AttackCommitted = AttackTimer <= cast;
+            globalNPC.AttackCommitted = AttackTimer <= cast;
             NPC.velocity.X *= 0.8f;
             if (AttackTimer == 1)
             {
@@ -1089,9 +1173,9 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunCrackTransition(tsorcRevampGlobalNPC g)
+        void RunCrackTransition(tsorcRevampGlobalNPC globalNPC)
         {
-            g.AttackCommitted = true; //the crack itself is not an opening
+            globalNPC.AttackCommitted = true; //the crack itself is not an opening
             NPC.velocity.X = 0f;
             if (AttackTimer == 1)
             {
@@ -1136,11 +1220,11 @@ namespace tsorcRevamp.NPCs.Enemies
         ///<summary>Counter-stance: an ice shell that stores the hits it absorbs (30% damage soak, see
         ///ModifyIncomingHit) and detonates them back as shards. Stop hitting it, reposition, or commit
         ///and eat the answer. Never chains.</summary>
-        void RunRimeWard(tsorcRevampGlobalNPC g)
+        void RunRimeWard(tsorcRevampGlobalNPC globalNPC)
         {
             if (AttackTimer <= WardTelegraphTicks + WardHoldTicks)
             {
-                g.AttackCommitted = true;
+                globalNPC.AttackCommitted = true;
                 NPC.velocity.X *= 0.7f;
                 if (AttackTimer == 1)
                 {
@@ -1222,10 +1306,10 @@ namespace tsorcRevamp.NPCs.Enemies
         ///dominoes outward from the giant along the floor — or along the CEILING when one hangs near
         ///the player (denying the grapple escape instead) — and stands for ~4 seconds. The answer is
         ///vertical: jump to higher ground, or hug whichever surface it didn't take.</summary>
-        void RunHoarfrostCreep(tsorcRevampGlobalNPC g, Player player)
+        void RunHoarfrostCreep(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             int tel = Tel(CreepTelegraphTicks);
-            g.AttackCommitted = AttackTimer <= tel;
+            globalNPC.AttackCommitted = AttackTimer <= tel;
             NPC.velocity.X *= 0.8f;
 
             if (AttackTimer <= tel)
@@ -1279,10 +1363,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
         ///<summary>Blizzard pull: the zone projectile drags players toward it for 90t; anyone still
         ///point-blank at the exhale check eats a mini frost-breath burst.</summary>
-        void RunUndertow(tsorcRevampGlobalNPC g, Player player)
+        void RunUndertow(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             int tel = Tel(UndertowTelegraphTicks);
-            g.AttackCommitted = AttackTimer <= tel + UndertowPullTicks;
+            globalNPC.AttackCommitted = AttackTimer <= tel + UndertowPullTicks;
             NPC.velocity.X *= 0.8f;
             Vector2 mouth = NPC.Center + new Vector2(NPC.direction * 26f, -28f);
 
@@ -1339,13 +1423,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
         ///<summary>Six stalactites over the player's area dropping on an accelerating cadence (gaps
         ///30t → 10t). The giant is free and walking again while the last three are still falling.</summary>
-        void RunCrystalCanopy(tsorcRevampGlobalNPC g, Player player)
+        void RunCrystalCanopy(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             //Walking cast like the crown — the threat is in the sky, not the body
             tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 2, canWalkBackwards: true);
-            TerrainNavigation.RecoverFromNarrowPerch(NPC, g, player);
+            TerrainNavigation.RecoverFromNarrowPerch(NPC, globalNPC, player);
             FootstepEffects();
-            g.AttackCommitted = AttackTimer <= 35;
+            globalNPC.AttackCommitted = AttackTimer <= 35;
 
             if (AttackTimer == 1)
             {
@@ -1375,10 +1459,10 @@ namespace tsorcRevamp.NPCs.Enemies
         ///<summary>Black Ice: a stomp glazes a 24-tile strip of floor under the player. Almost no
         ///threat by itself — for 8 seconds every dodge on it overshoots, and the chain into Glacial
         ///Slam is where it collects.</summary>
-        void RunBlackIce(tsorcRevampGlobalNPC g, Player player)
+        void RunBlackIce(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             int tel = Tel(GlazeTelegraphTicks);
-            g.AttackCommitted = AttackTimer <= tel;
+            globalNPC.AttackCommitted = AttackTimer <= tel;
             if (AttackTimer == 1)
             {
                 NPC.velocity.X = 0f;
@@ -1412,9 +1496,9 @@ namespace tsorcRevamp.NPCs.Enemies
         ///<summary>The 30% surprise: it fake-dies with the full death spectacle, crawls toward the
         ///player as a mound of blizzard, then erupts back to life with a point-blank freeze pulse and
         ///flows straight into a Glacial Stampede. The tell for attentive players: no gore, no coins.</summary>
-        void RunHeartOfWinter(tsorcRevampGlobalNPC g, Player player)
+        void RunHeartOfWinter(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = true;   //nothing interrupts the rebirth
+            globalNPC.AttackCommitted = true;   //nothing interrupts the rebirth
             NPC.timeLeft = 600;         //don't despawn while invisible
             NPC.dontTakeDamage = AttackTimer < HeartRebirthTick;
             NPC.damage = AttackTimer < HeartRebirthTick ? 0 : BaseContactDamage;
@@ -1576,7 +1660,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
             SoundEngine.PlaySound(SoundID.Item8 with { Pitch = -0.3f }, NPC.Center);
-            for (int m = 0; m < 25; m++)
+            for (int burst = 0; burst < 25; burst++)
             {
                 int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Frost, 0, 0, 80, default, 1.8f);
                 Main.dust[dust].noGravity = true;
@@ -1605,20 +1689,20 @@ namespace tsorcRevamp.NPCs.Enemies
         ///<summary>World Y of the first solid tile top under the point (scanning down), or -1 if none in range.</summary>
         static float FindGroundY(Vector2 worldPos, int maxTilesDown)
         {
-            int tx = (int)(worldPos.X / 16f);
-            int ty = (int)(worldPos.Y / 16f);
-            if (tx < 5 || tx > Main.maxTilesX - 5)
+            int tileX = (int)(worldPos.X / 16f);
+            int tileY = (int)(worldPos.Y / 16f);
+            if (tileX < 5 || tileX > Main.maxTilesX - 5)
             {
                 return -1f;
             }
-            for (int d = 0; d <= maxTilesDown; d++)
+            for (int depth = 0; depth <= maxTilesDown; depth++)
             {
-                int y = ty + d;
+                int y = tileY + depth;
                 if (y >= Main.maxTilesY - 5)
                 {
                     break;
                 }
-                Tile tile = Main.tile[tx, y];
+                Tile tile = Main.tile[tileX, y];
                 if (tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType])
                 {
                     return y * 16f;
@@ -1629,33 +1713,33 @@ namespace tsorcRevamp.NPCs.Enemies
 
         static bool IsSolidAt(Vector2 worldPos)
         {
-            int tx = (int)(worldPos.X / 16f);
-            int ty = (int)(worldPos.Y / 16f);
-            if (tx < 5 || tx > Main.maxTilesX - 5 || ty < 5 || ty > Main.maxTilesY - 5)
+            int tileX = (int)(worldPos.X / 16f);
+            int tileY = (int)(worldPos.Y / 16f);
+            if (tileX < 5 || tileX > Main.maxTilesX - 5 || tileY < 5 || tileY > Main.maxTilesY - 5)
             {
                 return true;
             }
-            Tile tile = Main.tile[tx, ty];
+            Tile tile = Main.tile[tileX, tileY];
             return tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType];
         }
 
         ///<summary>World Y of the first solid tile BOTTOM above the point (scanning up), or -1 if none in range.</summary>
         static float FindCeilingY(Vector2 worldPos, int maxTilesUp)
         {
-            int tx = (int)(worldPos.X / 16f);
-            int ty = (int)(worldPos.Y / 16f);
-            if (tx < 5 || tx > Main.maxTilesX - 5)
+            int tileX = (int)(worldPos.X / 16f);
+            int tileY = (int)(worldPos.Y / 16f);
+            if (tileX < 5 || tileX > Main.maxTilesX - 5)
             {
                 return -1f;
             }
-            for (int d = 0; d <= maxTilesUp; d++)
+            for (int depth = 0; depth <= maxTilesUp; depth++)
             {
-                int y = ty - d;
+                int y = tileY - depth;
                 if (y <= 5)
                 {
                     break;
                 }
-                Tile tile = Main.tile[tx, y];
+                Tile tile = Main.tile[tileX, y];
                 if (tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType])
                 {
                     return (y + 1) * 16f;

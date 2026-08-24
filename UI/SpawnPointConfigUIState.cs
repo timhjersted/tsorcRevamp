@@ -343,7 +343,10 @@ namespace tsorcRevamp.UI
                 if (CurrentEvent != null)
                 {
                     int currentIndex = System.Array.IndexOf(WorldConditionMethods, CurrentEvent.WorldCondition ?? "");
-                    if (currentIndex == -1) currentIndex = 0;
+                    if (currentIndex == -1)
+                    {
+                        currentIndex = 0;
+                    }
                     int nextIndex = (currentIndex + 1) % WorldConditionMethods.Length;
                     CurrentEvent.WorldCondition = WorldConditionMethods[nextIndex];
                     tsorcScriptedEvents.SaveDynamicEvents();
@@ -373,7 +376,10 @@ namespace tsorcRevamp.UI
                 if (CurrentEvent != null)
                 {
                     int currentIndex = System.Array.IndexOf(SpawnConditionMethods, CurrentEvent.MapCondition ?? "");
-                    if (currentIndex == -1) currentIndex = 0;
+                    if (currentIndex == -1)
+                    {
+                        currentIndex = 0;
+                    }
                     int nextIndex = (currentIndex + 1) % SpawnConditionMethods.Length;
                     CurrentEvent.MapCondition = SpawnConditionMethods[nextIndex];
                     tsorcScriptedEvents.SaveDynamicEvents();
@@ -403,7 +409,10 @@ namespace tsorcRevamp.UI
                 if (CurrentEvent != null)
                 {
                     int currentIndex = System.Array.IndexOf(PopularDusts, CurrentEvent.TriggerDust);
-                    if (currentIndex == -1) currentIndex = 0;
+                    if (currentIndex == -1)
+                    {
+                        currentIndex = 0;
+                    }
                     int nextIndex = (currentIndex + 1) % PopularDusts.Length;
                     CurrentEvent.TriggerDust = PopularDusts[nextIndex];
 
@@ -639,7 +648,10 @@ namespace tsorcRevamp.UI
         // kill-time (enemyValue = npc.value / (divisor * 15|20|25)) conversion exactly.
         private void RefreshSoulsPreview()
         {
-            if (soulsPreview == null || editingNpc == null) return;
+            if (soulsPreview == null || editingNpc == null)
+            {
+                return;
+            }
 
             NPC temp = new NPC();
             temp.SetDefaults(editingNpc.NpcID);
@@ -650,11 +662,29 @@ namespace tsorcRevamp.UI
             // Spawn-time: only expert mode gets the *25 branch (master falls through to *10, same as normal —
             // this is how the actual spawn code behaves, not a simplification for the preview).
             int npcValue = baseSouls * (expert ? 25 : 10);
-            float killDivisor = master ? 20f : (expert ? 25f : 15f);
+            float killDivisor = 15f;
+
+            if (master)
+            {
+                killDivisor = 20f;
+            }
+            else if (expert)
+            {
+                killDivisor = 25f;
+            }
             float ringMultiplier = tsorcRevampPlayer.CheckSoulsMultiplier(Main.LocalPlayer);
             int actualDrop = (int)(ringMultiplier * (npcValue / killDivisor));
 
-            string modeName = master ? "Master" : (expert ? "Expert" : "Normal");
+            string modeName = "Normal";
+
+            if (master)
+            {
+                modeName = "Master";
+            }
+            else if (expert)
+            {
+                modeName = "Expert";
+            }
             soulsPreview.SetText($"~ {actualDrop} souls/kill ({modeName}{(ringMultiplier != 1f ? $", rings x{ringMultiplier:0.##}" : "")})");
         }
 
@@ -723,14 +753,21 @@ namespace tsorcRevamp.UI
             float rowY = startY + 25f;
             float rowH = 28f;
 
-            PositionStatRow(healthLabel, healthInput, rowY); rowY += rowH;
-            PositionStatRow(soulsLabel, soulsInput, rowY); rowY += rowH;
-            soulsPreview.Top.Set(rowY, 0); rowY += 16f;
-            PositionStatRow(damageLabel, damageInput, rowY); rowY += rowH;
-            PositionStatRow(defenseLabel, defenseInput, rowY); rowY += rowH + 5f;
+            PositionStatRow(healthLabel, healthInput, rowY);
+            rowY += rowH;
+            PositionStatRow(soulsLabel, soulsInput, rowY);
+            rowY += rowH;
+            soulsPreview.Top.Set(rowY, 0);
+            rowY += 16f;
+            PositionStatRow(damageLabel, damageInput, rowY);
+            rowY += rowH;
+            PositionStatRow(defenseLabel, defenseInput, rowY);
+            rowY += rowH + 5f;
 
-            spawnTextLabel.Top.Set(rowY, 0); rowY += 20f;
-            spawnTextInput.Top.Set(rowY, 0); rowY += 35f;
+            spawnTextLabel.Top.Set(rowY, 0);
+            rowY += 20f;
+            spawnTextInput.Top.Set(rowY, 0);
+            rowY += 35f;
 
             // Save button always shown (stats no longer auto-save per keystroke). Back button only for multi-NPC.
             saveStatsButton.Top.Set(rowY, 0);
@@ -774,7 +811,10 @@ namespace tsorcRevamp.UI
 
         public void HideEditPanel()
         {
-            if (!editPanelAttached) return;
+            if (!editPanelAttached)
+            {
+                return;
+            }
 
             // Safety net: persist whatever's pending (stat fields no longer auto-save per keystroke, see
             // MakeStatInput) before this NPC's edit state is cleared, so leaving the panel without clicking
@@ -799,9 +839,9 @@ namespace tsorcRevamp.UI
         // Does NOT restore the search section — callers that need it (HideEditPanel) handle that.
         private void DetachEditElements()
         {
-            foreach (var el in EditElements())
+            foreach (var element in EditElements())
             {
-                el.Top.Set(-2000f, 0);
+                element.Top.Set(-2000f, 0);
             }
             spawnTextInput.Focused = false;
             Main.blockInput = false;
@@ -816,7 +856,10 @@ namespace tsorcRevamp.UI
         // otherwise stat edits after the first keystroke land on an orphaned object and never persist.
         public void RebindEditingNpc()
         {
-            if (editingNpc == null) return;
+            if (editingNpc == null)
+            {
+                return;
+            }
             if (CurrentEvent != null && editingNpcIndex >= 0 && editingNpcIndex < CurrentEvent.Npcs.Count)
             {
                 editingNpc = CurrentEvent.Npcs[editingNpcIndex];
@@ -842,17 +885,17 @@ namespace tsorcRevamp.UI
             }
         }
 
-        public void SetEvent(DynamicSpawnEvent ev)
+        public void SetEvent(DynamicSpawnEvent spawnEvent)
         {
-            CurrentEvent = ev;
+            CurrentEvent = spawnEvent;
 
             // Backward-compat: older events stored Adventure/Remix in MapCondition. Migrate it to WorldCondition
             // so the split menus display and cycle correctly.
-            if (ev != null && string.IsNullOrEmpty(ev.WorldCondition)
-                && (ev.MapCondition == "OnlyAdventureMapCondition" || ev.MapCondition == "RemixMapCondition"))
+            if (spawnEvent != null && string.IsNullOrEmpty(spawnEvent.WorldCondition)
+                && (spawnEvent.MapCondition == "OnlyAdventureMapCondition" || spawnEvent.MapCondition == "RemixMapCondition"))
             {
-                ev.WorldCondition = ev.MapCondition;
-                ev.MapCondition = "";
+                spawnEvent.WorldCondition = spawnEvent.MapCondition;
+                spawnEvent.MapCondition = "";
                 tsorcScriptedEvents.SaveDynamicEvents();
             }
 
@@ -865,22 +908,25 @@ namespace tsorcRevamp.UI
             }
 
             // Quick-add events are locked to a single NPC, so hide the multi-NPC add/list sections.
-            SetLowerSectionsVisible(ev == null || !ev.SingleNpcMarker);
+            SetLowerSectionsVisible(spawnEvent == null || !spawnEvent.SingleNpcMarker);
 
             RefreshDetails();
             RefreshList();
 
             // For single-NPC events, auto-open the edit panel for the one NPC.
-            if (ev != null && ev.SingleNpcMarker && ev.Npcs.Count > 0)
+            if (spawnEvent != null && spawnEvent.SingleNpcMarker && spawnEvent.Npcs.Count > 0)
             {
-                ShowEditPanel(ev.Npcs[0]);
+                ShowEditPanel(spawnEvent.Npcs[0]);
             }
         }
 
         // Attaches/detaches the "configured spawns" list and the "select enemy to place" search section.
         private void SetLowerSectionsVisible(bool visible)
         {
-            if (visible == lowerSectionsAttached) return;
+            if (visible == lowerSectionsAttached)
+            {
+                return;
+            }
 
             if (visible)
             {
@@ -908,7 +954,10 @@ namespace tsorcRevamp.UI
 
         public void RefreshDetails()
         {
-            if (CurrentEvent == null) return;
+            if (CurrentEvent == null)
+            {
+                return;
+            }
 
             eventDetailsText.SetText($"Event ID: {CurrentEvent.EventID.Substring(0, 8)}...");
 
@@ -950,7 +999,10 @@ namespace tsorcRevamp.UI
         public void RefreshList()
         {
             npcList.Clear();
-            if (CurrentEvent == null) return;
+            if (CurrentEvent == null)
+            {
+                return;
+            }
 
             foreach (var npc in CurrentEvent.Npcs)
             {
@@ -966,7 +1018,10 @@ namespace tsorcRevamp.UI
 
                 // NPC name (truncated at 22 chars to leave room for buttons)
                 string nameText = temp.TypeName;
-                if (nameText.Length > 22) nameText = nameText.Substring(0, 20) + "..";
+                if (nameText.Length > 22)
+                {
+                    nameText = nameText.Substring(0, 20) + "..";
+                }
                 UIText nameLabel = new UIText(nameText, 0.78f);
                 nameLabel.Left.Set(0, 0);
                 nameLabel.Top.Set(2, 0);
@@ -992,7 +1047,10 @@ namespace tsorcRevamp.UI
                 delBtn.OnMouseOut += (e, el) => delBtn.TextColor = Color.Crimson;
                 delBtn.OnLeftClick += (e, el) =>
                 {
-                    if (editingNpc == capturedNpc) HideEditPanel();
+                    if (editingNpc == capturedNpc)
+                    {
+                        HideEditPanel();
+                    }
                     CurrentEvent.Npcs.Remove(capturedNpc);
                     tsorcScriptedEvents.SaveDynamicEvents();
                     RefreshList();
@@ -1092,7 +1150,10 @@ namespace tsorcRevamp.UI
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (!Visible) return;
+            if (!Visible)
+            {
+                return;
+            }
             base.Draw(spriteBatch);
         }
 
@@ -1169,7 +1230,10 @@ namespace tsorcRevamp.UI
                     {
                         // Keep digits only and cap the length so it stays a valid int.
                         string filtered = new string(newText.Where(char.IsDigit).ToArray());
-                        if (filtered.Length > MaxDigits) filtered = filtered.Substring(0, MaxDigits);
+                        if (filtered.Length > MaxDigits)
+                        {
+                            filtered = filtered.Substring(0, MaxDigits);
+                        }
                         if (filtered != Text)
                         {
                             Text = filtered;

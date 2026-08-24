@@ -91,9 +91,59 @@ namespace tsorcRevamp.NPCs.Enemies
         bool IsBroodfather => variant == Variant.Elite;
 
         //Damage tiers (authored HALF; hostile projectiles deal 2x on hit). Used by the real attacks later.
-        int GlobDamage => SHM ? 40 : HM ? 33 : 28;
-        int EmberDamage => SHM ? 45 : HM ? 38 : 30;
-        int ClawDamage => SHM ? 50 : HM ? 42 : 34;
+        int GlobDamage
+        {
+            get
+            {
+                if (SHM)
+                {
+                    return 40;
+                }
+
+                if (HM)
+                {
+                    return 33;
+                }
+
+                return 28;
+            }
+        }
+
+        int EmberDamage
+        {
+            get
+            {
+                if (SHM)
+                {
+                    return 45;
+                }
+
+                if (HM)
+                {
+                    return 38;
+                }
+
+                return 30;
+            }
+        }
+
+        int ClawDamage
+        {
+            get
+            {
+                if (SHM)
+                {
+                    return 50;
+                }
+
+                if (HM)
+                {
+                    return 42;
+                }
+
+                return 34;
+            }
+        }
 
         public override void SetStaticDefaults()
         {
@@ -117,37 +167,52 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.3f;  //overridden by the PoiseProfiles entry
             NPC.lavaImmune = false;
 
-            tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            g.NavSearchRadius = 60;      //seek high ground / ledges to spit from
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.NavSearchRadius = 60;      //seek high ground / ledges to spit from
             //Aggressive bruiser: no kite band (the clutch-crab copies kite, not the leader).
-            g.MaxJumpPower = 10.5f;      //high, deliberate crab leap
-            g.MaxJumpBoost = 5f;
+            globalNPC.MaxJumpPower = 10.5f;      //high, deliberate crab leap
+            globalNPC.MaxJumpBoost = 5f;
             //On-hit evasion is bespoke: it burrows and re-emerges at the player's flank (see OnHitByX -> TryBurrowEvade).
         }
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            Player p = spawnInfo.Player;
-            if (Main.pumpkinMoon || Main.snowMoon || p.townNPCs > 0f || p.ZoneDungeon)
+            Player player = spawnInfo.Player;
+            if (Main.pumpkinMoon || Main.snowMoon || player.townNPCs > 0f || player.ZoneDungeon)
             {
                 return 0f;
             }
 
             //Ocean (Beach zone) — its home. Also displaced into the Underground Desert.
-            bool ocean = p.ZoneBeach;
-            bool undergroundDesert = p.ZoneUndergroundDesert;
+            bool ocean = player.ZoneBeach;
+            bool undergroundDesert = player.ZoneUndergroundDesert;
 
             if (ocean)
             {
-                if (tsorcRevampWorld.SuperHardMode && Main.rand.NextBool(18)) return 1f;
-                if (Main.hardMode && Main.rand.NextBool(30)) return 1f;
-                if (Main.rand.NextBool(140)) return 1f;
+                if (tsorcRevampWorld.SuperHardMode && Main.rand.NextBool(18))
+                {
+                    return 1f;
+                }
+                if (Main.hardMode && Main.rand.NextBool(30))
+                {
+                    return 1f;
+                }
+                if (Main.rand.NextBool(140))
+                {
+                    return 1f;
+                }
             }
             if (undergroundDesert)
             {
-                if (tsorcRevampWorld.SuperHardMode && Main.rand.NextBool(22)) return 1f;
-                if (Main.hardMode && Main.rand.NextBool(45)) return 1f;
+                if (tsorcRevampWorld.SuperHardMode && Main.rand.NextBool(22))
+                {
+                    return 1f;
+                }
+                if (Main.hardMode && Main.rand.NextBool(45))
+                {
+                    return 1f;
+                }
             }
             return 0f;
         }
@@ -211,21 +276,27 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             Player player = Main.player[NPC.target];
             InitializeStats();
 
-            g.AttackTelegraphing = false;
-            g.AttackCommitted = false;
+            globalNPC.AttackTelegraphing = false;
+            globalNPC.AttackCommitted = false;
 
-            if (g.StaggerTimer > 0)
+            if (globalNPC.StaggerTimer > 0)
             {
                 NPC.rotation = MathHelper.Lerp(NPC.rotation, -NPC.direction * 0.2f, 0.1f);
-                if (Submerged) NPC.noGravity = true;
+                if (Submerged)
+                {
+                    NPC.noGravity = true;
+                }
                 return;
             }
             NPC.rotation *= 0.85f;
-            if (evadeCooldown > 0) evadeCooldown--;
+            if (evadeCooldown > 0)
+            {
+                evadeCooldown--;
+            }
 
             //Idle identity: dripping black ichor, faint amber glow at the maw, the occasional wet clack.
             if (Main.rand.NextBool(6))
@@ -242,14 +313,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 Lighting.AddLight(NPC.Center, 0.35f, 0.14f, 0.03f);
                 if (Main.rand.NextBool(10))
                 {
-                    int e = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Torch, 0f, -1.5f, 120, default, 1f);
-                    Main.dust[e].noGravity = true;
+                    int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Torch, 0f, -1.5f, 120, default, 1f);
+                    Main.dust[dustIndex].noGravity = true;
                 }
             }
 
             if (State == AttackState.None)
             {
-                Move(g, player);
+                Move(globalNPC, player);
 
                 if (AttackCooldown > 0)
                 {
@@ -264,14 +335,14 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             else
             {
-                RunAttack(g, player);
+                RunAttack(globalNPC, player);
             }
         }
 
         ///<summary>Amphibious locomotion. Dry: the aggressive-bruiser FighterAI (high leap, seeks high
         ///ground). Wet: a buoyant pursuit that can rise to the surface or dive after the player, bubbles
         ///jetting at the feet — no swim animation needed (see ClericOfSorrow).</summary>
-        void Move(tsorcRevampGlobalNPC g, Player player)
+        void Move(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             if (Submerged)
             {
@@ -350,7 +421,7 @@ namespace tsorcRevamp.NPCs.Enemies
         //Phase 1: every attack is a dust-telegraph STUB. It faces the player, poses/telegraphs, then bails
         //through EndAttack. The real behavior (projectiles, burrow machine, brood spawn) replaces each body
         //in later phases; the skeleton, poise flags and pacing are already correct.
-        void RunAttack(tsorcRevampGlobalNPC g, Player player)
+        void RunAttack(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             //Burrow drives its own facing/motion (it's mid-travel); the others face the player.
             if (State != AttackState.PincerLeap && State != AttackState.BurrowAmbush)
@@ -365,22 +436,39 @@ namespace tsorcRevamp.NPCs.Enemies
 
             switch (State)
             {
-                case AttackState.IchorSpit: RunIchorSpit(g, player); break;
-                case AttackState.EmberLob: RunEmberLob(g, player); break;
-                case AttackState.BurrowAmbush: RunBurrow(g, player); break;
-                case AttackState.PincerLeap: RunPincerLeap(g, player); break;
-                case AttackState.BroodCall: RunBroodCall(g); break;
+                case AttackState.IchorSpit:
+                    RunIchorSpit(globalNPC, player);
+                    break;
+
+                case AttackState.EmberLob:
+                    RunEmberLob(globalNPC, player);
+                    break;
+
+                case AttackState.BurrowAmbush:
+                    RunBurrow(globalNPC, player);
+                    break;
+
+                case AttackState.PincerLeap:
+                    RunPincerLeap(globalNPC, player);
+                    break;
+
+                case AttackState.BroodCall:
+                    RunBroodCall(globalNPC);
+                    break;
             }
         }
 
         ///<summary>Converging-ichor windup at the maw, then 1–3 arcing globs. A hit douses; a miss splats a
         ///floor patch. Hyper-armored.</summary>
-        void RunIchorSpit(tsorcRevampGlobalNPC g, Player player)
+        void RunIchorSpit(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = true;
+            globalNPC.AttackCommitted = true;
             if (AttackTimer <= IchorTelegraphTicks)
             {
-                if (AttackTimer == 1) SoundEngine.PlaySound(SoundID.NPCHit1 with { Pitch = 0.4f }, NPC.Center);
+                if (AttackTimer == 1)
+                {
+                    SoundEngine.PlaySound(SoundID.NPCHit1 with { Pitch = 0.4f }, NPC.Center);
+                }
                 ConvergeMawDust(DustID.Ichor, AttackTimer / (float)IchorTelegraphTicks);
             }
             else if (AttackTimer == IchorTelegraphTicks + 1)
@@ -391,8 +479,8 @@ namespace tsorcRevamp.NPCs.Enemies
                     int count = Main.rand.Next(1, 4);
                     for (int i = 0; i < count; i++)
                     {
-                        Vector2 v = LobVelocity(Maw, player.Center, 9.5f, 3.2f).RotatedByRandom(0.18f);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), Maw, v,
+                        Vector2 lobVelocity = LobVelocity(Maw, player.Center, 9.5f, 3.2f).RotatedByRandom(0.18f);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), Maw, lobVelocity,
                             ModContent.ProjectileType<Projectiles.Enemy.QuaraIchorGlob>(), GlobDamage, 1f, Main.myPlayer, 0.18f);
                     }
                 }
@@ -405,12 +493,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
         ///<summary>The igniter: a longer windup with fire dust gathering at the maw, then a single arcing
         ///ember at the player (lights doused players and ichor patches on impact). Hyper-armored.</summary>
-        void RunEmberLob(tsorcRevampGlobalNPC g, Player player)
+        void RunEmberLob(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = true;
+            globalNPC.AttackCommitted = true;
             if (AttackTimer <= EmberTelegraphTicks)
             {
-                if (AttackTimer == 1) SoundEngine.PlaySound(SoundID.Item20 with { Pitch = 0.2f }, NPC.Center);
+                if (AttackTimer == 1)
+                {
+                    SoundEngine.PlaySound(SoundID.Item20 with { Pitch = 0.2f }, NPC.Center);
+                }
                 Lighting.AddLight(Maw, 0.5f, 0.3f, 0.08f);
                 ConvergeMawDust(DustID.Torch, AttackTimer / (float)EmberTelegraphTicks);
             }
@@ -419,8 +510,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.6f, Pitch = 0.3f }, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 v = LobVelocity(Maw, player.Center, 10f, 3.5f);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), Maw, v,
+                    Vector2 lobVelocity = LobVelocity(Maw, player.Center, 10f, 3.5f);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), Maw, lobVelocity,
                         ModContent.ProjectileType<Projectiles.Enemy.QuaraEmber>(), EmberDamage, 1f, Main.myPlayer, 0.2f);
                 }
             }
@@ -432,20 +523,23 @@ namespace tsorcRevamp.NPCs.Enemies
 
         ///<summary>Crouch → leap toward the player → claw swipe with a white swoosh on the descent → open
         ///recovery. Sub-phases via leapPhase; hyper-armored through the swipe, punishable on recovery.</summary>
-        void RunPincerLeap(tsorcRevampGlobalNPC g, Player player)
+        void RunPincerLeap(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = leapPhase < 3;
+            globalNPC.AttackCommitted = leapPhase < 3;
 
             switch (leapPhase)
             {
                 case 0: //TELEGRAPH — crouch and brace
                     NPC.direction = NPC.spriteDirection = player.Center.X >= NPC.Center.X ? 1 : -1;
                     NPC.velocity.X *= 0.8f;
-                    if (AttackTimer == 1) SoundEngine.PlaySound(SoundID.Zombie1 with { Pitch = 0.3f }, NPC.Center);
+                    if (AttackTimer == 1)
+                    {
+                        SoundEngine.PlaySound(SoundID.Zombie1 with { Pitch = 0.3f }, NPC.Center);
+                    }
                     if (Main.rand.NextBool(2))
                     {
-                        int d = Dust.NewDust(NPC.Bottom - new Vector2(NPC.width / 2f, 2f), NPC.width, 4, DustID.Ichor, 0f, -1f, 120, default, 1.1f);
-                        Main.dust[d].noGravity = true;
+                        int dustIndex = Dust.NewDust(NPC.Bottom - new Vector2(NPC.width / 2f, 2f), NPC.width, 4, DustID.Ichor, 0f, -1f, 120, default, 1.1f);
+                        Main.dust[dustIndex].noGravity = true;
                     }
                     if (AttackTimer >= LeapTelegraphTicks)
                     {
@@ -516,21 +610,27 @@ namespace tsorcRevamp.NPCs.Enemies
         ///<summary>Dust drawn inward toward the maw over a telegraph — the shared "a cast is charging" read.</summary>
         void ConvergeMawDust(int dustType, float progress)
         {
-            if (!Main.rand.NextBool(2)) return;
+            if (!Main.rand.NextBool(2))
+            {
+                return;
+            }
             Vector2 from = Maw + Main.rand.NextVector2Circular(30f, 30f) * (1.2f - progress);
-            int d = Dust.NewDust(from, 2, 2, dustType, 0f, 0f, 120, default, 1.1f);
-            Main.dust[d].noGravity = true;
-            Main.dust[d].velocity = (Maw - from) * 0.08f;
+            int dustIndex = Dust.NewDust(from, 2, 2, dustType, 0f, 0f, 120, default, 1.1f);
+            Main.dust[dustIndex].noGravity = true;
+            Main.dust[dustIndex].velocity = (Maw - from) * 0.08f;
         }
 
         ///<summary>A simple ballistic-ish lob: aim at the target, biased upward so gravity arcs it down.</summary>
         static Vector2 LobVelocity(Vector2 from, Vector2 target, float speed, float arc)
         {
             Vector2 dir = target - from;
-            if (dir != Vector2.Zero) dir.Normalize();
-            Vector2 v = dir * speed;
-            v.Y -= arc;
-            return v;
+            if (dir != Vector2.Zero)
+            {
+                dir.Normalize();
+            }
+            Vector2 launchVelocity = dir * speed;
+            launchVelocity.Y -= arc;
+            return launchVelocity;
         }
 
         int CountClutchCrabs()
@@ -539,8 +639,8 @@ namespace tsorcRevamp.NPCs.Enemies
             int type = ModContent.NPCType<QuaraClutchCrab>();
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                NPC n = Main.npc[i];
-                if (n.active && n.type == type && (int)n.ai[0] == NPC.whoAmI)
+                NPC other = Main.npc[i];
+                if (other.active && other.type == type && (int)other.ai[0] == NPC.whoAmI)
                 {
                     count++;
                 }
@@ -552,9 +652,9 @@ namespace tsorcRevamp.NPCs.Enemies
         ///burst back out with a lunging contact hit. Dirt dust on land, bubbles in water. Hyper-armored and
         ///untargetable while submerged; the short erupt recovery is the punish window. Doubles as the on-hit
         ///evasion (TryBurrowEvade). AttackTimer is reset to 0 at each phase transition and used per-phase.</summary>
-        void RunBurrow(tsorcRevampGlobalNPC g, Player player)
+        void RunBurrow(tsorcRevampGlobalNPC globalNPC, Player player)
         {
-            g.AttackCommitted = burrowPhase < 3; //committed through the burst; recovery is open
+            globalNPC.AttackCommitted = burrowPhase < 3; //committed through the burst; recovery is open
 
             switch (burrowPhase)
             {
@@ -599,7 +699,10 @@ namespace tsorcRevamp.NPCs.Enemies
                         NPC.velocity = Vector2.Lerp(NPC.velocity, Vector2.Normalize(toTarget) * 12f, 0.2f);
                     }
                     NPC.direction = NPC.spriteDirection = emergeTarget.X >= NPC.Center.X ? 1 : -1;
-                    if (Main.rand.NextBool(3)) SpawnBurrowDust(NPC.Center, emergeInWater);
+                    if (Main.rand.NextBool(3))
+                    {
+                        SpawnBurrowDust(NPC.Center, emergeInWater);
+                    }
                     if ((Math.Abs(NPC.Center.X - emergeTarget.X) < 20f && NPC.Center.Y >= emergeTarget.Y - 8 * 16f)
                         || AttackTimer >= BurrowTravelMax)
                     {
@@ -629,10 +732,10 @@ namespace tsorcRevamp.NPCs.Enemies
                         SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.8f, Pitch = 0.1f }, NPC.Center);
                         for (int i = 0; i < 34; i++)
                         {
-                            int d = Dust.NewDust(NPC.Bottom - new Vector2(NPC.width / 2f, 4f), NPC.width, 8,
+                            int dustIndex = Dust.NewDust(NPC.Bottom - new Vector2(NPC.width / 2f, 4f), NPC.width, 8,
                                 emergeInWater ? DustID.BubbleBurst_White : DustID.Dirt,
                                 Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-6f, -1f), 100, default, 1.4f);
-                            Main.dust[d].noGravity = emergeInWater;
+                            Main.dust[dustIndex].noGravity = emergeInWater;
                         }
                     }
                     NPC.alpha = (int)MathHelper.Clamp(255f - AttackTimer / (float)BurrowEruptTicks * 255f, 0, 255);
@@ -648,7 +751,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 default: //RECOVERY — no armor: the punish window
                     NPC.alpha = 0;
-                    if (!Submerged) NPC.velocity.X *= 0.9f;
+                    if (!Submerged)
+                    {
+                        NPC.velocity.X *= 0.9f;
+                    }
                     if (AttackTimer >= BurrowRecoveryTicks)
                     {
                         ResetBurrow();
@@ -667,12 +773,30 @@ namespace tsorcRevamp.NPCs.Enemies
             water = false;
             for (int attempt = 0; attempt < 3; attempt++)
             {
-                int sign = attempt == 0 ? -player.direction : attempt == 1 ? player.direction : (Main.rand.NextBool() ? 1 : -1);
-                if (sign == 0) sign = 1;
-                float tx = player.Center.X + sign * Main.rand.Next(5, 9) * 16f;
+                // Try behind the player first, then in front, then a coin flip.
+                int sign;
+
+                if (attempt == 0)
+                {
+                    sign = -player.direction;
+                }
+                else if (attempt == 1)
+                {
+                    sign = player.direction;
+                }
+                else
+                {
+                    sign = Main.rand.NextBool() ? 1 : -1;
+                }
+
+                if (sign == 0)
+                {
+                    sign = 1;
+                }
+                float targetX = player.Center.X + sign * Main.rand.Next(5, 9) * 16f;
 
                 //Water emerge: burst up right at the player's depth if that spot is open liquid
-                Vector2 atDepth = new(tx, player.Center.Y);
+                Vector2 atDepth = new(targetX, player.Center.Y);
                 if (TileLiquidAt(atDepth) && !IsSolidAt(atDepth))
                 {
                     result = atDepth;
@@ -681,19 +805,23 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 //Land emerge: scan down for the first solid surface, require >=4 thick + open space above
-                Vector2 scan = new(tx, player.Center.Y - 3 * 16f);
+                Vector2 scan = new(targetX, player.Center.Y - 3 * 16f);
                 for (int i = 0; i < 50; i++)
                 {
                     if (IsSolidAt(scan))
                     {
                         bool thick = true;
-                        for (int t = 1; t <= 4; t++)
+                        for (int tier = 1; tier <= 4; tier++)
                         {
-                            if (!IsSolidAt(scan + new Vector2(0, t * 16f))) { thick = false; break; }
+                            if (!IsSolidAt(scan + new Vector2(0, tier * 16f)))
+                            {
+                                thick = false;
+                                break;
+                            }
                         }
                         if (thick && !IsSolidAt(scan - new Vector2(0, 16f)))
                         {
-                            result = new Vector2(tx, (int)(scan.Y / 16f) * 16f); //top of the solid tile
+                            result = new Vector2(targetX, (int)(scan.Y / 16f) * 16f); //top of the solid tile
                             water = false;
                             return true;
                         }
@@ -707,11 +835,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
         void SpawnBurrowDust(Vector2 pos, bool water)
         {
-            if (!Main.rand.NextBool(2)) return;
-            int d = Dust.NewDust(pos - new Vector2(NPC.width / 2f, 2f), NPC.width, 6,
+            if (!Main.rand.NextBool(2))
+            {
+                return;
+            }
+            int dustIndex = Dust.NewDust(pos - new Vector2(NPC.width / 2f, 2f), NPC.width, 6,
                 water ? DustID.BubbleBurst_White : DustID.Dirt, 0f, water ? 1.2f : 0f, 100, default, 1.1f);
-            Main.dust[d].noGravity = water;
-            if (water) Main.dust[d].velocity = new Vector2(Main.rand.NextFloat(-0.5f, 0.5f), Main.rand.NextFloat(0.5f, 1.5f));
+            Main.dust[dustIndex].noGravity = water;
+            if (water)
+            {
+                Main.dust[dustIndex].velocity = new Vector2(Main.rand.NextFloat(-0.5f, 0.5f), Main.rand.NextFloat(0.5f, 1.5f));
+            }
         }
 
         ///<summary>Restore everything the burrow changed — the safety net for any exit path (incl. the player
@@ -722,30 +856,34 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.alpha = 0;
             NPC.noTileCollide = false;
             NPC.dontTakeDamage = false;
-            if (savedDamage > 0) { NPC.damage = savedDamage; savedDamage = -1; }
+            if (savedDamage > 0)
+            {
+                NPC.damage = savedDamage;
+                savedDamage = -1;
+            }
         }
 
         static bool IsSolidAt(Vector2 worldPos)
         {
-            int tx = (int)(worldPos.X / 16f);
-            int ty = (int)(worldPos.Y / 16f);
-            if (tx < 5 || tx > Main.maxTilesX - 5 || ty < 5 || ty > Main.maxTilesY - 5)
+            int tileX = (int)(worldPos.X / 16f);
+            int tileY = (int)(worldPos.Y / 16f);
+            if (tileX < 5 || tileX > Main.maxTilesX - 5 || tileY < 5 || tileY > Main.maxTilesY - 5)
             {
                 return true;
             }
-            Tile tile = Main.tile[tx, ty];
+            Tile tile = Main.tile[tileX, tileY];
             return tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType];
         }
 
         static bool TileLiquidAt(Vector2 worldPos)
         {
-            int tx = (int)(worldPos.X / 16f);
-            int ty = (int)(worldPos.Y / 16f);
-            if (tx < 5 || tx > Main.maxTilesX - 5 || ty < 5 || ty > Main.maxTilesY - 5)
+            int tileX = (int)(worldPos.X / 16f);
+            int tileY = (int)(worldPos.Y / 16f);
+            if (tileX < 5 || tileX > Main.maxTilesX - 5 || tileY < 5 || tileY > Main.maxTilesY - 5)
             {
                 return false;
             }
-            return Main.tile[tx, ty].LiquidAmount > 0;
+            return Main.tile[tileX, tileY].LiquidAmount > 0;
         }
 
         ///<summary>On-hit reaction (replaces the shared evasion): from true neutral, a chance to dive and
@@ -776,17 +914,17 @@ namespace tsorcRevamp.NPCs.Enemies
         ///<summary>The one long channel: staggerable for its first two thirds (a poise break cancels the
         ///summon), hyper-armored tail with a commit cue at the flip. On the fire tick it tops the brood back
         ///up to broodCap — clutch-crabs erupt from the ground/water around the leader.</summary>
-        void RunBroodCall(tsorcRevampGlobalNPC g)
+        void RunBroodCall(tsorcRevampGlobalNPC globalNPC)
         {
             NPC.velocity.X *= 0.85f;
 
             if (AttackTimer <= BroodStaggerableTicks)
             {
-                g.AttackTelegraphing = true; //interruptible: break poise to deny the reinforcements
+                globalNPC.AttackTelegraphing = true; //interruptible: break poise to deny the reinforcements
             }
             else
             {
-                g.AttackCommitted = true;
+                globalNPC.AttackCommitted = true;
             }
             if (AttackTimer == 1)
             {
@@ -806,8 +944,8 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.rand.NextBool(2))
             {
                 Vector2 pos = NPC.Bottom + new Vector2(Main.rand.NextFloat(-48f, 48f), 0f);
-                int d = Dust.NewDust(pos, 2, 2, Submerged ? DustID.BubbleBurst_White : DustID.Dirt, 0f, -2.5f, 100, default, 1.2f);
-                Main.dust[d].noGravity = true;
+                int dustIndex = Dust.NewDust(pos, 2, 2, Submerged ? DustID.BubbleBurst_White : DustID.Dirt, 0f, -2.5f, 100, default, 1.2f);
+                Main.dust[dustIndex].noGravity = true;
             }
 
             //Fire: spawn the missing brood members (server-authoritative).
@@ -828,10 +966,10 @@ namespace tsorcRevamp.NPCs.Enemies
         void SpawnClutchCrabs(int amount)
         {
             int type = ModContent.NPCType<QuaraClutchCrab>();
-            for (int c = 0; c < amount; c++)
+            for (int spawnIndex = 0; spawnIndex < amount; spawnIndex++)
             {
-                float ox = NPC.Center.X + Main.rand.Next(-7, 8) * 16f;
-                FindCrabSpawn(ox, out Vector2 spot, out bool inWater);
+                float originX = NPC.Center.X + Main.rand.Next(-7, 8) * 16f;
+                FindCrabSpawn(originX, out Vector2 spot, out bool inWater);
                 int idx = NPC.NewNPC(NPC.GetSource_FromAI(), (int)spot.X, (int)spot.Y, type);
                 if (idx >= 0 && idx < Main.maxNPCs && Main.npc[idx].ModNPC is QuaraClutchCrab crab)
                 {
@@ -847,22 +985,22 @@ namespace tsorcRevamp.NPCs.Enemies
 
         ///<summary>A ground surface (bottom-center world pos) or an open-water spot near the leader for a
         ///clutch-crab to erupt from; falls back to the leader's feet if nothing is found.</summary>
-        void FindCrabSpawn(float ox, out Vector2 spot, out bool inWater)
+        void FindCrabSpawn(float originX, out Vector2 spot, out bool inWater)
         {
             inWater = false;
-            Vector2 atDepth = new(ox, NPC.Center.Y);
+            Vector2 atDepth = new(originX, NPC.Center.Y);
             if (TileLiquidAt(atDepth) && !IsSolidAt(atDepth))
             {
-                spot = new Vector2(ox, NPC.Center.Y + NPC.height / 2f);
+                spot = new Vector2(originX, NPC.Center.Y + NPC.height / 2f);
                 inWater = true;
                 return;
             }
-            Vector2 scan = new(ox, NPC.Center.Y - 2 * 16f);
+            Vector2 scan = new(originX, NPC.Center.Y - 2 * 16f);
             for (int i = 0; i < 40; i++)
             {
                 if (IsSolidAt(scan))
                 {
-                    spot = new Vector2(ox, (int)(scan.Y / 16f) * 16f);
+                    spot = new Vector2(originX, (int)(scan.Y / 16f) * 16f);
                     return;
                 }
                 scan.Y += 16f;
@@ -902,24 +1040,60 @@ namespace tsorcRevamp.NPCs.Enemies
             float hpMult, valueMult;
             if (rarityRoll < 0.05f)
             {
-                variant = Variant.Elite; broodCap = 4; NPC.npcSlots = 110f; hpMult = 2.2f; valueMult = 3.0f; NPC.scale = 1.45f;
+                variant = Variant.Elite;
+                broodCap = 4;
+                NPC.npcSlots = 110f;
+                hpMult = 2.2f;
+                valueMult = 3.0f;
+                NPC.scale = 1.45f;
             }
             else if (rarityRoll < 0.30f)
             {
-                variant = Variant.Medium; broodCap = 2; NPC.npcSlots = 70f; hpMult = 1.5f; valueMult = 1.8f; NPC.scale = 1.3f;
+                variant = Variant.Medium;
+                broodCap = 2;
+                NPC.npcSlots = 70f;
+                hpMult = 1.5f;
+                valueMult = 1.8f;
+                NPC.scale = 1.3f;
             }
             else
             {
-                variant = Variant.Light; broodCap = 1; NPC.npcSlots = 40f; hpMult = 1.0f; valueMult = 1.0f; NPC.scale = 1.2f;
+                variant = Variant.Light;
+                broodCap = 1;
+                NPC.npcSlots = 40f;
+                hpMult = 1.0f;
+                valueMult = 1.0f;
+                NPC.scale = 1.2f;
             }
 
             //Tier base HP (PreHM 1200 / HM 2200 / SHM 4200), anchored above the Quara family.
             int baseHp = 1200;
-            if (tsorcRevampWorld.SuperHardMode) { SHM = true; baseHp = 4200; NPC.defense = 24; }
-            else if (Main.hardMode) { HM = true; baseHp = 2200; NPC.defense = 18; }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                SHM = true;
+                baseHp = 4200;
+                NPC.defense = 24;
+            }
+            else if (Main.hardMode)
+            {
+                HM = true;
+                baseHp = 2200;
+                NPC.defense = 18;
+            }
 
             NPC.lifeMax = (int)(baseHp * hpMult);
-            NPC.value = 2600f * valueMult * (SHM ? 1.6f : HM ? 1.25f : 1f);
+            float difficultyValueMult = 1f;
+
+            if (SHM)
+            {
+                difficultyValueMult = 1.6f;
+            }
+            else if (HM)
+            {
+                difficultyValueMult = 1.25f;
+            }
+
+            NPC.value = 2600f * valueMult * difficultyValueMult;
             NPC.life = NPC.lifeMax;
             NPC.netUpdate = true;
         }

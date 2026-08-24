@@ -319,7 +319,17 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (pattern <= 2)
             {
                 aimDirection = aimDirection.SafeNormalize(Vector2.UnitX);
-                int rayCount = pattern == 0 ? 1 : pattern == 1 ? 3 : 2;
+                // Ray fan width by pattern: 0 = single bolt, 1 = wide trident, anything else = a pair.
+                int rayCount = 2;
+
+                if (pattern == 0)
+                {
+                    rayCount = 1;
+                }
+                else if (pattern == 1)
+                {
+                    rayCount = 3;
+                }
                 for (int i = 0; i < rayCount; i++)
                 {
                     float spread = rayCount == 1 ? 0f : MathHelper.Lerp(-0.28f, 0.28f, i / (float)(rayCount - 1));
@@ -450,9 +460,17 @@ namespace tsorcRevamp.Projectiles.Enemy
             // Direction carries the damage-radius ratio (see ElandToxicVFX.fx ToxicField) - it is no
             // longer a circular/box flag. Every poison cloud is round now; the old box path is what
             // rendered those hard white squares on screen.
+            // A negative opacity means "caller did not specify" -> fall back to the active/idle defaults.
+            float resolvedOpacity = opacity;
+
+            if (resolvedOpacity < 0f)
+            {
+                resolvedOpacity = active ? 0.78f : 0.68f;
+            }
+
             Draw(elandToxicVFX, "ElandToxicField", voronoiNoise, cloudNoise,
                 center, size * visualScale, rotation, ToxicDark, ToxicMid, ToxicCore,
-                opacity >= 0f ? opacity : (active ? 0.78f : 0.68f), progress, active ? 1f : 0f, 1f / visualScale,
+                resolvedOpacity, progress, active ? 1f : 0f, 1f / visualScale,
                 BlendState.AlphaBlend);
         }
 
@@ -647,7 +665,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             float opacity, float progress, float active, float direction,
             BlendState blendState = null)
         {
-            if (primaryAsset == null) return;
+            if (primaryAsset == null)
+            {
+                return;
+            }
             Draw(effectAsset, techniqueName, primaryAsset.Value, detailAsset?.Value,
                 worldCenter, drawSize, rotation, darkColor, midColor, coreColor,
                 opacity, progress, active, direction, blendState, null);

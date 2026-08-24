@@ -43,25 +43,52 @@ namespace tsorcRevamp
         // Hard guards: never auto-deposit these. They stay in the inventory (or their own systems).
         public bool IsStorageDepositable(Item item)
         {
-            if (item == null || item.IsAir) return false;
-            if (item.favorited) return false;
-            if (item.questItem) return false;
+            if (item == null || item.IsAir)
+            {
+                return false;
+            }
+            if (item.favorited)
+            {
+                return false;
+            }
+            if (item.questItem)
+            {
+                return false;
+            }
             // Potions are quick-use and belong to the player / Potion Bag.
-            if (PotionBagUIState.IsValidPotion(item)) return false;
-            if (item.type == ModContent.ItemType<PotionBag>()) return false;
+            if (PotionBagUIState.IsValidPotion(item))
+            {
+                return false;
+            }
+            if (item.type == ModContent.ItemType<PotionBag>())
+            {
+                return false;
+            }
             // Coins are quick-use/spend — keep them in the inventory.
             if (item.type == ItemID.CopperCoin || item.type == ItemID.SilverCoin
                 || item.type == ItemID.GoldCoin || item.type == ItemID.PlatinumCoin) return false;
             // Grab-on-touch resources (hearts/stars/nebula/stamina droplets), permanent stat-ups, goodie bags,
             // and soul currency — see tsorcRevamp.StorageExcludedTypes (populated in PopulateArrays). These are
             // consumed/spent on contact or wanted in-hand, and must never be filed away.
-            if (tsorcRevamp.StorageExcludedTypes != null && tsorcRevamp.StorageExcludedTypes.Contains(item.type)) return false;
+            if (tsorcRevamp.StorageExcludedTypes != null && tsorcRevamp.StorageExcludedTypes.Contains(item.type))
+            {
+                return false;
+            }
             // "Open me" containers — boss/treasure bags and fishing crates — stay in inventory for quick opening
             // (covers modded bags too, via the vanilla sets).
-            if (item.type < ItemID.Sets.BossBag.Length && ItemID.Sets.BossBag[item.type]) return false;
-            if (item.type < ItemID.Sets.IsFishingCrate.Length && ItemID.Sets.IsFishingCrate[item.type]) return false;
+            if (item.type < ItemID.Sets.BossBag.Length && ItemID.Sets.BossBag[item.type])
+            {
+                return false;
+            }
+            if (item.type < ItemID.Sets.IsFishingCrate.Length && ItemID.Sets.IsFishingCrate[item.type])
+            {
+                return false;
+            }
             // Boss / event summoning items stay handy for fights (this vanilla set marks all of them, incl. modded).
-            if (item.type < ItemID.Sets.SortingPriorityBossSpawns.Length && ItemID.Sets.SortingPriorityBossSpawns[item.type] >= 0) return false;
+            if (item.type < ItemID.Sets.SortingPriorityBossSpawns.Length && ItemID.Sets.SortingPriorityBossSpawns[item.type] >= 0)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -71,19 +98,31 @@ namespace tsorcRevamp
         // the remainder on the item so the caller can fall back to normal inventory pickup (loot is never lost).
         public bool DepositToStorage(Item incoming)
         {
-            if (incoming == null || incoming.IsAir) return false;
+            if (incoming == null || incoming.IsAir)
+            {
+                return false;
+            }
             bool changed = false;
 
             // 1) Merge into existing matching, non-full stacks.
             for (int i = 0; i < StorageItems.Count && incoming.stack > 0; i++)
             {
-                Item s = StorageItems[i];
-                if (s == null || s.IsAir) continue;
-                if (s.type != incoming.type || s.prefix != incoming.prefix) continue;
-                if (s.stack >= s.maxStack) continue;
+                Item stored = StorageItems[i];
+                if (stored == null || stored.IsAir)
+                {
+                    continue;
+                }
+                if (stored.type != incoming.type || stored.prefix != incoming.prefix)
+                {
+                    continue;
+                }
+                if (stored.stack >= stored.maxStack)
+                {
+                    continue;
+                }
 
-                int moved = Math.Min(s.maxStack - s.stack, incoming.stack);
-                s.stack += moved;
+                int moved = Math.Min(stored.maxStack - stored.stack, incoming.stack);
+                stored.stack += moved;
                 incoming.stack -= moved;
                 BumpSeq(i);
                 changed = true;
@@ -101,7 +140,10 @@ namespace tsorcRevamp
                 changed = true;
             }
 
-            if (changed) StorageUIState.MarkDirty();
+            if (changed)
+            {
+                StorageUIState.MarkDirty();
+            }
 
             if (incoming.stack <= 0)
             {
@@ -118,15 +160,27 @@ namespace tsorcRevamp
         // sound / treat it as a change.
         public bool WithdrawToInventory(Item item)
         {
-            if (item == null || item.IsAir) return false;
+            if (item == null || item.IsAir)
+            {
+                return false;
+            }
             bool changed = false;
 
             for (int i = 0; i < 50 && item.stack > 0; i++)
             {
                 Item inv = Player.inventory[i];
-                if (inv == null || inv.IsAir) continue;
-                if (inv.type != item.type || inv.prefix != item.prefix) continue;
-                if (inv.stack >= inv.maxStack) continue;
+                if (inv == null || inv.IsAir)
+                {
+                    continue;
+                }
+                if (inv.type != item.type || inv.prefix != item.prefix)
+                {
+                    continue;
+                }
+                if (inv.stack >= inv.maxStack)
+                {
+                    continue;
+                }
 
                 int moved = Math.Min(inv.maxStack - inv.stack, item.stack);
                 inv.stack += moved;
@@ -146,7 +200,10 @@ namespace tsorcRevamp
                 }
             }
 
-            if (item.stack <= 0) item.TurnToAir();
+            if (item.stack <= 0)
+            {
+                item.TurnToAir();
+            }
             return changed;
         }
 
@@ -158,18 +215,30 @@ namespace tsorcRevamp
                 if (StorageItems[i] == null || StorageItems[i].IsAir)
                 {
                     StorageItems.RemoveAt(i);
-                    if (i < StorageSeq.Count) StorageSeq.RemoveAt(i);
+                    if (i < StorageSeq.Count)
+                    {
+                        StorageSeq.RemoveAt(i);
+                    }
                 }
             }
             // Repair any length mismatch defensively (e.g. after a migration / manual edit).
-            while (StorageSeq.Count < StorageItems.Count) StorageSeq.Add(NextSeq());
-            while (StorageSeq.Count > StorageItems.Count) StorageSeq.RemoveAt(StorageSeq.Count - 1);
+            while (StorageSeq.Count < StorageItems.Count)
+            {
+                StorageSeq.Add(NextSeq());
+            }
+            while (StorageSeq.Count > StorageItems.Count)
+            {
+                StorageSeq.RemoveAt(StorageSeq.Count - 1);
+            }
         }
 
         // Open/close the Storage pop-up. Shared by the opener slot click and the keybind.
         public static void ToggleStorage()
         {
-            if (Main.LocalPlayer == null) return;
+            if (Main.LocalPlayer == null)
+            {
+                return;
+            }
 
             if (!StorageUIState.Visible)
             {
@@ -194,15 +263,24 @@ namespace tsorcRevamp
         {
             try
             {
-                if (StorageItems == null) StorageItems = new List<Item>();
-                if (StorageSeq == null) StorageSeq = new List<int>();
+                if (StorageItems == null)
+                {
+                    StorageItems = new List<Item>();
+                }
+                if (StorageSeq == null)
+                {
+                    StorageSeq = new List<int>();
+                }
                 CompactStorage();
 
                 // Mirror the Potion Bag's proven idiom: build a fresh, dense, null-free list to serialize.
                 List<Item> toSave = new List<Item>();
-                foreach (Item it in StorageItems)
+                foreach (Item stored in StorageItems)
                 {
-                    if (it != null && !it.IsAir) toSave.Add(it);
+                    if (stored != null && !stored.IsAir)
+                    {
+                        toSave.Add(stored);
+                    }
                 }
 
                 tag["StorageItems"] = toSave;
@@ -239,8 +317,14 @@ namespace tsorcRevamp
             }
 
             // Length guard: if an older/edited save desyncs the parallel lists, realign them.
-            while (StorageSeq.Count < StorageItems.Count) StorageSeq.Add(NextSeq());
-            while (StorageSeq.Count > StorageItems.Count) StorageSeq.RemoveAt(StorageSeq.Count - 1);
+            while (StorageSeq.Count < StorageItems.Count)
+            {
+                StorageSeq.Add(NextSeq());
+            }
+            while (StorageSeq.Count > StorageItems.Count)
+            {
+                StorageSeq.RemoveAt(StorageSeq.Count - 1);
+            }
             StorageUIState.MarkDirty();
         }
     }
