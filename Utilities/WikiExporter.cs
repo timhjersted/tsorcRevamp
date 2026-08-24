@@ -56,6 +56,16 @@ namespace tsorcRevamp.Utilities
             ["AncestralSpirit"] = 8
         };
 
+        // These pre-composed portraits are maintained for Boss Checklist and are a more accurate depiction
+        // than arranging the individual moving NPC segments at export time.
+        private static readonly Dictionary<string, string> BossChecklistPortraits = new Dictionary<string, string>
+        {
+            ["HellkiteDragonHead"] = "HellkiteDragon_Portrait.png",
+            ["JungleWyvernHead"] = "JungleWyvern_Portrait.png",
+            ["SeathTheScalelessHead"] = "Seath_Portrait.png",
+            ["SerrisHead"] = "Serris_Portrait.png"
+        };
+
         public override CommandType Type => CommandType.Chat;
 
         public override string Command => "exportwikidata";
@@ -240,6 +250,11 @@ namespace tsorcRevamp.Utilities
 
             foreach (ModNPC modNPC in modNPCs)
             {
+                if (TryExportBossChecklistPortrait(imagesDirectory, modNPC, missingImages))
+                {
+                    continue;
+                }
+
                 if (wormGroupsByHeadType.TryGetValue(modNPC.Type, out WormGroup wormGroup))
                 {
                     ExportWormPortrait(imagesDirectory, wormGroup, missingImages);
@@ -273,6 +288,24 @@ namespace tsorcRevamp.Utilities
             File.Copy(sourceFile, Path.Combine(imagesDirectory, outputFileName), overwrite: true);
         }
 
+        private bool TryExportBossChecklistPortrait(string imagesDirectory, ModNPC modNPC, List<string> missingImages)
+        {
+            if (!BossChecklistPortraits.TryGetValue(modNPC.Name, out string portraitFileName))
+            {
+                return false;
+            }
+
+            string sourceFile = Path.Combine(Main.SavePath, "ModSources", "tsorcRevamp", "NPCs", "Bosses", "Boss Checklist Replacement Sprites", portraitFileName);
+            if (!File.Exists(sourceFile))
+            {
+                missingImages.Add($"{GetNpcImageFileName(modNPC)} (expected Boss Checklist portrait: {sourceFile})");
+                return true;
+            }
+
+            File.Copy(sourceFile, Path.Combine(imagesDirectory, GetNpcImageFileName(modNPC)), overwrite: true);
+            return true;
+        }
+
         private void ExportNpcPortrait(string imagesDirectory, ModNPC modNPC, List<string> missingImages)
         {
             string outputFileName = GetNpcImageFileName(modNPC);
@@ -292,9 +325,9 @@ namespace tsorcRevamp.Utilities
             try
             {
                 List<Portrait> pieces = wormGroup.Pieces
-                    .Select(npc => RotatePortraitCounterClockwise(CreateNpcPortrait(npc, padding: 0)))
+                    .Select(npc => RotatePortraitClockwise(CreateNpcPortrait(npc, padding: 2)))
                     .ToList();
-                const int overlap = 1;
+                const int overlap = 2;
                 int width = pieces.Sum(piece => piece.Width) - overlap * (pieces.Count - 1);
                 int height = pieces.Max(piece => piece.Height);
                 var combinedPixels = new Color[width * height];
@@ -342,7 +375,7 @@ namespace tsorcRevamp.Utilities
             return new Portrait { Pixels = portraitPixels, Width = visibleArea.Width, Height = visibleArea.Height };
         }
 
-        private static Portrait RotatePortraitCounterClockwise(Portrait source)
+        private static Portrait RotatePortraitClockwise(Portrait source)
         {
             var rotatedPixels = new Color[source.Pixels.Length];
             int rotatedWidth = source.Height;
@@ -352,8 +385,8 @@ namespace tsorcRevamp.Utilities
             {
                 for (int x = 0; x < source.Width; x++)
                 {
-                    int rotatedX = y;
-                    int rotatedY = source.Width - 1 - x;
+                    int rotatedX = source.Height - 1 - y;
+                    int rotatedY = x;
                     rotatedPixels[rotatedY * rotatedWidth + rotatedX] = source.Pixels[y * source.Width + x];
                 }
             }
