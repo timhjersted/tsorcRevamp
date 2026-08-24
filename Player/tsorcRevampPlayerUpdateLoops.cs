@@ -591,6 +591,8 @@ namespace tsorcRevamp
         }
         public override void PreUpdate()
         {
+            int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
+            int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
             timeSinceLastAttacked++;
             // Reset the last attacked NPC every 10 seconds
             if (timeSinceLastAttacked > 10 * 60)
@@ -919,7 +921,29 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.Darkness, 60);
             }
 
-            if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.PinkDungeonSlab)
+            if ((playerX > 6083 && playerX < 6847 && playerY > 1664 && playerY < 1999) &&
+            tsorcRevampWorld.RemixMap && !(Main.LocalPlayer.ZoneOverworldHeight || Main.LocalPlayer.ZoneDirtLayerHeight || Main.LocalPlayer.ZoneSkyHeight) && Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.ObsidianBrickUnsafe)
+            {     
+                bool DarkCloudIsAlive = false;
+
+                foreach (NPC npc in Main.npc)
+                {
+                    if (npc.active && npc.type == ModContent.NPCType<DarkCloud>()) 
+                    {
+                        DarkCloudIsAlive = true;
+                        break;
+                    }
+                }
+
+                if (!DarkCloudIsAlive)
+                {
+                    Player.AddBuff(BuffID.Blackout, 60);
+                    Player.AddBuff(BuffID.Darkness, 60);
+                    Player.AddBuff(BuffID.Battle, 60);
+                }
+            }
+
+            if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.PinkDungeonSlab && !tsorcRevampWorld.RemixMap)
             {
                 Player.AddBuff(BuffID.Darkness, 5 * 60);
                 Player.AddBuff(BuffID.WitheredArmor, 5 * 60);
@@ -2400,7 +2424,13 @@ namespace tsorcRevamp
                 }
             }
 
-            if (Main.tile[(Player.Center / 16).ToPoint()].WallType == WallID.PinkDungeonTileUnsafe && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
+            if (Main.tile[(Player.Center / 16).ToPoint()].WallType == WallID.PinkDungeonTileUnsafe && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.RemixMap)
+            {
+                Player.AddBuff(BuffID.WitheredWeapon, 5*60);
+                Player.AddBuff(BuffID.Blackout, 5*60);
+            }
+
+            if (Main.tile[(Player.Center / 16).ToPoint()].WallType == WallID.PinkDungeonSlabUnsafe && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.RemixMap)
             {
                 Player.AddBuff(BuffID.WitheredWeapon, 5*60);
                 Player.AddBuff(BuffID.Blackout, 5*60);

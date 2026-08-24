@@ -446,11 +446,7 @@ Mods: {
 			AttraidiesDesc: Gather all the Crests in order to craft the Mind Cube.
 			RealAttraidiesName: Attraidies (Real)
 			RealAttraidiesDesc: Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.
-			HellkiteDragonDesc:
-				'''
-				Often sighted roaming the skies above the Village, searching for its next feast.
-				Remix Map: Flies on a large magmatic sky island, above the western sand dunes.
-				'''
+			HellkiteDragonDesc: Often sighted roaming the skies above the Village, searching for its next feast.
 			WaterFiendKrakenDesc:
 				'''
 				Seek out the lihzahrd gate in the Great Chasm.
