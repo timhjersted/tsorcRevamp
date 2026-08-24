@@ -192,6 +192,7 @@ namespace tsorcRevamp
             BoulderfallEvent3,
             FirebombHollowAmbush,
             LeonhardPhase1Event,
+            LeonhardRemixEvent,
             HollowAmbush1,
             GoblinAmbush1,
             ShadowMageAmbush1,
@@ -201,7 +202,6 @@ namespace tsorcRevamp
             SpawnMechanic,
             SpawnWizard,
             HellkiteDragonEvent,
-            RemixHellkiteDragonEvent,
             EoL,
             RemixEoL,
             DungeonGuardian,
@@ -214,6 +214,7 @@ namespace tsorcRevamp
             AshCavernRightside,
             MorgulFelegLeftside,
             MorgulFelegRightside,
+            HallowDemonEvent,
             ShadowTempleEvent,
             ShadowTempleEvent2,
             MoltenSkyTempleEvent,
@@ -225,10 +226,12 @@ namespace tsorcRevamp
             BloodBossEvent1,
             BloodBossEvent2,
             BloodBossEvent3,
+            TwinsEvent,
             CatacombsEvent,
             FoundryEvent,
             FoundryEvent2,
             FrozenCathedralEvent,
+            EnragedQB,
             Lunatic,
             IceGolemIsland,
             AncestralSpiritRemixEvent,
@@ -241,6 +244,8 @@ namespace tsorcRevamp
             DiscipleOfAttraidiesEvent,
             WyvernFortressEvent,
             SpawnLonelyFairy,
+            Dutchman
+
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -252,7 +257,6 @@ namespace tsorcRevamp
         public static void InitializeScriptedEvents()
         {
             Player player = Main.LocalPlayer;
-
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
 
@@ -303,7 +307,7 @@ namespace tsorcRevamp
 
             ScriptedEvent AncestralSpiritRemixEvent = new ScriptedEvent(new Vector2(7344, 768), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Cyan, false, RemixMapCondition);
             //SkeletronHidden
-            ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Blue, false, null, SetNightCustomAction);
+            ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, 181, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Violet, false, null, SetNightCustomAction);
 
             //SkeletronHidden
             ScriptedEvent OldManEvent = new ScriptedEvent(new Vector2(4979, 1398), 64, NPCID.OldMan, DustID.WhiteTorch, true, true, true, "default", Color.White, false, () => { return !NPC.AnyNPCs(NPCID.OldMan) && !NPC.AnyNPCs(NPCID.SkeletronHead) && !NPC.downedBoss3; });
@@ -315,11 +319,10 @@ namespace tsorcRevamp
             ScriptedEvent EoW1Event = new ScriptedEvent(new Vector2(3633, 996), 46, NPCID.EaterofWorldsHead, DustID.Shadowflame, false, true, true, LangUtils.GetTextValue("Events.EoW"), Color.Purple, false, PreEoWCustomCondition);
 
             //EMPRESS OF LIGHT
-            ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 350), 100, NPCID.HallowBoss, DustID.RainbowTorch, false, true, true, LangUtils.GetTextValue("Events.EoL"), Main.DiscoColor, false, EoLDownedCondition);
+            ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 350), 100, NPCID.HallowBoss, DustID.HallowedTorch, false, true, true, LangUtils.GetTextValue("Events.EoL"), Color.Pink, false, EoLDownedCondition);
 
             ScriptedEvent Lunatic = new ScriptedEvent(new Vector2(171, 210), 40, NPCID.CultistBoss, 15, false, true, true, LangUtils.GetTextValue("Events.Lunatic"), Color.Cyan, false, RemixMapCondition);
             Lunatic.SetCustomDrops(new List<int>() { ItemID.CelestialSigil }, new List<int>() {1});
-            Lunatic.SetCustomStats(100000, null, null, null);
             //LICH KING
             ScriptedEvent LichKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<EarthFiendLich>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.LichKing"), Color.Gold, false, OnlyAdventureMapCondition);
 
@@ -432,7 +435,7 @@ namespace tsorcRevamp
             ScriptedEvent RemixWitchkingEvent = new ScriptedEvent(new Vector2(2487, 1803), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.CursedTorch, true, true, true, LangUtils.GetTextValue("Events.Witchking"), Color.Green, false, RemixMapCondition);
 
             //BLIGHT
-            ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.Blight"), Color.Blue, false, SuperHardModeCustomCondition);
+            ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 35, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.IceTorch, true, true, true, LangUtils.GetTextValue("Events.Blight"), Color.Blue, false, SuperHardModeCustomCondition, RainCustomAction);
             //BlightEvent.SetCustomStats(50000, 30, 50);
 
             //CHAOS
@@ -441,9 +444,7 @@ namespace tsorcRevamp
             ScriptedEvent ChaosEventRemix = new ScriptedEvent(new Vector2(7034, 968), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.Chaos"), Color.Red, false, RemixMapConditionSHM);
 
             //WYVERN MAGE SHADOW-SHM
-            List<int> WyvernShadowEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>() };
-            List<Vector2> WyvernShadowLocations = new List<Vector2>() { new Vector2(6432, 196), new Vector2(6432, 196) };
-            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6432, 196), 25, WyvernShadowEnemyTypeList, WyvernShadowLocations, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.WyvernMageShadow"), Color.LightBlue, false, SuperHardModeCustomCondition);
+            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6432, 196), 25, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.CrimsonTorch, true, true, true, LangUtils.GetTextValue("Events.WyvernMageShadow"), Color.OrangeRed, false, SuperHardModeCustomCondition);
 
             //DARK CLOUD
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.DarkCloud"), Color.LightCyan, false, OnlyAdventureMapConditionSHM);
@@ -538,6 +539,8 @@ namespace tsorcRevamp
             //LEONHARD PHASE 1 EVENT - BY ADAMANTITE GATE ACROSS BRIDGE FROM WIZARDS HOUSE
             ScriptedEvent LeonhardPhase1Event = new ScriptedEvent(new Vector2(3314, 355), 34, ModContent.NPCType<NPCs.Special.LeonhardPhase1>(), 54, true, false, true, LangUtils.GetTextValue("Events.Leonhard1"), Color.Red, false, LeonhardPhase1Undefeated);
 
+            //ScriptedEvent LeonhardRemixEvent = new ScriptedEvent(new Vector2(3418, 362), 35, ModContent.NPCType<NPCs.Special.LeonhardRemix>(), 60, true, true, true, LangUtils.GetTextValue("Events.Leonhard1"), Color.Red, false, LeonhardRemixSecretCondition);
+
             //HOLLOW AMBUSH 1 - BOTTOM RIGHT OF EARTH TEMPLE
             List<int> HollowAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.FirebombHollow>() };
             List<Vector2> HollowAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4446, 1211), new Vector2(4456, 1211) };
@@ -620,15 +623,16 @@ namespace tsorcRevamp
             //Morgul Feleg Rightside - Great Demon Of The Abyss
             ScriptedEvent MorgulFelegRightside = new ScriptedEvent(new Vector2(2382, 1882), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemonOfTheAbyss>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
 
+            //Great Demon Of The Abyss on the Abandonned Hallowed Village (Remix Map)
+            ScriptedEvent HallowDemonEvent = new ScriptedEvent(new Vector2(6761, 1081), 30, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemonOfTheAbyss>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
+
             //Molten Sky Temple 
             ScriptedEvent MoltenSkyTempleEvent = new ScriptedEvent(new Vector2(1040, 1865), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss.SerpentOfTheAbyssHead>(), 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange);
 
             //Molten Sky Temple second event
             ScriptedEvent MoltenSkyTempleEvent2 = new ScriptedEvent(new Vector2(90, 1893), 30, NPCID.MourningWood, 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction);
 
-            ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, OnlyAdventureMapConditionSHM, SetNightCustomAction);
-
-            ScriptedEvent RemixHellkiteDragonEvent = new ScriptedEvent(new Vector2(2159, 308), 150, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, false, LangUtils.GetTextValue("Events.RemixHellkiteDragon"), new Color(175, 75, 255), false, RemixMapConditionSHM, SetNightCustomAction);
+            ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
 
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
             
@@ -653,8 +657,19 @@ namespace tsorcRevamp
             BloodBossEvent3.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.LifeforcePotion, ItemID.BloodHamaxe, ItemID.MagicQuiver, ItemID.LavaCharm }, new List<int>() { 6, 3, 1, 1, 1, 1});
             BloodBossEvent3.SetCustomStats(null, null, null, 12000);
 
+            List<int> TwinsEventEnemyTypeList = new List<int>() { NPCID.Retinazer, NPCID.Spazmatism };
+            List<Vector2> TwinsEventEnemyLocations = new List<Vector2>() { new Vector2(2864, 236), new Vector2(2904, 236) };
+            ScriptedEvent TwinsEvent = new ScriptedEvent(new Vector2(2884, 236), 42, TwinsEventEnemyTypeList, TwinsEventEnemyLocations, 15, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Green, false, RemixMapCondition, SetNightCustomAction); 
+
             ScriptedEvent CatacombsEvent = new ScriptedEvent(new Vector2(3181, 1334), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SlograII>(), DustID.Torch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapCondition);
             CatacombsEvent.SetCustomStats(9000, null, null, null);
+
+            ScriptedEvent Dutchman = new ScriptedEvent(new Vector2(597, 848), 50, NPCID.PirateShip, DustID.GoldFlame, true, false, true, LangUtils.GetTextValue("Events.Dutchman"), Color.Yellow, false, RemixMapCondition);
+            Dutchman.SetCustomStats(null, null, null, 8000);
+
+            ScriptedEvent EnragedQB = new ScriptedEvent(new Vector2(5954, 401), 50, NPCID.QueenBee, DustID.GoldFlame, true, true, false, LangUtils.GetTextValue("Events.EnragedQB"), Color.Yellow, false, RemixMapCondition);
+            EnragedQB.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.RagePotion, ModContent.ItemType<Items.Materials.EternalCrystal>() }, new List<int>() { 3, 1, 1 });
+            EnragedQB.SetCustomStats(null, null, null, 2000);
 
             ScriptedEvent FoundryEvent = new ScriptedEvent(new Vector2(5229, 1254), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition);
 
@@ -671,7 +686,7 @@ namespace tsorcRevamp
             
             List<int> WingTrioEventEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.TheRage>(), ModContent.NPCType<NPCs.Bosses.TheSorrow>(), ModContent.NPCType<NPCs.Bosses.TheHunter>() };
             List<Vector2> WingTrioEventEnemyLocations = new List<Vector2>() { new Vector2(3838, 1425), new Vector2(3879, 1425), new Vector2(3858, 1410) };
-            ScriptedEvent WingTrioEvent = new ScriptedEvent(new Vector2(3858, 1420), 40, WingTrioEventEnemyTypeList, WingTrioEventEnemyLocations, 292, true, true, false, LangUtils.GetTextValue("Events.WingTrio"), Color.Yellow, false, RemixMapCondition);
+            ScriptedEvent WingTrioEvent = new ScriptedEvent(new Vector2(3858, 1420), 40, WingTrioEventEnemyTypeList, WingTrioEventEnemyLocations, 292, true, true, true, LangUtils.GetTextValue("Events.WingTrio"), Color.Yellow, false, RemixMapCondition);
             WingTrioEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Materials.EternalCrystal>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>()}, new List<int>() { 3, 1, 1, 1, 1 });
             WingTrioEvent.SetCustomStats(null, null, null, 40000);
 
@@ -691,7 +706,7 @@ namespace tsorcRevamp
             ScriptedEvent WyvernFortressEvent = new ScriptedEvent(new Vector2(7022, 288), 85, NPCID.WyvernHead, 16, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Cyan, false, RemixMapCondition);
 
             ScriptedEvent SandstormElementalEvent2 = new ScriptedEvent(new Vector2(950, 1503), 22, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow, false, RemixMapCondition);
-
+            
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
@@ -745,7 +760,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.RemixWitchkingEvent, RemixWitchkingEvent},
                 {ScriptedEventType.ChaosFight, ChaosEvent},
                 {ScriptedEventType.ChaosEventRemix, ChaosEventRemix},
-                { ScriptedEventType.WyvernMageShadowFight, WyvernMageShadowEvent},
+                {ScriptedEventType.WyvernMageShadowFight, WyvernMageShadowEvent},
                 {ScriptedEventType.BlightFight, BlightEvent},
                 {ScriptedEventType.DarkCloudPyramidFight, DarkCloudEvent},
                 {ScriptedEventType.DarkCloudEventRemix, DarkCloudEventRemix},
@@ -765,6 +780,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.BoulderfallEvent2, BoulderfallEvent2},
                 {ScriptedEventType.BoulderfallEvent3, BoulderfallEvent3},
                 {ScriptedEventType.LeonhardPhase1Event, LeonhardPhase1Event},
+                //{ScriptedEventType.LeonhardRemixEvent, LeonhardRemixEvent},
                 {ScriptedEventType.HollowAmbush1, HollowAmbush1},
                 {ScriptedEventType.GoblinAmbush1, GoblinAmbush1},
                 {ScriptedEventType.ShadowMageAmbush1, ShadowMageAmbush1},
@@ -775,7 +791,6 @@ namespace tsorcRevamp
                 {ScriptedEventType.SpawnMechanic, SpawnMechanic},
                 {ScriptedEventType.SpawnWizard, SpawnWizard},
                 {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent},
-                {ScriptedEventType.RemixHellkiteDragonEvent, RemixHellkiteDragonEvent},
                 {ScriptedEventType.EoL, EoL},
                 {ScriptedEventType.DungeonGuardian, DungeonGuardianEvent },
                 {ScriptedEventType.DualSandsprogAmbush1, DualSandsprogAmbush1 },
@@ -784,8 +799,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.MushroomCavern, MushroomCavern },
                 {ScriptedEventType.AshCavernLeftside, AshCavernLeftside },
                 {ScriptedEventType.AshCavernRightside, AshCavernRightside },
-                {ScriptedEventType.MorgulFelegLeftside, MorgulFelegLeftside },
+                {ScriptedEventType.MorgulFelegLeftside, MorgulFelegLeftside }, 
                 {ScriptedEventType.MorgulFelegRightside, MorgulFelegRightside },
+                {ScriptedEventType.HallowDemonEvent, HallowDemonEvent },
                 {ScriptedEventType.ShadowTempleEvent, ShadowTempleEvent },
                 {ScriptedEventType.ShadowTempleEvent2, ShadowTempleEvent2 },
                 {ScriptedEventType.MoltenSkyTempleEvent, MoltenSkyTempleEvent },
@@ -796,8 +812,10 @@ namespace tsorcRevamp
                 {ScriptedEventType.BloodBossEvent1, BloodBossEvent1 },
                 {ScriptedEventType.BloodBossEvent2, BloodBossEvent2 },
                 {ScriptedEventType.BloodBossEvent3, BloodBossEvent3 },
+                {ScriptedEventType.TwinsEvent, TwinsEvent },
                 {ScriptedEventType.CatacombsEvent, CatacombsEvent },
                 {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent },
+                {ScriptedEventType.EnragedQB, EnragedQB },
                 {ScriptedEventType.FoundryEvent, FoundryEvent },
                 {ScriptedEventType.FoundryEvent2, FoundryEvent2 },
                 {ScriptedEventType.Lunatic, Lunatic },
@@ -811,6 +829,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.SandstormElementalEvent2, SandstormElementalEvent2 },
                 {ScriptedEventType.DeathRemix, DeathRemix },
                 {ScriptedEventType.DiscipleOfAttraidiesEvent, DiscipleOfAttraidiesEvent },
+                {ScriptedEventType.Dutchman, Dutchman },
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -902,7 +921,6 @@ namespace tsorcRevamp
         {
             return !Main.dayTime;
         }
-
 
         public static bool HardModeCustomCondition()
         {
@@ -1025,8 +1043,7 @@ namespace tsorcRevamp
             {
                 return true;
             }
-        }
-
+        }   
         public static bool UndeadMerchantCondition()
         {
             return !NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.UndeadMerchant>());
@@ -1079,6 +1096,18 @@ namespace tsorcRevamp
         public static bool LeonhardPhase1Undefeated()
         {
             if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Special.LeonhardPhase1>())))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool LeonhardRemixSecretCondition()
+        {
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Special.LeonhardPhase1>())) && tsorcRevampWorld.RemixMap && Main.bloodMoon)
             {
                 return true;
             }

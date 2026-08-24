@@ -965,24 +965,6 @@ namespace tsorcRevamp
                 int dust = Dust.NewDust(Player.position, Player.width, Player.height, DustID.ShadowbeamStaff, 0f, 0f, 30, default, Main.rand.NextFloat(1f, 2f));
                 Main.dust[dust].noGravity = true;
             }
-
-            if (tsorcRevampWorld.RemixMap && UsefulFunctions.PlayerInZone(Player, tsorcRevampWorld.PirateZoneLeftX, tsorcRevampWorld.PirateZoneRightX, 755, 886))
-            {
-                if (!tsorcRevampWorld.RemixPiratesDefeated)
-                {
-                    if (!tsorcRevampWorld.RemixEnteredPirateArea)
-                        Main.invasionType = 0;
-
-                    Main.invasionDelay = 0;
-                    Main.StartInvasion(InvasionID.PirateInvasion);
-                }
-
-                tsorcRevampWorld.RemixEnteredPirateArea = true;
-            }
-            else if (tsorcRevampWorld.RemixEnteredPirateArea)
-            {
-                tsorcRevampWorld.RemixEnteredPirateArea = false;
-            }
         
             //--------------------
 
@@ -2461,7 +2443,7 @@ namespace tsorcRevamp
                     }
                 }
 
-                if (Main.LocalPlayer.ZoneMeteor && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && (Main.LocalPlayer.ZoneSkyHeight || Main.LocalPlayer.ZoneOverworldHeight) && Main.LocalPlayer.ZoneCorrupt && tsorcRevampWorld.SuperHardMode)
+                if (Main.LocalPlayer.ZoneMeteor && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && (Main.LocalPlayer.ZoneSkyHeight || Main.LocalPlayer.ZoneOverworldHeight) && Main.LocalPlayer.ZoneCrimson && tsorcRevampWorld.SuperHardMode)
                 {
                     bool WyvernShadowIsAlive = false;
 
@@ -2483,9 +2465,9 @@ namespace tsorcRevamp
                     }
                 }
 
-                /* For a future update of the remix map
-                
-                if (Main.LocalPlayer.ZoneHallow && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && (Main.LocalPlayer.ZoneDirtLayerHeight || Main.LocalPlayer.ZoneRockLayerHeight) && tsorcRevampWorld.SuperHardMode)
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())) &&
+                Main.LocalPlayer.ZoneHallow && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && (Main.LocalPlayer.ZoneDirtLayerHeight || Main.LocalPlayer.ZoneRockLayerHeight) 
+                && tsorcRevampWorld.SuperHardMode)
                 {
                     bool ChaosIsAlive = false;
 
@@ -2501,11 +2483,12 @@ namespace tsorcRevamp
 
                     if (!ChaosIsAlive)
                     {
-                        Player.AddBuff(BuffID.WitheredWeapon, 2*60);
-                        Player.AddBuff(BuffID.Blackout, 2*60);
-                        Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 2*60, false);
+                        Player.AddBuff(BuffID.WitheredWeapon, 1*60);
+                        Player.AddBuff(BuffID.WaterCandle, 1*60);
+                        Player.AddBuff(BuffID.Blackout, 1*30);
+                        Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1*60, false);
                     }
-                }*/
+                }
 
                 if (Main.LocalPlayer.ZoneJungle && !Main.LocalPlayer.ZoneDungeon && !Main.LocalPlayer.ZoneOverworldHeight && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
                 {

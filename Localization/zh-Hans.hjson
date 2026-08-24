@@ -511,12 +511,6 @@ Mods: {
 					克苏鲁之眼只能在晚上被召唤
 					一块银表经过改造后或许可以跳过时间...
 					'''
-				PirateMap:
-					'''
-					物品不消耗所以你可以在被打败后重新尝试
-					克苏鲁之眼只能在晚上被召唤
-					一块银表经过改造后或许可以跳过时间...
-					'''
 
 				MechanicalEye: {
 					Tooltip:
@@ -9899,6 +9893,7 @@ Mods: {
 				Hint: 你必须去西海寻找萨满长老...
 				MartianHint: 天空中开始出现火星探测器...
 				AbyssOpen: 连接深渊的裂缝敞开了...
+				// HallowDarker: Darkness spreads through the Hallowed Caves...
 			}
 
 			AttraidiesFragment.DisplayName: 阿卓迪斯分身
@@ -9979,6 +9974,7 @@ Mods: {
 				Heal2: 混沌被无形的护盾保护着 - 你离它太远了...
 				Rips: 混沌撕裂你的翅膀和盔甲！
 				OutOfRange: 混沌受到看不见的力量的保护—你离它太远了！
+				// DarknessLifted: The shadow in the Hallow has been lifted!
 			}
 
 			DarkCloud: {

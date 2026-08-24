@@ -510,12 +510,27 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.GoblinSummoner, 0.01f);
             }
+            if (spawnInfo.Player.ZoneHallow && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.hardMode)
+            {
+                pool.Add(NPCID.Gastropod, 0.18f);
+            }
+            if (spawnInfo.Player.ZoneHallow && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.hardMode && !tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(NPCID.Pixie, 0.40f);
+                pool.Add(NPCID.Unicorn, 0.09f);
+                pool.Add(NPCID.RainbowSlime, 0.01f);
+            }
             //ocean water (outer thirds of the map)
             if (spawnInfo.Water && Main.hardMode && (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3))
             {
                 pool.Add(NPCID.SandsharkHallow, 0.3f);
             }
 
+            if (spawnInfo.Player.ZoneJungle && spawnInfo.Player.ZoneRockLayerHeight && Main.hardMode)
+            {
+                pool.Add(NPCID.Derpling, 0.22f);
+                pool.Add(NPCID.GiantFlyingFox, 0.22f);
+            }
             //SUPER HARD MODE SECTION
             if (spawnInfo.Player.ZoneJungle && tsorcRevampWorld.SuperHardMode)
             {
@@ -546,7 +561,6 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.NebulaBrain, 0.2f); //.1 is 3%
                 pool.Add(NPCID.NebulaHeadcrab, 0.4f); //.1 is 3%
-                pool.Add(NPCID.NebulaBeast, 0.3f); //.1 is 3%
                 pool.Add(NPCID.NebulaSoldier, 0.4f); //.1 is 3%
             }
             //spaceships or flesh background of crimson biome
@@ -565,7 +579,7 @@ namespace tsorcRevamp.NPCs
             if (tsorcRevampWorld.RemixMap) // If it is Remix Map
             {
                 // wyvern mage prison (remix map)
-                if (spawnInfo.Player.ZoneMeteor && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && spawnInfo.Player.ZoneCorrupt && tsorcRevampWorld.SuperHardMode)
+                if (spawnInfo.Player.ZoneMeteor && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && spawnInfo.Player.ZoneCrimson && tsorcRevampWorld.SuperHardMode)
                 {
                     pool.Add(NPCID.SolarCorite, 0.15f);
                     pool.Add(NPCID.NebulaBrain, 0.15f);
@@ -586,23 +600,6 @@ namespace tsorcRevamp.NPCs
                 {
                     pool.Add(NPCID.CreatureFromTheDeep, 0.6f);
                     pool.Add(NPCID.Shark, 0.6f);
-                }
-
-                if (tsorcRevampWorld.RemixEnteredPirateArea)
-                {
-                    if (!tsorcRevampWorld.HardModeNotSHM)
-                        return;
-
-                    if (!NPC.AnyNPCs(NPCID.PirateShip))
-                        pool.Add(NPCID.PirateShip, 0.05f);
-                    if (!NPC.AnyNPCs(NPCID.PirateCaptain))
-                        pool.Add(NPCID.PirateCaptain, 0.1f);
-
-                    pool.Add(NPCID.PirateCrossbower, 0.12f);
-                    pool.Add(NPCID.Parrot, 0.17f);
-                    pool.Add(NPCID.PirateDeadeye, 0.2f);
-                    pool.Add(NPCID.PirateCorsair, 0.24f);
-                    pool.Add(NPCID.PirateDeckhand, 0.3f);
                 }
             }            
 

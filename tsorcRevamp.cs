@@ -93,6 +93,8 @@ namespace tsorcRevamp
             public static IItemDropRuleCondition NonAdventureModeRule;
             public static IItemDropRuleCondition NonExpertFirstKillRule;
             public static IItemDropRuleCondition DownedSkeletronRule;
+            public static IItemDropRuleCondition RemixWorldDropCondition;
+            public static IItemDropRuleCondition NonRemixWorldDropCondition;
         }
 
         public enum BossExtras

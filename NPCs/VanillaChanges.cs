@@ -3672,7 +3672,6 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.GreenSlime
                     || npc.type == NPCID.TheGroom
                     || npc.type == NPCID.SantaClaus
-                    || npc.type == NPCID.Unicorn
                     || npc.type == NPCID.ZombieEskimo
                     || npc.type == NPCID.PigronCorruption
                     || npc.type == NPCID.PigronHallow

@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Tools;
@@ -1342,6 +1343,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 Main.hardMode = true;
                 tsorcRevampWorld.SuperHardMode = true;
                 tsorcRevampWorld.TheEnd = false;
+                if (tsorcRevampWorld.RemixMap)
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.HallowDarker"), new Color(255, 40, 255));
+                }
             }
 
             else
@@ -1354,11 +1359,44 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 Main.hardMode = true;
                 tsorcRevampWorld.TheEnd = false;
             }
+
+            if (tsorcRevampWorld.RemixMap && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
+            {
+                (int xMin, int yMin, int xMax, int yMax)[] zones = new[]
+                {
+                    (7054, 1123, 7055, 1135),  
+                    (7002, 1194, 7003, 1206),  
+                    (7111, 1332, 7123, 1333),  
+                    (7171, 1232, 7183, 1233),  
+                    (7540,  994, 7541, 1012)   
+                };
+
+                foreach (var (xMin, yMin, xMax, yMax) in zones)
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            Tile tile = Main.tile[x, y];
+                            if (tile != null && tile.IsActuated)
+                            {
+                                tile.IsActuated = false;
+                                WorldGen.SquareTileFrame(x, y);
+                            }
+                        }
+                    }
+
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendTileSquare(-1, xMin, yMin, (xMax - xMin) + (yMax - yMin) + 2);
+                    }
+                }
+            }
         }
 
         public static void ActuateAttraidiesArena()
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !tsorcRevampWorld.RemixMap)
             {
                 for (int x = 1158; x < 1633; x++)
                 {

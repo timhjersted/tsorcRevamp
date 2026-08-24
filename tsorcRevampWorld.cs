@@ -49,9 +49,6 @@ namespace tsorcRevamp
         public static bool EnteredFloodedMachineTemple;
         public static bool EnteredPyramid;
         public static bool TalkedToShaman;
-        public static bool RemixPiratesDefeated;
-        public static bool RemixEnteredPirateArea;
-
         public static List<int> PairedBosses;
 
         public static List<Vector2> LitBonfireList;
@@ -171,8 +168,6 @@ namespace tsorcRevamp
             EnteredFloodedMachineTemple = false;
             EnteredPyramid = false;
             TalkedToShaman = false;
-            RemixPiratesDefeated = false;
-            RemixEnteredPirateArea = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             boundShaders = new List<string>();
@@ -222,8 +217,6 @@ namespace tsorcRevamp
                 world_state.Add("EnteredPyramid");
             if (TalkedToShaman)
                 world_state.Add("TalkedToShaman");
-            if (RemixPiratesDefeated)
-                world_state.Add("RemixPiratesDefeated");
 
             if (DownedBetsy)
             {
@@ -267,7 +260,6 @@ namespace tsorcRevamp
             EnteredFloodedMachineTemple = worldStateList.Contains("EnteredFloodedMachineTemple");
             EnteredPyramid = worldStateList.Contains("EnteredPyramid");
             TalkedToShaman = worldStateList.Contains("TalkedToShaman");
-            RemixPiratesDefeated = worldStateList.Contains("RemixPiratesDefeated");
 
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
             if (AbyssPortalLocation == Vector2.Zero)
@@ -1965,26 +1957,6 @@ namespace tsorcRevamp
                 }
 
                 return BossIDsAndCoordinatesInternal;
-            }
-        }
-        public override void PreUpdateInvasions()
-        {
-            if (RemixMap && Main.invasionType == InvasionID.PirateInvasion)
-            {
-                // To prevent "Pirates approaching from the east/west"
-                Main.invasionX = Main.spawnTileX;
-                if (Main.invasionSize <= 0)
-                    RemixPiratesDefeated = true;
-            }
-        }
-
-        public const int PirateZoneLeftX = 169;
-        public const int PirateZoneRightX = 858;
-        public override void PostUpdateInvasions()
-        {
-            if (RemixMap && Main.invasionType == InvasionID.PirateInvasion)
-            {
-                Main.invasionX = (PirateZoneLeftX + PirateZoneRightX) / 2; // The middle of the player zone X check
             }
         }
     }
