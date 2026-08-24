@@ -595,7 +595,10 @@ namespace tsorcRevamp
                 mod._spawnPointConfigUI?.Update(gameTime);
             }
 
-            if (MapMarkersUIState.Visible) mod.MarkerInterface.Update(gameTime);
+            if (MapMarkersUIState.Visible)
+            {
+                mod.MarkerInterface.Update(gameTime);
+            }
 
             UpdatePortableGuideCrafting();
 
@@ -620,25 +623,43 @@ namespace tsorcRevamp
                     var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
                     float staminaCurrent = staminaPlayer.staminaResourceCurrent;
 
-                    if (visualLife < 0f || visualLife < healthCurrent) visualLife = healthCurrent;
+                    if (visualLife < 0f || visualLife < healthCurrent)
+                    {
+                        visualLife = healthCurrent;
+                    }
                     else if (visualLife > healthCurrent)
                     {
                         visualLife -= Math.Max(0.2f, (visualLife - healthCurrent) * 0.08f);
-                        if (visualLife < healthCurrent) visualLife = healthCurrent;
+                        if (visualLife < healthCurrent)
+                        {
+                            visualLife = healthCurrent;
+                        }
                     }
 
-                    if (visualMana < 0f || visualMana < manaCurrent) visualMana = manaCurrent;
+                    if (visualMana < 0f || visualMana < manaCurrent)
+                    {
+                        visualMana = manaCurrent;
+                    }
                     else if (visualMana > manaCurrent)
                     {
                         visualMana -= Math.Max(0.1f, (visualMana - manaCurrent) * 0.08f);
-                        if (visualMana < manaCurrent) visualMana = manaCurrent;
+                        if (visualMana < manaCurrent)
+                        {
+                            visualMana = manaCurrent;
+                        }
                     }
 
-                    if (visualStamina < 0f || visualStamina < staminaCurrent) visualStamina = staminaCurrent;
+                    if (visualStamina < 0f || visualStamina < staminaCurrent)
+                    {
+                        visualStamina = staminaCurrent;
+                    }
                     else if (visualStamina > staminaCurrent)
                     {
                         visualStamina -= Math.Max(0.1f, (visualStamina - staminaCurrent) * 0.08f);
-                        if (visualStamina < staminaCurrent) visualStamina = staminaCurrent;
+                        if (visualStamina < staminaCurrent)
+                        {
+                            visualStamina = staminaCurrent;
+                        }
                     }
                 }
             }
@@ -687,9 +708,9 @@ namespace tsorcRevamp
 
             // Brighter, pinker red as the hit gets harder / health gets lower; opacity capped so it
             // never fully obscures the screen.
-            byte g = (byte)(30 + 55 * strength);
-            byte b = (byte)(20 + 35 * strength);
-            Color tint = new Color((byte)255, g, b) * (0.75f * strength);
+            byte green = (byte)(30 + 55 * strength);
+            byte blue = (byte)(20 + 35 * strength);
+            Color tint = new Color((byte)255, green, blue) * (0.75f * strength);
 
             Main.spriteBatch.Draw(hurtVignetteTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), tint);
         }
@@ -713,10 +734,10 @@ namespace tsorcRevamp
                 for (int x = 0; x < size; x++)
                 {
                     float dist = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), center) / maxDist; // 0 center .. 1 corner
-                    float a = MathHelper.Clamp((dist - 0.55f) / 0.45f, 0f, 1f); // only the outer ring is opaque
-                    a *= a; // ease-in for a soft transition
-                    byte v = (byte)(a * 255);
-                    data[y * size + x] = new Color(v, v, v, v); // premultiplied white
+                    float alpha = MathHelper.Clamp((dist - 0.55f) / 0.45f, 0f, 1f); // only the outer ring is opaque
+                    alpha *= alpha; // ease-in for a soft transition
+                    byte alphaByte = (byte)(alpha * 255);
+                    data[y * size + x] = new Color(alphaByte, alphaByte, alphaByte, alphaByte); // premultiplied white
                 }
             }
 
@@ -964,7 +985,10 @@ namespace tsorcRevamp
                 }
 
                 float dist = Vector2.Distance(npc.Center, Main.LocalPlayer.Center);
-                if (dist > 2400f) continue;
+                if (dist > 2400f)
+                {
+                    continue;
+                }
 
                 bool hadHistory = _debugAttackColor.TryGetValue(npc.whoAmI, out var history);
                 if (!hadHistory || history.current != current)
@@ -1051,11 +1075,19 @@ namespace tsorcRevamp
             float nearestDist = float.MaxValue;
             foreach (KeyValuePair<int, Terraria.DataStructures.TileEntity> kv in Terraria.DataStructures.TileEntity.ByID)
             {
-                if (kv.Value is not SoapstoneTileEntity se) continue;
+                if (kv.Value is not SoapstoneTileEntity se)
+                {
+                    continue;
+                }
                 // Match the banner anchor: tile center (i*16+8, j*16+8).
                 Vector2 center = new(se.Position.X * 16 + 8, se.Position.Y * 16 + 8);
-                float d = Vector2.Distance(Main.LocalPlayer.Center, center);
-                if (d < nearestDist) { nearestDist = d; nearest = se; }
+                float distance = Vector2.Distance(Main.LocalPlayer.Center, center);
+
+                if (distance < nearestDist)
+                {
+                    nearestDist = distance;
+                    nearest = se;
+                }
             }
 
             string[] lines;
@@ -1117,8 +1149,14 @@ namespace tsorcRevamp
                 alpha = timer / (float)fadeOut;
             else
                 alpha = 1f;
-            if (alpha < 0f) alpha = 0f;
-            if (alpha > 1f) alpha = 1f;
+            if (alpha < 0f)
+            {
+                alpha = 0f;
+            }
+            if (alpha > 1f)
+            {
+                alpha = 1f;
+            }
 
             DynamicSpriteFont font = FontAssets.DeathText.Value;
             float scale = 0.85f;
@@ -1451,7 +1489,10 @@ namespace tsorcRevamp
                     for (int j = 0; j < selectedRecipe.requiredItem.Count; j++)
                     {
                         Item ingredientItem = selectedRecipe.requiredItem[j];
-                        if (ingredientItem.type <= 0) continue;
+                        if (ingredientItem.type <= 0)
+                        {
+                            continue;
+                        }
 
                         int ingX = (int)(selectedRowPosition.X + 54 + ingIndex * (38 * currentScale));
                         Rectangle ingRect = new Rectangle(ingX, ingY, (int)(44 * 0.75f), (int)(44 * 0.75f));
@@ -1481,19 +1522,58 @@ namespace tsorcRevamp
 
         private static string GetRequiredTileName(int tileID)
         {
-            if (tileID == TileID.WorkBenches) return "Work Bench";
-            if (tileID == TileID.Anvils) return "Iron Anvil";
-            if (tileID == TileID.Furnaces) return "Furnace";
-            if (tileID == TileID.DemonAltar) return "Demon Altar";
-            if (tileID == TileID.MythrilAnvil) return "Mythril Anvil";
-            if (tileID == TileID.AdamantiteForge) return "Adamantite Forge";
-            if (tileID == TileID.TinkerersWorkbench) return "Tinkerer's Workshop";
-            if (tileID == TileID.ImbuingStation) return "Imbuing Station";
-            if (tileID == TileID.DyeVat) return "Dye Vat";
-            if (tileID == TileID.Loom) return "Loom";
-            if (tileID == TileID.Sawmill) return "Sawmill";
-            if (tileID == TileID.CrystalBall) return "Crystal Ball";
-            if (tileID == TileID.Autohammer) return "Autohammer";
+            if (tileID == TileID.WorkBenches)
+            {
+                return "Work Bench";
+            }
+            if (tileID == TileID.Anvils)
+            {
+                return "Iron Anvil";
+            }
+            if (tileID == TileID.Furnaces)
+            {
+                return "Furnace";
+            }
+            if (tileID == TileID.DemonAltar)
+            {
+                return "Demon Altar";
+            }
+            if (tileID == TileID.MythrilAnvil)
+            {
+                return "Mythril Anvil";
+            }
+            if (tileID == TileID.AdamantiteForge)
+            {
+                return "Adamantite Forge";
+            }
+            if (tileID == TileID.TinkerersWorkbench)
+            {
+                return "Tinkerer's Workshop";
+            }
+            if (tileID == TileID.ImbuingStation)
+            {
+                return "Imbuing Station";
+            }
+            if (tileID == TileID.DyeVat)
+            {
+                return "Dye Vat";
+            }
+            if (tileID == TileID.Loom)
+            {
+                return "Loom";
+            }
+            if (tileID == TileID.Sawmill)
+            {
+                return "Sawmill";
+            }
+            if (tileID == TileID.CrystalBall)
+            {
+                return "Crystal Ball";
+            }
+            if (tileID == TileID.Autohammer)
+            {
+                return "Autohammer";
+            }
 
             try
             {
@@ -1585,7 +1665,10 @@ namespace tsorcRevamp
             float staminaCurrent = staminaPlayer.staminaResourceCurrent;
             float staminaMax = staminaPlayer.staminaResourceMax2;
             
-            if (player == null || !player.active || player.dead) return;
+            if (player == null || !player.active || player.dead)
+            {
+                return;
+            }
             
 
             int healthCurrent = player.statLife;
@@ -1616,9 +1699,18 @@ namespace tsorcRevamp
             // 400 -> 400px, 405 -> 404px, 500 -> 480px.
             float ScaleResource(float value)
             {
-                if (value <= 0f) return 0f;
-                if (value <= 400f) return value;
-                if (value <= 500f) return 400f + (value - 400f) * 0.8f;
+                if (value <= 0f)
+                {
+                    return 0f;
+                }
+                if (value <= 400f)
+                {
+                    return value;
+                }
+                if (value <= 500f)
+                {
+                    return 400f + (value - 400f) * 0.8f;
+                }
                 return 480f + (value - 500f) * 0.7f;
             }
             int GetBarWidth(float maxVal) => (int)ScaleResource(maxVal);
@@ -1796,10 +1888,13 @@ namespace tsorcRevamp
             spriteBatch.Draw(pixel, startScreen, null, color, segment.ToRotation(), origin, scale, SpriteEffects.None, 0f);
         }
 
-        private void DrawHardcodedEvent(ScriptedEvent ev, bool isDormant)
+        private void DrawHardcodedEvent(ScriptedEvent scriptedEvent, bool isDormant)
         {
-            if (ev.DynamicEventID != null) return;
-            Vector2 centerPos = ev.centerpoint;
+            if (scriptedEvent.DynamicEventID != null)
+            {
+                return;
+            }
+            Vector2 centerPos = scriptedEvent.centerpoint;
             
             // Only draw if within 3000 pixels of the screen center to save performance
             Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth / 2f, Main.screenHeight / 2f);
@@ -1809,16 +1904,16 @@ namespace tsorcRevamp
             }
 
             // Draw the ring (always drawn in editor mode: white/faint for invisible, correct color for visible)
-            Color ringColor = ev.visible ? GetDustColor(ev.dustID) : Color.White * 0.4f;
+            Color ringColor = scriptedEvent.visible ? GetDustColor(scriptedEvent.dustID) : Color.White * 0.4f;
             if (isDormant)
             {
                 ringColor = ringColor * 0.4f;
             }
             float thickness = 2f;
 
-            float radiusInPixels = (float)System.Math.Sqrt(ev.radius);
+            float radiusInPixels = (float)System.Math.Sqrt(scriptedEvent.radius);
 
-            if (ev.square)
+            if (scriptedEvent.square)
             {
                 Vector2 topLeft = centerPos + new Vector2(-radiusInPixels, -radiusInPixels) - Main.screenPosition;
                 Vector2 topRight = centerPos + new Vector2(radiusInPixels, -radiusInPixels) - Main.screenPosition;
@@ -1850,9 +1945,9 @@ namespace tsorcRevamp
             }
 
             // Draw the NPCs
-            if (ev.eventNPCs != null)
+            if (scriptedEvent.eventNPCs != null)
             {
-                foreach (var npc in ev.eventNPCs)
+                foreach (var npc in scriptedEvent.eventNPCs)
                 {
                     NPC dummyNPC = new NPC();
                     dummyNPC.SetDefaults(npc.type);
@@ -1904,11 +1999,11 @@ namespace tsorcRevamp
                 if (tsorcScriptedEvents.EnabledEvents != null)
                 {
                     var enabledCopy = tsorcScriptedEvents.EnabledEvents.ToArray();
-                    foreach (var ev in enabledCopy)
+                    foreach (var scriptedEvent in enabledCopy)
                     {
-                        if (ev != null)
+                        if (scriptedEvent != null)
                         {
-                            DrawHardcodedEvent(ev, false);
+                            DrawHardcodedEvent(scriptedEvent, false);
                         }
                     }
                 }
@@ -1917,11 +2012,11 @@ namespace tsorcRevamp
                 if (tsorcScriptedEvents.RunningEvents != null)
                 {
                     var runningCopy = tsorcScriptedEvents.RunningEvents.ToArray();
-                    foreach (var ev in runningCopy)
+                    foreach (var scriptedEvent in runningCopy)
                     {
-                        if (ev != null)
+                        if (scriptedEvent != null)
                         {
-                            DrawHardcodedEvent(ev, false);
+                            DrawHardcodedEvent(scriptedEvent, false);
                         }
                     }
                 }
@@ -1930,25 +2025,31 @@ namespace tsorcRevamp
                 if (tsorcScriptedEvents.DisabledEvents != null)
                 {
                     var disabledCopy = tsorcScriptedEvents.DisabledEvents.ToArray();
-                    foreach (var ev in disabledCopy)
+                    foreach (var scriptedEvent in disabledCopy)
                     {
-                        if (ev != null)
+                        if (scriptedEvent != null)
                         {
-                            DrawHardcodedEvent(ev, true);
+                            DrawHardcodedEvent(scriptedEvent, true);
                         }
                     }
                 }
 
                 var dynamicCopy = tsorcScriptedEvents.DynamicEvents != null ? tsorcScriptedEvents.DynamicEvents.ToArray() : System.Array.Empty<DynamicSpawnEvent>();
                 bool npcHovered = false; // NPC hover overrides the base tooltip; first hovered NPC wins
-                foreach (var ev in dynamicCopy)
+                foreach (var scriptedEvent in dynamicCopy)
                 {
-                    if (ev == null) continue;
+                    if (scriptedEvent == null)
+                    {
+                        continue;
+                    }
 
                     // Hide events that don't belong to the current world (e.g. Adventure-only events in a Remix world).
-                    if (!tsorcScriptedEvents.IsEventVisibleInCurrentWorld(ev)) continue;
+                    if (!tsorcScriptedEvents.IsEventVisibleInCurrentWorld(scriptedEvent))
+                    {
+                        continue;
+                    }
 
-                    Vector2 centerPos = new Vector2(ev.CenterX * 16 + 8, ev.CenterY * 16 + 8);
+                    Vector2 centerPos = new Vector2(scriptedEvent.CenterX * 16 + 8, scriptedEvent.CenterY * 16 + 8);
 
                     // Only draw if within 3000 pixels of the screen center to save performance
                     Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth / 2f, Main.screenHeight / 2f);
@@ -1957,11 +2058,11 @@ namespace tsorcRevamp
                         continue;
                     }
 
-                    bool isSelected = configUI.Visible && configUI.CurrentEvent == ev;
+                    bool isSelected = configUI.Visible && configUI.CurrentEvent == scriptedEvent;
 
                     // Draw the ring (always drawn in editor mode: white/faint for invisible, correct color for visible)
 
-                    Color ringColor = ev.VisibleRing ? GetDustColor(ev.TriggerDust) : Color.White * 0.4f;
+                    Color ringColor = scriptedEvent.VisibleRing ? GetDustColor(scriptedEvent.TriggerDust) : Color.White * 0.4f;
                     float thickness = 2f;
 
                     if (isSelected)
@@ -1972,7 +2073,7 @@ namespace tsorcRevamp
 
                     int points = 60;
                     float step = MathHelper.TwoPi / points;
-                    float radiusInPixels = (float)System.Math.Sqrt(ev.Radius);
+                    float radiusInPixels = (float)System.Math.Sqrt(scriptedEvent.Radius);
                     for (int i = 0; i < points; i++)
                     {
                         Vector2 p1 = centerPos + new Vector2(radiusInPixels, 0).RotatedBy(i * step) - Main.screenPosition;
@@ -1981,7 +2082,7 @@ namespace tsorcRevamp
                     }
 
                     // Draw the center icon. Quick-add events use their single NPC as the marker, so no book icon.
-                    if (!ev.SingleNpcMarker)
+                    if (!scriptedEvent.SingleNpcMarker)
                     {
                         Texture2D icon = ModContent.Request<Texture2D>("tsorcRevamp/Items/Debug/EnemyDebugTome", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
                         if (icon != null)
@@ -1991,7 +2092,7 @@ namespace tsorcRevamp
                     }
 
                     // Draw the NPCs and check for mouse hover (used for the cursor tooltip in the UI layer).
-                    foreach (var npc in ev.Npcs)
+                    foreach (var npc in scriptedEvent.Npcs)
                     {
                         NPC dummyNPC = new NPC();
                         dummyNPC.SetDefaults(npc.NpcID);
@@ -2017,7 +2118,7 @@ namespace tsorcRevamp
                             float hoverRadius = System.Math.Max(24f, System.Math.Max(dummyNPC.width, dummyNPC.height) / 2f);
                             if (Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, npcCenter) < hoverRadius)
                             {
-                                if (isSelected && ev.SingleNpcMarker)
+                                if (isSelected && scriptedEvent.SingleNpcMarker)
                                     EditorHoverTooltip = "Left click to grab NPC and move event";
                                 else if (isSelected)
                                     EditorHoverTooltip = "Left click to grab NPC  ·  Right click to remove";

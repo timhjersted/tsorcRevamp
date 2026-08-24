@@ -183,7 +183,10 @@ namespace tsorcRevamp.NPCs
                     if (globalNPC.ArcherAimDirection == 0)
                     {
                         //Aim at them, and start the shot cooldown
-                        if (!globalNPC.CanUseMovingFireDuringAdvance(npc, Main.player[npc.target])) npc.velocity.X *= 0.5f;
+                        if (!globalNPC.CanUseMovingFireDuringAdvance(npc, Main.player[npc.target]))
+                        {
+                            npc.velocity.X *= 0.5f;
+                        }
                         globalNPC.ArcherAimDirection = 3f;
                         globalNPC.ProjectileTimer = scaledProjectileCooldown;
                         // Clear any stale lock from a previous aim cycle. The lock before the shot
@@ -589,7 +592,10 @@ namespace tsorcRevamp.NPCs
                 PursuitState fsmState;
                 if (globalNPC.RequiresFlatGround && globalNPC.BeastStale)
                 {
-                    if (globalNPC.PursuitState != PursuitState.Patrol) NavBehavior.EnterPatrol(npc, globalNPC);
+                    if (globalNPC.PursuitState != PursuitState.Patrol)
+                    {
+                        NavBehavior.EnterPatrol(npc, globalNPC);
+                    }
                     globalNPC.PursuitState = PursuitState.Patrol;
                     fsmState = PursuitState.Patrol;
                     // This branch SKIPS UpdateState entirely, so LOS can never re-aggro while BeastStale is
@@ -610,7 +616,10 @@ namespace tsorcRevamp.NPCs
                     }
                 }
 
-                if (globalNPC.TeleportCooldownTimer > 0) globalNPC.TeleportCooldownTimer--;
+                if (globalNPC.TeleportCooldownTimer > 0)
+                {
+                    globalNPC.TeleportCooldownTimer--;
+                }
 
                 // Lava escape: ANY teleporter caught in lava blinks to safe ground near the player — survival for
                 // non-lava-immune enemies, repositioning for immune ones (mirrors the old RingedKnight lava-escape).
@@ -653,7 +662,10 @@ namespace tsorcRevamp.NPCs
                     // A stale beast deliberately lost interest (can't reach you + un-hit ~10s) — don't let the
                     // reacquire-teleport yank it straight back; let it actually wander. A hit clears BeastStale and
                     // re-enables this. (Lava-escape teleport above is separate and still fires.)
-                    if (globalNPC.RequiresFlatGround && globalNPC.BeastStale) fireTeleport = false;
+                    if (globalNPC.RequiresFlatGround && globalNPC.BeastStale)
+                    {
+                        fireTeleport = false;
+                    }
                     if (fireTeleport && !TryTeleportReacquire(npc, globalNPC))
                     {
                         // No valid spot this attempt — throttle the (100×100) search so it doesn't run every
@@ -671,7 +683,10 @@ namespace tsorcRevamp.NPCs
                     // No teleport-mid-blink guard needed here — Flee is only ever entered when
                     // !globalNPC.CanTeleport (see the justHit handling above).
                     NavBehavior.RunFlee(npc, globalNPC, topSpeed, acceleration);
-                    if (!npc.noTileCollide && !npc.noGravity) AutoStepUp(npc);
+                    if (!npc.noTileCollide && !npc.noGravity)
+                    {
+                        AutoStepUp(npc);
+                    }
                     // Same as Patrol below: don't advance an LOS-requiring attack while running away, and
                     // aiming needs LOS anyway.
                     if (globalNPC.AttackList.Count == 0 || globalNPC.CurrentAttack.needsLineOfSight)
@@ -711,7 +726,10 @@ namespace tsorcRevamp.NPCs
                             npc.direction = globalNPC.PatrolDirection;
                             npc.spriteDirection = npc.direction;
                             npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.direction * topSpeed, acceleration / topSpeed);
-                            if (!npc.noTileCollide && !npc.noGravity) AutoStepUp(npc);
+                            if (!npc.noTileCollide && !npc.noGravity)
+                            {
+                                AutoStepUp(npc);
+                            }
                         }
                         else if (globalNPC.CanPassThroughWalls && !xAlignedDiffLevel)
                         {
@@ -726,12 +744,18 @@ namespace tsorcRevamp.NPCs
                                 npc.spriteDirection = npc.direction;
                             }
                             npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.direction * topSpeed, acceleration / topSpeed);
-                            if (!npc.noTileCollide && !npc.noGravity) AutoStepUp(npc);
+                            if (!npc.noTileCollide && !npc.noGravity)
+                            {
+                                AutoStepUp(npc);
+                            }
                         }
                         else
                         {
                             NavBehavior.RunPatrol(npc, globalNPC, topSpeed, acceleration);
-                            if (!npc.noTileCollide && !npc.noGravity) AutoStepUp(npc);
+                            if (!npc.noTileCollide && !npc.noGravity)
+                            {
+                                AutoStepUp(npc);
+                            }
                         }
                     }
                     // Don't advance an LOS-REQUIRING attack while patrolling (it gave up / can't see the target).
@@ -1255,7 +1279,10 @@ namespace tsorcRevamp.NPCs
         // in-mover decision point exactly — so behavior is unchanged.
         private static bool SenseHoldForAttack(NPC npc, tsorcRevampGlobalNPC globalNPC, bool lineOfSight)
         {
-            if (globalNPC.FighterPostAttackPauseTimer > 0) globalNPC.FighterPostAttackPauseTimer--;
+            if (globalNPC.FighterPostAttackPauseTimer > 0)
+            {
+                globalNPC.FighterPostAttackPauseTimer--;
+            }
             bool sf4TelegraphRequestsHold = globalNPC.NavSearchRadius > 0
                 && globalNPC.AttackList.Count > 0
                 && globalNPC.CurrentAttack.stopBefore
@@ -1421,17 +1448,32 @@ namespace tsorcRevamp.NPCs
         // internal (not private) so the extracted LocalMover class can share this single copy.
         internal static void AutoStepUp(NPC npc)
         {
-            if (npc.velocity.Y < 0f) return; // only while grounded / descending, like vanilla
+            if (npc.velocity.Y < 0f)
+            {
+                return;  // only while grounded / descending, like vanilla
+            }
             int offset = 0;
-            if (npc.velocity.X < 0f) offset = -1;
-            else if (npc.velocity.X > 0f) offset = 1;
-            if (offset == 0) return;
+            if (npc.velocity.X < 0f)
+            {
+                offset = -1;
+            }
+            else if (npc.velocity.X > 0f)
+            {
+                offset = 1;
+            }
+            if (offset == 0)
+            {
+                return;
+            }
 
             Vector2 pos = npc.position;
             pos.X += npc.velocity.X;
             int tileX = (int)((pos.X + (npc.width / 2) + ((npc.width / 2 + 1) * offset)) / 16f);
             int tileY = (int)((pos.Y + npc.height - 1f) / 16f);
-            if (!WorldGen.InWorld(tileX, tileY, 5)) return;
+            if (!WorldGen.InWorld(tileX, tileY, 5))
+            {
+                return;
+            }
 
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             if (globalNPC.RequiresFlatGround)
@@ -1443,14 +1485,14 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            Tile t = Main.tile[tileX, tileY];
+            Tile tile = Main.tile[tileX, tileY];
             Tile tU1 = Main.tile[tileX, tileY - 1];
             Tile tU2 = Main.tile[tileX, tileY - 2];
             Tile tU3 = Main.tile[tileX, tileY - 3];
             Tile tU4 = Main.tile[tileX, tileY - 4];
             Tile tBackU3 = Main.tile[tileX - offset, tileY - 3];
 
-            bool stepBlock = (t.HasUnactuatedTile && !t.TopSlope && !tU1.TopSlope && Main.tileSolid[t.TileType] && !Main.tileSolidTop[t.TileType])
+            bool stepBlock = (tile.HasUnactuatedTile && !tile.TopSlope && !tU1.TopSlope && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType])
                              || (tU1.IsHalfBlock && tU1.HasUnactuatedTile);
             bool clearU1 = !tU1.HasUnactuatedTile || !Main.tileSolid[tU1.TileType] || Main.tileSolidTop[tU1.TileType]
                            || (tU1.IsHalfBlock && (!tU4.HasUnactuatedTile || !Main.tileSolid[tU4.TileType] || Main.tileSolidTop[tU4.TileType]));
@@ -1462,8 +1504,14 @@ namespace tsorcRevamp.NPCs
                 && stepBlock && clearU1 && clearU2 && clearU3 && clearBehind)
             {
                 float tileWorldY = tileY * 16f;
-                if (t.IsHalfBlock) tileWorldY += 8f;
-                if (tU1.IsHalfBlock) tileWorldY -= 8f;
+                if (tile.IsHalfBlock)
+                {
+                    tileWorldY += 8f;
+                }
+                if (tU1.IsHalfBlock)
+                {
+                    tileWorldY -= 8f;
+                }
                 if (tileWorldY < pos.Y + npc.height)
                 {
                     float tileWorldYHeight = pos.Y + npc.height - tileWorldY;
