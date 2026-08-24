@@ -912,8 +912,8 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         protected virtual void RunMovementAI(float speedMult)
         {
-            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            g.RemembersLastKnownPos = true;
+            var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.RemembersLastKnownPos = true;
             SmartFighter4AI.Run(NPC,
                 topSpeed:           TopSpeed * speedMult,
                 acceleration:       Acceleration,
@@ -1486,9 +1486,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 // X is forced forward (|dx|) because facing already aims the swing at the player
                 // horizontally — only the vertical component varies. Clamped just shy of vertical
                 // so a player nearly overhead can't wrap the arc into a broken pose.
-                Player t = Main.player[NPC.target];
-                float dx = Math.Abs(t.Center.X - NPC.Center.X);
-                float dy = t.Center.Y - NPC.Center.Y; // + = player below
+                Player target = Main.player[NPC.target];
+                float dx = Math.Abs(target.Center.X - NPC.Center.X);
+                float dy = target.Center.Y - NPC.Center.Y; // + = player below
                 _comboAimBias = MathHelper.Clamp((float)Math.Atan2(dy, Math.Max(dx, 8f)), -MaxAimPitch, MaxAimPitch);
             }
             else
@@ -1529,8 +1529,15 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             get
             {
-                if (_autoMeleeArchetype.HasValue) return _autoMeleeArchetype.Value;
-                if (MeleeWeaponItemType <= 0) { _autoMeleeArchetype = WeaponArchetype.None; return WeaponArchetype.None; }
+                if (_autoMeleeArchetype.HasValue)
+                {
+                    return _autoMeleeArchetype.Value;
+                }
+                if (MeleeWeaponItemType <= 0)
+                {
+                    _autoMeleeArchetype = WeaponArchetype.None;
+                    return WeaponArchetype.None;
+                }
                 var probe = new Item();
                 probe.SetDefaults(MeleeWeaponItemType);
                 var a = WeaponArchetypeTables.DetectMelee(probe);
@@ -1547,8 +1554,15 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             get
             {
-                if (_autoRangedArchetype.HasValue) return _autoRangedArchetype.Value;
-                if (RangedWeaponItemType <= 0) { _autoRangedArchetype = WeaponArchetype.None; return WeaponArchetype.None; }
+                if (_autoRangedArchetype.HasValue)
+                {
+                    return _autoRangedArchetype.Value;
+                }
+                if (RangedWeaponItemType <= 0)
+                {
+                    _autoRangedArchetype = WeaponArchetype.None;
+                    return WeaponArchetype.None;
+                }
                 var probe = new Item();
                 probe.SetDefaults(RangedWeaponItemType);
                 var a = WeaponArchetypeTables.DetectRanged(probe);
@@ -1884,10 +1898,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     Vector2 velocity = fading
                         ? offset.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(0.7f, 1.8f)
                         : -offset * 0.08f;
-                    Dust d = Dust.NewDustPerfect(_echoStepPos + offset,
+                    Dust dust = Dust.NewDustPerfect(_echoStepPos + offset,
                         Main.rand.NextBool(5) ? DustID.ShadowbeamStaff : DustID.PurpleTorch,
                         velocity, 110, new Color(170, 74, 238), fading ? 0.72f : 0.85f);
-                    d.noGravity = true;
+                    dust.noGravity = true;
                 }
             }
 
@@ -1990,13 +2004,23 @@ namespace tsorcRevamp.NPCs.Puppets
                 float speed = materializing
                     ? Main.rand.NextFloat(0.7f, 2.0f)
                     : Main.rand.NextFloat(1.3f, 3.4f);
-                int type = i % 7 == 0 ? DustID.SilverFlame
-                    : i % 3 == 0 ? DustID.ShadowbeamStaff : DustID.PurpleTorch;
-                Dust d = Dust.NewDustPerfect(_echoStepPos + radial * Main.rand.NextFloat(8f, 28f),
+                // Every 7th mote is a bright silver flash, every 3rd a shadowbeam, the rest plain purple.
+                int type = DustID.PurpleTorch;
+
+                if (i % 7 == 0)
+                {
+                    type = DustID.SilverFlame;
+                }
+                else if (i % 3 == 0)
+                {
+                    type = DustID.ShadowbeamStaff;
+                }
+
+                Dust dust = Dust.NewDustPerfect(_echoStepPos + radial * Main.rand.NextFloat(8f, 28f),
                     type,
                     radial * speed, 105, new Color(176, 72, 242),
                     Main.rand.NextFloat(0.7f, 1.1f));
-                d.noGravity = true;
+                dust.noGravity = true;
             }
         }
 
@@ -2079,13 +2103,32 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
 
             bool attackPose = IsEchoStepSwinging || IsEchoStepFading;
-            int bodyRow = attackPose
-                ? BodyRowFromWeaponRotation(_echoStepRotation, _echoStepSwingDir)
-                : IsEchoStepWalking ? 3 : 1;
+            // Body row: swing pose wins, else the walk row (3) or the neutral stand row (1).
+            int bodyRow = 1;
+
+            if (attackPose)
+            {
+                bodyRow = BodyRowFromWeaponRotation(_echoStepRotation, _echoStepSwingDir);
+            }
+            else if (IsEchoStepWalking)
+            {
+                bodyRow = 3;
+            }
+
             _puppet.bodyFrame = new Rectangle(0, FrameHeight * bodyRow, 40, FrameHeight);
-            int legRow = IsEchoStepWalking
-                ? (EchoStepTellTicks - _echoStepDelayTimer) / 5 % 14
-                : attackPose ? 0 : 5;
+
+            // Legs: cycle the 14-frame walk while moving, else planted (0 mid-swing, 5 at rest).
+            int legRow = 5;
+
+            if (IsEchoStepWalking)
+            {
+                legRow = (EchoStepTellTicks - _echoStepDelayTimer) / 5 % 14;
+            }
+            else if (attackPose)
+            {
+                legRow = 0;
+            }
+
             _puppet.legFrame  = new Rectangle(0, FrameHeight * legRow, 40, FrameHeight);
             _puppet.direction = _echoStepSwingDir;
 
@@ -2148,9 +2191,9 @@ namespace tsorcRevamp.NPCs.Puppets
             Vector2 drawPos = handWorldPos - Main.screenPosition;
 
             float visualRotation = _echoStepSwingDir * (_echoStepRotation + MeleeWeaponRotationOffset * _echoStepSwingDir);
-            Vector2 hn = MeleeHandleNorm;
-            float originX = _echoStepSwingDir == 1 ? tex.Width * hn.X : tex.Width * (1f - hn.X);
-            Vector2 origin = new Vector2(originX, tex.Height * hn.Y);
+            Vector2 handleNorm = MeleeHandleNorm;
+            float originX = _echoStepSwingDir == 1 ? tex.Width * handleNorm.X : tex.Width * (1f - handleNorm.X);
+            Vector2 origin = new Vector2(originX, tex.Height * handleNorm.Y);
             SpriteEffects effects = _echoStepSwingDir == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Color light = Lighting.GetColor(handWorldPos.ToTileCoordinates());
             Color color = Color.Lerp(light, new Color(190, 145, 245), 0.48f) * EchoStepVisualOpacity;
@@ -2287,9 +2330,18 @@ namespace tsorcRevamp.NPCs.Puppets
             if (_estusCharges < 0)
                 _estusCharges = EstusChargesMax;
 
-            if (_rangedCooldown          > 0) _rangedCooldown--;
-            if (_secondaryRangedCooldown > 0) _secondaryRangedCooldown--;
-            if (_shieldGuardCooldown     > 0) _shieldGuardCooldown--;
+            if (_rangedCooldown          > 0)
+            {
+                _rangedCooldown--;
+            }
+            if (_secondaryRangedCooldown > 0)
+            {
+                _secondaryRangedCooldown--;
+            }
+            if (_shieldGuardCooldown     > 0)
+            {
+                _shieldGuardCooldown--;
+            }
             if (_queuedRangedFollowupTicks > 0)
             {
                 _queuedRangedFollowupTicks--;
@@ -2299,32 +2351,95 @@ namespace tsorcRevamp.NPCs.Puppets
                     _queuedRangedFollowupTarget = -1;
                 }
             }
-            if (_stabCooldown            > 0) _stabCooldown--;
-            if (_spearCooldown           > 0) _spearCooldown--;
-            if (_magicCooldown           > 0) _magicCooldown--;
-            if (_healCooldown            > 0) _healCooldown--;
-            if (_breathCooldown          > 0) _breathCooldown--;
-            if (_cursedKnivesCooldown    > 0) _cursedKnivesCooldown--;
-            if (_pierceCooldown          > 0) _pierceCooldown--;
-            if (_jumpSlashCooldown       > 0) _jumpSlashCooldown--;
-            if (_flipSlashCooldown       > 0) _flipSlashCooldown--;
-            if (_abyssSlashCooldown      > 0) _abyssSlashCooldown--;
-            if (_tendrilCooldown         > 0) _tendrilCooldown--;
-            if (_abyssShardCooldown      > 0) _abyssShardCooldown--;
-            if (_homingVolleyCooldown    > 0) _homingVolleyCooldown--;
-            if (_boomerangCooldown       > 0) _boomerangCooldown--;
-            if (_spiralFanCooldown       > 0) _spiralFanCooldown--;
-            if (AfterimageTicks          > 0) AfterimageTicks--;
+            if (_stabCooldown            > 0)
+            {
+                _stabCooldown--;
+            }
+            if (_spearCooldown           > 0)
+            {
+                _spearCooldown--;
+            }
+            if (_magicCooldown           > 0)
+            {
+                _magicCooldown--;
+            }
+            if (_healCooldown            > 0)
+            {
+                _healCooldown--;
+            }
+            if (_breathCooldown          > 0)
+            {
+                _breathCooldown--;
+            }
+            if (_cursedKnivesCooldown    > 0)
+            {
+                _cursedKnivesCooldown--;
+            }
+            if (_pierceCooldown          > 0)
+            {
+                _pierceCooldown--;
+            }
+            if (_jumpSlashCooldown       > 0)
+            {
+                _jumpSlashCooldown--;
+            }
+            if (_flipSlashCooldown       > 0)
+            {
+                _flipSlashCooldown--;
+            }
+            if (_abyssSlashCooldown      > 0)
+            {
+                _abyssSlashCooldown--;
+            }
+            if (_tendrilCooldown         > 0)
+            {
+                _tendrilCooldown--;
+            }
+            if (_abyssShardCooldown      > 0)
+            {
+                _abyssShardCooldown--;
+            }
+            if (_homingVolleyCooldown    > 0)
+            {
+                _homingVolleyCooldown--;
+            }
+            if (_boomerangCooldown       > 0)
+            {
+                _boomerangCooldown--;
+            }
+            if (_spiralFanCooldown       > 0)
+            {
+                _spiralFanCooldown--;
+            }
+            if (AfterimageTicks          > 0)
+            {
+                AfterimageTicks--;
+            }
             TickEchoStep(); // independent of Phase - can resolve while the puppet is doing anything else
             if (_meleeComboCooldowns != null)
                 for (int i = 0; i < _meleeComboCooldowns.Length; i++)
-                    if (_meleeComboCooldowns[i] > 0) _meleeComboCooldowns[i]--;
+                    if (_meleeComboCooldowns[i] > 0)
+                    {
+                        _meleeComboCooldowns[i]--;
+                    }
             if (_rangedComboCooldowns != null)
                 for (int i = 0; i < _rangedComboCooldowns.Length; i++)
-                    if (_rangedComboCooldowns[i] > 0) _rangedComboCooldowns[i]--;
-            if (_aerialHitCooldown > 0) _aerialHitCooldown--;
-            if (_aerialDiveCooldown > 0) _aerialDiveCooldown--;
-            if (gnpc.FighterEvasionCooldown > 0) gnpc.FighterEvasionCooldown--;
+                    if (_rangedComboCooldowns[i] > 0)
+                    {
+                        _rangedComboCooldowns[i]--;
+                    }
+            if (_aerialHitCooldown > 0)
+            {
+                _aerialHitCooldown--;
+            }
+            if (_aerialDiveCooldown > 0)
+            {
+                _aerialDiveCooldown--;
+            }
+            if (gnpc.FighterEvasionCooldown > 0)
+            {
+                gnpc.FighterEvasionCooldown--;
+            }
 
             // Decay recent-damage memory so old hits don't keep triggering heals forever.
             _recentDamage = Math.Max(0f, _recentDamage - RecentDamageDecayRate);
@@ -2332,8 +2447,14 @@ namespace tsorcRevamp.NPCs.Puppets
             // Reset HP-threshold flags once the puppet's HP rises back above each level
             // (heal restored it, or it just started above those values).
             float hpFrac = (float)NPC.life / NPC.lifeMax;
-            if (_halfHpHealed    && hpFrac > 0.55f) _halfHpHealed    = false;
-            if (_quarterHpHealed && hpFrac > 0.30f) _quarterHpHealed = false;
+            if (_halfHpHealed    && hpFrac > 0.55f)
+            {
+                _halfHpHealed    = false;
+            }
+            if (_quarterHpHealed && hpFrac > 0.30f)
+            {
+                _quarterHpHealed = false;
+            }
 
             if (_directionHoldTicks > 0)
                 _directionHoldTicks--;
@@ -2360,8 +2481,14 @@ namespace tsorcRevamp.NPCs.Puppets
             // puppet uses a proactive dodge (jump/roll or preemptive quick-step) we tick the timers here.
             if (EvadesProjectiles || PreemptiveQuickStepChance > 0)
             {
-                if (gnpc.DodgeTimer    > 0) gnpc.DodgeTimer--;
-                if (gnpc.DodgeCooldown > 0) gnpc.DodgeCooldown--;
+                if (gnpc.DodgeTimer    > 0)
+                {
+                    gnpc.DodgeTimer--;
+                }
+                if (gnpc.DodgeCooldown > 0)
+                {
+                    gnpc.DodgeCooldown--;
+                }
             }
 
             Player target = Main.player[NPC.target];
@@ -2436,7 +2563,10 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 Player fleeFrom      = Main.player[NPC.target];
                 float  awayDir       = Math.Sign(NPC.Center.X - fleeFrom.Center.X);
-                if (awayDir == 0) awayDir = -NPC.direction;
+                if (awayDir == 0)
+                {
+                    awayDir = -NPC.direction;
+                }
                 NPC.velocity.X       = (float)awayDir * TopSpeed * 2.0f;
                 NPC.direction        = (int)awayDir;
                 _directionHoldTicks  = 5; // allow quick correction while fleeing
@@ -2637,16 +2767,31 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private bool ShouldHeal()
         {
-            if (_estusCharges <= 0 || _healCooldown > 0) return false;
+            if (_estusCharges <= 0 || _healCooldown > 0)
+            {
+                return false;
+            }
             // Don't interrupt an already-running heal sequence.
-            if (Phase == AttackPhase.FleeToHeal || Phase == AttackPhase.Healing) return false;
+            if (Phase == AttackPhase.FleeToHeal || Phase == AttackPhase.Healing)
+            {
+                return false;
+            }
 
             float hp = (float)NPC.life / NPC.lifeMax;
 
-            if (!_halfHpHealed && hp <= FirstHealThreshold) return true;
-            if (!_quarterHpHealed && hp <= SecondHealThreshold) return true;
+            if (!_halfHpHealed && hp <= FirstHealThreshold)
+            {
+                return true;
+            }
+            if (!_quarterHpHealed && hp <= SecondHealThreshold)
+            {
+                return true;
+            }
             // Threshold 3: burst damage — took a lot of damage in a short window.
-            if (_recentDamage >= RecentDamageThreshold) return true;
+            if (_recentDamage >= RecentDamageThreshold)
+            {
+                return true;
+            }
 
             return false;
         }
@@ -2675,8 +2820,14 @@ namespace tsorcRevamp.NPCs.Puppets
             _recentDamage = 0f;
 
             float hp = (float)NPC.life / NPC.lifeMax;
-            if (hp > FirstHealThreshold) _halfHpHealed = true;
-            if (hp > SecondHealThreshold) _quarterHpHealed = true;
+            if (hp > FirstHealThreshold)
+            {
+                _halfHpHealed = true;
+            }
+            if (hp > SecondHealThreshold)
+            {
+                _quarterHpHealed = true;
+            }
             NPC.netUpdate = true;
         }
 
@@ -2982,7 +3133,10 @@ namespace tsorcRevamp.NPCs.Puppets
                             {
                                 // No attack was selected this tick, so vary the hover line with a lateral pass.
                                 float side = Math.Sign(NPC.Center.X - target.Center.X);
-                                if (side == 0) side = -NPC.direction;
+                                if (side == 0)
+                                {
+                                    side = -NPC.direction;
+                                }
                                 _flight.RequestStrafe(target.Center + new Vector2(-side * 240f, 0f));
                             }
                             break;
@@ -3248,7 +3402,10 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 // ── Melee slash ───────────────────────────────────────────────
                 case AttackPhase.MeleeTelegraph:
-                    if (SlowDownBeforeMelee) SlowDown();
+                    if (SlowDownBeforeMelee)
+                    {
+                        SlowDown();
+                    }
                     SetDisplayWeapon(FrontHandWeaponType, swing: false);
                     CheckAndFireFlash(MeleeTelegraphFlashColor);
                     if (--PhaseTimer <= 0)
@@ -3273,7 +3430,10 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 // ── Stab / lunge ──────────────────────────────────────────────
                 case AttackPhase.StabTelegraph:
-                    if (SlowDownBeforeMelee) SlowDown();
+                    if (SlowDownBeforeMelee)
+                    {
+                        SlowDown();
+                    }
                     SetDisplayWeapon(FrontHandWeaponType, swing: false);
                     SpawnTelegraphDust();
                     CheckAndFireFlash(MeleeTelegraphFlashColor);
@@ -3419,7 +3579,10 @@ namespace tsorcRevamp.NPCs.Puppets
                 // SpearPushSpeedMult = 0 → pure stationary poke (no movement);
                 // > 0 → small forward hop scaled by TopSpeed (less than stab lunge).
                 case AttackPhase.SpearTelegraph:
-                    if (SlowDownBeforeMelee) SlowDown();
+                    if (SlowDownBeforeMelee)
+                    {
+                        SlowDown();
+                    }
                     SetDisplayWeapon(SpearWeaponItemType, swing: false);
                     SpawnTelegraphDust();
                     CheckAndFireFlash(SpearTelegraphFlashColor);
@@ -3497,8 +3660,14 @@ namespace tsorcRevamp.NPCs.Puppets
                 // fired on entry; DoCustomTick gets ticksRemaining (last tick = 1), matching the magic
                 // convention. Returns to Idle/CasualStroll when it expires.
                 case AttackPhase.Custom:
-                    if (SlowDownDuringCustom) SlowDown();
-                    if (_customPoseWeapon >= 0) SetDisplayWeapon(_customPoseWeapon, swing: _customSwingPose);
+                    if (SlowDownDuringCustom)
+                    {
+                        SlowDown();
+                    }
+                    if (_customPoseWeapon >= 0)
+                    {
+                        SetDisplayWeapon(_customPoseWeapon, swing: _customSwingPose);
+                    }
                     DoCustomTick(PhaseTimer);
                     if (--PhaseTimer <= 0)
                         EnterCasualOrIdle();
@@ -3514,7 +3683,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (!airborneBreath)
                         SlowDown();
                     int faceB = target.Center.X < NPC.Center.X ? -1 : 1;
-                    NPC.direction = faceB; NPC.spriteDirection = faceB;
+                    NPC.direction = faceB;
+                    NPC.spriteDirection = faceB;
                     DoBreathWindup(BreathTelegraphTicks - PhaseTimer);
                     CheckAndFireFlash(BreathTelegraphFlashColor);
                     if (--PhaseTimer <= 0)
@@ -3538,7 +3708,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     {
                         NPC.velocity.X *= 0.85f;
                         int faceB = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceB; NPC.spriteDirection = faceB;
+                        NPC.direction = faceB;
+                        NPC.spriteDirection = faceB;
                     }
                     DoBreathTick(PhaseTimer);
                     if (--PhaseTimer <= 0)
@@ -3561,9 +3732,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.KnivesTelegraph:
                 {
                     bool airK = _flight != null && _flight.IsAirborne;
-                    if (!airK) SlowDown();
+                    if (!airK)
+                    {
+                        SlowDown();
+                    }
                     int faceK = target.Center.X < NPC.Center.X ? -1 : 1;
-                    NPC.direction = faceK; NPC.spriteDirection = faceK;
+                    NPC.direction = faceK;
+                    NPC.spriteDirection = faceK;
                     SetDisplayWeapon(CursedKnivesWeaponItemType, swing: false);
                     CheckAndFireFlash(CursedKnivesTelegraphFlashColor);
                     if (--PhaseTimer <= 0)
@@ -3579,7 +3754,10 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.KnivesThrow:
                 {
                     bool airK = _flight != null && _flight.IsAirborne;
-                    if (!airK) NPC.velocity.X *= 0.8f;
+                    if (!airK)
+                    {
+                        NPC.velocity.X *= 0.8f;
+                    }
                     if (--PhaseTimer <= 0)
                     {
                         if (_cursedKnivesVolleysLeft > 0)
@@ -3593,9 +3771,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.KnivesThrowPause:
                 {
                     bool airK = _flight != null && _flight.IsAirborne;
-                    if (!airK) SlowDown();
+                    if (!airK)
+                    {
+                        SlowDown();
+                    }
                     int faceK = target.Center.X < NPC.Center.X ? -1 : 1;
-                    NPC.direction = faceK; NPC.spriteDirection = faceK;
+                    NPC.direction = faceK;
+                    NPC.spriteDirection = faceK;
                     if (--PhaseTimer <= 0)
                     {
                         SetDisplayWeapon(CursedKnivesWeaponItemType, swing: true);
@@ -3622,7 +3804,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.PierceTelegraph:
                 {
                     int faceP = target.Center.X < NPC.Center.X ? -1 : 1;
-                    NPC.direction = faceP; NPC.spriteDirection = faceP;
+                    NPC.direction = faceP;
+                    NPC.spriteDirection = faceP;
                     _pierceDir = faceP;
                     if (PhaseTimer == PierceTelegraphTicks)
                     {
@@ -3672,7 +3855,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (--PhaseTimer <= 0)
                     {
                         NPC.velocity.X *= 0.4f;
-                        if (CanEchoStep) TryArmEchoStep();
+                        if (CanEchoStep)
+                        {
+                            TryArmEchoStep();
+                        }
                         EnterPhase(AttackPhase.PierceRecovery, PierceRecoveryTicks);
                     }
                     break;
@@ -3723,7 +3909,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (PhaseTimer == JumpSlashDodgebackTicks)
                     {
                         int faceJ = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceJ; NPC.spriteDirection = faceJ;
+                        NPC.direction = faceJ;
+                        NPC.spriteDirection = faceJ;
                         _jumpSlashDir = faceJ;
                         NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().DodgeTimer = JumpSlashDodgebackTicks + 5;
                     }
@@ -3745,7 +3932,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     {
                         _jumpSlashLaunched = true;
                         int faceJ = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceJ; NPC.spriteDirection = faceJ; _jumpSlashDir = faceJ;
+                        NPC.direction = faceJ;
+                        NPC.spriteDirection = faceJ;
+                        _jumpSlashDir = faceJ;
 
                         float dx = Math.Abs(target.Center.X - NPC.Center.X);
                         float rangeT = JumpSlashMaxRange > 0f
@@ -3809,7 +3998,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (PhaseTimer == FlipSlashRiseMaxTicks)
                     {
                         int faceF = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceF; NPC.spriteDirection = faceF; _flipSlashDir = faceF;
+                        NPC.direction = faceF;
+                        NPC.spriteDirection = faceF;
+                        _flipSlashDir = faceF;
                         float dx = Math.Abs(target.Center.X - NPC.Center.X);
                         float airtime = 2f * FlipSlashLaunchUpSpeed / 0.3f;
                         float vx = MathHelper.Clamp(dx / airtime, 2f, FlipSlashLaunchForwardSpeed);
@@ -3842,7 +4033,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (landedFlip || --PhaseTimer <= 0)
                     {
                         OnFlipSlashLand();
-                        if (CanEchoStep) TryArmEchoStep();
+                        if (CanEchoStep)
+                        {
+                            TryArmEchoStep();
+                        }
                         EnterPhase(AttackPhase.FlipSlashLand, FlipSlashLandHoldTicks);
                     }
                     break;
@@ -4031,7 +4225,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (PhaseTimer == HomingVolleyDodgebackTicks)
                     {
                         int faceHv = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceHv; NPC.spriteDirection = faceHv;
+                        NPC.direction = faceHv;
+                        NPC.spriteDirection = faceHv;
                         _homingVolleyDir = faceHv;
                         NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().DodgeTimer = HomingVolleyDodgebackTicks + 5;
                     }
@@ -4084,7 +4279,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (PhaseTimer == SwordLaunchRepositionTicks)
                     {
                         int faceSl = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceSl; NPC.spriteDirection = faceSl;
+                        NPC.direction = faceSl;
+                        NPC.spriteDirection = faceSl;
                         _swordLaunchDir = faceSl;
                         NPC.velocity = new Vector2(-faceSl * SwordLaunchRepositionBackSpeed, -SwordLaunchRepositionUpSpeed);
                         NPC.netUpdate = true;
@@ -4197,7 +4393,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (PhaseTimer == FireVolleyBackLeapTicks)
                     {
                         int faceFv = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceFv; NPC.spriteDirection = faceFv;
+                        NPC.direction = faceFv;
+                        NPC.spriteDirection = faceFv;
                         _fireVolleyDir = faceFv;
                         NPC.velocity = new Vector2(-faceFv * FireVolleyBackLeapSpeed, -FireVolleyBackLeapUpSpeed);
                         NPC.netUpdate = true;
@@ -4220,7 +4417,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (PhaseTimer == FireVolleyDodgeThroughTimeoutTicks)
                     {
                         int faceFv = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceFv; NPC.spriteDirection = faceFv;
+                        NPC.direction = faceFv;
+                        NPC.spriteDirection = faceFv;
                         NPC.velocity.Y = -FireVolleyDodgeThroughUpSpeed;
                         tsorcRevampAIs.ArmQuickStep(NPC, globalNpcFv, allowForward: true);
                         NPC.netUpdate = true;
@@ -4254,7 +4452,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.ClosingDistance:
                 {
                     int faceC = target.Center.X < NPC.Center.X ? -1 : 1;
-                    NPC.direction = faceC; NPC.spriteDirection = faceC;
+                    NPC.direction = faceC;
+                    NPC.spriteDirection = faceC;
                     bool inReach = dist <= MeleeEngageRange && NPC.velocity.Y == 0f
                                    && NPC.Center.Y - target.Center.Y < 48f;
                     if (inReach)
@@ -4312,8 +4511,14 @@ namespace tsorcRevamp.NPCs.Puppets
                     // Per-move brake for aim-swing pilots (0 = keep momentum); blanket SlowDown otherwise.
                     if (SlowDownBeforeMelee)
                     {
-                        if (AimSwingActive) NPC.velocity.X *= (1f - _activeMeleeCombo.MoveBrake);
-                        else SlowDown();
+                        if (AimSwingActive)
+                        {
+                            NPC.velocity.X *= (1f - _activeMeleeCombo.MoveBrake);
+                        }
+                        else
+                        {
+                            SlowDown();
+                        }
                     }
                     ApplyComboTelegraphPressure(target);
                     SetDisplayWeapon(FrontHandWeaponType, swing: false);
@@ -4447,7 +4652,9 @@ namespace tsorcRevamp.NPCs.Puppets
                         // following OverheadArc step is the chop.  Ends on reach OR the timeout
                         // (PhaseTimer = AttackTicks) so it always completes and resets to idle.
                         int faceDir = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceDir; NPC.spriteDirection = faceDir; _comboLockedDir = faceDir;
+                        NPC.direction = faceDir;
+                        NPC.spriteDirection = faceDir;
+                        _comboLockedDir = faceDir;
                         NPC.velocity.X = faceDir * (TopSpeed * ChargeAttackSpeedMult);
                         bool inReach = NPC.Distance(target.Center) <= MeleeRange * 0.9f;
                         endStep = (--PhaseTimer <= 0) || inReach;
@@ -4467,7 +4674,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     else if (step.Motion == ComboMotion.Feint)
                     {
                         // Hold the raised bait pose without swinging; the real chop is the next step.
-                        if (SlowDownBeforeMelee) NPC.velocity.X *= 0.6f;
+                        if (SlowDownBeforeMelee)
+                        {
+                            NPC.velocity.X *= 0.6f;
+                        }
                         endStep = (--PhaseTimer <= 0);
                     }
                     else
@@ -4514,8 +4724,14 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.MeleeComboPause:
                     if (SlowDownBeforeMelee)
                     {
-                        if (AimSwingActive) NPC.velocity.X *= (1f - _activeMeleeCombo.MoveBrake);
-                        else SlowDown();
+                        if (AimSwingActive)
+                        {
+                            NPC.velocity.X *= (1f - _activeMeleeCombo.MoveBrake);
+                        }
+                        else
+                        {
+                            SlowDown();
+                        }
                     }
                     // Re-face the player during the pause window.
                     {
@@ -4719,7 +4935,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private void EnsureMeleeComboPool()
         {
-            if (_meleeComboPool != null) return;
+            if (_meleeComboPool != null)
+            {
+                return;
+            }
             _meleeComboPool = MeleeComboPoolOverride ?? WeaponArchetypeTables.GetMeleeCombos(MeleeArchetype);
             if (_meleeComboPool != null)
                 _meleeComboCooldowns = new int[_meleeComboPool.Length];
@@ -4727,7 +4946,10 @@ namespace tsorcRevamp.NPCs.Puppets
 
         private void EnsureRangedComboPool()
         {
-            if (_rangedComboPool != null) return;
+            if (_rangedComboPool != null)
+            {
+                return;
+            }
             _rangedComboPool = WeaponArchetypeTables.GetRangedCombos(RangedArchetype);
             if (_rangedComboPool != null)
                 _rangedComboCooldowns = new int[_rangedComboPool.Length];
@@ -4741,7 +4963,10 @@ namespace tsorcRevamp.NPCs.Puppets
         private bool TryStartMeleeCombo(float dist, bool rangedStartOnly = false)
         {
             EnsureMeleeComboPool();
-            if (_meleeComboPool == null || _meleeComboPool.Length == 0) return false;
+            if (_meleeComboPool == null || _meleeComboPool.Length == 0)
+            {
+                return false;
+            }
 
             // Filter pool to combos whose cooldown is ready; rebuild weights array.
             float hpFrac = (float)NPC.life / NPC.lifeMax;
@@ -4752,14 +4977,37 @@ namespace tsorcRevamp.NPCs.Puppets
             // of any combo on cooldown.  We use a stack array of effective weights.
             int total = 0;
             int[] effective = new int[_meleeComboPool.Length];
-            ComboRangeBand band = dist <= closeMax ? ComboRangeBand.Close
-                               : dist <= midMax   ? ComboRangeBand.Mid
-                               : ComboRangeBand.Far;
-            float heavyMult = hpFrac <= 0.33f ? 2.5f : hpFrac <= 0.66f ? 1.5f : 1.0f;
+            ComboRangeBand band = ComboRangeBand.Far;
+
+            if (dist <= closeMax)
+            {
+                band = ComboRangeBand.Close;
+            }
+            else if (dist <= midMax)
+            {
+                band = ComboRangeBand.Mid;
+            }
+
+            // Heavier combos get weighted up as the puppet loses health.
+            float heavyMult = 1.0f;
+
+            if (hpFrac <= 0.33f)
+            {
+                heavyMult = 2.5f;
+            }
+            else if (hpFrac <= 0.66f)
+            {
+                heavyMult = 1.5f;
+            }
+
 
             for (int i = 0; i < _meleeComboPool.Length; i++)
             {
-                if (_meleeComboCooldowns[i] > 0) { effective[i] = 0; continue; }
+                if (_meleeComboCooldowns[i] > 0)
+                {
+                    effective[i] = 0;
+                    continue;
+                }
                 if (!CanSelectMeleeCombo(_meleeComboPool[i], dist, hpFrac))
                 {
                     effective[i] = 0;
@@ -4773,11 +5021,17 @@ namespace tsorcRevamp.NPCs.Puppets
                 float w = _meleeComboPool[i].BaseWeight;
                 w *= (_meleeComboPool[i].Preferred == band
                       || _meleeComboPool[i].Preferred == ComboRangeBand.Any) ? 2.0f : 0.4f;
-                if (_meleeComboPool[i].HeavyCommit) w *= heavyMult;
+                if (_meleeComboPool[i].HeavyCommit)
+                {
+                    w *= heavyMult;
+                }
                 effective[i] = (int)w;
                 total += effective[i];
             }
-            if (total <= 0) return false;
+            if (total <= 0)
+            {
+                return false;
+            }
 
             // Reactive first: let a boss pick from the player's live state (dodgeroll direction,
             // launched, flanking).  Only honoured if it names a ready combo; else weighted roll.
@@ -4790,10 +5044,17 @@ namespace tsorcRevamp.NPCs.Puppets
                 for (int i = 0; i < _meleeComboPool.Length; i++)
                 {
                     cumulative += effective[i];
-                    if (effective[i] > 0 && roll < cumulative) { chosen = i; break; }
+                    if (effective[i] > 0 && roll < cumulative)
+                    {
+                        chosen = i;
+                        break;
+                    }
                 }
             }
-            if (chosen < 0) return false;
+            if (chosen < 0)
+            {
+                return false;
+            }
 
             _activeMeleeComboIndex = chosen;
             _activeMeleeCombo      = _meleeComboPool[chosen];
@@ -5017,7 +5278,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         protected virtual void DoComboMeleeHit(MeleeComboStep step)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
             float reach = ComboReachBase * 0.7f * step.ReachMult;
             int   dmg   = (int)(MeleeDamage * step.DamageMult);
             if (dmg <= 0)
@@ -5319,15 +5583,18 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private void UpdateShield()
         {
-            if (!HasShield) return;
-            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (!HasShield)
+            {
+                return;
+            }
+            var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             // A carried shield remains visible, but reactive guards are opt-in. Their neutral hold
             // can otherwise be refreshed into an effective stun lock without ever breaking poise.
             if (!AllowReactiveDefense)
             {
                 _shielding = false;
-                g.ShieldGuarding = false;
+                globalNPC.ShieldGuarding = false;
                 return;
             }
 
@@ -5340,7 +5607,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (!guardPhase)
             {
                 _shielding = false;
-                g.ShieldGuarding = false;
+                globalNPC.ShieldGuarding = false;
                 _shieldWasGuarding = false;
                 _shieldMeleeExtended = false;
 
@@ -5348,34 +5615,34 @@ namespace tsorcRevamp.NPCs.Puppets
                 // never interrupt it or leave behind a delayed guard that fires after recovery.
                 if (!neutralPhase || !grounded || _shieldGuardCooldown > 0)
                 {
-                    g.ReactiveBlockTimer = 0;
+                    globalNPC.ReactiveBlockTimer = 0;
                     return;
                 }
 
                 // Guard selection is server-authoritative; clients receive the guard snapshot in
                 // ReceiveExtraAI instead of making a second random roll.
-                if (g.ReactiveBlockTimer <= 0 && Main.netMode != NetmodeID.MultiplayerClient)
-                    tsorcRevampAIs.TryPreemptiveBlock(NPC, g, ShieldGuardTicksRanged);
-                if (g.ReactiveBlockTimer <= 0)
+                if (globalNPC.ReactiveBlockTimer <= 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                    tsorcRevampAIs.TryPreemptiveBlock(NPC, globalNPC, ShieldGuardTicksRanged);
+                if (globalNPC.ReactiveBlockTimer <= 0)
                     return;
 
                 _shieldLockedDir = dirToPlayer;
                 _shieldWasGuarding = true;
-                EnterPhase(AttackPhase.ShieldGuard, g.ReactiveBlockTimer);
+                EnterPhase(AttackPhase.ShieldGuard, globalNPC.ReactiveBlockTimer);
                 NPC.netUpdate = true;
             }
 
             // A jump/ledge fall or timer expiry cleanly ends the action. UpdateShield runs before
             // PuppetAttackAI, so the puppet can immediately choose its next attack on this tick.
-            if (!grounded || g.ReactiveBlockTimer <= 0)
+            if (!grounded || globalNPC.ReactiveBlockTimer <= 0)
             {
-                FinishShieldGuard(g);
+                FinishShieldGuard(globalNPC);
                 return;
             }
 
             _shielding = true;
-            g.ShieldGuarding = true;
-            PhaseTimer = g.ReactiveBlockTimer;
+            globalNPC.ShieldGuarding = true;
+            PhaseTimer = globalNPC.ReactiveBlockTimer;
 
             // Rising edge: capture the facing the guard went up with.
             if (!_shieldWasGuarding)
@@ -5391,7 +5658,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // dodgeroll-through exposes the back for a backstab, and plant.
                 if (!_shieldMeleeExtended)
                 {
-                    g.ReactiveBlockTimer = Math.Max(g.ReactiveBlockTimer, ShieldGuardTicksMelee);
+                    globalNPC.ReactiveBlockTimer = Math.Max(globalNPC.ReactiveBlockTimer, ShieldGuardTicksMelee);
                     _shieldMeleeExtended = true;
                 }
                 NPC.direction       = _shieldLockedDir;
@@ -5428,7 +5695,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// thrown things (stars, flasks, caltrops, bombs) doesn't repeat the exact same clip.</summary>
         protected void PlayThrowSound()
         {
-            if (Main.dedServ) return;
+            if (Main.dedServ)
+            {
+                return;
+            }
             SoundStyle s = Main.rand.Next(3) switch
             {
                 0 => SoundID.Item7,
@@ -5446,7 +5716,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Plays the held weapon's own swing sound (the axe's UseSound) at a swing's start.</summary>
         protected void PlayMeleeSwingSound()
         {
-            if (Main.dedServ) return;
+            if (Main.dedServ)
+            {
+                return;
+            }
             Item w = GetCachedWeaponItem(MeleeWeaponItemType);
             SoundStyle snd = w?.UseSound ?? SoundID.Item1;
             SoundEngine.PlaySound(snd with { Volume = 0.55f, PitchVariance = 0.3f }, NPC.Center);
@@ -5459,17 +5732,26 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private void SpawnSwingVFX(float rotDelta)
         {
-            if (Main.dedServ || !IsWeaponVisiblePhase) return;
-            if (Math.Abs(rotDelta) < 0.07f) return;   // only during a real sweep, not a slow lerp
-            if (!Main.rand.NextBool(2)) return;        // sparse → subtle
+            if (Main.dedServ || !IsWeaponVisiblePhase)
+            {
+                return;
+            }
+            if (Math.Abs(rotDelta) < 0.07f)
+            {
+                return;  // only during a real sweep, not a slow lerp
+            }
+            if (!Main.rand.NextBool(2))
+            {
+                return;  // sparse → subtle
+            }
             Vector2 outward = _attackRuntimeV2.Active
                 ? GetWeaponWorldDirection()
                 : new Vector2(NPC.direction, 0f).RotatedBy(_weaponRotation);
             Vector2 tip     = GetHandPosition() + outward * 20f;
-            Dust d = Dust.NewDustPerfect(tip, DustID.Smoke,
+            Dust dust = Dust.NewDustPerfect(tip, DustID.Smoke,
                 outward.RotatedBy(MathHelper.PiOver2 * Math.Sign(rotDelta)) * 0.5f,
                 200, Color.LightGray, 0.55f);
-            d.noGravity = true;
+            dust.noGravity = true;
         }
 
         /// <summary>
@@ -5481,7 +5763,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private void UpdateAttackCommitFlags()
         {
-            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             bool telegraph =
                 Phase == AttackPhase.MeleeTelegraph  || Phase == AttackPhase.StabTelegraph  ||
@@ -5539,8 +5821,8 @@ namespace tsorcRevamp.NPCs.Puppets
             if (HyperArmorDuringTelegraph && telegraph)
                 committed = true;
 
-            g.AttackCommitted    = committed;
-            g.AttackTelegraphing = telegraph && !committed;
+            globalNPC.AttackCommitted    = committed;
+            globalNPC.AttackTelegraphing = telegraph && !committed;
         }
 
         // ── Aerial actions (default implementations) ──────────────────────────────
@@ -5550,7 +5832,10 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             if (MeleeWeaponItemType >= 0)
                 SetDisplayWeapon(FrontHandWeaponType, swing: false);
-            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
             SpawnTelegraphFlash(Color.OrangeRed);
         }
 
@@ -5558,7 +5843,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// to give the dive a sustained contact-damage feel.</summary>
         protected virtual void DoAerialDiveHit()
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
             Player target = Main.player[NPC.target];
             Vector2 attackDirection = (target.Center - NPC.Center)
                 .SafeNormalize(NPC.velocity.SafeNormalize(Vector2.UnitX));
@@ -5606,21 +5894,33 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <param name="count">Number of valid patterns to pick from.</param>
         private static int PickPatternByChance(int[] chances, int count)
         {
-            if (count <= 1) return 0;
+            if (count <= 1)
+            {
+                return 0;
+            }
             if (chances == null || chances.Length == 0)
                 return Main.rand.Next(count);
 
             int limit = Math.Min(chances.Length, count);
             int total = 0;
-            for (int i = 0; i < limit; i++) total += chances[i];
-            if (total <= 0) return Main.rand.Next(count);
+            for (int i = 0; i < limit; i++)
+            {
+                total += chances[i];
+            }
+            if (total <= 0)
+            {
+                return Main.rand.Next(count);
+            }
 
             int roll = Main.rand.Next(total);
             int cumulative = 0;
             for (int i = 0; i < limit; i++)
             {
                 cumulative += chances[i];
-                if (roll < cumulative) return i;
+                if (roll < cumulative)
+                {
+                    return i;
+                }
             }
             return 0;
         }
@@ -5699,10 +5999,27 @@ namespace tsorcRevamp.NPCs.Puppets
         /// the player, then enter the telegraph.  Close = 1 volley; mid = 2 back-to-back; far+LOS = 3.</summary>
         private void StartCursedKnives(float dist, bool hasLOS)
         {
-            if (dist <= CursedKnivesCloseRange)      { _cursedKnivesVolleysLeft = 1; _cursedKnivesGap = 0; }
-            else if (dist <= CursedKnivesMidRange)   { _cursedKnivesVolleysLeft = 2; _cursedKnivesGap = CursedKnivesBackToBackGap; }
-            else if (hasLOS)                         { _cursedKnivesVolleysLeft = 3; _cursedKnivesGap = CursedKnivesFarGap; }
-            else                                     { _cursedKnivesVolleysLeft = 1; _cursedKnivesGap = 0; }
+            if (dist <= CursedKnivesCloseRange)
+            {
+                _cursedKnivesVolleysLeft = 1;
+                _cursedKnivesGap = 0;
+            }
+            else if (dist <= CursedKnivesMidRange)
+            {
+                _cursedKnivesVolleysLeft = 2;
+                _cursedKnivesGap = CursedKnivesBackToBackGap;
+            }
+            else if (hasLOS)
+            {
+                _cursedKnivesVolleysLeft = 3;
+                _cursedKnivesGap = CursedKnivesFarGap;
+            }
+            else
+            {
+                _cursedKnivesVolleysLeft = 1;
+                _cursedKnivesGap = 0;
+            }
+
             EnterPhase(AttackPhase.KnivesTelegraph, CursedKnivesTelegraphTicks);
         }
 
@@ -5747,7 +6064,10 @@ namespace tsorcRevamp.NPCs.Puppets
             // Guarantee at least 30 ticks of telegraph so the flash always leads the attack by 30.
             PhaseTimer = isTelegraph ? Math.Max(duration, MinTelegraphTicks) : duration;
             // Each new telegraph phase gets its own flash.
-            if (isTelegraph) _flashFired = false;
+            if (isTelegraph)
+            {
+                _flashFired = false;
+            }
         }
 
         private void SlowDown() => NPC.velocity.X *= 0.80f;
@@ -5760,10 +6080,22 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private void TryPreemptiveQuickStep(tsorcRevampGlobalNPC gnpc, Player target, float dist)
         {
-            if (NPC.velocity.Y != 0f) return;                 // grounded only
-            if (dist > MeleeRange + 56f) return;              // must be in melee threat range
-            if (target.itemAnimation <= 0) return;            // player must be actively swinging/using
-            if (Main.rand.Next(100) >= PreemptiveQuickStepChance) return;
+            if (NPC.velocity.Y != 0f)
+            {
+                return;  // grounded only
+            }
+            if (dist > MeleeRange + 56f)
+            {
+                return;  // must be in melee threat range
+            }
+            if (target.itemAnimation <= 0)
+            {
+                return;  // player must be actively swinging/using
+            }
+            if (Main.rand.Next(100) >= PreemptiveQuickStepChance)
+            {
+                return;
+            }
 
             NPC.TargetClosest(true);
             tsorcRevampAIs.ArmQuickStep(NPC, gnpc, allowForward: true);
@@ -5779,16 +6111,28 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private void TryEvadeIncomingProjectile(tsorcRevampGlobalNPC gnpc, Player target)
         {
-            if (gnpc.Agility <= 0f) return; // Agility unset/zero → no dodging
+            if (gnpc.Agility <= 0f)
+            {
+                return;  // Agility unset/zero → no dodging
+            }
             float rangeSq = ProjectileEvadeRange * ProjectileEvadeRange;
 
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                Projectile p = Main.projectile[i];
-                if (!p.active || !p.friendly || p.damage <= 0) continue;
-                if (p.DistanceSQ(NPC.Center) >= rangeSq) continue;
+                Projectile proj = Main.projectile[i];
+                if (!proj.active || !proj.friendly || proj.damage <= 0)
+                {
+                    continue;
+                }
+                if (proj.DistanceSQ(NPC.Center) >= rangeSq)
+                {
+                    continue;
+                }
                 // Roughly aimed at us?  Compare the projectile's heading to the bearing toward this NPC.
-                if (UsefulFunctions.CompareAngles(p.velocity, UsefulFunctions.Aim(p.Center, NPC.Center, 1f)) >= 0.35f) continue;
+                if (UsefulFunctions.CompareAngles(proj.velocity, UsefulFunctions.Aim(proj.Center, NPC.Center, 1f)) >= 0.35f)
+                {
+                    continue;
+                }
 
                 if (Main.rand.NextFloat() < gnpc.Agility)
                 {
@@ -5907,8 +6251,14 @@ namespace tsorcRevamp.NPCs.Puppets
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player player = Main.player[i];
-                if (!player.active || player.dead || _bladeHitPlayers.Contains(i)) continue;
-                if (Vector2.DistanceSquared(player.Center, NPC.Center) > earlyOutRange * earlyOutRange) continue;
+                if (!player.active || player.dead || _bladeHitPlayers.Contains(i))
+                {
+                    continue;
+                }
+                if (Vector2.DistanceSquared(player.Center, NPC.Center) > earlyOutRange * earlyOutRange)
+                {
+                    continue;
+                }
 
                 Vector2 hitOrigin = origin;
                 Vector2 hitTip = tip;
@@ -5965,10 +6315,10 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             if (Main.rand.NextBool(3))
             {
-                Dust d = Dust.NewDustDirect(NPC.Center - new Vector2(8f), 16, 16, 89,
+                Dust dust = Dust.NewDustDirect(NPC.Center - new Vector2(8f), 16, 16, 89,
                     Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(-2f, -0.5f),
                     0, default, 1.2f);
-                d.noGravity = true;
+                dust.noGravity = true;
             }
         }
 
@@ -5980,14 +6330,20 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private void CheckAndFireFlash(Color color, int leadTicks = 30)
         {
-            if (_flashFired || PhaseTimer > Math.Max(1, leadTicks)) return;
+            if (_flashFired || PhaseTimer > Math.Max(1, leadTicks))
+            {
+                return;
+            }
             SpawnTelegraphFlash(color);
             _flashFired = true;
         }
 
         private void SpawnTelegraphFlash(Color color)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
             Projectile.NewProjectileDirect(
                 NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
                 ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(),
@@ -6215,7 +6571,10 @@ namespace tsorcRevamp.NPCs.Puppets
                 // Continuous spin while airborne (same free-running style as ComboMotion.Spin) —
                 // no fixed start/end, just a steady rotation for as long as the flip lasts.
                 _weaponRotation += FlipSlashSpinSpeed;
-                if (_weaponRotation > MathHelper.TwoPi) _weaponRotation -= MathHelper.TwoPi;
+                if (_weaponRotation > MathHelper.TwoPi)
+                {
+                    _weaponRotation -= MathHelper.TwoPi;
+                }
             }
             else if (Phase == AttackPhase.FlipSlashLand)
             {
@@ -6320,8 +6679,14 @@ namespace tsorcRevamp.NPCs.Puppets
             else if (Phase == AttackPhase.FireVolleyArcJump)
             {
                 // Same shape as LeapSlam: raise overhead on the way up, chop down through the apex.
-                if (NPC.velocity.Y < 0f) _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.3f, 0.20f);
-                else                     _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.3f, 0.18f);
+                if (NPC.velocity.Y < 0f)
+                {
+                    _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.3f, 0.20f);
+                }
+                else
+                {
+                    _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.3f, 0.18f);
+                }
             }
             else if (Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrowPause)
             {
@@ -6340,8 +6705,15 @@ namespace tsorcRevamp.NPCs.Puppets
                 // one-shot swing (DoMeleeAttack/TryMeleeHit, used outside the combo system) gets
                 // the same easing/flip/aim-bias opt-ins instead of only combos getting them.
                 float a0 = -1.3f - OverheadWindupOvershoot, a1 = 1.0f;
-                if (UseAlternateFlip && _comboSwingFlipped) (a0, a1) = (a1, a0);
-                if (UseAimAdaptiveArc || AimSwingActive) { a0 += _comboAimBias; a1 += _comboAimBias; }
+                if (UseAlternateFlip && _comboSwingFlipped)
+                {
+                    (a0, a1) = (a1, a0);
+                }
+                if (UseAimAdaptiveArc || AimSwingActive)
+                {
+                    a0 += _comboAimBias;
+                    a1 += _comboAimBias;
+                }
 
                 if (Phase == AttackPhase.MeleeTelegraph)
                 {
@@ -6379,8 +6751,15 @@ namespace tsorcRevamp.NPCs.Puppets
                 // angles), so flip/bias stay consistent across wind-up -> strike with no snap.
                 (float, float) Endpoints(float a0, float a1)
                 {
-                    if (UseAlternateFlip && _comboSwingFlipped) (a0, a1) = (a1, a0);
-                    if (UseAimAdaptiveArc || AimSwingActive) { a0 += _comboAimBias; a1 += _comboAimBias; }
+                    if (UseAlternateFlip && _comboSwingFlipped)
+                    {
+                        (a0, a1) = (a1, a0);
+                    }
+                    if (UseAimAdaptiveArc || AimSwingActive)
+                    {
+                        a0 += _comboAimBias;
+                        a1 += _comboAimBias;
+                    }
                     return (a0, a1);
                 }
 
@@ -6402,11 +6781,21 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.OverheadArc:
                     {
                         var (a0, a1) = Endpoints(-1.3f - OverheadWindupOvershoot, 1.0f);
-                        if (inTel)        _weaponRotation = UseLogicalMeleeTelegraphs
-                            ? LogicalSwingWindup(a1, a0, comboTelegraphT)
-                            : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
-                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.130f), 0.20f);
-                        else              _weaponRotation = ApplySwingEase(a0, a1, t, step);
+
+                        if (inTel)
+                        {
+                            _weaponRotation = UseLogicalMeleeTelegraphs
+                                ? LogicalSwingWindup(a1, a0, comboTelegraphT)
+                                : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
+                        }
+                        else if (inPause)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.130f), 0.20f);
+                        }
+                        else
+                        {
+                            _weaponRotation = ApplySwingEase(a0, a1, t, step);
+                        }
                         break;
                     }
                     case ComboMotion.UnderhandArc:
@@ -6416,74 +6805,150 @@ namespace tsorcRevamp.NPCs.Puppets
                         // (X=-8) — making the swing finish over the shoulder.  -1.0 keeps it in
                         // row 2 (hand up-forward, X=+4) for a clean rising slash.
                         var (a0, a1) = Endpoints(1.0f, -1.0f);
-                        if (inTel)        _weaponRotation = UseLogicalMeleeTelegraphs
-                            ? LogicalSwingWindup(a1, a0, comboTelegraphT)
-                            : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
-                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.150f), 0.20f);
-                        else              _weaponRotation = ApplySwingEase(a0, a1, t, step);
+
+                        if (inTel)
+                        {
+                            _weaponRotation = UseLogicalMeleeTelegraphs
+                                ? LogicalSwingWindup(a1, a0, comboTelegraphT)
+                                : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
+                        }
+                        else if (inPause)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.150f), 0.20f);
+                        }
+                        else
+                        {
+                            _weaponRotation = ApplySwingEase(a0, a1, t, step);
+                        }
                         break;
                     }
                     case ComboMotion.HorizontalSweep:
                     {
                         // Flat side-to-side: arm extends, weapon held near horizontal
                         var (a0, a1) = Endpoints(-0.4f, 0.6f);
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.25f);
-                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.700f), 0.18f);
-                        else              _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                        if (inTel)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.25f);
+                        }
+                        else if (inPause)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.700f), 0.18f);
+                        }
+                        else
+                        {
+                            _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                        }
                         break;
                     }
                     case ComboMotion.VerticalChop:
                     {
                         // Straight overhead → straight down (hammer)
                         var (a0, a1) = Endpoints(-1.55f - OverheadWindupOvershoot, 1.4f);
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.32f);
-                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.119f), 0.18f);
-                        else              _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                        if (inTel)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.32f);
+                        }
+                        else if (inPause)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.Lerp(a0, a1, 0.119f), 0.18f);
+                        }
+                        else
+                        {
+                            _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                        }
                         break;
                     }
                     case ComboMotion.Thrust:
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.20f);
-                        else if (inPause) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2 * 0.8f, 0.18f);
-                        else              _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.42f);
+                        if (inTel)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.20f);
+                        }
+                        else if (inPause)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2 * 0.8f, 0.18f);
+                        }
+                        else
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.42f);
+                        }
                         break;
                     case ComboMotion.JoustDash:
-                        if (inTel)        _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.18f);
-                        else              _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.45f);
+                        if (inTel)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.18f);
+                        }
+                        else
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.45f);
+                        }
                         break;
                     case ComboMotion.Spin:
                         // Continuous rotation; 1 full revolution per held item useAnimation-ish window
                         _weaponRotation += 0.28f;
-                        if (_weaponRotation > MathHelper.TwoPi) _weaponRotation -= MathHelper.TwoPi;
+                        if (_weaponRotation > MathHelper.TwoPi)
+                        {
+                            _weaponRotation -= MathHelper.TwoPi;
+                        }
                         break;
                     case ComboMotion.IaidoDraw:
                     {
                         var (a0, a1) = Endpoints(1.2f, -0.5f);
-                        if (inTel) _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.15f); // weapon held low/behind
-                        else       _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);   // fast snap forward
+                        if (inTel)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.15f);  // weapon held low/behind
+                        }
+                        else
+                        {
+                            _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);  // fast snap forward
+                        }
                         break;
                     }
                     case ComboMotion.GroundSlam:
                     {
                         var (a0, a1) = Endpoints(-1.55f - OverheadWindupOvershoot, 1.5f);
-                        if (inTel) _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.25f);
-                        else       _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                        if (inTel)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.25f);
+                        }
+                        else
+                        {
+                            _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                        }
                         break;
                     }
                     case ComboMotion.LeapSlam:
                         // Wind up overhead, then carry the axe up-and-FORWARD (toward the player,
                         // ~1 o'clock facing right / ~11 facing left) through the airborne arc, and
                         // slam down hard as it descends / lands.
-                        if (inTel)                    _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.45f - OverheadWindupOvershoot, 0.30f);
-                        else if (NPC.velocity.Y < 0f) _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.9f, 0.20f);
-                        else                          _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.4f, 0.22f);
+                        if (inTel)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.45f - OverheadWindupOvershoot, 0.30f);
+                        }
+                        else if (NPC.velocity.Y < 0f)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.9f, 0.20f);
+                        }
+                        else
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.4f, 0.22f);
+                        }
                         break;
                     case ComboMotion.LeapThrust:
                         // Telegraph: dip the spear low-forward ("cocked" for the upcoming poke).
                         // Airborne rising: snap to horizontal — spear leveled at the player.
                         // Falling/landing: hold horizontal for the thrust contact moment.
-                        if (inTel)                    _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2 * 0.8f, 0.22f);
-                        else if (NPC.velocity.Y < 0f) _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.28f);
-                        else                          _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.50f);
+                        if (inTel)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2 * 0.8f, 0.22f);
+                        }
+                        else if (NPC.velocity.Y < 0f)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.28f);
+                        }
+                        else
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.50f);
+                        }
                         break;
                     case ComboMotion.ChargeChop:
                         // Carry the axe cocked back/up while charging; the chop is the next step.
@@ -6633,7 +7098,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private void UpdateSpearGrip()
         {
-            if (!DrawWeaponAsSpear) return;
+            if (!DrawWeaponAsSpear)
+            {
+                return;
+            }
 
             float target = 0.5f; // idle: gripped in the middle
             float ease = 0.25f;
@@ -6641,7 +7109,8 @@ namespace tsorcRevamp.NPCs.Puppets
             switch (Phase)
             {
                 case AttackPhase.SpearTelegraph:
-                    target = 0.4f; ease = 0.22f; // pull the head back a touch, ready to thrust
+                    target = 0.4f;
+                    ease = 0.22f; // pull the head back a touch, ready to thrust
                     break;
                 case AttackPhase.SpearAttack:
                 {
@@ -6651,10 +7120,12 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
                 }
                 case AttackPhase.MeleeComboTelegraph:
-                    target = 0.45f; ease = 0.22f;
+                    target = 0.45f;
+                    ease = 0.22f;
                     break;
                 case AttackPhase.MeleeComboPause:
-                    target = 0.5f; ease = 0.25f;
+                    target = 0.5f;
+                    ease = 0.25f;
                     break;
                 case AttackPhase.RangedTelegraph:
                 case AttackPhase.RangedAttack:
@@ -6666,7 +7137,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     // "the spear is pointing the wrong way." Pull the grip toward the base (like
                     // SpearAttack's extended pose) so the tip clearly leads toward the aim direction
                     // and the butt tucks in near the hand instead.
-                    target = 0.85f; ease = 0.25f;
+                    target = 0.85f;
+                    ease = 0.25f;
                     break;
                 case AttackPhase.MeleeComboAttack:
                 {
@@ -6679,7 +7151,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                     else if (motion == ComboMotion.Spin)
                     {
-                        target = 0.9f; ease = 0.3f; // held out near the base so the spear sweeps wide
+                        target = 0.9f;
+                        ease = 0.3f; // held out near the base so the spear sweeps wide
                     }
                     else
                     {
@@ -6722,9 +7195,19 @@ namespace tsorcRevamp.NPCs.Puppets
                     motion = $"{step.Motion}#{_meleeComboStepIndex}";
                 }
 
-                float t = _attackRuntimeV2.Active
-                    ? _attackRuntimeV2.StageProgress
-                    : _weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f;
+                // Swing progress 0..1: the V2 runtime reports it directly; the legacy path derives it
+                // from the countdown timer, and a zero max means "no swing in flight" -> finished.
+                float t = 1f;
+
+                if (_attackRuntimeV2.Active)
+                {
+                    t = _attackRuntimeV2.StageProgress;
+                }
+                else if (_weaponAnimMax > 0)
+                {
+                    t = 1f - (float)_weaponAnim / _weaponAnimMax;
+                }
+
                 int bodyRow = _puppet != null ? _puppet.bodyFrame.Y / FrameHeight : -1;
                 Vector2 handOff = _puppet != null ? (GetHandPosition() - NPC.Center) : Vector2.Zero;
                 bool composite = CompositeArmActive;
@@ -6753,9 +7236,18 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             float visualAngle = weaponRotation + MeleeWeaponRotationOffset * direction;
             float pitch = (1f - (float)Math.Sin(visualAngle)) / 2f;
-            if (pitch > 0.95f) return 1;
-            if (pitch > 0.70f) return 2;
-            if (pitch > 0.30f) return 3;
+            if (pitch > 0.95f)
+            {
+                return 1;
+            }
+            if (pitch > 0.70f)
+            {
+                return 2;
+            }
+            if (pitch > 0.30f)
+            {
+                return 3;
+            }
             return 4;
         }
 
@@ -6829,9 +7321,18 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             get
             {
-                int bodyRow = IsEchoStepSwinging || IsEchoStepFading
-                    ? BodyRowFromWeaponRotation(_echoStepRotation, _echoStepSwingDir)
-                    : IsEchoStepWalking ? 3 : 1;
+                // Same row choice as the echo-step draw: swing pose, else walk row 3, else stand row 1.
+                int bodyRow = 1;
+
+                if (IsEchoStepSwinging || IsEchoStepFading)
+                {
+                    bodyRow = BodyRowFromWeaponRotation(_echoStepRotation, _echoStepSwingDir);
+                }
+                else if (IsEchoStepWalking)
+                {
+                    bodyRow = 3;
+                }
+
                 Vector2 offset = bodyRow switch
                 {
                     1 => new Vector2(-8f, -9f),
@@ -6874,9 +7375,18 @@ namespace tsorcRevamp.NPCs.Puppets
             else if (MirrorMeleeSwingRotationByFacing)
             {
                 drawRotation = GetMeleeDrawRotation();
-                float naturalDeg = NPC.direction == 1
-                    ? (BladeFlipActive ? 45f : -45f)
-                    : (BladeFlipActive ? 135f : -135f);
+                // Blade's natural rest angle, mirrored by facing; the flip swaps which side it hangs.
+                float naturalDeg;
+
+                if (NPC.direction == 1)
+                {
+                    naturalDeg = BladeFlipActive ? 45f : -45f;
+                }
+                else
+                {
+                    naturalDeg = BladeFlipActive ? 135f : -135f;
+                }
+
                 float actualAngle = MathHelper.ToRadians(naturalDeg + MathHelper.ToDegrees(drawRotation));
                 return new Vector2((float)Math.Cos(actualAngle), (float)Math.Sin(actualAngle));
             }
@@ -6909,7 +7419,10 @@ namespace tsorcRevamp.NPCs.Puppets
         private void LogWeaponDebug()
         {
             int now = (int)Main.GameUpdateCount;
-            if (now - _lastWeaponDebugLogTick < 6) return; // ~10/sec — enough resolution, not spam
+            if (now - _lastWeaponDebugLogTick < 6)
+            {
+                return;  // ~10/sec — enough resolution, not spam
+            }
             _lastWeaponDebugLogTick = now;
             try
             {
@@ -7008,9 +7521,12 @@ namespace tsorcRevamp.NPCs.Puppets
             _puppet.eyeColor = PuppetEyeColor;
             _puppet.skinVariant = PuppetSkinVariant;
 
-            _puppet.armor[0] = new Item();  _puppet.armor[0].SetDefaults(HeadArmorItemType);
-            _puppet.armor[1] = new Item();  _puppet.armor[1].SetDefaults(BodyArmorItemType);
-            _puppet.armor[2] = new Item();  _puppet.armor[2].SetDefaults(LegsArmorItemType);
+            _puppet.armor[0] = new Item();
+            _puppet.armor[0].SetDefaults(HeadArmorItemType);
+            _puppet.armor[1] = new Item();
+            _puppet.armor[1].SetDefaults(BodyArmorItemType);
+            _puppet.armor[2] = new Item();
+            _puppet.armor[2].SetDefaults(LegsArmorItemType);
 
             SetPuppetDye(0, HeadArmorDyeItemType);
             SetPuppetDye(1, BodyArmorDyeItemType);
@@ -7068,14 +7584,23 @@ namespace tsorcRevamp.NPCs.Puppets
 
         private void ApplyAccessoryDye(Item accessory, int shader)
         {
-            if (accessory.shoeSlot > 0) _puppet.cShoe = shader;
+            if (accessory.shoeSlot > 0)
+            {
+                _puppet.cShoe = shader;
+            }
             if (accessory.shieldSlot > 0)
             {
                 _puppet.cShield = shader;
                 _puppet.cShieldFallback = shader;
             }
-            if (accessory.neckSlot > 0) _puppet.cNeck = shader;
-            if (accessory.type == ItemID.AngelHalo) _puppet.cAngelHalo = shader;
+            if (accessory.neckSlot > 0)
+            {
+                _puppet.cNeck = shader;
+            }
+            if (accessory.type == ItemID.AngelHalo)
+            {
+                _puppet.cAngelHalo = shader;
+            }
         }
 
         private void SyncPuppet()
@@ -7113,9 +7638,18 @@ namespace tsorcRevamp.NPCs.Puppets
                     && (_flight.Mode == FlightMode.Hover || _flight.Mode == FlightMode.Strafe);
                 // Reset to frame zero after landing. Otherwise the last open flight frame remains
                 // cached while walking, making grounded puppets look as though they are still gliding.
-                _puppet.wingFrame = !airborne ? 0
-                    : gliding ? 1
-                    : (int)(_flight.WingAnimPhase * 4f) % 4;
+                if (!airborne)
+                {
+                    _puppet.wingFrame = 0;
+                }
+                else if (gliding)
+                {
+                    _puppet.wingFrame = 1;
+                }
+                else
+                {
+                    _puppet.wingFrame = (int)(_flight.WingAnimPhase * 4f) % 4;
+                }
             }
             else
             {
@@ -7187,7 +7721,10 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 _frameCounter += Math.Abs(NPC.velocity.X) * 0.55f
                     * Math.Max(0f, WalkAnimationSpeedMultiplier);
-                if (_frameCounter >= 14f) _frameCounter = 0f;
+                if (_frameCounter >= 14f)
+                {
+                    _frameCounter = 0f;
+                }
             }
 
             // ── Body frame ────────────────────────────────────────────────────────
@@ -7345,7 +7882,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.Spin:
                         // Rotate body row to suggest motion; cycle Use1→Use3 by rotation phase
                         bodyRow = 1 + ((int)(_weaponRotation / MathHelper.PiOver2) & 3);
-                        if (bodyRow > 4) bodyRow = 4;
+                        if (bodyRow > 4)
+                        {
+                            bodyRow = 4;
+                        }
                         break;
                     case ComboMotion.IaidoDraw:
                         bodyRow = inTel ? 4 : 3;
@@ -7420,10 +7960,22 @@ namespace tsorcRevamp.NPCs.Puppets
             if (HasWings)
                 _flight ??= new EnemyFlightController(FlightConfig);
 
-            int primaryWeapon = MeleeWeaponItemType > 0 ? MeleeWeaponItemType
-                : RangedWeaponItemType > 0 ? RangedWeaponItemType
-                : SecondaryRangedWeaponItemType > 0 ? SecondaryRangedWeaponItemType
-                : MagicWeaponItemType;
+            // First configured weapon wins, in preference order; magic is the fallback.
+            int primaryWeapon = MagicWeaponItemType;
+
+            if (MeleeWeaponItemType > 0)
+            {
+                primaryWeapon = MeleeWeaponItemType;
+            }
+            else if (RangedWeaponItemType > 0)
+            {
+                primaryWeapon = RangedWeaponItemType;
+            }
+            else if (SecondaryRangedWeaponItemType > 0)
+            {
+                primaryWeapon = SecondaryRangedWeaponItemType;
+            }
+
 
             if (withPrimaryWeapon && primaryWeapon <= 0)
                 return false;
@@ -7526,7 +8078,10 @@ namespace tsorcRevamp.NPCs.Puppets
                 _puppet.isFirstFractalAfterImage = true;
                 for (int k = 0; k < NPC.oldPos.Length; k += AfterimageSampleStep)
                 {
-                    if (NPC.oldPos[k] == Vector2.Zero) continue;
+                    if (NPC.oldPos[k] == Vector2.Zero)
+                    {
+                        continue;
+                    }
                     _puppet.firstFractalAfterImageOpacity = AfterimageOpacity * (1f - (float)k / NPC.oldPos.Length);
                     Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.oldPos[k], 0f, Vector2.Zero, 0f, PuppetDrawScale);
                 }
@@ -7599,10 +8154,10 @@ namespace tsorcRevamp.NPCs.Puppets
             // toward the chest and push it toward the attacker so the defensive state reads clearly.
             if (_shielding)
                 drawPos += new Vector2(NPC.direction * 5f, -5f);
-            SpriteEffects fx = NPC.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffects spriteFx = NPC.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             drawInfo.DrawDataCache.Add(new DrawData(
-                _shieldDrawTex, drawPos, src, _layerDrawColor, 0f, origin, NPC.scale, fx, 0));
+                _shieldDrawTex, drawPos, src, _layerDrawColor, 0f, origin, NPC.scale, spriteFx, 0));
         }
 
         private static Texture2D _slashVFXTex;
@@ -7714,7 +8269,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Vector2 origin = sourceRectangle.Size() * 0.5f;
             float scale = reach / 30f * SlashVFXScale;
             bool flippedSwing = UseAlternateFlip && _comboSwingFlipped;
-            SpriteEffects fx = (NPC.direction > 0) ^ flippedSwing ? SpriteEffects.FlipVertically : SpriteEffects.None;
+            SpriteEffects spriteFx = (NPC.direction > 0) ^ flippedSwing ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
             float maxAlpha = SlashVFXOpacity;
             var alphaGradient = new Gradient<float>(
@@ -7726,7 +8281,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Color color = Lighting.GetColor(position.ToTileCoordinates()).MultiplyRGB(SlashVFXColor) * alphaGradient.GetValue(t);
 
             drawInfo.DrawDataCache.Add(new DrawData(
-                _slashVFXTex, position - Main.screenPosition, sourceRectangle, color, rotation, origin, scale, fx, 0));
+                _slashVFXTex, position - Main.screenPosition, sourceRectangle, color, rotation, origin, scale, spriteFx, 0));
         }
 
         internal void DrawWeaponToLayer(ref PlayerDrawSet drawInfo)
@@ -7771,7 +8326,10 @@ namespace tsorcRevamp.NPCs.Puppets
                 // Vanilla item textures are lazy-loaded; ensure they're in memory before drawing.
                 Main.instance.LoadItem(_heldItemType);
                 var texAsset = TextureAssets.Item[_heldItemType];
-                if (texAsset?.Value == null) return;
+                if (texAsset?.Value == null)
+                {
+                    return;
+                }
                 tex = texAsset.Value;
             }
             // A weapon that doubles as the melee weapon (e.g. a spear that also casts the primary-ranged
@@ -7835,9 +8393,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 if (_heldItemType == MagicWeaponItemType)
                 {
                     // Staves grip lower on the shaft (not centred) so the hand holds near the base.
-                    Vector2 mg = MagicGripNorm;
-                    float mgx = NPC.direction == 1 ? tex.Width * mg.X : tex.Width * (1f - mg.X);
-                    origin = new Vector2(mgx, tex.Height * mg.Y);
+                    Vector2 magicGrip = MagicGripNorm;
+                    float mgx = NPC.direction == 1 ? tex.Width * magicGrip.X : tex.Width * (1f - magicGrip.X);
+                    origin = new Vector2(mgx, tex.Height * magicGrip.Y);
                 }
                 else
                 {
@@ -7847,9 +8405,9 @@ namespace tsorcRevamp.NPCs.Puppets
             else if (holdingSpearNow)
             {
                 // Grip slides along the shaft (head→base) so the spear extends/retracts.
-                Vector2 gn = Vector2.Lerp(SpearHeadNorm, SpearBaseNorm, _spearGrip);
-                float gx = NPC.direction == 1 ? tex.Width * gn.X : tex.Width * (1f - gn.X);
-                origin = new Vector2(gx, tex.Height * gn.Y);
+                Vector2 gripNorm = Vector2.Lerp(SpearHeadNorm, SpearBaseNorm, _spearGrip);
+                float gx = NPC.direction == 1 ? tex.Width * gripNorm.X : tex.Width * (1f - gripNorm.X);
+                origin = new Vector2(gx, tex.Height * gripNorm.Y);
             }
             else
             {
@@ -7861,14 +8419,14 @@ namespace tsorcRevamp.NPCs.Puppets
                 origin = new Vector2(handleX, tex.Height * handleNorm.Y);
             }
 
-            SpriteEffects fx = NPC.direction == -1
+            SpriteEffects spriteFx = NPC.direction == -1
                 ? SpriteEffects.FlipHorizontally
                 : SpriteEffects.None;
             // Mirror single-bladed melee weapons (axes) for motions that swing opposite the
             // OverheadArc convention (e.g. UnderhandArc) so the blade edge leads instead of trails.
             // See BladeFlipActive / GetWeaponWorldDirection for the matching hit-detection math.
             if (!heldRangedLike && !holdingSpearNow && BladeFlipActive)
-                fx |= SpriteEffects.FlipVertically;
+                spriteFx |= SpriteEffects.FlipVertically;
 
             // Per-weapon angular correction for melee sprites whose blade/head diagonal doesn't
             // match the broadsword convention (handle lower-left → blade upper-right).  Applied to
@@ -7892,7 +8450,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 drawRotation,
                 origin,
                 NPC.scale * scale,
-                fx,
+                spriteFx,
                 0));
 
             // ── Debug snapshot + log (DebugMode only) ───────────────────────────────
@@ -7975,7 +8533,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     BackGripTargetWorld = _twoHandedBackGripTargetWorld,
                     BackGripError = _twoHandedBackGripError,
                     BladeArmed = _bladeArmed,
-                    SpriteEffects = fx.ToString(),
+                    SpriteEffects = spriteFx.ToString(),
                     BladeFlipActive = BladeFlipActive,
                 });
             }
@@ -8019,9 +8577,17 @@ namespace tsorcRevamp.NPCs.Puppets
             int   frameCount  = 3;
             int   frameHeight = tex.Height / frameCount;
             // Pick frame based on remaining charges.
-            int frame = _estusCharges >= (int)(EstusChargesMax * 0.6f) ? 0
-                      : _estusCharges >= (int)(EstusChargesMax * 0.3f) ? 1
-                      : 2;
+            int frame = 2;
+
+            if (_estusCharges >= (int)(EstusChargesMax * 0.6f))
+            {
+                frame = 0;
+            }
+            else if (_estusCharges >= (int)(EstusChargesMax * 0.3f))
+            {
+                frame = 1;
+            }
+
             Rectangle src = new Rectangle(0, frame * frameHeight, tex.Width, frameHeight);
 
             // Position: Use2 hand offset is (4, -8) from NPC.Center, scaled by direction.
@@ -8034,12 +8600,12 @@ namespace tsorcRevamp.NPCs.Puppets
             // -π/2 (= −90°) points the sprite's "top" to the right for a right-facing puppet.
             float rotation = MathHelper.PiOver2 * -NPC.direction;
 
-            SpriteEffects fx = NPC.direction == -1
+            SpriteEffects spriteFx = NPC.direction == -1
                 ? SpriteEffects.FlipHorizontally
                 : SpriteEffects.None;
 
             drawInfo.DrawDataCache.Add(new DrawData(tex, drawPos, src,
-                _layerDrawColor * 0.85f, rotation, origin, 0.75f, fx, 0));
+                _layerDrawColor * 0.85f, rotation, origin, 0.75f, spriteFx, 0));
         }
 
         /// <summary>
@@ -8139,7 +8705,10 @@ namespace tsorcRevamp.NPCs.Puppets
             get
             {
                 // Asymmetry is a property of the weapon in hand, so a swap to a symmetric one stops flipping.
-                if (!FrontHandWeapon.SingleBladed || !BladeFlipMasterEnable) return false;
+                if (!FrontHandWeapon.SingleBladed || !BladeFlipMasterEnable)
+                {
+                    return false;
+                }
                 if (!IsMeleeComboPhase || _activeMeleeComboIndex < 0 || _activeMeleeCombo.Steps == null
                     || _meleeComboStepIndex < 0 || _meleeComboStepIndex >= _activeMeleeCombo.Steps.Length)
                     return false;
@@ -8226,7 +8795,10 @@ namespace tsorcRevamp.NPCs.Puppets
                 ComboMotion.ApexDiveCleave  => (-1.3f, 1.25f),
                 _                           => (HoldRotation, HoldRotation),
             };
-            if (UseAlternateFlip && _comboSwingFlipped) (a0, a1) = (a1, a0);
+            if (UseAlternateFlip && _comboSwingFlipped)
+            {
+                (a0, a1) = (a1, a0);
+            }
             bool fixedCarryMotion = step.Motion == ComboMotion.LowAxeRun
                 || step.Motion == ComboMotion.RisingUppercutLeap;
             if (!fixedCarryMotion && (UseAimAdaptiveArc || AimSwingActive))

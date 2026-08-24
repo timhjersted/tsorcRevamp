@@ -654,7 +654,13 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                             AttackTimer = 0;
                             NPC.netUpdate = true;
                         }
-                        else { AttackPhase = 2; AttackTimer = 0; NPC.netUpdate = true; }
+                        else
+                        {
+                            AttackPhase = 2;
+                            AttackTimer = 0;
+                            NPC.netUpdate = true;
+                        }
+
                     }
                     break;
                 default: // recovery (no armor)
