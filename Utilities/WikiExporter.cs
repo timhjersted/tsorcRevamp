@@ -37,6 +37,25 @@ namespace tsorcRevamp.Utilities
             public IEnumerable<string> Conditions { get; init; }
         }
 
+        private sealed class WormGroup
+        {
+            public ModNPC Head { get; init; }
+            public List<ModNPC> Pieces { get; init; }
+        }
+
+        private sealed class Portrait
+        {
+            public Color[] Pixels { get; init; }
+            public int Width { get; init; }
+            public int Height { get; init; }
+        }
+
+        // NPCs that inherit an animated vanilla NPC but do not declare their own frame count.
+        private static readonly Dictionary<string, int> PortraitFrameCountOverrides = new Dictionary<string, int>
+        {
+            ["AncestralSpirit"] = 8
+        };
+
         public override CommandType Type => CommandType.Chat;
 
         public override string Command => "exportwikidata";
@@ -69,15 +88,19 @@ namespace tsorcRevamp.Utilities
 
                 List<ModItem> modItems = ModContent.GetContent<ModItem>().Where(item => item.Mod == Mod).ToList();
                 List<ModNPC> modNPCs = ModContent.GetContent<ModNPC>().Where(npc => npc.Mod == Mod).ToList();
+                List<WormGroup> wormGroups = BuildWormGroups(modNPCs);
+                HashSet<int> wormSegmentTypes = wormGroups.SelectMany(group => group.Pieces.Skip(1)).Select(npc => npc.Type).ToHashSet();
+                List<ModNPC> wikiNPCs = modNPCs.Where(npc => !wormSegmentTypes.Contains(npc.Type)).ToList();
+                Dictionary<int, WormGroup> wormGroupsByHeadType = wormGroups.ToDictionary(group => group.Head.Type);
                 Dictionary<int, ModItem> modItemsByType = modItems.ToDictionary(item => item.Type);
                 Dictionary<int, ModNPC> modNPCsByType = modNPCs.ToDictionary(npc => npc.Type);
                 Dictionary<int, List<DropSource>> itemDropSources = BuildItemDropSources(modItemsByType, modNPCsByType);
                 Dictionary<int, List<ShopSource>> itemShopSources = BuildItemShopSources(modItemsByType);
 
                 ExportItems(itemsFile, modItems, itemDropSources, itemShopSources);
-                ExportNPCs(npcsFile, modNPCs);
-                ExportPagesXml(xmlFile, modItems, modNPCs);
-                List<string> missingImages = ExportImages(imagesDirectory, modItems, modNPCs);
+                ExportNPCs(npcsFile, wikiNPCs);
+                ExportPagesXml(xmlFile, modItems, wikiNPCs);
+                List<string> missingImages = ExportImages(imagesDirectory, modItems, wikiNPCs, wormGroupsByHeadType);
 
                 string msg = $"Success! Data exported to:\n- {itemsFile}\n- {npcsFile}\n- {xmlFile}\n- {imagesDirectory}";
                 if (missingImages.Count > 0)
@@ -205,7 +228,7 @@ namespace tsorcRevamp.Utilities
             File.WriteAllText(filePath, builder.ToString(), Encoding.UTF8);
         }
 
-        private List<string> ExportImages(string imagesDirectory, IEnumerable<ModItem> modItems, IEnumerable<ModNPC> modNPCs)
+        private List<string> ExportImages(string imagesDirectory, IEnumerable<ModItem> modItems, IEnumerable<ModNPC> modNPCs, IReadOnlyDictionary<int, WormGroup> wormGroupsByHeadType)
         {
             Directory.CreateDirectory(imagesDirectory);
             var missingImages = new List<string>();
@@ -217,7 +240,14 @@ namespace tsorcRevamp.Utilities
 
             foreach (ModNPC modNPC in modNPCs)
             {
-                ExportNpcPortrait(imagesDirectory, modNPC, missingImages);
+                if (wormGroupsByHeadType.TryGetValue(modNPC.Type, out WormGroup wormGroup))
+                {
+                    ExportWormPortrait(imagesDirectory, wormGroup, missingImages);
+                }
+                else
+                {
+                    ExportNpcPortrait(imagesDirectory, modNPC, missingImages);
+                }
             }
 
             return missingImages;
@@ -248,35 +278,112 @@ namespace tsorcRevamp.Utilities
             string outputFileName = GetNpcImageFileName(modNPC);
             try
             {
-                Texture2D sourceTexture = TextureAssets.Npc[modNPC.Type].Value;
-                int frameCount = Math.Max(Main.npcFrameCount[modNPC.Type], 1);
-                int frameHeight = sourceTexture.Height / frameCount;
-                if (frameHeight <= 0)
-                {
-                    throw new InvalidOperationException("The NPC texture has no valid animation frame height.");
-                }
-
-                Color[] framePixels = new Color[sourceTexture.Width * frameHeight];
-                sourceTexture.GetData(0, new Rectangle(0, 0, sourceTexture.Width, frameHeight), framePixels, 0, framePixels.Length);
-                Rectangle visibleArea = GetVisibleArea(framePixels, sourceTexture.Width, frameHeight, padding: 2);
-
-                Color[] portraitPixels = new Color[visibleArea.Width * visibleArea.Height];
-                for (int y = 0; y < visibleArea.Height; y++)
-                {
-                    Array.Copy(framePixels, (visibleArea.Y + y) * sourceTexture.Width + visibleArea.X, portraitPixels, y * visibleArea.Width, visibleArea.Width);
-                }
-
-                using (var portrait = new Texture2D(Main.instance.GraphicsDevice, visibleArea.Width, visibleArea.Height))
-                using (FileStream output = File.Create(Path.Combine(imagesDirectory, outputFileName)))
-                {
-                    portrait.SetData(portraitPixels);
-                    portrait.SaveAsPng(output, portrait.Width, portrait.Height);
-                }
+                SavePortrait(imagesDirectory, outputFileName, CreateNpcPortrait(modNPC));
             }
             catch (Exception ex)
             {
                 missingImages.Add($"{outputFileName} (portrait export failed: {ex.Message})");
             }
+        }
+
+        private void ExportWormPortrait(string imagesDirectory, WormGroup wormGroup, List<string> missingImages)
+        {
+            string outputFileName = GetNpcImageFileName(wormGroup.Head);
+            try
+            {
+                List<Portrait> pieces = wormGroup.Pieces.Select(CreateNpcPortrait).ToList();
+                const int gap = 2;
+                int width = pieces.Sum(piece => piece.Width) + gap * (pieces.Count - 1);
+                int height = pieces.Max(piece => piece.Height);
+                var combinedPixels = new Color[width * height];
+                int x = 0;
+
+                foreach (Portrait piece in pieces)
+                {
+                    int y = (height - piece.Height) / 2;
+                    for (int row = 0; row < piece.Height; row++)
+                    {
+                        Array.Copy(piece.Pixels, row * piece.Width, combinedPixels, (y + row) * width + x, piece.Width);
+                    }
+                    x += piece.Width + gap;
+                }
+
+                SavePortrait(imagesDirectory, outputFileName, new Portrait { Pixels = combinedPixels, Width = width, Height = height });
+            }
+            catch (Exception ex)
+            {
+                missingImages.Add($"{outputFileName} (worm portrait export failed: {ex.Message})");
+            }
+        }
+
+        private Portrait CreateNpcPortrait(ModNPC modNPC)
+        {
+            Texture2D sourceTexture = TextureAssets.Npc[modNPC.Type].Value;
+            int frameCount = PortraitFrameCountOverrides.TryGetValue(modNPC.Name, out int frameCountOverride)
+                ? frameCountOverride
+                : Math.Max(Main.npcFrameCount[modNPC.Type], 1);
+            int frameHeight = sourceTexture.Height / frameCount;
+            if (frameHeight <= 0)
+            {
+                throw new InvalidOperationException("The NPC texture has no valid animation frame height.");
+            }
+
+            Color[] framePixels = new Color[sourceTexture.Width * frameHeight];
+            sourceTexture.GetData(0, new Rectangle(0, 0, sourceTexture.Width, frameHeight), framePixels, 0, framePixels.Length);
+            Rectangle visibleArea = GetVisibleArea(framePixels, sourceTexture.Width, frameHeight, padding: 2);
+            var portraitPixels = new Color[visibleArea.Width * visibleArea.Height];
+            for (int y = 0; y < visibleArea.Height; y++)
+            {
+                Array.Copy(framePixels, (visibleArea.Y + y) * sourceTexture.Width + visibleArea.X, portraitPixels, y * visibleArea.Width, visibleArea.Width);
+            }
+
+            return new Portrait { Pixels = portraitPixels, Width = visibleArea.Width, Height = visibleArea.Height };
+        }
+
+        private static void SavePortrait(string imagesDirectory, string outputFileName, Portrait portrait)
+        {
+            using (var texture = new Texture2D(Main.instance.GraphicsDevice, portrait.Width, portrait.Height))
+            using (FileStream output = File.Create(Path.Combine(imagesDirectory, outputFileName)))
+            {
+                texture.SetData(portrait.Pixels);
+                texture.SaveAsPng(output, texture.Width, texture.Height);
+            }
+        }
+
+        private static List<WormGroup> BuildWormGroups(IEnumerable<ModNPC> modNPCs)
+        {
+            List<ModNPC> allNPCs = modNPCs.ToList();
+            var wormGroups = new List<WormGroup>();
+
+            foreach (ModNPC head in allNPCs.Where(npc => npc.Name.EndsWith("Head", StringComparison.Ordinal)))
+            {
+                string prefix = head.Name.Substring(0, head.Name.Length - "Head".Length);
+                ModNPC tail = allNPCs.FirstOrDefault(npc => npc.Name == prefix + "Tail");
+                if (tail == null)
+                {
+                    continue;
+                }
+
+                List<ModNPC> bodyPieces = allNPCs
+                    .Where(npc => npc.Name.StartsWith(prefix, StringComparison.Ordinal)
+                        && npc.Name != head.Name
+                        && npc.Name != tail.Name
+                        && (npc.Name.StartsWith(prefix + "Body", StringComparison.Ordinal) || npc.Name == prefix + "Legs"))
+                    .OrderBy(npc => npc.Name == prefix + "Body" ? 0 : npc.Name == prefix + "Legs" ? 1 : 2)
+                    .ThenBy(npc => npc.Name, StringComparer.Ordinal)
+                    .ToList();
+
+                if (bodyPieces.Count == 0)
+                {
+                    continue;
+                }
+
+                bodyPieces.Insert(0, head);
+                bodyPieces.Add(tail);
+                wormGroups.Add(new WormGroup { Head = head, Pieces = bodyPieces });
+            }
+
+            return wormGroups;
         }
 
         private static Rectangle GetVisibleArea(Color[] pixels, int width, int height, int padding)
