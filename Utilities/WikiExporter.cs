@@ -11,6 +11,8 @@ using Terraria.Map;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria.GameContent;
 
 namespace tsorcRevamp.Utilities
 {
@@ -215,7 +217,7 @@ namespace tsorcRevamp.Utilities
 
             foreach (ModNPC modNPC in modNPCs)
             {
-                ExportImageFile(imagesDirectory, modNPC.Texture, GetNpcImageFileName(modNPC), missingImages);
+                ExportNpcPortrait(imagesDirectory, modNPC, missingImages);
             }
 
             return missingImages;
@@ -239,6 +241,77 @@ namespace tsorcRevamp.Utilities
             }
 
             File.Copy(sourceFile, Path.Combine(imagesDirectory, outputFileName), overwrite: true);
+        }
+
+        private void ExportNpcPortrait(string imagesDirectory, ModNPC modNPC, List<string> missingImages)
+        {
+            string outputFileName = GetNpcImageFileName(modNPC);
+            try
+            {
+                Texture2D sourceTexture = TextureAssets.Npc[modNPC.Type].Value;
+                int frameCount = Math.Max(Main.npcFrameCount[modNPC.Type], 1);
+                int frameHeight = sourceTexture.Height / frameCount;
+                if (frameHeight <= 0)
+                {
+                    throw new InvalidOperationException("The NPC texture has no valid animation frame height.");
+                }
+
+                Color[] framePixels = new Color[sourceTexture.Width * frameHeight];
+                sourceTexture.GetData(0, new Rectangle(0, 0, sourceTexture.Width, frameHeight), framePixels, 0, framePixels.Length);
+                Rectangle visibleArea = GetVisibleArea(framePixels, sourceTexture.Width, frameHeight, padding: 2);
+
+                Color[] portraitPixels = new Color[visibleArea.Width * visibleArea.Height];
+                for (int y = 0; y < visibleArea.Height; y++)
+                {
+                    Array.Copy(framePixels, (visibleArea.Y + y) * sourceTexture.Width + visibleArea.X, portraitPixels, y * visibleArea.Width, visibleArea.Width);
+                }
+
+                using (var portrait = new Texture2D(Main.instance.GraphicsDevice, visibleArea.Width, visibleArea.Height))
+                using (FileStream output = File.Create(Path.Combine(imagesDirectory, outputFileName)))
+                {
+                    portrait.SetData(portraitPixels);
+                    portrait.SaveAsPng(output, portrait.Width, portrait.Height);
+                }
+            }
+            catch (Exception ex)
+            {
+                missingImages.Add($"{outputFileName} (portrait export failed: {ex.Message})");
+            }
+        }
+
+        private static Rectangle GetVisibleArea(Color[] pixels, int width, int height, int padding)
+        {
+            int minX = width;
+            int minY = height;
+            int maxX = -1;
+            int maxY = -1;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if (pixels[y * width + x].A == 0)
+                    {
+                        continue;
+                    }
+
+                    minX = Math.Min(minX, x);
+                    minY = Math.Min(minY, y);
+                    maxX = Math.Max(maxX, x);
+                    maxY = Math.Max(maxY, y);
+                }
+            }
+
+            if (maxX < 0)
+            {
+                return new Rectangle(0, 0, width, height);
+            }
+
+            int left = Math.Max(0, minX - padding);
+            int top = Math.Max(0, minY - padding);
+            int right = Math.Min(width - 1, maxX + padding);
+            int bottom = Math.Min(height - 1, maxY + padding);
+            return new Rectangle(left, top, right - left + 1, bottom - top + 1);
         }
 
         private static string GetItemImageFileName(ModItem modItem)
