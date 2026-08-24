@@ -61,6 +61,10 @@ namespace tsorcRevamp.Utilities
                     ? Path.Combine(workspacePath, "wiki_pages_import.xml")
                     : Path.Combine(savePath, "tsorc_wiki_pages_import.xml");
 
+                string imagesDirectory = workspaceExists
+                    ? Path.Combine(workspacePath, "images")
+                    : Path.Combine(savePath, "tsorc_wiki_images");
+
                 List<ModItem> modItems = ModContent.GetContent<ModItem>().Where(item => item.Mod == Mod).ToList();
                 List<ModNPC> modNPCs = ModContent.GetContent<ModNPC>().Where(npc => npc.Mod == Mod).ToList();
                 Dictionary<int, ModItem> modItemsByType = modItems.ToDictionary(item => item.Type);
@@ -71,8 +75,17 @@ namespace tsorcRevamp.Utilities
                 ExportItems(itemsFile, modItems, itemDropSources, itemShopSources);
                 ExportNPCs(npcsFile, modNPCs);
                 ExportPagesXml(xmlFile, modItems, modNPCs);
+                List<string> missingImages = ExportImages(imagesDirectory, modItems, modNPCs);
 
-                string msg = $"Success! Data exported to:\n- {itemsFile}\n- {npcsFile}\n- {xmlFile}";
+                string msg = $"Success! Data exported to:\n- {itemsFile}\n- {npcsFile}\n- {xmlFile}\n- {imagesDirectory}";
+                if (missingImages.Count > 0)
+                {
+                    msg += $"\n{missingImages.Count} image file(s) could not be found in the source folder. See client.log for the list.";
+                    foreach (string missingImage in missingImages)
+                    {
+                        Mod.Logger.Warn($"Wiki image export skipped: {missingImage}");
+                    }
+                }
                 caller.Reply(msg, Color.Lime);
             }
             catch (Exception ex)
@@ -105,6 +118,7 @@ namespace tsorcRevamp.Utilities
                 builder.AppendLine($"    [\"{escapedDisplayName}\"] = {{");
                 builder.AppendLine($"        name = \"{escapedDisplayName}\",");
                 builder.AppendLine($"        internalName = \"{escapedInternalName}\",");
+                builder.AppendLine($"        image = \"{GetItemImageFileName(modItem)}\",");
                 builder.AppendLine($"        type = \"{itemType}\",");
                 builder.AppendLine($"        damage = {item.damage},");
                 builder.AppendLine($"        defense = {item.defense},");
@@ -165,6 +179,7 @@ namespace tsorcRevamp.Utilities
                 builder.AppendLine($"    [\"{escapedDisplayName}\"] = {{");
                 builder.AppendLine($"        name = \"{escapedDisplayName}\",");
                 builder.AppendLine($"        internalName = \"{escapedInternalName}\",");
+                builder.AppendLine($"        image = \"{GetNpcImageFileName(modNPC)}\",");
                 builder.AppendLine($"        category = \"{category}\",");
                 builder.AppendLine($"        lifeMax = {npc.lifeMax},");
                 builder.AppendLine($"        defense = {npc.defense},");
@@ -186,6 +201,54 @@ namespace tsorcRevamp.Utilities
 
             builder.AppendLine("}");
             File.WriteAllText(filePath, builder.ToString(), Encoding.UTF8);
+        }
+
+        private List<string> ExportImages(string imagesDirectory, IEnumerable<ModItem> modItems, IEnumerable<ModNPC> modNPCs)
+        {
+            Directory.CreateDirectory(imagesDirectory);
+            var missingImages = new List<string>();
+
+            foreach (ModItem modItem in modItems)
+            {
+                ExportImageFile(imagesDirectory, modItem.Texture, GetItemImageFileName(modItem), missingImages);
+            }
+
+            foreach (ModNPC modNPC in modNPCs)
+            {
+                ExportImageFile(imagesDirectory, modNPC.Texture, GetNpcImageFileName(modNPC), missingImages);
+            }
+
+            return missingImages;
+        }
+
+        private void ExportImageFile(string imagesDirectory, string texturePath, string outputFileName, List<string> missingImages)
+        {
+            const string modAssetPrefix = "tsorcRevamp/";
+            if (string.IsNullOrWhiteSpace(texturePath) || !texturePath.StartsWith(modAssetPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                missingImages.Add($"{outputFileName} (texture: {texturePath ?? "<none>"})");
+                return;
+            }
+
+            string relativeTexturePath = texturePath.Substring(modAssetPrefix.Length).Replace('/', Path.DirectorySeparatorChar);
+            string sourceFile = Path.Combine(Main.SavePath, "ModSources", "tsorcRevamp", relativeTexturePath + ".png");
+            if (!File.Exists(sourceFile))
+            {
+                missingImages.Add($"{outputFileName} (expected: {sourceFile})");
+                return;
+            }
+
+            File.Copy(sourceFile, Path.Combine(imagesDirectory, outputFileName), overwrite: true);
+        }
+
+        private static string GetItemImageFileName(ModItem modItem)
+        {
+            return $"TSORC_Item_{modItem.Name}.png";
+        }
+
+        private static string GetNpcImageFileName(ModNPC modNPC)
+        {
+            return $"TSORC_NPC_{modNPC.Name}.png";
         }
 
         private void ExportPagesXml(string filePath, IEnumerable<ModItem> modItems, IEnumerable<ModNPC> modNPCs)
