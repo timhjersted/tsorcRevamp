@@ -70,7 +70,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     chance = 10f;
                 }
 
-                if (tsorcRevampWorld.RemixMap && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneUnderworldHeight) && spawnInfo.SpawnTileType == TileID.Titanstone && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.StarlitHeavenWallpaper) //Remix map, Dark Cloud Temple
+                if (tsorcRevampWorld.RemixMap && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneUnderworldHeight) && spawnInfo.SpawnTileType == TileID.Titanstone && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.ObsidianBrickUnsafe) //Remix map, Dark Cloud Temple
                 {
                     chance = 10f;
                 }

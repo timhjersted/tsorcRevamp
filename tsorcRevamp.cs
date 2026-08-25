@@ -897,6 +897,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<SlograBag>()                , ModContent.NPCType<Slogra>()                                                      },
                 {   ModContent.ItemType<GaibonBag>()                , ModContent.NPCType<Gaibon>()                                                      },
                 {   ModContent.ItemType<JungleWyvernBag>()          , ModContent.NPCType<JungleWyvernHead>()                                            },
+                {   ModContent.ItemType<AncestralSpiritBag>()       , ModContent.NPCType<AncestralSpirit>()                                             },
                 {   ModContent.ItemType<AncientDemonBag>()          , ModContent.NPCType<AncientDemon>()                                                },
                 {   ModContent.ItemType<HeroOfLumeliaBag>()         , ModContent.NPCType<HeroofLumelia>()                                               },
                 {   ModContent.ItemType<TheRageBag>()               , ModContent.NPCType<TheRage>()                                                     },
