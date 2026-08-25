@@ -1,0 +1,76 @@
+﻿Internal name	Display name	Reason
+AttraidiesApparition	Attraidies	Explicit spoiler, prototype, boss phase, or helper exclusion
+AttraidiesFragment	Attraidies Fragment	Explicit spoiler, prototype, boss phase, or helper exclusion
+AttraidiesIllusion	Attraidies Illusion	Explicit spoiler, prototype, boss phase, or helper exclusion
+AttraidiesManifestation	Attraidies Manifestation	Explicit spoiler, prototype, boss phase, or helper exclusion
+AttraidiesMimic	Attraidies	Explicit spoiler, prototype, boss phase, or helper exclusion
+AttraidiesShield	Attraidies Shield	Explicit spoiler, prototype, boss phase, or helper exclusion
+BrokenOkiku	Mindflayer Illusion	Explicit spoiler, prototype, boss phase, or helper exclusion
+DarkCloudMirror	Dark Cloud Mirror	Hidden from the Bestiary
+DarkDragonMask	Attraidies	Explicit spoiler, prototype, boss phase, or helper exclusion
+DarkUltimaWeapon	Dark Ultima Weapon	Hidden from the Bestiary
+DemonWheel	Demon Wheel	Hidden from the Bestiary
+DestroyerLaserProbe	Laser Probe	Explicit spoiler, prototype, boss phase, or helper exclusion
+GaibonFireball	Gaibon Fireball	Hidden from the Bestiary
+GhostDragonBody	Ghost Wyvern	Worm segment; represented by its head when applicable
+GhostDragonBody2	Ghost Wyvern	Worm segment; represented by its head when applicable
+GhostDragonBody3	Ghost Wyvern	Worm segment; represented by its head when applicable
+GhostDragonHead	Ghost Wyvern	Explicit spoiler, prototype, boss phase, or helper exclusion
+GhostDragonLegs	Ghost Wyvern	Worm segment; represented by its head when applicable
+GhostDragonTail	Ghost Wyvern	Worm segment; represented by its head when applicable
+HellkiteDragonBody	Hellkite Dragon	Worm segment; represented by its head when applicable
+HellkiteDragonBody2	Hellkite Dragon	Worm segment; represented by its head when applicable
+HellkiteDragonBody3	Hellkite Dragon	Worm segment; represented by its head when applicable
+HellkiteDragonLegs	Hellkite Dragon	Worm segment; represented by its head when applicable
+HellkiteDragonTail	Hellkite Dragon	Worm segment; represented by its head when applicable
+JungleWyvernBody	Ancient Jungle Wyvern	Worm segment; represented by its head when applicable
+JungleWyvernBody2	Ancient Jungle Wyvern	Worm segment; represented by its head when applicable
+JungleWyvernBody3	Ancient Jungle Wyvern	Worm segment; represented by its head when applicable
+JungleWyvernJuvenileBody	Jungle Wyvern Juvenile	Worm segment; represented by its head when applicable
+JungleWyvernJuvenileBody2	Jungle Wyvern Juvenile	Worm segment; represented by its head when applicable
+JungleWyvernJuvenileBody3	Jungle Wyvern Juvenile	Worm segment; represented by its head when applicable
+JungleWyvernJuvenileLegs	Jungle Wyvern Juvenile	Worm segment; represented by its head when applicable
+JungleWyvernJuvenileTail	Jungle Wyvern Juvenile	Worm segment; represented by its head when applicable
+JungleWyvernLegs	Ancient Jungle Wyvern	Worm segment; represented by its head when applicable
+JungleWyvernTail	Ancient Jungle Wyvern	Worm segment; represented by its head when applicable
+LichKingSerpentBody	Lich King Serpent	Worm segment; represented by its head when applicable
+LichKingSerpentTail	Lich King Serpent	Worm segment; represented by its head when applicable
+MarilithDeath	Fire Fiend Marilith	Explicit spoiler, prototype, boss phase, or helper exclusion
+MarilithIntro	?????	Explicit spoiler, prototype, boss phase, or helper exclusion
+MarilithSeeker	Marilith Seeker	Explicit spoiler, prototype, boss phase, or helper exclusion
+MarilithSpiritTwin	Marilith Spirit Twin	Explicit spoiler, prototype, boss phase, or helper exclusion
+MechaDragonBody	Wyvern Mage Disciple	Worm segment; represented by its head when applicable
+MechaDragonBody2	Wyvern Mage Disciple	Worm segment; represented by its head when applicable
+MechaDragonBody3	Wyvern Mage Disciple	Worm segment; represented by its head when applicable
+MechaDragonHead	Wyvern Mage Disciple	Explicit spoiler, prototype, boss phase, or helper exclusion
+MechaDragonLegs	Wyvern Mage Disciple	Worm segment; represented by its head when applicable
+MechaDragonTail	Wyvern Mage Disciple	Worm segment; represented by its head when applicable
+Okiku	Mindflayer Illusion	Explicit spoiler, prototype, boss phase, or helper exclusion
+ParasyticWormBody	Parasytic Worm	Worm segment; represented by its head when applicable
+ParasyticWormTail	Parasytic Worm	Worm segment; represented by its head when applicable
+PinwheelFireball	PinwheelFireball	Hidden from the Bestiary
+PrimeBeam	Prime Beam	Explicit spoiler, prototype, boss phase, or helper exclusion
+PrimeBuzzsaw	Prime Buzzsaw	Explicit spoiler, prototype, boss phase, or helper exclusion
+PrimeGatling	Prime Gatling	Explicit spoiler, prototype, boss phase, or helper exclusion
+PrimeIntro	Prime Intro	Explicit spoiler, prototype, boss phase, or helper exclusion
+PrimeIon	Prime Ion	Explicit spoiler, prototype, boss phase, or helper exclusion
+PrimeLaserProbe	Laser Probe	Explicit spoiler, prototype, boss phase, or helper exclusion
+PrimeSiege	Prime Siege	Explicit spoiler, prototype, boss phase, or helper exclusion
+PrimeWelder	Prime Welder	Explicit spoiler, prototype, boss phase, or helper exclusion
+SeathTheScalelessBody	Seath the Scaleless	Worm segment; represented by its head when applicable
+SeathTheScalelessBody2	Seath the Scaleless	Worm segment; represented by its head when applicable
+SeathTheScalelessBody3	Seath the Scaleless	Worm segment; represented by its head when applicable
+SeathTheScalelessLegs	Seath the Scaleless	Worm segment; represented by its head when applicable
+SeathTheScalelessTail	Seath the Scaleless	Worm segment; represented by its head when applicable
+SerpentOfTheAbyssBody	Serpent of the Abyss	Worm segment; represented by its head when applicable
+SerpentOfTheAbyssTail	Serpent of the Abyss	Worm segment; represented by its head when applicable
+SerrisBody	Serris	Worm segment; represented by its head when applicable
+SerrisTail	Serris	Worm segment; represented by its head when applicable
+ShadowDragonBody	Shadow Dragon	Worm segment; represented by its head when applicable
+ShadowDragonBody2	Shadow Dragon	Worm segment; represented by its head when applicable
+ShadowDragonBody3	Shadow Dragon	Worm segment; represented by its head when applicable
+ShadowDragonHead	Shadow Dragon	Explicit spoiler, prototype, boss phase, or helper exclusion
+ShadowDragonLegs	Shadow Dragon	Worm segment; represented by its head when applicable
+ShadowDragonTail	Shadow Dragon	Worm segment; represented by its head when applicable
+SoulOfCinder	Gwyn, Lord of Cinder	Explicit spoiler, prototype, boss phase, or helper exclusion
+ViciousSpit	Vicious Spit	Hidden from the Bestiary

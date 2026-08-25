@@ -66,6 +66,37 @@ namespace tsorcRevamp.Utilities
             ["SerrisHead"] = "Serris_Portrait.png"
         };
 
+        // Internal combat helpers, unused prototypes, and spoiler forms that should never have standalone wiki pages.
+        private static readonly HashSet<string> ExcludedWikiNPCs = new HashSet<string>
+        {
+            "AttraidiesMimic",
+            "DarkDragonMask",
+            "AttraidiesApparition",
+            "AttraidiesFragment",
+            "AttraidiesShield",
+            "AttraidiesIllusion",
+            "AttraidiesManifestation",
+            "MarilithDeath",
+            "MarilithIntro",
+            "MarilithSeeker",
+            "MarilithSpiritTwin",
+            "SoulOfCinder",
+            "DestroyerLaserProbe",
+            "PrimeLaserProbe",
+            "PrimeIntro",
+            "PrimeBeam",
+            "PrimeBuzzsaw",
+            "PrimeGatling",
+            "PrimeIon",
+            "PrimeSiege",
+            "PrimeWelder",
+            "BrokenOkiku",
+            "Okiku",
+            "GhostDragonHead",
+            "MechaDragonHead",
+            "ShadowDragonHead"
+        };
+
         public override CommandType Type => CommandType.Chat;
 
         public override string Command => "exportwikidata";
@@ -96,29 +127,47 @@ namespace tsorcRevamp.Utilities
                     ? Path.Combine(workspacePath, "images")
                     : Path.Combine(savePath, "tsorc_wiki_images");
 
+                string uploadBundleDirectory = workspaceExists
+                    ? Path.Combine(workspacePath, $"upload-images-{DateTime.Now:yyyyMMdd-HHmmss}")
+                    : Path.Combine(savePath, $"tsorc_wiki_upload_images_{DateTime.Now:yyyyMMdd-HHmmss}");
+
+                string excludedNpcsFile = workspaceExists
+                    ? Path.Combine(workspacePath, "wiki_excluded_npcs.txt")
+                    : Path.Combine(savePath, "tsorc_wiki_excluded_npcs.txt");
+
                 List<ModItem> modItems = ModContent.GetContent<ModItem>().Where(item => item.Mod == Mod).ToList();
                 List<ModNPC> modNPCs = ModContent.GetContent<ModNPC>().Where(npc => npc.Mod == Mod).ToList();
                 List<WormGroup> wormGroups = BuildWormGroups(modNPCs);
                 HashSet<int> wormSegmentTypes = wormGroups.SelectMany(group => group.Pieces.Skip(1)).Select(npc => npc.Type).ToHashSet();
-                List<ModNPC> wikiNPCs = modNPCs.Where(npc => !wormSegmentTypes.Contains(npc.Type)).ToList();
-                Dictionary<int, WormGroup> wormGroupsByHeadType = wormGroups.ToDictionary(group => group.Head.Type);
+                List<ModNPC> wikiNPCs = modNPCs.Where(ShouldExportNpc).Where(npc => !wormSegmentTypes.Contains(npc.Type)).ToList();
                 Dictionary<int, ModItem> modItemsByType = modItems.ToDictionary(item => item.Type);
-                Dictionary<int, ModNPC> modNPCsByType = modNPCs.ToDictionary(npc => npc.Type);
-                Dictionary<int, List<DropSource>> itemDropSources = BuildItemDropSources(modItemsByType, modNPCsByType);
+                Dictionary<int, ModNPC> wikiNPCsByType = wikiNPCs.ToDictionary(npc => npc.Type);
+                EnsureUniqueWikiPageNames(modItems, wikiNPCs);
+                ExportExcludedNpcs(excludedNpcsFile, modNPCs, wikiNPCs, wormSegmentTypes);
+                Dictionary<int, List<DropSource>> itemDropSources = BuildItemDropSources(modItemsByType, wikiNPCsByType);
                 Dictionary<int, List<ShopSource>> itemShopSources = BuildItemShopSources(modItemsByType);
 
                 ExportItems(itemsFile, modItems, itemDropSources, itemShopSources);
                 ExportNPCs(npcsFile, wikiNPCs);
                 ExportPagesXml(xmlFile, modItems, wikiNPCs);
-                List<string> missingImages = ExportImages(imagesDirectory, modItems, wikiNPCs, wormGroupsByHeadType);
+                List<string> missingImages = ExportImages(imagesDirectory, modItems, wikiNPCs);
+                List<string> missingBundleImages = ExportUploadBundle(uploadBundleDirectory, imagesDirectory, modItems, wikiNPCs);
 
-                string msg = $"Success! Data exported to:\n- {itemsFile}\n- {npcsFile}\n- {xmlFile}\n- {imagesDirectory}";
+                string msg = $"Success! Data exported to:\n- {itemsFile}\n- {npcsFile}\n- {xmlFile}\n- {imagesDirectory}\n- Clean upload bundle: {uploadBundleDirectory}\n- Excluded NPC audit: {excludedNpcsFile}";
                 if (missingImages.Count > 0)
                 {
                     msg += $"\n{missingImages.Count} image file(s) could not be found in the source folder. See client.log for the list.";
                     foreach (string missingImage in missingImages)
                     {
                         Mod.Logger.Warn($"Wiki image export skipped: {missingImage}");
+                    }
+                }
+                if (missingBundleImages.Count > 0)
+                {
+                    msg += $"\n{missingBundleImages.Count} image file(s) were unavailable for the upload bundle. See client.log for the list.";
+                    foreach (string missingImage in missingBundleImages)
+                    {
+                        Mod.Logger.Warn($"Wiki upload bundle skipped: {missingImage}");
                     }
                 }
                 caller.Reply(msg, Color.Lime);
@@ -150,9 +199,11 @@ namespace tsorcRevamp.Utilities
                 string rarity = GetRarityName(item.rare);
                 string tooltip = GetTooltipText(item);
 
-                builder.AppendLine($"    [\"{escapedDisplayName}\"] = {{");
+                string wikiName = GetWikiPageName(displayName, modItem.Name);
+                builder.AppendLine($"    [\"{escapedInternalName}\"] = {{");
                 builder.AppendLine($"        name = \"{escapedDisplayName}\",");
                 builder.AppendLine($"        internalName = \"{escapedInternalName}\",");
+                builder.AppendLine($"        wikiName = \"{EscapeLua(wikiName)}\",");
                 builder.AppendLine($"        image = \"{GetItemImageFileName(modItem)}\",");
                 builder.AppendLine($"        type = \"{itemType}\",");
                 builder.AppendLine($"        damage = {item.damage},");
@@ -211,9 +262,11 @@ namespace tsorcRevamp.Utilities
                 string category = npc.friendly ? (npc.townNPC ? "Town NPC" : "Friendly NPC") : (npc.boss ? "Boss" : "Enemy");
                 float kbResist = 1f - npc.knockBackResist;
 
-                builder.AppendLine($"    [\"{escapedDisplayName}\"] = {{");
+                string wikiName = GetWikiPageName(displayName, modNPC.Name);
+                builder.AppendLine($"    [\"{escapedInternalName}\"] = {{");
                 builder.AppendLine($"        name = \"{escapedDisplayName}\",");
                 builder.AppendLine($"        internalName = \"{escapedInternalName}\",");
+                builder.AppendLine($"        wikiName = \"{EscapeLua(wikiName)}\",");
                 builder.AppendLine($"        image = \"{GetNpcImageFileName(modNPC)}\",");
                 builder.AppendLine($"        category = \"{category}\",");
                 builder.AppendLine($"        lifeMax = {npc.lifeMax},");
@@ -238,14 +291,14 @@ namespace tsorcRevamp.Utilities
             File.WriteAllText(filePath, builder.ToString(), Encoding.UTF8);
         }
 
-        private List<string> ExportImages(string imagesDirectory, IEnumerable<ModItem> modItems, IEnumerable<ModNPC> modNPCs, IReadOnlyDictionary<int, WormGroup> wormGroupsByHeadType)
+        private List<string> ExportImages(string imagesDirectory, IEnumerable<ModItem> modItems, IEnumerable<ModNPC> modNPCs)
         {
             Directory.CreateDirectory(imagesDirectory);
             var missingImages = new List<string>();
 
             foreach (ModItem modItem in modItems)
             {
-                ExportImageFile(imagesDirectory, modItem.Texture, GetItemImageFileName(modItem), missingImages);
+                ExportItemImage(imagesDirectory, modItem, missingImages);
             }
 
             foreach (ModNPC modNPC in modNPCs)
@@ -255,37 +308,65 @@ namespace tsorcRevamp.Utilities
                     continue;
                 }
 
-                if (wormGroupsByHeadType.TryGetValue(modNPC.Type, out WormGroup wormGroup))
-                {
-                    ExportWormPortrait(imagesDirectory, wormGroup, missingImages);
-                }
-                else
-                {
-                    ExportNpcPortrait(imagesDirectory, modNPC, missingImages);
-                }
+                ExportNpcPortrait(imagesDirectory, modNPC, missingImages);
             }
 
             return missingImages;
         }
 
-        private void ExportImageFile(string imagesDirectory, string texturePath, string outputFileName, List<string> missingImages)
+        private List<string> ExportUploadBundle(string bundleDirectory, string imagesDirectory, IEnumerable<ModItem> modItems, IEnumerable<ModNPC> modNPCs)
+        {
+            Directory.CreateDirectory(bundleDirectory);
+            List<string> requiredImages = modItems.Select(GetItemImageFileName)
+                .Concat(modNPCs.Select(GetNpcImageFileName))
+                .OrderBy(fileName => fileName, StringComparer.Ordinal)
+                .ToList();
+            var missingImages = new List<string>();
+
+            foreach (string fileName in requiredImages)
+            {
+                string sourceFile = Path.Combine(imagesDirectory, fileName);
+                if (!File.Exists(sourceFile))
+                {
+                    missingImages.Add(fileName);
+                    continue;
+                }
+
+                File.Copy(sourceFile, Path.Combine(bundleDirectory, fileName), overwrite: true);
+            }
+
+            File.WriteAllLines(Path.Combine(bundleDirectory, "upload-manifest.txt"), requiredImages, Encoding.UTF8);
+            return missingImages;
+        }
+
+        private void ExportItemImage(string imagesDirectory, ModItem modItem, List<string> missingImages)
         {
             const string modAssetPrefix = "tsorcRevamp/";
-            if (string.IsNullOrWhiteSpace(texturePath) || !texturePath.StartsWith(modAssetPrefix, StringComparison.OrdinalIgnoreCase))
+            string outputFileName = GetItemImageFileName(modItem);
+            string texturePath = modItem.Texture;
+            if (!string.IsNullOrWhiteSpace(texturePath) && texturePath.StartsWith(modAssetPrefix, StringComparison.OrdinalIgnoreCase))
             {
-                missingImages.Add($"{outputFileName} (texture: {texturePath ?? "<none>"})");
-                return;
+                string relativeTexturePath = texturePath.Substring(modAssetPrefix.Length).Replace('/', Path.DirectorySeparatorChar);
+                string sourceFile = Path.Combine(Main.SavePath, "ModSources", "tsorcRevamp", relativeTexturePath + ".png");
+                if (File.Exists(sourceFile))
+                {
+                    File.Copy(sourceFile, Path.Combine(imagesDirectory, outputFileName), overwrite: true);
+                    return;
+                }
             }
 
-            string relativeTexturePath = texturePath.Substring(modAssetPrefix.Length).Replace('/', Path.DirectorySeparatorChar);
-            string sourceFile = Path.Combine(Main.SavePath, "ModSources", "tsorcRevamp", relativeTexturePath + ".png");
-            if (!File.Exists(sourceFile))
+            try
             {
-                missingImages.Add($"{outputFileName} (expected: {sourceFile})");
-                return;
+                Texture2D texture = TextureAssets.Item[modItem.Type].Value;
+                using (FileStream output = File.Create(Path.Combine(imagesDirectory, outputFileName)))
+                {
+                    texture.SaveAsPng(output, texture.Width, texture.Height);
+                }
             }
-
-            File.Copy(sourceFile, Path.Combine(imagesDirectory, outputFileName), overwrite: true);
+            catch (Exception ex)
+            {
+                missingImages.Add($"{outputFileName} (texture export failed: {ex.Message})");
+            }
         }
 
         private bool TryExportBossChecklistPortrait(string imagesDirectory, ModNPC modNPC, List<string> missingImages)
@@ -319,38 +400,6 @@ namespace tsorcRevamp.Utilities
             }
         }
 
-        private void ExportWormPortrait(string imagesDirectory, WormGroup wormGroup, List<string> missingImages)
-        {
-            string outputFileName = GetNpcImageFileName(wormGroup.Head);
-            try
-            {
-                List<Portrait> pieces = wormGroup.Pieces
-                    .Select(npc => RotatePortraitClockwise(CreateNpcPortrait(npc, padding: 2)))
-                    .ToList();
-                const int overlap = 2;
-                int width = pieces.Sum(piece => piece.Width) - overlap * (pieces.Count - 1);
-                int height = pieces.Max(piece => piece.Height);
-                var combinedPixels = new Color[width * height];
-                int x = 0;
-
-                foreach (Portrait piece in pieces)
-                {
-                    int y = (height - piece.Height) / 2;
-                    for (int row = 0; row < piece.Height; row++)
-                    {
-                        Array.Copy(piece.Pixels, row * piece.Width, combinedPixels, (y + row) * width + x, piece.Width);
-                    }
-                    x += piece.Width - overlap;
-                }
-
-                SavePortrait(imagesDirectory, outputFileName, new Portrait { Pixels = combinedPixels, Width = width, Height = height });
-            }
-            catch (Exception ex)
-            {
-                missingImages.Add($"{outputFileName} (worm portrait export failed: {ex.Message})");
-            }
-        }
-
         private Portrait CreateNpcPortrait(ModNPC modNPC, int padding = 2)
         {
             Texture2D sourceTexture = TextureAssets.Npc[modNPC.Type].Value;
@@ -373,25 +422,6 @@ namespace tsorcRevamp.Utilities
             }
 
             return new Portrait { Pixels = portraitPixels, Width = visibleArea.Width, Height = visibleArea.Height };
-        }
-
-        private static Portrait RotatePortraitClockwise(Portrait source)
-        {
-            var rotatedPixels = new Color[source.Pixels.Length];
-            int rotatedWidth = source.Height;
-            int rotatedHeight = source.Width;
-
-            for (int y = 0; y < source.Height; y++)
-            {
-                for (int x = 0; x < source.Width; x++)
-                {
-                    int rotatedX = source.Height - 1 - y;
-                    int rotatedY = x;
-                    rotatedPixels[rotatedY * rotatedWidth + rotatedX] = source.Pixels[y * source.Width + x];
-                }
-            }
-
-            return new Portrait { Pixels = rotatedPixels, Width = rotatedWidth, Height = rotatedHeight };
         }
 
         private static void SavePortrait(string imagesDirectory, string outputFileName, Portrait portrait)
@@ -485,6 +515,56 @@ namespace tsorcRevamp.Utilities
             return $"TSORC_NPC_{modNPC.Name}.png";
         }
 
+        private static string GetWikiPageName(string displayName, string internalName)
+        {
+            return displayName;
+        }
+
+        private static bool ShouldExportNpc(ModNPC modNPC)
+        {
+            if (ExcludedWikiNPCs.Contains(modNPC.Name))
+            {
+                return false;
+            }
+
+            return !NPCID.Sets.NPCBestiaryDrawOffset.TryGetValue(modNPC.Type, out NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers)
+                || !drawModifiers.Hide;
+        }
+
+        private static void EnsureUniqueWikiPageNames(IEnumerable<ModItem> modItems, IEnumerable<ModNPC> modNPCs)
+        {
+            List<string> duplicateNames = modItems.Select(item => GetWikiPageName(ContentSamples.ItemsByType[item.Type].Name, item.Name))
+                .Concat(modNPCs.Select(npc => GetWikiPageName(Lang.GetNPCNameValue(npc.Type), npc.Name)))
+                .GroupBy(name => name, StringComparer.Ordinal)
+                .Where(group => group.Count() > 1)
+                .Select(group => group.Key)
+                .OrderBy(name => name, StringComparer.Ordinal)
+                .ToList();
+
+            if (duplicateNames.Count > 0)
+            {
+                throw new InvalidOperationException($"Duplicate wiki page names must be excluded or renamed before export: {string.Join(", ", duplicateNames)}");
+            }
+        }
+
+        private static void ExportExcludedNpcs(string filePath, IEnumerable<ModNPC> modNPCs, IEnumerable<ModNPC> wikiNPCs, ISet<int> wormSegmentTypes)
+        {
+            HashSet<int> exportedTypes = wikiNPCs.Select(npc => npc.Type).ToHashSet();
+            var lines = new List<string> { "Internal name\tDisplay name\tReason" };
+
+            foreach (ModNPC modNPC in modNPCs.Where(npc => !exportedTypes.Contains(npc.Type)).OrderBy(npc => npc.Name, StringComparer.Ordinal))
+            {
+                string reason = ExcludedWikiNPCs.Contains(modNPC.Name)
+                    ? "Explicit spoiler, prototype, boss phase, or helper exclusion"
+                    : wormSegmentTypes.Contains(modNPC.Type)
+                        ? "Worm segment; represented by its head when applicable"
+                        : "Hidden from the Bestiary";
+                lines.Add($"{modNPC.Name}\t{Lang.GetNPCNameValue(modNPC.Type)}\t{reason}");
+            }
+
+            File.WriteAllLines(filePath, lines, Encoding.UTF8);
+        }
+
         private void ExportPagesXml(string filePath, IEnumerable<ModItem> modItems, IEnumerable<ModNPC> modNPCs)
         {
             var builder = new StringBuilder();
@@ -500,22 +580,10 @@ namespace tsorcRevamp.Utilities
                     displayName = modItem.Name;
                 }
 
-                string pageTitle = $"The Story of Red Cloud/{displayName}";
-                string itemType = GetItemType(item);
+                string pageTitle = $"The Story of Red Cloud/{GetWikiPageName(displayName, modItem.Name)}";
                 var pageContent = new StringBuilder();
-                pageContent.AppendLine("{{The Story of Red Cloud/Infobox item}}");
-                pageContent.AppendLine("");
-                pageContent.AppendLine($"The '''{displayName}''' is a modded [[{itemType}]] added by [[The Story of Red Cloud]].");
-                pageContent.AppendLine("");
-                pageContent.AppendLine("== Crafting ==");
-                pageContent.AppendLine("=== Recipes ===");
-                pageContent.AppendLine($"{{{{recipes|{displayName}}}}}");
-                pageContent.AppendLine("");
-
-                if (itemType == "Weapon" || itemType == "Armor" || itemType == "Accessory")
-                {
-                    pageContent.AppendLine("{{The Story of Red Cloud/Navbox equipment}}");
-                }
+                pageContent.AppendLine("{{mod sub-page}}");
+                pageContent.AppendLine($"{{{{TSORC Item|id={modItem.Name}}}}}");
 
                 WriteXmlPage(builder, pageTitle, pageContent.ToString());
             }
@@ -529,16 +597,10 @@ namespace tsorcRevamp.Utilities
                     displayName = modNPC.Name;
                 }
 
-                string pageTitle = $"The Story of Red Cloud/{displayName}";
-                string category = npc.friendly ? (npc.townNPC ? "Town NPC" : "Friendly NPC") : (npc.boss ? "Boss" : "Enemy");
+                string pageTitle = $"The Story of Red Cloud/{GetWikiPageName(displayName, modNPC.Name)}";
                 var pageContent = new StringBuilder();
-                pageContent.AppendLine("{{The Story of Red Cloud/NPC infobox}}");
-                pageContent.AppendLine("");
-                pageContent.AppendLine($"The '''{displayName}''' is a modded [[{category}]] added by [[The Story of Red Cloud]].");
-                pageContent.AppendLine("");
-                pageContent.AppendLine("== Drops ==");
-                pageContent.AppendLine("=== Loot ===");
-                pageContent.AppendLine($"{{{{drops|{displayName}}}}}");
+                pageContent.AppendLine("{{mod sub-page}}");
+                pageContent.AppendLine($"{{{{TSORC NPC|id={modNPC.Name}}}}}");
 
                 WriteXmlPage(builder, pageTitle, pageContent.ToString());
             }
@@ -554,6 +616,11 @@ namespace tsorcRevamp.Utilities
             for (int npcType = 0; npcType < NPCLoader.NPCCount; npcType++)
             {
                 if (!ContentSamples.NpcsByNetId.TryGetValue(npcType, out NPC npc))
+                {
+                    continue;
+                }
+
+                if (npc.ModNPC?.Mod == Mod && !modNPCsByType.ContainsKey(npcType))
                 {
                     continue;
                 }
