@@ -1,0 +1,5 @@
+<includeonly>{{#invoke:The Story of Red Cloud/NPC|main|id={{{id|}}}}}</includeonly><noinclude>
+This template renders an exported TSORC NPC page.
+
+Usage: <code><nowiki>{{The Story of Red Cloud/NPC|id=InternalNPCName}}</nowiki></code>
+</noinclude>

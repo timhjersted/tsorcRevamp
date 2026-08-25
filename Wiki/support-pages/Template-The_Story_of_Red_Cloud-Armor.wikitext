@@ -1,0 +1,5 @@
+<includeonly>{{#invoke:The Story of Red Cloud/Armor|main|id={{{id|}}}}}</includeonly><noinclude>
+This template renders an exported TSORC armor-set page.
+
+Usage: <code><nowiki>{{The Story of Red Cloud/Armor|id=ArmorSetInternalKey}}</nowiki></code>
+</noinclude>
