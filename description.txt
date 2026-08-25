@@ -1,13 +1,13 @@
-The Story of Red Cloud is a massive 40+ hour Dark Souls-inspired adventure built inside the world of Terraria using a custom world, mod, and companion soundtrack.
+The Story of Red Cloud is a massive 30+ hour Dark Souls-inspired adventure built inside the world of Terraria using a custom world, mod, and companion soundtrack.
 
-In development over 7 years, your 1-4 player journey will span 18 dungeons spread across an expansive, hand-crafted open world filled with shortcuts, hidden paths, epic boss fights, and countless secrets.
+In development over 8 years, your 1-4 player journey will span 18 dungeons spread across an expansive, hand-crafted open world filled with shortcuts, hidden paths, epic boss fights, and countless secrets.
 
 
-✅  The Custom World will load automatically when you reach the Select World screen. To create a fresh or updated world, click New on the World screen.
+✅  The Classic Custom World will load automatically when you reach the Select World screen. To create a fresh world or play Xelvaa's Remix World, click New on the World screen.
 
-✅  To download TSORC's Music Mod, click the text prompt you'll see on TML's main menu after enabling this mod OR Subscribe to the mod on Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=3135388514
+✅  To download TSORC's Music Mod, Subscribe: https://steamcommunity.com/sharedfiles/filedetails/?id=3135388514
 
-✅  To download Xelvaa's Music Mod Remix, Subscribe to the Mod on Steam:
+✅  To download Xelvaa's Music Mod Remix, which goes with the Remix World, Subscribe:
 https://steamcommunity.com/sharedfiles/filedetails/?id=3409707567
 
 ⚠️  Scroll down to read about our Discord, Cross Mod Compatibility, and the Game Manual
@@ -15,14 +15,14 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=3409707567
 
 ✅  TOP FEATURES
 ------------------------------------------
-- Companion Soundtrack with 65 songs! (Dark Souls and Elden Ring fans will love it)
-- 43 bosses (27 mod bosses plus 16 vanilla at scripted locations)
+- 27 mod bosses plus 16 vanilla at scripted locations
 - 100+ new enemies and 8 friendly NPCs
+- Companion Soundtrack with 65 songs! 
 - 800+ new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
 - Dark Souls game mechanics, including bonfire save points, soul currency and the dodge roll 
 - The mod enforces old school adventure map rules, so if you can do it, it's okay to do it!
 - Bearer of The Curse Mode offers the ultimate Dark Souls experience, adding an Estus Flask and Cerulean Tear to your UI, prevents the use of healing potions and makes all weapons use different amounts of stamina
-- New Remix World designed by Xelvaa offers a fresh and expanded experience compared to the classic game world designed by Tim Hjersted, ideal for a 2nd playthrough
+- New Remix World designed by Xelvaa offers a fresh and expanded experience compared to the classic game world designed by Tim Hjersted, ideal for a 1st or 2nd playthrough
 
 
 ✅  DISCORD
@@ -32,10 +32,9 @@ https://discord.gg/UGE6Mstrgz
 
 - Know how to code or sprite? We'd love more devs to join the team!
 - Please share suggestions for improvement under #any-suggestions or #bug-reports.
-- The changelogs can be found under #mod-changelog and #map-changelog.
-- TSORC holds many secrets. If you have questions, post them to #map-questions or #mod-questions.
+- Changelogs: #mod-changelog and #map-changelog.
+- Questions? Ask in #map-questions or #mod-questions.
 - Share videos of your playthrough in #tsorc-media.
-- The mod has been made fully translatable through a localization file. If you're interested in making it more accessible to your fellow speakers, please reach out in our Discord. 
 
 
 ⚠️  CROSS MOD COMPATIBILITY:
@@ -44,7 +43,6 @@ Highly Recommended QoL mods:
 ✅  AutoTrash
 ✅  Lights and Shadow
 ✅  Recipe Browser
-✅  Terraria Ambience (known to cause issues, disable this first if any arise)
 ✅  Magic Storage
 
 Additional Supported Mods:
@@ -59,37 +57,33 @@ Unsupported Mods:
 ⛔  Any mod that changes vanilla boss AIs
 ⛔  Any mod that changes vanilla recipes or edits vanilla progression
 ⛔  Any mod that changes the behavior of respawning in multiplayer
-
-Some mods interfere with the Adventure Map, but may be used if you're playing on a vanilla world:
-⚠️ Basic Automated Mining
-⚠️ No Biome Spread
-⚠️ Ore Excavator
-⚠️ Veinminer
+⚠️  Terraria Ambience (known to cause issues, but would otherwise be recommended)
 
 
-✅  GAME MANUAL:
+✅ GAME MANUAL:
 ------------------------------------------
-- Create a new classic character named Red Cloud (for multiplayer, everyone should use a different name)
+- Create a new classic character
 
-- On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
+- Multiplayer is supported for 4 players. Class diversity recommended. 
 
-- The new dodge roll action with i-frames can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default. Left Shift is also recommended, with Auto Select bound to Left Alt.)
+- Exhaust the Emerald Herald's dialog for gameplay tips
 
-- In Bearer of the Curse Mode, your Estus Flask is bound to the Quick Heal key and the Cerulian Tear is tied to your Quick Mana key.
-
-- Adventure Mode should stay checked in the TSORC mod config options to play with the custom story world.
-
-- Multiplayer is supported for 4 players. Class diversity recommended. Post issues you find under #bug-reports. Thanks! 
-
-- Go to #tips and #boss-list in our Discord for all game hints and walkthrough help
+- Go to #tips and #boss-list in our Discord for more game hints and walkthrough help
 
 
-✅  PROJECT STATUS:
+✅ PROJECT STATUS -- BETA 0.16:
 ------------------------------------------
 The game is fairly polished up to the end of the main story (defeating Attraidies). The post-Attraidies expansion (aka Super Hard Mode) is fully playable but not all bosses have been fully revamped to the standards of our other bosses.
 
-Going forward, we'll continue to release occasional updates to make improvements, address bugs and respond to game feedback as our free time allows.
 
-We're looking for new team members to help us, as our current team is often busy with work or college these days.
+✅ PROJECT UPDATE: 1.0 IS COMING IN 2027!
+------------------------------------------
+Since May 2026, progress on completing the revamp of the original 2012 mod has resumed making substantial progress!
 
-To reach our official 1.0 release goals, we really only have a handful of very late-game bosses left to give the full revamp treatment. If you're a coder that would be interested in this, get in touch via our Discord! Or spread the message to people who might be interested! Thanks!
+1.0 will also bring a huge swath of new content additions and improvements. Please look forward to it.
+
+If you're a coder or spriter that would be interested in joining the team, get in touch via our Discord! Or spread the message to people who might be interested.
+
+Cheers,
+Tim Hjersted,
+TSORC director and creator
