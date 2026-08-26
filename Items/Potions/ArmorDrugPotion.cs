@@ -7,11 +7,10 @@ namespace tsorcRevamp.Items.Potions
 {
     public class ArmorDrugPotion : ModItem
     {
-        public static int Defense = 18;
-        public static float DRIncrease = 12f;
-        public static int MaxLife = 50;
-        public static float BadDmg = 20f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Defense, DRIncrease, MaxLife, BadDmg);
+        public const int Defense = 9;
+        public const float ResistanceIncrease = 11f;
+        public const float BadDmgMult = 18f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Defense, ResistanceIncrease, BadDmgMult);
         public override void SetStaticDefaults()
         {
         }

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     public class AncientHornedHelmet : ModItem
     {
         public static float CritChance = 13f;
-        public static int MaxMinions = 2;
+        public static int MaxMinions = 1;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance, MaxMinions);
         public override void SetStaticDefaults()
         {
@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Armors
         {
             Item.width = 26;
             Item.height = 20;
-            Item.defense = 11;
+            Item.defense = 8;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }

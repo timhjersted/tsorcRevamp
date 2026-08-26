@@ -94,7 +94,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         /// override EffectPotency wholesale and bypass this.</summary>
         public virtual float MaxPotency
         {
-            get => 1.5f;
+            get => 1.2f;
         }
 
         /// <summary>
@@ -1058,9 +1058,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.statDefense += (int)ApplyScaling(ArmorDrugPotion.Defense);
-            player.endurance += ApplyScaling(ArmorDrugPotion.DRIncrease / 100f);
-            player.statLifeMax2 += (int)ApplyScaling(ArmorDrugPotion.MaxLife);
-            player.GetDamage(DamageClass.Generic) -= ApplyScaling(ArmorDrugPotion.BadDmg / 100f);
+            player.endurance += ApplyScaling(ArmorDrugPotion.ResistanceIncrease / 100f);
+            player.GetDamage(DamageClass.Generic) *= 1f - ApplyScaling(ArmorDrugPotion.BadDmgMult / 100f);
         }
     }
 
@@ -1079,7 +1078,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetCritChance(DamageClass.Generic) += ApplyScaling(BattlefrontPotion.DamageCritIncrease);
             player.thorns += ApplyScaling(BattlefrontPotion.Thorns / 100f);
             player.enemySpawns = true;
-            player.endurance -= ApplyScaling(BattlefrontPotion.DefenseDecrease / 100f);
+            player.endurance -= ApplyScaling(BattlefrontPotion.BadResistance / 100f);
         }
     }
 
@@ -1124,7 +1123,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.GetDamage(DamageClass.Generic) += ApplyScaling(DemonDrugPotion.Dmg / 100f);
+            player.GetDamage(DamageClass.Generic) *= 1f + ApplyScaling(DemonDrugPotion.DmgMult / 100f);
             player.statDefense -= (int)ApplyScaling(DemonDrugPotion.BadDefense);
         }
     }

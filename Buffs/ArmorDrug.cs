@@ -15,9 +15,8 @@ namespace tsorcRevamp.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.statDefense += ArmorDrugPotion.Defense;
-            player.endurance += ArmorDrugPotion.DRIncrease / 100f;
-            player.statLifeMax2 += ArmorDrugPotion.MaxLife;
-            player.GetDamage(DamageClass.Generic) -= ArmorDrugPotion.BadDmg / 100f;
+            player.endurance += ArmorDrugPotion.ResistanceIncrease / 100f;
+            player.GetDamage(DamageClass.Generic) *= 1f - (ArmorDrugPotion.BadDmgMult / 100f);
         }
     }
 }

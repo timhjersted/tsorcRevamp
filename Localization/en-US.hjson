@@ -5108,8 +5108,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesDefenseBy}
 					{$CommonItemTooltip.DRStat@1}
-					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
-					{$CommonItemTooltip.BadDmg@3}
+					{$CommonItemTooltip.BadDmgMult@2}
 					Does not stack with Demon Drug, Strength, or Battlefront Potions.
 					'''
 			}
@@ -5168,7 +5167,7 @@ Mods: {
 				DisplayName: Demon Drug
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.DmgMult}
 					{$CommonItemTooltip.BadDefense@1}
 					Does not stack with Armor Drug, Strength, or Battlefront Potions.
 					'''

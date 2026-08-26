@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class AncientMagicPlateArmor : ModItem
     {
-        public static float AtkSpeed = 12f;
+        public static float AtkSpeed = 15f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, 1f + tsorcRevampPlayer.MeleeBonusMultiplier);
         public override void SetStaticDefaults()
         {
@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Armors
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 12;
+            Item.defense = 13;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }

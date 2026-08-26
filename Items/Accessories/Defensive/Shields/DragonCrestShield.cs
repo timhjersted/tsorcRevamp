@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
         {
             Item.width = 28;
             Item.height = 28;
-            Item.defense = 5;
+            Item.defense = 3; //this was at 5 once, ankh shield for reference, a rare and very hard to craft defensive accessory has 4!!! defense
             Item.accessory = true;
             Item.expert = true;
             Item.value = PriceByRarity.Green_2;

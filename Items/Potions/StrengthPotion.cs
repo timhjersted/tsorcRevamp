@@ -7,9 +7,9 @@ namespace tsorcRevamp.Items.Potions
 {
     public class StrengthPotion : ModItem
     {
-        public static int Defense = 12;
-        public static float DamageBoost = 12f;
-        public static float AttackSpeedBoost = 10f;
+        public const int Defense = 5;
+        public const float DamageBoost = 3f;
+        public const float AttackSpeedBoost = 11f;
         public const float BadLifeRegen = 5f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageBoost, Defense, AttackSpeedBoost, BadLifeRegen / 2f, 1f + tsorcRevampPlayer.MeleeBonusMultiplier);
         public override void SetStaticDefaults()
