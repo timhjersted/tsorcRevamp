@@ -70,7 +70,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
 
             if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 50)
             {
-                player.noKnockback = false;
+                //player.noKnockback = false; setting this to false cancels out all other immunity applied before this, just not setting it to true here is fine since player is not immune by default
                 player.endurance += damageResistance2 / 100f;
 
             }
