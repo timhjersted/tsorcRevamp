@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using System.IO;
 using Terraria;
@@ -34,7 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies
             IcicleCrown,     // walking cast: 8 icicles fire sequentially, each locking aim before launch
             RimefangSpikes,  // 3 chained eruptions under the player; the third is a 5-wide led field
             FrozenEcho,      // blinks back, leaves a brittle statue of itself that shatters when killed
-            WintersGrasp,    // freeze zone at the player: crystallizes — keep moving fast to shatter free
+            WintersGrasp,    // Winter's Embrace: a point that pulls you in while firing 3 offset rings of icicles
             AbsoluteZero,    // Cracked: long staggerable channel → expanding freeze ring (roll through)
             IcePrison,       // Cracked: pillar cage around the player with one gap, shatters inward
             GlacialStampede, // Cracked: its only fast move — hyper-armor charge, spikes in its wake
@@ -80,7 +81,7 @@ namespace tsorcRevamp.NPCs.Enemies
         const int CreepSegments = 5;      //5 × 3-tile IceWave segments ≈ 14 tiles of denied surface
         const int CreepDominoDelay = 8;   //ticks between segment eruptions — the domino cadence
         const int UndertowTelegraphTicks = 30;
-        const int UndertowPullTicks = 90;
+        const int UndertowPullTicks = 180; //was 90 — twice the pull duration
         const int UndertowRecoveryTicks = 40;
         const int CanopyCastTicks = 20;
         const int GlazeTelegraphTicks = 30;
@@ -89,13 +90,20 @@ namespace tsorcRevamp.NPCs.Enemies
         const int HeartCrawlEndTick = 100; //the pile crawls toward the player until here
         const int HeartRebirthTick = 130;  //eruption telegraph 100→130, then the rebirth pulse
 
+        ///<summary>Sprite sits this many pixels lower than the hitbox so the feet plant on the
+        ///ground instead of hovering above it (+Y is down; Main.NPCAddHeight adds DrawOffsetY to
+        ///the draw position). Matches Holy Gigas. Anything drawn relative to NPC.Center or
+        ///NPC.Bottom that should track the BODY rather than the hitbox has to add this too, which
+        ///is why it is one constant rather than a literal repeated at each draw site.
+        ///FrozenGigasStatue draws this same sheet by hand and shares it for the same reason.</summary>
+        internal const float SpriteDrawOffsetY = 4f;
+
         //Projectile damage, tuned for a MID-HARDMODE boss event (hostile projectiles deal 2x this
         //on hit in normal mode). In SuperHardMode every value additionally runs through ScaleDamage
         //(×1.3 × SHMScale, matching the ArcherAI convention for SHM enemies).
         int SpikeDamage => ScaleDamage(45);
         int BreathDamage => ScaleDamage(16);  //rapid ticks, so each is small
         int HailDamage => ScaleDamage(40);
-        int GiantHailDamage => ScaleDamage(60);
         int CrownDamage => ScaleDamage(36);
         int ZoneDamage => ScaleDamage(45);
         int RingDamage => ScaleDamage(60);
@@ -164,6 +172,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.npcSlots = 100;
             NPC.scale = 1f;
             NPC.knockBackResist = 0.1f;
+            DrawOffsetY = SpriteDrawOffsetY; //plant the feet on the ground, as Holy Gigas does
             AnimationType = 28; // Zombie frame structure
 
             // Phase 2: SmartFighter4AI movement + beast levers (mirrors Gigas). minSurfaceWidth (in AI)
@@ -460,10 +469,10 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 (AttackState.GlacialSlam,     distTiles < 30f ? 1f : 0.4f),
                 (AttackState.FrostBreath,     distTiles < 25f ? 1f : 0.2f),
-                (AttackState.HailstoneVolley, distTiles > 12f ? 0.9f : 0.3f),
+                (AttackState.HailstoneVolley, distTiles > 15f ? 0.9f : 0f), //leaps in on cast, so it needs the room — mid/long range only
                 (AttackState.IcicleCrown,     0.8f),
                 (AttackState.RimefangSpikes,  0.8f),
-                (AttackState.FrozenEcho,      0.5f),
+                (AttackState.FrozenEcho,      1.1f),
                 (AttackState.WintersGrasp,    0.6f),
                 (AttackState.RimeWard,        LastHitTimer < 90 ? 0.6f : 0f), //no ward against nobody attacking
                 (AttackState.HoarfrostCreep,  distTiles < 22f ? 0.85f : 0.2f),
@@ -546,12 +555,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (ComboIndex > 0)
                 {
                     ComboRecoveryTicks = ComboIndex * 15;
-                    PendingCooldown = cooldown;
+                    //A combo already spent its "idle" time in that punishable stand, so the
+                    //walk-around pause afterward shrinks per extra move chained — 22% off per
+                    //extra move chained, floor 30%. Without this a 3-4 move combo racked up BOTH
+                    //the recovery stand AND the same flat pause as a single move, doubling the lull.
+                    PendingCooldown = (int)(cooldown * MathHelper.Clamp(1f - ComboIndex * 0.22f, 0.3f, 1f));
                     HalfTelegraph = false;
                     StartAttack(AttackState.ComboRecovery);
                     return;
                 }
-                AttackCooldown = cooldown + Main.rand.Next(60);
+                //Wider jitter (was +0-60t) so back-to-back fights don't fall into a metronome.
+                AttackCooldown = cooldown + Main.rand.Next(100);
                 NPC.netUpdate = true;
             }
             State = AttackState.None;
@@ -676,7 +690,20 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.X *= 0.8f;
                 if (AttackTimer == 1)
                 {
+                    //A small hop off the ground — not the slam itself, just enough that the crash
+                    //at tel/2 reads as coming DOWN rather than starting flat-footed.
+                    NPC.velocity.Y = -8f;
                     SoundEngine.PlaySound(SoundID.DeerclopsRubbleAttack with { Volume = 0.7f, Pitch = -0.4f }, NPC.Bottom);
+                }
+                //Halfway through the (possibly halved, if chained) telegraph, force the actual
+                //slam-down regardless of where the hop's own arc would otherwise be — this is what
+                //telegraphs the impact, not passive gravity, so it lands consistently whether or
+                //not the move was chained in at half telegraph. 14 comfortably clears the 8-unit
+                //speed PreDraw already uses to trigger the afterimage trail on ANY fast movement,
+                //so the trail appears here for free — see PreDraw's `NPC.velocity.Length() > 8f`.
+                if (AttackTimer == tel / 2)
+                {
+                    NPC.velocity.Y = 14f;
                 }
                 //Frost gathering around the fists (mid-body height, both sides)
                 for (int i = 0; i < 2; i++)
@@ -712,7 +739,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.X *= 0.7f;
                 if (AttackTimer >= tel + SlamRecoveryTicks)
                 {
-                    EndAttack(300);
+                    EndAttack(150);
                 }
             }
         }
@@ -754,7 +781,11 @@ namespace tsorcRevamp.NPCs.Enemies
                     for (int i = 0; i < 2; i++)
                     {
                         float angle = sweep + Main.rand.NextFloat(-0.1f, 0.1f);
-                        Vector2 vel = new Vector2(NPC.direction * (float)Math.Cos(angle), (float)Math.Sin(angle)) * (7.5f + Main.rand.NextFloat(-1f, 1f));
+                        //9f launch speed + the puff's own slower decay (GigasFrostBreathPuff.Decay)
+                        //together roughly double its old ~171px reach to ~340px over ~1.3s — a
+                        //moderate bump here so the puff still leaves the mouth like a breath, not a
+                        //sudden dart, with the extra distance made up by traveling longer, not faster.
+                        Vector2 vel = new Vector2(NPC.direction * (float)Math.Cos(angle), (float)Math.Sin(angle)) * (9f + Main.rand.NextFloat(-1f, 1f));
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), mouth, vel,
                             ModContent.ProjectileType<GigasFrostBreathPuff>(), BreathDamage, 1f, Main.myPlayer);
                     }
@@ -762,7 +793,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             else if (AttackTimer >= inhale + BreathExhaleTicks + BreathRecoveryTicks)
             {
-                EndAttack(300);
+                EndAttack(150);
             }
             else
             {
@@ -774,15 +805,23 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             int gather = Tel(VolleyGatherTicks);
             globalNPC.AttackCommitted = AttackTimer <= gather + 40;
-            NPC.velocity.X *= 0.8f;
             Vector2 origin = NPC.Center + new Vector2(0f, -90f);
+
+            if (AttackTimer == 1)
+            {
+                //Forward leap into the cast — closes distance while throwing overhead, instead of
+                //hurling from a dead stop. Only X gets damped again once it lands (velocity.Y == 0);
+                //while airborne the leap carries through the whole gather-and-throw.
+                NPC.velocity = new Vector2(NPC.direction * 6.5f, -9.5f);
+                SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.6f, Pitch = -0.3f }, NPC.Center);
+            }
+            else if (NPC.velocity.Y == 0f)
+            {
+                NPC.velocity.X *= 0.8f;
+            }
 
             if (AttackTimer <= gather)
             {
-                if (AttackTimer == 1)
-                {
-                    SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.6f, Pitch = -0.3f }, NPC.Center);
-                }
                 //Hail condensing overhead
                 for (int i = 0; i < 2; i++)
                 {
@@ -807,7 +846,8 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     SoundEngine.PlaySound(SoundID.Item72 with { Volume = 0.6f, Pitch = -0.2f }, NPC.Center);
                 }
-                //Burst 2: six fast, flat throws leading the player
+                //Burst 2: six fast, flat throws leading the player. This used to close with one
+                //giant boulder — cut so the whole volley stays small hailstones, not a mixed size.
                 if (AttackTimer == gather + 20)
                 {
                     for (int i = 0; i < 6; i++)
@@ -819,20 +859,12 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     SoundEngine.PlaySound(SoundID.Item72 with { Volume = 0.7f, Pitch = 0.1f }, NPC.Center);
                 }
-                //Burst 3: one giant hailstone that shatters into shards on impact
-                if (AttackTimer == gather + 35)
-                {
-                    Vector2 vel = UsefulFunctions.BallisticTrajectory(origin, player.Center, 10f, 0.2f);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                        ModContent.ProjectileType<GigasHailstone>(), GiantHailDamage, 5f, Main.myPlayer, 0.2f, 1f);
-                    SoundEngine.PlaySound(SoundID.Item72 with { Volume = 0.9f, Pitch = -0.5f }, NPC.Center);
-                }
             }
             if (AttackTimer >= gather + 70)
             {
-                EndAttack(270);
+                EndAttack(140);
             }
-            else if (AttackTimer > gather + 40)
+            else if (AttackTimer > gather + 40 && NPC.velocity.Y == 0f)
             {
                 NPC.velocity.X *= 0.7f; //recovery, no armor
             }
@@ -863,7 +895,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (AttackTimer >= gather + CrownVolleyTicks + CrownRecoveryTicks)
             {
-                EndAttack(300);
+                EndAttack(150);
             }
         }
 
@@ -894,7 +926,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (AttackTimer >= Tel(RimefangCastTicks) + RimefangRecoveryTicks)
             {
-                EndAttack(300);
+                EndAttack(150);
             }
         }
 
@@ -934,10 +966,14 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (AttackTimer >= EchoGatherTicks + 15)
             {
-                EndAttack(360);
+                EndAttack(180);
             }
         }
 
+        ///<summary>Winter's Embrace: casts a GigasFrostZone 150px to the player's side — a fixed
+        ///point that pulls them in and fires 3 rotationally-offset rings of icicles over several
+        ///seconds. The giant itself is done and free to act again in under a second; the zone is a
+        ///fully independent hazard from here, same overlap design as Crystal Canopy's falling drops.</summary>
         void RunWintersGrasp(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             int cast = Tel(GraspCastTicks);
@@ -956,12 +992,25 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (AttackTimer == 10 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), player.Center, Vector2.Zero,
-                    ModContent.ProjectileType<GigasFrostZone>(), ZoneDamage, 2f, Main.myPlayer, 25f);
+                //150px to the left or right, never right on top of the player — the pull needs
+                //room to actually pull them somewhere, and the icicle ring needs space to spawn
+                //without landing inside the player's own hitbox.
+                int side = Main.rand.NextBool() ? 1 : -1;
+                Vector2 spawnPos = player.Center + new Vector2(side * 150f, 0f);
+                if (IsSolidAt(spawnPos))
+                {
+                    spawnPos = player.Center + new Vector2(-side * 150f, 0f); //try the other side
+                    if (IsSolidAt(spawnPos))
+                    {
+                        spawnPos = player.Center; //both sides blocked — fall back rather than spawn in a wall
+                    }
+                }
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, Vector2.Zero,
+                    ModContent.ProjectileType<GigasFrostZone>(), ZoneDamage, 2f, Main.myPlayer);
             }
             if (AttackTimer >= cast + 15)
             {
-                EndAttack(420);
+                EndAttack(200);
             }
         }
 
@@ -1027,7 +1076,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.X = 0f; //post-burst recovery: vulnerable
                 if (AttackTimer >= ZeroChannelTicks + ZeroRecoveryTicks)
                 {
-                    EndAttack(390);
+                    EndAttack(190);
                 }
             }
         }
@@ -1060,7 +1109,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (AttackTimer >= cast + 20)
             {
-                EndAttack(420);
+                EndAttack(200);
             }
         }
 
@@ -1129,7 +1178,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (AttackTimer >= tel + StampedeChargeTicks + StampedeRecoveryTicks)
                 {
-                    EndAttack(360);
+                    EndAttack(170);
                 }
             }
         }
@@ -1169,7 +1218,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (AttackTimer >= cast + 15)
             {
-                EndAttack(480);
+                EndAttack(220);
             }
         }
 
@@ -1211,7 +1260,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 AttackTimer = 0;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    AttackCooldown = PendingCooldown + Main.rand.Next(60);
+                    AttackCooldown = PendingCooldown + Main.rand.Next(100);
                     NPC.netUpdate = true;
                 }
             }
@@ -1297,7 +1346,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.X *= 0.8f; //long recovery — the ward was safe time for it, this is yours
                 if (AttackTimer >= WardTelegraphTicks + WardHoldTicks + WardRecoveryTicks)
                 {
-                    EndAttack(420);
+                    EndAttack(200);
                 }
             }
         }
@@ -1357,7 +1406,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             else if (AttackTimer >= tel + CreepRecoveryTicks) //recovery, no armor
             {
-                EndAttack(330);
+                EndAttack(160);
             }
         }
 
@@ -1393,12 +1442,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
                     ModContent.ProjectileType<GigasUndertowZone>(), 0, 0f, Main.myPlayer, NPC.whoAmI, UndertowPullTicks);
             }
-            //Point-blank exhale: checked once, then a 20-tick burst of breath puffs
-            if (AttackTimer == tel + 70 && Main.netMode != NetmodeID.MultiplayerClient)
+            //Point-blank exhale: checked once (at the same 78%-through-the-pull point as before the
+            //pull got longer), then a 20-tick burst of breath puffs
+            int exhaleCheckTick = tel + (int)(UndertowPullTicks * 0.78f);
+            if (AttackTimer == exhaleCheckTick && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 undertowExhale = NPC.Distance(player.Center) < 128f;
             }
-            if (undertowExhale && AttackTimer > tel + 70 && AttackTimer <= tel + 90 && AttackTimer % 2 == 0
+            if (undertowExhale && AttackTimer > exhaleCheckTick && AttackTimer <= exhaleCheckTick + 20 && AttackTimer % 2 == 0
                 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 aim = (player.Center - mouth).SafeNormalize(new Vector2(NPC.direction, 0f));
@@ -1408,7 +1459,14 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (AttackTimer >= tel + UndertowPullTicks + UndertowRecoveryTicks)
             {
-                EndAttack(390);
+                //The pull deals no damage itself (GigasUndertowZone) — its only payoff is landing
+                //the point-blank exhale, which costs nothing to just resist. A normal EndAttack here
+                //would let the whole move whiff for free, so — like Heart of Winter's forced flow
+                //into Glacial Stampede — always continue straight into a real ground threat instead
+                //of rolling the ordinary chain odds (which, entered via HoarfrostCreep, are often
+                //already exhausted for this fight's combo budget).
+                StartAttack(AttackState.GlacialSlam);
+                return;
             }
             else if (AttackTimer > tel + UndertowPullTicks)
             {
@@ -1423,6 +1481,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         ///<summary>Six stalactites over the player's area dropping on an accelerating cadence (gaps
         ///30t → 10t). The giant is free and walking again while the last three are still falling.</summary>
+        ///<summary>Crystal Canopy is three DIFFERENT drop patterns in a row, each re-centred on the
+        ///player's position AT THAT MOMENT (not where they were at cast start), separated by a pause
+        ///where nothing is falling — a rhythm of read-react-read-react rather than one curtain. Only
+        ///the first cast (`tel`) shrinks when chained in (Tel()); the internal spacing stays fixed,
+        ///matching how HailstoneVolley's burst gaps work.</summary>
         void RunCrystalCanopy(tsorcRevampGlobalNPC globalNPC, Player player)
         {
             //Walking cast like the crown — the threat is in the sky, not the body
@@ -1431,29 +1494,77 @@ namespace tsorcRevamp.NPCs.Enemies
             FootstepEffects();
             globalNPC.AttackCommitted = AttackTimer <= 35;
 
+            int seqA = Tel(CanopyCastTicks);
+            int seqB = seqA + 40; //pause: nothing falls between sequences
+            int seqC = seqB + 35;
+            float awayFromNPC = NPC.direction; //player already stands in this X direction from the giant
+
             if (AttackTimer == 1)
             {
                 SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f, Pitch = 0.2f }, NPC.Center);
             }
-            if (AttackTimer == Tel(CanopyCastTicks) && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                //Drop delays close in: 15/45/70/90/105/115 after spawn (gaps 30→10)
-                Span<int> delays = stackalloc int[] { 15, 45, 70, 90, 105, 115 };
-                for (int i = 0; i < 6; i++)
+                if (AttackTimer == seqA)
                 {
-                    Vector2 pos = new Vector2(player.Center.X + (i - 2.5f) * 55f, player.position.Y - 220f);
-                    for (int tries = 0; tries < 10 && IsSolidAt(pos); tries++)
+                    //Sequence A, "Curtain": drop delays close in 15/40/62/80/95/107/115 (gaps
+                    //shrink 25→8) across seven columns, ordered FAR-from-the-giant (drops first) to
+                    //NEAR-the-giant (drops last) so the safe lane always ends up on the giant's
+                    //side, nudged 90px further from the giant than dead-centre on the player.
+                    Span<int> delays = stackalloc int[] { 15, 40, 62, 80, 95, 107, 115 };
+                    int columns = delays.Length;
+                    float centerX = player.Center.X + awayFromNPC * 90f;
+                    for (int i = 0; i < columns; i++)
                     {
-                        pos.Y += 16f; //pull down out of ceilings toward the player
+                        float columnOffset = awayFromNPC * ((columns - 1) / 2f - i) * 78f;
+                        SpawnCanopyIcicle(new Vector2(centerX + columnOffset, player.position.Y - 220f), delays[i]);
                     }
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
-                        ModContent.ProjectileType<GigasCanopyIcicle>(), CanopyDamage, 2f, Main.myPlayer, delays[i]);
+                    SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.6f, Pitch = 0.3f }, NPC.Center);
+                }
+                else if (AttackTimer == seqB)
+                {
+                    //Sequence B, "Volley": four columns in a tight, fast cluster directly on the
+                    //player's CURRENT spot — punishes standing still through the first pause.
+                    Span<int> delays = stackalloc int[] { 10, 22, 34, 46 };
+                    int columns = delays.Length;
+                    for (int i = 0; i < columns; i++)
+                    {
+                        float columnOffset = ((columns - 1) / 2f - i) * 48f;
+                        SpawnCanopyIcicle(new Vector2(player.Center.X + columnOffset, player.position.Y - 220f), delays[i]);
+                    }
+                    SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f, Pitch = 0.5f }, NPC.Center);
+                }
+                else if (AttackTimer == seqC)
+                {
+                    //Sequence C, "Pincer": two columns drop TOGETHER well outside the player on
+                    //both sides (a binary "which way do I not go" read), then a single centre
+                    //column punishes whichever way they guessed a beat later.
+                    float px = player.Center.X;
+                    SpawnCanopyIcicle(new Vector2(px - 150f, player.position.Y - 220f), 18);
+                    SpawnCanopyIcicle(new Vector2(px + 150f, player.position.Y - 220f), 18);
+                    SpawnCanopyIcicle(new Vector2(px, player.position.Y - 220f), 42);
+                    SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f, Pitch = 0.1f }, NPC.Center);
                 }
             }
-            if (AttackTimer >= 60) //short recovery — the overlap with the falling drops is the design
+            //Recovery starts shortly after the LAST cast, not after its icicles finish resolving —
+            //the giant is free and walking again while sequence C's drops are still falling, same
+            //overlap design as the original single curtain.
+            if (AttackTimer >= seqC + 25)
             {
-                EndAttack(330);
+                EndAttack(160);
             }
+        }
+
+        ///<summary>One stalactite for Crystal Canopy: pulled down out of ceilings toward the target
+        ///column so it never spawns embedded in solid tile. Shared by all three sequences.</summary>
+        void SpawnCanopyIcicle(Vector2 pos, int delay)
+        {
+            for (int tries = 0; tries < 10 && IsSolidAt(pos); tries++)
+            {
+                pos.Y += 16f;
+            }
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
+                ModContent.ProjectileType<GigasCanopyIcicle>(), CanopyDamage, 2f, Main.myPlayer, delay);
         }
 
         ///<summary>Black Ice: a stomp glazes a 24-tile strip of floor under the player. Almost no
@@ -1479,13 +1590,13 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (groundY > 0f)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(player.Center.X, groundY - 8f), Vector2.Zero,
-                            ModContent.ProjectileType<GigasGlazeStrip>(), 0, 0f, Main.myPlayer, 480f);
+                            ModContent.ProjectileType<GigasGlazeStrip>(), 0, 0f, Main.myPlayer, 960f); //twice the old 480t (8s) glaze duration
                     }
                 }
             }
             if (AttackTimer >= tel + GlazeRecoveryTicks)
             {
-                EndAttack(480);
+                EndAttack(220);
             }
             else if (AttackTimer > tel)
             {
@@ -1750,6 +1861,169 @@ namespace tsorcRevamp.NPCs.Enemies
 
         #endregion
 
+        #region Shader VFX
+
+        //Shared ice palette. Outer is deep enough to OCCLUDE (premultiplied alpha carries the dark
+        //interior through alpha, not by painting a dark colour); Core is deliberately short of pure
+        //white, which dissolves every ramp it tops.
+        static readonly Color IceOuter = new Color(18, 40, 68);
+        static readonly Color IceMid = new Color(88, 168, 226);
+        static readonly Color IceCore = new Color(205, 236, 250);
+
+        const string NoiseRoot = "tsorcRevamp/Textures/Noise/";
+        static Asset<Effect> breathEffect;
+        static Asset<Effect> wardEffect;
+        static Asset<Texture2D> mistNoise;
+        static Asset<Texture2D> mistDetailNoise;
+        static Asset<Texture2D> iceCellNoise;
+        static Asset<Texture2D> iceCrackNoise;
+
+        //Frost breath quad. 420px of reach matches where the puffs actually die now (speed 9
+        //decaying at 0.978/tick over 80 ticks sums to ~340px, plus room for the shader's own tip
+        //fade). Height keeps the same ~1.04:1 ratio to length as before, so the cone's 0.408 max
+        //half-width bound (see IceGigasFrostBreath.fx) still lands at the same relative breadth,
+        //just carried over the longer reach.
+        const float BreathQuadLength = 420f;
+        const float BreathQuadHeight = 440f;
+
+        //Rime Ward ellipse, ~6px outside the perimeter glint dust RunRimeWard already spawns at
+        //NPC.Center + dir * (38, 62), so the shader and the particles agree on where the shell is.
+        //The shell's jagged boundary peaks at 1.08x these axes (47.5 x 75.6px); the quad adds ~14px
+        //of margin beyond that so the ellipse never meets the quad edge as a flat cut.
+        const float WardAxisX = 44f;
+        const float WardAxisY = 70f;
+        const float WardQuadWidth = 124f;
+        const float WardQuadHeight = 180f;
+
+        static void LoadShaderAssets()
+        {
+            breathEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/IceGigasFrostBreath", AssetRequestMode.ImmediateLoad);
+            wardEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/IceGigasRimeWard", AssetRequestMode.ImmediateLoad);
+            mistNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
+            mistDetailNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "Turbulence_07-512x512", AssetRequestMode.ImmediateLoad);
+            //Flat-shaded polygons used as crystal facet GEOMETRY, not as a smooth modulator
+            iceCellNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "VoronoiNoise", AssetRequestMode.ImmediateLoad);
+            iceCrackNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Noise_Wo14", AssetRequestMode.ImmediateLoad);
+        }
+
+        ///<summary>Shared spritebatch plumbing for the two NPC-attached ice shaders. The caller picks
+        ///its technique and sets its own bespoke uniforms first; this binds the detail sampler, sets
+        ///the palette/time/pixel-grid every ice technique shares, draws the quad and restores state.
+        ///Called from the frost-breath and rime-ward draws.</summary>
+        static void DrawIceShaderQuad(Effect effect, Texture2D primary, Texture2D detail,
+            Vector2 worldCenter, Vector2 drawSize, float rotation, float opacity)
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture = graphicsDevice.Textures[1];
+            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
+            try
+            {
+                graphicsDevice.Textures[1] = detail;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+
+                effect.Parameters["OuterColor"]?.SetValue(IceOuter.ToVector3());
+                effect.Parameters["MiddleColor"]?.SetValue(IceMid.ToVector3());
+                effect.Parameters["CoreColor"]?.SetValue(IceCore.ToVector3());
+                effect.Parameters["Opacity"]?.SetValue(opacity);
+                effect.Parameters["Time"]?.SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["DrawSize"]?.SetValue(drawSize);
+                //Pre-divided 2px pixel grid. Deriving this in HLSL instead costs ~12 per-pixel slots
+                //at ps_2_0 (no preshader), which is the difference between fitting Reach and not.
+                Vector2 pixelBlocks = Vector2.Max(drawSize, Vector2.One) * 0.5f;
+                effect.Parameters["PixelGrid"]?.SetValue(
+                    new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                Main.EntitySpriteDraw(primary, worldCenter - Main.screenPosition, null, Color.White,
+                    rotation, primary.Size() * 0.5f, drawSize / primary.Size(), SpriteEffects.None, 0f);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture;
+                graphicsDevice.SamplerStates[1] = previousSampler;
+                UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            }
+        }
+
+        ///<summary>The frost-breath jet, drawn behind the body so the giant's head stays readable.
+        ///The quad is rotated to the CURRENT sweep angle, so it tracks the same low-to-high rake the
+        ///puff projectiles fly along; uv.x = 0 sits at the mouth.</summary>
+        void DrawFrostBreathCone()
+        {
+            int inhale = Tel(BreathInhaleTicks);
+            int tick = AttackTimer - inhale;
+            if (tick <= 0 || tick > BreathExhaleTicks)
+            {
+                return; //still inhaling, or already into recovery
+            }
+
+            //Same sweep the exhale uses to aim its puffs (RunFrostBreath), so the shader cone and
+            //the real projectiles rake together instead of drifting apart.
+            float sweep = MathHelper.Lerp(0.45f, -0.6f, tick / (float)BreathExhaleTicks);
+            Vector2 jetDirection = new Vector2(NPC.direction * (float)Math.Cos(sweep), (float)Math.Sin(sweep));
+            Vector2 mouth = NPC.Center + new Vector2(NPC.direction * 26f, -28f + NPC.gfxOffY + SpriteDrawOffsetY);
+            Vector2 quadCenter = mouth + jetDirection * (BreathQuadLength * 0.5f);
+
+            //Ramp in and out so the jet never pops on or cuts off mid-blast.
+            float fadeIn = MathHelper.Clamp(tick / 8f, 0f, 1f);
+            float fadeOut = MathHelper.Clamp((BreathExhaleTicks - tick) / 12f, 0f, 1f);
+            float progress = fadeIn * fadeOut;
+
+            LoadShaderAssets();
+            Effect effect = breathEffect.Value;
+            effect.CurrentTechnique = effect.Techniques["IceGigasFrostBreath"];
+            //Active = 1: this only ever draws during the committed exhale. The four derived scalars
+            //are folded here because they are pure-uniform maths — see the note in the .fx.
+            const float active = 1f;
+            const float opacity = 0.9f;
+            effect.Parameters["Progress"].SetValue(progress);
+            effect.Parameters["CoreMix"].SetValue(0.30f + active * 0.42f);
+            effect.Parameters["BodyAlphaGain"].SetValue(0.82f + active * 0.18f);
+            effect.Parameters["EmissiveGain"].SetValue(active * opacity * 0.09f);
+            effect.Parameters["AlphaScale"].SetValue(progress * opacity);
+
+            DrawIceShaderQuad(effect, mistNoise.Value, mistDetailNoise.Value, quadCenter,
+                new Vector2(BreathQuadLength, BreathQuadHeight), jetDirection.ToRotation(), opacity);
+        }
+
+        ///<summary>The Rime Ward shell: a thick jagged crust of ice around the whole body, rising
+        ///from the feet as it forms and glittering harder the more hits it has stored. Drawn behind
+        ///the sprite so the giant stays readable inside its own armour.</summary>
+        void DrawRimeWardShell()
+        {
+            if (AttackTimer > WardTelegraphTicks + WardHoldTicks)
+            {
+                return; //already detonated — the shards are the effect now, not the shell
+            }
+
+            float rise = MathHelper.Clamp(AttackTimer / (float)WardTelegraphTicks, 0f, 1f);
+            float stored = MathHelper.Clamp(WardStored / 8f, 0f, 1f); //8 = the RegisterHit cap
+
+            LoadShaderAssets();
+            Effect effect = wardEffect.Value;
+            effect.CurrentTechnique = effect.Techniques["IceGigasRimeWard"];
+            float time = Main.GlobalTimeWrappedHourly;
+            effect.Parameters["ShellAxis"].SetValue(new Vector2(WardAxisX, WardAxisY));
+            effect.Parameters["StoredAlphaGain"].SetValue(0.78f + stored * 0.16f);
+            effect.Parameters["StoredCoreGain"].SetValue(0.55f + stored * 0.45f);
+            effect.Parameters["GlintGain"].SetValue(0.6f + stored * 1.4f);
+            //Constant scroll rates only: scaling Time by anything that CHANGES during the effect
+            //(rise, stored) would jump the phase by whole periods, since Time is a free-running clock.
+            effect.Parameters["EdgePan"].SetValue(0.5f + time * 0.008f);
+            effect.Parameters["FillPan"].SetValue(0.5f + time * 0.030f);
+            effect.Parameters["CrackPan"].SetValue(time * 0.105f);
+            effect.Parameters["RiseOffset"].SetValue(rise - 1f);
+
+            Vector2 center = NPC.Center + new Vector2(0f, NPC.gfxOffY + SpriteDrawOffsetY);
+            DrawIceShaderQuad(effect, iceCellNoise.Value, iceCrackNoise.Value, center,
+                new Vector2(WardQuadWidth, WardQuadHeight), 0f, 0.92f);
+        }
+
+        #endregion
+
         ///<summary>Pale-blue afterimage trail during the stampede charge (and any other high-speed moment).
         ///Also hides the body entirely during Heart of Winter's fake death.</summary>
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -1757,6 +2031,17 @@ namespace tsorcRevamp.NPCs.Enemies
             if (HeartHidden)
             {
                 return false; //"dead" — the crawling pile is dust only
+            }
+
+            //Shader layers go down BEFORE the body (and dust draws in a later pass entirely), so
+            //both land behind the existing sprite and particle work rather than covering it.
+            if (!Main.dedServ && State == AttackState.FrostBreath)
+            {
+                DrawFrostBreathCone();
+            }
+            if (!Main.dedServ && State == AttackState.RimeWard)
+            {
+                DrawRimeWardShell();
             }
             bool stampeding = State == AttackState.GlacialStampede && AttackTimer > Tel(StampedeTelegraphTicks) && AttackTimer <= Tel(StampedeTelegraphTicks) + StampedeChargeTicks;
             if (stampeding || NPC.velocity.Length() > 8f)
@@ -1766,11 +2051,25 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 origin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height); //bottom-center
                 for (int k = NPC.oldPos.Length - 1; k > 0; k -= 2)
                 {
-                    Vector2 drawPos = NPC.oldPos[k] + new Vector2(NPC.width / 2f, NPC.height + NPC.gfxOffY + 4f) - screenPos;
+                    //This is a hand-rolled draw, so it does not get DrawOffsetY from NPCAddHeight
+                    //the way the real sprite does — apply the same shift or the trail detaches.
+                    Vector2 drawPos = NPC.oldPos[k] + new Vector2(NPC.width / 2f, NPC.height + NPC.gfxOffY + SpriteDrawOffsetY) - screenPos;
                     Color color = new Color(140, 210, 255, 0) * ((NPC.oldPos.Length - k) / (float)NPC.oldPos.Length) * 0.6f;
                     spriteBatch.Draw(texture, drawPos, NPC.frame, color, NPC.rotation, origin, NPC.scale, effects, 0f);
                 }
             }
+            return true;
+        }
+
+        ///<summary>Vanilla anchors the floating health bar to the 52x110 HITBOX, but the sprite
+        ///frame is 176x170 — about 60px of head and shoulders overhang above the hitbox with
+        ///nothing in NPC.height to tell vanilla about it, so the default bar floats around
+        ///mid-torso. Anchor explicitly to the visual sprite top instead.</summary>
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            const float frameHeight = 170f;
+            position.X = NPC.Center.X;
+            position.Y = NPC.Bottom.Y - frameHeight + NPC.gfxOffY + SpriteDrawOffsetY - 16f; //16px clearance above the head
             return true;
         }
 

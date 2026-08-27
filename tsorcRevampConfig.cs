@@ -261,10 +261,10 @@ namespace tsorcRevamp
             set => ModContent.GetInstance<tsorcRevampVisualConfig>().GravityFix = value;
         }
 
-        public bool UseOriginalPlayerHurtSounds
+        public HurtSoundMode HurtSoundMode
         {
-            get => ModContent.GetInstance<tsorcRevampSoundConfig>().UseOriginalPlayerHurtSounds;
-            set => ModContent.GetInstance<tsorcRevampSoundConfig>().UseOriginalPlayerHurtSounds = value;
+            get => ModContent.GetInstance<tsorcRevampSoundConfig>().HurtSoundMode;
+            set => ModContent.GetInstance<tsorcRevampSoundConfig>().HurtSoundMode = value;
         }
 
         public uint MiakodaVolume
@@ -469,6 +469,13 @@ namespace tsorcRevamp
         public bool GravityFix { get; set; }
     }
 
+    public enum HurtSoundMode
+    {
+        Vanilla,
+        LiteRealistic,
+        FullRealistic
+    }
+
     [Label("$Mods.tsorcRevamp.Configs.tsorcRevampSoundConfig.DisplayName")]
     public class tsorcRevampSoundConfig : ModConfig
     {
@@ -478,12 +485,41 @@ namespace tsorcRevamp
             return base.Autoload(ref name);
         }
 
-        public override void OnLoaded() => tsorcRevampConfig.MigrateRenamedConfig(this, nameof(tsorcRevampSoundConfig));
+        public override void OnLoaded()
+        {
+            tsorcRevampConfig.MigrateRenamedConfig(this, nameof(tsorcRevampSoundConfig));
+
+            // One-time migration from the old on/off UseOriginalPlayerHurtSounds bool. Runs once ever
+            // per config file - HurtSoundModeMigrated flips permanently true afterward, so a player's
+            // manual HurtSoundMode choice is never overwritten again on later loads.
+            if (!HurtSoundModeMigrated)
+            {
+                if (LegacyUseOriginalPlayerHurtSounds)
+                {
+                    HurtSoundMode = HurtSoundMode.Vanilla;
+                }
+                else
+                {
+                    HurtSoundMode = HurtSoundMode.LiteRealistic;
+                }
+
+                HurtSoundModeMigrated = true;
+            }
+        }
 
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
-        [DefaultValue(false)]
-        public bool UseOriginalPlayerHurtSounds { get; set; }
+        [DefaultValue(HurtSoundMode.LiteRealistic)]
+        public HurtSoundMode HurtSoundMode { get; set; }
+
+        // Hidden legacy field - only exists to catch the old bool's value out of pre-existing config
+        // JSON for the one-time migration above. Not shown in the config UI (internal), and keeps the
+        // old "UseOriginalPlayerHurtSounds" JSON key alive so upgrading players' old choice is read.
+        [JsonProperty("UseOriginalPlayerHurtSounds")]
+        internal bool LegacyUseOriginalPlayerHurtSounds { get; set; }
+
+        [JsonProperty]
+        internal bool HurtSoundModeMigrated { get; set; }
 
         [DefaultValue(5)]
         public uint MiakodaVolume { get; set; }

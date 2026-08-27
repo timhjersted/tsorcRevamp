@@ -1,3 +1,5 @@
+#include "PixelShaderCommon.fxh"
+
 sampler PrimarySampler : register(s0);
 sampler DetailSampler : register(s1);
 
@@ -11,6 +13,56 @@ float Active;
 float Direction;
 float2 DrawSize;
 float2 PrimaryTextureSize;
+float4 PixelGrid;
+
+// Nito's rotational sword attacks use the same procedural sweep construction proven by Gwyn's
+// greatsword, but the material language is Nito's: violet death magic in phase one and blood-red
+// destined death in phase two. The caller rotates this quad with the blade and flips local Y for
+// reverse-handed swings. The thrust deliberately does NOT use this technique; it retains the narrow
+// blade-local sheath below because a broad crescent would imply sideways danger during a lunge.
+float4 NitoReaperSweepPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
+{
+    float2 uv = PixelateShaderUV(coords, PixelGrid);
+    float2 p = uv * 2.0 - 1.0;
+
+    // Circular blade path centred behind the quad, with +X pointing along the sword. These bounds
+    // are the same resolution-independent construction used by GwynCinderSlash: the farthest flame
+    // reaches local x = 0.88, leaving 0.12 of clear quad for a guaranteed soft cutoff.
+    float d = length(p - float2(-0.62, 0.0)) - 1.16;
+
+    // Progress moves the travelling tip from one side of the swing to the other. Resolve that taper
+    // before thickness so the leading end closes to a point instead of being clipped into a bar.
+    float sweepY = Progress * 2.35 - 1.15;
+    float behind = sweepY - p.y;
+    float lead01 = saturate(behind * 3.40);
+    float age = saturate(1.0 - behind * 0.42);
+    float halfWidth = 0.34 * (1.0 - p.y * p.y) * lead01;
+
+    // Macro turbulence shapes the trailing edge; finer turbulence only textures its heat. Sampling
+    // across the arc faster than along it stretches the features into directional flame tongues.
+    float2 flowUV = float2(d * 1.30 - Time * 0.55, p.y * 0.55 + Time * 0.10);
+    float shape = tex2D(PrimarySampler, flowUV).r;
+    float detail = tex2D(DetailSampler, flowUV * 1.90 + float2(Time * 0.31, -Time * 0.12)).r;
+
+    // A crisp travelling edge and a noise-frayed wake. Noise can extend only backward, never ahead
+    // of the cutting edge, so the brightest region remains attached to the current weapon motion.
+    float lead = saturate((halfWidth - d) * 13.0);
+    float tail = saturate((d + halfWidth * (0.85 + shape * 2.30)) * 3.20);
+    float blade = lead * tail;
+    float tipHeat = blade * lead01 * (1.0 - lead01) * 4.0;
+
+    float body = blade * (0.30 + age * 0.70);
+    float heat = body * (0.42 + detail * 0.85) + tipHeat * 0.55;
+    float edge = body * saturate((halfWidth * 0.55 - abs(d)) * 6.0) + tipHeat * 0.70;
+
+    // Premultiplied AlphaBlend: the dark aged wake can occlude on bright sky while the colored core
+    // remains emissive. The caller supplies purple or red ramps through the same parameter contract.
+    float alpha = saturate(body * 1.25 + edge * 0.35) * Opacity;
+    float3 color = DarkColor * (body * 0.95)
+        + MidColor * (heat * 0.85)
+        + CoreColor * (edge * edge * 0.95);
+    return float4(color * Opacity, alpha);
+}
 
 // Nito's greatsword wake — the death-magic sheath that burns along the blade during a swing.
 //
@@ -82,5 +134,13 @@ technique NitoReaperTrail
     pass NitoReaperTrailPass
     {
         PixelShader = compile ps_2_0 PixelShaderFunction();
+    }
+}
+
+technique NitoReaperSweep
+{
+    pass NitoReaperSweepPass
+    {
+        PixelShader = compile ps_2_0 NitoReaperSweepPixel();
     }
 }

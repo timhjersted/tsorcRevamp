@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         int OwnerIndex => (int)Projectile.ai[0];
         int Kind => (int)Projectile.ai[1];
-        int Dir => Projectile.velocity.X >= 0f ? 1 : -1;
+        int Dir => Projectile.ai[2] >= 0f ? 1 : -1;
         int Timer => (int)Projectile.localAI[0];
         const int SwingTicks = 18;
 
@@ -36,27 +36,51 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             Projectile.localAI[0]++;
+            Projectile.velocity = Vector2.Zero;
             NPC owner = OwnerIndex >= 0 && OwnerIndex < Main.maxNPCs ? Main.npc[OwnerIndex] : null;
             if (owner == null || !owner.active)
             {
                 Projectile.Kill();
                 return;
             }
+            bool phaseTwo = owner.ModNPC is global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito nito
+                && nito.IsPhaseTwo;
 
             float progress = MathHelper.Clamp(Timer / (float)SwingTicks, 0f, 1f);
-            // +30px matches the boss's GroundSinkPixels draw sink so the hitbox sits on the visual blade.
-            Projectile.Center = owner.Center + new Vector2(0f, 30f) + global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashOffset(Kind, Dir, progress);
+            // Use the boss rig's shared vertical correction so collision and the shader remain on the
+            // visible blade if its ground anchoring is tuned again.
+            Projectile.Center = owner.Center
+                + new Vector2(0f, global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.GroundSinkPixels)
+                + global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashOffset(Kind, Dir, progress);
             Projectile.rotation = global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashWorldAngle(Kind, Dir, progress);
 
-            // The shader carries the blade silhouette; retain only a few bone sparks as texture.
+            // The shader carries the blade silhouette. In phase two, blood droplets and wraith wisps
+            // rise directly from the same hilt-to-tip line used for collision, so the empowered sword
+            // never leaves a detached cloud behind it.
             Vector2 blade = Projectile.rotation.ToRotationVector2();
             Vector2 hilt = Projectile.Center - blade * 40f;
             Vector2 tip = Projectile.Center + blade * 150f;
             for (int i = 0; i < 2; i++)
             {
                 Vector2 pos = Vector2.Lerp(hilt, tip, Main.rand.NextFloat()) + Main.rand.NextVector2Circular(7f, 7f);
-                Dust d = Dust.NewDustPerfect(pos, DustID.BoneTorch, blade * Main.rand.NextFloat(0.5f, 2f), 90, default, 1f);
+                int dustType = phaseTwo && i == 0 ? DustID.Blood
+                    : phaseTwo ? DustID.Wraith : DustID.BoneTorch;
+                Vector2 velocity = phaseTwo
+                    ? blade * Main.rand.NextFloat(0.3f, 1.3f) + new Vector2(0f, Main.rand.NextFloat(-2.8f, -1f))
+                    : blade * Main.rand.NextFloat(0.5f, 2f);
+                Dust d = Dust.NewDustPerfect(pos, dustType, velocity, 90, default,
+                    dustType == DustID.Blood ? 1.1f : 1f);
                 d.noGravity = true;
+            }
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            NPC owner = OwnerIndex >= 0 && OwnerIndex < Main.maxNPCs ? Main.npc[OwnerIndex] : null;
+            if (owner?.ModNPC is global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito nito
+                && nito.IsPhaseTwo)
+            {
+                target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
             }
         }
 
@@ -73,9 +97,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             float progress = MathHelper.Clamp(Timer / (float)SwingTicks, 0f, 1f);
             Vector2 blade = Projectile.rotation.ToRotationVector2();
             Vector2 center = Projectile.Center + blade * 50f;
-            NitoVFX.DrawSlash(center, Projectile.rotation,
-                new Vector2(255f, Kind == 2 ? 62f : 88f), progress, 0.9f,
-                Projectile.identity * 0.517f + Kind * 0.31f);
+            NPC owner = OwnerIndex >= 0 && OwnerIndex < Main.maxNPCs ? Main.npc[OwnerIndex] : null;
+            bool phaseTwo = owner?.ModNPC is global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito nito
+                && nito.IsPhaseTwo;
+            NitoVFX.DrawSlash(center, Projectile.rotation, progress, 0.9f, Kind, Dir,
+                Projectile.identity * 0.517f + Kind * 0.31f, phaseTwo);
             return false;
         }
     }
@@ -206,6 +232,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float ExpandSpeed = 8f;
         const float RingHalfThickness = 24f;
         float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 260f;
+        // ai[1] is deliberately opt-in: Quietus and the other existing nova users retain their
+        // current debuffs/dust, while a grave-hand detonation gets the Destined Death treatment.
+        bool GraveHandDetonation => Projectile.ai[1] > 0.5f;
         float Radius => Projectile.localAI[0];
 
         public override void SetDefaults()
@@ -228,21 +257,49 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.velocity = Vector2.Zero;
             Projectile.localAI[0] += ExpandSpeed;
-            for (int i = 0; i < 34; i++)
+            if (Main.netMode != NetmodeID.Server)
             {
-                float angle = Main.rand.NextFloat(MathHelper.TwoPi);
-                Vector2 pos = Projectile.Center + angle.ToRotationVector2() * (Radius + Main.rand.NextFloat(-7f, 7f));
-                Dust d = Dust.NewDustPerfect(pos, Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.BoneTorch, angle.ToRotationVector2() * 2.2f, 75, default, Main.rand.NextFloat(1f, 1.5f));
-                d.noGravity = true;
+                // The hand variant replaces the old orange/purple ring dust with a restrained
+                // black-wraith and blood wake. Its shader remains the source of the readable hit ring.
+                int dustCount = GraveHandDetonation ? 10 : 34;
+                for (int i = 0; i < dustCount; i++)
+                {
+                    float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    Vector2 radial = angle.ToRotationVector2();
+                    Vector2 pos = Projectile.Center + radial * (Radius + Main.rand.NextFloat(-7f, 7f));
+                    if (GraveHandDetonation)
+                    {
+                        bool blood = Main.rand.NextBool(3);
+                        Dust d = Dust.NewDustPerfect(pos, blood ? DustID.Blood : DustID.Wraith,
+                            radial * Main.rand.NextFloat(1.5f, 3.2f), blood ? 55 : 115,
+                            blood ? new Color(145, 18, 28) : new Color(16, 2, 22),
+                            Main.rand.NextFloat(0.62f, 1.12f));
+                        d.noGravity = !blood || Main.rand.NextBool(2);
+                        d.noLight = !blood;
+                        if (!blood)
+                        {
+                            d.fadeIn = Main.rand.NextFloat(0.9f, 1.25f);
+                        }
+                    }
+                    else
+                    {
+                        Dust d = Dust.NewDustPerfect(pos,
+                            Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.BoneTorch,
+                            radial * 2.2f, 75, default, Main.rand.NextFloat(1f, 1.5f));
+                        d.noGravity = true;
+                    }
+                }
             }
-            Lighting.AddLight(Projectile.Center, 0.45f, 0.35f, 0.65f);
+            Lighting.AddLight(Projectile.Center, GraveHandDetonation
+                ? new Vector3(0.52f, 0.08f, 0.12f)
+                : new Vector3(0.45f, 0.35f, 0.65f));
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             if (Radius > 2f)
             {
-                NitoVFX.DrawDeathRing(Projectile.Center, Radius, RingHalfThickness, 0.95f);
+                NitoVFX.DrawQuietusNova(Projectile.Center, Radius, MaxRadius, RingHalfThickness, 0.95f);
                 float flashProgress = MathHelper.Clamp(Radius / 88f, 0f, 1f);
                 if (flashProgress < 1f)
                 {
@@ -269,6 +326,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             target.AddBuff(BuffID.Darkness, 5 * 60);
             target.AddBuff(BuffID.Slow, 2 * 60);
+            if (GraveHandDetonation)
+            {
+                target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 10 * 60);
+            }
         }
     }
 
@@ -321,7 +382,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             if (Timer == TelegraphTicks + 1)
             {
-                SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.55f, Pitch = -0.5f }, Projectile.Center);
+                SoundEngine.PlaySound(SoundID.Item117 with { Volume = 0.55f, Pitch = -0.5f }, Projectile.Center);
                 // Bursting out of the ground throws grave-fire at the breach point.
                 NitoVFX.PyreBurst(new Vector2(Projectile.Center.X, bottom), 26, 4.5f, 1.2f, 20f, 8f);
             }
@@ -401,9 +462,10 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///<summary>
     ///A pair of these erupts flanking the player, holds for a beat, then CLAPS together on the spot
     ///the player was standing when they rose — detonating a blast at the meeting point. The two hands
-    ///share a convergence centre (ai[1]) and exactly one of them (ai[2]) is the designated exploder,
-    ///so the blast fires once rather than twice. Each also leaves a lingering grave-fire (NitoPyreFire)
-    ///burning at its own breach point, which is what actually denies the flanks while they close.
+    ///share a convergence centre (ai[1]); ai[2]'s low bit identifies the right-hand exploder, while
+    ///values 2/3 mark the alternate outward-detonation response to a player rolling through either
+    ///hand before the clap. Each breach burns only for the stationary hold, then dissipates as soon
+    ///as its hand starts moving.
     ///</summary>
     class NitoGraveHand : ModProjectile
     {
@@ -411,18 +473,24 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         int TelegraphTicks => Projectile.ai[0] > 0f ? (int)Projectile.ai[0] : 18;
         float ConvergeCenterX => Projectile.ai[1];
-        bool IsExploder => Projectile.ai[2] > 0.5f;
+        bool IsExploder => ((int)Projectile.ai[2] & 1) == 1;
+        bool OutwardDetonation => Projectile.ai[2] >= 2f;
+        int Side => IsExploder ? 1 : -1;
         int Timer => (int)Projectile.localAI[0];
 
         const int GrabTicks = 16;    // the initial damaging emergence
         const int PauseTicks = 60;   // the 1-second beat before they start closing
         const float ConvergeSpeed = 3.1f;
+        const float OutwardSpeed = 5f;
+        internal const float InitialHandOffset = 150f;
+        const float OutwardTravelDistance = 300f;
         const int MaxConvergeTicks = 150; // failsafe so a hand can never chase forever
         const float BlastRadius = 125f;   // ~250px across
 
         int EmergeTick => TelegraphTicks;
         int ConvergeStartTick => TelegraphTicks + GrabTicks + PauseTicks;
-        bool Converging => Timer > ConvergeStartTick;
+        bool Converging => !OutwardDetonation && Timer > ConvergeStartTick;
+        internal bool HasStartedMoving => OutwardDetonation || Converging;
 
         public override void SetDefaults()
         {
@@ -457,10 +525,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             behindNPCsAndTiles.Add(index);
         }
 
-        // Dangerous on the way up, and again while sweeping inward — but not during the hold, which is
-        // the player's window to get out from between them.
+        // The retreating hands are a telegraph, not two moving hitboxes: their separate novas are the
+        // punishment. The normal version remains dangerous on emergence and while sweeping inward.
         public override bool? CanDamage() =>
-            (Timer > EmergeTick && Timer < EmergeTick + GrabTicks) || Converging;
+            !OutwardDetonation && ((Timer > EmergeTick && Timer < EmergeTick + GrabTicks) || Converging);
 
         public override void AI()
         {
@@ -481,14 +549,31 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-4f, -1f), 80, default, 1.1f);
                 }
                 NitoVFX.PyreBurst(Projectile.Bottom, 30, 5f, 1.3f, 30f, 10f);
-                // The breach itself keeps burning after the hand has left it.
+                // The breach burns through the held telegraph; its hand link dismisses it as soon as
+                // this projectile begins either inward or outward movement.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Bottom, Vector2.Zero,
-                        ModContent.ProjectileType<NitoPyreFire>(), Projectile.damage / 2, 0f, Projectile.owner);
+                        ModContent.ProjectileType<NitoPyreFire>(), Projectile.damage / 2, 0f,
+                        Projectile.owner, Projectile.whoAmI + 1f);
                 }
                 return;
             }
+
+            // A dodge through either hand during the pre-clap window changes the whole pair's answer.
+            // Detection and state mutation are server-authoritative; ai[2] then synchronizes the branch.
+            if (!OutwardDetonation && Timer <= ConvergeStartTick && Main.netMode != NetmodeID.MultiplayerClient
+                && RollingPlayerIntersects())
+            {
+                ArmPairForOutwardDetonation();
+            }
+
+            if (OutwardDetonation)
+            {
+                RunOutwardDetonation();
+                return;
+            }
+
             if (!Converging)
             {
                 return; // the held beat
@@ -508,16 +593,157 @@ namespace tsorcRevamp.Projectiles.Enemy
                 if (IsExploder)
                 {
                     Vector2 blastCenter = new Vector2(ConvergeCenterX, Projectile.Center.Y);
-                    SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.9f, Pitch = -0.35f }, blastCenter);
-                    UsefulFunctions.ScreenShake(blastCenter, 7f, 16);
-                    NitoVFX.PyreBurst(blastCenter, 60, 9f, 1.6f, 40f, 40f);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), blastCenter, Vector2.Zero,
-                            ModContent.ProjectileType<NitoDeathNova>(), Projectile.damage, 6f, Projectile.owner, BlastRadius);
-                    }
+                    Detonate(blastCenter);
                 }
                 Projectile.Kill();
+            }
+        }
+
+        bool RollingPlayerIntersects()
+        {
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (player.active && !player.dead && Projectile.Hitbox.Intersects(player.Hitbox)
+                    && player.GetModPlayer<global::tsorcRevamp.tsorcRevampPlayer>().isDodging)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        void ArmPairForOutwardDetonation()
+        {
+            int handType = ModContent.ProjectileType<NitoGraveHand>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile hand = Main.projectile[i];
+                if (!hand.active || hand.type != handType || hand.ai[2] >= 2f
+                    || System.Math.Abs(hand.ai[1] - ConvergeCenterX) > 0.5f
+                    || System.Math.Abs(System.Math.Abs(hand.Center.X - ConvergeCenterX) - InitialHandOffset) > 4f)
+                {
+                    continue;
+                }
+
+                hand.ai[2] += 2f;
+                int handSide = ((int)hand.ai[2] & 1) == 1 ? 1 : -1;
+                hand.velocity = new Vector2(handSide * OutwardSpeed, 0f);
+                hand.timeLeft = System.Math.Max(hand.timeLeft,
+                    (int)(OutwardTravelDistance / OutwardSpeed) + 20);
+                hand.netUpdate = true;
+            }
+        }
+
+        void RunOutwardDetonation()
+        {
+            float targetX = ConvergeCenterX + Side * (InitialHandOffset + OutwardTravelDistance);
+            float remaining = System.Math.Abs(targetX - Projectile.Center.X);
+            float traveled = System.Math.Max(0f,
+                System.Math.Abs(Projectile.Center.X - ConvergeCenterX) - InitialHandOffset);
+            float progress = MathHelper.Clamp(traveled / OutwardTravelDistance, 0f, 1f);
+            Projectile.velocity = new Vector2(Side * OutwardSpeed, 0f);
+
+            EmitOutwardTelegraph(progress);
+            Lighting.AddLight(Projectile.Center, new Vector3(0.42f, 0.035f, 0.07f) * (0.35f + 0.65f * progress));
+
+            if (remaining <= OutwardSpeed + 1f)
+            {
+                Projectile.Center = new Vector2(targetX, Projectile.Center.Y);
+                Projectile.velocity = Vector2.Zero;
+                Detonate(Projectile.Center);
+                Projectile.Kill();
+            }
+        }
+
+        void EmitOutwardTelegraph(float progress)
+        {
+            if (Main.netMode == NetmodeID.Server || Timer % 2 != 0)
+            {
+                return;
+            }
+
+            int count = 1 + (int)(progress * 4f);
+            Vector2 wakeDirection = new Vector2(-Side, -0.35f);
+            for (int i = 0; i < count; i++)
+            {
+                bool blood = Main.rand.NextBool(3);
+                Vector2 position = Projectile.Center
+                    + Main.rand.NextVector2Circular(Projectile.width * 0.28f, Projectile.height * 0.3f);
+                Vector2 velocity = wakeDirection * Main.rand.NextFloat(0.45f, 1.8f + progress * 1.4f)
+                    + Main.rand.NextVector2Circular(0.55f, 0.75f);
+                Dust d = Dust.NewDustPerfect(position, blood ? DustID.Blood : DustID.Wraith, velocity,
+                    blood ? 55 : 120,
+                    blood ? new Color(140, 16, 26) : new Color(14, 2, 20),
+                    Main.rand.NextFloat(0.55f, 0.92f + progress * 0.28f));
+                d.noGravity = !blood || Main.rand.NextBool(3);
+                d.noLight = !blood;
+                if (!blood)
+                {
+                    d.fadeIn = Main.rand.NextFloat(0.85f, 1.18f);
+                }
+            }
+        }
+
+        void Detonate(Vector2 blastCenter)
+        {
+            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.9f, Pitch = -0.3f }, blastCenter);
+            UsefulFunctions.ScreenShake(blastCenter, 7f, 16);
+            SpawnDestinedDeathBlastDust(blastCenter);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                // ai[1] opts this nova into black/blood dust and one 10-second Destined Death proc.
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), blastCenter, Vector2.Zero,
+                    ModContent.ProjectileType<NitoDeathNova>(), Projectile.damage, 6f, Projectile.owner,
+                    BlastRadius, 1f);
+            }
+        }
+
+        static void SpawnDestinedDeathBlastDust(Vector2 center)
+        {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                return;
+            }
+
+            // Mid-speed body: dark ether carries the mass while blood supplies the readable red edge.
+            for (int i = 0; i < 40; i++)
+            {
+                bool blood = i % 3 == 0;
+                Vector2 direction = Main.rand.NextVector2Unit();
+                Dust d = Dust.NewDustPerfect(center + direction * Main.rand.NextFloat(2f, 24f),
+                    blood ? DustID.Blood : DustID.Wraith,
+                    direction * Main.rand.NextFloat(2.2f, 6.3f), blood ? 45 : 105,
+                    blood ? new Color(150, 18, 28) : new Color(12, 2, 18),
+                    Main.rand.NextFloat(0.68f, 1.28f));
+                d.noGravity = !blood || Main.rand.NextBool(2);
+                d.noLight = !blood;
+                if (!blood)
+                {
+                    d.fadeIn = Main.rand.NextFloat(1f, 1.32f);
+                }
+            }
+
+            // Fast, narrow blood splinters give the detonation a sharp front without a generic fireball.
+            for (int i = 0; i < 14; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                Dust d = Dust.NewDustPerfect(center, DustID.Blood,
+                    direction * Main.rand.NextFloat(6.5f, 10f), 35, new Color(170, 20, 32),
+                    Main.rand.NextFloat(0.48f, 0.82f));
+                d.noGravity = false;
+            }
+
+            // Slow black wisps remain behind the expanding shader ring as an ethereal afterbody.
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                Dust d = Dust.NewDustPerfect(center + direction * Main.rand.NextFloat(4f, 30f),
+                    DustID.Wraith, direction * Main.rand.NextFloat(0.45f, 1.8f), 150,
+                    new Color(8, 1, 14), Main.rand.NextFloat(0.52f, 0.78f));
+                d.noGravity = true;
+                d.noLight = true;
+                d.fadeIn = Main.rand.NextFloat(1.12f, 1.42f);
             }
         }
 
@@ -528,9 +754,9 @@ namespace tsorcRevamp.Projectiles.Enemy
                 ? telegraphProgress * 0.3f
                 : MathHelper.Clamp((Timer - TelegraphTicks) / 10f, 0f, 1f);
             float fade = MathHelper.Clamp((Projectile.timeLeft - 4f) / 12f, 0f, 1f);
-            // The rift stays behind at the BREACH point rather than sliding along with a converging
-            // hand — the hole in the ground doesn't travel.
-            if (!Converging)
+            // Once either branch starts moving, stop drawing the breach under the projectile; the
+            // hole belongs to the ground and must not skate outward with a retreating hand.
+            if (!Converging && !OutwardDetonation)
             {
                 NitoVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 7f),
                     new Vector2(Projectile.width * 1.35f, 48f), telegraphProgress, 0.8f * fade);
@@ -542,9 +768,9 @@ namespace tsorcRevamp.Projectiles.Enemy
     }
 
     ///<summary>
-    ///The red-and-black grave-fire a grave hand leaves burning in the hole it tore open. Damaging for
-    ///its full 3-second life, then eases out over the last half-second with a scatter of ember dust
-    ///rather than blinking off. Reuses the pyre-family plume shader the eruptions already use.
+    ///The red-and-black grave-fire used by Nito's pyres. A standalone phase-two pyre burns for three
+    ///seconds. A grave-hand-linked instance stores handIndex+1 in ai[0], stops damaging the instant
+    ///that hand moves, and dissipates over eight frames so no stationary shader is left behind.
     ///</summary>
     class NitoPyreFire : ModProjectile
     {
@@ -552,7 +778,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         const int BurnTicks = 180;  // 3 seconds
         const int FadeTicks = 30;
+        const int HandDismissTicks = 8;
         int Timer => (int)Projectile.localAI[0];
+        int LinkedHandIndex => (int)Projectile.ai[0] - 1;
+        bool LinkedToHand => Projectile.ai[0] > 0f;
+        bool DismissingWithHand => Projectile.ai[1] > 0.5f;
 
         public override void SetDefaults()
         {
@@ -572,7 +802,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         // Stops biting once it starts guttering out, so the visual tail is never an invisible hitbox.
-        public override bool? CanDamage() => Timer < BurnTicks;
+        public override bool? CanDamage() => !DismissingWithHand && Timer < BurnTicks;
 
         public override void DrawBehind(int index, System.Collections.Generic.List<int> behindNPCsAndTiles,
             System.Collections.Generic.List<int> behindNPCs, System.Collections.Generic.List<int> behindProjectiles,
@@ -585,7 +815,24 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.localAI[0]++;
             Projectile.velocity = Vector2.Zero;
-            Lighting.AddLight(Projectile.Center, 0.5f, 0.16f, 0.1f);
+            if (LinkedToHand && !DismissingWithHand && Timer > 2 && LinkedHandHasDeparted())
+            {
+                Projectile.ai[1] = 1f;
+                Projectile.timeLeft = System.Math.Min(Projectile.timeLeft, HandDismissTicks);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.netUpdate = true;
+                }
+            }
+
+            float dismissalFade = DismissingWithHand
+                ? MathHelper.Clamp(Projectile.timeLeft / (float)HandDismissTicks, 0f, 1f)
+                : 1f;
+            Lighting.AddLight(Projectile.Center, new Vector3(0.5f, 0.16f, 0.1f) * dismissalFade);
+            if (DismissingWithHand)
+            {
+                return;
+            }
             if (Timer < BurnTicks && Main.rand.NextBool(2))
             {
                 NitoVFX.PyreBurst(Projectile.Center + new Vector2(0f, 10f), 1, 2.2f, 0.9f, 46f, 12f);
@@ -596,9 +843,22 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
+        bool LinkedHandHasDeparted()
+        {
+            if (LinkedHandIndex < 0 || LinkedHandIndex >= Main.maxProjectiles)
+            {
+                return true;
+            }
+            Projectile hand = Main.projectile[LinkedHandIndex];
+            return !hand.active || hand.type != ModContent.ProjectileType<NitoGraveHand>()
+                || hand.ModProjectile is not NitoGraveHand graveHand || graveHand.HasStartedMoving;
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
-            float fade = Timer < BurnTicks
+            float fade = DismissingWithHand
+                ? MathHelper.Clamp(Projectile.timeLeft / (float)HandDismissTicks, 0f, 1f)
+                : Timer < BurnTicks
                 ? MathHelper.Clamp(Timer / 12f, 0f, 1f)                        // quick flare-up
                 : MathHelper.Clamp(1f - (Timer - BurnTicks) / (float)FadeTicks, 0f, 1f); // smooth guttering
             float progress = MathHelper.Clamp(Timer / (float)BurnTicks, 0f, 1f);
@@ -646,6 +906,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Lighting.AddLight(Projectile.Center, 0.22f, 0.18f, 0.3f);
                 return;
+            }
+            if (Timer == DelayTicks + 1)
+            {
+                SoundEngine.PlaySound(SoundID.Item60 with { Volume = 0.65f, Pitch = -0.15f }, Projectile.Center);
             }
             Projectile.velocity.Y += 0.15f;
             if (Projectile.velocity.Y > 13f)

@@ -1121,10 +1121,24 @@ namespace tsorcRevamp.NPCs
                 return;
             }
 
+            SpawnLeapTelegraph(npc, globalNPC.PounceTelegraphColor);
+        }
+
+        /// <summary>Spawns one instance of the shared underfoot leap tell with a caller-selected color.
+        /// Bespoke attack state machines can call this at their own cadence while ordinary pounces use
+        /// <see cref="tsorcRevampGlobalNPC.PounceTelegraphColor"/> through the helper above.</summary>
+        public static void SpawnLeapTelegraph(NPC npc, Color color)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
             Vector2 spawnPosition = npc.position;
             spawnPosition.Y += npc.height;
             spawnPosition.X += Main.rand.NextFloat(npc.width);
-            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, new Vector2(0, 2), ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(globalNPC.PounceTelegraphColor));
+            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, new Vector2(0, 2),
+                ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer,
+                UsefulFunctions.ColorToFloat(color));
         }
 
         private static void LaunchHighArcPounce(NPC npc, float topSpeed)

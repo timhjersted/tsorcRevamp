@@ -558,7 +558,7 @@ namespace tsorcRevamp
                 modifiers.FinalDamage *= 0.5f;
             }
 
-            if (!ModContent.GetInstance<tsorcRevampConfig>().UseOriginalPlayerHurtSounds)
+            if (ModContent.GetInstance<tsorcRevampConfig>().HurtSoundMode != HurtSoundMode.Vanilla)
             {
                 modifiers.DisableSound();
             }
@@ -585,7 +585,9 @@ namespace tsorcRevamp
 
         public override void PostHurt(Player.HurtInfo info)
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().UseOriginalPlayerHurtSounds && Player.whoAmI == Main.myPlayer && info.Damage > 0)
+            HurtSoundMode hurtSoundMode = ModContent.GetInstance<tsorcRevampConfig>().HurtSoundMode;
+
+            if (hurtSoundMode != HurtSoundMode.Vanilla && Player.whoAmI == Main.myPlayer && info.Damage > 0)
             {
                 float damagePct = Player.statLifeMax2 > 0 ? (float)info.Damage / Player.statLifeMax2 : 0f;
                 int damageVoiceIndex = 1;
@@ -635,6 +637,13 @@ namespace tsorcRevamp
                     {
                         voiceIndex = 1;
                     }
+                }
+
+                // Lite Realistic skips the health-band escalation entirely - always the short, common
+                // hurt-1 line, regardless of how much damage or how low health is.
+                if (hurtSoundMode == HurtSoundMode.LiteRealistic)
+                {
+                    voiceIndex = 1;
                 }
 
                 // Only play a hurt voice line if at least 2 seconds (120 ticks) have passed since the last one.

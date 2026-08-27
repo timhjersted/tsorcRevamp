@@ -22,6 +22,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         // T_CloudNoise_Tiled, T_PerlinNoise_Tiled, T_Noise_Wf4) and the Vessel set (T_VFX_Spiral07,
         // Turbulence_06, T_Noise_HU85k, SwirlyNoise, T_Aurax44, T_VFX_Noise_44xainv, T_texr41,
         // T_VFX_exp_dissapear, T_Noise_Wfk14, Vein_10) so the three bosses do not share a look.
+        // The one deliberate exception is Turbulence_06 in the reaper sweep: the user explicitly
+        // chose Gwyn's proven slash construction, whose macro/fine pair is Turbulence_06/07.
         //
         // Every pick below was checked as a grayscale R*A/255 contact sheet AND as a 2x2 tile —
         // all of them wrap seamlessly, which matters because every one of these shaders scrolls its
@@ -35,6 +37,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> bands;       // T_Wave66 — soft horizontal bands, streak modulation
         static Asset<Texture2D> glint;       // SplotchyNoise — dark with bright cell edges, bone glints
         static Asset<Texture2D> veins;       // T_Noise56ko — fibrous with bright veins, miasma capillaries
+        static Asset<Texture2D> reaperSweepShape; // Gwyn's proven macro slash turbulence (sweep only)
         static Asset<Texture2D> flareTexture;// T_VFX_Flare_666 — the (non-shader) nova birth flash
         static Asset<Texture2D> graveHandTexture; // bespoke hand silhouette; a correct, intentional shape source
 
@@ -52,6 +55,14 @@ namespace tsorcRevamp.Projectiles.Enemy
         static readonly Color PyreBlack = new(10, 3, 6);
         static readonly Color PyreRed = new(152, 22, 28);
         static readonly Color PyreEmber = new(240, 122, 52);
+        // The approved Gwyn-derived sword-sweep ramps. Phase one stays unmistakably spectral purple;
+        // phase two is blood/rose red rather than inheriting the grave-pyre family's orange ember.
+        static readonly Color ReaperPurpleDark = new(22, 6, 36);
+        static readonly Color ReaperPurpleMid = new(143, 42, 190);
+        static readonly Color ReaperPurpleCore = new(220, 166, 236);
+        static readonly Color ReaperRedDark = new(12, 2, 7);
+        static readonly Color ReaperRedMid = new(190, 18, 42);
+        static readonly Color ReaperRedCore = new(244, 92, 102);
 
         static void LoadAssets()
         {
@@ -68,11 +79,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             bands ??= ModContent.Request<Texture2D>(TextureRoot + "T_Wave66", AssetRequestMode.ImmediateLoad);
             glint ??= ModContent.Request<Texture2D>(TextureRoot + "SplotchyNoise", AssetRequestMode.ImmediateLoad);
             veins ??= ModContent.Request<Texture2D>(TextureRoot + "T_Noise56ko", AssetRequestMode.ImmediateLoad);
+            reaperSweepShape ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
             flareTexture ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Flare_666", AssetRequestMode.ImmediateLoad);
             graveHandTexture ??= ModContent.Request<Texture2D>(TextureRoot + "T_NitoGraveHand", AssetRequestMode.ImmediateLoad);
         }
 
-        internal static void DrawDeathRing(Vector2 center, float radius, float halfThickness, float opacity)
+        internal static void DrawDeathRing(Vector2 center, float radius, float halfThickness, float opacity,
+            float pyreBlend = 0f)
         {
             LoadAssets();
             // 4.5x, was 2.4x. At 2.4x the ring's own outer lip landed within ~3px of the quad edge,
@@ -81,10 +94,47 @@ namespace tsorcRevamp.Projectiles.Enemy
             // raw radius and half thickness, not off this quad).
             float padding = halfThickness * 4.5f;
             Vector2 size = Vector2.One * (radius + padding) * 2f;
-            // Active = the ring radius in UV units (x2), Direction = the half thickness in UV units.
+            // Active = ring radius in UV units (x2). Direction is the reciprocal UV half-thickness,
+            // precomputed here so the Reach pixel pass does not spend an instruction on uniform math.
             Draw(deathNovaEffect, "NitoDeathRing", flow, grit, center, size, 0f,
-                DeathDark, DeathMid, BoneCore, opacity, 0f,
-                radius / (radius + padding), halfThickness / size.X, BlendState.AlphaBlend);
+                Color.Lerp(DeathDark, PyreBlack, pyreBlend),
+                Color.Lerp(DeathMid, PyreRed, pyreBlend),
+                Color.Lerp(BoneCore, new Color(224, 74, 63), pyreBlend), opacity, 0f,
+                radius / (radius + padding), size.X / halfThickness, BlendState.AlphaBlend);
+        }
+
+        internal static void DrawQuietusNova(Vector2 center, float radius, float maxRadius,
+            float halfThickness, float opacity)
+        {
+            float progress = MathHelper.Clamp(radius / MathHelper.Max(maxRadius, 1f), 0f, 1f);
+            float diameter = maxRadius * 1.62f;
+
+            DrawDeathBlastLayer(center, diameter, progress, 0f, 0.54f, 0.72f, 0.11f, false, opacity);
+            DrawDeathBlastLayer(center, diameter, progress, 0.12f, 0.54f, 0.88f, 0.43f, true, opacity);
+            DrawDeathBlastLayer(center, diameter, progress, 0.25f, 0.51f, 1.04f, 0.76f, false, opacity);
+            DrawDeathBlastLayer(center, diameter, progress, 0.39f, 0.54f, 1.18f, 1.13f, true, opacity);
+
+            // The luminous seam remains the mechanical truth: it is still driven directly by the
+            // projectile's collision radius and half-thickness, above the decorative blast bodies.
+            DrawDeathRing(center, radius, halfThickness, opacity,
+                MathHelper.Clamp((progress - 0.48f) / 0.34f, 0f, 1f));
+        }
+
+        static void DrawDeathBlastLayer(Vector2 center, float diameter, float globalProgress,
+            float delay, float duration, float scale, float phase, bool pyre, float opacity)
+        {
+            float progress = (globalProgress - delay) / duration;
+            if (progress <= 0f || progress >= 1f)
+            {
+                return;
+            }
+
+            float fade = MathHelper.Clamp((1f - progress) * 2.35f, 0f, 1f);
+            Color dark = pyre ? PyreBlack : new Color(15, 6, 27);
+            Color mid = pyre ? new Color(142, 20, 34) : new Color(103, 42, 142);
+            Color core = pyre ? new Color(223, 65, 58) : new Color(174, 139, 196);
+            Draw(deathNovaEffect, "NitoDeathBlast", billow, flow, center, Vector2.One * diameter, 0f,
+                dark, mid, core, opacity * fade, progress, 1f / scale, phase, BlendState.AlphaBlend);
         }
 
         internal static void DrawDeathFlash(Vector2 center, Vector2 size, float progress, float opacity)
@@ -108,7 +158,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             LoadAssets();
             // AlphaBlend (premultiplied): this is SMOKE. Additive poison fog over a bright sky can never
             // read as dark or occluding, which is why it used to vanish into the background.
-            Draw(miasmaVolumeEffect, "NitoMiasmaVolume", macroFog, veins, center, size, rotation,
+            Draw(miasmaVolumeEffect, "NitoMiasmaVolume", macroFog, veins, center, size * 1.6f, rotation,
                 MiasmaDark, MiasmaMid, MiasmaCore, opacity, progress, 1f, phase, BlendState.AlphaBlend);
         }
 
@@ -117,34 +167,63 @@ namespace tsorcRevamp.Projectiles.Enemy
             LoadAssets();
             // Side-view fissure, not a top-down oval: the quad straddles the ground line and the effect
             // is allowed to clip into the tiles below it, so uneven terrain never reveals a floating disc.
-            Draw(graveEruptionEffect, "NitoGroundRift", macroFog, flow, center, size, 0f,
+            Draw(graveEruptionEffect, "NitoGroundRift", macroFog, flow, center, size * 1.6f, 0f,
                 PyreBlack, PyreRed, PyreEmber, opacity, progress, 1f, 1f, BlendState.AlphaBlend);
         }
 
-        /// <param name="phase">Per-swing phase so consecutive swings in a combo do not sample identically.</param>
-        internal static void DrawSlash(Vector2 center, float rotation, Vector2 size, float progress, float opacity,
-            float phase = 0f)
+        /// <param name="phase">Per-swing phase so consecutive thrust sheaths do not sample identically.</param>
+        /// <param name="direction">Locked facing direction; used with the swing kind to mirror reverse arcs.</param>
+        internal static void DrawSlash(Vector2 center, float rotation, float progress, float opacity, int kind,
+            int direction, float phase = 0f, bool phaseTwo = false)
         {
             LoadAssets();
-            Draw(reaperTrailEffect, "NitoReaperTrail", flow, glint, center, size, rotation,
-                DeathDark, DeathMid, BoneCore, opacity, progress, 1f, phase, BlendState.AlphaBlend);
+            if (kind == 2)
+            {
+                // A thrust promises danger forward, not around Nito: retain the slim blade-local
+                // sheath and its old palette instead of drawing the new broad movement crescent.
+                Color thrustDark = phaseTwo ? PyreBlack : DeathDark;
+                Color thrustMid = phaseTwo ? PyreRed : DeathMid;
+                Color thrustCore = phaseTwo ? PyreEmber : BoneCore;
+                Draw(reaperTrailEffect, "NitoReaperTrail", flow, glint, center, new Vector2(255f, 62f), rotation,
+                    thrustDark, thrustMid, thrustCore, opacity, progress, 1f, phase,
+                    BlendState.AlphaBlend);
+                return;
+            }
+
+            Color dark = phaseTwo ? ReaperRedDark : ReaperPurpleDark;
+            Color mid = phaseTwo ? ReaperRedMid : ReaperPurpleMid;
+            Color core = phaseTwo ? ReaperRedCore : ReaperPurpleCore;
+            // The approved preview used Gwyn's authored 1.5x by 1.9x envelope at Nito's 170px
+            // forward blade reach: 255x323. This is decorative motion history; collision remains the
+            // existing current-frame hilt-to-tip line. The hot leading edge stays nearest that line.
+            bool reverseKind = kind == 3 || kind == 4;
+            bool reverseWorldSweep = reverseKind == (direction >= 0);
+            Draw(reaperTrailEffect, "NitoReaperSweep", reaperSweepShape, flow, center,
+                new Vector2(255f, 323f), rotation, dark, mid, core, opacity, progress, 1f, phase,
+                BlendState.AlphaBlend,
+                reverseWorldSweep ? SpriteEffects.FlipVertically : SpriteEffects.None);
         }
 
         internal static void DrawAura(Vector2 center, Vector2 size, float opacity, bool phaseTwo,
             float pulseProgress, float flowDirection)
         {
             LoadAssets();
-            Color mid = phaseTwo ? new Color(133, 55, 168) : new Color(96, 88, 118);
+            Color dark = phaseTwo ? PyreBlack : DeathDark;
+            Color mid = phaseTwo ? new Color(150, 36, 52) : new Color(96, 88, 118);
+            Color core = phaseTwo ? PyreEmber : BoneCore;
             // AlphaBlend: the mantle of corpses should sit him in a pool of gloom, not halo him in light.
-            Draw(soulMantleEffect, "NitoSoulMantle", billow, glint, center, size, 0f,
-                DeathDark, mid, BoneCore, opacity, pulseProgress, phaseTwo ? 1f : 0f, flowDirection,
+            Vector2 visualSize = size * (phaseTwo ? 1.6f : 1.4f);
+            Draw(soulMantleEffect, "NitoSoulMantle", billow, glint, center, visualSize, 0f,
+                dark, mid, core, opacity, pulseProgress, phaseTwo ? 1f : 0f, flowDirection,
                 BlendState.AlphaBlend);
         }
 
         internal static void DrawGraveEruption(Vector2 center, Vector2 size, float progress, float opacity)
         {
             LoadAssets();
-            Draw(graveEruptionEffect, "NitoGravePlume", billow, flow, center, size, 0f,
+            Vector2 visualSize = size * 1.6f;
+            Vector2 bottomAnchoredCenter = center - new Vector2(0f, (visualSize.Y - size.Y) * 0.5f);
+            Draw(graveEruptionEffect, "NitoGravePlume", billow, flow, bottomAnchoredCenter, visualSize, 0f,
                 PyreBlack, PyreRed, PyreEmber, opacity, progress, 1f, 1f, BlendState.AlphaBlend);
         }
 
@@ -164,7 +243,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             // the portal fills its draw instead of being a thin lens floating in a mostly-empty box.
             // Dark = the hole, Mid = the galaxy arms (death-magic purple), Core = ember tips; the deep
             // red of the flame crown is a constant inside the shader.
-            Draw(gravefallEffect, "NitoGraveSky", flow, macroFog, center, size, 0f,
+            Vector2 visualSize = size.X <= 150f
+                ? size * 1.6f
+                : new Vector2(size.X, size.Y * 1.34f);
+            Draw(gravefallEffect, "NitoGraveSky", flow, macroFog, center, visualSize, 0f,
                 new Color(6, 3, 12), DeathMid, PyreEmber, opacity, progress, 1f, -1f, BlendState.AlphaBlend);
         }
 
@@ -173,7 +255,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             float phase = 0f)
         {
             LoadAssets();
-            Draw(gravefallEffect, "NitoGravefallTrail", bands, flow, center, size, rotation,
+            Draw(gravefallEffect, "NitoGravefallTrail", bands, flow, center, size * 1.6f, rotation,
                 // Mid was (122, 112, 146) — a pale desaturated grey that, lerped toward BoneCore for
                 // the glints, produced exactly the white blobs in the screenshots. Deep violet.
                 DeathDark, new Color(98, 74, 136), BoneCore, opacity, progress, 1f, phase,
@@ -207,7 +289,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Asset<Texture2D> primaryAsset, Asset<Texture2D> detailAsset,
             Vector2 worldCenter, Vector2 drawSize, float rotation, Color darkColor, Color midColor,
             Color coreColor, float opacity, float progress, float active, float direction,
-            BlendState blendState)
+            BlendState blendState, SpriteEffects spriteEffects = SpriteEffects.None)
         {
             LoadAssets();
             Texture2D primary = primaryAsset.Value;
@@ -242,11 +324,15 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Active"]?.SetValue(active);
                 effect.Parameters["Direction"]?.SetValue(direction);
                 effect.Parameters["DrawSize"]?.SetValue(actualSize);
+                effect.Parameters["PixelDrawSize"]?.SetValue(drawSize);
+                Vector2 pixelBlocks = Vector2.Max(drawSize, Vector2.One) * 0.5f;
+                effect.Parameters["PixelGrid"]?.SetValue(
+                    new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                 effect.Parameters["PrimaryTextureSize"]?.SetValue(primary.Size());
                 effect.CurrentTechnique.Passes[0].Apply();
 
                 Main.EntitySpriteDraw(primary, worldCenter - Main.screenPosition, null, Color.White,
-                    rotation, actualSize * 0.5f, scale, SpriteEffects.None, 0);
+                    rotation, actualSize * 0.5f, scale, spriteEffects, 0);
             }
             finally
             {

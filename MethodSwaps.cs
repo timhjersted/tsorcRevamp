@@ -1625,10 +1625,24 @@ namespace tsorcRevamp
 
         private static void On_Player_KillMe(On_Player.orig_KillMe orig, Player self, PlayerDeathReason damageSource, double dmg, int hitDirection, bool pvp)
         {
-            bool useCustom = !ModContent.GetInstance<tsorcRevampConfig>().UseOriginalPlayerHurtSounds;
+            HurtSoundMode hurtSoundMode = ModContent.GetInstance<tsorcRevampConfig>().HurtSoundMode;
+            bool useCustom = hurtSoundMode != HurtSoundMode.Vanilla;
             if (useCustom && self.whoAmI == Main.myPlayer && !self.dead)
             {
-                if (self.Male)
+                // Lite Realistic reuses the same short hurt-1 line for death instead of a dedicated
+                // "dying" voice clip, matching its "one common sound everywhere" design.
+                if (hurtSoundMode == HurtSoundMode.LiteRealistic)
+                {
+                    if (self.Male)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-hurt-1") with { Volume = 0.5f });
+                    }
+                    else
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-hurt-1") with { Volume = 0.5f });
+                    }
+                }
+                else if (self.Male)
                 {
                     int choice = Main.rand.Next(1, 3);
                     SoundEngine.PlaySound(new SoundStyle($"tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-dead-{choice}") with { Volume = 0.5f });

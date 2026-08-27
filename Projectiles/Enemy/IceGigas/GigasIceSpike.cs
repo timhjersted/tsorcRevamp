@@ -20,6 +20,13 @@ namespace tsorcRevamp.Projectiles.Enemy
         const int RiseTicks = 6;
         const int HoldTicks = 110;
         const int SinkTicks = 10;
+        //Vanilla's own draw code special-cases type 961 (see Main.DrawProj) and crops ONE frame out
+        //of a 1x5 vertical strip — the sheet is 5 growth-stage frames, not a single tall image. We
+        //were drawing the whole sheet as one sprite, which squashed it to 1/5 height: the "spike"
+        //came out as a wide horizontal smear (reads as sideways) and warped unpredictably as the
+        //rise/sink scale animated across all 5 overlapping frames at once.
+        const int SheetFrames = 5;
+        const int ArtFrame = 4; //tallest/most-detailed growth stage; our own RiseProgress handles the animation
 
         int TelegraphTicks => (int)Projectile.ai[0];
         float HeightScale => Projectile.ai[1] > 0f ? Projectile.ai[1] : 1f;
@@ -108,12 +115,15 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return false;
             }
             Texture2D texture = TextureAssets.Projectile[ProjectileID.DeerclopsIceSpike].Value;
+            int frameHeight = texture.Height / SheetFrames;
+            Rectangle frame = new Rectangle(0, ArtFrame * frameHeight, texture.Width, frameHeight);
+
             float drawHeight = Projectile.height * progress;
-            float texScaleY = drawHeight / texture.Height;
+            float texScaleY = drawHeight / frameHeight;
             float texScaleX = Projectile.width / (float)texture.Width * 1.4f;
             Vector2 bottom = new Vector2(Projectile.Center.X, Projectile.position.Y + Projectile.height + 2f) - Main.screenPosition;
             SpriteEffects flip = Projectile.whoAmI % 2 == 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Main.EntitySpriteDraw(texture, bottom, null, lightColor, 0f, new Vector2(texture.Width / 2f, texture.Height), new Vector2(texScaleX, texScaleY), flip, 0);
+            Main.EntitySpriteDraw(texture, bottom, frame, lightColor, 0f, new Vector2(frame.Width / 2f, frame.Height), new Vector2(texScaleX, texScaleY), flip, 0);
             return false;
         }
     }

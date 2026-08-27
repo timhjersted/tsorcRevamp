@@ -11,6 +11,12 @@ float Active;
 float Direction;
 float2 DrawSize;
 float2 PrimaryTextureSize;
+float4 PixelGrid;
+
+float2 PixelateNitoUV(float2 uv)
+{
+    return (floor(uv * PixelGrid.xy) + 0.5) * PixelGrid.zw;
+}
 
 // Nito's mantle — the shroud of corpses and grave-air hanging off a 250x320 body.
 //
@@ -24,36 +30,35 @@ float2 PrimaryTextureSize;
 // Active = phase two. Progress = the attack pulse (0 while idle).
 float4 SoulMantlePixel(float4 sampleColor : COLOR0, float2 c : TEXCOORD0) : COLOR0
 {
+    c = PixelateNitoUV(c);
     float2 p = c - 0.5;
-    float r = length(p) * 2.0;                 // 1.0 at the axis edges, 1.41 in the corners
+    float r = length(p) * 2.0;
     float flow = Direction;
 
     // Two layers drifting vertically against each other; both reverse with `flow`.
-    float n1 = tex2D(PrimarySampler, float2(c.x * 1.7, c.y * 1.3 - Time * 0.100 * flow)).r;
-    float n2 = tex2D(DetailSampler, float2(c.x * 2.6 + 0.31, c.y * 2.1 - Time * 0.170 * flow)).r;
-    float cloth = saturate(n1 * 0.90 + n2 * 0.55 - 0.32);
+    float n1 = tex2D(PrimarySampler, float2(c.x * 1.46, c.y * 1.05 - Time * 0.083 * flow)).r;
+    float n2 = tex2D(DetailSampler, float2(c.x * 2.15 + 0.31, c.y * 1.72 - Time * 0.145 * flow)).r;
+    float cloth = saturate(n1 * 0.92 + n2 * 0.48 - 0.34);
 
     // Hollow shroud: dense around the silhouette, open through the middle so the boss sprite still
     // reads through it. The outer radius is noise-driven and tops out at 0.74 + 0.16 = 0.90, so the
     // quad edges and corners are provably never touched.
     // The inner cut is wide on purpose (it was 0.12, which only cleared a small disc and left the
     // middle of the quad filled): the boss sprite is 250x320 and has to read THROUGH this.
-    float shellR = 0.74 + cloth * 0.16;
-    float shell = saturate((shellR - r) * 3.0) * saturate((r - 0.30) * 2.6);
+    float shellR = 0.79 + cloth * 0.15;
+    float shell = saturate((shellR - r) * 2.8) * saturate((r - 0.34) * 3.0);
 
     // Ragged hem: the lower half hangs in torn strips instead of closing into a neat ellipse.
-    float hem = saturate((c.y - 0.42) * 2.2) * saturate(cloth * 1.80 - 0.35);
-    float body = shell * saturate(cloth + 0.35) + shell * hem * 0.55;
+    float strips = saturate((c.y - 0.38) * 2.3) * saturate(n1 * 2.0 - 0.76) * shell;
+    float body = shell * saturate(cloth + 0.32) + strips * 0.58;
     // Soul-lights caught in the cloth. Phase two makes them numerous and hot.
-    float glint = saturate(n2 * 2.50 - 1.55) * shell * (0.35 + Active * 0.90);
-    // Soul threads drawn up through the cloth — vertical filaments in the lower shroud, which is
-    // what stops the hem reading as a flat wash of noise.
-    float thread = saturate(n1 * 2.20 - 1.05) * saturate((c.y - 0.30) * 2.0) * shell;
+    float glint = saturate(n2 * 2.78 - 1.84) * shell * (0.28 + Active * 0.72);
     float pulse = 0.82 + Progress * 0.28;
 
-    float3 tint = lerp(DarkColor, MidColor, saturate(body * 0.95 + thread * 0.8));
-    float alpha = saturate(body * 0.88 + thread * 0.35) * Opacity;
-    return float4(tint * alpha + CoreColor * ((glint * 0.32 + thread * 0.10) * Opacity * pulse), alpha);
+    float3 tint = lerp(DarkColor, MidColor,
+        saturate(body * 0.88 + strips * Active * 0.34));
+    float alpha = saturate(body * 0.94 + strips * Active * 0.38) * Opacity;
+    return float4(tint * alpha + CoreColor * (glint * 0.25 * Opacity * pulse), alpha);
 }
 
 technique NitoSoulMantle

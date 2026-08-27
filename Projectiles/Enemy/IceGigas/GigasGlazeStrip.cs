@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float SlideSpeedCap = 8f;   //carry never pushes past this
         const float MinSlideSpeed = 0.4f; //below this the carry lets go (you CAN eventually stop)
 
-        int Duration => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 480;
+        int Duration => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 960;
         float HalfWidth => MathHelper.Min(MaxHalfWidth, Projectile.localAI[0]);
 
         public override void SetDefaults()
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.aiStyle = 0;
-            Projectile.timeLeft = 480;
+            Projectile.timeLeft = 960;
         }
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
@@ -80,7 +80,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
             }
 
-            //Racing glint front while expanding
+            //Racing glint front while expanding — a few dark obsidian flecks mixed into the icy
+            //blue, so it reads as BLACK ice rather than ordinary frost.
             if (expanding)
             {
                 for (int side = -1; side <= 1; side += 2)
@@ -88,14 +89,21 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Vector2 front = Projectile.Center + new Vector2(side * HalfWidth, 0f);
                     int dust = Dust.NewDust(front - new Vector2(4f, 6f), 8, 8, DustID.IceTorch, side * 2f, -0.5f, 60, default, 1.2f);
                     Main.dust[dust].noGravity = true;
+                    if (Main.rand.NextBool(3))
+                    {
+                        int dark = Dust.NewDust(front - new Vector2(4f, 6f), 8, 8, DustID.Obsidian, side * 1.5f, -0.3f, 80, default, 1f);
+                        Main.dust[dark].noGravity = true;
+                    }
                 }
             }
-            //Sparse surface glints so the glaze stays readable without shouting
+            //Sparse surface glints so the glaze stays readable without shouting. About a third are
+            //black obsidian flecks instead of the icy IceRod glint — the same "black ice" mix.
             float remaining = Projectile.timeLeft / (float)Duration;
             if (Main.rand.NextFloat() < 0.35f + 0.3f * remaining)
             {
                 float x = Projectile.Center.X + Main.rand.NextFloat(-HalfWidth, HalfWidth);
-                int glint = Dust.NewDust(new Vector2(x - 2f, Projectile.position.Y), 4, 6, DustID.IceRod, 0f, 0f, 90, default, 0.85f);
+                int glintType = Main.rand.NextBool(3) ? DustID.Obsidian : DustID.IceRod;
+                int glint = Dust.NewDust(new Vector2(x - 2f, Projectile.position.Y), 4, 6, glintType, 0f, 0f, 90, default, 0.85f);
                 Main.dust[glint].noGravity = true;
                 Main.dust[glint].velocity *= 0.1f;
             }

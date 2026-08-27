@@ -11207,6 +11207,7 @@ Mods: {
 			// QuaraWaterResidue.DisplayName: Quara Water Residue
 			// CenterOfTheUniverseStar2.DisplayName: Center Of The Universe Star2
 			// ElectrocuteProjectile.DisplayName: Electrocute Projectile
+			// GigasEmbraceIcicle.DisplayName: Gigas Embrace Icicle
 		}
 
 		NPCs: {
@@ -13381,13 +13382,13 @@ Mods: {
 			tsorcRevampSoundConfig: {
 				// DisplayName: Sound
 
-				UseOriginalPlayerHurtSounds: {
-					// Label: Use Original Player Hurt/Death Sounds
+				HurtSoundMode: {
+					// Label: Player Hurt/Death Sound Mode
 					/* Tooltip:
 						'''
-						Use the vanilla Terraria player hurt and death sounds.
-						If disabled, custom Dark Souls hurt and death voices will be used.
-						Defaults to Off.
+						Vanilla: use the vanilla Terraria player hurt and death sounds.
+						Lite Realistic: custom Dark Souls voices, always the same short common hurt line at every health threshold (also used for death). Default.
+						Full Realistic: custom Dark Souls voices, escalating to more pained variants as health drops, with a separate death voice.
 						''' */
 				}
 
@@ -13420,6 +13421,33 @@ Mods: {
 						Set to 0 to disable them.
 						''' */
 				}
+			}
+
+			HurtSoundMode: {
+				Vanilla: {
+					// Label: Vanilla
+					// Tooltip: Use the vanilla Terraria player hurt and death sounds.
+				}
+
+				LiteRealistic: {
+					// Label: Lite Realistic
+					/* Tooltip:
+						'''
+						Custom Dark Souls hurt/death voices, but always the same short common
+						hurt line, no matter your health. Also used for death. Default.
+						''' */
+				}
+
+				FullRealistic: {
+					// Label: Full Realistic
+					/* Tooltip:
+						'''
+						Custom Dark Souls hurt/death voices, escalating to more pained variants
+						as your health drops, plus a separate dedicated death voice.
+						''' */
+				}
+
+				// Tooltip: ""
 			}
 
 			tsorcRevampControlsConfig: {

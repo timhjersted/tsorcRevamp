@@ -173,6 +173,10 @@ static class Preview
     // Effects/GwynCinderNova.fx and Effects/GwynSolarVortex.fx. Bindings must match
     // GwynCinderNova.DrawShaderRing: Turbulence_06 to s0 (macro shape), Turbulence_07 to s1 (detail).
     static Tex GwynShapeSampler, GwynDetailSampler;
+    // Ice Gigas Tier 1 candidates (design study — no shipped .fx yet).
+    static Tex IceCrystalSampler, IceCrackSampler, IceMistSampler, IceMistDetailSampler, IceSparkleSampler;
+    static Tex IceCrystalAltSampler, IceCrackAltSampler;
+    static Tex IceCellSampler, IceFacetSampler;
 
     static void LoadTextures()
     {
@@ -201,6 +205,26 @@ static class Preview
         VortexChurnSampler = new Tex("VoronoiNoise");
         SlashSpriteSampler = new Tex(Path.Combine(ProjectRoot, "Items", "Weapons", "Melee", "Broadswords",
             "BroadswordRework", "Common", "Melee", "Slash"), previewLocal: true);
+        // Ice Gigas Tier 1: sharp Voronoi cells for crystal facets (shape) + Vein_07's crack
+        // lattice for the detail layer riding on top (tips §46 — shape and detail must be
+        // separate noise fields). Turbulence_06/07 give the frost breath its billowing-mist
+        // read instead of a crystalline one. Both confirmed seamless via ContactSheet -Tile2x2.
+        IceCrystalSampler = new Tex("VoronoiNoise");
+        IceCrackSampler = new Tex("Vein_07-512x512");
+        IceMistSampler = new Tex("Turbulence_06-512x512");
+        IceMistDetailSampler = new Tex("Turbulence_07-512x512");
+        IceSparkleSampler = new Tex("T_VFX_SparklesF21");
+        // Winter's Grasp texture-repick comparison: softer blurred cells + a denser crack web,
+        // against the sharp-facet pairing above.
+        IceCrystalAltSampler = new Tex("Voronoi_10-512x512");
+        IceCrackAltSampler = new Tex("Vein_04-512x512");
+        // Ice-CHUNK pass. VoronoiNoise is flat-shaded polygons with hard straight cell edges —
+        // literal broken-plate geometry — but only if its cell steps are used as GEOMETRY rather
+        // than smeared into a brightness modulator (which is what made v2 read as "noise").
+        // T_Noise_Wo14 is genuinely faceted crystal (angular planes + sharp ridges) and supplies
+        // the surface detail inside each chunk. Both verified seamless at 2x2, 380px.
+        IceCellSampler = new Tex("VoronoiNoise");
+        IceFacetSampler = new Tex("T_Noise_Wo14");
     }
 
     // Palettes, copied from the C# helper.
@@ -834,6 +858,258 @@ static class Preview
         var (baseRgb, baseAlpha) = GigasHeavenlySpear(uv, Time, Progress, Active);
         var (detailRgb, detailAlpha) = GigasHeavenlySpearDetails(uv, Time, Progress, Active);
         return (detailRgb + baseRgb * (1f - detailAlpha), detailAlpha + baseAlpha * (1f - detailAlpha));
+    }
+
+    // ---- Candidates: Ice Gigas Tier 1 VFX pass -------------------------------------------------
+    // Shader-behind-dust/sprite for the 4 highest-value Ice Gigas attacks (IceGigas.cs). Every
+    // existing Dust burst and projectile sprite stays exactly as-is; these sit BEHIND them via
+    // DrawBehind, same layering as GigasConsecratedGround. Design study only — no .fx shipped yet.
+    static readonly V3 IceOuter = C(18, 40, 68);   // deep glacier shadow — occludes, carries the dark interior via alpha
+    static readonly V3 IceMid = C(88, 168, 226);   // vivid ice-blue energy
+    static readonly V3 IceCore = C(205, 236, 250); // pale cyan-white spark (kept off pure white — tips §48)
+
+    // ---- Candidate: IceGigasFreezeRing (Absolute Zero release) --------------------------------
+    // True annulus, matching GigasFreezeRing.Colliding — inside the wave is SAFE, the counterplay
+    // is rolling through the gap, not fleeing it. Ring-space sampling (tips §32/§49/§51): a large
+    // quad like this would tile visibly in ordinary UV space; ring-space cannot repeat. Adapted
+    // from GwynCinderNovaBlast's proven annulus shape, recoloured and re-textured for ice.
+    static (V3, float) IceGigasFreezeRing(V2 c, int quad, float RingRadius, float RingHalfThickness,
+        float TrailLength, float Time, float Opacity, bool pixelated = true)
+    {
+        V2 uv = pixelated ? PixelateShaderUV(c, quad, quad) : c;
+        V2 fromCenter = (uv - 0.5f) * (float)quad;
+        float radius = length(fromCenter);
+        V2 dir = fromCenter / MathF.Max(radius, 1f);
+        V2 swirl = new(-dir.y, dir.x); // cheap swirl (§50) instead of an explicit rotation matrix
+
+        float front = radius - RingRadius;
+        float depth = front * 0.0040f;
+        V2 facetPoint = (dir + swirl * (Time * 0.070f)) * (0.42f + depth) + 0.5f;
+        V2 crackPoint = (dir - swirl * (Time * 0.130f)) * (0.95f + depth * 3.0f) + 0.5f;
+        float facet = IceCrystalSampler.R(facetPoint);
+        float crack = IceCrackSampler.R(crackPoint);
+        float shimmer = sat(facet * 0.60f + crack * 0.48f - 0.10f);
+
+        // lip = the crisp leading wavefront at RingRadius. reach lets the trailing sheath extend
+        // inward by up to TrailLength (shimmer-feathered so the trail is jagged, not a flat band);
+        // sheath is zero once front < -reach, so the body provably dies before it reaches the
+        // quad's inner edge regardless of what the noise does.
+        float lip = sat((RingHalfThickness - front) * 0.34f);
+        float reach = RingHalfThickness * 0.85f + TrailLength * (0.30f + shimmer * 0.95f);
+        float sheath = lip * sat((front + reach) * 0.026f);
+
+        float towardLip = sat((front + RingHalfThickness * 1.10f) * 0.030f);
+        float chill = sheath * towardLip * (0.55f + crack * 0.55f);
+        float core = sheath * sat((front + RingHalfThickness * 0.35f) * 0.045f);
+        float glint = sat(facet * 1.9f - 1.05f) * chill;
+
+        float alpha = sat(sheath * 0.90f + core * 0.30f) * Opacity;
+        V3 color = IceOuter * (sheath * 0.90f)
+            + IceMid * (chill * 0.85f)
+            + IceCore * (core * core * 1.05f + glint * 0.80f);
+        return (color * Opacity, alpha);
+    }
+
+    // ---- Candidate: IceGigasFrostBreathCone (Frost Breath exhale) -----------------------------
+    // The caller rotates this quad each tick to the CURRENT sweep angle (the same jet the puffs
+    // already fly along, IceGigas.RunFrostBreath's `sweep` lerp) — uv.x=0 sits at the mouth,
+    // uv.y=0.5 is the jet centerline. Same along/across treatment as GigasSweepBeam, riding a
+    // rotating quad instead of a fixed horizontal one. Billowing turbulence, not crystal facets —
+    // this is blown mist, not solid ice, so it stays visually distinct from the other three.
+    // v3: v2 fixed the laser-core streak but the silhouette was still a uniform triangle. The
+    // cause was the width term — noise only modulated it +-15%, so the edge was essentially the
+    // straight line `0.10 + 0.40 * along`. Now three things break it up:
+    //   * `lobe` is LOW frequency and scrolls fast along the jet, so big billows travel outward
+    //     (the movement), and it drives 45% of the width rather than 15%;
+    //   * the centreline MEANDERS (`drift`), so the cone isn't mirror-symmetric about uv.y = 0.5;
+    //   * `puff` gates density in patches, so the jet thins and thickens along its length instead
+    //     of being a solid wedge. Baseline kept high (§46) so it undulates rather than speckling.
+    // RE-SYNCED to the shipped Effects/IceGigasFrostBreath.fx after the ps_2_0 slot pass took it
+    // from 78 -> 57 arithmetic. Those cuts were NOT cosmetic — the cone bound, the core's
+    // distance field, the chop UV, the puff threshold and the colour ramp all changed shape, so
+    // this port was re-rendered rather than assumed. Keep the two in lockstep.
+    static (V3, float) IceGigasFrostBreathCone(V2 c, int w, int h, float Time, float Progress, float Active, float Opacity, bool pixelated = true)
+    {
+        V2 uv = pixelated ? PixelateShaderUV(c, w, h) : c;
+        float along = uv.x;
+
+        // Chop rides a scaled copy of the mist UV: an independent per-axis float2 cost 9 slots.
+        V2 mistUV = new V2(along * 1.15f - Time * 1.45f, uv.y * 1.70f + Time * 0.18f);
+        float lobe = IceMistSampler.R(mistUV);
+        float chop = IceMistDetailSampler.R(mistUV * 2.4f + (Time * 0.12f));
+        float billow = sat(lobe * 0.66f + chop * 0.52f - 0.12f);
+
+        // The jet meanders instead of firing perfectly straight; the wander grows with distance
+        // from the mouth, so it stays anchored at the lips and gets loose further out.
+        float drift = (lobe - 0.5f) * 0.15f * along;
+        float across = abs(uv.y - 0.5f - drift);
+
+        // Bound by construction instead of by a guard term: spread maxes at 0.34, so halfWidth
+        // maxes at 0.408 and |drift| at 0.075 — the jet provably dies 0.483 from the centreline,
+        // inside the 0.5 quad edge, for any noise. The caller draws a TALLER quad (260x270 rather
+        // than 260x220) so the on-screen breadth is unchanged by the narrower uv fraction.
+        float spread = 0.09f + 0.25f * along;
+        float halfWidth = spread * (0.68f + lobe * 0.52f);
+
+        float puff = 0.62f + sat(billow * 1.55f - 0.42f) * 0.38f;
+        float envelope = sat(along * 9f) * sat((1f - along) * 3.2f);
+        // One shared distance field for both layers; a second independent saturate cost ~11.
+        float depth = (halfWidth - across) * 9.5f;
+        float body = sat(depth) * (0.55f + billow * 0.45f) * puff * envelope;
+        float core = sat(depth * 0.30f) * (0.5f + billow * 0.5f) * envelope;
+
+        // Contrast, not opacity, is what stops this washing out against a bright sky (§43): the
+        // BODY lifts toward pale frost so it is lighter than what it covers. Accumulated tiers
+        // replace two chained lerps, with weights solved to land the ramp in the same place.
+        float frost = sat(billow * 0.52f + core * 0.30f) * (0.30f + Active * 0.42f);
+        float heat = body * (0.80f + billow * 0.42f) * Progress;
+        V3 color = IceOuter * (heat * 0.09f)
+            + IceMid * (heat * 0.56f)
+            + IceCore * (heat * frost + core * (Active * Opacity * 0.09f));
+        float alpha = sat(body * (0.82f + Active * 0.18f) + core * 0.30f) * (Progress * Opacity);
+        return (color, alpha);
+    }
+
+    // ---- Candidate: IceGigasRimeWardShell (Rime Ward counter-stance) --------------------------
+    // v2: was a thin wireframe outline with a perfectly elliptical boundary ("fine for a pixel
+    // circle" per feedback, but not filled or icy). Now a THICK filled ice mass (56% of the
+    // radius out to the edge, not a hairline) with a JAGGED boundary — kept full-body/all-around
+    // rather than a frontal half-shield because RimeWard's detonation launches shards in a full
+    // 360° burst (RunRimeWard), which only reads consistently if the ice wraps the whole body.
+    // Semi-axes still match where RunRimeWard spawns its perimeter glint dust (38, 62), widened.
+    // Rise 0->1 crystallizes from the FEET up; Stored 0->1 (WardStored/8) brightens the core and
+    // adds glint stamps so a heavily-loaded ward reads hotter to hit.
+    static (V3, float) IceGigasRimeWardShell(V2 c, int w, int h, float axisX, float axisY, float Time, float Rise, float Stored, float Opacity, bool pixelated = true)
+    {
+        V2 uv = pixelated ? PixelateShaderUV(c, w, h) : c;
+        V2 p = (uv - 0.5f) * new V2((float)w, (float)h);
+        V2 norm = new V2(p.x / axisX, p.y / axisY);
+        float r = length(norm);
+
+        // Jagged boundary in plain elliptical space. Ring space would make the perturbation
+        // perfectly constant along each ray, but the normalize + ring UV measured 10 slots — a
+        // third of the budget — and at 0.45 the sample still crosses ~10 cells per lap, which is
+        // the chunky plate count wanted. Used RAW (no second blended field) so the Voronoi cell
+        // steps survive as sharp radius jumps rather than smoothing into wobble.
+        float edgeCell = IceCellSampler.R(norm * 0.45f + (0.5f + Time * 0.008f));
+        float jagged = edgeCell - 0.5f;
+        float localOuter = 1f + jagged * 0.16f;
+
+        // Facet fill in ORDINARY elliptical space (norm, not a direction vector) — a filled mass,
+        // so ring-space here would repeat the starburst-of-spokes mistake from Winter's Grasp.
+        V2 fillUV = norm * 1.30f + (0.5f + Time * 0.030f);
+        float facet = IceFacetSampler.R(fillUV);
+        float crack = IceCellSampler.R(fillUV * 2.0f - (Time * 0.105f));
+        float shimmer = sat(facet * 0.58f + crack * 0.50f - 0.10f);
+        // Thin bright fracture lines traced off the crack field's own web. Single abs-based
+        // band-pass rather than two opposing saturates: same peak and width, ~3 slots less.
+        float fractureLine = sat(1f - abs(crack - 0.54f) * 12.5f);
+
+        // Filled band from 58% of the radius out to the jagged boundary — thick armour plating,
+        // not a hairline. Inner edge also jitters with the boundary noise so it doesn't read as
+        // two concentric perfect circles. `towardEdge` replaces the separate analytic rimGlow the
+        // first draft carried: that was a second shape off the SAME distance field (8 slots for a
+        // boundary nobody can distinguish), so squaring this gives the bright lip for free.
+        float innerCut = 0.58f + jagged * 0.08f;
+        float fromEdge = localOuter - r;
+        float towardEdge = sat((r - innerCut) * 6f);
+        float shellFill = sat(fromEdge * 7f) * towardEdge * (0.55f + shimmer * 0.45f);
+
+        // uv.y runs 0 (top of the ellipse box) -> 1 (bottom/feet), so this grows the shell upward
+        // from the feet as Rise climbs 0..1.
+        float formed = sat(((Rise - 1f) + uv.y) * 9f);
+        shellFill *= formed;
+
+        // The fracture web doubles as the charge readout: scaling it by GlintGain (which carries
+        // Stored) gives "a loaded ward glitters harder" without a second threshold of `facet`.
+        float glintGain = 0.6f + Stored * 1.4f;
+        float fracture = fractureLine * shellFill;
+        float lip = towardEdge * towardEdge * shellFill;
+
+        float alpha = sat(shellFill * (0.78f + Stored * 0.16f) + fracture * 0.30f) * Opacity;
+        V3 color = IceOuter * (shellFill * 0.34f)
+            + IceMid * (shellFill * 0.78f)
+            + IceCore * ((lip * 0.42f + fracture * glintGain * 0.30f) * (0.55f + Stored * 0.45f));
+        return (color * Opacity, alpha);
+    }
+
+    // ---- Candidate: IceGigasWintersGraspZone (Winter's Grasp disc) ----------------------------
+    // v3 — TECHNIQUE CHANGE, not a retune. v1 was a perfect circle; v2 made the boundary wobble
+    // with blended smooth noise and still read as "noise, not ice chunks", because smoothly
+    // blending two noise fields DESTROYS the one property that makes ice read as ice: hard,
+    // straight-edged facets meeting at sharp corners.
+    //
+    // The fix is to use VoronoiNoise as GEOMETRY rather than as a brightness modulator. It is
+    // flat-shaded polygons with hard cell steps, so:
+    //   * sampled around a small ring circle, the radius is piecewise CONSTANT per cell — each
+    //     angular sector gets its own flat radius, giving straight chords with sharp corners
+    //     between them (a broken plate), instead of a smoothly undulating blob;
+    //   * sampled in Cartesian across the disc, each cell is a flat brightness PLATEAU — a slab
+    //     of ice — and a second tap a fraction of a cell away detects the cell boundaries, which
+    //     become the bright fracture lines between slabs.
+    // T_Noise_Wo14 (genuinely faceted crystal: angular planes + sharp ridges) then supplies the
+    // surface detail *inside* each slab, so the chunks aren't flat dead colour.
+    //
+    // APPROVED pairing: VoronoiNoise slabs + T_Noise_Wo14 facets. The Voronoi_10 alternate was
+    // rendered alongside and rejected — its cells are soft and blurred, so they read as puffy
+    // bubbles rather than broken plate ice.
+    static (V3, float) IceGigasWintersGraspZone(V2 c, int quad, float Radius, float Time, float Progress, float Active, float Opacity,
+        bool pixelated = true)
+    {
+        Tex cellTex = IceCellSampler;
+        Tex facetTex = IceFacetSampler;
+        // A 420px quad needs a coarser pixel block than a 106px one to read as the same "scale"
+        // of chunkiness (tips §51f — the filter must scale with the quad).
+        V2 uv = pixelated ? PixelateShaderUV(c, quad, quad, 3f) : c;
+        V2 p = (uv - 0.5f) * (float)quad;
+        float r = length(p);
+        V2 dir = p / MathF.Max(r, 0.0005f);
+
+        // CHUNKED BOUNDARY. dir * 0.16 walks a circle of circumference ~1.0 texture tile, so a
+        // full lap crosses ~11 Voronoi cells => ~11 plate-sized chunks around the rim. Used RAW
+        // (no blending with a second field) so the cell steps survive as sharp radius jumps.
+        // Swing 0.86..1.14 keeps the mean radius honest; max reach 1.14 * 160 = 182px, and the
+        // rim adds at most 16 more = 198px, provably inside the 210px quad half-width.
+        float edgeCell = cellTex.R(dir * 0.16f + new V2(0.5f + Time * 0.004f, 0.5f - Time * 0.003f));
+        float localRadius = Radius * (0.86f + edgeCell * 0.28f);
+
+        // FLAT SLAB INTERIOR. Cartesian (tips §49 — a filled body, never ring-space). Scale 1.2
+        // across the quad puts ~11 cells across the disc, i.e. ~29px slabs at gameplay scale.
+        V2 cellUV = p / (float)quad * 1.2f + new V2(0.5f + Time * 0.010f, 0.5f - Time * 0.008f);
+        float cell = cellTex.R(cellUV);
+        // Second tap ~1/8 of a cell away: equal inside a slab, different across a boundary, so
+        // abs(difference) isolates the cell WALLS. This is the fracture web between chunks.
+        float cellNeighbour = cellTex.R(cellUV + new V2(0.011f, 0.009f));
+        float fracture = sat(abs(cell - cellNeighbour) * 9f);
+        // Angular crystal detail inside each slab, so a chunk isn't dead flat colour.
+        float facet = facetTex.R(p / (float)quad * 3.4f + new V2(0.5f - Time * 0.014f, 0.5f + Time * 0.011f));
+        // Flat per-slab tone: the plateau IS the chunk. Kept as a step off `cell`, not smoothed.
+        float slabTone = 0.30f + cell * 0.70f;
+
+        // The filled sheet. Near-uniform coverage inside (it is a solid crystallised surface),
+        // with the tone/fracture variation carried by colour rather than by punching holes in it.
+        float sheet = sat((localRadius - r) * 0.42f);
+        // Feathered by MULTIPLY. Dividing through max(rimWidth * 0.6, 1) — the first form — cost
+        // 16 arithmetic slots, a quarter of the whole Reach budget, for an indistinguishable edge.
+        float rimWidth = 7f + edgeCell * 9f;
+        float rim = sat((rimWidth - abs(r - localRadius)) * 0.15f);
+
+        // Telegraph: mist off the crystal-detail layer alone. The slab cells were mixed in here
+        // originally, but the plate structure should not be legible before the sheet has formed.
+        float mistSwirl = sat(facet - 0.30f) * Progress;
+        float telegraphBody = sheet * 0.26f * mistSwirl;
+        float crystalBody = sheet * (0.52f + slabTone * 0.34f + facet * 0.16f);
+
+        float finalBody = telegraphBody + (crystalBody - telegraphBody) * Active;
+        float finalRim = rim * (0.50f + Active * 0.50f);
+        float finalFracture = fracture * sheet * Active;
+
+        // Accumulated tiers rather than chained lerps; the sum is already premultiplied.
+        float alpha = sat(finalBody * 0.85f + finalRim * 0.55f + finalFracture * 0.45f) * Opacity;
+        V3 color = IceOuter * (finalBody * 0.34f)
+            + IceMid * (finalBody * (0.46f + slabTone * 0.38f))
+            + IceCore * (finalRim * (0.4f + Active * 0.4f) + finalFracture * 0.85f);
+        return (color * Opacity, alpha);
     }
 
     // ---- Effects/RedKnightCrimsonVFX.fx : BombBlastPixel ------------------------------------
@@ -2024,6 +2300,99 @@ static class Preview
                 new Panel("2px pixel fresh", 52, 180, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 2.4f, 1f)),
                 new Panel("2px pixel sustained", 52, 180, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 4.1f, .62f)),
                 new Panel("2px pixel embers", 52, 180, Blend.PremultipliedAlpha, c => GigasConsecratedGround(c, 5.8f, .18f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "ice_gigas_freeze_ring")
+        {
+            // GigasFreezeRing.OnSpawn: ai[0] = 300 (Absolute Zero) or 96 (Heart of Winter rebirth).
+            // Radius progression 90/200/300 mirrors GwynCinderNovaBlast's early/mid/late spread.
+            // TrailLength kept modest (50) — the real collision band is a thin 22px annulus, not
+            // a comet; a big trailing tail would misrepresent the actual hitbox.
+            FocusPanels = new[]
+            {
+                new Panel("Unfiltered r=200", 480, 480, Blend.PremultipliedAlpha,
+                    c => IceGigasFreezeRing(c, 480, 200f, 22f, 50f, 3.6f, 1f, false)),
+                new Panel("Early r=90", 260, 260, Blend.PremultipliedAlpha,
+                    c => IceGigasFreezeRing(c, 260, 90f, 22f, 50f, 2.4f, 0.85f)),
+                new Panel("Mid r=200", 480, 480, Blend.PremultipliedAlpha,
+                    c => IceGigasFreezeRing(c, 480, 200f, 22f, 50f, 3.6f, 1f)),
+                new Panel("Late r=300", 680, 680, Blend.PremultipliedAlpha,
+                    c => IceGigasFreezeRing(c, 680, 300f, 22f, 50f, 4.8f, 0.9f)),
+                new Panel("Heart rebirth r=96", 280, 280, Blend.PremultipliedAlpha,
+                    c => IceGigasFreezeRing(c, 280, 96f, 22f, 50f, 4.2f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "ice_gigas_frost_breath")
+        {
+            // Real puffs travel ~150-200px before dying at 0.965 decel over 45 ticks; quad reach
+            // 260 covers that with room for the jet to visibly dissipate before the tip.
+            FocusPanels = new[]
+            {
+                new Panel("Unfiltered exhale", 260, 270, Blend.PremultipliedAlpha,
+                    c => IceGigasFrostBreathCone(c, 260, 270, 4.2f, 1f, 1f, 0.9f, false)),
+                new Panel("Gathering P=.4", 260, 270, Blend.PremultipliedAlpha,
+                    c => IceGigasFrostBreathCone(c, 260, 270, 2.1f, 0.4f, 0f, 0.6f)),
+                new Panel("Exhale P=.8", 260, 270, Blend.PremultipliedAlpha,
+                    c => IceGigasFrostBreathCone(c, 260, 270, 3.4f, 0.8f, 0.6f, 0.85f)),
+                new Panel("Full jet P=1", 260, 270, Blend.PremultipliedAlpha,
+                    c => IceGigasFrostBreathCone(c, 260, 270, 4.2f, 1f, 1f, 0.9f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "ice_gigas_rime_ward")
+        {
+            // axisX/axisY = 44/70, ~6px outside RunRimeWard's existing glint ellipse (38, 62).
+            // Quad 124x180: localOuter peaks at 1.08, so the shell reaches 47.5 x 75.6px, leaving
+            // ~14px of margin on both axes. The first sizing (106x154) left only 1.4px vertically,
+            // which is exactly how a radial effect ends up sliced flat at the quad edge (tips §47).
+            FocusPanels = new[]
+            {
+                new Panel("Unfiltered held", 124, 180, Blend.PremultipliedAlpha,
+                    c => IceGigasRimeWardShell(c, 124, 180, 44f, 70f, 3.6f, 1f, 0.5f, 0.9f, false)),
+                new Panel("Rising P=.35", 124, 180, Blend.PremultipliedAlpha,
+                    c => IceGigasRimeWardShell(c, 124, 180, 44f, 70f, 2.2f, 0.35f, 0f, 0.85f)),
+                new Panel("Fresh hold", 124, 180, Blend.PremultipliedAlpha,
+                    c => IceGigasRimeWardShell(c, 124, 180, 44f, 70f, 3.6f, 1f, 0f, 0.9f)),
+                new Panel("Loaded hold (Stored=8)", 124, 180, Blend.PremultipliedAlpha,
+                    c => IceGigasRimeWardShell(c, 124, 180, 44f, 70f, 4.8f, 1f, 1f, 0.95f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "ice_gigas_winters_grasp")
+        {
+            // GigasFrostZone.ZoneRadius = 160; quad 420 (max chunk reach 182 + 16 rim = 198 < 210).
+            FocusPanels = new[]
+            {
+                new Panel("Unfiltered crystallized", 420, 420, Blend.PremultipliedAlpha,
+                    c => IceGigasWintersGraspZone(c, 420, 160f, 4.4f, 1f, 1f, 0.9f, pixelated: false)),
+                new Panel("Telegraph P=.3", 420, 420, Blend.PremultipliedAlpha,
+                    c => IceGigasWintersGraspZone(c, 420, 160f, 2.0f, 0.3f, 0f, 0.55f)),
+                new Panel("Telegraph P=1 (about to snap)", 420, 420, Blend.PremultipliedAlpha,
+                    c => IceGigasWintersGraspZone(c, 420, 160f, 3.2f, 1f, 0f, 0.65f)),
+                new Panel("Crystallized", 420, 420, Blend.PremultipliedAlpha,
+                    c => IceGigasWintersGraspZone(c, 420, 160f, 4.4f, 1f, 1f, 0.9f)),
+                new Panel("Crystallized, drifted t=7.9", 420, 420, Blend.PremultipliedAlpha,
+                    c => IceGigasWintersGraspZone(c, 420, 160f, 7.9f, 1f, 1f, 0.9f)),
+                new Panel("Crystallized, drifted t=11.5", 420, 420, Blend.PremultipliedAlpha,
+                    c => IceGigasWintersGraspZone(c, 420, 160f, 11.5f, 1f, 1f, 0.9f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "ice_gigas_embrace")
+        {
+            // Winter's Embrace redesign: quad 108, Radius 40 (quarter of the old 160), Active
+            // pinned to 1 always. Time passed pre-scaled ~4x since the port hardcodes its own pan
+            // multipliers off `Time` directly (the shipped .fx call site instead widens the
+            // EdgePan/ShapePan/FacetPan uniform multipliers by the same ~4x — equivalent result).
+            FocusPanels = new[]
+            {
+                new Panel("Unfiltered t=4.4", 108, 108, Blend.PremultipliedAlpha,
+                    c => IceGigasWintersGraspZone(c, 108, 40f, 4.4f * 4f, 1f, 1f, 0.9f, pixelated: false)),
+                new Panel("t=4.4", 108, 108, Blend.PremultipliedAlpha,
+                    c => IceGigasWintersGraspZone(c, 108, 40f, 4.4f * 4f, 1f, 1f, 0.9f)),
+                new Panel("t=6.0 (drifted)", 108, 108, Blend.PremultipliedAlpha,
+                    c => IceGigasWintersGraspZone(c, 108, 40f, 6.0f * 4f, 1f, 1f, 0.9f)),
+                new Panel("t=7.9 (drifted)", 108, 108, Blend.PremultipliedAlpha,
+                    c => IceGigasWintersGraspZone(c, 108, 40f, 7.9f * 4f, 1f, 1f, 0.9f)),
+                new Panel("2x zoom, t=4.4", 216, 216, Blend.PremultipliedAlpha,
+                    c => IceGigasWintersGraspZone(c, 108, 40f, 4.4f * 4f, 1f, 1f, 0.9f)),
             };
         }
         if (Environment.GetEnvironmentVariable("FOCUS") == "gigas_heavenly_spears")

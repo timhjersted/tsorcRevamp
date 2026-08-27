@@ -115,13 +115,15 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (NPC.life <= 0 && Main.netMode != NetmodeID.Server)
             {
-                for (int i = 0; i < 30; i++)
+                //~80 ice dust total for the shatter — this is the trap springing, so it should
+                //read as a genuine explosion of ice rather than a light crumble.
+                for (int i = 0; i < 60; i++)
                 {
                     Vector2 vel = Main.rand.NextVector2Circular(5f, 5f);
                     int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Ice, vel.X, vel.Y, 40, default, Main.rand.NextFloat(1.2f, 1.8f));
                     Main.dust[dust].noGravity = true;
                 }
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     int glint = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.IceRod, 0f, -2f, 60, default, 1.1f);
                     Main.dust[glint].noGravity = true;
@@ -157,7 +159,9 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Vector2 drawPos = NPC.position + new Vector2(NPC.width / 2f, NPC.height + NPC.gfxOffY + 4f) - screenPos;
+            //Same ground-planting shift the living giant gets from DrawOffsetY. Shared constant
+            //rather than a matching literal, so the two copies of this sprite cannot drift apart.
+            Vector2 drawPos = NPC.position + new Vector2(NPC.width / 2f, NPC.height + NPC.gfxOffY + IceGigas.SpriteDrawOffsetY) - screenPos;
             Vector2 origin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height);
             Color tint = new Color(150, 215, 255, 140);
             //Faint white "ice" backing pass, slightly larger, then the tinted body

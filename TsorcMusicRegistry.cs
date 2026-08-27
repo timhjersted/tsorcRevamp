@@ -106,6 +106,9 @@ namespace tsorcRevamp
 
             Register("Pinwheel", "Boss18", "Boss18", MusicID.Boss2);
             Register("TheMachine", "Boss11", "Boss11", MusicID.Boss2);
+            // tsorcMusic assigns this exact track to vanilla Skeletron (NPCID.SkeletronHead).
+            // Keep the lookup here so the music pack remains optional and does not need an edit.
+            Register("GravelordNito", "Sandstorm", null, MusicID.Boss1, SceneEffectPriority.BossHigh);
             Register("RedKnight", "Sandstorm", "Event", MusicID.Boss1, SceneEffectPriority.BossLow);
             Register("GreatRedKnight", "Boss13", "Boss13", MusicID.Boss1);
             Register("BlackKnight", "Boss15", null, MusicID.Boss1);
