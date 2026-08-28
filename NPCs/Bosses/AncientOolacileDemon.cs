@@ -96,7 +96,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 target.AddBuff(BuffID.Bleeding, 2 * 60 + 30, false); //bleeding
             }
 
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)))
+            if (NPC.downedBoss3)
             {
                 target.AddBuff(BuffID.ShadowFlame, 3 * 60 + 30, false); //acid venom
                 target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false); //-20 HP after several hits

@@ -2,7 +2,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -46,13 +45,13 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)))
+            if (!NPC.downedBoss3)
             {
                 target.AddBuff(BuffID.Poisoned, 180);
                 target.AddBuff(BuffID.Bleeding, 180);
             }
 
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)))
+            if (NPC.downedBoss3)
             {
                 target.AddBuff(BuffID.Poisoned, 1200);
                 target.AddBuff(BuffID.Bleeding, 1200);

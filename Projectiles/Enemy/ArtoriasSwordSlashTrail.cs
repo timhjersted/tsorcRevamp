@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (!Main.dedServ)
             {
-                customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/Slash",
+                customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ArtoriasSwordTrail",
                     ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
         }
@@ -188,9 +188,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Color worldLight = Lighting.GetColor(_lightingSample.ToTileCoordinates());
             Color readableLight = Color.Lerp(worldLight, Color.White, 0.42f);
-            Color center = (TracksPhantom ? new Color(220, 205, 255) : new Color(194, 162, 245))
+            Color dark = (TracksPhantom ? new Color(30, 12, 58) : new Color(10, 2, 24))
                 .MultiplyRGB(readableLight);
-            Color edge = (TracksPhantom ? new Color(128, 62, 220) : new Color(96, 30, 175))
+            Color center = (TracksPhantom ? new Color(150, 94, 226) : new Color(104, 34, 180))
+                .MultiplyRGB(readableLight);
+            Color edge = (TracksPhantom ? new Color(214, 170, 246) : new Color(232, 66, 198))
                 .MultiplyRGB(readableLight);
 
             effect.Parameters["baseNoise"].SetValue(tsorcRevamp.NoiseSmooth);
@@ -198,6 +200,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             effect.Parameters["baseNoiseUOffset"].SetValue(_noiseOffset);
             effect.Parameters["fadeOut"].SetValue(MathHelper.Clamp(fadeOut, 0f, 1f));
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            effect.Parameters["slashDark"].SetValue(dark.ToVector4());
             effect.Parameters["slashCenter"].SetValue(center.ToVector4());
             effect.Parameters["slashEdge"].SetValue(edge.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());

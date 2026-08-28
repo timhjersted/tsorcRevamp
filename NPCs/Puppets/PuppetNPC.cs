@@ -183,6 +183,21 @@ namespace tsorcRevamp.NPCs.Puppets
         /// established archetype pose; individual bosses can pull the blade farther behind the head.</summary>
         protected virtual float OverheadWindupOvershoot => 0f;
 
+        /// <summary>Lets a puppet widen the authored start/end rotations of ordinary combo arcs
+        /// without changing the shared weapon-archetype tables. Damage still follows the same
+        /// active clock and swept blade used by the draw pose.</summary>
+        protected virtual void ModifyMeleeArcEndpoints(
+            ComboMotion motion, ref float startRotation, ref float endRotation) { }
+
+        /// <summary>How long the weapon remains at the completed strike pose before beginning the
+        /// next combo step's windup. The combo's PostStepPause must be longer than this value when
+        /// a visible transition to the next start pose is desired.</summary>
+        protected virtual int MeleeComboInterStepLingerTicks => 0;
+
+        /// <summary>How long the completed strike remains visibly planted at the start of melee
+        /// recovery. This is visual-only: the blade is no longer armed during the hold.</summary>
+        protected virtual int MeleeRecoveryLingerTicks => 0;
+
         // Telegraph minimum: 30 ticks = 0.5 s.  Long enough for the player to read the
         // wind-up arc (sword raises, holds at apex, then swings).  Heavier attacks override
         // upward; lighter attacks should not go below this floor.
@@ -1301,6 +1316,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
         private bool IsWeaponVisiblePhase =>
             Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack ||
+            (Phase == AttackPhase.MeleeRecovery && MeleeRecoveryLingerTicks > 0) ||
             Phase == AttackPhase.StabTelegraph  || Phase == AttackPhase.StabAttack  ||
             Phase == AttackPhase.StabRecovery   ||
             Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack ||
@@ -6705,6 +6721,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // one-shot swing (DoMeleeAttack/TryMeleeHit, used outside the combo system) gets
                 // the same easing/flip/aim-bias opt-ins instead of only combos getting them.
                 float a0 = -1.3f - OverheadWindupOvershoot, a1 = 1.0f;
+                ModifyMeleeArcEndpoints(ComboMotion.OverheadArc, ref a0, ref a1);
                 if (UseAlternateFlip && _comboSwingFlipped)
                 {
                     (a0, a1) = (a1, a0);
@@ -6749,8 +6766,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 // motion's fixed (start, end) arc endpoints. Telegraph/pause poses below are all
                 // expressed as a Lerp fraction of these same endpoints (not separate hardcoded
                 // angles), so flip/bias stay consistent across wind-up -> strike with no snap.
-                (float, float) Endpoints(float a0, float a1)
+                (float, float) Endpoints(ComboMotion motion, float a0, float a1)
                 {
+                    ModifyMeleeArcEndpoints(motion, ref a0, ref a1);
                     if (UseAlternateFlip && _comboSwingFlipped)
                     {
                         (a0, a1) = (a1, a0);
@@ -6767,7 +6785,28 @@ namespace tsorcRevamp.NPCs.Puppets
                 // step's arc STARTS rather than re-raising to the outgoing motion's apex — so e.g.
                 // Down-Up's overhead flows straight into the rising cut instead of snapping ~2 rad.
                 bool handoffEased = false;
-                if (inPause && AimSwingActive
+                if (inPause && MeleeComboInterStepLingerTicks > 0)
+                {
+                    int pauseTotal = Math.Max(1, step.PostStepPause);
+                    int elapsedPause = Math.Max(0, pauseTotal - PhaseTimer);
+                    int lingerTicks = Math.Min(MeleeComboInterStepLingerTicks, pauseTotal);
+                    if (elapsedPause < lingerTicks)
+                    {
+                        // Preserve the exact last damaging-frame pose. Collision is already disarmed
+                        // by the combo executor, so this communicates weight without extending danger.
+                        handoffEased = true;
+                    }
+                    else if (_meleeComboStepIndex + 1 < _activeMeleeCombo.Steps.Length)
+                    {
+                        float target = ComboStepStartRotation(_activeMeleeCombo.Steps[_meleeComboStepIndex + 1]);
+                        int transitionTicks = Math.Max(1, pauseTotal - lingerTicks);
+                        float transition = MathHelper.Clamp(
+                            (elapsedPause - lingerTicks + 1f) / transitionTicks, 0f, 1f);
+                        _weaponRotation = MathHelper.SmoothStep(_weaponRotation, target, transition);
+                        handoffEased = true;
+                    }
+                }
+                else if (inPause && AimSwingActive
                     && _meleeComboStepIndex + 1 < _activeMeleeCombo.Steps.Length)
                 {
                     float target = ComboStepStartRotation(_activeMeleeCombo.Steps[_meleeComboStepIndex + 1]);
@@ -6780,7 +6819,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     case ComboMotion.OverheadArc:
                     {
-                        var (a0, a1) = Endpoints(-1.3f - OverheadWindupOvershoot, 1.0f);
+                        var (a0, a1) = Endpoints(ComboMotion.OverheadArc,
+                            -1.3f - OverheadWindupOvershoot, 1.0f);
 
                         if (inTel)
                         {
@@ -6804,7 +6844,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         // -1.3 would map to body row 1, whose hand offset sits BEHIND the head
                         // (X=-8) — making the swing finish over the shoulder.  -1.0 keeps it in
                         // row 2 (hand up-forward, X=+4) for a clean rising slash.
-                        var (a0, a1) = Endpoints(1.0f, -1.0f);
+                        var (a0, a1) = Endpoints(ComboMotion.UnderhandArc, 1.0f, -1.0f);
 
                         if (inTel)
                         {
@@ -6825,7 +6865,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.HorizontalSweep:
                     {
                         // Flat side-to-side: arm extends, weapon held near horizontal
-                        var (a0, a1) = Endpoints(-0.4f, 0.6f);
+                        var (a0, a1) = Endpoints(ComboMotion.HorizontalSweep, -0.4f, 0.6f);
                         if (inTel)
                         {
                             _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.25f);
@@ -6843,7 +6883,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.VerticalChop:
                     {
                         // Straight overhead → straight down (hammer)
-                        var (a0, a1) = Endpoints(-1.55f - OverheadWindupOvershoot, 1.4f);
+                        var (a0, a1) = Endpoints(ComboMotion.VerticalChop,
+                            -1.55f - OverheadWindupOvershoot, 1.4f);
                         if (inTel)
                         {
                             _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.32f);
@@ -6892,7 +6933,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         break;
                     case ComboMotion.IaidoDraw:
                     {
-                        var (a0, a1) = Endpoints(1.2f, -0.5f);
+                        var (a0, a1) = Endpoints(ComboMotion.IaidoDraw, 1.2f, -0.5f);
                         if (inTel)
                         {
                             _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.15f);  // weapon held low/behind
@@ -6905,7 +6946,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                     case ComboMotion.GroundSlam:
                     {
-                        var (a0, a1) = Endpoints(-1.55f - OverheadWindupOvershoot, 1.5f);
+                        var (a0, a1) = Endpoints(ComboMotion.GroundSlam,
+                            -1.55f - OverheadWindupOvershoot, 1.5f);
                         if (inTel)
                         {
                             _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.25f);
@@ -6957,7 +6999,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.Feint:
                     {
                         // Raise exactly like a real overhead attack, then hold the apex as bait.
-                        var (a0, a1) = Endpoints(-1.3f - OverheadWindupOvershoot, 1.0f);
+                        var (a0, a1) = Endpoints(ComboMotion.Feint,
+                            -1.3f - OverheadWindupOvershoot, 1.0f);
                         _weaponRotation = inTel && UseLogicalMeleeTelegraphs
                             ? LogicalSwingWindup(a1, a0, comboTelegraphT)
                             : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
@@ -6965,7 +7008,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                     case ComboMotion.DoubleSpinSlam:
                     {
-                        var (a0, a1) = Endpoints(-1.3f - OverheadWindupOvershoot, 1.4f);
+                        var (a0, a1) = Endpoints(ComboMotion.DoubleSpinSlam,
+                            -1.3f - OverheadWindupOvershoot, 1.4f);
                         if (inTel)
                         {
                             _weaponRotation = UseLogicalMeleeTelegraphs
@@ -7062,6 +7106,12 @@ namespace tsorcRevamp.NPCs.Puppets
                         break;
                     }
                 }
+            }
+            else if ((Phase == AttackPhase.MeleeRecovery || Phase == AttackPhase.MeleeComboRecovery)
+                && IsHoldingMeleeRecoveryFollowThrough())
+            {
+                // The last active-frame rotation is intentionally left untouched. Damage has
+                // already ended; this is only the heavy sword settling into its final pose.
             }
             else if (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0)
             {
@@ -7753,6 +7803,10 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 bodyRow = BodyRowFromWeaponRotation(_weaponRotation, NPC.direction);
             }
+            else if (Phase == AttackPhase.MeleeRecovery && MeleeRecoveryLingerTicks > 0)
+            {
+                bodyRow = BodyRowFromWeaponRotation(_weaponRotation, NPC.direction);
+            }
             else if (Phase == AttackPhase.StabTelegraph)
             {
                 bodyRow = 4; // Use4 — arm dipped down to match sword dip telegraph
@@ -8231,7 +8285,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 else
                 {
                     float speedMult = step.SwingSpeedMult > 0f ? step.SwingSpeedMult : 1f;
-                    int swingTicks = AimSwingActive && IsArcSwingMotion(step.Motion)
+                    int swingTicks = UseAuthoredComboSwingClock && IsArcSwingMotion(step.Motion)
                         ? Math.Max(6, (int)Math.Round(step.AttackTicks / speedMult))
                         : Math.Max(1, GetMeleeSwingTicks(step.AttackTicks));
                     t = 1f - PhaseTimer / (float)swingTicks;
@@ -8732,6 +8786,11 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Resolved per-frame: aim-centered swing is live for this puppet right now.</summary>
         private bool AimSwingActive => UseAimCenteredSwing && AimSwingMasterEnable;
 
+        /// <summary>Uses each combo step's authored attack duration as the complete 0-to-1 swing
+        /// clock. Aim-centered puppets need this automatically; other puppets can opt in without
+        /// inheriting target-pitch steering.</summary>
+        protected virtual bool UseAuthoredComboSwingClock => AimSwingActive;
+
         /// <summary>Clamp on the aim pitch. The base overhead arc already starts near the raised
         /// limit (-1.3 rad ≈ -74°), and the composite arm inverts past vertical, so a big upward aim
         /// bias drove the arm to a broken -112° pose. Kept moderate (~34°) so the arc still visibly
@@ -8756,7 +8815,7 @@ namespace tsorcRevamp.NPCs.Puppets
         private int BeginComboAttackTicks(MeleeComboStep step)
         {
             int ticks = GetMeleeSwingTicks(step.AttackTicks);
-            if (AimSwingActive && IsArcSwingMotion(step.Motion))
+            if (UseAuthoredComboSwingClock && IsArcSwingMotion(step.Motion))
             {
                 float mult = step.SwingSpeedMult > 0f ? step.SwingSpeedMult : 1f;
                 ticks = Math.Max(6, (int)Math.Round(step.AttackTicks / mult));
@@ -8769,7 +8828,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Eases the arc through the step's chosen <see cref="SwingEaseStyle"/> when the
         /// aim-swing pilot is live, else the legacy on/off easing.</summary>
         private float ApplySwingEase(float a0, float a1, float t, MeleeComboStep step)
-            => AimSwingActive ? SwingEase.Apply(a0, a1, t, step.Ease)
+            => UseAuthoredComboSwingClock ? SwingEase.Apply(a0, a1, t, step.Ease)
                               : SwingEase.Apply(a0, a1, t, UseSwingEasing);
 
         /// <summary>The start angle a step's arc begins from, with the same flip / aim-bias transforms
@@ -8795,6 +8854,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 ComboMotion.ApexDiveCleave  => (-1.3f, 1.25f),
                 _                           => (HoldRotation, HoldRotation),
             };
+            ModifyMeleeArcEndpoints(step.Motion, ref a0, ref a1);
             if (UseAlternateFlip && _comboSwingFlipped)
             {
                 (a0, a1) = (a1, a0);
@@ -8807,6 +8867,18 @@ namespace tsorcRevamp.NPCs.Puppets
                 a1 += _comboAimBias;
             }
             return a0;
+        }
+
+        private bool IsHoldingMeleeRecoveryFollowThrough()
+        {
+            if (MeleeRecoveryLingerTicks <= 0)
+                return false;
+
+            int recoveryTicks = Phase == AttackPhase.MeleeComboRecovery
+                ? ActiveComboRecoveryTicks
+                : MeleeRecoveryTicks;
+            int lingerTicks = Math.Min(MeleeRecoveryLingerTicks, Math.Max(1, recoveryTicks));
+            return PhaseTimer > Math.Max(0, recoveryTicks - lingerTicks);
         }
 
         // ── Composite-arm swing experiment (opt-in, single-enemy safe A/B) ──────────

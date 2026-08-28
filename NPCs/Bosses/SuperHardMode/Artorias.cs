@@ -45,8 +45,55 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
         protected override bool UseCompositeArmSwing => true;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
-        protected override int AfterimageSampleStep => Phase == AttackPhase.PierceDash ? 1 : 2;
-        protected override float AfterimageOpacity => Phase == AttackPhase.PierceDash ? 0.58f : 0.4f;
+        protected override bool UseSwingEasing => true;
+        protected override bool UseLogicalMeleeTelegraphs => true;
+        protected override bool UseAuthoredComboSwingClock => true;
+        protected override float OverheadWindupOvershoot => 0.18f;
+        protected override int MeleeAttackTicks => 30;
+        protected override int MeleeRecoveryTicks => 30;
+        protected override int MeleeComboInterStepLingerTicks => 15;
+        protected override int MeleeRecoveryLingerTicks => 30;
+
+        protected override void ModifyMeleeArcEndpoints(
+            ComboMotion motion, ref float startRotation, ref float endRotation)
+        {
+            switch (motion)
+            {
+                case ComboMotion.OverheadArc:
+                    startRotation = Math.Min(startRotation, -1.48f);
+                    endRotation = 1.35f;
+                    break;
+                case ComboMotion.UnderhandArc:
+                    startRotation = 1.35f;
+                    endRotation = -1.35f;
+                    break;
+                case ComboMotion.HorizontalSweep:
+                    startRotation = -1.08f;
+                    endRotation = 1.18f;
+                    break;
+                case ComboMotion.VerticalChop:
+                case ComboMotion.GroundSlam:
+                    startRotation = Math.Min(startRotation, -1.58f);
+                    endRotation = Math.Max(endRotation, 1.48f);
+                    break;
+            }
+        }
+
+        protected override void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction)
+        {
+            combo.RecoveryTicks = combo.HeavyCommit ? 36 : 30;
+            if (combo.Steps == null)
+                return;
+
+            for (int i = 0; i < combo.Steps.Length - 1; i++)
+            {
+                MeleeComboStep step = combo.Steps[i];
+                // Fifteen non-damaging frames stay planted at contact; the remaining pause then
+                // cocks the sword into the next authored starting pose instead of snapping there.
+                step.PostStepPause = Math.Max(step.PostStepPause, 30);
+                combo.Steps[i] = step;
+            }
+        }
 
         protected override bool UseCompositeArmForAdditionalPhase =>
             Phase == AttackPhase.StabTelegraph || Phase == AttackPhase.StabAttack ||
@@ -293,7 +340,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             base.AI();
             UpdateSlashTrailSequence();
             TickProjectileSwordTelegraphs();
-            UpdateArtoriasDashAfterimages();
 
             // The puppet body and hand-drawn greatsword both sample the normal light map, so this
             // shared white light keeps the whole silhouette readable when the abyss-space scene is up.
@@ -312,19 +358,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 _abyssShardUnlocked = true;
             }
-        }
-
-        void UpdateArtoriasDashAfterimages()
-        {
-            bool largeMovement = Math.Abs(NPC.velocity.X) >= 4.5f || Math.Abs(NPC.velocity.Y) >= 5.5f;
-            bool dashPhase = Phase == AttackPhase.PierceDash
-                || Phase == AttackPhase.JumpSlashRise
-                || Phase == AttackPhase.JumpSlashAttack
-                || Phase == AttackPhase.FlipSlashRise
-                || Phase == AttackPhase.HomingVolleyDodgeback
-                || Phase == AttackPhase.SwordLaunchReposition;
-            if (largeMovement && dashPhase)
-                AfterimageTicks = Phase == AttackPhase.PierceDash ? 24 : 10;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -794,10 +827,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoPierceDashTick()
         {
-            // Keeps the shared afterimage trail alive every tick of the dash; it decays on its own
-            // once this stops being called (dash ends).
-            AfterimageTicks = 24;
-
             if (Main.dedServ || !Main.rand.NextBool(3))
             {
                 return;

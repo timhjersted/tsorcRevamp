@@ -706,44 +706,61 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            // Mid-speed body: dark ether carries the mass while blood supplies the readable red edge.
-            for (int i = 0; i < 40; i++)
+            // INTERIOR BODY: densely fills most of the true 125px detonation radius. Blood falls;
+            // some wraith matter also takes gravity so the blast collapses into a deathly rain.
+            for (int i = 0; i < 72; i++)
             {
-                bool blood = i % 3 == 0;
+                bool blood = i % 3 == 0 || Main.rand.NextBool(5);
                 Vector2 direction = Main.rand.NextVector2Unit();
-                Dust d = Dust.NewDustPerfect(center + direction * Main.rand.NextFloat(2f, 24f),
+                float radius = (float)System.Math.Sqrt(Main.rand.NextFloat()) * BlastRadius * 0.88f;
+                Dust d = Dust.NewDustPerfect(center + direction * radius,
                     blood ? DustID.Blood : DustID.Wraith,
-                    direction * Main.rand.NextFloat(2.2f, 6.3f), blood ? 45 : 105,
+                    direction * Main.rand.NextFloat(1.4f, 5.8f)
+                        + new Vector2(0f, Main.rand.NextFloat(-1.8f, 0.8f)),
+                    blood ? 45 : 105,
                     blood ? new Color(150, 18, 28) : new Color(12, 2, 18),
-                    Main.rand.NextFloat(0.68f, 1.28f));
-                d.noGravity = !blood || Main.rand.NextBool(2);
+                    Main.rand.NextFloat(0.62f, 1.22f));
+                d.noGravity = !blood && !Main.rand.NextBool(3);
                 d.noLight = !blood;
-                if (!blood)
+                if (!blood && d.noGravity)
                 {
-                    d.fadeIn = Main.rand.NextFloat(1f, 1.32f);
+                    d.fadeIn = Main.rand.NextFloat(1.28f, 1.58f);
                 }
             }
 
-            // Fast, narrow blood splinters give the detonation a sharp front without a generic fireball.
-            for (int i = 0; i < 14; i++)
+            // OUTWARD FRONT: starts around the damage boundary and races beyond it. These are soft,
+            // decorative particles; the shader ring remains the authoritative damaging radius.
+            for (int i = 0; i < 44; i++)
             {
                 Vector2 direction = Main.rand.NextVector2Unit();
-                Dust d = Dust.NewDustPerfect(center, DustID.Blood,
-                    direction * Main.rand.NextFloat(6.5f, 10f), 35, new Color(170, 20, 32),
-                    Main.rand.NextFloat(0.48f, 0.82f));
-                d.noGravity = false;
+                bool blood = i % 2 == 0;
+                Vector2 spawn = center + direction * Main.rand.NextFloat(BlastRadius * 0.68f, BlastRadius * 1.18f);
+                Dust d = Dust.NewDustPerfect(spawn, blood ? DustID.Blood : DustID.Wraith,
+                    direction * Main.rand.NextFloat(6.2f, 11.5f)
+                        + new Vector2(0f, Main.rand.NextFloat(-2.2f, 0.4f)),
+                    blood ? 35 : 105,
+                    blood ? new Color(175, 20, 34) : new Color(18, 2, 26),
+                    Main.rand.NextFloat(0.45f, 0.86f));
+                d.noGravity = !blood && Main.rand.NextBool(2);
+                d.noLight = !blood;
             }
 
-            // Slow black wisps remain behind the expanding shader ring as an ethereal afterbody.
-            for (int i = 0; i < 12; i++)
+            // FALLING AFTERBODY: a broad, slower fill both inside and just outside the nova. Every
+            // mote takes gravity, giving blood and wraith fragments a visible descending aftermath.
+            for (int i = 0; i < 28; i++)
             {
                 Vector2 direction = Main.rand.NextVector2Unit();
-                Dust d = Dust.NewDustPerfect(center + direction * Main.rand.NextFloat(4f, 30f),
-                    DustID.Wraith, direction * Main.rand.NextFloat(0.45f, 1.8f), 150,
-                    new Color(8, 1, 14), Main.rand.NextFloat(0.52f, 0.78f));
-                d.noGravity = true;
-                d.noLight = true;
-                d.fadeIn = Main.rand.NextFloat(1.12f, 1.42f);
+                bool blood = Main.rand.NextBool(3);
+                Dust d = Dust.NewDustPerfect(
+                    center + direction * Main.rand.NextFloat(12f, BlastRadius * 1.35f),
+                    blood ? DustID.Blood : DustID.Wraith,
+                    direction * Main.rand.NextFloat(0.5f, 2.6f)
+                        + new Vector2(0f, Main.rand.NextFloat(-4.2f, -1.2f)),
+                    blood ? 70 : 145,
+                    blood ? new Color(135, 12, 24) : new Color(8, 1, 14),
+                    Main.rand.NextFloat(0.5f, 0.82f));
+                d.noGravity = false;
+                d.noLight = !blood;
             }
         }
 

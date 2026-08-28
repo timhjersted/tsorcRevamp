@@ -12,6 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         const string NoiseRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> boundaryEffect;
+        static Asset<Effect> swordSwipeEffect;
         static Asset<Effect> detonationEffect;
         static Asset<Effect> impactEffect;
         static Asset<Effect> impactCoreEffect;
@@ -38,6 +39,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> flare;
         static Asset<Texture2D> abyssFog;
         static Asset<Texture2D> turbulentNoise;
+        static Asset<Texture2D> marbleNoise;
+        static Asset<Texture2D> slashFibers;
         static Asset<Texture2D> particleFire1;
         static Asset<Texture2D> particleFire2;
         static Asset<Texture2D> particleFlame1;
@@ -58,6 +61,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         static void LoadAssets()
         {
             boundaryEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssBoundary", AssetRequestMode.ImmediateLoad);
+            swordSwipeEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasSwordSwipe", AssetRequestMode.ImmediateLoad);
             detonationEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssDetonation", AssetRequestMode.ImmediateLoad);
             impactEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssImpact", AssetRequestMode.ImmediateLoad);
             impactCoreEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssImpactCore", AssetRequestMode.ImmediateLoad);
@@ -84,6 +88,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             flare ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_Flare_666", AssetRequestMode.ImmediateLoad);
             abyssFog ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/AbyssFog", AssetRequestMode.ImmediateLoad);
             turbulentNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "TurbulentNoise", AssetRequestMode.ImmediateLoad);
+            marbleNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_MarbleNoise_tiled", AssetRequestMode.ImmediateLoad);
+            slashFibers ??= ModContent.Request<Texture2D>(NoiseRoot + "Vein_04-512x512", AssetRequestMode.ImmediateLoad);
             particleFire1 ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Particles/fire_01_a", AssetRequestMode.ImmediateLoad);
             particleFire2 ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Particles/fire_02_a", AssetRequestMode.ImmediateLoad);
             particleFlame1 ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Particles/flame_01_a", AssetRequestMode.ImmediateLoad);
@@ -107,6 +113,13 @@ namespace tsorcRevamp.Projectiles.Enemy
                     new Color(128, 40, 164), opacity,
                     0f, radius, halfWidth, BlendState.AlphaBlend);
             }
+
+            Draw(boundaryEffect, "ArtoriasAbyssBoundaryInner", turbulentNoise, turbulentNoise,
+                center, size, 0f, new Color(7, 1, 18),
+                warning ? new Color(190, 34, 142) : new Color(108, 24, 174),
+                warning ? new Color(244, 82, 184) : new Color(210, 72, 214),
+                warning ? opacity * 0.52f : opacity * 0.64f,
+                warning ? 1f : 0f, radius, halfWidth, BlendState.Additive);
 
             Draw(boundaryEffect, "ArtoriasAbyssBoundaryEdge", turbulentNoise, turbulentNoise,
                 center, size, 0f, new Color(9, 2, 20), warning ? DangerMagenta : new Color(142, 34, 190),
@@ -176,6 +189,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             Draw(projectileEffect, "ArtoriasCrescent", circleGradient, brokenNoise,
                 center, size, rotation, VoidBlack, mid, KnightSilver, opacity,
                 0f, returning ? 1f : 0f, returning ? -1f : 1f, BlendState.Additive);
+        }
+
+        internal static void DrawSwordSwipe(Vector2 center, float rotation, Vector2 size,
+            float progress, float opacity)
+        {
+            LoadAssets();
+            Draw(swordSwipeEffect, "ArtoriasSwordSwipe", marbleNoise, slashFibers,
+                center, size, rotation, new Color(8, 2, 20), new Color(102, 32, 176),
+                new Color(232, 68, 198), opacity, progress, 1f, 1f,
+                BlendState.AlphaBlend, fullTexture: true);
         }
 
         internal static void DrawOrb(Vector2 center, Vector2 size, float rotation,

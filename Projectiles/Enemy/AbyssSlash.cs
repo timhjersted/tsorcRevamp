@@ -101,9 +101,12 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return false;
             }
 
-            ArtoriasVFX.DrawProjectileTrail(Projectile.Center - direction * 34f, rotation,
-                new Vector2(76f, 26f), 0.35f, 0.70f);
-            ArtoriasVFX.DrawCrescent(Projectile.Center, rotation, new Vector2(54f, 46f), false, 0.92f);
+            ArtoriasVFX.DrawProjectileTrail(Projectile.Center - direction * 38f, rotation,
+                new Vector2(88f, 30f), 0.35f, 0.58f);
+            float animationProgress = (Projectile.frame + Projectile.frameCounter / 4f)
+                / Main.projFrames[Type];
+            ArtoriasVFX.DrawSwordSwipe(Projectile.Center, rotation,
+                new Vector2(78f, 92f), animationProgress, 0.94f);
             return false;
         }
 

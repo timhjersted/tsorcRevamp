@@ -72,6 +72,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         const int HeavyTelegraph = 48;
         const int LongChannelTicks = 120;
         const int LongChannelStaggerTicks = 80;
+        const float ImpalingThrustMinRange = 410f; // old 110 + requested 300px separation
+        const float ImpalingThrustMaxRange = 650f;
 
         AttackState State = AttackState.None;
 
@@ -137,10 +139,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         const float SwordPivotX = 56f;
         const float SwordPivotY = 24f;
         const float SwordIdleReach = 78f;
-        // The old value was +30, which placed the opaque bottom of the 300px frame roughly two tiles
-        // below solid ground. -7 cancels PreDraw's historical 7px frame-anchor allowance, putting the
-        // visible base exactly on NPC.Bottom while retaining the measured body/sword grip alignment.
-        internal const float GroundSinkPixels = -7f;
+        // +9 combines with PreDraw's historical 7px frame-anchor allowance to place the complete rig
+        // 16px below NPC.Bottom. The body, sword, slash shader and collision all consume this shared
+        // correction, so lowering the art never detaches its attack geometry.
+        internal const float GroundSinkPixels = 9f;
         // GravelordNitoSword.png is 250x58, tip at the left edge, hilt/pommel at the right — this is
         // the handle-grip column (measured), i.e. where the (hidden) hand actually holds the blade.
         // The sword is drawn with ITS OWN origin pinned there instead of the texture's geometric
@@ -157,10 +159,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         const float HandLiftMax = 55f;
         const float HandDriftMax = 8f;
 
-        int SlashDamage => 23;
-        int HeavySlashDamage => 29;
-        int BoneDamage => 20;
-        int DeathDamage => 24;
+        const float AttackDamageScale = 0.75f;
+        static int ScaledAttackDamage(int baseDamage) => Math.Max(1,
+            (int)Math.Round(baseDamage * AttackDamageScale, MidpointRounding.AwayFromZero));
+        int SlashDamage => ScaledAttackDamage(23);       // 17
+        int HeavySlashDamage => ScaledAttackDamage(29);  // 22
+        int BoneDamage => ScaledAttackDamage(20);        // 15
+        int DeathDamage => ScaledAttackDamage(24);       // 18
 
         bool IsMeleeState => State == AttackState.SideSweep || State == AttackState.BackhandSweep
             || State == AttackState.OverheadCleave || State == AttackState.ImpalingThrust
@@ -195,11 +200,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.NavSearchRadius = 70;
-            // A small jump only — 1-2 tile ledges are already handled smoothly by the shared
-            // AutoStepUp system (unconditional for grounded NPCs), so this lower ceiling only
-            // covers genuine gaps the pathfinder can't step around; he should read as a heavy,
-            // grounded fighter, not a leaping beast.
-            globalNPC.MaxJumpPower = 6f;
+            // With 0.3 gravity, 6 power reaches a ~60px apex. 8.7 reaches ~126px: approximately four
+            // additional tiles of potential height. The horizontal boost remains unchanged so this
+            // expands vertical navigation without turning his heavy hop into a long-distance pounce.
+            globalNPC.MaxJumpPower = 8.7f;
             globalNPC.MaxJumpBoost = 3f;
             // Support core: the center 4 tiles must be on solid ground (matches his ~7.4-tile width).
             // The wider sprite edges — and up to half his ~11-tile height on a downslope — are allowed
@@ -361,9 +365,9 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
             if (State == AttackState.None)
             {
-                // canWalkBackwards:false — he turns to FACE his walking direction. Platforms are
-                // always fallen through by CanFallThroughPlatforms; LeapingCleave remains his authored
-                // vertical answer rather than allowing navigation to perch him on arena platforms.
+                // canWalkBackwards:false — he turns to FACE his walking direction. Platforms are valid
+                // footing near the player's level, but CanFallThroughPlatforms drops him through one
+                // whenever it has left him meaningfully above the fight.
                 tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.62f, acceleration: 0.45f, canTeleport: false, lavaJumping: true, canDodgeroll: false, canPounce: false, minSurfaceWidth: 4, canWalkBackwards: false);
                 StayGroundedRelativeTo(player);
                 MaintainRecoveryPursuit(player);
@@ -407,8 +411,9 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 ProximityWeight(dist, 145f, 190f, 7f));
             AddAttackOption(pool, AttackState.OverheadCleave, horizontal <= 310f && vertical < 190f,
                 ProximityWeight(dist, 210f, 250f, 6f));
-            AddAttackOption(pool, AttackState.ImpalingThrust, horizontal >= 110f && horizontal <= 440f && sameLevel,
-                ProximityWeight(dist, 285f, 230f, 7f));
+            AddAttackOption(pool, AttackState.ImpalingThrust,
+                horizontal >= ImpalingThrustMinRange && horizontal <= ImpalingThrustMaxRange && sameLevel,
+                ProximityWeight(dist, 520f, 210f, 7f));
             AddAttackOption(pool, AttackState.TripleReaperCombo, PhaseTwo && horizontal <= 370f && sameLevel,
                 ProximityWeight(dist, 220f, 240f, 11f));
             AddAttackOption(pool, AttackState.DraggingAdvance, horizontal >= 180f && horizontal <= 700f && sameLevel,
@@ -539,13 +544,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 return AttackState.SwordRain;
             }
+            if (horizontal >= ImpalingThrustMinRange && horizontal <= ImpalingThrustMaxRange && sameLevel)
+            {
+                return AttackState.ImpalingThrust;
+            }
             if (horizontal > 360f && sameLevel)
             {
                 return AttackState.DraggingAdvance;
-            }
-            if (horizontal > 110f && sameLevel)
-            {
-                return AttackState.ImpalingThrust;
             }
             return AttackState.SideSweep;
         }
@@ -597,7 +602,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
             float horizontal = Math.Abs(player.Center.X - NPC.Center.X);
             float vertical = Math.Abs(player.Center.Y - NPC.Center.Y);
-            if (vertical >= 190f || horizontal > 470f)
+            if (vertical >= 190f || horizontal > ImpalingThrustMaxRange + 30f)
             {
                 return;
             }
@@ -611,7 +616,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 _ => NextOverheadIsRising ? 4 : 1,
             };
 
-            bool lungeEligible = priorKind != 2 && horizontal >= 115f && horizontal <= 470f;
+            bool lungeEligible = priorKind != 2 && horizontal >= ImpalingThrustMinRange
+                && horizontal <= ImpalingThrustMaxRange + 30f;
             int followUpKind;
             if (horizontal > 330f)
             {
@@ -642,13 +648,15 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             bool sameLevel = vertical < 135f;
             return state switch
             {
-                AttackState.ImpalingThrust => horizontal >= 90f && horizontal <= 470f && sameLevel,
+                AttackState.ImpalingThrust => horizontal >= ImpalingThrustMinRange - 20f
+                    && horizontal <= ImpalingThrustMaxRange + 30f && sameLevel,
                 AttackState.DraggingAdvance => horizontal >= 160f && horizontal <= 740f && sameLevel,
                 AttackState.OverheadCleave => horizontal <= 330f && vertical < 190f,
                 AttackState.QuietusCombo => PhaseTwo && horizontal <= 410f && sameLevel,
                 AttackState.BonePillarCage => PhaseTwo && horizontal >= 120f && horizontal <= 650f,
                 AttackState.GravelordJudgment => PhaseTwo && (vertical > 90f || horizontal >= 260f),
-                AttackState.FollowUpSlash => PhaseTwo && horizontal <= 470f && vertical < 190f,
+                AttackState.FollowUpSlash => PhaseTwo
+                    && horizontal <= ImpalingThrustMaxRange + 30f && vertical < 190f,
                 _ => true,
             };
         }
@@ -1699,9 +1707,24 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             return false;
         }
 
-        // Nito is too large and heavy to use arena platforms as walkable floors. He falls through
-        // them on both server and clients and only treats full solid tiles as ground.
-        public override bool? CanFallThroughPlatforms() => true;
+        const float PlatformHeightTolerance = 56f; // 3.5 tiles of foot-height separation
+
+        // Platforms are useful arena footing, so Nito stands on them while his feet are roughly level
+        // with the player's. If a jump or a moving target strands him above the fight, he deliberately
+        // drops through instead of pacing on the upper platform indefinitely.
+        public override bool? CanFallThroughPlatforms()
+        {
+            if (NPC.target < 0 || NPC.target >= Main.maxPlayers)
+            {
+                return false;
+            }
+            Player player = Main.player[NPC.target];
+            if (!player.active || player.dead)
+            {
+                return false;
+            }
+            return player.Bottom.Y - NPC.Bottom.Y > PlatformHeightTolerance;
+        }
 
         ///<summary>Keeps recovery visually and physically pressuring the target. Shared navigation
         ///still handles walls, gaps and vertical routes first; on a clear, grounded lane this removes
@@ -1759,13 +1782,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 followUp = AttackState.LeapingCleave;
             }
-            else if (horizontal > 430f)
-            {
-                followUp = AttackState.DraggingAdvance;
-            }
-            else if (horizontal >= 125f)
+            else if (horizontal >= ImpalingThrustMinRange && horizontal <= ImpalingThrustMaxRange)
             {
                 followUp = AttackState.ImpalingThrust;
+            }
+            else if (horizontal > 330f)
+            {
+                followUp = AttackState.DraggingAdvance;
             }
             else
             {
@@ -1774,10 +1797,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             QueueFollowUp(followUp, player);
         }
 
-        ///<summary>Nito is a heavy, grounded fighter — he should never leap up onto ledges/platforms
-        ///that sit above the player. If FighterAI just started a nav hop (upward velocity) and the
-        ///player is NOT clearly above him, kill the upward impulse. AutoStepUp still carries him over
-        ///1–2 tile ledges without a jump, so this only suppresses genuine climbing.</summary>
+        ///<summary>Nito is a heavy, grounded fighter. If FighterAI starts a navigation hop while the
+        ///player's FEET are not meaningfully above his, kill the upward impulse. Using foot height is
+        ///important because Nito's much taller hitbox makes center-to-center comparisons misleading.
+        ///AutoStepUp still carries him over 1–2 tile ledges without a jump.</summary>
         void StayGroundedRelativeTo(Player player)
         {
             // Don't suppress a lava/liquid escape hop — only genuine climbing toward higher ground.
@@ -1785,7 +1808,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 return;
             }
-            bool playerAbove = player.Center.Y < NPC.Center.Y - 64f;
+            bool playerAbove = player.Bottom.Y < NPC.Bottom.Y - PlatformHeightTolerance;
             if (!playerAbove && NPC.velocity.Y < -1f)
             {
                 NPC.velocity.Y = 0f;
@@ -2019,6 +2042,34 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
         void SwordTelegraphDust(int kind)
         {
+            if (kind == 2)
+            {
+                // The thrust tell lives on the actual loose sword, not at the old head-height proxy.
+                // Thrust phi is horizontal, so this is the same hilt-to-tip axis PreDraw renders.
+                Vector2 bladeDirection = new Vector2(lockedDir, 0f);
+                Vector2 hilt = NPC.Center + new Vector2(
+                    lockedDir * SwordPivotX, SwordPivotY + GroundSinkPixels);
+                float windupProgress = SlashWindupEndTick > SlashWindupStartTick
+                    ? MathHelper.Clamp((AttackTimer - SlashWindupStartTick)
+                        / (float)(SlashWindupEndTick - SlashWindupStartTick), 0f, 1f)
+                    : 1f;
+                float reach = MathHelper.Lerp(SwordIdleReach, SlashReach(kind, 0f), windupProgress);
+                float lengthScale = 1f + MathHelper.Clamp((reach - SwordIdleReach) / 100f, -0.15f, 0.45f);
+                Vector2 tip = hilt + bladeDirection * 195f * lengthScale;
+                Vector2 perpendicular = new Vector2(0f, 1f);
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 pos = Vector2.Lerp(hilt, tip, Main.rand.NextFloat(0.12f, 0.96f))
+                        + perpendicular * Main.rand.NextFloat(-5f, 5f);
+                    Dust dust = Dust.NewDustPerfect(pos, DustID.BoneTorch,
+                        bladeDirection * Main.rand.NextFloat(0.25f, 1.15f)
+                            + perpendicular * Main.rand.NextFloat(-0.45f, 0.45f),
+                        100, default, Main.rand.NextFloat(0.72f, 0.9f));
+                    dust.noGravity = true;
+                }
+                return;
+            }
+
             // Rising slash gathers low near the hip (where the cut starts) rather than at shoulder height.
             Vector2 origin = NPC.Center + (kind == 4 ? new Vector2(lockedDir * 30f, -30f) : new Vector2(lockedDir * 40f, -92f));
             // Swing arc start angle by attack kind: 1 = straight overhead, 4 = wide sweep scaled by facing,
@@ -2188,8 +2239,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             int renderDirection = activeSlashPose ? SlashActiveDirection : NPC.spriteDirection;
             bool faceRight = renderDirection >= 0;
             SpriteEffects effects = faceRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            // Sink the whole rig ~2 tiles into the floor so his ragged base is always buried and the
-            // sprite reads as standing ON the ground, not floating above it.
+            // The shared correction places the visible base 16px below the collision feet, matching
+            // the requested ground contact while keeping the loose sword and slash geometry attached.
             Vector2 drawBottom = NPC.Bottom + new Vector2(0f, 7f + NPC.gfxOffY + GroundSinkPixels);
             Vector2 swordAnchor = NPC.Center + new Vector2(0f, NPC.gfxOffY + GroundSinkPixels);
 
@@ -2288,11 +2339,9 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             return false;
         }
 
-        ///<summary>Nito stands in Skeletron's progression slot (Skeletron itself remains fightable as
-        ///an optional boss). Defeating him must unlock everything the dungeon/post-Skeletron content
-        ///gates on: the vanilla dungeon-guardian flag, AND the mod's own NewSlain[SkeletronHead] gate
-        ///(read by Basilisk Walker/BarrowWight/spore trap/ink spit/Jungle Wyvern fire/Sublime Bone
-        ///Dust — see NewSlain.ContainsKey(NPCDefinition(NPCID.SkeletronHead)) call sites).</summary>
+        ///<summary>Nito stands in Skeletron's progression slot while Skeletron remains an optional,
+        ///separately tracked boss. downedBoss3 is Terraria's required dungeon-unlock compatibility bit;
+        ///NewSlain records only Nito here, preserving Skeletron's real first-kill rewards and history.</summary>
         public override void OnKill()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -2302,7 +2351,6 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             NPC.downedBoss3 = true;
 
             RegisterFirstKill(NPC.type);
-            RegisterFirstKill(NPCID.SkeletronHead);
 
             if (Main.netMode == NetmodeID.Server)
             {

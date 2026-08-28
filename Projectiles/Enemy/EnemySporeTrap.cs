@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 target.AddBuff(20, 600, false); //poisoned
             }
 
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)))
+            if (NPC.downedBoss3)
             {
                 //target.AddBuff(30, 150, false); //bleeding
                 target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 HP after several hits
