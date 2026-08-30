@@ -1567,10 +1567,6 @@ namespace tsorcRevamp
             {
                 SummonTagDuration += SummonerEdits.ScrollSummonTagDurationBoost / 100f;
             }
-            if (SeveringDuskDashTime > 0)
-            {
-                Player.GetDamage(DamageClass.Melee) += SeveringDusk.DashBonusDmg / 100f;
-            }
             if (PhoenixSkull && tsorcRevampWorld.BossAlive && !BossBlockedPhoenixRevive)
             {
                 Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Items.Accessories.Defensive.PhoenixSkull.BossChargeDuration * 60);

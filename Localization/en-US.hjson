@@ -1808,6 +1808,7 @@ Mods: {
 					Increases either arrow, bullet or specialist damage by {0}%
 					Ammo type is decided by a timer that picks one of the three regularly
 					Plays a sound to indicate the switch every {1} seconds
+					Disabling accessory visibility turns the sound off 
 					'''
 				Bow: Archery!
 				Gun: Shooting!
@@ -6608,8 +6609,10 @@ Mods: {
 				Tooltip:
 					'''
 					A blade honed sharp by the magic of the coming night.
-					Right click to dash, consuming stamina, increasing damage dealt and making you immune for a moment
+					Tooltip0
+					Dashing will block stamina regen and grant the sword a {0}% damage buff
 					'''
+				Tooltip0: Right click to dash, consuming {0} stamina, increasing damage dealt and making you immune for a moment
 			}
 
 			ShadowSickle: {
@@ -10278,6 +10281,11 @@ Mods: {
 			ElectrocuteCooldown: {
 				DisplayName: Electrocute Cooldown
 				Description: Electrocute is on cooldown.
+			}
+
+			SeveringDuskBuff: {
+				DisplayName: Severing Dusk Buff
+				Description: Mods.tsorcRevamp.Buffs.SeveringDuskBuff.Description
 			}
 		}
 

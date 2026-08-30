@@ -6573,6 +6573,7 @@ Mods: {
 					Клинок, отточенный магией наступающей ночи.
 					Нажмите ПКМ, чтобы нанести удар, потребляющий выносливость, увеличивающий наносимый урон и на мгновение делающий вас неуязвимым
 					'''
+				// Tooltip0: Right click to dash, consuming {0} stamina, increasing damage dealt and making you immune for a moment
 			}
 
 			ShadowSickle: {
@@ -10222,6 +10223,11 @@ Mods: {
 			ElectrocuteCooldown: {
 				// DisplayName: Electrocute Cooldown
 				// Description: Electrocute is on cooldown.
+			}
+
+			SeveringDuskBuff: {
+				// DisplayName: Severing Dusk Buff
+				// Description: Mods.tsorcRevamp.Buffs.SeveringDuskBuff.Description
 			}
 		}
 

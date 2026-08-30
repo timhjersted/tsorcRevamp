@@ -6606,6 +6606,7 @@ Mods: {
 					一把被残夜魔力锻造过的锋利的剑
 					<right>冲刺，消耗耐力让你暂时免疫攻击并增加伤害
 					'''
+				// Tooltip0: Right click to dash, consuming {0} stamina, increasing damage dealt and making you immune for a moment
 			}
 
 			ShadowSickle: {
@@ -10259,6 +10260,11 @@ Mods: {
 			ElectrocuteCooldown: {
 				// DisplayName: Electrocute Cooldown
 				// Description: Electrocute is on cooldown.
+			}
+
+			SeveringDuskBuff: {
+				// DisplayName: Severing Dusk Buff
+				// Description: Mods.tsorcRevamp.Buffs.SeveringDuskBuff.Description
 			}
 		}
 

@@ -28,7 +28,8 @@ namespace tsorcRevamp.Items.Accessories.Ranged
             Item.expert = true;
             Item.value = PriceByRarity.Cyan_9;
         }
-        public override void UpdateEquip(Player player)
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             Rectangle PlayerRect = Utils.CenteredRectangle(player.Center, player.Size);
             AmmoType++;
@@ -37,7 +38,10 @@ namespace tsorcRevamp.Items.Accessories.Ranged
                 case SwitchTiming * 60 * 0:
                     {
                         player.arrowDamage += Dmg / 100f;
-                        SoundEngine.PlaySound(SoundID.Item102 with { Volume = 3f });
+                        if (!hideVisual)
+                        {
+                            SoundEngine.PlaySound(SoundID.Item102 with { Volume = 1.5f });
+                        }
                         CombatText.NewText(PlayerRect, Color.BurlyWood, LangUtils.GetTextValue("Items.GoldenHairpin.Bow"));
                         break;
                     }
@@ -49,7 +53,10 @@ namespace tsorcRevamp.Items.Accessories.Ranged
                 case SwitchTiming * 60 * 1:
                     {
                         player.bulletDamage += Dmg / 100f;
-                        SoundEngine.PlaySound(SoundID.Item149 with { Volume = 3f });
+                        if (!hideVisual)
+                        {
+                            SoundEngine.PlaySound(SoundID.Item149 with { Volume = 1.5f });
+                        }
                         CombatText.NewText(PlayerRect, Color.BurlyWood, LangUtils.GetTextValue("Items.GoldenHairpin.Gun"));
                         break;
                     }
@@ -61,7 +68,10 @@ namespace tsorcRevamp.Items.Accessories.Ranged
                 case SwitchTiming * 60 * 2:
                     {
                         player.specialistDamage += Dmg / 100f;
-                        SoundEngine.PlaySound(SoundID.Item14 with { Volume = 3f });
+                        if (!hideVisual)
+                        {
+                            SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1.5f });
+                        }
                         CombatText.NewText(PlayerRect, Color.BurlyWood, LangUtils.GetTextValue("Items.GoldenHairpin.Specialist"));
                         break;
                     }
