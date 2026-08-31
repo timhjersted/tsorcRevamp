@@ -27,7 +27,7 @@ We're looking to do a full transfer of the original mod, which includes:
 * Over 400 custom items, weapons, and armor
 * 22 new bosses
 * Tons of new enemies
-* A completely handmade map, with ~~13~~ **17** dungeons and tons of secrets
+* A completely handmade map, with ~~13~~ **18** dungeons and tons of secrets
 
 
 ## Roadmap
@@ -48,4 +48,4 @@ Special thanks to Linklight2 for their large porting effort, and to Maxisi for t
 ## Contact
 
 [Join our Discord!](https://discord.gg/tPkhZgJ)
-You can also email me at zeodexic@protonmail.com for questions.
+You can also email Tim at timhjersted[at]gmail[dot]com for questions.
