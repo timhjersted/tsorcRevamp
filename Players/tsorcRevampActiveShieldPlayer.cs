@@ -26,6 +26,9 @@ namespace tsorcRevamp
         public int activeShieldType = -1;
         /// <summary>Frames remaining during which the player cannot raise a shield (set on guard break).</summary>
         public int blockLockTimer;
+        /// <summary>Frames left in an in-progress empowered attack, so every hit of one swing/volley benefits
+        /// from a single Riposte charge. See ApplyRiposteBonus.</summary>
+        private int riposteVolleyTicks;
 
         // Last values pushed to the network, so we only send a packet when the block state actually changes.
         private bool lastSyncedBlocking;
@@ -63,6 +66,9 @@ namespace tsorcRevamp
         /// <summary>The item in this player's Right-Click (2nd) slot, or null.</summary>
         private Item RightClickItem => Player.GetModPlayer<tsorcRevampPlayer>().RightClickSlot?.Item;
         private bool SecondSlotControlHeld => tsorcRevamp.SecondSlotKey?.Current ?? Player.controlUseTile;
+        /// <summary>True while the optional dedicated Raise Shield keybind is held. It is unbound by default, in
+        /// which case it never reports held and blocking falls back to the right-click rules in ComputeBlocking.</summary>
+        private bool ActiveShieldControlHeld => tsorcRevamp.ActiveShieldKey?.Current ?? false;
         private bool RightClickConflictActive => Player.controlUseTile;
 
         /// <summary>True when the Active Shields Revamp governs this player's shields (config on + SoulsMode).
@@ -75,6 +81,53 @@ namespace tsorcRevamp
             {
                 blockLockTimer--;
             }
+            if (riposteVolleyTicks > 0)
+            {
+                riposteVolleyTicks--;
+            }
+        }
+
+        // --- Riposte: a perfect parry empowers the counter-attack ---
+        // The Riposte buff is the charge; these hooks spend it. Both fire on the client landing the hit, and
+        // between them they cover everything the player can attack with: ModifyHitNPCWithItem for melee swings,
+        // ModifyHitNPCWithProj for ranged/magic/thrown. (The plain ModifyHitNPC hook looks like the umbrella one
+        // but only fires from Player.ApplyDamageToNPC, so it would miss ordinary combat entirely.)
+        public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)
+        {
+            ApplyRiposteBonus(ref modifiers);
+        }
+
+        public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
+        {
+            // Minions and sentries neither benefit nor spend the charge. They fire on their own schedule, so a
+            // stray hit would eat a summoner's parry reward before they ever swung.
+            if (proj.minion || proj.sentry || proj.DamageType == DamageClass.Summon)
+            {
+                return;
+            }
+
+            ApplyRiposteBonus(ref modifiers);
+        }
+
+        private void ApplyRiposteBonus(ref NPC.HitModifiers modifiers)
+        {
+            bool riposteReady = Player.HasBuff(ModContent.BuffType<Buffs.Riposte>());
+
+            if (!riposteReady && riposteVolleyTicks <= 0)
+            {
+                return;
+            }
+
+            // The first qualifying hit spends the buff and opens a short window so the REST of the same attack
+            // lands empowered too — a shotgun's pellets and a swing's extra targets are one counter, not several.
+            // Short enough (12 ticks) that a second swing of all but the fastest weapons falls outside it.
+            if (riposteReady)
+            {
+                Player.ClearBuff(ModContent.BuffType<Buffs.Riposte>());
+                riposteVolleyTicks = RiposteVolleyWindow;
+            }
+
+            modifiers.FinalDamage *= Buffs.Riposte.DamageMultiplier;
         }
 
         // ProcessTriggers is only called for the local player and runs once inputs are gathered,
@@ -185,36 +238,50 @@ namespace tsorcRevamp
                 return false;
             }
 
-            // 2nd Slot key held...
-            if (!SecondSlotControlHeld)
+            // Two ways to raise the guard. The dedicated Raise Shield keybind (unbound by default) is its own
+            // input, so it skips the right-click arbitration below entirely — that is the point of binding it.
+            bool dedicatedKeyHeld = ActiveShieldControlHeld;
+
+            if (!dedicatedKeyHeld)
             {
-                return false;
-            }
-            // ...but only if the held weapon has no right-click (alt) function of its own (weapon alt-fire wins).
-            if (RightClickConflictActive && Player.HeldItem != null && !Player.HeldItem.IsAir && ItemLoader.AltFunctionUse(Player.HeldItem, Player))
-            {
-                return false;
+                // Default path: 2nd Slot key (right mouse out of the box) held...
+                if (!SecondSlotControlHeld)
+                {
+                    return false;
+                }
+                // ...but only if the held weapon has no right-click (alt) function of its own (alt-fire wins).
+                if (RightClickConflictActive && Player.HeldItem != null && !Player.HeldItem.IsAir && ItemLoader.AltFunctionUse(Player.HeldItem, Player))
+                {
+                    return false;
+                }
             }
 
             // Priority for which shield raises: a shield in the Right-Click slot beats an accessory-slot shield.
             // A non-shield item in the slot means RMB is a slot-use (handled above), so don't block here.
             // Note: I kept this logic in place in case the following changes but currently only 1 shield can be equipped at a time  
-            ActiveShieldData data;
+            ActiveShieldData data = default;
             int shield;
             Item slotItem = RightClickItem;
-            if (slotItem != null && !slotItem.IsAir)
+            bool slotOccupied = slotItem != null && !slotItem.IsAir;
+            bool slotHoldsShield = false;
+
+            if (slotOccupied)
             {
-                if (tsorcRevamp.ActiveShieldRegistry.TryGetValue(slotItem.type, out data))
-                {
-                    shield = slotItem.type;
-                }
-                else
-                {
-                    return false; // slot holds a non-shield usable item → slot-use owns RMB
-                }
+                slotHoldsShield = tsorcRevamp.ActiveShieldRegistry.TryGetValue(slotItem.type, out data);
+            }
+
+            if (slotHoldsShield)
+            {
+                shield = slotItem.type;
+            }
+            else if (slotOccupied && !dedicatedKeyHeld)
+            {
+                return false; // slot holds a non-shield usable item → slot-use owns RMB
             }
             else
             {
+                // Nothing (or a non-shield item, when the dedicated key is what is held) in the slot: the dedicated
+                // key isn't right-click, so it can still raise an accessory-slot shield over a usable slot item.
                 shield = FindBestEquippedShield(out data);
             }
             if (shield == -1)
@@ -711,6 +778,13 @@ namespace tsorcRevamp
             if (!perfectParry)
             {
                 ApplyChipDamage(data, info);
+            }
+            else if (Player.whoAmI == Main.myPlayer)
+            {
+                // Riposte: the parry arms one empowered attack. Granted here rather than in ApplyOnBlockEffects
+                // because that bails when there is no attacker NPC, and parrying a stray hostile projectile
+                // (owner 255, no attacker resolvable) should still arm the counter.
+                Player.AddBuff(ModContent.BuffType<Buffs.Riposte>(), Buffs.Riposte.DurationTicks);
             }
 
             ReportBlockedAttack(attacker, attackingProjectile, (int)Math.Ceiling(blockedDamage), perfectParry);
@@ -1364,6 +1438,7 @@ namespace tsorcRevamp
         private const float StabilityBreakFraction = 0.60f;
 
         // --- Riposte: perfect parry poise damage, as a fraction of the enemy's current poise bar ---
+        private const int RiposteVolleyWindow = 12; // ticks one Riposte charge keeps empowering the same attack
         private const float RipostePoiseBest = 0.45f;  // best shield in the registry
         private const float RipostePoiseWorst = 0.25f; // worst — ~a third of the bar at the centre, so 2-4 parries stagger
 

@@ -109,18 +109,36 @@ namespace tsorcRevamp
             int pct = (int)Math.Round(data.DamageFactor * 100f);
             Color headerColor = new Color(120, 200, 255);
             Color bodyColor = new Color(180, 220, 245);
+            Color highlightColor = new Color(255, 223, 80);
+            Color hintColor = new Color(140, 160, 175);
 
-            tooltips.Add(new TooltipLine(Mod, "ActiveShieldHeader", Language.GetTextValue(Key + "Header")) { OverrideColor = headerColor });
-            tooltips.Add(new TooltipLine(Mod, "ActiveShieldUse", Language.GetTextValue(Key + "Use")) { OverrideColor = bodyColor });
+            // Passive defense goes UP with the item's own passive lines rather than under the [Active Shield]
+            // header: it applies whenever the shield is equipped, not only while the guard is raised, and sitting
+            // under the active header it read as active-only. Inserted after the last of the item's description
+            // lines (Tooltip0..N). Only mod shields reach this — vanilla shields (ActiveDefense 0) keep their own
+            // native defense line, which is already in the right place.
             if (data.ActiveDefense > 0)
             {
-                tooltips.Add(new TooltipLine(Mod, "ActiveShieldDefense", Language.GetTextValue(Key + "Defense", data.ActiveDefense)) { OverrideColor = bodyColor });
+                TooltipLine defenseLine = new TooltipLine(Mod, "ActiveShieldDefense", Language.GetTextValue(Key + "Defense", data.ActiveDefense)) { OverrideColor = bodyColor };
+                int lastPassiveLine = tooltips.FindLastIndex(line => line.Name != null && line.Name.StartsWith("Tooltip"));
+
+                if (lastPassiveLine != -1)
+                {
+                    tooltips.Insert(lastPassiveLine + 1, defenseLine);
+                }
+                else
+                {
+                    tooltips.Add(defenseLine);
+                }
             }
+
+            // --- [Active Shield] section ---------------------------------------------------------------------
+            // Only this shield's own numbers and its signature ability stay on the face of the tooltip. The rules
+            // that read word-for-word identically on every registered shield (how to raise it, the enemy wall,
+            // guard break, perfect parry, raised-regen) fold behind Left Shift — repeating them on all 19 shields
+            // is what turned this block into a wall of text. Same reveal pattern as the Runeterra weapons.
+            tooltips.Add(new TooltipLine(Mod, "ActiveShieldHeader", Language.GetTextValue(Key + "Header")) { OverrideColor = headerColor });
             tooltips.Add(new TooltipLine(Mod, "ActiveShieldCost", Language.GetTextValue(Key + "Cost", (int)data.BaseCost, resource, pct)) { OverrideColor = bodyColor });
-            tooltips.Add(new TooltipLine(Mod, "ActiveShieldWall", Language.GetTextValue(Key + "Wall")) { OverrideColor = bodyColor });
-            tooltips.Add(new TooltipLine(Mod, "ActiveShieldBreak", Language.GetTextValue(Key + "Break", resource)) { OverrideColor = bodyColor });
-            // Perfect parry applies to every shield — call it out in the highlight color.
-            tooltips.Add(new TooltipLine(Mod, "ActiveShieldParry", Language.GetTextValue(Key + "Parry")) { OverrideColor = new Color(255, 223, 80) });
 
             int slowPct = (int)Math.Round((1f - data.MoveSpeedMult) * 100f);
             if (slowPct > 0)
@@ -131,7 +149,7 @@ namespace tsorcRevamp
             // highlight color; every other shield shows its actual leak rate as an ordinary stat.
             if (data.IsGreatshield)
             {
-                tooltips.Add(new TooltipLine(Mod, "ActiveShieldGreatshield", Language.GetTextValue(Key + "Greatshield")) { OverrideColor = new Color(255, 223, 80) });
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldGreatshield", Language.GetTextValue(Key + "Greatshield")) { OverrideColor = highlightColor });
             }
             else
             {
@@ -143,17 +161,49 @@ namespace tsorcRevamp
                 int penaltyPct = (int)Math.Round(data.PassiveRegenPenalty * 100f);
                 tooltips.Add(new TooltipLine(Mod, "ActiveShieldRegenPenalty", Language.GetTextValue(Key + "RegenPenalty", penaltyPct)) { OverrideColor = bodyColor });
             }
-            // Per-shield signature effect.
+
+            // Per-shield signature effect. Yellow sets these apart from the common block stats.
             string effectKey = EffectKey(item.type);
             if (effectKey != null)
             {
-                // Signature shield abilities get yellow text to set them apart from the common block stats.
                 tooltips.Add(new TooltipLine(Mod, "ActiveShieldEffect", Language.GetTextValue(Key + effectKey)) { OverrideColor = new Color(255, 223, 0) });
             }
-            if (data.Resource == ShieldResource.Stamina)
+
+            // The shared rules are APPENDED, never inserted, so holding Shift only ever adds lines underneath what
+            // is already on screen instead of reshuffling the ones the player is mid-read of.
+            if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift))
             {
-                int raisedRegenPct = (int)Math.Round(tsorcRevampActiveShieldPlayer.BlockStaminaRegenMult * 100f);
-                tooltips.Add(new TooltipLine(Mod, "ActiveShieldRegen", Language.GetTextValue(Key + "Regen", raisedRegenPct)) { OverrideColor = bodyColor });
+                // "Right mouse click" is only the DEFAULT: both the 2nd Slot key and the optional Raise Shield
+                // key are rebindable, so resolve the live bindings instead of hardcoding either. The dedicated
+                // key leads when it is bound, because unlike right-click it works with any weapon in hand.
+                string secondSlotKeyText = tsorcRevampSystems.GetSecondSlotBindingText();
+                string raiseShieldKeyText = tsorcRevampSystems.GetRaiseShieldBindingText();
+                string inputText;
+
+                if (raiseShieldKeyText == null)
+                {
+                    inputText = Language.GetTextValue(Key + "UseInput", secondSlotKeyText);
+                }
+                else
+                {
+                    inputText = Language.GetTextValue(Key + "UseInputBound", raiseShieldKeyText, secondSlotKeyText);
+                }
+
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldUse", Language.GetTextValue(Key + "Use", inputText)) { OverrideColor = bodyColor });
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldRebind", Language.GetTextValue(Key + "Rebind")) { OverrideColor = hintColor });
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldWall", Language.GetTextValue(Key + "Wall")) { OverrideColor = bodyColor });
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldBreak", Language.GetTextValue(Key + "Break", resource)) { OverrideColor = bodyColor });
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldParry", Language.GetTextValue(Key + "Parry")) { OverrideColor = highlightColor });
+
+                if (data.Resource == ShieldResource.Stamina)
+                {
+                    int raisedRegenPct = (int)Math.Round(tsorcRevampActiveShieldPlayer.BlockStaminaRegenMult * 100f);
+                    tooltips.Add(new TooltipLine(Mod, "ActiveShieldRegen", Language.GetTextValue(Key + "Regen", raisedRegenPct)) { OverrideColor = bodyColor });
+                }
+            }
+            else
+            {
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldDetails", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Details")) { OverrideColor = hintColor });
             }
         }
 

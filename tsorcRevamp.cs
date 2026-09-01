@@ -131,6 +131,7 @@ namespace tsorcRevamp
         public static ModKeybind PrintPosition;
         public static ModKeybind StorageKey;
         public static ModKeybind SecondSlotKey;
+        public static ModKeybind ActiveShieldKey;
         public static bool isAdventureMap = false;
         public static int DarkSoulCustomCurrencyId;
         internal bool UICooldown = false;
@@ -332,6 +333,11 @@ namespace tsorcRevamp
             PrintPosition = KeybindLoader.RegisterKeybind(this, "Print Position", Microsoft.Xna.Framework.Input.Keys.P);
             StorageKey = KeybindLoader.RegisterKeybind(this, "Open Storage", Microsoft.Xna.Framework.Input.Keys.T);
             SecondSlotKey = KeybindLoader.RegisterKeybind(this, "2nd Slot", "Mouse2");
+            // Optional dedicated block key for the Active Shields Revamp. Unbound by default — "None" never matches a
+            // pressed key name, so it simply never fires, and right mouse stays the default way to raise a shield.
+            // Bound, it is a second, independent block input that ignores the right-click rules, so a weapon with
+            // its own alt-fire can no longer steal the guard (see tsorcRevampActiveShieldPlayer.ComputeBlocking).
+            ActiveShieldKey = KeybindLoader.RegisterKeybind(this, "Raise Shield", "None");
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulCoin>(), 99999L));
 
@@ -822,8 +828,8 @@ namespace tsorcRevamp
             #region StorageExcludedTypes list
             // Auto-deposit-on-pickup is disabled entirely (see tsorcGlobalItem.OnPickup), so this exclusion
             // list is no longer needed there. Left commented out rather than deleted in case auto-deposit is
-            // reinstated later. IsStorageDepositable's null-check on StorageExcludedTypes means leaving this
-            // unassigned is safe.
+            // reinstated later. IsStorageDepositable no longer reads it at all — deposits are manual and only
+            // filter on `favorited` — so reviving auto-deposit means re-adding the check there too.
             // StorageExcludedTypes = new HashSet<int>()
             // {
             //     // Life pickups (Heart + Halloween/Christmas variants)
@@ -2134,6 +2140,7 @@ namespace tsorcRevamp
             CustomDungeonWalls = null;
             DodgerollKey = null;
             SecondSlotKey = null;
+            ActiveShieldKey = null;
             //SwordflipKey = null;
 
             /* IIRC this was to change the Destroyer's texture, which was never fully implemented?

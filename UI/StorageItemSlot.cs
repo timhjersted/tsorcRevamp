@@ -5,6 +5,7 @@ using Terraria.GameContent;
 using Terraria.GameInput;
 using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
@@ -36,7 +37,11 @@ namespace tsorcRevamp.UI
             StorageUIState ui = StorageUIState.Instance;
             if (ui == null) return;
 
-            int viewIdx = StorageUIState.ScrollOffset * StorageUIState.COLUMNS + index;
+            // index < 0 marks the header deposit slot: it never binds to the view, so it stays permanently
+            // empty and anything dropped on it falls through to the manual-deposit path below (source -1,
+            // which makes WriteBack append a clone to StorageItems).
+            bool isDepositSlot = index < 0;
+            int viewIdx = isDepositSlot ? -1 : StorageUIState.ScrollOffset * StorageUIState.COLUMNS + index;
             bool hasItem = viewIdx >= 0 && viewIdx < ui.CurrentView.Count;
             int source = hasItem ? ui.ViewSource[viewIdx] : -1;
 
@@ -59,6 +64,11 @@ namespace tsorcRevamp.UI
             if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface && !StorageUIState.DraggingWindow)
             {
                 Main.LocalPlayer.mouseInterface = true;
+
+                if (isDepositSlot)
+                {
+                    Main.hoverItemName = Language.GetTextValue("Mods.tsorcRevamp.UI.StorageDeposit");
+                }
 
                 // Shift-click a storage slot -> withdraw straight to inventory (mirrors shift-clicking an
                 // inventory item to deposit it). Handled entirely ourselves, BEFORE ItemSlot.Handle: the
@@ -99,12 +109,12 @@ namespace tsorcRevamp.UI
 
             // Draw the slot manually so we fully control overlays — vanilla ItemSlot.Draw was stamping a stray
             // "1" on the slots; here the stack count is only ever drawn when it's actually > 1.
-            DrawSlot(spriteBatch, working, rectangle);
+            DrawSlot(spriteBatch, working, rectangle, isDepositSlot);
 
             Main.inventoryScale = oldScale;
         }
 
-        private void DrawSlot(SpriteBatch spriteBatch, Item working, Rectangle rectangle)
+        private void DrawSlot(SpriteBatch spriteBatch, Item working, Rectangle rectangle, bool isDepositSlot)
         {
             Texture2D backTex = TextureAssets.InventoryBack9.Value;
             Color backColor = Color.White * 0.85f;
@@ -114,7 +124,26 @@ namespace tsorcRevamp.UI
             }
             spriteBatch.Draw(backTex, rectangle, backColor);
 
-            if (working == null || working.IsAir) return;
+            if (working == null || working.IsAir)
+            {
+                if (isDepositSlot)
+                {
+                    // Faded chest so this reads as a drop target rather than a hole in the grid — the grid
+                    // itself never has holes (CompactStorage strips them), so an unmarked empty cell here
+                    // would look like a bug. Same vanilla Chest sprite the Storage opener slot uses, at half
+                    // opacity so it stays clearly a hint rather than an item sitting in the slot.
+                    // LoadItem first: the texture is lazily loaded and would otherwise draw blank.
+                    Main.instance.LoadItem(ItemID.Chest);
+                    Texture2D chestTex = TextureAssets.Item[ItemID.Chest].Value;
+                    Rectangle chestFrame = chestTex.Frame(1, 1, 0, 0);
+                    Vector2 chestOrigin = chestFrame.Size() / 2f;
+
+                    spriteBatch.Draw(chestTex, rectangle.Center.ToVector2(), chestFrame, Color.White * 0.5f,
+                        0f, chestOrigin, _scale, SpriteEffects.None, 0f);
+                }
+
+                return;
+            }
 
             // Force the (lazily-loaded) item texture to load before we read it — otherwise items not yet seen
             // this session (e.g. everything in storage right after a reload) render as blank sprites.

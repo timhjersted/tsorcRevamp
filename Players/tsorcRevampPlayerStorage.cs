@@ -40,7 +40,14 @@ namespace tsorcRevamp
             }
         }
 
-        // Hard guards: never auto-deposit these. They stay in the inventory (or their own systems).
+        // What may be deposited. Deliberately permissive: the long block list here dated from auto-deposit-on-
+        // pickup, when Storage grabbed things out from under the player and had to protect quick-use items
+        // (potions, coins, treasure bags, boss summons, stat-ups). Deposits are manual now, so every one of those
+        // is the player explicitly choosing to stash something and there's nothing left to protect them from.
+        //
+        // Favorited is the one real guard, and it earns its place twice over: it's Terraria's universal "don't
+        // move this" flag, and StorageUIState.WriteBack clears favorited on the clone it stores, so a favorited
+        // item would silently lose its star on the way in.
         public bool IsStorageDepositable(Item item)
         {
             if (item == null || item.IsAir)
@@ -48,44 +55,6 @@ namespace tsorcRevamp
                 return false;
             }
             if (item.favorited)
-            {
-                return false;
-            }
-            if (item.questItem)
-            {
-                return false;
-            }
-            // Potions are quick-use and belong to the player / Potion Bag.
-            if (PotionBagUIState.IsValidPotion(item))
-            {
-                return false;
-            }
-            if (item.type == ModContent.ItemType<PotionBag>())
-            {
-                return false;
-            }
-            // Coins are quick-use/spend — keep them in the inventory.
-            if (item.type == ItemID.CopperCoin || item.type == ItemID.SilverCoin
-                || item.type == ItemID.GoldCoin || item.type == ItemID.PlatinumCoin) return false;
-            // Grab-on-touch resources (hearts/stars/nebula/stamina droplets), permanent stat-ups, goodie bags,
-            // and soul currency — see tsorcRevamp.StorageExcludedTypes (populated in PopulateArrays). These are
-            // consumed/spent on contact or wanted in-hand, and must never be filed away.
-            if (tsorcRevamp.StorageExcludedTypes != null && tsorcRevamp.StorageExcludedTypes.Contains(item.type))
-            {
-                return false;
-            }
-            // "Open me" containers — boss/treasure bags and fishing crates — stay in inventory for quick opening
-            // (covers modded bags too, via the vanilla sets).
-            if (item.type < ItemID.Sets.BossBag.Length && ItemID.Sets.BossBag[item.type])
-            {
-                return false;
-            }
-            if (item.type < ItemID.Sets.IsFishingCrate.Length && ItemID.Sets.IsFishingCrate[item.type])
-            {
-                return false;
-            }
-            // Boss / event summoning items stay handy for fights (this vanilla set marks all of them, incl. modded).
-            if (item.type < ItemID.Sets.SortingPriorityBossSpawns.Length && ItemID.Sets.SortingPriorityBossSpawns[item.type] >= 0)
             {
                 return false;
             }

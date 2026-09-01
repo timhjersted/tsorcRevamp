@@ -174,6 +174,22 @@ namespace tsorcRevamp.Items
                     else if (wasSoulsMode && !isSoulsMode)
                     {
                         player.statMana -= player.statMana / 2;
+
+                        // The 2nd slot is only drawn while in SoulsMode (tsorcRevampPlayer.PositionInventorySlots),
+                        // so anything still in it now would be hidden but still held — unreachable until the player
+                        // switched back. Hand it back rather than blocking the switch on an item they can't see.
+                        // EndSecondSlotUse first: mid-use the slot item and Player.inventory[swappedSlotIndex] are
+                        // the SAME object, so ejecting would fight that teardown. It no-ops when no use is running.
+                        player.GetModPlayer<tsorcRevampActiveShieldPlayer>().EndSecondSlotUse();
+
+                        Item strandedItem = modPlayer.RightClickSlot?.Item;
+
+                        if (strandedItem != null && !strandedItem.IsAir)
+                        {
+                            player.QuickSpawnItem(player.GetSource_Misc("tsorcRevamp:SecondSlotEject"), strandedItem, strandedItem.stack);
+                            Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.UI.SecondSlotEjected", strandedItem.Name), 255, 200, 80);
+                            strandedItem.TurnToAir();
+                        }
                     }
                 }
                 //Main.NewText("Stamina regen rate: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate);

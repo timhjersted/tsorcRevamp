@@ -2,12 +2,15 @@ Mods: {
 	tsorcRevamp: {
 		ActiveShield: {
 			// Header: "[Active Shield]"
-			// Defense: Grants {0} defense
-			// Use: Hold Right Click (with a weapon that has no right-click function) to raise it and fully block frontal hits
+			// Defense: Grants {0} passive defense
+			// Use: Hold {0} to raise it and fully block frontal hits
+			// UseInput: "{0} (with a weapon that has no right-click function)"
+			// UseInputBound: "{0}, or {1} with a weapon that has no right-click function,"
+			// Rebind: Rebind in Controls → Mod Controls
 			// Cost: Each blocked hit costs {0} {1} + {2}% of the damage blocked
 			// Wall: Stops non-boss enemies from pushing through you
 			// Break: Running out of {0} mid-block breaks your guard (Ichor, Slow, and a brief stagger)
-			// Parry: Perfect parry — raise the shield just as a hit lands to block it at half the cost
+			// Parry: Perfect parry — raise the shield just as a hit lands. It costs less, leaks nothing, staggers the attacker, and empowers an immediate counter-attack
 			// Slow: Slows your movement by {0}% while raised
 			// Chip: An ordinary block leaks {0}% of the damage through as chip damage; a perfect parry leaks none
 			// Greatshield: Greatshield: no damage leaks through, but it is heavy and slow to recover from
@@ -453,11 +456,13 @@ Mods: {
 			Souls: Души
 			// SecondSlot: 2nd
 			// SecondSlotHover: Press {0} to use items or shields in your 2nd Slot. Rebind in controls.
+			// SecondSlotEjected: Your 2nd Slot is Souls Mode only - {0} was returned to you
 			// LeftMouseClick: Left mouse click
 			// RightMouseClick: Right mouse click
 			// MiddleMouseClick: Middle mouse click
 			// MouseButton: Mouse button {0}
 			// Storage: Storage
+			// StorageDeposit: Drop an item here to store it
 			// OpenStorage: Open Storage — Shift click to store inventory items while Storage is open
 			StaminaUse: "Использование выносливости: "
 			StaminaUseOnHitOnly: "Использование выносливости при ударе: "
@@ -4591,6 +4596,7 @@ Mods: {
 					Block any sooner than that and a little chip damage leaks through. Worse shields leak more.
 					A heavy enough hit will break your guard outright, however much stamina you have.
 					Greatshields leak nothing at all but are slower to recover. Bucklers are the opposite.
+					Prefer a dedicated block key? Bind Raise Shield under Controls, in the mod keybinds; it blocks even while holding a weapon that has its own right-click.
 					''' */
 			}
 
@@ -10130,6 +10136,11 @@ Mods: {
 				// Description: Increases stamina regeneration by {0}% and critical strike chance by {1}%
 			}
 
+			Riposte: {
+				// DisplayName: Riposte
+				// Description: Your next attack deals {0}% more damage
+			}
+
 			ShieldGuardBreak: {
 				// Description: Shields, items, and flight are disabled; stamina recovery is heavily reduced
 				// DisplayName: Shield Guard Break
@@ -13030,6 +13041,7 @@ Mods: {
 			"Print Position.DisplayName": Положение печати (только в режиме отладки)
 			// "Open Storage.DisplayName": Open Storage
 			// "2nd Slot.DisplayName": 2nd Slot
+			// "Raise Shield.DisplayName": Raise Shield (Active Shields)
 		}
 
 		InfoDisplays: {
@@ -13106,6 +13118,7 @@ Mods: {
 					/* Tooltip:
 						'''
 						Reworks shields into Dark Souls-style active blocking: hold Right Click (with a shield equipped and a weapon that has no right-click function) to raise it and fully block frontal hits at the cost of stamina (or mana, for magic wards).
+						Optionally bind Raise Shield in the mod keybinds for a dedicated block key that also works with right-click weapons.
 						Only functions while Unkindled or Bearer of the Curse. Turn off to keep the classic passive shield behavior. Defaults to On.
 						''' */
 				}

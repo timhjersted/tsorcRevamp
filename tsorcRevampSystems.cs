@@ -767,13 +767,30 @@ namespace tsorcRevamp
             return GetKeyboardBindingText("tsorcRevamp/2nd Slot");
         }
 
+        /// <summary>The keys bound to the optional Raise Shield block key, or null when it is unbound (the
+        /// default). Null rather than the "Unbound" display string so callers can branch without string-matching.</summary>
+        internal static string GetRaiseShieldBindingText()
+        {
+            string bindingText = GetKeyboardBindingText("tsorcRevamp/Raise Shield");
+
+            if (bindingText == UnboundText)
+            {
+                return null;
+            }
+
+            return bindingText;
+        }
+
+        /// <summary>What GetKeyboardBindingText reports for a trigger with no keys assigned.</summary>
+        internal const string UnboundText = "Unbound";
+
         private static string GetKeyboardBindingText(string trigger)
         {
             if (PlayerInput.CurrentProfile == null
                 || !PlayerInput.CurrentProfile.InputModes.TryGetValue(InputMode.Keyboard, out KeyConfiguration keyboard)
                 || !keyboard.KeyStatus.TryGetValue(trigger, out List<string> keys))
             {
-                return "Unbound";
+                return UnboundText;
             }
 
             List<string> boundKeys = new List<string>();
@@ -785,7 +802,7 @@ namespace tsorcRevamp
                 }
             }
 
-            return boundKeys.Count > 0 ? string.Join(" / ", boundKeys) : "Unbound";
+            return boundKeys.Count > 0 ? string.Join(" / ", boundKeys) : UnboundText;
         }
 
         private static string GetFriendlyBindingText(string key)

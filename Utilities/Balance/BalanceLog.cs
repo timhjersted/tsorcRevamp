@@ -463,6 +463,21 @@ namespace tsorcRevamp.Utilities.Balance
             return null;
         }
 
+        /// <summary>One equipped item flattened for the log. Shared by the armor/accessory loop and the
+        /// Right-Click (2nd) slot capture so both record the same fields.</summary>
+        private static EquipSlot MakeEquipSlot(Item item)
+        {
+            return new EquipSlot
+            {
+                type = item.type,
+                name = item.ModItem?.Name ?? item.Name,
+                mod = item.ModItem?.Mod?.Name ?? "Terraria",
+                prefix = item.prefix,
+                prefixName = PrefixName(item.prefix),
+                defense = item.defense,
+            };
+        }
+
         internal static GearSnapshot CaptureGear(Player player)
         {
             var snapshot = new GearSnapshot
@@ -490,22 +505,28 @@ namespace tsorcRevamp.Utilities.Balance
             {
                 Item item = player.armor[i];
                 if (item == null || item.IsAir)
-                    continue;
-
-                var slot = new EquipSlot
                 {
-                    type = item.type,
-                    name = item.ModItem?.Name ?? item.Name,
-                    mod = item.ModItem?.Mod?.Name ?? "Terraria",
-                    prefix = item.prefix,
-                    prefixName = PrefixName(item.prefix),
-                    defense = item.defense,
-                };
+                    continue;
+                }
 
                 if (i < 3)
-                    snapshot.armor.Add(slot);
+                {
+                    snapshot.armor.Add(MakeEquipSlot(item));
+                }
                 else
-                    snapshot.accessories.Add(slot);
+                {
+                    snapshot.accessories.Add(MakeEquipSlot(item));
+                }
+            }
+
+            // The Active Shields Right-Click (2nd) slot, which the armor array does not cover. A shield here
+            // grants its passives without costing an accessory slot, so without this the log undercounts shields
+            // and can't answer whether 2nd-slot placement is simply the correct play for a shield build.
+            // The slot exists for every player (built in Initialize, net-synced), so no local-player guard.
+            Item secondSlotItem = player.GetModPlayer<tsorcRevampPlayer>().RightClickSlot?.Item;
+            if (secondSlotItem != null && !secondSlotItem.IsAir)
+            {
+                snapshot.secondSlot = MakeEquipSlot(secondSlotItem);
             }
 
             for (int i = 0; i < player.buffType.Length; i++)

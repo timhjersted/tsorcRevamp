@@ -80,6 +80,10 @@ namespace tsorcRevamp.Utilities.Balance
     {
         public List<EquipSlot> armor = new();
         public List<EquipSlot> accessories = new();
+        /// <summary>The Active Shields Right-Click (2nd) slot item, or null when the slot is empty. Kept out of
+        /// <see cref="accessories"/> because it is NOT an accessory slot: a shield parked here grants its passives
+        /// while leaving every accessory slot free, so it is the one loadout choice the accessory list can't show.</summary>
+        public EquipSlot secondSlot;
         public List<string> buffs = new();
 
         public int maxLife;

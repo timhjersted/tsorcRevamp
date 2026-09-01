@@ -46,6 +46,7 @@ namespace tsorcRevamp.UI
 
         public UIPanel panel;
         private UIEnemySearchBar searchBar;
+        private StorageItemSlot depositSlot;
         private UIScrollbar scrollbar;
         private UIText closeButton;
         private readonly StorageItemSlot[] slots = new StorageItemSlot[VISIBLE_SLOTS];
@@ -118,7 +119,7 @@ namespace tsorcRevamp.UI
             searchBar = new UIEnemySearchBar();
             searchBar.Left.Set(12, 0);
             searchBar.Top.Set(32, 0);
-            searchBar.Width.Set(312, 0);
+            searchBar.Width.Set(260, 0); // narrowed to make room for the deposit slot on the same row
             searchBar.Height.Set(28, 0);
             searchBar.BackgroundColor = new Color(40, 40, 50) * 0.95f;
             searchBar.OnTextChanged += () =>
@@ -130,10 +131,20 @@ namespace tsorcRevamp.UI
             };
             panel.Append(searchBar);
 
+            // Always-empty deposit slot on the search row: drag an item onto it to store it without scrolling
+            // to the first free cell at the end of the grid. Index < 0 is what keeps it unbound from the view
+            // (see StorageItemSlot), so the 6x5 grid below stays a full 30 cells with no index shifting.
+            depositSlot = new StorageItemSlot(-1, ItemSlot.Context.InventoryItem, 0.85f);
+            depositSlot.Left.Set(280, 0);
+            depositSlot.Top.Set(30, 0);
+            depositSlot.Width.Set(44, 0);
+            depositSlot.Height.Set(44, 0);
+            panel.Append(depositSlot);
+
             // Tab row — flowed left-to-right, wrapping within the panel width.
             DynamicSpriteFont font = FontAssets.MouseText.Value;
             const float tabScale = 0.8f;
-            float tx = 12f, ty = 68f;
+            float tx = 12f, ty = 80f; // below the deposit slot (y 30-74), not just below the search bar
             const float rowHeight = 22f;
             const float gap = 10f;
             const float maxX = 324f;
