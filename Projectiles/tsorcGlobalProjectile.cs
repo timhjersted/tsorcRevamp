@@ -197,12 +197,6 @@ namespace tsorcRevamp.Projectiles
                     projectile.localNPCHitCooldown = 60;
                 }
 
-                if (projectile.type == ProjectileID.BabySlime)
-                {
-                    projectile.usesLocalNPCImmunity = true;
-                    projectile.localNPCHitCooldown = 12;
-                }
-
                 if (projectile.type == ProjectileID.Bee)
                 {
                     projectile.usesIDStaticNPCImmunity = true;
