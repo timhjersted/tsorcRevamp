@@ -208,6 +208,8 @@ namespace tsorcRevamp
                 estusChargesCurrent--; //Remove a charge
                 estusDrinkTimer = 0; //Set the timer back to 0
                 Player.HealEffect(estusHealthGain + estusHealthGainBonus);
+                Player.GetModPlayer<tsorcRevampPlayer>().ActivateSporePowderEffect();
+                Player.GetModPlayer<tsorcRevampPlayer>().ActivateVenomPowderEffect();
                 isEstusHealing = true; //Commence healing process
                                        //kplayer.eocDash = 0;
             }

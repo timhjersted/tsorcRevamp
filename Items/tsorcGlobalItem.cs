@@ -910,12 +910,19 @@ namespace tsorcRevamp.Items
             {
                 player.statMana += 20;
             }
+            
             // Life Crystal nerf moved to UseItem (below) � vanilla's Life Crystal handling in
             // Player.ItemCheck bumps statLifeMax/statLife directly and consumes the stack manually,
             // bypassing ItemLoader.ConsumeItem entirely. That means this OnConsumeItem hook never
             // fired for Life Crystals, and the nerf was silently inert. UseItem runs immediately
             // before vanilla's +20 effect, so we pre-subtract the nerf there and let vanilla's
             // unconditional +20 produce the intended net gain.
+
+            if (item.healLife > 0)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().ActivateSporePowderEffect();
+                player.GetModPlayer<tsorcRevampPlayer>().ActivateVenomPowderEffect();
+            }
         }
 
         public static void populateSoulRecipes()

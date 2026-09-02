@@ -3238,6 +3238,67 @@ namespace tsorcRevamp
             }
         }
 
+        public void ActivateSporePowderEffect()
+        {
+            if (!HasSporePowder)
+                return;
+
+            Vector2 center = Player.Center;
+            float radius = 120f;
+
+            for (int i = 0; i < 190; i++)
+            {
+                Vector2 offset = Main.rand.NextVector2Circular(radius, radius);
+                int dust = Dust.NewDust(center + offset, 1, 1, 44, 0f, 0f, 75, default, 1.4f);
+                Main.dust[dust].velocity = offset.SafeNormalize(Vector2.Zero) * 1f;
+                Main.dust[dust].noGravity = false;
+            }
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.85f }, Player.Center);
+
+            if (Main.myPlayer == Player.whoAmI)
+            {
+                int baseDamage = (int)Player.GetTotalDamage(DamageClass.Generic).ApplyTo(13);
+                int finalDamage = Main.DamageVar(baseDamage);
+
+                Projectile.NewProjectile(
+                    Player.GetSource_Misc("SporePowder"),
+                    center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Accessories.SporePowderProjectile>(),
+                    finalDamage,
+                    0.5f,
+                    Player.whoAmI
+                );
+            }
+        }
+
+        public void ActivateVenomPowderEffect()
+        {
+            if (!HasVenomPowder)
+                return;
+
+            Vector2 center = Player.Center;
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17 with { Volume = 0.95f }, Player.Center);
+
+            if (Main.myPlayer == Player.whoAmI)
+            {
+                int baseDamage = (int)Player.GetTotalDamage(DamageClass.Generic).ApplyTo(35);
+                int finalDamage = Main.DamageVar(baseDamage);
+
+                Projectile.NewProjectile(
+                    Player.GetSource_Misc("VenomPowder"),
+                    center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Accessories.VenomPowderProjectile>(),
+                    finalDamage,
+                    0.8f,
+                    Player.whoAmI
+                );
+            }
+        }
+
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame)
         {
             if (newFrame.HasValue)
