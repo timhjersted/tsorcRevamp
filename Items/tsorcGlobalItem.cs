@@ -817,6 +817,12 @@ namespace tsorcRevamp.Items
             {
                 player.statMana += 20;
             }
+
+            if (item.healLife > 0)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().ActivateSporePowderEffect();
+                player.GetModPlayer<tsorcRevampPlayer>().ActivateVenomPowderEffect();
+            }
         }
 
         public static void populateSoulRecipes()

@@ -1768,81 +1768,15 @@ namespace tsorcRevamp
                 }
             }
 
-            if (HasSporePowder) 
+            if (HasSporePowder)
             {
-                Vector2 center = Player.Center;
-                float radius = 120f; 
-
-                for (int i = 0; i < 190; i++)
-                {
-                    Vector2 offset = Main.rand.NextVector2Circular(radius, radius);
-                    int dust = Dust.NewDust(center + offset, 1, 1, 44, 0f, 0f, 100, default, 1.4f); 
-                    Main.dust[dust].velocity = offset.SafeNormalize(Vector2.Zero) * 1f;
-                    Main.dust[dust].noGravity = false;
-                }
-
-                for (int n = 0; n < Main.maxNPCs; n++)
-                {
-                    NPC npc = Main.npc[n];
-                    if (npc.active && !npc.friendly && !npc.dontTakeDamage)
-                    {
-                        if (Vector2.Distance(npc.Center, center) <= radius)
-                        {
-                            int baseDamage = (int)Player.GetTotalDamage(DamageClass.Generic).ApplyTo(60);
-                            int finalDamage = Main.DamageVar(baseDamage);
-                            npc.StrikeNPC(new NPC.HitInfo
-                            {
-                                Damage = finalDamage,
-                                Knockback = 2f,
-                                HitDirection = 0,
-                                Crit = false,
-                                DamageType = DamageClass.Generic
-                            }, false, false); // noPlayerInteraction = false, dontTriggerSound = false
-
-                            npc.AddBuff(BuffID.Poisoned, 240); // 4 seconds
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.8f }, Player.Center);
-                        }
-                    }
-                }
+                ActivateSporePowderEffect();
             }
 
-            /*if (HasVenomPowder) 
+            if (HasVenomPowder)
             {
-                Vector2 center = Player.Center;
-                float radius = 150f; 
-
-                for (int i = 0; i < 280; i++)
-                {
-                    Vector2 offset = Main.rand.NextVector2Circular(radius, radius);
-                    int dust = Dust.NewDust(center + offset, 1, 1, 171, 0f, 0f, 100, default, 1.6f);
-                    Main.dust[dust].velocity = offset.SafeNormalize(Vector2.Zero) * 1.5f;
-                    Main.dust[dust].noGravity = true;
-                }
-
-                for (int n = 0; n < Main.maxNPCs; n++)
-                {
-                    NPC npc = Main.npc[n];
-                    if (npc.active && !npc.friendly && !npc.dontTakeDamage)
-                    {
-                        if (Vector2.Distance(npc.Center, center) <= radius)
-                        {
-                            int baseDamage = (int)Player.GetTotalDamage(DamageClass.Generic).ApplyTo(90);
-                            int finalDamage = Main.DamageVar(baseDamage);
-                            npc.StrikeNPC(new NPC.HitInfo
-                            {
-                                Damage = finalDamage,
-                                Knockback = 4f,
-                                HitDirection = 0,
-                                Crit = false,
-                                DamageType = DamageClass.Generic
-                            }, false, false); // noPlayerInteraction = false, dontTriggerSound = false
-
-                            npc.AddBuff(BuffID.Venom, 240); // 4 seconds
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17 with { Volume = 0.9f }, Player.Center);
-                        }
-                    }
-                }
-            }*/
+                ActivateVenomPowderEffect();
+            }
         }
 
         //Reduces the mana restored from potions and such to zero

@@ -9897,6 +9897,7 @@ Mods: {
 			// DiamondCrusherShockwave.DisplayName: Diamond Crusher Shockwave
 			// AbyssBreath.DisplayName: Abyss Breath
 			// AbyssFlames.DisplayName: Abyss Flames
+			// VenomPowderProjectile.DisplayName: Venom Powder Projectile
 		}
 
 		NPCs: {
