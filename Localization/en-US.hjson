@@ -857,6 +857,7 @@ Mods: {
 				IronOre: Perhaps you can use these for making special arrows..?
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:A symbol resembling a large pyramid with the moon to its right side is carved into it]"
+				RemixLargeAmethyst: "[c/ffbf00:A symbol a dark prison in a sparkling crystal cave is carved into it]"
 				LargeSapphire: "[c/ffbf00:A symbol resembling a snow-capped mountain near a fortress is carved into it]"
 				RemixLargeSapphire:
 					'''
