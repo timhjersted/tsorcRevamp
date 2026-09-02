@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
 
             if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 50)
             {
-                player.noKnockback = false;
+                //player.noKnockback = false;
                 player.endurance += damageResistance2 / 100f;
 
             }

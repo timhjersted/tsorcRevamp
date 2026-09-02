@@ -1518,10 +1518,10 @@ namespace tsorcRevamp
                             }
 
                             float radius = 30 * 16; 
-                            for (int i = 0; i < Main.maxNPCs; i++)
+                            foreach (var npc in Main.ActiveNPCs)
                             {
-                                NPC npc = Main.npc[i];
-                                if (npc.active && !npc.friendly && npc.Distance(Player.Center) <= radius)
+                                bool killable = !npc.dontTakeDamage && !npc.immortal && !tsorcRevamp.UntargetableNPCs.Contains(npc.type);
+                                if (!npc.friendly && killable && npc.Distance(Player.Center) <= radius)
                                 {
                                     npc.AddBuff(ModContent.BuffType<WitchkingCurse>(), 6 * 60); // 6 seconds
                                     npc.AddBuff(BuffID.Confused, 4 * 60);

@@ -12,12 +12,12 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("A lost legendary tome.");
+            Item.staff[Item.type] = true;
         }
 
         public override void SetDefaults()
         {
-            Item.damage = 290;
+            Item.damage = 300;
             Item.height = 10;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.Purple;
@@ -27,11 +27,12 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.mana = 35;
             Item.UseSound = SoundID.Item20;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 33;
-            Item.useAnimation = 33;
+            Item.useTime = 32;
+            Item.useAnimation = 32;
             Item.value = PriceByRarity.Purple_11;
             Item.width = 34;
             Item.autoReuse = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override bool? UseItem(Player player)
