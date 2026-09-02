@@ -372,14 +372,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 else if (attackTracker == 3)
                 {
                     NPC.velocity *= 0.97f;
-                    if (attackTimer % 50 == 0)
+                    if (Main.rand.NextBool(2))
                     {
-                        ShootProjectile(NPC, target, 15, ProjectileID.Fireball, false, 20, Main.rand.Next(-360, 361), 18, NPC.Center - new Vector2(0, 40), 0);
+                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Torch, Scale: 2f);
                     }
-
-                    if (attackTimer % 20 == 0)
+                    if (attackTimer <= 525)
                     {
-                        ShootProjectile(NPC, target, 15, ProjectileID.Fireball, false, 10, Main.rand.Next(-360, 361), 36, NPC.Center - new Vector2(0, 40), 0);
+                        if (attackTimer % 50 == 0)
+                        {
+                            ShootProjectile(NPC, target, 15, ProjectileID.Fireball, false, 20, Main.rand.Next(-360, 361), 18, NPC.Center - new Vector2(0, 40), 0);
+                        }
+
+                        if (attackTimer % 20 == 0)
+                        {
+                            ShootProjectile(NPC, target, 15, ProjectileID.Fireball, false, 10, Main.rand.Next(-360, 361), 36, NPC.Center - new Vector2(0, 40), 0);
+                        }
                     }
 
                     if (attackTimer == 0)
@@ -437,7 +444,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         ShootProjectile(NPC, target, 7, ProjectileID.Fireball, true, 3, 22.5f, 22.5f, NPC.Center - new Vector2(0, 40), 0);
                     }
 
-                    if (attackTimer % 100 == 0)
+                    if (attackTimer % 120 == 0 && attackTimer != 0)
                     {
                         xOffset = Main.rand.Next(-2100, -1400);
                         yOffset = Main.rand.Next(700, 1400);
@@ -462,13 +469,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         for (int i = 0; i < 20; i++)
                         {
                             Vector2 startPosition = anchoredPosition + new Vector2(xOffset + i * 200, -900);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), startPosition, new Vector2(0, 20), ModContent.ProjectileType<ChaosDemonBolt>(), NPC.damage / 6, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), startPosition, new Vector2(0, 17), ModContent.ProjectileType<ChaosDemonBolt>(), NPC.damage / 6, 1);
                         }
 
                         for (int i = 0; i < 20; i++)
                         {
                             Vector2 startPosition = target.Center + new Vector2(1400, yOffset - (i * 200));
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), startPosition, new Vector2(-20, 0), ModContent.ProjectileType<ChaosDemonBolt>(), NPC.damage / 6, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), startPosition, new Vector2(-17, 0), ModContent.ProjectileType<ChaosDemonBolt>(), NPC.damage / 6, 1);
                         }
                     }
 

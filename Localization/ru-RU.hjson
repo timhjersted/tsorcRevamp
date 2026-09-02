@@ -620,6 +620,7 @@ Mods: {
 				IronOre: Возможно, вы сможете использовать её для изготовления специальных стрел..?
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:На нём высечен символ, напоминающий большую пирамиду с луной справа.]"
+				// RemixLargeAmethyst: "[c/ffbf00:A symbol a dark prison in a sparkling crystal cave is carved into it]"
 				LargeSapphire: "[c/ffbf00:На нём высечен символ, напоминающий заснеженную гору возле крепости.]"
 				RemixLargeSapphire:
 					'''

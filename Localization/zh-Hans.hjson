@@ -656,6 +656,7 @@ Mods: {
 				IronOre: 也许你可以用这些来制作特殊的箭......？
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:一个形似大金字塔的符号，月亮在它的右侧，刻在上面]"
+				// RemixLargeAmethyst: "[c/ffbf00:A symbol a dark prison in a sparkling crystal cave is carved into it]"
 				LargeSapphire: "[c/ffbf00:上面刻着飞龙法师堡垒附近的一座雪山的符号]"
 				RemixLargeSapphire:
 					'''
