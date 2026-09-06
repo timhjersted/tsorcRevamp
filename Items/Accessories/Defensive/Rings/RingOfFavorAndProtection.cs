@@ -10,9 +10,14 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 {
     public class RingOfFavorAndProtection : ModItem
     {
-        public static int MaxLifeIncrease = 40;
-        public static int MaxStaminaIncrease = 15;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxLifeIncrease, MaxStaminaIncrease);
+        public const int MaxLifeIncrease = 40;
+        public const int MaxStaminaIncrease = 15;
+        /// <summary>Percentage points of shield-hold movement slow this ring cancels (see
+        /// tsorcRevampActiveShieldPlayer.ApplyBlockSlow). </summary>
+        public const float ShieldSlowReduction = 5f;
+        /// <summary>Percentage points added to the normal stamina regen retained while a shield is raised.</summary>
+        public const float BlockStaminaRegenBonus = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxLifeIncrease, MaxStaminaIncrease,  ShieldSlowReduction, BlockStaminaRegenBonus);
         public override void SetStaticDefaults()
         {
         }
@@ -28,8 +33,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 
         public override void UpdateEquip(Player player)
         {
+            var staminaPlayer  = player.GetModPlayer<tsorcRevampStaminaPlayer>();
             player.statLifeMax2 += MaxLifeIncrease;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 += 10f;
+            staminaPlayer.staminaResourceMax2 += MaxStaminaIncrease;
+            staminaPlayer.RingOfFavor = true;
         }
 
         public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)

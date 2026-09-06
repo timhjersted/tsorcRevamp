@@ -169,12 +169,6 @@ Mods: {
 			// SoulsModeMobilityLimitWing: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}.
 			// SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
 			// SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
-			BotCPStone: Сокращает время, необходимое для использования фляги эстуса на {0}%
-			/* CeruleanManaFlower:
-				'''
-				Decreases the time needed to drink the Cerulean Flask by {0}%
-				Tip: Automatic drinking can always be disabled in the mod config
-				''' */
 			DSPickUpRange: Увеличивает дальность подбора тёмных душ
 			VanityFunction: Также работает в слотах для украшения
 			DragoonGearCompatible: Совместимо с Драгунскими ботинками и Драгунским снаряжением.
@@ -233,8 +227,17 @@ Mods: {
 			DefenseCap: Ограничивает максимальную защиту показателем в {0} ед.
 			FlatDmg: Увеличивает наносимый урона на {0} ед.
 			MaxStamina: Увеличивает максимальную выносливать на {0}%
+			// MaxStaminaFlat: Increases maximum stamina by {0}
 			CanBeBlessed: Для починки этого предмета необходимо благословление Изумрудного Вестника.
 			Trident: Улучшает подвижность в воде при удержании
+			// EstusDrinkTimeReduction: Decreases the time needed to drink the Estus Flask by {0}%
+			// EstusPStone: "{$CommonItemTooltip.EstusDrinkTimeReduction}"
+			// CeruleanDrinkTimeReduction: Decreases the time needed to drink the Cerulean Flask by {0}%
+			/* CeruleanManaFlower:
+				'''
+				{$CommonItemTooltip.CeruleanDrinkTimeReduction}
+				Tip: Automatic drinking can always be disabled in the mod config
+				''' */
 
 			Melee: {
 				ArmorPenPercent: Увеличивает пробитие брони в ближнем бою на {0}%
@@ -1656,11 +1659,6 @@ Mods: {
 					Это старое кольцо получило свое название из-за своего декоративного зеленого цветка, 
 					но его блеск давно померк.
 					'''
-				/* Old:
-					'''
-					[c/ffbf00:Reduces the movement penalty for holding a shield by {2}%]
-					[c/ffbf00:Increases stamina regeneration while your shield is raised by {3}% of its normal rate]
-					''' */
 			}
 
 			ChloranthyRing2: {

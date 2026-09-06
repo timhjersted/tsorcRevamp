@@ -6,6 +6,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp
@@ -1392,11 +1393,12 @@ namespace tsorcRevamp
             }
             // ease the shield-hold slow: Ring I by 2%, Ring II by 4% (they don't stack — II replaces I).
             tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
-            /*if (modPlayer.ChloranthyRing2) //don't add everything to chloranthy ring, it's already strong enough
+            var staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+            if (staminaPlayer.RingOfFavor) //don't add everything to chloranthy ring, it's already strong enough
             {
-                slow = Math.Min(1f, slow + Items.Accessories.Mobility.ChloranthyRing2.ShieldSlowReduction / 100f);
+                slow = Math.Min(1f, slow + RingOfFavorAndProtection.ShieldSlowReduction / 100f);
             }
-            else if (modPlayer.ChloranthyRing1)
+            /*else if (modPlayer.ChloranthyRing1)
             {
                 slow = Math.Min(1f, slow + Items.Accessories.Mobility.ChloranthyRing.ShieldSlowReduction / 100f);
             }*/

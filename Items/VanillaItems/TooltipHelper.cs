@@ -169,7 +169,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.whoAmI == Main.myPlayer && (item.type == ItemID.PhilosophersStone || item.type == ItemID.CharmofMyths || item.type == ModContent.ItemType<DragoonHelmet2>()))
             {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.BotCPStone", tsorcRevampEstusPlayer.EstusPStoneDrinkTimeReduction));
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.EstusPStone", tsorcRevampEstusPlayer.EstusPStoneDrinkTimeReduction));
             }
 
 

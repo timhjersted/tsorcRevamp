@@ -169,12 +169,6 @@ Mods: {
 			// SoulsModeMobilityLimitWing: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}.
 			// SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
 			// SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
-			BotCPStone: 减少 {0}% 元素瓶的使用时间
-			/* CeruleanManaFlower:
-				'''
-				Decreases the time needed to drink the Cerulean Flask by {0}%
-				Tip: Automatic drinking can always be disabled in the mod config
-				''' */
 			DSPickUpRange: 增加黑暗之魂拾取范围
 			VanityFunction: 在时装栏中也生效
 			DragoonGearCompatible: 与龙骑士套装和龙靴兼容.
@@ -233,8 +227,17 @@ Mods: {
 			DefenseCap: 防御被限定不超过 {0}
 			FlatDmg: 增加 {0} 点伤害
 			MaxStamina: 增加 {0}% 耐力上限
+			// MaxStaminaFlat: Increases maximum stamina by {0}
 			CanBeBlessed: 要修复此损坏的物品，请找绿衣朝圣者进行祝福
 			Trident: 手持时可提高在水中的移动能力
+			// EstusDrinkTimeReduction: Decreases the time needed to drink the Estus Flask by {0}%
+			// EstusPStone: "{$CommonItemTooltip.EstusDrinkTimeReduction}"
+			// CeruleanDrinkTimeReduction: Decreases the time needed to drink the Cerulean Flask by {0}%
+			/* CeruleanManaFlower:
+				'''
+				{$CommonItemTooltip.CeruleanDrinkTimeReduction}
+				Tip: Automatic drinking can always be disabled in the mod config
+				''' */
 
 			Melee: {
 				ArmorPenPercent: 增加 {0}% 近战护甲穿透
@@ -1693,11 +1696,6 @@ Mods: {
 					这枚古老的戒指因为其装饰性的绿色花朵而得名
 					但光泽却早已流逝
 					'''
-				/* Old:
-					'''
-					[c/ffbf00:Reduces the movement penalty for holding a shield by {2}%]
-					[c/ffbf00:Increases stamina regeneration while your shield is raised by {3}% of its normal rate]
-					''' */
 			}
 
 			ChloranthyRing2: {

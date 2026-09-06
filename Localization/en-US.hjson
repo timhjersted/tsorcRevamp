@@ -169,12 +169,6 @@ Mods: {
 			SoulsModeMobilityLimitWing: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}.
 			SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
 			SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
-			BotCPStone: Decreases the time needed to drink the Estus Flask by {0}%
-			CeruleanManaFlower:
-				'''
-				Decreases the time needed to drink the Cerulean Flask by {0}%
-				Tip: Automatic drinking can always be disabled in the mod config
-				'''
 			DSPickUpRange: " increases Dark Soul pick-up range"
 			VanityFunction: Also works in vanity slots
 			DragoonGearCompatible: Compatible with Dragoon Boots and Dragoon Gear.
@@ -233,8 +227,17 @@ Mods: {
 			DefenseCap: Defense is capped at {0}
 			FlatDmg: Increases damage dealt by {0} flat
 			MaxStamina: Increases maximum stamina by {0}%
+			MaxStaminaFlat: Increases maximum stamina by {0}
 			CanBeBlessed: To repair this broken item, let it be blessed by the Emerald Herald
 			Trident: Increases mobility in water when held
+			EstusDrinkTimeReduction: Decreases the time needed to drink the Estus Flask by {0}%
+			EstusPStone: "{$CommonItemTooltip.EstusDrinkTimeReduction}"
+			CeruleanDrinkTimeReduction: Decreases the time needed to drink the Cerulean Flask by {0}%
+			CeruleanManaFlower:
+				'''
+				{$CommonItemTooltip.CeruleanDrinkTimeReduction}
+				Tip: Automatic drinking can always be disabled in the mod config
+				'''
 
 			Melee: {
 				ArmorPenPercent: Increases melee armor penetration by {0}%
@@ -1686,11 +1689,6 @@ Mods: {
 					This old ring is named for its decorative green blossom,
 					but its luster is long since faded
 					'''
-				Old:
-					'''
-					[c/ffbf00:Reduces the movement penalty for holding a shield by {2}%]
-					[c/ffbf00:Increases stamina regeneration while your shield is raised by {3}% of its normal rate]
-					'''
 			}
 
 			ChloranthyRing2: {
@@ -1814,7 +1812,7 @@ Mods: {
 					Increases either arrow, bullet or specialist damage by {0}%
 					Ammo type is decided by a timer that picks one of the three regularly
 					Plays a sound to indicate the switch every {1} seconds
-					Disabling accessory visibility turns the sound off 
+					Disabling accessory visibility mutes the sound
 					'''
 				Bow: Archery!
 				Gun: Shooting!
@@ -8548,7 +8546,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases the Estus Flask's healing by {0} flat and {1}% of your max life
-					Decreases the time needed to drink Estus Flask by {2}%
+					{$CommonItemTooltip.EstusDrinkTimeReduction@2}
 					'''
 			}
 
@@ -8556,7 +8554,9 @@ Mods: {
 				DisplayName: Ring of Favor And Protection
 				Tooltip:
 					'''
-					Increases HP by 40 and stamina by 15 while worn
+					{$CommonItemTooltip.IncreasesMaxLifeBy} & {$CommonItemTooltip.MaxStaminaFlat@1}
+					[c/ffbf00:Reduces the movement penalty for holding a shield by {2}%]
+					[c/ffbf00:Increases stamina regeneration while your shield is raised by {3}% of its normal rate]
 					It seems as though Pinwheel held this to prevent
 					the necklace it wore from releasing its full power
 					'''

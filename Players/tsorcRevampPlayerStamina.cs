@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Systems;
@@ -24,7 +25,7 @@ namespace tsorcRevamp
             return player.GetModPlayer<tsorcRevampStaminaPlayer>();
         }
 
-
+        public bool RingOfFavor = false;
         // Here we include a custom resource, similar to mana or health.
         // Creating some variables to define the current value of our Stamina resource as well as the current maximum value. We also include a temporary max value, as well as some variables to handle the natural regeneration of this resource.
         public float staminaResourceCurrent;
@@ -413,6 +414,8 @@ namespace tsorcRevamp
             tsorcRevampPlayer soulsPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
             bool experimentalStaminaValues = ModContent.GetInstance<tsorcRevampConfig>().NewSoulsModeStaminaSystem;
 
+            RingOfFavor = false;
+
             // Regen rates pair with the cost multipliers in tsorcRevampPlayer.WeaponStaminaMult — change the two
             // together or the class balance drifts. Effective regen is ~15/sec per 1.0 here (the gain applies
             // every 4th tick), before gear gainMult and the stationary bonus.
@@ -594,11 +597,11 @@ namespace tsorcRevamp
             {
                 float fraction = tsorcRevampActiveShieldPlayer.BlockStaminaRegenMult;
                 tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
-                /*if (modPlayer.ChloranthyRing2)
+                if (RingOfFavor)
                 {
-                    fraction += Items.Accessories.Mobility.ChloranthyRing2.BlockStaminaRegenBonus / 100f;
+                    fraction += RingOfFavorAndProtection.BlockStaminaRegenBonus / 100f;
                 }
-                else if (modPlayer.ChloranthyRing1)
+                /*else if (modPlayer.ChloranthyRing1)
                 {
                     fraction += Items.Accessories.Mobility.ChloranthyRing.BlockStaminaRegenBonus / 100f;
                 }*/
