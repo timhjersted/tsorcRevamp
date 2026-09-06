@@ -2735,8 +2735,8 @@ namespace tsorcRevamp
                 Falling = false;
                 FracturingArmor = 1;
                 tsorcRevampEstusPlayer estusPlayer = Player.GetModPlayer<tsorcRevampEstusPlayer>();
-                estusPlayer.isDrinking = false;
-                estusPlayer.estusDrinkTimer = 0;
+                estusPlayer.IsDrinking = false;
+                estusPlayer.EstusDrinkTimer = 0;
                 var ceruleanPlayer = Player.GetModPlayer<CeruleanFlaskPlayer>();
                 ceruleanPlayer.IsDrinking = false;
                 ceruleanPlayer.CeruleanDrinkTimer = 0;

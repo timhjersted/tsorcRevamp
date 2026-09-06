@@ -13,15 +13,17 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         // The Chloranthy line is the dedicated stamina-regen accessory and is meant to be the BEST source of it:
         // 25% beats the Bottomless Green Tea Pot's 20%, which is correct because this costs an accessory slot
         // and the pot costs nothing to carry. A no-slot permanent should be the floor, not the ceiling.
-        public static float StaminaRecoverySpeed = 25f;
+        // Considering this accessory already adds other powerful effects to your character, I disagree ^.
+        // Used to be 25, but didn't reduce regen delay back then and didn't act as magnet for stam droplets!!!
+        public const float StaminaRecoverySpeed = 12f;
+        /// <summary>Percent cut from the post-spend stamina regen DELAY (tsorcRevampStaminaPlayer.PauseStaminaRegen).</summary>
+        public const float RegenDelayReduction = 20f;
         /// <summary>Percentage points of shield-hold movement slow this ring cancels (see
         /// tsorcRevampActiveShieldPlayer.ApplyBlockSlow). Ring II replaces Ring I rather than stacking.</summary>
-        public static float ShieldSlowReduction = 8f;
-        /// <summary>Percent cut from the post-spend stamina regen DELAY (tsorcRevampStaminaPlayer.PauseStaminaRegen).</summary>
-        public static float RegenDelayReduction = 20f;
+        //public const float ShieldSlowReduction = 8f;
         /// <summary>Percentage points added to the normal stamina regen retained while a shield is raised.</summary>
-        public static float BlockStaminaRegenBonus = 20f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StaminaRecoverySpeed);
+        //public const float BlockStaminaRegenBonus = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StaminaRecoverySpeed, RegenDelayReduction);
         public override void SetStaticDefaults()
         {
         }
@@ -48,7 +50,6 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRecoverySpeed / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().StaminaReaper = 6;
-            player.blackBelt = true;
             player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2 = true;
         }
 

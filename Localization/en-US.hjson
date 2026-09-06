@@ -1676,32 +1676,32 @@ Mods: {
 			}
 
 			ChloranthyRing: {
-				DisplayName: Chloranthy Ring I
+				DisplayName: Chloranthy Ring
 				Tooltip:
 					'''
-					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:Enhances your agility and evasiveness when dodge rolling]
-					[c/ffbf00:Reduces the movement penalty for holding a shield by 4%]
-					[c/ffbf00:Stamina begins recovering 10% sooner after you spend it]
-					[c/ffbf00:Increases stamina regeneration while your shield is raised by 10% of its normal rate]
-					[c/ca1e00:When drinking your Estus Flask, your movement is no longer hindered, at the cost of being inflicted with Ichor (-15 defense)]
+					Stamina begins recovering {1}% sooner after you spend it
 					Increases Stamina Droplet pickup range.
+					{$CommonItemTooltip.StaminaRecovery}
 					This old ring is named for its decorative green blossom,
 					but its luster is long since faded
+					'''
+				Old:
+					'''
+					[c/ffbf00:Reduces the movement penalty for holding a shield by {2}%]
+					[c/ffbf00:Increases stamina regeneration while your shield is raised by {3}% of its normal rate]
 					'''
 			}
 
 			ChloranthyRing2: {
-				DisplayName: Chloranthy Ring II
+				DisplayName: Enchanted Chloranthy Ring
 				Tooltip:
 					'''
-					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:Further enhances your agility and evasiveness when dodge rolling]
-					[c/ffbf00:Reduces the movement penalty for holding a shield by 8%]
-					[c/ffbf00:Stamina begins recovering 20% sooner after you spend it]
-					[c/ffbf00:Increases stamina regeneration while your shield is raised by 20% of its normal rate]
-					[c/ffbf00:Grants the Black Belt's effect & superior mid-air dexterity]
-					[c/ca1e00:When drinking your Estus Flask, your movement is no longer hindered, at the cost of being inflicted with Ichor (-15 defense)]
+					[c/ffbf00:Grants superior mid-air dexterity]
+					Stamina begins recovering {1}% sooner after you spend it
+					Increases Stamina Droplet pickup range even further.
+					{$CommonItemTooltip.StaminaRecovery}
 					This ring is named for its decorative green blossom.
 					Its luster has now been fully restored.
 					'''
@@ -8545,7 +8545,11 @@ Mods: {
 
 			EstusRing: {
 				DisplayName: Estus Ring
-				Tooltip: Increases the Estus Flask's healing by {0} flat and {1}% of your max life
+				Tooltip:
+					'''
+					Increases the Estus Flask's healing by {0} flat and {1}% of your max life
+					Decreases the time needed to drink Estus Flask by {2}%
+					'''
 			}
 
 			RingOfFavorAndProtection: {
@@ -11247,6 +11251,7 @@ Mods: {
 			CenterOfTheUniverseStar2.DisplayName: Center Of The Universe Star2
 			ElectrocuteProjectile.DisplayName: Electrocute Projectile
 			GigasEmbraceIcicle.DisplayName: Gigas Embrace Icicle
+			VenomPowderProjectile.DisplayName: Venom Powder Projectile
 		}
 
 		NPCs: {

@@ -46,8 +46,8 @@ namespace tsorcRevamp.UI
             if (player.whoAmI == Main.myPlayer && !Main.gameMenu)
             {
                 int chargesFrameCount = 12; // Changed from 7 to 12
-                int chargesCurrent = estusPlayer.estusChargesCurrent;
-                int chargesMax = estusPlayer.estusChargesMax;
+                int chargesCurrent = estusPlayer.EstusChargesCurrent;
+                int chargesMax = estusPlayer.EstusChargesMax;
                 float chargesPercentage = (float)chargesCurrent / chargesMax;
                 chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
 
@@ -56,10 +56,10 @@ namespace tsorcRevamp.UI
                 UsefulFunctions.EnsureLoaded(ref textureCharges, "tsorcRevamp/UI/EstusFlask_charges");
 
                 int frameHeight = textureCharges.Height / chargesFrameCount;
-                int drawFrame = (int)(frameHeight * estusPlayer.estusChargesCurrent); // Correct calculation of drawFrame
+                int drawFrame = (int)(frameHeight * estusPlayer.EstusChargesCurrent); // Correct calculation of drawFrame
                 Rectangle sourceRectangle = new Rectangle(0, drawFrame, textureCharges.Width, frameHeight);
                 Color numbercolor;
-                if (estusPlayer.estusChargesCurrent == 0)
+                if (estusPlayer.EstusChargesCurrent == 0)
                 {
                     numbercolor = Color.LightPink;
                 }
@@ -83,7 +83,7 @@ namespace tsorcRevamp.UI
 
                 // Draw the number next to the sprite (new)
                 Vector2 numberPosition = new Vector2(Main.screenWidth - ConfigInstance.EstusFlaskPosX + scaledWidth + 8, Main.screenHeight - ConfigInstance.EstusFlaskPosY + (scaledHeight / 2) - 10);
-                Utils.DrawBorderString(spriteBatch, estusPlayer.estusChargesCurrent.ToString(), numberPosition, numbercolor, 1f);
+                Utils.DrawBorderString(spriteBatch, estusPlayer.EstusChargesCurrent.ToString(), numberPosition, numbercolor, 1f);
             }
             base.Draw(spriteBatch);
         }

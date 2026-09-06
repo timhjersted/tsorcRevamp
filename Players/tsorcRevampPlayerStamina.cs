@@ -587,21 +587,21 @@ namespace tsorcRevamp
         }
 
         /// <summary>Fraction of normal regen kept while a shield is raised. Starts at the shared shield baseline;
-        /// Chloranthy adds to that baseline, with Ring II replacing Ring I rather than stacking.</summary>
+        /// something could add to that baseline, with sources replacing each other rather than stacking.</summary>
         private float BlockRegenFraction
         {
             get
             {
                 float fraction = tsorcRevampActiveShieldPlayer.BlockStaminaRegenMult;
                 tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
-                if (modPlayer.ChloranthyRing2)
+                /*if (modPlayer.ChloranthyRing2)
                 {
                     fraction += Items.Accessories.Mobility.ChloranthyRing2.BlockStaminaRegenBonus / 100f;
                 }
                 else if (modPlayer.ChloranthyRing1)
                 {
                     fraction += Items.Accessories.Mobility.ChloranthyRing.BlockStaminaRegenBonus / 100f;
-                }
+                }*/
                 return Math.Min(1f, fraction);
             }
         }

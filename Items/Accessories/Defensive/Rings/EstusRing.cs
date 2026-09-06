@@ -9,7 +9,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
     {
         public const int HealIncrease = 30;
         public const int PercentHealIncrease = 10;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(HealIncrease, PercentHealIncrease);
+        public const float DrinkTimeReduction = 33f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(HealIncrease, PercentHealIncrease, DrinkTimeReduction);
         public override void SetStaticDefaults()
         {
         }
@@ -25,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampEstusPlayer>().estusRing = true;
+            player.GetModPlayer<tsorcRevampEstusPlayer>().EstusRing = true;
         }
 
     }

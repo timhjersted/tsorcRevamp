@@ -224,7 +224,7 @@ namespace tsorcRevamp
             ModLoader.TryGetMod("tsorcRevamp", out Mod mod);
             if (drawInfo.drawPlayer.HeldItem.ModItem != null)
                 return drawInfo.drawPlayer.HeldItem.ModItem.Mod == mod;
-            else if (drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking)
+            else if (drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking)
                 return true;
             else if (drawInfo.drawPlayer.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
                 return true;
@@ -470,8 +470,8 @@ namespace tsorcRevamp
                 int drawY = (int)(drawInfo.Position.Y + drawInfo.drawPlayer.height / 2f - Main.screenPosition.Y);
                 int frameHeight = texture.Height / estusFrameCount;
                 int frame;
-                if (estusPlayer.estusChargesCurrent == estusPlayer.estusChargesMax) { frame = 0; }
-                else if (estusPlayer.estusChargesCurrent == 1) { frame = 2; }
+                if (estusPlayer.EstusChargesCurrent == estusPlayer.EstusChargesMax) { frame = 0; }
+                else if (estusPlayer.EstusChargesCurrent == 1) { frame = 2; }
                 else { frame = 1; }
 
                 int startY = frameHeight * frame;
@@ -487,7 +487,7 @@ namespace tsorcRevamp
 
                 // Threshold matches the body-frame threshold in tsorcRevampPlayerEstus.cs so the flask
                 // sprite and the player's arm-up pose appear together at the start of the drink channel.
-                if (estusPlayer.estusDrinkTimer >= estusPlayer.estusDrinkTimerMax * 0.05f)
+                if (estusPlayer.EstusDrinkTimer >= estusPlayer.EstusDrinkTimerMax * 0.05f)
                 {
                     drawInfo.DrawDataCache.Add(new DrawData(
                             texture, // The texture to render.
@@ -506,7 +506,7 @@ namespace tsorcRevamp
             }
             else
             {
-                estusPlayer.isDrinking = false;
+                estusPlayer.IsDrinking = false;
             }
             #endregion
             #region cerulean flask

@@ -1390,16 +1390,16 @@ namespace tsorcRevamp
             {
                 slow = data.MoveSpeedMult;
             }
-            // Chloranthy Rings ease the shield-hold slow: Ring I by 2%, Ring II by 4% (they don't stack — II replaces I).
+            // ease the shield-hold slow: Ring I by 2%, Ring II by 4% (they don't stack — II replaces I).
             tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.ChloranthyRing2)
+            /*if (modPlayer.ChloranthyRing2) //don't add everything to chloranthy ring, it's already strong enough
             {
                 slow = Math.Min(1f, slow + Items.Accessories.Mobility.ChloranthyRing2.ShieldSlowReduction / 100f);
             }
             else if (modPlayer.ChloranthyRing1)
             {
                 slow = Math.Min(1f, slow + Items.Accessories.Mobility.ChloranthyRing.ShieldSlowReduction / 100f);
-            }
+            }*/
             Player.maxRunSpeed *= slow;
             Player.accRunSpeed *= slow;
             Player.runAcceleration *= slow;

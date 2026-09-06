@@ -41,9 +41,10 @@ namespace tsorcRevamp.Systems
 
         public const float CeruleanRestorationTicksBase = 300f; //5 seconds for a charge to fully land
         public const float CeruleanRestorationTicksUnkindled = 150f; //Unkindled resolves in 2.5s
-        public const float CeruleanDrinkTimerMaxBase = 1.25f; //This is actually seconds. How long it takes to drink a charge
-        public const float CeruleanManaFlowerStrength = 33.4f;
-        public float CeruleanDrinkTimerReductionManaFlower = CeruleanDrinkTimerMaxBase * (CeruleanManaFlowerStrength / 100f);
+        public const float CeruleanDrinkTimerMaxBase = 1.5f; //This is actually seconds. How long it takes to drink a charge
+        public const float CeruleanManaFlowerStrength = 33f;
+        public const float CeruleanDrinkTimerReductionManaFlower = CeruleanDrinkTimerMaxBase * (CeruleanManaFlowerStrength / 100f);
+        public float CeruleanDrinkTimeReduction = 0;
         public float CeruleanDrinkTimerMax = CeruleanDrinkTimerMaxBase;
         public float CeruleanDrinkTimer; //How far through the animation we are
         public float CeruleanManaPerTick; //How much mana to restore per tick
@@ -92,12 +93,11 @@ namespace tsorcRevamp.Systems
             var arcaneSorceryPlayer = Player.GetModPlayer<ArcaneSorceryPlayer>();
             if (Player.manaFlower)
             {
-                CeruleanDrinkTimerMax = CeruleanDrinkTimerMaxBase - CeruleanDrinkTimerReductionManaFlower;
+                CeruleanDrinkTimeReduction += CeruleanDrinkTimerReductionManaFlower;
             }
-            else
-            {
-                CeruleanDrinkTimerMax = CeruleanDrinkTimerMaxBase;
-            }
+            CeruleanDrinkTimerMax = CeruleanDrinkTimerMaxBase - CeruleanDrinkTimeReduction;
+            CeruleanDrinkTimeReduction = 0; //resetting it back to default state after it was used to calc so it doesn't add up infinitely
+            
             CeruleanManaGainMaxManaBonus = Player.statManaMax2 * (BaseMaxManaGain / 100f);
             
             CeruleanManaGainMaxManaBonus *= arcaneSorceryPlayer.CeruleanFlaskMaxManaScalingMult;
@@ -151,20 +151,21 @@ namespace tsorcRevamp.Systems
                 
                 if (CeruleanDrinkTimer == 0)
                 {
+                    Player.AddBuff(ModContent.BuffType<Crippled>(), (int)(CeruleanDrinkTimerMax * 60f));
+                    Player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(CeruleanDrinkTimerMax * 60f));
                     // Chloranthy Ring (I or II): trade the standard drink slowdown for temporary
                     // vulnerability. Without the ring, the Crippled debuff blocks extra jumps, wings,
                     // rocket boots, and reduces moveSpeed by 10% for the drink duration (ground-bound
                     // and slowed). With the ring, those mobility losses are swapped for Ichor
                     // (-15 defense + glow) — full mobility but more damage taken if you get hit.
-                    if (modPlayer.ChloranthyRing1 || modPlayer.ChloranthyRing2)
+                    // Completely removing the challenge behind finding moments to drink Estus in a single accessory that also grants other very powerful effects? NOPE
+                    /*if (modPlayer.ChloranthyRing1 || modPlayer.ChloranthyRing2)
                     {
                         Player.AddBuff(BuffID.Ichor, (int)(CeruleanDrinkTimerMax * 60f));
                     }
                     else
                     {
-                        Player.AddBuff(ModContent.BuffType<Crippled>(), (int)(CeruleanDrinkTimerMax * 60f));
-                        Player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(CeruleanDrinkTimerMax * 60f));
-                    }
+                    }*/
                 }
             }
 

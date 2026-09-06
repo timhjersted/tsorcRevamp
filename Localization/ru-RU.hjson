@@ -10,7 +10,7 @@ Mods: {
 			// Cost: Each blocked hit costs {0} {1} + {2}% of the damage blocked
 			// Wall: Stops non-boss enemies from pushing through you
 			// Break: Running out of {0} mid-block breaks your guard (Ichor, Slow, and a brief stagger)
-			// Parry: Perfect parry — raise the shield just as a hit lands. It costs less, leaks nothing, staggers the attacker, and empowers an immediate counter-attack
+			// Parry: Perfect parry — raise the shield just as a hit lands. It costs less, negates chip damage, does stagger damage, and empowers an immediate counter-attack
 			// Slow: Slows your movement by {0}% while raised
 			// Chip: An ordinary block leaks {0}% of the damage through as chip damage; a perfect parry leaks none
 			// Greatshield: Greatshield: no damage leaks through, but it is heavy and slow to recover from
@@ -1656,6 +1656,11 @@ Mods: {
 					Это старое кольцо получило свое название из-за своего декоративного зеленого цветка, 
 					но его блеск давно померк.
 					'''
+				/* Old:
+					'''
+					[c/ffbf00:Reduces the movement penalty for holding a shield by {2}%]
+					[c/ffbf00:Increases stamina regeneration while your shield is raised by {3}% of its normal rate]
+					''' */
 			}
 
 			ChloranthyRing2: {
@@ -11189,6 +11194,7 @@ Mods: {
 			// CenterOfTheUniverseStar2.DisplayName: Center Of The Universe Star2
 			// ElectrocuteProjectile.DisplayName: Electrocute Projectile
 			// GigasEmbraceIcicle.DisplayName: Gigas Embrace Icicle
+			// VenomPowderProjectile.DisplayName: Venom Powder Projectile
 		}
 
 		NPCs: {

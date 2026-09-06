@@ -3075,7 +3075,7 @@ namespace tsorcRevamp
             if (modPlayer.SoulsMode && player.statMana < player.statManaMax2 && ceruleanFlaskPlayer.CeruleanChargesCurrent > 0)
             {
                 if (player == Main.LocalPlayer && !player.mouseInterface && ceruleanFlaskPlayer.CeruleanChargesCurrent > 0 && player.itemAnimation == 0
-                && !modPlayer.isDodging && !ceruleanFlaskPlayer.IsDrinking && !player.CCed && !estusPlayer.isDrinking && !ceruleanFlaskPlayer.IsCeruleanRestoring)
+                && !modPlayer.isDodging && !ceruleanFlaskPlayer.IsDrinking && !player.CCed && !estusPlayer.IsDrinking && !ceruleanFlaskPlayer.IsCeruleanRestoring)
                 {
                     ceruleanFlaskPlayer.IsDrinking = true;
                     ceruleanFlaskPlayer.CeruleanDrinkTimer = 0;
@@ -3145,11 +3145,11 @@ namespace tsorcRevamp
 
             if (modPlayer.SoulsMode && player.statLife < player.statLifeMax2)
             {
-                if (player == Main.LocalPlayer && !player.mouseInterface && estusPlayer.estusChargesCurrent > 0 && player.itemAnimation == 0
-                && !modPlayer.isDodging && !estusPlayer.isDrinking && !player.CCed && !ceruleanFlaskPlayer.IsDrinking)
+                if (player == Main.LocalPlayer && !player.mouseInterface && estusPlayer.EstusChargesCurrent > 0 && player.itemAnimation == 0
+                && !modPlayer.isDodging && !estusPlayer.IsDrinking && !player.CCed && !ceruleanFlaskPlayer.IsDrinking)
                 {
-                    estusPlayer.isDrinking = true;
-                    estusPlayer.estusDrinkTimer = 0;
+                    estusPlayer.IsDrinking = true;
+                    estusPlayer.EstusDrinkTimer = 0;
                 }
                 return;
             }
