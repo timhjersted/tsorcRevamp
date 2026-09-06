@@ -10,7 +10,7 @@ namespace tsorcRevamp.Buffs.Armor
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }
-        public const float ShunpoBlinkImmunityTime = 1f; //in seconds
+        public const float ShunpoBlinkImmunityTime = 2f; //in seconds
         public const int Cooldown = 45; //in seconds
         public override void Update(Player player, ref int buffIndex)
         {

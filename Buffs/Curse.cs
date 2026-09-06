@@ -37,9 +37,9 @@ namespace tsorcRevamp.Buffs
             if (powerful)
             {
                 AddStat(penalties, boons, "Max Life", Math.Min(modPlayer.powerfulCurseMaxLifeMultiplier, 0f), "%");
-                AddStat(penalties, boons, "Life Regeneration", Effective(modPlayer.powerfulCurseLifeRegenerationBonus, modPlayer), "");
-                AddStat(penalties, boons, "Defense", Effective(modPlayer.powerfulCurseDefenseBonus, modPlayer), "");
-                AddStat(penalties, boons, "Resistance", Effective(modPlayer.powerfulCurseResistanceBonus, modPlayer), "%");
+                AddStat(penalties, boons, "Life Regeneration", ((int)Effective(modPlayer.powerfulCurseLifeRegenerationBonus, modPlayer) / 2f), " per second");
+                AddStat(penalties, boons, "Defense", (int)Effective(modPlayer.powerfulCurseDefenseBonus, modPlayer), "");
+                AddStat(penalties, boons, "Resistance", (int)Effective(modPlayer.powerfulCurseResistanceBonus, modPlayer), "");
                 AddStat(penalties, boons, "Damage", Effective(modPlayer.powerfulCurseDamageBonus, modPlayer), "%");
                 AddStat(penalties, boons, "Attack Speed", Effective(modPlayer.powerfulCurseAttackSpeedBonus, modPlayer), "%");
                 AddStat(penalties, boons, "Movement Speed", Effective(modPlayer.powerfulCurseMovementSpeedBonus, modPlayer), "%");
@@ -47,9 +47,9 @@ namespace tsorcRevamp.Buffs
             else
             {
                 AddStat(penalties, boons, "Max Life", Math.Min(modPlayer.CurseMaxLifeMultiplier, 0f), "%");
-                AddStat(penalties, boons, "Life Regeneration", Effective(modPlayer.CurseLifeRegenerationBonus, modPlayer), "");
-                AddStat(penalties, boons, "Defense", Effective(modPlayer.CurseDefenseBonus, modPlayer), "");
-                AddStat(penalties, boons, "Resistance", Effective(modPlayer.CurseResistanceBonus, modPlayer), "%");
+                AddStat(penalties, boons, "Life Regeneration", ((int)Effective(modPlayer.CurseLifeRegenerationBonus, modPlayer) / 2f), " per second");
+                AddStat(penalties, boons, "Defense", (int)Effective(modPlayer.CurseDefenseBonus, modPlayer), "");
+                AddStat(penalties, boons, "Resistance", (int)Effective(modPlayer.CurseResistanceBonus, modPlayer), "");
                 AddStat(penalties, boons, "Damage", Effective(modPlayer.CurseDamageBonus, modPlayer), "%");
                 AddStat(penalties, boons, "Attack Speed", Effective(modPlayer.CurseAttackSpeedBonus, modPlayer), "%");
                 AddStat(penalties, boons, "Movement Speed", Effective(modPlayer.CurseMovementSpeedBonus, modPlayer), "%");

@@ -1867,31 +1867,46 @@ namespace tsorcRevamp
 
         public void DoShunpo(Player player)
         {
+            List<NPC> validTargets = new List<NPC>();
+            NPC chosenTarget = Main.npc.Last();
             foreach (var other in Main.ActiveNPCs)
             {
                 Vector2 MouseHitboxSize = new Vector2(100, 100);
                 
-                bool lineOfSight = Collision.CanHitLine(player.position, player.width, player.height, other.position, other.width, other.height);
+                bool lineOfSight = Collision.CanHitLine(player.position, player.width, player.height, Main.MouseWorld, player.width, player.height);
 
                 if (lineOfSight && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) && !player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
                 {
-                    player.immune = true;
-                    player.SetImmuneTimeForAllTypes((int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
-                    ShunpoVelocity = player.DirectionTo(other.Center) * Main.MouseWorld.Distance(player.Center);
-                    player.position += ShunpoVelocity;
-                    player.RefreshMovementAbilities();
-                    player.AddBuff(ModContent.BuffType<ShunpoBlink>(), (int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60 * 2 + 2));
-                    player.AddBuff(ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoBlink.Cooldown * 60);
-                    if (Main.rand.NextBool(2))
-                    {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo1") with { Volume = 1f });
-                    }
-                    else
-                    {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo2") with { Volume = 1f });
-                    }
-                    ShunpoTimer = 3;
+                    validTargets.Add(other);
                 }
+            }
+
+            foreach (var target in validTargets)
+            {
+                if (target.Center.Distance(Main.MouseWorld) < chosenTarget.Center.Distance(Main.MouseWorld))
+                {
+                    chosenTarget = target; //so it actually ports you to the npc nearest to your cursor, not any npc that is in the cursors range
+                }
+            }
+
+            if (chosenTarget != Main.npc.Last())
+            {
+                ShunpoVelocity = player.DirectionTo(chosenTarget.Center) * Main.MouseWorld.Distance(player.Center);
+                player.Center += ShunpoVelocity;
+                player.RefreshMovementAbilities();
+                player.AddBuff(ModContent.BuffType<ShunpoBlink>(), (int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
+                player.immune = true;
+                player.SetImmuneTimeForAllTypes((int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
+                player.AddBuff(ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoBlink.Cooldown );
+                if (Main.rand.NextBool(2))
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo1") with { Volume = 1f });
+                }
+                else
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo2") with { Volume = 1f });
+                }
+                //ShunpoTimer = 3;
             }
         }
         public void DoKrakenCast(Player player)
