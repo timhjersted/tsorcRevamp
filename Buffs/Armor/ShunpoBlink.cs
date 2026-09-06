@@ -11,11 +11,11 @@ namespace tsorcRevamp.Buffs.Armor
             Main.buffNoTimeDisplay[Type] = false;
         }
         public const float ShunpoBlinkImmunityTime = 1f; //in seconds
-        public const int Cooldown = 18; //in seconds
+        public const int Cooldown = 45; //in seconds
         public override void Update(Player player, ref int buffIndex)
         {
             player.immune = true;
-            player.GetModPlayer<tsorcRevampPlayer>().ShunpoTimer--;
+            //player.GetModPlayer<tsorcRevampPlayer>().ShunpoTimer--;
         }
     }
 }

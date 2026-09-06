@@ -160,7 +160,7 @@ namespace tsorcRevamp
 
         public int CritColorTier = 0;
 
-        public int MagicPlatingStacks = 0;
+        public int MagicPlatingStacks;
 
         public bool ChloranthyRing1 = false;
         public bool ChloranthyRing2 = false;
@@ -2628,6 +2628,7 @@ namespace tsorcRevamp
             return player.equippedWings != null ? rawDamage / 2 : rawDamage;
         }
 
+        public Vector2 SavedVelocity;
         public override void PreUpdateMovement()
         {
             // This is the last tModLoader player hook before vanilla resolves collision and fall damage.
@@ -2667,22 +2668,26 @@ namespace tsorcRevamp
                 ImpaleFreezeTimer--;
                 return;
             }
-            if (ShunpoTimer == 3)
+            /*if (ShunpoTimer == 3)
             {
-                Player.velocity = Vector2.Zero;
+                //SavedVelocity = Player.velocity; //save velocity
+                //Player.velocity = Vector2.Zero;
+                //Player.velocity += ShunpoVelocity;
             }
             if (ShunpoTimer == 2)
             {
-                Player.velocity = Player.GetModPlayer<tsorcRevampPlayer>().ShunpoVelocity;
+                //Player.velocity += ShunpoVelocity; //blink
+                //Player.velocity += ShunpoVelocity;
+                
             }
             if (ShunpoTimer == 1)
             {
-                Player.velocity = Vector2.Zero;
+                //Player.velocity -= ShunpoVelocity; //make player move at their prior speed
                 Player.RefreshMovementAbilities();
-            }
+            }*/
             if (SweepingBladeTimer > 0)
             {
-                Player.velocity = Player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeVelocity;
+                Player.velocity = SweepingBladeVelocity;
                 SweepingBladeTimer--;
                 Player.RefreshMovementAbilities();
             }

@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors
     public class AncientMagicPlateArmor : ModItem
     {
         public static float AtkSpeed = 15f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, 1f + tsorcRevampPlayer.MeleeBonusMultiplier);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, 1f + tsorcRevampPlayer.MeleeBonusMultiplier, MagicPlating.MagicPlatingStacksCap, MagicPlating.MagicPlatingStacksChance);
         public override void SetStaticDefaults()
         {
         }

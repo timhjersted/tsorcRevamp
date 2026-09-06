@@ -1527,16 +1527,20 @@ namespace tsorcRevamp
         ///You can also input negative numbers to reduce the duration, especially for cooldown-related debuffs.
         ///</summary>         
         ///<param name="player">The player who owns the buff</param>
-        ///<param name="BuffType">The ID of the buff whose duration you want to reduce</param>
-        ///<param name="Duration">How many ticks to reduce it by (60 ticks = 1 second)</param>
-        public static void AddPlayerBuffDuration(in Player player, in int BuffType, in int Duration)
+        ///<param name="buffType">The ID of the buff whose duration you want to reduce</param>
+        ///<param name="duration">How many ticks to reduce it by (60 ticks = 1 second)</param>
+        public static void AddPlayerBuffDuration(in Player player, in int buffType, in int duration)
         {
             int buffIndex = 0;
-            foreach (int buffType in player.buffType)
+            foreach (int currentType in player.buffType)
             {
-                if (buffType == BuffType)
+                if (currentType == buffType)
                 {
-                    player.buffTime[buffIndex] += Duration;
+                    player.buffTime[buffIndex] += duration;
+                    if (duration < 0 && player.buffTime[buffIndex] <= 1)
+                    {
+                        player.buffTime[buffIndex] = 1; //so last tick stuff still gets run like cooldown sounds
+                    }
                 }
                 buffIndex++;
             }
@@ -1547,16 +1551,20 @@ namespace tsorcRevamp
         ///You can also input negative numbers, especially for cooldown-related debuffs.
         ///</summary>         
         ///<param name="npc">The npc who owns the buff</param>
-        ///<param name="BuffType">The ID of the buff whose duration you want to reduce</param>
-        ///<param name="Duration">How many ticks to reduce it by (60 ticks = 1 second)</param>
-        public static void AddNPCBuffDuration(in NPC npc, in int BuffType, in int Duration)
+        ///<param name="buffType">The ID of the buff whose duration you want to reduce</param>
+        ///<param name="duration">How many ticks to reduce it by (60 ticks = 1 second)</param>
+        public static void AddNPCBuffDuration(in NPC npc, in int buffType, in int duration)
         {
             int buffIndex = 0;
-            foreach (int buffType in npc.buffType)
+            foreach (int currentType in npc.buffType)
             {
-                if (buffType == BuffType)
+                if (currentType == buffType)
                 {
-                    npc.buffTime[buffIndex] += Duration;
+                    npc.buffTime[buffIndex] += duration;
+                    if (duration < 0 && npc.buffTime[buffIndex] <= 1)
+                    {
+                        npc.buffTime[buffIndex] = 1; //so last tick stuff still gets run like cooldown sounds
+                    }
                 }
                 buffIndex++;
             }

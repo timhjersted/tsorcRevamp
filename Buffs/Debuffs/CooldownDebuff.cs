@@ -37,7 +37,7 @@ namespace tsorcRevamp.Buffs.Debuffs
         { }
         public override void Update(Player player, ref int buffIndex)
         {
-            if (player.buffTime[buffIndex] == 1 && PlaysSoundOnLastTick)
+            if (player.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
                 if (!PlaysVanillaSound)
                 {
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Buffs.Debuffs
         }
         public override void Update(NPC npc, ref int buffIndex)
         {
-            if (npc.buffTime[buffIndex] == 1 && PlaysSoundOnLastTick)
+            if (npc.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
                 if (!PlaysVanillaSound)
                 {

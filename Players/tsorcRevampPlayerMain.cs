@@ -99,7 +99,7 @@ namespace tsorcRevamp
         public bool normansRingAmmoSave = false;
         public List<int> bagsOpened;
         public static int LastHit = 1;
-        public static int ShunpoCooldownPerHit = -40;
+        public const int ShunpoCooldownPerHit = -60;
         public static bool SameHit = false;
         public static bool DiffHit = false;
         public Dictionary<int, int> consumedPotions;
@@ -757,47 +757,6 @@ namespace tsorcRevamp
 
         public override void OnHitAnything(float x, float y, Entity victim)
         {
-            if (Shunpo && Player.titaniumStormCooldown >= 0)
-            {
-                int TitaniumShardBaseDmg = 50; //50 is the base dmg of vanilla Titanium Shards
-                int TitaniumShardScaledBonusDmg = (int)Player.GetDamage(DamageClass.Generic).ApplyTo(TitaniumShardBaseDmg);
-                Player.titaniumStormCooldown = 10;
-                Player.AddBuff(BuffID.TitaniumStorm, 10 * 60);
-                if (Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard] < 15)
-                {
-                    Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard]++;
-                    if (Main.myPlayer == Player.whoAmI)
-                    {
-                        Projectile.NewProjectile(Player.GetSource_OnHit(victim), Player.Center, Vector2.Zero, ProjectileID.TitaniumStormShard, TitaniumShardBaseDmg + TitaniumShardScaledBonusDmg, 15f, Player.whoAmI);
-                    }
-                }
-                else
-                {
-                    UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoCooldownPerHit);
-                }
-            }
-            if (CelestialCloak)
-            {
-                if (Main.rand.NextBool(25))
-                {
-                    Vector2 starvector1 = new Vector2(-40, -200) + victim.Center;
-                    Vector2 starvector2 = new Vector2(40, -200) + victim.Center;
-                    Vector2 starvector3 = new Vector2(0, -200) + victim.Center;
-                    Vector2 starmove1 = new Vector2(+4, 20);
-                    Vector2 starmove2 = new Vector2(-4, 20);
-                    Vector2 starmove3 = new Vector2(0, 20);
-                    if (Main.myPlayer == Player.whoAmI)
-                    {
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                    }
-                }
-            }
-            if (Main.rand.NextBool(9) & MagicPlatingStacks <= 22 & Player.HasBuff(ModContent.BuffType<MagicPlating>()))
-            {
-                MagicPlatingStacks += 7;
-            }
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
@@ -1387,10 +1346,6 @@ namespace tsorcRevamp
             {
                 OverCrit(proj.CritChance, proj.DamageType, ref modifiers, out CritColorTier);
             }
-            if (ProjectileID.Sets.MinionSacrificable[proj.type])
-            {
-                ShunpoCooldownPerHit = -4;
-            }
         }
         public override void ModifyItemScale(Item item, ref float scale)
         {
@@ -1604,6 +1559,28 @@ namespace tsorcRevamp
             }
             CombatText.NewText(targetHitbox, ColorOfCrit, damageDealt + (isWhipTipCrit ? "!" : ""), isCrit, false);
         }
+
+        public void ShunpoSummonTitaniumShard(NPC target)
+        {
+            if (Shunpo && Player.titaniumStormCooldown <= 0 && target.type != NPCID.TargetDummy)
+            {
+                int TitaniumShardTotalDmg = (int)Player.GetDamage(DamageClass.Generic).ApplyTo(50); //50 is base dmg of titanium shards
+                Player.titaniumStormCooldown = 10;
+                Player.AddBuff(BuffID.TitaniumStorm, 10 * 60);
+                if (Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard] < 15)
+                {
+                    Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard]++;
+                    if (Main.myPlayer == Player.whoAmI)
+                    {
+                        Projectile.NewProjectile(Player.GetSource_OnHit(target), Player.Center, Vector2.Zero, ProjectileID.TitaniumStormShard, TitaniumShardTotalDmg, 15f, Player.whoAmI);
+                    }
+                }
+                else if (Player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
+                {
+                    UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoCooldownPerHit);
+                }
+            }
+        }
         public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
         {
             if (item.DamageType != DamageClass.Default)
@@ -1625,6 +1602,29 @@ namespace tsorcRevamp
                     (int)Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI, 1);
                 SummonMeleeBoom.position -= new Vector2(0, SummonMeleeBoom.height / 2f);
                 SummonMeleeBoom.netUpdate = true;
+            }
+            ShunpoSummonTitaniumShard(target);
+            if (CelestialCloak && item.DamageType == DamageClass.Magic)
+            {
+                if (Main.rand.NextBool(25))
+                {
+                    Vector2 starvector1 = new Vector2(-40, -200) + target.Center;
+                    Vector2 starvector2 = new Vector2(40, -200) + target.Center;
+                    Vector2 starvector3 = new Vector2(0, -200) + target.Center;
+                    Vector2 starmove1 = new Vector2(+4, 20);
+                    Vector2 starmove2 = new Vector2(-4, 20);
+                    Vector2 starmove3 = new Vector2(0, 20);
+                    if (Main.myPlayer == Player.whoAmI)
+                    {
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                    }
+                }
+            }
+            if (Main.rand.NextBool(MagicPlating.MagicPlatingStacksChance) && Player.HasBuff(ModContent.BuffType<MagicPlating>()))
+            {
+                MagicPlatingStacks = MagicPlating.ManageStacks(MagicPlatingStacks);
             }
         }
 
@@ -1689,6 +1689,40 @@ namespace tsorcRevamp
                         Player.buffTime[buffIndex] -= 15;
                     }
                     buffIndex++;
+                }
+            }
+
+            if (proj.type != ProjectileID.TitaniumStormShard)
+            {
+                ShunpoSummonTitaniumShard(target);
+            }
+            if (CelestialCloak && proj.DamageType == DamageClass.Magic)
+            {
+                if (Main.rand.NextBool(25))
+                {
+                    Vector2 starvector1 = new Vector2(-40, -200) + target.Center;
+                    Vector2 starvector2 = new Vector2(40, -200) + target.Center;
+                    Vector2 starvector3 = new Vector2(0, -200) + target.Center;
+                    Vector2 starmove1 = new Vector2(+4, 20);
+                    Vector2 starmove2 = new Vector2(-4, 20);
+                    Vector2 starmove3 = new Vector2(0, 20);
+                    if (Main.myPlayer == Player.whoAmI)
+                    {
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                    }
+                }
+            }
+            if (Main.rand.NextBool(MagicPlating.MagicPlatingStacksChance) && Player.HasBuff(ModContent.BuffType<MagicPlating>()))
+            {
+                if (proj.IsMinionOrSentryRelated)
+                {
+                    MagicPlatingStacks = MagicPlating.ManageStacks(MagicPlatingStacks, true);
+                }
+                else
+                {
+                    MagicPlatingStacks = MagicPlating.ManageStacks(MagicPlatingStacks);
                 }
             }
 
@@ -1833,16 +1867,19 @@ namespace tsorcRevamp
 
         public void DoShunpo(Player player)
         {
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (var other in Main.ActiveNPCs)
             {
-                NPC other = Main.npc[i];
                 Vector2 MouseHitboxSize = new Vector2(100, 100);
+                
+                bool lineOfSight = Collision.CanHitLine(player.position, player.width, player.height, other.position, other.width, other.height);
 
-                if (other.active && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) && !player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
+                if (lineOfSight && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) && !player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
                 {
                     player.immune = true;
                     player.SetImmuneTimeForAllTypes((int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
-                    ShunpoVelocity = player.DirectionTo(other.Center) * other.Center.Distance(player.Center);
+                    ShunpoVelocity = player.DirectionTo(other.Center) * Main.MouseWorld.Distance(player.Center);
+                    player.position += ShunpoVelocity;
+                    player.RefreshMovementAbilities();
                     player.AddBuff(ModContent.BuffType<ShunpoBlink>(), (int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60 * 2 + 2));
                     player.AddBuff(ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoBlink.Cooldown * 60);
                     if (Main.rand.NextBool(2))
@@ -1958,22 +1995,9 @@ namespace tsorcRevamp
                 NPC other = Main.npc[i];
                 Vector2 MouseHitboxSize = new Vector2(100, 100);
 
-                if ((tsorcRevamp.Shunpo.JustReleased) && other.active && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) && player.GetModPlayer<tsorcRevampPlayer>().Shunpo && !player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
+                if (tsorcRevamp.Shunpo.JustReleased)
                 {
-                    player.immune = true;
-                    player.SetImmuneTimeForAllTypes((int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
-                    ShunpoVelocity = player.DirectionTo(other.Center) * other.Center.Distance(player.Center);
-                    player.AddBuff(ModContent.BuffType<ShunpoBlink>(), (int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60 * 2 + 2));
-                    player.AddBuff(ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoBlink.Cooldown * 60);
-                    if (Main.rand.NextBool(2))
-                    {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo1") with { Volume = 1f });
-                    }
-                    else
-                    {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo2") with { Volume = 1f });
-                    }
-                    ShunpoTimer = 3;
+                    DoShunpo(player);
                 }
             }
             if (tsorcRevamp.reflectionShiftKey.JustPressed)

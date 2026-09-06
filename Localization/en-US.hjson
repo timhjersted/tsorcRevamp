@@ -2274,8 +2274,8 @@ Mods: {
 					'''
 					Fueled by a magical gem in the chest
 					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Bonus@1}
-					{$CommonItemTooltip.SetBonus}Chance to gain stacks upon damaging anything
-					Collect stacks to gain up to 28 resistance against the next hit
+					{$CommonItemTooltip.SetBonus}1/{3} chance to gain stacks upon damaging anything
+					Collect stacks to gain up to {2} resistance against the next hit
 					'''
 			}
 

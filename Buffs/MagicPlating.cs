@@ -6,6 +6,10 @@ namespace tsorcRevamp.Buffs
 {
     public class MagicPlating : ModBuff
     {
+        public const int MagicPlatingStacksCap = 40;
+        public const int MagicPlatingStacksChance = 6;
+        public const int StacksOnHit = 8;
+        public const int StacksOnMinionHit = StacksOnHit / 4;
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = false;
@@ -19,6 +23,22 @@ namespace tsorcRevamp.Buffs
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
             tip = LangUtils.GetTextValue("CommonItemTooltip.DRStat", Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().MagicPlatingStacks) + LangUtils.GetTextValue("Buffs.MagicPlating.Description");
+        }
+
+        public static int ManageStacks(int currentStacks, bool minion = false)
+        {
+            int stacksToAdd = StacksOnHit;
+            if (minion)
+            {
+                stacksToAdd = StacksOnMinionHit;
+            }
+            int totalStacks = currentStacks + stacksToAdd;
+
+            if (totalStacks > MagicPlatingStacksCap)
+            {
+                totalStacks = MagicPlatingStacksCap;
+            }
+            return totalStacks;
         }
     }
 }
