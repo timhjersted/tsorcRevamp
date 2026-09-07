@@ -657,7 +657,7 @@ namespace tsorcRevamp
                         break;
                     }*/
                     if (Player.HasBuff(ModContent.BuffType<ArcaneSorcery>()) 
-                        && staminaPlayer.staminaResourceCurrent < staminaPlayer.staminaResourceMax2 * arcanePlayer.ManaBurnStaminaThreshold / 100f)
+                        && staminaPlayer.staminaResourceCurrent < staminaPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f)
                     {
                         Player.AddBuff(ModContent.BuffType<ManaBurn>(), ManaBurn.Duration * 60);
                     }

@@ -66,7 +66,7 @@ namespace tsorcRevamp.Systems.LethalTempo
             // Use our animation spritesheet.
             Texture2D ourTexture = animatedTexture.Value;
             // Choose the frame to display, here based on constants and the game's tick count.
-            Rectangle ourSourceRectangle = animatedTexture.Frame(verticalFrames: FrameCount, frameY: (int)modPlayer.Stacks);
+            Rectangle ourSourceRectangle = animatedTexture.Frame(verticalFrames: FrameCount, frameY: modPlayer.Stacks);
 
             // Other stuff you can do in this hook
             /*

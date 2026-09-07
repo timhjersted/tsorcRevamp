@@ -10,12 +10,12 @@ public class ArcaneSorceryPlayer : ModPlayer
 {
     public bool ArcaneSorcerer = false;
 
-    public float MaxManaAmplifier = 400f;
-    public float ManaCostMult = 2f;
+    public const float MaxManaAmplifier = 400f;
+    public const float ManaCostMult = 2f;
     public bool ManaBurn = false;
-    public float ManaBurnStaminaThreshold = 50f;
-    public float ManaBurnCostMult = 2f;
-    public float ManaBurnBadResistance = 40f;
+    public const float ManaBurnStaminaThreshold = 50f;
+    public const float ManaBurnCostMult = 3f;
+    public const float ManaBurnBadResistance = 40f;
 
     public const float BaseCeruleanFlaskMaxManaScalingMult = 1.6f;
     public float CeruleanFlaskMaxManaScalingMult = 1f;
@@ -23,8 +23,8 @@ public class ArcaneSorceryPlayer : ModPlayer
     public const float BaseCeruleanFlatManaGainMult = 3f;
     public float CeruleanFlatManaGainMult = 1f;
     
-    public float ManaBurnMagicDamageAmp = 20f;
-    public float ManaBurnMagicAttackSpeedAmp = 20f;
+    public const float ManaBurnMagicDamageAmp = 15f;
+    public const float ManaBurnMagicAttackSpeedAmp = 15f;
     public override void ResetEffects()
     {
         ArcaneSorcerer = false;

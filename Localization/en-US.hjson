@@ -34,9 +34,17 @@ Mods: {
 		LethalTempoExplanation:
 			'''
 			[c/ff8400:Lethal Tempo: Melee base attack speed is multiplied by {0}x]
-			[c/ff8400:Hitting enemies with melee attacks will grant stacks of Lethal Tempo,]
+			[c/ff8400:Hitting enemies with true melee attacks will grant stacks of Lethal Tempo,]
 			[c/ff8400:these increase your attack speed temporarily and fall off after a few seconds, if not refreshed.]
 			[c/ff8400:Each stack grants {1}% multiplicative attack speed, up to a total of {2}x at the maximum of {3} stacks.]
+			[c/ff8400:At max stacks, also gain...]
+			'''
+		ElectrocuteExplanation:
+			'''
+			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 unique ranged projectiles in a span of {0} seconds,]
+			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. ({$CommonItemTooltip.Cooldown@1})]
+			[c/22dd96:Uses highest crit chance of the 3 projectiles.]
+			[c/22dd96:Ranged damage is reduced by {2}% while Electrocute is not on cooldown.]
 			'''
 		ArcaneSorceryExplanation:
 			'''
@@ -49,12 +57,14 @@ Mods: {
 			[c/ea00ea:multiplicatively increases magic damage by {5}% and attack speed by {6}%, ]
 			[c/ea00ea:but decreases your Resistance by {7} and multiplies your mana costs by another {8}x.]
 			'''
-		ElectrocuteExplanation:
+		ConquerorExplanation:
 			'''
-			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 unique ranged projectiles in a span of {0} seconds,]
-			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. ({$CommonItemTooltip.Cooldown@1})]
-			[c/22dd96:Uses highest crit chance of the 3 projectiles. ]
-			[c/22dd96:Ranged damage is reduced by {2}% while Electrocute is not on cooldown.]
+			[c/6efaff:Conqueror: Summon base damage is multiplied by {0}x]
+			[c/6efaff:Hitting enemies with whips will grant a stack of Conqueror(2 on a tip hit),]
+			[c/6efaff:these increase summon damage temporarily and fall off after a few seconds, if not refreshed.]
+			[c/6efaff:Each stack grants both {1}% multiplicative summon damage and {4}% multiplicative whip damage,]
+			[c/6efaff:up to a total of {2}x summon damage and {5}x whip damage at the maximum of {3} stacks.]
+			[c/6efaff:At max stacks: {$CommonItemTooltip.LifeRegen@6} and adds a whip tag slot.... soon™]
 			'''
 
 		CommonItemTooltip: {
@@ -4484,13 +4494,6 @@ Mods: {
 					'''
 					[c/ea00ea:mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time.]
 					[c/ea00ea:Mana Potions still work and resting at a Bonfire will restore mana, drinking the Cerulean Flask also cures Mana Sickness.]
-					'''
-				Summon:
-					'''
-					[c/6efaff:Conqueror: Summon base damage is reduced to {0}%, but hitting enemies with whips will grant a stack of Conqueror(2 on a tip hit),]
-					[c/6efaff:these increase summon damage temporarily and fall off after a few seconds, if not refreshed.]
-					[c/6efaff:Each stack grants {1}% damage, up to {2}% at the maximum of {3} stacks.]
-					[c/6efaff:At max stacks, gain {4}% Summon Tag Duration.]
 					'''
 			}
 
@@ -9985,6 +9988,7 @@ Mods: {
 			Conqueror: {
 				DisplayName: Conqueror
 				Description: Your summon damage is increased
+				Description0: Your total summon damage is multiplied by {0}x, whip damage by {1}x
 			}
 
 			Accuracy: {
@@ -10288,7 +10292,7 @@ Mods: {
 
 			ArcaneSorcery: {
 				DisplayName: Arcane Sorcery
-				Description: Mods.tsorcRevamp.Buffs.ArcaneSorcery.Description
+				Description: Your sorcery is affected by the curse...
 			}
 
 			Electrocute: {

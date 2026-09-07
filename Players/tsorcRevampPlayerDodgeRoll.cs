@@ -210,7 +210,7 @@ namespace tsorcRevamp
                 oldItemAnimation = Player.itemAnimation;
 
                 if (Player.HasBuff(ModContent.BuffType<ArcaneSorcery>()) &&
-                    modPlayer.staminaResourceCurrent <= modPlayer.staminaResourceMax2 * arcanePlayer.ManaBurnStaminaThreshold / 100f)
+                    modPlayer.staminaResourceCurrent <= modPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f)
                 {
                     return true;
                 }

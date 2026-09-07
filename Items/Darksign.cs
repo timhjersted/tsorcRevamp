@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.Conqueror;
 using tsorcRevamp.Systems.Electrocute;
 using tsorcRevamp.Systems.LethalTempo;
 using tsorcRevamp.Utilities;
@@ -266,7 +267,7 @@ namespace tsorcRevamp.Items
                         {      
                             tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("LethalTempoExplanation", 
                                 LethalTempoPlayer.BaseAttackSpeedMult, (int)(LethalTempoPlayer.BonusAttackSpeedPerStack * 100f), 
-                                MathF.Round(LethalTempoPlayer.MaxAttackSpeedMult, 2), (int)LethalTempoPlayer.MaxStacks)));
+                                MathF.Round(LethalTempoPlayer.MaxAttackSpeedMult, 2), LethalTempoPlayer.MaxStacks)));
                         }
                         break;
                     }
@@ -286,19 +287,23 @@ namespace tsorcRevamp.Items
                         if (ArcaneSorcery.Enabled)
                         {                        
                             tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "ArcaneSorcery", LangUtils.GetTextValue("ArcaneSorceryExplanation", 
-                                arcanePlayer.MaxManaAmplifier, arcanePlayer.ManaCostMult, ArcaneSorceryPlayer.BaseCeruleanFlatManaGainMult, 
+                                ArcaneSorceryPlayer.MaxManaAmplifier, ArcaneSorceryPlayer.ManaCostMult, ArcaneSorceryPlayer.BaseCeruleanFlatManaGainMult, 
                                 ArcaneSorceryPlayer.BaseCeruleanFlaskMaxManaScalingMult * ceruleanPlayer.BaseMaxManaGain, 
-                                arcanePlayer.ManaBurnStaminaThreshold, arcanePlayer.ManaBurnMagicDamageAmp, arcanePlayer.ManaBurnMagicAttackSpeedAmp,
-                                arcanePlayer.ManaBurnBadResistance, arcanePlayer.ManaBurnCostMult)));
+                                ArcaneSorceryPlayer.ManaBurnStaminaThreshold, ArcaneSorceryPlayer.ManaBurnMagicDamageAmp, ArcaneSorceryPlayer.ManaBurnMagicAttackSpeedAmp,
+                                ArcaneSorceryPlayer.ManaBurnBadResistance, ArcaneSorceryPlayer.ManaBurnCostMult)));
                         }
                         break;
                     }
                 case 4:
                     {
-                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("Items.Darksign.Summon", 
-                            (int)(modPlayer.ConquerorSummonBaseDamageMult * 100f), (int)(modPlayer.ConquerorBonusDmgPerStack * 100f), 
-                            Math.Round((modPlayer.ConquerorMaxStacks * modPlayer.ConquerorBonusDmgPerStack * 100f)), (int)(modPlayer.ConquerorMaxStacks),
-                            (int)((modPlayer.FullConquerorBonusTagDuration) * 100f))));
+                        if (Conqueror.Enabled)
+                        {
+                            tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("ConquerorExplanation", 
+                                ConquerorPlayer.BaseDamageMult, MathF.Round(ConquerorPlayer.BonusDmgPerStack * 100f, 2), 
+                                MathF.Round(ConquerorPlayer.MaxDmgMult, 2), ConquerorPlayer.MaxStacks,
+                                MathF.Round(ConquerorPlayer.BonusWhipDmgPerStack * 100f, 2), MathF.Round(ConquerorPlayer.MaxWhipDmgMult, 2),
+                                ConquerorPlayer.FullyStackedRegenBonus / 2f)));
+                        }
                         break;
                     }
             }

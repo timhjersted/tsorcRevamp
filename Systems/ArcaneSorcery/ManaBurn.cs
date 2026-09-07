@@ -19,6 +19,6 @@ public class ManaBurn : ModBuff
     {
         var arcanePlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
         arcanePlayer.ManaBurn = true; //adds mana cost later
-        player.endurance -= arcanePlayer.ManaBurnBadResistance / 100f;
+        player.endurance -= ArcaneSorceryPlayer.ManaBurnBadResistance / 100f;
     }
 }

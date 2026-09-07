@@ -20,6 +20,7 @@ using tsorcRevamp.LegacyCode;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.Conqueror;
 using tsorcRevamp.Systems.LethalTempo;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
@@ -535,32 +536,6 @@ namespace tsorcRevamp.Items
             {
                 target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff3>(), 5 * 60);
             }
-            #region Conqueror
-            if (item.DamageType == DamageClass.SummonMeleeSpeed && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                if (modPlayer.ConquerorStacks < modPlayer.ConquerorMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, player.Center);
-                }
-                else if (modPlayer.ConquerorStacks == modPlayer.ConquerorMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
-                }
-                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().ConquerorDuration * 60);
-            }
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && tsorcRevamp.EnemiesOOA.Contains(target.type))
-            {
-                if (modPlayer.ConquerorStacks < modPlayer.ConquerorMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, player.Center);
-                }
-                else if (modPlayer.ConquerorStacks == modPlayer.ConquerorMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
-                }
-                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().ConquerorDuration * 60);
-            }
-            #endregion
             // Pick/axe/hammer combat surcharge: the swing itself already paid ToolSwingStaminaMult in
             // PreItemCheck (tsorcRevampPlayerDodgeRoll.cs) regardless of what it hit — tile, air, or NPC —
             // so fighting with one of these tools costs a bit more than idly chopping wood or mining

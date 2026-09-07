@@ -16,7 +16,7 @@ public class LethalTempoPlayer : ModPlayer
     public const int MaxStacks = 20;
     public const float BonusAttackSpeedPerStack = (MaxAttackSpeedMult - BaseAttackSpeedMult) / (float)MaxStacks;
     public int Stacks = 0;
-    public bool AppliedLethalTempo = false;
+    public bool AppliedLethalTempo;
 
     public List<int> ItemTypeExceptions = new List<int>()
     {
@@ -31,7 +31,6 @@ public class LethalTempoPlayer : ModPlayer
     {
         if (Systems.LethalTempo.LethalTempo.Enabled)
         {
-            var modPlayer = Player.GetModPlayer<LethalTempoPlayer>();
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (Player.HeldItem.DamageType == DamageClass.Melee || Player.HeldItem.DamageType == DamageClass.MeleeNoSpeed)

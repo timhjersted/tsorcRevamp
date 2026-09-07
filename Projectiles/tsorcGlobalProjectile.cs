@@ -30,6 +30,7 @@ using MiakodaCrescent = tsorcRevamp.Projectiles.Pets.MiakodaCrescent;
 using MiakodaNew = tsorcRevamp.Projectiles.Pets.MiakodaNew;
 using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.LegacyCode;
+using tsorcRevamp.Systems.Conqueror;
 using tsorcRevamp.Systems.LethalTempo;
 
 namespace tsorcRevamp.Projectiles
@@ -660,46 +661,6 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
-            #region Conqueror
-            if (projectile.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[projectile.type] && modPlayer.BearerOfTheCurse && !AppliedConqueror)
-            {
-                if (modPlayer.ConquerorStacks < modPlayer.ConquerorMaxStacks - 1 && !modPlayer.WhipTipHit(projectile, projectile.WhipPointsForCollision, target.Hitbox))
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, player.Center);
-                }
-                else if (modPlayer.ConquerorStacks < modPlayer.ConquerorMaxStacks - 2 && !modPlayer.WhipTipHit(projectile, projectile.WhipPointsForCollision, target.Hitbox))
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.008f }, player.Center);
-                }
-                else if (modPlayer.ConquerorStacks == modPlayer.ConquerorMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
-                }
-                else if (modPlayer.ConquerorStacks == modPlayer.ConquerorMaxStacks - 2 && modPlayer.WhipTipHit(projectile, projectile.WhipPointsForCollision, target.Hitbox))
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
-                }
-                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().ConquerorDuration * 60);
-                if (modPlayer.WhipTipHit(projectile, projectile.WhipPointsForCollision, target.Hitbox))
-                {
-                    player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().ConquerorDuration * 60);
-                }
-                AppliedConqueror = true;
-            }
-            else if (projectile.DamageType != DamageClass.Summon && projectile.DamageType != DamageClass.SummonMeleeSpeed && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && tsorcRevamp.EnemiesOOA.Contains(target.type))
-            {
-                if (modPlayer.ConquerorStacks < modPlayer.ConquerorMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, player.Center);
-                }
-                else if (modPlayer.ConquerorStacks == modPlayer.ConquerorMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
-                }
-                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().ConquerorDuration * 60);
-                AppliedConqueror = true;
-            }
-            #endregion
 
         }
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)

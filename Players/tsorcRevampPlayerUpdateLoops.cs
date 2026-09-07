@@ -116,13 +116,6 @@ namespace tsorcRevamp
 
         public int MaxMinionTurretMultiplier;
 
-        public float ConquerorSummonBaseDamageMult = 0.4f;
-        public int ConquerorDuration = 3;
-        public float ConquerorStacks = 0;
-        public int ConquerorMaxStacks = 10;
-        public float ConquerorBonusDmgPerStack = 0.06f;
-        public float FullConquerorBonusTagDuration = 0.1f;
-
         public bool SteraksGage = false;
         public bool InfinityEdge = false;
         public bool LudensTempest = false;
@@ -1429,12 +1422,6 @@ namespace tsorcRevamp
             if (CovenantOfArtoriasEquipped && Player.HasBuff(ModContent.BuffType<Abyss>()))
             {
                 UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<Abyss>(), -99999999);
-            }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                Player.GetDamage(DamageClass.Summon) *= ConquerorSummonBaseDamageMult + (ConquerorStacks * ConquerorBonusDmgPerStack);
-                Player.GetDamage(DamageClass.MagicSummonHybrid) /= ConquerorSummonBaseDamageMult + (ConquerorStacks * ConquerorBonusDmgPerStack); //neutralizing Conqueror damage changes
-                Player.GetDamage(DamageClass.MagicSummonHybrid) *= 1f + ConquerorStacks * ConquerorBonusDmgPerStack / 4.5f; //adding small benefit for usage of Conqueror
             }
 
             // Tier-aware mana regen penalty.

@@ -56,8 +56,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             int maxMana = player.statManaMax2;
             if (arcaneSorceryPlayer.ArcaneSorcerer)
             {
-                maxManaSubtract *= (int)(arcaneSorceryPlayer.MaxManaAmplifier / 100f);
-                maxManaDivisor *= (int)(arcaneSorceryPlayer.MaxManaAmplifier / 100f);
+                maxManaSubtract *= (int)(ArcaneSorceryPlayer.MaxManaAmplifier / 100f);
+                maxManaDivisor *= (int)(ArcaneSorceryPlayer.MaxManaAmplifier / 100f);
             }
             if (maxMana >= maxManaSubtract)
             {
@@ -73,8 +73,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             int maxManaDivisor = MaxManaDivisorBase;
             if (arcaneSorceryPlayer.ArcaneSorcerer)
             {
-                maxManaSubtract *= (int)(arcaneSorceryPlayer.MaxManaAmplifier / 100f);
-                maxManaDivisor *= (int)(arcaneSorceryPlayer.MaxManaAmplifier / 100f);
+                maxManaSubtract *= (int)(ArcaneSorceryPlayer.MaxManaAmplifier / 100f);
+                maxManaDivisor *= (int)(ArcaneSorceryPlayer.MaxManaAmplifier / 100f);
             }
             int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
             if (ttindex != -1)

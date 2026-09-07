@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Systems.Conqueror;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.LegacyCode

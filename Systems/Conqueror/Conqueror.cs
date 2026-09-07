@@ -1,17 +1,21 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Systems.LethalTempo;
 
-namespace tsorcRevamp.Buffs.Runeterra.Summon
+namespace tsorcRevamp.Systems.Conqueror
 {
     public class Conqueror : ModBuff
     {
-        public const int FrameCount = 10;
+        public const bool Enabled = true;
+        public const int FrameCount = ConquerorPlayer.MaxStacks + 1;
         private Asset<Texture2D> animatedTexture;
         public override void SetStaticDefaults()
         {
@@ -26,27 +30,38 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
         }
         public override void Update(Player player, ref int buffIndex)
         {
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.ConquerorStacks == 0)
+            var modPlayer = player.GetModPlayer<ConquerorPlayer>();
+            Main.buffNoTimeDisplay[Type] = false;
+            if (player.buffTime[buffIndex] == 0)
             {
-                modPlayer.ConquerorStacks = 1;
-            }
-            if (player.buffTime[buffIndex] == 1)
-            {
-                if (modPlayer.ConquerorStacks > 1)
+                if (modPlayer.Stacks > 0)
                 {
-                    modPlayer.ConquerorStacks--;
-                    player.buffTime[buffIndex] = (int)(((float)modPlayer.ConquerorDuration / 6f) * 60f);
-                }
-                else
-                {
-                    modPlayer.ConquerorStacks = 0;
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFallOff") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0107f }, player.Center);
+                    modPlayer.Stacks--;
+                    player.buffTime[buffIndex] = (int)(((float)ConquerorPlayer.Duration / 6f) * 60f);
                 }
             }
+            if (modPlayer.Stacks == 0 && modPlayer.Conqueror)
+            {
+                Main.buffNoTimeDisplay[Type] = true;
+                BuffID.Sets.TimeLeftDoesNotDecrease[Type] = true;
+            }
+            else
+            {
+                BuffID.Sets.TimeLeftDoesNotDecrease[Type] = false;
+            }
+            /* for when the stacks fall off
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFallOff") with 
+                { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0107f }, player.Center);*/
+        }
+        public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
+        {
+            var modPlayer = Main.LocalPlayer.GetModPlayer<ConquerorPlayer>();
+            tip = Language.GetTextValue(Description.Key + "0", MathF.Round((modPlayer.Stacks * ConquerorPlayer.BonusDmgPerStack) + ConquerorPlayer.BaseDamageMult, 2), 
+                MathF.Round((modPlayer.Stacks * ConquerorPlayer.BonusDmgPerStack) + (modPlayer.Stacks * ConquerorPlayer.BonusWhipDmgPerStack) + ConquerorPlayer.BaseDamageMult, 2));
         }
         public override bool PreDraw(SpriteBatch spriteBatch, int buffIndex, ref BuffDrawParams drawParams)
         {
+            var modPlayer = Main.LocalPlayer.GetModPlayer<ConquerorPlayer>();
             // You can use this hook to make something special happen when the buff icon is drawn (such as reposition it, pick a different texture, etc.).
 
             // We draw our special texture here with a specific animation.
@@ -54,7 +69,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
             // Use our animation spritesheet.
             Texture2D ourTexture = animatedTexture.Value;
             // Choose the frame to display, here based on constants and the game's tick count.
-            Rectangle ourSourceRectangle = animatedTexture.Frame(verticalFrames: FrameCount, frameY: (int)Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().ConquerorStacks - 1);
+            Rectangle ourSourceRectangle = animatedTexture.Frame(verticalFrames: FrameCount, frameY: modPlayer.Stacks);
 
             // Other stuff you can do in this hook
             /*
@@ -90,10 +105,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 
         public override bool ReApply(Player player, int time, int buffIndex)
         {
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.ConquerorStacks < modPlayer.ConquerorMaxStacks)
+            var modPlayer = player.GetModPlayer<ConquerorPlayer>();
+            if (modPlayer.Stacks < ConquerorPlayer.MaxStacks)
             {
-                modPlayer.ConquerorStacks++;
+                modPlayer.Stacks++;
             }
 
             return false;
