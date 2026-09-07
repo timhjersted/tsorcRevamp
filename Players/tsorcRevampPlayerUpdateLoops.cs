@@ -115,12 +115,6 @@ namespace tsorcRevamp
 
         public int MaxMinionTurretMultiplier;
 
-        public float LethalTempoMeleeBaseAttackSpeedMult = 0.83f;
-        public int LethalTempoDuration = 3;
-        public float LethalTempoStacks = 0;
-        public int LethalTempoMaxStacks = 6;
-        public float LethalTempoBonusAttackSpeedPerStack = 0.07f;
-
         public float ConquerorSummonBaseDamageMult = 0.4f;
         public int ConquerorDuration = 3;
         public float ConquerorStacks = 0;
@@ -1435,16 +1429,9 @@ namespace tsorcRevamp
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                Player.GetAttackSpeed(DamageClass.Melee) *= LethalTempoMeleeBaseAttackSpeedMult + (LethalTempoStacks * LethalTempoBonusAttackSpeedPerStack);
-                Player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) /= LethalTempoMeleeBaseAttackSpeedMult + (LethalTempoStacks * LethalTempoBonusAttackSpeedPerStack); //neutralizing Lethal Tempo attack speed changes for whips
-                
                 Player.GetDamage(DamageClass.Summon) *= ConquerorSummonBaseDamageMult + (ConquerorStacks * ConquerorBonusDmgPerStack);
                 Player.GetDamage(DamageClass.MagicSummonHybrid) /= ConquerorSummonBaseDamageMult + (ConquerorStacks * ConquerorBonusDmgPerStack); //neutralizing Conqueror damage changes
                 Player.GetDamage(DamageClass.MagicSummonHybrid) *= 1f + ConquerorStacks * ConquerorBonusDmgPerStack / 4.5f; //adding small benefit for usage of Conqueror
-                if (ConquerorStacks == ConquerorMaxStacks)
-                {
-                    SummonTagDuration += FullConquerorBonusTagDuration;
-                }
             }
 
             // Tier-aware mana regen penalty.

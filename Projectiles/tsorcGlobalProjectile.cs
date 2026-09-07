@@ -30,6 +30,7 @@ using MiakodaCrescent = tsorcRevamp.Projectiles.Pets.MiakodaCrescent;
 using MiakodaNew = tsorcRevamp.Projectiles.Pets.MiakodaNew;
 using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.LegacyCode;
+using tsorcRevamp.Systems.LethalTempo;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -78,7 +79,6 @@ namespace tsorcRevamp.Projectiles
         public override bool InstancePerEntity => true;
         public static float WhipVolume = 0.4f;
         public static float WhipPitch = 0.3f;
-        public bool AppliedLethalTempo = false;
         public bool AppliedConqueror = false;
         public bool ModdedWhip = false;
         public bool ChargedWhip = false;
@@ -649,25 +649,6 @@ namespace tsorcRevamp.Projectiles
                     target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff3>(), 4 * 60);
                 }
             }
-
-            #region Lethal Tempo
-            if ((projectile.DamageType == DamageClass.Melee || projectile.DamageType == DamageClass.MeleeNoSpeed) && modPlayer.BearerOfTheCurse && !AppliedLethalTempo)
-            {
-                if (modPlayer.LethalTempoStacks < modPlayer.LethalTempoMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.002f }, player.Center);
-                }
-                else if (modPlayer.LethalTempoStacks == modPlayer.LethalTempoMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.003f }, player.Center);
-                }
-                player.AddBuff(ModContent.BuffType<LethalTempo>(), player.GetModPlayer<tsorcRevampPlayer>().LethalTempoDuration * 60);
-                if (projectile.type != ModContent.ProjectileType<FetidExhaustProjectile>())
-                {
-                    AppliedLethalTempo = true;
-                }
-            }
-            #endregion
 
             #region Conqueror
             if (projectile.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[projectile.type] && modPlayer.BearerOfTheCurse && !AppliedConqueror)

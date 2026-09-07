@@ -20,6 +20,7 @@ using tsorcRevamp.LegacyCode;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.LethalTempo;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -534,20 +535,6 @@ namespace tsorcRevamp.Items
             {
                 target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff3>(), 5 * 60);
             }
-            #region Lethal Tempo
-            if ((item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                if (modPlayer.LethalTempoStacks < modPlayer.LethalTempoMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.002f }, player.Center);
-                }
-                else if (modPlayer.LethalTempoStacks == modPlayer.LethalTempoMaxStacks - 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.003f }, player.Center);
-                }
-                player.AddBuff(ModContent.BuffType<LethalTempo>(), player.GetModPlayer<tsorcRevampPlayer>().LethalTempoDuration * 60);
-            }
-            #endregion
             #region Conqueror
             if (item.DamageType == DamageClass.SummonMeleeSpeed && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {

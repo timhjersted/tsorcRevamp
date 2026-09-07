@@ -31,6 +31,13 @@ Mods: {
 			// DashEffect: Double-tap a direction to dash
 		}
 
+		/* LethalTempoExplanation:
+			'''
+			[c/ff8400:Lethal Tempo: Melee base attack speed is reduced to {0}% multiplicatively.]
+			[c/ff8400:Hitting enemies with melee attacks will grant stacks of Lethal Tempo,]
+			[c/ff8400:these increase your attack speed temporarily and fall off after a few seconds, if not refreshed.]
+			[c/ff8400:Each stack grants {1}% multiplicative attack speed, up to a total of {2}% at the maximum of {3} stacks.]
+			''' */
 		/* ArcaneSorceryExplanation:
 			'''
 			[c/ea00ea:Arcane Sorcery: Maximum mana is increased by {0}%, ]
@@ -4472,13 +4479,6 @@ Mods: {
 					[c/ea00ea:mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time.]
 					[c/ea00ea:Mana Potions still work and resting at a Bonfire will restore mana, drinking the Cerulean Flask also cures Mana Sickness.]
 					''' */
-				Melee:
-					'''
-					[c/ff8400:近战攻速减少至 {0}%]
-					[c/ff8400:攻击敌人会增加致命节拍堆叠层数]
-					[c/ff8400:堆叠层数增加你的近战攻速，如果一段时间没有刷新则层数会减少]
-					[c/ff8400:每层增加 {1}% 近战攻速，最高到 {3} 层获得 {2}% 加成]
-					'''
 				Summon:
 					'''
 					[c/6efaff:召唤伤害减少至 {0}%，用鞭子攻击敌人会增加一层征服者堆叠（暴击时增加两层）]
@@ -9956,6 +9956,7 @@ Mods: {
 			LethalTempo: {
 				DisplayName: 致命节拍
 				Description: 提高近战攻速
+				// Description0: Your melee speed is multiplied by {0}%
 			}
 
 			Conqueror: {

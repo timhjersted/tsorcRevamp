@@ -1885,7 +1885,7 @@ namespace tsorcRevamp
             {
                 if (target.Center.Distance(Main.MouseWorld) < chosenTarget.Center.Distance(Main.MouseWorld))
                 {
-                    chosenTarget = target; //so it actually ports you to the npc nearest to your cursor, not any npc that is in the cursors range
+                    chosenTarget = target; //so it actually ports you to the npc nearest to your cursor, not any random npc that is in the cursors range
                 }
             }
 

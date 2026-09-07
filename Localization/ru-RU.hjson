@@ -31,6 +31,13 @@ Mods: {
 			// DashEffect: Double-tap a direction to dash
 		}
 
+		/* LethalTempoExplanation:
+			'''
+			[c/ff8400:Lethal Tempo: Melee base attack speed is reduced to {0}% multiplicatively.]
+			[c/ff8400:Hitting enemies with melee attacks will grant stacks of Lethal Tempo,]
+			[c/ff8400:these increase your attack speed temporarily and fall off after a few seconds, if not refreshed.]
+			[c/ff8400:Each stack grants {1}% multiplicative attack speed, up to a total of {2}% at the maximum of {3} stacks.]
+			''' */
 		/* ArcaneSorceryExplanation:
 			'''
 			[c/ea00ea:Arcane Sorcery: Maximum mana is increased by {0}%, ]
@@ -4431,13 +4438,6 @@ Mods: {
 					[c/ea00ea:mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time.]
 					[c/ea00ea:Mana Potions still work and resting at a Bonfire will restore mana, drinking the Cerulean Flask also cures Mana Sickness.]
 					''' */
-				Melee:
-					'''
-					[c/ff8400:Базовая скорость атаки в ближнем бою снижена до {0}%.]
-					[c/ff8400:Нанося удары по врагам в ближнем бою, вы получаете стаки смертоносного темпа,]
-					[c/ff8400:которые временно увеличивают скорость вашей атаки и спадают через несколько секунд, если их не обновить.]
-					[c/ff8400:Каждый стак увеличивает скорость атаки на {1}%, максимум до {2}% при {3} стаках.]
-					'''
 				Summon:
 					'''
 					[c/6efaff:Базовый урон от призыва снижен до {0}%, но удары хлыстом по врагам дают очки Завоевателя (2 за критический удар),]
@@ -9919,6 +9919,7 @@ Mods: {
 			LethalTempo: {
 				DisplayName: Смертельный темп
 				Description: Ваша скорость в ближнем бою увеличена
+				// Description0: Your melee speed is multiplied by {0}%
 			}
 
 			Conqueror: {
