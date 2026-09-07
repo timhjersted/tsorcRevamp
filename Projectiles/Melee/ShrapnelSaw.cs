@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee;
+using tsorcRevamp.Systems.LethalTempo;
 
 namespace tsorcRevamp.Projectiles.Melee
 {
@@ -16,44 +18,68 @@ namespace tsorcRevamp.Projectiles.Melee
             Projectile.hostile = false;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
-            Projectile.DamageType = DamageClass.Magic;
+            Projectile.DamageType = DamageClass.Melee;
             Projectile.light = 1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.usesIDStaticNPCImmunity = true;
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
-        Player owner
+        Player player
         {
             get
             {
                 return Main.player[Projectile.owner];
             }
         }
+        private float LtTimer;
 
         public override void AI()
         {
+            Projectile.idStaticNPCHitCooldown = (int)(Shrapnel.BaseHitCooldown / Main.player[Projectile.owner].GetTotalAttackSpeed(DamageClass.Melee));
+            
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
+                var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                float staminaCost = (0.1f * modPlayer.WeaponStaminaMult(player.HeldItem)) / player.GetWeaponAttackSpeed(player.HeldItem);
+
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= staminaCost;
+
+                staminaPlayer.staminaRegenDelayTimer = 2;
+            }
+            if (player.HasBuff(ModContent.BuffType<LethalTempo>()))
+            {
+                LtTimer--;
+                if (LtTimer <= 0)
+                {
+                    Projectile.GetGlobalProjectile<LethalTempoGlobalProjectile>().AppliedLethalTempo = false;
+                    LtTimer = Projectile.idStaticNPCHitCooldown;
+                }
+            }
+            
             Projectile.timeLeft = 2;
             Projectile.width = 60;
             Projectile.height = 60;
 
-            if (owner.whoAmI == Main.myPlayer)
+            if (player.whoAmI == Main.myPlayer)
             {
-                Projectile.rotation = UsefulFunctions.Aim(owner.Center, Main.MouseWorld, 1).ToRotation();
-                Projectile.direction = Main.MouseWorld.X > owner.Center.X ? 1 : -1;
+                Projectile.rotation = UsefulFunctions.Aim(player.Center, Main.MouseWorld, 1).ToRotation();
+                Projectile.direction = Main.MouseWorld.X > player.Center.X ? 1 : -1;
                 Vector2 rotDir = Projectile.rotation.ToRotationVector2();
-                Projectile.Center = owner.Center + rotDir * 64;
+                Projectile.Center = player.Center + rotDir * 64;
                 if (Projectile.direction == -1)
                 {
                     rotDir *= -1;
                 }
-                owner.itemRotation = rotDir.ToRotation();
-                owner.ChangeDir(Projectile.direction);
-                owner.itemTime = 2; // Set item time to 2 frames while we are used
-                owner.itemAnimation = 2; // Set item animation time to 2 frames while we are used
+                player.itemRotation = rotDir.ToRotation();
+                player.ChangeDir(Projectile.direction);
+                player.itemTime = 2; // Set item time to 2 frames while we are used
+                player.itemAnimation = 2; // Set item animation time to 2 frames while we are used
             }
 
 
-            if (!owner.channel || owner.noItems || owner.CCed)
+            if (!player.channel || player.noItems || player.CCed)
             {
                 Projectile.damage = 0;
                 Projectile.Kill();

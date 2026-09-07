@@ -38,6 +38,7 @@ namespace tsorcRevamp.Projectiles.Melee
             Projectile.aiStyle = ProjAIStyleID.Spear;
             Projectile.ownerHitCheck = true;
             Projectile.DamageType = DamageClass.Melee;
+            Projectile.usesOwnerMeleeHitCD = true;
         }
 
         public override bool PreAI()

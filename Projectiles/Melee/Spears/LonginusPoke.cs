@@ -8,20 +8,16 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
 {
     class LonginusPoke : ModdedSpearProjectile
     {
-        public override float HoldoutRangeMin => 160f;
+        public override float HoldoutRangeMin => 100f;
         public override float HoldoutRangeMax => 265f;
-        public override float HitboxSize => 1;
+        public override float HitboxSize => 1f;
         public override float Scale => 1.2f;
         public override int dustID => -2; // skip ModdedSpearProjectile default dust
 
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Projectile.width = 40;
-            Projectile.height = 40;
             Projectile.ownerHitCheck = false;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 10;
         }
 
         public override void CustomDust()

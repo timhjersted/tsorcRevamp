@@ -138,6 +138,28 @@ public class LethalTempoGlobalProjectile : GlobalProjectile
         ModContent.ProjectileType<BerserkerNightmareBall>(),
         ModContent.ProjectileType<SunderingLightBall>()
     };
+
+    public List<int> TimedProjectiles = new List<int>()
+    {
+        ProjectileID.Terragrim,
+        ProjectileID.Arkhalis,
+        ProjectileID.PiercingStarlight
+    };
+    public int Timer;
+    public override bool PreAI(Projectile projectile)
+    {
+        if (TimedProjectiles.Contains(projectile.type))
+        {
+            Timer--;
+            if (Timer <= 0)
+            {
+                AppliedLethalTempo = false;
+                Timer = 20;
+            }
+        }
+        return base.PreAI(projectile);
+    }
+
     public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
     {
         Player player = Main.player[projectile.owner];

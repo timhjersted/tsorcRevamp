@@ -9,6 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 {
     public class Shrapnel : ModItem
     {
+        public const int BaseHitCooldown = 15;
         public override void SetDefaults()
         {
             Item.damage = 160;

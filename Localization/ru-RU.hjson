@@ -6873,6 +6873,14 @@ Mods: {
 					Удары копьём по врагам ускоряют перезарядку
 					Перезарядка 18 секунд
 					'''
+				/* Tooltip0:
+					'''
+					Inherits Tridents water effect and pierces {0} armor penetration
+					Right-click to catalyze the spear with magic at a cost of {1} mana and increase its abilities({$CommonItemTooltip.SecondDuration@3})
+					Increases weapon speed, allows projectiles to pierce and inflicts frostburn during the buff 
+					Hitting enemies with the spear speeds up the cooldown reset
+					{$CommonItemTooltip.Cooldown@2}
+					''' */
 			}
 
 			GaeBolg: {

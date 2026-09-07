@@ -322,7 +322,7 @@ namespace tsorcRevamp.Projectiles
             {
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
+                
                 if (projectile.type == ProjectileID.Flames)
                 {
                     if (projectile.ai[0] == 1)

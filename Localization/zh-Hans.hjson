@@ -6905,6 +6905,14 @@ Mods: {
 					提升攻击速度，射弹获得穿透效果，攻击施加减益
 					18 秒冷却，命中敌人加速冷却
 					'''
+				/* Tooltip0:
+					'''
+					Inherits Tridents water effect and pierces {0} armor penetration
+					Right-click to catalyze the spear with magic at a cost of {1} mana and increase its abilities({$CommonItemTooltip.SecondDuration@3})
+					Increases weapon speed, allows projectiles to pierce and inflicts frostburn during the buff 
+					Hitting enemies with the spear speeds up the cooldown reset
+					{$CommonItemTooltip.Cooldown@2}
+					''' */
 			}
 
 			GaeBolg: {

@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Melee
 
         float laserWidth = 30;
 
-        bool initialized;
+        public bool Initialized;
         float timeFactor;
         List<Vector2> lastPositions;
         List<float> lastRotations;
@@ -85,10 +85,10 @@ namespace tsorcRevamp.Projectiles.Melee
                 Projectile.timeLeft++;
             }
 
-            if (!initialized)
+            if (!Initialized)
             {
                 SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, Projectile.Center);
-                initialized = true;
+                Initialized = true;
                 lastPositions = new List<Vector2>();
                 lastRotations = new List<float>();
             }

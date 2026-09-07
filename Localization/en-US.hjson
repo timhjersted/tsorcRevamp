@@ -894,8 +894,8 @@ Mods: {
 				ManaRegenerationBand: Increases mana regen by 30 and decreases mana regen delay by 100%
 				WellFedItemsBotC: Increases stamina regen by {0}% for the [c/6d8827:Bearer of the Curse]
 				CeruleanManaRegenerationPotion: Increases Cerulean Flask restoration time by {0}%
-				CelestialMagnetBotC: Mana Star pickups only restore {0}% of the [c/6d8827:Bearer of the Curse's] maximum mana
-				MagicCuffsBotC: Only restores {0}% of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse] as mana
+				CelestialMagnetBotC: Mana Star pickups restore {0}% of the [c/6d8827:Bearer of the Curse's] maximum mana
+				MagicCuffsBotC: Restores {0}% of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse] as mana
 				CoinGun:
 					'''
 					[c/ffbf00:Can also use soul coins as ammo]
@@ -6898,13 +6898,14 @@ Mods: {
 
 			PilgrimSpontoon: {
 				DisplayName: Pilgrim's Spontoon
-				Tooltip:
+				Tooltip: ""
+				Tooltip0:
 					'''
 					Inherits Tridents water effect and pierces {0} armor penetration
-					Right-click to catalyze the spear with magic at a cost of 60 mana and increase its abilities for a short time
+					Right-click to catalyze the spear with magic at a cost of {1} mana and increase its abilities({$CommonItemTooltip.SecondDuration@3})
 					Increases weapon speed, allows projectiles to pierce and inflicts frostburn during the buff 
 					Hitting enemies with the spear speeds up the cooldown reset
-					18 seconds cooldown
+					{$CommonItemTooltip.Cooldown@2}
 					'''
 			}
 

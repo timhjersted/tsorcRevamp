@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -23,6 +24,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int UseTime => 27;
         public override int Rarity => ItemRarityID.Green;
         public const int ArmorPen = 10;
+        public const int BaseManaCost = 60;
+        public const int Cooldown = 18;
+        public const int Duration = 7;
         public override int Value => PriceByRarity.fromItem(Item);
         public override SoundStyle UseSoundID => SoundID.Item71;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ArmorPen);
@@ -45,7 +49,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             if (player.altFunctionUse == 2) 
             {
-                if (player.statMana < 60 || player.HasBuff(ModContent.BuffType<PilgrimSpontoonCooldown>()))
+                if (player.statMana < (int)(player.manaCost * BaseManaCost) || player.HasBuff(ModContent.BuffType<PilgrimSpontoonCooldown>()))
                 {
                     return false; 
                 }
@@ -58,9 +62,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         {
             if (player.altFunctionUse == 2) 
             {
-                player.statMana -= 80; 
-                player.AddBuff(ModContent.BuffType<PilgrimSpontoonBuff>(), 380);
-                player.AddBuff(ModContent.BuffType<PilgrimSpontoonCooldown>(), 1080); 
+                player.statMana -= (int)(player.manaCost * BaseManaCost); 
+                player.AddBuff(ModContent.BuffType<PilgrimSpontoonBuff>(), Duration * 60);
+                player.AddBuff(ModContent.BuffType<PilgrimSpontoonCooldown>(), Cooldown * 60); 
 
                 SoundEngine.PlaySound(SoundID.Item25, player.position);
 
@@ -68,6 +72,17 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             }
             return base.UseItem(player);
         }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {            
+            Player player = Main.LocalPlayer;
+            int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+            if (ttindex != -1)
+            {
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Tooltip", Language.GetTextValue(Tooltip.Key + "0", ArmorPen, (int)(BaseManaCost * player.manaCost), Cooldown, Duration)));
+            }
+        }
+
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             if (player.altFunctionUse != 2)

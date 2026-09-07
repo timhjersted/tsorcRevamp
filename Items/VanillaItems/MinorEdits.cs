@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -73,7 +75,8 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 if (player.manaMagnet)
                 {
-                    grabRange += 100;
+                    grabRange += Item.manaGrabRange;
+                    player.GetModPlayer<MinorEditsPlayer>().PullItem_Pickup(item, 12f, 5);
                 }
             }
         }
@@ -217,6 +220,22 @@ namespace tsorcRevamp.Items.VanillaItems
                 .AddTile(TileID.DemonAltar);
             ShimmerArrow.Register();
 
+        }
+    }
+
+    public class MinorEditsPlayer : ModPlayer
+    {		
+        public void PullItem_Pickup(Item itemToPickUp, float speed, int acc)
+        {
+            Vector2 vector = new Vector2(itemToPickUp.position.X + (float)(itemToPickUp.width / 2), itemToPickUp.position.Y + (float)(itemToPickUp.height / 2));
+            float num = Player.Center.X - vector.X;
+            float num2 = Player.Center.Y - vector.Y;
+            float num3 = (float)Math.Sqrt(num * num + num2 * num2);
+            num3 = speed / num3;
+            num *= num3;
+            num2 *= num3;
+            itemToPickUp.velocity.X = (itemToPickUp.velocity.X * (float)(acc - 1) + num) / (float)acc;
+            itemToPickUp.velocity.Y = (itemToPickUp.velocity.Y * (float)(acc - 1) + num2) / (float)acc;
         }
     }
 }
