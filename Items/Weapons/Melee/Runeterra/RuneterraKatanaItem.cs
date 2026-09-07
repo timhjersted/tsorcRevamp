@@ -3,6 +3,7 @@ using Humanizer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -73,6 +74,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         }
         public override void HoldItem(Player player)
         {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             AttackSpeedScalingDuration = (int)((4f * (1f - ((player.GetTotalAttackSpeed(DamageClass.Melee) - 1f) / 1.67f))) * 60f); //4 seconds reduced by bonus attack speed
             if (AttackSpeedScalingDuration <= 80)
             {
@@ -88,15 +90,29 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             }
             if (Tier > 1)
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                List<NPC> validTargets = new List<NPC>();
+                modPlayer.SweepingBladeTarget = Main.npc.Last();
+                bool plasma = Tier == 2;
+                foreach (var other in Main.ActiveNPCs)
                 {
-                    NPC other = Main.npc[i];
-
-                    if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, player.GetModPlayer<tsorcRevampPlayer>().MouseHitboxSize)) 
-                        & other.Distance(player.Center) <= 400 && !other.HasBuff(DashCooldownBuffID) && Collision.CanHitLine(player.position, player.width, player.height, other.position, other.width, other.height))
+                    bool targetable = !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, player.GetModPlayer<tsorcRevampPlayer>().MouseHitboxSize)) 
+                        && other.Distance(player.Center) <= 400 && !other.HasBuff(DashCooldownBuffID) && Collision.CanHitLine(player.position, player.width, player.height, other.position, other.width, other.height);
+                    if (targetable)
                     {
-                        UsefulFunctions.DustRing(other.Center, other.width / 2, DashDustID, 5, 2);
+                        validTargets.Add(other);
                     }
+                }
+                foreach (NPC target in validTargets)
+                {
+                    if (target.Center.Distance(Main.MouseWorld) < modPlayer.SweepingBladeTarget.Center.Distance(Main.MouseWorld))
+                    {
+                        modPlayer.SweepingBladeTarget = target; //so it actually dashes to the npc nearest to your cursor, not any random npc that is in the cursors range
+                    }
+                }
+
+                if (modPlayer.SweepingBladeTarget != Main.npc.Last())
+                {
+                    UsefulFunctions.DustRing(modPlayer.SweepingBladeTarget.Center, modPlayer.SweepingBladeTarget.width / 2, DashDustID, 5, 2);
                 }
             }
         }
@@ -165,7 +181,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "Thrust") with { Volume = SwingSoundVolume });
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile.NewProjectile(source, position, velocity / totalMeleeAttackSpeed, ThrustProjectileID, damage, ItemKnockback * 2, player.whoAmI);
+                        Projectile.NewProjectile(source, position, velocity, ThrustProjectileID, damage, ItemKnockback * 2, player.whoAmI);
                     }
                 }
                 else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
@@ -177,7 +193,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "TornadoCast") with { Volume = SwingSoundVolume });
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity / totalMeleeAttackSpeed, ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, ItemKnockback * 2, player.whoAmI, Tier);
+                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, ItemKnockback * 2, player.whoAmI, Tier);
                     }
                 }
             }
@@ -199,7 +215,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     }
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile.NewProjectile(source, position, velocity / totalMeleeAttackSpeed, ThrustProjectileID, damage, knockback * 2, player.whoAmI);
+                        Projectile.NewProjectile(source, position, velocity, ThrustProjectileID, damage, knockback * 2, player.whoAmI);
                     }
                 }
                 else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2 && player.HasBuff(DashBuffID))
@@ -211,7 +227,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "Spin") with { Volume = 1f });
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile.NewProjectile(source, position, velocity / totalMeleeAttackSpeed, SpinProjectileID, damage, knockback * 2, player.whoAmI);
+                        Projectile.NewProjectile(source, position, velocity, SpinProjectileID, damage, knockback * 2, player.whoAmI);
                     }
                 }
                 else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && !player.HasBuff(DashBuffID))
@@ -223,7 +239,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "TornadoCast") with { Volume = 1f });
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity / totalMeleeAttackSpeed, ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, knockback * 2, player.whoAmI, Tier);
+                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, knockback * 2, player.whoAmI, Tier);
                     }
                 }
                 else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && player.HasBuff(DashBuffID))

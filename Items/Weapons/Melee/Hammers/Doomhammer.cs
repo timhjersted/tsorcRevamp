@@ -75,7 +75,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
                         position,
                         velocity,
                         ModContent.ProjectileType<Projectiles.Bolt1Revamped>(),
-                        (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), 
+                        damage, 
                         0.1f, 
                         player.whoAmI,
                         0,
@@ -95,7 +95,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             else 
             {
                 float[] angles = { -10f, 0f, 10f };
-                int projDamage = (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage) * 0.66f); 
+                int projDamage = (int)(damage * 0.66f); 
 
                 foreach (float angle in angles)
                 {
@@ -119,27 +119,27 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             if (player.altFunctionUse == 2) 
             {
                 Projectile.NewProjectile(
-                    Item.GetSource_FromThis(),
+                    player.GetSource_ItemUse(Item),
                     target.Center,
                     Vector2.Zero,
                     ModContent.ProjectileType<Projectiles.Bolt2Bolt>(),
-                    (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage) * 0.33f), 
-                    player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack),
+                    (int)(hit.SourceDamage * 3f),
+                    hit.Knockback,
                     Main.myPlayer,
-                    player.GetTotalCritChance(DamageClass.Melee) + Item.crit
+                    1
                 );
             }
             else 
             {
                 Projectile.NewProjectile(
-                    Item.GetSource_FromThis(),
+                    player.GetSource_ItemUse(Item),
                     target.Center,
                     Vector2.Zero,
                     ProjectileID.Flames,
-                    (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), 
-                    player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack),
+                    hit.SourceDamage, 
+                    hit.Knockback,
                     Main.myPlayer,
-                    player.GetTotalCritChance(DamageClass.Melee) + Item.crit
+                    1
                 );
             }
         }

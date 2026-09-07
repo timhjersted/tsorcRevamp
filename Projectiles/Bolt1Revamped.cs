@@ -34,6 +34,10 @@ namespace tsorcRevamp.Projectiles
             if (!initialized)
             {
                 initialized = true;
+                if (Projectile.ai[2] == 1)
+                {
+                    Projectile.DamageType = DamageClass.Melee;
+                }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit53 with { Volume = 0.5f, PitchVariance = 0.3f }, Projectile.Center);
                 Projectile.rotation = Projectile.velocity.ToRotation();
                 Projectile.velocity.Normalize();

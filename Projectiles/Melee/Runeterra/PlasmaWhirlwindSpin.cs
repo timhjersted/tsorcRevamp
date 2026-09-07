@@ -32,10 +32,6 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.width = 328;
             Projectile.height = 320;
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-            Player player = Main.player[Projectile.owner];
-        }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.SourceDamage *= 4;
@@ -67,6 +63,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
             if (!AppliedOnSpawn)
             {
+                Projectile.velocity /= player.GetTotalAttackSpeed(DamageClass.Melee);
                 Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
                 //Projectile.Resize((int)(Projectile.width / PlasmaWhirlwind.BaseScale * Projectile.scale), (int)(Projectile.height / PlasmaWhirlwind.BaseScale * Projectile.scale));
                 AppliedOnSpawn  = true;

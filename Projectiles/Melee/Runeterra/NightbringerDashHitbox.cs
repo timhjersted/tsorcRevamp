@@ -13,6 +13,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
     class NightbringerDashHitbox : ModProjectile
     {
         public bool Hit = false;
+        public bool Initialized = false;
         public override void SetDefaults()
         {
             Projectile.width = Player.defaultWidth;
@@ -32,7 +33,12 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.position = player.Center;
+            if (!Initialized)
+            {
+                Main.npc[(int)Projectile.ai[0]].AddBuff(ModContent.BuffType<NightbringerDashCooldown>(), PlasmaWhirlwind.DashCooldown * 60);
+                Initialized = true;
+            }
+            Projectile.Center = player.Center;
             if (player.HasBuff(ModContent.BuffType<NightbringerDash>()))
             {
                 Projectile.timeLeft = 2;
@@ -42,7 +48,6 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire3, 3 * 60);
-            target.AddBuff(ModContent.BuffType<NightbringerDashCooldown>(), PlasmaWhirlwind.DashCooldown * 60);
             if (!Hit)
             {
                 Hit = true;

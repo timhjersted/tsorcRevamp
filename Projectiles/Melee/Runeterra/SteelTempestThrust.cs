@@ -6,91 +6,45 @@ using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Projectiles.Melee.Shortswords;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
-    public class SteelTempestThrust : ModProjectile
+    public class SteelTempestThrust : ModdedShortswordProj
     {
-        public bool AppliedOnSpawn = false;
-        public bool Hit = false;
-        public const int FadeInDuration = 7;
-        public const int FadeOutDuration = 4;
+        public override float HitboxWidth => 20f;
+        public override float HitboxLength => 12f;
 
-        public const int TotalDuration = 32;
-
-        public float CollisionWidth = 20f;
-
-        public int Timer
+        public override int SpriteWidth => 110;
+        public override int SpriteHeight => 104;
+        public override int TotalDuration => 32;
+        public override float SetDefaultScale()
         {
-            get => (int)Projectile.ai[0];
-            set => Projectile.ai[0] = value;
+            return SteelTempest.BaseScale;
         }
+
+        public override void Initialization(Player player)
+        {
+            Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
+            Projectile.Resize((int)(Projectile.width / SetDefaultScale() * Projectile.scale), (int)(Projectile.height / SetDefaultScale() * Projectile.scale));
+            CollisionWidth *= Projectile.scale;
+            Projectile.velocity /= player.GetTotalAttackSpeed(DamageClass.Melee);
+        }
+        
+        public bool Hit = false;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 6;
         }
-
-        public override void SetDefaults()
-        {
-            Projectile.Size = new Vector2(18);
-            Projectile.aiStyle = -1;
-            Projectile.friendly = true;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
-            Projectile.scale = SteelTempest.BaseScale;
-            Projectile.DamageType = DamageClass.Melee;
-            Projectile.ownerHitCheck = true;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 60;
-            Projectile.extraUpdates = 1;
-            Projectile.timeLeft = 360;
-            Projectile.hide = true;
-            Projectile.width = 110;
-            Projectile.height = 104;
-        }
-
-        public override void OnSpawn(IEntitySource source)
-        {
-            Player player = Main.player[Projectile.owner];
-        }
-
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.SourceDamage *= 2;
         }
-        public override void AI()
+
+        public override void SetVisualOffsets()
         {
-            Player player = Main.player[Projectile.owner];
-
-            if (!AppliedOnSpawn)
-            {
-                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
-                Projectile.Resize((int)(Projectile.width / SteelTempest.BaseScale * Projectile.scale), (int)(Projectile.height / SteelTempest.BaseScale * Projectile.scale));
-                CollisionWidth *= Projectile.scale;
-                AppliedOnSpawn = true;
-            }
-
-            Timer += 1;
-            if (Timer >= TotalDuration)
-            {
-                Projectile.Kill();
-                return;
-            }
-            else
-            {
-                player.heldProj = Projectile.whoAmI;
-            }
-            Projectile.Opacity = Utils.GetLerpValue(0f, FadeInDuration, Timer, clamped: true) * Utils.GetLerpValue(TotalDuration, TotalDuration - FadeOutDuration, Timer, clamped: true);
-
-            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, reverseRotation: false, addGfxOffY: false);
-            Projectile.Center = playerCenter + Projectile.velocity * (Timer - 1f);
-
-            Projectile.spriteDirection = (Vector2.Dot(Projectile.velocity, Vector2.UnitX) >= 0f).ToDirectionInt();
-
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - MathHelper.PiOver4 * Projectile.spriteDirection;
-
-            const int HalfSpriteWidth = 158 / 2;
-            const int HalfSpriteHeight = 148 / 2;
+            int HalfSpriteWidth = 158 / 2;
+            int HalfSpriteHeight = 148 / 2;
 
             int HalfProjWidth = Projectile.width / 2;
             int HalfProjHeight = Projectile.height / 2;
@@ -98,35 +52,12 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             DrawOriginOffsetX = 0;
             DrawOffsetX = -(HalfSpriteWidth - HalfProjWidth);
             DrawOriginOffsetY = -(HalfSpriteHeight - HalfProjHeight);
-
+            
             Projectile.frame = (int)((Timer / 28f) * 6f);
             if (Timer > 28f)
             {
                 Projectile.frame = 0;
             }
-        }
-        public override bool ShouldUpdatePosition()
-        {
-            return false;
-        }
-
-        public override void CutTiles()
-        {
-            Player player = Main.player[Projectile.owner];
-            DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
-            DelegateMethods.tileCutIgnore = Terraria.ID.TileID.Sets.TileCutIgnore.None;
-            Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 12f * player.GetAdjustedItemScale(player.HeldItem);
-            Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
-        }
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            Player player = Main.player[Projectile.owner];
-            Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity * 12f * player.GetAdjustedItemScale(player.HeldItem);
-            float collisionPoint = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

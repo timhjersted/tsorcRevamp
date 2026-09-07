@@ -84,6 +84,7 @@ namespace tsorcRevamp.Projectiles
         public bool ChargedWhip = false;
         public bool ModdedFlail = false;
         public bool KrakenEmpowered = false;
+        public bool Initialized;
 
         public int WeaponStaminaSourceItemType = -1;
         public bool WeaponStaminaSourceIsSummon;
@@ -322,6 +323,15 @@ namespace tsorcRevamp.Projectiles
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
+                if (projectile.type == ProjectileID.Flames)
+                {
+                    if (projectile.ai[0] == 1)
+                    {
+                        projectile.DamageType = DamageClass.Melee;
+                        projectile.ai[0] = 0;
+                    }
+                }
+                
                 if (projectile.type == ProjectileID.PurificationPowder)
                 {
                     projectile.usesIDStaticNPCImmunity = true;

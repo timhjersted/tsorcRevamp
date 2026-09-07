@@ -33,11 +33,6 @@ namespace tsorcRevamp.Projectiles.Melee.Axes
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.idStaticNPCHitCooldown = 30;
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-            Projectile.CritChance = (int)Projectile.ai[0];
-            Projectile.ai[0] = 0;
-        }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
             behindProjectiles.Add(index);

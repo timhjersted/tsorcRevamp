@@ -32,9 +32,17 @@ namespace tsorcRevamp.Projectiles
                 target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 120);
             }
         }
-
+        bool Initialized;
         public override void AI()
         {
+            if (!Initialized)
+            {
+                Initialized = true;
+                if (Projectile.ai[0] != 0)
+                {
+                    Projectile.DamageType = DamageClass.Melee;
+                }
+            }
             if (Projectile.ai[0] == 0)
             {
                 Projectile.velocity.X *= 0.001f;

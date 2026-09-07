@@ -31,12 +31,6 @@ namespace tsorcRevamp.Projectiles.Melee.Hammers
             Projectile.tileCollide = true; 
         }
 
-        public override void OnSpawn(IEntitySource source)
-        {
-            Projectile.CritChance = (int)Projectile.ai[0];
-            Projectile.ai[0] = 0;
-        }
-
         public override void AI()
         {
             for (int num88 = 0; num88 < 2; num88++)
@@ -108,8 +102,7 @@ namespace tsorcRevamp.Projectiles.Melee.Hammers
                     ModContent.ProjectileType<AncientFireAxeFireballBurst>(),
                     Projectile.damage / 2,
                     Projectile.knockBack,
-                    Main.myPlayer,
-                    Projectile.CritChance
+                    Main.myPlayer
                 );
             }
         }

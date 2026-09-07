@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 {
     public class FetidExhaust : ModItem
     {
-        public const float BaseHitCooldown = 25f;
+        public const float BaseHitCooldown = 20f;
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("Expel a close-range blast of searing noxious gas");

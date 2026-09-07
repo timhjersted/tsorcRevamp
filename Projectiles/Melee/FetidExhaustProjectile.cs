@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Systems.LethalTempo;
 
 namespace tsorcRevamp.Projectiles.Melee
 {
@@ -36,9 +37,10 @@ namespace tsorcRevamp.Projectiles.Melee
             Projectile.timeLeft = 70;
             Projectile.width = 10;
             Projectile.height = 250;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 8;
+            Projectile.usesIDStaticNPCImmunity = true;
         }
+
+        private float LtTimer;
 
         float laserWidth = 30;
 
@@ -50,6 +52,26 @@ namespace tsorcRevamp.Projectiles.Melee
         {
             Player player = Main.player[Projectile.owner];
             Projectile.idStaticNPCHitCooldown = (int)(FetidExhaust.BaseHitCooldown / Main.player[Projectile.owner].GetTotalAttackSpeed(DamageClass.Melee));
+            
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
+                var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                float staminaCost = (0.3f * modPlayer.WeaponStaminaMult(player.HeldItem)) / player.GetWeaponAttackSpeed(player.HeldItem);
+
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= staminaCost;
+
+                staminaPlayer.staminaRegenDelayTimer = 2;
+            }
+            if (player.HasBuff(ModContent.BuffType<LethalTempo>()))
+            {
+                LtTimer--;
+                if (LtTimer <= 0)
+                {
+                    Projectile.GetGlobalProjectile<LethalTempoGlobalProjectile>().AppliedLethalTempo = false;
+                    LtTimer = Projectile.idStaticNPCHitCooldown;
+                }
+            }
             Vector2 rrp = player.RotatedRelativePoint(player.MountedCenter, true);
             UpdatePlayerVisuals(player);
 

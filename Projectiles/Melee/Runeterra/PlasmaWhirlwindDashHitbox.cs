@@ -12,6 +12,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
     class PlasmaWhirlwindDashHitbox : ModProjectile
     {
         public bool Hit = false;
+        public bool Initialized = false;
         public override void SetDefaults()
         {
             Projectile.width = Player.defaultWidth;
@@ -31,7 +32,12 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.position = player.Center;
+            if (!Initialized)
+            {
+                Main.npc[(int)Projectile.ai[0]].AddBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>(), PlasmaWhirlwind.DashCooldown * 60);
+                Initialized = true;
+            }
+            Projectile.Center = player.Center;
             if (player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>()))
             {
                 Projectile.timeLeft = 2;
@@ -40,7 +46,6 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>(), PlasmaWhirlwind.DashCooldown * 60);
             if (!Hit)
             {
                 Hit = true;

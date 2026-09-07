@@ -1836,17 +1836,17 @@ namespace tsorcRevamp
             Player player = Main.player[Main.myPlayer];
             if (Shunpo)
             {
-                DoShunpo(player);
+                DoShunpo();
             }
             
             if (Kraken)
             {
-                DoKrakenCast(player);
+                DoKrakenCast();
             }
             
             if (!Player.HasBuff(ModContent.BuffType<WitchkingScreamCooldown>()) && Witch)
             {
-                DoWitchkingScream(player);
+                DoWitchkingScream();
             }
         }
 
@@ -1865,7 +1865,7 @@ namespace tsorcRevamp
         }
 
 
-        public void DoShunpo(Player player)
+        public void DoShunpo()
         {
             List<NPC> validTargets = new List<NPC>();
             NPC chosenTarget = Main.npc.Last();
@@ -1873,9 +1873,11 @@ namespace tsorcRevamp
             {
                 Vector2 MouseHitboxSize = new Vector2(100, 100);
                 
-                bool lineOfSight = Collision.CanHitLine(player.position, player.width, player.height, Main.MouseWorld, player.width, player.height);
+                bool lineOfSight = Collision.CanHitLine(Player.position, Player.width, Player.height, Main.MouseWorld, Player.width, Player.height);
 
-                if (lineOfSight && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) && !player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
+                if (lineOfSight && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly 
+                    && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) 
+                    && !Player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
                 {
                     validTargets.Add(other);
                 }
@@ -1891,13 +1893,13 @@ namespace tsorcRevamp
 
             if (chosenTarget != Main.npc.Last())
             {
-                ShunpoVelocity = player.DirectionTo(chosenTarget.Center) * Main.MouseWorld.Distance(player.Center);
-                player.Center += ShunpoVelocity;
-                player.RefreshMovementAbilities();
-                player.AddBuff(ModContent.BuffType<ShunpoBlink>(), (int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
-                player.immune = true;
-                player.SetImmuneTimeForAllTypes((int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
-                player.AddBuff(ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoBlink.Cooldown );
+                ShunpoVelocity = Player.DirectionTo(chosenTarget.Center) * Main.MouseWorld.Distance(Player.Center);
+                Player.Center += ShunpoVelocity;
+                Player.RefreshMovementAbilities();
+                Player.AddBuff(ModContent.BuffType<ShunpoBlink>(), (int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
+                Player.immune = true;
+                Player.SetImmuneTimeForAllTypes((int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
+                Player.AddBuff(ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoBlink.Cooldown );
                 if (Main.rand.NextBool(2))
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo1") with { Volume = 1f });
@@ -1909,17 +1911,16 @@ namespace tsorcRevamp
                 //ShunpoTimer = 3;
             }
         }
-        public void DoKrakenCast(Player player)
-        {
-            if (Main.myPlayer == player.whoAmI)
-            {
-                Projectile Tsunami = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<KrakenTsunami>(), (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseDmg), player.GetTotalKnockback(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseKnockback), player.whoAmI);
-            }
+        public void DoKrakenCast()
+        {                
+            Projectile Tsunami = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero,
+                ModContent.ProjectileType<KrakenTsunami>(), (int)Player.GetTotalDamage(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseDmg),
+                Player.GetTotalKnockback(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseKnockback), Player.whoAmI);
         }
 
-        public void DoWitchkingScream(Player player)
+        public void DoWitchkingScream()
         {
-                        player.AddBuff(ModContent.BuffType<WitchkingScreamCooldown>(), 20 * 60);
+                        Player.AddBuff(ModContent.BuffType<WitchkingScreamCooldown>(), 20 * 60);
                         
                         if (Main.myPlayer == Player.whoAmI)
                         {
@@ -1950,13 +1951,13 @@ namespace tsorcRevamp
                             for (int i = 0; i < 30; i++) 
                             {
                                 Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
-                                int dustIndex = Dust.NewDust(player.Center, 0, 0, 114, dustSpeed.X, dustSpeed.Y, 0, default(Color), 1.9f);
+                                int dustIndex = Dust.NewDust(Player.Center, 0, 0, 114, dustSpeed.X, dustSpeed.Y, 0, default(Color), 1.9f);
                                 Main.dust[dustIndex].noGravity = true; 
                             }
                             for (int i = 0; i < 30; i++) 
                             {
                                 Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
-                                int dustIndex = Dust.NewDust(player.Center, 0, 0, 130, dustSpeed.X, dustSpeed.Y, 0, default(Color), 1.9f);
+                                int dustIndex = Dust.NewDust(Player.Center, 0, 0, 130, dustSpeed.X, dustSpeed.Y, 0, default(Color), 1.9f);
                                 Main.dust[dustIndex].noGravity = true; 
                             }
 
@@ -1984,10 +1985,86 @@ namespace tsorcRevamp
                         }
         }
 
+        public NPC SweepingBladeTarget = Main.npc.Last();
+        public void DoSweepingBlade()
+        {
+            /*List<NPC> validTargets = new List<NPC>();
+            SweepingBladeTarget = Main.npc.Last();
+            bool plasma = true;
+            foreach (var other in Main.ActiveNPCs)
+            {
+                bool hasPlasma = Player.HeldItem.type == ModContent.ItemType<PlasmaWhirlwind>() &&
+                                 !Player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>());
+                bool hasNightbringer = Player.HeldItem.type == ModContent.ItemType<Nightbringer>() &&
+                                       !Player.HasBuff(ModContent.BuffType<NightbringerDash>());
+                bool targetable = !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly 
+                    && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) 
+                    && other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>())
+                    && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>());
+                if (targetable && hasPlasma)
+                {
+                    validTargets.Add(other);
+                    plasma = true;
+                } //cooldown is added by On-Hit in the dash projectile hitbox
+                if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && targetable  && hasNightbringer)
+                {
+                    validTargets.Add(other);
+                    plasma = false;
+                } //cooldown is added by On-Hit in the dash projectile hitbox
+
+                foreach (NPC target in validTargets)
+                {
+                    if (target.Center.Distance(Main.MouseWorld) < SweepingBladeTarget.Center.Distance(Main.MouseWorld))
+                    {
+                        SweepingBladeTarget = target; //so it actually dashes to the npc nearest to your cursor, not any random npc that is in the cursors range
+                    }
+                }
+            }*/
+
+            if (SweepingBladeTarget != Main.npc.Last())
+            {
+                int heldItem = Player.HeldItem.type;
+                if (heldItem == ModContent.ItemType<PlasmaWhirlwind>())
+                {
+                    Player.immune = true;
+                    Player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
+                    SweepingBladeVelocity = Player.DirectionTo(SweepingBladeTarget.Center) * 17;
+                    Player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Dash") with { Volume = 1f });
+                    Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Player.Center, Vector2.Zero, 
+                        ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), Player.HeldItem.damage, 0, Player.whoAmI, SweepingBladeTarget.whoAmI);
+                }
+                else if (heldItem == ModContent.ItemType<Nightbringer>())
+                {
+                    Player.immune = true;
+                    SweepingBladeVelocity = Player.DirectionTo(SweepingBladeTarget.Center) * 17;
+                    Player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
+                    Player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/Dash") with { Volume = 1f });                    
+                    Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Player.Center, Vector2.Zero, 
+                        ModContent.ProjectileType<NightbringerDashHitbox>(), Player.HeldItem.damage, 0, Player.whoAmI, SweepingBladeTarget.whoAmI);
+
+                }
+            }
+        }
+
+        public void DoFirewall()
+        {
+            bool hasNightbringer = Player.HeldItem.type == ModContent.ItemType<Nightbringer>() &&
+                                   !Player.HasBuff(ModContent.BuffType<NightbringerFirewallCooldown>());
+            if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && hasNightbringer)
+            {
+                Vector2 unitVectorTowardsMouse = Player.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * Player.direction);
+                Projectile Firewall = Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), Player.Center, unitVectorTowardsMouse * 5f,
+                    ModContent.ProjectileType<NightbringerFirewall>(), Player.HeldItem.damage, 0, Main.myPlayer);
+
+                Player.AddBuff(ModContent.BuffType<NightbringerFirewallCooldown>(), Nightbringer.WindwallCooldown * 60);
+            }
+        }
+
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
             Player player = Main.player[Main.myPlayer];
-            Vector2 unitVectorTowardsMouse = player.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * player.direction);
 
             if (tsorcRevamp.PrintPosition.JustPressed && ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
             {
@@ -2010,9 +2087,9 @@ namespace tsorcRevamp
                 NPC other = Main.npc[i];
                 Vector2 MouseHitboxSize = new Vector2(100, 100);
 
-                if (tsorcRevamp.Shunpo.JustReleased)
+                if (tsorcRevamp.Shunpo.JustReleased && Shunpo)
                 {
-                    DoShunpo(player);
+                    DoShunpo();
                 }
             }
             if (tsorcRevamp.reflectionShiftKey.JustPressed)
@@ -2047,54 +2124,21 @@ namespace tsorcRevamp
             }
             if (tsorcRevamp.WitchScream.JustReleased && !Player.HasBuff(ModContent.BuffType<WitchkingScreamCooldown>()) && Witch)
                 {
-                    DoWitchkingScream(player);
+                    DoWitchkingScream();
                 }
 
             if (tsorcRevamp.KrakensCast.JustReleased && Kraken)
             {
-                DoKrakenCast(player);
+                DoKrakenCast();
             }
 
             if (tsorcRevamp.specialAbility.JustReleased)
             {
                 #region Sweeping Blade & Firewall
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    NPC other = Main.npc[i];
+                
+                DoSweepingBlade();
 
-                    if (other.active && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<PlasmaWhirlwind>() && !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>()))
-                    {
-                        player.immune = true;
-                        player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
-                        SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;
-                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Dash") with { Volume = 1f });
-                        if (Main.myPlayer == player.whoAmI)
-                        {
-                            Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), player.HeldItem.damage, 0, player.whoAmI);
-                        }
-                    } //cooldown is added by On-Hit in the dash projectile hitbox
-                    if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && other.active && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !player.HasBuff(ModContent.BuffType<NightbringerDash>()))
-                    {
-                        player.immune = true;
-                        SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;
-                        player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
-                        player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/Dash") with { Volume = 1f });
-                        if (Main.myPlayer == player.whoAmI)
-                        {
-                            Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightbringerDashHitbox>(), player.HeldItem.damage, 0, player.whoAmI);
-                        }
-                    } //cooldown is added by On-Hit in the dash projectile hitbox
-                }
-                if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerFirewallCooldown>()))
-                {
-                    if (Main.myPlayer == player.whoAmI)
-                    {
-                        Projectile Firewall = Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<NightbringerFirewall>(), player.HeldItem.damage / 3, 0, Main.myPlayer);
-                    }
-                    Player.AddBuff(ModContent.BuffType<NightbringerFirewallCooldown>(), 30 * 60);
-                }
+                DoFirewall();
                 #endregion
 
                 #region Scouts Boost & Nuclear Mushrooms

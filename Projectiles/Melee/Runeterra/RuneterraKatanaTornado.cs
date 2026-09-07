@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = baseTimeLeft;
-            Projectile.DamageType = DamageClass.MeleeNoSpeed;
+            Projectile.DamageType = DamageClass.Melee;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = (Projectile.velocity == Vector2.Zero) ? 6 : 5;
         }
@@ -47,15 +47,13 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         {
             modifiers.SourceDamage *= 2;
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-        }
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
             
             if (!AppliedOnSpawn)
             {
+                Projectile.velocity /= player.GetTotalAttackSpeed(DamageClass.Melee);
                 float baseScale = 1f;
                 Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
                 switch (Projectile.ai[0])

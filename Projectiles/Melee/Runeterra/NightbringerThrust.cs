@@ -6,100 +6,37 @@ using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Projectiles.Melee.Shortswords;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
-    public class NightbringerThrust : ModProjectile
+    public class NightbringerThrust : ModdedShortswordProj
     {
-        public bool AppliedOnSpawn = false;
-        public bool Hit = false;
-        public const int FadeInDuration = 7;
-        public const int FadeOutDuration = 4;
+        public override float HitboxWidth => 20f;
+        public override float HitboxLength => 21.5f;
 
-        public const int TotalDuration = 32;
+        public override int SpriteWidth => 186;
+        public override int SpriteHeight => 220;
+        public override int TotalDuration => 32;
+        public override float SetDefaultScale()
+        {
+            return Nightbringer.BaseScale;
+        }
+        public override void Initialization(Player player)
+        {
+            Projectile.scale = player.GetAdjustedItemScale(player.HeldItem) * 1.15f;
+            Projectile.Resize((int)(Projectile.width / SetDefaultScale() * Projectile.scale), (int)(Projectile.height / SetDefaultScale() * Projectile.scale));
+            CollisionWidth *= Projectile.scale;
+            Projectile.velocity /= player.GetTotalAttackSpeed(DamageClass.Melee);
+        }
 
-        public float CollisionWidth = 20f;
-
-        public int Timer
+        public override void SetVisualOffsets()
         {
-            get => (int)Projectile.ai[0];
-            set => Projectile.ai[0] = value;
-        }
-        public override void SetStaticDefaults()
-        {
-            Main.projFrames[Projectile.type] = 11;
-        }
-        public override void SetDefaults()
-        {
-            Projectile.Size = new Vector2(18);
-            Projectile.width = 186;
-            Projectile.height = 220;
-            Projectile.aiStyle = -1;
-            Projectile.friendly = true;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
-            Projectile.scale = Nightbringer.BaseScale;
-            Projectile.usesOwnerMeleeHitCD = true;
-            Projectile.DamageType = DamageClass.Melee;
-            Projectile.ownerHitCheck = true;
-            Projectile.extraUpdates = 1;
-            Projectile.timeLeft = 360;
-            Projectile.hide = true;
-        }
-        public override void OnSpawn(IEntitySource source)
-        {
+            base.SetVisualOffsets();
             Player player = Main.player[Projectile.owner];
-        }
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            modifiers.SourceDamage *= 2;
-        }
-        public override void AI()
-        {
-            Player player = Main.player[Projectile.owner];
-
-            if (!AppliedOnSpawn)
-            {
-                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem) * 1.15f;
-                Projectile.Resize((int)(Projectile.width / Nightbringer.BaseScale * Projectile.scale), (int)(Projectile.height / Nightbringer.BaseScale * Projectile.scale));
-                CollisionWidth *= Projectile.scale;
-                AppliedOnSpawn = true;
-            }
-
-            Timer += 1;
-            if (Timer >= TotalDuration)
-            {
-                Projectile.Kill();
-                return;
-            }
-            else
-            {
-                player.heldProj = Projectile.whoAmI;
-            }
-
-            Projectile.Opacity = Utils.GetLerpValue(0f, FadeInDuration, Timer, clamped: true) * Utils.GetLerpValue(TotalDuration, TotalDuration - FadeOutDuration, Timer, clamped: true);
-
             Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, reverseRotation: false, addGfxOffY: false);
             Projectile.Center = playerCenter + Projectile.velocity * (Timer + 10f);
-
-            Projectile.spriteDirection = (Vector2.Dot(Projectile.velocity, Vector2.UnitX) >= 0f).ToDirectionInt();
-
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - MathHelper.PiOver4 * Projectile.spriteDirection;
-
-            const int HalfSpriteWidth = 186 / 2;//needs adjustments for sprite
-            const int HalfSpriteHeight = 220 / 2;
-
-            int HalfProjWidth = Projectile.width / 2;
-            int HalfProjHeight = Projectile.height / 2;
-
-            DrawOriginOffsetX = 0;
-            DrawOffsetX = -(HalfSpriteWidth - HalfProjWidth);
-            DrawOriginOffsetY = -(HalfSpriteHeight - HalfProjHeight);
-
-            DrawOriginOffsetX = 0;
-            DrawOffsetX = -(HalfSpriteWidth - HalfProjWidth);
-            DrawOriginOffsetY = -(HalfSpriteHeight - HalfProjHeight);
-
+            
             Projectile.frame = (int)((Timer / 28f) * 11f);
             if (Timer > 28f)
             {
@@ -107,28 +44,14 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             }
             Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 1.4f);
         }
-        public override bool ShouldUpdatePosition()
+        public bool Hit = false;
+        public override void SetStaticDefaults()
         {
-            return false;
+            Main.projFrames[Projectile.type] = 11;
         }
-
-        public override void CutTiles()
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            Player player = Main.player[Projectile.owner];
-            DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
-            DelegateMethods.tileCutIgnore = Terraria.ID.TileID.Sets.TileCutIgnore.None;
-            Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 21.5f * player.GetAdjustedItemScale(player.HeldItem);
-            Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
-        }
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            Player player = Main.player[Projectile.owner];
-            Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity * 21.5f * player.GetAdjustedItemScale(player.HeldItem);
-            float collisionPoint = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
+            modifiers.SourceDamage *= 2;
         }
         public static Texture2D texture;
         public static Texture2D glowTexture;

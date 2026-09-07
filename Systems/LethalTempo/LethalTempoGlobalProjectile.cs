@@ -5,9 +5,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Melee;
+using tsorcRevamp.Projectiles.Melee.Axes;
 using tsorcRevamp.Projectiles.Melee.Boomerangs;
 using tsorcRevamp.Projectiles.Melee.Broadswords;
 using tsorcRevamp.Projectiles.Melee.Flails;
+using tsorcRevamp.Projectiles.Melee.Hammers;
 using tsorcRevamp.Projectiles.Melee.Shortswords;
 using tsorcRevamp.Projectiles.Melee.Spears;
 
@@ -110,11 +112,13 @@ public class LethalTempoGlobalProjectile : GlobalProjectile
         ModContent.ProjectileType<LonginusHeld>(),
         ModContent.ProjectileType<LonginusThrown>(),
         81, //idk why but Longinus uses id 81 somehow
+        ModContent.ProjectileType<Bolt1Revamped>(), //Doomhammer
+        ModContent.ProjectileType<DoomhammerFireball>(), //^^^^^^^^^^
+        ModContent.ProjectileType<AncientFireAxeFireballBurst>() //^^
         
     };
     public List<int> Exceptions = new List<int>()
     {
-        ModContent.ProjectileType<FetidExhaustProjectile>()
     };
 
     public static List<int> Flails = new List<int>()

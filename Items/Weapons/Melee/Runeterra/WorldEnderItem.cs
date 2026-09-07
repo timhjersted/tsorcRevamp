@@ -29,11 +29,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 44;
             Item.useTime = 44;
-            Item.damage = 860;
+            Item.damage = 750;
             Item.knockBack = 20f;
             Item.rare = ModContent.RarityType<OrangeRed>();
             Item.value = Item.buyPrice(1, 0, 0, 0);
-            Item.DamageType = DamageClass.MeleeNoSpeed;
+            Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             Item.shootSpeed = 100f;
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
@@ -59,9 +59,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             if (player.altFunctionUse == 2)
             {
-                return 0.75f;
+                return 0.75f / player.GetTotalAttackSpeed(DamageClass.Melee);
             }
-            return base.UseSpeedMultiplier(player) * player.GetTotalAttackSpeed(DamageClass.Melee);
+            return base.UseSpeedMultiplier(player);
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
