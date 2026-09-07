@@ -78,7 +78,7 @@ namespace tsorcRevamp.Projectiles.Magic
             
             
             var modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();
-            float staminaCost = (15 * modPlayer.WeaponStaminaMult) / owner.GetWeaponAttackSpeed(owner.HeldItem);
+            float staminaCost = (15 * modPlayer.WeaponStaminaMult(owner.HeldItem)) / owner.GetWeaponAttackSpeed(owner.HeldItem);
 
             if (IsAtMaxCharge)
             {

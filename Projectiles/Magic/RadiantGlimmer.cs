@@ -90,7 +90,7 @@ namespace tsorcRevamp.Projectiles.Magic
             {
                 var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
                 var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-                float staminaCost = (10f * modPlayer.WeaponStaminaMult) / player.GetWeaponAttackSpeed(player.HeldItem);
+                float staminaCost = (10f * modPlayer.WeaponStaminaMult(player.HeldItem)) / player.GetWeaponAttackSpeed(player.HeldItem);
 
                 if (!player.HasBuff(ModContent.BuffType<ManaBurn>()) && Main.GameUpdateCount % 20 == 0)
                 {

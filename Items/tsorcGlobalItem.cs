@@ -576,7 +576,7 @@ namespace tsorcRevamp.Items
                 && (tsorcRevamp.WeaponClassifiedTools == null || !tsorcRevamp.WeaponClassifiedTools.Contains(item.type)))
             {
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -=
-                    tsorcRevampStaminaPlayer.ToolCombatHitSurcharge * modPlayer.WeaponStaminaMult;
+                    tsorcRevampStaminaPlayer.ToolCombatHitSurcharge * modPlayer.WeaponStaminaMult(item);
             }
         }
 

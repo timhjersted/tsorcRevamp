@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-            float staminaCost = (30 * modPlayer.WeaponStaminaMult) / player.GetWeaponAttackSpeed(player.HeldItem);
+            float staminaCost = (30 * modPlayer.WeaponStaminaMult(Item)) / player.GetWeaponAttackSpeed(player.HeldItem);
             int manaCost = player.GetManaCost(player.HeldItem);
             if (player.statMana <= manaCost)
             {

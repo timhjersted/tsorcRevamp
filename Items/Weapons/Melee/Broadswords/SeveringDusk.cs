@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             {
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
                 tsorcRevampStaminaPlayer playerStamina = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-                float staminaCost = (BaseStaminaCost * modPlayer.WeaponStaminaMult) / player.GetWeaponAttackSpeed(player.HeldItem);
+                float staminaCost = (BaseStaminaCost * modPlayer.WeaponStaminaMult(Item)) / player.GetWeaponAttackSpeed(player.HeldItem);
                 if (playerStamina.staminaResourceCurrent > staminaCost && modPlayer.SeveringDuskDashTime < 1)
                 {
                     playerStamina.staminaResourceCurrent -= staminaCost;
@@ -80,7 +80,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 Player player = Main.LocalPlayer;
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
                 tsorcRevampStaminaPlayer playerStamina = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-                float staminaCost = (BaseStaminaCost * modPlayer.WeaponStaminaMult) / player.GetWeaponAttackSpeed(player.HeldItem);
+                float staminaCost = (BaseStaminaCost * modPlayer.WeaponStaminaMult(Item)) / player.GetWeaponAttackSpeed(player.HeldItem);
                 tooltips.Insert(ttindex1, new TooltipLine(Mod, "Tooltip0", Language.GetTextValue(Tooltip.Key + "0", (int)staminaCost)));
             }
         }

@@ -117,7 +117,7 @@ public class LethalTempoGlobalProjectile : GlobalProjectile
         ModContent.ProjectileType<FetidExhaustProjectile>()
     };
 
-    public List<int> Flails = new List<int>()
+    public static List<int> Flails = new List<int>()
     {
         ProjectileID.Mace,
         ProjectileID.FlamingMace,
@@ -131,6 +131,7 @@ public class LethalTempoGlobalProjectile : GlobalProjectile
         ProjectileID.FlowerPow,
         ProjectileID.Flairon,
         ModContent.ProjectileType<HeavensTearBall>(),
+        ModContent.ProjectileType<BerserkerNightmareBall>(),
         ModContent.ProjectileType<SunderingLightBall>()
     };
     public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)

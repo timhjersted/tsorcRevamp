@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles
             Player player = Main.player[Projectile.owner];
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             int manaCost = player.GetManaCost(player.HeldItem);
-            float staminaCost = (30 * modPlayer.WeaponStaminaMult) / player.GetWeaponAttackSpeed(player.HeldItem);
+            float staminaCost = (30 * modPlayer.WeaponStaminaMult(player.HeldItem)) / player.GetWeaponAttackSpeed(player.HeldItem);
             Vector2 rrp = player.RotatedRelativePoint(player.MountedCenter, true);
             float trueChargeTime = (MaxCharge * (player.HeldItem.useTime / 5f));
             charge++;

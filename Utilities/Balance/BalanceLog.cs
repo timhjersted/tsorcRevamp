@@ -557,7 +557,7 @@ namespace tsorcRevamp.Utilities.Balance
                     : "Classic";
                 snapshot.usesWeaponStamina = souls.UsesWeaponStamina;
                 snapshot.playerDamagePerSecondEma = player.GetModPlayer<tsorcRevampStaminaPlayer>().PlayerDamagePerSecondEma;
-                snapshot.weaponStaminaMult = souls.WeaponStaminaMult;
+                snapshot.weaponStaminaMult = souls.WeaponStaminaMult(player.HeldItem);
                 snapshot.tired = souls.Tired;
 
                 var stamina = player.GetModPlayer<tsorcRevampStaminaPlayer>();

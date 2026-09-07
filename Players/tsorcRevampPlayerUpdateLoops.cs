@@ -34,6 +34,7 @@ using tsorcRevamp.Projectiles.Summon.YoungHunter;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.LethalTempo;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -384,17 +385,19 @@ namespace tsorcRevamp
             => Math.Max(2, (int)Math.Round(Player.statLifeMax2 * percentPerSecond * 2f / 100f));
 
         public bool UsesWeaponStamina => BearerOfTheCurse || Unkindled;
-        public float WeaponStaminaMult
+        public float WeaponStaminaMult(Item item)
         {
-            get
+            bool experimentalStaminaValues = ModContent.GetInstance<tsorcRevampConfig>().NewSoulsModeStaminaSystem;
+            float classStaminaMult = BearerOfTheCurse
+                ? (experimentalStaminaValues ? 1.5f : 1.15f)
+                : (Unkindled ? (experimentalStaminaValues ? 1f : 0.85f) : 0f);
+            float weaponStaminaMult = 1f;
+            if (FlailItems.Contains(item.type))
             {
-                bool experimentalStaminaValues = ModContent.GetInstance<tsorcRevampConfig>().NewSoulsModeStaminaSystem;
-                float classStaminaMult = BearerOfTheCurse
-                    ? (experimentalStaminaValues ? 1.5f : 1.15f)
-                    : (Unkindled ? (experimentalStaminaValues ? 1f : 0.85f) : 0f);
-
-                return classStaminaMult * TiredStaminaMult;
+                weaponStaminaMult = 0.5f;
             }
+
+            return classStaminaMult * TiredStaminaMult * weaponStaminaMult;
         }
 
         // Tired debuff: +25% stamina cost on everything that spends it. Applied here so every existing

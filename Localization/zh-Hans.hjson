@@ -33,10 +33,10 @@ Mods: {
 
 		/* LethalTempoExplanation:
 			'''
-			[c/ff8400:Lethal Tempo: Melee base attack speed is reduced to {0}% multiplicatively.]
+			[c/ff8400:Lethal Tempo: Melee base attack speed is multiplied by {0}x]
 			[c/ff8400:Hitting enemies with melee attacks will grant stacks of Lethal Tempo,]
 			[c/ff8400:these increase your attack speed temporarily and fall off after a few seconds, if not refreshed.]
-			[c/ff8400:Each stack grants {1}% multiplicative attack speed, up to a total of {2}% at the maximum of {3} stacks.]
+			[c/ff8400:Each stack grants {1}% multiplicative attack speed, up to a total of {2}x at the maximum of {3} stacks.]
 			''' */
 		/* ArcaneSorceryExplanation:
 			'''
@@ -9956,7 +9956,7 @@ Mods: {
 			LethalTempo: {
 				DisplayName: 致命节拍
 				Description: 提高近战攻速
-				// Description0: Your melee speed is multiplied by {0}%
+				// Description0: Your total melee speed is multiplied by {0}x
 			}
 
 			Conqueror: {

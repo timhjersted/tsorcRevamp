@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.Audio;
@@ -7,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Weapons.Melee.Flails;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Systems;
@@ -139,6 +141,24 @@ namespace tsorcRevamp
 
         }
 
+        public List<int> FlailItems = new List<int>()
+        {
+            ItemID.Mace,
+            ItemID.FlamingMace,
+            ItemID.BallOHurt,
+            ItemID.TheMeatball,
+            ItemID.BlueMoon,
+            ItemID.Sunfury,
+            ModContent.ItemType<Moonfury>(),
+            ItemID.DaoofPow,
+            ItemID.DripplerFlail,
+            ItemID.FlowerPow,
+            //ItemID.Flairon,
+            ModContent.ItemType<HeavensTear>(),
+            ModContent.ItemType<BerserkerNightmare>(),
+            ModContent.ItemType<SunderingLight>()
+        };
+
         int oldItemAnimation = 0;
         bool wasJustRolling = false;
         int blockVisuals; //Block the remaining itemAnimation visuals after a roll, to prevent visual jank
@@ -183,7 +203,7 @@ namespace tsorcRevamp
                 var arcanePlayer = Player.GetModPlayer<ArcaneSorceryPlayer>();
                 
                 
-                float mult = Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
+                float mult = Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult(Player.HeldItem);
                 int scaledUseAnimation = (int)(item.useAnimation / Player.GetAttackSpeed(item.DamageType));
 
                 bool startedAnimation = (Player.itemAnimation > oldItemAnimation && Player.itemAnimationMax > 0);

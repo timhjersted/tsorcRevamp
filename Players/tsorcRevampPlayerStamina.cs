@@ -196,7 +196,7 @@ namespace tsorcRevamp
                 return;
             }
 
-            float cost = damageDone * SummonDamageStaminaRate * Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
+            float cost = damageDone * SummonDamageStaminaRate * Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult(Player.HeldItem);
             staminaResourceCurrent = Math.Max(0f, staminaResourceCurrent - cost);
         }
 
@@ -269,7 +269,7 @@ namespace tsorcRevamp
             float useTimeFactor = Math.Max(1, scaledUseAnimation) / 60f;
 
             return OutputStaminaPerSecond * relativePower * archetypeMultiplier
-                * Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult * useTimeFactor;
+                * Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult(item) * useTimeFactor;
         }
 
         private static float GetBootstrapDamage(Item item) => Math.Max(1, item.damage);
@@ -630,7 +630,7 @@ namespace tsorcRevamp
                 if (Player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
                 {
                     // Apply the active Souls Mode class cost (legacy or experimental config) to held-weapon drains.
-                    float mult = Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
+                    float mult = Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult(Player.HeldItem);
                     //if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //find boomerangs, if so, cut regen by 2/3
                     //{
                     //    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
@@ -851,7 +851,7 @@ namespace tsorcRevamp
             public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
             {
                 if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina) return;
-                float staminaMult = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
+                float staminaMult = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult(item);
                 if (!ModContent.GetInstance<tsorcRevampConfig>().ShowStaminaTooltip) return;
                 if (item.DamageType == DamageClass.Summon && !UsesOutputBasedWeaponCost(item)) return;
                 if (item.damage <= 0 && item.type != ItemID.CoinGun) return;

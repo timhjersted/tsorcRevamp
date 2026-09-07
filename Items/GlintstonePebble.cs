@@ -120,7 +120,7 @@ namespace tsorcRevamp.Items
                 }
                 if (player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina)
                 {
-                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 20 * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult;
+                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 20 * player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult(player.HeldItem);
                 }
 
                 if (player.whoAmI == Main.myPlayer)
