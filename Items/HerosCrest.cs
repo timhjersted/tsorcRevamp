@@ -72,7 +72,14 @@ public class HerosCrest : ModItem
             {
                 Player.GetDamage(DamageClass.Generic) += Stats / 100f;
                 Player.GetCritChance(DamageClass.Generic) += Stats;
-                Player.luck += Stats * 10f / 100f;
+            }
+        }
+
+        public override void ModifyLuck(ref float luck)
+        {
+            if (HerosCrest)
+            {
+                luck += Stats * 10f / 100f;
             }
         }
     }

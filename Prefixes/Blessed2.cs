@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Prefixes;
 
 public class Blessed2 : ModPrefix
 {
-    public const float Luck = 3f;
+    public const float Luck = 5f;
     
     public override PrefixCategory Category => PrefixCategory.Accessory;
 
@@ -24,7 +25,7 @@ public class Blessed2 : ModPrefix
 
     public override void ApplyAccessoryEffects(Player player)
     {
-        player.luck += Luck / 100f;
+        player.GetModPlayer<AccessoryPrefixEditsPlayer>().BlessedAccessories++;
     }
 
     public override IEnumerable<TooltipLine> GetTooltipLines(Item item)

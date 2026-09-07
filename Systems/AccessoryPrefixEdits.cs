@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Prefixes;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Systems;
@@ -89,7 +90,7 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
             if (item.prefix == PrefixID.Lucky) //default +4 crit chance
             {
                 self.GetCritChance(DamageClass.Generic) += LuckyCritChance;
-                self.luck += LuckyPercentLuck / 100f;
+                self.GetModPlayer<AccessoryPrefixEditsPlayer>().LuckyAccessories++;
             }
             if (item.prefix == PrefixID.Brisk) //default 1% movespeed
             {
@@ -287,5 +288,22 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
                 tooltips.Insert(ttindex, new TooltipLine(Mod, "ManaEfficiency", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Arcane", (int)((float)ArcaneManaGain * (1f + modPlayer.MaxManaAmplifier / 100f)), ArcaneManaCostReduction)));
             }
         }
+    }
+}
+
+public class AccessoryPrefixEditsPlayer : ModPlayer
+{
+    public int LuckyAccessories;
+    public int BlessedAccessories;
+    public override void ResetEffects()
+    {
+        LuckyAccessories = 0;
+        BlessedAccessories = 0;
+    }
+
+    public override void ModifyLuck(ref float luck)
+    {
+        luck += LuckyAccessories * AccessoryPrefixTooltipEdits.LuckyPercentLuck / 100f;
+        luck += BlessedAccessories * Blessed2.Luck / 100f;
     }
 }
