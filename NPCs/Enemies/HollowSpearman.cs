@@ -605,7 +605,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
 
-                if (NPC.direction == 1) //if enemy facing right
+                if (NPC.direction == 1 && !UsefulFunctions.IsMinionOrSentry(projectile)) //if enemy facing right
                 {
                     if (projectile.oldPosition.X < NPC.Center.X && projectile.aiStyle != 19) //if hit in the back
                     {
@@ -620,7 +620,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                     }
                 }
-                else //if enemy facing left
+                else if (!UsefulFunctions.IsMinionOrSentry(projectile)) //if enemy facing left
                 {
                     if (projectile.oldPosition.X > NPC.Center.X && projectile.aiStyle != 19) //if hit in the back
                     {

@@ -1133,7 +1133,7 @@ namespace tsorcRevamp
             for (int i = 0; i < Main.npc.Length && !dodgedThreat; i++)
             {
                 NPC npc = Main.npc[i];
-                dodgedThreat = npc.active && !npc.friendly && npc.damage > 0 && !npc.dontTakeDamage && paddedHitbox.Intersects(npc.Hitbox);
+                dodgedThreat = UsefulFunctions.IsHostileThreat(npc) && paddedHitbox.Intersects(npc.Hitbox);
             }
 
             for (int i = 0; i < Main.projectile.Length && !dodgedThreat; i++)

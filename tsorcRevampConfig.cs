@@ -123,6 +123,18 @@ namespace tsorcRevamp
             set => ModContent.GetInstance<tsorcRevampGameplayConfig>().NewSoulsModeStaminaSystem = value;
         }
 
+        public bool SummonerRework
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().SummonerRework;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().SummonerRework = value;
+        }
+
+        public bool RegainSystem
+        {
+            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().RegainSystem;
+            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().RegainSystem = value;
+        }
+
         public bool DebugMode
         {
             get => ModContent.GetInstance<tsorcRevampGameplayConfig>().DebugMode;
@@ -333,9 +345,6 @@ namespace tsorcRevamp
         public bool ActiveShieldsRevamp { get; set; }
 
         [DefaultValue(false)]
-        public bool NewSoulsModeStaminaSystem { get; set; }
-
-        [DefaultValue(false)]
         public bool DebugMode { get; set; }
 
         [Header("$Mods.tsorcRevamp.Configs.tsorcRevampGameplayConfig.Headers.GameplayTweaks")]
@@ -356,6 +365,19 @@ namespace tsorcRevamp
 
         [DefaultValue(false)]
         public bool DisableModWingsFallControlDuringFlight { get; set; }
+
+        // Experimental options go LAST in this class. A tModLoader [Header] applies to its property and
+        // every property after it until the next [Header], so anything added below this line joins the
+        // Experimental section whether it belongs there or not.
+        [Header("$Mods.tsorcRevamp.Configs.tsorcRevampGameplayConfig.Headers.Experimental")]
+        [DefaultValue(false)]
+        public bool SummonerRework { get; set; }
+
+        [DefaultValue(true)]
+        public bool RegainSystem { get; set; }
+
+        [DefaultValue(false)]
+        public bool NewSoulsModeStaminaSystem { get; set; }
     }
 
     [Label("$Mods.tsorcRevamp.Configs.tsorcRevampVisualConfig.DisplayName")]

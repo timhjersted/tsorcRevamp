@@ -9,32 +9,29 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
         public override void SetStaticDefaults()
         {
             Main.buffNoSave[Type] = true;
-            Main.buffNoTimeDisplay[Type] = false; // Display the countdown timer!
+            Main.buffNoTimeDisplay[Type] = true; // Permanent like a vanilla minion - no countdown to show.
         }
 
         public override void Update(Player player, ref int buffIndex)
         {
             int minionType = ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherSpirit>();
-            int maxTimeLeft = 0;
+            bool minionAlive = false;
 
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile proj = Main.projectile[i];
                 if (proj.active && proj.owner == player.whoAmI && proj.type == minionType)
                 {
-                    if (proj.ModProjectile is Projectiles.Summon.Archer.ArcherSpirit spirit)
-                    {
-                        if (spirit.lifetime > maxTimeLeft)
-                        {
-                            maxTimeLeft = spirit.lifetime;
-                        }
-                    }
+                    minionAlive = true;
+                    break;
                 }
             }
 
-            if (maxTimeLeft > 0)
+            if (minionAlive)
             {
-                player.buffTime[buffIndex] = maxTimeLeft;
+                // Matches CheckActive's own Projectile.timeLeft refresh - the buff never actually
+                // counts down to 0 on its own while a spirit is alive to keep re-arming it.
+                player.buffTime[buffIndex] = 2;
             }
             else
             {

@@ -967,6 +967,11 @@ namespace tsorcRevamp
             Player.statLife -= chip;
             CombatText.NewText(Player.Hitbox, ChipDamageColor, chip);
 
+            // Chip eats into any standing regain pool, so blocking bleeds recovery away rather than
+            // preserving it. It must NOT open a pool or count as a hit for the consecutive-hit penalty —
+            // blocking is never supposed to generate regain, only to spend it.
+            Player.GetModPlayer<Systems.Regain.RegainPlayer>().ReducePool(chip);
+
             if (Player.statLife <= 0)
             {
                 // Reuse the incoming hit's death reason so the death message names the real attacker.
@@ -1640,9 +1645,10 @@ namespace tsorcRevamp
                     continue;
                 }
                 // Elite/mini-boss types in BodyBlockableNPCs are always stopped; otherwise stop only
-                // knockback-able, non-boss, contact-damaging enemies (true bosses push through).
+                // knockback-able, non-boss threats (true bosses push through). Do not check npc.damage:
+                // puppet enemies keep contact damage at zero and attack through weapon hitboxes.
                 bool forced = tsorcRevamp.BodyBlockableNPCs != null && tsorcRevamp.BodyBlockableNPCs.Contains(npc.type);
-                if (!forced && (npc.boss || npc.damage <= 0 || npc.knockBackResist <= 0f))
+                if (!forced && (!UsefulFunctions.IsHostileThreat(npc) || npc.boss || npc.knockBackResist <= 0f))
                 {
                     continue;
                 }

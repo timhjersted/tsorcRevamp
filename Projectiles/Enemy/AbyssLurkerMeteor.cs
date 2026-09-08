@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
@@ -11,10 +10,12 @@ namespace tsorcRevamp.Projectiles.Enemy
     class AbyssLurkerMeteor : ModProjectile
     {
         const int Lifetime = 6 * 60;
+        const int TelegraphTicks = 90;
         const int OrbDelay = 2 * 60;
         const int PreExplosionDustTime = 2 * 60;
         const int ExplosionHitboxSize = 120;
         bool expandedForExplosion;
+        bool meteorRevealed;
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/AbyssMeteor";
 
@@ -35,22 +36,39 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.light = 0.9f;
             Projectile.timeLeft = Lifetime;
             Projectile.rotation = MathHelper.Pi;
-        }
-
-        public override void OnSpawn(IEntitySource source)
-        {
-            if (Main.netMode != NetmodeID.Server)
-            {
-                SpawnMeteorSpawnDust();
-            }
+            Projectile.alpha = 255;
         }
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool? CanDamage() => expandedForExplosion ? null : false;
+        // Damages on contact once it has actually appeared, not only when it detonates. It is a burning
+        // orb sitting in the world - standing inside it should hurt. Still harmless during the telegraph,
+        // when nothing is visibly there yet.
+        public override bool? CanDamage() => meteorRevealed ? null : false;
 
         public override void AI()
         {
+            // Telegraph: gathering embers mark where the orb is about to appear, so a player is never
+            // caught out by one materialising on top of them. Nothing is drawn and nothing can be hit
+            // until it resolves.
+            if (!meteorRevealed)
+            {
+                EmitTelegraphDust();
+
+                if (Projectile.timeLeft <= Lifetime - TelegraphTicks)
+                {
+                    meteorRevealed = true;
+                    Projectile.alpha = 0;
+
+                    if (!Main.dedServ)
+                    {
+                        SpawnMeteorSpawnDust();
+                    }
+                }
+
+                return;
+            }
+
             Animate();
             EmitIdleDust();
 
@@ -72,6 +90,27 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Projectile.frameCounter = 0;
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+            }
+        }
+
+        /// <summary>
+        /// Embers gathering at the spot the orb will occupy, rising upward. Abyssal pink/violet rather
+        /// than the Fire Lurker's orange, matching the rest of this projectile's palette.
+        /// </summary>
+        void EmitTelegraphDust()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2 offset = Main.rand.NextVector2Circular(18f, 8f);
+                Dust fire = Dust.NewDustPerfect(Projectile.Center + offset, DustID.PinkTorch,
+                    new Vector2(Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(-2.4f, -1f)), 80,
+                    new Color(215, 90, 255), Main.rand.NextFloat(1.1f, 1.5f));
+                fire.noGravity = true;
             }
         }
 

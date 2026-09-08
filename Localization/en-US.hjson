@@ -148,6 +148,8 @@ Mods: {
 			NoKnockback: Grants immunity to knockback
 			ObsidianShield: "{$CommonItemTooltip.NoKnockback} and fire blocks"
 			ForBotCOnly: " for the [c/6d8827:Bearer of the Curse]"
+			SpiritAshSummonCost: "[c/6efaff:Costs {0} mana to summon]"
+			SpiritAshResummonCooldown: Still recovering ({0}s)
 			UniqueBarrier: Does not stack with other barrier or shield spells
 			NonConsumable: Item is non-consumable
 			UnusableDuringBoss: Can not be used while a boss is alive!
@@ -877,7 +879,7 @@ Mods: {
 				IronOre: Perhaps you can use these for making special arrows..?
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:A symbol resembling a large pyramid with the moon to its right side is carved into it]"
-				RemixLargeAmethyst: "[c/ffbf00:A symbol a dark prison in a sparkling crystal cave is carved into it]"
+				RemixLargeAmethyst: "[c/ffbf00:A symbol of a dark prison in a sparkling crystal cave is carved into it]"
 				LargeSapphire: "[c/ffbf00:A symbol resembling a snow-capped mountain near a fortress is carved into it]"
 				RemixLargeSapphire:
 					'''
@@ -4000,7 +4002,6 @@ Mods: {
 					'''
 					Summons a Lesser Vessel to fight for you
 					A floating soul-eye that spits homing skulls
-					Lasts 2.5 minutes
 					Damage scales with the number of Dark Souls held
 					'''
 			}
@@ -4466,19 +4467,17 @@ Mods: {
 				Tooltip:
 					'''
 					A talisman of the cycle. Left-click to cycle to the next tier:
-					[c/aaaaaa:Classic] → [c/6d8827:Unkindled] → [c/dd3333:Bearer of the Curse] → [c/aaaaaa:Classic]
 
-					[c/6d8827:Unkindled] (default): Estus and Cerulean flasks bound to
-					Quick Heal and Quick Mana. Upgrades drop from bosses.
+					[c/FFCC00:Unkindled] (default): Estus and Cerulean flasks bound to
+					Quick Heal and Quick Mana. Upgrades drop from bosses. 
 					Healing items work at half strength; mana regen reduced outside bonfires.
+					Weapons use stamina. Lost health can be briefly recovered by hiting enemies. Gain +1 accessory slot.
 
-					[c/dd3333:Bearer of the Curse]: All Unkindled features plus combat class
-					mechanics, an extra accessory slot, and {0}% more souls.
-					Weapons drain stamina, healing potions don't work, mana regen is
-					disabled outside bonfires, and dying costs {1}% max HP until your
-					soul is recovered.
+					[c/dd3333:Bearer of the Curse]: All Unkindled features plus combat class mechanics, and {0}% more souls.
+					Weapons drain more stamina but stamina regens faster. Healing potions don't work. Mana regen is
+					disabled outside bonfires, and dying costs {1}% max HP until your soul is recovered.
 
-					[c/aaaaaa:Classic]: No flasks. Vanilla Terraria healing and magic systems.
+					[c/aaaaaa:Classic]: No flasks. Vanilla Terraria healing, shield and magic systems.
 
 					Right-click to preview class-specific Bearer of the Curse mechanics.
 					'''
@@ -4487,8 +4486,8 @@ Mods: {
 				Unkindled: You rise as the Unkindled — your fire still smolders.
 				BearerOfTheCurse: You have taken up the burden — the Curse is yours to bear.
 				Classic: You let the flame fade. The curse is lifted.
-				State_Classic: "[c/aaaaaa:Currently:] Classic [c/aaaaaa:— click to become] [c/6d8827:Unkindled]"
-				State_Unkindled: "[c/6d8827:Currently:] Unkindled [c/aaaaaa:— click to take up the] [c/dd3333:Curse]"
+				State_Classic: "[c/aaaaaa:Currently:] Classic [c/aaaaaa:— click to become] [c/FFCC00:Unkindled]"
+				State_Unkindled: "[c/FFCC00:Currently:] Unkindled [c/aaaaaa:— click to take up the] [c/dd3333:Curse]"
 				State_BotC: "[c/dd3333:Currently:] Bearer of the Curse [c/aaaaaa:— click to return to] [c/aaaaaa:Classic]"
 				UnkindledCerulean:
 					'''
@@ -6325,6 +6324,14 @@ Mods: {
 			LordGwynHelm: {
 				DisplayName: Crown of the Lord of Cinder
 				Tooltip: Worn by he who linked the First Flame
+				SetBonus:
+					'''
+					Lord of Cinder: melee hits kindle Cinder; at {0} stacks restore {1} mana.
+					Above 50% mana, gain flame power and empower the Sword of Lord Gwyn.
+					Dodge through attacks to arm a sunlight strike.
+					Burning kills restore mana and stamina.
+					Above 50% mana, lethal damage triggers Last Cinder.
+					'''
 			}
 
 			LordGwynArmor: {
@@ -7356,9 +7363,8 @@ Mods: {
 					'''
 					Summons an Archer Spirit to fight for you
 					Looses frostburn arrows that inflict Frostburn on hit
-					Uses 2 summoner slots and costs 100 mana
+					Uses 2 summoner slots
 					The spirit targets the highest HP enemy nearby
-					Fades away after 3 minutes
 					'''
 			}
 
@@ -10048,6 +10054,11 @@ Mods: {
 				Description: The Archer Spirit will shoot down your enemies!
 			}
 
+			SpiritAshRecoveryBuff: {
+				DisplayName: Spirit Ash Recovery
+				Description: Tracks each minion or sentry's 90-second cooldown. If one dies before the cooldown expires, it cannot be brought back until it does.
+			}
+
 			RustedChainDebuff: {
 				DisplayName: Rusted Chain Debuff
 				Description: ""
@@ -10241,8 +10252,8 @@ Mods: {
 			}
 
 			LesserVesselBuff: {
-				DisplayName: Lesser Vessel Buff
-				Description: Mods.tsorcRevamp.Buffs.LesserVesselBuff.Description
+				DisplayName: Lesser Vessel
+				Description: The Lesser Vessel will spit homing skulls at your enemies!
 			}
 
 			RunePrisonDebuff: {
@@ -11258,6 +11269,12 @@ Mods: {
 			ElectrocuteProjectile.DisplayName: Electrocute Projectile
 			GigasEmbraceIcicle.DisplayName: Gigas Embrace Icicle
 			VenomPowderProjectile.DisplayName: Venom Powder Projectile
+			DreadWraithMaceBall.DisplayName: Dread Wraith Mace Ball
+			DreadWraithSkull.DisplayName: Dread Wraith Skull
+			DreadWraithEmberTrail.DisplayName: Dread Wraith Ember Trail
+			OwlEyeFlame.DisplayName: Owl Eye Flame
+			PuppetSwordSlashTrail.DisplayName: Puppet Sword Slash Trail
+			PuppetFireWaveColumn.DisplayName: Puppet Fire Wave Column
 		}
 
 		NPCs: {
@@ -13049,6 +13066,13 @@ Mods: {
 					AgitatedOnHitWarning3: I tried to warn you!
 				}
 			}
+
+			DreadWraith: {
+				DisplayName: Dread Wraith
+				DespawnHandler: The Dread Wraith sinks back into the crypt's shadow, its hunt unfinished...
+			}
+
+			OwlCompanion.DisplayName: Owl Companion
 		}
 
 		Prefixes: {
@@ -13131,6 +13155,31 @@ Mods: {
 					AdventureMode: Adventure Mode
 					GameplayChanges: Gameplay Changes
 					GameplayTweaks: Gameplay Tweaks
+					Experimental: Experimental
+				}
+
+				SummonerRework: {
+					Label: Summoner Rework: Spirit Ashes
+					Tooltip:
+						'''
+						Turns minions and sentries into mortal spirit ashes. They have your maximum health and
+						your defense, and block hostile shots that hit them.
+						An enemy your spirits are holding deals 30% less damage to you, but standing inside one
+						slowly wears them down. Estus repairs your ashes as well as yourself.
+
+						Applies to Unkindled and Bearer of the Curse. Defaults to Off.
+						'''
+				}
+
+				RegainSystem: {
+					Label: Regain
+					Tooltip:
+						'''
+						Damage taken lingers as a recoverable pool for a few seconds,
+						and landing weapon hits claws it back.
+
+						Applies to Unkindled and Bearer of the Curse. Defaults to On.
+						'''
 				}
 
 				AdventureMode: {

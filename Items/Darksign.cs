@@ -247,25 +247,32 @@ namespace tsorcRevamp.Items
         {
             Player player = Main.LocalPlayer;
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+
+            // Anchored to the tooltip's own opening line ("A talisman of the cycle...") rather than the
+            // last vanilla-owned line, so the state line lands right below it regardless of how many
+            // vanilla stat lines the item has - see SummonerEdits.cs for the same Tooltip0 convention.
+            int firstLineIndex = tooltips.FindIndex(t => t.Name == "Tooltip0");
 
             // Dynamic current-tier line — tells the player which mode they're in AND what left-clicking
-            // will do next. Inserted at the top of the appended tooltips (right after the last vanilla line)
-            // so it's the first thing read after the item name/description.
+            // will do next. Inserted right below the tooltip's opening line, ahead of the tier
+            // descriptions, so it reads as an immediate status check rather than something buried after them.
             string stateKey;
             if (modPlayer.BearerOfTheCurse) stateKey = "Mods.tsorcRevamp.Items.Darksign.State_BotC";
             else if (modPlayer.Unkindled) stateKey = "Mods.tsorcRevamp.Items.Darksign.State_Unkindled";
             else stateKey = "Mods.tsorcRevamp.Items.Darksign.State_Classic";
-            tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CurrentState", Language.GetTextValue(stateKey)));
+            tooltips.Insert(firstLineIndex + 1, new TooltipLine(Mod, "CurrentState", Language.GetTextValue(stateKey)));
 
-            // Class-mechanic preview (right-click cycles ClassCounter). Inserted after the state line.
+            // Class-mechanic preview (right-click cycles ClassCounter). Appended at the very end of the
+            // tooltip, after the tier descriptions, rather than up near the state line - it is reference
+            // detail for whichever class you're peeking at, not something that needs to compete with the
+            // state line for the reader's first glance.
             switch (ClassCounter)
             {
                 case 1:
                     {
                         if (LethalTempo.Enabled)
                         {      
-                            tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("LethalTempoExplanation", 
+                            tooltips.Insert(tooltips.Count, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("LethalTempoExplanation", 
                                 LethalTempoPlayer.BaseAttackSpeedMult, (int)(LethalTempoPlayer.BonusAttackSpeedPerStack * 100f), 
                                 MathF.Round(LethalTempoPlayer.MaxAttackSpeedMult, 2), LethalTempoPlayer.MaxStacks)));
                         }
@@ -275,7 +282,7 @@ namespace tsorcRevamp.Items
                     {
                         if (Electrocute.Enabled)
                         {
-                            tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Electrocute", LangUtils.GetTextValue("ElectrocuteExplanation", 
+                            tooltips.Insert(tooltips.Count, new TooltipLine(Mod, "Electrocute", LangUtils.GetTextValue("ElectrocuteExplanation", 
                                 ElectrocutePlayer.TimeWindowInSec, Electrocute.Cooldown, ElectrocutePlayer.BadRangedDmg)));
                         }
                         break;
@@ -286,7 +293,7 @@ namespace tsorcRevamp.Items
                         var ceruleanPlayer = player.GetModPlayer<CeruleanFlaskPlayer>();
                         if (ArcaneSorcery.Enabled)
                         {                        
-                            tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "ArcaneSorcery", LangUtils.GetTextValue("ArcaneSorceryExplanation", 
+                            tooltips.Insert(tooltips.Count, new TooltipLine(Mod, "ArcaneSorcery", LangUtils.GetTextValue("ArcaneSorceryExplanation", 
                                 ArcaneSorceryPlayer.MaxManaAmplifier, ArcaneSorceryPlayer.ManaCostMult, ArcaneSorceryPlayer.BaseCeruleanFlatManaGainMult, 
                                 ArcaneSorceryPlayer.BaseCeruleanFlaskMaxManaScalingMult * ceruleanPlayer.BaseMaxManaGain, 
                                 ArcaneSorceryPlayer.ManaBurnStaminaThreshold, ArcaneSorceryPlayer.ManaBurnMagicDamageAmp, ArcaneSorceryPlayer.ManaBurnMagicAttackSpeedAmp,
@@ -298,7 +305,7 @@ namespace tsorcRevamp.Items
                     {
                         if (Conqueror.Enabled)
                         {
-                            tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("ConquerorExplanation", 
+                            tooltips.Insert(tooltips.Count, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("ConquerorExplanation", 
                                 ConquerorPlayer.BaseDamageMult, MathF.Round(ConquerorPlayer.BonusDmgPerStack * 100f, 2), 
                                 MathF.Round(ConquerorPlayer.MaxDmgMult, 2), ConquerorPlayer.MaxStacks,
                                 MathF.Round(ConquerorPlayer.BonusWhipDmgPerStack * 100f, 2), MathF.Round(ConquerorPlayer.MaxWhipDmgMult, 2),

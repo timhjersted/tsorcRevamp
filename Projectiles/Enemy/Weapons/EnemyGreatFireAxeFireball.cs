@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     /// </summary>
     public class EnemyGreatFireAxeFireball : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Melee/Axes/AncientFireAxeFireball";
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/MoltenOrb";
 
         // Public so a future attack variant can spawn this with different tuning.
         public float RiseHeightAboveTarget = 140f;
@@ -55,13 +55,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Type] = 8;
+            Main.projFrames[Type] = 4; // MoltenOrb.png is a 4-frame 38x38 vertical strip
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 66;
-            Projectile.height = 28;
+            // Round orb sprite, not the old elongated comet — hitbox matches its native 38x38 frame.
+            Projectile.width = 36;
+            Projectile.height = 36;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = true;
@@ -115,7 +116,19 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                     break;
             }
 
-            Projectile.rotation = Projectile.velocity.ToRotation();
+            // Face travel direction while moving; keep spinning slowly on its own during the apex
+            // pause instead of snapping to angle 0 every time velocity zeroes out (ToRotation() of
+            // a zero vector is 0 — was invisible on the old elongated comet's near-symmetric pause
+            // pose, but a round orb has no "front" to hide the snap behind).
+            if (Projectile.velocity != Vector2.Zero)
+            {
+                Projectile.rotation = Projectile.velocity.ToRotation();
+            }
+            else
+            {
+                Projectile.rotation += 0.05f;
+            }
+
             Lighting.AddLight(Projectile.Center, Projectile.light * 0.4f, Projectile.light * 0.1f, Projectile.light * 1f);
 
             if (Main.rand.NextBool(2))

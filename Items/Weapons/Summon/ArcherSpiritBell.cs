@@ -38,15 +38,14 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
-            Item.mana = 100; // Costs 100 magic/mana
             Item.buffType = ModContent.BuffType<ArcherSpiritBuff>();
             Item.shoot = ModContent.ProjectileType<ArcherSpirit>();
         }
 
         public override bool CanUseItem(Player player)
         {
-            // Don't let the bell fire (and spend its 100 mana) unless there are enough free minion slots
-            // for the Archer Spirit. StaffMinionSlotsRequired only affects slot accounting, not usability.
+            // Don't let the bell fire unless there are enough free minion slots for the Archer Spirit.
+            // StaffMinionSlotsRequired only affects slot accounting, not usability.
             return player.maxMinions - player.slotsMinions >= SlotsRequired;
         }
 

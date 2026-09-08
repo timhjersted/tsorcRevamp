@@ -1751,7 +1751,7 @@ namespace tsorcRevamp
                 for (int l = 0; l < 200; l++)
                 {
                     NPC nPC = Main.npc[l];
-                    if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(Player.Center, nPC.Center) <= 240)
+                    if (UsefulFunctions.IsHostileThreat(nPC) && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(Player.Center, nPC.Center) <= 240)
                     {
                         nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 60);
                     }

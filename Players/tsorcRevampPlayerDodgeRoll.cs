@@ -350,8 +350,7 @@ namespace tsorcRevamp
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC npc = Main.npc[i];
-                if (npc != null && npc.active && !npc.friendly && !npc.dontTakeDamage
-                    && npc.damage > 0 && npc.Hitbox.Intersects(playerHitbox))
+                if (UsefulFunctions.IsHostileThreat(npc) && npc.Hitbox.Intersects(playerHitbox))
                 {
                     AwardPerfectDodge();
                     return;

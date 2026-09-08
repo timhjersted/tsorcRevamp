@@ -59,6 +59,85 @@ namespace tsorcRevamp.NPCs.Puppets
             ? EncounterBannerStyle.GreatInvaderVanquished
             : EncounterBannerStyle.InvaderVanquished;
 
+        // ── Death & despawn dust ─────────────────────────────────────────────────
+        // Two distinct events share one dust-burst shape: a real kill (NPC.life <= 0, via HitEffect)
+        // and a party-wipe despawn (NPC.life still positive, the fight is simply given up on — see
+        // PartyWipeDespawnHandler below). Every subclass gets both for free; override the dust type
+        // (and, if a subclass is thematically distinct like a ghost, the tint) rather than re-deriving
+        // this per invader. The two defaults are deliberately DIFFERENT dust, not one inheriting from
+        // the other: most invaders bleed when actually killed, but a party-wipe despawn is a fade-away,
+        // not a wound, so it defaults to Shadowflame instead of Blood.
+        protected virtual int OnKillDustType => DustID.Blood;
+        protected virtual Color OnKillDustColor => default; // default(Color) = dust's own natural color
+        protected virtual int OnKillDustCount => 150;
+        protected virtual float OnKillDustTravelMult => 2f; // multiple of NPC.height the burst travels
+
+        protected virtual int DespawnDustType => DustID.Shadowflame;
+        protected virtual Color DespawnDustColor => default;
+        protected virtual int DespawnDustCount => 300;
+        protected virtual float DespawnDustTravelMult => 3.5f;
+
+        /// <summary>Broadcast when the party-wipe despawn below fires. Override for a bespoke line
+        /// (and localize it, like DreadWraith does) — this default is intentionally generic and NOT
+        /// localized, since most invaders don't need a unique line for an edge case this rare.</summary>
+        protected virtual string DespawnFlavorText => $"{InvaderTitle} melts away, its hunt unfinished...";
+        protected virtual Color DespawnFlavorColor => Color.White;
+
+        public override void HitEffect(NPC.HitInfo hit)
+        {
+            if (NPC.life > 0 || Main.dedServ)
+            {
+                return;
+            }
+
+            EmitDeathDustBurst(OnKillDustType, OnKillDustColor, OnKillDustCount, OnKillDustTravelMult);
+        }
+
+        /// <summary>One-shot radial dust explosion shared by HitEffect and the party-wipe despawn.
+        /// Spawns across the NPC's own bounding box (matching vanilla's own Dust.NewDust spread) with an
+        /// outward speed picked so the dust travels roughly travelMult * NPC.height before drag stops it.
+        /// Generic (non-special-cased) dust decays ~0.97/tick under noGravity, which sums to roughly
+        /// speed * 33 total displacement — an approximation from vanilla's drag constant, not measured
+        /// on screen, so treat travelMult as a starting point rather than an exact figure.</summary>
+        private void EmitDeathDustBurst(int dustType, Color tint, int count, float travelMult)
+        {
+            // +-0.5 per particle so a single call already reads as "3 to 4x", not one fixed radius.
+            float travelDistance = NPC.height * (travelMult + Main.rand.NextFloat(-0.5f, 0.5f));
+            float speed = travelDistance / 33f;
+
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2CircularEdge(speed, speed) * Main.rand.NextFloat(0.4f, 1f);
+                int dustIndex = Dust.NewDust(
+                    NPC.position, NPC.width, NPC.height,
+                    dustType, velocity.X, velocity.Y, 0, tint, Main.rand.NextFloat(1.1f, 2.2f));
+                Main.dust[dustIndex].noGravity = true;
+            }
+        }
+
+        // ── Despawn on party wipe ────────────────────────────────────────────────
+        // The mod-wide convention every boss already uses — see NPCDespawnHandler (NPCs/NPCDespawnHandler.cs)
+        // — reused as-is rather than reinvented: it tracks whichever players were present and only
+        // despawns once every one of them has died at least once, so nobody can dodge the fight by
+        // staying out of range while a partner keeps it alive. Lazily built (rather than requiring every
+        // subclass to construct one in SetDefaults, like BossBase does) so this is free for every invader.
+        private NPCDespawnHandler _partyWipeDespawnHandler;
+        private NPCDespawnHandler PartyWipeDespawnHandler
+            => _partyWipeDespawnHandler ??= new NPCDespawnHandler(DespawnFlavorText, DespawnFlavorColor, DespawnDustType);
+
+        /// <summary>Runs the despawn check and, on the exact tick it signals imminent removal, the big
+        /// custom burst — called from the top of AI() below. NPC.life is still positive here; this is a
+        /// disappearance, not a kill, so it deliberately doesn't go through HitEffect.</summary>
+        private void UpdatePartyWipeDespawn()
+        {
+            bool aboutToDespawn = PartyWipeDespawnHandler.TargetAndDespawn(NPC.whoAmI);
+
+            if (aboutToDespawn && !Main.dedServ)
+            {
+                EmitDeathDustBurst(DespawnDustType, DespawnDustColor, DespawnDustCount, DespawnDustTravelMult);
+            }
+        }
+
         // ── Layer coordination ────────────────────────────────────────────────────
         /// <summary>
         /// Set to <c>this</c> for the exact duration of a <see cref="Main.PlayerRenderer.DrawPlayer"/>
@@ -1284,6 +1363,10 @@ namespace tsorcRevamp.NPCs.Puppets
         internal Vector2 DebugOrigin;
         internal int     DebugDirection;
         internal string  DebugPhaseName => Phase.ToString();
+
+        /// <summary>Extra pixels to raise the above-head debug readout. Tall puppets (e.g. mounted ones)
+        /// override this so the label clears the sprite instead of sitting on top of it.</summary>
+        internal virtual float DebugLabelRise => 0f;
         internal int     DebugPhaseTimer => PhaseTimer;
         /// <summary>Friendly name of the set-piece attack currently firing (for the DebugMode HUD),
         /// or null. Subclasses set this when a bespoke attack triggers; the overlay shows it prominently
@@ -1622,6 +1705,22 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual void OnMeleeComboAttackTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total) { }
         /// <summary>Called once as a combo step completes, before its pause/recovery begins.</summary>
         protected virtual void OnComboStepCompleted(MeleeComboStep step) { }
+        /// <summary>Called exactly once when a combo is chosen — both on the roll (host/singleplayer)
+        /// and when a client receives the matching network snapshot. `ActiveMeleeComboName` goes stale
+        /// between combos, so a subclass that needs to know "which weapon is this combo" should latch
+        /// that decision here instead of re-deriving it from the name on every read.
+        /// A subclass override MUST call base.OnMeleeComboStarted(combo) — this rebuilds the cached
+        /// FrontHandWeapon (see DefaultFrontWeapon above) so MeleeWeaponItemType/HideHeldMeleeSprite/etc
+        /// reflect the combo that just started rather than whichever weapon happened to be active the
+        /// very first time anything ever read FrontHandWeapon. Cheap for a puppet with one fixed melee
+        /// weapon (nothing actually changes on rebuild); required for one that switches weapons per
+        /// combo (Dread Wraith mace-vs-glaive) — without it, the wrong weapon's icon/hide-flag can stick
+        /// for the rest of the fight.</summary>
+        protected virtual void OnMeleeComboStarted(MeleeCombo combo)
+        {
+            _defaultFrontWeapon = null;
+            _frontHandWeaponResolved = false;
+        }
         /// <summary>True only when the currently completing legacy combo step made a confirmed blade
         /// or reported projectile contact. Useful for effects and conditional branches.</summary>
         protected bool CurrentComboStepHitConnected => _currentComboStepHitConnected;
@@ -1632,6 +1731,16 @@ namespace tsorcRevamp.NPCs.Puppets
             && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length
                 ? _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion
                 : ComboMotion.OverheadArc;
+        /// <summary>The active step's ReachMult, or 1 outside a combo. Lets a subclass's own cosmetic
+        /// effects (e.g. a blade-glow anchored to the weapon tip) use the SAME reach the real hitbox
+        /// uses (<c>ComboReachBase * 0.7f * ReachMult</c> — see <see cref="TickBladeHit"/>) instead of
+        /// drifting from it by re-deriving their own tip distance.</summary>
+        protected float ActiveMeleeComboReachMult =>
+            _activeMeleeCombo.Steps != null
+            && _meleeComboStepIndex >= 0
+            && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length
+                ? _activeMeleeCombo.Steps[_meleeComboStepIndex].ReachMult
+                : 1f;
         /// <summary>Called after a step completes but before its next step is scheduled. Returning
         /// false ends the combo in normal recovery, enabling honest hit-confirmed branches.</summary>
         protected virtual bool ShouldContinueMeleeCombo(
@@ -1722,6 +1831,189 @@ namespace tsorcRevamp.NPCs.Puppets
 
         /// <summary>Flight tuning.  Override to customize hover altitude / dive speed / cooldowns.</summary>
         protected virtual EnemyFlightConfig FlightConfig => EnemyFlightConfig.Default;
+
+        // ── Mount / cavalry ───────────────────────────────────────────────────────
+        // Deliberately shaped like the wings block above: a master toggle, a vanilla item/ID for the
+        // visual, and a config struct driving a controller in NPCs/AI. The mount renders for free —
+        // PuppetNPC draws through Main.PlayerRenderer.DrawPlayer, and vanilla mounts are drawn by the
+        // MountBack/MountFront player draw layers inside that pipeline.
+
+        /// <summary>Master toggle: when true this puppet spawns riding <see cref="MountType"/> and uses the
+        /// jousting movement controller instead of the ground navigator until the mount is destroyed.</summary>
+        protected virtual bool HasMount => false;
+
+        /// <summary>Vanilla <see cref="Terraria.ID.MountID"/> to ride. -1 disables.</summary>
+        protected virtual int MountType => -1;
+
+        /// <summary>Charge / overshoot / turnaround tuning.</summary>
+        protected virtual EnemyMountConfig MountConfig => EnemyMountConfig.Default;
+
+        /// <summary>Top speed a combo step's ForwardPushMult (lunges, charges, jousts) drives with,
+        /// instead of the plain ground TopSpeed. Default is a no-op (TopSpeed) for every puppet without
+        /// a mount; a mounted puppet should override this so a charge-flavored attack step actually
+        /// moves at (roughly) the mount's own speed rather than the rider's on-foot pace — otherwise a
+        /// combo allowed to start from mount-charge range can finish its whole animation stranded far
+        /// short of the target it was aimed at.</summary>
+        protected virtual float ComboForwardPushTopSpeed => TopSpeed;
+
+        /// <summary>Separate health pool for the mount. All incoming damage drains this before any reaches
+        /// the rider, so the mount reads as a destructible first phase.</summary>
+        protected virtual int MountLifeMax => 0;
+
+        /// <summary>Contact damage dealt while the mount is mid-charge. Applied ONLY during the committed
+        /// run-past — outside that window the puppet keeps its usual zero contact damage.</summary>
+        protected virtual int MountTrampleDamage => 0;
+
+        /// <summary>Vertical correction (px) applied to the rider's hand anchor while mounted. Mounting
+        /// raises the drawn rider above NPC.Center, but the hand rig is built off NPC.Center, so weapons
+        /// and the flail anchor detach without this. Negative = up. Needs calibrating in-game per mount.</summary>
+        protected virtual float MountedHandOffsetY => -22f;
+
+        /// <summary>Top-speed multiplier applied while the rider is mid-attack. Keeps the mount moving
+        /// during casts and swings instead of stopping dead.</summary>
+        protected virtual float MountedAttackSpeedScale => 0.55f;
+
+        /// <summary>Extra vertical nudge (px) for the whole mounted assembly on top of the mount's own
+        /// heightBoost. Positive = down. The heightBoost correction in SyncPuppet does the real work;
+        /// this exists to fine-tune how deep the rider sits in the saddle per mount.</summary>
+        protected virtual float MountedSeatOffsetY => 0f;
+
+        /// <summary>Top-left the puppet is drawn from. While mounted the rider is raised by the mount's
+        /// heightBoost so the MOUNT's feet land on the ground instead of the rider's — without this the
+        /// whole assembly renders about a tile too low and the goat sinks into the floor.</summary>
+        private Vector2 PuppetDrawPosition
+        {
+            get
+            {
+                if (!IsMounted || _puppet == null || _puppet.mount == null || !_puppet.mount.Active)
+                {
+                    return NPC.position;
+                }
+
+                float raise = _puppet.mount.HeightBoost - MountedSeatOffsetY;
+
+                return new Vector2(NPC.position.X, NPC.position.Y - raise);
+            }
+        }
+
+        /// <summary>Hook for the moment the mount's health pool is emptied — gore, phase-two setup, stat
+        /// changes. The rider is already dismounted and its own health restored when this fires.</summary>
+        protected virtual void OnMountDestroyed() { }
+
+        private EnemyMountController _mount;
+        /// <summary>Exposed so subclasses can read charge state when picking attacks.</summary>
+        protected EnemyMountController MountAI => _mount;
+
+        private bool _mountSpawned;
+        private int _riderLifeMax;
+        private int _mountTrampleCooldown;
+
+        /// <summary>Ticks between trample hits so a single charge can't connect on consecutive frames.</summary>
+        private const int MountTrampleCooldownTicks = 45;
+
+        /// <summary>True while the mount is alive and carrying the rider. Note the mount has no separate
+        /// health counter: during phase one NPC.life IS the mount's pool, which keeps one source of truth
+        /// and lets the vanilla boss bar show it with no custom UI.</summary>
+        public bool IsMounted => HasMount && _mountSpawned;
+
+        /// <summary>Mount health/phase state lives here rather than in InitPuppet, because InitPuppet is only
+        /// ever called from draw code (PreDraw / DrawExportPose) — it would never run on a dedicated server,
+        /// and would run late in singleplayer. OnSpawn is server-authoritative and runs before any AI tick.</summary>
+        public override void OnSpawn(IEntitySource source)
+        {
+            base.OnSpawn(source);
+
+            // Generic shader-based slash trail (see HasSlashTrailVFX / TryGetMeleeSlashTrailPose):
+            // one visual-only ribbon projectile per puppet, reading this puppet's own live blade
+            // pose every frame. Opt-in only, so puppets still on the sprite-strip HasSlashVFX system
+            // are unaffected.
+            if (HasSlashTrailVFX && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.PuppetSwordSlashTrail>(), 0, 0f,
+                    Main.myPlayer, NPC.whoAmI);
+            }
+
+            if (!HasMount || MountType <= 0 || MountLifeMax <= 0)
+            {
+                return;
+            }
+
+            _mountSpawned = true;
+            _riderLifeMax = NPC.lifeMax;
+
+            NPC.lifeMax = MountLifeMax;
+            NPC.life = MountLifeMax;
+        }
+
+        /// <summary>Contact damage, but ONLY during the committed run-past — outside that window the puppet
+        /// keeps its usual zero contact damage, so closing to melee range stays safe and readable.</summary>
+        private void TickMountTrample(Player target)
+        {
+            if (_mountTrampleCooldown > 0)
+            {
+                _mountTrampleCooldown--;
+            }
+
+            if (_mount == null || !_mount.IsCharging || MountTrampleDamage <= 0)
+            {
+                return;
+            }
+
+            if (target == null || !target.active || target.dead || _mountTrampleCooldown > 0)
+            {
+                return;
+            }
+
+            if (!NPC.Hitbox.Intersects(target.Hitbox))
+            {
+                return;
+            }
+
+            target.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), MountTrampleDamage, NPC.direction);
+            _mountTrampleCooldown = MountTrampleCooldownTicks;
+        }
+
+        /// <summary>Break the mount and hand the fight to the rider. Restoring lifeMax/life makes the vanilla
+        /// boss bar visibly refill, which is the phase-two tell.</summary>
+        private void DestroyMount()
+        {
+            _mountSpawned = false;
+
+            // MountAI must go null here, not just _mountSpawned false: a subclass's PostAI typically
+            // gates ALL its mount-only effects (charge embers, glaive glow, ...) on "MountAI == null ->
+            // return", and the controller was otherwise left alive frozen mid-charge — e.g. IsCharging
+            // stuck true forever if the mount died mid-charge — so those effects kept firing every tick
+            // for the rest of the fight instead of stopping when the mount actually broke.
+            _mount = null;
+
+            if (_puppet != null && _puppet.mount != null && _puppet.mount.Active)
+            {
+                _puppet.mount.Dismount(_puppet);
+            }
+
+            NPC.lifeMax = _riderLifeMax;
+            NPC.life = _riderLifeMax;
+
+            // Push the phase change to clients immediately — the synced _mountSpawned flag is what makes
+            // their SyncPuppet stop drawing the mount.
+            NPC.netUpdate = true;
+
+            OnMountDestroyed();
+        }
+
+        public override bool CheckDead()
+        {
+            // Phase-one "death" is the mount breaking, not the rider dying: refuse the kill, dismount, and
+            // let the restored rider health carry the fight into phase two.
+            if (IsMounted)
+            {
+                DestroyMount();
+                return false;
+            }
+
+            return base.CheckDead();
+        }
 
         /// <summary>Chance per second of triggering a random idle takeoff burst (0-100).
         /// Set to 0 to only fly when tactically necessary (player above, blocked, low HP).</summary>
@@ -2329,6 +2621,17 @@ namespace tsorcRevamp.NPCs.Puppets
                     return;
                 }
             }
+            else
+            {
+                // Not a decoy — the real encounter instance. Illusions skip this: they're short-lived
+                // copies from a teleport ability, not the fight itself, and shouldn't independently
+                // track player deaths or broadcast their own despawn message.
+                UpdatePartyWipeDespawn();
+            }
+
+            // Cheap edge-detect every tick regardless of HasSlashTrailVFX — a puppet that never
+            // opts in just never has anything read _meleeSlashTrailSequence.
+            UpdateMeleeSlashTrailSequence();
             // ── First-spawn invasion banner ────────────────────────────────────────
             // localAI[0] is not synced across the network, so every client (and singleplayer)
             // initialises it at 0 independently.  On the very first tick we fire the banner
@@ -2545,6 +2848,61 @@ namespace tsorcRevamp.NPCs.Puppets
                     TickWeaponAnim();
                     return;
                 }
+            }
+
+            // ── Mount tick (before ground movement) ───────────────────────────────
+            // While mounted, the jouster controller owns intent (charge state, speed, and committed
+            // overshoot waypoint) while SmartFighter4 owns physical traversal. Attacks still run — the
+            // rider swings and casts from the saddle.
+            if (IsMounted)
+            {
+                // SmartFighter4 owns target acquisition for the normal path (it calls TargetClosest
+                // internally). This branch skips SF4 entirely, so without this the NPC never picks a
+                // player, NPC.target stays invalid, and the controller idles forever. faceTarget is
+                // false because the charge locks its own facing and must not be overridden here.
+                NPC.TargetClosest(false);
+                Player mountTarget = Main.player[NPC.target];
+
+                _mount ??= new EnemyMountController(MountConfig);
+
+                // The navigator owns movement at ALL times while mounted; the controller is intent-only.
+                // The mount is an extension of movement (a speed/aggression profile), not a second
+                // movement system. Letting it self-drive during charges meant no pathfinding for those
+                // states, which is what walked it into pits and made it hop mindlessly at walls.
+                _mount.DriveMovement = false;
+
+                // Keep riding while attacking, just slower — a mount that stops dead to cast looks broken
+                // and removes all the pressure the charge built up.
+                bool committedToAttack = Phase != AttackPhase.Idle
+                    && Phase != AttackPhase.CasualStroll
+                    && Phase != AttackPhase.ClosingDistance;
+
+                if (committedToAttack)
+                {
+                    _mount.SpeedScale = MountedAttackSpeedScale;
+                }
+                else
+                {
+                    _mount.SpeedScale = 1f;
+                }
+
+                _mount.Tick(NPC, mountTarget);
+
+                // Navigator runs EVERY tick, in every mount state — full A*, doors, ledges, ropes and
+                // SF4's own stuck recovery. The mount chooses how fast and Dread Wraith's movement
+                // override opts into its committed charge waypoint; wind-up remains a full stop.
+                RunMovementAI(_mount.ModeSpeedMultiplier * _mount.SpeedScale);
+
+                TickMountTrample(mountTarget);
+
+                tsorcRevampAIs.TickQuickStep(NPC, gnpc);
+                if (gnpc.DodgeTimer <= 0 && gnpc.QuickStepTimer <= 0 && gnpc.QuickStepRecoveryTimer <= 0)
+                {
+                    PuppetAttackAI();
+                }
+                UpdateAttackCommitFlags();
+                TickWeaponAnim();
+                return;
             }
 
             float speedMult = (Phase == AttackPhase.CasualStroll || Phase == AttackPhase.Healing)
@@ -2885,6 +3243,7 @@ namespace tsorcRevamp.NPCs.Puppets
             writer.Write((short)Math.Clamp(_shieldGuardCooldown, 0, short.MaxValue));
             writer.Write((short)Math.Clamp(globalNPC.ReactiveBlockTimer, 0, short.MaxValue));
             writer.Write(_shielding);
+            writer.Write(_mountSpawned);
             writer.Write((short)Math.Clamp(_echoStepDelayTimer, -1, short.MaxValue));
             writer.Write((short)Math.Clamp(_echoStepLeapDuration, 1, short.MaxValue));
             writer.Write(_echoStepPos.X);
@@ -2915,6 +3274,7 @@ namespace tsorcRevamp.NPCs.Puppets
             _shieldGuardCooldown = reader.ReadInt16();
             int shieldTimer = reader.ReadInt16();
             bool shieldActive = reader.ReadBoolean();
+            _mountSpawned = reader.ReadBoolean();
             _echoStepDelayTimer = reader.ReadInt16();
             _echoStepLeapDuration = reader.ReadInt16();
             _echoStepPos = new Vector2(reader.ReadSingle(), reader.ReadSingle());
@@ -2975,6 +3335,7 @@ namespace tsorcRevamp.NPCs.Puppets
             bool wasActive = _attackRuntimeV2.Active;
             _activeMeleeComboIndex = comboIndex;
             _activeMeleeCombo = _meleeComboPool[comboIndex];
+            OnMeleeComboStarted(_activeMeleeCombo);
             _meleeComboStepIndex = 0;
             _comboLockedDir = lockedFacing < 0 ? -1 : 1;
             _attackRuntimeV2.LoadNetworkState(
@@ -4537,7 +4898,14 @@ namespace tsorcRevamp.NPCs.Puppets
                         }
                     }
                     ApplyComboTelegraphPressure(target);
-                    SetDisplayWeapon(FrontHandWeaponType, swing: false);
+                    // MeleeWeaponItemType, not FrontHandWeaponType: the latter reads FrontHandWeapon,
+                    // which is built ONCE (lazily, on first access) and then cached for the NPC's whole
+                    // lifetime — see DefaultFrontWeapon above. That's fine for a puppet with one fixed
+                    // melee weapon, but Dread Wraith picks mace vs. glaive per combo, so the cached value
+                    // is frozen to whichever one happened to be active the very first time any code read
+                    // FrontHandWeapon, and every combo telegraph after that (mace OR spear) would display
+                    // that same frozen weapon regardless of which combo was actually running.
+                    SetDisplayWeapon(MeleeWeaponItemType, swing: false);
                     CheckAndFireFlash(_activeMeleeCombo.InitialFlashColor);
                     if (--PhaseTimer <= 0)
                     {
@@ -4700,7 +5068,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     {
                         TickBladeHit();
                         if (step.ForwardPushMult > 0f)
-                            NPC.velocity.X = _comboLockedDir * (TopSpeed * step.ForwardPushMult);
+                            NPC.velocity.X = _comboLockedDir * (ComboForwardPushTopSpeed * step.ForwardPushMult);
                         else if (SlowDownBeforeMelee && AimSwingActive)
                             NPC.velocity.X *= (1f - _activeMeleeCombo.MoveBrake); // per-move brake (0 = keep drifting)
                         else if (SlowDownBeforeMelee)
@@ -5077,6 +5445,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (_activeMeleeCombo.Steps != null)
                 _activeMeleeCombo.Steps = (MeleeComboStep[])_activeMeleeCombo.Steps.Clone();
             CustomizeMeleeCombo(ref _activeMeleeCombo, hpFrac);
+            OnMeleeComboStarted(_activeMeleeCombo);
             _meleeComboStepIndex   = 0;
             _lastAttackHitConnected = false;
             _currentComboStepHitConnected = false;
@@ -5317,6 +5686,15 @@ namespace tsorcRevamp.NPCs.Puppets
         /// player instead of lunging forward (avoids overshooting at close range).</summary>
         protected virtual float LeapMinLungeDistance => 80f;
 
+        /// <summary>Horizontal distance (px) a leap-based attack (LeapSlam, ApexDiveCleave) aims to
+        /// land SHORT of the target's exact position, rather than landing squarely on top of them.
+        /// 0 (default) preserves the original "land right on them" aim — the right call for a leap
+        /// that IS the whole engagement (Studded's Leaping Cleave/Seismic Pursuit). A puppet whose
+        /// leap is meant to read as "close most of the gap, but still arrive as a separate body"
+        /// (Owl Father) can raise this so landing leaves a visible gap instead of overlapping the
+        /// player, while staying well inside the step's own swing reach so the slam still connects.</summary>
+        protected virtual float LeapLandingStandoff => 0f;
+
         private void BeginLeapAttack(MeleeComboStep step)
         {
             Player target = Main.player[NPC.target];
@@ -5339,10 +5717,11 @@ namespace tsorcRevamp.NPCs.Puppets
             else
             {
                 // Far: arc toward the player, horizontal speed sized to land near them (roughly
-                // dx / airtime) and capped so it never overshoots.
+                // dx / airtime, minus the standoff) and capped so it never overshoots.
+                float travelDistance = Math.Max(0f, dx - LeapLandingStandoff);
                 float launchSpeed = LeapAttackUpSpeed * heightMult;
                 float airtime = 2f * launchSpeed / 0.3f; // ticks aloft ≈ 2·Vy/g
-                float vx = MathHelper.Clamp(dx / airtime, 1.5f, LeapAttackForwardSpeed * forwardMult);
+                float vx = MathHelper.Clamp(travelDistance / airtime, 1.5f, LeapAttackForwardSpeed * forwardMult);
                 _comboLeapVx = dir * vx;
                 NPC.velocity = new Vector2(_comboLeapVx, -launchSpeed);
             }
@@ -5376,8 +5755,9 @@ namespace tsorcRevamp.NPCs.Puppets
             float forwardMult = step.LeapForwardSpeedMult > 0f ? step.LeapForwardSpeedMult : 1f;
             float maxForward = LeapAttackForwardSpeed * forwardMult;
             float dx = Math.Abs(target.Center.X - NPC.Center.X);
+            float travelDistance = Math.Max(0f, dx - LeapLandingStandoff);
             float ascentTicks = LeapAttackUpSpeed * heightMult / 0.3f;
-            float forwardSpeed = MathHelper.Clamp(dx / Math.Max(1f, ascentTicks), 1.8f, maxForward);
+            float forwardSpeed = MathHelper.Clamp(travelDistance / Math.Max(1f, ascentTicks), 1.8f, maxForward);
             _comboLeapVx = towardTarget * forwardSpeed;
             NPC.velocity = new Vector2(_comboLeapVx, -(LeapAttackUpSpeed + 1.8f) * heightMult);
             _comboLeapLaunched = true;
@@ -6914,15 +7294,32 @@ namespace tsorcRevamp.NPCs.Puppets
                         }
                         break;
                     case ComboMotion.JoustDash:
+                    {
+                        // Same architecture as the arc swings above (Endpoints + LogicalSwingWindup +
+                        // ApplySwingEase), just a much smaller sweep — couch the lance back, then
+                        // extend to level. Used to be a bare exponential Lerp-toward-target every
+                        // tick, which never actually arrives (each tick only closes part of the
+                        // REMAINING distance), reading as "creeps, slows down, then just kind of
+                        // stops" instead of one continuous motion.
+                        var (a0, a1) = Endpoints(ComboMotion.JoustDash, MathHelper.PiOver2, MathHelper.PiOver4);
+
                         if (inTel)
                         {
-                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.18f);
+                            _weaponRotation = UseLogicalMeleeTelegraphs
+                                ? LogicalSwingWindup(a1, a0, comboTelegraphT)
+                                : MathHelper.Lerp(_weaponRotation, a0, 0.18f);
+                        }
+                        else if (inPause)
+                        {
+                            // Single-step combo today — nothing to hand off to, just hold the landed pose.
+                            _weaponRotation = a1;
                         }
                         else
                         {
-                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.45f);
+                            _weaponRotation = ApplySwingEase(a0, a1, t, step);
                         }
                         break;
+                    }
                     case ComboMotion.Spin:
                         // Continuous rotation; 1 full revolution per held item useAnimation-ish window
                         _weaponRotation += 0.28f;
@@ -6959,39 +7356,47 @@ namespace tsorcRevamp.NPCs.Puppets
                         break;
                     }
                     case ComboMotion.LeapSlam:
+                    {
                         // Wind up overhead, then carry the axe up-and-FORWARD (toward the player,
                         // ~1 o'clock facing right / ~11 facing left) through the airborne arc, and
-                        // slam down hard as it descends / lands.
+                        // slam down hard as it lands. Same Endpoints + ApplySwingEase architecture
+                        // as JoustDash below: one continuous arc across the whole leap, instead of
+                        // three separate Lerp-toward-target chains keyed off velocity.Y's sign that
+                        // each converged early and then sat frozen mid-air for the rest of the leap.
+                        var (a0, a1) = Endpoints(ComboMotion.LeapSlam, -1.45f - OverheadWindupOvershoot, 1.4f);
+
                         if (inTel)
                         {
-                            _weaponRotation = MathHelper.Lerp(_weaponRotation, -1.45f - OverheadWindupOvershoot, 0.30f);
-                        }
-                        else if (NPC.velocity.Y < 0f)
-                        {
-                            _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.9f, 0.20f);
+                            _weaponRotation = UseLogicalMeleeTelegraphs
+                                ? LogicalSwingWindup(a1, a0, comboTelegraphT)
+                                : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
                         }
                         else
                         {
-                            _weaponRotation = MathHelper.Lerp(_weaponRotation, 1.4f, 0.22f);
+                            _weaponRotation = ApplySwingEase(a0, a1, t, step);
                         }
                         break;
+                    }
                     case ComboMotion.LeapThrust:
-                        // Telegraph: dip the spear low-forward ("cocked" for the upcoming poke).
-                        // Airborne rising: snap to horizontal — spear leveled at the player.
-                        // Falling/landing: hold horizontal for the thrust contact moment.
+                    {
+                        // Telegraph: dip the spear low-forward, cocked for the upcoming poke. Attack:
+                        // level out to the thrust angle and hold it through the whole airborne arc for
+                        // the landing contact. Same fix as LeapSlam above — was three Lerp-toward-target
+                        // chains keyed off velocity.Y that never actually arrived anywhere.
+                        var (a0, a1) = Endpoints(ComboMotion.LeapThrust, MathHelper.PiOver2 * 0.8f, MathHelper.PiOver4);
+
                         if (inTel)
                         {
-                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2 * 0.8f, 0.22f);
-                        }
-                        else if (NPC.velocity.Y < 0f)
-                        {
-                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.28f);
+                            _weaponRotation = UseLogicalMeleeTelegraphs
+                                ? LogicalSwingWindup(a1, a0, comboTelegraphT)
+                                : MathHelper.Lerp(_weaponRotation, a0, 0.22f);
                         }
                         else
                         {
-                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.50f);
+                            _weaponRotation = ApplySwingEase(a0, a1, t, step);
                         }
                         break;
+                    }
                     case ComboMotion.ChargeChop:
                         // Carry the axe cocked back/up while charging; the chop is the next step.
                         _weaponRotation = MathHelper.Lerp(_weaponRotation, -0.95f, 0.20f);
@@ -7343,7 +7748,17 @@ namespace tsorcRevamp.NPCs.Puppets
                 _ => new Vector2( 4f,  2f),  // fallback — level arm
             };
 
-            return NPC.Center + new Vector2(offset.X * NPC.direction, offset.Y);
+            // Mounting draws the rider raised above NPC.Center, but every offset above is measured from
+            // NPC.Center — without this correction the held weapon, the flail anchor and the melee hitbox
+            // all stay down at the mount's feet.
+            float mountedRise = 0f;
+
+            if (IsMounted)
+            {
+                mountedRise = MountedHandOffsetY;
+            }
+
+            return NPC.Center + new Vector2(offset.X * NPC.direction, offset.Y + mountedRise);
         }
 
         /// <summary>World-space front-hand position of the puppet — the anchor a subclass fires casts from
@@ -7426,15 +7841,19 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 drawRotation = GetMeleeDrawRotation();
                 // Blade's natural rest angle, mirrored by facing; the flip swaps which side it hangs.
+                // Base angle is MeleeNaturalRestAngleDeg (45° = standard broadsword convention, the
+                // default every puppet except Dread Wraith actually uses); dir=-1 mirrors it about the
+                // vertical axis (180 - base) rather than hardcoding a second unrelated magic number.
+                float baseDeg = MeleeNaturalRestAngleDeg;
                 float naturalDeg;
 
                 if (NPC.direction == 1)
                 {
-                    naturalDeg = BladeFlipActive ? 45f : -45f;
+                    naturalDeg = BladeFlipActive ? baseDeg : -baseDeg;
                 }
                 else
                 {
-                    naturalDeg = BladeFlipActive ? 135f : -135f;
+                    naturalDeg = BladeFlipActive ? (180f - baseDeg) : -(180f - baseDeg);
                 }
 
                 float actualAngle = MathHelper.ToRadians(naturalDeg + MathHelper.ToDegrees(drawRotation));
@@ -7661,6 +8080,39 @@ namespace tsorcRevamp.NPCs.Puppets
             _puppet.width     = NPC.width;
             _puppet.height    = NPC.height;
             _puppet.gravDir   = 1f;
+
+            // Mount visual is DERIVED from the gameplay flag every frame rather than driven by mount/dismount
+            // events. A client that learns about the dismount via synced state (not by running CheckDead
+            // itself) still stops drawing the mount, with no event plumbing to miss.
+            if (HasMount && MountType > 0)
+            {
+                _puppet.mount ??= new Mount();
+
+                if (IsMounted && !_puppet.mount.Active)
+                {
+                    _puppet.mount.SetMount(MountType, _puppet);
+                }
+                else if (!IsMounted && _puppet.mount.Active)
+                {
+                    _puppet.mount.Dismount(_puppet);
+                }
+            }
+
+            // Mount animation: the puppet never runs Player.Update, so the mount's frame counter has to be
+            // advanced by hand. GetIntendedGroundedFrame picks standing vs running from the velocity we
+            // just copied across, so the gallop speeds up and settles on its own.
+            if (_puppet.mount != null && _puppet.mount.Active)
+            {
+                // Vanilla grows a mounted player's hitbox by the mount's heightBoost and raises its
+                // position to match. We overwrite position/height from the NPC every tick, which undoes
+                // that — so reapply it here or the mount's own offset math works from a rider ~20px too
+                // short, sinking the whole assembly into the ground. Feet are pinned to NPC.Bottom so
+                // the MOUNT stands on the ground rather than the rider.
+                _puppet.height = NPC.height + _puppet.mount.HeightBoost;
+                _puppet.position.Y = NPC.Bottom.Y - _puppet.height;
+
+                _puppet.mount.UpdateFrame(_puppet, _puppet.mount.GetIntendedGroundedFrame(_puppet), NPC.velocity);
+            }
 
             // Wing flap state: drive vanilla wing draw layer's animation.
             // controlJump=true + wingTime>0 makes the wing layer pick the flap frames;
@@ -7984,6 +8436,24 @@ namespace tsorcRevamp.NPCs.Puppets
             else
                 legRow = 0; // Idle
 
+            // ── Mounted pose ──────────────────────────────────────────────────────
+            // Match what vanilla does to a mounted player (Player.PlayerFrame): pin the legs to row 6 —
+            // the one-leg sitting pose — with the counter frozen so they DON'T walk while the mount
+            // moves, and drop the body into the mount's own reins-holding frame so the front arm is held
+            // out. The body override is skipped mid-attack: the Use rows still have to drive swings and
+            // casts from the saddle.
+            if (IsMounted && _puppet.mount != null && _puppet.mount.Active)
+            {
+                legRow = 6;
+
+                bool neutralPose = bodyRow == 0 || bodyRow == 5 || bodyRow >= 6;
+
+                if (neutralPose)
+                {
+                    bodyRow = _puppet.mount.BodyFrame;
+                }
+            }
+
             _puppet.bodyFrame = new Rectangle(0, FrameHeight * bodyRow, 40, FrameHeight);
             _puppet.legFrame  = new Rectangle(0, FrameHeight * legRow,  40, FrameHeight);
         }
@@ -8096,7 +8566,7 @@ namespace tsorcRevamp.NPCs.Puppets
             DrawingPuppetFor = this;
             try
             {
-                Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.position, 0f, Vector2.Zero, 0f, PuppetDrawScale);
+                Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, PuppetDrawPosition, 0f, Vector2.Zero, 0f, PuppetDrawScale);
             }
             finally
             {
@@ -8137,7 +8607,13 @@ namespace tsorcRevamp.NPCs.Puppets
                         continue;
                     }
                     _puppet.firstFractalAfterImageOpacity = AfterimageOpacity * (1f - (float)k / NPC.oldPos.Length);
-                    Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.oldPos[k], 0f, Vector2.Zero, 0f, PuppetDrawScale);
+
+                    // oldPos stores raw NPC.position, but a mounted puppet is DRAWN raised by the mount's
+                    // height boost. Without the same raise the echoes trail below the goat and sink into
+                    // the ground, instead of only lagging behind it.
+                    Vector2 echoPosition = NPC.oldPos[k] + (PuppetDrawPosition - NPC.position);
+
+                    Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, echoPosition, 0f, Vector2.Zero, 0f, PuppetDrawScale);
                 }
                 _puppet.isFirstFractalAfterImage = false;
             }
@@ -8150,10 +8626,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 _puppet.firstFractalAfterImageOpacity = 0.2f;
             }
 
-            Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, NPC.position, 0f, Vector2.Zero, 0f, PuppetDrawScale);
+            Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, PuppetDrawPosition, 0f, Vector2.Zero, 0f, PuppetDrawScale);
             _puppet.isFirstFractalAfterImage = previousFractal;
             _puppet.firstFractalAfterImageOpacity = previousOpacity;
             DrawingPuppetFor = null;
+
+            // Spectral duplicate (opt-in) — drawn directly on top of the real puppet just rendered.
+            DrawSpectralOverlay(spriteBatch);
 
             // Umbral Echo Step: drawn AFTER the real puppet (and outside DrawingPuppetFor, since
             // PuppetWeaponDrawLayer reads the puppet's LIVE state, not this fixed echo point) so it
@@ -8216,6 +8695,124 @@ namespace tsorcRevamp.NPCs.Puppets
 
         private static Texture2D _slashVFXTex;
         private static bool _slashVFXTexLoadAttempted;
+
+        // ── Generic shader-based slash trail (opt-in alternative to HasSlashVFX above) ─────────
+        // A DynamicTrail ribbon (see PuppetSwordSlashTrail) driven by this puppet's own live hand
+        // position / blade direction / reach, instead of the flat Slash.png sprite strip below.
+        // Artorias pioneered this exact pattern (ArtoriasSwordSlashTrail / ArtoriasSwordTrail.fx);
+        // this lifts the same math onto PuppetNPC's own already-generic accessors so any puppet can
+        // opt in with just a spawned projectile + three colors, no boss-specific wiring required.
+        // The two systems are mutually exclusive per puppet in practice, but nothing enforces that —
+        // a puppet could run both if it wanted a fallback during A/B testing.
+        protected virtual bool HasSlashTrailVFX => false;
+        protected virtual Color SlashTrailDarkColor => new Color(10, 2, 24);
+        protected virtual Color SlashTrailCenterColor => new Color(104, 34, 180);
+        protected virtual Color SlashTrailEdgeColor => new Color(232, 66, 198);
+
+        private int _meleeSlashTrailSequence;
+        private bool _meleeSlashTrailWasActive;
+
+        /// <summary>Same swing-phase union <see cref="DrawSlashToLayer"/> uses for the sprite VFX —
+        /// the shader trail should be live in every phase that already draws a swinging blade.</summary>
+        private bool IsMeleeSlashActive =>
+            Phase == AttackPhase.MeleeAttack || Phase == AttackPhase.StabAttack
+            || Phase == AttackPhase.SpearAttack || Phase == AttackPhase.MeleeComboAttack
+            || Phase == AttackPhase.JumpSlashAttack || Phase == AttackPhase.FlipSlashLand
+            || Phase == AttackPhase.AbyssSlashSwipe || Phase == AttackPhase.TendrilSwing
+            || Phase == AttackPhase.HomingVolleySwing || Phase == AttackPhase.BoomerangSwing
+            || Phase == AttackPhase.SpiralFanSwing;
+
+        /// <summary>Bumped once per fresh swing so <see cref="Projectiles.Enemy.PuppetSwordSlashTrail"/>
+        /// knows to reset its ribbon history instead of interpolating across the gap between two
+        /// unrelated swings (e.g. two different combo steps).</summary>
+        private void UpdateMeleeSlashTrailSequence()
+        {
+            bool active = IsMeleeSlashActive;
+            if (active && !_meleeSlashTrailWasActive)
+                _meleeSlashTrailSequence++;
+            _meleeSlashTrailWasActive = active;
+        }
+
+        /// <summary>Live pose + palette for the generic shader-based slash trail. Same accessors
+        /// <see cref="DrawSlashToLayer"/>'s sprite VFX already reads, just handed to the trail
+        /// projectile instead of a DrawData call. Returns false while no swing is live; the caller
+        /// should fade its trail history out rather than snapping it away.</summary>
+        internal bool TryGetMeleeSlashTrailPose(out Vector2 pivot, out Vector2 direction,
+            out float reach, out float progress, out int sequence,
+            out Color darkColor, out Color centerColor, out Color edgeColor)
+        {
+            pivot = PuppetHandPosition;
+            direction = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
+            reach = Math.Max(MeleeRange * 0.7f, PuppetActiveBladeReach);
+            progress = PuppetWeaponAnimationProgress;
+            sequence = _meleeSlashTrailSequence;
+            darkColor = SlashTrailDarkColor;
+            centerColor = SlashTrailCenterColor;
+            edgeColor = SlashTrailEdgeColor;
+            return IsMeleeSlashActive;
+        }
+
+        // ── Generic spectral duplicate overlay (opt-in) ─────────────────────────────
+        // A second full DrawPlayer pass (body + armor + weapon) at an enlarged scale, tinted via a
+        // custom pixel shader and made translucent via vanilla's own fractal-afterimage alpha field —
+        // the "empowered spirit form" phase-transition look. Drawn directly ON TOP of the real puppet.
+        // Only the VISUAL is enlarged; a puppet opting in is responsible for scaling its own attack
+        // reach to match (see e.g. Owl Father's ComboReachBase override) — NPC.width/height and
+        // terrain pathing stay at the small base size throughout.
+        protected virtual bool HasSpectralOverlay => false;
+        protected virtual float SpectralOverlayScale => 3f;
+        protected virtual Color SpectralOverlayColor => new Color(255, 230, 80);
+        protected virtual float SpectralOverlayOpacity => 0.55f;
+
+        private Effect _spectralOverlayEffect;
+        private bool _spectralOverlayEffectLoadAttempted;
+
+        /// <summary>Draws the enlarged, tinted spectral duplicate. Wraps the ENTIRE DrawPlayer call
+        /// (every body/armor/weapon layer) in one Immediate-mode SpriteBatch scope using a trivial
+        /// recolor pixel shader — the same "capture a whole composed player in one SpriteBatch scope"
+        /// trick PuppetSpriteExporter uses for its render-target export, just swapping the render
+        /// target for a custom Effect via the established StartShaderSpritebatch/RestartSpritebatch
+        /// helpers instead. Known risk: an armor piece with its own dye/glowmask shader could apply
+        /// ITS effect mid-draw and locally override this one for that layer — not an issue for Owl
+        /// Father's plain (undyed) set, but worth remembering if this is reused on a dyed puppet.
+        /// No-op unless HasSpectralOverlay.</summary>
+        private void DrawSpectralOverlay(SpriteBatch spriteBatch)
+        {
+            if (!HasSpectralOverlay)
+                return;
+
+            if (!_spectralOverlayEffectLoadAttempted)
+            {
+                _spectralOverlayEffectLoadAttempted = true;
+                _spectralOverlayEffect = ModContent.Request<Effect>(
+                    "tsorcRevamp/Effects/SpectralOverlay", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            if (_spectralOverlayEffect == null)
+                return;
+
+            _spectralOverlayEffect.Parameters["tintColor"].SetValue(
+                SpectralOverlayColor.ToVector4() * new Vector4(1f, 1f, 1f, SpectralOverlayOpacity));
+
+            UsefulFunctions.StartShaderSpritebatch(ref spriteBatch);
+            _spectralOverlayEffect.CurrentTechnique.Passes[0].Apply();
+
+            DrawingPuppetFor = this;
+            bool previousFractal = _puppet.isFirstFractalAfterImage;
+            float previousOpacity = _puppet.firstFractalAfterImageOpacity;
+            // Full opacity here — the actual translucency is baked into tintColor.a above, applied
+            // uniformly by the shader instead of vanilla's own (unTinted) afterimage alpha blend.
+            _puppet.isFirstFractalAfterImage = true;
+            _puppet.firstFractalAfterImageOpacity = 1f;
+
+            Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, PuppetDrawPosition, 0f, Vector2.Zero, 0f,
+                PuppetDrawScale * SpectralOverlayScale);
+
+            _puppet.isFirstFractalAfterImage = previousFractal;
+            _puppet.firstFractalAfterImageOpacity = previousOpacity;
+            DrawingPuppetFor = null;
+
+            UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+        }
 
         /// <summary>
         /// Draws an arc-shaped slash swoosh along the same angle/reach <see cref="TickBladeHit"/>
@@ -8370,9 +8967,27 @@ namespace tsorcRevamp.NPCs.Puppets
             // When drawing as a spear, prefer the holdout-projectile texture (the full shaft+head sprite)
             // over the item icon (which is just a small inventory tile).
             Texture2D tex;
-            if (holdingSpearNow && SpearDrawTexturePath != null && ModContent.HasAsset(SpearDrawTexturePath))
+            // ModContent.HasAsset only answers for MOD assets, so a vanilla holdout path
+            // ("Terraria/Images/Projectile_N") used to fail this check and silently fall back to the small
+            // item icon. Vanilla assets are always loadable, so accept them directly.
+            bool spearTextureUsable = SpearDrawTexturePath != null
+                && (SpearDrawTexturePath.StartsWith("Terraria/") || ModContent.HasAsset(SpearDrawTexturePath));
+
+            // Same "prefer the full weapon art over the tiny inventory icon" idea as the spear branch
+            // above, for a swing that isn't drawn as a spear. Only applies while actually holding the
+            // melee weapon — a magic/ranged/cursed-knives swap in the same hand keeps its own icon.
+            bool meleeTextureUsable = MeleeDrawTexturePath != null
+                && _heldItemType == MeleeWeaponItemType
+                && (MeleeDrawTexturePath.StartsWith("Terraria/") || ModContent.HasAsset(MeleeDrawTexturePath));
+
+            if (holdingSpearNow && spearTextureUsable)
             {
                 tex = ModContent.Request<Texture2D>(SpearDrawTexturePath,
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            else if (!holdingSpearNow && meleeTextureUsable)
+            {
+                tex = ModContent.Request<Texture2D>(MeleeDrawTexturePath,
                     ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
             else
@@ -8480,7 +9095,18 @@ namespace tsorcRevamp.NPCs.Puppets
             // OverheadArc convention (e.g. UnderhandArc) so the blade edge leads instead of trails.
             // See BladeFlipActive / GetWeaponWorldDirection for the matching hit-detection math.
             if (!heldRangedLike && !holdingSpearNow && BladeFlipActive)
+            {
                 spriteFx |= SpriteEffects.FlipVertically;
+
+                // origin.X above is already mirrored for FlipHorizontally because SpriteBatch always
+                // measures origin in PRE-flip texture space — the same rule applies to Y here. Without
+                // this, FlipVertically mirrors the sprite but the pivot stays pinned to the unflipped
+                // handle position, which after the flip is actually the BLADE end: the axe visibly
+                // pivots/holds from the wrong end during UnderhandArc (e.g. Up-Down Reversal's second
+                // step). Mirroring origin.Y keeps the handle pixel at the hand for both flip states,
+                // same fix as the FlipHorizontally case just on the other axis.
+                origin.Y = tex.Height - origin.Y;
+            }
 
             // Per-weapon angular correction for melee sprites whose blade/head diagonal doesn't
             // match the broadsword convention (handle lower-left → blade upper-right).  Applied to
@@ -8689,6 +9315,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// shaft-and-head weapon the player sees.  Override to point at the projectile texture path.
         /// Null (default) falls back to the item sprite.</summary>
         protected virtual string SpearDrawTexturePath => null;
+        /// <summary>Same idea as <see cref="SpearDrawTexturePath"/> but for the normal (non-spear) melee
+        /// draw branch — a swing that should show the full weapon art instead of the small item icon.
+        /// Null (default) falls back to the item sprite.</summary>
+        protected virtual string MeleeDrawTexturePath => null;
         /// <summary>Extra draw-only rotation applied after <see cref="MeleeWeaponRotationOffset"/> when drawing the spear.
         /// Use this to correct a sprite whose tip isn't in the standard orientation without affecting the arm-pose rows
         /// (which read <see cref="MeleeWeaponRotationOffset"/> via <see cref="BodyRowFromWeaponRotation"/>).
@@ -8722,6 +9352,15 @@ namespace tsorcRevamp.NPCs.Puppets
         /// facing, just like the composite arm does. Kept off by default while legacy puppets retain
         /// their established draw tuning.</summary>
         protected virtual bool MirrorMeleeSwingRotationByFacing => false;
+
+        /// <summary>Only read when <see cref="MirrorMeleeSwingRotationByFacing"/> is true. The blade's
+        /// rest angle (degrees) at _weaponRotation=0, dir=1, no flip — 45° is the standard broadsword
+        /// convention (handle lower-left, blade upper-right) every current adopter of the mirrored path
+        /// actually uses. A weapon sprite calibrated to a DIFFERENT convention (e.g. a glaive drawn along
+        /// the anti-diagonal) needs this overridden, or GetWeaponWorldDirection() — which both hit
+        /// detection and any cosmetic effect anchored to the blade tip rely on — silently points the
+        /// "logical" blade somewhere other than where the sprite is actually drawn.</summary>
+        protected virtual float MeleeNaturalRestAngleDeg => 45f;
 
         // Offset comes off the equipped weapon, not the puppet, so swapping to a sprite on the
         // opposite diagonal (a mace head vs a sword tip) corrects itself.
@@ -8826,10 +9465,21 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         /// <summary>Eases the arc through the step's chosen <see cref="SwingEaseStyle"/> when the
-        /// aim-swing pilot is live, else the legacy on/off easing.</summary>
+        /// aim-swing pilot is live, else the legacy on/off easing. Trapezoidal is a special case:
+        /// it needs the step's raw tick budget (its accel/decel/hold phases are absolute tick counts,
+        /// not fractions of the swing), so it's honored regardless of UseAuthoredComboSwingClock.</summary>
         private float ApplySwingEase(float a0, float a1, float t, MeleeComboStep step)
-            => UseAuthoredComboSwingClock ? SwingEase.Apply(a0, a1, t, step.Ease)
+        {
+            if (step.Ease == SwingEaseStyle.Trapezoidal)
+            {
+                int totalTicks = Math.Max(1, step.AttackTicks);
+                int elapsedTicks = (int)Math.Round(t * totalTicks);
+                return SwingEase.ApplyTrapezoidal(a0, a1, elapsedTicks, totalTicks);
+            }
+
+            return UseAuthoredComboSwingClock ? SwingEase.Apply(a0, a1, t, step.Ease)
                               : SwingEase.Apply(a0, a1, t, UseSwingEasing);
+        }
 
         /// <summary>The start angle a step's arc begins from, with the same flip / aim-bias transforms
         /// the live swing applies — so an inter-step pause can ease toward where the NEXT step actually
@@ -8848,6 +9498,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 ComboMotion.ChargeChop      => (-0.95f, -0.95f),
                 ComboMotion.DoubleSpinSlam  => (-1.3f - OverheadWindupOvershoot, 1.4f),
                 ComboMotion.ThrownWeaponRetrieve => (HoldRotation, HoldRotation),
+                ComboMotion.LeapSlam        => (-1.45f - OverheadWindupOvershoot, 1.4f),
+                ComboMotion.LeapThrust      => (MathHelper.PiOver2 * 0.8f, MathHelper.PiOver4),
                 ComboMotion.LowAxeRun       => (1.9f, 1.9f),
                 ComboMotion.RisingUppercutLeap => (1.9f, -1.0f),
                 ComboMotion.BackstepRaise   => (1.0f, -1.3f),

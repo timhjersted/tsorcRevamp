@@ -148,6 +148,8 @@ Mods: {
 			NoKnockback: Даёт иммунитет к отбрасыванию
 			ObsidianShield: "{$CommonItemTooltip.NoKnockback} и огненным блокам"
 			ForBotCOnly: " для [c/6d8827:Носителя проклятия]"
+			// SpiritAshSummonCost: "[c/6efaff:Costs {0} mana to summon]"
+			// SpiritAshResummonCooldown: Still recovering ({0}s)
 			UniqueBarrier: Не суммируется с другими заклинаниями барьера или щита
 			NonConsumable: Не расходуется
 			UnusableDuringBoss: Нельзя использовать, пока босс жив!
@@ -845,7 +847,7 @@ Mods: {
 				IronOre: Возможно, вы сможете использовать её для изготовления специальных стрел..?
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:На нём высечен символ, напоминающий большую пирамиду с луной справа.]"
-				// RemixLargeAmethyst: "[c/ffbf00:A symbol a dark prison in a sparkling crystal cave is carved into it]"
+				// RemixLargeAmethyst: "[c/ffbf00:A symbol of a dark prison in a sparkling crystal cave is carved into it]"
 				LargeSapphire: "[c/ffbf00:На нём высечен символ, напоминающий заснеженную гору возле крепости.]"
 				RemixLargeSapphire:
 					'''
@@ -3963,7 +3965,6 @@ Mods: {
 					'''
 					Summons a Lesser Vessel to fight for you
 					A floating soul-eye that spits homing skulls
-					Lasts 2.5 minutes
 					Damage scales with the number of Dark Souls held
 					''' */
 			}
@@ -4427,21 +4428,28 @@ Mods: {
 				DisplayName: Знак тьмы
 				Tooltip:
 					'''
-					Используйте, чтобы стать [c/6d8827:носителем проклятия]
-					Игра за [c/6d8827:Носителя Проклятия] даёт следующие эффекты:
-					Вы получаете дополнительный слот для аксессуаров, на {0}% больше душ, а ваша выносливость восстанавливается намного быстрее.
-					Однако [c/dd3333:использование оружия приводит к истощению выносливости] а восстановление жизни уменьшается вдвое, если выносливость не достигает максимума.
-					Предметы мгновенного лечения не вылечат вас, но вы получите флягу Эстуса, которую можно улучшить.
-					Смерть уменьшает ваше максимальное количество здоровья на {1}% до тех пор, пока вы не вернетесь туда, где умерли.
-					Проверьте конфигурацию мода, чтобы настроить громкость звуковых эффектов, добавляемых, когда вы становитесь [c/6d8827:носителем проклятия.].
+					Талисман цикла. Левый клик переключает на следующий уровень:
+
+					[c/FFCC00:Неугасший] (по умолчанию): фляги Эстуса и Церулеан привязаны к
+					быстрому лечению и быстрой мане. Улучшения выпадают с боссов.
+					Лечащие предметы действуют вполовину слабее; восстановление маны снижено вне костров.
+					Оружие расходует выносливость. Часть потерянного здоровья можно вернуть, поражая врагов. +1 слот для аксессуаров.
+
+					[c/dd3333:Носитель проклятия]: все особенности Неугасшего плюс механики боевых классов, и на {0}% больше душ.
+					Оружие расходует больше выносливости, но она восстанавливается быстрее. Зелья лечения не действуют. Восстановление маны
+					полностью отключено вне костров, а смерть отнимает {1}% максимального здоровья до тех пор, пока душа не будет возвращена.
+
+					[c/aaaaaa:Классический]: без фляг. Ванильные системы лечения, щитов и магии Terraria.
+
+					Правый клик показывает предпросмотр боевых механик каждого класса для Носителя проклятия.
 					'''
 				Enabled: Ты стал носителем Проклятия
 				Disabled: Проклятие снято
 				// Unkindled: You rise as the Unkindled — your fire still smolders.
 				// BearerOfTheCurse: You have taken up the burden — the Curse is yours to bear.
 				// Classic: You let the flame fade. The curse is lifted.
-				// State_Classic: "[c/aaaaaa:Currently:] Classic [c/aaaaaa:— click to become] [c/6d8827:Unkindled]"
-				// State_Unkindled: "[c/6d8827:Currently:] Unkindled [c/aaaaaa:— click to take up the] [c/dd3333:Curse]"
+				// State_Classic: "[c/aaaaaa:Currently:] Classic [c/aaaaaa:— click to become] [c/FFCC00:Unkindled]"
+				// State_Unkindled: "[c/FFCC00:Currently:] Unkindled [c/aaaaaa:— click to take up the] [c/dd3333:Curse]"
 				// State_BotC: "[c/dd3333:Currently:] Bearer of the Curse [c/aaaaaa:— click to return to] [c/aaaaaa:Classic]"
 				/* UnkindledCerulean:
 					'''
@@ -6293,6 +6301,14 @@ Mods: {
 			LordGwynHelm: {
 				// DisplayName: Crown of the Lord of Cinder
 				// Tooltip: Worn by he who linked the First Flame
+				/* SetBonus:
+					'''
+					Lord of Cinder: melee hits kindle Cinder; at {0} stacks restore {1} mana.
+					Above 50% mana, gain flame power and empower the Sword of Lord Gwyn.
+					Dodge through attacks to arm a sunlight strike.
+					Burning kills restore mana and stamina.
+					Above 50% mana, lethal damage triggers Last Cinder.
+					''' */
 			}
 
 			LordGwynArmor: {
@@ -7325,9 +7341,8 @@ Mods: {
 					'''
 					Summons an Archer Spirit to fight for you
 					Looses frostburn arrows that inflict Frostburn on hit
-					Uses 2 summoner slots and costs 100 mana
+					Uses 2 summoner slots
 					The spirit targets the highest HP enemy nearby
-					Fades away after 3 minutes
 					''' */
 			}
 
@@ -9996,6 +10011,11 @@ Mods: {
 				// Description: The Archer Spirit will shoot down your enemies!
 			}
 
+			SpiritAshRecoveryBuff: {
+				// DisplayName: Spirit Ash Recovery
+				// Description: Tracks each minion or sentry's 90-second cooldown. If one dies before the cooldown expires, it cannot be brought back until it does.
+			}
+
 			RustedChainDebuff: {
 				DisplayName: Ржавые цепи
 				Description: ""
@@ -10189,8 +10209,8 @@ Mods: {
 			}
 
 			LesserVesselBuff: {
-				// DisplayName: Lesser Vessel Buff
-				// Description: Mods.tsorcRevamp.Buffs.LesserVesselBuff.Description
+				// DisplayName: Lesser Vessel
+				// Description: The Lesser Vessel will spit homing skulls at your enemies!
 			}
 
 			RunePrisonDebuff: {
@@ -11206,6 +11226,12 @@ Mods: {
 			// ElectrocuteProjectile.DisplayName: Electrocute Projectile
 			// GigasEmbraceIcicle.DisplayName: Gigas Embrace Icicle
 			// VenomPowderProjectile.DisplayName: Venom Powder Projectile
+			// DreadWraithMaceBall.DisplayName: Dread Wraith Mace Ball
+			// DreadWraithSkull.DisplayName: Dread Wraith Skull
+			// DreadWraithEmberTrail.DisplayName: Dread Wraith Ember Trail
+			// OwlEyeFlame.DisplayName: Owl Eye Flame
+			// PuppetSwordSlashTrail.DisplayName: Puppet Sword Slash Trail
+			// PuppetFireWaveColumn.DisplayName: Puppet Fire Wave Column
 		}
 
 		NPCs: {
@@ -12998,6 +13024,13 @@ Mods: {
 					// AgitatedOnHitWarning3: I tried to warn you!
 				}
 			}
+
+			DreadWraith: {
+				// DisplayName: Dread Wraith
+				// DespawnHandler: The Dread Wraith sinks back into the crypt's shadow, its hunt unfinished...
+			}
+
+			// OwlCompanion.DisplayName: Owl Companion
 		}
 
 		Prefixes: {
@@ -13080,6 +13113,31 @@ Mods: {
 					// AdventureMode: Adventure Mode
 					// GameplayChanges: Gameplay Changes
 					// GameplayTweaks: Gameplay Tweaks
+					// Experimental: Experimental
+				}
+
+				SummonerRework: {
+					// Label: Summoner Rework: Spirit Ashes
+					/* Tooltip:
+						'''
+						Turns minions and sentries into mortal spirit ashes. They have your maximum health and
+						your defense, and block hostile shots that hit them.
+						An enemy your spirits are holding deals 30% less damage to you, but standing inside one
+						slowly wears them down. Estus repairs your ashes as well as yourself.
+
+						Applies to Unkindled and Bearer of the Curse. Defaults to Off.
+						''' */
+				}
+
+				RegainSystem: {
+					// Label: Regain
+					/* Tooltip:
+						'''
+						Damage taken lingers as a recoverable pool for a few seconds,
+						and landing weapon hits claws it back.
+
+						Applies to Unkindled and Bearer of the Curse. Defaults to On.
+						''' */
 				}
 
 				AdventureMode: {

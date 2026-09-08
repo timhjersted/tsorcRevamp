@@ -13,8 +13,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
     ///<summary>
     ///Early-game soul summon crafted from the Vessel of Souls' drop. Rings the reliquary to conjure a
     ///Lesser Vessel — a floating soul-eye that spits homing skulls. Modelled on the Archer Spirit Bell,
-    ///but 1 slot. Costs 60 mana, lasts 2.5 minutes, and its damage scales with the Dark Souls the player
-    ///is holding (see SoulDamageBonus). 
+    ///but 1 slot. Free to summon, permanent like a vanilla minion, and its damage scales with the Dark
+    ///Souls the player is holding (see SoulDamageBonus).
     ///</summary>
     public class SoulReliquaryBell : ModItem
     {
@@ -41,7 +41,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.UseSound = SoundID.Item35;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
-            Item.mana = 60;
             Item.buffType = ModContent.BuffType<LesserVesselBuff>();
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.VesselOfSouls.LesserVessel>();
         }

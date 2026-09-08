@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -40,6 +41,73 @@ namespace tsorcRevamp.NPCs.Puppets
         public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/OwlFatherInvader_Head_Boss";
 
         protected override string InvaderTitle => "Owl Father";
+
+        // ── Companion owl + spectral form ────────────────────────────────────────
+        // The owl is killed outright (StrikeInstantKill) the instant Owl Father's health crosses
+        // 50%, which is also what flips on the 3x glowing spectral duplicate for the rest of the
+        // fight. _spectralFormActive is derived from NPC.life every tick rather than stored/synced
+        // directly — NPC.life is already network-synced, so every client converges on the same
+        // answer independently the moment the threshold is crossed.
+        private const float SpectralFormHealthThreshold = 0.5f;
+        private const float SpectralReachMultiplier = 3f;
+        private int _companionOwlIndex = -1;
+        private bool _spectralFormActive;
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            base.OnSpawn(source);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                _companionOwlIndex = NPC.NewNPC(source, (int)NPC.Center.X, (int)NPC.Center.Y - 80,
+                    ModContent.NPCType<OwlCompanion>(), ai0: NPC.whoAmI);
+                NPC.netUpdate = true;
+            }
+        }
+
+        public override void AI()
+        {
+            base.AI();
+            CheckSpectralFormTrigger();
+        }
+
+        /// <summary>Edge-triggers once, the first tick NPC.life crosses the 50% threshold: kills the
+        /// companion owl (if it's still alive) and permanently flips on the spectral overlay + the
+        /// 3x reach that goes with it.</summary>
+        private void CheckSpectralFormTrigger()
+        {
+            if (_spectralFormActive || NPC.lifeMax <= 0)
+            {
+                return;
+            }
+
+            float healthFraction = NPC.life / (float)NPC.lifeMax;
+            if (healthFraction > SpectralFormHealthThreshold)
+            {
+                return;
+            }
+
+            _spectralFormActive = true;
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            if (_companionOwlIndex >= 0 && _companionOwlIndex < Main.maxNPCs)
+            {
+                NPC companion = Main.npc[_companionOwlIndex];
+                if (companion.active && companion.ModNPC is OwlCompanion)
+                {
+                    companion.StrikeInstantKill();
+                }
+            }
+
+            UsefulFunctions.ScreenShake(NPC.Bottom, 5f, 16, distanceFalloff: 700f);
+            SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.8f, Pitch = -0.3f }, NPC.Center);
+        }
+
+        protected override bool HasSpectralOverlay => _spectralFormActive;
 
         protected override void RunMovementAI(float speedMult)
         {
@@ -222,7 +290,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 MoveBrake = 0.15f,
                 Steps = new[] { AxeSwing(ComboMotion.LeapSlam, 44, 115,
                     damageMult: 1.55f, reachMult: 1.28f,
-                    leapHeightMult: 1.18f, leapForwardSpeedMult: 1.05f) },
+                    leapHeightMult: 1.18f, leapForwardSpeedMult: 1.05f,
+                    ease: SwingEaseStyle.Trapezoidal) },
             },
             new MeleeCombo
             {
@@ -239,7 +308,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     AxeSwing(ComboMotion.LeapSlam, 48, 118, pauseAfter: 10,
                         damageMult: 1.30f, reachMult: 1.26f,
-                        leapHeightMult: 1.22f, leapForwardSpeedMult: 1.05f),
+                        leapHeightMult: 1.22f, leapForwardSpeedMult: 1.05f,
+                        ease: SwingEaseStyle.Trapezoidal),
                     AxeSwing(ComboMotion.UnderhandArc, 0, 28,
                         damageMult: 1.25f, forwardPushMult: 0.38f, reachMult: 1.20f),
                 },
@@ -344,29 +414,50 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override bool UseLogicalMeleeTelegraphs => true;
         protected override bool UseCompositeArmSwing => true;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
-        protected override bool HasSlashVFX => true;
-        protected override Color SlashVFXColor => Color.OrangeRed; // matches AncientFireAxe's own slashColor
-        protected override float SlashVFXOpacity => 0.48f;
-        protected override float SlashVFXScale => 0.55f;
+        // Shader-based slash ribbon (see PuppetNPC.HasSlashTrailVFX / PuppetSwordSlashTrail) instead
+        // of the flat Slash.png sprite strip every other axe puppet still uses — the "Artorias/Gwyn-
+        // style" swing VFX, recolored to a molten red-orange-yellow ramp matching AncientFireAxe's
+        // own fire theme (and the OnFire debuff OnBladeHit applies below).
+        protected override bool HasSlashTrailVFX => true;
+        protected override Color SlashTrailDarkColor => new Color(40, 6, 2);
+        protected override Color SlashTrailCenterColor => new Color(226, 90, 20);
+        protected override Color SlashTrailEdgeColor => new Color(255, 200, 80);
 
         // ── Axe draw tuning ─────────────────────────────────────────────────────────
         // Grip above the butt so every pose leaves a short, visible section below the hand.
         protected override Vector2 MeleeHandleNorm => new Vector2(0.12f, 0.86f);
         protected override float MeleeWeaponDrawScale => 0.85f;
-        protected override float ComboReachBase => 90f;
+        // Scales 3x once the spectral form triggers (see SpectralReachMultiplier below) — the giant
+        // duplicate's axe needs a hitbox that actually matches its 3x visual reach, replacing the
+        // normal-size hitbox entirely rather than adding a second one (per design: one hitbox, sized
+        // to whichever body is currently the "real" one).
+        protected override float ComboReachBase => _spectralFormActive ? 90f * SpectralReachMultiplier : 90f;
         protected override float MeleeWeaponRotationOffset => 1.0f;
 
         protected override float TopSpeed => 2.65f;
         protected override float Acceleration => 0.095f;
-        protected override float MeleeRange => 82f;
-        protected override float StabRange => 150f;
-        protected override float ComboMaxStartRange => 360f;
+        protected override float MeleeRange => _spectralFormActive ? 82f * SpectralReachMultiplier : 82f;
+        protected override float StabRange => 150f; // unused — CanStab is false below
+        // Matches Studded's 440 — was 360 for no recorded reason, and this is the radius the two
+        // Leaping Slam combos + Apex Dive Cleave (all RangedStartOnly gap-closers) can even be
+        // rolled from. Wider means Owl reaches for a leap-in more often right after a ranged
+        // exchange instead of falling through to a plain run. Also scales with the spectral form so
+        // combos keep being selectable from the giant axe's actual reach.
+        protected override float ComboMaxStartRange => _spectralFormActive ? 440f * SpectralReachMultiplier : 440f;
         protected override int ClosingDistanceMaxTicks => 130;
         protected override int MeleeComboChance => 100;
         protected override int RangedStartMeleeComboChance => 70;
         protected override float ComboTelegraphMultiplier => 1.20f;
-        protected override float ComboTelegraphAdvanceSpeedMult => 0.55f;
+        // Was 0.55 (Studded/Dread Wraith both run 0.85-0.9) for no recorded reason. This only
+        // matters once a close-range swing is already telegraphing and the target backs away —
+        // matching Studded's pace keeps that swing from whiffing as often.
+        protected override float ComboTelegraphAdvanceSpeedMult => 0.85f;
         protected override float ComboTelegraphAdvanceStopDistance => 70f;
+        // The two Leaping Slam combos and Apex Dive Cleave land about 1.5 tiles short of the
+        // player's exact position instead of squarely on top of them — still comfortably inside
+        // the landing slam's own reach (~80px), but reads as "closed most of the gap and arrived,"
+        // not "teleported onto your face." See LeapLandingStandoff's doc comment in PuppetNPC.cs.
+        protected override float LeapLandingStandoff => 24f;
         protected override int MeleeRecoveryTicks => 22;
         protected override int CasualStrollChance => 0;
 

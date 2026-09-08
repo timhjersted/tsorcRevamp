@@ -422,16 +422,22 @@ namespace tsorcRevamp
             if (soulsPlayer.BearerOfTheCurse)
             {
                 // Base 2.0 against its 1.15 cost. Experimental 2.8 against 1.5 cost — a much bigger swing on both
-                // axes, leaning hard into "spends fast, recovers fast", but 2.8 specifically because that is the
-                // net-parity point with Unkindled's experimental 1.0/1.5 (both land at -16.5/sec while attacking).
-                // Solve for it with regenRate = (39 * costMult - 16.5) / 15 if either cost changes.
+                // axes, leaning hard into "spends fast, recovers fast". 2.8 was originally chosen as the exact
+                // net-parity point with Unkindled's old experimental 1.0/1.5 (both landed at -16.5/sec while
+                // attacking); Unkindled's numbers below have since moved and neither tier is at parity with BotC
+                // anymore (deliberate - see the note below). Solve regenRate = (39 * costMult - 16.5) / 15 if you
+                // want to re-target a specific net rate for BotC.
                 staminaResourceRegenRate = experimentalStaminaValues ? 2.8f : 2f;
             }
             else if (soulsPlayer.Unkindled)
             {
-                // 1.25 base gives Unkindled a real regen edge of its own rather than leaving it on the Classic
-                // baseline with nothing but smaller penalties.
-                staminaResourceRegenRate = experimentalStaminaValues ? 1.5f : 1.25f;
+                // Base raised from 1.25 to 1.5, experimental from 1.5 to 1.8 (2025-09) - deliberately NOT
+                // paired with a BotC change, unlike the "change the two together" note above. BotC's numbers
+                // are untouched, so Unkindled now recovers net faster than BotC at BOTH tiers instead of
+                // matching it at base and hitting exact parity at experimental. The goal: waiting for
+                // stamina to refill is the part that feels bad, not spending it fast, so both of Unkindled's
+                // tiers lean toward "recovers fast" rather than "matches BotC's net burn rate".
+                staminaResourceRegenRate = experimentalStaminaValues ? 1.8f : 1.5f;
             }
             else
             {

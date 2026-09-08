@@ -91,6 +91,15 @@ namespace tsorcRevamp.NPCs.Puppets
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
         }
 
+        // A ghost (see GhostShirt above) doesn't bleed — white DustID.Ghost for both the on-kill burst
+        // and the party-wipe despawn, in place of PuppetNPC's shared Blood-on-kill/Shadowflame-on-despawn
+        // defaults. Despawn is overridden separately from kill (the base class no longer derives one
+        // from the other), so both have to be set explicitly to keep them consistent with each other.
+        protected override int OnKillDustType => DustID.Ghost;
+        protected override Color OnKillDustColor => Color.White;
+        protected override int DespawnDustType => DustID.Ghost;
+        protected override Color DespawnDustColor => Color.White;
+
         public override void SetDefaults()
         {
             NPC.width = 20;

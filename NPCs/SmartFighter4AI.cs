@@ -8,6 +8,15 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs
 {
+    /// <summary>Result of an opt-in movement waypoint passed to <see cref="SmartFighter4AI.Run"/>.</summary>
+    public enum SmartFighter4WaypointStatus
+    {
+        None,
+        Navigating,
+        Reached,
+        Blocked
+    }
+
     // SmartFighter3 â€” Test 4 ground enemy AI — SF3 pathfinding + physics-based jumps.
     //
     // Three pillars added in this version (vs the prior Nav iteration):
@@ -166,6 +175,17 @@ namespace tsorcRevamp.NPCs
         }
 
         /// <summary>
+        /// Returns the last result for the optional movement waypoint supplied to <see cref="Run"/>.
+        /// Ordinary player-pursuit callers never enter waypoint mode and always report <see cref="SmartFighter4WaypointStatus.None"/>.
+        /// </summary>
+        public static SmartFighter4WaypointStatus GetWaypointStatus(NPC npc)
+        {
+            return States.TryGetValue(npc.whoAmI, out NavState nav)
+                ? nav.WaypointStatus
+                : SmartFighter4WaypointStatus.None;
+        }
+
+        /// <summary>
         /// Releases physics that SF4 temporarily owns while climbing a rope. Shared AI states such as
         /// Patrol, Flee, and teleport can take control before SF4 gets another movement frame, so they
         /// must explicitly hand the body back to normal gravity instead of leaving an orphaned rope ride.
@@ -265,9 +285,14 @@ namespace tsorcRevamp.NPCs
         // reads globalNPC.PursuitState and only moves. holdForAttack = combat wants to stop-and-fire → hold this frame.
         // Defaults false → standalone behavior (Puppets, TibianValkyrieSmart4 testbed) still owns its own
         // combat, but shares the grounded overspeed brake below.
+        /// <param name="movementWaypoint">Optional world-space CENTER destination. When supplied, SF4 moves toward
+        /// that fixed point instead of the player while combat targeting remains on <c>npc.target</c>. This is opt-in
+        /// movement vocabulary for committed run-throughs, leap attacks, retreats, and similar authored actions.
+        /// If the requested point is beyond terrain the NPC cannot safely traverse, SF4 stops on the nearest reachable
+        /// ground and reports <see cref="SmartFighter4WaypointStatus.Blocked"/> instead of blind-chasing over the edge.</param>
         public static void Run(NPC npc, float topSpeed = 1.55f, float acceleration = 0.10f,
             int doorBreakingDamage = 4, float attackRange = 700f, bool movementOnly = false, bool holdForAttack = false,
-            float brakingPower = 0.2f)
+            float brakingPower = 0.2f, Vector2? movementWaypoint = null)
         {
             Player player = Main.player[npc.target];
             if (!player.active || player.dead)
@@ -282,6 +307,17 @@ namespace tsorcRevamp.NPCs
             }
 
             NavState nav = GetState(npc);
+            bool waypointMode = movementWaypoint.HasValue;
+            if (!waypointMode && nav.WaypointActive)
+            {
+                // The authored movement has released control. Do not let its stale final leg pull normal pursuit
+                // away from the player on the next frame; preserve an airborne ballistic commitment, if any.
+                nav.WaypointActive = false;
+                nav.WaypointStatus = SmartFighter4WaypointStatus.None;
+                nav.Plan = null;
+                nav.PlanIndex = 0;
+                nav.ReplanCooldown = 0;
+            }
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             _minSurfaceWidth = globalNPC.MinSurfaceWidth; // beast flat-ground gate for IsStandableTile this frame (0 = off)
             _maxSurfaceStep = globalNPC.MaxSurfaceStep;   // tolerated footprint unevenness (Deerclops-clip failsafe)
@@ -390,6 +426,17 @@ namespace tsorcRevamp.NPCs
             // Strict raycast LOS: a solid tile anywhere between the NPC and player blocks firing/navigation
             // decisions. Platforms remain transparent, matching projectile telegraph gating.
             bool los = HasStrictLineOfSight(npc.Center, player.Center);
+            string actionLabel = "idle", reasonLabel = "";
+            bool actionHandled = false;
+
+            if (waypointMode)
+            {
+                RunWaypointMovement(nav, npc, player, movementWaypoint.Value, topSpeed, acceleration,
+                    jumpCeil, boostCeil, grounded, doorBreakingDamage, globalNPC,
+                    out actionLabel, out reasonLabel);
+            }
+            else
+            {
             // Progress = closing on the player, OR actively executing a path (so a multi-tile reroute
             // that temporarily moves away isn't read as "stuck" and made to give up mid-route).
             float distNow = npc.Distance(player.Center);
@@ -401,9 +448,6 @@ namespace tsorcRevamp.NPCs
             PursuitState pstate = movementOnly
                 ? globalNPC.PursuitState
                 : NavBehavior.UpdateState(npc, globalNPC, player, los, madeProgress, attackRange);
-
-            string actionLabel = "idle", reasonLabel = "";
-            bool actionHandled = false;
 
             // Hold-to-fire (movementOnly): combat (RunFighterCombat in BasicAI) wants to stop-and-fire, so hold
             // position this frame and skip pathing — the shot comes from BasicAI, not SF4. Mirrors halt-attack.
@@ -909,6 +953,7 @@ namespace tsorcRevamp.NPCs
                     nav.PursuitStallFrames = 0;
                 }
             }
+            }
 
             // Phase 2: a large beast bulls straight through a thin (<= BeastPhaseMaxWidth) body/head obstruction
             // (single block, skinny pillar, low overhang) instead of being stopped or forced to jump by it. While
@@ -962,6 +1007,127 @@ namespace tsorcRevamp.NPCs
             nav.LastReason = reasonLabel;
             nav.LastTelemetryPlan = DescribePlan(nav);
             LogFrame(npc, player, nav, grounded, los, canAttack, actionLabel, reasonLabel);
+        }
+
+        /// <summary>
+        /// Dedicated, opt-in movement owner for an authored waypoint. It deliberately skips player-relative
+        /// kiting, patrol, firing holds, and no-plan cliff drops: those are correct for open-ended pursuit but
+        /// can reverse or kill a committed run-through. The normal SF4 plan executor still owns doors, steps,
+        /// validated jumps, drops with known landings, ropes, collision, and ballistic commitment.
+        /// </summary>
+        private static void RunWaypointMovement(NavState nav, NPC npc, Player player, Vector2 waypoint,
+            float topSpeed, float acceleration, float jumpCeil, float boostCeil, bool grounded,
+            int doorBreakingDamage, tsorcRevampGlobalNPC globalNPC, out string action, out string reason)
+        {
+            bool newWaypoint = !nav.WaypointActive || Vector2.DistanceSquared(nav.Waypoint, waypoint) > 4f;
+            if (newWaypoint)
+            {
+                ReleaseRopeTraversal(npc);
+                nav.WaypointActive = true;
+                nav.Waypoint = waypoint;
+                nav.WaypointStatus = SmartFighter4WaypointStatus.Navigating;
+                nav.WaypointClamped = false;
+                nav.Plan = null;
+                nav.PlanIndex = 0;
+                nav.CommitFrames = 0;
+                nav.ReplanCooldown = 0;
+                nav.NoAStarPath = false;
+                nav.BadEdgeTargets.Clear();
+            }
+
+            int waypointFeetY = (int)((waypoint.Y + npc.height * 0.5f - 1f) / TileF);
+            int feetY = GetFeetTileY(npc);
+            bool reachedRequestedPoint = Math.Abs(npc.Center.X - waypoint.X) <= TileF
+                && Math.Abs(feetY - waypointFeetY) <= 2;
+
+            if (grounded && reachedRequestedPoint)
+            {
+                nav.WaypointStatus = SmartFighter4WaypointStatus.Reached;
+                nav.Plan = null;
+                nav.PlanIndex = 0;
+                BrakeToStop(npc);
+                action = "waypoint-reached";
+                reason = $"goal=({waypoint.X / TileF:F1},{waypointFeetY})";
+                return;
+            }
+
+            bool hasStep = nav.Plan != null && nav.PlanIndex < nav.Plan.Count;
+            bool completedSafeEndpoint = nav.Plan != null && nav.PlanIndex >= nav.Plan.Count;
+            if (completedSafeEndpoint)
+            {
+                nav.WaypointStatus = nav.WaypointClamped
+                    ? SmartFighter4WaypointStatus.Blocked
+                    : SmartFighter4WaypointStatus.Reached;
+                BrakeToStop(npc);
+                action = nav.WaypointStatus == SmartFighter4WaypointStatus.Blocked
+                    ? "waypoint-blocked"
+                    : "waypoint-reached";
+                reason = nav.LastPlanResult;
+                return;
+            }
+
+            if (grounded && !nav.IsCommitted && !hasStep && nav.ReplanCooldown == 0)
+            {
+                Replan(nav, npc, waypoint, topSpeed);
+                nav.ReplanCooldown = ReplanCooldown;
+                hasStep = nav.Plan != null && nav.PlanIndex < nav.Plan.Count;
+            }
+
+            if (hasStep)
+            {
+                nav.WaypointStatus = SmartFighter4WaypointStatus.Navigating;
+                ExecuteStep(nav, npc, player, topSpeed, acceleration, jumpCeil, boostCeil, grounded,
+                    doorBreakingDamage, globalNPC, out action, out reason);
+                return;
+            }
+
+            if (nav.NoAStarPath)
+            {
+                nav.WaypointStatus = nav.WaypointClamped || nav.NoAStarPath
+                    ? SmartFighter4WaypointStatus.Blocked
+                    : SmartFighter4WaypointStatus.Reached;
+                BrakeToStop(npc);
+                action = nav.WaypointStatus == SmartFighter4WaypointStatus.Blocked
+                    ? "waypoint-blocked"
+                    : "waypoint-reached";
+                reason = nav.LastPlanResult;
+                return;
+            }
+
+            // A committed jump/drop can briefly have no current step as it completes. Let its validated
+            // velocity finish; never substitute the ordinary no-plan chase while waypoint mode owns movement.
+            if (!grounded)
+            {
+                action = nav.AirCommitTimer > 0 ? "waypoint-air-commit" : "waypoint-airborne";
+                reason = nav.AirCommitTimer > 0 ? $"dirX={nav.AirCommitDirX} t={nav.AirCommitTimer}" : "no-commit";
+                return;
+            }
+
+            if (nav.ReplanCooldown > 0)
+            {
+                // A failed committed step has already bad-edged its target. Wait out the normal short
+                // planning cadence and let SF4 search an alternate route instead of declaring the authored
+                // move blocked on its first missed jump.
+                nav.WaypointStatus = SmartFighter4WaypointStatus.Navigating;
+                BrakeToStop(npc);
+                action = "waypoint-replan-wait";
+                reason = $"cooldown={nav.ReplanCooldown}";
+                return;
+            }
+
+            nav.WaypointStatus = SmartFighter4WaypointStatus.Blocked;
+            BrakeToStop(npc);
+            action = "waypoint-blocked";
+            reason = "no-safe-plan";
+        }
+
+        private static void BrakeToStop(NPC npc)
+        {
+            npc.velocity.X *= 0.6f;
+            if (Math.Abs(npc.velocity.X) < 0.3f)
+            {
+                npc.velocity.X = 0f;
+            }
         }
 
         public static void OnHit(NPC npc)
@@ -1141,6 +1307,19 @@ namespace tsorcRevamp.NPCs
 
         private static void Replan(NavState nav, NPC npc, Player player, float topSpeed)
         {
+            int goalFeetY = (int)((player.Bottom.Y - 1f) / TileF);
+            Replan(nav, npc, (int)(player.Center.X / TileF), goalFeetY, topSpeed, waypointMode: false);
+        }
+
+        private static void Replan(NavState nav, NPC npc, Vector2 waypoint, float topSpeed)
+        {
+            int goalFeetY = (int)((waypoint.Y + npc.height * 0.5f - 1f) / TileF);
+            Replan(nav, npc, (int)(waypoint.X / TileF), goalFeetY, topSpeed, waypointMode: true);
+        }
+
+        private static void Replan(NavState nav, NPC npc, int targetCx, int targetFeetY, float topSpeed,
+            bool waypointMode)
+        {
             // Capture this NPC's jump physics so BuildEdges/TryFindJumpEdge only propose
             // edges this enemy can actually clear (gravity-aware, gap-width-aware).
             tsorcRevampGlobalNPC pg = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -1150,8 +1329,6 @@ namespace tsorcRevamp.NPCs
 
             int npcFeetY = GetFeetTileY(npc);
             int npcCx = (int)(npc.Center.X / TileF);
-            int playerFeetY = (int)((player.Bottom.Y - 1f) / TileF);
-            int playerCx = (int)(player.Center.X / TileF);
 
             // Per-NPC search window = the NavSearchRadius lever (tiles). Caller only invokes Replan when
             // NavSearchRadius > 0; clamp to the hard ScanRadius caps so a huge accidental value can't
@@ -1159,8 +1336,8 @@ namespace tsorcRevamp.NPCs
             int radius = Math.Clamp(pg.NavSearchRadius, 1, ScanRadiusX);
             int yRadius = Math.Min(radius, ScanRadiusY);
             int xMin = npcCx - radius, xMax = npcCx + radius;
-            int yMin = Math.Min(npcFeetY, playerFeetY) - yRadius;
-            int yMax = Math.Max(npcFeetY, playerFeetY) + yRadius;
+            int yMin = Math.Min(npcFeetY, targetFeetY) - yRadius;
+            int yMax = Math.Max(npcFeetY, targetFeetY) + yRadius;
 
             List<Span> spans = BuildSpans(xMin, xMax, yMin, yMax);
             // Prune expired bad-edge entries before building.
@@ -1180,11 +1357,34 @@ namespace tsorcRevamp.NPCs
                     nav.BadEdgeTargets.Remove(k);
                 }
             }
-            BuildEdges(spans, playerFeetY, nav.BadEdgeTargets);
+            BuildEdges(spans, targetFeetY, nav.BadEdgeTargets);
 
             nav.LastReplanTick = now;
             Span start = FindContainingSpan(spans, npcCx, npcFeetY);
-            Span goal = FindContainingSpan(spans, playerCx, playerFeetY);
+            Span goal = FindContainingSpan(spans, targetCx, targetFeetY);
+            bool requestedGoalWasClamped = goal != null && !SpanContainsNear(goal, targetCx, targetFeetY);
+            List<Span> path = start != null && goal != null
+                ? AStar(start, goal, targetCx, targetFeetY)
+                : null;
+
+            // Authored waypoint safety: if the desired point sits over an abyss or beyond an unmakeable
+            // gap, choose the closest span in the connected component we can ACTUALLY reach. On a broad
+            // current platform this naturally becomes its forward edge. The final Walk step approaches
+            // that safe limit and then reports Blocked; it never falls back to blind cliff pursuit.
+            if (waypointMode && start != null && (goal == null || path == null))
+            {
+                HashSet<Span> reachable = CollectReachableSpans(start);
+                Span safeGoal = FindClosestSafeStopSpan(reachable, targetCx, targetFeetY, start.Y);
+                if (safeGoal != null)
+                {
+                    goal = safeGoal;
+                    path = AStar(start, goal, targetCx, targetFeetY);
+                    requestedGoalWasClamped = true;
+                }
+            }
+
+            nav.WaypointClamped = waypointMode && requestedGoalWasClamped;
+
             if (start == null || goal == null)
             {
                 nav.Plan = null;
@@ -1195,11 +1395,10 @@ namespace tsorcRevamp.NPCs
                 // means the player wasn't standing on anything (airborne, roped, flying).
                 nav.LastPlanResult = nav.LastReplanResult = start == null
                     ? $"no-start-span spans={spans.Count} me=({npcCx},{npcFeetY}) msw={_minSurfaceWidth} ch={_clearanceHeight}"
-                    : $"no-goal-span spans={spans.Count} goal=({playerCx},{playerFeetY})";
+                    : $"no-goal-span spans={spans.Count} goal=({targetCx},{targetFeetY})";
                 return;
             }
 
-            List<Span> path = AStar(start, goal, playerCx, playerFeetY);
             if (path == null)
             {
                 nav.Plan = null;
@@ -1233,12 +1432,81 @@ namespace tsorcRevamp.NPCs
             }
 
             nav.NoAStarPath = false;
-            nav.Plan = ConvertToSteps(path, playerCx, playerFeetY);
+            int resolvedTargetCx = targetCx;
+            if (nav.WaypointClamped)
+            {
+                // Stop one tile inside the reachable span. At charge speed, targeting the literal last
+                // standable tile leaves no room for the next frame's braking distance and can turn a safe
+                // plan into a momentum-driven fall after arrival.
+                if (targetCx > goal.RightX)
+                {
+                    resolvedTargetCx = Math.Max(goal.LeftX, goal.RightX - 1);
+                }
+                else if (targetCx < goal.LeftX)
+                {
+                    resolvedTargetCx = Math.Min(goal.RightX, goal.LeftX + 1);
+                }
+            }
+            nav.Plan = ConvertToSteps(path, resolvedTargetCx, targetFeetY);
             nav.PlanIndex = 0;
             nav.StepTimer = StepTimeoutFrames;
             nav.CommitFrames = 0;
             nav.JumpFiredThisStep = false;
-            nav.LastPlanResult = nav.LastReplanResult = $"plan steps={nav.Plan.Count} spans={spans.Count} pathLen={path.Count}";
+            nav.LastPlanResult = nav.LastReplanResult = $"plan steps={nav.Plan.Count} spans={spans.Count} pathLen={path.Count}"
+                + (nav.WaypointClamped ? " waypoint-clamped" : "");
+        }
+
+        private static bool SpanContainsNear(Span span, int x, int feetY)
+        {
+            return x >= span.LeftX - 1 && x <= span.RightX + 1 && Math.Abs(span.Y - feetY) <= 3;
+        }
+
+        private static HashSet<Span> CollectReachableSpans(Span start)
+        {
+            HashSet<Span> reached = new HashSet<Span> { start };
+            Stack<Span> frontier = new Stack<Span>();
+            frontier.Push(start);
+            while (frontier.Count > 0)
+            {
+                Span span = frontier.Pop();
+                foreach (Edge edge in span.Edges)
+                {
+                    if (reached.Add(edge.To))
+                    {
+                        frontier.Push(edge.To);
+                    }
+                }
+            }
+            return reached;
+        }
+
+        private static Span FindClosestSafeStopSpan(IEnumerable<Span> spans, int targetX, int targetY,
+            int startFeetY)
+        {
+            Span best = null;
+            int bestScore = int.MaxValue;
+            foreach (Span span in spans)
+            {
+                // A fallback endpoint must not lure the committed mover DOWN into a pit that the full
+                // route already proved cannot reach the requested far side. Exact reachable routes may
+                // still descend and climb normally; this restriction applies only to the safe stop chosen
+                // after that route fails.
+                if (span.Y > startFeetY + 2)
+                {
+                    continue;
+                }
+                int dx = targetX < span.LeftX ? span.LeftX - targetX
+                    : targetX > span.RightX ? targetX - span.RightX
+                    : 0;
+                int score = dx + Math.Abs(span.Y - targetY) * 5;
+                if (score < bestScore)
+                {
+                    best = span;
+                    bestScore = score;
+                }
+            }
+            // The start span is always in the reachable set and is the safest possible last resort.
+            return best;
         }
 
         // ================================================================================
@@ -4576,6 +4844,12 @@ namespace tsorcRevamp.NPCs
             public int PlanIndex;
             public int StepTimer;
             public int ReplanCooldown;
+            // Opt-in authored movement goal. Kept entirely in per-NPC navigator state so ordinary SF4 callers
+            // are unaffected and a released waypoint cannot leak into the next player-pursuit frame.
+            public bool WaypointActive;
+            public Vector2 Waypoint;
+            public SmartFighter4WaypointStatus WaypointStatus;
+            public bool WaypointClamped;
             // Patrol/Pursue FSM support: last distance to the player (for progress detection) and a
             // LOS-independent "can't reach" counter that trips ForceDisengage so a walled-off NPC
             // patrols instead of pressing forever (the "stands at the wall" bug).

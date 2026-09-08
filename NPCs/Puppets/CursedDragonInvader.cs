@@ -181,8 +181,26 @@ namespace tsorcRevamp.NPCs.Puppets
         // ── Magic: MeteorStorm (instant 3-storm, rare 7 s rain) ─────────────────────
         protected override float MagicRange => 860f;
         protected override float MinMagicRange => 240f;   // usable across more of the fight
-        protected override int MagicTelegraphTicks => 60;
-        protected override int MagicRecoveryTicks => 75;
+        // ── Twin Storm (below 50% HP) ─────────────────────────────────────────────
+        // A second-wind magic attack: a long planted 90-tick telegraph at the staff tip, then two
+        // tornadoes peeling off to either side. Chains 2-3 casts back to back with ZERO recovery, so
+        // once it starts the pressure is relentless until the chain runs out.
+        private const int TwinStormTelegraphTicks = 90;
+        /// <summary>Ticks before the strike when the gathered swirl bursts outward — the "it's coming" beat.</summary>
+        private const int TwinStormBurstLeadTicks = 15;
+        /// <summary>Radius of the gathering swirl. 16px radius = the 32px circle.</summary>
+        private const float TwinStormSwirlRadius = 16f;
+        /// <summary>Chance per idle tick of arming a chain once below half health.</summary>
+        private const int TwinStormArmChance = 200;
+
+        private int _twinStormCastsLeft;
+
+        /// <summary>True while a Twin Storm chain is queued or mid-flight. Drives the longer telegraph and
+        /// the zero recovery, so it must be armed BEFORE the magic phase begins (see PostAI).</summary>
+        private bool TwinStormQueued => _twinStormCastsLeft > 0;
+
+        protected override int MagicTelegraphTicks => TwinStormQueued ? TwinStormTelegraphTicks : 60;
+        protected override int MagicRecoveryTicks => TwinStormQueued ? 0 : 75;
         protected override int MagicCooldownAfterUse => 180; // fires more often
         protected override int MagicPreferenceChance => 55;  // meteors compete with arcane ball, not just fill gaps
 
@@ -462,6 +480,15 @@ namespace tsorcRevamp.NPCs.Puppets
 
             Player target = Main.player[NPC.target];
 
+            // Twin Storm takes priority over the meteor kit whenever a chain is armed. Consumes one cast;
+            // with MagicRecoveryTicks at 0 the next telegraph begins almost immediately.
+            if (TwinStormQueued)
+            {
+                _twinStormCastsLeft--;
+                FireTwinStorm();
+                return;
+            }
+
             if (Main.rand.Next(100) < MeteorRainChance)
             {
                 // Rare: channel a 7-second meteor rain (DoMagicTick spawns over the extended phase).
@@ -648,9 +675,117 @@ namespace tsorcRevamp.NPCs.Puppets
 
         // ── Visual: white dust + light building at the spear tip through the whole ranged
         // telegraph, with one strong pulse right before the shot fires ─────────────────
+        /// <summary>Two tornadoes peeling away to either side. Reuses vanilla's Apprentice storm (the same
+        /// projectile the Tome of Infinite Wisdom's right-click summons), so the whole swirling column and
+        /// its dust come free — it only needs flipping hostile. Vanilla's own recipe is preserved: spawn
+        /// anchored 100px above the caster's FEET with a purely horizontal velocity and 1.75x damage. That
+        /// ground-anchored, flat trajectory is what makes it read as a tornado rather than a fired shot.</summary>
+        private void FireTwinStorm()
+        {
+            SoundEngine.PlaySound(SoundID.Item84 with { Volume = 0.7f, Pitch = -0.2f }, NPC.Center);
+
+            const float StormSpeed = 7f;
+            int stormDamage = (int)(MagicDamage * 1.75f);
+
+            for (int side = -1; side <= 1; side += 2)
+            {
+                int index = Projectile.NewProjectile(
+                    NPC.GetSource_FromThis(),
+                    new Vector2(NPC.Center.X, NPC.Bottom.Y - 100f),
+                    new Vector2(side * StormSpeed, 0f),
+                    ProjectileID.DD2ApprenticeStorm,
+                    stormDamage,
+                    4f,
+                    Main.myPlayer);
+
+                if (index < 0 || index >= Main.maxProjectiles)
+                {
+                    continue;
+                }
+
+                Projectile storm = Main.projectile[index];
+                storm.friendly = false;
+                storm.hostile = true;
+                storm.netUpdate = true;
+            }
+        }
+
+        /// <summary>Twin Storm's tell: energy winds into a tight 32px circle at the staff tip for most of
+        /// the telegraph, then bursts outward over the final 15 ticks as the storms are released.</summary>
+        protected override void DoMagicTelegraphVFX(float progress)
+        {
+            if (!TwinStormQueued || Main.dedServ)
+            {
+                return;
+            }
+
+            Vector2 staffTip = GetSpearTipWorldPosition(92f);
+            float burstStart = 1f - (TwinStormBurstLeadTicks / (float)TwinStormTelegraphTicks);
+
+            if (progress < burstStart)
+            {
+                // Gathering: motes ride the rim of the circle, tightening and speeding up as it fills.
+                float gather = progress / burstStart;
+                float radius = TwinStormSwirlRadius * MathHelper.Lerp(1.15f, 0.75f, gather);
+                float spin = Main.GlobalTimeWrappedHourly * MathHelper.Lerp(4f, 11f, gather);
+
+                for (int i = 0; i < 3; i++)
+                {
+                    float angle = spin + MathHelper.TwoPi * i / 3f;
+                    Vector2 rim = staffTip + angle.ToRotationVector2() * radius;
+
+                    // Velocity runs TANGENT to the circle, which is what makes it read as a swirl
+                    // rather than a ring of static sparks.
+                    Vector2 tangent = (angle + MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(1.2f, 3.2f, gather);
+
+                    Dust swirl = Dust.NewDustPerfect(rim, DustID.Cloud, tangent, 90,
+                        Color.Lerp(new Color(180, 225, 255), Color.White, gather),
+                        Main.rand.NextFloat(0.9f, 1.45f));
+                    swirl.noGravity = true;
+                }
+
+                Lighting.AddLight(staffTip, 0.25f * gather, 0.4f * gather, 0.6f * gather);
+                return;
+            }
+
+            // Burst: the gathered ring blows outward. Scales up hard through the final ticks so the
+            // release is unmistakable.
+            float burst = (progress - burstStart) / (1f - burstStart);
+
+            for (int i = 0; i < 6; i++)
+            {
+                Vector2 outward = Main.rand.NextVector2CircularEdge(1f, 1f);
+
+                Dust blast = Dust.NewDustPerfect(
+                    staffTip + outward * TwinStormSwirlRadius,
+                    DustID.Cloud,
+                    outward * MathHelper.Lerp(3f, 9f, burst),
+                    70,
+                    Color.White,
+                    Main.rand.NextFloat(1.2f, 2f));
+                blast.noGravity = true;
+            }
+
+            Lighting.AddLight(staffTip, 0.5f, 0.7f, 1f);
+        }
+
         public override void PostAI()
         {
             base.PostAI();
+
+            // Arm a Twin Storm chain while idle, NOT at cast time: MagicTelegraphTicks and
+            // MagicRecoveryTicks are both read when the phase is entered, so the flag has to already be
+            // set or the first cast would use the short 60-tick telegraph and full recovery.
+            bool belowHalfHealth = NPC.life < NPC.lifeMax * 0.5f;
+
+            if (belowHalfHealth && !TwinStormQueued && Phase == AttackPhase.Idle
+                && Main.netMode != NetmodeID.MultiplayerClient
+                && Main.rand.Next(TwinStormArmChance) == 0)
+            {
+                _twinStormCastsLeft = Main.rand.Next(2, 4); // 2-3 casts back to back
+                NPC.netUpdate = true;
+            }
+
             if (Phase != AttackPhase.RangedTelegraph || IsSecondaryRangedActive || Main.dedServ)
                 return;
 

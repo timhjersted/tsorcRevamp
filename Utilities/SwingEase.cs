@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System;
 
 namespace tsorcRevamp.Utilities
 {
@@ -17,6 +18,11 @@ namespace tsorcRevamp.Utilities
         /// <summary>Back-loaded: eases slowly at first then whips through the end — a wind-up that
         /// holds the apex a beat longer before the strike. Reads "delayed / baiting".</summary>
         Whip,
+        /// <summary>Tick-accurate accel/cruise/decel/hold shape — see <see cref="SwingEase.ApplyTrapezoidal"/>.
+        /// Unlike the other styles (which reshape a plain 0..1 progress fraction), this one needs the
+        /// step's raw tick counts, so it's handled as a special case in PuppetNPC.ApplySwingEase rather
+        /// than through the generic <see cref="SwingEase.Apply(float,float,float,SwingEaseStyle)"/> switch.</summary>
+        Trapezoidal,
     }
 
     /// <summary>
@@ -87,6 +93,86 @@ namespace tsorcRevamp.Utilities
                     return curve.GetValue(t);
                 }
             }
+        }
+
+        /// <summary>Tick-accurate accel/cruise/decel/hold swing: a short quadratic ease-in over the
+        /// first <c>AccelDegrees</c>, a fast constant-speed cruise through the middle (the emergent
+        /// "top speed" — naturally faster than either ramp since it covers most of the remaining
+        /// angle in whatever ticks are left), a slow, deliberate quadratic ease-out over the final
+        /// <c>DecelDegrees</c> that always takes exactly <c>DecelTicks</c> ticks regardless of the
+        /// swing's overall duration, then a dead-stop hold at the finished pose for <c>HoldTicks</c>
+        /// ticks so the weapon visibly lands instead of cutting off mid-motion. Built for Dread
+        /// Wraith's spear swings (see PuppetNPC.ApplySwingEase) to replace an exponential
+        /// Lerp-toward-target that never actually finished moving, just crept asymptotically closer
+        /// and looked like it stalled halfway. Constants are hardcoded rather than parameterized
+        /// since only those three motions use this today — promote them to parameters if a future
+        /// caller needs a different shape.</summary>
+        public static float ApplyTrapezoidal(float start, float end, int elapsedTicks, int totalTicks)
+        {
+            const float AccelDegrees = 15f;
+            const float DecelDegrees = 15f;
+            const int AccelTicks = 10;
+            const int DecelTicks = 30;
+            const int HoldTicks = 15;
+
+            totalTicks = Math.Max(1, totalTicks);
+            elapsedTicks = (int)MathHelper.Clamp(elapsedTicks, 0, totalTicks);
+
+            float totalSweep = end - start;
+            float sweepSign = totalSweep >= 0f ? 1f : -1f;
+            float totalSweepAbs = Math.Abs(totalSweep);
+
+            float accelAngle = MathHelper.ToRadians(AccelDegrees);
+            float decelAngle = MathHelper.ToRadians(DecelDegrees);
+
+            // Safety: if the ramps would eat more angle than this swing actually covers (a tiny
+            // motion, or a future caller with a small sweep), shrink both proportionally rather than
+            // producing a negative plateau.
+            float rampAngleTotal = accelAngle + decelAngle;
+            if (rampAngleTotal > totalSweepAbs && rampAngleTotal > 0f)
+            {
+                float shrink = totalSweepAbs / rampAngleTotal;
+                accelAngle *= shrink;
+                decelAngle *= shrink;
+            }
+
+            // Same idea for ticks: if the caller didn't budget enough AttackTicks for the full
+            // accel+decel+hold allowance, shrink proportionally so the shape still fits.
+            int accelTicks = Math.Min(AccelTicks, totalTicks);
+            int decelHoldBudget = Math.Max(0, totalTicks - accelTicks);
+            int decelHoldWant = DecelTicks + HoldTicks;
+            int decelTicks = decelHoldWant > 0
+                ? (int)Math.Round(Math.Min(decelHoldBudget, decelHoldWant) * (DecelTicks / (float)decelHoldWant))
+                : 0;
+            int holdTicks = Math.Max(0, Math.Min(decelHoldBudget, decelHoldWant) - decelTicks);
+            int plateauTicks = Math.Max(0, totalTicks - accelTicks - decelTicks - holdTicks);
+
+            float plateauAngle = Math.Max(0f, totalSweepAbs - accelAngle - decelAngle);
+
+            float angle;
+            if (elapsedTicks <= accelTicks)
+            {
+                float progress = accelTicks > 0 ? elapsedTicks / (float)accelTicks : 1f;
+                angle = accelAngle * progress * progress; // ease-in: rest -> top speed
+            }
+            else if (elapsedTicks <= accelTicks + plateauTicks)
+            {
+                float progress = plateauTicks > 0 ? (elapsedTicks - accelTicks) / (float)plateauTicks : 1f;
+                angle = accelAngle + plateauAngle * progress; // constant-speed cruise
+            }
+            else if (elapsedTicks <= accelTicks + plateauTicks + decelTicks)
+            {
+                float progress = decelTicks > 0
+                    ? (elapsedTicks - accelTicks - plateauTicks) / (float)decelTicks
+                    : 1f;
+                angle = accelAngle + plateauAngle + decelAngle * (1f - (1f - progress) * (1f - progress)); // ease-out to a stop
+            }
+            else
+            {
+                angle = totalSweepAbs; // hold: fully settled at the end pose
+            }
+
+            return start + sweepSign * angle;
         }
     }
 }

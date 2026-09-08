@@ -221,7 +221,7 @@ namespace tsorcRevamp
 
             On_NPC.AI_069_DukeFishron += DukeFishronAdjustment;
 
-            On_Main.HoverOverNPCs += HidePinwheelLifeOnMouseover;
+            On_Main.HoverOverNPCs += Main_HoverOverNPCs;
 
             // Graveyard biome: don't let thunder get scheduled at all while standing there, rather than trying to
             // intercept/stop the sound after vanilla already started it (an earlier StopAll(SoundID.Thunder)
@@ -523,7 +523,7 @@ namespace tsorcRevamp
             orig();
         }
 
-        private static void HidePinwheelLifeOnMouseover(On_Main.orig_HoverOverNPCs orig, Main self, Rectangle mouseRectangle)
+        private static void Main_HoverOverNPCs(On_Main.orig_HoverOverNPCs orig, Main self, Rectangle mouseRectangle)
         {   //But why does this run every tick and not only when hovering over an enemy
 
             List<NPC> pinwheelList = new List<NPC>();
@@ -543,6 +543,8 @@ namespace tsorcRevamp
             {
                 pinwheelList[i].dontTakeDamage = false;
             }
+
+            Systems.SummonerRework.SpiritAshesMinions.ShowHoverText(mouseRectangle);
         }
 
         private static void DukeFishronAdjustment(On_NPC.orig_AI_069_DukeFishron orig, NPC self)

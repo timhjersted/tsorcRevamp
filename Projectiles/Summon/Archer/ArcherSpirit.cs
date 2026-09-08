@@ -14,7 +14,6 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
         private const int ArcherNavSearchRadius = 100;
         private const int AimWindupFrames = 12;
 
-        public int lifetime = 10800; // 3 minutes in ticks
         public int shootCooldown = 0;
         public int aimWindupTimer = 0;
         public int stuckTimer = 0;
@@ -56,13 +55,6 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
 
             if (!CheckActive(player))
             {
-                return;
-            }
-
-            lifetime--;
-            if (lifetime <= 0)
-            {
-                Projectile.Kill();
                 return;
             }
 
@@ -714,12 +706,8 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
             Vector2 origin = sourceRectangle.Size() / 2f;
 
             float opacity = 1f;
-            if (lifetime < 120)
-            {
-                opacity = lifetime / 120f;
-            }
 
-            // Light yellow tint, no transparency (except when fading out at the end of life)
+            // Light yellow tint, no transparency
             Color drawColor = lightColor;
             drawColor.R = (byte)Math.Min(255, drawColor.R * 1.2f);
             drawColor.G = (byte)Math.Min(255, drawColor.G * 1.2f);

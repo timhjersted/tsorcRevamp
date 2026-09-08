@@ -580,7 +580,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
-                if (NPC.direction == 1)
+                if (NPC.direction == 1 && !UsefulFunctions.IsMinionOrSentry(projectile))
                 {
                     if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19)
                     {
@@ -595,7 +595,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center);
                     }
                 }
-                else
+                else if (!UsefulFunctions.IsMinionOrSentry(projectile))
                 {
                     if (projectile.oldPosition.X > NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19)
                     {

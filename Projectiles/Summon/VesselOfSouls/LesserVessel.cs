@@ -30,7 +30,6 @@ namespace tsorcRevamp.Projectiles.Summon.VesselOfSouls
             ? "tsorcRevamp/Projectiles/Enemy/VesselOfSouls/StrangeEye"
             : "tsorcRevamp/NPCs/Bosses/VesselOfSouls/SoulVessel";
 
-        public int lifetime = 9000; // 2.5 minutes in ticks
         int shootTimer;
         int frameTimer;
         int frameIndex;
@@ -81,9 +80,6 @@ namespace tsorcRevamp.Projectiles.Summon.VesselOfSouls
         {
             Player player = Main.player[Projectile.owner];
             if (!CheckActive(player)) return;
-
-            lifetime--;
-            if (lifetime <= 0) { Projectile.Kill(); return; }
 
             Lighting.AddLight(Projectile.Center, 0.35f, 0.1f, 0.45f);
 
@@ -253,7 +249,7 @@ namespace tsorcRevamp.Projectiles.Summon.VesselOfSouls
             int frameH = tex.Height / Main.projFrames[Projectile.type];
             Rectangle src = new Rectangle(0, Projectile.frame * frameH, tex.Width, frameH);
             Vector2 origin = src.Size() / 2f;
-            float opacity = lifetime < 120 ? lifetime / 120f : 1f;
+            float opacity = 1f;
             bool rotating = UseStrangeEyeSprite && RotateStrangeEyeGaze;
             SpriteEffects fx = rotating ? SpriteEffects.None
                 : (Projectile.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally);

@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Melee.Broadswords;
 
@@ -154,7 +155,12 @@ namespace tsorcRevamp.Items.Armors
                 lastCinderCooldown--;
             }
 
-            Player.setBonus = $"Lord of Cinder: melee hits kindle Cinder; at {CinderStacksMax} stacks restore {CinderManaRestore} mana. Above 50% mana, gain flame power and empower the Sword of Lord Gwyn. Dodge through attacks to arm a sunlight strike. Burning kills restore mana and stamina. Above 50% mana, lethal damage triggers Last Cinder.";
+            // {0}/{1} = CinderStacksMax/CinderManaRestore - see LordGwynHelm's .hjson entry, not typed as
+            // literals here so the tooltip can never drift out of sync with a future rebalance of either
+            // constant. Filed under the helm's own key, matching the other set-bonus items in this mod
+            // (ArtoriasOfTheAbyssHelm, FirelinkHelm) rather than this GlobalItem's own name.
+            Player.setBonus = Language.GetTextValue(
+                "Mods.tsorcRevamp.Items.LordGwynHelm.SetBonus", CinderStacksMax, CinderManaRestore);
             Player.manaCost -= LordGwynSetEffects.SetManaCost / 100f;
             Player.magmaStone = true;
             Player.meleeEnchant = 3;
@@ -278,7 +284,7 @@ namespace tsorcRevamp.Items.Armors
             for (int i = 0; i < Main.maxNPCs && !dodgedThreat; i++)
             {
                 NPC npc = Main.npc[i];
-                dodgedThreat = npc.active && !npc.friendly && npc.damage > 0 && !npc.dontTakeDamage && paddedHitbox.Intersects(npc.Hitbox);
+                dodgedThreat = UsefulFunctions.IsHostileThreat(npc) && paddedHitbox.Intersects(npc.Hitbox);
             }
             for (int i = 0; i < Main.maxProjectiles && !dodgedThreat; i++)
             {

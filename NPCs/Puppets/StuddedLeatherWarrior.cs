@@ -753,17 +753,8 @@ namespace tsorcRevamp.NPCs.Puppets
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<global::tsorcRevamp.Items.Weapons.Throwing.FireFlask>()));
         }
 
-        public override void HitEffect(NPC.HitInfo hit)
-        {
-            if (NPC.life <= 0)
-            {
-                for (int i = 0; i < 150; i++)
-                {
-                    int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 100, default, Main.rand.NextFloat(1f, 2.2f));
-                    Main.dust[d].noGravity = true;
-                }
-            }
-        }
+        // On-kill (150 Blood) and the party-wipe despawn both come from PuppetNPC's shared defaults —
+        // no override needed, Blood is already the base default dust for both.
 
         public override void OnKill()
         {

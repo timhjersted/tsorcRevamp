@@ -1018,7 +1018,10 @@ namespace tsorcRevamp
                     _debugAttackColor[npc.whoAmI] = history;
                 }
 
-                Vector2 headPos = new Vector2(npc.Top.X, npc.Top.Y) - Main.screenPosition - new Vector2(0f, 36f);
+                // Puppets can opt into extra clearance so a tall sprite (e.g. a mounted rider) doesn't
+                // sit on top of its own readout.
+                float labelRise = inv != null ? inv.DebugLabelRise : 0f;
+                Vector2 headPos = new Vector2(npc.Top.X, npc.Top.Y) - Main.screenPosition - new Vector2(0f, 36f + labelRise);
                 if (!string.IsNullOrEmpty(history.older))
                 {
                     Vector2 size = headFont.MeasureString(history.older) * 0.65f;
@@ -1737,7 +1740,7 @@ namespace tsorcRevamp
             int GetFillWidth(float val, float maxVal) => (int)ScaleResource(Math.Min(val, maxVal));
 
             // Reusable bar drawing helper using 3-slice rendering of the overhead stamina bar sprite
-            void DrawBar(int y, float current, float visualCurrent, float max, Color fillColor, Color highlightColor, Color shadowColor, Color bgColor, float debt = 0f)
+            void DrawBar(int y, float current, float visualCurrent, float max, Color fillColor, Color highlightColor, Color shadowColor, Color bgColor, float debt = 0f, float regain = 0f, bool regainDecaying = false)
             {
                 int maxBarWidth = GetBarWidth(max);
                 int startX = rightX - maxBarWidth;
@@ -1762,8 +1765,11 @@ namespace tsorcRevamp
                 // Draw dark resource background container
                 spriteBatch.Draw(pixel, new Rectangle(startX, y + 2, maxBarWidth, barHeight - 3), bgColor);
 
-                // Draw damage yellow indicator (if visualCurrent > current)
-                if (visualRatio > ratio)
+                // Draw damage yellow indicator (if visualCurrent > current).
+                // Suppressed while a regain pool is standing: both occupy the same span of the bar, and
+                // the pool is the more actionable signal — it says how much you can still take back,
+                // where the lag indicator only says what you already lost.
+                if (visualRatio > ratio && regain <= 0f)
                 {
                     int fillStart = GetFillWidth(current, max);
                     int fillWidth = GetFillWidth(visualCurrent, max) - fillStart;
@@ -1788,6 +1794,25 @@ namespace tsorcRevamp
                     spriteBatch.Draw(pixel, new Rectangle(startX, y + 2, debtFillWidth, 2), new Color(235, 90, 90));
                     spriteBatch.Draw(pixel, new Rectangle(startX, y + 4, debtFillWidth, 5), new Color(190, 35, 45));
                     spriteBatch.Draw(pixel, new Rectangle(startX, y + 9, debtFillWidth, 2), new Color(110, 15, 25));
+                }
+
+                // Regain pool: health still recoverable by landing hits, drawn immediately to the right
+                // of current health. Grey-white while it holds ("you can still get this back"), yellow
+                // once it starts draining ("you are losing this"). One segment changing colour rather
+                // than a handoff to the lag indicator above — the HP was already deducted when the hit
+                // landed, so an expiring pool is a lost opportunity, not a second loss.
+                int regainStart = GetFillWidth(current, max);
+                int regainFillWidth = Math.Min(GetFillWidth(regain, max), maxBarWidth - regainStart);
+                if (regainFillWidth > 0)
+                {
+
+                    Color regainHighlight = regainDecaying ? new Color(255, 225, 120) : new Color(235, 235, 240);
+                    Color regainMain = regainDecaying ? new Color(240, 190, 50) : new Color(195, 195, 205);
+                    Color regainShadow = regainDecaying ? new Color(160, 110, 10) : new Color(120, 120, 132);
+
+                    spriteBatch.Draw(pixel, new Rectangle(startX + regainStart, y + 2, regainFillWidth, 2), regainHighlight);
+                    spriteBatch.Draw(pixel, new Rectangle(startX + regainStart, y + 4, regainFillWidth, 5), regainMain);
+                    spriteBatch.Draw(pixel, new Rectangle(startX + regainStart, y + 9, regainFillWidth, 2), regainShadow);
                 }
 
                 // Draw current resource fill
@@ -1840,8 +1865,9 @@ namespace tsorcRevamp
                 spriteBatch.Draw(pixel, new Rectangle(L + W - 2, T + 2, 1, H - 3), borderGoldColor);
             }
 
-            // Health (Red)
-            DrawBar(startY, healthCurrent, visualLife, healthMax, new Color(230, 45, 45), new Color(255, 130, 120), new Color(140, 20, 45), new Color(45, 10, 10, 180));
+            // Health (Red), with the regain pool riding on top of it when the BotC rework is active.
+            var regainPlayer = player.GetModPlayer<Systems.Regain.RegainPlayer>();
+            DrawBar(startY, healthCurrent, visualLife, healthMax, new Color(230, 45, 45), new Color(255, 130, 120), new Color(140, 20, 45), new Color(45, 10, 10, 180), 0f, regainPlayer.RegainPool, regainPlayer.IsDecaying);
 
             // Mana (Blue)
             DrawBar(startY + barHeight + gap, (int)(manaCurrent / (1f + modPlayer.MaxManaAmplifier / 100f)), (int)(visualMana / (1f + modPlayer.MaxManaAmplifier / 100f)), (int)(manaMax / (1f + modPlayer.MaxManaAmplifier / 100f)), new Color(30, 110, 230), new Color(100, 175, 255), new Color(20, 45, 140), new Color(10, 20, 50, 180));

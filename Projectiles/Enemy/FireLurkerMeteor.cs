@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     class FireLurkerMeteor : ModProjectile
     {
         const int Lifetime = 6 * 60;
-        const int TelegraphTicks = 60;
+        const int TelegraphTicks = 90;
         const int OrbDelay = 2 * 60;
         const int PreExplosionDustTime = 2 * 60;
         const int ExplosionHitboxSize = 120;
@@ -41,7 +41,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool? CanDamage() => expandedForExplosion ? null : false;
+        // Damages on contact once it has actually appeared, not only when it detonates. It is a burning
+        // orb sitting in the world - standing inside it should hurt. Still harmless during the telegraph,
+        // when nothing is visibly there yet.
+        public override bool? CanDamage() => meteorRevealed ? null : false;
 
         public override void AI()
         {

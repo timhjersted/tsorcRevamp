@@ -7,8 +7,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
-    /// <summary>Pixel-drawn fire crescent used both as Owl Father's direct ranged slash and as the
-    /// short ground waves released by Greatfire Breaker. ai[0]: 0 = direct, 1 = ground-following.</summary>
+    /// <summary>Fire crescent used both as Owl Father's direct ranged slash and as the short ground
+    /// waves released by Greatfire Breaker. ai[0]: 0 = direct, 1 = ground-following. The visible
+    /// "wave" is carried by trailing PuppetFireWaveColumn instances spawned in AI(); this projectile
+    /// is the real hitbox plus a single leading-edge ember.</summary>
     public class PuppetGreatfireCrescent : ModProjectile
     {
         public const int DirectMode = 0;
@@ -17,7 +19,15 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         private bool GroundFollowing => (int)Projectile.ai[0] == GroundMode;
 
-        public override string Texture => "Terraria/Images/MagicPixel";
+        // Ground-mode waves get the full 15-tile rising wall the design calls for; the direct throw
+        // is airborne and travels toward the player rather than along the ground, so its trail is a
+        // shorter wisp scaled to match instead of reaching all the way down to the terrain.
+        private const float GroundWaveColumnHeight = 15f * 16f;
+        private const float DirectWaveColumnHeight = 6f * 16f;
+        private const int WaveColumnSpawnInterval = 4;
+        private int _waveColumnTimer;
+
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/FireBreath";
 
         public override void SetDefaults()
         {
@@ -66,6 +76,16 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.rotation = Projectile.velocity.ToRotation();
             Lighting.AddLight(Projectile.Center, 0.9f, 0.35f, 0.06f);
 
+            if (!Main.dedServ)
+            {
+                _waveColumnTimer++;
+                if (_waveColumnTimer >= WaveColumnSpawnInterval)
+                {
+                    _waveColumnTimer = 0;
+                    SpawnFireWaveColumn();
+                }
+            }
+
             if (!Main.dedServ && Main.rand.NextBool(2))
             {
                 Dust ember = Dust.NewDustPerfect(
@@ -79,35 +99,43 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             }
         }
 
+        /// <summary>The crescent's own leading edge — a single pulsing ember. The actual "wave of
+        /// fire" look comes from the trailing <see cref="PuppetFireWaveColumn"/>s spawned in AI();
+        /// this just keeps the real hitbox visually anchored to something instead of invisible.</summary>
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D pixel = TextureAssets.MagicPixel.Value;
-            int direction = Projectile.velocity.X < 0f ? -1 : 1;
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             float fade = MathHelper.Clamp(Projectile.timeLeft / 10f, 0f, 1f);
+            float pulse = 1f + (float)System.Math.Sin(Main.GameUpdateCount * 0.3f) * 0.08f;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Color color = Color.Lerp(Color.Gold, Color.OrangeRed, 0.4f) * fade;
 
-            for (int i = 0; i < 11; i++)
-            {
-                float progress = i / 10f;
-                float angle = MathHelper.Lerp(-1.25f, 1.25f, progress);
-                Vector2 local = new Vector2(
-                    direction * (float)System.Math.Cos(angle) * 20f,
-                    (float)System.Math.Sin(angle) * 25f);
-                Vector2 drawPosition = Projectile.Center + local - Main.screenPosition;
-                Color color = Color.Lerp(Color.Gold, Color.OrangeRed, System.Math.Abs(progress - 0.5f) * 1.4f)
-                    * (0.85f * fade);
-                float size = i == 0 || i == 10 ? 3f : 5f;
-                Main.EntitySpriteDraw(
-                    pixel,
-                    drawPosition,
-                    null,
-                    color,
-                    0f,
-                    new Vector2(0.5f),
-                    new Vector2(size, size + 1f),
-                    SpriteEffects.None);
-            }
+            Main.EntitySpriteDraw(
+                texture, drawPosition, null, color, Projectile.rotation,
+                texture.Size() * 0.5f, 1.4f * pulse, SpriteEffects.None, 0);
 
             return false;
+        }
+
+        /// <summary>Spawns one rising fire-lick column at the crescent's current position, staggered
+        /// every <see cref="WaveColumnSpawnInterval"/> ticks so the wave reads as a continuous curtain
+        /// trailing the crescent rather than a single static burst.</summary>
+        private void SpawnFireWaveColumn()
+        {
+            float columnHeight = GroundFollowing ? GroundWaveColumnHeight : DirectWaveColumnHeight;
+            float fanSpread = (Projectile.velocity.X < 0f ? -1f : 1f) * 14f;
+            Vector2 spawnPosition = Projectile.Center;
+
+            if (GroundFollowing)
+            {
+                float groundY = PuppetGroundDustWave.FindGroundY(Projectile.Center.X, Projectile.Center.Y);
+                spawnPosition = new Vector2(Projectile.Center.X, groundY);
+            }
+
+            Projectile.NewProjectile(
+                Projectile.GetSource_FromThis(), spawnPosition, Vector2.Zero,
+                ModContent.ProjectileType<PuppetFireWaveColumn>(), 0, 0f, Projectile.owner,
+                columnHeight, fanSpread);
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

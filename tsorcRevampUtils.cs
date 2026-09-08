@@ -280,6 +280,33 @@ namespace tsorcRevamp
     public static class UsefulFunctions
     {
         /// <summary>
+        /// Whether an NPC is a genuine combat threat to the player. This deliberately does not inspect
+        /// <see cref="NPC.damage"/> because puppet and invader enemies deal damage through weapon hitboxes
+        /// and projectiles while keeping their contact damage at zero.
+        /// </summary>
+        public static bool IsHostileThreat(NPC npc)
+        {
+            return npc != null
+                && npc.active
+                && !npc.friendly
+                && !npc.townNPC
+                && !npc.dontTakeDamage
+                && npc.type != NPCID.TargetDummy
+                && !npc.CountsAsACritter;
+        }
+
+        /// <summary>
+        /// Whether a projectile came from a minion or sentry rather than a directly-wielded weapon.
+        /// Used to exclude positional weak-spot bonuses (back/backstab damage) from summons - a minion
+        /// or sentry has no "the player is standing behind the enemy" story behind it, so the bonus would
+        /// trigger essentially at random based on where the summon happens to be facing/standing.
+        /// </summary>
+        public static bool IsMinionOrSentry(Projectile projectile)
+        {
+            return projectile.minion || projectile.sentry;
+        }
+
+        /// <summary>
         /// Shared "lit fuse" sound played when a bomb appears in an enemy's hand / telegraph (smoke
         /// bomb, the knights' firebombs, Gwyn's smoke bomb).  ONE place to swap the sound.
         /// NOTE: vanilla's bomb fuse is NOT a SoundID enum member — it's a looped audio asset

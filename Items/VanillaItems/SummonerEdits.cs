@@ -17,6 +17,15 @@ namespace tsorcRevamp.Items.VanillaItems
 
         public override void SetDefaults(Item item)
         {
+            // 1.4.5 removes mana costs from every vanilla summon weapon and sentry. Doing it here now
+            // keeps 1.4.4.9 consistent with that instead of waiting for the actual update. Vanilla only -
+            // item.type < ItemID.Count excludes this mod's own summon items (Archer Spirit Bell, Soul
+            // Reliquary, etc.), which have their mana costs set deliberately and separately.
+            if (item.type < ItemID.Count && item.DamageType == DamageClass.Summon && item.mana > 0)
+            {
+                item.mana = 0;
+            }
+
             #region Minions
             if (item.type == ItemID.AbigailsFlower)
             {

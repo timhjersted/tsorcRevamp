@@ -220,6 +220,13 @@ namespace tsorcRevamp
                 EstusChargesCurrent--; //Remove a charge
                 EstusDrinkTimer = 0; //Set the timer back to 0
                 Player.HealEffect(EstusHealthGain + EstusHealthGainBonus);
+
+                // A draught of Estus repairs the summoner's spirit ashes too, splitting this same total
+                // across whichever are wounded. Applied here on the drink finishing rather than from the
+                // per-tick healing loop below - that loop halts once the player is at full health, which
+                // would leave a topped-off summoner unable to repair a battered army.
+                Systems.SummonerRework.SpiritAshesMinions.HealOwnedMinions(Player, EstusHealthGain + EstusHealthGainBonus);
+
                 Player.GetModPlayer<tsorcRevampPlayer>().ActivateSporePowderEffect();
                 Player.GetModPlayer<tsorcRevampPlayer>().ActivateVenomPowderEffect();
                 IsEstusHealing = true; //Commence healing process
