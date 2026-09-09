@@ -2,7 +2,7 @@
 
 // s0/s1 mean different things per technique, because the callers differ. GwynCinderArc and
 // GwynCinderBlade take a real SPRITE at s0 (the boomerang's greatsword) and a flow field at s1.
-// GwynCinderSlash is fully procedural and takes macro turbulence at s0, fine turbulence at s1.
+// FireSlashArc is fully procedural and takes macro turbulence at s0, fine turbulence at s1.
 sampler PrimaryTexture : register(s0);
 sampler FlowNoise : register(s1);
 
@@ -13,8 +13,8 @@ float Opacity;
 float Time;
 float2 DrawSize;
 float2 PrimaryTextureSize;
-float2 CoordScale;        // GwynCinderSlash: PrimaryTextureSize / DrawSize, pre-divided in C#
-float4 PixelGrid;         // GwynCinderSlash: xy = 2px block count across the quad, zw = reciprocal
+float2 CoordScale;        // FireSlashArc: PrimaryTextureSize / DrawSize, pre-divided in C#
+float4 PixelGrid;         // FireSlashArc: xy = 2px block count across the quad, zw = reciprocal
 float Progress;
 
 float2 NormalizedCoordinates(float2 coords)
@@ -63,8 +63,10 @@ float4 GwynCinderBladePixel(float4 sampleColor : COLOR0, float2 coords : TEXCOOR
     return float4(sampleColor.rgb * color * heat, sampleColor.a * alpha);
 }
 
-// Gwyn's greatsword slash, drawn under BlendState.AlphaBlend (premultiplied — the return is already
-// density-weighted, so a bare float4(color, alpha) here would paint a rectangle the size of the quad).
+// Generic procedural melee-slash quad, drawn under BlendState.AlphaBlend (premultiplied — the
+// return is already density-weighted, so a bare float4(color, alpha) here would paint a rectangle
+// the size of the quad). Originated on Gwyn's greatsword; PuppetNPC.HasFireSlashVFX lifted it onto
+// every puppet's own live hand/blade pose, so any puppet can opt in with just three colors.
 //
 // This replaces a version that tinted the shared 3-frame `Slash` sprite and edge-detected its
 // outline. Two things doomed that: the sprite is a soft pale crescent whose art fights any palette
@@ -74,7 +76,7 @@ float4 GwynCinderBladePixel(float4 sampleColor : COLOR0, float2 coords : TEXCOOR
 // it cannot silently degrade at a size nobody previewed.
 //
 // Local space is p in [-1,1]^2 with +X along the aim direction; the caller rotates the quad.
-float4 GwynCinderSlashPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
+float4 FireSlashArcPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
     float2 uv = PixelateShaderUV(coords * CoordScale, PixelGrid);
     float2 p = uv * 2.0 - 1.0;
@@ -134,11 +136,11 @@ float4 GwynCinderSlashPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOOR
     return float4(color * Opacity, alpha);
 }
 
-technique GwynCinderSlash
+technique FireSlashArc
 {
-    pass GwynCinderSlashPass
+    pass FireSlashArcPass
     {
-        PixelShader = compile ps_2_0 GwynCinderSlashPixel();
+        PixelShader = compile ps_2_0 FireSlashArcPixel();
     }
 }
 

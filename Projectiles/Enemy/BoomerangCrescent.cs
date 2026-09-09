@@ -18,7 +18,8 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         const float Speed = 7f;
         const float CurveRatePerTick = 0.05f;
-        const int OutboundArcTicks = 45;
+        const float OvershootPastTarget = 400f; // how far beyond the player it commits to before turning
+        const int MaxOutboundTicks = 90; // safety cap so a tight curl can't loop forever without reaching the overshoot point
         const float CatchDistance = 50f;
         const float ReturnHomingRate = 0.10f;
 
@@ -27,6 +28,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         bool _returning;
         int _turnFlashTimer;
+        float _dustOrbitAngle;
+
+        // Captured on the first AI tick, before the curl rotates the launch velocity, so the
+        // outbound leg can be measured as real forward progress instead of elapsed time.
+        bool _outboundParamsSet;
+        Vector2 _launchOrigin;
+        Vector2 _launchDir;
+        float _turnProjectedDistance;
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/AbyssSlash";
 
@@ -63,11 +72,32 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             NPC owner = OwnerIndex >= 0 && OwnerIndex < Main.maxNPCs ? Main.npc[OwnerIndex] : null;
 
+            if (!_outboundParamsSet)
+            {
+                // Lock the launch direction and turn-around point once, from this tick's still-
+                // unrotated velocity - a fixed tick count used to turn regardless of range, so at
+                // long range it could turn around before ever reaching the player. Instead: aim
+                // OvershootPastTarget beyond wherever the player was at launch, projected onto the
+                // launch direction, and turn once real forward progress reaches that point.
+                _launchOrigin = Projectile.Center;
+                _launchDir = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+
+                Player launchTarget = owner != null && owner.active && owner.target >= 0
+                    && owner.target < Main.maxPlayers ? Main.player[owner.target] : null;
+                Vector2 turnPoint = launchTarget != null && launchTarget.active
+                    ? launchTarget.Center + _launchDir * OvershootPastTarget
+                    : _launchOrigin + _launchDir * OvershootPastTarget;
+                _turnProjectedDistance = Vector2.Dot(turnPoint - _launchOrigin, _launchDir);
+                _outboundParamsSet = true;
+            }
+
             if (!_returning)
             {
                 // Continuously rotating velocity traces the wide curling "out past the player" arc.
                 Projectile.velocity = Projectile.velocity.RotatedBy(CurveRatePerTick * CurveDir);
-                if (elapsed >= OutboundArcTicks)
+
+                float traveledDistance = Vector2.Dot(Projectile.Center - _launchOrigin, _launchDir);
+                if (traveledDistance >= _turnProjectedDistance || elapsed >= MaxOutboundTicks)
                 {
                     _returning = true;
                     _turnFlashTimer = 12;
@@ -115,6 +145,36 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Main.rand.NextFloat(0.62f, 0.96f));
                 d.noGravity = true;
             }
+
+            SpawnOrbitingDust();
+        }
+
+        /// <summary>Extra purple motes circling INSIDE the shader silhouette (the Orbit layer draws
+        /// out to ~86-94px across - this stays well within that, ~10-24px out from center) rather
+        /// than trailing behind like the dust above. Orbits the same direction as the curl so it
+        /// reads as part of the same spin instead of a separate, uncoordinated effect.</summary>
+        void SpawnOrbitingDust()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            _dustOrbitAngle += 0.30f * CurveDir;
+            if (!Main.rand.NextBool(2))
+            {
+                return;
+            }
+
+            float radius = Main.rand.NextFloat(10f, 24f);
+            Vector2 radial = _dustOrbitAngle.ToRotationVector2();
+            Vector2 tangent = radial.RotatedBy(MathHelper.PiOver2 * CurveDir);
+            Vector2 position = Projectile.Center + radial * radius;
+            Vector2 velocity = tangent * Main.rand.NextFloat(0.9f, 1.7f);
+            Color tint = _returning ? new Color(225, 80, 190) : new Color(170, 70, 235);
+            Dust d = Dust.NewDustPerfect(position, DustID.PurpleTorch, velocity, 110, tint,
+                Main.rand.NextFloat(0.55f, 0.85f));
+            d.noGravity = true;
         }
 
         public override bool PreDraw(ref Color lightColor)

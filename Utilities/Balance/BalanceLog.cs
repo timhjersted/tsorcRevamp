@@ -122,6 +122,37 @@ namespace tsorcRevamp.Utilities.Balance
                 _current.damageTaken += amount;
         }
 
+        /// <summary>Logs one successful Regain credit against the current boss encounter, if one is
+        /// open. Deliberately silent outside a boss fight - see the comment in RecordHit on why
+        /// trash-mob activity is not logged at all.</summary>
+        internal static void RecordRegainCredit(int itemType, int healed, float distanceTiles)
+        {
+            if (!Active || _current == null || healed <= 0)
+                return;
+
+            WeaponUsage weapon = GetWeapon(itemType);
+            if (weapon == null)
+                return;
+
+            weapon.regainHealed += healed;
+            weapon.regainCredits++;
+            weapon.regainDistanceSumTiles += distanceTiles;
+            _current.totalRegainHealed += healed;
+        }
+
+        /// <summary>Logs one credit the swing-window gate refused. A weapon racking these up fast
+        /// relative to regainCredits is trying to credit multiple times off a single activation -
+        /// exactly the shape a multishot/piercing/beam exploit takes.</summary>
+        internal static void RecordRegainGateRefusal(int itemType)
+        {
+            if (!Active || _current == null)
+                return;
+
+            WeaponUsage weapon = GetWeapon(itemType);
+            if (weapon != null)
+                weapon.regainGateRefusals++;
+        }
+
         internal static void NotifyKilled(NPC npc)
         {
             if (_current != null && npc.whoAmI == _anchorNpcId && npc.type == _anchorNpcType)

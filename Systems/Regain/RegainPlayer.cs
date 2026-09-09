@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Utilities.Balance;
 
 namespace tsorcRevamp.Systems.Regain
 {
@@ -14,7 +15,10 @@ namespace tsorcRevamp.Systems.Regain
     /// This is the counterweight to Souls Mode's healing scarcity. Without it the answer to "I'm low" is
     /// retreat and pray; with it the answer is fight back, and it costs no new heal button to say so.
     ///
-    /// All tuning lives in Regain.cs. Gated by Regain.Active().
+    /// All tunable constants live in Regain.cs. Gated by Regain.Active(). One correctness dependency lives
+    /// outside both files: the post-hit-proc/split exclusion (isChildProjectile below) reads
+    /// Projectiles.tsorcGlobalProjectile.SpawnedByProjectile/HasHitAnNpc, set on every hostile projectile
+    /// regardless of whether Regain is even active.
     /// </summary>
     public class RegainPlayer : ModPlayer
     {
@@ -42,16 +46,28 @@ namespace tsorcRevamp.Systems.Regain
         /// taken mid-decay do not change how fast the rest drains.</summary>
         private float decayPerTick;
 
-        /// <summary>Game frame of the last credit. One credit per frame is the whole dedupe rule: no
-        /// weapon can attack twice within a single tick, so every swing, shot and cast still registers,
-        /// while a piercing shot through five enemies or an AoE on a swarm resolves in one frame and
-        /// therefore pays exactly once.
+        /// <summary>Game tick of the last credit. Gates against multiple credits from ONE weapon
+        /// activation - multishot pellets, a piercing hit ticking through several frames, a channelled
+        /// beam firing every tick - by requiring Regain.CreditGateFraction of the CURRENT hit's own swing
+        /// time to have elapsed since the last credit, floored by Regain.MinTicksBetweenCredits so no
+        /// weapon can credit faster than that regardless of its own speed. See CreditGateFraction and
+        /// MinTicksBetweenCredits in Regain.cs for why each exists.
+        ///
+        /// long, not uint: a uint sentinel far in the past (e.g. uint.MaxValue) wraps under subtraction
+        /// once GameUpdateCount is small, which would fail the very first credit of a session.
+        ///
+        /// Sentinel is -1,000,000 (a bit over 4.6 hours of ticks in the past), NOT long.MinValue: casting
+        /// GameUpdateCount to long and subtracting long.MinValue overflows a signed 64-bit long (its
+        /// magnitude is one past long.MaxValue), which wraps to a huge NEGATIVE number under C#'s default
+        /// unchecked arithmetic - making the gate check below true forever and refusing every credit,
+        /// including the first. -1,000,000 is nowhere near either overflow boundary while still being far
+        /// larger than any real gate window (tens of ticks).
         ///
         /// ⚠ Do NOT replace this with attack identity derived from Player.itemAnimation. Channelled
         /// magic holds itemAnimation constant while casting and fast auto-reuse weapons reset it to max
         /// on the frame it hits zero, so the "new attack" edge never fires for them - melee keeps
         /// working while ranged and magic silently stop regaining entirely.</summary>
-        private uint lastCreditFrame = uint.MaxValue;
+        private long lastCreditTick = -1_000_000L;
 
         /// <summary>Hits taken in quick succession, driving the recoverable fraction.</summary>
         public int ConsecutiveHits;
@@ -187,7 +203,7 @@ namespace tsorcRevamp.Systems.Regain
 
         public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            TryCredit(item.damage, ScaledUseAnimation(item), target, isMinionOrSentry: false);
+            TryCredit(item.damage, ScaledUseAnimation(item), target, isMinionOrSentry: false, item.type, isChildProjectile: false);
         }
 
         /// <summary>
@@ -215,28 +231,30 @@ namespace tsorcRevamp.Systems.Regain
             // Minions and sentries deal damage but must never heal their owner - your pets tank for you,
             // only you can heal you. This is the one exclusion the damage-based model does not get for
             // free, since (unlike stamina cost) minions plainly do have damage.
-            bool isMinionOrSentry = proj.minion
-                || proj.sentry
-                || proj.GetGlobalProjectile<tsorcGlobalProjectile>().WeaponStaminaSourceIsSummon;
+            tsorcGlobalProjectile projData = proj.GetGlobalProjectile<tsorcGlobalProjectile>();
+            bool isMinionOrSentry = proj.minion || proj.sentry || projData.WeaponStaminaSourceIsSummon;
 
-            int sourceItemType = proj.GetGlobalProjectile<tsorcGlobalProjectile>().WeaponStaminaSourceItemType;
+            // A projectile spawned by ANOTHER projectile that had ALREADY hit something - a post-hit
+            // proc/split (Chlorophyte Arrow's homing children), not the player's own weapon activation.
+            // These can land hits seconds later, well outside any per-activation timing gate. Does NOT
+            // catch a vanilla held-gun's cosmetic barrel spawning its own damage bolt (the barrel never
+            // hits anything itself) - see tsorcGlobalProjectile.SpawnedByProjectile for the exact rule.
+            bool isChildProjectile = projData.SpawnedByProjectile;
+
+            int sourceItemType = projData.WeaponStaminaSourceItemType;
 
             if (sourceItemType > 0 && ContentSamples.ItemsByType.TryGetValue(sourceItemType, out Item sourceWeapon))
             {
-                TryCredit(sourceWeapon.damage, ScaledUseAnimation(sourceWeapon), target, isMinionOrSentry);
+                TryCredit(sourceWeapon.damage, ScaledUseAnimation(sourceWeapon), target, isMinionOrSentry, sourceItemType, isChildProjectile);
                 return;
             }
 
             // No originating weapon - a projectile spawned by an accessory or buff rather than an item
             // use. Credit it at reference speed off its own damage; rare, and the per-hit cap bounds it.
-            TryCredit(proj.damage, Regain.ReferenceUseAnimationTicks, target, isMinionOrSentry);
+            // itemType -1 tells the balance log there is no weapon to attribute this to.
+            TryCredit(proj.damage, Regain.ReferenceUseAnimationTicks, target, isMinionOrSentry, itemType: -1, isChildProjectile);
         }
 
-        /// <summary>
-        /// Converts a landed hit into recovered health, if everything lines up: the rework is on, a pool
-        /// is open, the credit cooldown has elapsed, the target is a real threat, and the hit did not
-        /// come from a minion.
-        /// </summary>
         /// <summary>
         /// Diagnostic for "regain isn't firing". Prints the first refusal reason per hit while
         /// ShowDebugMessages is on, because every gate in TryCredit fails silently by design and there
@@ -253,7 +271,13 @@ namespace tsorcRevamp.Systems.Regain
             Main.NewText($"[Regain] no credit: {reason}", 255, 160, 160);
         }
 
-        private void TryCredit(int statedDamage, float scaledUseAnimation, NPC target, bool isMinionOrSentry)
+        /// <summary>
+        /// Converts a landed hit into recovered health, if everything lines up: the hit did not come from
+        /// a minion/sentry or a post-hit proc/split, the rework is on, a pool is open, the weapon's own
+        /// gate window has elapsed, the target is a real threat, and the resulting credit rounds to
+        /// something greater than zero.
+        /// </summary>
+        private void TryCredit(int statedDamage, float scaledUseAnimation, NPC target, bool isMinionOrSentry, int itemType, bool isChildProjectile)
         {
             if (Player.whoAmI != Main.myPlayer)
             {
@@ -263,6 +287,12 @@ namespace tsorcRevamp.Systems.Regain
             if (isMinionOrSentry)
             {
                 DebugRefusal("hit came from a minion/sentry");
+                return;
+            }
+
+            if (isChildProjectile)
+            {
+                DebugRefusal("hit came from a projectile spawned by another projectile (split/chain), not a direct weapon activation");
                 return;
             }
 
@@ -278,10 +308,22 @@ namespace tsorcRevamp.Systems.Regain
                 return;
             }
 
-            // One credit per frame. Every attack the player makes registers; a single attack that touches
-            // several enemies resolves in one frame and so still pays once.
-            if (Main.GameUpdateCount == lastCreditFrame)
+            // Gate against multiple credits from ONE weapon activation, measured against THIS hit's own
+            // swing time rather than a flat constant - see Regain.CreditGateFraction. A weapon can never
+            // be blocked by its own next legitimate swing this way; only a second hit landing before that
+            // weapon could have swung again gets refused, which is exactly what a multishot pellet, a
+            // piercing hit ticking through several frames, or a channelled beam tick actually is.
+            //
+            // MinTicksBetweenCredits then applies on top as a hard floor, independent of weapon identity -
+            // see its doc comment in Regain.cs for why this is a deliberate credit-rate cap, not another
+            // exploit patch.
+            long ticksSinceLastCredit = (long)Main.GameUpdateCount - lastCreditTick;
+            float gateTicks = Math.Max(scaledUseAnimation * Regain.CreditGateFraction, Regain.MinTicksBetweenCredits);
+
+            if (ticksSinceLastCredit < gateTicks)
             {
+                DebugRefusal($"still inside this weapon's own swing window ({ticksSinceLastCredit}/{(int)gateTicks} ticks)");
+                BalanceLog.RecordRegainGateRefusal(itemType);
                 return;
             }
 
@@ -312,11 +354,37 @@ namespace tsorcRevamp.Systems.Regain
             // recovering 2-3x faster than slow ones. Scaling both makes HP-per-second come out equal.
             float swingScale = Regain.SwingTimeScale(scaledUseAnimation);
 
+            // Range falloff: the "stay in the danger zone" lever. Full value out to
+            // Regain.FullRegainRangeTiles, tapering off beyond it, so sniping from across the arena stops
+            // being as good as trading blows.
+            float distanceToTarget = Vector2.Distance(Player.Center, target.Center);
+            float rangeScale = Regain.RangeScale(distanceToTarget);
+
             float perCreditCap = RegainPoolOriginal * Regain.MaxPoolFractionPerHit * swingScale;
-            float credit = Math.Min(statedDamage * Regain.DamageToRegainRate * swingScale, perCreditCap);
+            float credit = Math.Min(statedDamage * Regain.DamageToRegainRate * swingScale * rangeScale, perCreditCap);
             credit = Math.Min(credit, RegainPool);
 
+            // Round to nearest, NOT Ceiling - a blanket Ceiling was tried and then dropped over a
+            // theoretical bias concern, not a confirmed measurement: Ceiling's up-to-1-HP overshoot is a
+            // flat cost per credit regardless of weapon speed, but a fast weapon earns many more credits
+            // per second than a slow one, so that flat overshoot would compound into more real HP/sec for
+            // it than for a slow weapon's big, infrequent credits. (A Laser-Rifle-vs-Demon-Bow comparison
+            // was initially cited as evidence for this - it wasn't; that data predated Ceiling ever being
+            // in the build. The bias risk is still real by the math above, just not directly measured.)
+            //
+            // Round is unbiased and restores parity - but a small pool with a fast weapon (low
+            // swingScale) can still put perCreditCap under 0.5 HP, which Round sends to 0. That credit
+            // attempt would heal nothing AND return before lastCreditTick updates, leaving the pool
+            // permanently un-healable by that weapon until it just decays away. So: round normally, and
+            // only override the specific case of "this hit had real credit potential but rounded to
+            // nothing" up to the minimum non-zero heal. Every credit that would have rounded to 1+ anyway
+            // is completely untouched - no bias reintroduced for the normal case.
             int healed = (int)Math.Round(credit);
+
+            if (healed <= 0 && credit > 0f)
+            {
+                healed = 1;
+            }
 
             if (healed <= 0)
             {
@@ -324,7 +392,8 @@ namespace tsorcRevamp.Systems.Regain
             }
 
             RegainPool -= healed;
-            lastCreditFrame = Main.GameUpdateCount;
+            lastCreditTick = Main.GameUpdateCount;
+            BalanceLog.RecordRegainCredit(itemType, healed, distanceToTarget / 16f);
 
             Player.statLife = Math.Min(Player.statLife + healed, Player.statLifeMax2);
             Player.HealEffect(healed, true);

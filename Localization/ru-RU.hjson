@@ -11232,6 +11232,7 @@ Mods: {
 			// OwlEyeFlame.DisplayName: Owl Eye Flame
 			// PuppetSwordSlashTrail.DisplayName: Puppet Sword Slash Trail
 			// PuppetFireWaveColumn.DisplayName: Puppet Fire Wave Column
+			// OwlFireDiveExplosion.DisplayName: Owl Fire Dive Explosion
 		}
 
 		NPCs: {
@@ -13031,6 +13032,7 @@ Mods: {
 			}
 
 			// OwlCompanion.DisplayName: Owl Companion
+			// OwlFireDiveCompanion.DisplayName: Owl Fire Dive Companion
 		}
 
 		Prefixes: {

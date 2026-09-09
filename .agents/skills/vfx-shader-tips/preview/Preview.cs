@@ -132,6 +132,7 @@ static class Preview
     static float sat(float v) => v < 0f ? 0f : (v > 1f ? 1f : v);
     static float length(V2 p) => MathF.Sqrt(p.x * p.x + p.y * p.y);
     static float abs(float v) => MathF.Abs(v);
+    static float frac(float v) => v - MathF.Floor(v);
     static V3 lerp(V3 a, V3 b, float t) => new(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
     /// HLSL smoothstep, including the descending-edge case (edge0 > edge1), which several shaders
     /// here rely on to invert a falloff without a separate 1-x.
@@ -177,6 +178,9 @@ static class Preview
     static Tex IceCrystalSampler, IceCrackSampler, IceMistSampler, IceMistDetailSampler, IceSparkleSampler;
     static Tex IceCrystalAltSampler, IceCrackAltSampler;
     static Tex IceCellSampler, IceFacetSampler;
+    // Effects/ArtoriasPurpleFire.fx. Bindings must match ArtoriasVFX.DrawHomingFlameWisp:
+    // particleTrace7/particleFlame1 (mask shape, differs per technique) -> s0, turbulentNoise -> s1.
+    static Tex HomingWispTrace7Sampler, HomingWispFlame1Sampler, HomingWispTurbulentSampler;
 
     static void LoadTextures()
     {
@@ -205,6 +209,13 @@ static class Preview
         VortexChurnSampler = new Tex("VoronoiNoise");
         SlashSpriteSampler = new Tex(Path.Combine(ProjectRoot, "Items", "Weapons", "Melee", "Broadswords",
             "BroadswordRework", "Common", "Melee", "Slash"), previewLocal: true);
+        SwordSwipeFlow = new Tex("T_MarbleNoise_tiled");
+        SwordSwipeFibers = new Tex("Vein_04-512x512");
+        HomingWispTrace7Sampler = new Tex(Path.Combine(TextureRoot, "Particles", "trace_07_a"), previewLocal: true);
+        HomingWispFlame1Sampler = new Tex(Path.Combine(TextureRoot, "Particles", "flame_01_a"), previewLocal: true);
+        HomingWispTurbulentSampler = new Tex("TurbulentNoise");
+        BoomerangSpiralSampler = new Tex("T_VFX_Spiral07");
+        BoomerangWindstreakSampler = new Tex("T_Windstreak3");
         // Ice Gigas Tier 1: sharp Voronoi cells for crystal facets (shape) + Vein_07's crack
         // lattice for the detail layer riding on top (tips §46 — shape and detail must be
         // separate noise fields). Turbulence_06/07 give the frost breath its billowing-mist
@@ -1783,6 +1794,636 @@ static class Preview
         return (color * Opacity, alpha);
     }
 
+    // ---- Effects/ArtoriasSwordSwipe.fx, technique ArtoriasSwordSwipe (the CURRENT AbyssSlash) ----
+    // The shipped AbyssSlash projectile shape: two SUBTRACTED circles (an outer disc minus an
+    // offset inner disc), which is what makes it read as a thin crescent MOON - pinched to a point
+    // at both tips. Ported verbatim as the "OLD" baseline for the C-shape revamp below.
+    static readonly V3 SwipeDark = C(8, 2, 20);
+    static readonly V3 SwipeMid = C(102, 32, 176);
+    static readonly V3 SwipeCore = C(232, 68, 198);
+    static Tex SwordSwipeFlow, SwordSwipeFibers; // T_MarbleNoise_tiled, Vein_04-512x512
+
+    static (V3, float) ArtoriasSwordSwipeOld(V2 c, float time, float opacity)
+    {
+        V2 p = c * 2f - 1f;
+        p.y *= 1.06f;
+
+        float outerDistance = length(p);
+        float innerDistance = length(p + new V2(0.40f, 0f));
+        float outer = sat((0.96f - outerDistance) * 6.25f);
+        float cutout = sat((innerDistance - 0.48f) * 6.25f);
+        float crescent = outer * cutout;
+
+        V2 flowUV = new(p.y * 0.62f - time * 0.34f, p.x * 0.44f + time * 0.11f);
+        float macro = SwordSwipeFlow.R(flowUV);
+        float fibers = SwordSwipeFibers.R(new V2(p.y * 1.45f - time * 0.58f, p.x * 0.72f + time * 0.16f));
+        float churn = sat(macro * 0.72f + fibers * 0.40f - 0.16f);
+
+        float outerRim = sat((outerDistance - 0.70f) * 5.8f);
+        float innerRim = sat((0.72f - innerDistance) * 4.2f);
+        float rim = crescent * sat(MathF.Max(outerRim, innerRim * 0.65f));
+        float tornBody = crescent * sat(churn + 0.46f);
+        float hot = rim * sat(0.30f + churn * 0.78f);
+
+        float alpha = sat(tornBody * 0.78f + rim * 0.62f) * opacity;
+        V3 material = SwipeDark * (tornBody * 0.88f)
+            + SwipeMid * (tornBody * (0.48f + churn * 0.44f))
+            + SwipeCore * (hot * 0.76f);
+        return (material * opacity, alpha);
+    }
+
+    // ---- New: AbyssSlashArc - reuses NitoReaperSweep/GwynCinderSlash's single-arc-band
+    // construction (same circle-SDF formula, verified identical above) instead of the two-circle
+    // subtraction, because a subtracted crescent tapers to a point at both tips by construction -
+    // there is no tuning knob that turns a moon sliver into a paren. A thickened band along ONE
+    // circle's edge has uniform width and no forced tip pinch, which is what "(" actually looks
+    // like. `circleCenterX`/`circleRadius` control curvature - see the FOCUS block for the tuning
+    // pass: bigger radius (moved further away, offset scaled to match) = a flatter, more open arc.
+    //
+    // Unlike GwynCinderSlash/NitoReaperSweep, this drops the sweepY/lead01/age reveal mask entirely:
+    // those exist to animate a SWING growing into frame over Progress, but AbyssSlash is a constant
+    // flying projectile with no swing to reveal - keeping that mask just cropped the arc down to a
+    // comet-shaped sliver (confirmed by rendering it: the first pass of this candidate looked like a
+    // teardrop, not a paren, at every candidate radius, because progress<1 was hiding most of the
+    // band). The full band is always shown; only the flowing noise texture animates over `time`.
+    static (V3, float) AbyssSlashArc(V2 c, int w, int h, float circleCenterX, float circleRadius,
+        float time, float opacity, bool pixelated = true)
+    {
+        V2 uv = pixelated ? PixelateShaderUV(c, w, h) : c;
+        V2 p = uv * 2f - 1f;
+
+        float d = length(p - new V2(circleCenterX, 0f)) - circleRadius;
+        // Tapers the band to a point at the very top/bottom of the quad (a blade-like end on each
+        // tip) without the progress-driven reveal that turned this into a one-sided comet.
+        float halfWidth = 0.34f * sat(1f - p.y * p.y);
+
+        V2 flowUV = new(d * 1.30f - time * 0.55f, p.y * 0.55f + time * 0.10f);
+        float shape = GwynShapeSampler.R(flowUV);
+        float detail = GwynDetailSampler.R(flowUV * 1.90f + new V2(time * 0.31f, -time * 0.12f));
+
+        float lead = sat((halfWidth - d) * 13f);
+        float tail = sat((d + halfWidth * (0.85f + shape * 2.30f)) * 3.20f);
+        float body = lead * tail;
+
+        float heat = body * (0.42f + detail * 0.85f);
+        float edge = body * sat((halfWidth * 0.55f - abs(d)) * 6f);
+
+        float alpha = sat(body * 1.25f + edge * 0.35f) * opacity;
+        V3 color = SwipeDark * (body * 0.95f)
+            + SwipeMid * (heat * 0.85f)
+            + SwipeCore * (edge * edge * 0.95f);
+        return (color * opacity, alpha);
+    }
+
+    // ---- Effects/NitoReaperTrail.fx, technique NitoReaperTrail (the THRUST sheath) -------------
+    // Bindings must match VoidSlashVFX.DrawThrust: flow (Turbulence_07) -> s0, glint
+    // (SplotchyNoise) -> s1. Reused verbatim for Artorias's PierceStabHold impale revamp below.
+    static (V3, float) NitoReaperTrail(V2 c, float Time, float Progress, float Opacity,
+        V3 dark, V3 mid, V3 core, float direction = 0f)
+    {
+        float along = c.x;
+        float across = abs(c.y - 0.5f) * 2.0f;
+        V2 phase = new(direction * 5.7f, direction * 2.3f);
+
+        float n1 = DetailSampler.R(new V2(along * 1.3f - Time * 1.15f, c.y * 2.6f) + phase);
+        float n2 = VortexWebSampler.R(new V2(along * 2.4f - Time * 1.85f, c.y * 3.6f) + phase);
+        float churn = sat(n1 * 0.75f + n2 * 0.45f - 0.10f);
+
+        float lens = sat((along - 0.03f) * 4.2f) * sat((1.0f - along) * 5.2f);
+        float reach = lens * (0.62f + churn * 0.26f);
+        float sheath = sat((reach - across) * 5.0f);
+
+        float tatter = sat(churn + 0.60f - Progress * 0.80f);
+        float body = sheath * tatter;
+        float rim = sat(1.0f - abs(sheath - 0.28f) * 3.2f) * (0.40f + churn * 0.70f) * tatter;
+        float spark = sat(churn * 2.55f - 1.60f) * sheath;
+
+        float fade = 1.0f - Progress * 0.50f;
+        V3 tint = lerp(dark, mid, sat(body * 1.10f + rim * 0.80f));
+        float alpha = sat(body * 0.80f + rim * 0.55f) * Opacity * fade;
+        V3 color = tint * alpha + core * ((rim * 0.35f + spark * 0.95f) * Opacity * fade);
+        return (color, alpha);
+    }
+
+    // ---- New (no shipped .fx yet): ArtoriasWindWisp, for Artorias's PierceStabHold impale --------
+    // A noise-threshold flame field (first two attempts) reads as either a smudge or dust - it has
+    // no reliable centerline. ArtoriasTendrilCore's sine-wave STRAND already reads well (it's what
+    // the user approved in the tendril-burst panel): a wavy centerline plus noise-modulated width and
+    // a travelling brightness pulse. This reuses exactly that construction, longer and biased into
+    // ONE direction (the wind off the tip) instead of five symmetric radiating arms, plus a light
+    // pixel-block quantization (§51f) so it reads as the same shader family as the sweep/thrust.
+    static (V3, float) ArtoriasWindWisp(V2 c, int w, int h, float time, float phase, float opacity,
+        V3 dark, V3 mid, V3 core, float pixelBlock = 2f)
+    {
+        V2 uv = PixelateShaderUV(c, w, h, pixelBlock);
+        float taper = sat(uv.x * 3.5f) * sat((1.0f - uv.x) * 2.2f); // slower taper into the tail than the tip
+        float noise = OldNovaBrokenSampler.R(uv * new V2(3.4f, 5.1f) + new V2(-time * 0.6f + phase, time * 0.22f));
+        float waveA = MathF.Sin(uv.x * 9.0f + time * 3.1f + phase * 6.2f) * 0.10f * taper;
+        float waveB = (-waveA * 0.7f + (noise - 0.5f) * 0.07f) * taper;
+        float strandA = sat((0.052f - abs(uv.y - 0.5f - waveA)) * 20.0f);
+        float strandB = sat((0.040f - abs(uv.y - 0.5f - waveB)) * 26.0f);
+        float strands = sat(strandA + strandB * 0.75f) * taper;
+
+        // A brightness pulse races along the strand toward the tail - the "wind carrying embers
+        // off the blade" read, same trick as the tendril core's travelling pulse but one-directional.
+        float pulsePos = frac(time * 0.9f + phase);
+        float pulse = sat((0.16f - abs(uv.x - pulsePos)) * 5.5f) * strands;
+        float breakup = strands * sat(0.42f + noise * 0.78f);
+
+        V3 color = lerp(dark, mid, breakup);
+        color = lerp(color, core, pulse * 0.85f);
+        float alpha = sat(breakup * 0.85f + pulse * 0.9f) * opacity;
+        return (color * (breakup * 0.80f + pulse * 1.25f), alpha);
+    }
+
+    // ---- Effects/ArtoriasPurpleFire.fx, HomingAbyssOrb's wavy wisp trail ------------------------
+    // Mask-driven (not procedural): `mask` comes from a real sprite texture's brightest channel,
+    // so this shader's visibility rides entirely on how much of that sprite survives the `torn`
+    // threshold. LocalUV is identity here too (see the tendril note below for why).
+    static readonly V3 WispDark = C(7, 1, 18);
+    static readonly V3 WispBodyMid = C(96, 24, 168);
+    static readonly V3 WispBodyCore = C(210, 52, 204);
+    static readonly V3 WispCoreMid = C(180, 42, 226);
+    static readonly V3 WispCoreCore = C(236, 220, 255);
+
+    static float MaskValue(V4 s) => MathF.Max(s.w, MathF.Max(s.x, MathF.Max(s.y, s.z)));
+
+    static (V3, float) PurpleFireBodyOld(V2 uv, float time, float direction, float progress, float opacity)
+    {
+        V2 animatedUV = uv;
+        animatedUV.x += MathF.Sin(uv.y * 11.0f + time * 6.4f + direction) * 0.036f
+            * (0.35f + abs(uv.y - 0.5f));
+        float mask = MaskValue(HomingWispTrace7Sampler.T(animatedUV));
+        float noise = HomingWispTurbulentSampler.R(uv * new V2(3.1f, 4.7f)
+            + new V2(time * 0.08f * direction, -time * 0.18f));
+        float sideFade = sat(1.0f - abs(uv.x - 0.5f) * 2.0f);
+        float endFade = sat(uv.y * 5.0f) * sat((1.0f - uv.y) * 5.0f);
+        float edgeFade = sideFade * endFade;
+        float torn = sat(mask * 1.12f + noise * 0.46f - 0.38f) * edgeFade;
+        float ember = torn * sat((noise - 0.62f) * 2.7f);
+        V3 color = lerp(WispDark, WispBodyMid, torn * (0.58f + progress * 0.20f));
+        color = lerp(color, WispBodyCore, ember * 0.32f);
+        float alpha = torn * opacity;
+        return (color * alpha, alpha);
+    }
+
+    static (V3, float) PurpleFireCoreOld(V2 uv, float time, float direction, float active, float opacity)
+    {
+        V2 animatedUV = uv;
+        animatedUV.x += MathF.Sin(uv.y * 14.0f - time * 8.2f + direction) * 0.026f
+            * (0.30f + abs(uv.y - 0.5f));
+        float mask = MaskValue(HomingWispFlame1Sampler.T(animatedUV));
+        float noise = HomingWispTurbulentSampler.R(uv * new V2(4.3f, 5.6f)
+            + new V2(-time * 0.13f, time * 0.06f * direction));
+        float sideFade = sat(1.0f - abs(uv.x - 0.5f) * 2.0f);
+        sideFade *= sideFade;
+        float endFade = sat(uv.y * 5.0f) * sat((1.0f - uv.y) * 5.0f);
+        float edgeFade = sideFade * endFade;
+        float core = sat(mask * 1.24f + noise * 0.30f - 0.54f) * edgeFade;
+        float hot = sat((core - 0.48f) * 1.92f) * (0.72f + active * 0.28f);
+        V3 color = lerp(WispCoreMid, WispCoreCore, hot);
+        float intensity = core * 0.82f + hot * 1.18f;
+        return (color * intensity, core);
+    }
+
+    // ---- New: same two techniques, less translucent and pixelated -------------------------------
+    // Two independent changes, both requested: (1) the `torn`/`core` thresholds ate most of the
+    // sprite mask before any color could show through - lowering the subtraction and adding a
+    // post-boost multiplier lets more of the shape read as solid instead of a faint haze.
+    // (2) PixelateShaderUV added (absent from the shipped .fx entirely), matching the chunky look
+    // established for Artorias's other reworked VFX (impale tendrils, sweep/thrust).
+    static (V3, float) PurpleFireBodyNew(V2 c, int w, int h, float time, float direction, float progress,
+        float opacity, float pixelBlock = 4f)
+    {
+        V2 uv = PixelateShaderUV(c, w, h, pixelBlock);
+        V2 animatedUV = uv;
+        animatedUV.x += MathF.Sin(uv.y * 11.0f + time * 6.4f + direction) * 0.036f
+            * (0.35f + abs(uv.y - 0.5f));
+        float mask = MaskValue(HomingWispTrace7Sampler.T(animatedUV));
+        float noise = HomingWispTurbulentSampler.R(uv * new V2(3.1f, 4.7f)
+            + new V2(time * 0.08f * direction, -time * 0.18f));
+        float sideFade = sat(1.0f - abs(uv.x - 0.5f) * 2.0f);
+        float endFade = sat(uv.y * 5.0f) * sat((1.0f - uv.y) * 5.0f);
+        float edgeFade = sideFade * endFade;
+        // -0.38 -> -0.20: the old threshold discarded most of the mask before color ever showed.
+        float torn = sat(mask * 1.12f + noise * 0.46f - 0.20f) * edgeFade;
+        float ember = torn * sat((noise - 0.62f) * 2.7f);
+        V3 color = lerp(WispDark, WispBodyMid, torn * (0.62f + progress * 0.20f));
+        color = lerp(color, WispBodyCore, ember * 0.40f);
+        // A flat 1.35x floor on the coverage itself (not just the color) - opacity was the thing
+        // reported as translucent, not the palette.
+        float alpha = sat(torn * 1.35f) * opacity;
+        return (color * alpha, alpha);
+    }
+
+    static (V3, float) PurpleFireCoreNew(V2 c, int w, int h, float time, float direction, float active,
+        float opacity, float pixelBlock = 4f)
+    {
+        V2 uv = PixelateShaderUV(c, w, h, pixelBlock);
+        V2 animatedUV = uv;
+        animatedUV.x += MathF.Sin(uv.y * 14.0f - time * 8.2f + direction) * 0.026f
+            * (0.30f + abs(uv.y - 0.5f));
+        float mask = MaskValue(HomingWispFlame1Sampler.T(animatedUV));
+        float noise = HomingWispTurbulentSampler.R(uv * new V2(4.3f, 5.6f)
+            + new V2(-time * 0.13f, time * 0.06f * direction));
+        float sideFade = sat(1.0f - abs(uv.x - 0.5f) * 2.0f);
+        sideFade *= sideFade;
+        float endFade = sat(uv.y * 5.0f) * sat((1.0f - uv.y) * 5.0f);
+        float edgeFade = sideFade * endFade;
+        float core = sat(mask * 1.24f + noise * 0.30f - 0.36f) * edgeFade;
+        float hot = sat((core - 0.40f) * 1.92f) * (0.72f + active * 0.28f);
+        V3 color = lerp(WispCoreMid, WispCoreCore, hot);
+        float intensity = sat(core * 0.95f + hot * 1.25f);
+        return (color * intensity, core);
+    }
+
+    // ---- Effects/ArtoriasBoomerangOrbit.fx / ArtoriasBoomerangTrail.fx - the ring-burst / --------
+    // ---- Boomerang Crescent swirl (shared by both attacks per the user's answer) -----------------
+    // The root cause of "too translucent" here isn't the thresholds - it's that DrawBoomerang
+    // hardcodes BlendState.Additive for all three techniques (Core/Orbit/Ribbon). Pure additive
+    // CANNOT occlude (vfx-shader-tips §43): `dst + rgb*a` only ever ADDS light, so there is no
+    // shader tuning that makes it read as a solid body - only premultiplied alpha can do that, and
+    // it stays strictly more expressive (still glows on top of its own occlusion). OLD below is a
+    // faithful port of the shipped additive version; NEW switches to premultiplied alpha, adds
+    // pixelation, and (Orbit only) replaces the two full sin/cos UV rotations with a tangent-slide
+    // swirl (§50 "cheap swirl") - RotateUV alone put the shipped Orbit technique at 75/64 slots
+    // before any of this, so there is no room to add PixelateShaderUV without cutting it anyway.
+    static readonly V3 BoomerangDark = C(4, 1, 12);
+    static readonly V3 BoomerangMid = C(138, 54, 232);
+    static readonly V3 BoomerangCore = C(210, 196, 255);
+    static readonly V3 RibbonDark = C(3, 1, 10);
+    static readonly V3 RibbonMid = C(126, 50, 218);
+    static readonly V3 RibbonCore = C(196, 180, 255);
+    static Tex BoomerangSpiralSampler, BoomerangWindstreakSampler; // spiral.png, T_Windstreak3
+
+    static (V3, float) BoomerangOrbitOld(V2 coords, float time, float direction, float active, float opacity)
+    {
+        V2 p = coords - 0.5f;
+        float radius = length(p);
+        float spin = time * (0.82f + active * 0.24f) * direction;
+        // RotateUV(p, angle), inlined: full sin/cos rotation matrix, TWICE.
+        float sA = MathF.Sin(spin), cA = MathF.Cos(spin);
+        V2 uvA = new V2(p.x * cA - p.y * sA, p.x * sA + p.y * cA) + 0.5f;
+        float spinB = -spin * 0.63f;
+        float sB = MathF.Sin(spinB), cB = MathF.Cos(spinB);
+        V2 uvB = new V2(p.x * cB - p.y * sB, p.x * sB + p.y * cB) + 0.5f;
+
+        float spiralA = BoomerangSpiralSampler.R(uvA);
+        float spiralB = BoomerangSpiralSampler.R(uvB * 1.23f - 0.115f);
+        float noise = HomingWispTurbulentSampler.R(coords * 3.2f + new V2(time * 0.09f * direction, -time * 0.12f));
+
+        float outer = sat((0.51f - radius) * 13.0f);
+        float hollow = sat((radius - 0.10f) * 13.0f);
+        float brokenSpiral = sat(spiralA * 0.70f + spiralB * 0.45f + noise * 0.35f - 0.43f);
+        float wisps = brokenSpiral * outer * hollow;
+        float hot = sat((wisps - 0.42f) * 2.25f);
+
+        V3 color = lerp(BoomerangDark, BoomerangMid, wisps);
+        color = lerp(color, BoomerangCore, hot * 0.58f);
+        return (color * (wisps * 0.90f + hot * 0.70f), wisps * opacity);
+    }
+
+    static (V3, float) BoomerangOrbitNew(V2 c, int w, int h, float time, float direction, float active,
+        float opacity, float pixelBlock = 4f, float threshold = -0.28f)
+    {
+        V2 coords = PixelateShaderUV(c, w, h, pixelBlock);
+        V2 p = coords - 0.5f;
+        float radius = length(p);
+        V2 dir = p / MathF.Max(radius, 0.0005f);
+        V2 perp = new(-dir.y, dir.x);
+        float spin = time * (0.82f + active * 0.24f) * direction;
+
+        // Tangent-slide swirl instead of RotateUV's sin/cos matrix (twice) - visually interchangeable
+        // for a noise lookup (§50) and the only way this fits ps_2_0 with pixelation added.
+        V2 uvA = coords + perp * (spin * 0.16f);
+        V2 uvB = coords * 1.23f - 0.115f + perp * (-spin * 0.63f * 0.16f);
+
+        float spiralA = BoomerangSpiralSampler.R(uvA);
+        float spiralB = BoomerangSpiralSampler.R(uvB);
+        float noise = HomingWispTurbulentSampler.R(coords * 3.2f + new V2(time * 0.09f * direction, -time * 0.12f));
+
+        float outer = sat((0.51f - radius) * 13.0f);
+        float hollow = sat((radius - 0.10f) * 13.0f);
+        // Original -0.43 threshold hid too much (Option A read as thin/pale). -0.28 (Option B) let
+        // SO much through that the two counter-spiraling arms merged into one blob, losing the
+        // "cool weird shape" - threshold is now a parameter so a middle value can keep the arms
+        // readable while still being far more solid than the original.
+        float brokenSpiral = sat(spiralA * 0.70f + spiralB * 0.45f + noise * 0.35f + threshold);
+        float wisps = brokenSpiral * outer * hollow;
+        float hot = sat((wisps - 0.34f) * 2.25f);
+
+        V3 color = lerp(BoomerangDark, BoomerangMid, wisps);
+        color = lerp(color, BoomerangCore, hot * 0.58f);
+        float alpha = sat(wisps * 1.3f) * opacity;
+        V3 premultiplied = (color * (0.85f + hot * 0.55f)) * alpha;
+        return (premultiplied, alpha);
+    }
+
+    // ---- "Keep the current design, just pixelated" - same additive blend, same thresholds/colors,
+    // only PixelateShaderUV added (Orbit also needs the tangent-slide swirl swap purely to fit the
+    // instruction budget with pixelation added - not a design change, see BoomerangOrbitNew above).
+    static (V3, float) BoomerangOrbitPixelatedSameDesign(V2 c, int w, int h, float time, float direction,
+        float active, float opacity, float pixelBlock = 4f)
+    {
+        V2 coords = PixelateShaderUV(c, w, h, pixelBlock);
+        V2 p = coords - 0.5f;
+        float radius = length(p);
+        V2 dir = p / MathF.Max(radius, 0.0005f);
+        V2 perp = new(-dir.y, dir.x);
+        float spin = time * (0.82f + active * 0.24f) * direction;
+        V2 uvA = coords + perp * (spin * 0.16f);
+        V2 uvB = coords * 1.23f - 0.115f + perp * (-spin * 0.63f * 0.16f);
+
+        float spiralA = BoomerangSpiralSampler.R(uvA);
+        float spiralB = BoomerangSpiralSampler.R(uvB);
+        float noise = HomingWispTurbulentSampler.R(coords * 3.2f + new V2(time * 0.09f * direction, -time * 0.12f));
+
+        float outer = sat((0.51f - radius) * 13.0f);
+        float hollow = sat((radius - 0.10f) * 13.0f);
+        float brokenSpiral = sat(spiralA * 0.70f + spiralB * 0.45f + noise * 0.35f - 0.43f); // original threshold
+        float wisps = brokenSpiral * outer * hollow;
+        float hot = sat((wisps - 0.42f) * 2.25f);
+
+        V3 color = lerp(BoomerangDark, BoomerangMid, wisps);
+        color = lerp(color, BoomerangCore, hot * 0.58f);
+        return (color * (wisps * 0.90f + hot * 0.70f), wisps * opacity); // original additive return
+    }
+
+    static (V3, float) BoomerangRibbonPixelatedSameDesign(V2 c, int w, int h, float time, float direction,
+        float active, float opacity, float pixelBlock = 4f)
+    {
+        V2 coords = PixelateShaderUV(c, w, h, pixelBlock);
+        float streak = BoomerangWindstreakSampler.R(coords);
+        float noise = HomingWispTurbulentSampler.R(coords * new V2(3.4f, 2.1f)
+            + new V2(time * 0.15f * direction, -time * 0.31f));
+        float center = sat(1.0f - abs(coords.x - 0.5f) * 2.25f);
+        float tailFade = sat(coords.y * 2.8f) * sat((1.0f - coords.y) * 1.25f);
+        float body = sat(streak * (0.60f + noise * 0.62f) - 0.16f) * center * tailFade; // original threshold
+        float thread = sat((body - 0.52f) * 2.1f);
+
+        V3 color = lerp(RibbonDark, RibbonMid, body);
+        color = lerp(color, RibbonCore, thread * 0.45f);
+        return (color * (body * 0.78f + thread * 0.64f), body * opacity); // original additive return
+    }
+
+    static (V3, float) BoomerangSwirlPixelatedSameDesignComposite(V2 c, int w, int h, float time, float opacity,
+        float pixelBlock = 4f)
+    {
+        (V3 rgb, float a) acc = (new V3(0, 0, 0), 0f);
+        var (ribbonRgb, ribbonA) = BoomerangRibbonPixelatedSameDesign(c, w, h, time, 1f, 1f, opacity * 0.88f, pixelBlock);
+        acc = AddComposite(acc, ribbonRgb * ribbonA);
+        var (orbitRgb, orbitA) = BoomerangOrbitPixelatedSameDesign(c, w, h, time, 1f, 1f, opacity * 0.86f, pixelBlock);
+        acc = AddComposite(acc, orbitRgb * orbitA);
+        return (acc.rgb, 1f); // additive panel - see the alpha note on BoomerangSwirlOldComposite
+    }
+
+    static (V3, float) BoomerangRibbonOld(V2 coords, float time, float direction, float active, float opacity)
+    {
+        float streak = BoomerangWindstreakSampler.R(coords);
+        float noise = HomingWispTurbulentSampler.R(coords * new V2(3.4f, 2.1f)
+            + new V2(time * 0.15f * direction, -time * 0.31f));
+        float center = sat(1.0f - abs(coords.x - 0.5f) * 2.25f);
+        float tailFade = sat(coords.y * 2.8f) * sat((1.0f - coords.y) * 1.25f);
+        float body = sat(streak * (0.60f + noise * 0.62f) - 0.16f) * center * tailFade;
+        float thread = sat((body - 0.52f) * 2.1f);
+
+        V3 color = lerp(RibbonDark, RibbonMid, body);
+        color = lerp(color, RibbonCore, thread * 0.45f);
+        return (color * (body * 0.78f + thread * 0.64f), body * opacity);
+    }
+
+    static (V3, float) BoomerangRibbonNew(V2 c, int w, int h, float time, float direction, float active,
+        float opacity, float pixelBlock = 4f, float threshold = -0.02f)
+    {
+        V2 coords = PixelateShaderUV(c, w, h, pixelBlock);
+        float streak = BoomerangWindstreakSampler.R(coords);
+        float noise = HomingWispTurbulentSampler.R(coords * new V2(3.4f, 2.1f)
+            + new V2(time * 0.15f * direction, -time * 0.31f));
+        float center = sat(1.0f - abs(coords.x - 0.5f) * 2.25f);
+        float tailFade = sat(coords.y * 2.8f) * sat((1.0f - coords.y) * 1.25f);
+        // Original -0.16. -0.02 (Option B) reads solid but loses the streak's own internal grain.
+        float body = sat(streak * (0.60f + noise * 0.62f) + threshold) * center * tailFade;
+        float thread = sat((body - 0.40f) * 2.1f);
+
+        V3 color = lerp(RibbonDark, RibbonMid, body);
+        color = lerp(color, RibbonCore, thread * 0.55f);
+        float alpha = sat(body * 1.3f) * opacity;
+        V3 premultiplied = (color * (0.80f + thread * 0.75f)) * alpha;
+        return (premultiplied, alpha);
+    }
+
+    // Composites Ribbon (drawn first/underneath) + Orbit (on top) - the two swirl layers around the
+    // crescent core, which is left out here (it's the actual sprite silhouette, already reasonably
+    // opaque today - see the message to the user for why this preview focuses on the wisps instead).
+    static (V3, float) BoomerangSwirlOldComposite(V2 c, float time, float opacity)
+    {
+        (V3 rgb, float a) acc = (new V3(0, 0, 0), 0f);
+        // OLD is additive-only: both layers just ADD onto whatever's behind, so the "composite" is
+        // literally a sum, not an over-operation - reproduced here as acc.rgb += layer.rgb*layer.a.
+        var (ribbonRgb, ribbonA) = BoomerangRibbonOld(c, time, 1f, 1f, opacity * 0.88f);
+        acc = AddComposite(acc, ribbonRgb * ribbonA);
+        var (orbitRgb, orbitA) = BoomerangOrbitOld(c, time, 1f, 1f, opacity * 0.86f);
+        acc = AddComposite(acc, orbitRgb * orbitA);
+        // The harness applies ONE Blend.Additive pass per panel as `dst + rgb*a` - acc.a is still 0
+        // here (AddComposite never touches it, by design, so further layers can keep summing), which
+        // would silently zero out this whole panel. Alpha=1 so the accumulated rgb actually lands.
+        return (acc.rgb, 1f);
+    }
+
+    static (V3, float) BoomerangSwirlNewComposite(V2 c, int w, int h, float time, float opacity,
+        float pixelBlock = 4f, float ribbonThreshold = -0.02f, float orbitThreshold = -0.28f)
+    {
+        var acc = OverComposite((new V3(0, 0, 0), 0f),
+            BoomerangRibbonNew(c, w, h, time, 1f, 1f, opacity * 0.88f, pixelBlock, ribbonThreshold));
+        acc = OverComposite(acc,
+            BoomerangOrbitNew(c, w, h, time, 1f, 1f, opacity * 0.86f, pixelBlock, orbitThreshold));
+        return acc;
+    }
+
+    // ---- Layered: solid pixelated body (C) UNDER + the original crisp additive spiral (A) OVER ---
+    // The solid pass fixes "too translucent"; the thin additive lines on top bring back the spiral
+    // arms A had, since additive glowing filaments over an already-opaque, already-colored body
+    // read fine (unlike additive alone over a plain background, which is the thing that washed out).
+    static (V3, float) BoomerangSwirlLayeredComposite(V2 c, int w, int h, float time, float opacity,
+        float pixelBlock = 4f, float ribbonThreshold = -0.10f, float orbitThreshold = -0.36f)
+    {
+        var acc = OverComposite((new V3(0, 0, 0), 0f),
+            BoomerangRibbonNew(c, w, h, time, 1f, 1f, opacity * 0.88f, pixelBlock, ribbonThreshold));
+        acc = OverComposite(acc,
+            BoomerangOrbitNew(c, w, h, time, 1f, 1f, opacity * 0.86f, pixelBlock, orbitThreshold));
+
+        // The original, UNPIXELATED, additive spiral lines - drawn as a real extra layer, not a
+        // replacement, same as how the game would draw this: the solid pass first, then this pass
+        // with BlendState.Additive on top of it.
+        var (ribbonOldRgb, ribbonOldA) = BoomerangRibbonOld(c, time, 1f, 1f, opacity * 0.60f);
+        acc = AddComposite(acc, ribbonOldRgb * ribbonOldA);
+        var (orbitOldRgb, orbitOldA) = BoomerangOrbitOld(c, time, 1f, 1f, opacity * 0.60f);
+        acc = AddComposite(acc, orbitOldRgb * orbitOldA);
+        return acc;
+    }
+
+    // ---- Effects/ArtoriasAbyssTendril.fx --------------------------------------------------------
+    // LocalUV cancels to identity here: the live Draw() helper sets the DrawSize uniform to the
+    // TEXTURE's own size (see the uniform-contract table in vfx-pipeline/SKILL.md), which is also
+    // what PrimaryTextureSize holds, so `coords * PrimaryTextureSize / DrawSize == coords`.
+    //
+    // The shipped .fx does not pixelate at all - fine for a thin, unpixelated tendril, but it read as
+    // smooth/soft next to the chunky Gwyn/Nito-family sweep and wisp. Added PixelateShaderUV here
+    // (not shippable without recompiling ArtoriasAbyssTendril.fx's .xnb, so this is the revamp
+    // proposal, not yet how the live shader behaves) - `w`/`h` are the arm's real on-screen pixel
+    // size, same contract as every other pixelated technique in this file.
+    static (V3, float) ArtoriasTendrilShadow(V2 c, int w, int h, float Time, float Opacity, float Active,
+        V3 dark, V3 mid, float pixelBlock = 5f)
+    {
+        V2 uv = PixelateShaderUV(c, w, h, pixelBlock);
+        float taper = sat(uv.x * 5.0f) * sat((1.0f - uv.x) * 5.0f);
+        float noise = OldNovaBrokenSampler.R(uv * new V2(3.2f, 4.8f) + new V2(-Time * 0.09f, Time * 0.045f));
+        float fog = OldNovaSmoothSampler.R(uv * new V2(1.7f, 2.3f) + new V2(Time * 0.025f, -Time * 0.038f));
+        float wave = MathF.Sin(uv.x * 15.0f + Time * 4.8f) * 0.095f * taper;
+        float distanceFromBody = abs(uv.y - 0.5f - wave);
+        float width = 0.105f + noise * 0.075f + Active * 0.025f;
+        float body = sat((width - distanceFromBody) * 9.5f) * taper;
+        float torn = body * sat(fog * 0.72f + noise * 0.48f - 0.22f);
+        V3 color = lerp(dark, mid, torn * 0.38f);
+        float alpha = sat(body * 0.62f + torn * 0.36f) * Opacity;
+        return (color * alpha, alpha);
+    }
+
+    static (V3, float) ArtoriasTendrilCore(V2 c, int w, int h, float Time, float Opacity, float Active,
+        V3 dark, V3 mid, V3 core, float pixelBlock = 5f)
+    {
+        V2 uv = PixelateShaderUV(c, w, h, pixelBlock);
+        float taper = sat(uv.x * 6.0f) * sat((1.0f - uv.x) * 6.0f);
+        float noise = OldNovaBrokenSampler.R(uv * new V2(4.1f, 5.3f) + new V2(Time * 0.12f, -Time * 0.08f));
+        float waveA = MathF.Sin(uv.x * 20.0f + Time * 7.2f) * 0.085f * taper;
+        float waveB = (-waveA * 0.72f + (noise - 0.5f) * 0.055f) * taper;
+        float strandA = sat((0.040f - abs(uv.y - 0.5f - waveA)) * 25.0f);
+        float strandB = sat((0.031f - abs(uv.y - 0.5f - waveB)) * 32.0f);
+        float strands = sat(strandA + strandB * 0.78f) * taper;
+        float pulsePos = frac(Time * (0.58f + Active * 0.24f));
+        float pulse = sat((0.11f - abs(uv.x - pulsePos)) * 9.1f) * strands;
+        float breakup = strands * sat(0.48f + noise * 0.72f);
+        V3 color = lerp(dark, mid, breakup);
+        color = lerp(color, core, pulse * 0.88f);
+        float alpha = sat(breakup + pulse) * Opacity;
+        return (color * (breakup * 0.82f + pulse * 1.38f), alpha);
+    }
+
+    // ---- Composite study for Artorias.PierceStabHold's impale VFX (no shipped .fx yet) ----------
+    // 5-arm tendril burst (ArtoriasAbyssTendril, unchanged math) plus a soft glow halo (new) plus
+    // VoidSlashVFX's thrust sheath (NitoReaperTrail port above) laid across the center, all
+    // hand-composited here because a Panel is one blend mode but this stacks three. Composites into
+    // a running (rgb, a) premultiplied accumulator so the harness can still apply it in one pass.
+    static readonly float[] ImpaleArmAngles = { -2.82f, -1.88f, -0.92f, 0.18f, 1.25f };
+    static readonly V3 ImpaleDark = C(7, 5, 15);       // VoidBlack
+    static readonly V3 ImpaleIndigo = C(53, 36, 111);  // AbyssIndigo (shadow mid)
+    static readonly V3 ImpaleMagenta = C(226, 64, 162);// DangerMagenta (core mid)
+    static readonly V3 ImpaleSilver = C(205, 224, 235);// KnightSilver (core highlight)
+    static readonly V3 ImpaleThrustDark = C(22, 6, 36);
+    static readonly V3 ImpaleThrustMid = C(143, 42, 190);
+    static readonly V3 ImpaleThrustCore = C(220, 166, 236);
+
+    static (V3 rgb, float a) OverComposite((V3 rgb, float a) acc, (V3 rgb, float a) layer)
+        => (layer.rgb + acc.rgb * (1f - layer.a), layer.a + acc.a * (1f - layer.a));
+
+    static (V3 rgb, float a) AddComposite((V3 rgb, float a) acc, V3 contribution)
+        => (acc.rgb + contribution, acc.a);
+
+    // Body (AlphaBlend, drawn first/underneath) + Core (Additive, on top) - exactly the two-draw
+    // order ArtoriasVFX.DrawHomingFlameWisp uses, composited into one panel.
+    static (V3, float) HomingWispOldComposite(V2 c, float time, float direction, float state, float opacity)
+    {
+        var acc = OverComposite((new V3(0, 0, 0), 0f), PurpleFireBodyOld(c, time, direction, state, opacity * 0.78f));
+        var (coreRgb, coreA) = PurpleFireCoreOld(c, time, direction, state, opacity);
+        return AddComposite(acc, coreRgb * coreA);
+    }
+
+    static (V3, float) HomingWispNewComposite(V2 c, int w, int h, float time, float direction, float state,
+        float opacity, float pixelBlock = 4f)
+    {
+        var acc = OverComposite((new V3(0, 0, 0), 0f),
+            PurpleFireBodyNew(c, w, h, time, direction, state, opacity * 0.78f, pixelBlock));
+        var (coreRgb, coreA) = PurpleFireCoreNew(c, w, h, time, direction, state, opacity, pixelBlock);
+        return AddComposite(acc, coreRgb * coreA);
+    }
+
+    /// <param name="panelPx">Panel size in pixels (square) - `c` arrives as 0..1 across it.</param>
+    /// <param name="scale">1 = current shipped tendril size; 2 = the requested "twice as big".</param>
+    /// <param name="withGlow">Adds the new soft halo underneath the tendrils.</param>
+    /// <param name="withThrust">Layers ImpaleTipWisp - flame wisps blowing off the tip - on top.
+    /// Driven purely by `time` (a continuous wind), not a fade-in/out Progress: this holds for
+    /// seconds, it isn't a single swing that needs to ramp up and fade out.</param>
+    static (V3, float) ArtoriasImpaleComposite(V2 c, int panelPx, float scale, float raiseProgress,
+        float time, bool withGlow, bool withThrust)
+    {
+        V2 center = new V2(panelPx * 0.5f, panelPx * 0.5f);
+        V2 p = new V2(c.x * panelPx, c.y * panelPx) - center; // pixel offset from the impale point
+
+        (V3 rgb, float a) acc = (new V3(0, 0, 0), 0f);
+
+        if (withGlow)
+        {
+            // New: a soft halo so the burst reads even before the sharp tendrils resolve, and holds
+            // up on a dark cave background where the old additive core alone washes out to nothing.
+            float glowRadius = 34f * scale;
+            float glowFalloff = sat(1f - length(p) / (glowRadius * 2.6f));
+            float glow = glowFalloff * glowFalloff * 0.85f;
+            acc = OverComposite(acc, (ImpaleMagenta * glow, glow * 0.62f));
+        }
+
+        float lengthMult = (0.82f + raiseProgress * 0.26f) * scale;
+        for (int i = 0; i < ImpaleArmAngles.Length; i++)
+        {
+            float angle = ImpaleArmAngles[i] + MathF.Sin(time * (3.2f + i * 0.17f) + i * 1.7f) * 0.18f;
+            float armLength = (34f + i * 4f) * lengthMult;
+            float shadowWidth = 26f * scale;
+            float coreWidth = 17f * scale;
+            V2 dir = new(MathF.Cos(angle), MathF.Sin(angle));
+            V2 perp = new(-dir.y, dir.x);
+            float along = (p.x * dir.x + p.y * dir.y) / armLength;
+            float acrossShadow = (p.x * perp.x + p.y * perp.y) / shadowWidth + 0.5f;
+            float acrossCore = (p.x * perp.x + p.y * perp.y) / coreWidth + 0.5f;
+
+            if (along is >= -0.15f and <= 1.15f)
+            {
+                var shadow = ArtoriasTendrilShadow(new V2(along, acrossShadow), (int)armLength, (int)shadowWidth,
+                    time, 0.86f * 0.62f, 0.74f, ImpaleDark, ImpaleIndigo);
+                acc = OverComposite(acc, shadow);
+                var (coreRgb, coreA) = ArtoriasTendrilCore(new V2(along, acrossCore), (int)armLength, (int)coreWidth,
+                    time, 0.86f * 0.80f, 0.86f, ImpaleDark, ImpaleMagenta, ImpaleSilver);
+                acc = AddComposite(acc, coreRgb * coreA);
+            }
+        }
+
+        if (withThrust)
+        {
+            // Wind-blown wisps: 4 ArtoriasWindWisp strands clustered around ONE direction (the tip
+            // side, here the +X "wind" the real code would derive from the sword's actual world
+            // angle) instead of radiating symmetrically like the burst tendrils - longer, so they
+            // read as being carried away rather than sprouting in place.
+            const int wispArms = 4;
+            for (int i = 0; i < wispArms; i++)
+            {
+                float angle = (i - (wispArms - 1) / 2f) * 0.20f; // narrow cone around the wind direction
+                float armLength = (150f + i * 24f) * scale;
+                float armWidth = 34f * scale;
+                V2 dir = new(MathF.Cos(angle), MathF.Sin(angle));
+                V2 perp = new(-dir.y, dir.x);
+                float along = (p.x * dir.x + p.y * dir.y) / armLength;
+                float across = (p.x * perp.x + p.y * perp.y) / armWidth + 0.5f;
+                if (along is >= -0.1f and <= 1.1f)
+                {
+                    var (wispRgb, wispA) = ArtoriasWindWisp(new V2(along, across), (int)armLength,
+                        (int)armWidth, time, i * 0.73f, 0.92f,
+                        ImpaleThrustDark, ImpaleThrustMid, ImpaleThrustCore);
+                    acc = AddComposite(acc, wispRgb * wispA);
+                }
+            }
+        }
+
+        return acc;
+    }
+
     // ---- Effects/GwynSolarVortex.fx ------------------------------------------------------------
     static readonly V3 VortexBoundary = C(255, 117, 16);
     static readonly V3 VortexStream = C(255, 196, 62);
@@ -1971,6 +2612,59 @@ static class Preview
         new Panel("Herald P=0.75", 180, 180, Blend.PremultipliedAlpha,
             c => StormHerald(c, 6.6f, 0.75f, 0.95f)),
     };
+
+    // ---- Effects/ArtoriasAbyssBoundary.fx - the arena-wide ring (Artorias.RingRadius, ~800px, up
+    // to a 2400px+ draw quad). LocalUV is identity here too (same DrawSize-is-texture-size contract).
+    // World-space, not the 0..1 quad UV: `localPosition = (uv-0.5)*WorldDrawSize` in real pixels, so
+    // this preview renders a flat STRIP of world space straddling the boundary line rather than the
+    // whole circle (which would be thousands of pixels across and unreadable in a still image) - the
+    // shader's own math only cares about signedDistance from the boundary, which is exactly what a
+    // straight strip reproduces locally.
+    static readonly V3 BoundaryDark = C(7, 1, 18);
+    static readonly V3 BoundaryMid = C(96, 24, 168);
+    static readonly V3 BoundaryCore = C(210, 52, 204);
+
+    static (V3, float) BoundaryEdgeOld(float signedDistance, V2 tangentPos, float time, float opacity)
+    {
+        float radialDistance = signedDistance; // strip stand-in: distance FROM the boundary line
+        float boundaryDistance = abs(signedDistance);
+        V2 localPosition = new(tangentPos.x, radialDistance);
+
+        V2 tiledUV = localPosition / 142.0f;
+        tiledUV.x += time * 0.055f;
+        tiledUV.y -= time * 0.16f;
+        float flameNoise = HomingWispTurbulentSampler.R(tiledUV);
+        float breakup = HomingWispTurbulentSampler.R(new V2(localPosition.y, localPosition.x) / 74.0f
+            + new V2(-time * 0.11f, time * 0.07f));
+
+        float coreBand = 1.0f - smoothstep(1.5f, 13.0f, boundaryDistance);
+        float outerDistance = MathF.Max(signedDistance, 0f);
+        float flameReach = 28.0f + flameNoise * 82.0f;
+        float flameBody = sat(1.0f - outerDistance / flameReach);
+        flameBody *= sat((flameNoise * 0.74f + breakup * 0.46f + flameBody - 0.46f) * 1.8f);
+        flameBody *= sat((signedDistance + 10.0f) / 18.0f);
+        float lickingEdge = flameBody * sat((breakup - 0.48f) * 2.2f);
+
+        V3 color = BoundaryDark * (flameBody * 0.78f);
+        color += BoundaryMid * (flameBody * flameBody * 1.05f);
+        color += BoundaryCore * (lickingEdge * 0.42f);
+        color += new V3(0.94f, 0.30f, 0.82f) * (coreBand * 0.78f);
+        color += new V3(0.96f, 0.76f, 1.0f) * (coreBand * coreBand * 0.32f);
+
+        float alpha = sat(coreBand + flameBody * 0.86f) * opacity;
+        return (color, alpha); // not premultiplied in the original - additive-ish return, matches shipped
+    }
+
+    static (V3, float) BoundaryEdgeNew(float signedDistance, V2 tangentPos, float time, float opacity,
+        float pixelBlockWorldPx = 10f)
+    {
+        // Pixelate in WORLD PIXELS directly (this shader never leaves world space) rather than via
+        // the 0..1-quad PixelateShaderUV helper - simpler here since there's no quad to divide by,
+        // and it keeps the block size meaningful regardless of how far the ring has collapsed.
+        float pixelatedRadial = (MathF.Floor(signedDistance / pixelBlockWorldPx) + 0.5f) * pixelBlockWorldPx;
+        V2 pixelatedTangent = new((MathF.Floor(tangentPos.x / pixelBlockWorldPx) + 0.5f) * pixelBlockWorldPx, 0f);
+        return BoundaryEdgeOld(pixelatedRadial, pixelatedTangent, time, opacity);
+    }
 
     // ---------------------------------------------------------------------------------------------
     // Compositing + sheet layout.
@@ -2200,6 +2894,142 @@ static class Preview
                     c => GwynCinderSlash(c, 150, 190, 0.50f, 3.4f, 1f)),
                 new Panel("NEW slash P=.85", 150, 190, Blend.PremultipliedAlpha,
                     c => GwynCinderSlash(c, 150, 190, 0.85f, 3.7f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "abyss_boundary")
+        {
+            // Artorias's arena-wide ring (Effects/ArtoriasAbyssBoundary.fx, the "Edge" technique -
+            // the licking-flame boundary line itself). A flat strip of world space straddling the
+            // line: panel Y = signedDistance from the boundary (top = safe interior, bottom = deep
+            // in the forbidden exterior fog), panel X = an arbitrary tangent slice for texture
+            // variety. Block sizes are real WORLD PIXELS, not screen pixels - try a couple to see
+            // which reads at actual arena scale.
+            const int w = 320, h = 260;
+            FocusPanels = new[]
+            {
+                new Panel("Option A - current (unpixelated, shipped)", w, h, Blend.Additive,
+                    c => BoundaryEdgeOld(-60f + c.y * 280f, new V2(-160f + c.x * 320f, 0f), 4.0f, 1f)),
+                new Panel("Option B - 6 world-px blocks", w, h, Blend.Additive,
+                    c => BoundaryEdgeNew(-60f + c.y * 280f, new V2(-160f + c.x * 320f, 0f), 4.0f, 1f, 6f)),
+                new Panel("Option C - 10 world-px blocks", w, h, Blend.Additive,
+                    c => BoundaryEdgeNew(-60f + c.y * 280f, new V2(-160f + c.x * 320f, 0f), 4.0f, 1f, 10f)),
+                new Panel("Option D - 16 world-px blocks", w, h, Blend.Additive,
+                    c => BoundaryEdgeNew(-60f + c.y * 280f, new V2(-160f + c.x * 320f, 0f), 4.0f, 1f, 16f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "boomerang_swirl")
+        {
+            // Spiral Fan's ring-burst AND the separate Boomerang Crescent throw both route through
+            // ArtoriasVFX.DrawBoomerangRibbon/Orbit (shared per the user's answer) - the crescent
+            // sprite itself isn't shown here (see the message to the user for why); this isolates
+            // the swirling wisp layers, which is where the actual translucency and the sin/cos
+            // budget problem both live. Real draw sizes are ribbon 38x116, orbit 92x92 - square
+            // panel here for a fair side-by-side, real proportions kept in the actual draw calls.
+            const int px = 130;
+            FocusPanels = new[]
+            {
+                new Panel("Option A - current (additive, shipped)", px, px, Blend.Additive,
+                    c => BoomerangSwirlOldComposite(c, 2.6f, 1f)),
+                new Panel("Option B - solid, but arms merge into a blob", px, px, Blend.PremultipliedAlpha,
+                    c => BoomerangSwirlNewComposite(c, px, px, 2.6f, 1f)),
+                new Panel("Option C - solid, arms still readable", px, px, Blend.PremultipliedAlpha,
+                    c => BoomerangSwirlNewComposite(c, px, px, 2.6f, 1f, ribbonThreshold: -0.10f, orbitThreshold: -0.36f)),
+                new Panel("Option D - A layered on top of C", px, px, Blend.PremultipliedAlpha,
+                    c => BoomerangSwirlLayeredComposite(c, px, px, 2.6f, 1f)),
+                new Panel("Option D, later in time (motion check)", px, px, Blend.PremultipliedAlpha,
+                    c => BoomerangSwirlLayeredComposite(c, px, px, 3.1f, 1f)),
+                new Panel("Option E - current design, just pixelated (still additive)", px, px, Blend.Additive,
+                    c => BoomerangSwirlPixelatedSameDesignComposite(c, px, px, 2.6f, 1f)),
+                new Panel("Option E, later in time (motion check)", px, px, Blend.Additive,
+                    c => BoomerangSwirlPixelatedSameDesignComposite(c, px, px, 3.1f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "homing_wisp")
+        {
+            // HomingAbyssOrb's wavy flame-wisp trail (ArtoriasVFX.DrawHomingFlameWisp / Effects/
+            // ArtoriasPurpleFire.fx) - the serpentine trail shape stays exactly as-is (that's the
+            // "cool shape" to keep); only translucency and pixelation change. Each panel is
+            // automatically split sky|cave (Day|Night) by the harness - no separate panels needed
+            // for that. Real draw size is 32x104 (body) / ~17x75 (core); w/h below match the body.
+            const int w = 32, h = 104;
+            FocusPanels = new[]
+            {
+                new Panel("Option A - current (shipped)", w, h, Blend.PremultipliedAlpha,
+                    c => HomingWispOldComposite(c, 3.0f, 1f, 0.9f, 1f)),
+                new Panel("Option B - less translucent + 4px pixelated", w, h, Blend.PremultipliedAlpha,
+                    c => HomingWispNewComposite(c, w, h, 3.0f, 1f, 0.9f, 1f)),
+                new Panel("Option C - less translucent + 6px pixelated", w, h, Blend.PremultipliedAlpha,
+                    c => HomingWispNewComposite(c, w, h, 3.0f, 1f, 0.9f, 1f, 6f)),
+                new Panel("Option C, full intensity (state=1)", w, h, Blend.PremultipliedAlpha,
+                    c => HomingWispNewComposite(c, w, h, 3.4f, 1f, 1f, 1f, 6f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "abyss_slash_arc")
+        {
+            // AbyssSlash (the crescent Artorias shoots out of his sword during AbyssSlashSwipe):
+            // OLD is the shipped two-circle-subtraction crescent (tapers to a point at both tips).
+            // NEW candidates are the Nito/Gwyn single-arc-band construction at increasing radius -
+            // bigger radius (offset scaled to match) = a flatter, more open "(" instead of a moon
+            // sliver. Current draw size is 78x92; +20% = ~94x110.
+            const int w = 94, h = 110;
+            FocusPanels = new[]
+            {
+                new Panel("OLD crescent (moon, pinched tips)", w, h, Blend.PremultipliedAlpha,
+                    c => ArtoriasSwordSwipeOld(c, 2.4f, 1f)),
+                new Panel("NEW arc, tight (baseline radius)", w, h, Blend.PremultipliedAlpha,
+                    c => AbyssSlashArc(c, w, h, -0.62f, 1.16f, 2.4f, 1f)),
+                new Panel("NEW arc, medium (candidate B)", w, h, Blend.PremultipliedAlpha,
+                    c => AbyssSlashArc(c, w, h, -0.90f, 1.55f, 2.4f, 1f)),
+                new Panel("NEW arc, flat - like ( ) (candidate C)", w, h, Blend.PremultipliedAlpha,
+                    c => AbyssSlashArc(c, w, h, -1.10f, 1.95f, 2.4f, 1f)),
+                new Panel("NEW arc, flattest (candidate D)", w, h, Blend.PremultipliedAlpha,
+                    c => AbyssSlashArc(c, w, h, -1.40f, 2.50f, 2.4f, 1f)),
+                new Panel("NEW arc C, later in time (motion check)", w, h, Blend.PremultipliedAlpha,
+                    c => AbyssSlashArc(c, w, h, -1.10f, 1.95f, 3.0f, 1f)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "artorias_wisp_zoom")
+        {
+            // Fast-iteration rig: a single ArtoriasWindWisp strand alone, big, at several wind
+            // phases - for tuning the shape before recombining it with the tendril burst.
+            const int ww = 420, wh = 90;
+            FocusPanels = new[]
+            {
+                new Panel("wisp t=3.0", ww, wh, Blend.Additive,
+                    c => ArtoriasWindWisp(c, ww, wh, 3.0f, 0f, 1f, ImpaleThrustDark, ImpaleThrustMid, ImpaleThrustCore)),
+                new Panel("wisp t=3.15", ww, wh, Blend.Additive,
+                    c => ArtoriasWindWisp(c, ww, wh, 3.15f, 0f, 1f, ImpaleThrustDark, ImpaleThrustMid, ImpaleThrustCore)),
+                new Panel("wisp t=3.30", ww, wh, Blend.Additive,
+                    c => ArtoriasWindWisp(c, ww, wh, 3.30f, 0f, 1f, ImpaleThrustDark, ImpaleThrustMid, ImpaleThrustCore)),
+                new Panel("wisp t=3.45", ww, wh, Blend.Additive,
+                    c => ArtoriasWindWisp(c, ww, wh, 3.45f, 0f, 1f, ImpaleThrustDark, ImpaleThrustMid, ImpaleThrustCore)),
+            };
+        }
+        if (Environment.GetEnvironmentVariable("FOCUS") == "artorias_impale")
+        {
+            // Artorias.PierceStabHold impale revamp: current tendril burst is "cool conceptually but
+            // practically invisible and a bit small" - twice as big, a glow so it reads on a dark
+            // background, and ImpaleTipWisp (soft, pixelated, wind-blown flame off the tip) layered
+            // across the center for the actual "blade piercing through" read.
+            //
+            // LAYOUT NOTE: this FOCUS has 6 panels -> the shared grid renderer lays them out 3 across
+            // x 2 down. Each panel is ALSO split sky | cave side by side (see the "1/2/3/4/5/6:"
+            // numbering below to keep the six straight across that grid).
+            const int px = 260;
+            FocusPanels = new[]
+            {
+                new Panel("1: OLD tendrils only (1x, no glow, no wisp)", px, px, Blend.PremultipliedAlpha,
+                    c => ArtoriasImpaleComposite(c, px, 1f, 0.5f, 3.2f, false, false)),
+                new Panel("2: NEW tendrils 2x + glow (no wisp yet)", px, px, Blend.PremultipliedAlpha,
+                    c => ArtoriasImpaleComposite(c, px, 2f, 0.5f, 3.2f, true, false)),
+                new Panel("3: NEW + tip wisp, wind phase A", px, px, Blend.PremultipliedAlpha,
+                    c => ArtoriasImpaleComposite(c, px, 2f, 0.5f, 3.2f, true, true)),
+                new Panel("4: NEW + tip wisp, wind phase B (0.3s later)", px, px, Blend.PremultipliedAlpha,
+                    c => ArtoriasImpaleComposite(c, px, 2f, 0.5f, 3.5f, true, true)),
+                new Panel("5: NEW + tip wisp, wind phase C (0.6s later)", px, px, Blend.PremultipliedAlpha,
+                    c => ArtoriasImpaleComposite(c, px, 2f, 0.5f, 3.8f, true, true)),
+                new Panel("6: NEW + tip wisp, late in hold (raise=.9)", px, px, Blend.PremultipliedAlpha,
+                    c => ArtoriasImpaleComposite(c, px, 2f, 0.9f, 4.1f, true, true)),
             };
         }
         if (Environment.GetEnvironmentVariable("FOCUS") == "gwyn_nova_charge")

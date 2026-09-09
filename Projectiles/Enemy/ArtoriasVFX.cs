@@ -266,13 +266,13 @@ namespace tsorcRevamp.Projectiles.Enemy
                 center, new Vector2(width, length), rotation,
                 new Color(7, 1, 18), new Color(96, 24, 168), new Color(210, 52, 204),
                 opacity * 0.78f, intensity, intensity, 1f,
-                BlendState.AlphaBlend, fullTexture: true);
+                BlendState.AlphaBlend, fullTexture: true, pixelBlockSize: 6f);
             Draw(purpleFireEffect, "ArtoriasPurpleFireCore", particleFlame1, turbulentNoise,
                 center + direction * System.Math.Min(8f, length * 0.08f),
                 new Vector2(width * 0.52f, length * 0.72f), rotation,
                 new Color(7, 1, 18), new Color(180, 42, 226), new Color(236, 220, 255),
                 opacity, intensity, intensity, -1f,
-                BlendState.Additive, fullTexture: true);
+                BlendState.Additive, fullTexture: true, pixelBlockSize: 6f);
         }
 
         internal static void DrawFloorFlame(Texture2D texture, Rectangle frame,
@@ -300,15 +300,25 @@ namespace tsorcRevamp.Projectiles.Enemy
                 aura ? SamplerState.LinearClamp : SamplerState.PointClamp);
         }
 
+        // Two passes: a solid pixelated underlay (fixes "too translucent" - pure additive can never
+        // occlude, vfx-shader-tips §43), then the original crisp additive spiral on top at reduced
+        // opacity so the counter-rotating arms stay readable instead of melting into the solid body.
+        // Approved via the offline preview harness (boomerang_swirl FOCUS, "Option D"). Shared by
+        // both consumers of this method - the Boomerang Crescent throw and Spiral Fan's ring-burst.
         internal static void DrawBoomerangOrbit(Vector2 center, Vector2 size, float rotation,
             bool returning, float curveDirection, float opacity)
         {
             LoadAssets();
             Color mid = returning ? new Color(232, 44, 174) : new Color(138, 54, 232);
+            Color dark = new Color(4, 1, 12);
+            Color core = new Color(210, 196, 255);
+            DrawBoomerang(boomerangOrbitEffect, "ArtoriasBoomerangOrbitSolid", spiral.Value, spiral.Value.Bounds,
+                brokenNoise.Value, center, size, rotation, dark, mid, core, opacity,
+                0f, returning ? 1f : 0f, curveDirection, 0f, SamplerState.LinearWrap,
+                blendState: BlendState.AlphaBlend);
             DrawBoomerang(boomerangOrbitEffect, "ArtoriasBoomerangOrbit", spiral.Value, spiral.Value.Bounds,
-                brokenNoise.Value, center, size, rotation, new Color(4, 1, 12), mid,
-                new Color(210, 196, 255), opacity, 0f, returning ? 1f : 0f,
-                curveDirection, 0f, SamplerState.LinearWrap);
+                brokenNoise.Value, center, size, rotation, dark, mid, core, opacity * 0.65f,
+                0f, returning ? 1f : 0f, curveDirection, 0f, SamplerState.LinearWrap);
         }
 
         internal static void DrawBoomerangRibbon(Vector2 center, float rotation, Vector2 size,
@@ -316,10 +326,15 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             LoadAssets();
             Color mid = returning ? new Color(222, 42, 180) : new Color(126, 50, 218);
+            Color dark = new Color(3, 1, 10);
+            Color core = new Color(196, 180, 255);
+            DrawBoomerang(boomerangTrailEffect, "ArtoriasBoomerangRibbonSolid", windstreak.Value, windstreak.Value.Bounds,
+                brokenNoise.Value, center, size, rotation, dark, mid, core, opacity,
+                0f, returning ? 1f : 0f, curveDirection, 0f, SamplerState.LinearWrap,
+                blendState: BlendState.AlphaBlend);
             DrawBoomerang(boomerangTrailEffect, "ArtoriasBoomerangRibbon", windstreak.Value, windstreak.Value.Bounds,
-                brokenNoise.Value, center, size, rotation, new Color(3, 1, 10), mid,
-                new Color(196, 180, 255), opacity, 0f, returning ? 1f : 0f,
-                curveDirection, 0f, SamplerState.LinearWrap);
+                brokenNoise.Value, center, size, rotation, dark, mid, core, opacity * 0.65f,
+                0f, returning ? 1f : 0f, curveDirection, 0f, SamplerState.LinearWrap);
         }
 
         internal static void DrawBoomerangPulse(Vector2 center, Vector2 size, float progress,
@@ -387,27 +402,75 @@ namespace tsorcRevamp.Projectiles.Enemy
                 BlendState.Additive);
         }
 
-        internal static void DrawImpaleTendrils(Vector2 center, float raiseProgress, float opacity)
+        /// <summary>Soft radial halo behind the impale burst - a plain tinted draw of the existing
+        /// circleGradient texture, no shader needed. The old burst alone read as "cool conceptually
+        /// but practically invisible" on a dark background; this is what actually fixes that (the
+        /// bigger, pixelated tendrils below help, but a small thin shape is still a small thin shape
+        /// without something soft underneath it to anchor the eye).</summary>
+        static void DrawImpaleGlow(Vector2 center, float radius, float opacity)
+        {
+            LoadAssets();
+            Texture2D texture = circleGradient.Value;
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Vector2 origin = texture.Size() * 0.5f;
+            float scale = radius * 2f / texture.Width;
+            Main.EntitySpriteDraw(texture, center - Main.screenPosition, null,
+                DangerMagenta * opacity, 0f, origin, scale, SpriteEffects.None, 0);
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+        }
+
+        /// <param name="windDirection">The sword's actual tip direction (through the impaled
+        /// target and out the far side) - the wisps stream this way, not radially.</param>
+        internal static void DrawImpaleTendrils(Vector2 center, Vector2 windDirection, float raiseProgress,
+            float opacity)
         {
             LoadAssets();
             float time = Main.GlobalTimeWrappedHourly;
             float pulse = 0.86f + 0.14f * (float)System.Math.Sin(time * 8.4f);
+
+            DrawImpaleGlow(center, 170f, opacity * 0.6f);
+
+            // Wind wisps: 4 strands streaming off the tip, longer than the radiating burst below
+            // and drawn with the plain (unpixelated) tendril shader - approved as-is, soft and
+            // flowing rather than blocky, so it reads as motion rather than more burst.
+            float windAngle = windDirection.SafeNormalize(Vector2.UnitX).ToRotation();
+            for (int i = 0; i < 4; i++)
+            {
+                float angle = windAngle + (i - 1.5f) * 0.20f;
+                float wispLength = (150f + i * 24f) * pulse;
+                Vector2 midpoint = center + angle.ToRotationVector2() * (wispLength * 0.52f);
+
+                Draw(tendrilEffect, "ArtoriasTendrilShadow", smoothNoise, brokenNoise,
+                    midpoint, new Vector2(wispLength, 30f), angle,
+                    VoidBlack, AbyssIndigo, KnightSilver,
+                    opacity * 0.5f, raiseProgress, 0.74f, 1f,
+                    BlendState.AlphaBlend);
+                Draw(tendrilEffect, "ArtoriasTendrilCore", windstreak, brokenNoise,
+                    midpoint, new Vector2(wispLength, 20f), angle,
+                    VoidBlack, DangerMagenta, KnightSilver,
+                    opacity * 0.68f, raiseProgress, 0.86f, 1f,
+                    BlendState.Additive);
+            }
+
+            // Radiating burst: doubled reach/width from the old shipped scale, and switched onto the
+            // Pixelated techniques (ArtoriasAbyssTendril.fx) so it matches the chunky Gwyn/Nito-family
+            // look instead of reading as a soft, easily-lost smear next to the wisps above.
             for (int i = 0; i < ImpaleTendrilAngles.Length; i++)
             {
                 float angle = ImpaleTendrilAngles[i]
                     + (float)System.Math.Sin(time * (3.2f + i * 0.17f) + i * 1.7f) * 0.18f;
-                float length = (34f + i * 4f) * pulse * MathHelper.Lerp(0.82f, 1.08f, raiseProgress);
-                Vector2 start = center + angle.ToRotationVector2() * 4f;
-                Vector2 end = center + angle.ToRotationVector2() * length;
-                Vector2 midpoint = Vector2.Lerp(start, end, 0.5f);
+                float length = (34f + i * 4f) * 2f * pulse * MathHelper.Lerp(0.82f, 1.08f, raiseProgress);
+                Vector2 midpoint = center + angle.ToRotationVector2() * (length * 0.52f);
 
-                Draw(tendrilEffect, "ArtoriasTendrilShadow", smoothNoise, brokenNoise,
-                    midpoint, new Vector2(length, 26f), angle,
+                Draw(tendrilEffect, "ArtoriasTendrilShadowPixelated", smoothNoise, brokenNoise,
+                    midpoint, new Vector2(length, 52f), angle,
                     VoidBlack, AbyssIndigo, KnightSilver,
                     opacity * 0.62f, raiseProgress, 0.74f, 1f,
                     BlendState.AlphaBlend);
-                Draw(tendrilEffect, "ArtoriasTendrilCore", windstreak, brokenNoise,
-                    midpoint, new Vector2(length, 17f), angle,
+                Draw(tendrilEffect, "ArtoriasTendrilCorePixelated", windstreak, brokenNoise,
+                    midpoint, new Vector2(length, 34f), angle,
                     VoidBlack, DangerMagenta, KnightSilver,
                     opacity * 0.80f, raiseProgress, 0.86f, 1f,
                     BlendState.Additive);
@@ -442,7 +505,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 worldCenter, Vector2 drawSize, float rotation,
             Color darkColor, Color midColor, Color coreColor,
             float opacity, float progress, float active, float direction, BlendState blendState,
-            bool fullTexture = false)
+            bool fullTexture = false, float pixelBlockSize = 5f)
         {
             Texture2D primary = primaryAsset.Value;
             Texture2D detail = detailAsset.Value;
@@ -477,6 +540,15 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["DrawSize"]?.SetValue(actualSize);
                 effect.Parameters["PrimaryTextureSize"]?.SetValue(primary.Size());
                 effect.Parameters["WorldDrawSize"]?.SetValue(drawSize);
+                // Only consumed by techniques that declare PixelGrid (ArtoriasAbyssTendril's
+                // impale-burst variants, ArtoriasPurpleFire's homing wisp) - a no-op ?.SetValue for
+                // every technique that doesn't. Default 5px matches the impale burst
+                // (ArtoriasImpaleV6); callers pass their own approved block size otherwise (see
+                // vfx-shader-tips §51f - the same block size reads very differently depending on how
+                // much contrast the underlying shape has, so this isn't one-size-fits-all).
+                Vector2 pixelBlocks = Vector2.Max(drawSize / pixelBlockSize, Vector2.One);
+                effect.Parameters["PixelGrid"]?.SetValue(
+                    new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                 effect.CurrentTechnique.Passes[0].Apply();
 
                 Main.EntitySpriteDraw(primary, worldCenter - Main.screenPosition, source, Color.White,
@@ -495,8 +567,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             Texture2D detail, Vector2 worldCenter, Vector2 drawSize, float rotation,
             Color darkColor, Color midColor, Color coreColor, float opacity,
             float progress, float active, float direction, float layer,
-            SamplerState primarySampler, SpriteEffects spriteEffects = SpriteEffects.None)
+            SamplerState primarySampler, SpriteEffects spriteEffects = SpriteEffects.None,
+            BlendState blendState = null, float pixelBlockSize = 4f)
         {
+            blendState ??= BlendState.Additive;
             Vector2 actualSize = source.Size();
             Vector2 scale = drawSize / actualSize;
             Vector2 textureSize = primary.Size();
@@ -504,7 +578,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 frameUVScale = source.Size() / textureSize;
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, primarySampler,
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, blendState, primarySampler,
                 DepthStencilState.None, RasterizerState.CullNone, null,
                 Main.GameViewMatrix.TransformationMatrix);
 
@@ -529,6 +603,11 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Layer"]?.SetValue(layer);
                 effect.Parameters["FrameUVOrigin"]?.SetValue(frameUVOrigin);
                 effect.Parameters["FrameUVScale"]?.SetValue(frameUVScale);
+                // Only consumed by the *Solid techniques (ArtoriasBoomerangOrbit/RibbonSolid) - a
+                // no-op ?.SetValue for every other technique in this file family.
+                Vector2 pixelBlocks = Vector2.Max(drawSize / pixelBlockSize, Vector2.One);
+                effect.Parameters["PixelGrid"]?.SetValue(
+                    new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                 effect.CurrentTechnique.Passes[0].Apply();
 
                 Main.EntitySpriteDraw(primary, worldCenter - Main.screenPosition, source,

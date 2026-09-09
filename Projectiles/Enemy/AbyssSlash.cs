@@ -15,6 +15,8 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         bool UsesFanBoomerangVFX => Projectile.ai[1] >= 0.5f;
 
+        float _dustOrbitAngle;
+
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/AbyssSlash";
 
         public override void SetStaticDefaults()
@@ -44,6 +46,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.1f);
+            if (UsesFanBoomerangVFX)
+            {
+                // The fan variant carries the boomerang shader stack (purple magic) on top of the
+                // plain white crescent light above - casts both instead of replacing one.
+                Lighting.AddLight(Projectile.Center, new Vector3(0.55f, 0.15f, 0.85f));
+            }
 
             Animate();
 
@@ -57,6 +65,38 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Main.rand.NextFloat(0.72f, 1.02f));
                 d.noGravity = true;
             }
+
+            if (UsesFanBoomerangVFX)
+            {
+                SpawnOrbitingDust();
+            }
+        }
+
+        /// <summary>Extra purple motes circling INSIDE the boomerang shader silhouette (Orbit draws
+        /// out to ~92px across - this stays well within that, ~10-22px out from center), fan variant
+        /// only. Mirrors BoomerangCrescent's own SpawnOrbitingDust so the two attacks that share this
+        /// shader stack read consistently.</summary>
+        void SpawnOrbitingDust()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            _dustOrbitAngle += 0.30f;
+            if (!Main.rand.NextBool(2))
+            {
+                return;
+            }
+
+            float radius = Main.rand.NextFloat(10f, 22f);
+            Vector2 radial = _dustOrbitAngle.ToRotationVector2();
+            Vector2 tangent = radial.RotatedBy(MathHelper.PiOver2);
+            Vector2 position = Projectile.Center + radial * radius;
+            Vector2 velocity = tangent * Main.rand.NextFloat(0.9f, 1.7f);
+            Dust d = Dust.NewDustPerfect(position, DustID.PurpleTorch, velocity, 110,
+                new Color(170, 70, 235), Main.rand.NextFloat(0.55f, 0.85f));
+            d.noGravity = true;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -105,8 +145,10 @@ namespace tsorcRevamp.Projectiles.Enemy
                 new Vector2(88f, 30f), 0.35f, 0.58f);
             float animationProgress = (Projectile.frame + Projectile.frameCounter / 4f)
                 / Main.projFrames[Type];
+            // 94x110 = the old 78x92 at +20%, matching the approved C-shaped arc revamp
+            // (ArtoriasSwordSwipe.fx - see the offline preview harness's abyss_slash_arc FOCUS).
             ArtoriasVFX.DrawSwordSwipe(Projectile.Center, rotation,
-                new Vector2(78f, 92f), animationProgress, 0.94f);
+                new Vector2(94f, 110f), animationProgress, 0.94f);
             return false;
         }
 

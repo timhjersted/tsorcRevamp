@@ -18,6 +18,7 @@ using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Projectiles.Melee.Shortswords;
 using tsorcRevamp.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -93,6 +94,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 step.PostStepPause = Math.Max(step.PostStepPause, 30);
                 combo.Steps[i] = step;
             }
+
+            // "Ground Pound" (shared Greatsword combo table) plays as GroundSlam, which is just the
+            // OverheadArc/VerticalChop pose with no jump - it read as a plain swing, not a pound, and
+            // its 2.0x DamageMult was landing for ~380-400 against 80 defense. Retarget it onto
+            // LeapSlam (jump toward the player, overhead pose, hit fires on landing) so it actually
+            // pounds the ground, and cut the damage 60% (2.0x -> 0.8x) to match.
+            if (combo.Name == "Ground Pound" && combo.Steps.Length > 0)
+            {
+                MeleeComboStep slam = combo.Steps[0];
+                slam.Motion = ComboMotion.LeapSlam;
+                slam.DamageMult = 0.8f;
+                combo.Steps[0] = slam;
+            }
+        }
+
+        // Ground Pound's landing hit is the only LeapSlam-motion step in Artorias's moveset, so this
+        // fires exactly once per use: a shockwave-style impact under the boss when the slam connects.
+        protected override void DoComboMeleeHit(MeleeComboStep step)
+        {
+            if (step.Motion == ComboMotion.LeapSlam)
+            {
+                SpawnLandingImpactVFX(NPC.Bottom, 86f, 68f);
+            }
+            base.DoComboMeleeHit(step);
         }
 
         protected override bool UseCompositeArmForAdditionalPhase =>
@@ -126,6 +151,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   PierceRecoveryTicks  => 90;
         protected override int   PierceStabChance     => 50;
         protected override int   PierceStabRaiseTicks => 180;
+        // The pose reaches vertical in a quick 12-tick snap instead of drifting there across the
+        // whole 180-tick hold - the target reads as centered/impaled immediately, and PierceStabHold
+        // just holds them there for the rest of the sequence instead of visibly still adjusting.
+        protected override int   PierceStabRaiseAnimTicks => 12;
         protected override int   PierceStabFlickTicks => 20;
         protected override int   PierceCooldownAfterUse => 480;
 
@@ -201,8 +230,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         private int _impaleSwordProjIndex = -1;
         private int _impaleTargetIndex = -1;
-        private int _slashTrailSwingSequence;
-        private bool _slashTrailWasActive;
+        private int _swordSlashSequence; // bumped per fresh swing; feeds VoidSlashVFX's per-swing noise phase
+        private bool _swordSlashWasActive;
         NPCDespawnHandler despawnHandler;
 
         // Only a fabled blade can pierce Artorias's protective shield: the Barrow Blade
@@ -302,12 +331,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), _ringCenter, Vector2.Zero,
                     ModContent.ProjectileType<Projectiles.Enemy.ArtoriasBoundaryVFX>(), 0, 0f,
                     Main.myPlayer, NPC.whoAmI);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasSwordSlashTrail>(), 0, 0f,
-                    Main.myPlayer, NPC.whoAmI, 0f);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasSwordSlashTrail>(), 0, 0f,
-                    Main.myPlayer, NPC.whoAmI, 1f);
             }
             NPC.netUpdate = true;
         }
@@ -338,7 +361,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             base.AI();
-            UpdateSlashTrailSequence();
+            UpdateSwordSlashSequence();
             TickProjectileSwordTelegraphs();
 
             // The puppet body and hand-drawn greatsword both sample the normal light map, so this
@@ -377,6 +400,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void DrawArtoriasAttackVFX()
         {
+            DrawSwordSlashVFX();
+
             if (_novaStageIndex >= 0 && Phase == AttackPhase.NovaCharge)
             {
                 float chargeProgress = MathHelper.Clamp(1f - PhaseTimer / (float)NovaChargeTicks, 0f, 1f);
@@ -425,8 +450,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (impaled.active && !impaled.dead)
                 {
                     float raise = GetImpaleRaiseProgress01();
+                    // The blade points from Artorias THROUGH the impaled target - the wind wisps
+                    // stream on out that far side, not radially.
+                    Vector2 windDirection = (impaled.Center - NPC.Center).SafeNormalize(new Vector2(NPC.direction, 0f));
                     Projectiles.Enemy.ArtoriasVFX.DrawImpaleTendrils(
-                        impaled.Center, raise, 0.86f);
+                        impaled.Center, windDirection, raise, 0.86f);
                 }
             }
 
@@ -465,12 +493,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 charge, Phase == AttackPhase.TendrilReach, 0.92f);
         }
 
-        void UpdateSlashTrailSequence()
+        void UpdateSwordSlashSequence()
         {
             bool active = IsMainSwordSlashActive;
-            if (active && !_slashTrailWasActive)
-                _slashTrailSwingSequence++;
-            _slashTrailWasActive = active;
+            if (active && !_swordSlashWasActive)
+                _swordSlashSequence++;
+            _swordSlashWasActive = active;
         }
 
         bool IsMainSwordSlashActive =>
@@ -481,32 +509,79 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Phase == AttackPhase.TendrilSwing || Phase == AttackPhase.HomingVolleySwing ||
             Phase == AttackPhase.BoomerangSwing || Phase == AttackPhase.SpiralFanSwing;
 
-        internal bool TryGetSwordSlashTrailPose(bool phantom, out Vector2 pivot,
-            out Vector2 direction, out float reach, out float progress, out int sequence)
+        // A stab reads as danger straight ahead; sweeping the same broad crescent used for chops
+        // over it would falsely promise danger to the sides, so those phases get the narrow thrust
+        // sheath instead (mirrors GravelordNito.NitoVFX.DrawSlash's kind==2 special case).
+        bool IsMainSwordThrust =>
+            Phase == AttackPhase.StabAttack || Phase == AttackPhase.PierceDash ||
+            (Phase == AttackPhase.MeleeComboAttack && (ActiveMeleeComboMotion == ComboMotion.Thrust
+                || ActiveMeleeComboMotion == ComboMotion.JoustDash
+                || ActiveMeleeComboMotion == ComboMotion.LeapThrust));
+
+        // Envelope ratios lifted from Nito's authored 255x323 sweep / 255x62 thrust quads at his
+        // ~170px blade reach (255/170 = 1.5, 323/170 = 1.9, 62/170 = 0.365) — see VoidSlashVFX.
+        // Multiplying by each wielder's OWN live reach instead of hardcoding pixels is what makes
+        // the shader read as "this sword's length" rather than "Nito's sword, borrowed".
+        const float SlashQuadWidthMult = 1.5f;
+        const float SlashQuadSweepHeightMult = 1.9f;
+        const float SlashQuadThrustHeightMult = 0.365f;
+        static readonly Color SlashDark = new(22, 6, 36);
+        static readonly Color SlashMid = new(143, 42, 190);
+        static readonly Color SlashCore = new(220, 166, 236);
+
+        /// <summary>Draws the shared VoidSlashVFX shader slash over both the real sword (tracking
+        /// the live hand/weapon pose) and, while active, the Echo Step phantom's own blade. Purely
+        /// visual — TickBladeHit/the swept-collision system carries the actual hitbox regardless of
+        /// what this draws, same as the ribbon system it replaced.</summary>
+        void DrawSwordSlashVFX()
         {
-            if (phantom)
+            if (Main.dedServ)
             {
-                pivot = PuppetEchoStepHandPosition;
-                reach = EchoStepReach;
-                progress = PuppetEchoStepSwingProgress;
-                sequence = PuppetEchoStepSequence;
+                return;
+            }
+
+            if (IsMainSwordSlashActive)
+            {
+                Vector2 pivot = PuppetHandPosition;
+                Vector2 direction = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
+                // The 70x70 greatsword's authored handle-to-tip diagonal is about 87px; ordinary
+                // collision reach can be shorter, but the slash must still meet the blade that is
+                // visibly sweeping through the frame instead of stopping around its midpoint.
+                float reach = Math.Max(86f, PuppetActiveBladeReach);
+                float progress = PuppetWeaponAnimationProgress;
+                Vector2 center = pivot + direction * (reach * 0.55f);
+                float rotation = direction.ToRotation();
+
+                if (IsMainSwordThrust)
+                {
+                    VoidSlashVFX.DrawThrust(center, rotation,
+                        new Vector2(reach * SlashQuadWidthMult, reach * SlashQuadThrustHeightMult),
+                        progress, 0.9f, SlashDark, SlashMid, SlashCore, _swordSlashSequence * 0.31f);
+                }
+                else
+                {
+                    VoidSlashVFX.DrawSweep(center, rotation,
+                        new Vector2(reach * SlashQuadWidthMult, reach * SlashQuadSweepHeightMult),
+                        progress, 0.9f, SlashDark, SlashMid, SlashCore, NPC.direction < 0);
+                }
+            }
+
+            if (PuppetEchoStepSwinging)
+            {
+                Vector2 pivot = PuppetEchoStepHandPosition;
                 int facing = PuppetEchoStepDirection;
                 float drawRotation = facing * (PuppetEchoStepWeaponRotation
                     + MeleeWeaponRotationOffset * facing);
                 float naturalRotation = facing == 1 ? -MathHelper.PiOver4 : -3f * MathHelper.PiOver4;
-                direction = (naturalRotation + drawRotation).ToRotationVector2();
-                return PuppetEchoStepSwinging;
-            }
+                Vector2 direction = (naturalRotation + drawRotation).ToRotationVector2();
+                float reach = EchoStepReach;
+                Vector2 center = pivot + direction * (reach * 0.55f);
 
-            pivot = PuppetHandPosition;
-            direction = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
-            // The 70x70 greatsword's authored handle-to-tip diagonal is about 87px. Ordinary
-            // collision reaches can be shorter, but the visual ribbon must still meet the blade
-            // that is visibly sweeping through the frame instead of ending around its midpoint.
-            reach = Math.Max(86f, PuppetActiveBladeReach);
-            progress = PuppetWeaponAnimationProgress;
-            sequence = _slashTrailSwingSequence;
-            return IsMainSwordSlashActive;
+                VoidSlashVFX.DrawSweep(center, direction.ToRotation(),
+                    new Vector2(reach * SlashQuadWidthMult, reach * SlashQuadSweepHeightMult),
+                    PuppetEchoStepSwingProgress, 0.9f * PuppetEchoStepVisualOpacity,
+                    SlashDark, SlashMid, SlashCore, facing < 0);
+            }
         }
 
         void TickProjectileSwordTelegraphs()
@@ -884,10 +959,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (!Main.dedServ && Main.GameUpdateCount % 3 == 0)
             {
-                Vector2 sprayDirection = new Vector2(NPC.direction, -0.25f)
-                    .SafeNormalize(Vector2.UnitX);
+                // Along the actual blade line (Artorias -> through the target -> out the far side),
+                // not just NPC.direction, so it stays aligned as the sword raises from horizontal to
+                // vertical. The EXIT-side spray (front) is plain Dust, which already draws over the
+                // player - the mirrored ENTRY-side spray (back, into Artorias) needs to draw BEHIND
+                // the player instead, which Dust cannot do, so that half lives in
+                // ArtoriasImpalingSword's own behind-the-player draw pass (see its _backBlood list).
+                Vector2 bladeDir = (target.Center - NPC.Center).SafeNormalize(new Vector2(NPC.direction, 0f));
                 Dust blood = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Circular(7f, 10f),
-                    DustID.Blood, sprayDirection.RotatedByRandom(0.55f) * Main.rand.NextFloat(1.8f, 4.8f),
+                    DustID.Blood, bladeDir.RotatedByRandom(0.4f) * Main.rand.NextFloat(1.8f, 4.8f),
                     70, new Color(120, 10, 24), Main.rand.NextFloat(0.85f, 1.25f));
                 blood.noGravity = false;
 
@@ -919,12 +999,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _impaleTargetIndex = -1;
         }
 
-        /// <summary>Progress (0-1) through the PierceStabHold raise, or 1 once past it; 0 outside the sequence.</summary>
+        /// <summary>Progress (0-1) through the PierceStabHold raise, or 1 once past it; 0 outside the
+        /// sequence. Reaches 1 after PierceStabRaiseAnimTicks (a quick snap), not the whole hold -
+        /// see that property's doc comment. Both the impale world position (GetSwordTipWorldPosition)
+        /// and the held weapon's own rotation (PuppetNPC's PierceStabHold case) key off this, so they
+        /// stay in lockstep: the target is centered on the raised blade immediately, not part-way
+        /// through a slow multi-second drift.</summary>
         public float GetImpaleRaiseProgress01()
         {
             if (Phase == AttackPhase.PierceStabHold)
             {
-                return PierceStabRaiseTicks > 0 ? 1f - (float)PhaseTimer / PierceStabRaiseTicks : 1f;
+                int elapsedTicks = PierceStabRaiseTicks - PhaseTimer;
+                return PierceStabRaiseAnimTicks > 0
+                    ? MathHelper.Clamp(elapsedTicks / (float)PierceStabRaiseAnimTicks, 0f, 1f)
+                    : 1f;
             }
             if (Phase == AttackPhase.PierceStabFlick)
             {

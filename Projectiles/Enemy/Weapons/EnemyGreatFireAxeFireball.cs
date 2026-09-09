@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
     /// <summary>
-    /// Rise -> pause-at-apex -> accelerate-home fireball. Shared by any Owl Father fire-volley
+    /// Rise -> pause-at-apex -> accelerate-home fireball. Used by the companion's flying fire-volley
     /// attack that wants the "goes up above the target, waits, then commits" read. Initial velocity
     /// (rise direction/speed) is set by whoever spawns it; this projectile manages the transitions.
     ///
@@ -84,7 +84,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             switch (phase)
             {
                 case 0: // Rising — coasts on whatever velocity it was spawned with.
-                    if (target != null && Projectile.Center.Y <= target.Center.Y - RiseHeightAboveTarget)
+                    // An airborne source can already be above the normal apex. Negative initial
+                    // ai[1] gives its orb a short visible rise before allowing the apex pause.
+                    if (Projectile.ai[1] >= 0f && target != null
+                        && Projectile.Center.Y <= target.Center.Y - RiseHeightAboveTarget)
                     {
                         Projectile.velocity = Vector2.Zero;
                         Projectile.ai[0] = 1f;

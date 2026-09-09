@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -20,12 +22,8 @@ namespace tsorcRevamp.NPCs.Puppets
     /// Wields EnemyGreatFireAxe (own enemy-only sprite/dimensions, not the player AncientFireAxe
     /// item directly). Loot still drops the real player AncientFireAxe.
     ///
-    /// Signature ranged attack "Fire Volley": reuses the shared Spiral Fan
-    /// swing+staggered-burst system (axe swing -> 3 fireballs, 30 ticks apart) for the base volley,
-    /// then chains via TryContinueSpiralFanChain into an optional reposition (backward leap if
-    /// there's room, or a leaping dodge-roll THROUGH the player if they're close) for a second
-    /// volley, and optionally escalates into a big arc-jump-over with a third volley fired mid-air.
-    /// No recovery after the chain ends either way — a clean hit-and-run poke.
+    /// The companion owns the airborne molten-orb volley. Owl Father retains axe swings,
+    /// greatfire crescents and the final-phase firefall array.
     /// </summary>
     [AutoloadBossHead]
     public class OwlFatherInvader : PuppetNPC
@@ -34,9 +32,11 @@ namespace tsorcRevamp.NPCs.Puppets
         private const string GreatfireBreakerName = "Greatfire Breaker";
         private const string GreatfireCrescentName = "Greatfire Crescent";
         private const string BackstepReentryName = "Backstep Re-entry Chop";
-        private const string VolleyCommandName = "Volley Command";
         private const string FirefallArrayName = "Firefall Array";
         private const string ApexDiveName = "Apex Dive Cleave";
+        private const string FireOwlBombardmentName = "Greatfire Owl Bombardment";
+        private const int FireOwlSummonIntervalTicks = 27;
+        private const float FireOwlMinimumHeightAbovePlayer = 250f;
 
         public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/OwlFatherInvader_Head_Boss";
 
@@ -44,14 +44,21 @@ namespace tsorcRevamp.NPCs.Puppets
 
         // ── Companion owl + spectral form ────────────────────────────────────────
         // The owl is killed outright (StrikeInstantKill) the instant Owl Father's health crosses
-        // 50%, which is also what flips on the 3x glowing spectral duplicate for the rest of the
-        // fight. _spectralFormActive is derived from NPC.life every tick rather than stored/synced
-        // directly — NPC.life is already network-synced, so every client converges on the same
-        // answer independently the moment the threshold is crossed.
+        // 50%, which replaces the small puppet with a 2x shield-glow form for the rest of the
+        // fight. Sync the latched state so joining clients also see it after Owl heals above 50%.
         private const float SpectralFormHealthThreshold = 0.5f;
-        private const float SpectralReachMultiplier = 3f;
+        private const float SpectralReachMultiplier = 2f;
+        private const int SpectralHitboxWidth = 40;
+        private const int SpectralHitboxHeight = 84;
         private int _companionOwlIndex = -1;
         private bool _spectralFormActive;
+        private bool _spectralTransitionBurstPlayed;
+        private int _fireOwlBombardmentCount;
+        private int _fireOwlBombardmentSpawned;
+        private int _fireOwlBombardmentTimer;
+        private int _fireOwlBombardmentTarget = -1;
+        private bool _fireOwlBombardmentActive;
+        private Vector2 _fireOwlBombardmentAnchor;
 
         public override void OnSpawn(IEntitySource source)
         {
@@ -67,13 +74,45 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void AI()
         {
-            base.AI();
             CheckSpectralFormTrigger();
+            base.AI();
+            TickFireOwlBombardment();
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(_spectralFormActive);
+            writer.Write(_fireOwlBombardmentActive);
+            writer.Write(_fireOwlBombardmentCount);
+            writer.Write(_fireOwlBombardmentSpawned);
+            writer.Write(_fireOwlBombardmentTimer);
+            writer.Write(_fireOwlBombardmentTarget);
+            writer.WriteVector2(_fireOwlBombardmentAnchor);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            bool wasSpectral = _spectralFormActive;
+            _spectralFormActive = reader.ReadBoolean();
+            _fireOwlBombardmentActive = reader.ReadBoolean();
+            _fireOwlBombardmentCount = reader.ReadInt32();
+            _fireOwlBombardmentSpawned = reader.ReadInt32();
+            _fireOwlBombardmentTimer = reader.ReadInt32();
+            _fireOwlBombardmentTarget = reader.ReadInt32();
+            _fireOwlBombardmentAnchor = reader.ReadVector2();
+            if (_spectralFormActive)
+            {
+                ApplySpectralBodyHitbox();
+                if (!wasSpectral)
+                    SpawnSpectralTransitionBurst();
+            }
         }
 
         /// <summary>Edge-triggers once, the first tick NPC.life crosses the 50% threshold: kills the
         /// companion owl (if it's still alive) and permanently flips on the spectral overlay + the
-        /// 3x reach that goes with it.</summary>
+        /// 2x reach that goes with it.</summary>
         private void CheckSpectralFormTrigger()
         {
             if (_spectralFormActive || NPC.lifeMax <= 0)
@@ -88,6 +127,9 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             _spectralFormActive = true;
+            ApplySpectralBodyHitbox();
+            SpawnSpectralTransitionBurst();
+            NPC.netUpdate = true;
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
@@ -107,7 +149,60 @@ namespace tsorcRevamp.NPCs.Puppets
             SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.8f, Pitch = -0.3f }, NPC.Center);
         }
 
+        private void SpawnSpectralTransitionBurst()
+        {
+            if (_spectralTransitionBurstPlayed || Main.dedServ)
+                return;
+
+            _spectralTransitionBurstPlayed = true;
+            for (int i = 0; i < 400; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2CircularEdge(1f, 1f);
+                Vector2 position = NPC.Center + Main.rand.NextVector2Circular(
+                    NPC.width * 0.48f, NPC.height * 0.48f);
+                Dust gold = Dust.NewDustPerfect(
+                    position,
+                    DustID.GoldFlame,
+                    direction * Main.rand.NextFloat(2.5f, 11f),
+                    45,
+                    new Color(255, 215, 65),
+                    Main.rand.NextFloat(0.85f, 1.85f));
+                gold.noGravity = true;
+                gold.fadeIn = Main.rand.NextFloat(0.75f, 1.3f);
+            }
+
+            Lighting.AddLight(NPC.Center, new Vector3(1f, 0.72f, 0.12f) * 2.2f);
+        }
+
         protected override bool HasSpectralOverlay => _spectralFormActive;
+        protected override float SpectralOverlayScale => 2f;
+        protected override int PuppetVisualWidth => 20;
+        protected override int PuppetVisualHeight => 42;
+        // Keep the gold armor recognizable. The yellow light is supplied by a small halo behind it,
+        // following Juggernaut's six-copy glow instead of Hydra's broad 12-copy blue blur.
+        protected override Color SpectralOverlayColor => new Color(255, 218, 70);
+        protected override float SpectralCoreTintStrength => 0.22f;
+        protected override float SpectralCoreOpacity => 0.5f;
+        protected override Color SpectralHaloColor => new Color(255, 196, 42);
+        protected override int SpectralHaloCopyCount => 6;
+        protected override float SpectralHaloRadius => 8f;
+        protected override float SpectralHaloOpacity => 0.42f;
+        protected override float SpectralHaloScale => 1f;
+        protected override bool SpectralHaloFollowsCoreOpacity => false;
+        protected override float SpectralTrailOpacity => 0.24f;
+
+        private void ApplySpectralBodyHitbox()
+        {
+            if (NPC.width == SpectralHitboxWidth && NPC.height == SpectralHitboxHeight)
+                return;
+
+            // Keep feet planted while resizing the physical body to the 2x player-draw silhouette.
+            // The axe remains a separate active attack, rather than a permanently hittable limb.
+            Vector2 bottom = NPC.Bottom;
+            NPC.width = SpectralHitboxWidth;
+            NPC.height = SpectralHitboxHeight;
+            NPC.Bottom = bottom;
+        }
 
         protected override void RunMovementAI(float speedMult)
         {
@@ -120,7 +215,6 @@ namespace tsorcRevamp.NPCs.Puppets
                 acceleration: Acceleration,
                 doorBreakingDamage: 4,
                 // This is SF4's re-aggro radius, not Owl Father's preferred attack distance.
-                // Match it to Fire Volley's outer limit so the melee boss keeps hunting at range.
                 attackRange: 700f);
         }
 
@@ -129,13 +223,16 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int LegsArmorItemType => ModContent.ItemType<OwlFatherGreaves>();
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyGreatFireAxe>();
-        // Fire Volley is a bespoke special attack rather than a conventional held ranged weapon.
+        // The companion handles the molten-orb volley; Owl Father has no held ranged weapon.
         protected override int RangedWeaponItemType => -1;
         protected override int RangedDamage => 0;
 
         protected override int MeleeDamage => 30;
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Axe;
+        // Owl Father's axe art is authored with its blade facing the ground. Keep that orientation
+        // during underhand/upward attacks instead of vertically mirroring the weapon to lead the arc.
+        protected override bool MeleeWeaponIsSingleBladed => false;
 
         private static MeleeComboStep AxeSwing(
             ComboMotion motion,
@@ -171,9 +268,9 @@ namespace tsorcRevamp.NPCs.Puppets
             windupTicks: 40,
             activeTicks: 26,
             recoveryTicks: 22,
-            oppositeWindupRotation: 1.0f,
-            attackStartRotation: -1.3f,
-            attackEndRotation: 1.0f,
+            oppositeWindupRotation: 1.15f,
+            attackStartRotation: -1.45f,
+            attackEndRotation: 1.15f,
             swingEase: SwingEaseStyle.Whip);
 
         private static readonly PuppetAttackClip GreatfireUpwardSwingV2 = new PuppetAttackClip(
@@ -182,9 +279,9 @@ namespace tsorcRevamp.NPCs.Puppets
             windupTicks: 38,
             activeTicks: 25,
             recoveryTicks: 22,
-            oppositeWindupRotation: -1.0f,
-            attackStartRotation: 1.0f,
-            attackEndRotation: -1.0f,
+            oppositeWindupRotation: -1.15f,
+            attackStartRotation: 1.25f,
+            attackEndRotation: -1.25f,
             swingEase: SwingEaseStyle.Smooth);
 
         private static readonly MeleeCombo[] OwlFatherAxeCombos = new[]
@@ -361,15 +458,18 @@ namespace tsorcRevamp.NPCs.Puppets
             },
             new MeleeCombo
             {
-                Name = VolleyCommandName,
-                BaseWeight = 80,
+                Name = FireOwlBombardmentName,
+                BaseWeight = 48,
                 Preferred = ComboRangeBand.Far,
-                InitialFlashColor = Color.OrangeRed,
-                CooldownAfterUse = 210,
+                InitialFlashColor = Color.Orange,
+                CooldownAfterUse = 520,
+                HeavyCommit = true,
+                HyperArmor = true,
                 RangedStartOnly = true,
-                MoveBrake = 0.42f,
-                Steps = new[] { AxeSwing(ComboMotion.UnderhandArc, 46, 30,
-                    damageMult: 0.55f, reachMult: 1.15f) },
+                MoveBrake = 0.22f,
+                // This short command only launches the background summon controller. Owl Father
+                // can select and perform ordinary attacks while its 27-tick owl cadence continues.
+                Steps = new[] { AxeSwing(ComboMotion.BackstepRaise, 24, 10, damageMult: 0f) },
             },
             new MeleeCombo
             {
@@ -413,22 +513,36 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override bool UseAimAdaptiveArc => true;
         protected override bool UseLogicalMeleeTelegraphs => true;
         protected override bool UseCompositeArmSwing => true;
+        protected override float MeleeCompositeArmRotationOffset => MeleeWeaponRotationOffset;
+        protected override bool PreserveShaftDirectionOnBladeFlip => true;
+        protected override bool UseLandingTimedLeapSlam => true;
+        protected override int MeleeComboInterStepLingerTicks => 3;
+        protected override int MeleeRecoveryLingerTicks => 6;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
-        // Shader-based slash ribbon (see PuppetNPC.HasSlashTrailVFX / PuppetSwordSlashTrail) instead
-        // of the flat Slash.png sprite strip every other axe puppet still uses — the "Artorias/Gwyn-
-        // style" swing VFX, recolored to a molten red-orange-yellow ramp matching AncientFireAxe's
-        // own fire theme (and the OnFire debuff OnBladeHit applies below).
-        protected override bool HasSlashTrailVFX => true;
-        protected override Color SlashTrailDarkColor => new Color(40, 6, 2);
-        protected override Color SlashTrailCenterColor => new Color(226, 90, 20);
-        protected override Color SlashTrailEdgeColor => new Color(255, 200, 80);
+        // Shader-lit fire slash quad (see PuppetNPC.HasFireSlashVFX) instead of the flat Slash.png
+        // sprite strip every other axe puppet still uses — Gwyn's procedural greatsword slash,
+        // recolored to a molten red-orange-yellow ramp matching AncientFireAxe's own fire theme
+        // (and the OnFire debuff OnBladeHit applies below). Armed every combo-attack tick in
+        // OnMeleeComboAttackTick below, same pattern as Gwyn.
+        protected override bool HasFireSlashVFX => true;
+        protected override Color FireSlashCinderColor => new Color(40, 6, 2);
+        protected override Color FireSlashFlameColor => new Color(226, 90, 20);
+        protected override Color FireSlashCoreColor => new Color(255, 200, 80);
+        // The axe's blade travels on the opposite side of its shaft from Gwyn's greatsword.
+        // Reverse only the shader's local sweep so the bright curve sits on the axe tip instead
+        // of bowing above and ahead of it; hand, weapon, and collision remain shared.
+        protected override bool FireSlashSweepFlippedWhenFacingRight => false;
+        // Calibrated against the axe's asymmetric head: the procedural arc needs to sit a little
+        // farther along the blade and one-and-a-half tiles lower than the generic sword anchor.
+        protected override float FireSlashForwardOffsetPixels => 5f;
+        protected override Vector2 FireSlashWorldOffset => new Vector2(0f, 24f);
 
         // ── Axe draw tuning ─────────────────────────────────────────────────────────
-        // Grip above the butt so every pose leaves a short, visible section below the hand.
-        protected override Vector2 MeleeHandleNorm => new Vector2(0.12f, 0.86f);
+        // The shaft runs from (2, 61) to (51, 12) in the 72x64 texture: grip ~20% above its butt.
+        protected override Vector2 MeleeHandleNorm => new Vector2(0.17f, 0.80f);
         protected override float MeleeWeaponDrawScale => 0.85f;
-        // Scales 3x once the spectral form triggers (see SpectralReachMultiplier below) — the giant
-        // duplicate's axe needs a hitbox that actually matches its 3x visual reach, replacing the
+        // Scales 2x once the spectral form triggers (see SpectralReachMultiplier below) — the giant
+        // duplicate's axe needs a hitbox that actually matches its 2x visual reach, replacing the
         // normal-size hitbox entirely rather than adding a second one (per design: one hitbox, sized
         // to whichever body is currently the "real" one).
         protected override float ComboReachBase => _spectralFormActive ? 90f * SpectralReachMultiplier : 90f;
@@ -444,6 +558,9 @@ namespace tsorcRevamp.NPCs.Puppets
         // exchange instead of falling through to a plain run. Also scales with the spectral form so
         // combos keep being selectable from the giant axe's actual reach.
         protected override float ComboMaxStartRange => _spectralFormActive ? 440f * SpectralReachMultiplier : 440f;
+        // Normal chops should begin from visibly close range. When farther away, the shared
+        // ClosingDistance phase pursues first; RangedStartOnly leaps and fire attacks bypass it.
+        protected override float MeleeEngageRange => MeleeRange * 0.85f;
         protected override int ClosingDistanceMaxTicks => 130;
         protected override int MeleeComboChance => 100;
         protected override int RangedStartMeleeComboChance => 70;
@@ -452,7 +569,7 @@ namespace tsorcRevamp.NPCs.Puppets
         // matters once a close-range swing is already telegraphing and the target backs away —
         // matching Studded's pace keeps that swing from whiffing as often.
         protected override float ComboTelegraphAdvanceSpeedMult => 0.85f;
-        protected override float ComboTelegraphAdvanceStopDistance => 70f;
+        protected override float ComboTelegraphAdvanceStopDistance => MeleeRange * 0.62f;
         // The two Leaping Slam combos and Apex Dive Cleave land about 1.5 tiles short of the
         // player's exact position instead of squarely on top of them — still comfortably inside
         // the landing slam's own reach (~80px), but reads as "closed most of the gap and arrived,"
@@ -518,6 +635,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected override void DoMeleeAttack()
         {
+            ArmFireSlashVFX(MeleeRange * 0.7f, 0.5f);
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.65f, PitchVariance = 0.2f }, NPC.Center);
             TryMeleeHit();
         }
@@ -540,11 +658,11 @@ namespace tsorcRevamp.NPCs.Puppets
             if (combo.Name == GreatfireBreakerName || combo.Name == BackstepReentryName)
                 return healthFraction <= 0.66f;
 
-            if (combo.Name == VolleyCommandName)
-                return healthFraction <= 1f / 3f && CountCommandableFireballs() > 0;
-
             if (combo.Name == FirefallArrayName || combo.Name == ApexDiveName)
                 return healthFraction <= 1f / 3f;
+
+            if (combo.Name == FireOwlBombardmentName)
+                return _spectralFormActive && !_fireOwlBombardmentActive;
 
             return true;
         }
@@ -554,20 +672,98 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             if (combo.Name == FirefallArrayName && elapsed == 10)
                 SpawnFirefallArray();
-            else if (combo.Name == VolleyCommandName && elapsed == 0)
-                ReserveSuspendedFireballs();
+            else if (combo.Name == FireOwlBombardmentName && elapsed == 12)
+                StartFireOwlBombardment();
+        }
+
+        /// <summary>
+        /// Summons a fixed airborne formation around the player's position when the attack began.
+        /// Each side is a 2-by-4 grid: columns are 120px apart and rows are 100px apart, so every
+        /// pair is separated by at least 100px. Its nearest row stays at least 250px above the live
+        /// player position, with subsequent rows extending upward, while the horizontal formation
+        /// remains at least 400px to the left or right of the captured attack position.
+        /// </summary>
+        private void StartFireOwlBombardment()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || !NPC.HasValidTarget)
+                return;
+
+            Player target = Main.player[NPC.target];
+            _fireOwlBombardmentCount = Main.rand.Next(8, 17);
+            _fireOwlBombardmentSpawned = 0;
+            _fireOwlBombardmentTimer = 0;
+            _fireOwlBombardmentTarget = target.whoAmI;
+            _fireOwlBombardmentAnchor = target.Center;
+            _fireOwlBombardmentActive = true;
+            NPC.netUpdate = true;
+        }
+
+        private void TickFireOwlBombardment()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || !_fireOwlBombardmentActive)
+                return;
+
+            if (_fireOwlBombardmentTarget < 0 || _fireOwlBombardmentTarget >= Main.maxPlayers
+                || !Main.player[_fireOwlBombardmentTarget].active || Main.player[_fireOwlBombardmentTarget].dead)
+            {
+                _fireOwlBombardmentActive = false;
+                NPC.netUpdate = true;
+                return;
+            }
+
+            if (++_fireOwlBombardmentTimer % FireOwlSummonIntervalTicks != 0)
+                return;
+
+            int ordinal = _fireOwlBombardmentSpawned++;
+            Player target = Main.player[_fireOwlBombardmentTarget];
+            int side = ordinal % 2 == 0 ? -1 : 1;
+            int sideSlot = ordinal / 2;
+            int column = sideSlot % 2;
+            int row = sideSlot / 2;
+            // Keep the original formation stable if the player falls, but shift the whole stack
+            // upward if the player climbs during the long summon cadence. This preserves 100px row
+            // spacing while guaranteeing that even the nearest row remains at least 250px above.
+            float nearestRowY = Math.Min(
+                _fireOwlBombardmentAnchor.Y - FireOwlMinimumHeightAbovePlayer,
+                target.Center.Y - FireOwlMinimumHeightAbovePlayer);
+            Vector2 spawnPosition = _fireOwlBombardmentAnchor + new Vector2(
+                side * (400f + column * 120f),
+                nearestRowY - _fireOwlBombardmentAnchor.Y - row * 100f);
+
+            int owlIndex = NPC.NewNPC(NPC.GetSource_FromThis(), (int)spawnPosition.X,
+                (int)spawnPosition.Y, ModContent.NPCType<OwlFireDiveCompanion>(),
+                ai0: target.whoAmI, ai2: ordinal);
+            if (owlIndex >= 0 && owlIndex < Main.maxNPCs)
+            {
+                NPC owl = Main.npc[owlIndex];
+                owl.Center = spawnPosition;
+                owl.target = target.whoAmI;
+                owl.netUpdate = true;
+            }
+
+            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.22f, Pitch = 0.38f }, spawnPosition);
+
+            if (_fireOwlBombardmentSpawned >= _fireOwlBombardmentCount)
+            {
+                _fireOwlBombardmentActive = false;
+                NPC.netUpdate = true;
+            }
         }
 
         protected override void OnMeleeComboAttackTick(
             MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
+            if (combo.Name == FireOwlBombardmentName)
+                return;
+
+            float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+            ArmFireSlashVFX(bladeReach, elapsed / (float)Math.Max(1, total - 1));
+
             if (elapsed != total / 2)
                 return;
 
             if (combo.Name == GreatfireCrescentName)
                 SpawnGreatfireCrescent();
-            else if (combo.Name == VolleyCommandName)
-                CommandSuspendedFireballs();
         }
 
         private void SpawnGreatfireCrescent()
@@ -576,7 +772,11 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
 
             int direction = NPC.direction < 0 ? -1 : 1;
-            Vector2 origin = PuppetHandPosition + new Vector2(direction * 22f, 2f);
+            float startX = NPC.Bottom.X + direction * 22f;
+            if (!PuppetGroundDustWave.TryFindGroundY(startX, NPC.Bottom.Y, out float groundY))
+                return;
+
+            Vector2 origin = new Vector2(startX, groundY - 26f);
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(),
                 origin,
@@ -585,7 +785,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 22,
                 3f,
                 Main.myPlayer,
-                PuppetGreatfireCrescent.DirectMode);
+                PuppetGreatfireCrescent.GroundMode);
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.62f, Pitch = 0.10f }, origin);
         }
 
@@ -597,9 +797,13 @@ namespace tsorcRevamp.NPCs.Puppets
             int projectileType = ModContent.ProjectileType<PuppetGreatfireCrescent>();
             for (int direction = -1; direction <= 1; direction += 2)
             {
+                float startX = NPC.Bottom.X + direction * 14f;
+                if (!PuppetGroundDustWave.TryFindGroundY(startX, NPC.Bottom.Y, out float groundY))
+                    continue;
+
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(),
-                    NPC.Bottom + new Vector2(direction * 14f, -24f),
+                    new Vector2(startX, groundY - 26f),
                     new Vector2(direction * 7f, 0f),
                     projectileType,
                     24,
@@ -607,6 +811,38 @@ namespace tsorcRevamp.NPCs.Puppets
                     Main.myPlayer,
                     PuppetGreatfireCrescent.GroundMode);
             }
+        }
+
+        private void SpawnHighLeapFireColumns()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            for (int direction = -1; direction <= 1; direction += 2)
+            {
+                for (int column = 0; column < 3; column++)
+                {
+                    float x = NPC.Bottom.X + direction * (24f + column * 48f);
+                    // Use the same exposed-surface lookup as Owl Father's traveling ground fire.
+                    // Each farther pair waits six more ticks, making the eruption visibly move
+                    // outward from the impact instead of drawing six simultaneous static flames.
+                    if (!PuppetGroundDustWave.TryFindGroundY(x, NPC.Bottom.Y, out float groundY))
+                        continue;
+
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(),
+                        new Vector2(x, groundY), Vector2.Zero,
+                        ModContent.ProjectileType<PuppetFireWaveColumn>(), 22, 3f, Main.myPlayer,
+                        96f, direction * 6f, PuppetFireWaveColumn.EncodeSlamDelay(column * 6));
+                }
+            }
+        }
+
+        protected override void OnLeapSlamLanded(MeleeComboStep step)
+        {
+            // Owl Father's only LeapSlam motions are the two High Leaping Slam variants. This hook
+            // is tied to the physics landing itself, so hit/miss results and combo recovery cannot
+            // suppress the six-column eruption.
+            SpawnHighLeapFireColumns();
         }
 
         private void SpawnFirefallArray()
@@ -632,67 +868,12 @@ namespace tsorcRevamp.NPCs.Puppets
                     26,
                     3f,
                     Main.myPlayer,
-                    delays[i]);
+                    delays[i],
+                    0f,
+                    PuppetFirefallPillar.DreadWraithFireVisualStyle);
             }
 
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.52f, Pitch = -0.22f }, target.Center);
-        }
-
-        private int CountCommandableFireballs()
-        {
-            int count = 0;
-            int projectileType = ModContent.ProjectileType<EnemyGreatFireAxeFireball>();
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile projectile = Main.projectile[i];
-                if (!projectile.active || projectile.type != projectileType)
-                    continue;
-                if (projectile.ModProjectile is EnemyGreatFireAxeFireball fireball
-                    && fireball.CanBeCommandedBy(NPC.whoAmI))
-                    count++;
-            }
-            return count;
-        }
-
-        private void CommandSuspendedFireballs()
-        {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-                return;
-
-            int commandIndex = 0;
-            int projectileType = ModContent.ProjectileType<EnemyGreatFireAxeFireball>();
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile projectile = Main.projectile[i];
-                if (!projectile.active || projectile.type != projectileType)
-                    continue;
-                if (projectile.ModProjectile is not EnemyGreatFireAxeFireball fireball
-                    || !fireball.CanBeCommandedBy(NPC.whoAmI))
-                    continue;
-
-                fireball.CommandDive(commandIndex * 10);
-                commandIndex++;
-            }
-
-            if (commandIndex > 0)
-                SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.62f, Pitch = -0.10f }, NPC.Center);
-        }
-
-        private void ReserveSuspendedFireballs()
-        {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-                return;
-
-            int projectileType = ModContent.ProjectileType<EnemyGreatFireAxeFireball>();
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile projectile = Main.projectile[i];
-                if (!projectile.active || projectile.type != projectileType)
-                    continue;
-                if (projectile.ModProjectile is EnemyGreatFireAxeFireball fireball
-                    && fireball.CanBeCommandedBy(NPC.whoAmI))
-                    fireball.ReserveForCommand(90);
-            }
         }
 
         protected override bool ShouldContinueMeleeCombo(
@@ -743,132 +924,71 @@ namespace tsorcRevamp.NPCs.Puppets
             }
         }
 
-        // ── Fire Volley (ranged attack #1 of 6) ─────────────────────────────────────
-        protected override bool  CanSpiralFan               => true;
-        protected override float SpiralFanMinRange          => 200f;  // "at range", not melee
-        protected override float SpiralFanMaxRange          => 700f;
-        protected override int   SpiralFanChance            => 12;
-        protected override int   SpiralFanCooldownAfterUse  => 400;   // whole chain can run long
-        protected override int   SpiralFanSwingTelegraphTicks => 30;
-        protected override int   SpiralFanSwingTicks        => 30;
-        protected override int   SpiralFanFireTicks         => 4;
-        protected override int   SpiralFanRecoveryTicks     => 1;     // "no recovery" after the chain ends
+        // The shared PuppetNPC death burst is 150 Blood dusts. Against Owl Father's dark arena
+        // that reads as almost nothing, especially when the 2x spectral body disappears on the
+        // same frame. Give this boss a brighter, layered burst and keep OnKill as a fallback for
+        // death paths that do not deliver a final client-side HitEffect.
+        private bool _deathBurstPlayed;
 
-        // 30 ticks between each of the 3 shots (fires at index 0/1/2; -1 after 2 ends the volley).
-        protected override int NextSpiralFanDelay(int completedShotIndex)
-            => completedShotIndex < 2 ? 30 : -1;
-
-        protected override void DoSpiralFanFire(int shotIndex)
-            => FireOneVolleyShot(shotIndex % FireVolleySpawnOffsets.Length);
-
-        // Left / middle (1 tile higher) / right, each ~3 tiles (48px) apart.
-        private static readonly Vector2[] FireVolleySpawnOffsets =
+        public override void HitEffect(NPC.HitInfo hit)
         {
-            new Vector2(-48f, 0f),
-            new Vector2(0f, -16f),
-            new Vector2(48f, 0f),
-        };
-
-        private void FireOneVolleyShot(int offsetIndex)
-        {
-            if (Main.netMode == NetmodeID.MultiplayerClient || !NPC.HasValidTarget) return;
-            Player target = Main.player[NPC.target];
-
-            Vector2 spawnPos = NPC.Center + new Vector2(0f, -NPC.height * 0.9f) + FireVolleySpawnOffsets[offsetIndex];
-            Vector2 toPlayer = target.Center - spawnPos;
-            toPlayer.Y -= 120f; // bias the launch upward, not straight at them — "travel up and towards"
-            if (toPlayer == Vector2.Zero) toPlayer = new Vector2(0f, -1f);
-            toPlayer.Normalize();
-            Vector2 velocity = toPlayer * 6f;
-
-            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.6f, PitchVariance = 0.2f }, NPC.Center);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, velocity,
-                ModContent.ProjectileType<EnemyGreatFireAxeFireball>(),
-                20, 2f, Main.myPlayer,
-                ai0: 0f, ai1: 0f, ai2: NPC.whoAmI + 1f);
+            if (NPC.life <= 0)
+                SpawnOwlFatherDeathBurst();
         }
 
-        // ── Chain: reposition (backward leap / dodge-through) -> volley 2 -> optional arc-jump -> volley 3
-        private int _fireVolleyChain; // 0 = fresh, 1 = one bonus volley granted, 2 = arc-jump granted
-
-        private const int   FireVolleyChainChance = 45; // roll after volley 1, to attempt volley 2
-        private const int   FireVolleyArcChance   = 40; // roll after volley 2, to escalate into the arc-jump
-        private const float FireVolleyCloseRange  = 220f; // below this, dodge-through instead of back-leap
-
-        protected override void OnSpiralFanSequenceStart()
+        public override void OnKill()
         {
-            _fireVolleyChain = 0;
+            base.OnKill();
+            SpawnOwlFatherDeathBurst();
         }
 
-        protected override bool TryContinueSpiralFanChain()
+        private void SpawnOwlFatherDeathBurst()
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient || !NPC.HasValidTarget) return false;
-            Player target = Main.player[NPC.target];
+            if (_deathBurstPlayed || Main.dedServ)
+                return;
 
-            if (_fireVolleyChain == 0)
+            _deathBurstPlayed = true;
+            Vector2 center = NPC.Center;
+            Vector2 inheritedVelocity = NPC.velocity * 0.15f;
+
+            // Ninety gravity-affected blood particles are distributed from the top of the body to
+            // the feet, alternating left and right so the whole disappearing silhouette ruptures.
+            for (int i = 0; i < 90; i++)
             {
-                if (Main.rand.Next(100) >= FireVolleyChainChance) return false;
-
-                float dist = NPC.Distance(target.Center);
-                if (dist <= FireVolleyCloseRange)
-                {
-                    _fireVolleyChain = 1;
-                    EnterPhase(AttackPhase.FireVolleyDodgeThrough, FireVolleyDodgeThroughTimeoutTicks);
-                    return true;
-                }
-
-                if (HasRoomToBackLeap())
-                {
-                    _fireVolleyChain = 1;
-                    EnterPhase(AttackPhase.FireVolleyBackLeap, FireVolleyBackLeapTicks);
-                    return true;
-                }
-
-                return false; // no valid reposition — ends here, no recovery either way
+                float verticalProgress = (i + Main.rand.NextFloat()) / 90f;
+                float side = i % 2 == 0 ? -1f : 1f;
+                Vector2 position = new Vector2(
+                    center.X + Main.rand.NextFloat(-NPC.width * 0.22f, NPC.width * 0.22f),
+                    MathHelper.Lerp(NPC.Top.Y, NPC.Bottom.Y, verticalProgress));
+                Dust blood = Dust.NewDustPerfect(
+                    position,
+                    DustID.Blood,
+                    new Vector2(side * Main.rand.NextFloat(2.5f, 6f), Main.rand.NextFloat(-1.8f, 1.8f))
+                        + inheritedVelocity,
+                    20,
+                    default,
+                    Main.rand.NextFloat(1.45f, 2.55f));
+                blood.noGravity = false;
             }
 
-            if (_fireVolleyChain == 1)
+            // The 120 gold embers launch in every direction at exactly twice the blood speed range.
+            // They retain gravity so the wide initial starburst bends back down around the corpse.
+            for (int i = 0; i < 120; i++)
             {
-                if (Main.rand.Next(100) >= FireVolleyArcChance) return false;
-                _fireVolleyChain = 2;
-                BeginFireVolleyArcJump();
-                EnterPhase(AttackPhase.FireVolleyArcJump, 100);
-                return true;
+                Vector2 direction = Main.rand.NextVector2CircularEdge(1f, 1f);
+                float matchingBloodSpeed = Main.rand.NextFloat(2.5f, 6f);
+                Dust ember = Dust.NewDustPerfect(
+                    center + Main.rand.NextVector2Circular(NPC.width * 0.4f, NPC.height * 0.4f),
+                    DustID.GoldFlame,
+                    direction * matchingBloodSpeed * 2f + inheritedVelocity,
+                    35,
+                    new Color(255, 210, 55),
+                    Main.rand.NextFloat(1.05f, 2.05f));
+                ember.noGravity = false;
             }
 
-            return false;
+            Lighting.AddLight(center, new Vector3(1f, 0.52f, 0.12f) * 1.4f);
         }
 
-        // Both reposition moves (backward leap, dodge-through) funnel back into the same swing
-        // system for volley 2 — re-entering SpiralFanSwingTelegraph gives it its own axe-swing
-        // telegraph, matching "with axe swing as telegraph" for the dodge-through landing too.
-        protected override void OnFireVolleyRepositionLanded()
-            => EnterPhase(AttackPhase.SpiralFanSwingTelegraph, SpiralFanSwingTelegraphTicks);
-
-        // Volley 3: all 3 shots fire together mid-air at the arc's apex (one continuous swing,
-        // not a staggered burst like the grounded volleys).
-        protected override void DoFireVolleyArcFire()
-        {
-            for (int i = 0; i < FireVolleySpawnOffsets.Length; i++)
-                FireOneVolleyShot(i);
-        }
-
-        protected override void OnFireVolleyArcJumpLanded()
-            => EnterCasualOrIdle();
-
-        /// <summary>Lightweight clearance probe for the backward leap: an unobstructed line to the
-        /// landing point, and solid ground under it. "About 8 tiles if there's room" is approximate
-        /// by design, so this doesn't need to be pixel-exact.</summary>
-        private bool HasRoomToBackLeap()
-        {
-            int dir = -NPC.direction; // away from the player
-            Vector2 landing = NPC.Center + new Vector2(dir * 128f, 0f); // ~8 tiles
-            bool clearPath = Collision.CanHitLine(
-                NPC.position, NPC.width, NPC.height,
-                landing - new Vector2(NPC.width / 2f, NPC.height / 2f), NPC.width, NPC.height);
-            bool groundBelow = Collision.SolidCollision(
-                new Vector2(landing.X - 8f, landing.Y + NPC.height / 2f), 16, 24);
-            return clearPath && groundBelow;
-        }
     }
 }

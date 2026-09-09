@@ -35,9 +35,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             Projectile.velocity.Y += Projectile.ai[0];
-            if (Projectile.velocity.Y > 15f)
+            if (Projectile.velocity.Y > 11.25f)
             {
-                Projectile.velocity.Y = 15f;
+                Projectile.velocity.Y = 11.25f;
             }
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             if (++Projectile.frameCounter >= 5)

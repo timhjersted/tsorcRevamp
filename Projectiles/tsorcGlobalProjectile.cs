@@ -90,6 +90,24 @@ namespace tsorcRevamp.Projectiles
         public int WeaponStaminaSourceItemType = -1;
         public bool WeaponStaminaSourceIsSummon;
 
+        /// <summary>True once this projectile has landed at least one hit. Exists to tell apart two very
+        /// different things that both spawn a projectile from another projectile: a vanilla "held gun"
+        /// weapon's cosmetic barrel projectile spawning its actual damage bolt (the barrel never hits
+        /// anything itself - Laser Machinegun, Space Gun, Chain Gun and friends all work this way, and it
+        /// is the weapon's ordinary, first-class shot) versus a hit-triggered proc like Chlorophyte Arrow
+        /// splitting into homing children AFTER it has already struck something. Set in OnHitNPC.</summary>
+        public bool HasHitAnNpc;
+
+        /// <summary>True when this projectile's IEntitySource was another projectile that had ALREADY
+        /// landed a hit (see HasHitAnNpc) by the time it spawned this one - i.e. this is a split, chain,
+        /// or on-hit proc (Chlorophyte Arrow's homing splits, for example), not the player's own weapon
+        /// activation. A vanilla held-gun weapon's cosmetic barrel spawning its damage bolt does NOT set
+        /// this, because the barrel itself never registers a hit - only a genuinely POST-HIT spawn does.
+        /// Used by Systems/Regain to refuse credit to these: crediting them lets a single shot's delayed,
+        /// self-spawned children land Regain hits seconds later and well outside any per-activation timing
+        /// gate, since there genuinely is no "one swing" for a gate to bound.</summary>
+        public bool SpawnedByProjectile;
+
         // Enemy attack attribution. Hostile projectiles generally use owner = 255, so owner cannot identify the
         // firing NPC when a player blocks a shot. Carry the source explicitly and inherit it through child shots.
         public int SourceNPCIndex = -1;
@@ -233,6 +251,12 @@ namespace tsorcRevamp.Projectiles
                 SourceNPCIndex = parentData.SourceNPCIndex;
                 SourceNPCType = parentData.SourceNPCType;
                 DefenseTraits = parentData.DefenseTraits;
+
+                // Only a parent that has ALREADY hit something counts as a proc/split (Chlorophyte Arrow).
+                // A vanilla held-gun's cosmetic barrel projectile spawning its own damage bolt never hits
+                // anything itself, so it fails this check and the bolt is correctly treated as the
+                // weapon's ordinary shot - see HasHitAnNpc's doc comment for why this distinction matters.
+                SpawnedByProjectile = parentData.HasHitAnNpc;
             }
             // Some legacy projectiles change their type during PreKill. Their children still spawn normally,
             // but the retired parent no longer has a valid per-entity GlobalProjectile instance to inherit.
@@ -589,6 +613,10 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
         {
+            // Marks this projectile as having actually landed a hit - see HasHitAnNpc's doc comment.
+            // Must be set before anything below can early-return, so it is first.
+            HasHitAnNpc = true;
+
             Player player = Main.player[projectile.owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 

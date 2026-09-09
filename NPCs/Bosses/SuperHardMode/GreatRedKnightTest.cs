@@ -824,7 +824,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static readonly Vector2 SpearGripOrigin = new Vector2(54f, 54f);  // EnemyAncientBloodLanceProj is 108x108, grip at center (54, 54)
         static readonly Vector2 BombGripOrigin = new Vector2(11f, 18f);  // EnemyFirebomb is 22x24, hand near the bottom
         static readonly Vector2 MagicBallGripOrigin = new Vector2(8f, 8f);
-        static readonly Vector2 HandGripOrigin = new Vector2(7f, 4f);    // RedKnight_Hand is 14x8, centered on the grip
 
         // World position of the body's gripping hand for the current animation frame.
         Vector2 CurrentHandWorld()
@@ -844,6 +843,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
             float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
             return new Vector2(x, y) + OverlayFudge;
+        }
+
+        // Redraws this frame's arm over the body so the gripped prop reads as held rather than laid on top of
+        // the sprite. RedKnight_LeftArm is a 70x56-per-frame sheet (16 frames stacked, matching FrameW/FrameH/
+        // HandPixel.Length), sliced by the current frame the same way BlackKnight's own hand overlay is.
+        void DrawArmOverlay(SpriteBatch spriteBatch, Color drawColor, SpriteEffects effects)
+        {
+            if (handTexture == null)
+            {
+                return;
+            }
+
+            Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
+            Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
+            spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, 0f, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -866,7 +880,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (handTexture == null)
             {
                 // Loose PNG (no content class): ImmediateLoad + full path so .Value is the real texture.
-                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/RedKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                // RedKnight_Hand was never created as an asset — reuse RedKnight_LeftArm, the same per-frame
+                // arm overlay sheet the real RedKnight/GreatRedKnight already use for this body part.
+                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/RedKnight_LeftArm", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
             SpriteEffects handEffects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
@@ -881,10 +897,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // Weapon behind the hand, pivoting on the grip so it aims at the throw target.
                 spriteBatch.Draw(spearTexture, handWorld, null, drawColor, rotation, SpearGripOrigin, NPC.scale, SpriteEffects.None, 0);
                 // Hand on top, unrotated and facing like the body, covering the grip.
-                if (handTexture != null)
-                {
-                    spriteBatch.Draw(handTexture, handWorld, null, drawColor, 0f, HandGripOrigin, NPC.scale, handEffects, 0);
-                }
+                DrawArmOverlay(spriteBatch, drawColor, handEffects);
             }
             // Magic ball
             if (magicBallTexture != null && ((NPC.ai[1] >= 225 && NPC.ai[1] <= 325f) || (NPC.ai[1] >= 350 && NPC.ai[1] <= 375f) || (NPC.ai[1] >= 400 && NPC.ai[1] <= 480f)))
@@ -896,10 +909,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Dust dust = Dust.NewDustPerfect(CurrentHandWorld() + Main.rand.NextVector2Circular(6f, 6f), DustID.YellowTorch, Main.rand.NextVector2Circular(0.35f, 0.35f), 120, default, 0.65f);
                     dust.noGravity = true;
                 }
-                if (handTexture != null)
-                {
-                    spriteBatch.Draw(handTexture, handWorld, null, drawColor, 0f, HandGripOrigin, NPC.scale, handEffects, 0);
-                }
+                DrawArmOverlay(spriteBatch, drawColor, handEffects);
             }
             // Bomb
             if (NPC.ai[1] >= 865)
@@ -909,10 +919,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
 
                 spriteBatch.Draw(bombTexture, handWorld, null, drawColor, rotation, BombGripOrigin, 1f, SpriteEffects.None, 0);
-                if (handTexture != null)
-                {
-                    spriteBatch.Draw(handTexture, handWorld, null, drawColor, 0f, HandGripOrigin, NPC.scale, handEffects, 0);
-                }
+                DrawArmOverlay(spriteBatch, drawColor, handEffects);
             }
 
         }

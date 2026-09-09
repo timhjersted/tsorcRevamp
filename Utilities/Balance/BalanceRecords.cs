@@ -44,6 +44,23 @@ namespace tsorcRevamp.Utilities.Balance
         /// <summary>Populated for ranged weapons. Ammo choice is a large, invisible slice of practical
         /// ranged DPS, so a weapon's numbers can't be compared without it.</summary>
         public List<AmmoUsage> ammo = new();
+
+        // --- Regain system (Systems/Regain) --------------------------------------------------
+        // Exists to catch the shape a busted weapon takes: a huge regainHealed relative to
+        // damageTaken on the encounter means this weapon is draintanking; a high regainGateRefusals
+        // relative to regainCredits means it is repeatedly trying to credit off ONE activation
+        // (multishot/piercing/beam) and the swing-window gate is the only thing stopping it.
+        /// <summary>Total HP this weapon recovered via Regain during the encounter.</summary>
+        public long regainHealed;
+        /// <summary>Successful Regain credits earned by this weapon.</summary>
+        public int regainCredits;
+        /// <summary>Credits refused by the swing-window gate (Regain.CreditGateFraction) because
+        /// another credit from this same weapon had already landed too recently.</summary>
+        public int regainGateRefusals;
+        /// <summary>Sum of the distance-to-target, in tiles, at each successful credit. Divide by
+        /// regainCredits for the average - a weapon credited almost entirely from far outside melee
+        /// range gives itself away here.</summary>
+        public float regainDistanceSumTiles;
     }
 
     internal sealed class AmmoUsage
@@ -163,6 +180,10 @@ namespace tsorcRevamp.Utilities.Balance
         public int playerDeaths;
         public long damageTaken;
         public bool gearChangedMidFight;
+
+        /// <summary>Sum of every weapon's regainHealed - the encounter-level "how much of damageTaken
+        /// did Regain erase" figure without having to sum the per-weapon list by hand.</summary>
+        public long totalRegainHealed;
 
         public GearSnapshot gear;
         public List<WeaponUsage> weapons = new();

@@ -146,7 +146,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool UseCompositeArmSwing => true;
         protected override bool UseTwoHandedCompositeSwing => true;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
-        protected override bool HasSlashVFX => false; // Gwyn draws a dedicated shader-lit fire slash in PostDraw.
+        protected override bool HasSlashVFX => false; // Uses HasFireSlashVFX (shader-lit fire slash) instead.
         protected override float WalkAnimationSpeedMultiplier => 0.35f;
         protected override float OverheadWindupOvershoot => MathHelper.ToRadians(17f);
         protected override bool SlowDownBeforeMelee => false; // pursue through the windup — no walking out of the telegraph
@@ -545,6 +545,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             base.SendExtraAI(writer);
             writer.Write(_arenaCenterSet);
             writer.WriteVector2(_arenaCenter);
+            writer.Write(_spearJumpActive);
+            writer.Write((byte)_spearThrowsThisJump);
+            writer.Write((byte)_spearFollowupsRemaining);
+            writer.Write(_spearAirTargetSpeed);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -552,16 +556,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             base.ReceiveExtraAI(reader);
             _arenaCenterSet = reader.ReadBoolean();
             _arenaCenter = reader.ReadVector2();
+            _spearJumpActive = reader.ReadBoolean();
+            _spearThrowsThisJump = reader.ReadByte();
+            _spearFollowupsRemaining = reader.ReadByte();
+            _spearAirTargetSpeed = reader.ReadSingle();
         }
 
         public override void AI()
         {
-            _drawFireSlash = false;
             //Contact only hurts during the Unbroken Advance march (all other damage is weapon hitboxes)
             NPC.damage = TooEarly ? TooEarlyDamage : (_advanceTimer > 0 ? MeleeDamage : 0);
 
             base.AI();
+            TickSpearJumpChoreography();
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
+
+            // A restrained neutral-white fill keeps Gwyn readable in unlit arena sections without
+            // competing with the hotter attack lights on his blade and projectiles.
+            if (!Main.dedServ)
+                Lighting.AddLight(NPC.Center, 0.42f, 0.42f, 0.42f);
 
             TickDefenseRing();
             TickCowardRing();
@@ -618,7 +631,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 _descentCd = System.Math.Min(_descentCd, 240);
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.9f, Pitch = 0.3f }, NPC.Center);
                     UsefulFunctions.ScreenShake(NPC.Center, 10f, 24);
                     for (int i = 0; i < 60; i++)
                     {
@@ -1397,7 +1409,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Fury"), 255, 200, 60);
                 Vector2 spawn = new Vector2(player.Center.X, player.Center.Y - 640f);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.GwynDescentMeteor>(), DescentDamage, 0f, Main.myPlayer, DescentDamage, player.Center.X);
+                    ModContent.ProjectileType<Projectiles.Enemy.GwynDescentMeteor>(), DescentDamage, 0f,
+                    Main.myPlayer, DescentDamage, player.Center.X, ArenaCenter.Y);
             }
         }
 
@@ -1405,7 +1418,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //    magic set-pieces (lightning spear etc.) layer on in Phase 3. ──────────────────────────
         protected override void DoMeleeAttack()
         {
-            ArmFireSlash(0.5f, ComboReachBase * 0.7f);
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.2f }, NPC.Center);
             TryMeleeHit();
         }
@@ -1424,15 +1436,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // greatsword — they just stream off the tip instead of leading it.
             if (step.Motion == ComboMotion.LowAxeRun)
             {
-                if (elapsed == 0)
-                {
-                    SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.6f, Pitch = -0.4f }, NPC.Center);
-                }
                 EmitPursuitDragEmbers(bladeReach, elapsed);
                 return;
             }
 
-            ArmFireSlash(progress, bladeReach);
+            ArmFireSlashVFX(bladeReach, progress);
             EmitSwingFireDust(bladeReach, elapsed);
 
             // Leap hits resolve on landing; emitting their fire at takeoff would contradict the
@@ -1454,26 +1462,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        bool _drawFireSlash;
-        float _fireSlashProgress;
-        float _fireSlashReach;
-        static Asset<Effect> fireSlashEffect;
-        static Asset<Texture2D> fireSlashShapeNoise;
-        static Asset<Texture2D> fireSlashDetailNoise;
-        //Quad proportions the GwynCinderSlash technique's geometry is authored against: its arc apex
-        //sits at local x = 0.90, so the quad has to be 1.5x the blade reach wide and centred
-        //0.325 * reach ahead of the hand for the apex to land exactly on the weapon tip.
-        const float FireSlashQuadWidth = 1.5f;
-        const float FireSlashQuadHeight = 1.9f;
-        const float FireSlashQuadOffset = 0.325f;
-        const float FireSlashPixelBlockSize = 2f;
-
-        void ArmFireSlash(float progress, float reach)
-        {
-            _drawFireSlash = true;
-            _fireSlashProgress = MathHelper.Clamp(progress, 0f, 1f);
-            _fireSlashReach = Math.Max(24f, reach);
-        }
+        // Fire-slash quad palette (see PuppetNPC.HasFireSlashVFX) — a dark ember red so the aged
+        // tail occludes rather than glowing, then flame orange, then a pale core hot spot.
+        protected override bool HasFireSlashVFX => true;
+        protected override Color FireSlashCinderColor => new Color(64, 8, 2);
+        protected override Color FireSlashFlameColor => new Color(255, 116, 14);
+        protected override Color FireSlashCoreColor => new Color(255, 236, 172);
+        protected override float FireSlashOpacity => 1.1f;
+        protected override int FireSlashFadeoutTicks => 8;
+        // Keep the arc's leading tip on the real blade reach while giving the greatsword a broader,
+        // more visible body than the generic puppet defaults.
+        protected override float FireSlashQuadWidthMult => 1.65f;
+        protected override float FireSlashQuadHeightMult => 2.1f;
+        protected override float FireSlashQuadOffsetMult => 0.274f;
 
         void EmitSwingFireDust(float bladeReach, int elapsed)
         {
@@ -1521,72 +1522,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Lighting.AddLight(tip, 0.9f, 0.45f, 0.12f);
         }
 
-        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-        {
-            if (!_drawFireSlash || _fireSlashReach <= 0f)
-                return;
-
-            fireSlashEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GwynCinderTrail", AssetRequestMode.ImmediateLoad);
-            fireSlashShapeNoise ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
-            fireSlashDetailNoise ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/Turbulence_07-512x512", AssetRequestMode.ImmediateLoad);
-
-            //The arc is procedural now. It used to be the shared 3-frame `Slash` sprite tinted orange
-            //and drawn twice, additively — a soft pale crescent with a hard white outline that washed
-            //out over anything bright, which is what made it read as a smear rather than as fire.
-            Texture2D noiseTexture = fireSlashShapeNoise.Value;
-            int quadWidth = Math.Max(2, (int)(_fireSlashReach * FireSlashQuadWidth));
-            int quadHeight = Math.Max(2, (int)(_fireSlashReach * FireSlashQuadHeight));
-            Rectangle source = new Rectangle(0, 0, quadWidth, quadHeight);
-            Vector2 quadSize = source.Size();
-
-            Vector2 hand = PuppetHandPosition;
-            Vector2 tip = PuppetWeaponTipPosition(_fireSlashReach);
-            Vector2 direction = (tip - hand).SafeNormalize(new Vector2(NPC.direction, 0f));
-            Vector2 position = hand + direction * (_fireSlashReach * FireSlashQuadOffset) - Main.screenPosition;
-            float rotation = direction.ToRotation();
-            //The flip mirrors the shader's local Y, which mirrors the sweep with Gwyn's facing.
-            SpriteEffects effects = NPC.direction > 0 ? SpriteEffects.FlipVertically : SpriteEffects.None;
-            //Hold full strength through the swing and fade only over the last fifth, so the arc does
-            //not pop out of existence on the final frame. Per-pixel cooling is the shader's `age`.
-            float opacity = 0.95f * MathHelper.Clamp((1f - _fireSlashProgress) * 5f, 0f, 1f);
-
-            Vector2 pixelBlocks = quadSize / FireSlashPixelBlockSize;
-            Vector4 pixelGrid = new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
-                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            Effect effect = fireSlashEffect.Value;
-            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
-            Texture previousTexture = graphicsDevice.Textures[1];
-            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
-            try
-            {
-                graphicsDevice.Textures[1] = fireSlashDetailNoise.Value;
-                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
-                effect.CurrentTechnique = effect.Techniques["GwynCinderSlash"];
-                effect.Parameters["CinderColor"].SetValue(new Color(64, 8, 2).ToVector3());
-                effect.Parameters["FlameColor"].SetValue(new Color(255, 116, 14).ToVector3());
-                effect.Parameters["CoreColor"].SetValue(new Color(255, 236, 172).ToVector3());
-                effect.Parameters["Opacity"].SetValue(opacity);
-                effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-                effect.Parameters["Progress"].SetValue(_fireSlashProgress);
-                effect.Parameters["DrawSize"].SetValue(quadSize);
-                effect.Parameters["CoordScale"].SetValue(noiseTexture.Size() / quadSize);
-                effect.Parameters["PixelGrid"].SetValue(pixelGrid);
-                effect.CurrentTechnique.Passes[0].Apply();
-
-                Main.EntitySpriteDraw(noiseTexture, position, source, Color.White, rotation,
-                    quadSize * 0.5f, 1f, effects, 0);
-            }
-            finally
-            {
-                graphicsDevice.Textures[1] = previousTexture;
-                graphicsDevice.SamplerStates[1] = previousSampler;
-            }
-            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
-        }
         protected override void OnComboStepCompleted(MeleeComboStep step)
         {
             // Only a real landing gets the leap's impact crescent. A timed-out airborne leap keeps
@@ -1638,8 +1573,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // ── Spear of the First Sun (the marquee lightning attack) ────────────────
-        // Mapped onto the base HomingVolley template — "raise the weapon overhead, then fire a
-        // projectile partway through the downswing" is exactly the throw motion. The two-stage
+        // Mapped onto the base HomingVolley template. Gwyn launches into a distance-scaled forward
+        // jump during the raised telegraph and releases at its end, near the apex. The two-stage
         // payload (contact explosion → delayed ground bolt → floor electricity) lives entirely in
         // the GwynLightningSpear → GwynLightningStrike → GwynFloorSpark projectile chain.
         protected override bool  CanHomingVolley             => true;
@@ -1647,15 +1582,106 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float HomingVolleyMaxRange         => 1400f;   // works at nearly any range — it's a signature
         protected override int   HomingVolleyChance           => 8;
         protected override int   HomingVolleyCooldownAfterUse => 420;
-        protected override int   HomingVolleyDodgebackTicks   => 8;       // barely a step — the raise is planted, imposing
-        protected override float HomingVolleyDodgebackSpeed   => 1.5f;
-        protected override int   HomingVolleySwingTelegraphTicks => 40;   // the long overhead raise — everyone sees it coming
-        protected override int   HomingVolleySwingTicks       => 28;
-        protected override float HomingVolleyFireProgress     => 0.55f;   // hurl it partway through the downswing
+        protected override int   HomingVolleyDodgebackTicks   => 1;       // state handoff only; the telegraph owns the jump
+        protected override float HomingVolleyDodgebackSpeed   => 0f;
+        protected override int   HomingVolleySwingTelegraphTicks => 32;
+        protected override int   HomingVolleySwingTicks       => 8;
+        protected override float HomingVolleyFireProgress     => 0f;      // release exactly as the telegraph ends
         protected override int   HomingVolleyRecoveryTicks    => 45;
         protected override bool  UseRaisedHomingVolleyHoldoutPose => true;
 
         const int LightningSpearDamage = 50;
+        const int SpearFollowupTelegraphTicks = 14;
+        const float SpearMinimumStandoff = 340f;
+        bool _spearJumpActive;
+        int _spearThrowsThisJump;
+        int _spearFollowupsRemaining;
+        float _spearAirTargetSpeed;
+
+        void TickSpearJumpChoreography()
+        {
+            if (Phase == AttackPhase.HomingVolleyDodgeback)
+            {
+                _spearJumpActive = false;
+                _spearThrowsThisJump = 0;
+                _spearFollowupsRemaining = 0;
+                _spearAirTargetSpeed = 0f;
+                return;
+            }
+
+            bool telegraphing = Phase == AttackPhase.HomingVolleySwingTelegraph;
+            bool throwing = Phase == AttackPhase.HomingVolleySwing;
+            if (!telegraphing && !throwing)
+            {
+                // The base state enters recovery at the end of the throw. Redirect immediately to
+                // the shorter second telegraph so there is no recovery frame between releases.
+                if (Phase == AttackPhase.HomingVolleyRecovery && _spearJumpActive
+                    && _spearFollowupsRemaining > 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    _spearFollowupsRemaining--;
+                    EnterPhase(AttackPhase.HomingVolleySwingTelegraph, SpearFollowupTelegraphTicks);
+                    NPC.netUpdate = true;
+                }
+                else if (Phase == AttackPhase.HomingVolleyRecovery)
+                {
+                    _spearJumpActive = false;
+                }
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            if (target == null || !target.active || target.dead)
+                return;
+
+            if (!_spearJumpActive && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                float distance = Math.Abs(target.Center.X - NPC.Center.X);
+                float distanceFactor = MathHelper.Clamp((distance - 240f) / 760f, 0f, 1f);
+                float launchSpeedY = MathHelper.Lerp(8.8f, 10.4f, distanceFactor);
+                float approachFactor = MathHelper.Clamp((distance - SpearMinimumStandoff) / 520f, 0f, 1f);
+                int direction = target.Center.X < NPC.Center.X ? -1 : 1;
+
+                _spearAirTargetSpeed = direction * MathHelper.Lerp(0f, 4.2f, approachFactor);
+                NPC.noGravity = false;
+                NPC.velocity = new Vector2(_spearAirTargetSpeed * 0.55f, -launchSpeedY);
+                _spearJumpActive = true;
+                NPC.netUpdate = true;
+            }
+
+            if (_spearJumpActive && NPC.velocity.Y != 0f)
+            {
+                float horizontalGap = Math.Abs(target.Center.X - NPC.Center.X);
+                float desiredSpeed = horizontalGap > SpearMinimumStandoff ? _spearAirTargetSpeed : 0f;
+                NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, desiredSpeed, 0.12f);
+            }
+
+            // Aim remains live through each telegraph and locks only when DoHomingVolleyFire runs.
+            if (telegraphing)
+            {
+                int direction = target.Center.X < NPC.Center.X ? -1 : 1;
+                NPC.direction = direction;
+                NPC.spriteDirection = direction;
+                EmitSpearTelegraphVFX(target);
+            }
+        }
+
+        void EmitSpearTelegraphVFX(Player target)
+        {
+            if (Main.dedServ)
+                return;
+
+            Vector2 hand = PuppetHandPosition;
+            Vector2 aim = (target.Center - hand).SafeNormalize(new Vector2(NPC.direction, 0f));
+            Vector2 bladePos = hand + aim * 42f;
+            if (Main.GameUpdateCount % 2UL == 0UL)
+            {
+                int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Electric;
+                Dust dust = Dust.NewDustPerfect(bladePos + Main.rand.NextVector2Circular(8f, 8f),
+                    type, Vector2.Zero, 60, default, Main.rand.NextFloat(1.2f, 1.8f));
+                dust.noGravity = true;
+            }
+            Lighting.AddLight(bladePos, 0.7f, 0.6f, 0.25f);
+        }
 
         protected override bool DrawSpecialHeldWeapon(ref PlayerDrawSet drawInfo)
         {
@@ -1708,7 +1734,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 return;
             }
-            if (total > 0 && elapsed >= total * HomingVolleyFireProgress)
+            if (total > 0 && elapsed > total * HomingVolleyFireProgress)
             {
                 return;
             }
@@ -1741,6 +1767,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 15f;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
                 ModContent.ProjectileType<Projectiles.Enemy.GwynLightningSpear>(), LightningSpearDamage, 4f, Main.myPlayer);
+
+            _spearThrowsThisJump++;
+            _spearFollowupsRemaining = _spearThrowsThisJump == 1 && Main.rand.NextBool(2) ? 1 : 0;
+            NPC.netUpdate = true;
         }
 
         // ── Cinder Nova (point-blank space-maker + greed punish) ─────────────────

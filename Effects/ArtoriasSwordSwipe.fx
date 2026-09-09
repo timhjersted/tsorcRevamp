@@ -18,37 +18,42 @@ float2 LocalUV(float2 coords)
     return coords * PrimaryTextureSize / max(DrawSize, float2(1.0, 1.0));
 }
 
-// A projectile-local sibling of NitoReaperSweep: the silhouette is a real side-view bracket,
-// while marble flow and fine horizontal fibers supply the abyss material. The hot rim is kept
-// narrow so the projectile never collapses back into the old solid-white crescent.
+// A projectile-local sibling of NitoReaperSweep/GwynCinderSlash: a thickened band running along
+// ONE circle's edge (not two subtracted circles), so it reads as an open "(" bracket instead of a
+// crescent MOON pinched to a point at both tips - the previous two-circle-subtraction construction
+// had no tuning knob that could fix that, since the pinch is inherent to subtracting two discs.
+//
+// Also drops GwynCinderSlash/NitoReaperSweep's sweepY/lead01/age reveal mask: that exists to
+// animate a SWING growing into frame over Progress, but this is a constant flying projectile with
+// no swing to reveal - keeping that mask cropped the arc down to a comet-shaped sliver instead of
+// showing the full bracket (confirmed by rendering both in the offline preview harness before
+// committing this). The full band is always visible; only the flowing noise texture animates.
 float4 ArtoriasSwordSwipePixel(float4 vertexColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
     float2 uv = LocalUV(coords);
     float2 p = uv * 2.0 - 1.0;
-    p.y *= 1.06;
 
-    float outerDistance = length(p);
-    float innerDistance = length(p + float2(0.40, 0.0));
-    float outer = saturate((0.96 - outerDistance) * 6.25);
-    float cutout = saturate((innerDistance - 0.48) * 6.25);
-    float crescent = outer * cutout;
+    // Circle center/radius chosen in the offline preview ("tight" candidate) - keeps roughly the
+    // old crescent's curvature, just as a uniform-width band instead of a pinched sliver.
+    float d = length(p - float2(-0.62, 0.0)) - 1.16;
+    // Tapers the band to a point at the very top/bottom of the quad (a blade-like end on each tip).
+    float halfWidth = 0.34 * saturate(1.0 - p.y * p.y);
 
-    float2 flowUV = float2(p.y * 0.62 - Time * 0.34, p.x * 0.44 + Time * 0.11);
+    float2 flowUV = float2(d * 1.30 - Time * 0.55, p.y * 0.55 + Time * 0.10);
     float macro = tex2D(PrimarySampler, flowUV).r;
-    float fibers = tex2D(DetailSampler,
-        float2(p.y * 1.45 - Time * 0.58, p.x * 0.72 + Time * 0.16)).r;
-    float churn = saturate(macro * 0.72 + fibers * 0.40 - 0.16);
+    float fibers = tex2D(DetailSampler, flowUV * 1.90 + float2(Time * 0.31, -Time * 0.12)).r;
 
-    float outerRim = saturate((outerDistance - 0.70) * 5.8);
-    float innerRim = saturate((0.72 - innerDistance) * 4.2);
-    float rim = crescent * saturate(max(outerRim, innerRim * 0.65));
-    float tornBody = crescent * saturate(churn + 0.46);
-    float hot = rim * saturate(0.30 + churn * 0.78);
+    float lead = saturate((halfWidth - d) * 13.0);
+    float tail = saturate((d + halfWidth * (0.85 + macro * 2.30)) * 3.20);
+    float body = lead * tail;
 
-    float alpha = saturate(tornBody * 0.78 + rim * 0.62) * Opacity;
-    float3 material = DarkColor * (tornBody * 0.88)
-        + MidColor * (tornBody * (0.48 + churn * 0.44))
-        + CoreColor * (hot * 0.76);
+    float heat = body * (0.42 + fibers * 0.85);
+    float edge = body * saturate((halfWidth * 0.55 - abs(d)) * 6.0);
+
+    float alpha = saturate(body * 1.25 + edge * 0.35) * Opacity;
+    float3 material = DarkColor * (body * 0.95)
+        + MidColor * (heat * 0.85)
+        + CoreColor * (edge * edge * 0.95);
     return float4(vertexColor.rgb * material * Opacity, vertexColor.a * alpha);
 }
 

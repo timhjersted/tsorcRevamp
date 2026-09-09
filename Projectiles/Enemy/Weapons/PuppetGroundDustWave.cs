@@ -35,7 +35,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 return;
             }
 
-            float groundY = FindGroundY(Projectile.Center.X, Projectile.Center.Y);
+            if (!TryFindGroundY(Projectile.Center.X, Projectile.Center.Y, out float groundY))
+            {
+                Projectile.Kill();
+                return;
+            }
             Projectile.Center = new Vector2(Projectile.Center.X, groundY - 2f);
 
             if (!Main.dedServ)
@@ -59,14 +63,43 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         internal static float FindGroundY(float worldX, float aroundY)
         {
+            return TryFindGroundY(worldX, aroundY, out float groundY) ? groundY : aroundY;
+        }
+
+        /// <summary>Finds an exposed solid-tile surface near the supplied height. Returning false
+        /// is significant: ground-bound effects must stop at unsupported gaps instead of retaining
+        /// their old Y and appearing to travel through open air.</summary>
+        internal static bool TryFindGroundY(float worldX, float aroundY, out float groundY)
+        {
             int tileX = Utils.Clamp((int)(worldX / 16f), 1, Main.maxTilesX - 2);
             int centerTileY = Utils.Clamp((int)(aroundY / 16f), 5, Main.maxTilesY - 10);
-            for (int tileY = centerTileY - 5; tileY <= centerTileY + 10; tileY++)
+            for (int distance = 0; distance <= 14; distance++)
             {
-                if (WorldGen.SolidTile(tileX, tileY))
-                    return tileY * 16f;
+                if (distance <= 8)
+                {
+                    int upwardTileY = centerTileY - distance;
+                    if (WorldGen.SolidTile(tileX, upwardTileY)
+                        && !WorldGen.SolidTile(tileX, upwardTileY - 1))
+                    {
+                        groundY = upwardTileY * 16f;
+                        return true;
+                    }
+                }
+
+                if (distance > 0)
+                {
+                    int downwardTileY = centerTileY + distance;
+                    if (WorldGen.SolidTile(tileX, downwardTileY)
+                        && !WorldGen.SolidTile(tileX, downwardTileY - 1))
+                    {
+                        groundY = downwardTileY * 16f;
+                        return true;
+                    }
+                }
             }
-            return aroundY;
+
+            groundY = aroundY;
+            return false;
         }
 
         public override bool PreDraw(ref Color lightColor) => false;

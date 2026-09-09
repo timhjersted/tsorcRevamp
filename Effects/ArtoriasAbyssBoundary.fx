@@ -56,10 +56,17 @@ float4 BoundaryShroudPixel(float4 vertexColor : COLOR0, float2 coords : TEXCOORD
     return float4(vertexColor.rgb * color * alpha, alpha);
 }
 
+// 6 world pixels/block - approved via the offline preview harness (abyss_boundary FOCUS, Option B).
+// Quantized directly in world space (this shader already works in real pixels via WorldDrawSize,
+// never a 0..1 quad UV) rather than through the usual PixelateShaderUV(uv, PixelGrid) contract, so
+// the block size stays meaningful at any ring radius without a second uniform to wire up.
+static const float BoundaryPixelBlockWorldSize = 6.0;
+
 float4 BoundaryEdgePixel(float4 vertexColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
     float2 uv = LocalUV(coords);
     float2 localPosition = (uv - 0.5) * WorldDrawSize;
+    localPosition = (floor(localPosition / BoundaryPixelBlockWorldSize) + 0.5) * BoundaryPixelBlockWorldSize;
     float radialDistance = length(localPosition);
     float halfThickness = max(Direction, 1.0);
     float safeRadius = Active - halfThickness;
@@ -83,14 +90,18 @@ float4 BoundaryEdgePixel(float4 vertexColor : COLOR0, float2 coords : TEXCOORD0)
     float flameBody = saturate(1.0 - outerDistance / flameReach);
     flameBody *= saturate((flameNoise * 0.74 + breakup * 0.46 + flameBody - 0.46) * 1.8);
     flameBody *= saturate((signedDistance + 10.0) / 18.0);
-    float lickingEdge = flameBody * saturate((breakup - 0.48) * 2.2);
 
-    float warning = Progress;
+    // The lickingEdge highlight (a breakup-driven CoreColor accent on top of flameBody) was cut to
+    // make room for the world-pixel quantization above - a decorative flourish, not part of the
+    // boundary's actual shape (coreBand/flameBody), and this technique had only 2 arithmetic slots
+    // of headroom before either change.
+    // The core seam's separate white-hot inner highlight (a second coreBand*coreBand term on top of
+    // the pink seam color) was dropped for the same slot-budget reason as lickingEdge above - the
+    // seam itself (coreBand, the pink term below) is unchanged, this only removes its extra
+    // brightened core.
     float3 color = DarkColor * flameBody * 0.78;
-    color += MidColor * flameBody * flameBody * (1.05 + warning * 0.22);
-    color += CoreColor * lickingEdge * 0.42;
-    color += float3(0.94, 0.30, 0.82) * coreBand * 0.78;
-    color += float3(0.96, 0.76, 1.0) * coreBand * coreBand * 0.32;
+    color += MidColor * flameBody * flameBody * (1.05 + Progress * 0.22);
+    color += float3(0.94, 0.30, 0.82) * coreBand * 0.86;
 
     float alpha = saturate(coreBand + flameBody * 0.86) * Opacity;
     return float4(vertexColor.rgb * color, vertexColor.a * alpha);

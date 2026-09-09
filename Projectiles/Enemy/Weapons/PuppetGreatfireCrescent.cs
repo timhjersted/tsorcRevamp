@@ -64,7 +64,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                     return;
                 }
 
-                float groundY = PuppetGroundDustWave.FindGroundY(Projectile.Center.X, Projectile.Center.Y);
+                if (!PuppetGroundDustWave.TryFindGroundY(Projectile.Center.X, Projectile.Bottom.Y, out float groundY))
+                {
+                    Projectile.Kill();
+                    return;
+                }
                 Projectile.Center = new Vector2(Projectile.Center.X, groundY - Projectile.height * 0.5f);
                 Projectile.velocity.Y = 0f;
             }
@@ -128,7 +132,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
             if (GroundFollowing)
             {
-                float groundY = PuppetGroundDustWave.FindGroundY(Projectile.Center.X, Projectile.Center.Y);
+                if (!PuppetGroundDustWave.TryFindGroundY(Projectile.Center.X, Projectile.Bottom.Y, out float groundY))
+                    return;
                 spawnPosition = new Vector2(Projectile.Center.X, groundY);
             }
 

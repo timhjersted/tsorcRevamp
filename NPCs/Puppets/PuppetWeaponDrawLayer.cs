@@ -7,6 +7,15 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
+    [Autoload(Side = ModSide.Client)]
+    public sealed class PuppetSpectralDrawPlayer : ModPlayer
+    {
+        public override void TransformDrawData(ref PlayerDrawSet drawInfo)
+        {
+            PuppetNPC.DrawingPuppetFor?.TransformSpectralDrawData(ref drawInfo);
+        }
+    }
+
     /// <summary>
     /// Draws the puppet's held weapon at the correct layer depth:
     ///   body / legs → [weapon here] → front arm (grips the weapon) → head

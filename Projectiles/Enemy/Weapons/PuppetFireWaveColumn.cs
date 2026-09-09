@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.Weapons
@@ -11,8 +12,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     /// One rising "lick" of Greatfire Crescent's fire wave: several staggered FireBreath.png copies
     /// stacked up a vertical column, lighting up bottom-to-top as the wave climbs and fading back out
     /// the same way, each with its own slow rotation wobble so the column reads as licking flame
-    /// rather than a static stamp. Purely decorative — spawned alongside PuppetGreatfireCrescent's
-    /// real hitbox every few ticks as it travels, never collides itself.
+    /// rather than a static stamp. Decorative alongside Crescent; the slam variant damages only
+    /// inside its visible, rising flames.
     /// </summary>
     public class PuppetFireWaveColumn : ModProjectile
     {
@@ -21,6 +22,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         // ai[0] = full column height (px), ai[1] = signed horizontal fan-out at the column's top (px)
         private float ColumnHeight => Projectile.ai[0];
         private float FanSpread => Projectile.ai[1];
+        // ai[2] opts into the compact, damaging landing eruption and stores its visual delay.
+        // Crescent leaves ai[2] at zero and remains decorative.
+        public const int SlamMode = 1;
+        public static float EncodeSlamDelay(int ticks) => SlamMode + System.Math.Max(0, ticks);
+        private bool IsSlam => Projectile.ai[2] >= SlamMode;
+        private int SpawnDelay => IsSlam ? System.Math.Max(0, (int)Projectile.ai[2] - SlamMode) : 0;
 
         private const int LickCount = 6;
         private const int RiseTicks = 18;   // time for the wave to climb the full column
@@ -47,6 +54,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void OnSpawn(IEntitySource source)
         {
+            Projectile.timeLeft = TotalTicks + SpawnDelay;
             _lickRotation = new float[LickCount];
             _lickRotSpeed = new float[LickCount];
             _lickPhaseOffset = new float[LickCount];
@@ -65,6 +73,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
 
         public override void AI()
         {
+            int elapsed = TotalTicks - Projectile.timeLeft;
+            Projectile.hostile = IsSlam && elapsed >= 0;
+            if (elapsed < 0)
+                return;
+            if (Main.dedServ)
+                return;
+
             for (int i = 0; i < LickCount; i++)
             {
                 _lickRotation[i] += _lickRotSpeed[i];
@@ -74,6 +89,39 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             {
                 Lighting.AddLight(Projectile.Center + new Vector2(0f, -ColumnHeight * 0.4f), 0.7f, 0.28f, 0.05f);
             }
+
+            if (IsSlam && Projectile.timeLeft > FadeTicks && Main.rand.NextBool(2))
+            {
+                Dust ember = Dust.NewDustPerfect(Projectile.Center + new Vector2(Main.rand.NextFloat(-9f, 9f), -4f),
+                    DustID.Torch, new Vector2(Main.rand.NextFloat(-0.5f, 0.5f), Main.rand.NextFloat(-3.5f, -1.5f)),
+                    80, default, 1.1f);
+                ember.noGravity = true;
+            }
+        }
+
+        public override bool? CanDamage()
+            => IsSlam && TotalTicks - Projectile.timeLeft >= 0 ? null : false;
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            int elapsed = TotalTicks - Projectile.timeLeft;
+            if (!IsSlam || elapsed < 0)
+                return false;
+
+            // Match each flame's staggered rise; never hit the empty space above the eruption.
+            for (int i = 0; i < LickCount; i++)
+            {
+                float localTick = elapsed - i / (float)LickCount * 0.55f * RiseTicks;
+                if (localTick < 3f || localTick > RiseTicks + LingerTicks)
+                    continue;
+
+                float progress = i / (float)(LickCount - 1);
+                Vector2 center = Projectile.Center + new Vector2(FanSpread * progress * progress,
+                    -progress * ColumnHeight * MathHelper.Clamp(localTick / RiseTicks, 0f, 1f));
+                if (new Rectangle((int)center.X - 10, (int)center.Y - 10, 20, 20).Intersects(targetHitbox))
+                    return true;
+            }
+            return false;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -81,6 +129,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             int elapsed = TotalTicks - Projectile.timeLeft;
+            if (elapsed < 0)
+                return false;
             float fanDirection = FanSpread >= 0f ? 1f : -1f;
             float fanMagnitude = System.Math.Abs(FanSpread);
 
@@ -113,6 +163,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
                 // wave have cooled toward a deeper ember red.
                 Color color = Color.Lerp(new Color(255, 200, 60), new Color(200, 30, 10), lickProgress) * alpha;
                 float scale = _lickScale[i] * MathHelper.Lerp(0.7f, 1.3f, lickProgress) * (1f - dissipate * 0.3f);
+                if (IsSlam)
+                    scale *= 0.8f;
 
                 Main.EntitySpriteDraw(texture, drawPosition, null, color, _lickRotation[i],
                     origin, scale, SpriteEffects.None, 0);

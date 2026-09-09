@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 
@@ -16,6 +18,24 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         int OwnerWhoAmI => (int)Projectile.ai[0];
         int TargetWhoAmI => (int)Projectile.ai[1];
+
+        // ── Entry-side blood spray ──────────────────────────────────────────────────────────────
+        // The exit-side spray (out the far side of the target) is plain Dust in
+        // Artorias.DoPierceStabHoldTick - Dust always draws over the player, which is exactly right
+        // for that half. This half sprays back toward Artorias (into the "entry wound") and has to
+        // draw BEHIND the player instead, which Dust cannot do, so it's a manual particle list drawn
+        // from this projectile's own already-behind-the-player PreDraw.
+        struct BackBloodDrop
+        {
+            public Vector2 Position;
+            public Vector2 Velocity;
+            public float Life;
+            public float MaxLife;
+            public float Scale;
+        }
+
+        readonly List<BackBloodDrop> _backBlood = new();
+        int _backBloodSpawnTimer;
 
         public override void SetDefaults()
         {
@@ -46,6 +66,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.Center = tip;
             Projectile.rotation = (tip - Main.npc[OwnerWhoAmI].Center).ToRotation() + MathHelper.PiOver2;
 
+            UpdateBackBlood();
+
             if (TargetWhoAmI < 0 || TargetWhoAmI >= Main.maxPlayers)
             {
                 return;
@@ -60,6 +82,43 @@ namespace tsorcRevamp.Projectiles.Enemy
             var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.ImpaleFreezeTimer = 10;
             modPlayer.ImpaleWorldPosition = tip;
+
+            if (!Main.dedServ && --_backBloodSpawnTimer <= 0)
+            {
+                _backBloodSpawnTimer = 3; // matches DoPierceStabHoldTick's exit-side spray cadence
+                // Toward Artorias, i.e. the opposite of the exit-side spray's direction.
+                Vector2 backDirection = (Main.npc[OwnerWhoAmI].Center - target.Center)
+                    .SafeNormalize(new Vector2(-artorias.NPC.direction, 0f));
+                for (int i = 0; i < 2; i++)
+                {
+                    _backBlood.Add(new BackBloodDrop
+                    {
+                        Position = target.Center + Main.rand.NextVector2Circular(7f, 10f),
+                        Velocity = backDirection.RotatedByRandom(0.4f) * Main.rand.NextFloat(1.8f, 4.8f),
+                        MaxLife = Main.rand.NextFloat(24f, 36f),
+                        Life = 0f,
+                        Scale = Main.rand.NextFloat(2.4f, 4.2f),
+                    });
+                }
+            }
+        }
+
+        void UpdateBackBlood()
+        {
+            for (int i = _backBlood.Count - 1; i >= 0; i--)
+            {
+                BackBloodDrop drop = _backBlood[i];
+                drop.Life++;
+                drop.Position += drop.Velocity;
+                drop.Velocity.Y += 0.15f; // gravity, matching the exit-side Dust.Blood (noGravity = false)
+                drop.Velocity *= 0.96f;
+                if (drop.Life >= drop.MaxLife)
+                {
+                    _backBlood.RemoveAt(i);
+                    continue;
+                }
+                _backBlood[i] = drop;
+            }
         }
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
@@ -83,7 +142,27 @@ namespace tsorcRevamp.Projectiles.Enemy
                 ArtoriasVFX.DrawTendril(start, artorias.NPC.Center,
                     artorias.GetImpaleRaiseProgress01(), 0.48f, hostileTip: false);
             }
+
+            DrawBackBlood();
             return false;
+        }
+
+        void DrawBackBlood()
+        {
+            if (_backBlood.Count == 0)
+            {
+                return;
+            }
+
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Rectangle frame = new(0, 0, 1, 1);
+            foreach (BackBloodDrop drop in _backBlood)
+            {
+                float fade = 1f - drop.Life / drop.MaxLife;
+                Color color = new Color(120, 10, 24) * fade;
+                Main.EntitySpriteDraw(pixel, drop.Position - Main.screenPosition, frame, color,
+                    0f, frame.Size() * 0.5f, drop.Scale, SpriteEffects.None, 0);
+            }
         }
     }
 }

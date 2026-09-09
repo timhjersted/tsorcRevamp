@@ -4,6 +4,7 @@ using ReLogic.Content;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -13,7 +14,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         static Asset<Effect> deathNovaEffect;
         static Asset<Effect> graveEruptionEffect;
-        static Asset<Effect> reaperTrailEffect;
         static Asset<Effect> miasmaVolumeEffect;
         static Asset<Effect> gravefallEffect;
         static Asset<Effect> soulMantleEffect;
@@ -37,7 +37,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> bands;       // T_Wave66 — soft horizontal bands, streak modulation
         static Asset<Texture2D> glint;       // SplotchyNoise — dark with bright cell edges, bone glints
         static Asset<Texture2D> veins;       // T_Noise56ko — fibrous with bright veins, miasma capillaries
-        static Asset<Texture2D> reaperSweepShape; // Gwyn's proven macro slash turbulence (sweep only)
         static Asset<Texture2D> flareTexture;// T_VFX_Flare_666 — the (non-shader) nova birth flash
         static Asset<Texture2D> graveHandTexture; // bespoke hand silhouette; a correct, intentional shape source
 
@@ -68,7 +67,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             deathNovaEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/NitoDeathNova", AssetRequestMode.ImmediateLoad);
             graveEruptionEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/NitoGraveEruption", AssetRequestMode.ImmediateLoad);
-            reaperTrailEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/NitoReaperTrail", AssetRequestMode.ImmediateLoad);
             miasmaVolumeEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/NitoMiasmaVolume", AssetRequestMode.ImmediateLoad);
             gravefallEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/NitoGravefall", AssetRequestMode.ImmediateLoad);
             soulMantleEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/NitoSoulMantle", AssetRequestMode.ImmediateLoad);
@@ -79,7 +77,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             bands ??= ModContent.Request<Texture2D>(TextureRoot + "T_Wave66", AssetRequestMode.ImmediateLoad);
             glint ??= ModContent.Request<Texture2D>(TextureRoot + "SplotchyNoise", AssetRequestMode.ImmediateLoad);
             veins ??= ModContent.Request<Texture2D>(TextureRoot + "T_Noise56ko", AssetRequestMode.ImmediateLoad);
-            reaperSweepShape ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
             flareTexture ??= ModContent.Request<Texture2D>(TextureRoot + "T_VFX_Flare_666", AssetRequestMode.ImmediateLoad);
             graveHandTexture ??= ModContent.Request<Texture2D>(TextureRoot + "T_NitoGraveHand", AssetRequestMode.ImmediateLoad);
         }
@@ -176,7 +173,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         internal static void DrawSlash(Vector2 center, float rotation, float progress, float opacity, int kind,
             int direction, float phase = 0f, bool phaseTwo = false)
         {
-            LoadAssets();
             if (kind == 2)
             {
                 // A thrust promises danger forward, not around Nito: retain the slim blade-local
@@ -184,9 +180,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Color thrustDark = phaseTwo ? PyreBlack : DeathDark;
                 Color thrustMid = phaseTwo ? PyreRed : DeathMid;
                 Color thrustCore = phaseTwo ? PyreEmber : BoneCore;
-                Draw(reaperTrailEffect, "NitoReaperTrail", flow, glint, center, new Vector2(255f, 62f), rotation,
-                    thrustDark, thrustMid, thrustCore, opacity, progress, 1f, phase,
-                    BlendState.AlphaBlend);
+                VoidSlashVFX.DrawThrust(center, rotation, new Vector2(255f, 62f), progress, opacity,
+                    thrustDark, thrustMid, thrustCore, phase);
                 return;
             }
 
@@ -198,10 +193,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             // existing current-frame hilt-to-tip line. The hot leading edge stays nearest that line.
             bool reverseKind = kind == 3 || kind == 4;
             bool reverseWorldSweep = reverseKind == (direction >= 0);
-            Draw(reaperTrailEffect, "NitoReaperSweep", reaperSweepShape, flow, center,
-                new Vector2(255f, 323f), rotation, dark, mid, core, opacity, progress, 1f, phase,
-                BlendState.AlphaBlend,
-                reverseWorldSweep ? SpriteEffects.FlipVertically : SpriteEffects.None);
+            VoidSlashVFX.DrawSweep(center, rotation, new Vector2(255f, 323f), progress, opacity,
+                dark, mid, core, reverseWorldSweep);
         }
 
         internal static void DrawAura(Vector2 center, Vector2 size, float opacity, bool phaseTwo,

@@ -384,13 +384,18 @@ namespace tsorcRevamp.NPCs.Puppets
         // ── Axe draw tuning ─────────────────────────────────────────────────────────
         // Grip slightly above the butt of the diagonal handle so a short length remains visible
         // behind the hand in every held pose, telegraph, and swing.
-        protected override Vector2 MeleeHandleNorm => new Vector2(0.14f, 0.84f);
+        protected override Vector2 MeleeHandleNorm => new Vector2(0.18f, 0.80f);
         protected override float MeleeWeaponDrawScale => 0.85f;
         // Match the tracked capsule to the axe's measured 74px visual reach. The old 82px base
         // became only ~63px after the shared 0.7 scale and visibly stopped short of both blades.
         protected override float ComboReachBase => 96f;
         // Preserve the wrist-to-weapon angle that tested well with the composite arm.
         protected override float MeleeWeaponRotationOffset => 1.0f;
+        // Keep a 45-degree wrist bend while retaining the axe's authored blade arc.
+        protected override float MeleeCompositeArmRotationOffset => MeleeWeaponRotationOffset;
+        protected override bool UseLandingTimedLeapSlam => true;
+        protected override int MeleeComboInterStepLingerTicks => 3;
+        protected override int MeleeRecoveryLingerTicks => 6;
         // The composite arm already mirrors its arc by facing. Mirror the axe's raw arc as well so
         // left-facing casts and uppercuts remain attached to the hand instead of rotating backward.
         protected override bool MirrorMeleeSwingRotationByFacing => true;

@@ -450,7 +450,7 @@ namespace tsorcRevamp
 
         private bool IsVanillaContextRightClickAvailable()
         {
-            if (IsHoveringTalkableNPC() || IsHoveringInteractibleProjectile())
+            if (IsHoveringTalkableNPC() || IsHoveringInteractibleProjectile() || IsHoveringDoor())
             {
                 return true;
             }
@@ -492,6 +492,16 @@ namespace tsorcRevamp
             }
 
             return false;
+        }
+
+        // Doors aren't part of the "Smart Interact" popup system (SmartInteractLookup below never flags them),
+        // so without this check the 2nd Slot swallows the right-click on the same frame vanilla would've
+        // opened/closed the door — the slot item fires and the door doesn't toggle. Player.tileTargetX/Y is the
+        // same tile vanilla's own door-toggle code (Player.ItemCheck) reads the mouse-hovered tile from.
+        private bool IsHoveringDoor()
+        {
+            Tile tile = Framing.GetTileSafely(Player.tileTargetX, Player.tileTargetY);
+            return TileLoader.IsClosedDoor(tile) || TileLoader.CloseDoorID(tile) >= 0;
         }
 
         private bool IsHoveringInteractibleProjectile()

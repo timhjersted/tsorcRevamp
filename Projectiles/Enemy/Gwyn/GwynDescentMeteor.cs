@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///Descent of the Sun: Gwyn calls down a meteor of sunlight (GwynMeteor.png, 4 frames). It hangs
     ///high, marking the impact zone on the ground with a rune (drawn separately), grows brighter,
     ///then crashes — a huge fire explosion, screen shake, and a ring of ground fireballs bursting
-    ///outward from the crater. ai[0] = damage, ai[1] = target ground X.
+    ///outward from the crater. ai[0] = damage, ai[1] = target ground X, ai[2] = arena baseline Y.
     ///</summary>
     class GwynDescentMeteor : ModProjectile
     {
@@ -22,6 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float FallAccel = 0.9f;
         const int CraterFireballs = 8;
         const float SpriteScale = 0.6f;
+        const float DamageApproachHeight = 320f;
 
         int Timer => (int)Projectile.localAI[0];
         bool Falling => Timer > HangTicks;
@@ -46,7 +47,15 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            GroundY = FindGroundY(new Vector2(Projectile.ai[1], Projectile.Center.Y), 60);
+            // Resolve from the arena's interior baseline rather than from the meteor overhead. The
+            // latter finds the dome roof first and detonates outside the fight. Starting alongside
+            // Gwyn skips that enclosing shell while still adapting to the real floor at the locked X.
+            Player closestPlayer = UsefulFunctions.GetClosestPlayer(Projectile.Center);
+            float arenaBaselineY = Projectile.ai[2] != 0f
+                ? Projectile.ai[2]
+                : closestPlayer?.Center.Y ?? Projectile.Center.Y;
+            GroundY = FindGroundYNear(new Vector2(Projectile.ai[1], arenaBaselineY), 80, 8);
+
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.9f, Pitch = -0.5f }, Projectile.Center);
             if (GroundY > 0f && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -58,7 +67,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool? CanDamage()
         {
-            return Falling;
+            // The meteor is allowed to cross the dome and any other upper structure harmlessly.
+            // Its body only becomes lethal on the final approach inside the arena.
+            return Falling && GroundY > 0f
+                && Projectile.Bottom.Y >= GroundY - DamageApproachHeight;
         }
 
         public override void AI()
@@ -173,10 +185,33 @@ namespace tsorcRevamp.Projectiles.Enemy
                     break;
                 }
                 Tile tile = Main.tile[tx, y];
-                if (tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType])
+                if (tile.HasTile && !tile.IsActuated
+                    && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]))
                 {
                     return y * 16f;
                 }
+            }
+            return -1f;
+        }
+
+        static float FindGroundYNear(Vector2 worldPos, int maxTilesDown, int maxTilesSide)
+        {
+            float groundY = FindGroundY(worldPos, maxTilesDown);
+            if (groundY > 0f)
+                return groundY;
+
+            // A narrow pit or non-solid decorative column should not make the arena-wide attack
+            // fall back to the dome. Resolve the nearest supporting floor while keeping the locked
+            // horizontal impact position unchanged.
+            for (int offset = 1; offset <= maxTilesSide; offset++)
+            {
+                groundY = FindGroundY(worldPos - new Vector2(offset * 16f, 0f), maxTilesDown);
+                if (groundY > 0f)
+                    return groundY;
+
+                groundY = FindGroundY(worldPos + new Vector2(offset * 16f, 0f), maxTilesDown);
+                if (groundY > 0f)
+                    return groundY;
             }
             return -1f;
         }

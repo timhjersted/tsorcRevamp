@@ -50,24 +50,45 @@ namespace tsorcRevamp.Systems.Regain
         /// HP grows ~4x, so no flat rate could span that range on its own.</summary>
         public const float MaxPoolFractionPerHit = 0.25f;
 
-        // There is deliberately NO tick-based cooldown between credits. Measured use times across this
-        // mod's roster cluster at 22-27 ticks for EVERY class (melee 25, ranged 27, mage 22, summoner
-        // 24), so any gate in that range silently swallows a large share of ordinary swings - which a
-        // player reads as the mechanic failing to fire, not as a throttle.
-        //
-        // RegainPlayer dedupes per FRAME instead, which keeps the property a cooldown was wanted for (a
-        // piercing shot or an AoE on a swarm credits once, not once per enemy) without ever skipping an
-        // attack the player made.
-        //
-        // Fast weapons are therefore NOT penalised at all. Deliberate, pending playtest: item.damage
-        // already gives heavy weapons more per credit, which may be sufficient on its own.
+        /// <summary>How much of a weapon's own swing time must elapse before it can credit again, as a
+        /// fraction of that weapon's ScaledUseAnimation. This replaces an earlier per-FRAME dedupe that
+        /// only blocked two credits landing on the exact same tick: it did nothing for multishot pellets,
+        /// a piercing hit ticking through several frames, or a channelled beam firing every tick, all of
+        /// which could credit many times off one weapon activation.
+        ///
+        /// A flat tick-based cooldown was rejected for the same reason: measured use times cluster at
+        /// 22-27 ticks across every class (melee 25, ranged 27, mage 22, summoner 24), so any single
+        /// constant in that range clips whichever class's swing happens to be shorter than it. Gating on
+        /// the CURRENT hit's own swing time sidesteps that - a weapon can never be blocked by its own next
+        /// legitimate swing, only by a second hit landing before that weapon could have swung again, which
+        /// is exactly what multishot/piercing/beam leftovers are: the attack already paid for, not a new
+        /// one.
+        ///
+        /// 0.8 rather than 1.0 so a weapon that speeds up mid-fight (attack speed buff) is never blocked
+        /// by a window measured before the buff applied.</summary>
+        public const float CreditGateFraction = 0.8f;
+
+        /// <summary>Hard floor on ticks between credits, applied on top of CreditGateFraction. Unlike that
+        /// fraction - which only stops a SECOND credit from the SAME activation - this deliberately caps
+        /// how many separate, legitimate activations can credit per second, for every weapon alike.
+        ///
+        /// The rest of this system is built so a weapon's own speed cancels out of its HP/sec (smaller
+        /// credits, proportionally more often, same total) - that parity is intentional and correct for
+        /// normal-speed weapons. This floor is the one place that parity is broken on purpose: a weapon
+        /// faster than ~12 ticks/swing (attack-speed-scaled) stops converting extra speed into extra
+        /// regain once it is credit-rate-limited by this floor instead of by its own swing time.
+        ///
+        /// 12 ticks (0.2s) is comfortably faster than every reference class's real swing time (22-27
+        /// ticks), so it only ever engages for weapons well above normal attack speed - it is a speed
+        /// limit on regain, not a nerf to typical play.</summary>
+        public const int MinTicksBetweenCredits = 12;
 
         /// <summary>Ticks the pool sits at full before it starts decaying. 300 = 5 seconds.
         ///
-        /// For scale: 4 credits at one per 40 ticks is 160 ticks (2.67s) for a full recovery, so 5
-        /// seconds leaves real room to reposition, close distance, or wait out an attack before
-        /// counter-attacking - rather than demanding an unbroken chain of hits from the instant you are
-        /// struck. The decay window after it is further margin for catching a partial.</summary>
+        /// For scale: at ReferenceUseAnimationTicks (25), 4 credits is 100 ticks (1.67s) for a full
+        /// recovery, so 5 seconds leaves real room to reposition, close distance, or wait out an attack
+        /// before counter-attacking - rather than demanding an unbroken chain of hits from the instant you
+        /// are struck. The decay window after it is further margin for catching a partial.</summary>
         public const int HoldTicks = 300;
 
         /// <summary>Ticks the pool takes to decay from full to nothing once the hold expires. 90 = 1.5s.
@@ -103,9 +124,16 @@ namespace tsorcRevamp.Systems.Regain
 
         /// <summary>Clamp on the swing-time scale, so a pathologically slow or fast weapon cannot claim
         /// an absurd share of the pool in one hit. Parity holds exactly between these bounds and degrades
-        /// gracefully outside them.</summary>
+        /// gracefully outside them.
+        ///
+        /// MaxSwingTimeScale lowered from 2.5 to 1.5 after playtest data: Quad-Barrel Shotgun (useTime 55,
+        /// scale ~2.2 at the old cap) was averaging 9.36 HP per credit against Laser Rifle's 4.41 in the
+        /// same fight - a multi-pellet weapon's large useTime inflates BOTH the damage term and
+        /// perCreditCap by the same factor, so a high useTime reads as "one big meaningful hit" even when
+        /// it is really several smaller pellets landing together. 1.5 caps how far that inflation can go
+        /// without touching anything at or below the reference speed.</summary>
         public const float MinSwingTimeScale = 0.2f;
-        public const float MaxSwingTimeScale = 2.5f;
+        public const float MaxSwingTimeScale = 1.5f;
 
         /// <summary>
         /// How much of a credit a weapon earns for its swing time, relative to a median weapon.
@@ -160,6 +188,50 @@ namespace tsorcRevamp.Systems.Regain
             }
 
             return 0.4f;
+        }
+
+        /// <summary>Distance, in tiles, inside which a landed hit earns full regain value. Pulled back in
+        /// from 16 to 9 after playtest - still past true melee/whip reach (~6), but 16 was giving
+        /// comfortable mid-range ranged/magic play the same "danger zone" value as melee, which was too
+        /// forgiving. The taper band (see NoRegainRangeTiles) shifted down by the same 7 tiles, so its
+        /// width - and therefore its shape - is unchanged, only where it sits.</summary>
+        public const float FullRegainRangeTiles = 9f;
+
+        /// <summary>Distance, in tiles, beyond which regain value bottoms out at MinRangeMultiplier.
+        /// Between this and FullRegainRangeTiles the value eases out along an S-curve rather than a
+        /// straight line or a hard cliff - see RangeScale.</summary>
+        public const float NoRegainRangeTiles = 23f;
+
+        /// <summary>Floor on the falloff - never exactly zero, so a hit landed from far away still returns
+        /// something rather than the mechanic silently doing nothing at extreme range.</summary>
+        public const float MinRangeMultiplier = 0.05f;
+
+        private const float TileSizeInPixels = 16f;
+
+        /// <summary>How much of a landed hit's credit survives at the given distance from the target. This
+        /// is the "stay in the danger zone" lever: full value out to FullRegainRangeTiles, an S-curve taper
+        /// from there to NoRegainRangeTiles - gentle right past that range, steepest in the middle, gentle
+        /// again near the floor, rather than an ease-out that punishes closing distance immediately - and
+        /// a small floor beyond that so a true sniper still gets something, just not for free.</summary>
+        public static float RangeScale(float distancePixels)
+        {
+            float distanceTiles = distancePixels / TileSizeInPixels;
+
+            if (distanceTiles <= FullRegainRangeTiles)
+            {
+                return 1f;
+            }
+
+            if (distanceTiles >= NoRegainRangeTiles)
+            {
+                return MinRangeMultiplier;
+            }
+
+            float t = (distanceTiles - FullRegainRangeTiles) / (NoRegainRangeTiles - FullRegainRangeTiles);
+            float smoothstep = 3f * t * t - 2f * t * t * t;
+            float remaining = 1f - smoothstep;
+
+            return MinRangeMultiplier + remaining * (1f - MinRangeMultiplier);
         }
     }
 }
