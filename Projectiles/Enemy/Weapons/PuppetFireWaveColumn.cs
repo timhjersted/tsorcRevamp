@@ -32,8 +32,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
         private const int LickCount = 6;
         private const int RiseTicks = 18;   // time for the wave to climb the full column
         private const int LingerTicks = 10; // hold near full height before dissipating
-        private const int FadeTicks = 14;   // per-lick fade-out length
-        private const int TotalTicks = RiseTicks + LingerTicks + FadeTicks;
+        private const int FadeTicks = 6;    // each FireBreath sprite gets a complete six-tick fade
+        private const int MaxLickDelayTicks = 9;
+        // Include the upper lick's stagger in the projectile lifetime. Without this allowance the
+        // top sprites were still partly opaque when the projectile expired and vanished abruptly.
+        private const int TotalTicks = RiseTicks + LingerTicks + FadeTicks + MaxLickDelayTicks;
 
         private float[] _lickRotation;
         private float[] _lickRotSpeed;

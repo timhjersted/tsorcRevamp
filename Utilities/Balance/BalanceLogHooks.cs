@@ -138,10 +138,39 @@ namespace tsorcRevamp.Utilities.Balance
 
     internal sealed class BalanceLogPlayer : ModPlayer
     {
+        /// <summary>Set in OnHurt, consumed one tick later in PostUpdate - see PostUpdate for why the
+        /// read can't happen directly in OnHurt. A plain bool rather than a counter: two hits landing in
+        /// the exact same tick would under-count by one, which is an acceptable rare-case loss for
+        /// telemetry, not a correctness requirement.</summary>
+        private bool _pendingImmuneTimeCapture;
+
         public override void OnHurt(Player.HurtInfo info)
         {
-            if (Player.whoAmI == Main.myPlayer)
-                BalanceLog.RecordDamageTaken(info.Damage);
+            if (Player.whoAmI != Main.myPlayer)
+            {
+                return;
+            }
+
+            BalanceLog.RecordDamageTaken(info.Damage);
+            _pendingImmuneTimeCapture = true;
+        }
+
+        /// <summary>
+        /// Captures the iframe duration THIS hit actually granted, one tick late on purpose: vanilla's
+        /// Player.Hurt calls PlayerLoader.OnHurt (which reaches ModPlayer.OnHurt above) BEFORE it writes
+        /// the new Player.immuneTime - reading it inside OnHurt would return the PREVIOUS hit's leftover
+        /// value, not this one's. By the next tick vanilla has already written the fresh grant, which
+        /// already reflects iframe-extending effects like Cross Necklace's longInvince.
+        /// </summary>
+        public override void PostUpdate()
+        {
+            if (!_pendingImmuneTimeCapture)
+            {
+                return;
+            }
+
+            _pendingImmuneTimeCapture = false;
+            BalanceLog.RecordHurtImmuneTime(Player.immuneTime);
         }
     }
 

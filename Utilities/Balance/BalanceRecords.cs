@@ -185,6 +185,13 @@ namespace tsorcRevamp.Utilities.Balance
         /// did Regain erase" figure without having to sum the per-weapon list by hand.</summary>
         public long totalRegainHealed;
 
+        /// <summary>Player.immuneTime actually granted by each hit taken this encounter, in ticks, one
+        /// entry per hit, in order. Already includes iframe-extending effects like Cross Necklace's
+        /// longInvince - lets a Regain balance pass check whether longer iframes correlate with a higher
+        /// totalRegainHealed/damageTaken ratio (the "stand in the boss and tank" concern) instead of
+        /// guessing from the ratio alone.</summary>
+        public List<int> hurtImmuneTimes = new();
+
         public GearSnapshot gear;
         public List<WeaponUsage> weapons = new();
         public List<NpcDamage> npcDamage = new();

@@ -132,7 +132,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Phase == AttackPhase.HomingVolleySwingTelegraph || Phase == AttackPhase.HomingVolleySwing ||
             Phase == AttackPhase.SwordLaunchReposition || Phase == AttackPhase.SpiralFanSwingTelegraph ||
             Phase == AttackPhase.SpiralFanSwing || Phase == AttackPhase.SpiralFanBurst ||
-            Phase == AttackPhase.SpiralFanPause;
+            Phase == AttackPhase.SpiralFanPause ||
+            // Recoveries too: MeleeRecoveryLingerTicks keeps the greatsword drawn at its finished
+            // pose for the first 30 ticks of these, and without the composite arm the shoulder would
+            // snap back to a 4-frame Use pose underneath a blade that hasn't moved.
+            Phase == AttackPhase.JumpSlashRecovery || Phase == AttackPhase.AbyssSlashRecovery ||
+            Phase == AttackPhase.TendrilRecovery || Phase == AttackPhase.HomingVolleyRecovery ||
+            Phase == AttackPhase.BoomerangRecovery;
 
         protected override int MeleeDamage => 55;
         protected override int RangedDamage => 0; // unused, no ranged weapon

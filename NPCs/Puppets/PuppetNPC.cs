@@ -1003,6 +1003,16 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float LeapAttackForwardSpeed => TopSpeed * 1.7f;
         /// <summary>Upward launch speed at the start of a LeapSlam (px/frame).</summary>
         protected virtual float LeapAttackUpSpeed      => 9.5f;
+        /// <summary>Minimum forward speed for a distant leap. Lower values prevent short hops from
+        /// sailing past a nearby target; close leaps calculate their exact required speed down to zero.</summary>
+        protected virtual float LeapAttackMinimumForwardSpeed => 1.5f;
+        /// <summary>How many ticks of the target's current horizontal velocity to include in leap aim.</summary>
+        protected virtual float LeapAttackTargetLeadTicks => 0f;
+        /// <summary>Bounded horizontal correction while a LeapSlam is still ascending. The descent
+        /// remains locked so the player can read and dodge the committed landing line.</summary>
+        protected virtual float LeapAttackAscentTrackingStrength => 0f;
+        /// <summary>Equivalent ascent-only correction for ApexDiveCleave.</summary>
+        protected virtual float ApexDiveAscentTrackingStrength => 0.08f;
         /// <summary>Run speed during a ChargeChop, as a multiplier of TopSpeed.</summary>
         protected virtual float ChargeAttackSpeedMult  => 1.85f;
 
@@ -1482,11 +1492,26 @@ namespace tsorcRevamp.NPCs.Puppets
             Phase == AttackPhase.FireVolleyBackLeap || Phase == AttackPhase.FireVolleyDodgeThrough ||
             Phase == AttackPhase.FireVolleyArcJump ||
             (Phase == AttackPhase.Custom && _customPoseWeapon >= 0) ||
+            // Keep the blade on screen for the follow-through hold of the bespoke sword recoveries.
+            // Without this the greatsword vanished on the frame the swing ended — the pose was still
+            // being held, but nothing was drawing it. Gated on the same opt-in hold, so puppets that
+            // leave MeleeRecoveryLingerTicks at 0 are unaffected.
+            (IsWeaponRecoveryPhase && IsHoldingMeleeRecoveryFollowThrough()) ||
             (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0);
 
         private bool IsMeleeComboPhase =>
             Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
             Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery;
+
+        /// <summary>Recovery phases that end a weapon swing, and so can hold the finished pose for a
+        /// beat before easing back to the carried hold — see
+        /// <see cref="IsHoldingMeleeRecoveryFollowThrough"/>. None of these have a rotation branch of
+        /// their own, so without the hold they fall straight into the idle ease on frame one.</summary>
+        private bool IsWeaponRecoveryPhase =>
+            Phase == AttackPhase.MeleeRecovery || Phase == AttackPhase.MeleeComboRecovery ||
+            Phase == AttackPhase.JumpSlashRecovery || Phase == AttackPhase.AbyssSlashRecovery ||
+            Phase == AttackPhase.TendrilRecovery || Phase == AttackPhase.HomingVolleyRecovery ||
+            Phase == AttackPhase.BoomerangRecovery;
 
         private bool IsTelemetryAttackPhase =>
             Phase != AttackPhase.Idle && Phase != AttackPhase.ClosingDistance
@@ -1502,6 +1527,31 @@ namespace tsorcRevamp.NPCs.Puppets
         /// the navigator would otherwise flip direction every single tick.
         /// </summary>
         private int _directionHoldTicks;
+
+        /// <summary>
+        /// Facing captured when the current committed attack began, and re-applied every tick of
+        /// that attack by <see cref="LockAttackFacing"/>. The navigator runs BEFORE the attack
+        /// state machine each tick and always steers toward the player, so without this the sprite
+        /// flipped mid-swing the moment the player got behind — most visibly when a jump attack
+        /// leaps clean over them. 0 = nothing committed.
+        /// </summary>
+        private int _attackFacingDir;
+
+        /// <summary>
+        /// Phases that arm their OWN <c>DodgeTimer</c> i-frames as part of the attack (Jump Slash's
+        /// backward roll and the airborne leap that follows it, the Forward Flip Slash, Homing
+        /// Volley's roll). The dodge-roll movement guard in <see cref="AI"/> skips PuppetAttackAI
+        /// while DodgeTimer runs so a REACTIVE dodge's velocity isn't overridden — but these phases
+        /// set that timer themselves, so obeying it there froze the attack that armed it: PhaseTimer
+        /// stopped counting, the launch velocity stopped being re-asserted, and the navigator took
+        /// the puppet back mid-attack (walking toward the player, sprite flipped) until the timer ran
+        /// out. Flip Slash was the worst case — it refreshes DodgeTimer to 5 every tick, so its phase
+        /// logic only advanced one tick in six.
+        /// </summary>
+        private bool AttackOwnsDodgeIFrames =>
+            Phase == AttackPhase.JumpSlashDodgeback || Phase == AttackPhase.JumpSlashRise ||
+            Phase == AttackPhase.FlipSlashRise ||
+            Phase == AttackPhase.HomingVolleyDodgeback || Phase == AttackPhase.HomingVolleySwingTelegraph;
 
         // ── Telegraph flash ───────────────────────────────────────────────────────
         /// <summary>True once the flash VFX for the current telegraph phase has been spawned.</summary>
@@ -2981,10 +3031,18 @@ namespace tsorcRevamp.NPCs.Puppets
             // Anti-bounce: if FighterAI just reversed direction but the hold timer is still
             // running (e.g. the player dodgerolled past), revert to the previous direction so
             // the puppet doesn't flip back and forth every tick.
+            // spriteDirection is reverted too: SmartFighter4 writes BOTH fields when it re-faces,
+            // so restoring only NPC.direction left the body drawn backwards while every hitbox,
+            // muzzle offset and swing arc still used the old facing.
             if (NPC.direction != dirBefore && _directionHoldTicks > 0)
+            {
                 NPC.direction = dirBefore;
+                NPC.spriteDirection = dirBefore;
+            }
             else if (NPC.direction != dirBefore)
+            {
                 _directionHoldTicks = 30; // lock new direction for ~½ s before allowing another flip
+            }
 
             // ── Flee-to-heal movement override ────────────────────────────────────
             // FighterAI always moves TOWARD the player.  When fleeing we invert velocity.X
@@ -3046,8 +3104,14 @@ namespace tsorcRevamp.NPCs.Puppets
             // it would call SlowDown() or set a stab-lunge velocity, overriding the dash.
             // Instead we skip attack AI entirely for those ticks so the dodge movement lands.
             // Also skip while the shield guard is committed so it holds its minimum window.
-            if (gnpc.DodgeTimer <= 0 && gnpc.QuickStepTimer <= 0 && gnpc.QuickStepRecoveryTimer <= 0 && !_shielding)
+            // AttackOwnsDodgeIFrames is the exception: those phases set DodgeTimer THEMSELVES, so
+            // honouring it here froze the very phase that armed it (see the property's remarks).
+            bool dodgeOwnsMovement = gnpc.DodgeTimer > 0 && !AttackOwnsDodgeIFrames;
+
+            if (!dodgeOwnsMovement && gnpc.QuickStepTimer <= 0 && gnpc.QuickStepRecoveryTimer <= 0 && !_shielding)
+            {
                 PuppetAttackAI();
+            }
 
             UpdateAttackCommitFlags();
             TickWeaponAnim();
@@ -3836,6 +3900,11 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 // ── Melee slash ───────────────────────────────────────────────
                 case AttackPhase.MeleeTelegraph:
+                    // The wind-up still tracks; the swing that follows is locked to whichever way
+                    // the sword was raised, so a player rolling behind ends up behind the arc rather
+                    // than dragging it around with them.
+                    _attackFacingDir = target.Center.X < NPC.Center.X ? -1 : 1;
+                    LockAttackFacing();
                     if (SlowDownBeforeMelee)
                     {
                         SlowDown();
@@ -3852,6 +3921,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.MeleeAttack:
+                    LockAttackFacing();
                     // Keep opted-in fire slash visuals alive for the exact same window as the
                     // tracked blade hitbox. DoMeleeAttack only runs once at phase entry, which made
                     // the effect flash for one frame and then begin fading while the sword was
@@ -3870,12 +3940,17 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.MeleeRecovery:
+                    // Facing stays committed through recovery: the follow-through is part of the
+                    // swing, and re-facing here made a heavy greatsword appear to teleport its arc.
+                    LockAttackFacing();
                     if (--PhaseTimer <= 0)
                         EnterCasualOrIdle();
                     break;
 
                 // ── Stab / lunge ──────────────────────────────────────────────
                 case AttackPhase.StabTelegraph:
+                    _attackFacingDir = target.Center.X < NPC.Center.X ? -1 : 1;
+                    LockAttackFacing();
                     if (SlowDownBeforeMelee)
                     {
                         SlowDown();
@@ -3899,14 +3974,14 @@ namespace tsorcRevamp.NPCs.Puppets
                     // Lunge speed = TopSpeed × StabLungeSpeedMult.  Default 2.0 is firm but not
                     // overshooting; override per-subclass for more/less aggressive dashes.
                     NPC.velocity.X      = _stabLungeDir * (TopSpeed * StabLungeSpeedMult);
-                    NPC.direction       = _stabLungeDir;
-                    NPC.spriteDirection = _stabLungeDir;
-                    _directionHoldTicks = Math.Max(_directionHoldTicks, 5);
+                    _attackFacingDir    = _stabLungeDir;
+                    LockAttackFacing();
                     if (--PhaseTimer <= 0)
                         EnterPhase(AttackPhase.StabRecovery, StabRecoveryTicks);
                     break;
 
                 case AttackPhase.StabRecovery:
+                    LockAttackFacing();
                     if (--PhaseTimer <= 0)
                     {
                         _stabCooldown = StabCooldownAfterUse; // prevent instant re-stab after dodgeroll
@@ -4250,9 +4325,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.PierceTelegraph:
                 {
                     int faceP = target.Center.X < NPC.Center.X ? -1 : 1;
-                    NPC.direction = faceP;
-                    NPC.spriteDirection = faceP;
                     _pierceDir = faceP;
+                    _attackFacingDir = faceP;
+                    LockAttackFacing();
                     if (PhaseTimer == PierceTelegraphTicks)
                     {
                         _pierceAnchorPos = NPC.position;
@@ -4276,6 +4351,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 // A plain (non-stab) hit just marks _pierceHitConnected and keeps carrying through.
                 case AttackPhase.PierceDash:
                 {
+                    // The dash usually overshoots THROUGH the player; without this the sprite spun
+                    // around the instant it crossed, so the lance visibly pointed back the way it came.
+                    LockAttackFacing();
                     NPC.velocity.X = _pierceDir * PierceDashSpeed;
                     DoPierceDashTick();
 
@@ -4313,6 +4391,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // Stab variant only: target is held impaled while the sword arm raises 0→90°.
                 case AttackPhase.PierceStabHold:
                 {
+                    LockAttackFacing();
                     NPC.velocity.X = 0f;
                     float raiseProgress = 1f - PhaseTimer / (float)PierceStabRaiseTicks;
                     if (_pierceTarget != null && _pierceTarget.active)
@@ -4326,6 +4405,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // exactly once, on the phase's first tick).
                 case AttackPhase.PierceStabFlick:
                 {
+                    LockAttackFacing();
                     if (PhaseTimer == PierceStabFlickTicks && _pierceTarget != null && _pierceTarget.active)
                         OnPierceFlick(_pierceTarget);
                     if (--PhaseTimer <= 0)
@@ -4338,6 +4418,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 // Shared recovery after either pierce variant ends — can walk, can't attack yet.
                 case AttackPhase.PierceRecovery:
+                    LockAttackFacing();
                     if (!IsEchoStepVisible)
                         SlowDown();
                     if (--PhaseTimer <= 0)
@@ -4355,11 +4436,14 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (PhaseTimer == JumpSlashDodgebackTicks)
                     {
                         int faceJ = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceJ;
-                        NPC.spriteDirection = faceJ;
                         _jumpSlashDir = faceJ;
+                        _attackFacingDir = faceJ;
                         NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().DodgeTimer = JumpSlashDodgebackTicks + 5;
                     }
+                    // Held for the whole roll → leap → swipe → recovery chain. The leap deliberately
+                    // passes OVER the player, so without this the navigator flips the sprite around
+                    // at the apex and the sword comes down facing the wrong way.
+                    LockAttackFacing();
                     NPC.velocity.X = -_jumpSlashDir * JumpSlashDodgebackSpeed; // away from the player
                     DoJumpSlashDodgebackTick();
                     if (--PhaseTimer <= 0)
@@ -4377,10 +4461,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (!_jumpSlashLaunched)
                     {
                         _jumpSlashLaunched = true;
+                        // Re-aim once at launch (the roll may have crossed the player), then commit.
                         int faceJ = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceJ;
-                        NPC.spriteDirection = faceJ;
                         _jumpSlashDir = faceJ;
+                        _attackFacingDir = faceJ;
 
                         float dx = Math.Abs(target.Center.X - NPC.Center.X);
                         float rangeT = JumpSlashMaxRange > 0f
@@ -4404,6 +4488,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         NPC.velocity.X = _jumpSlashDir * _jumpSlashFlightSpeed;
                     }
 
+                    LockAttackFacing();
                     DoJumpSlashRiseTick();
 
                     bool nearPlayer = NPC.Distance(target.Center) <= JumpSlashTriggerRange;
@@ -4417,6 +4502,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 }
 
                 case AttackPhase.JumpSlashAttack:
+                    LockAttackFacing();
                     // TryMeleeHit (called from DoJumpSlashAttack on phase entry) only ARMS the
                     // tracked blade check - TickBladeHit has to run every tick of the swing to
                     // actually test it, same as MeleeAttack/StabAttack below. Without this call the
@@ -4433,6 +4519,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.JumpSlashRecovery:
+                    LockAttackFacing();
                     SlowDown();
                     if (--PhaseTimer <= 0)
                     {
@@ -4449,9 +4536,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (PhaseTimer == FlipSlashRiseMaxTicks)
                     {
                         int faceF = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceF;
-                        NPC.spriteDirection = faceF;
                         _flipSlashDir = faceF;
+                        _attackFacingDir = faceF;
                         float dx = Math.Abs(target.Center.X - NPC.Center.X);
                         float airtime = 2f * FlipSlashLaunchUpSpeed / 0.3f;
                         float vx = MathHelper.Clamp(dx / airtime, 2f, FlipSlashLaunchForwardSpeed);
@@ -4467,6 +4553,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     // regardless of exact air time.
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().DodgeTimer = 5;
 
+                    LockAttackFacing();
                     DoFlipSlashRiseTick();
 
                     if (!_flipHitConnected)
@@ -4493,9 +4580,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
                 }
 
-                // Sword snaps into the slam pose (handled in the rotation table below) and is held
-                // there for the full duration - no easing, a deliberate static pose.
+                // Sword settles into the slam pose (handled in the rotation table below) and is held
+                // there for the rest of the phase - a deliberate static pose.
                 case AttackPhase.FlipSlashLand:
+                    LockAttackFacing();
                     NPC.velocity.X *= 0.5f;
                     if (--PhaseTimer <= 0)
                     {
@@ -4509,6 +4597,12 @@ namespace tsorcRevamp.NPCs.Puppets
                 // (already applied earlier this tick, before PuppetAttackAI runs) carries through
                 // untouched, so the puppet keeps walking during the whole wind-up.
                 case AttackPhase.AbyssSlashTelegraph:
+                    // Re-face the player each tick of the wind-up (the puppet is still walking here,
+                    // so this is where the swipe direction is chosen), then commit it for the rest
+                    // of the chain: every swipe after the first fires along the SAME line, and a
+                    // navigator flip mid-chain used to fling the later crescents backwards.
+                    _attackFacingDir = target.Center.X < NPC.Center.X ? -1 : 1;
+                    LockAttackFacing();
                     if (--PhaseTimer <= 0)
                     {
                         _abyssSlashIndex = 0;
@@ -4518,6 +4612,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.AbyssSlashSwipe:
+                    LockAttackFacing();
                     if (--PhaseTimer <= 0)
                     {
                         int delay = NextAbyssSlashDelay(_abyssSlashIndex);
@@ -4535,6 +4630,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.AbyssSlashPause:
+                    LockAttackFacing();
                     if (--PhaseTimer <= 0)
                     {
                         _abyssSlashIndex++;
@@ -4544,6 +4640,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.AbyssSlashRecovery:
+                    LockAttackFacing();
                     SlowDown();
                     if (--PhaseTimer <= 0)
                     {
@@ -4554,6 +4651,10 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 // ── Abyss Tendril Grab ──────────────────────────────────────────
                 case AttackPhase.TendrilTelegraph:
+                    // Tracks during the reach-back, then owns facing for the yank and the finishing
+                    // swing - the tendril flies along this direction, so the sprite must agree.
+                    _attackFacingDir = target.Center.X < NPC.Center.X ? -1 : 1;
+                    LockAttackFacing();
                     SlowDown();
                     DoTendrilTelegraphTick(TendrilTelegraphTicks - PhaseTimer);
                     if (--PhaseTimer <= 0)
@@ -4566,6 +4667,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // The tendril projectile is fully self-contained (fly/yank/retract); this phase
                 // just holds the arm-out pose for as long as that sequence should take.
                 case AttackPhase.TendrilReach:
+                    LockAttackFacing();
                     SlowDown();
                     DoTendrilReachTick();
                     if (--PhaseTimer <= 0)
@@ -4573,6 +4675,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.TendrilSwingTelegraph:
+                    LockAttackFacing();
                     SlowDown();
                     if (--PhaseTimer <= 0)
                     {
@@ -4582,6 +4685,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.TendrilSwing:
+                    LockAttackFacing();
                     if (--PhaseTimer <= 0)
                     {
                         // If the finishing swing whiffed too, a delayed echo picks up the same
@@ -4594,6 +4698,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.TendrilRecovery:
+                    LockAttackFacing();
                     if (!IsEchoStepVisible)
                         SlowDown();
                     if (--PhaseTimer <= 0)
@@ -4676,11 +4781,11 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (PhaseTimer == HomingVolleyDodgebackTicks)
                     {
                         int faceHv = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceHv;
-                        NPC.spriteDirection = faceHv;
                         _homingVolleyDir = faceHv;
+                        _attackFacingDir = faceHv;
                         NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().DodgeTimer = HomingVolleyDodgebackTicks + 5;
                     }
+                    LockAttackFacing();
                     NPC.velocity.X = -_homingVolleyDir * HomingVolleyDodgebackSpeed;
                     if (--PhaseTimer <= 0)
                     {
@@ -4691,6 +4796,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 }
 
                 case AttackPhase.HomingVolleySwingTelegraph:
+                    LockAttackFacing();
                     SlowDown();
                     if (--PhaseTimer <= 0)
                     {
@@ -4700,6 +4806,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 case AttackPhase.HomingVolleySwing:
                 {
+                    LockAttackFacing();
                     SlowDown();
                     int elapsedSwing = HomingVolleySwingTicks - PhaseTimer;
                     DoHomingVolleySwingTick(elapsedSwing, HomingVolleySwingTicks);
@@ -4717,6 +4824,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 }
 
                 case AttackPhase.HomingVolleyRecovery:
+                    LockAttackFacing();
                     SlowDown();
                     if (--PhaseTimer <= 0)
                         EnterCasualOrIdle();
@@ -4730,9 +4838,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (PhaseTimer == SwordLaunchRepositionTicks)
                     {
                         int faceSl = target.Center.X < NPC.Center.X ? -1 : 1;
-                        NPC.direction = faceSl;
-                        NPC.spriteDirection = faceSl;
                         _swordLaunchDir = faceSl;
+                        _attackFacingDir = faceSl;
                         NPC.velocity = new Vector2(-faceSl * SwordLaunchRepositionBackSpeed, -SwordLaunchRepositionUpSpeed);
                         NPC.netUpdate = true;
                     }
@@ -4740,6 +4847,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     {
                         NPC.velocity.X = -_swordLaunchDir * SwordLaunchRepositionBackSpeed;
                     }
+
+                    // The hop travels BACKWARDS while still facing the player - exactly the case the
+                    // navigator would "correct" by spinning the sprite to match the travel direction.
+                    LockAttackFacing();
 
                     bool landedSl = PhaseTimer < SwordLaunchRepositionTicks && NPC.velocity.Y == 0f;
                     if (landedSl || --PhaseTimer <= 0)
@@ -4750,7 +4861,11 @@ namespace tsorcRevamp.NPCs.Puppets
                 }
 
                 // ── Boomerang Crescent ─────────────────────────────────────────
+                // The raise still tracks (the crescent's line isn't chosen yet); everything from the
+                // chop onward is locked so the projectile and the sprite agree.
                 case AttackPhase.BoomerangSwingTelegraph:
+                    _attackFacingDir = target.Center.X < NPC.Center.X ? -1 : 1;
+                    LockAttackFacing();
                     SlowDown();
                     if (--PhaseTimer <= 0)
                     {
@@ -4761,6 +4876,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 case AttackPhase.BoomerangSwing:
                 {
+                    LockAttackFacing();
                     SlowDown();
                     int elapsedBoom = BoomerangSwingTicks - PhaseTimer;
                     DoBoomerangSwingTick(elapsedBoom, BoomerangSwingTicks);
@@ -4778,6 +4894,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 }
 
                 case AttackPhase.BoomerangRecovery:
+                    LockAttackFacing();
                     SlowDown();
                     if (--PhaseTimer <= 0)
                         EnterCasualOrIdle();
@@ -4785,6 +4902,8 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 // ── Spiral Fan ─────────────────────────────────────────────────
                 case AttackPhase.SpiralFanSwingTelegraph:
+                    _attackFacingDir = target.Center.X < NPC.Center.X ? -1 : 1;
+                    LockAttackFacing();
                     SlowDown();
                     if (--PhaseTimer <= 0)
                     {
@@ -4794,6 +4913,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 case AttackPhase.SpiralFanSwing:
                 {
+                    LockAttackFacing();
                     SlowDown();
                     DoSpiralFanSwingTick(SpiralFanSwingTicks - PhaseTimer, SpiralFanSwingTicks);
                     if (--PhaseTimer <= 0)
@@ -4806,6 +4926,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 }
 
                 case AttackPhase.SpiralFanBurst:
+                    LockAttackFacing();
                     SlowDown();
                     if (--PhaseTimer <= 0)
                     {
@@ -4823,6 +4944,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.SpiralFanPause:
+                    LockAttackFacing();
                     SlowDown();
                     if (--PhaseTimer <= 0)
                     {
@@ -4833,6 +4955,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.SpiralFanRecovery:
+                    LockAttackFacing();
                     SlowDown();
                     if (--PhaseTimer <= 0 && !TryContinueSpiralFanChain())
                         EnterCasualOrIdle();
@@ -5004,8 +5127,11 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (step.Motion == ComboMotion.LeapSlam || step.Motion == ComboMotion.LeapThrust)
                     {
                         // Hold the launch velocity (SF4 ran earlier this tick and would otherwise
-                        // steer X); gravity provides the downward arc.  The hit connects when we
-                        // land, or when the airtime cap (AttackTicks) expires.
+                        // steer X). Optional correction is limited to ascent; gravity and the locked
+                        // descent preserve a committed, dodgeable landing line.
+                        if (_comboLeapLaunched && NPC.velocity.Y < 0f)
+                            UpdateLeapAscentTracking(target, step, 0f,
+                                LeapAttackAscentTrackingStrength);
                         NPC.velocity.X = _comboLeapVx;
                         // velocity.Y only returns to exactly 0 via a vertical collision (landing).
                         // Require a few ticks of airtime first so a launch that can't clear a low
@@ -5051,14 +5177,8 @@ namespace tsorcRevamp.NPCs.Puppets
                         {
                             // Limited ascent tracking. Facing and horizontal velocity lock at apex,
                             // leaving the final descent readable and dodgeable.
-                            int trackingDirection = target.Center.X < NPC.Center.X ? -1 : 1;
-                            _comboLockedDir = trackingDirection;
-                            NPC.direction = trackingDirection;
-                            NPC.spriteDirection = trackingDirection;
-                            float desired = trackingDirection * Math.Min(
-                                LeapAttackForwardSpeed,
-                                Math.Max(1.8f, Math.Abs(target.Center.X - NPC.Center.X) / 24f));
-                            _comboLeapVx = MathHelper.Lerp(_comboLeapVx, desired, 0.08f);
+                            UpdateLeapAscentTracking(target, step, 1.8f,
+                                ApexDiveAscentTrackingStrength);
                             NPC.velocity.X = _comboLeapVx;
                         }
                         else
@@ -5228,8 +5348,12 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 // ── Melee combo: final recovery ───────────────────────────────
-                // Direction unlocked during recovery — puppet can re-orient toward player.
+                // Facing stays locked through recovery. It used to unlock the instant the last
+                // active frame ended, which snapped a heavy greatsword's follow-through around to
+                // face a player who had already rolled behind — the swing "landed" in one direction
+                // and finished in the other. Re-orientation resumes at EnterCasualOrIdle.
                 case AttackPhase.MeleeComboRecovery:
+                    LockComboDirection();
                     if (--PhaseTimer <= 0)
                     {
                         if (_meleeComboCooldowns != null
@@ -5252,8 +5376,27 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private void LockComboDirection()
         {
-            NPC.direction       = _comboLockedDir;
-            NPC.spriteDirection = _comboLockedDir;
+            _attackFacingDir = _comboLockedDir;
+            LockAttackFacing();
+        }
+
+        /// <summary>
+        /// Re-assert <see cref="_attackFacingDir"/> onto the NPC, sprite included. Called every tick
+        /// of a committed attack — wind-up, active frames AND recovery — because the navigator ran
+        /// earlier this tick and steers toward the player unconditionally. Also refreshes the
+        /// anti-bounce hold so the flip stays suppressed for a few ticks after the attack releases,
+        /// instead of the sprite snapping around on the very frame the last swing ends.
+        /// No-op when nothing is committed (dir 0).
+        /// </summary>
+        private void LockAttackFacing()
+        {
+            if (_attackFacingDir == 0)
+            {
+                return;
+            }
+
+            NPC.direction       = _attackFacingDir;
+            NPC.spriteDirection = _attackFacingDir;
             _directionHoldTicks = Math.Max(_directionHoldTicks, 5);
         }
 
@@ -5784,11 +5927,55 @@ namespace tsorcRevamp.NPCs.Puppets
         /// player, while staying well inside the step's own swing reach so the slam still connects.</summary>
         protected virtual float LeapLandingStandoff => 0f;
 
+        private float PredictedLeapTargetX(Player target)
+        {
+            float lead = MathHelper.Clamp(
+                target.velocity.X * LeapAttackTargetLeadTicks,
+                -96f,
+                96f);
+            return target.Center.X + lead;
+        }
+
+        private void UpdateLeapAscentTracking(
+            Player target, MeleeComboStep step, float extraLaunchSpeed, float trackingStrength)
+        {
+            if (target == null || trackingStrength <= 0f)
+                return;
+
+            float heightMult = step.LeapHeightMult > 0f ? step.LeapHeightMult : 1f;
+            float forwardMult = step.LeapForwardSpeedMult > 0f ? step.LeapForwardSpeedMult : 1f;
+            float launchSpeed = (LeapAttackUpSpeed + extraLaunchSpeed) * heightMult;
+            // For a flat-ground ballistic arc, (launchSpeed - currentVy) / gravity is the
+            // remaining time back to launch height. It stays useful on stepped terrain while
+            // avoiding the old fixed 24-tick correction that accelerated distant dives past targets.
+            float remainingAirTicks = Math.Max(12f, (launchSpeed - NPC.velocity.Y) / 0.3f);
+            float targetX = PredictedLeapTargetX(target);
+            float signedGap = targetX - NPC.Center.X;
+            int trackingDirection = signedGap < 0f ? -1 : 1;
+            float travelDistance = Math.Max(0f, Math.Abs(signedGap) - LeapLandingStandoff);
+            float maxForward = LeapAttackForwardSpeed * forwardMult;
+            float desiredSpeed = MathHelper.Clamp(
+                travelDistance / remainingAirTicks,
+                0f,
+                maxForward);
+            float desiredVelocity = trackingDirection * desiredSpeed;
+
+            _comboLeapVx = MathHelper.Lerp(_comboLeapVx, desiredVelocity,
+                MathHelper.Clamp(trackingStrength, 0f, 1f));
+            if (Math.Abs(signedGap) > 24f)
+            {
+                _comboLockedDir = trackingDirection;
+                NPC.direction = trackingDirection;
+                NPC.spriteDirection = trackingDirection;
+            }
+        }
+
         private void BeginLeapAttack(MeleeComboStep step)
         {
             _leapSlamSwingProgress = 0f;
             Player target = Main.player[NPC.target];
-            int dir = target.Center.X < NPC.Center.X ? -1 : 1;
+            float targetX = PredictedLeapTargetX(target);
+            int dir = targetX < NPC.Center.X ? -1 : 1;
             _comboLockedDir = dir;
             NPC.direction = dir;
             NPC.spriteDirection = dir;
@@ -5796,13 +5983,18 @@ namespace tsorcRevamp.NPCs.Puppets
 
             float heightMult = step.LeapHeightMult > 0f ? step.LeapHeightMult : 1f;
             float forwardMult = step.LeapForwardSpeedMult > 0f ? step.LeapForwardSpeedMult : 1f;
-            float dx = Math.Abs(target.Center.X - NPC.Center.X);
+            float dx = Math.Abs(targetX - NPC.Center.X);
             if (dx < LeapMinLungeDistance)
             {
-                // Close: jump high and fall onto them — minimal horizontal travel so it lands ON
-                // the player instead of sailing past.
-                _comboLeapVx = dir * 1.5f;
-                NPC.velocity = new Vector2(_comboLeapVx, -(LeapAttackUpSpeed + 2f) * heightMult);
+                // Close: solve the small horizontal gap against the complete higher arc. This can
+                // reach zero when already aligned, preventing the old fixed 1.5px/tick overshoot.
+                float launchSpeed = (LeapAttackUpSpeed + 2f) * heightMult;
+                float airtime = 2f * launchSpeed / 0.3f;
+                float travelDistance = Math.Max(0f, dx - LeapLandingStandoff);
+                float vx = Math.Min(LeapAttackMinimumForwardSpeed,
+                    travelDistance / Math.Max(1f, airtime));
+                _comboLeapVx = dir * vx;
+                NPC.velocity = new Vector2(_comboLeapVx, -launchSpeed);
             }
             else
             {
@@ -5811,7 +6003,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 float travelDistance = Math.Max(0f, dx - LeapLandingStandoff);
                 float launchSpeed = LeapAttackUpSpeed * heightMult;
                 float airtime = 2f * launchSpeed / 0.3f; // ticks aloft ≈ 2·Vy/g
-                float vx = MathHelper.Clamp(travelDistance / airtime, 1.5f, LeapAttackForwardSpeed * forwardMult);
+                float vx = MathHelper.Clamp(travelDistance / airtime,
+                    LeapAttackMinimumForwardSpeed, LeapAttackForwardSpeed * forwardMult);
                 _comboLeapVx = dir * vx;
                 NPC.velocity = new Vector2(_comboLeapVx, -launchSpeed);
             }
@@ -5835,7 +6028,8 @@ namespace tsorcRevamp.NPCs.Puppets
         private void BeginApexDiveCleave(MeleeComboStep step)
         {
             Player target = Main.player[NPC.target];
-            int towardTarget = target.Center.X < NPC.Center.X ? -1 : 1;
+            float targetX = PredictedLeapTargetX(target);
+            int towardTarget = targetX < NPC.Center.X ? -1 : 1;
             _comboLockedDir = towardTarget;
             NPC.direction = towardTarget;
             NPC.spriteDirection = towardTarget;
@@ -5844,12 +6038,14 @@ namespace tsorcRevamp.NPCs.Puppets
             float heightMult = step.LeapHeightMult > 0f ? step.LeapHeightMult : 1f;
             float forwardMult = step.LeapForwardSpeedMult > 0f ? step.LeapForwardSpeedMult : 1f;
             float maxForward = LeapAttackForwardSpeed * forwardMult;
-            float dx = Math.Abs(target.Center.X - NPC.Center.X);
+            float dx = Math.Abs(targetX - NPC.Center.X);
             float travelDistance = Math.Max(0f, dx - LeapLandingStandoff);
-            float ascentTicks = LeapAttackUpSpeed * heightMult / 0.3f;
-            float forwardSpeed = MathHelper.Clamp(travelDistance / Math.Max(1f, ascentTicks), 1.8f, maxForward);
+            float launchSpeed = (LeapAttackUpSpeed + 1.8f) * heightMult;
+            float airtime = 2f * launchSpeed / 0.3f;
+            float forwardSpeed = MathHelper.Clamp(travelDistance / Math.Max(1f, airtime),
+                LeapAttackMinimumForwardSpeed, maxForward);
             _comboLeapVx = towardTarget * forwardSpeed;
-            NPC.velocity = new Vector2(_comboLeapVx, -(LeapAttackUpSpeed + 1.8f) * heightMult);
+            NPC.velocity = new Vector2(_comboLeapVx, -launchSpeed);
             _comboLeapLaunched = true;
             _apexDiveFallTicks = 0;
             _apexDiveStrikeStarted = false;
@@ -6546,6 +6742,14 @@ namespace tsorcRevamp.NPCs.Puppets
                 _hasPreviousBladeSample = false;
             }
 
+            // Dropping back to neutral releases the attack's facing commitment, so the navigator is
+            // free to re-face on its own again. Every committed sequence re-captures on entry.
+            if (phase == AttackPhase.Idle || phase == AttackPhase.CasualStroll
+                || phase == AttackPhase.ClosingDistance)
+            {
+                _attackFacingDir = 0;
+            }
+
             Phase      = phase;
             // Guarantee at least 30 ticks of telegraph so the flash always leads the attack by 30.
             PhaseTimer = isTelegraph ? Math.Max(duration, MinTelegraphTicks) : duration;
@@ -7057,8 +7261,12 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 // The half-circle downward swipe: -60° (cocked) sweeping through vertical/forward to
                 // +55° (past horizontal, angled down-forward) — a ~115° arc.
+                // Smooth-eased rather than linear: the arc now starts slow out of the cocked pose,
+                // accelerates through the strike and settles into the follow-through instead of
+                // running at one constant speed and stopping dead on the last frame.
                 float slashT = JumpSlashAttackTicks > 0 ? 1f - (float)PhaseTimer / JumpSlashAttackTicks : 1f;
-                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(-60f), MathHelper.ToRadians(55f), slashT);
+                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(-60f), MathHelper.ToRadians(55f),
+                    slashT, SwingEaseStyle.Smooth);
             }
             else if (Phase == AttackPhase.FlipSlashRise)
             {
@@ -7072,9 +7280,17 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             else if (Phase == AttackPhase.FlipSlashLand)
             {
-                // Snaps to the landing slam pose (195° clockwise from straight-up, i.e. past 6 o'clock
-                // toward 7) and holds there for the whole phase — a deliberate static pose, not eased.
-                _weaponRotation = MathHelper.ToRadians(195f - 45f);
+                // Settles into the landing slam pose (195° clockwise from straight-up, i.e. past
+                // 6 o'clock toward 7) over the first few ticks, then holds it for the rest of the
+                // phase. It used to snap there in one frame from wherever the free spin happened to
+                // be when the feet touched down, which read as a dropped frame. AngleLerp takes the
+                // short way round so the blade never unwinds backwards to reach the pose.
+                const int FlipSlashLandSettleTicks = 6;
+                float slamPose = MathHelper.ToRadians(195f - 45f);
+                int elapsedLand = FlipSlashLandHoldTicks - PhaseTimer;
+                float settleT = MathHelper.Clamp(elapsedLand / (float)FlipSlashLandSettleTicks, 0f, 1f);
+
+                _weaponRotation = _weaponRotation.AngleLerp(slamPose, MathHelper.SmoothStep(0f, 1f, settleT));
             }
             else if (Phase == AttackPhase.AbyssSlashTelegraph)
             {
@@ -7084,8 +7300,10 @@ namespace tsorcRevamp.NPCs.Puppets
                 int elapsedAbyss    = totalAbyssTicks - PhaseTimer;
                 if (elapsedAbyss < AbyssSlashArcTicks)
                 {
+                    // SmoothStep, not a raw Lerp: the raise eases out of the low pose and settles
+                    // into the held post instead of travelling at one speed and stopping dead.
                     float armT = AbyssSlashArcTicks > 0 ? elapsedAbyss / (float)AbyssSlashArcTicks : 1f;
-                    _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(180f - 45f), MathHelper.ToRadians(10f - 45f), armT);
+                    _weaponRotation = MathHelper.SmoothStep(MathHelper.ToRadians(180f - 45f), MathHelper.ToRadians(10f - 45f), armT);
                 }
                 else
                 {
@@ -7095,9 +7313,12 @@ namespace tsorcRevamp.NPCs.Puppets
             else if (Phase == AttackPhase.AbyssSlashSwipe)
             {
                 // Quick release swing: from the held "post" pose back down through to a forward-down
-                // follow-through, matching where the projectile fires from.
+                // follow-through, matching where the projectile fires from. Snap-eased — most of the
+                // arc is spent in the first third, so the release reads as a whip-crack off the hold
+                // rather than a uniform sweep, then decelerates into the follow-through.
                 float swipeT = AbyssSlashSwipeTicks > 0 ? 1f - (float)PhaseTimer / AbyssSlashSwipeTicks : 1f;
-                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(10f - 45f), MathHelper.ToRadians(170f - 45f), swipeT);
+                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(10f - 45f), MathHelper.ToRadians(170f - 45f),
+                    swipeT, SwingEaseStyle.Snap);
             }
             else if (Phase == AttackPhase.TendrilTelegraph || Phase == AttackPhase.TendrilReach)
             {
@@ -7114,7 +7335,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 if (elapsedTendril < TendrilSwingArcTicks)
                 {
                     float armT = TendrilSwingArcTicks > 0 ? elapsedTendril / (float)TendrilSwingArcTicks : 1f;
-                    _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(180f - 45f), MathHelper.ToRadians(10f - 45f), armT);
+                    _weaponRotation = MathHelper.SmoothStep(MathHelper.ToRadians(180f - 45f), MathHelper.ToRadians(10f - 45f), armT);
                 }
                 else
                 {
@@ -7123,9 +7344,11 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             else if (Phase == AttackPhase.TendrilSwing)
             {
-                // Same 10°→170° release as Abyss Slash's swipe - the "standard" underhand swing shape.
+                // Same 10°→170° release as Abyss Slash's swipe - the "standard" underhand swing shape,
+                // sharing its Snap easing so the two read as the same motion.
                 float swingT = TendrilSwingTicks > 0 ? 1f - (float)PhaseTimer / TendrilSwingTicks : 1f;
-                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(10f - 45f), MathHelper.ToRadians(170f - 45f), swingT);
+                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(10f - 45f), MathHelper.ToRadians(170f - 45f),
+                    swingT, SwingEaseStyle.Snap);
             }
             else if (Phase == AttackPhase.HomingVolleySwingTelegraph)
             {
@@ -7136,9 +7359,12 @@ namespace tsorcRevamp.NPCs.Puppets
             else if (Phase == AttackPhase.HomingVolleySwing)
             {
                 // Full overhead chop: cocked back down through vertical to a down-forward
-                // follow-through - the volley fires partway through this arc.
+                // follow-through - the volley fires partway through this arc. Smooth-eased so the
+                // heavy blade builds speed out of the raise and settles at the end; the fire point
+                // is a progress fraction of the same clock, so it still lands mid-arc.
                 float swingT = HomingVolleySwingTicks > 0 ? 1f - (float)PhaseTimer / HomingVolleySwingTicks : 1f;
-                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f),
+                    swingT, SwingEaseStyle.Smooth);
             }
             else if (Phase == AttackPhase.BoomerangSwingTelegraph || Phase == AttackPhase.SpiralFanSwingTelegraph)
             {
@@ -7148,16 +7374,19 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             else if (Phase == AttackPhase.BoomerangSwing)
             {
-                // Same overhead chop shape as Homing Volley - the crescent(s) fire partway through.
+                // Same overhead chop shape (and easing) as Homing Volley - the crescent(s) fire
+                // partway through.
                 float swingT = BoomerangSwingTicks > 0 ? 1f - (float)PhaseTimer / BoomerangSwingTicks : 1f;
-                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f),
+                    swingT, SwingEaseStyle.Smooth);
             }
             else if (Phase == AttackPhase.SpiralFanSwing)
             {
-                // Same overhead chop shape again, but purely a visual wind-up here - the burst that
-                // follows (SpiralFanBurst/Pause) carries the actual firing sequence.
+                // Same overhead chop shape (and easing) again, but purely a visual wind-up here - the
+                // burst that follows (SpiralFanBurst/Pause) carries the actual firing sequence.
                 float swingT = SpiralFanSwingTicks > 0 ? 1f - (float)PhaseTimer / SpiralFanSwingTicks : 1f;
-                _weaponRotation = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f),
+                    swingT, SwingEaseStyle.Smooth);
             }
             else if (Phase == AttackPhase.SpiralFanBurst || Phase == AttackPhase.SpiralFanPause)
             {
@@ -7619,8 +7848,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                 }
             }
-            else if ((Phase == AttackPhase.MeleeRecovery || Phase == AttackPhase.MeleeComboRecovery)
-                && IsHoldingMeleeRecoveryFollowThrough())
+            else if (IsWeaponRecoveryPhase && IsHoldingMeleeRecoveryFollowThrough())
             {
                 // The last active-frame rotation is intentionally left untouched. Damage has
                 // already ended; this is only the heavy sword settling into its final pose.
@@ -9042,6 +9270,8 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float SpectralHaloScale => 1.05f;
         protected virtual bool SpectralHaloFollowsCoreOpacity => true;
         protected virtual float SpectralTrailOpacity => 0.45f;
+        /// <summary>Suppress halo and motion-history copies below the puppet's current feet.</summary>
+        protected virtual bool SpectralExcludeDownwardCopies => false;
 
         private Vector2[] _spectralOldPositions;
         private readonly List<DrawData> _spectralDrawCache = new List<DrawData>();
@@ -9087,6 +9317,8 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 Vector2 offset = new Vector2(SpectralHaloRadius, 0f)
                     .RotatedBy(MathHelper.TwoPi * i / SpectralHaloCopyCount);
+                if (SpectralExcludeDownwardCopies && offset.Y > 0.01f)
+                    continue;
                 foreach (DrawData core in _spectralDrawCache)
                 {
                     DrawData halo = core;
@@ -9105,6 +9337,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     Vector2 offset = _spectralOldPositions[k] - NPC.position;
                     // Avoid stacking stationary copies or spanning an instantaneous teleport.
                     if (offset.LengthSquared() < 1f || offset.LengthSquared() > 320f * 320f)
+                        continue;
+                    if (SpectralExcludeDownwardCopies && offset.Y > 1f)
                         continue;
                     Color trailColor = SpectralHaloColor
                         * ((_spectralOldPositions.Length - k) / (float)_spectralOldPositions.Length
@@ -9840,14 +10074,48 @@ namespace tsorcRevamp.NPCs.Puppets
             return a0;
         }
 
+        /// <summary>
+        /// True while a recovery phase should keep the weapon parked at the pose the swing finished
+        /// on, before the idle handler eases it back to the carried hold. Covers the bespoke sword
+        /// recoveries as well as the shared melee/combo ones: those all used to drop straight into
+        /// the 0.10-per-tick ease toward HoldRotation on the recovery's very first frame, which cut
+        /// the follow-through off and made a greatsword read as weightless. Opt-in per puppet via
+        /// <see cref="MeleeRecoveryLingerTicks"/> (0 disables, which is the default).
+        /// </summary>
         private bool IsHoldingMeleeRecoveryFollowThrough()
         {
             if (MeleeRecoveryLingerTicks <= 0)
+            {
                 return false;
+            }
 
-            int recoveryTicks = Phase == AttackPhase.MeleeComboRecovery
-                ? ActiveComboRecoveryTicks
-                : MeleeRecoveryTicks;
+            int recoveryTicks;
+
+            switch (Phase)
+            {
+                case AttackPhase.MeleeComboRecovery:
+                    recoveryTicks = ActiveComboRecoveryTicks;
+                    break;
+                case AttackPhase.JumpSlashRecovery:
+                    recoveryTicks = JumpSlashRecoveryTicks;
+                    break;
+                case AttackPhase.AbyssSlashRecovery:
+                    recoveryTicks = AbyssSlashRecoveryTicks;
+                    break;
+                case AttackPhase.TendrilRecovery:
+                    recoveryTicks = TendrilRecoveryTicks;
+                    break;
+                case AttackPhase.HomingVolleyRecovery:
+                    recoveryTicks = HomingVolleyRecoveryTicks;
+                    break;
+                case AttackPhase.BoomerangRecovery:
+                    recoveryTicks = BoomerangRecoveryTicks;
+                    break;
+                default:
+                    recoveryTicks = MeleeRecoveryTicks;
+                    break;
+            }
+
             int lingerTicks = Math.Min(MeleeRecoveryLingerTicks, Math.Max(1, recoveryTicks));
             return PhaseTimer > Math.Max(0, recoveryTicks - lingerTicks);
         }

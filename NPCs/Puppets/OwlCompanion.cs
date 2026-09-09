@@ -1,9 +1,11 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy;
@@ -102,6 +104,8 @@ namespace tsorcRevamp.NPCs.Puppets
             // wing-flap cycle for wandering flight, and a swept-back glide pose for the dive. Confirm
             // against the actual sheet in-game and adjust the ranges below if they're off.
             Main.npcFrameCount[Type] = 13;
+            NPCID.Sets.TrailCacheLength[Type] = 6;
+            NPCID.Sets.TrailingMode[Type] = 1;
         }
 
         // Confirmed against the actual 13-frame sheet (contact-sheet render):
@@ -572,10 +576,26 @@ namespace tsorcRevamp.NPCs.Puppets
 
         private void SpawnDiveTrail()
         {
-            if (!Main.dedServ)
-                Dust.NewDustPerfect(NPC.Center, DustID.Torch,
-                    -NPC.velocity * 0.1f + Main.rand.NextVector2Circular(1f, 1f), 60, default,
-                    Main.rand.NextFloat(1.1f, 1.6f)).noGravity = true;
+            if (Main.dedServ)
+                return;
+
+            Vector2 travelDirection = NPC.velocity.SafeNormalize(new Vector2(NPC.direction, 0f));
+            Vector2 trailNormal = new Vector2(-travelDirection.Y, travelDirection.X);
+            int emberCount = Main.rand.NextBool(3) ? 2 : 1;
+            for (int i = 0; i < emberCount; i++)
+            {
+                Vector2 position = NPC.Center - travelDirection * Main.rand.NextFloat(10f, 18f)
+                    + trailNormal * Main.rand.NextFloat(-7f, 7f);
+                Vector2 velocity = -NPC.velocity * Main.rand.NextFloat(0.08f, 0.14f)
+                    + Main.rand.NextVector2Circular(0.75f, 0.75f);
+                Dust ember = Dust.NewDustPerfect(position,
+                    Main.rand.NextBool(4) ? DustID.Torch : DustID.RedTorch,
+                    velocity, 55, new Color(255, 72, 24), Main.rand.NextFloat(0.85f, 1.35f));
+                ember.noGravity = true;
+                ember.fadeIn = Main.rand.NextFloat(1.15f, 1.65f);
+            }
+
+            Lighting.AddLight(NPC.Center - travelDirection * 8f, 0.55f, 0.08f, 0.015f);
         }
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
@@ -813,6 +833,39 @@ namespace tsorcRevamp.NPCs.Puppets
             }
         }
 
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (_state != OwlState.DiveBombing)
+                return true;
+
+            Texture2D texture = TextureAssets.Npc[Type].Value;
+            Rectangle source = NPC.frame;
+            Vector2 origin = source.Size() * 0.5f;
+            SpriteEffects effects = NPC.spriteDirection == 1
+                ? SpriteEffects.FlipHorizontally
+                : SpriteEffects.None;
+
+            // Two position-cache echoes make the fast bowl-shaped pass readable without turning
+            // the small owl into a continuous smear. Draw the older sample first so the trail
+            // brightens toward the live sprite.
+            int[] cacheSamples = { 5, 2 };
+            for (int i = 0; i < cacheSamples.Length; i++)
+            {
+                int cacheIndex = Math.Min(cacheSamples[i], NPC.oldPos.Length - 1);
+                if (cacheIndex < 0 || NPC.oldPos[cacheIndex] == Vector2.Zero)
+                    continue;
+
+                Vector2 drawPosition = NPC.oldPos[cacheIndex] + NPC.Size * 0.5f
+                    - screenPos + new Vector2(0f, NPC.gfxOffY);
+                float opacity = i == 0 ? 0.16f : 0.28f;
+                spriteBatch.Draw(texture, drawPosition, source,
+                    new Color(220, 54, 18, 0) * opacity,
+                    NPC.rotation, origin, NPC.scale, effects, 0f);
+            }
+
+            return true;
+        }
+
         // Killed via Owl Father's NPC.StrikeInstantKill() call at the 50%-health threshold (see
         // OwlFatherInvader) — that routes through the normal StrikeNPC/checkDead pipeline, so OnKill
         // fires exactly like any other death regardless of dontTakeDamage above.
@@ -823,13 +876,15 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
             }
 
-            for (int i = 0; i < 150; i++)
+            const int bloodDustCount = 300;
+            for (int i = 0; i < bloodDustCount; i++)
             {
-                float angle = MathHelper.TwoPi * i / 150f + Main.rand.NextFloat(-0.025f, 0.025f);
+                float angle = MathHelper.TwoPi * i / bloodDustCount
+                    + Main.rand.NextFloat(-0.025f, 0.025f);
                 Dust blood = Dust.NewDustPerfect(NPC.Center, DustID.Blood,
                     angle.ToRotationVector2() * Main.rand.NextFloat(1.5f, 5.5f), 0, default,
                     Main.rand.NextFloat(1f, 1.8f));
-                blood.noGravity = true;
+                blood.noGravity = false;
             }
         }
     }

@@ -122,6 +122,16 @@ namespace tsorcRevamp.Utilities.Balance
                 _current.damageTaken += amount;
         }
 
+        /// <summary>Logs the iframe duration one hit actually granted (already includes iframe-extending
+        /// effects like Cross Necklace's longInvince) - see BalanceLogPlayer.PostUpdate for why this is
+        /// captured a tick after OnHurt rather than during it. Feeds the question of whether longer
+        /// iframes correlate with a higher Regain healed/damageTaken ratio.</summary>
+        internal static void RecordHurtImmuneTime(int ticks)
+        {
+            if (_current != null && ticks > 0)
+                _current.hurtImmuneTimes.Add(ticks);
+        }
+
         /// <summary>Logs one successful Regain credit against the current boss encounter, if one is
         /// open. Deliberately silent outside a boss fight - see the comment in RecordHit on why
         /// trash-mob activity is not logged at all.</summary>

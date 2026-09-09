@@ -28,6 +28,7 @@ namespace tsorcRevamp.NPCs.Puppets
     [AutoloadBossHead]
     public class OwlFatherInvader : PuppetNPC
     {
+        private const string HighLeapingSlamName = "High Leaping Slam";
         private const string HighLeapFollowUpName = "High Leaping Slam - Rising Follow-Up";
         private const string GreatfireBreakerName = "Greatfire Breaker";
         private const string GreatfireCrescentName = "Greatfire Crescent";
@@ -37,6 +38,8 @@ namespace tsorcRevamp.NPCs.Puppets
         private const string FireOwlBombardmentName = "Greatfire Owl Bombardment";
         private const int FireOwlSummonIntervalTicks = 27;
         private const float FireOwlMinimumHeightAbovePlayer = 250f;
+        private const float GreatfireCrescentStartRaiseRadians = 0.2617994f; // 15 degrees
+        private const int FireColumnBladeChargeTicks = 60;
 
         public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/OwlFatherInvader_Head_Boss";
 
@@ -178,18 +181,19 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override float SpectralOverlayScale => 2f;
         protected override int PuppetVisualWidth => 20;
         protected override int PuppetVisualHeight => 42;
-        // Keep the gold armor recognizable. The yellow light is supplied by a small halo behind it,
-        // following Juggernaut's six-copy glow instead of Hydra's broad 12-copy blue blur.
+        // Keep the gold armor recognizable. A tight upper halo adds warmth without stacking a
+        // second silhouette under the feet or burying the original armor in displaced pixel blocks.
         protected override Color SpectralOverlayColor => new Color(255, 218, 70);
-        protected override float SpectralCoreTintStrength => 0.22f;
+        protected override float SpectralCoreTintStrength => 0.14f;
         protected override float SpectralCoreOpacity => 0.5f;
         protected override Color SpectralHaloColor => new Color(255, 196, 42);
-        protected override int SpectralHaloCopyCount => 6;
-        protected override float SpectralHaloRadius => 8f;
-        protected override float SpectralHaloOpacity => 0.42f;
+        protected override int SpectralHaloCopyCount => 8;
+        protected override float SpectralHaloRadius => 5f;
+        protected override float SpectralHaloOpacity => 0.26f;
         protected override float SpectralHaloScale => 1f;
         protected override bool SpectralHaloFollowsCoreOpacity => false;
-        protected override float SpectralTrailOpacity => 0.24f;
+        protected override float SpectralTrailOpacity => 0.12f;
+        protected override bool SpectralExcludeDownwardCopies => true;
 
         private void ApplySpectralBodyHitbox()
         {
@@ -376,7 +380,7 @@ namespace tsorcRevamp.NPCs.Puppets
             },
             new MeleeCombo
             {
-                Name = "High Leaping Slam",
+                Name = HighLeapingSlamName,
                 BaseWeight = 65,
                 Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.OrangeRed,
@@ -537,6 +541,19 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override float FireSlashForwardOffsetPixels => 5f;
         protected override Vector2 FireSlashWorldOffset => new Vector2(0f, 24f);
 
+        protected override void ModifyMeleeArcEndpoints(
+            ComboMotion motion, ref float startRotation, ref float endRotation)
+        {
+            base.ModifyMeleeArcEndpoints(motion, ref startRotation, ref endRotation);
+
+            if (motion == ComboMotion.OverheadArc && ActiveMeleeComboName == GreatfireCrescentName)
+            {
+                // Pull only the start/top of Greatfire Crescent 15 degrees farther overhead. The
+                // end point stays fixed, giving the downswing a slightly larger committed arc.
+                startRotation -= GreatfireCrescentStartRaiseRadians;
+            }
+        }
+
         // ── Axe draw tuning ─────────────────────────────────────────────────────────
         // The shaft runs from (2, 61) to (51, 12) in the 72x64 texture: grip ~20% above its butt.
         protected override Vector2 MeleeHandleNorm => new Vector2(0.17f, 0.80f);
@@ -562,6 +579,11 @@ namespace tsorcRevamp.NPCs.Puppets
         // ClosingDistance phase pursues first; RangedStartOnly leaps and fire attacks bypass it.
         protected override float MeleeEngageRange => MeleeRange * 0.85f;
         protected override int ClosingDistanceMaxTicks => 130;
+        protected override float LeapAttackForwardSpeed => TopSpeed * 2.05f;
+        protected override float LeapAttackMinimumForwardSpeed => 0.55f;
+        protected override float LeapAttackTargetLeadTicks => 10f;
+        protected override float LeapAttackAscentTrackingStrength => 0.10f;
+        protected override float ApexDiveAscentTrackingStrength => 0.12f;
         protected override int MeleeComboChance => 100;
         protected override int RangedStartMeleeComboChance => 70;
         protected override float ComboTelegraphMultiplier => 1.20f;
@@ -655,21 +677,46 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
-            if (combo.Name == GreatfireBreakerName || combo.Name == BackstepReentryName)
-                return healthFraction <= 0.66f;
+            if ((combo.Name == GreatfireBreakerName || combo.Name == BackstepReentryName)
+                && healthFraction > 0.66f)
+                return false;
 
-            if (combo.Name == FirefallArrayName || combo.Name == ApexDiveName)
-                return healthFraction <= 1f / 3f;
+            if ((combo.Name == FirefallArrayName || combo.Name == ApexDiveName)
+                && healthFraction > 1f / 3f)
+                return false;
 
             if (combo.Name == FireOwlBombardmentName)
                 return _spectralFormActive && !_fireOwlBombardmentActive;
 
+            if (IsJumpGapCloser(combo) && distance > ReliableJumpStartRange(combo.Steps[0]))
+                return false;
+
             return true;
+        }
+
+        private bool IsJumpGapCloser(MeleeCombo combo)
+            => combo.Name == HighLeapingSlamName
+                || combo.Name == HighLeapFollowUpName
+                || combo.Name == ApexDiveName;
+
+        private float ReliableJumpStartRange(MeleeComboStep step)
+        {
+            float heightMult = step.LeapHeightMult > 0f ? step.LeapHeightMult : 1f;
+            float forwardMult = step.LeapForwardSpeedMult > 0f ? step.LeapForwardSpeedMult : 1f;
+            float extraLaunchSpeed = step.Motion == ComboMotion.ApexDiveCleave ? 1.8f : 0f;
+            float airtime = 2f * (LeapAttackUpSpeed + extraLaunchSpeed) * heightMult / 0.3f;
+            float maximumTravel = airtime * LeapAttackForwardSpeed * forwardMult;
+            float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+            // Leave a small margin for uneven ground and motion after the ascent lock. If the
+            // player is farther away, Owl Father chooses a real ranged move or pursues first.
+            return maximumTravel + bladeReach - LeapLandingStandoff - 24f;
         }
 
         protected override void OnMeleeComboTelegraphTick(
             MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
+            EmitFireColumnBladeCharge(combo, step, elapsed);
+
             if (combo.Name == FirefallArrayName && elapsed == 10)
                 SpawnFirefallArray();
             else if (combo.Name == FireOwlBombardmentName && elapsed == 12)
@@ -753,6 +800,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override void OnMeleeComboAttackTick(
             MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
+            int telegraphTicks = Math.Max(MinComboTelegraphTicks,
+                (int)(step.TelegraphTicks * ComboTelegraphMultiplier));
+            EmitFireColumnBladeCharge(combo, step, telegraphTicks + elapsed);
+
             if (combo.Name == FireOwlBombardmentName)
                 return;
 
@@ -764,6 +815,89 @@ namespace tsorcRevamp.NPCs.Puppets
 
             if (combo.Name == GreatfireCrescentName)
                 SpawnGreatfireCrescent();
+        }
+
+        private void EmitFireColumnBladeCharge(
+            MeleeCombo combo, MeleeComboStep step, int comboTimelineTick)
+        {
+            if (Main.dedServ || !HasFireColumnFollowUp(combo.Name, step.Motion))
+                return;
+
+            int telegraphTicks = Math.Max(MinComboTelegraphTicks,
+                (int)(step.TelegraphTicks * ComboTelegraphMultiplier));
+            int releaseTimelineTick;
+
+            if (step.Motion == ComboMotion.LeapSlam)
+            {
+                // Landing-timed slams do not have a fixed impact frame. Predict their flat-ground
+                // airtime from the same launch velocity and 0.3px/tick gravity used by PuppetNPC,
+                // placing the 60-tick tell across the latter part of the jump. Raised terrain can
+                // shorten the final few ticks naturally because the real landing remains authoritative.
+                float heightMult = step.LeapHeightMult > 0f ? step.LeapHeightMult : 1f;
+                float launchSpeed = (LeapAttackUpSpeed + 1.8f) * heightMult;
+                int expectedAirTicks = (int)Math.Ceiling(2f * launchSpeed / 0.3f);
+                releaseTimelineTick = telegraphTicks + expectedAirTicks;
+            }
+            else
+            {
+                float swingSpeed = step.SwingSpeedMult > 0f ? step.SwingSpeedMult : 1f;
+                int attackTicks = Math.Max(6, (int)Math.Round(step.AttackTicks / swingSpeed));
+                releaseTimelineTick = telegraphTicks + (combo.Name == GreatfireCrescentName
+                    ? attackTicks / 2
+                    : attackTicks);
+            }
+
+            int chargeStartTick = Math.Max(0, releaseTimelineTick - FireColumnBladeChargeTicks);
+            int chargeElapsed = comboTimelineTick - chargeStartTick;
+            if (chargeElapsed < 0 || chargeElapsed >= FireColumnBladeChargeTicks)
+                return;
+
+            float progress = (chargeElapsed + 1f) / FireColumnBladeChargeTicks;
+            Vector2 weaponDirection = PuppetWeaponDirection.SafeNormalize(
+                new Vector2(NPC.direction, 0f));
+            Vector2 bladeNormal = new Vector2(-weaponDirection.Y, weaponDirection.X);
+            float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+            int emberCount = 1;
+            if (progress >= 0.4f && Main.rand.NextBool(2))
+                emberCount++;
+            if (progress >= 0.75f)
+                emberCount++;
+
+            for (int i = 0; i < emberCount; i++)
+            {
+                // Restrict the emitter to the outer 35% of the weapon so it reads as an axe-head
+                // charge rather than a body aura or a line running down the handle.
+                Vector2 position = PuppetHandPosition
+                    + weaponDirection * bladeReach * Main.rand.NextFloat(0.65f, 1.0f)
+                    + bladeNormal * Main.rand.NextFloat(-5f, 5f) * (0.65f + progress * 0.35f);
+                float scale = Main.rand.NextFloat(0.5f, 0.72f)
+                    + progress * Main.rand.NextFloat(0.65f, 1.05f);
+                Vector2 velocity = NPC.velocity * 0.12f
+                    + bladeNormal * Main.rand.NextFloat(-0.35f, 0.35f)
+                    + new Vector2(Main.rand.NextFloat(-0.35f, 0.35f),
+                        Main.rand.NextFloat(-1.55f, -0.55f));
+                Dust ember = Dust.NewDustPerfect(
+                    position,
+                    Main.rand.NextBool(3) ? DustID.GoldFlame : DustID.OrangeTorch,
+                    velocity,
+                    55,
+                    new Color(255, 174, 45),
+                    scale);
+                ember.noGravity = true;
+                ember.fadeIn = scale + MathHelper.Lerp(0.25f, 0.7f, progress);
+            }
+
+            Vector2 bladeGlowCenter = PuppetHandPosition + weaponDirection * bladeReach * 0.82f;
+            Lighting.AddLight(bladeGlowCenter,
+                new Vector3(1f, 0.34f, 0.04f) * MathHelper.Lerp(0.18f, 0.75f, progress));
+        }
+
+        private static bool HasFireColumnFollowUp(string comboName, ComboMotion motion)
+        {
+            if (motion == ComboMotion.LeapSlam)
+                return comboName == HighLeapingSlamName || comboName == HighLeapFollowUpName;
+
+            return comboName == GreatfireCrescentName || comboName == GreatfireBreakerName;
         }
 
         private void SpawnGreatfireCrescent()
