@@ -9,3 +9,9 @@ Items/RubixCube.cs
 Items/RubixCube.png
 /.idea
 tsorcRevamp.sln
+
+# Standalone offline preview tools under .agents/tools are their own dotnet
+# projects. The /bin and /obj rules above are root-anchored and miss nested
+# projects, so their build output needs explicit rules or it gets committed.
+.agents/tools/*/bin/
+.agents/tools/*/obj/

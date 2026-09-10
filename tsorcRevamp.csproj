@@ -19,10 +19,6 @@
 		<Compile Remove="Projectiles\Enemy\UnusedAssets\**" />
 		<!-- Standalone developer-data tools have their own projects and are not mod content. -->
 		<Compile Remove="Scripts\GenerateDevData\**\*.cs" />
-		<!-- Offline preview harnesses (Documentation\tools\SwingPreview) are standalone projects.
-		     Their own obj\ output defines assembly attributes, so globbing them into the mod build
-		     fails it with CS0579 duplicate-attribute errors rather than anything self-explanatory. -->
-		<Compile Remove="Documentation\**\*.cs" />
 	</ItemGroup>
 
 </Project>

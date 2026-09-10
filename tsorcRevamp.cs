@@ -212,7 +212,7 @@ namespace tsorcRevamp
         /// swing-speed stamina formula, same as any sword) rather than as utility tools (the flat
         /// ToolSwingStaminaMult / ToolCombatHitSurcharge rate). Consulted directly at each stamina cost/
         /// gate/tooltip site that checks item.pick/axe/hammer — see
-        /// Documentation/StaminaSystem_DPSPricingRetro.md for why this is no longer centralized behind
+        /// tsorcDocs/StaminaSystem_DPSPricingRetro.md for why this is no longer centralized behind
         /// UsesOutputBasedWeaponCost (that function used to double as the tool-vs-weapon router before
         /// DPS-aware pricing was reverted; now it only distinguishes CoinGun, so it can't do this job too).</summary>
         public static HashSet<int> WeaponClassifiedTools;
@@ -479,7 +479,7 @@ namespace tsorcRevamp
             //--------
             #region Active Shields Revamp registry
             //Block cost = ceil(BaseCost + incomingDamage * DamageFactor). Lower = better shield.
-            //See Documentation/ActiveShieldsRevamp.md for the full balance table and design.
+            //See tsorcDocs/ActiveShieldsRevamp.md for the full balance table and design.
             //ActiveShieldData(baseCost, damageFactor, moveSpeedMult, resource). Lower base/factor = better; higher moveSpeedMult = slows less.
             //Base pool is 125 stamina, growing to ~250-275 fully upgraded; costs are ordered by progression so each shield is a step up.
             ActiveShieldRegistry = new Dictionary<int, ActiveShieldData>
@@ -595,7 +595,7 @@ namespace tsorcRevamp
             //
             // This registry originally routed weapon-classified items into DPS-aware output-based pricing
             // instead; that system was reverted for the general roster (see
-            // Documentation/StaminaSystem_DPSPricingRetro.md — reported as inconsistent and punishing for
+            // tsorcDocs/StaminaSystem_DPSPricingRetro.md — reported as inconsistent and punishing for
             // high damage/DPS builds, confirmed mechanically). The registry's actual finding — which items
             // here are real weapons vs. genuine tools — was never the problem, so it stayed: items on this
             // list now just fall through to the plain legacy swing-speed cost, same as any sword, instead

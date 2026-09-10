@@ -13,7 +13,7 @@ using tsorcRevamp.Projectiles.Enemy.Quara;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    // Rebuilt with the Gigas Method (Documentation/EnemyRedesignSkillGuide.md): a kiting water-mage
+    // Rebuilt with the Gigas Method (tsorcDocs/EnemyRedesignSkillGuide.md): a kiting water-mage
     // displaced into the Hallow, with an actual gameplan — SOAK the target (bubbles / wave / droplets
     // all apply Wet), because ink sticks to a wet target: the Ink Geyser's Blackout and Broken Armor
     // last TWICE as long against a soaked player. Respect the "harmless" bubbles or eat a long blind.

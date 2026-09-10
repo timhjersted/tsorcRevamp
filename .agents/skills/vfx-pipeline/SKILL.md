@@ -12,7 +12,7 @@ This skill covers the end-to-end pipeline for creating, compiling, and integrati
 ## Related Skills & References
 - **[VFX Shader Tips & HLSL Best Practices](file:///.agents/skills/vfx-shader-tips/SKILL.md)**: Supplemental cheatsheet detailing frame UV normalization (`uSourceRect`), multi-layer noise blending, Gwyn-style edge rim detection, analytical falloffs, and 3-tier color ramping — plus the field notes (§31–41) and the preview harness (§42–48).
 - **[VFX Dust Tips](file:///.agents/skills/vfx-dust-tips/SKILL.md)**: the particle half of the pipeline — a curated `DustID` table, the count-vs-scale "chunkiness" tradeoff, layered burst architecture, `NewDust`/`NewDustPerfect`/`NewDustDirect`, what `fadeIn` actually does (it is a grow-to-scale target, not an alpha ramp), and a symptoms → fix table. Most effects here are dust *and* shader; check both.
-- **[Documentation/VFX_ARSENAL.md](file:///Documentation/VFX_ARSENAL.md)**: the reusable `VFX/` arsenal only — particle, beam, ring and primitive-trail recipes, `/vfxshowcase`, and the arsenal runtime watchlist. Its former "Shader authoring" half now lives at the bottom of **this** file.
+- **[tsorcDocs/VFX_ARSENAL.md](file:///tsorcDocs/VFX_ARSENAL.md)**: the reusable `VFX/` arsenal only — particle, beam, ring and primitive-trail recipes, `/vfxshowcase`, and the arsenal runtime watchlist. Its former "Shader authoring" half now lives at the bottom of **this** file.
 
 ---
 
@@ -188,7 +188,7 @@ These helpers were copy-pasted between bosses, so a defect in one is usually in 
 
 # Shader authoring reference
 
-Moved here from `Documentation/VFX_ARSENAL.md` — that file now documents only the reusable `VFX/`
+Moved here from `tsorcDocs/VFX_ARSENAL.md` — that file now documents only the reusable `VFX/`
 arsenal (the particle/beam/ring library). Keeping the toolchain described in two places is what let
 them drift apart: neither copy mentioned that the two compilers disagree, which is a full hour lost
 every time someone rediscovers it.

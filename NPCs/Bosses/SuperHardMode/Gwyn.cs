@@ -848,7 +848,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 int damage = Math.Max(1,
                     (int)Math.Ceiling(target.statLifeMax2 * LordEmbraceMaxHealthDamageFraction));
                 target.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), damage,
-                    NPC.direction, dodgeable: false);
+                    NPC.direction, dodgeable: false, scalingArmorPenetration: 1f);
                 target.AddBuff(BuffID.OnFire, 10 * 60);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), explosionCenter + new Vector2(0f, 48f),
                     Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.GwynDescentColumn>(),

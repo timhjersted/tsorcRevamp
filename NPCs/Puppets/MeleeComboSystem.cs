@@ -338,7 +338,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// (ModifyMeleeArcEndpoints, alternate-flip, aim bias) — those stay with the caller.
         ///
         /// Lives here rather than inline in PuppetNPC.TickWeaponAnim so the offline preview harness
-        /// (Documentation/tools/SwingPreview) swings the SAME numbers the game does. A hand-copied
+        /// (.agents/tools/SwingPreview) swings the SAME numbers the game does. A hand-copied
         /// table is the failure mode the VFX preview harness documents: it drifts within about three
         /// tweaks and then quietly previews a swing nobody ships.
         ///

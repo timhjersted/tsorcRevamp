@@ -12,7 +12,7 @@ using tsorcRevamp.Projectiles.Enemy;
 namespace tsorcRevamp.NPCs.Enemies{
 	// Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
 	//
-	// Fire-staff caster, rebuilt with the Gigas Method (see Documentation/EnemyRedesignSkillGuide.md)
+	// Fire-staff caster, rebuilt with the Gigas Method (see tsorcDocs/EnemyRedesignSkillGuide.md)
 	// at common-enemy scale: 5 attacks (2 gated below half health), short telegraphs, brisk cooldowns.
 	// All attack language is dust and projectiles — the sprite only has walk/idle/jump frames, but it
 	// holds a staff, so casts read from a glowing staff tip. Its historic identity (the old

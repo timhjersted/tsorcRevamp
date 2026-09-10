@@ -114,7 +114,7 @@ namespace tsorcRevamp.Utilities
         /// greatsword arc, i.e. a hard visual snap rather than the smooth sweep this is for. Callers
         /// today budget 70–118 ticks, which leaves a healthy plateau; Dread Wraith's tables carry a
         /// comment about raising AttackTicks from 14 to 75 for exactly this reason. Verify a new
-        /// caller with <c>Documentation/tools/SwingPreview</c> before shipping it.</para></summary>
+        /// caller with <c>.agents/tools/SwingPreview</c> before shipping it.</para></summary>
         public static float ApplyTrapezoidal(float start, float end, int elapsedTicks, int totalTicks)
         {
             const float AccelDegrees = 15f;

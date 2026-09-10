@@ -8061,7 +8061,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// instead of snapping between four fixed frames. Pitch is 1 = straight up, 0 = straight down.
         ///
         /// Public and static so the offline body renderer
-        /// (Documentation/tools/SwingPreview) poses the torso from the same thresholds the game uses
+        /// (.agents/tools/SwingPreview) poses the torso from the same thresholds the game uses
         /// — a copied set would drift and quietly preview a different pose than ships.
         /// </summary>
         public static int BodyRowFromWeaponRotation(float weaponRotation, int direction, float meleeWeaponRotationOffset)

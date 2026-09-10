@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs
     /// FighterAI (BasicAI) and SmartFighter4AI. The FSM (state transitions + timers + anchor/last-known)
     /// is fully shared; each movement driver supplies its own Pursue/Search locomotion and calls
     /// <see cref="RunPatrol"/> for the Patrol state. See
-    /// Documentation/PatrolPursue_and_NavTier_Removal.md.
+    /// tsorcDocs/PatrolPursue_and_NavTier_Removal.md.
     ///
     /// NOT WIRED IN YET (Phase-1 step 2): this file compiles standalone; SF4/FighterAI integration is
     /// steps 3-4.

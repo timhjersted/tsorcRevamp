@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     // Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
     //
-    // Rebuilt with the Gigas Method (Documentation/EnemyRedesignSkillGuide.md). Structural template =
+    // Rebuilt with the Gigas Method (tsorcDocs/EnemyRedesignSkillGuide.md). Structural template =
     // QuaraHydromancer; amphibious movement template = ClericOfSorrow's hover kit.
     //
     // Fantasy: an ambush-predator crab and BROOD-LEADER. Its whole kit runs on one rule — GOO -> IGNITE:

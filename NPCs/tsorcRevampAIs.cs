@@ -465,7 +465,7 @@ namespace tsorcRevamp.NPCs
             // in-progress pounce/dodge, the teleport countdown, and block-firing-while-busy. It fills `intent`
             // (SeizesBody / HoldForAttack). NOTE: the movement code below does NOT yet read `intent` — wiring
             // movement to honor it is Step 3; it's populated now only so the contract surface exists.
-            // See Documentation/CombatMovementSeparation_Plan.md.
+            // See tsorcDocs/CombatMovementSeparation_Plan.md.
             FighterCombatIntent intent = default;
             RunFighterCombatExec(npc, globalNPC, topSpeed, fleeing, ref intent);
 
@@ -512,7 +512,7 @@ namespace tsorcRevamp.NPCs
             // ── Patrol/Pursue FSM + unified teleport (Phase 1 Steps 4a/4b — tier-0 path only) ────────
             // Advance the shared macro-state machine; when it gives up the chase, either blink to re-acquire
             // (the styled disengage resolver) or take over with patrol locomotion. Fleeing enemies are left to
-            // the despawn path above. See Documentation/PatrolPursue_and_NavTier_Removal.md.
+            // the despawn path above. See tsorcDocs/PatrolPursue_and_NavTier_Removal.md.
             if (!fleeing)
             {
                 const float FighterAggroRange = 2000f; // generous: an LOS sighting re-aggros like the old BoredTimer reset

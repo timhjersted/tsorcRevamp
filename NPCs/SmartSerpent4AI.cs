@@ -8,7 +8,7 @@ namespace tsorcRevamp.NPCs
 {
     ///<summary>
     ///Span-graph A* pathfinding for the GreatSerpent boss -- the planning layer scoped in
-    ///Documentation/SmartSerpent4AI_Plan.md. Forked from the ARCHITECTURE of SmartFighter4AI (span graph +
+    ///tsorcDocs/SmartSerpent4AI_Plan.md. Forked from the ARCHITECTURE of SmartFighter4AI (span graph +
     ///PriorityQueue + A* + plan/replan/bad-edge memory), not its code: the movement vocabulary is rewritten
     ///for a grounded snake (Slither / Climb / WallScale / SpanGap instead of Walk / Jump / Drop / Rope).
     ///<para/>

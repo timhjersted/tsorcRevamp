@@ -23,7 +23,7 @@ namespace tsorcRevamp
     /// </para>
     /// Verified offset (from the final 1.18.43 TEdit analysis): <c>newY = oldY + (oldY &gt;= 1791 ? 400 : 200)</c>,
     /// X unchanged, plus a small override table for the one structure that broke the formula. See
-    /// <c>Documentation/WORLD_EXPANSION_PLAN.md</c> and <c>WorldData/ExpandedCoordOverrides.json</c>.
+    /// <c>tsorcDocs/WORLD_EXPANSION_PLAN.md</c> and <c>WorldData/ExpandedCoordOverrides.json</c>.
     /// </summary>
     public static class ExpandedWorldTransform
     {

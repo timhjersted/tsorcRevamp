@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Offline swing previewer. Runs the mod's REAL swing maths headless - no Terraria, no game launch -
+    and writes telemetry-schema JSONL that .agents/tools/swing-analyze.ps1 renders unchanged.
+
+    It references the mod's own compiled DLL rather than re-implementing SwingEase or the combo
+    tables. That is deliberate: the VFX preview harness hand-ports its maths and documents that the
+    port drifts within about three tweaks. Referencing the assembly means there is nothing to drift.
+
+    Run this first, from the repo root:
+        dotnet build tsorcRevamp.csproj -t:Compile
+
+    -t:Compile works while tModLoader is open (a full build does not - it fails with TML003), but it
+    writes the assembly to obj\, NOT bin\. bin\ only refreshes on a full build, so referencing it
+    silently previews whatever the mod looked like the last time the game was closed. Hence obj\.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <AssemblyName>SwingPreview</AssemblyName>
+    <RootNamespace>SwingPreview</RootNamespace>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
+    <TModLoaderDir>C:\Program Files (x86)\Steam\steamapps\common\tModLoader</TModLoaderDir>
+    <ModBinDir>$(MSBuildThisFileDirectory)..\..\..\obj\Debug\net8.0</ModBinDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="tsorcRevamp">
+      <HintPath>$(ModBinDir)\tsorcRevamp.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="tModLoader">
+      <HintPath>$(TModLoaderDir)\tModLoader.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="FNA">
+      <HintPath>$(TModLoaderDir)\Libraries\FNA\1.0.0\FNA.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

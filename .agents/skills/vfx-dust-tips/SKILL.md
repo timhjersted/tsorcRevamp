@@ -20,7 +20,7 @@ recompile.
 - **[VFX Shader Tips & HLSL Best Practices](file:///.agents/skills/vfx-shader-tips/SKILL.md)**: HLSL
   technique, the field notes (§31–41), the offline preview harness (§42–48). §20 there (the 3-layer
   particle architecture) and §23 (easing curves) are the shader-side companions to §4 and §7 below.
-- **[Documentation/VFX_ARSENAL.md](file:///Documentation/VFX_ARSENAL.md)**: the reusable `VFX/`
+- **[tsorcDocs/VFX_ARSENAL.md](file:///tsorcDocs/VFX_ARSENAL.md)**: the reusable `VFX/`
   particle/beam/ring library. Check it before hand-rolling a particle system.
 
 ---

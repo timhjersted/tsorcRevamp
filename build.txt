@@ -2,5 +2,5 @@ displayName = The Story of Red Cloud
 author = Vibrent, Zeodexic, MarfMaster, Xelvaa, Urgiv
 version = 0.18.1
 homepage = https://discord.gg/kSptDbe
-buildIgnore = Projectiles\Enemy\UnusedAssets\*, Scripts\GenerateDevData\*, Documentation\tools\*
+buildIgnore = Projectiles\Enemy\UnusedAssets\*, Scripts\GenerateDevData\*
 

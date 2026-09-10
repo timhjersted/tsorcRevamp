@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs
     //   SeizesBody    — combat/teleport owns velocity this frame → the mover should no-op those frames.
     //   HoldForAttack — stop-and-fire: the mover should pin position / hold its standoff so combat can shoot.
     // Populated by the combat layer and obeyed by the movement layer.
-    // See Documentation/CombatMovementSeparation_Plan.md.
+    // See tsorcDocs/CombatMovementSeparation_Plan.md.
     internal struct FighterCombatIntent
     {
         public bool SeizesBody;

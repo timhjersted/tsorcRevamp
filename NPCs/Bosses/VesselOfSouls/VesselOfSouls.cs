@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
     // a top-level state machine (Idle / Attack / PhaseTransition / Dying) and a MoveMood sub-machine
     // (Orbit / Drift / Menace / Retreat). PHASE 1 = the open-world fight (4 attacks). At 50% it SWALLOWS
     // the player into a hazy-purple void (reusing the per-player EnterTheAbyss render) and PHASE 2 adds
-    // 4 more attacks. Death is a survive-only spectacle. See Documentation/VesselOfSouls_Design.md.
+    // 4 more attacks. Death is a survive-only spectacle. See tsorcDocs/VesselOfSouls_Design.md.
     //
     // Sprite: NPCs/Bosses/VesselOfSouls/VesselOfSouls.png 220×1990, 6 frames. Top 3 (0–2) = normal /
     // closed mouth. Bottom 3 (3–5) = mouth dilated (every inhale/gravity/breath move).

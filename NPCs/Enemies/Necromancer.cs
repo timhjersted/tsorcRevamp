@@ -11,7 +11,7 @@ using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    // Rebuilt with the Gigas Method (Documentation/EnemyRedesignSkillGuide.md) as a kiting ritual
+    // Rebuilt with the Gigas Method (tsorcDocs/EnemyRedesignSkillGuide.md) as a kiting ritual
     // caster: it keeps its distance and backpedals while it works, raises up to three Spellbound
     // Ghouls with a proper graveside ceremony, pressures with bone fans and grave hands between its
     // big casts, drains life through the signature Soul Siphon, EATS one of its own ghouls to heal

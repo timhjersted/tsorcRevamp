@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs
 {
     // === Patrol/Pursue FSM enums (namespace-scoped so the matching fields on tsorcRevampGlobalNPC
     // can share the type name via C#'s "Color Color" rule). See
-    // Documentation/PatrolPursue_and_NavTier_Removal.md. ===
+    // tsorcDocs/PatrolPursue_and_NavTier_Removal.md. ===
     public enum PursuitState
     {
         Pursue, // has LOS, or a valid target + making progress
@@ -1174,7 +1174,7 @@ namespace tsorcRevamp.NPCs
         // Throttle tick for the LogFighterNavDebug file logger.
         public int LastNavDebugLogTick = 0;
 
-        // === Patrol/Pursue FSM state (Phase 1 — see Documentation/PatrolPursue_and_NavTier_Removal.md) ===
+        // === Patrol/Pursue FSM state (Phase 1 — see tsorcDocs/PatrolPursue_and_NavTier_Removal.md) ===
         // Defaults reproduce a dumb chase-on-sight enemy. Per-enemy levers override in SetDefaults.
         public PursuitState PursuitState = PursuitState.Pursue;
         // Give-up clock: ticks of FAILED pursuit (no LOS AND not progressing toward the player/last-known).
@@ -1263,7 +1263,7 @@ namespace tsorcRevamp.NPCs
         // Reference position for the position-immobility anti-stuck (robust to wall-bouncing / LOS flicker).
         public Vector2 StuckCheckPos = Vector2.Zero;
 
-        // === Unified teleport (Phase 1 — 4b; see Documentation/PatrolPursue_and_NavTier_Removal.md) ===
+        // === Unified teleport (Phase 1 — 4b; see tsorcDocs/PatrolPursue_and_NavTier_Removal.md) ===
         // Merges the legacy `canTeleport` AI param and the WeakTeleport system into one re-acquire-on-give-up
         // blink (reusing TeleportCountdown / QueueTeleport / ExecuteQueuedTeleport for the actual smoke + warp).
         public bool CanTeleport = false;

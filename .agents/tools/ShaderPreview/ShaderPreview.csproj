@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Renders the mod's REAL compiled .xnb shaders offline on a real GPU, with the parameters and
+    blend states their actual call sites use.
+
+    ADDITIVE to .agents/skills/vfx-shader-tips/preview/ - that harness hand-ports the HLSL and stays.
+    Two independent renderers disagreeing is a useful signal; neither replaces the other.
+
+    Refresh Effects/*.xnb first:  dotnet build tsorcRevamp.csproj -t:Compile
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <AssemblyName>ShaderPreview</AssemblyName>
+    <RootNamespace>ShaderPreview</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <TModLoaderDir>C:\Program Files (x86)\Steam\steamapps\common\tModLoader</TModLoaderDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="FNA">
+      <HintPath>$(TModLoaderDir)\Libraries\FNA\1.0.0\FNA.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(TModLoaderDir)\Libraries\Native\Windows\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>%(Filename)%(Extension)</Link>
+    </None>
+  </ItemGroup>
+
+</Project>
