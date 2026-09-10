@@ -18,6 +18,7 @@ namespace tsorcRevamp.Utilities
     ///   /swingarm stretch none|quarter|threequarters|full
     ///   /swingarm flip [on|off]         → toggle the blade-leads-the-swing mirror (single-bladed weapons)
     ///   /swingarm aim [on|off]          → toggle full-360 aim-centered swing (axe archetype)
+    ///   /swingarm pivot [on|off]        → show the composite arm's rotation pivot + hand (sprite registration aid)
     ///   /swingarm log clear             → close this session and start a fresh timestamped file
     ///   /swingarm status                → print current values
     /// </summary>
@@ -98,6 +99,20 @@ namespace tsorcRevamp.Utilities
                         PuppetNPC.AimSwingMasterEnable ? Color.Lime : Color.Gray);
                     break;
 
+                case "pivot":
+                    if (args.Length >= 2 && args[1].ToLowerInvariant() == "on")
+                        PuppetArmPivotDebugLayer.ShowArmPivot = true;
+                    else if (args.Length >= 2 && args[1].ToLowerInvariant() == "off")
+                        PuppetArmPivotDebugLayer.ShowArmPivot = false;
+                    else
+                        PuppetArmPivotDebugLayer.ShowArmPivot = !PuppetArmPivotDebugLayer.ShowArmPivot;
+                    caller.Reply(
+                        PuppetArmPivotDebugLayer.ShowArmPivot
+                            ? "Arm pivot markers: ON (green = composite front-arm rotation pivot, magenta = front hand)"
+                            : "Arm pivot markers: OFF",
+                        PuppetArmPivotDebugLayer.ShowArmPivot ? Color.Lime : Color.Gray);
+                    break;
+
                 case "log":
                     if (args.Length >= 2 && args[1].ToLowerInvariant() == "clear")
                     {
@@ -153,6 +168,9 @@ namespace tsorcRevamp.Utilities
             caller.Reply(
                 $"Aim-centered swing: {(PuppetNPC.AimSwingMasterEnable ? "ON (full 360 aim)" : "OFF (legacy fixed arc)")}",
                 PuppetNPC.AimSwingMasterEnable ? Color.Lime : Color.Gray);
+            caller.Reply(
+                $"Arm pivot markers: {(PuppetArmPivotDebugLayer.ShowArmPivot ? "ON" : "OFF")}",
+                PuppetArmPivotDebugLayer.ShowArmPivot ? Color.Lime : Color.Gray);
             caller.Reply(
                 $"Puppet attack telemetry: {(PuppetNPC.SwingDebugLog ? "ON (automatic)" : "OFF")} (Logs/{PuppetAttackTelemetry.FileName})",
                 PuppetNPC.SwingDebugLog ? Color.Lime : Color.Gray);

@@ -20,6 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public const int TelegraphMode = 0;
         public const int ImpactMode = 1;
+        public const int ExplosionOnlyMode = 2;
 
         const int ImpactLifetime = 68;
         const int ColumnHeight = 760;
@@ -35,6 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> windStreak;
 
         bool Telegraphing => (int)Projectile.ai[0] == TelegraphMode;
+        bool ExplosionOnly => (int)Projectile.ai[0] == ExplosionOnlyMode;
         int ParentIndex => (int)Projectile.ai[1];
         float Age => Projectile.localAI[0];
 
@@ -86,18 +88,32 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             float columnFade = ColumnFade(Age);
-            for (int segment = 0; segment < 5; segment++)
+            if (ExplosionOnly)
             {
-                Vector2 lightPosition = Projectile.Center - Vector2.UnitY * (ColumnHeight * (segment + 0.5f) / 5f);
-                Lighting.AddLight(lightPosition, 1.15f * columnFade, 0.62f * columnFade, 0.16f * columnFade);
+                Lighting.AddLight(Projectile.Center - Vector2.UnitY * 48f,
+                    1.35f * columnFade, 0.68f * columnFade, 0.16f * columnFade);
+            }
+            else
+            {
+                for (int segment = 0; segment < 5; segment++)
+                {
+                    Vector2 lightPosition = Projectile.Center - Vector2.UnitY * (ColumnHeight * (segment + 0.5f) / 5f);
+                    Lighting.AddLight(lightPosition, 1.15f * columnFade, 0.62f * columnFade, 0.16f * columnFade);
+                }
             }
 
             if (Main.netMode != NetmodeID.Server && Age < 46f)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Vector2 position = Projectile.Center + new Vector2(Main.rand.NextFloat(-105f, 105f), Main.rand.NextFloat(-35f, 6f));
-                    Vector2 velocity = new Vector2(Main.rand.NextFloat(-2.4f, 2.4f), Main.rand.NextFloat(-8f, -3f));
+                    float horizontalRadius = ExplosionOnly ? 76f : 105f;
+                    Vector2 position = Projectile.Center + new Vector2(
+                        Main.rand.NextFloat(-horizontalRadius, horizontalRadius),
+                        Main.rand.NextFloat(ExplosionOnly ? -92f : -35f, 6f));
+                    Vector2 velocity = ExplosionOnly
+                        ? (position - (Projectile.Center - Vector2.UnitY * 48f)).SafeNormalize(-Vector2.UnitY)
+                            * Main.rand.NextFloat(2.5f, 7f)
+                        : new Vector2(Main.rand.NextFloat(-2.4f, 2.4f), Main.rand.NextFloat(-8f, -3f));
                     Dust ember = Dust.NewDustPerfect(position, Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame,
                         velocity, 40, default, Main.rand.NextFloat(1.1f, 2.15f));
                     ember.noGravity = true;
@@ -138,7 +154,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Telegraphing)
                 DrawTelegraph();
             else
-                DrawImpact();
+                DrawImpact(ExplosionOnly);
 
             return false;
         }
@@ -164,7 +180,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
         }
 
-        void DrawImpact()
+        void DrawImpact(bool explosionOnly)
         {
             float columnFade = ColumnFade(Age);
             float smokeFade = SmokeFade(Age);
@@ -178,17 +194,22 @@ namespace tsorcRevamp.Projectiles.Enemy
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            DrawGroundMark(drawPosition, columnFade, 1.05f + Age * 0.008f);
+            if (!explosionOnly)
+                DrawGroundMark(drawPosition, columnFade, 1.05f + Age * 0.008f);
             DrawImpactRays(drawPosition, columnFade);
-            DrawFlameCurtain(drawPosition, columnFade);
+            if (!explosionOnly)
+                DrawFlameCurtain(drawPosition, columnFade);
             DrawFireball(drawPosition, columnFade);
 
             // One purpose-built pass now owns the turbulent silhouette, orange/gold body, and
             // white-hot core. Keeping those layers in one shader prevents three generic beams from
             // sliding apart and reading as overlapping laser rectangles.
-            DrawSolarColumn(drawPosition, 255f,
-                new Color(255, 44, 5), new Color(255, 139, 18), new Color(255, 239, 174),
-                columnFade, 0.62f, 1.45f);
+            if (!explosionOnly)
+            {
+                DrawSolarColumn(drawPosition, 255f,
+                    new Color(255, 44, 5), new Color(255, 139, 18), new Color(255, 239, 174),
+                    columnFade, 0.62f, 1.45f);
+            }
 
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
         }

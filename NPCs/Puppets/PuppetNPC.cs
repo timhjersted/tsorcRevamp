@@ -185,6 +185,23 @@ namespace tsorcRevamp.NPCs.Puppets
         /// This enlarges the puppet, armor, accessories, and custom held-weapon layer together
         /// without changing the NPC hitbox or any combat reach calculations.</summary>
         protected virtual float PuppetDrawScale => 1f;
+
+        /// <summary>Which half of the body sheet's torso/shoulder cells this puppet draws from.
+        /// Vanilla's CreateCompositeData shifts ONLY the torso and the two shoulder caps down two
+        /// rows for a female frame (`pt.Y += 2`), so on a 9x4 composite sheet male reads rows 1-2 of
+        /// columns 1-2 and female reads rows 3-4. The composite arm columns (8 and 9) are indexed by
+        /// stretch amount, not gender, and are shared by both. Exists so a boss whose sheet has
+        /// better art on one half can pick it without re-cutting the sheet.</summary>
+        protected virtual bool PuppetIsMale => true;
+
+        /// <summary>Suppresses the two static composite shoulder-cap cells (columns 1-2, row 2 male /
+        /// row 4 female on a 9x4 body sheet) for this puppet's whole draw. Set this when the sheet
+        /// draws its shoulder into the TORSO cell instead of the cap cell: vanilla draws both
+        /// unconditionally, so a sheet carrying the pad in the torso renders two overlapping
+        /// shoulders. Suppressing the cap also sidesteps vanilla hiding it on the jump frame
+        /// (CreateCompositeData case 5), so the shoulder then looks identical grounded and airborne.
+        /// Leave false for a sheet authored the vanilla way, with a bare torso and a filled cap cell.</summary>
+        internal virtual bool SuppressCompositeShoulderCaps => false;
         /// <summary>Source dimensions for the player-draw rig. Normally these mirror the NPC body,
         /// but a spectral puppet can enlarge its physical body while retaining an unscaled source
         /// that is then enlarged once by its overlay transform.</summary>
@@ -1511,7 +1528,9 @@ namespace tsorcRevamp.NPCs.Puppets
             Phase == AttackPhase.MeleeRecovery || Phase == AttackPhase.MeleeComboRecovery ||
             Phase == AttackPhase.JumpSlashRecovery || Phase == AttackPhase.AbyssSlashRecovery ||
             Phase == AttackPhase.TendrilRecovery || Phase == AttackPhase.HomingVolleyRecovery ||
-            Phase == AttackPhase.BoomerangRecovery;
+            Phase == AttackPhase.BoomerangRecovery ||
+            Phase == AttackPhase.StabRecovery || Phase == AttackPhase.SpearRecovery ||
+            Phase == AttackPhase.PierceRecovery || Phase == AttackPhase.SpiralFanRecovery;
 
         private bool IsTelemetryAttackPhase =>
             Phase != AttackPhase.Idle && Phase != AttackPhase.ClosingDistance
@@ -4686,6 +4705,17 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 case AttackPhase.TendrilSwing:
                     LockAttackFacing();
+                    // DoTendrilSwing only arms the tracked blade once, on phase entry. Resolve that
+                    // authored hand-to-tip sweep on every active frame just like MeleeAttack and
+                    // JumpSlashAttack; without this call every tendril finisher was visual-only.
+                    if (HasFireSlashVFX)
+                    {
+                        float tendrilSwingProgress = TendrilSwingTicks > 0
+                            ? 1f - PhaseTimer / (float)TendrilSwingTicks
+                            : 1f;
+                        ArmFireSlashVFX(MeleeRange, tendrilSwingProgress);
+                    }
+                    TickBladeHit();
                     if (--PhaseTimer <= 0)
                     {
                         // If the finishing swing whiffed too, a delayed echo picks up the same
@@ -6735,6 +6765,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 || phase == AttackPhase.SpearRecovery
                 || phase == AttackPhase.MeleeComboPause
                 || phase == AttackPhase.MeleeComboRecovery
+                || phase == AttackPhase.TendrilRecovery
                 || phase == AttackPhase.Idle;
             if (endsTrackedBlade)
             {
@@ -7473,8 +7504,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 // motion's fixed (start, end) arc endpoints. Telegraph/pause poses below are all
                 // expressed as a Lerp fraction of these same endpoints (not separate hardcoded
                 // angles), so flip/bias stay consistent across wind-up -> strike with no snap.
-                (float, float) Endpoints(ComboMotion motion, float a0, float a1)
+                // Base angles come from WeaponArchetypeTables.SwingArcEndpoints so the offline preview
+                // harness swings the same numbers as the game; only the per-puppet transforms below
+                // stay here, because they depend on live instance state.
+                (float, float) Endpoints(ComboMotion motion)
                 {
+                    (float a0, float a1) = WeaponArchetypeTables.SwingArcEndpoints(
+                        motion, OverheadWindupOvershoot);
                     ModifyMeleeArcEndpoints(motion, ref a0, ref a1);
                     if (UseAlternateFlip && _comboSwingFlipped)
                     {
@@ -7526,8 +7562,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     case ComboMotion.OverheadArc:
                     {
-                        var (a0, a1) = Endpoints(ComboMotion.OverheadArc,
-                            -1.3f - OverheadWindupOvershoot, 1.0f);
+                        var (a0, a1) = Endpoints(ComboMotion.OverheadArc);
 
                         if (inTel)
                         {
@@ -7551,7 +7586,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         // -1.3 would map to body row 1, whose hand offset sits BEHIND the head
                         // (X=-8) — making the swing finish over the shoulder.  -1.0 keeps it in
                         // row 2 (hand up-forward, X=+4) for a clean rising slash.
-                        var (a0, a1) = Endpoints(ComboMotion.UnderhandArc, 1.0f, -1.0f);
+                        var (a0, a1) = Endpoints(ComboMotion.UnderhandArc);
 
                         if (inTel)
                         {
@@ -7572,7 +7607,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.HorizontalSweep:
                     {
                         // Flat side-to-side: arm extends, weapon held near horizontal
-                        var (a0, a1) = Endpoints(ComboMotion.HorizontalSweep, -0.4f, 0.6f);
+                        var (a0, a1) = Endpoints(ComboMotion.HorizontalSweep);
                         if (inTel)
                         {
                             _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.25f);
@@ -7590,8 +7625,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.VerticalChop:
                     {
                         // Straight overhead → straight down (hammer)
-                        var (a0, a1) = Endpoints(ComboMotion.VerticalChop,
-                            -1.55f - OverheadWindupOvershoot, 1.4f);
+                        var (a0, a1) = Endpoints(ComboMotion.VerticalChop);
                         if (inTel)
                         {
                             _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.32f);
@@ -7628,7 +7662,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         // tick, which never actually arrives (each tick only closes part of the
                         // REMAINING distance), reading as "creeps, slows down, then just kind of
                         // stops" instead of one continuous motion.
-                        var (a0, a1) = Endpoints(ComboMotion.JoustDash, MathHelper.PiOver2, MathHelper.PiOver4);
+                        var (a0, a1) = Endpoints(ComboMotion.JoustDash);
 
                         if (inTel)
                         {
@@ -7657,7 +7691,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         break;
                     case ComboMotion.IaidoDraw:
                     {
-                        var (a0, a1) = Endpoints(ComboMotion.IaidoDraw, 1.2f, -0.5f);
+                        var (a0, a1) = Endpoints(ComboMotion.IaidoDraw);
                         if (inTel)
                         {
                             _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.15f);  // weapon held low/behind
@@ -7670,8 +7704,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                     case ComboMotion.GroundSlam:
                     {
-                        var (a0, a1) = Endpoints(ComboMotion.GroundSlam,
-                            -1.55f - OverheadWindupOvershoot, 1.5f);
+                        var (a0, a1) = Endpoints(ComboMotion.GroundSlam);
                         if (inTel)
                         {
                             _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.25f);
@@ -7699,7 +7732,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         // as JoustDash below: one continuous arc across the whole leap, instead of
                         // three separate Lerp-toward-target chains keyed off velocity.Y's sign that
                         // each converged early and then sat frozen mid-air for the rest of the leap.
-                        var (a0, a1) = Endpoints(ComboMotion.LeapSlam, -1.45f - OverheadWindupOvershoot, 1.4f);
+                        var (a0, a1) = Endpoints(ComboMotion.LeapSlam);
 
                         if (inTel)
                         {
@@ -7719,7 +7752,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         // level out to the thrust angle and hold it through the whole airborne arc for
                         // the landing contact. Same fix as LeapSlam above — was three Lerp-toward-target
                         // chains keyed off velocity.Y that never actually arrived anywhere.
-                        var (a0, a1) = Endpoints(ComboMotion.LeapThrust, MathHelper.PiOver2 * 0.8f, MathHelper.PiOver4);
+                        var (a0, a1) = Endpoints(ComboMotion.LeapThrust);
 
                         if (inTel)
                         {
@@ -7740,8 +7773,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.Feint:
                     {
                         // Raise exactly like a real overhead attack, then hold the apex as bait.
-                        var (a0, a1) = Endpoints(ComboMotion.Feint,
-                            -1.3f - OverheadWindupOvershoot, 1.0f);
+                        var (a0, a1) = Endpoints(ComboMotion.Feint);
                         _weaponRotation = inTel && UseLogicalMeleeTelegraphs
                             ? LogicalSwingWindup(a1, a0, comboTelegraphT)
                             : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
@@ -7749,8 +7781,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                     case ComboMotion.DoubleSpinSlam:
                     {
-                        var (a0, a1) = Endpoints(ComboMotion.DoubleSpinSlam,
-                            -1.3f - OverheadWindupOvershoot, 1.4f);
+                        var (a0, a1) = Endpoints(ComboMotion.DoubleSpinSlam);
                         if (inTel)
                         {
                             _weaponRotation = UseLogicalMeleeTelegraphs
@@ -8023,8 +8054,19 @@ namespace tsorcRevamp.NPCs.Puppets
         /// also pose a one-off echo/duplicate swinging independently of the puppet's own state.
         /// </summary>
         private int BodyRowFromWeaponRotation(float weaponRotation, int direction)
+            => BodyRowFromWeaponRotation(weaponRotation, direction, MeleeWeaponRotationOffset);
+
+        /// <summary>
+        /// Which Use1-Use4 body row matches a weapon angle, so the torso pose tracks the blade
+        /// instead of snapping between four fixed frames. Pitch is 1 = straight up, 0 = straight down.
+        ///
+        /// Public and static so the offline body renderer
+        /// (Documentation/tools/SwingPreview) poses the torso from the same thresholds the game uses
+        /// — a copied set would drift and quietly preview a different pose than ships.
+        /// </summary>
+        public static int BodyRowFromWeaponRotation(float weaponRotation, int direction, float meleeWeaponRotationOffset)
         {
-            float visualAngle = weaponRotation + MeleeWeaponRotationOffset * direction;
+            float visualAngle = weaponRotation + meleeWeaponRotationOffset * direction;
             float pitch = (1f - (float)Math.Sin(visualAngle)) / 2f;
             if (pitch > 0.95f)
             {
@@ -8326,7 +8368,7 @@ namespace tsorcRevamp.NPCs.Puppets
             _puppet.active  = true;
             _puppet.whoAmI  = 0;
             _puppet.gravDir = 1f;
-            _puppet.Male    = true;
+            _puppet.Male    = PuppetIsMale;
             _puppet.skinColor = PuppetSkinColor;
             _puppet.eyeColor = PuppetEyeColor;
             _puppet.skinVariant = PuppetSkinVariant;
@@ -10110,6 +10152,18 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
                 case AttackPhase.BoomerangRecovery:
                     recoveryTicks = BoomerangRecoveryTicks;
+                    break;
+                case AttackPhase.StabRecovery:
+                    recoveryTicks = StabRecoveryTicks;
+                    break;
+                case AttackPhase.SpearRecovery:
+                    recoveryTicks = SpearRecoveryTicks;
+                    break;
+                case AttackPhase.PierceRecovery:
+                    recoveryTicks = PierceRecoveryTicks;
+                    break;
+                case AttackPhase.SpiralFanRecovery:
+                    recoveryTicks = SpiralFanRecoveryTicks;
                     break;
                 default:
                     recoveryTicks = MeleeRecoveryTicks;

@@ -32,8 +32,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetDefaults()
         {
             Projectile.hostile = true;
-            Projectile.width = 64;
-            Projectile.height = 58;
+            Projectile.width = 128;
+            Projectile.height = 116;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 60;
@@ -55,9 +55,10 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 5; i++)
             {
-                Vector2 position = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-22f, 22f), Main.rand.NextFloat(-18f, 0f));
+                Vector2 position = Projectile.Bottom + new Vector2(
+                    Main.rand.NextFloat(-44f, 44f), Main.rand.NextFloat(-36f, 0f));
                 int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
                 Dust dust = Dust.NewDustPerfect(position, type,
                     new Vector2(Direction * Main.rand.NextFloat(0.8f, 2.2f), Main.rand.NextFloat(-4.2f, -1.6f)),
@@ -82,7 +83,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreDraw(ref Color lightColor)
         {
             LoadAssets();
-            Rectangle source = new Rectangle(0, 0, 72, 68);
+            Rectangle source = new Rectangle(0, 0, 144, 136);
             float progress = MathHelper.Clamp(1f - Projectile.timeLeft / (float)Lifetime, 0f, 1f);
             float opacity = MathHelper.Clamp(Projectile.timeLeft / 8f, 0.35f, 1f);
 

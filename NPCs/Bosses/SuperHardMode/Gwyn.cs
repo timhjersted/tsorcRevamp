@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int HeadArmorItemType => ModContent.ItemType<LordGwynHelm>();
         protected override int BodyArmorItemType => ModContent.ItemType<LordGwynArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<LordGwynLeggings>();
-        protected override float PuppetDrawScale => 1.2f;
+        protected override float PuppetDrawScale => 1.1f;
         // The composite body sheet supplies the gray sleeve, gold wrist, and brown hand. Its
         // transparent joins still use the synthetic player's skin substrate, so match that to
         // Gwyn's dark-brown authored palette instead of PuppetNPC's bright orange invader default.
@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Wrath of Gwyn (below 30% HP) turns the dial up: faster, more aggressive.
         protected override float TopSpeed => _wrathActive ? 3.2f : 2.6f;
         protected override float Acceleration => _wrathActive ? 0.19f : 0.14f;
-        protected override int MeleeComboChance => _wrathActive ? 95 : 85;
+        protected override int MeleeComboChance => _wrathActive ? 82 : 75;
 
         // ── Wings (storm-only flight; hidden whenever Gwyn is grounded) ─────────
         // Angel wings for the god of sunlight — traded for flame wings once the Wrath ignites.
@@ -107,14 +107,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   ClosingDistanceMaxTicks        => 150;
         protected override float ClosingDistanceSpeedMult       => 1.75f;
 
-        ///<summary>Melee gets 85-95% of ticks when he is already on top of the player, but only 60%
-        ///when he is not. This is the valve that keeps the ranged kit alive. Gwyn's bespoke ranged
-        ///attacks (Firestorm, Descent, Spear Storm, Gravity of the Sun, ...) only roll while the
+        ///<summary>Melee gets most ticks when he is already on top of the player, but no longer
+        ///starves the bespoke set-pieces during Wrath. Gwyn's ranged attacks
+        ///(Firestorm, Descent, Spear Storm, Gravity of the Sun, ...) only roll while the
         ///phase is Idle, and entering ClosingDistance locks the phase for up to 150 ticks — so
-        ///inheriting the in-range chance out here would hand melee ~90% of the out-of-range ticks
-        ///and reduce a boss with thirteen ranged set-pieces to a chaser. 60 leaves a real share of
+        ///inheriting the in-range chance out here would hand melee most of the out-of-range ticks
+        ///and reduce a boss with thirteen ranged set-pieces to a chaser. 50 leaves a real share of
         ///ticks for them while still meaning most gaps end in him arriving.</summary>
-        protected override int   RangedStartMeleeComboChance    => 60;
+        protected override int   RangedStartMeleeComboChance    => 50;
         // Restores the authored 12-44 telegraph spread. At the inherited Max(30, tel * 1.35) every
         // windup below 23 ticks was flattened to the same 30, so his quick swings, pressure strings
         // and heavy punishes all opened identically and there was no rhythm to read.
@@ -144,7 +144,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // The repaired armor sheet now supplies complete front and back composite-arm frames,
         // allowing the greatsword pose to retain smooth rotation without exposing player skin.
         protected override bool UseCompositeArmSwing => true;
-        protected override bool UseTwoHandedCompositeSwing => true;
+        protected override bool UseTwoHandedCompositeSwing => !IsDashGrabSequence;
+        protected override bool UseCompositeArmForAdditionalPhase => IsDashGrabSequence;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
         protected override bool HasSlashVFX => false; // Uses HasFireSlashVFX (shader-lit fire slash) instead.
         protected override float WalkAnimationSpeedMultiplier => 0.35f;
@@ -297,7 +298,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     GS(ComboMotion.LeapSlam,   25, 22, 14, 1.3f, 1.2f),
                     GS(ComboMotion.GroundSlam,  0, 24,  0, 1.5f, 1.3f, 0.35f),
                 } },
-            // 10 — Wrath Flurry: the enrage full-commit chain (weighted up only at low HP)
+            // 10 — Wrath Flurry: the full-commit chain unlocked by the <30% Wrath phase
             new MeleeCombo { Name = "Wrath Flurry", BaseWeight = 25, Preferred = ComboRangeBand.Any,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 300, RecoveryTicks = 45,
                 HeavyCommit = true, HyperArmor = true,
@@ -414,6 +415,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         ///inside MeleeRange * 1.05, so it crosses whatever the gap actually is.</summary>
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
+            //This was described as the enrage chain, but it was selectable for the entire fight.
+            //Keep one unmistakable melee reveal for the actual Wrath phase.
+            if (combo.Name == "Wrath Flurry")
+            {
+                return _wrathActive;
+            }
             if (combo.Name == "Cindering Leap" || combo.Name == "Roll-Catch")
             {
                 return distance <= 300f;
@@ -482,6 +489,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 1;
+            //The Wrath dash is fast enough that the normal ten-position cache reads as a few
+            //disconnected ghosts. Match Artorias's proven pierce cache for a continuous rush trail.
+            NPCID.Sets.TrailCacheLength[NPC.type] = 20;
+            NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
@@ -549,6 +560,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write((byte)_spearThrowsThisJump);
             writer.Write((byte)_spearFollowupsRemaining);
             writer.Write(_spearAirTargetSpeed);
+            writer.Write(_wrathActive);
+            writer.Write((short)_stormTimer);
+            writer.Write((short)_gravityTimer);
+            writer.Write((short)_pullComboNudge);
+            writer.Write(_dashGrabEndX);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -560,6 +576,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _spearThrowsThisJump = reader.ReadByte();
             _spearFollowupsRemaining = reader.ReadByte();
             _spearAirTargetSpeed = reader.ReadSingle();
+            _wrathActive = reader.ReadBoolean();
+            _stormTimer = reader.ReadInt16();
+            _gravityTimer = reader.ReadInt16();
+            _pullComboNudge = reader.ReadInt16();
+            _dashGrabEndX = reader.ReadSingle();
         }
 
         public override void AI()
@@ -568,6 +589,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.damage = TooEarly ? TooEarlyDamage : (_advanceTimer > 0 ? MeleeDamage : 0);
 
             base.AI();
+            TickLordEmbraceRecovery();
             TickSpearJumpChoreography();
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
@@ -656,6 +678,207 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 Lighting.AddLight(NPC.Center, 1f, 0.7f, 0.25f);
             }
+        }
+
+        // ── Lord's Embrace (Wrath-exclusive full-arena dash grab) ────────────────
+        // Reuses the proven Artorias pierce/impale state machine, but the weapon is suppressed and
+        // the hand itself is the threat. The target position stays live during the readable windup,
+        // then locks 100px beyond the player when the dash commits. A hit stops Gwyn immediately;
+        // a miss ends at that cached overshoot instead of carrying him blindly across the arena.
+        protected override bool  CanPierce                 => _wrathActive;
+        protected override float PierceRange               => 2400f;
+        protected override float MinPierceRange            => 280f;
+        protected override int   PierceChance               => 5;
+        protected override int   PierceTelegraphTicks       => 45;
+        protected override int   PierceDashTicks            => 90;
+        protected override float PierceDashSpeed            => 32f;
+        protected override int   PierceRecoveryTicks        => 180;
+        protected override int   PierceStabChance            => 100;
+        protected override int   PierceStabRaiseTicks       => 120;
+        protected override int   PierceStabRaiseAnimTicks   => 18;
+        protected override int   PierceStabFlickTicks       => 16;
+        protected override int   PierceCooldownAfterUse     => 900;
+
+        const float LordEmbraceMaxHealthDamageFraction = 0.60f;
+        const float DashGrabOvershoot = 100f;
+        const float DashGrabFlickDistance = 50f * 16f;
+        float _dashGrabEndX;
+
+        bool IsDashGrabSequence =>
+            Phase == AttackPhase.PierceTelegraph || Phase == AttackPhase.PierceDash ||
+            Phase == AttackPhase.PierceStabHold || Phase == AttackPhase.PierceStabFlick;
+
+        protected override void DoPierceWindup(int elapsed)
+        {
+            Player target = Main.player[NPC.target];
+            int direction = target.Center.X < NPC.Center.X ? -1 : 1;
+            _dashGrabEndX = target.Center.X + direction * DashGrabOvershoot;
+
+            if (elapsed == 0)
+            {
+                SetAttackLabel("Lord's Embrace", PierceTelegraphTicks + PierceDashTicks
+                    + PierceStabRaiseTicks + PierceStabFlickTicks);
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.8f, Pitch = -0.55f }, NPC.Center);
+                }
+            }
+
+            if (!Main.dedServ)
+            {
+                float progress = MathHelper.Clamp(elapsed / (float)PierceTelegraphTicks, 0f, 1f);
+                Vector2 hand = PuppetHandPosition;
+                int count = 1 + (int)(progress * 3f);
+                for (int i = 0; i < count; i++)
+                {
+                    Vector2 position = hand + Main.rand.NextVector2Circular(10f + progress * 18f, 10f + progress * 18f);
+                    Dust ember = Dust.NewDustPerfect(position,
+                        Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame,
+                        (hand - position) * 0.08f, 45, default, Main.rand.NextFloat(0.9f, 1.35f));
+                    ember.noGravity = true;
+                }
+            }
+
+            if (elapsed >= PierceTelegraphTicks - 1 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                NPC.netUpdate = true;
+            }
+        }
+
+        protected override void DoPierceDashTick()
+        {
+            AfterimageTicks = Math.Max(AfterimageTicks, 3);
+
+            if (!Main.dedServ)
+            {
+                Vector2 wake = NPC.Center - new Vector2(NPC.direction * 18f, 0f);
+                Dust ember = Dust.NewDustPerfect(wake,
+                    Main.rand.NextBool(3) ? DustID.RedTorch : DustID.Torch,
+                    -NPC.velocity * Main.rand.NextFloat(0.10f, 0.20f)
+                        + Main.rand.NextVector2Circular(0.8f, 0.8f),
+                    70, default, Main.rand.NextFloat(1f, 1.45f));
+                ember.noGravity = true;
+            }
+
+            bool reachedOvershoot = NPC.direction > 0
+                ? NPC.Center.X >= _dashGrabEndX
+                : NPC.Center.X <= _dashGrabEndX;
+            if (reachedOvershoot)
+            {
+                NPC.Center = new Vector2(_dashGrabEndX, NPC.Center.Y);
+                NPC.velocity.X = 0f;
+                EnterPhase(AttackPhase.PierceRecovery, PierceRecoveryTicks);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.netUpdate = true;
+                }
+            }
+        }
+
+        protected override void OnPierceContact(Player target, bool isStab)
+        {
+            var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.ImpaleFreezeTimer = 10;
+            modPlayer.ImpaleWorldPosition = PuppetHandPosition;
+            ReportAttackHit();
+
+            if (!Main.dedServ)
+            {
+                SoundEngine.PlaySound(SoundID.NPCHit13 with { Volume = 0.75f, Pitch = -0.35f }, target.Center);
+                UsefulFunctions.ScreenShake(target.Center, 8f, 14);
+            }
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                NPC.netUpdate = true;
+            }
+        }
+
+        protected override void DoPierceStabHoldTick(Player target, float raiseProgress01)
+        {
+            if (target.dead)
+            {
+                target.GetModPlayer<tsorcRevampPlayer>().ImpaleFreezeTimer = 0;
+                return;
+            }
+
+            Vector2 holdPosition = PuppetHandPosition + new Vector2(NPC.direction * 4f, -4f);
+            var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.ImpaleFreezeTimer = 10;
+            modPlayer.ImpaleWorldPosition = holdPosition;
+
+            if (!Main.dedServ)
+            {
+                float growth = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(raiseProgress01, 0f, 1f));
+                int count = 2 + (int)(growth * 7f);
+                float radius = MathHelper.Lerp(12f, 58f, growth);
+                for (int i = 0; i < count; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2Circular(radius, radius);
+                    Vector2 velocity = offset.SafeNormalize(-Vector2.UnitY)
+                        * Main.rand.NextFloat(0.6f, 2.4f) + new Vector2(0f, -1.2f - growth * 1.8f);
+                    Dust ember = Dust.NewDustPerfect(holdPosition + offset,
+                        Main.rand.NextBool(3) ? DustID.GoldFlame : DustID.Torch,
+                        velocity, 45, new Color(255, 116, 24), Main.rand.NextFloat(0.9f, 1.7f));
+                    ember.noGravity = true;
+                }
+                Lighting.AddLight(holdPosition, 1.1f + growth * 0.7f, 0.42f + growth * 0.35f, 0.08f);
+            }
+        }
+
+        protected override void OnPierceFlick(Player target)
+        {
+            var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.ImpaleFreezeTimer = 0;
+            if (!target.active || target.dead)
+            {
+                return;
+            }
+
+            Vector2 explosionCenter = target.Center;
+            Vector2 away = new Vector2(NPC.direction, -0.12f).SafeNormalize(new Vector2(NPC.direction, 0f));
+
+            if (!Main.dedServ)
+            {
+                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1f, Pitch = -0.6f }, explosionCenter);
+                UsefulFunctions.ScreenShake(explosionCenter, 20f, 30);
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int damage = Math.Max(1,
+                    (int)Math.Ceiling(target.statLifeMax2 * LordEmbraceMaxHealthDamageFraction));
+                target.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), damage,
+                    NPC.direction, dodgeable: false);
+                target.AddBuff(BuffID.OnFire, 10 * 60);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), explosionCenter + new Vector2(0f, 48f),
+                    Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.GwynDescentColumn>(),
+                    0, 0f, Main.myPlayer, Projectiles.Enemy.GwynDescentColumn.ExplosionOnlyMode);
+            }
+
+            if (!target.dead)
+            {
+                target.Center += away * DashGrabFlickDistance;
+                target.velocity = away * 24f;
+            }
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                NPC.netUpdate = true;
+            }
+        }
+
+        void TickLordEmbraceRecovery()
+        {
+            if (Phase != AttackPhase.PierceRecovery)
+                return;
+
+            Player target = Main.player[NPC.target];
+            if (target == null || !target.active || target.dead)
+                return;
+
+            int direction = target.Center.X < NPC.Center.X ? -1 : 1;
+            NPC.direction = direction;
+            NPC.spriteDirection = direction;
+            NPC.velocity.X = direction * TopSpeed * 0.35f;
         }
 
         // ── Flash Step (sunlight teleport — connective pressure) ─────────────────
@@ -902,7 +1125,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // He ascends on his wings (angel wings; flame wings once the Wrath ignites) and hangs aloft
         // while a dozen spear-nodes ring the player in three sequenced waves — each node telegraphs,
         // fires its spear, and dissipates. Landing exhausts him: the recovery is the reward.
-        int _stormCd = 600;
+        int _stormCd = 420;
         int _stormTimer;
         const int StormNodeDamage = 40;
 
@@ -946,7 +1169,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     _stormTimer = 0;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        _stormCd = 1400 + Main.rand.Next(600);
+                        _stormCd = _wrathActive
+                            ? 660 + Main.rand.Next(240)
+                            : 900 + Main.rand.Next(300);
                         NPC.netUpdate = true;
                     }
                 }
@@ -968,7 +1193,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             Player target = Main.player[NPC.target];
             float dist = NPC.Distance(target.Center);
-            if (!target.dead && target.active && dist > 250f && dist < 1000f && Main.rand.NextBool(150))
+            int stormRoll = _wrathActive ? 65 : 90;
+            if (!target.dead && target.active && dist > 250f && dist < 1000f && Main.rand.NextBool(stormRoll))
             {
                 _stormTimer = 1;
                 SetAttackLabel("Sunlight Spear Storm", 240);
@@ -981,24 +1207,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         // ── Gravity of the Sun (#13 — the keystone anti-kite) ────────────────────
         // He plants and a golden singularity forms at his chest: 40t of light spiralling inward (the
-        // read), then a GwynGravityWell drags every player radially toward him for ~2s. Resistible by
-        // holding away or rolling — but a stationary caster gets reeled straight into his melee, and
-        // the reactive hook greets whoever arrives with the pressure string (_pullComboNudge).
+        // read), then a GwynGravityWell drags every player radially toward him for ~4s. The cast
+        // releases Gwyn as soon as the well opens, so the field can feed directly into his next
+        // attack. Resistible by holding away or rolling — but a stationary caster gets reeled into
+        // his melee, where the reactive hook answers with the pressure string (_pullComboNudge).
         int _gravityCd = 500;
         int _gravityTimer;
         int _pullComboNudge;
+        const int GravityChargeTicks = 40;
+        const int GravityWellTicks = 240;
+        const int GravitySequenceTicks = GravityChargeTicks + GravityWellTicks;
 
         void TickGravity()
         {
             if (_gravityTimer > 0)
             {
                 _gravityTimer++;
-                NPC.velocity.X *= 0.75f; //planted
 
-                if (_gravityTimer <= 40)
+                if (_gravityTimer <= GravityChargeTicks)
                 {
+                    NPC.velocity.X *= 0.75f; //planted only while the singularity forms
                     //The singularity forming: gold spiralling tightly inward to his chest
-                    float progress = _gravityTimer / 40f;
+                    float progress = _gravityTimer / (float)GravityChargeTicks;
                     int count = 1 + (int)(progress * 3f);
                     for (int i = 0; i < count; i++)
                     {
@@ -1009,19 +1239,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Dust d = Dust.NewDustPerfect(pos, type, (NPC.Center - pos) * 0.1f, 60, default, 1.2f);
                         d.noGravity = true;
                     }
-                    if (_gravityTimer == 40 && Main.netMode != NetmodeID.MultiplayerClient)
+                    if (_gravityTimer == GravityChargeTicks)
                     {
-                        SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.7f, Pitch = -0.6f }, NPC.Center);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.Enemy.GwynGravityWell>(), 0, 0f, Main.myPlayer, NPC.whoAmI, 120f);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.7f, Pitch = -0.6f }, NPC.Center);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                                ModContent.ProjectileType<Projectiles.Enemy.GwynGravityWell>(), 0, 0f, Main.myPlayer,
+                                NPC.whoAmI, GravityWellTicks);
+                            _pullComboNudge = GravityWellTicks;
+                        }
+
+                        //The field is now autonomous. Free the combat machine for the next tick and
+                        //stop this helper from damping movement during whatever attack follows.
+                        if (Phase == AttackPhase.NovaRecovery)
+                        {
+                            EnterPhase(AttackPhase.Idle, 0);
+                        }
+                        NPC.netUpdate = true;
                     }
                 }
                 Lighting.AddLight(NPC.Center, 1f, 0.85f, 0.35f);
 
-                if (_gravityTimer >= 160)
+                if (_gravityTimer >= GravitySequenceTicks)
                 {
                     _gravityTimer = 0;
-                    _pullComboNudge = 90; //whoever got reeled in meets the 3-hit
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         _gravityCd = 800 + Main.rand.Next(300);
@@ -1049,9 +1291,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (!gPlayer.dead && gPlayer.active && gDist > 200f && gDist < 1100f && Main.rand.NextBool(130))
             {
                 _gravityTimer = 1;
-                SetAttackLabel("Gravity of the Sun", 170);
+                //The named cast ends when the autonomous well opens; subsequent attacks should get
+                //their own telemetry identity even though the field remains active behind them.
+                SetAttackLabel("Gravity of the Sun", GravityChargeTicks + 10);
                 SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.7f, Pitch = -0.7f }, NPC.Center);
-                EnterPhase(AttackPhase.NovaRecovery, 165); //park the ground machine for the channel
+                EnterPhase(AttackPhase.NovaRecovery, GravityChargeTicks + 5); //only park him for the cast
                 NPC.netUpdate = true;
             }
         }
@@ -1162,7 +1406,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // finds), hangs a beat to aim, then DIVES at the player's marked position trailing golden
         // echoes — ending in a flaming greatsword slash where they stood. The wings only ever show
         // while airborne (ShowWingsWhenGrounded is false — his cape keeps the grounded silhouette).
-        int _plungeCd = 700;
+        int _plungeCd = 360;
         int _plungeTimer;
         int _plungePhase;
         Vector2 _plungeTarget;
@@ -1193,7 +1437,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             Player player = Main.player[NPC.target];
             float dist = NPC.Distance(player.Center);
-            if (!player.dead && player.active && dist > 150f && dist < 900f && Main.rand.NextBool(120))
+            if (!player.dead && player.active && dist > 150f && dist < 900f && Main.rand.NextBool(75))
             {
                 _plungeTimer = 1;
                 _plungePhase = 0;
@@ -1325,7 +1569,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.noGravity = false;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                _plungeCd = 800 + Main.rand.Next(400);
+                _plungeCd = 480 + Main.rand.Next(240);
                 NPC.netUpdate = true;
             }
         }
@@ -1685,6 +1929,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override bool DrawSpecialHeldWeapon(ref PlayerDrawSet drawInfo)
         {
+            // Lord's Embrace is deliberately bare-handed. Returning true tells PuppetNPC that this
+            // phase supplied its own held-weapon presentation, so the greatsword is not drawn over
+            // the outstretched grabbing arm.
+            if (IsDashGrabSequence)
+                return true;
+
             bool bareHandGrasp = Phase == AttackPhase.TendrilTelegraph
                 || Phase == AttackPhase.TendrilReach;
             if (bareHandGrasp)
@@ -1725,6 +1975,43 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 texture, hand - Main.screenPosition, frame, Color.White, aim.ToRotation(), origin,
                 NPC.scale * 0.6f, effects, 0));
             return true;
+        }
+
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            base.PostDraw(spriteBatch, screenPos, drawColor);
+
+            if (!IsDashGrabSequence || Main.dedServ)
+                return;
+
+            float scale;
+            float opacity = 1f;
+            if (Phase == AttackPhase.PierceTelegraph)
+            {
+                float progress = 1f - PhaseTimer / (float)Math.Max(1, PierceTelegraphTicks);
+                scale = MathHelper.Lerp(0.86f, 1.18f, MathHelper.SmoothStep(0f, 1f, progress));
+            }
+            else if (Phase == AttackPhase.PierceStabHold)
+            {
+                float growth = 1f - PhaseTimer / (float)Math.Max(1, PierceStabRaiseTicks);
+                scale = MathHelper.Lerp(1.18f, 2.05f, MathHelper.SmoothStep(0f, 1f, growth));
+            }
+            else if (Phase == AttackPhase.PierceStabFlick)
+            {
+                float release = 1f - PhaseTimer / (float)Math.Max(1, PierceStabFlickTicks);
+                scale = MathHelper.Lerp(2.05f, 1.25f, MathHelper.SmoothStep(0f, 1f, release));
+                opacity = MathHelper.Lerp(1f, 0.45f, release);
+            }
+            else
+            {
+                scale = 1.22f;
+            }
+
+            Vector2 handPosition = PuppetHandPosition + new Vector2(NPC.direction * 4f, -2f);
+            float rotation = NPC.direction > 0 ? 0f : MathHelper.Pi;
+            Projectiles.Enemy.GwynFlameGrasp.DrawHandAura(handPosition, rotation,
+                scale * NPC.scale, opacity, drawUnblockableOutline: true);
+            Lighting.AddLight(handPosition, 1.15f * opacity, 0.24f * opacity, 0.06f * opacity);
         }
 
         ///<summary>Lightning gathers on the raised blade through the windup — the telegraph read.</summary>
@@ -1769,7 +2056,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 ModContent.ProjectileType<Projectiles.Enemy.GwynLightningSpear>(), LightningSpearDamage, 4f, Main.myPlayer);
 
             _spearThrowsThisJump++;
-            _spearFollowupsRemaining = _spearThrowsThisJump == 1 && Main.rand.NextBool(2) ? 1 : 0;
+            if (_spearThrowsThisJump == 1)
+            {
+                //Below half health, the signature cast is a guaranteed 3-4 throw sequence. Before
+                //that breakpoint it retains the lighter 1-2 throw pattern.
+                _spearFollowupsRemaining = NPC.life <= NPC.lifeMax * 0.50f
+                    ? Main.rand.Next(2, 4)
+                    : (Main.rand.NextBool(2) ? 1 : 0);
+            }
             NPC.netUpdate = true;
         }
 
@@ -1894,17 +2188,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   TendrilChance            => 5;
         protected override int   TendrilCooldownAfterUse  => 480;
         protected override int   TendrilTelegraphTicks    => 30;
-        protected override int   TendrilReachTicks        => 60;
+        protected override int   TendrilReachTicks        => 54;
+        protected override int   TendrilSwingArcTicks     => 22;
+        protected override int   TendrilSwingHoldTicks    => 6;
+        protected override int   TendrilSwingTicks        => 20;
+        protected override int   TendrilRecoveryTicks     => 38;
 
         const int GraspDamage = 70;
+        internal Vector2 GraspHandPosition => PuppetHandPosition;
 
         protected override void DoTendrilTelegraphTick(int elapsed)
         {
+            if (elapsed == 0)
+            {
+                SetAttackLabel("Lord's Grasp", TendrilTelegraphTicks + TendrilReachTicks
+                    + TendrilSwingArcTicks + TendrilSwingHoldTicks + TendrilSwingTicks);
+            }
             if (Main.dedServ)
             {
                 return;
             }
-            Vector2 handPos = NPC.Center + new Vector2(NPC.direction * 20f, -6f);
+            Vector2 handPos = GraspHandPosition;
             int count = 1 + elapsed / 6;
             for (int i = 0; i < count; i++)
             {
@@ -1917,14 +2221,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoTendrilLaunch()
         {
-            SetAttackLabel("Lord's Grasp", 100);
             SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.7f, Pitch = -0.3f }, NPC.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
             Player target = Main.player[NPC.target];
-            Vector2 origin = NPC.Center + new Vector2(NPC.direction * (NPC.width * 0.5f + 10f), -NPC.height * 0.3f);
+            Vector2 origin = GraspHandPosition;
             Vector2 vel = UsefulFunctions.Aim(origin, target.Center, 13f);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
                 ModContent.ProjectileType<Projectiles.Enemy.GwynFlameGrasp>(), GraspDamage, 8f, Main.myPlayer, NPC.whoAmI);

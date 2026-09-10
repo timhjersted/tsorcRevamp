@@ -195,10 +195,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             float progress, float opacity)
         {
             LoadAssets();
+            // 2px blocks, not the 5px default: that is the block size the arc was tuned at in the
+            // offline preview (AbyssSlashArcV2), and the shader's PixelateShaderUV reads it via
+            // PixelGrid.
             Draw(swordSwipeEffect, "ArtoriasSwordSwipe", marbleNoise, slashFibers,
                 center, size, rotation, new Color(8, 2, 20), new Color(102, 32, 176),
                 new Color(232, 68, 198), opacity, progress, 1f, 1f,
-                BlendState.AlphaBlend, fullTexture: true);
+                BlendState.AlphaBlend, fullTexture: true, pixelBlockSize: 2f);
         }
 
         internal static void DrawOrb(Vector2 center, Vector2 size, float rotation,

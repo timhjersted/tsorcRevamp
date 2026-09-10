@@ -37,7 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int HeadArmorItemType => ModContent.ItemType<ArtoriasHelmet>();
         protected override int BodyArmorItemType => ModContent.ItemType<ArtoriasArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<ArtoriasGreaves>();
-        protected override float PuppetDrawScale => 1.2f;
+        protected override float PuppetDrawScale => 1.1f;
         protected override Color PuppetSkinColor => new Color(20, 23, 38);
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyArtoriasGreatsword>();
@@ -54,6 +54,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int MeleeRecoveryTicks => 30;
         protected override int MeleeComboInterStepLingerTicks => 15;
         protected override int MeleeRecoveryLingerTicks => 30;
+        // Ground Pound resolves on real ground contact instead of a tick countdown: this enables the
+        // predictive downswing (UpdateLeapSlamPose projects the landing a few frames ahead so the
+        // blade arrives flat as the feet touch) and the OnLeapSlamLanded hook below.
+        protected override bool UseLandingTimedLeapSlam => true;
 
         protected override void ModifyMeleeArcEndpoints(
             ComboMotion motion, ref float startRotation, ref float endRotation)
@@ -105,19 +109,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 MeleeComboStep slam = combo.Steps[0];
                 slam.Motion = ComboMotion.LeapSlam;
                 slam.DamageMult = 0.8f;
+                // GroundSlam's authored 24 ticks were sized for a chop from a standing pose. A leap
+                // is airborne for 2 * LeapAttackUpSpeed / gravity = 2 * 9.5 / 0.3 = ~63 ticks before
+                // it can touch down at all, so the step's timer used to expire roughly 39 ticks short
+                // and resolve the "pound" in mid-air. 90 matches every other authored LeapSlam in the
+                // repo and leaves headroom for the horizontal travel on top of the arc.
+                slam.AttackTicks = 90;
                 combo.Steps[0] = slam;
             }
         }
 
-        // Ground Pound's landing hit is the only LeapSlam-motion step in Artorias's moveset, so this
-        // fires exactly once per use: a shockwave-style impact under the boss when the slam connects.
-        protected override void DoComboMeleeHit(MeleeComboStep step)
+        // Ground Pound is the only LeapSlam-motion step in Artorias's moveset, so this fires exactly
+        // once per use: a shockwave-style impact under the boss the moment the slam actually touches
+        // down. It hangs off OnLeapSlamLanded rather than DoComboMeleeHit because that hook only runs
+        // on a real landing - a leap that times out airborne (blocked, or the player ran out of
+        // reach) now ends with no ground effect instead of detonating a shockwave in open sky.
+        protected override void OnLeapSlamLanded(MeleeComboStep step)
         {
-            if (step.Motion == ComboMotion.LeapSlam)
-            {
-                SpawnLandingImpactVFX(NPC.Bottom, 86f, 68f);
-            }
-            base.DoComboMeleeHit(step);
+            SpawnLandingImpactVFX(NPC.Bottom, 86f, 68f);
+            base.OnLeapSlamLanded(step);
         }
 
         protected override bool UseCompositeArmForAdditionalPhase =>
@@ -138,7 +148,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // snap back to a 4-frame Use pose underneath a blade that hasn't moved.
             Phase == AttackPhase.JumpSlashRecovery || Phase == AttackPhase.AbyssSlashRecovery ||
             Phase == AttackPhase.TendrilRecovery || Phase == AttackPhase.HomingVolleyRecovery ||
-            Phase == AttackPhase.BoomerangRecovery;
+            Phase == AttackPhase.BoomerangRecovery ||
+            Phase == AttackPhase.PierceRecovery || Phase == AttackPhase.SpiralFanRecovery;
 
         protected override int MeleeDamage => 55;
         protected override int RangedDamage => 0; // unused, no ranged weapon

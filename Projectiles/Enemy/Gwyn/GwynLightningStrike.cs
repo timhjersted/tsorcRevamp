@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         const int TelegraphTicks = 40;
         const int StrikeTicks = 12;
-        const int FloorSparkTiles = 12;
+        const int FloorSparkTiles = 36;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> judgmentEffect;

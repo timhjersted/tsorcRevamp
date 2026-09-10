@@ -333,24 +333,62 @@ namespace tsorcRevamp.NPCs.Puppets
         private static RangedComboShot R(int pause, float spread = 0f, float speed = 1f, int count = 1)
             => new RangedComboShot { PauseBefore = pause, SpreadDegrees = spread, SpeedMult = speed, ProjectileCount = count };
 
+        /// <summary>
+        /// Base start/end rotation of each motion's visible swing arc, before any per-puppet transform
+        /// (ModifyMeleeArcEndpoints, alternate-flip, aim bias) — those stay with the caller.
+        ///
+        /// Lives here rather than inline in PuppetNPC.TickWeaponAnim so the offline preview harness
+        /// (Documentation/tools/SwingPreview) swings the SAME numbers the game does. A hand-copied
+        /// table is the failure mode the VFX preview harness documents: it drifts within about three
+        /// tweaks and then quietly previews a swing nobody ships.
+        ///
+        /// NOT the same table as PuppetNPC.ComboStepStartRotation, and do not merge them. That one
+        /// answers "where does the NEXT step's arc begin" for the inter-step pause handoff, and
+        /// deliberately differs — Feint parks at its wind-up because a feint never completes the
+        /// swing, and JoustDash has no entry there at all.
+        /// </summary>
+        public static (float Start, float End) SwingArcEndpoints(ComboMotion motion, float overheadWindupOvershoot)
+        {
+            switch (motion)
+            {
+                case ComboMotion.OverheadArc:    return (-1.3f - overheadWindupOvershoot, 1.0f);
+                case ComboMotion.UnderhandArc:   return (1.0f, -1.0f);
+                case ComboMotion.HorizontalSweep: return (-0.4f, 0.6f);
+                case ComboMotion.VerticalChop:   return (-1.55f - overheadWindupOvershoot, 1.4f);
+                case ComboMotion.GroundSlam:     return (-1.55f - overheadWindupOvershoot, 1.5f);
+                case ComboMotion.JoustDash:      return (MathHelper.PiOver2, MathHelper.PiOver4);
+                case ComboMotion.IaidoDraw:      return (1.2f, -0.5f);
+                case ComboMotion.LeapSlam:       return (-1.45f - overheadWindupOvershoot, 1.4f);
+                case ComboMotion.LeapThrust:     return (MathHelper.PiOver2 * 0.8f, MathHelper.PiOver4);
+                case ComboMotion.Feint:          return (-1.3f - overheadWindupOvershoot, 1.0f);
+                case ComboMotion.DoubleSpinSlam: return (-1.3f - overheadWindupOvershoot, 1.4f);
+                default:                         return (0f, 0f);
+            }
+        }
+
         // ─────────────────────────────────────────────────────────────────────
         // MELEE ARCHETYPE TABLES (5 combos each)
         // Colors: white=quick, cyan=combo, yellow=committed, orange=dash, red=heavy
         // ─────────────────────────────────────────────────────────────────────
 
+        // Same authored-easing pass as the Greatsword table below, and the same caveats: curve only,
+        // no SwingSpeedMult, and only honored where UseAuthoredComboSwingClock is on. HeroofLumelia
+        // is this table's only shared-pool consumer today (Kahlrun overrides its pool).
         public static readonly MeleeCombo[] Broadsword = new[]
         {
             new MeleeCombo {
                 Name = "Quickslash", BaseWeight = 100, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.White, CooldownAfterUse = 40,
-                Steps = new[] { S(ComboMotion.OverheadArc, 16, 22, 0) }
+                // Front-loaded to match the name - the hit lands in the first third of the arc.
+                Steps = new[] { S(ComboMotion.OverheadArc, 16, 22, 0, ease: SwingEaseStyle.Snap) }
             },
             new MeleeCombo {
                 Name = "Under-Over", BaseWeight = 80, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.LightYellow, CooldownAfterUse = 90,
                 Steps = new[] {
+                    // Rising cut stays Smooth so the reversal reads; the overhead follow-up snaps.
                     S(ComboMotion.UnderhandArc, 18, 18, 12),
-                    S(ComboMotion.OverheadArc,  0,  20, 0,  1.1f),
+                    S(ComboMotion.OverheadArc,  0,  20, 0,  1.1f, ease: SwingEaseStyle.Snap),
                 }
             },
             new MeleeCombo {
@@ -362,8 +400,10 @@ namespace tsorcRevamp.NPCs.Puppets
                 Name = "3-Hit Standard", BaseWeight = 60, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Cyan, CooldownAfterUse = 140,
                 Steps = new[] {
-                    S(ComboMotion.OverheadArc,     14, 18, 14, 0.9f),
-                    S(ComboMotion.HorizontalSweep,  0, 18, 14, 0.9f),
+                    // First two chain quickly, the rising finisher keeps the Smooth default so the
+                    // combo lands on a heavier-reading beat instead of three identical snaps.
+                    S(ComboMotion.OverheadArc,     14, 18, 14, 0.9f, ease: SwingEaseStyle.Snap),
+                    S(ComboMotion.HorizontalSweep,  0, 18, 14, 0.9f, ease: SwingEaseStyle.Snap),
                     S(ComboMotion.UnderhandArc,     0, 20, 0,  1.1f),
                 }
             },
@@ -371,21 +411,31 @@ namespace tsorcRevamp.NPCs.Puppets
                 Name = "5-Hit Finisher", BaseWeight = 30, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true,
                 Steps = new[] {
-                    S(ComboMotion.OverheadArc,     40, 14, 8,  0.7f),
-                    S(ComboMotion.UnderhandArc,     0, 14, 8,  0.7f),
-                    S(ComboMotion.HorizontalSweep,  0, 14, 8,  0.7f),
-                    S(ComboMotion.OverheadArc,      0, 14, 8,  0.7f),
+                    // Four 14-tick arcs: Snap on all of them, otherwise the Smooth ramp eats most of
+                    // such a short window and the flurry reads as one slow blur.
+                    S(ComboMotion.OverheadArc,     40, 14, 8,  0.7f, ease: SwingEaseStyle.Snap),
+                    S(ComboMotion.UnderhandArc,     0, 14, 8,  0.7f, ease: SwingEaseStyle.Snap),
+                    S(ComboMotion.HorizontalSweep,  0, 14, 8,  0.7f, ease: SwingEaseStyle.Snap),
+                    S(ComboMotion.OverheadArc,      0, 14, 8,  0.7f, ease: SwingEaseStyle.Snap),
                     S(ComboMotion.JoustDash,        0, 18, 0,  1.5f, 1.2f, 1.5f),
                 }
             },
         };
 
+        // Authored easing pass: this table predates SwingEaseStyle and every step was inheriting the
+        // Smooth default, so all five combos swung with the same shape regardless of weight or intent.
+        // Only the CURVE is authored here - no SwingSpeedMult, so every step keeps its existing tick
+        // budget and nothing rebalances. Ease is read via PuppetNPC.ApplySwingEase, which only honors
+        // it when UseAuthoredComboSwingClock is on (Artorias today; SoulOfCinder needs the one-line
+        // opt-in) and only for IsArcSwingMotion steps - Spin / JoustDash / LeapSlam ignore it.
         public static readonly MeleeCombo[] Greatsword = new[]
         {
             new MeleeCombo {
                 Name = "Heavy Chop", BaseWeight = 70, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Orange, CooldownAfterUse = 160, HeavyCommit = true,
-                Steps = new[] { S(ComboMotion.OverheadArc, 45, 26, 0, 1.8f, 1.2f) }
+                // Whip: hangs at the apex a beat longer, then drives through. The 45-tick telegraph
+                // already sells the commitment; this keeps the blade heavy instead of coasting down.
+                Steps = new[] { S(ComboMotion.OverheadArc, 45, 26, 0, 1.8f, 1.2f, ease: SwingEaseStyle.Whip) }
             },
             new MeleeCombo {
                 Name = "Rising Slash", BaseWeight = 60, Preferred = ComboRangeBand.Close,
@@ -403,14 +453,18 @@ namespace tsorcRevamp.NPCs.Puppets
             new MeleeCombo {
                 Name = "Ground Pound", BaseWeight = 30, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true,
-                Steps = new[] { S(ComboMotion.GroundSlam, 50, 24, 0, 2.0f, 1.3f) }
+                // Whip again for the heaviest move in the pool. Note Artorias retargets this step
+                // onto LeapSlam, which is not an arc motion, so this curve applies to SoulOfCinder.
+                Steps = new[] { S(ComboMotion.GroundSlam, 50, 24, 0, 2.0f, 1.3f, ease: SwingEaseStyle.Whip) }
             },
             new MeleeCombo {
                 Name = "Running Cleave", BaseWeight = 50, Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.Cyan, CooldownAfterUse = 160,
                 Steps = new[] {
                     S(ComboMotion.JoustDash,   22, 14, 10, 0.9f, 1.1f, 1.4f),
-                    S(ComboMotion.OverheadArc,  0, 22, 0,  1.4f, 1.2f),
+                    // Snap: the cleave lands early in the arc so it connects at the end of the dash
+                    // rather than trailing a beat behind it.
+                    S(ComboMotion.OverheadArc,  0, 22, 0,  1.4f, 1.2f, ease: SwingEaseStyle.Snap),
                 }
             },
         };

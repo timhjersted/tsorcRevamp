@@ -73,8 +73,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             Lighting.AddLight(Projectile.Center, 0.4f + progress * 0.5f, 0.35f + progress * 0.4f, 0.15f);
 
-            if (Timer == TelegraphTicks)
+            //Fire once as soon as the telegraph completes. An exact-tick equality is brittle when a
+            //node begins updating late on a client or is corrected by projectile synchronization.
+            if (Timer >= TelegraphTicks && Projectile.localAI[1] == 0f)
             {
+                Projectile.localAI[1] = 1f;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.5f, Pitch = 0.4f }, Projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

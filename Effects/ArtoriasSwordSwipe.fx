@@ -1,3 +1,5 @@
+#include "PixelShaderCommon.fxh"
+
 sampler PrimarySampler : register(s0);
 sampler DetailSampler : register(s1);
 
@@ -12,6 +14,7 @@ float Direction;
 float2 DrawSize;
 float2 PrimaryTextureSize;
 float2 WorldDrawSize;
+float4 PixelGrid;         // xy = block count across the quad, zw = its reciprocal (computed in C#)
 
 float2 LocalUV(float2 coords)
 {
@@ -30,7 +33,11 @@ float2 LocalUV(float2 coords)
 // committing this). The full band is always visible; only the flowing noise texture animates.
 float4 ArtoriasSwordSwipePixel(float4 vertexColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
-    float2 uv = LocalUV(coords);
+    // Pixelated to match the arc that was approved in the offline preview harness. The original
+    // port of that prototype carried every constant across but dropped its PixelateShaderUV call,
+    // so the shipped arc has been rendering as smooth gradients. DrawSwordSwipe passes a 2px block
+    // size, which is what the prototype used.
+    float2 uv = PixelateShaderUV(LocalUV(coords), PixelGrid);
     float2 p = uv * 2.0 - 1.0;
 
     // Circle center/radius chosen in the offline preview ("tight" candidate) - keeps roughly the

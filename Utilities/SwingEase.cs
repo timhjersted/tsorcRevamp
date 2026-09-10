@@ -106,7 +106,15 @@ namespace tsorcRevamp.Utilities
         /// Lerp-toward-target that never actually finished moving, just crept asymptotically closer
         /// and looked like it stalled halfway. Constants are hardcoded rather than parameterized
         /// since only those three motions use this today — promote them to parameters if a future
-        /// caller needs a different shape.</summary>
+        /// caller needs a different shape.
+        ///
+        /// <para><b>Needs <c>totalTicks</c> well above 55.</b> Accel(10) + Decel(30) + Hold(15) is a
+        /// 55-tick allowance, so at or below that the cruise plateau collapses to zero ticks and the
+        /// entire plateau angle is covered in a single frame — measured at ~112°/tick for a 26-tick
+        /// greatsword arc, i.e. a hard visual snap rather than the smooth sweep this is for. Callers
+        /// today budget 70–118 ticks, which leaves a healthy plateau; Dread Wraith's tables carry a
+        /// comment about raising AttackTicks from 14 to 75 for exactly this reason. Verify a new
+        /// caller with <c>Documentation/tools/SwingPreview</c> before shipping it.</para></summary>
         public static float ApplyTrapezoidal(float start, float end, int elapsedTicks, int totalTicks)
         {
             const float AccelDegrees = 15f;
