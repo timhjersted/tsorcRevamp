@@ -14,6 +14,9 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {
+            ArmorIDs.Body.Sets.HidesTopSkin[Item.bodySlot] = true;
+            ArmorIDs.Body.Sets.HidesArms[Item.bodySlot] = true;
+            ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = true;
         }
 
         public override void SetDefaults()

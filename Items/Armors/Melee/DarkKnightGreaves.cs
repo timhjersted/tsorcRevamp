@@ -14,6 +14,8 @@ namespace tsorcRevamp.Items.Armors.Melee
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MeleeSpeed);
         public override void SetStaticDefaults()
         {
+            ArmorIDs.Legs.Sets.HidesTopSkin[Item.legSlot] = true;
+            ArmorIDs.Legs.Sets.HidesBottomSkin[Item.legSlot] = true;
         }
         public override void SetDefaults()
         {

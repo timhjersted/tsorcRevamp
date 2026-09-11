@@ -10493,7 +10493,7 @@ Mods: {
 			GreatFarronDart.DisplayName: 强力法兰短箭
 			GreatFarronDartSpawner.DisplayName: 强力法兰短箭生成器
 			SwordOfLordGwyn.DisplayName: 葛温之刃
-			// SwordOfCinder.DisplayName: Sword of Cinder
+			// SwordOfCinder.DisplayName: Severing Dusk
 			TackleProjectile.DisplayName: 葛温
 			Hellwing.DisplayName: 地狱之翼
 			HerosArrow.DisplayName: 英雄之箭
@@ -11270,6 +11270,7 @@ Mods: {
 			// PuppetSwordSlashTrail.DisplayName: Puppet Sword Slash Trail
 			// PuppetFireWaveColumn.DisplayName: Puppet Fire Wave Column
 			// OwlFireDiveExplosion.DisplayName: Owl Fire Dive Explosion
+			// VanillaSwordArc.DisplayName: Vanilla Sword Arc
 		}
 
 		NPCs: {
@@ -11584,7 +11585,6 @@ Mods: {
 			}
 
 			SwordOfLordGwyn.DisplayName: 葛温之刃
-			// SwordOfCinder.DisplayName: Sword of Cinder
 			HellkiteDragonBody.DisplayName: 炼狱鸢龙
 			HellkiteDragonBody2.DisplayName: 炼狱鸢龙
 			HellkiteDragonBody3.DisplayName: 炼狱鸢龙

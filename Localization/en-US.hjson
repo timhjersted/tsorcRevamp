@@ -11276,6 +11276,7 @@ Mods: {
 			PuppetSwordSlashTrail.DisplayName: Puppet Sword Slash Trail
 			PuppetFireWaveColumn.DisplayName: Puppet Fire Wave Column
 			OwlFireDiveExplosion.DisplayName: Owl Fire Dive Explosion
+			VanillaSwordArc.DisplayName: Vanilla Sword Arc
 		}
 
 		NPCs: {

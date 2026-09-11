@@ -12,7 +12,7 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias, SoulOfCinder";
+        internal const string Known = "Gwyn, Artorias, SoulOfCinder, DarkKnight";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
@@ -60,6 +60,23 @@ namespace SwingPreview
                     WeaponSprite = P("Items", "Weapons", "Melee", "Broadswords", "SeveringDusk.png"),
                     WeaponRotationOffset = 0f,
                     DrawScale = 1.15f,
+                };
+            }
+
+            if (puppet.Equals("DarkKnight", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "DarkKnight",
+                    BodySheet = P("Items", "Armors", "Melee", "DarkKnightArmor_Body.png"),
+                    LegsSheet = P("Items", "Armors", "Melee", "DarkKnightGreaves_Legs.png"),
+                    HeadSheet = P("Items", "Armors", "Melee", "DarkKnightHelmet_Head.png"),
+                    // SwingPreview cannot load vanilla XNBs headlessly. Rune Blade has the same
+                    // compact broadsword footprint and is used only as the offline pose proxy;
+                    // the game draws the real vanilla Night's Edge selected by DarkKnight.cs.
+                    WeaponSprite = P("Items", "Weapons", "Melee", "Broadswords", "RuneBlade.png"),
+                    WeaponRotationOffset = 0f,
+                    DrawScale = 1f,
                 };
             }
 

@@ -10456,7 +10456,7 @@ Mods: {
 			GreatFarronDart.DisplayName: Великий дротик Фаррона
 			GreatFarronDartSpawner.DisplayName: Великий создатель дротиков Фаррона
 			SwordOfLordGwyn.DisplayName: Меч лорда Гвина
-			// SwordOfCinder.DisplayName: Sword of Cinder
+			// SwordOfCinder.DisplayName: Severing Dusk
 			TackleProjectile.DisplayName: Гвин
 			Hellwing.DisplayName: Адское крыло
 			HerosArrow.DisplayName: Стрела героя
@@ -11233,6 +11233,7 @@ Mods: {
 			// PuppetSwordSlashTrail.DisplayName: Puppet Sword Slash Trail
 			// PuppetFireWaveColumn.DisplayName: Puppet Fire Wave Column
 			// OwlFireDiveExplosion.DisplayName: Owl Fire Dive Explosion
+			// VanillaSwordArc.DisplayName: Vanilla Sword Arc
 		}
 
 		NPCs: {
@@ -11547,7 +11548,6 @@ Mods: {
 			}
 
 			SwordOfLordGwyn.DisplayName: Меч лорда Гвина
-			// SwordOfCinder.DisplayName: Sword of Cinder
 			HellkiteDragonBody.DisplayName: Адский дракон
 			HellkiteDragonBody2.DisplayName: Адский дракон
 			HellkiteDragonBody3.DisplayName: Адский дракон
