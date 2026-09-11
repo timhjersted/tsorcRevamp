@@ -18,6 +18,13 @@ namespace tsorcRevamp.Items.Armors
         public const int SoulCost = 80000;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, GenericDamage, MinionSlots, StaminaRegen);
 
+        public override void SetStaticDefaults()
+        {
+            int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Legs);
+            ArmorIDs.Legs.Sets.HidesTopSkin[equipSlot] = true;
+            ArmorIDs.Legs.Sets.HidesBottomSkin[equipSlot] = true;
+        }
+
         public override void SetDefaults()
         {
             Item.width = 18;

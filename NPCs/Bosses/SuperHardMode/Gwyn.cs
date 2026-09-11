@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemySwordOfGwyn>();
         protected override int RangedWeaponItemType => -1; // melee + bespoke fire/lightning magic
         protected override Vector2 MeleeHandleNorm => new Vector2(0.14f, 0.86f);
-        protected override float MeleeWeaponDrawScale => 0.65f;
+        protected override float MeleeWeaponDrawScale => 0.75f;
         protected override float ComboReachBase => 125f;
         protected override float MeleeBladeWidth => 30f;
 
@@ -129,6 +129,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.RemembersLastKnownPos = true;
 
+            // The unarmed walk after Wrath Flurry is a slow, spent advance, not a chase.
+            if (FlurryRecoveryWalking)
+            {
+                speedMult *= FlurryRecoveryWalkSpeedMult;
+            }
+
             SmartFighter4AI.Run(NPC,
                 topSpeed: TopSpeed * speedMult,
                 acceleration: Acceleration,
@@ -148,11 +154,120 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // returns its argument unchanged for any positive tick count and GS() sets no SwingSpeedMult.
         protected override bool UseAuthoredComboSwingClock => true;
 
-        // Holds the finished swing pose for 14 ticks before the arm eases back to the carry angle
-        // and the weapon stops drawing, so a strike reads as a follow-through instead of the blade
-        // vanishing on recovery frame one. The rest of each recovery is the ordinary unarmed idle.
+        // Holds the finished swing pose for 14 ticks before the arm eases back to the carry angle, so
+        // a strike reads as a follow-through instead of drifting home on recovery frame one. Combo
+        // recoveries keep the blade drawn throughout (MeleeComboRecovery is always a visible phase);
+        // only the bespoke recoveries (JumpSlash, Stab, Tendril...) stop drawing it after the hold.
+        // V2 clips ignore this entirely.
         // Artorias runs 30 with a comparable greatsword; the shorter beat suits Gwyn's faster kit.
         protected override int MeleeRecoveryLingerTicks => 14;
+
+        // Wrath Flurry's swipes share endpoints, so the pause between them must HOLD the landed pose
+        // rather than drift back toward the outgoing arc (the base behaviour at 0 linger, which
+        // re-raises the blade and then snaps it to the next start). After 3 held ticks the pause
+        // "eases" toward the next start - which, with shared endpoints and the leaps landing in the
+        // lowered pose, is always the pose it is already in, so every flurry pause is a pure hold.
+        protected override int MeleeComboInterStepLingerTicks
+        {
+            get
+            {
+                if (WrathFlurrySwinging)
+                {
+                    return 3;
+                }
+                return 0;
+            }
+        }
+
+        // The combo phases only. ActiveMeleeComboName is never cleared when a combo ends, so the
+        // phase check stops a stale "Wrath Flurry" from widening a later one-shot MeleeAttack.
+        bool WrathFlurrySwinging =>
+            ActiveMeleeComboName == WrathFlurryName
+            && (Phase == AttackPhase.MeleeComboTelegraph
+                || Phase == AttackPhase.MeleeComboAttack
+                || Phase == AttackPhase.MeleeComboPause);
+
+        // Wrath Flurry's recovery once the landing beat (MeleeRecoveryLingerTicks) is over: the
+        // sword is put away and he walks. PhaseTimer counts DOWN from FlurryFinalRecoveryTicks.
+        bool FlurryRecoveryWalking =>
+            Phase == AttackPhase.MeleeComboRecovery
+            && ActiveMeleeComboName == WrathFlurryName
+            && PhaseTimer <= FlurryFinalRecoveryTicks - MeleeRecoveryLingerTicks;
+
+        protected override bool WeaponSheathed => FlurryRecoveryWalking;
+
+        // The flurry's opening raise: FlurryWindupRaiseTicks of the telegraph ease up into the raised
+        // pose before the drop to the first swipe's start. The tick count is the same formula as
+        // PuppetNPC.GetComboTelegraphTicks, which is private.
+        protected override float LogicalWindupSettleFraction
+        {
+            get
+            {
+                if (!WrathFlurrySwinging)
+                {
+                    return base.LogicalWindupSettleFraction;
+                }
+
+                int telegraphTicks = Math.Max(MinComboTelegraphTicks, (int)(FlurryTelegraphTicks * ComboTelegraphMultiplier));
+                return FlurryWindupRaiseTicks / (float)telegraphTicks;
+            }
+        }
+
+        // The flurry's leaps carry the sword overhead through the air and swing when the player is
+        // in reach or on the projected landing (Artorias's leap pose). Without this the chop sweeps
+        // over the sword's 32-tick useAnimation from takeoff and finishes mid-ascent. Cindering Leap
+        // and Roll-Catch keep their current pose.
+        protected override bool UseLandingTimedLeapSlam => WrathFlurrySwinging;
+
+        // Carry the leaps in the raised swipe pose (the cocked frame the underhands finish in), so
+        // takeoff continues straight from the previous swipe, and slam down the full 185° swipe arc.
+        protected override float LeapSlamCarryRotation
+        {
+            get
+            {
+                if (WrathFlurrySwinging)
+                {
+                    return FlurryRaisedPose;
+                }
+                return base.LeapSlamCarryRotation;
+            }
+        }
+
+        protected override float LeapSlamImpactRotation
+        {
+            get
+            {
+                if (WrathFlurrySwinging)
+                {
+                    return FlurryLoweredPose;
+                }
+                return base.LeapSlamImpactRotation;
+            }
+        }
+
+        // Wrath Flurry's 185° swipes. The base arcs are 149° overhead (-1.30 - 17° overshoot -> 1.0)
+        // and 115° underhand (1.0 -> -1.0). Both now run between the same two poses: blade past
+        // vertical behind the head (-1.62), and low-forward, 47° below level (1.61). The extra reach
+        // is all at the bottom. 1.61 is past the 1.40 that V2 aim correction clamps to, but the
+        // legacy slams already go further (GroundSlam 1.5, the landing-timed impact ~2.1).
+        protected override void ModifyMeleeArcEndpoints(ComboMotion motion, ref float startRotation, ref float endRotation)
+        {
+            if (!WrathFlurrySwinging)
+            {
+                return;
+            }
+
+            if (motion == ComboMotion.OverheadArc)
+            {
+                startRotation = FlurryRaisedPose;
+                endRotation = FlurryLoweredPose;
+            }
+            else if (motion == ComboMotion.UnderhandArc)
+            {
+                startRotation = FlurryLoweredPose;
+                endRotation = FlurryRaisedPose;
+            }
+        }
 
         // The repaired armor sheet now supplies complete front and back composite-arm frames,
         // allowing the greatsword pose to retain smooth rotation without exposing player skin.
@@ -161,7 +276,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool UseCompositeArmForAdditionalPhase => IsDashGrabSequence;
         protected override bool HasUnblockableBodyAura => Phase == AttackPhase.TendrilTelegraph;
         protected override float UnblockableBodyAuraScale => 1.1f;
-        protected override float UnblockableBodyAuraOpacity => 0.5f;
+        protected override float UnblockableBodyAuraOpacity => 0.3f;
+        // Gwyn never disengages to drink Estus; pressure and authored recoveries remain his only
+        // neutral breaks. Zero charges keeps the shared flee/heal intercept permanently disabled.
+        protected override int EstusChargesMax => 0;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
         protected override bool HasSlashVFX => false; // Uses HasFireSlashVFX (shader-lit fire slash) instead.
         protected override float WalkAnimationSpeedMultiplier => 0.35f;
@@ -183,6 +301,64 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static MeleeComboStep GS(ComboMotion m, int tel, int atk, int pause, float dmg = 1f, float reach = 1f, float push = 0f,
                                  SwingEaseStyle ease = SwingEaseStyle.Smooth)
             => new MeleeComboStep { Motion = m, TelegraphTicks = tel, AttackTicks = atk, PostStepPause = pause, DamageMult = dmg, ReachMult = reach, ForwardPushMult = push, Ease = ease };
+
+        // ── Wrath Flurry tuning ─────────────────────────────────────────────────
+        const string WrathFlurryName = "Wrath Flurry";
+        // The two poses every swipe runs between (185° apart): blade past vertical behind the head,
+        // and low-forward 47° below level. Also the leaps' carry and impact. See ModifyMeleeArcEndpoints.
+        const float FlurryRaisedPose = -1.62f;
+        const float FlurryLoweredPose = 1.61f;
+        // Authored telegraph; x1.15 ComboTelegraphMultiplier = 44 ticks on screen. The first 25 are a
+        // slow ease up into the raised pose (LogicalWindupSettleFraction), the rest drop to the start.
+        const int FlurryTelegraphTicks = 39;
+        const int FlurryWindupRaiseTicks = 25;
+        // Each swipe: speed builds for 10 ticks, peaks, then decays exponentially for 45 onto the
+        // next swipe's start. Decay 7 puts the 185° arc's peak near 19°/tick; the settle is down to
+        // 21% of that 10 ticks later and near-still for its last half.
+        const int FlurrySwipeEaseIn = 10;
+        const int FlurrySwipeEaseOut = 45;
+        const float FlurrySwipeDecay = 7f;
+        const int FlurrySwipePause = 10;    // held pose; re-faces the player between swipes
+        // The blade is live while it moves at >= this share of its top speed; slower is follow-through.
+        const float FlurryArmedSpeedShare = 0.3f;
+        // Gap-closer: after this many whiffs in a row, with the player past MeleeEngageRange, the
+        // next overhand becomes a leap slam, followed by a 12-tick landing beat.
+        const int FlurryLeapAfterMisses = 2;
+        const int FlurryLeapPause = 12;
+        // Both leaps swing in the air once past the apex with the player this close (centre to
+        // centre): MeleeRange 110 plus the ~40px he still travels during the 10-tick downswing.
+        const float FlurryLeapStrikeRange = 150f;
+        // The finale's punish window: three seconds with no attack. The first MeleeRecoveryLingerTicks
+        // are the planted landing beat, then the sword is put away and he walks forward at this
+        // fraction of TopSpeed.
+        const int FlurryFinalRecoveryTicks = 180;
+        const float FlurryRecoveryWalkSpeedMult = 0.35f;
+
+        /// <summary>One Wrath Flurry swipe on the Weighted ease. Armed through the ease-in and the
+        /// part of the exponential settle still above FlurryArmedSpeedShare of top speed - the
+        /// speed is v*e^(-decay*p), so that lasts ln(1/share)/decay of the ease-out.</summary>
+        static MeleeComboStep FlurrySwipe(ComboMotion motion, int telegraph, float dmg, float reach, float push)
+        {
+            int attackTicks = FlurrySwipeEaseIn + FlurrySwipeEaseOut;
+            MeleeComboStep step = GS(motion, telegraph, attackTicks, FlurrySwipePause, dmg, reach, push, SwingEaseStyle.Weighted);
+            step.EaseInTicks = FlurrySwipeEaseIn;
+            step.EaseOutTicks = FlurrySwipeEaseOut;
+            step.EaseOutDecay = FlurrySwipeDecay;
+
+            float armedSettleTicks = FlurrySwipeEaseOut * (float)Math.Log(1f / FlurryArmedSpeedShare) / FlurrySwipeDecay;
+            step.HitWindowEnd = (FlurrySwipeEaseIn + armedSettleTicks) / attackTicks;
+            return step;
+        }
+
+        /// <summary>A Wrath Flurry leap slam: carried in the raised swipe pose (LeapSlamCarryRotation),
+        /// swung in the air when the player is in reach, else on the landing. 90 ticks is only the
+        /// timeout, as for every authored LeapSlam; the step really ends on landing.</summary>
+        static MeleeComboStep FlurryLeap(int pause, float dmg)
+        {
+            MeleeComboStep step = GS(ComboMotion.LeapSlam, 0, 90, pause, dmg, 1.2f);
+            step.LeapStrikeRange = FlurryLeapStrikeRange;
+            return step;
+        }
 
         // Complete grounded strikes use the single-clock runtime. Movement attacks and linked
         // strings stay on MeleeCombo because their locomotion and continuation are the behavior.
@@ -296,17 +472,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // 5 — Cinderfall: committed ground cleave + fire AoE
             new MeleeCombo { Name = "Cinderfall", BaseWeight = 40, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true, RuntimeV2Clip = CinderfallV2,
-                // Whip: the heaviest slam in the kit, so the apex hangs before it comes down.
+                // Whip: the heaviest slam in the kit, so the apex hangs before it comes down. The curve
+                // that plays is CinderfallV2's swingEase — a V2 clip bypasses this step's Ease entirely.
                 Steps = new[] { GS(ComboMotion.GroundSlam, 25, 24, 0, 1.6f, 1.3f, 0.40f, ease: SwingEaseStyle.Whip) } },
             // 6 — Guillotine Drop: heavy standing overhead, the "respect me" punish
             new MeleeCombo { Name = "Guillotine", BaseWeight = 45, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true, RuntimeV2Clip = GuillotineV2,
                 // Whip: the 30-tick tell plus a held apex is what makes this the "respect me" punish.
+                // Played by GuillotineV2's swingEase; this step's Ease is unused while the clip is set.
                 Steps = new[] { GS(ComboMotion.OverheadArc, 30, 22, 0, 1.8f, 1.15f, 0.35f, ease: SwingEaseStyle.Whip) } },
             // 7 — Backhand + Step: quick re-engaging sweep, denies a roll-back
             new MeleeCombo { Name = "Backhand Step", BaseWeight = 60, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Orange, CooldownAfterUse = 70, RuntimeV2Clip = BackhandV2,
                 // Snap: front-loaded so the re-engage is out and back before a roll can answer it.
+                // Played by BackhandV2's swingEase; this step's Ease is unused while the clip is set.
                 Steps = new[] { GS(ComboMotion.HorizontalSweep, 12, 16, 0, 0.9f, 1.1f, 0.85f, ease: SwingEaseStyle.Snap) } },
             // 8 — 3-Hit Standard: the staple pressure string. Push RISES per step so the string
             //     walks him through a player trying to back out of it rather than whiffing behind them.
@@ -328,18 +507,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     GS(ComboMotion.LeapSlam,   25, 22, 14, 1.3f, 1.2f),
                     GS(ComboMotion.GroundSlam,  0, 24,  0, 1.5f, 1.3f, 0.35f, ease: SwingEaseStyle.Whip),
                 } },
-            // 10 — Wrath Flurry: the full-commit chain unlocked at half health
-            new MeleeCombo { Name = "Wrath Flurry", BaseWeight = 25, Preferred = ComboRangeBand.Any,
-                InitialFlashColor = Color.Red, CooldownAfterUse = 300, RecoveryTicks = 45,
+            // 10 — Wrath Flurry: the full-commit chain unlocked at half health. Seven player-style
+            //      swipes, rising and falling in turn, each its own hit. The arcs are widened to 185°
+            //      and share endpoints (see ModifyMeleeArcEndpoints), so every swipe begins exactly
+            //      where the last one ended: no re-raise between hits. Facing is locked only while a
+            //      swipe is live; the 2-tick pause re-faces the player, so a roll through him costs
+            //      the current swipe and then the next one comes from the other side. Two whiffs in
+            //      a row against a retreating player turn the next overhand into a leap slam
+            //      (ModifyNextMeleeComboStep). It ends on a leap slam from the cocked pose the last
+            //      underhand finishes in, then a long planted recovery - the punish window.
+            new MeleeCombo { Name = WrathFlurryName, BaseWeight = 25, Preferred = ComboRangeBand.Any,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 300, RecoveryTicks = FlurryFinalRecoveryTicks,
                 HeavyCommit = true, HyperArmor = true,
                 Steps = new[] {
-                    // Deliberately alternated rather than all-Snap: four identical front-loaded arcs
-                    // read as one long blur. Snap opener, Smooth reversal, Snap, then the spin
-                    // finisher whips so the chain ends on a held beat instead of just stopping.
-                    GS(ComboMotion.JoustDash,    22, 14, 8,  1.0f, 1.2f, 1.5f,  ease: SwingEaseStyle.Snap),
-                    GS(ComboMotion.UnderhandArc,  0, 16, 8,  0.9f, 1.1f, 0.55f),
-                    GS(ComboMotion.OverheadArc,   0, 16, 8,  1.1f, 1.15f, 0.60f, ease: SwingEaseStyle.Snap),
-                    GS(ComboMotion.Spin,          0, 24, 0,  1.2f, 1.15f, 0.60f, ease: SwingEaseStyle.Whip),
+                    // 55 ticks each (10 building speed, 45 decaying onto the next start) + a 10-tick
+                    // hold. Reach stays under 1.15 so only the leaps throw a crescent.
+                    FlurrySwipe(ComboMotion.UnderhandArc, FlurryTelegraphTicks, 0.8f, 1.1f, 0.45f),
+                    FlurrySwipe(ComboMotion.OverheadArc,  0, 0.8f, 1.1f, 0.45f),
+                    FlurrySwipe(ComboMotion.UnderhandArc, 0, 0.8f, 1.1f, 0.45f),
+                    FlurrySwipe(ComboMotion.OverheadArc,  0, 0.8f, 1.1f, 0.45f),
+                    FlurrySwipe(ComboMotion.UnderhandArc, 0, 0.8f, 1.1f, 0.45f),
+                    FlurrySwipe(ComboMotion.OverheadArc,  0, 0.8f, 1.1f, 0.45f),
+                    FlurrySwipe(ComboMotion.UnderhandArc, 0, 0.8f, 1.1f, 0.45f),
+                    // Finale: the underhand above ends cocked behind his head, which is exactly the
+                    // leap's carry pose, so he launches straight out of the 10-tick hold.
+                    FlurryLeap(0, 1.3f),
                 } },
             // 11 — Sunlight Pursuit: the long-range answer, and the only attack that crosses a
             //      whole arena. He drops the greatsword low and BEHIND him and sprints — the run
@@ -452,7 +644,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             //This was described as the enrage chain, but it was selectable for the entire fight.
             //Keep one unmistakable melee reveal for the second half of the fight.
-            if (combo.Name == "Wrath Flurry")
+            if (combo.Name == WrathFlurryName)
             {
                 return HalfHealthMovesUnlocked;
             }
@@ -465,6 +657,59 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return distance <= 260f;
             }
             return true;
+        }
+
+        // Consecutive Wrath Flurry swipes that connected with nobody. Feeds the gap-close leap below.
+        int _flurryMissStreak;
+
+        ///<summary>Counts Wrath Flurry whiffs. Runs at the end of every step, before the pause; the
+        ///flurry always continues - this only records whether the swipe that just ended connected.</summary>
+        protected override bool ShouldContinueMeleeCombo(
+            string comboName, int nextStepIndex, Player target, bool previousStepHit)
+        {
+            if (comboName == WrathFlurryName)
+            {
+                // nextStepIndex 1 = the first swipe just ended, so this is a fresh flurry.
+                if (nextStepIndex == 1)
+                {
+                    _flurryMissStreak = 0;
+                }
+
+                if (previousStepHit)
+                {
+                    _flurryMissStreak = 0;
+                }
+                else
+                {
+                    _flurryMissStreak++;
+                }
+            }
+            return base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
+        }
+
+        ///<summary>Wrath Flurry gap-closer. After FlurryLeapAfterMisses whiffs in a row, with the player
+        ///past MeleeEngageRange (where no swipe can start a combo either), the next OVERHAND becomes a
+        ///leap slam at them. Only overhands are swapped: the leap is an overhead - carried high, slammed
+        ///down - so the under/over rhythm continues, and it can never come more than every other swipe.
+        ///A LeapSlam tops out near 280px of travel, so from further it closes most of the gap.</summary>
+        protected override void ModifyNextMeleeComboStep(
+            string comboName, int nextStepIndex, Player target, ref MeleeComboStep nextStep)
+        {
+            if (comboName != WrathFlurryName || nextStep.Motion != ComboMotion.OverheadArc)
+            {
+                return;
+            }
+
+            bool enoughWhiffs = _flurryMissStreak >= FlurryLeapAfterMisses;
+            bool outOfReach = NPC.Distance(target.Center) > MeleeEngageRange;
+            if (!enoughWhiffs || !outOfReach)
+            {
+                return;
+            }
+
+            // Reach 1.2 throws the fire crescent on impact (OnComboStepCompleted).
+            nextStep = FlurryLeap(FlurryLeapPause, 1.0f);
+            _flurryMissStreak = 0;
         }
 
         // ── Kept systems (original distances) ────────────────────────────────────
@@ -632,22 +877,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (despawnHandler.IsDespawning)
             {
-                NPC.damage = 0;
-                NPC.dontTakeDamage = true;
-                NPC.velocity = Vector2.Zero;
-                AfterimageTicks = 0;
-                _advanceTimer = 0;
-                _stormTimer = 0;
-                _gravityTimer = 0;
-                _plungeTimer = 0;
-                _riposteTimer = 0;
-                _spearJumpActive = false;
-                _spearFollowupsRemaining = 0;
-                Flight?.RequestLand();
-                if (Phase != AttackPhase.Idle)
-                {
-                    EnterPhase(AttackPhase.Idle, 0);
-                }
+                ResetEncounterAfterWipe();
                 return;
             }
 
@@ -655,6 +885,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.damage = TooEarly ? TooEarlyDamage : (_advanceTimer > 0 ? MeleeDamage : 0);
 
             base.AI();
+
+            // Wrath Flurry's 180-tick recovery (the punish window). The landing beat is planted -
+            // the navigator runs every tick, recovery included, so zero its step. After that he has
+            // sheathed the sword (WeaponSheathed) and walks toward the player at the reduced
+            // speed RunMovementAI applies. Recovery keeps facing locked to the combo direction, so
+            // face the way he is actually walking or a player behind him gets a moonwalk. Runs after
+            // base.AI so it has the last word this tick; Terraria moves and draws the NPC after AI.
+            bool inFlurryRecovery = Phase == AttackPhase.MeleeComboRecovery && ActiveMeleeComboName == WrathFlurryName;
+            if (inFlurryRecovery && !FlurryRecoveryWalking)
+            {
+                NPC.velocity.X = 0f;
+            }
+            else if (FlurryRecoveryWalking && Math.Abs(NPC.velocity.X) > 0.1f)
+            {
+                int walkDirection = Math.Sign(NPC.velocity.X);
+                NPC.direction = walkDirection;
+                NPC.spriteDirection = walkDirection;
+            }
+
             TickLordEmbraceRecovery();
             TickSpearJumpChoreography();
 
@@ -690,6 +939,51 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (_attackLabelTimer > 0 && --_attackLabelTimer == 0)
             {
                 DebugAttackLabel = null;
+            }
+        }
+
+        private void ResetEncounterAfterWipe()
+        {
+            // The shared handler normally runs a four-second dissolve. That left Gwyn and any
+            // already-launched attacks alive across the player's death/respawn boundary. Remove
+            // every projectile attributed to this exact NPC instance before releasing the slot.
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (!projectile.active)
+                {
+                    continue;
+                }
+
+                var source = projectile.GetGlobalProjectile<Projectiles.tsorcGlobalProjectile>();
+                if (source.SourceNPCIndex == NPC.whoAmI && source.SourceNPCType == NPC.type)
+                {
+                    // Quiet removal is intentional: Kill() can run a projectile's impact burst or
+                    // spawn children, which would recreate the exact post-wipe effects being cleared.
+                    projectile.active = false;
+                    projectile.timeLeft = 0;
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.KillProjectile, -1, -1, null,
+                            projectile.identity, projectile.owner);
+                    }
+                }
+            }
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active)
+                {
+                    Main.player[i].GetModPlayer<tsorcRevampPlayer>().ImpaleFreezeTimer = 0;
+                }
+            }
+
+            NPC.damage = 0;
+            NPC.velocity = Vector2.Zero;
+            NPC.active = false;
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPC.whoAmI);
             }
         }
 
@@ -1746,6 +2040,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (step.Motion == ComboMotion.LowAxeRun)
             {
                 EmitPursuitDragEmbers(bladeReach, elapsed);
+                return;
+            }
+
+            // Past the step's hit window (Wrath Flurry's long settle) the blade is disarmed, so stop
+            // feeding the fire slash and let it fade over FireSlashFadeoutTicks for the same reason.
+            bool followingThrough = step.HitWindowEnd > 0f && progress > step.HitWindowEnd;
+            if (followingThrough)
+            {
                 return;
             }
 

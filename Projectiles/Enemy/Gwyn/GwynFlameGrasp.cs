@@ -350,7 +350,11 @@ namespace tsorcRevamp.Projectiles.Enemy
                     effect.Parameters["CoreColor"].SetValue(new Color(255, 196, 156).ToVector3());
                     float pulse = 0.5f + 0.5f
                         * (float)System.Math.Sin(Main.GlobalTimeWrappedHourly * 8f);
-                    effect.Parameters["Opacity"].SetValue(opacity * MathHelper.Lerp(0.76f, 1f, pulse));
+                    const float combinedOutlineOpacity = 0.3f;
+                    float layerOpacity = 1f - (float)System.Math.Pow(
+                        1f - combinedOutlineOpacity, 1f / OutlineDirections.Length);
+                    effect.Parameters["Opacity"].SetValue(
+                        opacity * layerOpacity * MathHelper.Lerp(0.76f, 1f, pulse));
                     effect.CurrentTechnique.Passes[0].Apply();
 
                     float outlineRadius = MathHelper.Lerp(1.6f, 2.8f, pulse)

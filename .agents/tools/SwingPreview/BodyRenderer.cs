@@ -23,6 +23,10 @@ namespace SwingPreview
         public int Direction = 1;
         public int BodyRow;
         public int LegRow;
+        public int StepIndex;             // 0-based step of a chained combo
+        public int StepCount = 1;
+        public string Motion;
+        public bool WeaponHidden;         // PuppetNPC.WeaponSheathed: no weapon, arms at rest
     }
 
     /// <summary>Which sprite sheets to composite, and the handful of numbers the pose maths needs.</summary>
@@ -36,11 +40,15 @@ namespace SwingPreview
         public float WeaponRotationOffset;   // MeleeWeaponRotationOffset
         public float DrawScale = 1f;
 
-        /// <summary>Weapon sprite scale. CALIBRATION KNOB, not derived: PuppetNPC.DrawWeaponToLayer
-        /// computes its own draw size from grip points and reach, and that is not reproduced here.
-        /// Dial it with --weaponscale until the blade matches a screenshot, or read the real value
-        /// out of a telemetry log's "scale" / "visualReach" fields.</summary>
-        public float WeaponScale = 0.45f;
+        /// <summary>Weapon sprite scale relative to the body cells: the puppet's MeleeWeaponDrawScale,
+        /// read from the mod (DrawPlayer's PuppetDrawScale scales body and weapon together, so it
+        /// cancels). --weaponscale overrides it.</summary>
+        public float WeaponScale = 1f;
+
+        /// <summary>The puppet's MeleeHandleNorm: the normalised texture point pinned to the hand,
+        /// exactly as PuppetNPC.DrawWeaponToLayer uses it as the draw origin.</summary>
+        public float HandleNormX = 0.10f;
+        public float HandleNormY = 0.85f;
     }
 
     /// <summary>
@@ -133,9 +141,17 @@ namespace SwingPreview
         private static Bitmap DrawFrame(PuppetArt art, PoseFrame frame,
             Bitmap body, Bitmap legs, Bitmap head, Bitmap weapon, int zoom)
         {
-            // Generous canvas: a greatsword at full extension reaches well past the 40x56 body cell.
-            const int PadX = 60;
-            const int PadY = 50;
+            // Canvas padding sized to the weapon: its reach from the grip to the farthest texture
+            // corner, so a full-scale greatsword (Gwyn's is ~117px) never runs off the frame.
+            float scaledWidth = weapon.Width * art.WeaponScale;
+            float scaledHeight = weapon.Height * art.WeaponScale;
+            float gripX = scaledWidth * art.HandleNormX;
+            float gripY = scaledHeight * art.HandleNormY;
+            float farX = Math.Max(gripX, scaledWidth - gripX);
+            float farY = Math.Max(gripY, scaledHeight - gripY);
+            int weaponReach = (int)Math.Ceiling(Math.Sqrt(farX * farX + farY * farY));
+            int PadX = Math.Max(60, weaponReach + 12);
+            int PadY = Math.Max(50, weaponReach + 12);
             int w = (CellW + PadX * 2) * zoom;
             int h = (CellH + PadY * 2) * zoom;
 
@@ -152,6 +168,25 @@ namespace SwingPreview
             g.ScaleTransform(zoom, zoom);
             g.TranslateTransform(PadX, PadY);
 
+            // Facing left is drawn as the exact mirror of the right-facing pose, about the body cell's
+            // centre - which is what the game produces (vanilla flips every layer with the sprite,
+            // and Gwyn/Artorias set MirrorMeleeSwingRotationByFacing). Mirroring each layer
+            // separately got the weapon's rotate/mirror order wrong: blade and arm pointed apart.
+            bool flip = false;
+            float armRotation = frame.CompositeArmRotation * frame.Direction;   // back to facing-right space
+            if (frame.WeaponHidden)
+            {
+                // Sheathed: no composite arm pose in game, so the arms hang in the natural draw.
+                // Rotation 0 in composite space is the arm straight down - the idle stand-in.
+                armRotation = 0f;
+            }
+            if (frame.Direction < 0)
+            {
+                g.TranslateTransform(CellW / 2f, 0f);
+                g.ScaleTransform(-1f, 1f);
+                g.TranslateTransform(-CellW / 2f, 0f);
+            }
+
             int torsoColumn = frame.Airborne ? ColTorsoJump : ColTorso;
             Rectangle torsoCell = Cell(torsoColumn, RowTorso);
             Rectangle frontShoulderCell = Cell(ColFrontShoulder, RowShoulder);
@@ -163,8 +198,6 @@ namespace SwingPreview
             Rectangle legFrame = LegacyFrame(frame.LegRow);
             Rectangle headFrame = LegacyFrame(frame.BodyRow);
 
-            bool flip = frame.Direction < 0;
-
             // Vanilla flips the front arm in front of the shoulder cap on body rows 1, 2 and 5.
             // BodyRowFromWeaponRotation walks rows 1->4 as the weapon pitches down, so an un-fixed
             // swing shows the arm over the pauldron for its high-pitch half and behind it for the
@@ -174,20 +207,23 @@ namespace SwingPreview
 
             // ---- vanilla layer order ----
             DrawStatic(g, legs, legFrame, flip);
-            DrawRotated(g, body, backArmCell, BackArmPivot, frame.CompositeArmRotation * 0.55f, flip);
+            DrawRotated(g, body, backArmCell, BackArmPivot, armRotation * 0.55f, flip);
             DrawStatic(g, body, backShoulderCell, flip);
             DrawStatic(g, body, torsoCell, flip);
             DrawStatic(g, head, headFrame, flip);
-            DrawWeapon(g, weapon, art, frame, flip);
+            if (!frame.WeaponHidden)
+            {
+                DrawWeapon(g, weapon, art, frame.WeaponRotation, armRotation, flip);
+            }
 
             if (armOverShoulder)
             {
                 DrawStatic(g, body, frontShoulderCell, flip);
-                DrawRotated(g, body, frontArmCell, FrontArmPivot, frame.CompositeArmRotation, flip);
+                DrawRotated(g, body, frontArmCell, FrontArmPivot, armRotation, flip);
             }
             else
             {
-                DrawRotated(g, body, frontArmCell, FrontArmPivot, frame.CompositeArmRotation, flip);
+                DrawRotated(g, body, frontArmCell, FrontArmPivot, armRotation, flip);
                 DrawStatic(g, body, frontShoulderCell, flip);
             }
 
@@ -263,10 +299,10 @@ namespace SwingPreview
         /// GetFrontHandPosition maths relative to the cell, and the sprite is pinned by its lower-left
         /// (the hilt corner for a Terraria sword), which is the convention the real draw starts from.
         /// </summary>
-        private static void DrawWeapon(Graphics g, Bitmap weapon, PuppetArt art, PoseFrame frame, bool flip)
+        private static void DrawWeapon(Graphics g, Bitmap weapon, PuppetArt art, float weaponRotation, float armRotation, bool flip)
         {
-            PointF hand = FrontHandInCell(frame.CompositeArmRotation, flip);
-            float degrees = (float)((frame.WeaponRotation + art.WeaponRotationOffset * frame.Direction) * 180.0 / Math.PI);
+            PointF hand = FrontHandInCell(armRotation, flip);
+            float degrees = (float)((weaponRotation + art.WeaponRotationOffset) * 180.0 / Math.PI);
 
             GraphicsState state = g.Save();
             g.TranslateTransform(hand.X, hand.Y);
@@ -280,11 +316,15 @@ namespace SwingPreview
             g.RotateTransform(degrees);
 
             // Terraria sword sprites run hilt at bottom-left to tip at top-right, which is the
-            // MeleeNaturalRestAngleDeg = 45 pose. So rotation 0 needs no correction: pin the sprite's
-            // bottom-left corner to the hand and rotate the whole thing about that point.
+            // MeleeNaturalRestAngleDeg = 45 pose, so rotation 0 needs no correction. Pin the
+            // MeleeHandleNorm texel to the hand and rotate about it - DrawWeaponToLayer's origin.
+            // (This used to pin the texture's bottom-left CORNER, i.e. beyond the pommel, which made
+            // every puppet look like it held the very end of its sword.)
             float w = weapon.Width * art.WeaponScale;
             float h = weapon.Height * art.WeaponScale;
-            g.DrawImage(weapon, new RectangleF(0f, -h, w, h),
+            float originX = w * art.HandleNormX;
+            float originY = h * art.HandleNormY;
+            g.DrawImage(weapon, new RectangleF(-originX, -originY, w, h),
                 new RectangleF(0f, 0f, weapon.Width, weapon.Height), GraphicsUnit.Pixel);
 
             g.Restore(state);
@@ -320,12 +360,19 @@ namespace SwingPreview
             using var brush = new SolidBrush(tint);
             string air = frame.Airborne ? " air" : "";
             g.DrawString($"t{frame.Tick} {ShortPhase(frame.Phase)}{air}", font, brush, 4, 4);
+
+            if (frame.StepCount > 1)
+            {
+                using var stepBrush = new SolidBrush(Color.FromArgb(255, 150, 155, 165));
+                g.DrawString($"{frame.StepIndex + 1}/{frame.StepCount} {frame.Motion}", font, stepBrush, 4, 18);
+            }
         }
 
         private static string ShortPhase(string phase)
         {
             if (string.IsNullOrEmpty(phase)) { return "?"; }
             if (phase.Contains("Telegraph")) { return "windup"; }
+            if (phase.Contains("Pause")) { return "pause"; }
             if (phase.Contains("Recovery")) { return "recovery"; }
             return "swing";
         }
@@ -401,11 +448,21 @@ namespace SwingPreview
             int fh = frames[0].Height;
 
             var phases = new StringBuilder();
+            var steps = new StringBuilder();
             for (int i = 0; i < poses.Count; i++)
             {
-                if (i > 0) { phases.Append(','); }
+                if (i > 0)
+                {
+                    phases.Append(',');
+                    steps.Append(',');
+                }
                 string tag = ShortPhase(poses[i].Phase) + (poses[i].Armed ? "*" : "") + (poses[i].Airborne ? " air" : "");
+                if (poses[i].StepCount > 1)
+                {
+                    tag = $"step {poses[i].StepIndex + 1}/{poses[i].StepCount} {poses[i].Motion} - {tag}";
+                }
                 phases.Append('"').Append(tag).Append('"');
+                steps.Append(poses[i].StepIndex);
             }
 
             string html = $@"<!doctype html>
@@ -423,9 +480,17 @@ namespace SwingPreview
   button:hover {{ background:#353b48; }}
   #meta {{ color:#9aa1ae; }}
   .swing {{ color:#f06a6a; }}
+  #timeline {{ display:block; margin-top:12px; cursor:pointer; border:1px solid #3a3f4b; max-width:100%; }}
+  .legend span {{ display:inline-block; width:10px; height:10px; margin:0 4px 0 12px; vertical-align:middle; }}
 </style>
 <h1>{puppet} &nbsp;/&nbsp; {label} &nbsp;<span id=""meta"">{frames.Count} frames @60fps</span></h1>
 <div id=""stage""></div>
+<canvas id=""timeline"" width=""720"" height=""26""></canvas>
+<div class=""legend"" style=""color:#9aa1ae; margin-top:6px"">
+  <span style=""background:#5b7fd6""></span>windup<span style=""background:#e0a040""></span>swing
+  <span style=""background:#f06a6a""></span>swing, blade armed<span style=""background:#8a62c8""></span>pause
+  <span style=""background:#4c5363""></span>recovery &nbsp; white ticks = step boundaries
+</div>
 <div class=""row"">
   <button id=""play"">pause</button>
   <button id=""prev"">&#9664; step</button>
@@ -441,10 +506,35 @@ namespace SwingPreview
 <script>
   var FW = {fw}, FH = {fh}, COLS = {sheetColumns}, N = {frames.Count};
   var phases = [{phases}];
+  var steps = [{steps}];
   var stage = document.getElementById('stage'), scrub = document.getElementById('scrub');
   var label = document.getElementById('label'), speed = document.getElementById('speed');
   var speedLabel = document.getElementById('speedLabel'), playBtn = document.getElementById('play');
+  var timeline = document.getElementById('timeline'), tctx = timeline.getContext('2d');
   var frame = 0, playing = true, acc = 0, last = performance.now();
+
+  // One column per frame, coloured by phase, so pauses and step handoffs read at a glance.
+  function phaseColour(p) {{
+    if (p.indexOf('windup') >= 0) return '#5b7fd6';
+    if (p.indexOf('pause') >= 0) return '#8a62c8';
+    if (p.indexOf('recovery') >= 0) return '#4c5363';
+    return p.indexOf('*') >= 0 ? '#f06a6a' : '#e0a040';
+  }}
+  function drawTimeline() {{
+    var w = timeline.width, h = timeline.height, colW = w / N;
+    tctx.clearRect(0, 0, w, h);
+    for (var i = 0; i < N; i++) {{
+      tctx.fillStyle = phaseColour(phases[i] || '');
+      tctx.fillRect(Math.floor(i * colW), 4, Math.ceil(colW), h - 8);
+      if (i > 0 && steps[i] !== steps[i - 1]) {{
+        tctx.fillStyle = '#ffffff';
+        tctx.fillRect(Math.floor(i * colW), 0, 1, h);
+      }}
+    }}
+    tctx.strokeStyle = '#ffffff';
+    tctx.lineWidth = 2;
+    tctx.strokeRect(Math.floor(frame * colW), 1, Math.max(2, colW), h - 2);
+  }}
 
   function show(i) {{
     frame = (i + N) % N;
@@ -454,7 +544,14 @@ namespace SwingPreview
     var p = phases[frame] || '';
     label.innerHTML = 'frame ' + frame + ' / ' + (N - 1) + ' &nbsp; ' +
       (p.indexOf('*') >= 0 ? '<span class=""swing"">' + p + '</span>' : p);
+    drawTimeline();
   }}
+
+  timeline.onclick = function (e) {{
+    var rect = timeline.getBoundingClientRect();
+    playing = false; playBtn.textContent = 'play';
+    show(Math.floor((e.clientX - rect.left) / rect.width * N));
+  }};
 
   function loop(now) {{
     var dt = now - last; last = now;

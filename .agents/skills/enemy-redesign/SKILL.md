@@ -85,6 +85,15 @@ answers*. State which items are novel-risk (a brief player-freeze, a grab that b
 the user can veto. Present it as options for approval; the user picks and tweaks (they cut the
 snowball attack, changed heal numbers, renamed things). Only build after a yes.
 
+**Prove the counterplay with arithmetic.** The player rolls with **22 ticks of i-frames**, can roll
+again **30 ticks after starting** a roll (so each roll leaves an 8-tick gap with no protection), and
+is immune for **40 ticks** after any hit. A claim like
+"rolling away is caught" or "punishes early rolls" must survive that timeline, and so must every
+follow-up. For any **melee** attack or combo, load `attack-timing-design`: its §2 has the full
+budget and fairness rules, its §3 the per-move timing sheet the proposal must fill in (on-screen
+ticks, strike curve, live window, tail, punish window, travel distance), and its §10 the review
+checklist, including the failures a real proposal made.
+
 This review step is itself a deliverable the user values — several sessions were "review enemy X" with
 no code written that turn at all.
 

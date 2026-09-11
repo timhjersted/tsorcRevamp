@@ -1,0 +1,4 @@
+interface:
+  display_name: "Attack Timing Design"
+  short_description: "Design or retune a puppet melee attack's timing and feel"
+  default_prompt: "Use $attack-timing-design to design this puppet melee attack's timing sheet, implement it, and verify it with SwingPreview --profile."

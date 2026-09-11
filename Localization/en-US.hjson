@@ -10499,7 +10499,7 @@ Mods: {
 			GreatFarronDart.DisplayName: Great Farron Dart
 			GreatFarronDartSpawner.DisplayName: Great Farron Dart Spawner
 			SwordOfLordGwyn.DisplayName: Sword of Lord Gwyn
-			SwordOfCinder.DisplayName: Sword of Cinder
+			SwordOfCinder.DisplayName: Severing Dusk
 			TackleProjectile.DisplayName: Gwyn
 			Hellwing.DisplayName: Hellwing
 			HerosArrow.DisplayName: Heros Arrow
@@ -11590,7 +11590,6 @@ Mods: {
 			}
 
 			SwordOfLordGwyn.DisplayName: Sword of Lord Gwyn
-			SwordOfCinder.DisplayName: Sword of Cinder
 			HellkiteDragonBody.DisplayName: Hellkite Dragon
 			HellkiteDragonBody2.DisplayName: Hellkite Dragon
 			HellkiteDragonBody3.DisplayName: Hellkite Dragon

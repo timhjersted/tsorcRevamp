@@ -291,17 +291,28 @@ namespace tsorcRevamp.NPCs.Puppets
         private float _leapSlamSwingProgress;
         private const int LeapSlamDownswingTicks = 10;
 
+        /// <summary>A landing-timed LeapSlam whose step sets LeapStrikeRange began its downswing in
+        /// the air because the target came into range. The blade then sweeps every tick until the
+        /// landing, and the landing does not hit a second time.</summary>
+        private bool _leapStrikeStarted;
+
         // Logical arm angles that put the blade above the head, then down-forward at impact.
-        // Ground-directed slams deliberately exclude player-height aim bias.
-        private float LeapSlamCarryRotation => MathHelper.ToRadians(-105f + MeleeNaturalRestAngleDeg)
+        // Ground-directed slams deliberately exclude player-height aim bias. Virtual so a combo can
+        // carry the blade in its own cocked pose (Gwyn's Wrath Flurry holds its raised swipe pose).
+        protected virtual float LeapSlamCarryRotation => MathHelper.ToRadians(-105f + MeleeNaturalRestAngleDeg)
             - FrontHandWeapon.RotationOffset;
-        private float LeapSlamImpactRotation => MathHelper.ToRadians(75f + MeleeNaturalRestAngleDeg)
+        protected virtual float LeapSlamImpactRotation => MathHelper.ToRadians(75f + MeleeNaturalRestAngleDeg)
             - FrontHandWeapon.RotationOffset;
 
         private void UpdateLeapSlamPose(bool landed)
         {
             if (landed)
                 _leapSlamSwingProgress = 1f;
+            else if (_leapStrikeStarted)
+            {
+                // In-range strike: the downswing runs on its own clock, landing or not.
+                _leapSlamSwingProgress = Math.Min(1f, _leapSlamSwingProgress + 1f / LeapSlamDownswingTicks);
+            }
             else if (NPC.velocity.Y > 0f)
             {
                 // Project the same body collision a few frames ahead, including platforms and
@@ -1477,7 +1488,13 @@ namespace tsorcRevamp.NPCs.Puppets
             }
         }
 
-        private bool IsWeaponVisiblePhase =>
+        /// <summary>True while the puppet has put its weapon away inside a phase that would normally
+        /// show it - e.g. a long combo recovery played as unarmed walking. Hides the weapon AND drops
+        /// every weapon pose (the Use1-Use4 body frames and the composite arms), so the arms fall
+        /// back to the natural walk/idle draw. Default false.</summary>
+        protected virtual bool WeaponSheathed => false;
+
+        private bool IsWeaponVisiblePhase => !WeaponSheathed && (
             Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack ||
             (Phase == AttackPhase.MeleeRecovery && MeleeRecoveryLingerTicks > 0) ||
             Phase == AttackPhase.StabTelegraph  || Phase == AttackPhase.StabAttack  ||
@@ -1514,7 +1531,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // being held, but nothing was drawing it. Gated on the same opt-in hold, so puppets that
             // leave MeleeRecoveryLingerTicks at 0 are unaffected.
             (IsWeaponRecoveryPhase && IsHoldingMeleeRecoveryFollowThrough()) ||
-            (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0);
+            (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0));
 
         private bool IsMeleeComboPhase =>
             Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
@@ -2922,18 +2939,19 @@ namespace tsorcRevamp.NPCs.Puppets
             gnpc.QuickStepRecoveryTicks = QuickStepRecoveryTicks;
             gnpc.QuickStepForwardRoom   = QuickStepForwardRoom;
 
-            // SF4 puppets don't run BasicAI, which is what normally winds these down — so when this
-            // puppet uses a proactive dodge (jump/roll or preemptive quick-step) we tick the timers here.
-            if (EvadesProjectiles || PreemptiveQuickStepChance > 0)
+            // SF4 puppets don't run BasicAI, which normally winds these down. Tick every armed
+            // dodge timer here, not only puppets opted into proactive evasion: several authored
+            // attacks (Jump Slash, Flip Slash, Homing Volley) grant their own DodgeTimer. Leaving
+            // those timers gated on EvadesProjectiles/PreemptiveQuickStepChance made them permanent
+            // on puppets such as Soul of Cinder, suppressing all later attacks and granting endless
+            // blinking i-frames after the first such move.
+            if (gnpc.DodgeTimer > 0)
             {
-                if (gnpc.DodgeTimer    > 0)
-                {
-                    gnpc.DodgeTimer--;
-                }
-                if (gnpc.DodgeCooldown > 0)
-                {
-                    gnpc.DodgeCooldown--;
-                }
+                gnpc.DodgeTimer--;
+            }
+            if (gnpc.DodgeCooldown > 0)
+            {
+                gnpc.DodgeCooldown--;
             }
 
             Player target = Main.player[NPC.target];
@@ -5173,8 +5191,24 @@ namespace tsorcRevamp.NPCs.Puppets
                                         NPC.width, NPC.height).Y < 1f
                                 : PhaseTimer < 86);
                         bool landingTimedSlam = UseLandingTimedLeapSlam && step.Motion == ComboMotion.LeapSlam;
+
+                        // In-range strike (opt-in via LeapStrikeRange): once past the apex with the
+                        // target close, swing now rather than on the landing, and arm the swept blade.
+                        bool pastApex = _comboLeapLaunched && NPC.velocity.Y >= 0f && !landed;
+                        bool canStrikeInAir = landingTimedSlam && step.LeapStrikeRange > 0f
+                            && !_leapStrikeStarted && _leapSlamSwingProgress <= 0f && pastApex;
+                        if (canStrikeInAir && NPC.Distance(target.Center) <= step.LeapStrikeRange)
+                        {
+                            _leapStrikeStarted = true;
+                            DoComboMeleeHit(step);
+                            PlayMeleeSwingSound();
+                        }
+
                         if (landingTimedSlam)
                             UpdateLeapSlamPose(landed);
+                        if (_leapStrikeStarted)
+                            TickBladeHit();
+
                         endStep = (--PhaseTimer <= 0) || landed;
                         if (endStep)
                         {
@@ -5182,7 +5216,8 @@ namespace tsorcRevamp.NPCs.Puppets
                             // tick against the weapon's actual landing pose — a slam/thrust still
                             // only connects if the sprite is really overlapping the target here,
                             // it just doesn't need to be checked every tick like a sweeping arc.
-                            if (!landingTimedSlam || landed)
+                            // An in-air strike already swept its hit, so the landing adds none.
+                            if ((!landingTimedSlam || landed) && !_leapStrikeStarted)
                             {
                                 DoComboMeleeHit(step);
                                 TickBladeHit();
@@ -5190,6 +5225,7 @@ namespace tsorcRevamp.NPCs.Puppets
                             if (landingTimedSlam && landed)
                                 OnLeapSlamLanded(step);
                             _comboLeapLaunched = false;
+                            _leapStrikeStarted = false;
                         }
                     }
                     else if (step.Motion == ComboMotion.BackstepRaise)
@@ -5303,7 +5339,21 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                     else
                     {
-                        TickBladeHit();
+                        // Past the step's HitWindowEnd the blade is only following through (a long
+                        // Weighted ease-out), so disarm it rather than let a settling sword deal damage.
+                        // Elapsed is measured before this tick's PhaseTimer decrement below.
+                        float stepProgress = (_activeComboStepTotalTicks - PhaseTimer) / (float)Math.Max(1, _activeComboStepTotalTicks);
+                        bool followingThrough = step.HitWindowEnd > 0f && stepProgress > step.HitWindowEnd;
+                        if (followingThrough)
+                        {
+                            _bladeArmed = false;
+                            _hasPreviousBladeSample = false;
+                        }
+                        else
+                        {
+                            TickBladeHit();
+                        }
+
                         if (step.ForwardPushMult > 0f)
                             NPC.velocity.X = _comboLockedDir * (ComboForwardPushTopSpeed * step.ForwardPushMult);
                         else if (SlowDownBeforeMelee && AimSwingActive)
@@ -6003,6 +6053,7 @@ namespace tsorcRevamp.NPCs.Puppets
         private void BeginLeapAttack(MeleeComboStep step)
         {
             _leapSlamSwingProgress = 0f;
+            _leapStrikeStarted = false;
             Player target = Main.player[NPC.target];
             float targetX = PredictedLeapTargetX(target);
             int dir = targetX < NPC.Center.X ? -1 : 1;
@@ -7103,10 +7154,15 @@ namespace tsorcRevamp.NPCs.Puppets
             return requestedTicks > 0 ? requestedTicks : GetWeaponUseAnimation(MeleeWeaponItemType);
         }
 
+        /// <summary>Share of a logical wind-up spent easing from the carry pose to the arc's far end
+        /// before the raise to the attack start begins. 0.25 = the first quarter. A boss can lengthen
+        /// it to hold a menacing raised pose longer (Gwyn's Wrath Flurry).</summary>
+        protected virtual float LogicalWindupSettleFraction => 0.25f;
+
         private float LogicalSwingWindup(float oppositeEnd, float attackStart, float progress)
         {
             progress = MathHelper.Clamp(progress, 0f, 1f);
-            const float settleFraction = 0.25f;
+            float settleFraction = MathHelper.Clamp(LogicalWindupSettleFraction, 0.05f, 0.95f);
             if (progress < settleFraction)
             {
                 float settle = MathHelper.SmoothStep(0f, 1f, progress / settleFraction);
@@ -7618,7 +7674,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         }
                         else
                         {
-                            _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                            _weaponRotation = ApplySwingEase(a0, a1, t, step);
                         }
                         break;
                     }
@@ -7636,7 +7692,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         }
                         else
                         {
-                            _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                            _weaponRotation = ApplySwingEase(a0, a1, t, step);
                         }
                         break;
                     }
@@ -7698,7 +7754,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         }
                         else
                         {
-                            _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);  // fast snap forward
+                            _weaponRotation = ApplySwingEase(a0, a1, t, step);  // fast snap forward
                         }
                         break;
                     }
@@ -7711,7 +7767,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         }
                         else
                         {
-                            _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing);
+                            _weaponRotation = ApplySwingEase(a0, a1, t, step);
                         }
                         break;
                     }
@@ -9314,7 +9370,13 @@ namespace tsorcRevamp.NPCs.Puppets
             float opacity = MathHelper.Clamp(UnblockableBodyAuraOpacity, 0f, 1f);
             float pulse = 0.5f + 0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 8f);
             float outlineRadius = MathHelper.Lerp(1.6f, 2.8f, pulse) * scale;
-            Color auraColor = new Color(255, 4, 2) * opacity;
+            // Opacity describes the finished eight-copy silhouette, not every individual copy.
+            // Applying it to each layer made 50% alpha accumulate to virtually solid red wherever
+            // the displaced body sprites overlapped.
+            float layerOpacity = opacity <= 0f
+                ? 0f
+                : 1f - (float)Math.Pow(1f - opacity, 1f / AttackTelegraphDraw.GlowDirections.Length);
+            Color auraColor = new Color(255, 4, 2) * layerOpacity;
 
             _unblockableBodyDrawCache.Clear();
             _unblockableBodyDrawCache.AddRange(drawInfo.DrawDataCache);
@@ -10107,8 +10169,9 @@ namespace tsorcRevamp.NPCs.Puppets
             return ticks;
         }
 
-        /// <summary>Eases the arc through the step's chosen <see cref="SwingEaseStyle"/> when the
-        /// aim-swing pilot is live, else the legacy on/off easing. Trapezoidal is a special case:
+        /// <summary>Eases the arc through the step's chosen <see cref="SwingEaseStyle"/> when
+        /// <see cref="UseAuthoredComboSwingClock"/> is on, else the legacy on/off easing. Every arc
+        /// motion plus JoustDash/LeapSlam/LeapThrust swings through here. Trapezoidal is a special case:
         /// it needs the step's raw tick budget (its accel/decel/hold phases are absolute tick counts,
         /// not fractions of the swing), so it's honored regardless of UseAuthoredComboSwingClock.</summary>
         private float ApplySwingEase(float a0, float a1, float t, MeleeComboStep step)
@@ -10118,6 +10181,15 @@ namespace tsorcRevamp.NPCs.Puppets
                 int totalTicks = Math.Max(1, step.AttackTicks);
                 int elapsedTicks = (int)Math.Round(t * totalTicks);
                 return SwingEase.ApplyTrapezoidal(a0, a1, elapsedTicks, totalTicks);
+            }
+
+            // Weighted is authored in ticks, so like Trapezoidal it maps t back onto AttackTicks. It
+            // still needs the authored clock: without it t runs over the weapon's useAnimation.
+            if (step.Ease == SwingEaseStyle.Weighted && UseAuthoredComboSwingClock)
+            {
+                int totalTicks = Math.Max(1, step.AttackTicks);
+                return SwingEase.ApplyWeighted(a0, a1, t * totalTicks, totalTicks,
+                    step.EaseInTicks, step.EaseOutTicks, step.EaseOutDecay);
             }
 
             return UseAuthoredComboSwingClock ? SwingEase.Apply(a0, a1, t, step.Ease)
@@ -10274,13 +10346,13 @@ namespace tsorcRevamp.NPCs.Puppets
 
         /// <summary>Phases whose <c>_weaponRotation</c> represents an actual swinging-arm motion
         /// (as opposed to a held-aim pose).  Only these drive the composite arm experiment.</summary>
-        private bool IsMeleeSwingPosePhase =>
+        private bool IsMeleeSwingPosePhase => !WeaponSheathed && (
             Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack ||
             Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
             Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery ||
             Phase == AttackPhase.TendrilSwingTelegraph || Phase == AttackPhase.TendrilSwing ||
             Phase == AttackPhase.BoomerangSwingTelegraph || Phase == AttackPhase.BoomerangSwing ||
-            UseCompositeArmForAdditionalPhase;
+            UseCompositeArmForAdditionalPhase);
 
         /// <summary>True when the composite-arm swing path should be active this frame.</summary>
         private bool CompositeArmActive =>

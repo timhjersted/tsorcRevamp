@@ -23,6 +23,11 @@ namespace tsorcRevamp.Utilities
         /// step's raw tick counts, so it's handled as a special case in PuppetNPC.ApplySwingEase rather
         /// than through the generic <see cref="SwingEase.Apply(float,float,float,SwingEaseStyle)"/> switch.</summary>
         Trapezoidal,
+        /// <summary>Tick-authored heavy swing: ease in over the step's EaseInTicks, cruise at top
+        /// speed, then decelerate over EaseOutTicks into the end pose - see
+        /// <see cref="SwingEase.ApplyWeighted"/>. Like Trapezoidal it needs raw ticks, so
+        /// PuppetNPC.ApplySwingEase special-cases it; the generic switch treats it as Smooth.</summary>
+        Weighted,
     }
 
     /// <summary>
@@ -93,6 +98,71 @@ namespace tsorcRevamp.Utilities
                     return curve.GetValue(t);
                 }
             }
+        }
+
+        /// <summary>Speed decay used by <see cref="ApplyWeighted"/> when a step leaves EaseOutDecay unset.</summary>
+        public const float DefaultWeightedDecay = 6f;
+
+        /// <summary>
+        /// Heavy swing shaped like a real one, with authored tick counts. Speed builds up over
+        /// <paramref name="easeInTicks"/> (a cubic ease-in, so speed grows with the square of time),
+        /// holds top speed for whatever ticks remain, then decays exponentially over
+        /// <paramref name="easeOutTicks"/>: the blade sheds most of its speed right after the strike,
+        /// then creeps to a stop exactly on <paramref name="end"/>.
+        ///
+        /// <paramref name="easeOutDecay"/> is the contrast knob: how many times speed falls by 1/e over
+        /// the ease-out. 6 = speed is down to 37% a sixth of the way into it and 5% by halfway. Higher
+        /// means a faster strike (the fixed arc is covered sooner) and a longer near-still settle.
+        ///
+        /// Velocity is continuous at both joins. Top speed v is solved from
+        /// v * (easeIn/3 + cruise + easeOut * (1 - e^-k) / k) = sweep, which is also why long ramps cap
+        /// the peak. Units: ticks in, the start..end angle out.
+        /// </summary>
+        public static float ApplyWeighted(float start, float end, float elapsedTicks, int totalTicks,
+            int easeInTicks, int easeOutTicks, float easeOutDecay)
+        {
+            totalTicks = Math.Max(1, totalTicks);
+            float elapsed = MathHelper.Clamp(elapsedTicks, 0f, totalTicks);
+            int inTicks = Math.Clamp(easeInTicks, 0, totalTicks);
+            int outTicks = Math.Clamp(easeOutTicks, 0, totalTicks - inTicks);
+            int cruiseTicks = totalTicks - inTicks - outTicks;
+
+            float decay = DefaultWeightedDecay;
+            if (easeOutDecay > 0f)
+            {
+                decay = easeOutDecay;
+            }
+            // Share of the ease-out's span the exponential actually covers; normalises it to land on end.
+            float decayCoverage = 1f - (float)Math.Exp(-decay);
+
+            // Top speed as a fraction of the sweep per tick, and the fraction each phase covers.
+            float speed = 1f / (inTicks / 3f + cruiseTicks + outTicks * decayCoverage / decay);
+            float inFraction = speed * inTicks / 3f;
+            float cruiseFraction = speed * cruiseTicks;
+            float outFraction = 1f - inFraction - cruiseFraction;
+
+            float fraction;
+            if (elapsed < inTicks)
+            {
+                float progress = elapsed / inTicks;
+                fraction = inFraction * progress * progress * progress;
+            }
+            else if (elapsed < inTicks + cruiseTicks)
+            {
+                fraction = inFraction + speed * (elapsed - inTicks);
+            }
+            else if (outTicks > 0)
+            {
+                float progress = (elapsed - inTicks - cruiseTicks) / outTicks;
+                float settled = (1f - (float)Math.Exp(-decay * progress)) / decayCoverage;
+                fraction = inFraction + cruiseFraction + outFraction * settled;
+            }
+            else
+            {
+                fraction = 1f;
+            }
+
+            return MathHelper.Lerp(start, end, fraction);
         }
 
         /// <summary>Tick-accurate accel/cruise/decel/hold swing: a short quadratic ease-in over the

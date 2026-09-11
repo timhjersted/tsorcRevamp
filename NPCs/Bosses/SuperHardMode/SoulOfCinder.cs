@@ -3,13 +3,13 @@ using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Weapons.Enemy;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
 
@@ -26,12 +26,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int BodyArmorItemType => ModContent.ItemType<FirelinkArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<FirelinkLeggings>();
 
-        protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyArtoriasGreatsword>();
-        protected override int RangedWeaponItemType => ModContent.ItemType<EnemySmokeBomb>();
-        protected override int SecondaryRangedWeaponItemType => ModContent.ItemType<EnemyVenomStaff>();
-        protected override int MagicWeaponItemType => ModContent.ItemType<EnemyMeteorStorm>();
+        protected override int MeleeWeaponItemType => ModContent.ItemType<SeveringDusk>();
+        protected override int RangedWeaponItemType => UsesRangedMemory ? ModContent.ItemType<EnemySmokeBomb>() : -1;
+        protected override int SecondaryRangedWeaponItemType => UsesPyromancyMemory ? ModContent.ItemType<EnemyVenomStaff>() : -1;
+        protected override int MagicWeaponItemType => UsesMagicMemory ? ModContent.ItemType<EnemyMeteorStorm>() : -1;
 
-        protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
+        protected override Vector2 MeleeHandleNorm => new Vector2(0.14f, 0.87f);
+        protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Broadsword;
         protected override RangedStyle RangedAnimStyle => RangedStyle.Throw;
         protected override RangedStyle SecondaryRangedAnimStyle => RangedStyle.Crossbow;
 
@@ -40,7 +41,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int SecondaryRangedDamage => 68;
         protected override int MagicDamage => 70;
 
-        protected override float TopSpeed => _swordDead ? 3.05f : 2.65f;
+        bool SecondPhase => _secondPhaseStarted;
+        bool UsesAshenMemory => _memory == CinderMemory.AshenWarrior;
+        bool UsesAbyssMemory => _memory == CinderMemory.Abyss;
+        bool UsesPyromancyMemory => _memory == CinderMemory.Pyromancy;
+        bool UsesSorceryMemory => _memory == CinderMemory.SorceryMiracle;
+        bool UsesRangedMemory => UsesAbyssMemory || UsesPyromancyMemory;
+        bool UsesMagicMemory => UsesPyromancyMemory || UsesSorceryMemory;
+        bool FinaleUnlocked => SecondPhase && NPC.life <= NPC.lifeMax / 5;
+
+        protected override float TopSpeed => SecondPhase ? 3.05f : 2.65f;
         protected override float Acceleration => 0.12f;
         protected override float RunDistance => 360f;
         protected override float MeleeRange => 112f;
@@ -48,16 +58,34 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float ComboReachBase => 138f;
         protected override float MeleeEngageRange => 132f;
         protected override float ComboMaxStartRange => 290f;
-        protected override int MeleeComboChance => 85;
+        protected override int MeleeComboChance => UsesAshenMemory ? 100 : SecondPhase ? 55 : 0;
+        protected override int RangedStartMeleeComboChance => UsesAshenMemory ? 80 : SecondPhase ? 45 : 0;
         protected override float ComboTelegraphMultiplier => 1.15f;
         protected override int MeleeRecoveryTicks => 32;
-        protected override bool CanStab => true;
+        protected override int MeleeRecoveryLingerTicks => 6;
+        protected override int MeleeComboInterStepLingerTicks => 3;
+        protected override bool CanStab => UsesAshenMemory;
+        protected override bool UseCompositeArmSwing => true;
         protected override bool UseSwingEasing => true;
+        protected override bool UseLogicalMeleeTelegraphs => true;
+        protected override bool UseAuthoredComboSwingClock => true;
+        protected override bool MirrorMeleeSwingRotationByFacing => true;
         protected override bool UseAlternateFlip => true;
         protected override bool UseAimAdaptiveArc => true;
         protected override bool HasSlashVFX => true;
-        protected override Color SlashVFXColor => new Color(255, 120, 40);
-        protected override Color MeleeTelegraphFlashColor => new Color(255, 140, 60);
+        protected override Color SlashVFXColor => MemoryColor;
+        protected override Color MeleeTelegraphFlashColor => MemoryColor;
+
+        protected override int EstusChargesMax => 1;
+        protected override float EstusHealFraction => 0.10f;
+        protected override float FirstHealThreshold => 0.30f;
+        protected override float SecondHealThreshold => -1f;
+        protected override float HealLifeCapFraction => 0.499f;
+        protected override int HealCooldownTicks => 900;
+        protected override int HealAnimationTicks => 110;
+        protected override float RecentDamageThreshold => 1f;
+        protected override float FleeToHealDistance => 20f * 16f;
+        protected override int FleeToHealMaxTicks => 120;
 
         protected override float RangedRange => 780f;
         protected override float MinRangedRange => 160f;
@@ -67,7 +95,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int RangedCooldownAfterUse => 170;
         protected override int MaxRangedBurst => 2;
         protected override int SingleRangedBurstChance => 35;
-        protected override Color RangedTelegraphFlashColor => new Color(255, 95, 45);
+        protected override Color RangedTelegraphFlashColor => MemoryColor;
 
         protected override float SecondaryRangedRange => 920f;
         protected override float SecondaryRangedMinRange => 300f;
@@ -76,7 +104,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int SecondaryRangedRecoveryTicks => 70;
         protected override int SecondaryRangedCooldownAfterUse => 210;
         protected override int SecondaryRangedChance => 45;
-        protected override Color SecondaryRangedFlashColor => new Color(130, 255, 120);
+        protected override Color SecondaryRangedFlashColor => MemoryColor;
 
         protected override float MagicRange => 1000f;
         protected override float MinMagicRange => 260f;
@@ -85,56 +113,56 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int MagicRecoveryTicks => 82;
         protected override int MagicCooldownAfterUse => 210;
         protected override int MagicPreferenceChance => 55;
-        protected override Color MagicTelegraphFlashColor => new Color(180, 90, 255);
+        protected override Color MagicTelegraphFlashColor => MemoryColor;
 
-        protected override bool CanBreathe => true;
+        protected override bool CanBreathe => UsesPyromancyMemory;
         protected override float BreathRange => 680f;
         protected override float MinBreathRange => 120f;
         protected override int BreathTelegraphTicks => 76;
-        protected override int BreathDurationTicks => _swordDead ? 135 : 105;
+        protected override int BreathDurationTicks => SecondPhase ? 135 : 105;
         protected override int BreathRecoveryTicks => 70;
         protected override int BreathCooldownAfterUse => 360;
         protected override int BreathChance => 5;
 
-        protected override bool CanPierce => true;
+        protected override bool CanPierce => UsesAshenMemory;
         protected override float PierceRange => 760f;
         protected override float MinPierceRange => 230f;
         protected override int PierceChance => 5;
         protected override int PierceTelegraphTicks => 56;
         protected override int PierceDashTicks => 34;
-        protected override float PierceDashSpeed => _swordDead ? 18f : 15.5f;
+        protected override float PierceDashSpeed => SecondPhase ? 18f : 15.5f;
         protected override int PierceRecoveryTicks => 82;
         protected override int PierceCooldownAfterUse => 300;
         protected override int PierceStabChance => 0;
 
-        protected override bool CanJumpSlash => true;
+        protected override bool CanJumpSlash => UsesAshenMemory;
         protected override float JumpSlashMinRange => 160f;
         protected override float JumpSlashMaxRange => 520f;
         protected override int JumpSlashChance => 4;
         protected override int JumpSlashRecoveryTicks => 72;
         protected override int JumpSlashCooldownAfterUse => 300;
 
-        protected override bool CanFlipSlash => true;
+        protected override bool CanFlipSlash => UsesAshenMemory;
         protected override float FlipSlashMinRange => 130f;
         protected override float FlipSlashMaxRange => 470f;
         protected override int FlipSlashChance => 4;
         protected override int FlipSlashCooldownAfterUse => 360;
 
-        protected override bool CanHomingVolley => true;
+        protected override bool CanHomingVolley => UsesSorceryMemory;
         protected override float HomingVolleyMinRange => 280f;
         protected override float HomingVolleyMaxRange => 760f;
         protected override int HomingVolleyChance => 7;
         protected override int HomingVolleyRecoveryTicks => 88;
         protected override int HomingVolleyCooldownAfterUse => 280;
 
-        protected override bool CanBoomerang => true;
+        protected override bool CanBoomerang => UsesAbyssMemory;
         protected override float BoomerangMinRange => 120f;
         protected override float BoomerangMaxRange => 760f;
         protected override int BoomerangChance => 7;
         protected override int BoomerangRecoveryTicks => 92;
         protected override int BoomerangCooldownAfterUse => 320;
 
-        protected override bool CanSpiralFan => true;
+        protected override bool CanSpiralFan => UsesSorceryMemory;
         protected override float SpiralFanMinRange => 220f;
         protected override float SpiralFanMaxRange => 850f;
         protected override int SpiralFanChance => 7;
@@ -147,8 +175,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //arena location yet — a proper event location is pending. Re-add (routed through ExpandedWorldTransform,
         //legacy 2000-space) once that's designed.
 
-        const int NormalDefense = 550;
-        const int SwordBrokenDefense = 130;
+        const int BaseDefense = 130;
         const float ProtectionRadius = 1000f;
         const float KillRingRadius = 2000f;
         const int CowardGraceTicks = 90;
@@ -157,9 +184,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int PhantomSeekerDamage = 55;
         const int SmokeBombDamage = 58;
         const int BioSpitDamage = 68;
-        const int BioSpitFinalDamage = 76;
-        const int PlasmaOrbDamage = 70;
-        const int CursedBreathDamage = 68;
         const int FireBreathDamage = 50;
         const int IceStormDamage = 40;
         const int DisruptDamage = 68;
@@ -171,24 +195,170 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int OrangeProjDamage = 45;
         const int SwordProjectileDamage = 69;
 
+        const int CB_REVERSAL = 1;
+        const int CB_PURSUIT = 3;
+        const int CB_BACKSTEP = 4;
+        const int CB_SOUL_OF_LORDS = 5;
+        const string SoulOfLordsComboName = "Soul of Lords";
+
+        static MeleeComboStep CS(
+            ComboMotion motion,
+            int telegraph,
+            int attack,
+            int pause,
+            float damage = 1f,
+            float reach = 1f,
+            float push = 0f,
+            SwingEaseStyle ease = SwingEaseStyle.Smooth)
+            => new MeleeComboStep
+            {
+                Motion = motion,
+                TelegraphTicks = telegraph,
+                AttackTicks = attack,
+                PostStepPause = pause,
+                DamageMult = damage,
+                ReachMult = reach,
+                ForwardPushMult = push,
+                Ease = ease,
+            };
+
+        static readonly MeleeCombo[] CinderCombos =
+        {
+            new MeleeCombo
+            {
+                Name = "Cinder Cleave",
+                BaseWeight = 85,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = new Color(255, 128, 52),
+                CooldownAfterUse = 55,
+                RecoveryTicks = 22,
+                MoveBrake = 0.12f,
+                Steps = new[]
+                {
+                    CS(ComboMotion.OverheadArc, 18, 22, 0, 1.05f, 1.08f, 0.30f, SwingEaseStyle.Snap),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = "Delayed Reversal",
+                BaseWeight = 65,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = new Color(190, 75, 255),
+                CooldownAfterUse = 130,
+                RecoveryTicks = 30,
+                MoveBrake = 0.18f,
+                Steps = new[]
+                {
+                    CS(ComboMotion.UnderhandArc, 22, 20, 16, 0.95f, 1.05f, 0.35f),
+                    CS(ComboMotion.OverheadArc, 0, 24, 0, 1.30f, 1.14f, 0.55f, SwingEaseStyle.Whip),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = "Borrowed Fury",
+                BaseWeight = 58,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = new Color(255, 92, 36),
+                CooldownAfterUse = 190,
+                RecoveryTicks = 42,
+                HyperArmor = true,
+                MoveBrake = 0.08f,
+                Steps = new[]
+                {
+                    CS(ComboMotion.HorizontalSweep, 18, 18, 10, 0.82f, 1.02f, 0.38f, SwingEaseStyle.Snap),
+                    CS(ComboMotion.UnderhandArc, 0, 20, 13, 0.90f, 1.08f, 0.48f, SwingEaseStyle.Snap),
+                    CS(ComboMotion.OverheadArc, 0, 26, 0, 1.38f, 1.18f, 0.62f, SwingEaseStyle.Whip),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = "Severing Pursuit",
+                BaseWeight = 55,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = new Color(205, 70, 255),
+                CooldownAfterUse = 180,
+                RecoveryTicks = 46,
+                RangedStartOnly = true,
+                MoveBrake = 0f,
+                Steps = new[]
+                {
+                    CS(ComboMotion.JoustDash, 28, 20, 0, 1.28f, 1.35f, 1.75f, SwingEaseStyle.Snap),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = "Backstep Reprise",
+                BaseWeight = 48,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = new Color(115, 175, 255),
+                CooldownAfterUse = 210,
+                RecoveryTicks = 34,
+                MoveBrake = 0f,
+                Steps = new[]
+                {
+                    CS(ComboMotion.BackstepRaise, 20, 60, 12, 0f, 1f, 0f, SwingEaseStyle.Linear),
+                    CS(ComboMotion.HorizontalSweep, 0, 24, 0, 1.32f, 1.18f, 0.90f, SwingEaseStyle.Whip),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = SoulOfLordsComboName,
+                BaseWeight = 26,
+                Preferred = ComboRangeBand.Any,
+                InitialFlashColor = Color.White,
+                CooldownAfterUse = 420,
+                RecoveryTicks = 78,
+                HeavyCommit = true,
+                HyperArmor = true,
+                MoveBrake = 0.05f,
+                Steps = new[]
+                {
+                    CS(ComboMotion.UnderhandArc, 36, 18, 9, 0.72f, 1.05f, 0.38f, SwingEaseStyle.Snap),
+                    CS(ComboMotion.OverheadArc, 0, 18, 9, 0.72f, 1.05f, 0.42f, SwingEaseStyle.Snap),
+                    CS(ComboMotion.UnderhandArc, 0, 19, 11, 0.82f, 1.08f, 0.46f, SwingEaseStyle.Snap),
+                    CS(ComboMotion.OverheadArc, 0, 21, 14, 0.95f, 1.12f, 0.52f),
+                    CS(ComboMotion.JoustDash, 0, 24, 0, 1.55f, 1.38f, 1.80f, SwingEaseStyle.Whip),
+                },
+            },
+        };
+
+        protected override MeleeCombo[] MeleeComboPoolOverride => CinderCombos;
+
         NPCDespawnHandler despawnHandler;
-        bool _swordSpawned;
-        bool _swordDead;
-        bool _announcedSwordBreak;
         int _protectionTextCooldown;
         readonly int[] _cowardTimers = new int[Main.maxPlayers];
         CinderRangedAttack _queuedRangedAttack = CinderRangedAttack.DarkBead;
         CinderMagicAttack _queuedMagicAttack = CinderMagicAttack.IceStorm;
         int _magicBurstsRemaining;
         int _magicBurstTimer;
+        CinderMemory _memory = CinderMemory.AshenWarrior;
+        CinderCustomSequence _customSequence;
+        AttackPhase _previousPhase = AttackPhase.Idle;
+        int _memoryAttacksRemaining = 2;
+        bool _memoryShiftPending;
+        bool _secondPhaseStarted;
+
+        enum CinderMemory : byte
+        {
+            AshenWarrior,
+            Abyss,
+            Pyromancy,
+            SorceryMiracle,
+        }
+
+        enum CinderCustomSequence : byte
+        {
+            None,
+            MemoryShift,
+            SecondPhaseTransition,
+        }
 
         enum CinderRangedAttack
         {
             SmokeBomb,
             DarkBead,
             PhantomSeeker,
-            BioSpit,
-            PlasmaCross
+            BioSpit
         }
 
         enum CinderMagicAttack
@@ -199,6 +369,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             CultistFire,
             LostSoulCurse
         }
+
+        Color MemoryColor => _memory switch
+        {
+            CinderMemory.AshenWarrior => new Color(255, 128, 52),
+            CinderMemory.Abyss => new Color(180, 70, 255),
+            CinderMemory.Pyromancy => new Color(255, 72, 30),
+            CinderMemory.SorceryMiracle => new Color(115, 185, 255),
+            _ => Color.White,
+        };
+
+        int MemoryDustType => _memory switch
+        {
+            CinderMemory.AshenWarrior => DustID.Torch,
+            CinderMemory.Abyss => DustID.Shadowflame,
+            CinderMemory.Pyromancy => DustID.GoldFlame,
+            CinderMemory.SorceryMiracle => DustID.IceTorch,
+            _ => DustID.Smoke,
+        };
+
+        string MemoryName => _memory switch
+        {
+            CinderMemory.AshenWarrior => "Ashen Warrior",
+            CinderMemory.Abyss => "Abyss",
+            CinderMemory.Pyromancy => "Pyromancy",
+            CinderMemory.SorceryMiracle => "Sorcery / Miracle",
+            _ => "Unknown",
+        };
 
         public override void SetStaticDefaults()
         {
@@ -218,7 +415,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.width = 30;
             NPC.scale = 1.15f;
             NPC.damage = 0;
-            NPC.defense = NormalDefense;
+            NPC.defense = BaseDefense;
             NPC.lifeMax = 750000;
             NPC.knockBackResist = 0f;
             NPC.boss = true;
@@ -240,53 +437,191 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             EvasiveProfile.RedKnight(globalNPC);
         }
 
-        public override void OnSpawn(IEntitySource source)
+        protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
-            SpawnSwordOfCinder();
+            if (!UsesAshenMemory && !SecondPhase)
+            {
+                return false;
+            }
+            if (combo.Name == SoulOfLordsComboName)
+            {
+                return FinaleUnlocked;
+            }
+            if (combo.Name == "Severing Pursuit")
+            {
+                return distance <= 300f;
+            }
+            return true;
         }
+
+        protected override int ReactiveComboIndex(float distance, ComboRangeBand band, int[] ready)
+        {
+            Player player = Main.player[NPC.target];
+            if (player == null || !player.active || player.dead)
+            {
+                return -1;
+            }
+
+            bool dodging = player.GetModPlayer<tsorcRevampPlayer>().isDodging;
+            float awaySign = Math.Sign(player.Center.X - NPC.Center.X);
+            bool rollingAway = dodging
+                && Math.Sign(player.velocity.X) == awaySign
+                && Math.Abs(player.velocity.X) > 2f;
+            bool rollingThrough = dodging && distance < MeleeRange + 24f;
+            bool airborne = player.velocity.Y < -3f && player.Center.Y < NPC.Center.Y - 24f;
+
+            if (rollingAway && Ready(ready, CB_PURSUIT))
+            {
+                return CB_PURSUIT;
+            }
+            if (rollingThrough && Ready(ready, CB_BACKSTEP))
+            {
+                return CB_BACKSTEP;
+            }
+            if (airborne && Ready(ready, CB_REVERSAL))
+            {
+                return CB_REVERSAL;
+            }
+            return -1;
+        }
+
+        static bool Ready(int[] ready, int index)
+            => index >= 0 && index < ready.Length && ready[index] > 0;
 
         public override void AI()
         {
+            TryStartSecondPhaseTransition();
             base.AI();
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             NPC.TargetClosest(true);
 
-            SpawnSwordOfCinder();
-            TickSwordState();
+            TickMemoryCycle();
             TickDistanceRules();
         }
 
-        void SpawnSwordOfCinder()
+        void TryStartSecondPhaseTransition()
         {
-            if (_swordSpawned || Main.netMode == NetmodeID.MultiplayerClient)
+            if (Main.netMode == NetmodeID.MultiplayerClient
+                || _secondPhaseStarted
+                || NPC.life > NPC.lifeMax / 2)
             {
                 return;
             }
 
-            int swordID = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<SwordOfCinder>(), NPC.whoAmI);
-            Main.npc[swordID].velocity.Y = -10f;
-            Main.npc[swordID].netUpdate = true;
-            _swordSpawned = true;
+            _secondPhaseStarted = true;
+            _memory = CinderMemory.AshenWarrior;
+            _memoryAttacksRemaining = 2;
+            _memoryShiftPending = false;
+            _customSequence = CinderCustomSequence.SecondPhaseTransition;
+            StartCustomAttack(90, MeleeWeaponItemType, swingPose: true);
             NPC.netUpdate = true;
         }
 
-        void TickSwordState()
+        void TickMemoryCycle()
         {
-            if (_swordDead)
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                _previousPhase = Phase;
+                return;
+            }
+
+            bool returnedToNeutral = IsCompletedAttackPhase(_previousPhase) && IsNeutralPhase(Phase);
+            if (returnedToNeutral)
+            {
+                _memoryAttacksRemaining--;
+                _memoryShiftPending = _memoryAttacksRemaining <= 0;
+            }
+
+            if (_memoryShiftPending && IsNeutralPhase(Phase))
+            {
+                _memory = (CinderMemory)(((int)_memory + 1) % 4);
+                _memoryAttacksRemaining = 2;
+                _memoryShiftPending = false;
+                _customSequence = CinderCustomSequence.MemoryShift;
+                StartCustomAttack(32, MeleeWeaponItemType, swingPose: true);
+                NPC.netUpdate = true;
+            }
+
+            _previousPhase = Phase;
+        }
+
+        static bool IsNeutralPhase(AttackPhase phase)
+            => phase == AttackPhase.Idle || phase == AttackPhase.CasualStroll;
+
+        static bool IsCompletedAttackPhase(AttackPhase phase)
+        {
+            return phase == AttackPhase.MeleeRecovery
+                || phase == AttackPhase.StabRecovery
+                || phase == AttackPhase.RangedRecovery
+                || phase == AttackPhase.MagicRecovery
+                || phase == AttackPhase.BreathRecovery
+                || phase == AttackPhase.PierceRecovery
+                || phase == AttackPhase.JumpSlashRecovery
+                || phase == AttackPhase.FlipSlashLand
+                || phase == AttackPhase.HomingVolleyRecovery
+                || phase == AttackPhase.BoomerangRecovery
+                || phase == AttackPhase.SpiralFanRecovery
+                || phase == AttackPhase.MeleeComboRecovery;
+        }
+
+        protected override void DoCustomAttack()
+        {
+            if (_customSequence == CinderCustomSequence.SecondPhaseTransition)
+            {
+                DebugAttackLabel = "Second Phase: Soul Rekindled";
+                SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.9f, Pitch = -0.15f }, NPC.Center);
+            }
+            else
+            {
+                DebugAttackLabel = $"Memory Shift: {MemoryName}";
+                SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.7f, Pitch = 0.1f }, NPC.Center);
+            }
+
+            if (Main.dedServ)
             {
                 return;
             }
 
-            if (_swordSpawned && !NPC.AnyNPCs(ModContent.NPCType<SwordOfCinder>()))
+            for (int i = 0; i < 24; i++)
             {
-                _swordDead = true;
-                NPC.defense = SwordBrokenDefense;
-                if (!_announcedSwordBreak)
+                Vector2 velocity = Main.rand.NextVector2CircularEdge(5.5f, 5.5f);
+                Dust dust = Dust.NewDustPerfect(NPC.Center, MemoryDustType, velocity, 80, MemoryColor, 1.35f);
+                dust.noGravity = true;
+            }
+        }
+
+        protected override void DoCustomTick(int ticksRemaining)
+        {
+            if (!Main.dedServ)
+            {
+                int duration = _customSequence == CinderCustomSequence.SecondPhaseTransition ? 90 : 32;
+                float progress = 1f - ticksRemaining / (float)duration;
+                float radius = MathHelper.Lerp(90f, 18f, progress);
+
+                if (Main.GameUpdateCount % 2 == 0)
                 {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.SwordShattered"), 150, 75, 255);
-                    _announcedSwordBreak = true;
+                    Vector2 offset = Main.rand.NextVector2CircularEdge(radius, radius);
+                    Dust dust = Dust.NewDustPerfect(
+                        NPC.Center + offset,
+                        MemoryDustType,
+                        -offset.SafeNormalize(Vector2.Zero) * MathHelper.Lerp(1.2f, 4.5f, progress),
+                        80,
+                        MemoryColor,
+                        1.15f);
+                    dust.noGravity = true;
                 }
-                NPC.netUpdate = true;
+
+                Lighting.AddLight(NPC.Center, MemoryColor.ToVector3() * (0.8f + progress * 1.5f));
+            }
+
+            if (ticksRemaining == 1)
+            {
+                _customSequence = CinderCustomSequence.None;
+                DebugAttackLabel = null;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.netUpdate = true;
+                }
             }
         }
 
@@ -308,9 +643,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     _protectionTextCooldown = 200;
                 }
             }
-            else if (_protectionTextCooldown <= 0)
+            else
             {
-                NPC.defense = _swordDead ? SwordBrokenDefense : NormalDefense;
+                NPC.defense = BaseDefense;
             }
 
             if (_protectionTextCooldown > 0)
@@ -381,32 +716,79 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             TryMeleeHit(StabRange * 0.7f);
         }
 
-        protected override void DoPierceDashTick()
+        protected override void DoPierceWindup(int elapsed)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient || Main.GameUpdateCount % 8 != 0)
+            if (Main.dedServ || elapsed % 3 != 0)
             {
                 return;
             }
 
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Gwyn.TackleProjectile>(), MeleeDamage + 7, 1f, Main.myPlayer, 10, NPC.whoAmI);
+            float progress = MathHelper.Clamp(elapsed / (float)PierceTelegraphTicks, 0f, 1f);
+            Vector2 offset = Main.rand.NextVector2CircularEdge(58f, 28f);
+            Dust dust = Dust.NewDustPerfect(
+                NPC.Center + offset,
+                DustID.Shadowflame,
+                -offset.SafeNormalize(Vector2.Zero) * MathHelper.Lerp(1.2f, 4f, progress),
+                80,
+                new Color(205, 70, 255),
+                1.1f);
+            dust.noGravity = true;
+        }
+
+        protected override void DoPierceDashTick()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            Lighting.AddLight(NPC.Center, new Color(180, 55, 255).ToVector3() * 1.1f);
+            if (Main.rand.NextBool(2))
+            {
+                Dust dust = Dust.NewDustPerfect(
+                    NPC.Center + Main.rand.NextVector2Circular(12f, 20f),
+                    DustID.Shadowflame,
+                    -NPC.velocity * 0.22f,
+                    90,
+                    new Color(205, 70, 255),
+                    1.05f);
+                dust.noGravity = true;
+            }
+        }
+
+        protected override void OnPierceContact(Player target, bool isStab)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Projectile.NewProjectile(
+                NPC.GetSource_FromThis(),
+                target.Center,
+                new Vector2(NPC.direction * 0.01f, 0f),
+                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
+                MeleeDamage + 7,
+                6f,
+                Main.myPlayer,
+                target.width + 12f,
+                target.height + 8f);
         }
 
         protected override void OnRangedBurstStarted(bool secondary)
         {
-            Player target = Main.player[NPC.target];
             if (secondary)
             {
-                _queuedRangedAttack = NPC.life < NPC.lifeMax / 3 ? CinderRangedAttack.PlasmaCross : CinderRangedAttack.BioSpit;
+                _queuedRangedAttack = CinderRangedAttack.BioSpit;
                 return;
             }
 
-            float dist = NPC.Distance(target.Center);
-            if (dist < 260f)
+            if (UsesPyromancyMemory)
             {
                 _queuedRangedAttack = CinderRangedAttack.SmokeBomb;
                 SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center);
             }
-            else if (_swordDead && Main.rand.NextBool(3))
+            else if (SecondPhase && Main.rand.NextBool(3))
             {
                 _queuedRangedAttack = CinderRangedAttack.PhantomSeeker;
             }
@@ -433,10 +815,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     FirePhantomSeeker(target);
                     break;
                 case CinderRangedAttack.BioSpit:
-                    FireBioSpit(target, NPC.life <= NPC.lifeMax / 5 ? BioSpitFinalDamage : BioSpitDamage);
-                    break;
-                case CinderRangedAttack.PlasmaCross:
-                    FirePlasmaCross(target);
+                    FireBioSpit(target, BioSpitDamage);
                     break;
                 default:
                     FireDarkBead(target);
@@ -478,19 +857,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.5f }, NPC.Center);
         }
 
-        void FirePlasmaCross(Player target)
-        {
-            const float speed = 6f;
-            Vector2 origin = NPC.Center;
-            Vector2 aimed = UsefulFunctions.Aim(origin, target.Center, speed);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, aimed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), PlasmaOrbDamage, 0f, Main.myPlayer);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, new Vector2(speed, speed), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), PlasmaOrbDamage, 0f, Main.myPlayer);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, new Vector2(-speed, speed), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), PlasmaOrbDamage, 0f, Main.myPlayer);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, new Vector2(speed, -speed), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), PlasmaOrbDamage, 0f, Main.myPlayer);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, new Vector2(-speed, -speed), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), PlasmaOrbDamage, 0f, Main.myPlayer);
-            SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.3f }, NPC.Center);
-        }
-
         protected override void DoMagicAttack()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -498,21 +864,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            float hpFrac = NPC.life / (float)NPC.lifeMax;
-            if (hpFrac <= 0.20f)
+            if (UsesPyromancyMemory)
             {
                 _queuedMagicAttack = Main.rand.NextBool() ? CinderMagicAttack.CultistFire : CinderMagicAttack.DemonFireLob;
             }
-            else if (hpFrac <= 0.50f)
+            else if (SecondPhase)
             {
-                _queuedMagicAttack = Main.rand.NextBool() ? CinderMagicAttack.PhasedMatterBlast : CinderMagicAttack.LostSoulCurse;
+                _queuedMagicAttack = Main.rand.Next(3) switch
+                {
+                    0 => CinderMagicAttack.IceStorm,
+                    1 => CinderMagicAttack.PhasedMatterBlast,
+                    _ => CinderMagicAttack.LostSoulCurse,
+                };
             }
             else
             {
-                _queuedMagicAttack = CinderMagicAttack.IceStorm;
+                _queuedMagicAttack = Main.rand.NextBool()
+                    ? CinderMagicAttack.IceStorm
+                    : CinderMagicAttack.PhasedMatterBlast;
             }
 
-            _magicBurstsRemaining = hpFrac <= 0.33f ? 3 : 2;
+            _magicBurstsRemaining = SecondPhase ? 3 : 2;
             _magicBurstTimer = 1;
             _magicAttackTicksOverride = 56;
             FireQueuedMagic(Main.player[NPC.target]);
@@ -570,13 +942,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             float t = MathHelper.Clamp(elapsed / (float)BreathTelegraphTicks, 0f, 1f);
             float radius = MathHelper.Lerp(60f, 12f, t);
-            UsefulFunctions.DustRing(NPC.Center, (int)radius, NPC.life > NPC.lifeMax * 0.8f ? DustID.CursedTorch : DustID.Torch, 24, 2f);
+            UsefulFunctions.DustRing(NPC.Center, (int)radius, DustID.Torch, 24, 2f);
             Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * (1f + t * 3f));
         }
 
         protected override void OnBreathStart()
         {
-            SoundEngine.PlaySound(NPC.life > NPC.lifeMax * 0.8f ? SoundID.NPCHit30 : new SoundStyle("tsorcRevamp/Sounds/DarkSouls/breath1") with { Volume = 0.5f }, NPC.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/breath1") with { Volume = 0.5f }, NPC.Center);
         }
 
         protected override void DoBreathTick(int ticksRemaining)
@@ -589,9 +961,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             Player target = Main.player[NPC.target];
             Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, target.Center, 9f) + Main.rand.NextVector2Circular(1.5f, 1.5f);
-            int type = NPC.life > NPC.lifeMax * 0.8f ? ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>() : ModContent.ProjectileType<Projectiles.Enemy.FireBreath>();
-            int damage = NPC.life > NPC.lifeMax * 0.8f ? CursedBreathDamage : FireBreathDamage;
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(5f * NPC.direction, -12f), breathVel, type, damage, 0f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(5f * NPC.direction, -12f), breathVel, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), FireBreathDamage, 0f, Main.myPlayer);
             SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.12f, Pitch = 0.2f }, NPC.Center);
         }
 
@@ -603,7 +973,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             Player target = Main.player[NPC.target];
-            if (_swordDead)
+            if (SecondPhase)
             {
                 for (int i = 0; i < 5; i++)
                 {
@@ -632,7 +1002,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Cinder.SwordOfCinder>(), SwordProjectileDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
+            Player target = Main.player[NPC.target];
+            Vector2 velocity = UsefulFunctions.Aim(NPC.Center, target.Center, 18f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Cinder.SwordOfCinder>(), SwordProjectileDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
         }
 
         protected override void DoSpiralFanFire(int shotIndex)
@@ -644,8 +1016,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             Player target = Main.player[NPC.target];
             Vector2 origin = NPC.Center + new Vector2(0f, -64f);
-            int bulletCount = _swordDead ? 7 : 5;
-            float spread = _swordDead ? 67f : 52.5f;
+            int bulletCount = SecondPhase ? 7 : 5;
+            float spread = SecondPhase ? 67f : 52.5f;
             Vector2 baseVelocity = UsefulFunctions.Aim(origin, target.Center, 24f);
             for (int i = -(bulletCount / 2); i <= bulletCount / 2; i++)
             {
@@ -656,31 +1028,57 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override int NextSpiralFanDelay(int completedShotIndex)
         {
-            return completedShotIndex < (_swordDead ? 5 : 3) ? 30 : -1;
+            return completedShotIndex < (SecondPhase ? 5 : 3) ? 30 : -1;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write((byte)_memory);
+            writer.Write((byte)_customSequence);
+            writer.Write((byte)Math.Clamp(_memoryAttacksRemaining, 0, byte.MaxValue));
+            writer.Write(_memoryShiftPending);
+            writer.Write(_secondPhaseStarted);
+            writer.Write((short)(_customSequence == CinderCustomSequence.None ? 0 : Math.Max(1, PhaseTimer)));
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            CinderCustomSequence previousCustomSequence = _customSequence;
+            base.ReceiveExtraAI(reader);
+            _memory = (CinderMemory)reader.ReadByte();
+            _customSequence = (CinderCustomSequence)reader.ReadByte();
+            _memoryAttacksRemaining = reader.ReadByte();
+            _memoryShiftPending = reader.ReadBoolean();
+            _secondPhaseStarted = reader.ReadBoolean();
+            int customTicksRemaining = reader.ReadInt16();
+
+            if (_customSequence != CinderCustomSequence.None)
+            {
+                if (previousCustomSequence != _customSequence || Phase != AttackPhase.Custom)
+                {
+                    StartCustomAttack(Math.Max(1, customTicksRemaining), MeleeWeaponItemType, swingPose: true);
+                }
+                else
+                {
+                    PhaseTimer = Math.Max(1, customTicksRemaining);
+                }
+            }
+            else if (previousCustomSequence != CinderCustomSequence.None && Phase == AttackPhase.Custom)
+            {
+                DebugAttackLabel = null;
+                EnterPhase(AttackPhase.Idle, 0);
+            }
         }
 
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            if (_swordDead)
-            {
-                modifiers.FinalDamage *= 1.1f;
-            }
-            else
-            {
-                modifiers.FinalDamage *= 0.7f;
-            }
+            modifiers.FinalDamage *= 1.1f;
         }
 
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            if (_swordDead)
-            {
-                modifiers.FinalDamage *= 1.1f;
-            }
-            else
-            {
-                modifiers.FinalDamage *= 0.7f;
-            }
+            modifiers.FinalDamage *= 1.1f;
 
             if (projectile.minion)
             {
@@ -703,18 +1101,5 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SoulOfCinderBag>()));
         }
 
-        public override void SendExtraAI(BinaryWriter writer)
-        {
-            writer.Write(_swordSpawned);
-            writer.Write(_swordDead);
-            writer.Write(_announcedSwordBreak);
-        }
-
-        public override void ReceiveExtraAI(BinaryReader reader)
-        {
-            _swordSpawned = reader.ReadBoolean();
-            _swordDead = reader.ReadBoolean();
-            _announcedSwordBreak = reader.ReadBoolean();
-        }
     }
 }

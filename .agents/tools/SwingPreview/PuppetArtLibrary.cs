@@ -12,7 +12,7 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias";
+        internal const string Known = "Gwyn, Artorias, SoulOfCinder";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
@@ -46,6 +46,20 @@ namespace SwingPreview
                     WeaponSprite = P("Items", "Weapons", "Melee", "Broadswords", "ArtoriasGreatsword.png"),
                     WeaponRotationOffset = 0f,
                     DrawScale = 1.1f,
+                };
+            }
+
+            if (puppet.Equals("SoulOfCinder", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "SoulOfCinder",
+                    BodySheet = P("Items", "Armors", "FirelinkArmor_Body.png"),
+                    LegsSheet = P("Items", "Armors", "FirelinkLeggings_Legs.png"),
+                    HeadSheet = P("Items", "Armors", "FirelinkHelm_Head.png"),
+                    WeaponSprite = P("Items", "Weapons", "Melee", "Broadswords", "SeveringDusk.png"),
+                    WeaponRotationOffset = 0f,
+                    DrawScale = 1.15f,
                 };
             }
 

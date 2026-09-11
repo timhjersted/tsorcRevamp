@@ -84,6 +84,21 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Easing shape of the arc, for aim-swing pilot puppets only. Lets different steps
         /// feel different (snappy flick vs heavy settle vs delayed whip) at the same duration.</summary>
         public SwingEaseStyle Ease;
+        /// <summary>Ticks of acceleration at the start / deceleration at the end of the swing, read
+        /// only when Ease is <see cref="SwingEaseStyle.Weighted"/> (see SwingEase.ApplyWeighted).</summary>
+        public int EaseInTicks;
+        public int EaseOutTicks;
+        /// <summary>Weighted only: how sharply speed decays over EaseOutTicks (1/e-foldings). Higher =
+        /// faster strike, longer near-still settle. 0 = SwingEase.DefaultWeightedDecay (6).</summary>
+        public float EaseOutDecay;
+        /// <summary>Landing-timed LeapSlam only: once past the apex with the target this close (px,
+        /// centre to centre), the downswing starts in the air instead of waiting for the landing,
+        /// and the blade sweeps for real. 0 (default) = strike on the landing only.</summary>
+        public float LeapStrikeRange;
+        /// <summary>Fraction of the attack phase after which the blade stops dealing damage and is
+        /// only following through. 0 (the default) keeps it armed for the whole phase. Pairs with a
+        /// long Weighted ease-out, so a slowly settling blade is not a live hitbox.</summary>
+        public float HitWindowEnd;
         /// <summary>Per-step launch shaping for leap motions. Values at or below zero are treated as
         /// 1 so existing combo tables retain their current movement without migration.</summary>
         public float LeapHeightMult;
@@ -426,8 +441,8 @@ namespace tsorcRevamp.NPCs.Puppets
         // Smooth default, so all five combos swung with the same shape regardless of weight or intent.
         // Only the CURVE is authored here - no SwingSpeedMult, so every step keeps its existing tick
         // budget and nothing rebalances. Ease is read via PuppetNPC.ApplySwingEase, which only honors
-        // it when UseAuthoredComboSwingClock is on (Artorias today; SoulOfCinder needs the one-line
-        // opt-in) and only for IsArcSwingMotion steps - Spin / JoustDash / LeapSlam ignore it.
+        // it when UseAuthoredComboSwingClock is on (Artorias, Gwyn, axe pilots; SoulOfCinder needs the
+        // one-line opt-in). Every arc motion plus JoustDash/LeapSlam/LeapThrust reads it; Spin does not.
         public static readonly MeleeCombo[] Greatsword = new[]
         {
             new MeleeCombo {

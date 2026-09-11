@@ -3,40 +3,52 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
 
 namespace SwingPreview
 {
-    /// <summary>One swing to simulate. Either pulled from a real combo table or built from CLI args
-    /// when prototyping a move that does not exist yet.</summary>
+    /// <summary>One run to simulate: a whole combo chained the way the game chains it (default), a
+    /// single step in isolation (--per-step), or a bare motion built from CLI args (--motion).</summary>
     internal sealed class SwingSpec
     {
         public string Puppet = "Preview";
         public string Label = "Swing";
-        public ComboMotion Motion = ComboMotion.OverheadArc;
-        public SwingEaseStyle Ease = SwingEaseStyle.Smooth;
-        public int TelegraphTicks = 30;
-        public int AttackTicks = 26;
+
+        /// <summary>The combo this run came from, bound onto the puppet instance before simulating so
+        /// overrides keyed on ActiveMeleeComboName resolve for it (see PuppetProfile.Bind).</summary>
+        public MeleeCombo Combo;
+        public MeleeComboStep[] Steps;
+
+        /// <summary>Set when the combo carries a RuntimeV2Clip. The game then ignores Steps' motion,
+        /// ease and timing entirely and plays the clip on its own clock, so the preview does too.</summary>
+        public PuppetAttackClip V2Clip;
+
+        public PuppetProfile Profile;
         public int RecoveryTicks = 30;
-        /// <summary>Ticks the finished pose is held before easing back to the carry angle. Mirrors
-        /// PuppetNPC.MeleeRecoveryLingerTicks, which is protected and so unreadable from here -
-        /// defaulted to the SAME 0 the base class uses rather than a flattering guess, because a
-        /// preview that invents a follow-through no puppet has is worse than no preview. Pass
-        /// --linger to match a specific boss (Artorias 30, Gwyn 14, StuddedLeatherWarrior 6).</summary>
-        public int RecoveryLingerTicks = 0;
-        public float SwingSpeedMult = 1f;
-        public float OverheadWindupOvershoot;
-        public float HoldRotation = 0.78f;   // PuppetNPC's default carried broadsword angle
+        public int RecoveryLingerTicks;
+        public int InterStepLingerTicks;
+        public int WeaponUseAnimation;
         public float Reach = 60f;
-        public bool UseLogicalTelegraph = true;
         public bool FlipArc;
-        public float ArmFrom = 0.15f;
-        public float ArmTo = 0.75f;
         public int Direction = 1;
+
+        /// <summary>1-based step the target is behind for (a dodge roll through the puppet). The
+        /// game re-faces during MeleeComboPause, so facing flips in the pause BEFORE this step.
+        /// 0 = the target never moves.</summary>
+        public int RollThroughStep;
         public bool Airborne;
         public float WeaponRotationOffset;
+
+        public string StepSummary()
+        {
+            if (V2Clip != null)
+            {
+                return $"V2 clip windup={V2Clip.WindupTicks} active={V2Clip.ActiveTicks} recovery={V2Clip.RecoveryTicks} ease={V2Clip.SwingEase}";
+            }
+            return string.Join(" -> ", Steps.Select(step =>
+                $"{step.Motion}({step.TelegraphTicks}/{step.AttackTicks}/{step.PostStepPause},{step.Ease})"));
+        }
     }
 
     internal sealed class Options
@@ -51,10 +63,16 @@ namespace SwingPreview
         public int Attack = -1;
         public int Recovery = -1;
         public int Linger = -1;
+        public int StepLinger = -1;
+        public int UseAnim = -1;
+        public int RollThrough;
+        public string Clock;
         public float SwingMult = -1f;
-        public float Overshoot = 0f;
+        public float Overshoot = float.NaN;
         public bool List;
         public bool CompareEases;
+        public bool PerStep;
+        public bool Profile;
         public bool Body;
         public bool Airborne;
         public bool VanillaShoulderOrder;
@@ -69,15 +87,26 @@ namespace SwingPreview
 SwingPreview - run the mod's real swing maths headless and emit telemetry JSONL.
 
   --list                          list archetypes and their combo names, then exit
-  --archetype <name>              Greatsword | Broadsword | Axe | Hammer | Katana | ...
+  --puppet <class>                a PuppetNPC subclass (Gwyn, Artorias, ...): its pool AND its real
+                                  flags (authored clock, easing, telegraph scaling, lingers, weapon
+                                  useAnimation, arc overrides) are read from the compiled mod
+  --archetype <name>              Greatsword | Broadsword | Axe | ... (base PuppetNPC flags unless
+                                  --puppet is also given)
   --combo <substring>             only combos whose name contains this
+  --per-step                      render each step alone with its own telegraph instead of the chain
+  --profile                       print every phase's speed profile: sweep, peak deg/tick, the first-
+                                  frame jump into it, armed ticks, and the deg/tick of every frame
   --motion <ComboMotion>          prototype a single motion instead of a table combo
-  --ease <Linear|Smooth|Snap|Whip|Trapezoidal>
-  --compare-eases                 emit the same swing once per ease style, to A/B curves
+  --ease <Linear|Smooth|Snap|Whip|Trapezoidal>   override every step's authored Ease
+  --compare-eases                 emit the same run once per ease style, to A/B curves
+  --clock <on|off>                override UseAuthoredComboSwingClock (gate 1 of 3)
+  --step-linger <ticks>           override MeleeComboInterStepLingerTicks (the between-hits hold)
+  --roll-through <step>           the player rolls behind before this step (1-based): the puppet
+                                  re-faces in the preceding pause, as the game does
   --telegraph / --attack / --recovery / --linger <ticks>
+  --useanim <ticks>               override the weapon's useAnimation
   --swingmult <float>             AttackTicks are divided by this, as the authored clock does
-  --overshoot <float>             OverheadWindupOvershoot for this puppet
-  --puppet <name>                 label; with --body it also picks the sprite set (Gwyn, Artorias)
+  --overshoot <float>             override OverheadWindupOvershoot
   --body                          also composite the real sprite sheets -> strip + contact sheet + HTML player
   --airborne                      pose on the jump body frame (row 5), where vanilla hides the shoulder caps
   --vanilla-shoulder-order        draw the UNFIXED shoulder order (arm flips in front of the pauldron on
@@ -89,7 +118,8 @@ SwingPreview - run the mod's real swing maths headless and emit telemetry JSONL.
 
 Examples:
   SwingPreview --list
-  SwingPreview --archetype Greatsword
+  SwingPreview --puppet Gwyn --combo ""Wrath Flurry"" --body
+  SwingPreview --puppet Gwyn --combo ""Wrath Flurry"" --step-linger 6 --body
   SwingPreview --archetype Greatsword --combo ""Heavy Chop"" --compare-eases
   SwingPreview --motion OverheadArc --telegraph 45 --attack 26 --ease Whip --overshoot 0.18
 ");
@@ -115,6 +145,8 @@ Examples:
                 {
                     case "--list": options.List = true; break;
                     case "--compare-eases": options.CompareEases = true; break;
+                    case "--per-step": options.PerStep = true; break;
+                    case "--profile": options.Profile = true; break;
                     case "--body": options.Body = true; break;
                     case "--airborne": options.Airborne = true; break;
                     case "--vanilla-shoulder-order": options.VanillaShoulderOrder = true; break;
@@ -125,12 +157,16 @@ Examples:
                     case "--combo": options.Combo = Next(); break;
                     case "--motion": options.Motion = Next(); break;
                     case "--ease": options.Ease = Next(); break;
+                    case "--clock": options.Clock = Next(); break;
                     case "--puppet": options.Puppet = Next(); break;
                     case "--out": options.OutFile = Next(); break;
                     case "--telegraph": options.Telegraph = int.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--attack": options.Attack = int.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--recovery": options.Recovery = int.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--linger": options.Linger = int.Parse(Next(), CultureInfo.InvariantCulture); break;
+                    case "--step-linger": options.StepLinger = int.Parse(Next(), CultureInfo.InvariantCulture); break;
+                    case "--useanim": options.UseAnim = int.Parse(Next(), CultureInfo.InvariantCulture); break;
+                    case "--roll-through": options.RollThrough = int.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--swingmult": options.SwingMult = float.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--overshoot": options.Overshoot = float.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "-h":
@@ -151,59 +187,39 @@ Examples:
             return options;
         }
 
-        /// Resolves which combo pool to preview. A generic weapon archetype comes straight from
-        /// WeaponArchetypeTables; a boss with a BESPOKE pool (Gwyn's "Wrath Flurry", etc.) keeps it
-        /// in a private static MeleeCombo[] field on its own class, exposed only through the
-        /// protected MeleeComboPoolOverride property - neither is reachable across the assembly
-        /// boundary, so the puppet path reflects the field directly.
-        private static MeleeCombo[] TableFor(string archetype, string puppet)
+        /// <summary>The profile every spec in this invocation shares, with CLI overrides applied on
+        /// top of what was read from the mod. Printed once so a run always says which gates it used.</summary>
+        public PuppetProfile BuildProfile()
         {
-            if (!string.IsNullOrWhiteSpace(archetype)
-                && Enum.TryParse(archetype, ignoreCase: true, out WeaponArchetype parsed))
+            PuppetProfile profile = PuppetProfile.For(Puppet);
+
+            // An explicit archetype replaces the puppet's own pool but keeps its flags, so a boss
+            // can be previewed swinging a generic table.
+            if (!string.IsNullOrWhiteSpace(Archetype)
+                && Enum.TryParse(Archetype, ignoreCase: true, out WeaponArchetype parsed))
             {
-                return WeaponArchetypeTables.GetMeleeCombos(parsed);
+                profile.Pool = WeaponArchetypeTables.GetMeleeCombos(parsed);
             }
 
-            if (string.IsNullOrWhiteSpace(puppet)) { return null; }
+            if (!string.IsNullOrWhiteSpace(Clock))
+            {
+                profile.AuthoredClock = Clock.Equals("on", StringComparison.OrdinalIgnoreCase);
+            }
+            if (!float.IsNaN(Overshoot))
+            {
+                profile.OverheadWindupOvershoot = Overshoot;
+            }
+            if (UseAnim > 0)
+            {
+                profile.WeaponUseAnimation = UseAnim;
+            }
 
-            Type puppetType = PuppetTypeNamed(puppet);
-
-            if (puppetType == null) { return null; }
-
-            // Any static MeleeCombo[] on the class is the pool. Matching on TYPE rather than on a
-            // name like "GwynCombos" means a new boss needs no change here.
-            FieldInfo poolField = puppetType
-                .GetFields(BindingFlags.NonPublic | BindingFlags.Public
-                           | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                .FirstOrDefault(field => field.FieldType == typeof(MeleeCombo[]));
-
-            if (poolField == null) { return null; }
-
-            return poolField.GetValue(null) as MeleeCombo[];
+            // --step-linger / --linger are applied per spec in NewSpec, after Bind re-reads the
+            // puppet's own values for that combo.
+            return profile;
         }
 
-        /// Finds a PuppetNPC subclass by bare class name. GetTypes() throws on a partially-loadable
-        /// assembly (the mod references plenty we do not resolve headlessly), and the surviving
-        /// types in the exception are still usable, which is the whole point of catching it.
-        private static Type PuppetTypeNamed(string puppet)
-        {
-            Type[] types;
-
-            try
-            {
-                types = typeof(PuppetNPC).Assembly.GetTypes();
-            }
-            catch (ReflectionTypeLoadException ex)
-            {
-                types = ex.Types.Where(type => type != null).ToArray();
-            }
-
-            return types.FirstOrDefault(type =>
-                typeof(PuppetNPC).IsAssignableFrom(type)
-                && type.Name.Equals(puppet, StringComparison.OrdinalIgnoreCase));
-        }
-
-        public List<SwingSpec> BuildSpecs()
+        public List<SwingSpec> BuildSpecs(PuppetProfile profile)
         {
             var specs = new List<SwingSpec>();
 
@@ -214,28 +230,18 @@ Examples:
                     MeleeCombo[] table = WeaponArchetypeTables.GetMeleeCombos(archetype);
                     if (table == null) { continue; }
                     Console.WriteLine($"{archetype}:");
-                    foreach (MeleeCombo combo in table)
-                    {
-                        string steps = string.Join(" -> ", combo.Steps.Select(s =>
-                            $"{s.Motion}({s.TelegraphTicks}/{s.AttackTicks},{s.Ease})"));
-                        Console.WriteLine($"    {combo.Name,-18} {steps}");
-                    }
+                    PrintPool(table);
                 }
 
                 // Bosses carrying their own pool instead of a generic archetype table. Without this
                 // their combos are invisible to --list and look like they do not exist.
                 foreach (string name in PuppetArtLibrary.Known.Split(',').Select(part => part.Trim()))
                 {
-                    MeleeCombo[] bespoke = TableFor(null, name);
-                    if (bespoke == null) { continue; }
+                    PuppetProfile bespoke = PuppetProfile.For(name);
+                    if (bespoke.Pool == null) { continue; }
 
-                    Console.WriteLine($"{name} (bespoke pool, use --puppet {name}):");
-                    foreach (MeleeCombo combo in bespoke)
-                    {
-                        string steps = string.Join(" -> ", combo.Steps.Select(s =>
-                            $"{s.Motion}({s.TelegraphTicks}/{s.AttackTicks},{s.Ease})"));
-                        Console.WriteLine($"    {combo.Name,-18} {steps}");
-                    }
+                    Console.WriteLine($"{name} (use --puppet {name}):");
+                    PrintPool(bespoke.Pool);
                 }
 
                 return specs;
@@ -249,51 +255,52 @@ Examples:
                     Console.WriteLine($"unknown motion: {Motion}");
                     return specs;
                 }
-                var spec = new SwingSpec
+                var step = new MeleeComboStep
                 {
-                    Puppet = Puppet,
-                    Label = motion.ToString(),
                     Motion = motion,
-                    OverheadWindupOvershoot = Overshoot,
+                    TelegraphTicks = 30,
+                    AttackTicks = 26,
+                    Ease = SwingEaseStyle.Smooth,
                 };
-                ApplyOverrides(spec);
+                var prototype = new MeleeCombo { Name = motion.ToString(), Steps = new[] { step } };
+                SwingSpec spec = NewSpec(profile, prototype, prototype.Name, prototype.Steps);
                 AddWithEaseVariants(specs, spec);
                 return specs;
             }
 
-            MeleeCombo[] pool = TableFor(Archetype, Puppet);
-            if (pool == null)
+            if (profile.Pool == null)
             {
                 Console.WriteLine("Pass --archetype (see --list), --puppet <boss with its own pool>, --motion, or --list.");
                 return specs;
             }
 
-            foreach (MeleeCombo combo in pool)
+            foreach (MeleeCombo authored in profile.Pool)
             {
                 if (!string.IsNullOrWhiteSpace(Combo) &&
-                    combo.Name.IndexOf(Combo, StringComparison.OrdinalIgnoreCase) < 0)
+                    authored.Name.IndexOf(Combo, StringComparison.OrdinalIgnoreCase) < 0)
                 {
                     continue;
                 }
 
+                MeleeCombo combo = profile.Customize(authored);
+
+                if (!PerStep || combo.RuntimeV2Clip != null || combo.Steps.Length == 1)
+                {
+                    SwingSpec spec = NewSpec(profile, combo, combo.Name, combo.Steps);
+                    AddWithEaseVariants(specs, spec);
+                    continue;
+                }
+
+                // Isolated view: each step with its own telegraph and recovery, which the game never
+                // plays (steps 2+ start straight from the pause). Useful for clean per-arc metrics.
                 for (int stepIndex = 0; stepIndex < combo.Steps.Length; stepIndex++)
                 {
                     MeleeComboStep step = combo.Steps[stepIndex];
-                    var spec = new SwingSpec
-                    {
-                        Puppet = Puppet,
-                        Label = combo.Steps.Length > 1
-                            ? $"{combo.Name} [{stepIndex + 1}/{combo.Steps.Length}]"
-                            : combo.Name,
-                        Motion = step.Motion,
-                        Ease = step.Ease,
-                        TelegraphTicks = step.TelegraphTicks,
-                        AttackTicks = step.AttackTicks,
-                        RecoveryTicks = combo.RecoveryTicks > 0 ? combo.RecoveryTicks : 30,
-                        SwingSpeedMult = step.SwingSpeedMult > 0f ? step.SwingSpeedMult : 1f,
-                        OverheadWindupOvershoot = Overshoot,
-                    };
-                    ApplyOverrides(spec);
+                    step.PostStepPause = 0;
+                    string label = $"{combo.Name} [{stepIndex + 1}of{combo.Steps.Length}]";
+                    var isolated = combo;
+                    isolated.RuntimeV2Clip = null;
+                    SwingSpec spec = NewSpec(profile, isolated, label, new[] { step });
                     AddWithEaseVariants(specs, spec);
                 }
             }
@@ -301,25 +308,62 @@ Examples:
             return specs;
         }
 
-        private void ApplyOverrides(SwingSpec spec)
+        private static void PrintPool(MeleeCombo[] pool)
         {
-            if (Telegraph >= 0) { spec.TelegraphTicks = Telegraph; }
-            if (Attack >= 0) { spec.AttackTicks = Attack; }
-            if (Recovery >= 0) { spec.RecoveryTicks = Recovery; }
-            if (Linger >= 0) { spec.RecoveryLingerTicks = Linger; }
-            if (SwingMult > 0f) { spec.SwingSpeedMult = SwingMult; }
-            spec.Airborne = Airborne;
-            if (!string.IsNullOrWhiteSpace(Ease) &&
-                Enum.TryParse(Ease, ignoreCase: true, out SwingEaseStyle parsed))
+            foreach (MeleeCombo combo in pool)
             {
-                spec.Ease = parsed;
+                string steps = string.Join(" -> ", combo.Steps.Select(s =>
+                    $"{s.Motion}({s.TelegraphTicks}/{s.AttackTicks},{s.Ease})"));
+                string v2 = combo.RuntimeV2Clip != null ? "  [V2 clip - steps unused]" : "";
+                Console.WriteLine($"    {combo.Name,-18} {steps}{v2}");
             }
-            spec.RecoveryLingerTicks = Math.Min(spec.RecoveryLingerTicks, spec.RecoveryTicks);
+        }
+
+        private SwingSpec NewSpec(PuppetProfile profile, MeleeCombo combo, string label, MeleeComboStep[] steps)
+        {
+            // Lingers can be keyed on the live combo (Gwyn's Wrath Flurry), so read them bound.
+            profile.Bind(combo);
+
+            var spec = new SwingSpec
+            {
+                Puppet = Puppet,
+                Label = label,
+                Combo = combo,
+                Steps = (MeleeComboStep[])steps.Clone(),
+                V2Clip = combo.RuntimeV2Clip,
+                Profile = profile,
+                RecoveryTicks = combo.RecoveryTicks > 0 ? combo.RecoveryTicks : profile.DefaultRecoveryTicks,
+                RecoveryLingerTicks = profile.RecoveryLingerTicks,
+                InterStepLingerTicks = profile.InterStepLingerTicks,
+                WeaponUseAnimation = profile.WeaponUseAnimation,
+                RollThroughStep = RollThrough,
+                Airborne = Airborne,
+            };
+
+            if (Recovery >= 0) { spec.RecoveryTicks = Recovery; }
+            if (StepLinger >= 0) { spec.InterStepLingerTicks = StepLinger; }
+            if (Linger >= 0) { spec.RecoveryLingerTicks = Linger; }
+
+            for (int i = 0; i < spec.Steps.Length; i++)
+            {
+                MeleeComboStep step = spec.Steps[i];
+                if (Telegraph >= 0 && i == 0) { step.TelegraphTicks = Telegraph; }
+                if (Attack >= 0) { step.AttackTicks = Attack; }
+                if (SwingMult > 0f) { step.SwingSpeedMult = SwingMult; }
+                if (!string.IsNullOrWhiteSpace(Ease) &&
+                    Enum.TryParse(Ease, ignoreCase: true, out SwingEaseStyle parsed))
+                {
+                    step.Ease = parsed;
+                }
+                spec.Steps[i] = step;
+            }
+
+            return spec;
         }
 
         private void AddWithEaseVariants(List<SwingSpec> specs, SwingSpec spec)
         {
-            if (!CompareEases)
+            if (!CompareEases || spec.V2Clip != null)
             {
                 specs.Add(spec);
                 return;
@@ -331,27 +375,29 @@ Examples:
                          SwingEaseStyle.Snap, SwingEaseStyle.Whip, SwingEaseStyle.Trapezoidal
                      })
             {
+                MeleeComboStep[] steps = (MeleeComboStep[])spec.Steps.Clone();
+                for (int i = 0; i < steps.Length; i++)
+                {
+                    steps[i].Ease = style;
+                }
+
                 specs.Add(new SwingSpec
                 {
                     Puppet = spec.Puppet,
                     Label = $"{spec.Label} [{style}]",
-                    Motion = spec.Motion,
-                    Ease = style,
-                    Direction = spec.Direction,
-                    Airborne = spec.Airborne,
-                    WeaponRotationOffset = spec.WeaponRotationOffset,
-                    TelegraphTicks = spec.TelegraphTicks,
-                    AttackTicks = spec.AttackTicks,
+                    Combo = spec.Combo,
+                    Steps = steps,
+                    Profile = spec.Profile,
                     RecoveryTicks = spec.RecoveryTicks,
                     RecoveryLingerTicks = spec.RecoveryLingerTicks,
-                    SwingSpeedMult = spec.SwingSpeedMult,
-                    OverheadWindupOvershoot = spec.OverheadWindupOvershoot,
-                    HoldRotation = spec.HoldRotation,
+                    InterStepLingerTicks = spec.InterStepLingerTicks,
+                    WeaponUseAnimation = spec.WeaponUseAnimation,
                     Reach = spec.Reach,
-                    UseLogicalTelegraph = spec.UseLogicalTelegraph,
                     FlipArc = spec.FlipArc,
-                    ArmFrom = spec.ArmFrom,
-                    ArmTo = spec.ArmTo,
+                    Direction = spec.Direction,
+                    RollThroughStep = spec.RollThroughStep,
+                    Airborne = spec.Airborne,
+                    WeaponRotationOffset = spec.WeaponRotationOffset,
                 });
             }
         }

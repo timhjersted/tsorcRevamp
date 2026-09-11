@@ -23,12 +23,12 @@ default, not written in the file · `.` off by default, never considered
 
 | Enemy | archetype | arm | 2hnd | ease | clock | tele | mirr | aimC | aimA | flip | arcs | over | link | foll | land | pool | clip |
 |---|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| BodyRenderer | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| Program | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| Program | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | Y |
+| PuppetProfile | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | HeroofLumelia | Broadsword | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | Artorias | Greatsword | Y | . | Y | Y | Y | Y | . | . | . | Y | Y | Y | Y | Y | . | . |
-| Gwyn | Greatsword | Y | Y | Y | Y | Y | Y | . | Y | n | . | Y | . | Y | . | Y | Y |
-| SoulOfCinder | Greatsword | . | . | Y | . | . | . | . | Y | Y | . | . | . | . | . | . | . |
+| Gwyn | Greatsword | Y | Y | Y | Y | Y | Y | . | Y | n | Y | Y | Y | Y | Y | Y | Y |
+| SoulOfCinder | Broadsword | Y | . | Y | Y | Y | Y | . | Y | Y | . | . | Y | Y | . | Y | . |
 | ClericOfSorrow | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | AbyssalNinjaInvader | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | BlackNinja | Flail | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
