@@ -4,7 +4,7 @@
     Renders the mod's REAL compiled .xnb shaders offline on a real GPU, with the parameters and
     blend states their actual call sites use.
 
-    ADDITIVE to .agents/skills/vfx-shader-tips/preview/ - that harness hand-ports the HLSL and stays.
+    ADDITIVE to .agents/tools/ShaderSketch/ - that harness hand-ports the HLSL and stays.
     Two independent renderers disagreeing is a useful signal; neither replaces the other.
 
     Refresh Effects/*.xnb first:  dotnet build tsorcRevamp.csproj -t:Compile

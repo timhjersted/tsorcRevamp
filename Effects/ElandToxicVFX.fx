@@ -5,7 +5,7 @@
 // SHAPE from the primary sprite. (The previous VenomGlob sampled T_Windstreak3's red channel for
 // its silhouette, but that texture's RGB is solid white across the whole canvas - its real shape
 // lives only in alpha - so the sample was a constant 1.0 and the glob rendered as a flat white
-// blob. See tsorcDocs/VFX_ARSENAL.md "Know what's actually in your input texture".)
+// blob. See .agents/skills/vfx-pipeline/VFX_ARSENAL.md "Know what's actually in your input texture".)
 //
 // Texture contract (set by EnemyVFX.DrawEland*):
 //   PrimarySampler = Voronoi_10  - cellular; bubbling/corrosive cell structure

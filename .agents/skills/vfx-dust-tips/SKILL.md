@@ -15,12 +15,12 @@ recompile.
 > silent no-ops). Those two account for most of the "why does my fire look like orange LEGO" time.
 
 ## Related Skills & References
-- **[VFX Pipeline & Shader Development Guide](file:///.agents/skills/vfx-pipeline/SKILL.md)**: the
+- **[VFX Pipeline & Shader Development Guide](../vfx-pipeline/SKILL.md)**: the
   end-to-end `.fx` → `.xnb` → C# pipeline, compiler disagreements, and the draw-helper audit list.
-- **[VFX Shader Tips & HLSL Best Practices](file:///.agents/skills/vfx-shader-tips/SKILL.md)**: HLSL
+- **[VFX Shader Tips & HLSL Best Practices](../vfx-shader-tips/SKILL.md)**: HLSL
   technique, the field notes (§31–41), the offline preview harness (§42–48). §20 there (the 3-layer
   particle architecture) and §23 (easing curves) are the shader-side companions to §4 and §7 below.
-- **[tsorcDocs/VFX_ARSENAL.md](file:///tsorcDocs/VFX_ARSENAL.md)**: the reusable `VFX/`
+- **[vfx-pipeline/VFX_ARSENAL.md](../vfx-pipeline/VFX_ARSENAL.md)**: the reusable `VFX/`
   particle/beam/ring library. Check it before hand-rolling a particle system.
 
 ---
@@ -126,7 +126,7 @@ Anything above ~2.0 needs a reason. Anything above ~3.0 is almost certainly a bu
 
 ## 4. Layered bursts (the 3-pass architecture, in dust)
 
-This is [vfx-shader-tips §20](file:///.agents/skills/vfx-shader-tips/SKILL.md) applied to particles.
+This is [vfx-shader-tips §20](../vfx-shader-tips/SKILL.md) applied to particles.
 One pass of identical motes always reads as one stamp; three passes with genuinely different
 parameters read as an event. The three layers are **different in every axis**, not the same loop at
 three sizes:
@@ -162,7 +162,7 @@ Real implementation: `Projectiles/Enemy/EnemyFirebomb.cs` `OnKill`, and
 count, speed, radius, angular phase, lifetime — or you have drawn one ring twice.
 `tsorcRevampAIs.SpawnFireTeleportBurst` offsets its second ring by a half-step
 (`+ MathHelper.Pi / count`) plus an irrational nudge so its members land in the first ring's gaps.
-This is the particle form of [vfx-shader-tips §33](file:///.agents/skills/vfx-shader-tips/SKILL.md).
+This is the particle form of [vfx-shader-tips §33](../vfx-shader-tips/SKILL.md).
 
 ---
 
@@ -177,7 +177,7 @@ This is the particle form of [vfx-shader-tips §33](file:///.agents/skills/vfx-s
 invisible. Higher alpha = fainter. Typical bands in this repo: `60–90` for hot sparks you want to
 punch, `100–150` for body fire, `170–200` for background smoke.
 
-Watch out for the same trap as [vfx-shader-tips §48](file:///.agents/skills/vfx-shader-tips/SKILL.md):
+Watch out for the same trap as [vfx-shader-tips §48](../vfx-shader-tips/SKILL.md):
 a pale desaturated tint over a bright dust is white. If a flame is reading pastel, lower the `alpha`
 (make it more opaque) rather than raising the tint's brightness.
 
@@ -236,7 +236,7 @@ motes triple in size. Copy that pattern, not the no-op one.
   ```
   Suction (motes moving *inward*) is the standard anticipation cue before a big attack — see
   `RedKnightVFX.DrawStormHeraldGather` and
-  [vfx-shader-tips §21](file:///.agents/skills/vfx-shader-tips/SKILL.md).
+  [vfx-shader-tips §21](../vfx-shader-tips/SKILL.md).
 - **You cannot set a lifetime directly.** A dust dies when `scale` decays to ~0. You control its
   life through spawn scale, `fadeIn`, and `noGravity`. If you need a precise duration, spawn from a
   timed emitter projectile (see `Projectiles/VFX/TeleportMistLinger.cs`) rather than fighting it.
@@ -265,7 +265,7 @@ fine.noGravity = true;
 `new Vector2(-v.Y, v.X)` is the cheap perpendicular — do not reach for `RotatedBy(MathHelper.PiOver2)`.
 
 The particle analogue of
-[vfx-shader-tips §45](file:///.agents/skills/vfx-shader-tips/SKILL.md) (anisotropic sampling) is:
+[vfx-shader-tips §45](../vfx-shader-tips/SKILL.md) (anisotropic sampling) is:
 **give a stream much more variance along its axis than across it.** Equal spread in both directions
 makes a stream look like a ball.
 
@@ -299,7 +299,7 @@ makes a stream look like a ball.
 | "Stream looks like a **ball**" | equal spread along and across | §8 — much more variance along the axis than across it. |
 | "Colour tint has **no effect**" | tinting a dark dust brighter | §5 — `newColor` multiplies; pick a brighter `DustID`. |
 | "Dust is **too faint**" | `alpha` too high | §5 — `alpha` is inverted; lower it toward 0. |
-| "Dust **stops mid-effect**" | emission is gated by a condition that expired | Check the gate, not the dust — see [vfx-shader-tips §39](file:///.agents/skills/vfx-shader-tips/SKILL.md). |
+| "Dust **stops mid-effect**" | emission is gated by a condition that expired | Check the gate, not the dust — see [vfx-shader-tips §39](../vfx-shader-tips/SKILL.md). |
 | "Vanilla-`aiStyle` dust I can't change" | vanilla AI runs before `ModProjectile.AI()` | §9 — `PreAI()` returning `false` + reimplement. |
 | "Count doesn't match what I asked for" | dust budget throttling | §2 / §9 — expected under load; don't rely on exact counts. |
 
@@ -308,7 +308,7 @@ makes a stream look like a ball.
 ## 11. Verification discipline
 
 You cannot preview dust offline the way you can preview a shader
-([vfx-shader-tips §42](file:///.agents/skills/vfx-shader-tips/SKILL.md)), so the discipline is
+([vfx-shader-tips §42](../vfx-shader-tips/SKILL.md)), so the discipline is
 arithmetic instead:
 
 - **Write the maximum scale down.** `1.2 (jitter) × Scale × every multiplier`. If that number is
@@ -317,7 +317,7 @@ arithmetic instead:
   reviewable; "40 motes @ 0.9–1.9 → 64 @ 0.75–1.5 plus a 22-mote fine pass" is.
 - **Check who else spawns the projectile you are editing.** `FireBreath` alone is fired by eight
   different NPCs plus the shared teleport system — a "demon fire-breath" tweak is a mod-wide change.
-  Same rule as [vfx-shader-tips §35](file:///.agents/skills/vfx-shader-tips/SKILL.md).
+  Same rule as [vfx-shader-tips §35](../vfx-shader-tips/SKILL.md).
 - **Adding damaging particles is a balance change, not polish.** If a decorative layer needs to
   overlap a damaging one, spawn it with `hostile = false; friendly = false; damage = 0;` and say so
   — see the second ring in `tsorcRevampAIs.SpawnFireTeleportBurst`.

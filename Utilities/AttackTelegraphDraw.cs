@@ -10,7 +10,7 @@ namespace tsorcRevamp
     /// <summary>Shared, dust-free weapon telegraphs for defensive-rule attacks.</summary>
     public static class AttackTelegraphDraw
     {
-        private static readonly Vector2[] GlowDirections =
+        internal static readonly Vector2[] GlowDirections =
         {
             Vector2.UnitX,
             -Vector2.UnitX,

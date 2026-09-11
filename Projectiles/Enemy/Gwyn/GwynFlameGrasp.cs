@@ -174,20 +174,23 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             Vector2 origin = GetOriginPosition(owner);
-            int segments = (int)MathHelper.Clamp(Vector2.Distance(origin, Projectile.Center) / 42f, 1f, 12f);
+            float tetherLength = Vector2.Distance(origin, Projectile.Center);
+            int segments = System.Math.Clamp((int)System.Math.Ceiling(tetherLength / 12f), 1, 52);
+            // Rebuild a tightly spaced gold chain every other tick. Existing dust survives between
+            // emissions, producing a continuous hand-to-orb tether without paying for 50 new motes
+            // on every update at maximum reach.
+            if (((int)Age & 1) != 0)
+            {
+                return;
+            }
             for (int i = 1; i < segments; i++)
             {
-                if (!Main.rand.NextBool(3))
-                {
-                    continue;
-                }
-
                 Vector2 position = Vector2.Lerp(origin, Projectile.Center, i / (float)segments)
-                    + Main.rand.NextVector2Circular(5f, 5f);
-                int type = Main.rand.NextBool(3) ? DustID.Torch : DustID.GoldFlame;
+                    + Main.rand.NextVector2Circular(1.5f, 1.5f);
+                int type = Main.rand.NextBool(5) ? DustID.GoldCoin : DustID.GoldFlame;
                 Dust dust = Dust.NewDustPerfect(position, type,
-                    Main.rand.NextVector2Circular(0.6f, 0.6f), 55, default,
-                    Main.rand.NextFloat(0.85f, 1.25f));
+                    Main.rand.NextVector2Circular(0.18f, 0.18f), 50,
+                    new Color(255, 210, 72), Main.rand.NextFloat(0.72f, 1.02f));
                 dust.noGravity = true;
             }
         }
@@ -305,7 +308,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             float fadeOut = MathHelper.Clamp(Projectile.timeLeft / 8f, 0f, 1f);
             float drawScale = State == StateGrasping ? 1.18f : 1f;
             DrawHandAura(Projectile.Center, Projectile.rotation, drawScale,
-                fadeIn * fadeOut, drawUnblockableOutline: false);
+                fadeIn * fadeOut, drawUnblockableOutline: State == StateFlying);
             return false;
         }
 

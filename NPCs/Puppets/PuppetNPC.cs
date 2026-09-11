@@ -9298,6 +9298,47 @@ namespace tsorcRevamp.NPCs.Puppets
             DrawFireSlashVFX();
         }
 
+        // A composed puppet cannot use DrawUnblockableWeaponAura directly because its body is many
+        // PlayerDrawSet layers rather than one texture. This applies the same eight-direction red
+        // silhouette pattern to the completed draw cache, then restores the ordinary body on top.
+        // Default-off so subclasses can opt in for a specific telegraph phase.
+        protected virtual bool HasUnblockableBodyAura => false;
+        protected virtual float UnblockableBodyAuraScale => 1.1f;
+        protected virtual float UnblockableBodyAuraOpacity => 0.5f;
+        private readonly List<DrawData> _unblockableBodyDrawCache = new List<DrawData>();
+
+        private void TransformUnblockableBodyAura(ref PlayerDrawSet drawInfo)
+        {
+            Vector2 anchor = NPC.Center - Main.screenPosition;
+            float scale = Math.Max(1f, UnblockableBodyAuraScale);
+            float opacity = MathHelper.Clamp(UnblockableBodyAuraOpacity, 0f, 1f);
+            float pulse = 0.5f + 0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 8f);
+            float outlineRadius = MathHelper.Lerp(1.6f, 2.8f, pulse) * scale;
+            Color auraColor = new Color(255, 4, 2) * opacity;
+
+            _unblockableBodyDrawCache.Clear();
+            _unblockableBodyDrawCache.AddRange(drawInfo.DrawDataCache);
+            drawInfo.DrawDataCache.Clear();
+
+            foreach (Vector2 direction in AttackTelegraphDraw.GlowDirections)
+            {
+                Vector2 offset = direction * outlineRadius;
+                foreach (DrawData original in _unblockableBodyDrawCache)
+                {
+                    DrawData aura = original;
+                    aura.position = anchor + (original.position - anchor) * scale + offset;
+                    aura.scale *= scale;
+                    aura.color = auraColor * (original.color.A / 255f);
+                    aura.shader = 0;
+                    drawInfo.DrawDataCache.Add(aura);
+                }
+            }
+
+            // The normal puppet is last, so the warning remains a silhouette behind the armor
+            // rather than tinting or washing out Gwyn himself.
+            drawInfo.DrawDataCache.AddRange(_unblockableBodyDrawCache);
+        }
+
         // The finished player draw cache becomes the spectral body. This preserves every armor
         // layer and the hand/weapon attachment without a second solid small puppet underneath.
         protected virtual bool HasSpectralOverlay => false;
@@ -9336,7 +9377,16 @@ namespace tsorcRevamp.NPCs.Puppets
         /// history, then a blue-tinted core. Called after armor/weapon layers have composed.</summary>
         internal void TransformSpectralDrawData(ref PlayerDrawSet drawInfo)
         {
-            if (!HasSpectralOverlay || drawInfo.drawPlayer != _puppet)
+            if (drawInfo.drawPlayer != _puppet)
+                return;
+
+            if (HasUnblockableBodyAura)
+            {
+                TransformUnblockableBodyAura(ref drawInfo);
+                return;
+            }
+
+            if (!HasSpectralOverlay)
                 return;
 
             Vector2 feet = NPC.Bottom - Main.screenPosition;

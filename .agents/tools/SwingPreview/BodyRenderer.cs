@@ -165,6 +165,13 @@ namespace SwingPreview
 
             bool flip = frame.Direction < 0;
 
+            // Vanilla flips the front arm in front of the shoulder cap on body rows 1, 2 and 5.
+            // BodyRowFromWeaponRotation walks rows 1->4 as the weapon pitches down, so an un-fixed
+            // swing shows the arm over the pauldron for its high-pitch half and behind it for the
+            // rest. PuppetShoulderCapLayer forces it behind for the whole swing.
+            bool armOverShoulder = VanillaShoulderOrder
+                && Array.IndexOf(ArmOverShoulderRows, frame.BodyRow) >= 0;
+
             // ---- vanilla layer order ----
             DrawStatic(g, legs, legFrame, flip);
             DrawRotated(g, body, backArmCell, BackArmPivot, frame.CompositeArmRotation * 0.55f, flip);
@@ -172,8 +179,17 @@ namespace SwingPreview
             DrawStatic(g, body, torsoCell, flip);
             DrawStatic(g, head, headFrame, flip);
             DrawWeapon(g, weapon, art, frame, flip);
-            DrawRotated(g, body, frontArmCell, FrontArmPivot, frame.CompositeArmRotation, flip);
-            DrawStatic(g, body, frontShoulderCell, flip);
+
+            if (armOverShoulder)
+            {
+                DrawStatic(g, body, frontShoulderCell, flip);
+                DrawRotated(g, body, frontArmCell, FrontArmPivot, frame.CompositeArmRotation, flip);
+            }
+            else
+            {
+                DrawRotated(g, body, frontArmCell, FrontArmPivot, frame.CompositeArmRotation, flip);
+                DrawStatic(g, body, frontShoulderCell, flip);
+            }
 
             g.ResetTransform();
             DrawLabel(canvas, frame);
@@ -185,6 +201,16 @@ namespace SwingPreview
         /// assembly and is a runtime /swingarm tunable rather than gameplay config, so the preview
         /// carries its own copy defaulting to the same value the mod ships (Full).</summary>
         internal static int ArmStretch = 0;
+
+        /// <summary>Render the UNFIXED vanilla shoulder order instead of the mod's forced one, for
+        /// before/after comparison. Vanilla derives shoulder-over-arm from the body frame row, so
+        /// the arm flips in front of the pauldron partway through a swing; PuppetShoulderCapLayer
+        /// pins it behind for puppets, which is what the preview models by default.</summary>
+        internal static bool VanillaShoulderOrder = false;
+
+        /// <summary>Body frame rows that draw the front arm OVER the shoulder cap in vanilla
+        /// (PlayerDrawSet's composite setup). Row 5 is the airborne pose.</summary>
+        private static readonly int[] ArmOverShoulderRows = { 1, 2, 5 };
 
         private static readonly float[] StretchRadius = { 10f, 8f, 6f, 4f };
 

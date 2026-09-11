@@ -141,11 +141,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool UseAlternateFlip => false;
         protected override bool UseAimAdaptiveArc => true;
         protected override bool UseLogicalMeleeTelegraphs => true;
+
+        // Required for the per-step Ease values in GwynCombos to be read at all: the swing angle
+        // falls back to a plain lerp unless this is on. It costs nothing else here — the swing clock
+        // it also selects resolves to step.AttackTicks either way, because GetMeleeSwingTicks
+        // returns its argument unchanged for any positive tick count and GS() sets no SwingSpeedMult.
+        protected override bool UseAuthoredComboSwingClock => true;
+
+        // Holds the finished swing pose for 14 ticks before the arm eases back to the carry angle
+        // and the weapon stops drawing, so a strike reads as a follow-through instead of the blade
+        // vanishing on recovery frame one. The rest of each recovery is the ordinary unarmed idle.
+        // Artorias runs 30 with a comparable greatsword; the shorter beat suits Gwyn's faster kit.
+        protected override int MeleeRecoveryLingerTicks => 14;
+
         // The repaired armor sheet now supplies complete front and back composite-arm frames,
         // allowing the greatsword pose to retain smooth rotation without exposing player skin.
         protected override bool UseCompositeArmSwing => true;
         protected override bool UseTwoHandedCompositeSwing => !IsDashGrabSequence;
         protected override bool UseCompositeArmForAdditionalPhase => IsDashGrabSequence;
+        protected override bool HasUnblockableBodyAura => Phase == AttackPhase.TendrilTelegraph;
+        protected override float UnblockableBodyAuraScale => 1.1f;
+        protected override float UnblockableBodyAuraOpacity => 0.5f;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
         protected override bool HasSlashVFX => false; // Uses HasFireSlashVFX (shader-lit fire slash) instead.
         protected override float WalkAnimationSpeedMultiplier => 0.35f;
@@ -160,8 +176,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                   CB_CINDERFALL = 5, CB_GUILLOTINE = 6, CB_BACKHAND = 7, CB_THREEHIT = 8,
                   CB_ROLLCATCH = 9, CB_FLURRY = 10, CB_PURSUIT = 11;
 
-        static MeleeComboStep GS(ComboMotion m, int tel, int atk, int pause, float dmg = 1f, float reach = 1f, float push = 0f)
-            => new MeleeComboStep { Motion = m, TelegraphTicks = tel, AttackTicks = atk, PostStepPause = pause, DamageMult = dmg, ReachMult = reach, ForwardPushMult = push };
+        // `ease` shapes the arc's velocity curve. It defaults to Smooth to match the shared S()
+        // helper in MeleeComboSystem: leaving it off produced SwingEaseStyle.Linear (enum value 0),
+        // i.e. constant angular velocity with no ease-in or ease-out, which is what made every one
+        // of Gwyn's swings start and stop dead rather than wind up and settle.
+        static MeleeComboStep GS(ComboMotion m, int tel, int atk, int pause, float dmg = 1f, float reach = 1f, float push = 0f,
+                                 SwingEaseStyle ease = SwingEaseStyle.Smooth)
+            => new MeleeComboStep { Motion = m, TelegraphTicks = tel, AttackTicks = atk, PostStepPause = pause, DamageMult = dmg, ReachMult = reach, ForwardPushMult = push, Ease = ease };
 
         // Complete grounded strikes use the single-clock runtime. Movement attacks and linked
         // strings stay on MeleeCombo because their locomotion and continuation are the behavior.
@@ -251,19 +272,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             new MeleeCombo { Name = "Under-Over", BaseWeight = 70, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Gold, CooldownAfterUse = 130, RecoveryTicks = 24,
                 Steps = new[] {
+                    // Rising cut stays Smooth so the reversal reads; the overhead follow-up snaps.
                     GS(ComboMotion.UnderhandArc, 15, 20, 12, 1.0f, 1.1f, 0.50f),
-                    GS(ComboMotion.OverheadArc,   0, 22,  0, 1.3f, 1.15f, 0.65f),
+                    GS(ComboMotion.OverheadArc,   0, 22,  0, 1.3f, 1.15f, 0.65f, ease: SwingEaseStyle.Snap),
                 } },
             // 2 — Cindering Leap Overhead: tracking leap that reaches, then the 170° chop (roll it on landing)
             new MeleeCombo { Name = "Cindering Leap", BaseWeight = 55, Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 150, RecoveryTicks = 30,
                 HeavyCommit = true, RangedStartOnly = true,
-                Steps = new[] { GS(ComboMotion.LeapSlam, 25, 24, 0, 1.5f, 1.2f) } },
+                // Whip holds the apex a beat before the chop crashes down — the leap's whole read.
+                Steps = new[] { GS(ComboMotion.LeapSlam, 25, 24, 0, 1.5f, 1.2f, ease: SwingEaseStyle.Whip) } },
             // 3 — Sliding Thrust: low dash pierce, gap-closer
             new MeleeCombo { Name = "Sliding Thrust", BaseWeight = 55, Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.Yellow, CooldownAfterUse = 130, RecoveryTicks = 22,
                 RangedStartOnly = true,
-                Steps = new[] { GS(ComboMotion.JoustDash, 20, 16, 0, 1.2f, 1.4f, 1.8f) } },
+                // Snap: the lunge commits early and coasts, so the thrust lands with the dash.
+                Steps = new[] { GS(ComboMotion.JoustDash, 20, 16, 0, 1.2f, 1.4f, 1.8f, ease: SwingEaseStyle.Snap) } },
             // 4 — Sunspin: 360° sweep, anti-flank
             new MeleeCombo { Name = "Sunspin", BaseWeight = 45, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Yellow, CooldownAfterUse = 170, RecoveryTicks = 34,
@@ -272,22 +296,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // 5 — Cinderfall: committed ground cleave + fire AoE
             new MeleeCombo { Name = "Cinderfall", BaseWeight = 40, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true, RuntimeV2Clip = CinderfallV2,
-                Steps = new[] { GS(ComboMotion.GroundSlam, 25, 24, 0, 1.6f, 1.3f, 0.40f) } },
+                // Whip: the heaviest slam in the kit, so the apex hangs before it comes down.
+                Steps = new[] { GS(ComboMotion.GroundSlam, 25, 24, 0, 1.6f, 1.3f, 0.40f, ease: SwingEaseStyle.Whip) } },
             // 6 — Guillotine Drop: heavy standing overhead, the "respect me" punish
             new MeleeCombo { Name = "Guillotine", BaseWeight = 45, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true, RuntimeV2Clip = GuillotineV2,
-                Steps = new[] { GS(ComboMotion.OverheadArc, 30, 22, 0, 1.8f, 1.15f, 0.35f) } },
+                // Whip: the 30-tick tell plus a held apex is what makes this the "respect me" punish.
+                Steps = new[] { GS(ComboMotion.OverheadArc, 30, 22, 0, 1.8f, 1.15f, 0.35f, ease: SwingEaseStyle.Whip) } },
             // 7 — Backhand + Step: quick re-engaging sweep, denies a roll-back
             new MeleeCombo { Name = "Backhand Step", BaseWeight = 60, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Orange, CooldownAfterUse = 70, RuntimeV2Clip = BackhandV2,
-                Steps = new[] { GS(ComboMotion.HorizontalSweep, 12, 16, 0, 0.9f, 1.1f, 0.85f) } },
+                // Snap: front-loaded so the re-engage is out and back before a roll can answer it.
+                Steps = new[] { GS(ComboMotion.HorizontalSweep, 12, 16, 0, 0.9f, 1.1f, 0.85f, ease: SwingEaseStyle.Snap) } },
             // 8 — 3-Hit Standard: the staple pressure string. Push RISES per step so the string
             //     walks him through a player trying to back out of it rather than whiffing behind them.
             new MeleeCombo { Name = "3-Hit", BaseWeight = 55, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 180, RecoveryTicks = 28,
                 Steps = new[] {
-                    GS(ComboMotion.HorizontalSweep, 14, 18, 12, 0.9f, 1f,     0.45f),
-                    GS(ComboMotion.HorizontalSweep,  0, 18, 12, 0.9f, 1.05f,  0.55f),
+                    // Two snappy sweeps build the pressure; the finisher stays Smooth so it lands
+                    // heavy instead of reading as a third light poke.
+                    GS(ComboMotion.HorizontalSweep, 14, 18, 12, 0.9f, 1f,     0.45f, ease: SwingEaseStyle.Snap),
+                    GS(ComboMotion.HorizontalSweep,  0, 18, 12, 0.9f, 1.05f,  0.55f, ease: SwingEaseStyle.Snap),
                     GS(ComboMotion.OverheadArc,      0, 22,  0, 1.3f, 1.1f,   0.70f),
                 } },
             // 9 — Roll-Catch: leap in, then the flip slam lands where a panicked roll ends
@@ -295,18 +324,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 InitialFlashColor = Color.Red, CooldownAfterUse = 240, RecoveryTicks = 40,
                 HeavyCommit = true, RangedStartOnly = true,
                 Steps = new[] {
+                    // The leap travels Smooth; the slam that catches the roll is the delayed payoff.
                     GS(ComboMotion.LeapSlam,   25, 22, 14, 1.3f, 1.2f),
-                    GS(ComboMotion.GroundSlam,  0, 24,  0, 1.5f, 1.3f, 0.35f),
+                    GS(ComboMotion.GroundSlam,  0, 24,  0, 1.5f, 1.3f, 0.35f, ease: SwingEaseStyle.Whip),
                 } },
-            // 10 — Wrath Flurry: the full-commit chain unlocked by the <30% Wrath phase
+            // 10 — Wrath Flurry: the full-commit chain unlocked at half health
             new MeleeCombo { Name = "Wrath Flurry", BaseWeight = 25, Preferred = ComboRangeBand.Any,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 300, RecoveryTicks = 45,
                 HeavyCommit = true, HyperArmor = true,
                 Steps = new[] {
-                    GS(ComboMotion.JoustDash,    22, 14, 8,  1.0f, 1.2f, 1.5f),
+                    // Deliberately alternated rather than all-Snap: four identical front-loaded arcs
+                    // read as one long blur. Snap opener, Smooth reversal, Snap, then the spin
+                    // finisher whips so the chain ends on a held beat instead of just stopping.
+                    GS(ComboMotion.JoustDash,    22, 14, 8,  1.0f, 1.2f, 1.5f,  ease: SwingEaseStyle.Snap),
                     GS(ComboMotion.UnderhandArc,  0, 16, 8,  0.9f, 1.1f, 0.55f),
-                    GS(ComboMotion.OverheadArc,   0, 16, 8,  1.1f, 1.15f, 0.60f),
-                    GS(ComboMotion.Spin,          0, 24, 0,  1.2f, 1.15f, 0.60f),
+                    GS(ComboMotion.OverheadArc,   0, 16, 8,  1.1f, 1.15f, 0.60f, ease: SwingEaseStyle.Snap),
+                    GS(ComboMotion.Spin,          0, 24, 0,  1.2f, 1.15f, 0.60f, ease: SwingEaseStyle.Whip),
                 } },
             // 11 — Sunlight Pursuit: the long-range answer, and the only attack that crosses a
             //      whole arena. He drops the greatsword low and BEHIND him and sprints — the run
@@ -319,9 +352,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 InitialFlashColor = Color.Orange, CooldownAfterUse = 300, RecoveryTicks = 34,
                 HeavyCommit = true, HyperArmor = true, RangedStartOnly = true,
                 Steps = new[] {
-                    GS(ComboMotion.LowAxeRun,          32, 140, 1, 0f),
+                    // The run is a carried pose, not a swing, so it stays Linear — easing a 140-tick
+                    // sprint would make the blade drift instead of holding low and steady.
+                    GS(ComboMotion.LowAxeRun,          32, 140, 1, 0f, ease: SwingEaseStyle.Linear),
                     // Safety timeout only; the step normally ends 30 ticks after the leap apex.
-                    GS(ComboMotion.RisingUppercutLeap,  0, 150, 0, 1.35f, 1.20f),
+                    GS(ComboMotion.RisingUppercutLeap,  0, 150, 0, 1.35f, 1.20f, ease: SwingEaseStyle.Whip),
                 } },
         };
 
@@ -416,10 +451,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
             //This was described as the enrage chain, but it was selectable for the entire fight.
-            //Keep one unmistakable melee reveal for the actual Wrath phase.
+            //Keep one unmistakable melee reveal for the second half of the fight.
             if (combo.Name == "Wrath Flurry")
             {
-                return _wrathActive;
+                return HalfHealthMovesUnlocked;
             }
             if (combo.Name == "Cindering Leap" || combo.Name == "Roll-Catch")
             {
@@ -483,6 +518,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int protectedHoldTimer;   // keeps the 9999 penalty (and the broadcast) from re-triggering every tick
         float cowardGraceTimer = 90;
         bool announcedCoward;
+
+        bool HalfHealthMovesUnlocked => NPC.life <= NPC.lifeMax * 0.50f;
 
         NPCDespawnHandler despawnHandler;
 
@@ -585,13 +622,41 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
+            // Gwyn owns this check instead of letting the puppet base start a second party-wipe
+            // sequence. Despawning must suspend the combat machine before it can move, attack, or
+            // continue drawing a committed attack over the dissolve effect.
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            if (!NPC.active)
+            {
+                return;
+            }
+            if (despawnHandler.IsDespawning)
+            {
+                NPC.damage = 0;
+                NPC.dontTakeDamage = true;
+                NPC.velocity = Vector2.Zero;
+                AfterimageTicks = 0;
+                _advanceTimer = 0;
+                _stormTimer = 0;
+                _gravityTimer = 0;
+                _plungeTimer = 0;
+                _riposteTimer = 0;
+                _spearJumpActive = false;
+                _spearFollowupsRemaining = 0;
+                Flight?.RequestLand();
+                if (Phase != AttackPhase.Idle)
+                {
+                    EnterPhase(AttackPhase.Idle, 0);
+                }
+                return;
+            }
+
             //Contact only hurts during the Unbroken Advance march (all other damage is weapon hitboxes)
             NPC.damage = TooEarly ? TooEarlyDamage : (_advanceTimer > 0 ? MeleeDamage : 0);
 
             base.AI();
             TickLordEmbraceRecovery();
             TickSpearJumpChoreography();
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
             // A restrained neutral-white fill keeps Gwyn readable in unlit arena sections without
             // competing with the hotter attack lights on his blade and projectiles.
@@ -680,12 +745,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        // ── Lord's Embrace (Wrath-exclusive full-arena dash grab) ────────────────
+        // ── Lord's Embrace (half-health full-arena dash grab) ────────────────────
         // Reuses the proven Artorias pierce/impale state machine, but the weapon is suppressed and
         // the hand itself is the threat. The target position stays live during the readable windup,
         // then locks 100px beyond the player when the dash commits. A hit stops Gwyn immediately;
         // a miss ends at that cached overshoot instead of carrying him blindly across the arena.
-        protected override bool  CanPierce                 => _wrathActive;
+        protected override bool  CanPierce                 => HalfHealthMovesUnlocked;
         protected override float PierceRange               => 2400f;
         protected override float MinPierceRange            => 280f;
         protected override int   PierceChance               => 5;
@@ -2187,7 +2252,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float TendrilMaxRange         => 560f;
         protected override int   TendrilChance            => 5;
         protected override int   TendrilCooldownAfterUse  => 480;
-        protected override int   TendrilTelegraphTicks    => 30;
+        protected override int   TendrilTelegraphTicks    => 60;
         protected override int   TendrilReachTicks        => 54;
         protected override int   TendrilSwingArcTicks     => 22;
         protected override int   TendrilSwingHoldTicks    => 6;
@@ -2209,11 +2274,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
             Vector2 handPos = GraspHandPosition;
-            int count = 1 + elapsed / 6;
+            float progress = MathHelper.Clamp(elapsed / (float)Math.Max(1, TendrilTelegraphTicks - 1), 0f, 1f);
+            float collapse = MathHelper.SmoothStep(0f, 1f, progress);
+            float radius = MathHelper.Lerp(46f, 2f, collapse);
+            int count = 2 + (int)(progress * 3f);
             for (int i = 0; i < count; i++)
             {
-                int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
-                Dust d = Dust.NewDustPerfect(handPos + Main.rand.NextVector2Circular(12f, 12f), type, Main.rand.NextVector2Circular(1f, 1f), 60, default, Main.rand.NextFloat(1f, 1.5f));
+                float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                Vector2 position = handPos + angle.ToRotationVector2() * radius
+                    + Main.rand.NextVector2Circular(2f, 2f);
+                int type = Main.rand.NextBool(4) ? DustID.GoldCoin : DustID.GoldFlame;
+                Dust d = Dust.NewDustPerfect(position, type, (handPos - position) * 0.12f,
+                    45, new Color(255, 214, 92), Main.rand.NextFloat(0.85f, 1.25f));
                 d.noGravity = true;
             }
             Lighting.AddLight(handPos, 0.8f, 0.4f, 0.1f);
@@ -2229,8 +2301,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player target = Main.player[NPC.target];
             Vector2 origin = GraspHandPosition;
             Vector2 vel = UsefulFunctions.Aim(origin, target.Center, 13f);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
+            int graspIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
                 ModContent.ProjectileType<Projectiles.Enemy.GwynFlameGrasp>(), GraspDamage, 8f, Main.myPlayer, NPC.whoAmI);
+            Projectiles.tsorcGlobalProjectile.SetDefenseTraits(
+                graspIndex, AttackDefenseTraits.BypassesActiveShield);
         }
 
         protected override void DoTendrilSwing()

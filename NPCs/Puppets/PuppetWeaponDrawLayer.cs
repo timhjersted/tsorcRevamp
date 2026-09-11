@@ -101,12 +101,14 @@ namespace tsorcRevamp.NPCs.Puppets
     }
 
     /// <summary>
-    /// Turns off the two static composite shoulder caps for puppets whose sheet draws the shoulder
-    /// into the torso cell instead (see <see cref="PuppetNPC.SuppressCompositeShoulderCaps"/>).
+    /// Fixes composite shoulder drawing for puppets: pins the front arm behind the shoulder cap for
+    /// every frame of a swing, and optionally turns the two static caps off entirely for puppets
+    /// whose sheet draws the shoulder into the torso cell
+    /// (see <see cref="PuppetNPC.SuppressCompositeShoulderCaps"/>).
     ///
     /// Runs before the Skin layer because that is where the BACK cap is emitted; the FRONT cap comes
-    /// later in ArmOverItem. PlayerDrawSet is threaded through the layer chain by ref and
-    /// hideCompositeShoulders is only read at draw time, so setting it here covers both.
+    /// later in ArmOverItem. PlayerDrawSet is threaded through the layer chain by ref and both flags
+    /// are only read at draw time, so setting them here covers both caps.
     /// </summary>
     [Autoload(Side = ModSide.Client)]
     public class PuppetShoulderCapLayer : PlayerDrawLayer
@@ -121,7 +123,19 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             PuppetNPC puppet = PuppetNPC.DrawingPuppetFor;
 
-            if (puppet == null || !puppet.SuppressCompositeShoulderCaps)
+            if (puppet == null)
+            {
+                return;
+            }
+
+            // Vanilla picks this from the BODY FRAME ROW, not the armour (PlayerDrawSet's composite
+            // setup): rows 1, 2 and 5 draw the front arm OVER the shoulder cap, every other row
+            // draws it behind. A swinging puppet changes body row with the weapon angle, so the arm
+            // pops in front of the pauldron partway through the arc and back behind it again.
+            // Forcing it true keeps the shoulder joint covered for the whole swing.
+            drawInfo.compShoulderOverFrontArm = true;
+
+            if (!puppet.SuppressCompositeShoulderCaps)
             {
                 return;
             }

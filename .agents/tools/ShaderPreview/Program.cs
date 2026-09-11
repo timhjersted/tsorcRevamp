@@ -12,7 +12,7 @@ namespace ShaderPreview
     /// Renders the mod's REAL compiled .xnb shaders offline, on a real GPU, with the parameters,
     /// textures and blend state their actual call sites use.
     ///
-    /// This sits ALONGSIDE .agents/skills/vfx-shader-tips/preview/ - it does not replace it. That
+    /// This sits ALONGSIDE .agents/tools/ShaderSketch/ - it does not replace it. That
     /// harness hand-ports the HLSL to C#; this one runs the shipped bytecode. Keeping both means a
     /// disagreement between them is informative rather than ambiguous.
     ///

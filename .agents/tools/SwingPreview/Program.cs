@@ -44,6 +44,8 @@ namespace SwingPreview
 
             PuppetArt art = options.Body ? PuppetArtLibrary.Resolve(options.Puppet, options.RepoRoot) : null;
             if (art != null && options.WeaponScale > 0f) { art.WeaponScale = options.WeaponScale; }
+
+            BodyRenderer.VanillaShoulderOrder = options.VanillaShoulderOrder;
             if (options.Body && art == null)
             {
                 Console.WriteLine($"No art profile for --puppet {options.Puppet}. Known: {PuppetArtLibrary.Known}");

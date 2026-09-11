@@ -10,9 +10,9 @@ This skill covers the end-to-end pipeline for creating, compiling, and integrati
 ---
 
 ## Related Skills & References
-- **[VFX Shader Tips & HLSL Best Practices](file:///.agents/skills/vfx-shader-tips/SKILL.md)**: Supplemental cheatsheet detailing frame UV normalization (`uSourceRect`), multi-layer noise blending, Gwyn-style edge rim detection, analytical falloffs, and 3-tier color ramping — plus the field notes (§31–41) and the preview harness (§42–48).
-- **[VFX Dust Tips](file:///.agents/skills/vfx-dust-tips/SKILL.md)**: the particle half of the pipeline — a curated `DustID` table, the count-vs-scale "chunkiness" tradeoff, layered burst architecture, `NewDust`/`NewDustPerfect`/`NewDustDirect`, what `fadeIn` actually does (it is a grow-to-scale target, not an alpha ramp), and a symptoms → fix table. Most effects here are dust *and* shader; check both.
-- **[tsorcDocs/VFX_ARSENAL.md](file:///tsorcDocs/VFX_ARSENAL.md)**: the reusable `VFX/` arsenal only — particle, beam, ring and primitive-trail recipes, `/vfxshowcase`, and the arsenal runtime watchlist. Its former "Shader authoring" half now lives at the bottom of **this** file.
+- **[VFX Shader Tips & HLSL Best Practices](../vfx-shader-tips/SKILL.md)**: Supplemental cheatsheet detailing frame UV normalization (`uSourceRect`), multi-layer noise blending, Gwyn-style edge rim detection, analytical falloffs, and 3-tier color ramping — plus the field notes (§31–41) and the three preview harnesses (§42–48).
+- **[VFX Dust Tips](../vfx-dust-tips/SKILL.md)**: the particle half of the pipeline — a curated `DustID` table, the count-vs-scale "chunkiness" tradeoff, layered burst architecture, `NewDust`/`NewDustPerfect`/`NewDustDirect`, what `fadeIn` actually does (it is a grow-to-scale target, not an alpha ramp), and a symptoms → fix table. Most effects here are dust *and* shader; check both.
+- **[VFX_ARSENAL.md](VFX_ARSENAL.md)**: the reusable `VFX/` arsenal only — particle, beam, ring and primitive-trail recipes, `/vfxshowcase`, and the arsenal runtime watchlist. Its former "Shader authoring" half now lives at the bottom of **this** file.
 
 ---
 
@@ -22,7 +22,7 @@ This skill covers the end-to-end pipeline for creating, compiling, and integrati
 - Place `.fx` shader files in `Effects/`.
 - Target the Reach profile (`ps_2_0`) for full cross-platform compatibility across FNA and XNA backends.
 - Define technique and pass names explicitly.
-- For sprite-attached effects or animated quads, always accept `uSourceRect` and compute `frameUV = (c - uSourceRect.xy) / uSourceRect.zw` (see [vfx-shader-tips](file:///.agents/skills/vfx-shader-tips/SKILL.md)).
+- For sprite-attached effects or animated quads, always accept `uSourceRect` and compute `frameUV = (c - uSourceRect.xy) / uSourceRect.zw` (see [vfx-shader-tips](../vfx-shader-tips/SKILL.md)).
 
 ### 2. Compilation (`.fx` -> `.xnb`)
 - Compile shaders to `.xnb` using the dedicated PowerShell script:
@@ -137,21 +137,28 @@ Compiling only proves the shader fits in `ps_2_0`; it says nothing about how it 
 functions into the harness and render them to a PNG:
 
 ```bash
-cd .agents/skills/vfx-shader-tips/preview && dotnet run     # writes preview.png
+cd .agents/tools/ShaderSketch && dotnet run     # -> tsorcDocs/VFXPreviews/<name>-<timestamp>.png
 ```
 
 Each panel renders over a bright sky **and** a dark cave, because the two backgrounds fail in
 opposite directions. Ten minutes to wire up per boss, and every iteration after that is a
 `dotnet run` instead of a full tModLoader launch. Details and the pitfalls that invalidate a preview
-are in §42 of the tips skill; `preview/ContactSheet.ps1` in the same folder is the companion tool for
+are in §42 of the tips skill; `.agents/tools/ShaderSketch/ContactSheet.ps1` beside it is the companion tool for
 choosing textures (§44).
 
-For **live** tuning there is a second harness outside the repo — `tModLoader/ShaderHarness/`
+For a preview that **cannot drift from the game**, use `.agents/tools/ShaderPreview/` — it runs the
+real compiled `.xnb` on a real GPU with the call site's own textures, blend state and parameters, and
+writes to `tsorcDocs/ShaderReports/`. Build the mod first (`dotnet build tsorcRevamp.csproj
+-t:Compile`) so the `.xnb` is current, and run `dotnet run -- --verify` to check its recipe constants
+still match `ArtoriasVFX.cs`. Prefer this whenever the question is "does this match the game".
+
+For **live** tuning there is a third harness outside the repo — `tModLoader/ShaderHarness/`
 (`node render.js <job>` for PNGs, `node server.js` for a WebGL page with sliders for
 `Progress`/`Opacity`/`Active`/time and a premultiply toggle that reproduces the §43 rectangle bug on
-demand). Use `preview/` for stills and contact sheets, `ShaderHarness/` when you are dragging a value
-to find a curve. See its `README.md`; §42 of the tips skill has the comparison table.
-**Do not build a third harness.**
+demand). Use `ShaderPreview/` for ground truth, `ShaderSketch/` for sketching maths that is not in an
+`.fx` yet, `ShaderHarness/` when you are dragging a value to find a curve. See its `README.md`;
+§42 of the tips skill has the full comparison table and the drift war-story.
+**Do not build a fourth harness.**
 
 ### 3. C# Registration & Asset Loading
 - Load effect assets in `tsorcRevamp.cs` or `EnemyVFX.cs`:
@@ -188,7 +195,7 @@ These helpers were copy-pasted between bosses, so a defect in one is usually in 
 
 # Shader authoring reference
 
-Moved here from `tsorcDocs/VFX_ARSENAL.md` — that file now documents only the reusable `VFX/`
+Moved here from `VFX_ARSENAL.md` — that file now documents only the reusable `VFX/`
 arsenal (the particle/beam/ring library). Keeping the toolchain described in two places is what let
 them drift apart: neither copy mentioned that the two compilers disagree, which is a full hour lost
 every time someone rediscovers it.

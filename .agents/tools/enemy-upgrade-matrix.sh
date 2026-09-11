@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Regenerates the coverage table in tsorcDocs/EnemyUpgradeMatrix.md by reading the source,
+# Regenerates the coverage table in .agents/skills/enemy-upgrade-audit/EnemyUpgradeMatrix.md by reading the source,
 # so it can never drift from the code the way a hand-kept list does.
 #
 #   bash .agents/tools/enemy-upgrade-matrix.sh          # print to stdout
@@ -13,7 +13,7 @@
 set -u
 cd "$(dirname "${BASH_SOURCE[0]}")/../.." || exit 1
 
-DOC="tsorcDocs/EnemyUpgradeMatrix.md"
+DOC=".agents/skills/enemy-upgrade-audit/EnemyUpgradeMatrix.md"
 
 # Axis list: <identifier>|<short column header>
 AXES=(

@@ -1,6 +1,6 @@
 ---
 name: vfx-shader-tips
-description: Supplemental guide on best practices, HLSL techniques, frame UV normalization, noise blending, edge detection, and shader architecture for Terraria tModLoader VFX. Includes an offline CPU preview harness (preview/) for seeing a shader before launching the game.
+description: Supplemental guide on best practices, HLSL techniques, frame UV normalization, noise blending, edge detection, and shader architecture for Terraria tModLoader VFX. Includes three offline preview harnesses for seeing a shader before launching the game — .agents/tools/ShaderPreview runs the real compiled .xnb on a GPU and cannot drift from the game.
 ---
 
 # 🎨 Supplemental VFX Shader Tips & HLSL Best Practices for Terraria (tModLoader)
@@ -8,12 +8,14 @@ description: Supplemental guide on best practices, HLSL techniques, frame UV nor
 This skill provides advanced principles, pipelines, and mathematical techniques for authoring high-quality 2D HLSL (`.fx`) shaders in Terraria. It draws on lessons learned from large open-source mod repositories (e.g., Calamity, Spirit Mod) and Reach `ps_2_0` shader architecture.
 
 > **Start here if you are about to write or fix an `.fx` file:** §42 (render it offline before you
-> ship it — `preview/`) and §43 (additive cannot make a saturated colour over a bright sky). Those two
-> account for most of the "it compiled but it looks terrible" time this repo has spent.
+> ship it — `.agents/tools/ShaderPreview/` runs the real `.xnb`) and §43 (additive cannot make a
+> saturated colour over a bright sky). Those two account for most of the "it compiled but it looks
+> terrible" time this repo has spent.
 >
 > - §1–30 — general HLSL technique.
 > - §31–41 — field notes: how effects here actually broke, in game.
-> - §42–48 — look at it before you ship it: the preview harness and what it immediately exposed.
+> - §42–48 — look at it before you ship it: the three preview harnesses, which to reach for, and
+>   what they immediately exposed.
 > - §49–50 — ring-space is for rims not bodies; cheap swirl and the slot savings that actually land.
 > - §51 — ring-space also CURES tiling repeats on large radial quads (the Gwyn pass); the inverted
 >   interference contour; pixel-block size scales with the quad; plus the
@@ -619,20 +621,47 @@ before writing any new `.fx`; the rest fall out of it.
 
 ## 42. You Can Preview a Shader Without Launching the Game — Do It
 
-**Two harnesses exist. Use the one that matches the question you're asking; do not build a third.**
+**Three harnesses exist. Use the one that matches the question you're asking; do not build a fourth.**
 
-| | `preview/` (next to this file) | `tModLoader/ShaderHarness/` (outside the repo) |
-|---|---|---|
-| Run | `dotnet run` | `node render.js <job>` / `node server.js` |
-| Output | PNG | PNG, **plus an interactive WebGL page** |
-| Extras | `ContactSheet.ps1` for texture picking (§44) | live sliders for `Progress`/`Opacity`/`Active`/time, and a **premultiply toggle** that reproduces the §43 rectangle bug on demand |
-| In version control | yes (ships with the repo) | no (tooling, sits beside `ShaderCompiler/`) |
+| | `.agents/tools/ShaderPreview/` | `.agents/tools/ShaderSketch/` | `tModLoader/ShaderHarness/` (outside the repo) |
+|---|---|---|---|
+| What it runs | the **real compiled `.xnb`**, on a real GPU (FNA/D3D11) | a hand port of the HLSL to C# | a hand port of the HLSL to GLSL |
+| Run | `dotnet run -- --only <Name>` | `dotnet run` | `node render.js <job>` / `node server.js` |
+| Output | PNG → `tsorcDocs/ShaderReports/` | PNG → `tsorcDocs/VFXPreviews/` (`PREVIEW_OUTPUT_DIR` overrides); older renders in `VFXPreviews/Archive/` | PNG, **plus an interactive WebGL page** |
+| Extras | `--verify` re-reads the call site and reports drift; `--progress a,b,c`; `--size` | `ContactSheet.ps1` for texture picking (§44) | live sliders for `Progress`/`Opacity`/`Active`/time, and a **premultiply toggle** that reproduces the §43 rectangle bug on demand |
+| Drift | **none in the maths** — it is the shipped bytecode. Only the recipe constants mirror the call site. | hand port, drifts | hand port, drifts |
 
-Reach for `preview/` for a still, a batch of `Progress` values, or a contact sheet. Reach for
-`ShaderHarness/` when you are tuning a *curve* and want to drag a slider — watching a value move is
-far faster than re-rendering a grid, and it is how the spear-wake shear and the bomb fireball were
-dialled in. Both carry the same caveat: they are hand ports of the HLSL and **drift within about
-three tweaks**, so re-sync after every `.fx` edit.
+**Reach for `ShaderPreview/` by default**, and always when the question is "does this match the
+game". It runs the bytecode the game runs, so the HLSL cannot silently disagree with it. Build the
+mod first so the `.xnb` is current (`dotnet build tsorcRevamp.csproj -t:Compile`), and keep
+`Recipes.cs` honest with `--verify`, which re-reads `ArtoriasVFX.cs` and checks the
+technique/texture/blend triples still appear there.
+
+Reach for `ShaderSketch/` when you want to prototype maths that **is not in an `.fx` yet** — it is a C#
+sketchpad, which the real renderer cannot be. Reach for `ShaderHarness/` when you are tuning a
+*curve* and want to drag a slider; watching a value move is far faster than re-rendering a grid, and
+it is how the spear-wake shear and the bomb fireball were dialled in. Both of those are hand ports
+that **drift within about three tweaks**, so re-sync after every `.fx` edit.
+
+> **The drift is not hypothetical.** `ArtoriasSwordSwipe` was ported from the `ShaderSketch/` prototype
+> `AbyssSlashArc` with every constant carried across — `-0.62`, `1.16`, `0.34`, `1.30`/`0.55`,
+> `13.0`, `3.20`, even the comments — but the port dropped its `PixelateShaderUV` call. The prototype
+> defaulted `pixelated: true` at 2px; the shipped shader rendered smooth gradients for weeks and
+> nobody could see it, because comparing the `.fx` against the prototype's *maths* showed a perfect
+> match. Running the real `.xnb` is what settles this class of question.
+
+Four errors made the real-GPU harness look wrong on its first attempt, all worth knowing because
+three of them apply to any harness:
+
+- **Draw the primary texture as the quad, not a white pixel.** `ArtoriasVFX.Draw` draws the primary
+  texture itself and the shader samples `PrimarySampler` for its *shape*. A white quad produces
+  something with no relationship to the real effect. This was the biggest single error.
+- **`PixelGrid` must be non-zero** when the shader includes `PixelShaderCommon.fxh`. Left at zero,
+  `PixelateShaderUV` degenerates and the effect can render completely empty.
+- **`DrawSize` is the SOURCE rect; `WorldDrawSize` is the on-screen size.** They differ whenever
+  `fullTexture` is false, and swapping them quietly changes every UV calculation.
+- **Take the real size from the call site.** `SwordSwipe` is `94×110` per `AbyssSlash.cs`; an
+  invented `190×120` bends an SDF built over `p = uv*2-1` into a different shape entirely.
 
 You cannot see an `.fx` file. Compiling one only proves it fits in `ps_2_0` — it says nothing about
 whether it looks like anything. So the loop has historically been: write HLSL, compile, launch
@@ -732,7 +761,7 @@ precisely because neither background alone tells you the truth.
 
 ## 44. Pick Textures by Looking, Then Check the Seam
 
-**Tooling: `preview/ContactSheet.ps1`.**
+**Tooling: `.agents/tools/ShaderSketch/ContactSheet.ps1`.**
 
 Two passes, and the second is the one everybody skips:
 
