@@ -29,6 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         //4px rather than the usual 2px. The quad is ~1580px across, so 2px blocks are sub-perceptible
         //at gameplay zoom on a field this large — the filter has to scale with the effect to read.
         const float PixelBlockSize = 4f;
+        const float VisualOpacity = 0.5f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> solarVortexEffect;
@@ -138,7 +139,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             float fadeIn = MathHelper.Clamp(Age / 18f, 0f, 1f);
             float fadeOut = MathHelper.Clamp(Projectile.timeLeft / 16f, 0.3f, 1f);
-            float opacity = fadeIn * fadeOut;
+            // Keep the compiled shader untouched: dim the complete draw at its C# opacity input.
+            float opacity = fadeIn * fadeOut * VisualOpacity;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             //The spiral core is a plain glow sprite and stays additive. The field is premultiplied

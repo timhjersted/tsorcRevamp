@@ -223,8 +223,10 @@ namespace SwingPreview
             }
         }
 
-        /// <summary>PuppetNPC.ModifyMeleeArcEndpoints on this puppet (Artorias widens his arcs).</summary>
-        public void ModifyEndpoints(ComboMotion motion, ref float start, ref float end)
+        /// <summary>PuppetNPC.ModifyMeleeArcEndpoints on this puppet (Artorias widens his arcs).
+        /// <paramref name="phaseName"/> lets a move author distinct telegraph-only poses without
+        /// making the offline render silently reuse its live-attack endpoints.</summary>
+        public void ModifyEndpoints(ComboMotion motion, ref float start, ref float end, string phaseName = null)
         {
             if (_modifyEndpoints == null || _instance == null)
             {
@@ -232,8 +234,20 @@ namespace SwingPreview
             }
 
             object[] args = { motion, start, end };
+            FieldInfo phaseField = null;
+            object priorPhase = null;
             try
             {
+                if (!string.IsNullOrWhiteSpace(phaseName))
+                {
+                    BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+                    phaseField = typeof(PuppetNPC).GetField("Phase", flags);
+                    if (phaseField != null)
+                    {
+                        priorPhase = phaseField.GetValue(_instance);
+                        phaseField.SetValue(_instance, Enum.Parse(phaseField.FieldType, phaseName));
+                    }
+                }
                 _modifyEndpoints.Invoke(_instance, args);
                 start = (float)args[1];
                 end = (float)args[2];
@@ -241,6 +255,13 @@ namespace SwingPreview
             catch (TargetInvocationException)
             {
                 AddNoteOnce("ModifyMeleeArcEndpoints threw headless: base arc endpoints used");
+            }
+            finally
+            {
+                if (phaseField != null)
+                {
+                    phaseField.SetValue(_instance, priorPhase);
+                }
             }
         }
 

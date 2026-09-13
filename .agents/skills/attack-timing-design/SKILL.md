@@ -14,6 +14,9 @@ and to audit old ones.
 - Use `enemy-redesign` for the moveset, state machine and stats.
 - Use `puppet-swing-tuning` for how the SwingPreview tool and the combo engine work: the three ease
   gates, V2 clips, and where the preview is not the game.
+- Use `attack-quality-pass` for everything that isn't swing timing: projectile lifecycles,
+  telegraph props and dust, grips, reach feasibility, move variety, copies and VFX. Its spec card
+  and checklist apply to every attack, melee included.
 
 This skill is the design layer on top of those.
 

@@ -185,6 +185,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// This enlarges the puppet, armor, accessories, and custom held-weapon layer together
         /// without changing the NPC hitbox or any combat reach calculations.</summary>
         protected virtual float PuppetDrawScale => 1f;
+        /// <summary>Visual-only world-space offset applied to the complete puppet rig, including its
+        /// held weapon. It does not move the NPC hitbox; use for small authored tell vibrations.</summary>
+        protected virtual Vector2 PuppetVisualOffset => Vector2.Zero;
 
         /// <summary>Which half of the body sheet's torso/shoulder cells this puppet draws from.
         /// Vanilla's CreateCompositeData shifts ONLY the torso and the two shoulder caps down two
@@ -207,8 +210,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// that is then enlarged once by its overlay transform.</summary>
         protected virtual int PuppetVisualWidth => NPC.width;
         protected virtual int PuppetVisualHeight => NPC.height;
-        private Vector2 PuppetVisualPosition => NPC.Bottom - new Vector2(PuppetVisualWidth, PuppetVisualHeight);
-        private Vector2 PuppetVisualCenter => NPC.Bottom - new Vector2(0f, PuppetVisualHeight * 0.5f);
+        private Vector2 PuppetVisualPosition =>
+            NPC.Bottom - new Vector2(PuppetVisualWidth, PuppetVisualHeight) + PuppetVisualOffset;
+        private Vector2 PuppetVisualCenter =>
+            NPC.Bottom - new Vector2(0f, PuppetVisualHeight * 0.5f) + PuppetVisualOffset;
         protected abstract int MeleeWeaponItemType  { get; }   // -1 = none
         protected abstract int RangedWeaponItemType { get; }   // -1 = none
         protected virtual  int MagicWeaponItemType  => -1;
@@ -398,9 +403,11 @@ namespace tsorcRevamp.NPCs.Puppets
         ///   Crossbow — horizontal aim: arm extends forward at Use3, quick click/fire (useAnimation ≈ 22).
         ///   Bow      — diagonal draw: arm rises from Use3 → Use1 over the telegraph, snaps forward at release (useAnimation ≈ 60).
         /// </summary>
-        protected enum RangedStyle { Throw, Crossbow, Bow }
+        protected enum RangedStyle { Throw, Crossbow, Bow, Staff }
         /// <summary>Animation style for the primary ranged weapon.  Override per subclass.</summary>
         protected virtual RangedStyle RangedAnimStyle => RangedStyle.Throw;
+        /// <summary>Client-side cosmetic hook for a ranged charge. Progress reaches 1 immediately before release.</summary>
+        protected virtual void DoRangedTelegraphVFX(bool secondary, float progress) { }
 
         // ── Secondary ranged weapon (optional) ───────────────────────────────────
         // When set, each burst randomly picks primary OR secondary based on range bands and chance.
@@ -950,6 +957,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int   SpiralFanRecoveryTicks      => 90;
 
         protected virtual void DoSpiralFanSwingTick(int elapsed, int total) { }
+        protected virtual int SpiralFanWeaponItemType => MeleeWeaponItemType;
+        protected virtual bool UseAuthoredSpiralFanCastPose => false;
+        protected virtual float SpiralFanCastStartRotation => -0.20f;
+        protected virtual float SpiralFanCastEndRotation => -0.80f;
         /// <summary>Returns the delay (ticks) before the next shot, or negative to end the burst.</summary>
         protected virtual int  NextSpiralFanDelay(int completedShotIndex) => -1;
         /// <summary>Fired once per shot (index 0, 1, 2...) - spawn that shot here.</summary>
@@ -995,7 +1006,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
         // ── Estus healing ─────────────────────────────────────────────────────────
         /// <summary>How many estus drinks the puppet starts with.</summary>
-        protected virtual int   EstusChargesMax         => 10;
+        protected virtual int   EstusChargesMax         => 3;
         /// <summary>Fraction of max HP restored per drink.</summary>
         protected virtual float EstusHealFraction       => 0.20f;
         /// <summary>Primary and secondary health thresholds that can request an Estus attempt.</summary>
@@ -1004,8 +1015,8 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Maximum post-heal life fraction. Defaults uncapped; bosses may keep a phase
         /// active by capping healing below that phase's upper boundary.</summary>
         protected virtual float HealLifeCapFraction     => 1f;
-        /// <summary>Ticks of cooldown between any two heals (prevents spam).</summary>
-        protected virtual int   HealCooldownTicks       => 300;
+        /// <summary>Ticks of cooldown between use attempts (10 seconds by default).</summary>
+        protected virtual int   HealCooldownTicks       => 10 * 60;
         /// <summary>Ticks the interruptible drinking channel lasts before HP is restored.</summary>
         protected virtual int   HealAnimationTicks      => 130;
         /// <summary>
@@ -1842,6 +1853,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Per-tick events driven by the same combo clocks as animation and collision.</summary>
         protected virtual void OnMeleeComboTelegraphTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total) { }
         protected virtual void OnMeleeComboAttackTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total) { }
+        /// <summary>Runs after a landing-timed LeapSlam has sampled its real downswing pose for the
+        /// current tick. This is the correct point for blade-attached VFX: the ordinary combo tick
+        /// happens before terrain prediction updates <c>_leapSlamSwingProgress</c>.</summary>
+        protected virtual void OnLandingTimedLeapSlamSwingTick(MeleeComboStep step, float progress) { }
         /// <summary>Called on the exact physics tick a landing-timed LeapSlam touches supported ground.</summary>
         protected virtual void OnLeapSlamLanded(MeleeComboStep step) { }
         /// <summary>Called once as a combo step completes, before its pause/recovery begins.</summary>
@@ -1957,6 +1972,11 @@ namespace tsorcRevamp.NPCs.Puppets
         /// covers thrusts + most dash lunges.</summary>
         protected virtual float ComboMaxStartRange => StabRange + 80f;
 
+        /// <summary>Optional farther selection radius for committed <see cref="MeleeCombo.RangedStartOnly"/>
+        /// gap-closers. If no such combo is ready beyond <see cref="ComboMaxStartRange"/>, the puppet
+        /// falls through to its ranged/magic attacks instead of entering ordinary ClosingDistance.</summary>
+        protected virtual float RangedStartComboMaxRange => ComboMaxStartRange;
+
         // ── Wings / flight ────────────────────────────────────────────────────────
         /// <summary>Master toggle: when true, this puppet can take off, hover, dive, and land.
         /// Subclasses can wire this to a static config flag or a ModConfig field.</summary>
@@ -2033,7 +2053,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 float raise = _puppet.mount.HeightBoost - MountedSeatOffsetY;
 
-                return new Vector2(NPC.position.X, NPC.position.Y - raise);
+                return new Vector2(NPC.position.X, NPC.position.Y - raise) + PuppetVisualOffset;
             }
         }
 
@@ -3857,11 +3877,12 @@ namespace tsorcRevamp.NPCs.Puppets
                     int comboStartChance = dist > MeleeEngageRange
                         ? RangedStartMeleeComboChance
                         : MeleeComboChance;
+                    float comboInterceptRange = Math.Max(ComboMaxStartRange, RangedStartComboMaxRange);
                     if (MeleeArchetype != WeaponArchetype.None
                         && MeleeWeaponItemType >= 0
                         && NPC.velocity.Y == 0f
                         && NPC.Center.Y - target.Center.Y < 48f
-                        && dist <= ComboMaxStartRange
+                        && dist <= comboInterceptRange
                         && Main.rand.Next(100) < comboStartChance)
                     {
                         // Out of hittable reach → close the gap first (no swing until in range).
@@ -3871,10 +3892,16 @@ namespace tsorcRevamp.NPCs.Puppets
                             // deliberately open from here. Otherwise preserve normal gap closing.
                             if (TryStartMeleeCombo(dist, rangedStartOnly: true))
                                 break;
-                            EnterPhase(AttackPhase.ClosingDistance, ClosingDistanceMaxTicks);
-                            break;
+
+                            // The extended band is only for an authored gap-closer. If it is on
+                            // cooldown or otherwise ineligible, retain access to ranged/magic attacks.
+                            if (dist <= ComboMaxStartRange)
+                            {
+                                EnterPhase(AttackPhase.ClosingDistance, ClosingDistanceMaxTicks);
+                                break;
+                            }
                         }
-                        if (TryStartMeleeCombo(dist))
+                        else if (TryStartMeleeCombo(dist))
                             break;
                     }
 
@@ -4953,6 +4980,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     _attackFacingDir = target.Center.X < NPC.Center.X ? -1 : 1;
                     LockAttackFacing();
                     SlowDown();
+                    SetDisplayWeapon(SpiralFanWeaponItemType, swing: false);
                     if (--PhaseTimer <= 0)
                     {
                         EnterPhase(AttackPhase.SpiralFanSwing, SpiralFanSwingTicks);
@@ -4963,6 +4991,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     LockAttackFacing();
                     SlowDown();
+                    SetDisplayWeapon(SpiralFanWeaponItemType, swing: false);
                     DoSpiralFanSwingTick(SpiralFanSwingTicks - PhaseTimer, SpiralFanSwingTicks);
                     if (--PhaseTimer <= 0)
                     {
@@ -4976,6 +5005,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.SpiralFanBurst:
                     LockAttackFacing();
                     SlowDown();
+                    SetDisplayWeapon(SpiralFanWeaponItemType, swing: false);
                     if (--PhaseTimer <= 0)
                     {
                         int delaySf = NextSpiralFanDelay(_spiralFanIndex);
@@ -4994,6 +5024,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.SpiralFanPause:
                     LockAttackFacing();
                     SlowDown();
+                    SetDisplayWeapon(SpiralFanWeaponItemType, swing: false);
                     if (--PhaseTimer <= 0)
                     {
                         _spiralFanIndex++;
@@ -5205,7 +5236,11 @@ namespace tsorcRevamp.NPCs.Puppets
                         }
 
                         if (landingTimedSlam)
+                        {
                             UpdateLeapSlamPose(landed);
+                            if (_leapSlamSwingProgress > 0f)
+                                OnLandingTimedLeapSlamSwingTick(step, _leapSlamSwingProgress);
+                        }
                         if (_leapStrikeStarted)
                             TickBladeHit();
 
@@ -7217,11 +7252,15 @@ namespace tsorcRevamp.NPCs.Puppets
                         // Arm extends level forward toward target for bow draw.
                         _weaponRotation = MathHelper.Lerp(_weaponRotation, 0.0f, 0.22f);
                         break;
+                    case RangedStyle.Staff:
+                        _weaponRotation = MathHelper.SmoothStep(-0.18f, -0.78f, rangedT);
+                        break;
                     default: // Throw
                         // Hold the hand high while lining up the throw.
                         _weaponRotation = MathHelper.Lerp(-0.75f, -0.10f, rangedT);
                         break;
                 }
+                DoRangedTelegraphVFX(_usingSecondaryRanged, MathHelper.Clamp(rangedT, 0f, 1f));
             }
             else if (Phase == AttackPhase.RangedAttack)
             {
@@ -7237,6 +7276,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     case RangedStyle.Bow:
                         // Small release recoil / snap
                         _weaponRotation = MathHelper.Lerp(-0.08f, 0.05f, rangedT);
+                        break;
+                    case RangedStyle.Staff:
+                        _weaponRotation = MathHelper.Lerp(-0.78f, -0.60f, rangedT);
                         break;
                     default: // Throw
                         // Swing the arm forward as the projectile leaves the hand.
@@ -7452,6 +7494,19 @@ namespace tsorcRevamp.NPCs.Puppets
                 float swingT = HomingVolleySwingTicks > 0 ? 1f - (float)PhaseTimer / HomingVolleySwingTicks : 1f;
                 _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f),
                     swingT, SwingEaseStyle.Smooth);
+            }
+            else if (Phase == AttackPhase.SpiralFanSwingTelegraph && UseAuthoredSpiralFanCastPose)
+            {
+                float fanT = SpiralFanSwingTelegraphTicks > 0 ? 1f - PhaseTimer / (float)SpiralFanSwingTelegraphTicks : 1f;
+                _weaponRotation = MathHelper.SmoothStep(SpiralFanCastStartRotation, SpiralFanCastEndRotation, fanT);
+            }
+            else if (Phase == AttackPhase.SpiralFanSwing && UseAuthoredSpiralFanCastPose)
+            {
+                _weaponRotation = SpiralFanCastEndRotation;
+            }
+            else if ((Phase == AttackPhase.SpiralFanBurst || Phase == AttackPhase.SpiralFanPause) && UseAuthoredSpiralFanCastPose)
+            {
+                _weaponRotation = SpiralFanCastEndRotation;
             }
             else if (Phase == AttackPhase.BoomerangSwingTelegraph || Phase == AttackPhase.SpiralFanSwingTelegraph)
             {
@@ -8719,6 +8774,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     RangedStyle.Crossbow => 3, // Use3 — arm level/forward for horizontal aim
                     RangedStyle.Bow      => 3, // Use3 â€” level arm extended forward for bow aim
+                    RangedStyle.Staff    => 2, // Use2 — raised casting arm
                     _                    => 2, // Throw default — raised arm
                 };
             }
@@ -8728,6 +8784,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     RangedStyle.Crossbow => 3, // Use3 — arm stays level, small click jolt
                     RangedStyle.Bow      => 3, // Use3 — arm snaps forward at release
+                    RangedStyle.Staff    => 2, // Use2 — retain the raised staff through release
                     _                    => 3, // Throw — arm forward at release
                 };
             }
@@ -9186,6 +9243,43 @@ namespace tsorcRevamp.NPCs.Puppets
                 && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length)
                 reach = ComboReachBase * 0.7f * _activeMeleeCombo.Steps[_meleeComboStepIndex].ReachMult;
             progress = PuppetWeaponAnimationProgress;
+            if (Phase == AttackPhase.MeleeComboAttack)
+            {
+                if (UseLandingTimedLeapSlam && ActiveMeleeComboMotion == ComboMotion.LeapSlam)
+                {
+                    progress = MathHelper.Clamp(_leapSlamSwingProgress, 0f, 1f);
+                }
+                else if (_attackRuntimeV2.Active)
+                {
+                    progress = _attackRuntimeV2.StageProgress;
+                }
+                else if (_activeMeleeCombo.Steps != null
+                    && _meleeComboStepIndex >= 0
+                    && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length)
+                {
+                    MeleeComboStep step = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                    int elapsed = Math.Max(0, _activeComboStepTotalTicks - PhaseTimer);
+                    progress = step.Motion == ComboMotion.RisingUppercutLeap
+                        ? elapsed / (float)Math.Max(1, GetWeaponUseAnimation(MeleeWeaponItemType))
+                        : elapsed / (float)Math.Max(1, _activeComboStepTotalTicks);
+                    progress = MathHelper.Clamp(progress, 0f, 1f);
+                }
+            }
+            else if (IsMeleeSlashActive)
+            {
+                progress = Phase switch
+                {
+                    AttackPhase.JumpSlashAttack => 1f - PhaseTimer / (float)JumpSlashAttackTicks,
+                    AttackPhase.FlipSlashLand => 1f - PhaseTimer / (float)FlipSlashLandHoldTicks,
+                    AttackPhase.AbyssSlashSwipe => 1f - PhaseTimer / (float)AbyssSlashSwipeTicks,
+                    AttackPhase.TendrilSwing => 1f - PhaseTimer / (float)TendrilSwingTicks,
+                    AttackPhase.HomingVolleySwing => 1f - PhaseTimer / (float)HomingVolleySwingTicks,
+                    AttackPhase.BoomerangSwing => 1f - PhaseTimer / (float)BoomerangSwingTicks,
+                    AttackPhase.SpiralFanSwing => 1f - PhaseTimer / (float)SpiralFanSwingTicks,
+                    _ => progress,
+                };
+                progress = MathHelper.Clamp(progress, 0f, 1f);
+            }
             sequence = _meleeSlashTrailSequence;
             darkColor = SlashTrailDarkColor;
             centerColor = SlashTrailCenterColor;
@@ -9675,6 +9769,11 @@ namespace tsorcRevamp.NPCs.Puppets
                 && _heldItemType == MeleeWeaponItemType
                 && (MeleeDrawTexturePath.StartsWith("Terraria/") || ModContent.HasAsset(MeleeDrawTexturePath));
 
+            string rangedDrawTexturePath = GetHeldRangedDrawTexturePath(_heldItemType);
+            bool rangedTextureUsable = rangedDrawTexturePath != null
+                && _heldItemType == _activeRangedItemType
+                && (rangedDrawTexturePath.StartsWith("Terraria/") || ModContent.HasAsset(rangedDrawTexturePath));
+
             if (holdingSpearNow && spearTextureUsable)
             {
                 tex = ModContent.Request<Texture2D>(SpearDrawTexturePath,
@@ -9683,6 +9782,11 @@ namespace tsorcRevamp.NPCs.Puppets
             else if (!holdingSpearNow && meleeTextureUsable)
             {
                 tex = ModContent.Request<Texture2D>(MeleeDrawTexturePath,
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            else if (rangedTextureUsable)
+            {
+                tex = ModContent.Request<Texture2D>(rangedDrawTexturePath,
                     ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
             else
@@ -9749,9 +9853,13 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             else if (heldBowLike)
             {
-                // Bow is held at the grip on the string side
-                float hx = NPC.direction == 1 ? tex.Width * 0.25f : tex.Width * 0.75f;
-                origin = new Vector2(hx, tex.Height * 0.50f);
+                // Bow is held at its authored grip. Mirror the origin in texture space when the
+                // sprite flips so the same physical grip pixel remains pinned to the hand.
+                Vector2 gripNorm = GetHeldRangedGripNorm(_heldItemType);
+                float hx = NPC.direction == 1
+                    ? tex.Width * gripNorm.X
+                    : tex.Width * (1f - gripNorm.X);
+                origin = new Vector2(hx, tex.Height * gripNorm.Y);
             }
             else if (heldRangedLike)
             {
@@ -10035,7 +10143,12 @@ namespace tsorcRevamp.NPCs.Puppets
 
         /// <summary>Draw scale for a held ranged/thrown/magic item.  Default 1f (full size); override
         /// per item type for sprites that should read smaller (e.g. tiny throwing stars).</summary>
+        /// <summary>Optional custom sprite for a ranged item held by the puppet. The gameplay item
+        /// remains unchanged; this only replaces its inventory icon in the puppet draw layer.</summary>
+        protected virtual string GetHeldRangedDrawTexturePath(int itemType) => null;
         protected virtual float GetHeldRangedDrawScale(int itemType) => 1f;
+        /// <summary>Normalized grip pixel for a held bow sprite before horizontal mirroring.</summary>
+        protected virtual Vector2 GetHeldRangedGripNorm(int itemType) => new Vector2(0.25f, 0.5f);
 
         /// <summary>When true for the given held ranged item type, red "lit fuse" sparks are emitted
         /// off the top of it while it's in hand (e.g. a smoke bomb).  Default false.</summary>

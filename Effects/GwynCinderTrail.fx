@@ -14,7 +14,7 @@ float Time;
 float2 DrawSize;
 float2 PrimaryTextureSize;
 float2 CoordScale;        // FireSlashArc: PrimaryTextureSize / DrawSize, pre-divided in C#
-float4 PixelGrid;         // FireSlashArc: xy = 2px block count across the quad, zw = reciprocal
+float4 PixelGrid;         // xy = 2px block count across the quad, zw = reciprocal
 float Progress;
 
 float2 NormalizedCoordinates(float2 coords)
@@ -45,15 +45,18 @@ float4 GwynCinderArcPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0
 
 float4 GwynCinderBladePixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
-    float4 sprite = tex2D(PrimaryTexture, coords);
+    // Quantize before both sprite-mask and flow work so the entire cinder material shares a
+    // deliberate 2px grid. The crisp, unshaded greatsword is drawn over this pass in C#.
+    float2 uv = PixelateShaderUV(coords, PixelGrid);
+    float4 sprite = tex2D(PrimaryTexture, uv);
     float2 texel = 1.0 / max(PrimaryTextureSize, float2(1.0, 1.0));
     float neighborAlpha = min(
-        min(tex2D(PrimaryTexture, coords + float2(texel.x, 0.0)).a,
-            tex2D(PrimaryTexture, coords - float2(texel.x, 0.0)).a),
-        min(tex2D(PrimaryTexture, coords + float2(0.0, texel.y)).a,
-            tex2D(PrimaryTexture, coords - float2(0.0, texel.y)).a));
+        min(tex2D(PrimaryTexture, uv + float2(texel.x, 0.0)).a,
+            tex2D(PrimaryTexture, uv - float2(texel.x, 0.0)).a),
+        min(tex2D(PrimaryTexture, uv + float2(0.0, texel.y)).a,
+            tex2D(PrimaryTexture, uv - float2(0.0, texel.y)).a));
     float edge = saturate((sprite.a - neighborAlpha) * 4.0);
-    float flow = tex2D(FlowNoise, coords * 2.2 + float2(-Time * 0.48, Time * 0.31)).r;
+    float flow = tex2D(FlowNoise, uv * 2.2 + float2(-Time * 0.48, Time * 0.31)).r;
     float luminance = dot(sprite.rgb, float3(0.299, 0.587, 0.114));
     float heat = sprite.a * (0.42 + flow * 0.62 + luminance * 0.22) + edge * 1.15;
 

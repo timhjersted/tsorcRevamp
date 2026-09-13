@@ -15,6 +15,7 @@ using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Projectiles.Melee.Broadswords;
+using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 // NOTE: the folder is Gwyn/, but the namespace stays flat (…SuperHardMode) — a namespace segment
@@ -171,7 +172,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             get
             {
-                if (WrathFlurrySwinging)
+                if (WrathFlurrySwinging || UnderOverSwinging || ThreeHitSwinging)
                 {
                     return 3;
                 }
@@ -179,13 +180,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        // The combo phases only. ActiveMeleeComboName is never cleared when a combo ends, so the
-        // phase check stops a stale "Wrath Flurry" from widening a later one-shot MeleeAttack.
-        bool WrathFlurrySwinging =>
-            ActiveMeleeComboName == WrathFlurryName
+        // The combo phases only. ActiveMeleeComboName is never cleared when a combo ends, so these
+        // checks stop stale names from leaking per-combo arcs into later one-shot melee attacks.
+        bool ComboSwinging(string name) =>
+            ActiveMeleeComboName == name
             && (Phase == AttackPhase.MeleeComboTelegraph
                 || Phase == AttackPhase.MeleeComboAttack
                 || Phase == AttackPhase.MeleeComboPause);
+        bool WrathFlurrySwinging => ComboSwinging(WrathFlurryName);
+        bool CinderingLeapSwinging => ComboSwinging(CinderingLeapName);
+        bool CinderfallSwinging => ComboSwinging(CinderfallName);
+        bool UnderOverSwinging => ComboSwinging(UnderOverName);
+        bool ThreeHitSwinging => ComboSwinging(ThreeHitName);
 
         // Wrath Flurry's recovery once the landing beat (MeleeRecoveryLingerTicks) is over: the
         // sword is put away and he walks. PhaseTimer counts DOWN from FlurryFinalRecoveryTicks.
@@ -205,6 +211,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if (!WrathFlurrySwinging)
                 {
+                    if (CinderingLeapSwinging)
+                    {
+                        // Finish the tell in the raised carry pose, then keep that exact frame in air.
+                        return 0.35f;
+                    }
+                    if (UnderOverSwinging)
+                    {
+                        // Settle raised early, then spend most of the tell lowering into the rising cut.
+                        return 0.35f;
+                    }
                     return base.LogicalWindupSettleFraction;
                 }
 
@@ -216,8 +232,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // The flurry's leaps carry the sword overhead through the air and swing when the player is
         // in reach or on the projected landing (Artorias's leap pose). Without this the chop sweeps
         // over the sword's 32-tick useAnimation from takeoff and finishes mid-ascent. Cindering Leap
-        // and Roll-Catch keep their current pose.
-        protected override bool UseLandingTimedLeapSlam => WrathFlurrySwinging;
+        // uses the same landing-timed path; Roll-Catch keeps its existing pose and countdown.
+        protected override bool UseLandingTimedLeapSlam => WrathFlurrySwinging || CinderingLeapSwinging;
 
         // Carry the leaps in the raised swipe pose (the cocked frame the underhands finish in), so
         // takeoff continues straight from the previous swipe, and slam down the full 185° swipe arc.
@@ -225,7 +241,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             get
             {
-                if (WrathFlurrySwinging)
+                if (WrathFlurrySwinging || CinderingLeapSwinging)
                 {
                     return FlurryRaisedPose;
                 }
@@ -241,6 +257,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     return FlurryLoweredPose;
                 }
+                if (CinderingLeapSwinging)
+                {
+                    return CinderingLeapImpactPose;
+                }
                 return base.LeapSlamImpactRotation;
             }
         }
@@ -252,20 +272,36 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // legacy slams already go further (GroundSlam 1.5, the landing-timed impact ~2.1).
         protected override void ModifyMeleeArcEndpoints(ComboMotion motion, ref float startRotation, ref float endRotation)
         {
-            if (!WrathFlurrySwinging)
+            if (WrathFlurrySwinging)
             {
+                if (motion == ComboMotion.OverheadArc)
+                {
+                    startRotation = FlurryRaisedPose;
+                    endRotation = FlurryLoweredPose;
+                }
+                else if (motion == ComboMotion.UnderhandArc)
+                {
+                    startRotation = FlurryLoweredPose;
+                    endRotation = FlurryRaisedPose;
+                }
                 return;
             }
 
-            if (motion == ComboMotion.OverheadArc)
+            if (CinderfallSwinging && motion == ComboMotion.GroundSlam)
             {
-                startRotation = FlurryRaisedPose;
-                endRotation = FlurryLoweredPose;
+                startRotation = RefinedRaisedPose;
+                endRotation = CinderfallLoweredPose;
+                return;
             }
-            else if (motion == ComboMotion.UnderhandArc)
+
+            if ((UnderOverSwinging || ThreeHitSwinging)
+                && (motion == ComboMotion.HorizontalSweep
+                    || motion == ComboMotion.OverheadArc
+                    || motion == ComboMotion.UnderhandArc))
             {
-                startRotation = FlurryLoweredPose;
-                endRotation = FlurryRaisedPose;
+                bool rising = motion == ComboMotion.UnderhandArc;
+                startRotation = rising ? RefinedLoweredPose : RefinedRaisedPose;
+                endRotation = rising ? RefinedRaisedPose : RefinedLoweredPose;
             }
         }
 
@@ -281,7 +317,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // neutral breaks. Zero charges keeps the shared flee/heal intercept permanently disabled.
         protected override int EstusChargesMax => 0;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
-        protected override bool HasSlashVFX => false; // Uses HasFireSlashVFX (shader-lit fire slash) instead.
+        protected override bool HasSlashVFX => false; // Gwyn spawns the tracked four-frame VanillaSwordArc directly.
         protected override float WalkAnimationSpeedMultiplier => 0.35f;
         protected override float OverheadWindupOvershoot => MathHelper.ToRadians(17f);
         protected override bool SlowDownBeforeMelee => false; // pursue through the windup — no walking out of the telegraph
@@ -301,6 +337,50 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static MeleeComboStep GS(ComboMotion m, int tel, int atk, int pause, float dmg = 1f, float reach = 1f, float push = 0f,
                                  SwingEaseStyle ease = SwingEaseStyle.Smooth)
             => new MeleeComboStep { Motion = m, TelegraphTicks = tel, AttackTicks = atk, PostStepPause = pause, DamageMult = dmg, ReachMult = reach, ForwardPushMult = push, Ease = ease };
+
+        const string UnderOverName = "Under-Over";
+        const string CinderingLeapName = "Cindering Leap";
+        const string CinderfallName = "Cinderfall";
+        const string ThreeHitName = "3-Hit";
+
+        // Default sword-language poses: a safe raised start and an end close to the player's own
+        // straight-down broadsword finish. Their 3.91-rad (224-degree) envelope leaves about 180
+        // degrees live once a Weighted swing is disarmed below 30% of peak speed.
+        const float RefinedRaisedPose = -1.62f;
+        const float RefinedLoweredPose = 2.29f;
+        // Cinderfall is the signature heavy: 233 degrees of envelope / about 187 degrees live.
+        const float CinderfallLoweredPose = 2.45f;
+        // A landing-timed LeapSlam is armed across its whole ten-tick downswing, so this endpoint is
+        // 185 degrees from the carried pose instead of using the wider Weighted-swing envelope.
+        const float CinderingLeapImpactPose = 1.61f;
+        const float RefinedArmedSpeedShare = 0.30f;
+
+        /// <summary>Authored sword swing with cubic acceleration, an exponential harmless settle,
+        /// and a hit window that closes once blade speed drops below 30% of peak.</summary>
+        static MeleeComboStep WeightedSwordSwing(
+            ComboMotion motion, int telegraph, int easeInTicks, int easeOutTicks, float decay,
+            int pause, float damage, float reach, float push)
+        {
+            int attackTicks = easeInTicks + easeOutTicks;
+            MeleeComboStep step = GS(motion, telegraph, attackTicks, pause, damage, reach, push,
+                SwingEaseStyle.Weighted);
+            step.EaseInTicks = easeInTicks;
+            step.EaseOutTicks = easeOutTicks;
+            step.EaseOutDecay = decay;
+            float armedSettleTicks = easeOutTicks
+                * (float)Math.Log(1f / RefinedArmedSpeedShare) / decay;
+            step.HitWindowEnd = (easeInTicks + armedSettleTicks) / attackTicks;
+            return step;
+        }
+
+        static MeleeComboStep CinderingLeapStep()
+        {
+            // Ninety ticks is only the airborne safety timeout. The landing or in-range trigger
+            // starts a ten-tick, fully armed 185-degree downswing from the held raised pose.
+            MeleeComboStep step = GS(ComboMotion.LeapSlam, 25, 90, 0, 1.5f, 1.45f);
+            step.LeapStrikeRange = FlurryLeapStrikeRange;
+            return step;
+        }
 
         // ── Wrath Flurry tuning ─────────────────────────────────────────────────
         const string WrathFlurryName = "Wrath Flurry";
@@ -381,21 +461,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             maxAimCorrection: 0.30f,
             aimLockTicksBeforeActive: 14);
 
-        static readonly PuppetAttackClip CinderfallV2 = new PuppetAttackClip(
-            name: "Cinderfall",
-            pose: PuppetPosePreset.TwoHandedSwing,
-            windupTicks: 34,
-            activeTicks: 28,
-            recoveryTicks: 40,
-            oppositeWindupRotation: 1.10f,
-            attackStartRotation: -1.70f,
-            attackEndRotation: 1.25f,
-            hitWindowStart: 0.22f,
-            hitWindowEnd: 0.88f,
-            swingEase: SwingEaseStyle.Whip,
-            maxAimCorrection: 0.25f,
-            aimLockTicksBeforeActive: 18);
-
         static readonly PuppetAttackClip GuillotineV2 = new PuppetAttackClip(
             name: "Guillotine",
             pose: PuppetPosePreset.TwoHandedSwing,
@@ -444,20 +509,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             new MeleeCombo { Name = "Cleave", BaseWeight = 100, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Orange, CooldownAfterUse = 40, RuntimeV2Clip = CleaveV2,
                 Steps = new[] { GS(ComboMotion.HorizontalSweep, 15, 18, 0, 1.0f, 1.1f, 0.55f) } },
-            // 1 — Under-Over juggle: rising launch into an overhead chop
-            new MeleeCombo { Name = "Under-Over", BaseWeight = 70, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.Gold, CooldownAfterUse = 130, RecoveryTicks = 24,
+            // 1 — Under-Over timing sheet
+            // Poses 2.29 -> -1.62 -> 2.29 rad: 224° envelope / about 180° live per cut.
+            // Tell 40t on screen. Strike 10t cubic acceleration + 45t k7 decay: peak ~23°/t,
+            // live 18t. The harmless 37t tail + 10t held/re-facing pause leaves 47t between
+            // live windows, so both hits are independently rollable. Recovery adds a 30t opening.
+            new MeleeCombo { Name = UnderOverName, BaseWeight = 70, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = 130, RecoveryTicks = 30,
                 Steps = new[] {
-                    // Rising cut stays Smooth so the reversal reads; the overhead follow-up snaps.
-                    GS(ComboMotion.UnderhandArc, 15, 20, 12, 1.0f, 1.1f, 0.50f),
-                    GS(ComboMotion.OverheadArc,   0, 22,  0, 1.3f, 1.15f, 0.65f, ease: SwingEaseStyle.Snap),
+                    WeightedSwordSwing(ComboMotion.UnderhandArc, 35, 10, 45, 7f, 10, 1.0f, 1.45f, 0.65f),
+                    WeightedSwordSwing(ComboMotion.OverheadArc,   0, 10, 45, 7f,  0, 1.3f, 1.50f, 0.85f),
                 } },
-            // 2 — Cindering Leap Overhead: tracking leap that reaches, then the 170° chop (roll it on landing)
-            new MeleeCombo { Name = "Cindering Leap", BaseWeight = 55, Preferred = ComboRangeBand.Mid,
+            // 2 — Cindering Leap timing sheet
+            // Pose -1.62 -> 1.61 rad: 185° fully armed downswing. The 28t opening tell finishes
+            // raised; that exact frame is carried through flight. The blade only moves after the
+            // apex inside 150px or during the projected last 10t before ground contact. Recovery 30t.
+            new MeleeCombo { Name = CinderingLeapName, BaseWeight = 55, Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 150, RecoveryTicks = 30,
                 HeavyCommit = true, RangedStartOnly = true,
-                // Whip holds the apex a beat before the chop crashes down — the leap's whole read.
-                Steps = new[] { GS(ComboMotion.LeapSlam, 25, 24, 0, 1.5f, 1.2f, ease: SwingEaseStyle.Whip) } },
+                Steps = new[] { CinderingLeapStep() } },
             // 3 — Sliding Thrust: low dash pierce, gap-closer
             new MeleeCombo { Name = "Sliding Thrust", BaseWeight = 55, Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.Yellow, CooldownAfterUse = 130, RecoveryTicks = 22,
@@ -469,12 +539,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 InitialFlashColor = Color.Yellow, CooldownAfterUse = 170, RecoveryTicks = 34,
                 HeavyCommit = true,
                 Steps = new[] { GS(ComboMotion.Spin, 20, 26, 0, 1.1f, 1.15f, 0.6f) } },
-            // 5 — Cinderfall: committed ground cleave + fire AoE
-            new MeleeCombo { Name = "Cinderfall", BaseWeight = 40, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true, RuntimeV2Clip = CinderfallV2,
-                // Whip: the heaviest slam in the kit, so the apex hangs before it comes down. The curve
-                // that plays is CinderfallV2's swingEase — a V2 clip bypasses this step's Ease entirely.
-                Steps = new[] { GS(ComboMotion.GroundSlam, 25, 24, 0, 1.6f, 1.3f, 0.40f, ease: SwingEaseStyle.Whip) } },
+            // 5 — Cinderfall timing sheet
+            // Poses -1.62 -> 2.45 rad: 233° envelope / about 187° live. The raised-sword tell is
+            // 44t on screen with a converging ember charge. Strike 8t cubic acceleration + 45t k8
+            // decay: peak ~28°/t, live 15t. Its 38t harmless tail + 48t recovery is the punish window.
+            // Legacy MeleeCombo is deliberate: V2 clips cannot run the Weighted curve.
+            new MeleeCombo { Name = CinderfallName, BaseWeight = 40, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 200, RecoveryTicks = 48, HeavyCommit = true,
+                Steps = new[] {
+                    WeightedSwordSwing(ComboMotion.GroundSlam, 39, 8, 45, 8f, 0, 1.6f, 1.50f, 0.45f),
+                } },
             // 6 — Guillotine Drop: heavy standing overhead, the "respect me" punish
             new MeleeCombo { Name = "Guillotine", BaseWeight = 45, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true, RuntimeV2Clip = GuillotineV2,
@@ -487,16 +561,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // Snap: front-loaded so the re-engage is out and back before a roll can answer it.
                 // Played by BackhandV2's swingEase; this step's Ease is unused while the clip is set.
                 Steps = new[] { GS(ComboMotion.HorizontalSweep, 12, 16, 0, 0.9f, 1.1f, 0.85f, ease: SwingEaseStyle.Snap) } },
-            // 8 — 3-Hit Standard: the staple pressure string. Push RISES per step so the string
-            //     walks him through a player trying to back out of it rather than whiffing behind them.
-            new MeleeCombo { Name = "3-Hit", BaseWeight = 55, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 180, RecoveryTicks = 28,
+            // 8 — 3-Hit timing sheet
+            // Three alternating 224° envelopes share endpoints, yielding about 180° live each with
+            // no re-raise snap. Tell 32t; each strike is 9t cubic acceleration + 36t k6.5 decay,
+            // peak ~26°/t and live 16t. Tail 29t + pause 10t = 39t between live windows. Each pause
+            // re-faces; forward pressure rises per cut and the next cut surges if the target left reach.
+            new MeleeCombo { Name = ThreeHitName, BaseWeight = 55, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 180, RecoveryTicks = 34,
                 Steps = new[] {
-                    // Two snappy sweeps build the pressure; the finisher stays Smooth so it lands
-                    // heavy instead of reading as a third light poke.
-                    GS(ComboMotion.HorizontalSweep, 14, 18, 12, 0.9f, 1f,     0.45f, ease: SwingEaseStyle.Snap),
-                    GS(ComboMotion.HorizontalSweep,  0, 18, 12, 0.9f, 1.05f,  0.55f, ease: SwingEaseStyle.Snap),
-                    GS(ComboMotion.OverheadArc,      0, 22,  0, 1.3f, 1.1f,   0.70f),
+                    WeightedSwordSwing(ComboMotion.HorizontalSweep, 28, 9, 36, 6.5f, 10, 0.9f, 1.45f, 0.75f),
+                    WeightedSwordSwing(ComboMotion.UnderhandArc,     0, 9, 36, 6.5f, 10, 0.9f, 1.45f, 0.95f),
+                    WeightedSwordSwing(ComboMotion.OverheadArc,      0, 9, 36, 6.5f,  0, 1.3f, 1.50f, 1.15f),
                 } },
             // 9 — Roll-Catch: leap in, then the flip slam lands where a panicked roll ends
             new MeleeCombo { Name = "Roll-Catch", BaseWeight = 30, Preferred = ComboRangeBand.Mid,
@@ -648,7 +723,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 return HalfHealthMovesUnlocked;
             }
-            if (combo.Name == "Cindering Leap" || combo.Name == "Roll-Catch")
+            if (combo.Name == CinderingLeapName || combo.Name == "Roll-Catch")
             {
                 return distance <= 300f;
             }
@@ -695,6 +770,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override void ModifyNextMeleeComboStep(
             string comboName, int nextStepIndex, Player target, ref MeleeComboStep nextStep)
         {
+            if (comboName == ThreeHitName)
+            {
+                float nextReach = ComboReachBase * 0.7f * nextStep.ReachMult;
+                if (NPC.Distance(target.Center) > nextReach)
+                {
+                    // About 170px over the 45t step at base TopSpeed, enough to stay attached to a
+                    // retreat without tracking through a player who rolled behind the committed cut.
+                    nextStep.ForwardPushMult = Math.Max(nextStep.ForwardPushMult, 1.45f);
+                }
+                return;
+            }
+
             if (comboName != WrathFlurryName || nextStep.Motion != ComboMotion.OverheadArc)
             {
                 return;
@@ -771,9 +858,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 1;
-            //The Wrath dash is fast enough that the normal ten-position cache reads as a few
-            //disconnected ghosts. Match Artorias's proven pierce cache for a continuous rush trail.
-            NPCID.Sets.TrailCacheLength[NPC.type] = 20;
+            // Twelve afterimages sampled every other cached position keep both the Wrath dash and
+            // Winged Plunge continuous without drawing a solid duplicate over Gwyn's real body.
+            NPCID.Sets.TrailCacheLength[NPC.type] = 24;
             NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
@@ -847,6 +934,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write((short)_gravityTimer);
             writer.Write((short)_pullComboNudge);
             writer.Write(_dashGrabEndX);
+            writer.Write((short)_plungeTimer);
+            writer.Write((byte)_plungePhase);
+            writer.WriteVector2(_plungeTarget);
+            writer.Write(_plungeApexY);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -863,6 +954,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _gravityTimer = reader.ReadInt16();
             _pullComboNudge = reader.ReadInt16();
             _dashGrabEndX = reader.ReadSingle();
+            _plungeTimer = reader.ReadInt16();
+            _plungePhase = reader.ReadByte();
+            _plungeTarget = reader.ReadVector2();
+            _plungeApexY = reader.ReadSingle();
         }
 
         public override void AI()
@@ -1293,12 +1388,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // ── Greatsword Boomerang (full-lane reach — the edge-camper punish) ──────
-        // Base Boomerang template: overhead wind-up + chop; the fire event hurls the blade spinning
-        // across the arena, and it arcs back to his hand. While it flies he's briefly weaponless —
-        // the punish window if you're close enough to use it.
+        // Attack spec — Greatsword Boomerang / PuppetNPC Boomerang phases + GwynGreatswordBoomerang.
+        // Weapon: EnemySwordOfGwyn, raised for 26t then thrown halfway through a 28t overhead chop.
+        // Birth/life/death: launches from the forward hand at 15px/t, spins with a gold/fire dust
+        // wake, passes through terrain deliberately, then homes to Gwyn and ends with the catch sound.
+        // Reach: selectable from 200-2850px (3x the old 950px maximum); aim locks on release and the
+        // outbound leg ends 300px beyond that player position before the return begins.
+        // VFX: pixel-filtered cinder copies behind the crisp sword; additive, behind the projectile.
+        // Selection: 7% eligible idle roll, 420t cooldown; 60t recovery leaves Gwyn punishable.
+        // Fairness: 26t raise + 14t of visible chop before release; rollable, terrain-piercing.
+        // Multiplayer: the server locks and sends outbound distance; projectile damage remains hostile.
         protected override bool  CanBoomerang               => true;
         protected override float BoomerangMinRange          => 200f;
-        protected override float BoomerangMaxRange          => 950f;
+        protected override float BoomerangMaxRange          => 2850f;
         protected override int   BoomerangChance            => 7;
         protected override int   BoomerangCooldownAfterUse  => 420;
         protected override int   BoomerangSwingTelegraphTicks => 26;
@@ -1333,8 +1435,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player target = Main.player[NPC.target];
             Vector2 origin = NPC.Center + new Vector2(NPC.direction * 26f, -14f);
             Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 15f;
+            float outboundDistance = Vector2.Distance(origin, target.Center)
+                + Projectiles.Enemy.GwynGreatswordBoomerang.TargetOvershoot;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.GwynGreatswordBoomerang>(), BoomerangDamage, 6f, Main.myPlayer, NPC.whoAmI, 50f);
+                ModContent.ProjectileType<Projectiles.Enemy.GwynGreatswordBoomerang>(), BoomerangDamage,
+                6f, Main.myPlayer, NPC.whoAmI, outboundDistance);
         }
 
         // ── Judgment from Behind (the back-turn punish) ──────────────────────────
@@ -1773,6 +1878,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         const float PlungeRiseHeight = 380f;  //default ascent — clears the dome's center, not its edges
         const float PlungeCeilingPad = 70f;   //stay this far under whatever ceiling the check finds
+        const int PlungeGroundWaveReachTiles = 60;
+        const float PlungeExplosionDamageMult = 0.75f;
+
+        // Attack spec — Winged Plunge / bespoke _plungePhase sequence.
+        // Weapon: EnemySwordOfGwyn, held by the existing two-handed puppet rig throughout the move.
+        // Tell: dome-aware rise (<=70t), then a 20t hover/aim lock with gold dust and a release sound.
+        // Dive: 17px/t toward the locked point for <=55t; twelve cached body echoes plus dense
+        // GoldFlame body dust stream backward along the committed path.
+        // Impact: instant sword hit, an 8t rollable 240px circular blast for 0.75x melee damage,
+        // and two 7px/t ground waves travelling 60 tiles (960px) per side. The blast's bright core
+        // is 300px wide, exactly 25% larger than its hitbox; smoke and rays are decorative residue.
+        // Selection: Idle/CasualStroll, 150-900px, own 480-719t cooldown after use.
+        // Multiplayer: selection, damage, and projectile spawning are server-authoritative; plunge
+        // phase/target are synchronized so client-only afterimages and dust follow the same dive.
 
         void TickWingedPlunge()
         {
@@ -1838,6 +1957,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         _plungePhase = 1;
                         _plungeTimer = 1;
+                        NPC.netUpdate = true;
                     }
                     break;
 
@@ -1851,6 +1971,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         _plungePhase = 2;
                         _plungeTimer = 1;
                         SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.6f, Pitch = 0.4f }, NPC.Center);
+                        NPC.netUpdate = true;
                     }
                     break;
 
@@ -1858,16 +1979,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 dir = (_plungeTarget - NPC.Center).SafeNormalize(Vector2.UnitY);
                     NPC.velocity = dir * 17f;
-                    if (_plungeTimer % 2 == 0 && Main.netMode != NetmodeID.Server)
+                    AfterimageTicks = Math.Max(AfterimageTicks, 3);
+                    if (Main.netMode != NetmodeID.Server)
                     {
-                        //Echo: a body-sized puff of gold left hanging along the dive path
-                        for (int i = 0; i < 5; i++)
+                        // Dense, mostly-gold motes cover the body while their low reverse velocity
+                        // leaves a readable wake between the twelve cached puppet silhouettes.
+                        for (int i = 0; i < 6; i++)
                         {
                             Vector2 pos = NPC.position + new Vector2(Main.rand.NextFloat(NPC.width), Main.rand.NextFloat(NPC.height));
-                            int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Torch;
-                            Dust d = Dust.NewDustPerfect(pos, type, Vector2.Zero, 80, default, 1.5f);
+                            int type = Main.rand.NextBool(5) ? DustID.Torch : DustID.GoldFlame;
+                            Dust d = Dust.NewDustPerfect(pos, type,
+                                -dir * Main.rand.NextFloat(0.5f, 1.8f) + Main.rand.NextVector2Circular(0.45f, 0.45f),
+                                70, new Color(255, 205, 86), Main.rand.NextFloat(0.75f, 1.3f));
                             d.noGravity = true;
-                            d.velocity = dir * -0.5f;
                         }
                     }
                     Lighting.AddLight(NPC.Center, 1f, 0.8f, 0.3f);
@@ -1879,14 +2003,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         SetAttackLabel("Winged Plunge — Slash", 60);
                         SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.4f }, NPC.Center);
                         SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.6f, Pitch = 0.1f }, NPC.Center);
-                        UsefulFunctions.ScreenShake(NPC.Center, 7f, 14);
+                        Vector2 impactPosition = NPC.Bottom - new Vector2(0f, 20f);
+                        UsefulFunctions.ScreenShake(impactPosition, 7f, 14);
                         if (Main.netMode != NetmodeID.Server)
                         {
                             for (int i = 0; i < 22; i++)
                             {
                                 Vector2 vel = Main.rand.NextVector2Circular(5f, 5f);
                                 int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
-                                Dust d = Dust.NewDustPerfect(NPC.Center, type, vel, 40, default, 1.6f);
+                                Dust d = Dust.NewDustPerfect(impactPosition, type, vel, 40, default, 1.6f);
                                 d.noGravity = true;
                             }
                         }
@@ -1896,16 +2021,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             Vector2 spawn = NPC.Center + new Vector2(NPC.direction * 24f, -8f);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
                                 ModContent.ProjectileType<Projectiles.Enemy.GwynFireArc>(), (int)(MeleeDamage * 0.7f), 4f, Main.myPlayer, NPC.direction, 2f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), impactPosition, Vector2.Zero,
+                                ModContent.ProjectileType<Projectiles.Enemy.GwynDescentColumn>(),
+                                Math.Max(1, (int)(MeleeDamage * PlungeExplosionDamageMult)), 6f, Main.myPlayer,
+                                Projectiles.Enemy.GwynDescentColumn.WingedPlungeExplosionMode);
                             for (int direction = -1; direction <= 1; direction += 2)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Bottom - new Vector2(0f, 20f), Vector2.Zero,
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), impactPosition, Vector2.Zero,
                                     ModContent.ProjectileType<Projectiles.Enemy.GwynGroundFireWave>(), (int)(MeleeDamage * 0.55f), 5f,
-                                    Main.myPlayer, direction, 20f);
+                                    Main.myPlayer, direction, PlungeGroundWaveReachTiles);
                             }
                         }
                         Flight?.RequestLand();
                         _plungePhase = 3;
                         _plungeTimer = 1;
+                        NPC.netUpdate = true;
                     }
                     break;
                 }
@@ -2023,6 +2153,113 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.2f }, NPC.Center);
             TryMeleeHit();
+            SpawnGwynSwordArc(ComboMotion.HorizontalSweep,
+                Math.Max(1, GetMeleeSwingTicks(MeleeAttackTicks)));
+        }
+
+        // Gwyn's sword art reaches about 88px from the authored 14%/86% grip after its 0.75 draw
+        // scale. VanillaSwordArc's 94px reference radius and 1.1 internal scale put its outer edge
+        // at this same distance, so the crescent overlaps the blade rather than reading half-sized.
+        const float GwynSwordArcRadius = 88f;
+        const int LandingSwordArcTicks = 10;
+        bool _swordArcSpawnedForStep;
+
+        protected override void OnMeleeComboStarted(MeleeCombo combo)
+        {
+            base.OnMeleeComboStarted(combo);
+            _swordArcSpawnedForStep = false;
+        }
+
+        static bool IsGwynSwordSlashMotion(ComboMotion motion)
+            => motion == ComboMotion.OverheadArc || motion == ComboMotion.UnderhandArc
+            || motion == ComboMotion.HorizontalSweep || motion == ComboMotion.VerticalChop
+            || motion == ComboMotion.GroundSlam || motion == ComboMotion.IaidoDraw
+            || motion == ComboMotion.DoubleSpinSlam || motion == ComboMotion.Spin
+            || motion == ComboMotion.LeapSlam || motion == ComboMotion.RisingUppercutLeap
+            || motion == ComboMotion.ApexDiveCleave;
+
+        void SpawnGwynSwordArc(ComboMotion motion, int duration, bool forceReverse = false)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            duration = Math.Max(1, duration);
+            bool reverse = forceReverse || motion == ComboMotion.UnderhandArc
+                || motion == ComboMotion.RisingUppercutLeap;
+            int sweepDirection = (reverse ? -1 : 1) * NPC.direction;
+            VanillaSwordArcSettings settings = new VanillaSwordArcSettings
+            {
+                Texture = VanillaSwordArcTexture.NightsEdge,
+                Easing = VanillaSwordArcEasing.Linear,
+                Duration = duration,
+                StartAngle = PuppetWeaponDirection.ToRotation(),
+                SweepAngle = sweepDirection * MathHelper.Pi,
+                Radius = GwynSwordArcRadius,
+                Opacity = 0.62f,
+                FadeInFraction = Math.Min(0.12f, 2f / duration),
+                FadeOutFraction = Math.Min(0.35f, 5f / duration),
+                AfterimageLag = MathHelper.PiOver4,
+                AfterimageOpacity = 0.58f,
+                BodyOpacity = 0.82f,
+                CoreOpacity = 0.18f,
+                DrawTipSparkle = false,
+                TintWithWorldLighting = true,
+                DarkColor = new Color(72, 8, 3),
+                BodyColor = new Color(225, 61, 8),
+                CoreColor = new Color(255, 178, 68),
+                DrawCinderOverlay = true,
+                CinderOverlayOpacity = 0.62f,
+                CinderOverlayDarkColor = new Color(64, 8, 2),
+                CinderOverlayFlameColor = new Color(255, 116, 14),
+                CinderOverlayCoreColor = new Color(255, 236, 172),
+                DustType = -1,
+                DustCount = 0,
+                TrackPuppetBlade = true,
+                EnableCollision = false,
+            };
+
+            VanillaSwordArc.SpawnForNPC(NPC.GetSource_FromAI(), NPC, 0, 0f, Main.myPlayer,
+                settings, Vector2.Zero, hostile: false);
+        }
+
+        protected override void OnMeleeComboTelegraphTick(
+            MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
+        {
+            base.OnMeleeComboTelegraphTick(combo, step, elapsed, total);
+            if (combo.Name != CinderfallName || Main.dedServ)
+            {
+                return;
+            }
+
+            float progress = MathHelper.Clamp(elapsed / (float)Math.Max(1, total - 1), 0f, 1f);
+            float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+            Vector2 bladeTip = PuppetWeaponTipPosition(bladeReach);
+            Lighting.AddLight(bladeTip, 1.15f * progress, 0.35f * progress, 0.06f);
+
+            // Ember charge converges onto the raised sword tip throughout the 44-tick tell. The
+            // tighter, brighter final frames make the release readable without extending the timer.
+            if (elapsed % 2 == 0)
+            {
+                float radius = MathHelper.Lerp(30f, 8f, progress);
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2Circular(radius, radius);
+                    int dustType = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;
+                    Dust dust = Dust.NewDustPerfect(bladeTip + offset, dustType,
+                        -offset * MathHelper.Lerp(0.06f, 0.16f, progress), 70, default,
+                        MathHelper.Lerp(0.85f, 1.45f, progress));
+                    dust.noGravity = true;
+                }
+            }
+
+            if (elapsed == 0)
+            {
+                SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.65f, Pitch = -0.35f }, bladeTip);
+            }
+            else if (elapsed == total - 10)
+            {
+                SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.8f, Pitch = 0.15f }, bladeTip);
+            }
         }
 
         ///<summary>Each swing trails cinder-fire; the heavier ones (reach ≥ 1.15) fling a fire
@@ -2043,16 +2280,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            // Past the step's hit window (Wrath Flurry's long settle) the blade is disarmed, so stop
-            // feeding the fire slash and let it fade over FireSlashFadeoutTicks for the same reason.
-            bool followingThrough = step.HitWindowEnd > 0f && progress > step.HitWindowEnd;
-            if (followingThrough)
+            bool landingTimedSlash = step.Motion == ComboMotion.LeapSlam
+                && (WrathFlurrySwinging || CinderingLeapSwinging);
+            if (!_swordArcSpawnedForStep && !landingTimedSlash && elapsed == 0
+                && step.DamageMult > 0f && IsGwynSwordSlashMotion(step.Motion))
             {
-                return;
+                int duration = step.Motion == ComboMotion.RisingUppercutLeap
+                    ? Math.Min(total, Math.Max(1, GetMeleeSwingTicks(0)))
+                    : total;
+                SpawnGwynSwordArc(step.Motion, duration, combo.Name == "Backhand Step");
+                _swordArcSpawnedForStep = true;
             }
 
-            ArmFireSlashVFX(bladeReach, progress);
-            EmitSwingFireDust(bladeReach, elapsed);
+            // Past the step's hit window the blade is harmless. The tracked sprite and its cinder
+            // material still finish the real visual swing, but damaging-looking ember spray stops.
+            bool followingThrough = step.HitWindowEnd > 0f && progress > step.HitWindowEnd;
+            if (!followingThrough)
+                EmitSwingFireDust(bladeReach, elapsed);
 
             // Leap hits resolve on landing; emitting their fire at takeoff would contradict the
             // telegraph. The rising uppercut is the opposite case: its blade sweep is over within a
@@ -2067,25 +2311,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     EmitComboCinders(step);
                 }
             }
-            else if (step.Motion != ComboMotion.LeapSlam && elapsed == total / 2)
+            else if (step.Motion != ComboMotion.LeapSlam
+                && elapsed == (step.Ease == SwingEaseStyle.Weighted ? step.EaseInTicks : total / 2))
             {
                 EmitComboCinders(step);
             }
         }
 
-        // Fire-slash quad palette (see PuppetNPC.HasFireSlashVFX) — a dark ember red so the aged
-        // tail occludes rather than glowing, then flame orange, then a pale core hot spot.
-        protected override bool HasFireSlashVFX => true;
-        protected override Color FireSlashCinderColor => new Color(64, 8, 2);
-        protected override Color FireSlashFlameColor => new Color(255, 116, 14);
-        protected override Color FireSlashCoreColor => new Color(255, 236, 172);
-        protected override float FireSlashOpacity => 1.1f;
-        protected override int FireSlashFadeoutTicks => 8;
-        // Keep the arc's leading tip on the real blade reach while giving the greatsword a broader,
-        // more visible body than the generic puppet defaults.
-        protected override float FireSlashQuadWidthMult => 1.65f;
-        protected override float FireSlashQuadHeightMult => 2.1f;
-        protected override float FireSlashQuadOffsetMult => 0.274f;
+        protected override void OnLandingTimedLeapSlamSwingTick(MeleeComboStep step, float progress)
+        {
+            if (_swordArcSpawnedForStep || step.DamageMult <= 0f)
+                return;
+
+            int remainingSwingTicks = Math.Max(5,
+                (int)Math.Ceiling((1f - MathHelper.Clamp(progress, 0f, 1f)) * LandingSwordArcTicks));
+            SpawnGwynSwordArc(step.Motion, remainingSwingTicks);
+            _swordArcSpawnedForStep = true;
+        }
 
         void EmitSwingFireDust(float bladeReach, int elapsed)
         {
@@ -2135,12 +2377,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void OnComboStepCompleted(MeleeComboStep step)
         {
+            base.OnComboStepCompleted(step);
             // Only a real landing gets the leap's impact crescent. A timed-out airborne leap keeps
             // its normal recovery without producing a disconnected ground effect.
             if (step.Motion == ComboMotion.LeapSlam && NPC.velocity.Y == 0f)
             {
                 EmitComboCinders(step);
             }
+            _swordArcSpawnedForStep = false;
         }
 
         void EmitComboCinders(MeleeComboStep step)
@@ -2613,6 +2857,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
             TryMeleeHit(reach: 110f);
+            SpawnGwynSwordArc(ComboMotion.UnderhandArc, TendrilSwingTicks, forceReverse: true);
         }
 
         ///<summary>KEPT (1000px): the First Flame shields him from cowards — full defense lock beyond

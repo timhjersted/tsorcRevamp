@@ -1,3 +1,5 @@
+#include "PixelShaderCommon.fxh"
+
 sampler FlameTexture : register(s0);
 sampler SmoothNoise : register(s1);
 
@@ -7,10 +9,12 @@ float3 CoreColor;
 float Opacity;
 float Time;
 float2 PrimaryTextureSize;
+float4 PixelGrid;
 
 float4 GwynFlameGraspPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
     float2 uv = coords * PrimaryTextureSize * 0.01724138;
+    uv = PixelateShaderUV(uv, PixelGrid);
     float2 p = (uv - float2(0.5, 0.5)) * 2.0;
     float flameNoise = tex2D(FlameTexture, uv * 1.7 + float2(-Time * 0.48, Time * 0.14)).r;
     float breakup = flameNoise * 1.25 - 0.15;

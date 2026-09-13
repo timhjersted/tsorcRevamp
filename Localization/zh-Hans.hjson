@@ -9077,6 +9077,11 @@ Mods: {
 				// DisplayName: Broken Dual Bladed Axe
 				// Tooltip: ""
 			}
+
+			PurpleGemStaff: {
+				// Tooltip: ""
+				// DisplayName: Purple Gem Staff
+			}
 		}
 
 		Buffs: {
@@ -10317,6 +10322,9 @@ Mods: {
 		}
 
 		Projectiles: {
+			// BloodKnightArrow.DisplayName: Blood Arrow
+			// BloodKnightDarkHarvestWhip.DisplayName: Dark Harvest
+			// BloodKnightRainArrow.DisplayName: Blood Rain Arrow
 			// PurpleSkull.DisplayName: Purple Skull
 			// VesselGravityWell.DisplayName: Gravity Well
 			// VesselSoulNova.DisplayName: Soul Nova
@@ -11271,6 +11279,12 @@ Mods: {
 			// PuppetFireWaveColumn.DisplayName: Puppet Fire Wave Column
 			// OwlFireDiveExplosion.DisplayName: Owl Fire Dive Explosion
 			// VanillaSwordArc.DisplayName: Vanilla Sword Arc
+			// EnemySpellAbyssStormExplosion.DisplayName: Enemy Spell Abyss Storm Explosion
+			// CinderIceSpellPreview.DisplayName: Cinder Ice Spell Preview
+			// CinderGreenRain.DisplayName: Cinder Green Rain
+			// CinderDarkBeadPreview.DisplayName: Cinder Dark Bead Preview
+			// CinderBlueWisp.DisplayName: Cinder Blue Wisp
+			// CinderRemoteFlame.DisplayName: Cinder Remote Flame
 		}
 
 		NPCs: {

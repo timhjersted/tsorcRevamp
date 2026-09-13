@@ -9,9 +9,11 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy
 {
     /// <summary>
-    /// Client presentation for Descent of the Sun. This deliberately uses the mod's established
+    /// Descent of the Sun presentation reused by Gwyn's smaller impact effects. This deliberately
+    /// uses the mod's established
     /// immediate/additive shader path and ordinary texture assets rather than the experimental VFX
-    /// strip renderer, so it can survive that renderer being replaced. It never owns damage.
+    /// strip renderer, so it can survive that renderer being replaced. Only Winged Plunge mode
+    /// owns damage; the Descent and Lord's Embrace modes remain presentation-only.
     /// ai[0] = telegraph/impact mode; ai[1] = parent meteor index while telegraphing.
     /// </summary>
     class GwynDescentColumn : ModProjectile
@@ -21,9 +23,15 @@ namespace tsorcRevamp.Projectiles.Enemy
         public const int TelegraphMode = 0;
         public const int ImpactMode = 1;
         public const int ExplosionOnlyMode = 2;
+        public const int WingedPlungeExplosionMode = 3;
 
         const int ImpactLifetime = 68;
         const int ColumnHeight = 760;
+        const int WingedPlungeDamageTicks = 8;
+        const int WingedPlungeHitboxDiameter = 240;
+        const float ExplosionCenterHeight = 48f;
+        const int WingedPlungeBroadphaseHeight = WingedPlungeHitboxDiameter + (int)(ExplosionCenterHeight * 2f);
+        const float WingedPlungeVisualDiameter = WingedPlungeHitboxDiameter * 1.25f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> solarColumnEffect;
@@ -36,14 +44,20 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> windStreak;
 
         bool Telegraphing => (int)Projectile.ai[0] == TelegraphMode;
-        bool ExplosionOnly => (int)Projectile.ai[0] == ExplosionOnlyMode;
+        bool WingedPlungeExplosion => (int)Projectile.ai[0] == WingedPlungeExplosionMode;
+        bool ExplosionOnly => (int)Projectile.ai[0] == ExplosionOnlyMode || WingedPlungeExplosion;
         int ParentIndex => (int)Projectile.ai[1];
         float Age => Projectile.localAI[0];
+        Vector2 ImpactAnchor => Projectile.Center;
+        Vector2 ExplosionCenter => ImpactAnchor - Vector2.UnitY * ExplosionCenterHeight;
 
         public override void SetDefaults()
         {
             Projectile.width = 2;
             Projectile.height = 2;
+            Projectile.hostile = true;
+            Projectile.friendly = false;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
@@ -55,10 +69,33 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             if (!Telegraphing)
                 Projectile.timeLeft = ImpactLifetime;
+
+            if (WingedPlungeExplosion)
+            {
+                // Keep the projectile centered on Descent's ground anchor on every peer. The taller
+                // broadphase fully encloses the real circle, whose center sits 48px above the floor.
+                Vector2 impactAnchor = Projectile.Center;
+                Projectile.width = WingedPlungeHitboxDiameter;
+                Projectile.height = WingedPlungeBroadphaseHeight;
+                Projectile.Center = impactAnchor;
+            }
         }
 
         public override bool ShouldUpdatePosition() => false;
-        public override bool? CanDamage() => false;
+        public override bool? CanDamage()
+            => WingedPlungeExplosion && Age <= WingedPlungeDamageTicks;
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            if (!WingedPlungeExplosion)
+                return false;
+
+            Vector2 nearestPoint = new Vector2(
+                MathHelper.Clamp(ExplosionCenter.X, targetHitbox.Left, targetHitbox.Right),
+                MathHelper.Clamp(ExplosionCenter.Y, targetHitbox.Top, targetHitbox.Bottom));
+            float radius = WingedPlungeHitboxDiameter * 0.5f;
+            return Vector2.DistanceSquared(ExplosionCenter, nearestPoint) <= radius * radius;
+        }
 
         public override void AI()
         {
@@ -88,9 +125,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             float columnFade = ColumnFade(Age);
+            Vector2 impactAnchor = ImpactAnchor;
             if (ExplosionOnly)
             {
-                Lighting.AddLight(Projectile.Center - Vector2.UnitY * 48f,
+                Lighting.AddLight(ExplosionCenter,
                     1.35f * columnFade, 0.68f * columnFade, 0.16f * columnFade);
             }
             else
@@ -107,11 +145,11 @@ namespace tsorcRevamp.Projectiles.Enemy
                 for (int i = 0; i < 3; i++)
                 {
                     float horizontalRadius = ExplosionOnly ? 76f : 105f;
-                    Vector2 position = Projectile.Center + new Vector2(
+                    Vector2 position = impactAnchor + new Vector2(
                         Main.rand.NextFloat(-horizontalRadius, horizontalRadius),
                         Main.rand.NextFloat(ExplosionOnly ? -92f : -35f, 6f));
                     Vector2 velocity = ExplosionOnly
-                        ? (position - (Projectile.Center - Vector2.UnitY * 48f)).SafeNormalize(-Vector2.UnitY)
+                        ? (position - ExplosionCenter).SafeNormalize(-Vector2.UnitY)
                             * Main.rand.NextFloat(2.5f, 7f)
                         : new Vector2(Main.rand.NextFloat(-2.4f, 2.4f), Main.rand.NextFloat(-8f, -3f));
                     Dust ember = Dust.NewDustPerfect(position, Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame,
@@ -119,6 +157,12 @@ namespace tsorcRevamp.Projectiles.Enemy
                     ember.noGravity = true;
                 }
             }
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            if (WingedPlungeExplosion)
+                target.AddBuff(BuffID.OnFire, 5 * 60);
         }
 
         bool TryGetParent(out Projectile parent)
@@ -166,7 +210,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             float progress = MathHelper.Clamp(parent.localAI[0] / 55f, 0f, 1f);
             float pulse = 0.78f + 0.22f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 7f);
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Vector2 drawPosition = ImpactAnchor - Main.screenPosition;
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
@@ -184,7 +228,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             float columnFade = ColumnFade(Age);
             float smokeFade = SmokeFade(Age);
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Vector2 drawPosition = ImpactAnchor - Main.screenPosition;
 
             // The smoke flipbook is drawn under the emissive layers so it gives the blast volume
             // without turning the whole column into one opaque sprite.
@@ -343,7 +387,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             int frameHeight = texture.Height / rows;
             int frame = Math.Min(columns * rows - 1, (int)(Age * 0.52f));
             Rectangle source = new Rectangle(frame % columns * frameWidth, frame / columns * frameHeight, frameWidth, frameHeight);
-            float scale = 1.0f + Age * 0.018f;
+            // Winged Plunge uses this exact Descent explosion frame without its solar column. Its
+            // luminous body is 300px across around a 240px circular hitbox: 25% visual overshoot.
+            float scale = WingedPlungeExplosion
+                ? WingedPlungeVisualDiameter / frameWidth
+                : 1.0f + Age * 0.018f;
             Main.EntitySpriteDraw(texture, drawPosition - new Vector2(0f, 48f), source,
                 Color.White * Math.Min(1f, opacity * 1.15f), 0f,
                 new Vector2(frameWidth, frameHeight) * 0.5f, scale, SpriteEffects.None, 0);

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -26,34 +27,101 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.light = 1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.timeLeft = InitialLifetime;
         }
 
-        float size = 0;
-        int dustCount = 0;
-        const float MaxStormRadius = 60f * 16f;
-        const float StormGrowTime = 45f;
-        const float StormGrowSpeed = MaxStormRadius / StormGrowTime;
+        private const float MaxStormRadius = 60f * 16f;
+        private const int StormGrowTicks = 45;
+        private const int StormBrakeTicks = 60;
+        private const int StormReturnAccelerationTicks = 30;
+        private const int ReturnDamageArmTicks = 8;
+        private const int InitialLifetime = 240;
+        private const float StormGrowSpeed = MaxStormRadius / StormGrowTicks;
+        private const float StormReturnTopSpeed = StormGrowSpeed * 0.5f;
+
+        private float size;
+
+        private int Age => InitialLifetime - Projectile.timeLeft;
+        private bool Braking => Age >= StormGrowTicks && Age < StormGrowTicks + StormBrakeTicks;
+        private int ReturnElapsed => Age - StormGrowTicks - StormBrakeTicks + 1;
 
         public override void AI()
         {
-            bool growing = size < MaxStormRadius;
-            if (size < MaxStormRadius)
+            float edgeVelocity;
+            if (Age < StormGrowTicks)
             {
-                size = MathHelper.Min(size + StormGrowSpeed, MaxStormRadius);
-                dustCount = GetStormDustCount(size);
+                float growProgress = (Age + 1f) / StormGrowTicks;
+                size = MaxStormRadius * MathHelper.Clamp(growProgress, 0f, 1f);
+                edgeVelocity = StormGrowSpeed;
+            }
+            else if (Braking)
+            {
+                size = MaxStormRadius;
+                float brakeProgress = (Age - StormGrowTicks + 1f) / StormBrakeTicks;
+                edgeVelocity = MathHelper.Lerp(
+                    StormGrowSpeed,
+                    0f,
+                    MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(brakeProgress, 0f, 1f)));
             }
             else
             {
-                //Fade out after reaching max radius, and then despawn
-                dustCount /= 2;
-                if (dustCount <= 0)
+                float returnTravel = GetReturnTravel(ReturnElapsed);
+                size = Math.Max(0f, MaxStormRadius - returnTravel);
+                edgeVelocity = -GetReturnSpeed(ReturnElapsed);
+
+                if (size <= 0f)
                 {
+                    SpawnCenterExplosion();
                     Projectile.Kill();
                     return;
                 }
             }
 
-            DrawStormEdge(growing ? StormGrowSpeed : 0f);
+            DrawStormEdge(edgeVelocity);
+            Lighting.AddLight(Projectile.Center, 0.08f, 0.2f, 0.42f);
+        }
+
+        public override bool? CanDamage()
+        {
+            if (Braking)
+                return false;
+
+            // Let the returning edge visibly pull away from its stationary pose before it rearms.
+            // At that point its accelerating 32px ring crosses a player well inside one roll window.
+            if (Age >= StormGrowTicks + StormBrakeTicks && ReturnElapsed <= ReturnDamageArmTicks)
+                return false;
+
+            return null;
+        }
+
+        private static float GetReturnSpeed(int elapsed)
+        {
+            float accelerationProgress = MathHelper.Clamp(
+                elapsed / (float)StormReturnAccelerationTicks, 0f, 1f);
+            return StormReturnTopSpeed * MathHelper.SmoothStep(0f, 1f, accelerationProgress);
+        }
+
+        private static float GetReturnTravel(int elapsed)
+        {
+            float distance = 0f;
+            for (int tick = 1; tick <= elapsed; tick++)
+                distance += GetReturnSpeed(tick);
+            return distance;
+        }
+
+        private void SpawnCenterExplosion()
+        {
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromThis(),
+                    Projectile.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<EnemySpellAbyssStormExplosion>(),
+                    Projectile.damage,
+                    Projectile.knockBack,
+                    Projectile.owner);
+            }
         }
 
         private static int GetStormDustCount(float radius)
@@ -63,7 +131,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         private void DrawStormEdge(float outwardSpeed)
         {
-            int count = dustCount < 1 ? 1 : dustCount;
+            // The phase lasts much longer now, so stagger a third of the old circumference sample
+            // per tick. Persistent dust fills the gaps without saturating Terraria's global dust pool.
+            int count = Math.Max(8, GetStormDustCount(size) / 3);
             float phase = Projectile.localAI[0] * 0.08f;
 
             for (int j = 0; j < count; j++)

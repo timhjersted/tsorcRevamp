@@ -27,14 +27,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int LegsArmorItemType => ModContent.ItemType<FirelinkLeggings>();
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<SeveringDusk>();
-        protected override int RangedWeaponItemType => UsesRangedMemory ? ModContent.ItemType<EnemySmokeBomb>() : -1;
-        protected override int SecondaryRangedWeaponItemType => UsesPyromancyMemory ? ModContent.ItemType<EnemyVenomStaff>() : -1;
-        protected override int MagicWeaponItemType => UsesMagicMemory ? ModContent.ItemType<EnemyMeteorStorm>() : -1;
+        protected override int RangedWeaponItemType => UsesRangedMemory ? ModContent.ItemType<PurpleGemStaff>() : -1;
+        protected override int SecondaryRangedWeaponItemType => UsesPyromancyMemory ? ModContent.ItemType<PurpleGemStaff>() : -1;
+        protected override int MagicWeaponItemType => UsesMagicMemory ? ModContent.ItemType<PurpleGemStaff>() : -1;
 
         protected override Vector2 MeleeHandleNorm => new Vector2(0.14f, 0.87f);
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Broadsword;
-        protected override RangedStyle RangedAnimStyle => RangedStyle.Throw;
-        protected override RangedStyle SecondaryRangedAnimStyle => RangedStyle.Crossbow;
+        protected override RangedStyle RangedAnimStyle => RangedStyle.Staff;
+        protected override RangedStyle SecondaryRangedAnimStyle => RangedStyle.Staff;
 
         protected override int MeleeDamage => 95;
         protected override int RangedDamage => 58;
@@ -89,7 +89,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override float RangedRange => 780f;
         protected override float MinRangedRange => 160f;
-        protected override int RangedTelegraphTicks => 42;
+        protected override int RangedTelegraphTicks => 45;
         protected override int RangedAttackTicks => 10;
         protected override int RangedRecoveryTicks => 54;
         protected override int RangedCooldownAfterUse => 170;
@@ -99,21 +99,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override float SecondaryRangedRange => 920f;
         protected override float SecondaryRangedMinRange => 300f;
-        protected override int SecondaryRangedTelegraphTicks => 50;
+        protected override int SecondaryRangedTelegraphTicks => 45;
         protected override int SecondaryRangedAttackTicks => 10;
         protected override int SecondaryRangedRecoveryTicks => 70;
         protected override int SecondaryRangedCooldownAfterUse => 210;
         protected override int SecondaryRangedChance => 45;
-        protected override Color SecondaryRangedFlashColor => MemoryColor;
+        protected override Color SecondaryRangedFlashColor => Color.LimeGreen;
+        // Twelve rising lob shots, exactly five ticks apart, instead of a single generic staff bolt.
+        protected override int[][] SecondaryRangedBurstPatterns => new[] { new[] { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 } };
 
         protected override float MagicRange => 1000f;
         protected override float MinMagicRange => 260f;
-        protected override int MagicTelegraphTicks => 62;
+        protected override int MagicTelegraphTicks => 45;
         protected override int MagicAttackTicks => 16;
         protected override int MagicRecoveryTicks => 82;
         protected override int MagicCooldownAfterUse => 210;
         protected override int MagicPreferenceChance => 55;
         protected override Color MagicTelegraphFlashColor => MemoryColor;
+        protected override bool UseAuthoredMagicCastPose => true;
+        protected override float MagicCastStartRotation => -0.08f;
+        protected override float MagicCastEndRotation => _queuedMagicAttack == CinderMagicAttack.IceStorm
+            ? MathHelper.Lerp(-1.15f, 0.65f, _magicShotProgress)
+            : -0.78f;
+        protected override int MagicWeaponRecoveryHoldTicks => 20;
 
         protected override bool CanBreathe => UsesPyromancyMemory;
         protected override float BreathRange => 680f;
@@ -137,7 +145,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override bool CanJumpSlash => UsesAshenMemory;
         protected override float JumpSlashMinRange => 160f;
-        protected override float JumpSlashMaxRange => 520f;
+        protected override float JumpSlashMaxRange => 700f;
+        protected override float JumpSlashLaunchUpSpeed => 12f;
+        protected override float JumpSlashMaxUpSpeed => 16f;
+        protected override float JumpSlashLaunchForwardSpeed => 11f;
+        protected override float JumpSlashMaxForwardSpeed => 14f;
+        protected override float JumpSlashTriggerRange => 112f;
         protected override int JumpSlashChance => 4;
         protected override int JumpSlashRecoveryTicks => 72;
         protected override int JumpSlashCooldownAfterUse => 300;
@@ -148,7 +161,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int FlipSlashChance => 4;
         protected override int FlipSlashCooldownAfterUse => 360;
 
-        protected override bool CanHomingVolley => UsesSorceryMemory;
+        protected override bool CanHomingVolley => false;
         protected override float HomingVolleyMinRange => 280f;
         protected override float HomingVolleyMaxRange => 760f;
         protected override int HomingVolleyChance => 7;
@@ -168,6 +181,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int SpiralFanChance => 7;
         protected override int SpiralFanRecoveryTicks => 95;
         protected override int SpiralFanCooldownAfterUse => 360;
+        protected override int SpiralFanSwingTelegraphTicks => 45;
+        protected override int SpiralFanWeaponItemType => ModContent.ItemType<PurpleGemStaff>();
+        protected override bool UseAuthoredSpiralFanCastPose => true;
+        protected override float SpiralFanCastStartRotation => -0.12f;
+        protected override float SpiralFanCastEndRotation => -0.78f;
 
         public static readonly float ARENA_WIDTH = 864;
         public static readonly float ARENA_HEIGHT = 656;
@@ -182,16 +200,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         const int DarkBeadDamage = 36;
         const int PhantomSeekerDamage = 55;
-        const int SmokeBombDamage = 58;
         const int BioSpitDamage = 68;
         const int FireBreathDamage = 50;
         const int IceStormDamage = 40;
         const int DisruptDamage = 68;
         const int LostSoulDamage = 38;
-        const int CultistFireDamage = 41;
-        const int CultistMagicDamage = 62;
-        const int GravityBallDamage = 66;
-        const int TridentDamage = 43;
         const int OrangeProjDamage = 45;
         const int SwordProjectileDamage = 69;
 
@@ -331,10 +344,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         CinderMagicAttack _queuedMagicAttack = CinderMagicAttack.IceStorm;
         int _magicBurstsRemaining;
         int _magicBurstTimer;
+        int _magicBurstTotal;
+        float _magicShotProgress;
+        bool _magicPrepared;
         CinderMemory _memory = CinderMemory.AshenWarrior;
         CinderCustomSequence _customSequence;
         AttackPhase _previousPhase = AttackPhase.Idle;
-        int _memoryAttacksRemaining = 2;
+        // One completed attack per memory keeps the four identities cycling instead of letting
+        // a lucky ranged roll repeat while another memory stays unseen.
+        int _memoryAttacksRemaining = 1;
         bool _memoryShiftPending;
         bool _secondPhaseStarted;
 
@@ -355,7 +373,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         enum CinderRangedAttack
         {
-            SmokeBomb,
             DarkBead,
             PhantomSeeker,
             BioSpit
@@ -365,9 +382,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             IceStorm,
             PhasedMatterBlast,
-            DemonFireLob,
-            CultistFire,
-            LostSoulCurse
+            LostSoulCurse,
+            CinderConstellation,
+            FirelinkCross,
+            AshenOrbit
         }
 
         Color MemoryColor => _memory switch
@@ -492,11 +510,214 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             TryStartSecondPhaseTransition();
             base.AI();
+            PrepareMagicTelegraph();
+            SpawnStaffSpellPreviews();
+            UpdateAttackLabel();
+            EmitSpiralStaffDust();
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             NPC.TargetClosest(true);
 
             TickMemoryCycle();
             TickDistanceRules();
+        }
+
+        void EmitSpiralStaffDust()
+        {
+            if (Main.dedServ || !IsSpiralFanPhase || !Main.rand.NextBool(2))
+                return;
+
+            Vector2 tip = NPC.Center + new Vector2(30f * NPC.direction, -42f);
+            Dust purple = Dust.NewDustPerfect(tip, DustID.PurpleTorch, Main.rand.NextVector2Circular(0.7f, 0.7f), 100,
+                new Color(190, 85, 255), 0.85f);
+            purple.noGravity = true;
+            if (Main.rand.NextBool(2))
+            {
+                Dust blue = Dust.NewDustPerfect(tip, DustID.IceTorch, Main.rand.NextVector2Circular(0.65f, 0.65f), 100,
+                    new Color(85, 185, 255), 0.8f);
+                blue.noGravity = true;
+            }
+        }
+
+        bool IsSpiralFanPhase => Phase == AttackPhase.SpiralFanSwingTelegraph
+            || Phase == AttackPhase.SpiralFanSwing
+            || Phase == AttackPhase.SpiralFanBurst
+            || Phase == AttackPhase.SpiralFanPause;
+
+        void UpdateAttackLabel()
+        {
+            if (Phase == AttackPhase.Custom)
+                return;
+
+            DebugAttackLabel = Phase switch
+            {
+                AttackPhase.RangedTelegraph or AttackPhase.RangedAttack or AttackPhase.RangedRecovery
+                    => _queuedRangedAttack == CinderRangedAttack.BioSpit ? "Emerald Rain Staff Volley"
+                     : _queuedRangedAttack == CinderRangedAttack.PhantomSeeker ? "Phantom Staff Seeker"
+                     : "Dark Bead Staff Volley",
+                AttackPhase.MagicTelegraph or AttackPhase.MagicAttack or AttackPhase.MagicRecovery
+                    => _queuedMagicAttack == CinderMagicAttack.IceStorm ? "Rising Ice Storm"
+                     : _queuedMagicAttack == CinderMagicAttack.PhasedMatterBlast ? "Phased Matter Cast"
+                     : _queuedMagicAttack == CinderMagicAttack.CinderConstellation ? "Cinder Constellation"
+                     : _queuedMagicAttack == CinderMagicAttack.FirelinkCross ? "Firelink Cross"
+                     : _queuedMagicAttack == CinderMagicAttack.AshenOrbit ? "Ashen Orbit"
+                     : "Lost Soul Curse",
+                AttackPhase.SpiralFanSwingTelegraph or AttackPhase.SpiralFanSwing or AttackPhase.SpiralFanBurst or AttackPhase.SpiralFanPause or AttackPhase.SpiralFanRecovery => "Azure Wisp Fan",
+                AttackPhase.JumpSlashDodgeback or AttackPhase.JumpSlashRise or AttackPhase.JumpSlashAttack or AttackPhase.JumpSlashRecovery => "Leaping Cinderfall",
+                AttackPhase.FlipSlashRise or AttackPhase.FlipSlashLand => "Cinder Somersault",
+                AttackPhase.BoomerangSwingTelegraph or AttackPhase.BoomerangSwing or AttackPhase.BoomerangRecovery => "Cinder Blade Throw",
+                AttackPhase.HomingVolleyDodgeback or AttackPhase.HomingVolleySwingTelegraph or AttackPhase.HomingVolleySwing or AttackPhase.HomingVolleyRecovery => "Skyfall Trident Volley",
+                AttackPhase.BreathTelegraph or AttackPhase.Breathing or AttackPhase.BreathRecovery => "First Flame Breath",
+                AttackPhase.PierceTelegraph or AttackPhase.PierceDash or AttackPhase.PierceRecovery => "Ashen Piercing Dash",
+                _ => null,
+            };
+        }
+
+        protected override void DoRangedTelegraphVFX(bool secondary, float progress)
+        {
+            if (Main.dedServ || !Main.rand.NextBool(2))
+                return;
+
+            Color color = secondary ? Color.LimeGreen : new Color(125, 185, 255);
+            Vector2 tip = NPC.Center + new Vector2(30f * NPC.direction, -42f);
+            Dust dust = Dust.NewDustPerfect(tip, secondary ? DustID.GreenTorch : DustID.IceTorch,
+                Main.rand.NextVector2Circular(0.75f, 0.75f), 100, color, MathHelper.Lerp(0.7f, 1.15f, progress));
+            dust.noGravity = true;
+        }
+
+        protected override void DoMagicTelegraphVFX(float progress)
+        {
+            if (Main.dedServ || !Main.rand.NextBool(2))
+                return;
+
+            bool fireRitual = _queuedMagicAttack >= CinderMagicAttack.CinderConstellation;
+            Vector2 tip = NPC.Center + new Vector2(30f * NPC.direction, -42f);
+            if (fireRitual)
+            {
+                int ritual = (int)_queuedMagicAttack - (int)CinderMagicAttack.CinderConstellation;
+                if (ritual == 0) // Cinder Constellation: diagonal, inward-curling embers.
+                {
+                    float angle = progress * MathHelper.TwoPi * 1.7f * NPC.direction;
+                    Dust dust = Dust.NewDustPerfect(tip + angle.ToRotationVector2() * 6f, DustID.OrangeTorch,
+                        -angle.ToRotationVector2() * (0.7f + progress), 90, Color.Orange, 0.55f + progress * 0.35f);
+                    dust.noGravity = true;
+                    if (progress > 0.75f && Main.rand.NextBool(3))
+                    {
+                        Dust glint = Dust.NewDustPerfect(tip, DustID.AncientLight, Main.rand.NextVector2Circular(0.5f, 0.5f),
+                            100, Color.LightGoldenrodYellow, 0.45f);
+                        glint.noGravity = true;
+                    }
+                }
+                else if (ritual == 1) // Firelink Cross: alternating horizontal and vertical red-orange strokes.
+                {
+                    bool vertical = ((int)(progress * 30f) / 2) % 2 == 0;
+                    Vector2 direction = vertical ? Vector2.UnitY : Vector2.UnitX * NPC.direction;
+                    Dust dust = Dust.NewDustPerfect(tip - direction * 7f, vertical ? DustID.RedTorch : DustID.OrangeTorch,
+                        direction * (1f + progress), 90, Color.OrangeRed, 0.55f + progress * 0.35f);
+                    dust.noGravity = true;
+                }
+                else // Ashen Orbit: a clockwise ember ring that becomes white-hot at release.
+                {
+                    float angle = progress * MathHelper.TwoPi * 2.2f * NPC.direction;
+                    Vector2 tangent = (angle + MathHelper.PiOver2 * NPC.direction).ToRotationVector2();
+                    Dust dust = Dust.NewDustPerfect(tip + angle.ToRotationVector2() * 7f, DustID.OrangeTorch,
+                        tangent * (0.8f + progress), 90, Color.Orange, 0.52f + progress * 0.3f);
+                    dust.noGravity = true;
+                    if (progress > 0.76f && Main.rand.NextBool(3))
+                    {
+                        Dust glint = Dust.NewDustPerfect(tip, DustID.AncientLight, Main.rand.NextVector2Circular(0.45f, 0.45f),
+                            100, Color.LightGoldenrodYellow, 0.42f);
+                        glint.noGravity = true;
+                    }
+                }
+                return;
+            }
+
+            Color color = _queuedMagicAttack == CinderMagicAttack.IceStorm
+                ? new Color(115, 195, 255) : new Color(190, 95, 255);
+            Dust spellDust = Dust.NewDustPerfect(tip, _queuedMagicAttack == CinderMagicAttack.IceStorm ? DustID.IceTorch : DustID.PurpleTorch,
+                Main.rand.NextVector2Circular(0.85f, 0.85f), 90, color, 0.75f + progress * 0.45f);
+            spellDust.noGravity = true;
+        }
+
+        void SpawnStaffSpellPreviews()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            if (Phase == AttackPhase.RangedTelegraph && PhaseTimer == 30
+                && _queuedRangedAttack == CinderRangedAttack.DarkBead)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.CinderDarkBeadPreview>(), 0, 0f, Main.myPlayer, NPC.whoAmI);
+            }
+            else if (Phase == AttackPhase.MagicTelegraph && PhaseTimer == 30)
+            {
+                if (_queuedMagicAttack == CinderMagicAttack.IceStorm)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                        ModContent.ProjectileType<Projectiles.Enemy.CinderIceSpellPreview>(), 0, 0f, Main.myPlayer, NPC.whoAmI);
+                }
+                else if (_queuedMagicAttack >= CinderMagicAttack.CinderConstellation)
+                {
+                    SpawnRemoteFirePattern(Main.player[NPC.target], _queuedMagicAttack);
+                }
+            }
+        }
+
+        void SpawnRemoteFirePattern(Player target, CinderMagicAttack pattern)
+        {
+            int count = pattern == CinderMagicAttack.AshenOrbit ? 6 : 4;
+            float radius = pattern == CinderMagicAttack.CinderConstellation ? 190f
+                : pattern == CinderMagicAttack.AshenOrbit ? 220f : 165f;
+            for (int i = 0; i < count; i++)
+            {
+                float angle = MathHelper.TwoPi * i / count + (pattern == CinderMagicAttack.CinderConstellation ? MathHelper.PiOver4 : 0f);
+                int id = Projectile.NewProjectile(NPC.GetSource_FromThis(), target.Center + angle.ToRotationVector2() * radius,
+                    Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.CinderRemoteFlame>(), FireBreathDamage, 0f,
+                    Main.myPlayer, target.whoAmI, pattern == CinderMagicAttack.CinderConstellation ? 0 : pattern == CinderMagicAttack.FirelinkCross ? 1 : 2);
+                Main.projectile[id].rotation = angle;
+            }
+            SoundEngine.PlaySound(pattern switch
+            {
+                CinderMagicAttack.CinderConstellation => SoundID.Item29 with { Volume = 0.7f, Pitch = 0.1f },
+                CinderMagicAttack.FirelinkCross => SoundID.Item74 with { Volume = 0.7f, Pitch = -0.2f },
+                _ => SoundID.Item119 with { Volume = 0.65f, Pitch = 0.05f }
+            }, NPC.Center);
+        }
+
+        void PrepareMagicTelegraph()
+        {
+            if (Phase != AttackPhase.MagicTelegraph)
+            {
+                if (Phase != AttackPhase.MagicAttack)
+                    _magicPrepared = false;
+                return;
+            }
+
+            if (_magicPrepared || Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            if (UsesPyromancyMemory)
+            {
+                _queuedMagicAttack = (CinderMagicAttack)Main.rand.Next((int)CinderMagicAttack.CinderConstellation, (int)CinderMagicAttack.AshenOrbit + 1);
+            }
+            else if (SecondPhase)
+            {
+                _queuedMagicAttack = Main.rand.Next(3) switch
+                {
+                    0 => CinderMagicAttack.IceStorm,
+                    1 => CinderMagicAttack.PhasedMatterBlast,
+                    _ => CinderMagicAttack.LostSoulCurse,
+                };
+            }
+            else
+            {
+                _queuedMagicAttack = Main.rand.NextBool()
+                    ? CinderMagicAttack.IceStorm
+                    : CinderMagicAttack.PhasedMatterBlast;
+            }
+            _magicPrepared = true;
+            NPC.netUpdate = true;
         }
 
         void TryStartSecondPhaseTransition()
@@ -510,10 +731,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             _secondPhaseStarted = true;
             _memory = CinderMemory.AshenWarrior;
-            _memoryAttacksRemaining = 2;
+            _memoryAttacksRemaining = 1;
             _memoryShiftPending = false;
             _customSequence = CinderCustomSequence.SecondPhaseTransition;
-            StartCustomAttack(90, MeleeWeaponItemType, swingPose: true);
+            StartCustomAttack(90);
             NPC.netUpdate = true;
         }
 
@@ -535,10 +756,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (_memoryShiftPending && IsNeutralPhase(Phase))
             {
                 _memory = (CinderMemory)(((int)_memory + 1) % 4);
-                _memoryAttacksRemaining = 2;
+                _memoryAttacksRemaining = 1;
                 _memoryShiftPending = false;
                 _customSequence = CinderCustomSequence.MemoryShift;
-                StartCustomAttack(32, MeleeWeaponItemType, swingPose: true);
+                StartCustomAttack(32);
                 NPC.netUpdate = true;
             }
 
@@ -783,12 +1004,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            if (UsesPyromancyMemory)
-            {
-                _queuedRangedAttack = CinderRangedAttack.SmokeBomb;
-                SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center);
-            }
-            else if (SecondPhase && Main.rand.NextBool(3))
+            if (!secondary && SecondPhase && Main.rand.NextBool(3))
             {
                 _queuedRangedAttack = CinderRangedAttack.PhantomSeeker;
             }
@@ -808,9 +1024,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player target = Main.player[NPC.target];
             switch (_queuedRangedAttack)
             {
-                case CinderRangedAttack.SmokeBomb:
-                    FireSmokeBomb(target);
-                    break;
                 case CinderRangedAttack.PhantomSeeker:
                     FirePhantomSeeker(target);
                     break;
@@ -821,14 +1034,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     FireDarkBead(target);
                     break;
             }
-        }
-
-        void FireSmokeBomb(Player target)
-        {
-            Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 10f);
-            velocity += Main.rand.NextVector2Circular(-4f, 0f);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), SmokeBombDamage, 0f, Main.myPlayer);
-            SoundEngine.PlaySound(SoundID.Item7 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center);
         }
 
         void FireDarkBead(Player target)
@@ -852,8 +1057,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void FireBioSpit(Player target, int damage)
         {
-            Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 10f);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), damage, 5f, Main.myPlayer);
+            float height = Main.rand.NextFloat(9f, 16f) * 16f;
+            float verticalSpeed = -MathF.Sqrt(2f * 0.30f * height);
+            float airTime = -2f * verticalSpeed / 0.30f;
+            float horizontalSpeed = MathHelper.Clamp((target.Center.X - NPC.Center.X) / airTime, -10f, 10f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center,
+                new Vector2(horizontalSpeed, verticalSpeed), ModContent.ProjectileType<Projectiles.Enemy.CinderGreenRain>(),
+                damage, 5f, Main.myPlayer, target.whoAmI);
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.5f }, NPC.Center);
         }
 
@@ -864,45 +1074,51 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            if (UsesPyromancyMemory)
+            // The selection was locked at telegraph entry so the staff, growing spell preview,
+            // and release all tell the same attack.
+            if (!_magicPrepared)
+                PrepareMagicTelegraph();
+
+            if (_queuedMagicAttack == CinderMagicAttack.IceStorm)
             {
-                _queuedMagicAttack = Main.rand.NextBool() ? CinderMagicAttack.CultistFire : CinderMagicAttack.DemonFireLob;
+                _magicBurstTotal = Main.rand.Next(6, 13);
+                _magicBurstsRemaining = _magicBurstTotal - 1;
+                _magicBurstTimer = 0;
+                _magicShotProgress = 0f;
+                _magicAttackTicksOverride = _magicBurstTotal * 12;
             }
-            else if (SecondPhase)
+            else if (_queuedMagicAttack >= CinderMagicAttack.CinderConstellation)
             {
-                _queuedMagicAttack = Main.rand.Next(3) switch
-                {
-                    0 => CinderMagicAttack.IceStorm,
-                    1 => CinderMagicAttack.PhasedMatterBlast,
-                    _ => CinderMagicAttack.LostSoulCurse,
-                };
+                _magicBurstTotal = 0;
+                _magicBurstsRemaining = 0;
+                _magicAttackTicksOverride = 30;
+                SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.55f, Pitch = -0.1f }, NPC.Center);
             }
             else
             {
-                _queuedMagicAttack = Main.rand.NextBool()
-                    ? CinderMagicAttack.IceStorm
-                    : CinderMagicAttack.PhasedMatterBlast;
+                _magicBurstTotal = SecondPhase ? 3 : 2;
+                _magicBurstsRemaining = _magicBurstTotal - 1;
+                _magicBurstTimer = 0;
+                _magicAttackTicksOverride = 56;
             }
-
-            _magicBurstsRemaining = SecondPhase ? 3 : 2;
-            _magicBurstTimer = 1;
-            _magicAttackTicksOverride = 56;
             FireQueuedMagic(Main.player[NPC.target]);
         }
 
         protected override void DoMagicTick(int ticksRemaining)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient || _magicBurstsRemaining <= 1)
+            if (Main.netMode == NetmodeID.MultiplayerClient || _magicBurstsRemaining <= 0)
             {
                 return;
             }
 
             _magicBurstTimer++;
-            if (_magicBurstTimer >= 18)
+            int interval = _queuedMagicAttack == CinderMagicAttack.IceStorm ? 12 : 18;
+            if (_magicBurstTimer >= interval)
             {
                 _magicBurstTimer = 0;
-                _magicBurstsRemaining--;
                 FireQueuedMagic(Main.player[NPC.target]);
+                _magicBurstsRemaining--;
+                NPC.netUpdate = true;
             }
         }
 
@@ -914,20 +1130,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 6f, 1.06f, true, true), ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>(), DisruptDamage, 5f, Main.myPlayer);
                     SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.2f, Pitch = 0.4f }, NPC.Center);
                     break;
-                case CinderMagicAttack.DemonFireLob:
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 5f), ProjectileID.DD2DrakinShot, FireBreathDamage, 0f, Main.myPlayer);
-                    SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-                    break;
-                case CinderMagicAttack.CultistFire:
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 0.1f), Main.rand.NextBool() ? ProjectileID.CultistBossFireBall : ProjectileID.CultistBossFireBallClone, Main.rand.NextBool() ? CultistFireDamage : CultistMagicDamage, 0.1f, Main.myPlayer);
-                    SoundEngine.PlaySound(SoundID.NPCHit34, NPC.Center);
-                    break;
                 case CinderMagicAttack.LostSoulCurse:
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 8f, 1.06f, true, true), ProjectileID.DesertDjinnCurse, LostSoulDamage, 7f, Main.myPlayer);
                     SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = 0.5f }, NPC.Center);
                     break;
+                case CinderMagicAttack.CinderConstellation:
+                case CinderMagicAttack.FirelinkCross:
+                case CinderMagicAttack.AshenOrbit:
+                    // The brands were created at their remote positions during the last 30 tell ticks.
+                    break;
                 default:
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 14f, 0.015f, true), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), IceStormDamage, 0f, Main.myPlayer);
+                    float shotIndex = _magicBurstTotal - _magicBurstsRemaining - 1;
+                    _magicShotProgress = _magicBurstTotal <= 1 ? 0.5f : shotIndex / (_magicBurstTotal - 1f);
+                    float angle = MathHelper.Lerp(MathHelper.ToRadians(-145f), MathHelper.ToRadians(-35f), _magicShotProgress);
+                    Vector2 velocity = angle.ToRotationVector2() * 12.5f;
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), IceStormDamage, 0f, Main.myPlayer);
                     SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.3f }, NPC.Center);
                     break;
             }
@@ -965,36 +1182,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.12f, Pitch = 0.2f }, NPC.Center);
         }
 
-        protected override void DoHomingVolleyFire()
-        {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-
-            Player target = Main.player[NPC.target];
-            if (SecondPhase)
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    Vector2 targetPoint = target.Center + new Vector2(-480 + 240 * i, 0f);
-                    Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPoint, 12f, 0.1f, true, true);
-                    if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), TridentDamage, 0.5f, Main.myPlayer);
-                    }
-                }
-            }
-            else
-            {
-                Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 6f, 0.1f, true, true);
-                if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity + target.velocity / 1.5f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), GravityBallDamage, 0.5f, Main.myPlayer);
-                }
-            }
-        }
-
         protected override void DoBoomerangFire()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -1015,14 +1202,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             Player target = Main.player[NPC.target];
-            Vector2 origin = NPC.Center + new Vector2(0f, -64f);
+            Vector2 origin = NPC.Center + new Vector2(30f * NPC.direction, -42f);
             int bulletCount = SecondPhase ? 7 : 5;
             float spread = SecondPhase ? 67f : 52.5f;
             Vector2 baseVelocity = UsefulFunctions.Aim(origin, target.Center, 24f);
             for (int i = -(bulletCount / 2); i <= bulletCount / 2; i++)
             {
                 Vector2 velocity = baseVelocity.RotatedBy(MathHelper.ToRadians(-((spread / (bulletCount - 1)) * i)));
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity, ModContent.ProjectileType<Projectiles.Enemy.Gwyn.FarronHailSpawner>(), OrangeProjDamage, 1f, Main.myPlayer, 0, 30);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
+                    ModContent.ProjectileType<Projectiles.Enemy.CinderBlueWisp>(), OrangeProjDamage, 1f, Main.myPlayer);
             }
         }
 
@@ -1040,6 +1228,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write(_memoryShiftPending);
             writer.Write(_secondPhaseStarted);
             writer.Write((short)(_customSequence == CinderCustomSequence.None ? 0 : Math.Max(1, PhaseTimer)));
+            writer.Write((byte)_queuedRangedAttack);
+            writer.Write((byte)_queuedMagicAttack);
+            writer.Write((byte)Math.Clamp(_magicBurstsRemaining, 0, byte.MaxValue));
+            writer.Write((byte)Math.Clamp(_magicBurstTotal, 0, byte.MaxValue));
+            writer.Write(_magicShotProgress);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -1052,12 +1245,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _memoryShiftPending = reader.ReadBoolean();
             _secondPhaseStarted = reader.ReadBoolean();
             int customTicksRemaining = reader.ReadInt16();
+            _queuedRangedAttack = (CinderRangedAttack)reader.ReadByte();
+            _queuedMagicAttack = (CinderMagicAttack)reader.ReadByte();
+            _magicBurstsRemaining = reader.ReadByte();
+            _magicBurstTotal = reader.ReadByte();
+            _magicShotProgress = reader.ReadSingle();
 
             if (_customSequence != CinderCustomSequence.None)
             {
                 if (previousCustomSequence != _customSequence || Phase != AttackPhase.Custom)
                 {
-                    StartCustomAttack(Math.Max(1, customTicksRemaining), MeleeWeaponItemType, swingPose: true);
+                    StartCustomAttack(Math.Max(1, customTicksRemaining));
                 }
                 else
                 {

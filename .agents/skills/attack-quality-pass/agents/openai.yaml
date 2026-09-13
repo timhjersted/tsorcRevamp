@@ -1,0 +1,4 @@
+interface:
+  display_name: "Attack Quality Pass"
+  short_description: "Definition of done for boss/enemy attacks, projectiles and telegraphs"
+  default_prompt: "Use $attack-quality-pass to fill in the spec card for this attack and run the pre-handoff checklist."

@@ -30,6 +30,8 @@ default, not written in the file · `.` off by default, never considered
 | Gwyn | Greatsword | Y | Y | Y | Y | Y | Y | . | Y | n | Y | Y | Y | Y | Y | Y | Y |
 | SoulOfCinder | Broadsword | Y | . | Y | Y | Y | Y | . | Y | Y | . | . | Y | Y | . | Y | . |
 | ClericOfSorrow | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| DarkBloodKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | Y | . |
+| DarkKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | Y | . |
 | AbyssalNinjaInvader | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | BlackNinja | Flail | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | Blaidd | Greatsword | . | . | Y | . | . | Y | . | Y | . | . | . | . | . | . | Y | . |

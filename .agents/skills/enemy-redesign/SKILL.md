@@ -94,6 +94,11 @@ budget and fairness rules, its §3 the per-move timing sheet the proposal must f
 ticks, strike curve, live window, tail, punish window, travel distance), and its §10 the review
 checklist, including the failures a real proposal made.
 
+**Every attack also needs an `attack-quality-pass` spec card (§12)** covering the weapon, tell,
+projectile birth/life/death, reach proven at max range, counts and intervals, and selection. Most
+rework feedback so far has been exactly those fields left unstated: projectiles that pop in and
+vanish, props out of the hand, leaps landing short, and attacks that rarely get picked.
+
 This review step is itself a deliverable the user values — several sessions were "review enemy X" with
 no code written that turn at all.
 

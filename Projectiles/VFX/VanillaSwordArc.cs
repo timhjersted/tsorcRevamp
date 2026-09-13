@@ -7,6 +7,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Puppets;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
@@ -26,6 +27,8 @@ namespace tsorcRevamp.Projectiles.VFX
         EaseIn,
         EaseOut,
         SineInOut,
+        /// <summary>Tick-authored cubic acceleration with an exponential follow-through.</summary>
+        Weighted,
     }
 
     public enum VanillaSwordArcAnchor : byte
@@ -45,6 +48,12 @@ namespace tsorcRevamp.Projectiles.VFX
         public VanillaSwordArcTexture Texture = VanillaSwordArcTexture.NightsEdge;
         public VanillaSwordArcEasing Easing = VanillaSwordArcEasing.Linear;
 
+        // Weighted is intentionally shaped the same way as PuppetNPC's Weighted sword clock.
+        // Leave these at zero when using the ordinary fractional easing modes above.
+        public int WeightedEaseInTicks;
+        public int WeightedEaseOutTicks;
+        public float WeightedEaseOutDecay = 6f;
+
         public int Duration = 25;
         public float StartAngle = MathHelper.Pi;
         public float SweepAngle = MathHelper.Pi;
@@ -60,6 +69,16 @@ namespace tsorcRevamp.Projectiles.VFX
         public float TipSparkleOpacity = 0.5f;
         public bool DrawTipSparkle = true;
         public bool TintWithWorldLighting = true;
+
+        // Optional fire-material pass. It reuses the exact same source frame, pivot, rotation,
+        // scale, and flip as the readable vanilla arc below, so the shader cannot drift away from
+        // the sword silhouette. This uses the already-compiled GwynCinderBlade technique; enabling
+        // it does not require rebuilding an effect file.
+        public bool DrawCinderOverlay;
+        public float CinderOverlayOpacity = 0.6f;
+        public Color CinderOverlayDarkColor = new Color(64, 8, 2);
+        public Color CinderOverlayFlameColor = new Color(255, 116, 14);
+        public Color CinderOverlayCoreColor = new Color(255, 236, 172);
 
         public Color DarkColor = new Color(40, 20, 60);
         public Color BodyColor = new Color(80, 40, 180);
@@ -95,6 +114,9 @@ namespace tsorcRevamp.Projectiles.VFX
         public Vector2 WorldVelocity;
         public bool FollowAnchorRotation;
 
+        // Opt in for puppet weapons when the arc must follow the live hand and blade pose.
+        public bool TrackPuppetBlade;
+
         public VanillaSwordArcSettings Clone()
         {
             return (VanillaSwordArcSettings)MemberwiseClone();
@@ -128,6 +150,9 @@ namespace tsorcRevamp.Projectiles.VFX
             }
 
             Duration = Math.Clamp(Duration, 1, 600);
+            WeightedEaseInTicks = Math.Clamp(WeightedEaseInTicks, 0, Duration);
+            WeightedEaseOutTicks = Math.Clamp(WeightedEaseOutTicks, 0, Duration - WeightedEaseInTicks);
+            WeightedEaseOutDecay = Math.Max(0f, WeightedEaseOutDecay);
             Radius = Math.Clamp(Radius, 1f, 2000f);
             ConeHalfAngle = Math.Clamp(ConeHalfAngle, 0.01f, MathHelper.Pi);
             Opacity = MathHelper.Clamp(Opacity, 0f, 1f);
@@ -138,6 +163,7 @@ namespace tsorcRevamp.Projectiles.VFX
             BodyOpacity = Math.Max(0f, BodyOpacity);
             CoreOpacity = Math.Max(0f, CoreOpacity);
             TipSparkleOpacity = Math.Max(0f, TipSparkleOpacity);
+            CinderOverlayOpacity = MathHelper.Clamp(CinderOverlayOpacity, 0f, 1f);
             DamageStartFraction = MathHelper.Clamp(DamageStartFraction, 0f, 1f);
             DamageEndFraction = MathHelper.Clamp(DamageEndFraction, DamageStartFraction, 1f);
             Penetrate = Math.Max(-1, Penetrate);
@@ -159,7 +185,7 @@ namespace tsorcRevamp.Projectiles.VFX
     /// </summary>
     public class VanillaSwordArc : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => "tsorcRevamp/Projectiles/VFX/VanillaSwordArc";
 
         VanillaSwordArcSettings settings = new VanillaSwordArcSettings();
         VanillaSwordArcAnchor anchorType;
@@ -170,6 +196,13 @@ namespace tsorcRevamp.Projectiles.VFX
         bool hasPreviousRotation;
         bool isFriendly;
         bool isHostile;
+        bool hasTrackedPuppetBlade;
+        bool hasEverTrackedPuppetBlade;
+        Vector2 trackedPuppetBladeDirection;
+        float trackedPuppetBladeProgress;
+
+        static Effect cinderOverlayEffect;
+        static Texture2D cinderOverlayNoise;
 
         float Progress => MathHelper.Clamp(Projectile.localAI[0] / settings.Duration, 0f, 1f);
         int SweepDirection => settings.SweepAngle >= 0f ? 1 : -1;
@@ -249,6 +282,18 @@ namespace tsorcRevamp.Projectiles.VFX
             projectile.ownerHitCheck = resolvedSettings.OwnerHitCheck;
             projectile.ownerHitCheckDistance = resolvedSettings.OwnerHitCheckDistance;
             projectile.timeLeft = resolvedSettings.Duration + 2;
+
+            // A landing-timed swing can finish its combo phase in the same tick that it spawns
+            // its impact VFX. Sample the blade immediately so the brief fade keeps the real
+            // hand/pivot instead of falling back to the NPC's centre on the following frame.
+            if (resolvedSettings.TrackPuppetBlade
+                && anchorType == VanillaSwordArcAnchor.NPC
+                && anchorIndex >= 0 && anchorIndex < Main.maxNPCs
+                && Main.npc[anchorIndex].ModNPC is PuppetNPC puppet)
+            {
+                arc.TryTrackPuppetBlade(puppet);
+            }
+
             projectile.netUpdate = true;
             return index;
         }
@@ -263,7 +308,9 @@ namespace tsorcRevamp.Projectiles.VFX
 
             previousRotation = Projectile.rotation;
             float easedProgress = ApplyEasing(Progress);
-            Projectile.rotation = settings.StartAngle + settings.SweepAngle * easedProgress + GetAnchorRotation();
+            Projectile.rotation = hasTrackedPuppetBlade
+                ? trackedPuppetBladeDirection.ToRotation()
+                : settings.StartAngle + settings.SweepAngle * easedProgress + GetAnchorRotation();
             hasPreviousRotation = Projectile.localAI[0] > 0f;
 
             EmitDust();
@@ -277,6 +324,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
         bool UpdateAnchor()
         {
+            hasTrackedPuppetBlade = false;
             switch (anchorType)
             {
                 case VanillaSwordArcAnchor.Player:
@@ -297,7 +345,23 @@ namespace tsorcRevamp.Projectiles.VFX
                     }
 
                     NPC npc = Main.npc[anchorIndex];
-                    Projectile.Center = npc.Center + anchorOffset;
+                    if (settings.TrackPuppetBlade
+                        && npc.ModNPC is PuppetNPC puppet
+                        && TryTrackPuppetBlade(puppet))
+                    {
+                        // The helper above has already snapped this frame to the live hand pose.
+                    }
+                    else if (hasEverTrackedPuppetBlade)
+                    {
+                        // The follow-through may outlive the active combo phase by a few frames.
+                        // Keep the last honest blade pose for that fade; reverting to npc.Center
+                        // produces the detached pop the effect is meant to avoid.
+                        hasTrackedPuppetBlade = true;
+                    }
+                    else
+                    {
+                        Projectile.Center = npc.Center + anchorOffset;
+                    }
                     anchorVelocity = npc.velocity;
                     break;
 
@@ -308,6 +372,24 @@ namespace tsorcRevamp.Projectiles.VFX
             }
 
             Projectile.velocity = Vector2.Zero;
+            return true;
+        }
+
+        bool TryTrackPuppetBlade(PuppetNPC puppet)
+        {
+            if (!puppet.TryGetMeleeSlashTrailPose(out Vector2 pivot,
+                out Vector2 direction, out _, out float progress, out _,
+                out _, out _, out _))
+            {
+                return false;
+            }
+
+            Projectile.Center = pivot + anchorOffset;
+            trackedPuppetBladeDirection = direction;
+            trackedPuppetBladeProgress = progress;
+            Projectile.rotation = direction.ToRotation();
+            hasTrackedPuppetBlade = true;
+            hasEverTrackedPuppetBlade = true;
             return true;
         }
 
@@ -334,8 +416,45 @@ namespace tsorcRevamp.Projectiles.VFX
                 VanillaSwordArcEasing.EaseIn => progress * progress,
                 VanillaSwordArcEasing.EaseOut => 1f - (1f - progress) * (1f - progress),
                 VanillaSwordArcEasing.SineInOut => (1f - MathF.Cos(MathHelper.Pi * progress)) * 0.5f,
+                VanillaSwordArcEasing.Weighted => ApplyWeightedEasing(progress),
                 _ => progress,
             };
+        }
+
+        float ApplyWeightedEasing(float progress)
+        {
+            int totalTicks = Math.Max(1, settings.Duration);
+            int inTicks = Math.Clamp(settings.WeightedEaseInTicks, 0, totalTicks);
+            int outTicks = Math.Clamp(settings.WeightedEaseOutTicks, 0, totalTicks - inTicks);
+            int cruiseTicks = totalTicks - inTicks - outTicks;
+            float decay = settings.WeightedEaseOutDecay > 0f
+                ? settings.WeightedEaseOutDecay
+                : 6f;
+            float decayCoverage = 1f - MathF.Exp(-decay);
+            float speed = 1f / (inTicks / 3f + cruiseTicks + outTicks * decayCoverage / decay);
+            float inFraction = speed * inTicks / 3f;
+            float cruiseFraction = speed * cruiseTicks;
+            float elapsed = MathHelper.Clamp(progress, 0f, 1f) * totalTicks;
+
+            if (elapsed < inTicks && inTicks > 0)
+            {
+                float rampProgress = elapsed / inTicks;
+                return inFraction * rampProgress * rampProgress * rampProgress;
+            }
+
+            if (elapsed < inTicks + cruiseTicks)
+            {
+                return inFraction + speed * (elapsed - inTicks);
+            }
+
+            if (outTicks <= 0)
+            {
+                return 1f;
+            }
+
+            float tailProgress = (elapsed - inTicks - cruiseTicks) / outTicks;
+            float settled = (1f - MathF.Exp(-decay * tailProgress)) / decayCoverage;
+            return inFraction + cruiseFraction + (1f - inFraction - cruiseFraction) * settled;
         }
 
         float VisualOpacity()
@@ -427,9 +546,10 @@ namespace tsorcRevamp.Projectiles.VFX
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = TextureAssets.Projectile[(int)settings.Texture].Value;
-            Rectangle bodyFrame = texture.Frame(1, 4, 0, 0);
-            Rectangle coreFrame = texture.Frame(1, 4, 0, 3);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            float frameProgress = hasTrackedPuppetBlade ? trackedPuppetBladeProgress : Progress;
+            int frameIndex = Math.Clamp((int)(frameProgress * 4f), 0, 3);
+            Rectangle bodyFrame = texture.Frame(1, 4, 0, frameIndex);
             Vector2 origin = bodyFrame.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawScale = settings.Radius / 94f * 1.1f;
@@ -462,8 +582,14 @@ namespace tsorcRevamp.Projectiles.VFX
 
             Color coreGlow = settings.CoreColor * (opacity * settings.CoreOpacity * lighting);
             coreGlow.A = 0;
-            Main.EntitySpriteDraw(texture, drawPosition, coreFrame, coreGlow,
-                Projectile.rotation, origin, drawScale, effects, 0);
+            Main.EntitySpriteDraw(texture, drawPosition, bodyFrame, coreGlow,
+                Projectile.rotation, origin, drawScale * 0.98f, effects, 0);
+
+            if (settings.DrawCinderOverlay && settings.CinderOverlayOpacity > 0f)
+            {
+                DrawCinderOverlay(texture, drawPosition, bodyFrame, origin, drawScale, effects,
+                    opacity * settings.CinderOverlayOpacity, frameProgress);
+            }
 
             if (settings.DrawTipSparkle && settings.TipSparkleOpacity > 0f)
             {
@@ -476,6 +602,48 @@ namespace tsorcRevamp.Projectiles.VFX
             }
 
             return false;
+        }
+
+        void DrawCinderOverlay(Texture2D texture, Vector2 drawPosition, Rectangle sourceRectangle,
+            Vector2 origin, float scale, SpriteEffects effects, float opacity, float progress)
+        {
+            cinderOverlayEffect ??= ModContent.Request<Effect>(
+                "tsorcRevamp/Effects/GwynCinderTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            cinderOverlayNoise ??= ModContent.Request<Texture2D>(
+                "tsorcRevamp/Textures/Noise/T_Aurax44", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
+            Texture previousTexture = graphicsDevice.Textures[1];
+            SamplerState previousSampler = graphicsDevice.SamplerStates[1];
+            try
+            {
+                graphicsDevice.Textures[1] = cinderOverlayNoise;
+                graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
+
+                cinderOverlayEffect.CurrentTechnique = cinderOverlayEffect.Techniques["GwynCinderBlade"];
+                cinderOverlayEffect.Parameters["CinderColor"].SetValue(settings.CinderOverlayDarkColor.ToVector3());
+                cinderOverlayEffect.Parameters["FlameColor"].SetValue(settings.CinderOverlayFlameColor.ToVector3());
+                cinderOverlayEffect.Parameters["CoreColor"].SetValue(settings.CinderOverlayCoreColor.ToVector3());
+                cinderOverlayEffect.Parameters["Opacity"].SetValue(opacity);
+                cinderOverlayEffect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                cinderOverlayEffect.Parameters["DrawSize"].SetValue(sourceRectangle.Size());
+                cinderOverlayEffect.Parameters["PrimaryTextureSize"].SetValue(texture.Size());
+                cinderOverlayEffect.Parameters["Progress"].SetValue(progress);
+                cinderOverlayEffect.CurrentTechnique.Passes[0].Apply();
+
+                Main.EntitySpriteDraw(texture, drawPosition, sourceRectangle, Color.White,
+                    Projectile.rotation, origin, scale, effects, 0);
+            }
+            finally
+            {
+                graphicsDevice.Textures[1] = previousTexture;
+                graphicsDevice.SamplerStates[1] = previousSampler;
+                UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            }
         }
 
         static void DrawTipSparkle(Vector2 drawPosition, Color color, float opacity,
@@ -505,6 +673,9 @@ namespace tsorcRevamp.Projectiles.VFX
 
             writer.Write((short)settings.Texture);
             writer.Write((byte)settings.Easing);
+            writer.Write(settings.WeightedEaseInTicks);
+            writer.Write(settings.WeightedEaseOutTicks);
+            writer.Write(settings.WeightedEaseOutDecay);
             writer.Write(settings.Duration);
             writer.Write(settings.StartAngle);
             writer.Write(settings.SweepAngle);
@@ -520,6 +691,11 @@ namespace tsorcRevamp.Projectiles.VFX
             writer.Write(settings.TipSparkleOpacity);
             writer.Write(settings.DrawTipSparkle);
             writer.Write(settings.TintWithWorldLighting);
+            writer.Write(settings.DrawCinderOverlay);
+            writer.Write(settings.CinderOverlayOpacity);
+            WriteColor(writer, settings.CinderOverlayDarkColor);
+            WriteColor(writer, settings.CinderOverlayFlameColor);
+            WriteColor(writer, settings.CinderOverlayCoreColor);
             WriteColor(writer, settings.DarkColor);
             WriteColor(writer, settings.BodyColor);
             WriteColor(writer, settings.CoreColor);
@@ -550,6 +726,14 @@ namespace tsorcRevamp.Projectiles.VFX
 
             writer.WriteVector2(settings.WorldVelocity);
             writer.Write(settings.FollowAnchorRotation);
+            writer.Write(settings.TrackPuppetBlade);
+
+            // Preserve an impact pose when the source combo has already advanced by the time a
+            // remote client receives this cosmetic projectile.
+            writer.Write(hasEverTrackedPuppetBlade);
+            writer.WriteVector2(Projectile.Center);
+            writer.WriteVector2(trackedPuppetBladeDirection);
+            writer.Write(trackedPuppetBladeProgress);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -562,6 +746,9 @@ namespace tsorcRevamp.Projectiles.VFX
 
             settings.Texture = (VanillaSwordArcTexture)reader.ReadInt16();
             settings.Easing = (VanillaSwordArcEasing)reader.ReadByte();
+            settings.WeightedEaseInTicks = reader.ReadInt32();
+            settings.WeightedEaseOutTicks = reader.ReadInt32();
+            settings.WeightedEaseOutDecay = reader.ReadSingle();
             settings.Duration = reader.ReadInt32();
             settings.StartAngle = reader.ReadSingle();
             settings.SweepAngle = reader.ReadSingle();
@@ -577,6 +764,11 @@ namespace tsorcRevamp.Projectiles.VFX
             settings.TipSparkleOpacity = reader.ReadSingle();
             settings.DrawTipSparkle = reader.ReadBoolean();
             settings.TintWithWorldLighting = reader.ReadBoolean();
+            settings.DrawCinderOverlay = reader.ReadBoolean();
+            settings.CinderOverlayOpacity = reader.ReadSingle();
+            settings.CinderOverlayDarkColor = ReadColor(reader);
+            settings.CinderOverlayFlameColor = ReadColor(reader);
+            settings.CinderOverlayCoreColor = ReadColor(reader);
             settings.DarkColor = ReadColor(reader);
             settings.BodyColor = ReadColor(reader);
             settings.CoreColor = ReadColor(reader);
@@ -607,6 +799,14 @@ namespace tsorcRevamp.Projectiles.VFX
 
             settings.WorldVelocity = reader.ReadVector2();
             settings.FollowAnchorRotation = reader.ReadBoolean();
+            settings.TrackPuppetBlade = reader.ReadBoolean();
+            hasEverTrackedPuppetBlade = reader.ReadBoolean();
+            Projectile.Center = reader.ReadVector2();
+            trackedPuppetBladeDirection = reader.ReadVector2();
+            trackedPuppetBladeProgress = reader.ReadSingle();
+            hasTrackedPuppetBlade = hasEverTrackedPuppetBlade;
+            if (hasEverTrackedPuppetBlade)
+                Projectile.rotation = trackedPuppetBladeDirection.ToRotation();
             settings.Sanitize();
 
             Projectile.friendly = settings.EnableCollision && isFriendly;

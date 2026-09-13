@@ -565,7 +565,8 @@ namespace SwingPreview
                 return MathHelper.Lerp(rotation, target, 0.22f);
             }
 
-            (float a0, float a1) = Endpoints(spec, step.Motion);
+            (float a0, float a1) = Endpoints(spec, step.Motion,
+                inTel ? "MeleeComboTelegraph" : "MeleeComboAttack");
 
             switch (step.Motion)
             {
@@ -790,10 +791,10 @@ namespace SwingPreview
             return SwingEase.Apply(a0, a1, t, profile.UseSwingEasing);
         }
 
-        private static (float, float) Endpoints(SwingSpec spec, ComboMotion motion)
+        private static (float, float) Endpoints(SwingSpec spec, ComboMotion motion, string phaseName = null)
         {
             (float a0, float a1) = WeaponArchetypeTables.SwingArcEndpoints(motion, spec.Profile.OverheadWindupOvershoot);
-            spec.Profile.ModifyEndpoints(motion, ref a0, ref a1);
+            spec.Profile.ModifyEndpoints(motion, ref a0, ref a1, phaseName);
             if (spec.FlipArc)
             {
                 (a0, a1) = (a1, a0);

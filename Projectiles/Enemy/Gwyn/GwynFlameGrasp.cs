@@ -30,18 +30,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float CaptureStandoff = 72f;
         const int GrabPadding = 14;
         const int ShaderDrawSize = 58;
+        const float PixelBlockSize = 2f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> flameGraspEffect;
         static Asset<Texture2D> flameTexture;
         static Asset<Texture2D> smoothNoise;
-
-        static readonly Vector2[] OutlineDirections =
-        {
-            new Vector2(-1f, -1f), new Vector2(0f, -1f), new Vector2(1f, -1f),
-            new Vector2(-1f,  0f),                         new Vector2(1f,  0f),
-            new Vector2(-1f,  1f), new Vector2(0f,  1f), new Vector2(1f,  1f),
-        };
 
         int State => (int)Projectile.ai[1];
         int TargetWho => (int)Projectile.ai[2] - 1;
@@ -324,6 +318,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Rectangle source = new Rectangle(0, 0, ShaderDrawSize, ShaderDrawSize);
             Vector2 drawPosition = worldPosition - Main.screenPosition;
+            Vector2 drawSize = source.Size() * scale;
+            Vector2 pixelBlocks = Vector2.Max(drawSize / PixelBlockSize, Vector2.One);
+            Vector4 pixelGrid = new Vector4(pixelBlocks.X, pixelBlocks.Y,
+                1f / pixelBlocks.X, 1f / pixelBlocks.Y);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
@@ -342,6 +340,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.CurrentTechnique = effect.Techniques["GwynFlameGrasp"];
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
                 effect.Parameters["PrimaryTextureSize"].SetValue(flameTexture.Value.Size());
+                effect.Parameters["PixelGrid"].SetValue(pixelGrid);
 
                 if (drawUnblockableOutline)
                 {
@@ -352,17 +351,17 @@ namespace tsorcRevamp.Projectiles.Enemy
                         * (float)System.Math.Sin(Main.GlobalTimeWrappedHourly * 8f);
                     const float combinedOutlineOpacity = 0.3f;
                     float layerOpacity = 1f - (float)System.Math.Pow(
-                        1f - combinedOutlineOpacity, 1f / OutlineDirections.Length);
+                        1f - combinedOutlineOpacity, 1f / AttackTelegraphDraw.GlowDirections.Length);
                     effect.Parameters["Opacity"].SetValue(
                         opacity * layerOpacity * MathHelper.Lerp(0.76f, 1f, pulse));
                     effect.CurrentTechnique.Passes[0].Apply();
 
                     float outlineRadius = MathHelper.Lerp(1.6f, 2.8f, pulse)
                         * System.Math.Max(1f, scale);
-                    foreach (Vector2 direction in OutlineDirections)
+                    foreach (Vector2 direction in AttackTelegraphDraw.GlowDirections)
                     {
                         Main.EntitySpriteDraw(flameTexture.Value,
-                            drawPosition + direction.SafeNormalize(Vector2.Zero) * outlineRadius,
+                            drawPosition + direction * outlineRadius,
                             source, Color.White, rotation, source.Size() * 0.5f, scale,
                             SpriteEffects.None, 0);
                     }

@@ -12,7 +12,8 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///Gwyn's hurled greatsword (shares the SwordOfGwyn item art): spins across the arena trailing
     ///fire, arcs at its apex, and returns to his hand — a full-lane horizontal wall that punishes
     ///edge-campers. While it flies, Gwyn is weaponless (the punish window if you're close).
-    ///ai[0] = owner NPC whoAmI, ai[1] = outbound flight ticks before the return begins.
+    ///ai[0] = owner NPC whoAmI, ai[1] = launch-locked outbound distance in pixels,
+    ///ai[2] = 1 once the return begins.
     ///</summary>
     class GwynGreatswordBoomerang : ModProjectile
     {
@@ -21,14 +22,17 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float ReturnAccel = 1.1f;
         const float ReturnTopSpeed = 19f;
         const float CatchRange = 52f;
+        const float OutboundStallDistance = 180f;
+        const float OutboundStallSpeed = 8f;
+        public const float TargetOvershoot = 300f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> cinderTrailEffect;
         static Asset<Texture2D> flowNoise;
 
         int ParentIndex => (int)Projectile.ai[0];
-        int OutboundTicks => (int)Projectile.ai[1] > 0 ? (int)Projectile.ai[1] : 50;
-        bool Returning => Projectile.localAI[0] > OutboundTicks;
+        float OutboundDistance => Projectile.ai[1] > 0f ? Projectile.ai[1] : 750f;
+        bool Returning => Projectile.ai[2] == 1f;
 
         public override void SetStaticDefaults()
         {
@@ -44,13 +48,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false; // a god's flaming blade doesn't stop for terrain
             Projectile.penetrate = -1;
             Projectile.aiStyle = 0;
-            Projectile.timeLeft = 360;
+            Projectile.timeLeft = 720;
             Projectile.light = 0.7f;
         }
 
         public override void AI()
         {
-            Projectile.localAI[0]++;
             Projectile.rotation += 0.38f * (Projectile.velocity.X >= 0f ? 1f : -1f);
 
             NPC parent = ParentIndex >= 0 && ParentIndex < Main.maxNPCs ? Main.npc[ParentIndex] : null;
@@ -79,8 +82,35 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             else
             {
-                //Outbound: slight decay so it visibly stalls at the apex before turning back
-                Projectile.velocity *= 0.985f;
+                // Distance, rather than a timer, owns the turn. ai[1] is locked by Gwyn at release
+                // to the target's distance + 300px, so movement after the tell cannot shorten the
+                // promised overshoot. Constant speed carries the blade across the expanded arena;
+                // only the final 180px eases down to preserve the old readable apex stall.
+                float remaining = OutboundDistance - Projectile.localAI[0];
+                if (remaining <= 0f)
+                {
+                    Projectile.ai[2] = 1f;
+                    Projectile.netUpdate = true;
+                }
+                else if (remaining < OutboundStallDistance)
+                {
+                    float stallProgress = 1f - remaining / OutboundStallDistance;
+                    float speed = MathHelper.Lerp(Projectile.velocity.Length(), OutboundStallSpeed,
+                        stallProgress * 0.08f);
+                    Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitX) * speed;
+                }
+
+                // Clamp the last outbound step to the promised turn point. This keeps the centre of
+                // the blade at least 300px past the locked target instead of reversing one tick early.
+                remaining = OutboundDistance - Projectile.localAI[0];
+                float outboundStep = System.Math.Min(Projectile.velocity.Length(), remaining);
+                Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitX) * outboundStep;
+                Projectile.localAI[0] += outboundStep;
+                if (Projectile.localAI[0] >= OutboundDistance)
+                {
+                    Projectile.ai[2] = 1f;
+                    Projectile.netUpdate = true;
+                }
             }
 
             //Blazing spin trail
@@ -138,6 +168,12 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
                 effect.Parameters["DrawSize"].SetValue(texture.Size());
                 effect.Parameters["PrimaryTextureSize"].SetValue(texture.Size());
+                Vector2 pixelDrawSize = texture.Size() * 0.85f;
+                Vector2 pixelCount = new Vector2(
+                    System.Math.Max(1f, pixelDrawSize.X / 2f),
+                    System.Math.Max(1f, pixelDrawSize.Y / 2f));
+                effect.Parameters["PixelGrid"].SetValue(new Vector4(
+                    pixelCount.X, pixelCount.Y, 1f / pixelCount.X, 1f / pixelCount.Y));
                 effect.Parameters["Progress"].SetValue(Returning ? 1f : 0f);
 
                 for (int i = Projectile.oldPos.Length - 1; i >= 1; i--)
