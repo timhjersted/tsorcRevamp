@@ -19,6 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
 
         const float ExpandSpeed = 10f;
+        const int FadeOutTicks = 15;
         const float RingHalfThickness = 30f;
         const float FlameTrailLength = 58f;
         //The shader's outermost term is the lip, which dies 3px past RingRadius + RingHalfThickness.
@@ -34,6 +35,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 420f;
         float Radius => Projectile.localAI[0];
+        bool Fading => Radius >= MaxRadius;
+        float FadeOpacity => Fading
+            ? MathHelper.Clamp(Projectile.timeLeft / (float)FadeOutTicks, 0f, 1f)
+            : 1f;
 
         public override void SetDefaults()
         {
@@ -48,16 +53,21 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            Projectile.timeLeft = (int)(MaxRadius / ExpandSpeed) + 4;
+            int broadphaseDiameter = (int)Math.Ceiling((MaxRadius + RingHalfThickness) * 2f);
+            Projectile.Resize(broadphaseDiameter, broadphaseDiameter);
+            Projectile.timeLeft = (int)Math.Ceiling(MaxRadius / ExpandSpeed) + FadeOutTicks;
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.9f, Pitch = -0.2f }, Projectile.Center); // fiery whoosh
         }
+
+        public override bool? CanDamage() => !Fading;
 
         public override void AI()
         {
             Projectile.velocity = Vector2.Zero;
-            Projectile.localAI[0] += ExpandSpeed;
+            Projectile.localAI[0] = Math.Min(MaxRadius, Radius + ExpandSpeed);
             //Ember supplement on the leading edge
-            for (int i = 0; i < 6; i++)
+            int emberCount = Fading ? 2 : 6;
+            for (int i = 0; i < emberCount; i++)
             {
                 float ang = Main.rand.NextFloat(MathHelper.TwoPi);
                 Vector2 pos = Projectile.Center + ang.ToRotationVector2() * Radius;
@@ -65,8 +75,9 @@ namespace tsorcRevamp.Projectiles.Enemy
                 int dust = Dust.NewDust(pos, 4, 4, type, 0f, 0f, 60, default, 1.4f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity = ang.ToRotationVector2() * 2f;
+                Main.dust[dust].scale *= FadeOpacity;
             }
-            Lighting.AddLight(Projectile.Center, 1.1f, 0.6f, 0.2f);
+            Lighting.AddLight(Projectile.Center, 1.1f * FadeOpacity, 0.6f * FadeOpacity, 0.2f * FadeOpacity);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -103,7 +114,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             LoadAssets();
 
-            float opacity = MathHelper.Clamp(Projectile.timeLeft / 12f, 0.35f, 1f);
+            float opacity = FadeOpacity;
             float drawRadius = Math.Max(2f, Radius + RingHalfThickness + DrawPadding);
             int drawDiameter = Math.Max(2, (int)Math.Ceiling(drawRadius * 2f));
             Rectangle source = new Rectangle(0, 0, drawDiameter, drawDiameter);

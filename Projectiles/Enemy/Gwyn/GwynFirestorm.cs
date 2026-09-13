@@ -17,8 +17,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         const int TelegraphTicks = 40;
         const int DropInterval = 7;   // a fireball wave every N ticks
-        const float BandHalfWidth = 380f;
-        const float FireballSpeedMultiplier = 0.75f;
+        // 1,060px total coverage: 300px wider than the former 760px band.
+        const float BandHalfWidth = 530f;
+        // The former 0.75 movement scale reduced by 20%.
+        const float FireballSpeedMultiplier = 0.60f;
 
         int Duration => (int)Projectile.ai[1] > 0 ? (int)Projectile.ai[1] : 150;
         int Timer => (int)Projectile.localAI[0];
@@ -83,7 +85,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Vector2 velocity = new Vector2(Main.rand.NextFloat(-1.5f, 1.5f), 6f) * FireballSpeedMultiplier;
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawn, velocity,
                         ModContent.ProjectileType<GwynFireball>(), (int)Projectile.ai[0], 2f, Projectile.owner,
-                        0.2f * FireballSpeedMultiplier);
+                        0.2f * FireballSpeedMultiplier, FireballSpeedMultiplier);
                 }
             }
         }

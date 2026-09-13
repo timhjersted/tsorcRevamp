@@ -3,6 +3,7 @@
 /.vs
 /bin
 /obj
+/.nuget-packages/
 Tiles/SteamEmu/stats.ini
 tsorcRevamp.csproj.user
 Items/RubixCube.cs

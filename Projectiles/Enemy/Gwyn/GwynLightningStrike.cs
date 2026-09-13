@@ -21,7 +21,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         const int TelegraphTicks = 40;
         const int StrikeTicks = 12;
-        const int FloorSparkTiles = 36;
+        // 54 tiles / 864px: 50% farther than the former 36-tile lane, unless terrain stops it first.
+        const int FloorSparkTiles = 54;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> judgmentEffect;

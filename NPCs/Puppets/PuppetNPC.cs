@@ -615,6 +615,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int   PierceStabRaiseAnimTicks   => PierceStabRaiseTicks;
         /// <summary>Ticks spent rotating back down and flicking the target away.</summary>
         protected virtual int   PierceStabFlickTicks       => 20;
+        /// <summary>Optional hold between the start-of-flick effect and the actual release. The
+        /// default remains immediate; bosses with a lingering blast can delay the launch so its
+        /// timing matches the visual.</summary>
+        protected virtual int   PierceStabFlickDelayTicks  => 0;
         /// <summary>Cooldown after the whole sequence (dash or stab) ends before another can begin.</summary>
         protected virtual int   PierceCooldownAfterUse     => 480;
 
@@ -630,7 +634,11 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Fired once per tick while the target is held impaled (PierceStabHold phase),
         /// with the current raise progress 0–1.  Override to keep the impaling weapon's visual in sync.</summary>
         protected virtual void DoPierceStabHoldTick(Player target, float raiseProgress01) { }
-        /// <summary>Fired once when the flick releases the target (start of PierceStabFlick).
+        /// <summary>Fired once when PierceStabFlick begins, before any optional release delay.</summary>
+        protected virtual void OnPierceFlickStarted(Player target) { }
+        /// <summary>Fired while a delayed flick is still holding its target.</summary>
+        protected virtual void DoPierceStabFlickDelayTick(Player target, int elapsed) { }
+        /// <summary>Fired once when the flick actually releases the target.
         /// Override for the heal / screenshake / launch — the base class does not apply these itself
         /// since the exact numbers are boss-specific.</summary>
         protected virtual void OnPierceFlick(Player target) { }
@@ -2229,6 +2237,9 @@ namespace tsorcRevamp.NPCs.Puppets
         protected int AfterimageTicks;
         /// <summary>Draw an echo every Nth cached old-position sample (NPC.oldPos has 10 slots by default).</summary>
         protected virtual int AfterimageSampleStep => 2;
+        /// <summary>Maximum number of cached old-position slots eligible for afterimages. This lets
+        /// one attack use a longer type-level trail cache without lengthening every other dash.</summary>
+        protected virtual int AfterimageSampleLimit => NPC.oldPos.Length;
         protected virtual float AfterimageOpacity => 0.4f;
 
         // ── Umbral Echo Step (optional dash follow-up) ─────────────────────────────
@@ -4470,8 +4481,18 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.PierceStabFlick:
                 {
                     LockAttackFacing();
-                    if (PhaseTimer == PierceStabFlickTicks && _pierceTarget != null && _pierceTarget.active)
-                        OnPierceFlick(_pierceTarget);
+                    int flickElapsed = PierceStabFlickTicks - PhaseTimer;
+                    int releaseDelay = Math.Clamp(PierceStabFlickDelayTicks, 0,
+                        Math.Max(0, PierceStabFlickTicks - 1));
+                    if (_pierceTarget != null && _pierceTarget.active)
+                    {
+                        if (flickElapsed == 0)
+                            OnPierceFlickStarted(_pierceTarget);
+                        if (flickElapsed < releaseDelay)
+                            DoPierceStabFlickDelayTick(_pierceTarget, flickElapsed);
+                        if (flickElapsed == releaseDelay)
+                            OnPierceFlick(_pierceTarget);
+                    }
                     if (--PhaseTimer <= 0)
                     {
                         _pierceTarget = null;
@@ -5689,7 +5710,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// range-aware (close/mid/far bands) and HP-aware (heavy combos weighted up as HP drops).
         /// Returns true if a combo started; false if no eligible combo (cooldowns/weights).
         /// </summary>
-        private bool TryStartMeleeCombo(float dist, bool rangedStartOnly = false)
+        protected bool TryStartMeleeCombo(float dist, bool rangedStartOnly = false)
         {
             EnsureMeleeComboPool();
             if (_meleeComboPool == null || _meleeComboPool.Length == 0)
@@ -6759,6 +6780,11 @@ namespace tsorcRevamp.NPCs.Puppets
         /// true — most set-pieces are stationary channels; override false for a moving one.</summary>
         protected virtual  bool SlowDownDuringCustom => true;
 
+        /// <summary>Optional fixed local weapon angle for a <see cref="AttackPhase.Custom"/> set-piece.
+        /// Return <c>null</c> to keep the ordinary carried-weapon easing. This gives scripted guards and
+        /// channels a real authored pose without pretending they are a damaging melee swing.</summary>
+        protected virtual float? CustomWeaponRotation => null;
+
         /// <summary>
         /// Park the puppet in a bespoke, timed set-piece phase for <paramref name="duration"/> ticks: it
         /// holds an optional weapon pose, fires <see cref="DoCustomAttack"/> once now, runs
@@ -7371,8 +7397,14 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             else if (Phase == AttackPhase.PierceStabFlick)
             {
-                // Snap back down and past horizontal — the flick that launches the target away.
-                float flickT = PierceStabFlickTicks > 0 ? 1f - (float)PhaseTimer / PierceStabFlickTicks : 1f;
+                // Hold the raised pose through an optional delayed blast, then snap back down and
+                // past horizontal in sync with the actual release.
+                int elapsedTicks = PierceStabFlickTicks - PhaseTimer;
+                int releaseDelay = Math.Clamp(PierceStabFlickDelayTicks, 0,
+                    Math.Max(0, PierceStabFlickTicks - 1));
+                int animationTicks = Math.Max(1, PierceStabFlickTicks - releaseDelay);
+                float flickT = MathHelper.Clamp(
+                    (elapsedTicks - releaseDelay) / (float)animationTicks, 0f, 1f);
                 _weaponRotation = MathHelper.Lerp(-MathHelper.PiOver4, MathHelper.PiOver2, flickT);
             }
             else if (Phase == AttackPhase.JumpSlashDodgeback)
@@ -7990,6 +8022,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                 }
             }
+            else if (Phase == AttackPhase.Custom && CustomWeaponRotation.HasValue)
+            {
+                _weaponRotation = CustomWeaponRotation.Value;
+            }
             else if (IsWeaponRecoveryPhase && IsHoldingMeleeRecoveryFollowThrough())
             {
                 // The last active-frame rotation is intentionally left untouched. Damage has
@@ -8015,6 +8051,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 // Ease the weapon back to the natural hold angle so it always looks carried.
                 _weaponRotation = MathHelper.Lerp(_weaponRotation, HoldRotation, 0.10f);
             }
+
+            if (UseCompositeArmForAdditionalPhase)
+                ModifyAdditionalPhaseWeaponRotation(ref _weaponRotation);
 
             UpdateSpearGrip();
             SpawnSwingVFX(_weaponRotation - _prevWeaponRotation);
@@ -9096,7 +9135,9 @@ namespace tsorcRevamp.NPCs.Puppets
             if (AfterimageTicks > 0 && !HasSpectralOverlay)
             {
                 _puppet.isFirstFractalAfterImage = true;
-                for (int k = 0; k < NPC.oldPos.Length; k += AfterimageSampleStep)
+                int sampleLimit = Math.Min(NPC.oldPos.Length, Math.Max(0, AfterimageSampleLimit));
+                int sampleStep = Math.Max(1, AfterimageSampleStep);
+                for (int k = 0; k < sampleLimit; k += sampleStep)
                 {
                     if (NPC.oldPos[k] == Vector2.Zero)
                     {
@@ -10422,6 +10463,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Allows a subclass to keep the continuously-authored front arm active during
         /// bespoke weapon phases that are not part of the shared melee/combo phase list.</summary>
         protected virtual bool UseCompositeArmForAdditionalPhase => false;
+
+        /// <summary>Allows a bespoke additional phase to replace the normal weapon-space rotation
+        /// before it drives the composite arm. Default is a no-op.</summary>
+        protected virtual void ModifyAdditionalPhaseWeaponRotation(ref float weaponRotation) { }
 
         /// <summary>Opt-in great-weapon pose. The front arm continues to own the weapon anchor and
         /// collision; the back arm follows the same authored swing and reaches for a second hilt

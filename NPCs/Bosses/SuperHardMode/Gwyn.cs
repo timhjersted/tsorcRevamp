@@ -155,6 +155,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // returns its argument unchanged for any positive tick count and GS() sets no SwingSpeedMult.
         protected override bool UseAuthoredComboSwingClock => true;
 
+        // Riposte's Custom phase is a true raised-blade guard, not an idle recovery with a label.
+        // The pose is held locally by the puppet rig for all 60 synchronized guard ticks.
+        protected override float? CustomWeaponRotation => _riposteTimer > 0 ? RefinedRaisedPose : null;
+
         // Holds the finished swing pose for 14 ticks before the arm eases back to the carry angle, so
         // a strike reads as a follow-through instead of drifting home on recovery frame one. Combo
         // recoveries keep the blade drawn throughout (MeleeComboRecovery is always a visible phase);
@@ -310,7 +314,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool UseCompositeArmSwing => true;
         protected override bool UseTwoHandedCompositeSwing => !IsDashGrabSequence;
         protected override bool UseCompositeArmForAdditionalPhase => IsDashGrabSequence;
-        protected override bool HasUnblockableBodyAura => Phase == AttackPhase.TendrilTelegraph;
+        protected override bool HasUnblockableBodyAura =>
+            Phase == AttackPhase.TendrilTelegraph || Phase == AttackPhase.PierceDash;
         protected override float UnblockableBodyAuraScale => 1.1f;
         protected override float UnblockableBodyAuraOpacity => 0.3f;
         // Gwyn never disengages to drink Estus; pressure and authored recoveries remain his only
@@ -328,7 +333,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Flash colors are the Lord of Cinder's fire — orange bread & butter, red heavy commits.
         const int CB_CLEAVE = 0, CB_UNDEROVER = 1, CB_LEAP = 2, CB_SLIDE = 3, CB_SPIN = 4,
                   CB_CINDERFALL = 5, CB_GUILLOTINE = 6, CB_BACKHAND = 7, CB_THREEHIT = 8,
-                  CB_ROLLCATCH = 9, CB_FLURRY = 10, CB_PURSUIT = 11;
+                  CB_ROLLCATCH = 9, CB_FLURRY = 10, CB_PURSUIT = 11, CB_JUDGMENT = 12,
+                  CB_RIPOSTE = 13;
 
         // `ease` shapes the arc's velocity curve. It defaults to Smooth to match the shared S()
         // helper in MeleeComboSystem: leaving it off produced SwingEaseStyle.Linear (enum value 0),
@@ -342,6 +348,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const string CinderingLeapName = "Cindering Leap";
         const string CinderfallName = "Cinderfall";
         const string ThreeHitName = "3-Hit";
+        const string JudgmentGuillotineName = "Judgment Guillotine";
+        const string RiposteCounterName = "Riposte Counter";
 
         // Default sword-language poses: a safe raised start and an end close to the player's own
         // straight-down broadsword finish. Their 3.91-rad (224-degree) envelope leaves about 180
@@ -475,6 +483,50 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             swingEase: SwingEaseStyle.Whip,
             maxAimCorrection: 0.22f,
             aimLockTicksBeforeActive: 20);
+
+        // Judgment Guillotine timing sheet
+        // Poses -1.62 -> 2.29 rad: 224° envelope; the 0.22-0.82 armed interval covers about
+        // 180° of the Whip-shaped cut. Tell 60t on screen: 40t of eased sword movement, then a
+        // literal 20t hold at the attack-start pose. The active swing re-accelerates from rest and
+        // remains damaging for 19t, inside the player's 22t base roll. Its final ~6t are harmless
+        // follow-through, then the 48t recovery is the punish window. This dedicated clip is only
+        // eligible after Judgment's marked teleport; ordinary Guillotine keeps its shorter tell.
+        static readonly PuppetAttackClip JudgmentGuillotineV2 = new PuppetAttackClip(
+            name: JudgmentGuillotineName,
+            pose: PuppetPosePreset.TwoHandedSwing,
+            windupTicks: 60,
+            activeTicks: 32,
+            recoveryTicks: 48,
+            oppositeWindupRotation: 0.45f,
+            attackStartRotation: RefinedRaisedPose,
+            attackEndRotation: RefinedLoweredPose,
+            hitWindowStart: 0.22f,
+            hitWindowEnd: 0.82f,
+            swingEase: SwingEaseStyle.Whip,
+            maxAimCorrection: 0f,
+            aimLockTicksBeforeActive: 20,
+            windupHoldTicks: 20);
+
+        // Riposte Counter timing sheet
+        // The 60t guard has already raised the sword. On a successful melee bait, the counter holds
+        // that pose for 18t while the clang lands, then cuts from -1.62 to 2.29 rad. Its 0.15-0.78
+        // live interval is 15 of the 24 swing ticks, comfortably inside the player's 22t roll.
+        // The 40t recovery is the reward for baiting or rolling the counter instead of trading.
+        static readonly PuppetAttackClip RiposteCounterV2 = new PuppetAttackClip(
+            name: RiposteCounterName,
+            pose: PuppetPosePreset.TwoHandedSwing,
+            windupTicks: 18,
+            activeTicks: 24,
+            recoveryTicks: 40,
+            oppositeWindupRotation: RefinedRaisedPose,
+            attackStartRotation: RefinedRaisedPose,
+            attackEndRotation: RefinedLoweredPose,
+            hitWindowStart: 0.15f,
+            hitWindowEnd: 0.78f,
+            swingEase: SwingEaseStyle.Whip,
+            maxAimCorrection: 0f,
+            aimLockTicksBeforeActive: 18,
+            windupStartRotation: RefinedRaisedPose);
 
         static readonly PuppetAttackClip BackhandV2 = new PuppetAttackClip(
             name: "Backhand Step",
@@ -625,6 +677,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     // Safety timeout only; the step normally ends 30 ticks after the leap apex.
                     GS(ComboMotion.RisingUppercutLeap,  0, 150, 0, 1.35f, 1.20f, ease: SwingEaseStyle.Whip),
                 } },
+            // 12 — Judgment Guillotine: internal-only follow-up for Judgment from Behind. Its
+            // CanSelect gate is closed unless the marked teleport has completed, so it never enters
+            // Gwyn's ordinary weighted bag. A real positive weight lets ReactiveComboIndex select it.
+            new MeleeCombo { Name = JudgmentGuillotineName, BaseWeight = 1, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = 0, RecoveryTicks = 48,
+                HeavyCommit = true, HyperArmor = true, RuntimeV2Clip = JudgmentGuillotineV2,
+                Steps = new[] { GS(ComboMotion.OverheadArc, 60, 32, 0, 1.8f, 1.50f, 0.35f,
+                    ease: SwingEaseStyle.Whip) } },
+            // 13 — Riposte Counter: opened only after a melee strike commits into the active guard.
+            // Reach stays at 1.1 so this is a sword punish, not the old disconnected fire crescent.
+            new MeleeCombo { Name = RiposteCounterName, BaseWeight = 1, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = 0, RecoveryTicks = 40,
+                HeavyCommit = true, HyperArmor = true, RuntimeV2Clip = RiposteCounterV2,
+                Steps = new[] { GS(ComboMotion.OverheadArc, 18, 24, 0, 1.55f, 1.10f, 0.30f,
+                    ease: SwingEaseStyle.Whip) } },
         };
 
         protected override MeleeCombo[] MeleeComboPoolOverride => GwynCombos;
@@ -639,10 +706,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 return -1;
             }
+            // A live guard has just caught a melee strike. Consume its internal-only counter before
+            // reading the ordinary movement reactions, so a roll-state cannot replace the promised punish.
+            if (_riposteCounterPending)
+            {
+                if (Ready(ready, CB_RIPOSTE)) { _riposteCounterPending = false; return CB_RIPOSTE; }
+                if (Ready(ready, CB_GUILLOTINE)) { _riposteCounterPending = false; return CB_GUILLOTINE; }
+            }
             //Judgment from Behind: the teleport just planted him at the player's back — the queued
-            //punish is a guaranteed heavy overhead (fallback: the juggle) the moment a combo can start.
+            //punish is the dedicated 60-tick heavy overhead the moment a combo can start.
             if (_judgmentPending > 0)
             {
+                if (Ready(ready, CB_JUDGMENT)) { _judgmentPending = 0; return CB_JUDGMENT; }
+                // Defensive fallback if a future pool edit makes the internal entry unavailable.
                 if (Ready(ready, CB_GUILLOTINE)) { _judgmentPending = 0; return CB_GUILLOTINE; }
                 if (Ready(ready, CB_UNDEROVER)) { _judgmentPending = 0; return CB_UNDEROVER; }
             }
@@ -717,6 +793,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         ///inside MeleeRange * 1.05, so it crosses whatever the gap actually is.</summary>
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
+            // This entry exists so the V2 network snapshot can resolve a dedicated clip by pool
+            // index. It is never part of normal selection; Judgment's teleport opens the gate.
+            if (combo.Name == JudgmentGuillotineName)
+            {
+                return _judgmentPending > 0;
+            }
+            if (combo.Name == RiposteCounterName)
+            {
+                return _riposteCounterPending;
+            }
             //This was described as the enrage chain, but it was selectable for the entire fight.
             //Keep one unmistakable melee reveal for the second half of the fight.
             if (combo.Name == WrathFlurryName)
@@ -803,6 +889,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float DefenseRingRadius = 1000f; // beyond this: defense 9999
         const int FightableDefense = 130;      // the old post-sword value; the sword mechanic is removed
         const float CowardRingRadius = 2000f;  // beyond this: Coward's Affliction (after grace)
+        const float CompressedCowardRingRadius = CowardRingRadius * 0.5f;
+        const int CowardRingShrinkTicks = 180;
+        const int CowardRingHoldTicks = 16 * 60;
+        const int CowardRingExpandTicks = 180;
+        const int CowardRingCompressionTotalTicks = CowardRingShrinkTicks
+            + CowardRingHoldTicks + CowardRingExpandTicks;
         // ── Rain of Death: anchored to the ARENA, not to Gwyn ────────────────────
         // The trigger used to be NPC.Distance(player), which meant the hazard switched on and off
         // as Gwyn's own pathing drifted toward or away from a stationary player — the player could
@@ -820,6 +912,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         Vector2 _arenaCenter;
         bool _arenaCenterSet;
+        int _cowardRingCompressionTimer;
         int _rainTimer;
         bool _rainAnnounced;
 
@@ -834,6 +927,39 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         ///<summary>The fixed arena centre, captured the first tick Gwyn exists. Falls back to his
         ///live position until then so nothing can read a zero vector.</summary>
         Vector2 ArenaCenter => _arenaCenterSet ? _arenaCenter : NPC.Center;
+
+        /// <summary>The outer coward ring smoothly compresses once per Unbroken Advance: 3 seconds
+        ///from 2,000px to 1,000px, 16 seconds held, then a 3-second restoration. The timer itself
+        ///is synchronized so both its collision rule and its dust wall agree in multiplayer.</summary>
+        float CurrentCowardRingRadius
+        {
+            get
+            {
+                if (_cowardRingCompressionTimer <= 0)
+                {
+                    return CowardRingRadius;
+                }
+
+                int elapsed = CowardRingCompressionTotalTicks - _cowardRingCompressionTimer;
+                if (elapsed < CowardRingShrinkTicks)
+                {
+                    float progress = elapsed / (float)CowardRingShrinkTicks;
+                    return MathHelper.Lerp(CowardRingRadius, CompressedCowardRingRadius,
+                        MathHelper.SmoothStep(0f, 1f, progress));
+                }
+
+                elapsed -= CowardRingShrinkTicks;
+                if (elapsed < CowardRingHoldTicks)
+                {
+                    return CompressedCowardRingRadius;
+                }
+
+                elapsed -= CowardRingHoldTicks;
+                float restoreProgress = MathHelper.Clamp(elapsed / (float)CowardRingExpandTicks, 0f, 1f);
+                return MathHelper.Lerp(CompressedCowardRingRadius, CowardRingRadius,
+                    MathHelper.SmoothStep(0f, 1f, restoreProgress));
+            }
+        }
         const int TooEarlyDamage = 10000;
         const float ProximityDebuffRange = 700f;
 
@@ -858,9 +984,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 1;
-            // Twelve afterimages sampled every other cached position keep both the Wrath dash and
-            // Winged Plunge continuous without drawing a solid duplicate over Gwyn's real body.
-            NPCID.Sets.TrailCacheLength[NPC.type] = 24;
+            // Lord's Embrace gets three times its former cached body trail: 72 positions sampled
+            // every other tick produce 36 echoes. Other moves retain their original first 24 slots.
+            NPCID.Sets.TrailCacheLength[NPC.type] = 72;
             NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
@@ -925,6 +1051,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             base.SendExtraAI(writer);
             writer.Write(_arenaCenterSet);
             writer.WriteVector2(_arenaCenter);
+            writer.Write((short)_cowardRingCompressionTimer);
             writer.Write(_spearJumpActive);
             writer.Write((byte)_spearThrowsThisJump);
             writer.Write((byte)_spearFollowupsRemaining);
@@ -938,6 +1065,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write((byte)_plungePhase);
             writer.WriteVector2(_plungeTarget);
             writer.Write(_plungeApexY);
+            writer.Write((byte)_judgmentTeleportTimer);
+            writer.WriteVector2(_judgmentOriginCenter);
+            writer.WriteVector2(_judgmentDestinationBottom);
+            writer.Write((short)_riposteTimer);
+            writer.Write((short)_riposteCd);
+            writer.Write(_riposteCounterPending);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -945,6 +1078,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             base.ReceiveExtraAI(reader);
             _arenaCenterSet = reader.ReadBoolean();
             _arenaCenter = reader.ReadVector2();
+            _cowardRingCompressionTimer = reader.ReadInt16();
             _spearJumpActive = reader.ReadBoolean();
             _spearThrowsThisJump = reader.ReadByte();
             _spearFollowupsRemaining = reader.ReadByte();
@@ -958,6 +1092,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _plungePhase = reader.ReadByte();
             _plungeTarget = reader.ReadVector2();
             _plungeApexY = reader.ReadSingle();
+            _judgmentTeleportTimer = reader.ReadByte();
+            _judgmentOriginCenter = reader.ReadVector2();
+            _judgmentDestinationBottom = reader.ReadVector2();
+            _riposteTimer = reader.ReadInt16();
+            _riposteCd = reader.ReadInt16();
+            _riposteCounterPending = reader.ReadBoolean();
         }
 
         public override void AI()
@@ -1139,6 +1279,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // the hand itself is the threat. The target position stays live during the readable windup,
         // then locks 100px beyond the player when the dash commits. A hit stops Gwyn immediately;
         // a miss ends at that cached overshoot instead of carrying him blindly across the arena.
+        // Attack spec: 45t hand-gather tell; 32px/t dash with 100px overshoot, 36 cached echoes, and
+        // the same red body silhouette as Lord's Grasp. On contact the player is held 120t at the
+        // aimed hand, 50px higher and 50px farther out. Gold motes collapse into that hand while a
+        // presentation-only flame orb draws over the player. The explosion starts the 40t flick;
+        // release waits 20t, then launches at 12px/t through normal tile-stopped player movement.
+        // Damage is 60% max life, server-authoritative; the orb is harmless and network-synced.
         protected override bool  CanPierce                 => HalfHealthMovesUnlocked;
         protected override float PierceRange               => 2400f;
         protected override float MinPierceRange            => 280f;
@@ -1150,17 +1296,73 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   PierceStabChance            => 100;
         protected override int   PierceStabRaiseTicks       => 120;
         protected override int   PierceStabRaiseAnimTicks   => 18;
-        protected override int   PierceStabFlickTicks       => 16;
+        protected override int   PierceStabFlickTicks       => 40;
+        protected override int   PierceStabFlickDelayTicks  => 20;
         protected override int   PierceCooldownAfterUse     => 900;
 
         const float LordEmbraceMaxHealthDamageFraction = 0.60f;
         const float DashGrabOvershoot = 100f;
-        const float DashGrabFlickDistance = 50f * 16f;
+        const float LordEmbraceHoldRaise = 50f;
+        const float LordEmbraceHoldOutward = 50f;
+        const float LordEmbraceFlickSpeed = 12f;
         float _dashGrabEndX;
+
+        protected override int AfterimageSampleLimit => IsDashGrabSequence ? 72 : 24;
 
         bool IsDashGrabSequence =>
             Phase == AttackPhase.PierceTelegraph || Phase == AttackPhase.PierceDash ||
             Phase == AttackPhase.PierceStabHold || Phase == AttackPhase.PierceStabFlick;
+
+        internal bool LordEmbraceOrbActive =>
+            Phase == AttackPhase.PierceStabHold || Phase == AttackPhase.PierceStabFlick;
+
+        internal void GetLordEmbraceOrbDraw(out float scale, out float opacity)
+        {
+            opacity = 1f;
+            if (Phase == AttackPhase.PierceStabHold)
+            {
+                float growth = 1f - PhaseTimer / (float)Math.Max(1, PierceStabRaiseTicks);
+                scale = MathHelper.Lerp(1.18f, 2.05f,
+                    MathHelper.SmoothStep(0f, 1f, growth));
+                return;
+            }
+
+            int elapsed = PierceStabFlickTicks - PhaseTimer;
+            float release = MathHelper.Clamp(
+                (elapsed - PierceStabFlickDelayTicks) /
+                (float)Math.Max(1, PierceStabFlickTicks - PierceStabFlickDelayTicks), 0f, 1f);
+            scale = MathHelper.Lerp(2.05f, 1.25f, MathHelper.SmoothStep(0f, 1f, release));
+            opacity = 1f - release;
+        }
+
+        Vector2 LordEmbraceHoldPosition => PuppetHandPosition
+            + new Vector2(NPC.direction * (4f + LordEmbraceHoldOutward),
+                -4f - LordEmbraceHoldRaise);
+
+        protected override void ModifyAdditionalPhaseWeaponRotation(ref float weaponRotation)
+        {
+            if (!IsDashGrabSequence)
+                return;
+
+            int flickElapsed = PierceStabFlickTicks - PhaseTimer;
+            if (Phase == AttackPhase.PierceStabFlick && flickElapsed >= PierceStabFlickDelayTicks)
+                return;
+
+            Player target = Main.player[NPC.target];
+            if (target == null || !target.active || target.dead)
+                return;
+
+            Vector2 aim = (target.Center - NPC.Center)
+                .SafeNormalize(new Vector2(NPC.direction, 0f));
+            float worldAngle = aim.ToRotation();
+            float directionNeutralAngle = NPC.direction == 1
+                ? worldAngle
+                : MathHelper.Pi - worldAngle;
+            float time = (float)Main.GameUpdateCount + NPC.whoAmI * 13f;
+            float vibration = (float)Math.Sin(time * 0.9f) * 0.018f
+                + (float)Math.Sin(time * 1.7f) * 0.009f;
+            weaponRotation = directionNeutralAngle + vibration;
+        }
 
         protected override void DoPierceWindup(int elapsed)
         {
@@ -1243,6 +1445,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), target.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.Gwyn.GwynEmbraceOrb>(), 0, 0f,
+                    Main.myPlayer, NPC.whoAmI, target.whoAmI);
                 NPC.netUpdate = true;
             }
         }
@@ -1255,41 +1460,47 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            Vector2 holdPosition = PuppetHandPosition + new Vector2(NPC.direction * 4f, -4f);
+            Vector2 holdPosition = LordEmbraceHoldPosition;
             var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.ImpaleFreezeTimer = 10;
             modPlayer.ImpaleWorldPosition = holdPosition;
 
-            if (!Main.dedServ)
-            {
-                float growth = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(raiseProgress01, 0f, 1f));
-                int count = 2 + (int)(growth * 7f);
-                float radius = MathHelper.Lerp(12f, 58f, growth);
-                for (int i = 0; i < count; i++)
-                {
-                    Vector2 offset = Main.rand.NextVector2Circular(radius, radius);
-                    Vector2 velocity = offset.SafeNormalize(-Vector2.UnitY)
-                        * Main.rand.NextFloat(0.6f, 2.4f) + new Vector2(0f, -1.2f - growth * 1.8f);
-                    Dust ember = Dust.NewDustPerfect(holdPosition + offset,
-                        Main.rand.NextBool(3) ? DustID.GoldFlame : DustID.Torch,
-                        velocity, 45, new Color(255, 116, 24), Main.rand.NextFloat(0.9f, 1.7f));
-                    ember.noGravity = true;
-                }
-                Lighting.AddLight(holdPosition, 1.1f + growth * 0.7f, 0.42f + growth * 0.35f, 0.08f);
-            }
+            EmitLordEmbraceHandCollapse(raiseProgress01);
         }
 
-        protected override void OnPierceFlick(Player target)
+        void EmitLordEmbraceHandCollapse(float progress01)
         {
-            var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.ImpaleFreezeTimer = 0;
+            if (Main.dedServ)
+                return;
+
+            float growth = MathHelper.SmoothStep(0f, 1f,
+                MathHelper.Clamp(progress01, 0f, 1f));
+            Vector2 hand = PuppetHandPosition;
+            int count = 2 + (int)(growth * 5f);
+            float radius = MathHelper.Lerp(18f, 48f, growth);
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 offset = Main.rand.NextVector2CircularEdge(radius, radius)
+                    * Main.rand.NextFloat(0.72f, 1f);
+                Vector2 inward = (-offset).SafeNormalize(Vector2.Zero);
+                Dust ember = Dust.NewDustPerfect(hand + offset,
+                    Main.rand.NextBool(3) ? DustID.GoldFlame : DustID.Torch,
+                    inward * Main.rand.NextFloat(1.4f, 3.2f), 55,
+                    new Color(255, 182, 52), Main.rand.NextFloat(0.65f, 1.25f));
+                ember.noGravity = true;
+            }
+            Lighting.AddLight(hand, 1.1f + growth * 0.7f,
+                0.42f + growth * 0.35f, 0.08f);
+        }
+
+        protected override void OnPierceFlickStarted(Player target)
+        {
             if (!target.active || target.dead)
             {
                 return;
             }
 
             Vector2 explosionCenter = target.Center;
-            Vector2 away = new Vector2(NPC.direction, -0.12f).SafeNormalize(new Vector2(NPC.direction, 0f));
 
             if (!Main.dedServ)
             {
@@ -1309,15 +1520,36 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     0, 0f, Main.myPlayer, Projectiles.Enemy.GwynDescentColumn.ExplosionOnlyMode);
             }
 
-            if (!target.dead)
-            {
-                target.Center += away * DashGrabFlickDistance;
-                target.velocity = away * 24f;
-            }
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 NPC.netUpdate = true;
             }
+        }
+
+        protected override void DoPierceStabFlickDelayTick(Player target, int elapsed)
+        {
+            if (!target.active || target.dead)
+                return;
+
+            var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.ImpaleFreezeTimer = 10;
+            modPlayer.ImpaleWorldPosition = LordEmbraceHoldPosition;
+            EmitLordEmbraceHandCollapse(1f);
+        }
+
+        protected override void OnPierceFlick(Player target)
+        {
+            var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.ImpaleFreezeTimer = 0;
+            if (!target.active || target.dead)
+                return;
+
+            // Velocity is resolved by Terraria's ordinary player movement, so every normal solid
+            // tile stops the throw. Never move Center directly here: the old 800px displacement
+            // skipped tile collision and could place the player through entire walls.
+            Vector2 away = new Vector2(NPC.direction, -0.12f)
+                .SafeNormalize(new Vector2(NPC.direction, 0f));
+            target.velocity = away * LordEmbraceFlickSpeed;
         }
 
         void TickLordEmbraceRecovery()
@@ -1443,14 +1675,36 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // ── Judgment from Behind (the back-turn punish) ──────────────────────────
-        // Fires specifically when the player is at range with their back to him: a flash-step to
-        // their blind side, then a queued heavy overhead the instant the combo system can start
-        // (see the _judgmentPending branch in ReactiveComboIndex). The appear-flash is the warning.
+        // Attack spec — Judgment from Behind / bespoke teleport -> Judgment Guillotine.
+        // Weapon: EnemySwordOfGwyn is drawn throughout the post-teleport 60t tell; it moves for 40t
+        // then holds fully settled for 20t before the Whip-shaped swing re-accelerates.
+        // Tell: 45t, locked origin and destination. Exactly 250 gold motes are attempted at EACH
+        // point over the tell, beginning outside Gwyn's silhouette and collapsing into its centre.
+        // Teleport: the marked destination erupts outward in a separate 250-mote three-layer burst.
+        // Reach: destination is locked 90px behind the target; the follow-up has a 131px swept reach
+        // against Gwyn's ~88px visible blade, deliberately generous for the blind-side execution.
+        // Fairness: both endpoints are visible for 45t, then the sword gives a separate 60t tell;
+        // its 19t live interval is fully covered by the base 22t roll. Recovery is 48t.
+        // Multiplayer: the server locks and executes the warp; timer and endpoints are synchronized,
+        // while every client emits its own cosmetic dust from those shared coordinates.
         int _judgmentCd = 600;
         int _judgmentPending;
+        int _judgmentTeleportTimer;
+        Vector2 _judgmentOriginCenter;
+        Vector2 _judgmentDestinationBottom;
+
+        const int JudgmentTeleportTelegraphTicks = 45;
+        const int JudgmentEndpointDustCount = 250;
+        const int JudgmentExitBurstDustCount = 250;
 
         void TickJudgment()
         {
+            if (_judgmentTeleportTimer > 0)
+            {
+                RunJudgmentTeleport();
+                return;
+            }
+
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
@@ -1470,118 +1724,559 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (!player.dead && player.active && facingAway && dist > 380f && dist < 1100f && Main.rand.NextBool(100))
             {
                 _judgmentCd = 700 + Main.rand.Next(300);
-                SetAttackLabel("Judgment from Behind", 110);
-                FlashBurst(NPC.Center);
+                SetAttackLabel("Judgment from Behind", 200);
+                _judgmentOriginCenter = NPC.Center;
                 float destX = player.Center.X - player.direction * 90f; //their blind side
-                NPC.Bottom = new Vector2(destX, player.Bottom.Y);
-                NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
-                NPC.spriteDirection = NPC.direction;
-                FlashBurst(NPC.Center);
-                _judgmentPending = 90; //the reactive hook converts this into a guaranteed Guillotine
+                _judgmentDestinationBottom = new Vector2(destX, player.Bottom.Y);
+                _judgmentTeleportTimer = 1;
+                NPC.velocity = Vector2.Zero;
+                EnterPhase(AttackPhase.NovaRecovery, JudgmentTeleportTelegraphTicks + 2);
                 NPC.netUpdate = true;
             }
         }
 
-        // ── Riposte Stance (the greedy-trade punish; ranged players are immune) ──
-        // He drops into a shimmering guard for ~40 ticks. Melee-striking him during the window takes
-        // 50% damage and triggers the PARRY: a clang, a flash, and a devastating counter-swing.
-        // If nobody takes the bait, the stance simply ends.
-        int _riposteCd = 700;
+        void RunJudgmentTeleport()
+        {
+            NPC.velocity = Vector2.Zero;
+            Vector2 destinationCenter = _judgmentDestinationBottom - Vector2.UnitY * NPC.height * 0.5f;
+
+            if (!Main.dedServ)
+            {
+                SpawnJudgmentCollapse(_judgmentOriginCenter, _judgmentTeleportTimer);
+                SpawnJudgmentCollapse(destinationCenter, _judgmentTeleportTimer);
+                float progress = _judgmentTeleportTimer / (float)JudgmentTeleportTelegraphTicks;
+                Lighting.AddLight(_judgmentOriginCenter, 0.65f * progress, 0.5f * progress, 0.12f);
+                Lighting.AddLight(destinationCenter, 0.9f * progress, 0.72f * progress, 0.18f);
+
+                if (_judgmentTeleportTimer == 1)
+                {
+                    SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.75f, Pitch = -0.4f }, NPC.Center);
+                }
+            }
+
+            if (_judgmentTeleportTimer < JudgmentTeleportTelegraphTicks)
+            {
+                _judgmentTeleportTimer++;
+                return;
+            }
+
+            // The collapse lands first; the new silhouette then punches the same gold back outward.
+            if (!Main.dedServ)
+            {
+                SpawnJudgmentExitBurst(destinationCenter);
+                SoundEngine.PlaySound(SoundID.Item8 with { Volume = 1f, Pitch = 0.2f }, destinationCenter);
+            }
+
+            // Clients predict the already server-authored endpoint so Gwyn appears inside the burst
+            // immediately; the server's net update confirms the same coordinates.
+            NPC.Bottom = _judgmentDestinationBottom;
+            Player player = Main.player[NPC.target];
+            NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
+            NPC.spriteDirection = NPC.direction;
+            EnterPhase(AttackPhase.Idle, 0);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                _judgmentPending = 120;
+                NPC.netUpdate = true;
+            }
+
+            _judgmentTeleportTimer = 0;
+        }
+
+        void SpawnJudgmentCollapse(Vector2 center, int elapsed)
+        {
+            // Integer cumulative emission makes the attempted total exactly 250 across all 45 ticks
+            // without a lopsided final-frame dump (the global Terraria dust budget may still thin it).
+            int throughThisTick = JudgmentEndpointDustCount * elapsed / JudgmentTeleportTelegraphTicks;
+            int throughPreviousTick = JudgmentEndpointDustCount * (elapsed - 1) / JudgmentTeleportTelegraphTicks;
+            int count = throughThisTick - throughPreviousTick;
+            float progress = elapsed / (float)JudgmentTeleportTelegraphTicks;
+            float eased = progress * progress * (3f - 2f * progress);
+            float radiusX = MathHelper.Lerp(Math.Max(86f, NPC.width * 1.15f), 8f, eased);
+            float radiusY = MathHelper.Lerp(Math.Max(72f, NPC.height * 0.8f), 10f, eased);
+            int remaining = Math.Max(1, JudgmentTeleportTelegraphTicks - elapsed + 1);
+
+            for (int i = 0; i < count; i++)
+            {
+                float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                Vector2 offset = new Vector2((float)Math.Cos(angle) * radiusX,
+                    (float)Math.Sin(angle) * radiusY);
+                Vector2 position = center + offset;
+                Vector2 inward = (center - position) / remaining * 1.35f;
+                if (inward.LengthSquared() > 13f * 13f)
+                {
+                    inward = inward.SafeNormalize(Vector2.Zero) * 13f;
+                }
+
+                int type = Main.rand.NextBool(5) ? DustID.GoldCoin : DustID.GoldFlame;
+                Dust dust = Dust.NewDustPerfect(position, type, inward, 45, default,
+                    Main.rand.NextFloat(0.55f, 1.25f));
+                dust.noGravity = true;
+            }
+        }
+
+        void SpawnJudgmentExitBurst(Vector2 center)
+        {
+            for (int i = 0; i < JudgmentExitBurstDustCount; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                float spawnRadius;
+                float speed;
+                float scale;
+                int alpha;
+                int type;
+
+                if (i < 160) // midground body: the mass of the sunlight eruption
+                {
+                    spawnRadius = Main.rand.NextFloat(3f, 28f);
+                    speed = Main.rand.NextFloat(2.5f, 8f);
+                    scale = Main.rand.NextFloat(0.75f, 1.45f);
+                    alpha = 55;
+                    type = DustID.GoldFlame;
+                }
+                else if (i < 220) // foreground sparks: smaller, faster leading edge
+                {
+                    spawnRadius = Main.rand.NextFloat(8f, 38f);
+                    speed = Main.rand.NextFloat(8f, 13f);
+                    scale = Main.rand.NextFloat(0.45f, 0.85f);
+                    alpha = 30;
+                    type = DustID.GoldCoin;
+                }
+                else // background glow: slow motes billow after the sharp burst has passed
+                {
+                    spawnRadius = Main.rand.NextFloat(4f, 24f);
+                    speed = Main.rand.NextFloat(0.6f, 2.2f);
+                    scale = Main.rand.NextFloat(0.5f, 0.75f);
+                    alpha = 100;
+                    type = DustID.GoldFlame;
+                }
+
+                Dust dust = Dust.NewDustPerfect(center + direction * spawnRadius, type,
+                    direction * speed, alpha, default, scale);
+                dust.noGravity = true;
+                if (i >= 220)
+                {
+                    dust.fadeIn = Main.rand.NextFloat(1.25f, 1.6f);
+                }
+            }
+        }
+
+        // ── Riposte Stance (reactive guard -> melee punish OR projectile return) ──
+        // Attack spec
+        // Weapon / pose: EnemySwordOfGwyn remains visibly raised at -1.62 rad for the full 60t guard.
+        // Entry: a far player's shot on a collision course starts it deterministically; a close melee hit
+        // has a 1-in-3 chance to provoke it, while neutral bait is only a 1-in-180 roll. Every entry opens
+        // the same 480t (8 second) cooldown.
+        // Melee response: the first hit during guard is halved, clangs, then starts the 18t -> 24t
+        // Riposte Counter clip. Its live 15t Whip cut is covered by a normal 22t dodge; 40t recovery is
+        // the reward for respecting it. It uses the real tracked blade hitbox, never a recovery-only swing.
+        // Projectile response: non-melee, non-minion shots are swallowed at the guard, held in the existing
+        // Gigas Holy Shield vortex, then released 400px behind the target after that vortex's 60t tell as a
+        // hostile shot aimed back at its owner. One guard reflects at most one projectile.
+        // Multiplayer: guard/cooldown/counter state is extra-AI synchronized; spawn, capture, damage and
+        // melee selection are server-authoritative. Each client generates only its local dust and lighting.
+        const int RiposteGuardTicks = 60;
+        const int RiposteCooldownTicks = 8 * 60;
+        const float RiposteMeleeTriggerRange = 180f;
+        const float RiposteReflectMinimumRange = 340f;
+        const float RiposteProjectileThreatRange = 920f;
+        const int RipostePreemptiveChance = 180;
+        int _riposteCd = RiposteCooldownTicks;
         int _riposteTimer;
+        bool _riposteCounterPending;
+
+        bool RiposteGuardActive => _riposteTimer > 0 && Phase == AttackPhase.Custom;
 
         void TickRiposte()
         {
+            if (Main.netMode != NetmodeID.MultiplayerClient && _riposteCd > 0)
+            {
+                _riposteCd--;
+            }
+
             if (_riposteTimer > 0)
             {
-                _riposteTimer--;
-                NPC.velocity.X *= 0.7f;
-                //The guard shimmer: a sheen of gold glints along the raised blade
-                if (Main.netMode != NetmodeID.Server)
+                // A different bespoke state interrupted the guard. Do not leave an invisible 50%
+                // reduction or a stale timer behind it.
+                if (Phase != AttackPhase.Custom)
                 {
-                    Vector2 bladePos = NPC.Center + new Vector2(NPC.direction * 16f, -26f) + Main.rand.NextVector2Circular(6f, 22f);
-                    Dust d = Dust.NewDustPerfect(bladePos, DustID.GoldCoin, Vector2.Zero, 0, default, Main.rand.NextFloat(0.8f, 1.2f));
-                    d.noGravity = true;
-                    d.velocity *= 0.2f;
+                    _riposteTimer = 0;
+                    return;
                 }
-                Lighting.AddLight(NPC.Center, 0.5f, 0.45f, 0.2f);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && NPC.target >= 0 && NPC.target < Main.maxPlayers)
+                {
+                    Player player = Main.player[NPC.target];
+                    if (player.active && !player.dead)
+                    {
+                        AbsorbRiposteProjectiles(player);
+                    }
+                }
+
+                _riposteTimer--;
                 return;
             }
+
+            if (Main.netMode == NetmodeID.MultiplayerClient || _riposteCd > 0
+                || (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+                || NPC.target < 0 || NPC.target >= Main.maxPlayers)
+            {
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            if (!target.active || target.dead)
+            {
+                return;
+            }
+
+            float distance = NPC.Distance(target.Center);
+            // Long-range pressure is the reliable reactive entry: commit to a visibly incoming shot,
+            // then make the player decide whether to stop firing or watch their own projectile return.
+            if (distance >= RiposteReflectMinimumRange && HasIncomingRiposteThreat(target))
+            {
+                StartRiposteGuard(target, "Projectile Guard");
+            }
+            // At close range it is only a rare bait. The response-to-a-real-melee-hit path below is
+            // deliberately more likely, so it feels reactive rather than a random invulnerability roll.
+            else if (distance <= RiposteMeleeTriggerRange && Main.rand.NextBool(RipostePreemptiveChance))
+            {
+                StartRiposteGuard(target, "Riposte Stance");
+            }
+        }
+
+        void StartRiposteGuard(Player player, string label)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || _riposteTimer > 0 || _riposteCd > 0
+                || (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll) || !player.active || player.dead)
+            {
+                return;
+            }
+
+            NPC.target = player.whoAmI;
+            NPC.direction = NPC.spriteDirection = player.Center.X >= NPC.Center.X ? 1 : -1;
+            _riposteTimer = RiposteGuardTicks;
+            _riposteCd = RiposteCooldownTicks;
+            SetAttackLabel(label, RiposteGuardTicks + 20);
+            StartCustomAttack(RiposteGuardTicks, MeleeWeaponItemType, swingPose: true);
+            NPC.netUpdate = true;
+        }
+
+        protected override void DoCustomAttack()
+        {
+            if (!RiposteGuardActive)
+            {
+                return;
+            }
+
+            // StartCustomAttack is called on the authority; multiplayer clients instead receive the
+            // Custom state and play this cue on their first synchronized Custom tick below.
+            if (Main.netMode != NetmodeID.Server)
+            {
+                SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.58f, Pitch = 0.48f }, NPC.Center);
+            }
+        }
+
+        protected override void DoCustomTick(int ticksRemaining)
+        {
+            if (!RiposteGuardActive)
+            {
+                return;
+            }
+
+            float progress = MathHelper.Clamp(1f - ticksRemaining / (float)RiposteGuardTicks, 0f, 1f);
+            float bladeReach = ComboReachBase * 0.7f;
+            Vector2 bladeTip = PuppetWeaponTipPosition(bladeReach);
+            Lighting.AddLight(bladeTip, 0.75f + 0.35f * progress, 0.58f + 0.25f * progress, 0.12f);
+
+            if (Main.netMode == NetmodeID.MultiplayerClient && ticksRemaining == RiposteGuardTicks)
+            {
+                SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.58f, Pitch = 0.48f }, NPC.Center);
+            }
+
+            if (Main.netMode != NetmodeID.Server && Main.rand.NextBool(2))
+            {
+                Vector2 offset = Main.rand.NextVector2Circular(7f, 24f);
+                int dustType = Main.rand.NextBool() ? DustID.GoldCoin : DustID.GoldFlame;
+                Dust dust = Dust.NewDustPerfect(bladeTip + offset, dustType,
+                    -offset.SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(0.3f, 1.3f), 50, default,
+                    MathHelper.Lerp(0.72f, 1.18f, progress));
+                dust.noGravity = true;
+            }
+        }
+
+        bool HasIncomingRiposteThreat(Player player)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile incoming = Main.projectile[i];
+                if (!IsRiposteReflectable(incoming, player))
+                {
+                    continue;
+                }
+
+                float speed = incoming.velocity.Length();
+                if (speed < 2f)
+                {
+                    continue;
+                }
+
+                Vector2 toGwyn = NPC.Center - incoming.Center;
+                float forwardDistance = Vector2.Dot(toGwyn, incoming.velocity / speed);
+                if (forwardDistance < 0f || forwardDistance > RiposteProjectileThreatRange)
+                {
+                    continue;
+                }
+
+                float collisionRadius = Math.Max(NPC.width, NPC.height) * 0.65f
+                    + Math.Max(incoming.width, incoming.height) * 0.5f;
+                float lateralDistanceSquared = Math.Max(0f, toGwyn.LengthSquared() - forwardDistance * forwardDistance);
+                if (lateralDistanceSquared > collisionRadius * collisionRadius)
+                {
+                    continue;
+                }
+
+                float impactTicks = forwardDistance / speed;
+                if (impactTicks >= 16f && impactTicks <= 55f)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        static bool IsRiposteReflectable(Projectile projectile, Player target)
+        {
+            return projectile.active && projectile.friendly && !projectile.hostile && projectile.damage > 0
+                && projectile.owner == target.whoAmI && !projectile.IsMinionOrSentryRelated
+                && !projectile.DamageType.CountsAsClass(DamageClass.Melee);
+        }
+
+        void AbsorbRiposteProjectiles(Player player)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile incoming = Main.projectile[i];
+                if (!IsRiposteReflectable(incoming, player))
+                {
+                    continue;
+                }
+
+                Vector2 toGwyn = NPC.Center - incoming.Center;
+                float catchRadius = Math.Max(NPC.width, NPC.height) * 0.65f
+                    + Math.Max(incoming.width, incoming.height) * 0.5f;
+                if (!incoming.Hitbox.Intersects(NPC.Hitbox)
+                    && toGwyn.LengthSquared() > catchRadius * catchRadius)
+                {
+                    continue;
+                }
+
+                // A passing shot that has already moved away is no longer a guard interaction.
+                if (Vector2.Dot(toGwyn, incoming.velocity) < -8f)
+                {
+                    continue;
+                }
+
+                ReflectRiposteProjectile(player, incoming);
+                return; // One clearly readable return per guard.
+            }
+        }
+
+        void ReflectRiposteProjectile(Player player, Projectile incoming)
+        {
+            Vector2 impact = incoming.Center;
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), impact, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.GigasHolyShieldVortex>(), 0, 0f, Main.myPlayer, -1f, 0f);
+
+            if (TryFindRiposteVortexPosition(player, impact, out Vector2 output))
+            {
+                int damage = Math.Max(1, (int)(player.statLifeMax2 * 0.20f));
+                float returnSpeed = Math.Max(incoming.velocity.Length(), 14f);
+                // Preserve the player's original projectile and visuals, but make its later release
+                // hostile, wall-piercing, and owned by its obvious 60-tick output telegraph.
+                incoming.friendly = false;
+                incoming.hostile = false;
+                incoming.hide = true;
+                incoming.tileCollide = false;
+                incoming.ignoreWater = true;
+                incoming.velocity = Vector2.Zero;
+                incoming.damage = damage;
+                incoming.timeLeft = Math.Max(incoming.timeLeft, 180);
+                incoming.netUpdate = true;
+
+                Projectile outputVortex = Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), output, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.GigasHolyShieldVortex>(), 0, 0f, player.whoAmI,
+                    incoming.whoAmI, Projectiles.Enemy.GigasHolyShieldVortex.OutputMode);
+                outputVortex.localAI[1] = returnSpeed;
+                outputVortex.netUpdate = true;
+            }
+            else
+            {
+                // The intake vortex still plays for 20 ticks, making this rare slot-pressure fallback
+                // a visible absorption rather than a silent projectile deletion.
+                incoming.Kill();
+            }
+
+            _riposteTimer = 0;
+            SetAttackLabel("PROJECTILE RETURN", 70);
+            EnterPhase(AttackPhase.Idle, 0);
+            NPC.netUpdate = true;
+        }
+
+        bool TryFindRiposteVortexPosition(Player player, Vector2 impact, out Vector2 position)
+        {
+            int facing = player.direction == 0 ? NPC.direction : player.direction;
+            Vector2 behindPlayer = player.Center - new Vector2(facing * 400f, 0f);
+            float heightT = MathHelper.Clamp((impact.Y - NPC.Top.Y) / NPC.height, 0f, 1f);
+            float desiredY = behindPlayer.Y + MathHelper.Lerp(-90f, 90f, heightT);
+            float bestScore = float.MaxValue;
+            position = Vector2.Zero;
+
+            float[] verticalSlots = { -90f, -30f, 30f, 90f };
+            float[] lateralSlots = { -30f, 30f };
+            int vortexType = ModContent.ProjectileType<Projectiles.Enemy.GigasHolyShieldVortex>();
+            foreach (float yOffset in verticalSlots)
+            {
+                foreach (float xOffset in lateralSlots)
+                {
+                    Vector2 candidate = behindPlayer + new Vector2(xOffset, yOffset);
+                    bool occupied = false;
+                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    {
+                        Projectile portal = Main.projectile[i];
+                        if (portal.active && portal.type == vortexType && portal.owner == player.whoAmI
+                            && portal.ai[1] == Projectiles.Enemy.GigasHolyShieldVortex.OutputMode
+                            && Vector2.DistanceSquared(portal.Center, candidate) < 54f * 54f)
+                        {
+                            occupied = true;
+                            break;
+                        }
+                    }
+                    if (!occupied)
+                    {
+                        float score = Math.Abs(candidate.Y - desiredY) + Math.Abs(xOffset) * 0.1f;
+                        if (score < bestScore)
+                        {
+                            bestScore = score;
+                            position = candidate;
+                        }
+                    }
+                }
+            }
+            return bestScore < float.MaxValue;
+        }
+
+        void TryStartRiposteFromMeleeHit(Player player)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || _riposteTimer > 0 || _riposteCd > 0
+                || (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
+                || !player.active || player.dead || NPC.Distance(player.Center) > RiposteMeleeTriggerRange)
+            {
+                return;
+            }
+
+            if (Main.rand.NextBool(3))
+            {
+                StartRiposteGuard(player, "Riposte Stance");
+            }
+        }
+
+        void TriggerMeleeRiposte(Player player)
+        {
+            if (!RiposteGuardActive)
+            {
+                return;
+            }
+
+            if (Main.netMode != NetmodeID.Server)
+            {
+                SoundEngine.PlaySound(SoundID.NPCHit4 with { Volume = 0.9f, Pitch = 0.5f }, NPC.Center);
+                for (int i = 0; i < 26; i++)
+                {
+                    Vector2 velocity = Main.rand.NextVector2Circular(6f, 6f);
+                    int dustType = Main.rand.NextBool() ? DustID.GoldCoin : DustID.GoldFlame;
+                    Dust dust = Dust.NewDustPerfect(NPC.Center, dustType, velocity, 40, default, 1.5f);
+                    dust.noGravity = true;
+                }
+            }
+
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
-            if (_riposteCd > 0)
-            {
-                _riposteCd--;
-                return;
-            }
-            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll)
-            {
-                return;
-            }
-            Player player = Main.player[NPC.target];
-            if (!player.dead && player.active && NPC.Distance(player.Center) < 220f && Main.rand.NextBool(120))
-            {
-                _riposteCd = 800 + Main.rand.Next(400);
-                _riposteTimer = 40;
-                SetAttackLabel("Riposte Stance", 60);
-                SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.5f, Pitch = 0.6f }, NPC.Center); //the sheen cue
-                EnterPhase(AttackPhase.NovaRecovery, 44); //park the combat machine for the stance
-                NPC.netUpdate = true;
-            }
-        }
 
-        void TriggerRiposte()
-        {
+            NPC.target = player.whoAmI;
+            NPC.direction = NPC.spriteDirection = player.Center.X >= NPC.Center.X ? 1 : -1;
             _riposteTimer = 0;
+            _riposteCounterPending = true;
             SetAttackLabel("RIPOSTE!", 70);
-            SoundEngine.PlaySound(SoundID.NPCHit4 with { Volume = 0.9f, Pitch = 0.5f }, NPC.Center); //the parry clang
-            if (Main.netMode != NetmodeID.Server)
-            {
-                for (int i = 0; i < 26; i++)
-                {
-                    Vector2 vel = Main.rand.NextVector2Circular(6f, 6f);
-                    int type = Main.rand.NextBool() ? DustID.GoldCoin : DustID.GoldFlame;
-                    Dust d = Dust.NewDustPerfect(NPC.Center, type, vel, 40, default, 1.5f);
-                    d.noGravity = true;
-                }
-            }
-            //The devastating counter: a full-reach swing + a heavy fire crescent
+            EnterPhase(AttackPhase.Idle, 0);
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.4f }, NPC.Center);
-            TryMeleeHit(reach: 130f);
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+
+            // The protected base picker keeps all V2 timing, swept-blade collision and net snapshots
+            // intact, while ReactiveComboIndex forces the internal Riposte Counter entry this instant.
+            if (!TryStartMeleeCombo(NPC.Distance(player.Center)))
             {
-                Vector2 spawn = NPC.Center + new Vector2(NPC.direction * 24f, -8f);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.GwynFireArc>(), (int)(MeleeDamage * 0.9f), 4f, Main.myPlayer, NPC.direction, 0f);
+                _riposteCounterPending = false;
+                EnterPhase(AttackPhase.NovaRecovery, 40);
             }
+            NPC.netUpdate = true;
         }
 
-        ///<summary>The Riposte guard soaks half of what hits it — the parry read.</summary>
+        ///<summary>The guard only halves the deliberate melee trade. Eligible ranged shots are instead
+        ///blocked in <see cref="CanBeHitByProjectile"/> and converted into a visible return vortex.</summary>
         public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
         {
-            if (_riposteTimer > 0)
+            if (RiposteGuardActive)
             {
                 modifiers.FinalDamage *= 0.5f;
             }
         }
 
+        public override bool? CanBeHitByProjectile(Projectile projectile)
+        {
+            if (RiposteGuardActive && NPC.target >= 0 && NPC.target < Main.maxPlayers)
+            {
+                Player target = Main.player[NPC.target];
+                if (target.active && !target.dead && IsRiposteReflectable(projectile, target))
+                {
+                    return false;
+                }
+            }
+            return base.CanBeHitByProjectile(projectile);
+        }
+
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             base.OnHitByItem(player, item, hit, damageDone);
-            if (_riposteTimer > 0)
+            if (RiposteGuardActive)
             {
-                TriggerRiposte();
+                TriggerMeleeRiposte(player);
+            }
+            else
+            {
+                TryStartRiposteFromMeleeHit(player);
             }
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             base.OnHitByProjectile(projectile, hit, damageDone);
-            //Only melee-class projectiles (spear thrusts, true-melee extensions) spring the trap
-            if (_riposteTimer > 0 && projectile.DamageType.CountsAsClass(DamageClass.Melee))
+            if (!projectile.DamageType.CountsAsClass(DamageClass.Melee)
+                || projectile.owner < 0 || projectile.owner >= Main.maxPlayers)
             {
-                TriggerRiposte();
+                return;
+            }
+
+            Player player = Main.player[projectile.owner];
+            if (RiposteGuardActive)
+            {
+                TriggerMeleeRiposte(player);
+            }
+            else
+            {
+                TryStartRiposteFromMeleeHit(player);
             }
         }
 
@@ -1848,6 +2543,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 _advanceTimer = 180; //3 seconds of relentless
                 _advanceWallTicks = 0;
+                _cowardRingCompressionTimer = CowardRingCompressionTotalTicks;
                 SetAttackLabel("Unbroken Advance", 190);
                 if (Main.netMode != NetmodeID.Server)
                 {
@@ -2592,26 +3288,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             base.PostDraw(spriteBatch, screenPos, drawColor);
 
-            if (!IsDashGrabSequence || Main.dedServ)
+            if (!IsDashGrabSequence || LordEmbraceOrbActive || Main.dedServ)
                 return;
 
             float scale;
-            float opacity = 1f;
             if (Phase == AttackPhase.PierceTelegraph)
             {
                 float progress = 1f - PhaseTimer / (float)Math.Max(1, PierceTelegraphTicks);
                 scale = MathHelper.Lerp(0.86f, 1.18f, MathHelper.SmoothStep(0f, 1f, progress));
-            }
-            else if (Phase == AttackPhase.PierceStabHold)
-            {
-                float growth = 1f - PhaseTimer / (float)Math.Max(1, PierceStabRaiseTicks);
-                scale = MathHelper.Lerp(1.18f, 2.05f, MathHelper.SmoothStep(0f, 1f, growth));
-            }
-            else if (Phase == AttackPhase.PierceStabFlick)
-            {
-                float release = 1f - PhaseTimer / (float)Math.Max(1, PierceStabFlickTicks);
-                scale = MathHelper.Lerp(2.05f, 1.25f, MathHelper.SmoothStep(0f, 1f, release));
-                opacity = MathHelper.Lerp(1f, 0.45f, release);
             }
             else
             {
@@ -2621,8 +3305,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Vector2 handPosition = PuppetHandPosition + new Vector2(NPC.direction * 4f, -2f);
             float rotation = NPC.direction > 0 ? 0f : MathHelper.Pi;
             Projectiles.Enemy.GwynFlameGrasp.DrawHandAura(handPosition, rotation,
-                scale * NPC.scale, opacity, drawUnblockableOutline: true);
-            Lighting.AddLight(handPosition, 1.15f * opacity, 0.24f * opacity, 0.06f * opacity);
+                scale * NPC.scale, 1f, drawUnblockableOutline: true);
+            Lighting.AddLight(handPosition, 1.15f, 0.24f, 0.06f);
         }
 
         ///<summary>Lightning gathers on the raised blade through the windup — the telegraph read.</summary>
@@ -2748,7 +3432,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.GwynCinderNova>(), NovaDamage, 10f, Main.myPlayer, 420f);
+                ModContent.ProjectileType<Projectiles.Enemy.GwynCinderNova>(), NovaDamage, 10f, Main.myPlayer, 840f);
         }
 
         const int NovaDamage = 60;
@@ -2791,15 +3475,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // ── Lord's Grasp (grab — the shield-turtle / spacing punish) ─────────────
-        // Base Tendril template: gather fire at the hand, then launch a reaching flaming claw that
-        // seizes and immolates on contact. Bypasses block comfort — it hunts turtling players.
-        protected override bool  CanTendrilGrab          => true;
-        protected override float TendrilMinRange         => 150f;
-        protected override float TendrilMaxRange         => 560f;
+        // Attack spec — Lord's Grasp / TendrilTelegraph / GwynFlameGrasp.
+        // Tell: bare hand and gathering gold flame for 60t; true line of sight is required both to
+        // select and release. Reach: 0-1,200px; launch speed scales 13->26px/t with distance, so a
+        // maximum-range target is reached in 47 ticks. Solid tiles intercept the hand and send it
+        // back empty. The 180t reach phase covers a max-range flight, 44t grasp, and full retraction.
+        // Player effect: on-hit fire plus the existing 44t pull into 72px finisher range; tile impact
+        // only retracts, never damages through the wall. Multiplayer: authoritative launch/collision.
+        protected override bool CanTendrilGrab
+        {
+            get
+            {
+                if (!NPC.HasValidTarget)
+                {
+                    return false;
+                }
+
+                Player target = Main.player[NPC.target];
+                return target.active && !target.dead && Collision.CanHitLine(
+                    GraspHandPosition, 1, 1, target.Center, 1, 1);
+            }
+        }
+        protected override float TendrilMinRange         => 0f;
+        protected override float TendrilMaxRange         => 1200f;
         protected override int   TendrilChance            => 5;
         protected override int   TendrilCooldownAfterUse  => 480;
         protected override int   TendrilTelegraphTicks    => 60;
-        protected override int   TendrilReachTicks        => 54;
+        protected override int   TendrilReachTicks        => 180;
         protected override int   TendrilSwingArcTicks     => 22;
         protected override int   TendrilSwingHoldTicks    => 6;
         protected override int   TendrilSwingTicks        => 20;
@@ -2846,7 +3548,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             Player target = Main.player[NPC.target];
             Vector2 origin = GraspHandPosition;
-            Vector2 vel = UsefulFunctions.Aim(origin, target.Center, 13f);
+            if (!target.active || target.dead || !Collision.CanHitLine(origin, 1, 1, target.Center, 1, 1))
+            {
+                return;
+            }
+
+            const float graspMaxRange = 1200f;
+            const float baseGraspSpeed = 13f;
+            float distanceFactor = MathHelper.Clamp(Vector2.Distance(origin, target.Center) / graspMaxRange, 0f, 1f);
+            float speed = MathHelper.Lerp(baseGraspSpeed, baseGraspSpeed * 2f, distanceFactor);
+            Vector2 vel = UsefulFunctions.Aim(origin, target.Center, speed);
             int graspIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
                 ModContent.ProjectileType<Projectiles.Enemy.GwynFlameGrasp>(), GraspDamage, 8f, Main.myPlayer, NPC.whoAmI);
             Projectiles.tsorcGlobalProjectile.SetDefenseTraits(
@@ -2886,23 +3597,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        ///<summary>KEPT (2000px): the outer flame wall. Flight is torn down anywhere inside it;
-        ///fleeing beyond it brings the Coward's Affliction after a 90-tick grace.</summary>
+        ///<summary>KEPT (2000px): the spawn-anchored outer flame wall. Flight is torn down anywhere
+        ///inside it; fleeing beyond it brings the Coward's Affliction after a 90-tick grace. Unbroken
+        ///Advance temporarily compresses the radius, but never moves the safe-zone centre.</summary>
         void TickCowardRing()
         {
             Player player = Main.player[NPC.target];
+            float ringRadius = CurrentCowardRingRadius;
+            float playerDistance = Vector2.Distance(player.Center, ArenaCenter);
 
-            if (NPC.Distance(player.Center) < CowardRingRadius)
+            if (playerDistance < ringRadius)
             {
                 player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
             }
 
-            UsefulFunctions.DustRing(NPC.Center, (int)CowardRingRadius, DustID.RedsWingsRun, 1, 1f);
-            UsefulFunctions.DustRing(NPC.Center, (int)CowardRingRadius, DustID.Torch, 10, 1f);
-            UsefulFunctions.DustRing(NPC.Center, (int)CowardRingRadius, DustID.RedTorch, 5, 2f);
-            UsefulFunctions.DustRing(NPC.Center, (int)CowardRingRadius, DustID.Firefly, 100, -3f);
+            UsefulFunctions.DustRing(ArenaCenter, (int)ringRadius, DustID.RedsWingsRun, 1, 1f);
+            UsefulFunctions.DustRing(ArenaCenter, (int)ringRadius, DustID.Torch, 10, 1f);
+            UsefulFunctions.DustRing(ArenaCenter, (int)ringRadius, DustID.RedTorch, 5, 2f);
+            UsefulFunctions.DustRing(ArenaCenter, (int)ringRadius, DustID.Firefly, 100, -3f);
 
-            if (NPC.Distance(player.Center) > CowardRingRadius)
+            if (playerDistance > ringRadius)
             {
                 cowardGraceTimer--;
                 if (cowardGraceTimer <= 0)
@@ -2919,6 +3633,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 cowardGraceTimer = 90;
                 announcedCoward = false;
+            }
+
+            if (_cowardRingCompressionTimer > 0)
+            {
+                _cowardRingCompressionTimer--;
             }
         }
 

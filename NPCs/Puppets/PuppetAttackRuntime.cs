@@ -42,6 +42,9 @@ namespace tsorcRevamp.NPCs.Puppets
         public int ActiveTicks { get; }
         public int RecoveryTicks { get; }
         public float OppositeWindupRotation { get; }
+        /// <summary>The physical pose at windup tick zero. Defaults to the recovery end, preserving
+        /// existing clips; a counter can instead inherit the pose of the guard that preceded it.</summary>
+        public float WindupStartRotation { get; }
         public float AttackStartRotation { get; }
         public float AttackEndRotation { get; }
         public float RecoveryEndRotation { get; }
@@ -51,6 +54,11 @@ namespace tsorcRevamp.NPCs.Puppets
         public float MaxAimCorrection { get; }
         public float AimTurnRate { get; }
         public int AimLockTicksBeforeActive { get; }
+        /// <summary>Ticks at the end of the windup spent completely settled on
+        /// <see cref="AttackStartRotation"/>. This creates an authored stop before the blade
+        /// re-accelerates into the active swing instead of stretching the windup motion to fill
+        /// the entire tell.</summary>
+        public int WindupHoldTicks { get; }
 
         public PuppetAttackClip(
             string name,
@@ -67,7 +75,9 @@ namespace tsorcRevamp.NPCs.Puppets
             SwingEaseStyle swingEase = SwingEaseStyle.Smooth,
             float maxAimCorrection = 0.35f,
             float aimTurnRate = 0.035f,
-            int aimLockTicksBeforeActive = 18)
+            int aimLockTicksBeforeActive = 18,
+            int windupHoldTicks = 0,
+            float? windupStartRotation = null)
         {
             Name = name;
             Pose = pose;
@@ -75,6 +85,7 @@ namespace tsorcRevamp.NPCs.Puppets
             ActiveTicks = Math.Max(1, activeTicks);
             RecoveryTicks = Math.Max(1, recoveryTicks);
             OppositeWindupRotation = oppositeWindupRotation;
+            WindupStartRotation = windupStartRotation ?? recoveryEndRotation;
             AttackStartRotation = attackStartRotation;
             AttackEndRotation = attackEndRotation;
             RecoveryEndRotation = recoveryEndRotation;
@@ -84,6 +95,7 @@ namespace tsorcRevamp.NPCs.Puppets
             MaxAimCorrection = Math.Abs(maxAimCorrection);
             AimTurnRate = Math.Abs(aimTurnRate);
             AimLockTicksBeforeActive = Math.Max(0, aimLockTicksBeforeActive);
+            WindupHoldTicks = Math.Clamp(windupHoldTicks, 0, WindupTicks - 1);
         }
     }
 
@@ -246,11 +258,18 @@ namespace tsorcRevamp.NPCs.Puppets
 
         private float SampleLogicalWindup(float progress)
         {
+            int motionTicks = Clip.WindupTicks - Clip.WindupHoldTicks;
+            if (StageTick >= motionTicks)
+                return Clip.AttackStartRotation;
+
+            // Remap the moving part of the windup onto its own clock. The remaining ticks are a
+            // literal hold above, so the last motion frame eases fully onto the attack start pose.
+            progress = MathHelper.Clamp(StageTick / (float)Math.Max(1, motionTicks - 1), 0f, 1f);
             const float settleFraction = 0.25f;
             if (progress < settleFraction)
             {
                 float settle = MathHelper.SmoothStep(0f, 1f, progress / settleFraction);
-                return MathHelper.Lerp(Clip.RecoveryEndRotation, Clip.OppositeWindupRotation, settle);
+                return MathHelper.Lerp(Clip.WindupStartRotation, Clip.OppositeWindupRotation, settle);
             }
 
             float raise = MathHelper.SmoothStep(

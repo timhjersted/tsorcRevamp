@@ -23,9 +23,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         const int StateRetracting = 2;
 
         const int Lifetime = 180;
-        const int MaxFlightTicks = 44;
+        const int MaxFlightTicks = 56;
         const int GraspTicks = 44;
-        const float MaxLength = 620f;
+        const float MaxLength = 1200f;
         const float PullSpeed = 14f;
         const float CaptureStandoff = 72f;
         const int GrabPadding = 14;
@@ -39,6 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         int State => (int)Projectile.ai[1];
         int TargetWho => (int)Projectile.ai[2] - 1;
+        bool HasGrabbedPlayer => TargetWho >= 0 && TargetWho < Main.maxPlayers;
         float Age => Projectile.localAI[0];
 
         public override void SetDefaults()
@@ -47,7 +48,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.friendly = false;
             Projectile.width = 46;
             Projectile.height = 46;
-            Projectile.tileCollide = false;
+            Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.aiStyle = 0;
@@ -85,7 +86,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         void FlyOut(NPC owner)
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
-            Projectile.velocity *= 0.995f;
             if (Age >= MaxFlightTicks || Projectile.Distance(GetOriginPosition(owner)) >= MaxLength)
             {
                 StartRetract();
@@ -156,7 +156,10 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            int tipCount = State == StateGrasping ? 8 : 5;
+            // A hand that successfully caught someone stays in its larger, hotter grasp state while
+            // returning. A missed hand retracts as the ordinary smaller projectile instead.
+            bool returningAfterGrab = State == StateRetracting && HasGrabbedPlayer;
+            int tipCount = State == StateGrasping || returningAfterGrab ? 8 : 5;
             for (int i = 0; i < tipCount; i++)
             {
                 Vector2 spread = Main.rand.NextVector2Circular(Projectile.width * 0.5f, Projectile.height * 0.5f);
@@ -213,6 +216,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             return State == StateFlying;
         }
 
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            // A wall is a clean miss, not a teleporting grab or a projectile death. Keep the hand
+            // alive long enough for the visible flame tether to retract to Gwyn through the wall.
+            Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity,
+                Projectile.width, Projectile.height);
+            StartRetract();
+            return false;
+        }
+
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             if (State != StateFlying)
@@ -258,6 +271,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Projectile.ai[1] = StateRetracting;
             Projectile.hostile = false;
+            Projectile.tileCollide = false;
             Projectile.netUpdate = true;
         }
 
@@ -300,7 +314,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             float fadeIn = MathHelper.Clamp((Age + 2f) / 5f, 0.55f, 1f);
             float fadeOut = MathHelper.Clamp(Projectile.timeLeft / 8f, 0f, 1f);
-            float drawScale = State == StateGrasping ? 1.18f : 1f;
+            // Keep the successful grab's enlarged hand silhouette during its complete retraction;
+            // wall and range misses keep the normal outgoing-hand presentation.
+            bool returningAfterGrab = State == StateRetracting && HasGrabbedPlayer;
+            float drawScale = State == StateGrasping || returningAfterGrab ? 1.18f : 1f;
             DrawHandAura(Projectile.Center, Projectile.rotation, drawScale,
                 fadeIn * fadeOut, drawUnblockableOutline: State == StateFlying);
             return false;

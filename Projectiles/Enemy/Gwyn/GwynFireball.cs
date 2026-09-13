@@ -9,11 +9,19 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     ///<summary>
     ///A falling fireball of the Firestorm (FireFlameShot.png, 6 frames). Rains from above the player,
-    ///accelerating down, bursting on tile or player. ai[0] = gravity per tick.
+    ///accelerating down, bursting on tile or player. ai[0] = gravity per tick; ai[1] = terminal
+    ///speed scale (defaults to the original 0.75 scale used by non-Firestorm spawns).
     ///</summary>
     class GwynFireball : ModProjectile
     {
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/GwynFireball";
+
+        const float BaseTerminalFallSpeed = 15f;
+        const float DefaultMovementMultiplier = 0.75f;
+
+        float MovementMultiplier => Projectile.ai[1] > 0f
+            ? Projectile.ai[1]
+            : DefaultMovementMultiplier;
 
         public override void SetStaticDefaults()
         {
@@ -35,9 +43,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             Projectile.velocity.Y += Projectile.ai[0];
-            if (Projectile.velocity.Y > 11.25f)
+            float terminalFallSpeed = BaseTerminalFallSpeed * MovementMultiplier;
+            if (Projectile.velocity.Y > terminalFallSpeed)
             {
-                Projectile.velocity.Y = 11.25f;
+                Projectile.velocity.Y = terminalFallSpeed;
             }
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             if (++Projectile.frameCounter >= 5)
