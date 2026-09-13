@@ -9,12 +9,25 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     ///<summary>
     ///A lightweight sunlight spear — the volley/storm projectile fired by GwynSolarSpearNode. Shares
-    ///the LightningSpear art (GwynLightningSpear.png), but flies straight and simply hits, with NONE
-    ///of the marquee spear's delayed-bolt payload (that stays unique to Spear of the First Sun).
+    ///the LightningSpear art (GwynLightningSpear.png), but flies straight without the marquee
+    ///spear's delayed judgment-bolt payload (that stays unique to Spear of the First Sun). Storm
+    ///spears that strike terrain crackle at the impact for 90 ticks, then fire one equal-damage
+    ///spear back along the incoming path. The rebound dies normally on its next player/tile hit.
+    ///ai[0] = 0 regular Volley spear, 1 outbound Storm spear, 2 Storm rebound, 3 terrain charge.
+    ///ai[1] = terrain-charge timer. ai[2] = rebound direction in radians.
     ///</summary>
     class GwynSunlightSpear : ModProjectile
     {
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/GwynLightningSpear";
+
+        public const float RegularState = 0f;
+        public const float StormOutboundState = 1f;
+        const float StormReboundState = 2f;
+        const float StormChargeState = 3f;
+        const int ImpactChargeTicks = 90;
+        const float SpearSpeed = 12f;
+
+        bool IsCharging => Projectile.ai[0] == StormChargeState;
 
         public override void SetStaticDefaults()
         {
@@ -35,12 +48,15 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            Projectile.rotation = Projectile.velocity.ToRotation();
-            if (++Projectile.frameCounter >= 5)
+            AdvanceAnimation();
+
+            if (IsCharging)
             {
-                Projectile.frameCounter = 0;
-                Projectile.frame = (Projectile.frame + 1) % 4;
+                TickImpactCharge();
+                return;
             }
+
+            Projectile.rotation = Projectile.velocity.ToRotation();
             if (Main.rand.NextBool(2))
             {
                 int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Electric;
@@ -51,6 +67,119 @@ namespace tsorcRevamp.Projectiles.Enemy
             Lighting.AddLight(Projectile.Center, 0.6f, 0.5f, 0.2f);
         }
 
+        void AdvanceAnimation()
+        {
+            if (++Projectile.frameCounter >= 5)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame = (Projectile.frame + 1) % 4;
+            }
+        }
+
+        void TickImpactCharge()
+        {
+            Projectile.velocity = Vector2.Zero;
+            Projectile.tileCollide = false;
+            Projectile.rotation = Projectile.ai[2] + MathHelper.Pi;
+            Projectile.ai[1]++;
+
+            if (Main.netMode != NetmodeID.Server)
+            {
+                SpawnChargeDust();
+            }
+            Lighting.AddLight(Projectile.Center, 0.75f, 0.65f, 0.35f);
+
+            if (Projectile.ai[1] < ImpactChargeTicks)
+            {
+                return;
+            }
+
+            if (Projectile.localAI[0] == 0f)
+            {
+                Projectile.localAI[0] = 1f;
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    SpawnReleaseBurst();
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.55f, Pitch = 0.35f }, Projectile.Center);
+                }
+            }
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Vector2 reboundDirection = Projectile.ai[2].ToRotationVector2();
+                Vector2 spawnPosition = Projectile.Center + reboundDirection * 18f;
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawnPosition,
+                    reboundDirection * SpearSpeed, Type, Projectile.damage, Projectile.knockBack,
+                    Projectile.owner, StormReboundState);
+                Projectile.Kill();
+            }
+        }
+
+        void SpawnChargeDust()
+        {
+            Vector2 reboundDirection = Projectile.ai[2].ToRotationVector2();
+            Vector2 normal = new Vector2(-reboundDirection.Y, reboundDirection.X);
+
+            Dust blueSquiggle = Dust.NewDustPerfect(
+                Projectile.Center + Main.rand.NextVector2Circular(9f, 9f),
+                DustID.Electric,
+                normal * Main.rand.NextFloat(-1.4f, 1.4f) + Main.rand.NextVector2Circular(0.35f, 0.35f),
+                55, Color.RoyalBlue, Main.rand.NextFloat(0.65f, 1.05f));
+            blueSquiggle.noGravity = true;
+
+            Dust yellowSpark = Dust.NewDustPerfect(
+                Projectile.Center + Main.rand.NextVector2Circular(7f, 7f),
+                DustID.GoldFlame,
+                reboundDirection * Main.rand.NextFloat(0.4f, 1.4f) + Main.rand.NextVector2Circular(0.7f, 0.7f),
+                45, new Color(255, 225, 100), Main.rand.NextFloat(0.45f, 0.8f));
+            yellowSpark.noGravity = true;
+        }
+
+        void SpawnReleaseBurst()
+        {
+            for (int i = 0; i < 18; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2CircularEdge(6f, 6f) * Main.rand.NextFloat(0.45f, 1f);
+                Dust blueSquiggle = Dust.NewDustPerfect(Projectile.Center, DustID.Electric, velocity,
+                    45, Color.RoyalBlue, Main.rand.NextFloat(0.65f, 1.05f));
+                blueSquiggle.noGravity = true;
+            }
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2CircularEdge(8f, 8f) * Main.rand.NextFloat(0.55f, 1f);
+                Dust yellowSpark = Dust.NewDustPerfect(Projectile.Center, DustID.GoldFlame, velocity,
+                    35, new Color(255, 225, 100), Main.rand.NextFloat(0.45f, 0.85f));
+                yellowSpark.noGravity = true;
+            }
+        }
+
+        public override bool? CanDamage()
+        {
+            return IsCharging ? false : null;
+        }
+
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            if (Projectile.ai[0] != StormOutboundState)
+            {
+                return true;
+            }
+
+            Vector2 reboundDirection = -oldVelocity.SafeNormalize(Vector2.UnitY);
+            Projectile.ai[0] = StormChargeState;
+            Projectile.ai[1] = 0f;
+            Projectile.ai[2] = reboundDirection.ToRotation();
+            Projectile.velocity = Vector2.Zero;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = ImpactChargeTicks + 5;
+            Projectile.netUpdate = true;
+
+            if (Main.netMode != NetmodeID.Server)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item94 with { Volume = 0.45f, Pitch = 0.45f }, Projectile.Center);
+            }
+            return false;
+        }
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.OnFire, 4 * 60);
@@ -58,12 +187,26 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnKill(int timeLeft)
         {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                return;
+            }
+
+            //Normal death language for both the outbound spear and its one allowed rebound:
+            //blue electric squiggles underneath a faster foreground of small yellow sparks.
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(4f, 4f);
+                Dust blueSquiggle = Dust.NewDustPerfect(Projectile.Center, DustID.Electric, velocity,
+                    50, Color.RoyalBlue, Main.rand.NextFloat(0.65f, 1.05f));
+                blueSquiggle.noGravity = true;
+            }
             for (int i = 0; i < 8; i++)
             {
-                Vector2 vel = Main.rand.NextVector2Circular(3f, 3f);
-                int type = Main.rand.NextBool() ? DustID.GoldFlame : DustID.Electric;
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, type, vel.X, vel.Y, 40, default, 1.3f);
-                Main.dust[dust].noGravity = true;
+                Vector2 velocity = Main.rand.NextVector2CircularEdge(6.5f, 6.5f) * Main.rand.NextFloat(0.45f, 1f);
+                Dust yellowSpark = Dust.NewDustPerfect(Projectile.Center, DustID.GoldFlame, velocity,
+                    35, new Color(255, 225, 100), Main.rand.NextFloat(0.45f, 0.8f));
+                yellowSpark.noGravity = true;
             }
         }
 
@@ -73,7 +216,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             int frameHeight = texture.Height / Main.projFrames[Projectile.type];
             Rectangle frame = new Rectangle(0, Projectile.frame * frameHeight, texture.Width, frameHeight);
             Vector2 origin = new Vector2(texture.Width / 2f, frameHeight / 2f);
-            SpriteEffects fx = Projectile.velocity.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            Vector2 visualDirection = IsCharging
+                ? -(Projectile.ai[2].ToRotationVector2())
+                : Projectile.velocity;
+            SpriteEffects fx = visualDirection.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame, Color.White, Projectile.rotation, origin, 0.45f, fx, 0);
             return false;
         }

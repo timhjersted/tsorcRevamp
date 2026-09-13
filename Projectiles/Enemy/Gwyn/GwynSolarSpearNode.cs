@@ -13,6 +13,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///the READ — you can see where every spear will come from before it fires. Used by the Sunlight
     ///Spears Volley (a few near Gwyn) and the Sunlight Spear Storm (a dozen, in waves).
     ///ai[0] = telegraph ticks before firing.
+    ///ai[1] = 1 for the Storm's terrain-charge/rebound spear; 0 for the ordinary Volley spear.
     ///</summary>
     class GwynSolarSpearNode : ModProjectile
     {
@@ -86,7 +87,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                         ? (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY)
                         : Vector2.UnitY;
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, dir * SpearSpeed,
-                        ModContent.ProjectileType<GwynSunlightSpear>(), Projectile.damage, 3f, Projectile.owner);
+                        ModContent.ProjectileType<GwynSunlightSpear>(), Projectile.damage, 3f, Projectile.owner,
+                        Projectile.ai[1] > 0f ? GwynSunlightSpear.StormOutboundState : GwynSunlightSpear.RegularState);
                 }
                 //Burst as the orb spends itself
                 for (int i = 0; i < 14; i++)

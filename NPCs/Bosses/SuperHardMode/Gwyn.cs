@@ -106,7 +106,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float ComboTelegraphAdvanceSpeedMult => 0.85f;
         protected override int   CasualStrollChance             => 0;
         protected override int   ClosingDistanceMaxTicks        => 150;
-        protected override float ClosingDistanceSpeedMult       => 1.75f;
+        // The half-health moveset is Gwyn's pressure phase, even before the final 30% Wrath ignition.
+        // At 2.1x he runs at 5.46 px/t from 50-30% HP and 6.72 px/t once Wrath raises TopSpeed.
+        protected override float ClosingDistanceSpeedMult       => HalfHealthMovesUnlocked ? 2.1f : 1.75f;
 
         ///<summary>Melee gets most ticks when he is already on top of the player, but no longer
         ///starves the bespoke set-pieces during Wrath. Gwyn's ranged attacks
@@ -127,8 +129,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         ///pursuit FSM's engagement band. 800 keeps a melee-first boss coming.</summary>
         protected override void RunMovementAI(float speedMult)
         {
+            // The authored pursuit solver owns the airborne line. Letting SF4 run here could replace
+            // its horizontal commitment with a path-step arc before TickFlurryPursuit restores it.
+            if (_flurryPursuitActive && _flurryPursuitAirborne)
+            {
+                NPC.velocity.X = _flurryPursuitVelocityX;
+                return;
+            }
+
             var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.RemembersLastKnownPos = true;
+
+            bool aggressiveClosing = HalfHealthMovesUnlocked && Phase == AttackPhase.ClosingDistance;
+            float movementAcceleration = Acceleration * (aggressiveClosing ? 1.3f : 1f);
+
+            // A missed Wrath Flurry swipe owns a short, visibly committed run-up before its
+            // repositioning jump. It is faster than neutral ClosingDistance, but still uses SF4's
+            // terrain navigation until the trajectory solver commits the airborne line.
+            if (_flurryPursuitActive && !_flurryPursuitAirborne)
+            {
+                speedMult = Math.Max(speedMult, FlurryPursuitRunSpeedMult);
+                movementAcceleration *= FlurryPursuitAccelerationMult;
+            }
 
             // The unarmed walk after Wrath Flurry is a slow, spent advance, not a chase.
             if (FlurryRecoveryWalking)
@@ -138,7 +160,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             SmartFighter4AI.Run(NPC,
                 topSpeed: TopSpeed * speedMult,
-                acceleration: Acceleration,
+                acceleration: movementAcceleration,
                 doorBreakingDamage: 4,
                 attackRange: 800f);
         }
@@ -409,13 +431,34 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int FlurrySwipePause = 10;    // held pose; re-faces the player between swipes
         // The blade is live while it moves at >= this share of its top speed; slower is follow-through.
         const float FlurryArmedSpeedShare = 0.3f;
-        // Gap-closer: after this many whiffs in a row, with the player past MeleeEngageRange, the
-        // next overhand becomes a leap slam, followed by a 12-tick landing beat.
-        const int FlurryLeapAfterMisses = 2;
-        const int FlurryLeapPause = 12;
         // Both leaps swing in the air once past the apex with the player this close (centre to
         // centre): MeleeRange 110 plus the ~40px he still travels during the 10-tick downswing.
         const float FlurryLeapStrikeRange = 150f;
+
+        // Miss-pursuit spec — the reposition is movement, not an extra hit. A normal Flurry swipe
+        // remains the next threat after Gwyn lands, so a successful dodge does not immediately arm
+        // another damaging leap. The harmless tail of the missed swipe plus this visible run/flight
+        // provides far more than the 20t light-attack reaction floor.
+        //
+        // Trigger:       every completed normal Flurry swipe that hit nobody, while the next step is
+        //                not the authored final leap and the target is >112px away.
+        // Run tell:      at least 8t; up to 36t while SF4 routes terrain and closes to a solvable arc.
+        // Jump:          7.5-11px/t upward, <=TopSpeed*2.4 horizontal, calculated from real gravity
+        //                and vertical displacement to land 84px short of a 10t-led target position.
+        // Tracking:      8% correction while rising; direction and trajectory lock on descent.
+        // Damage/VFX:    no hitbox/projectile; sword holds the shared endpoint, feet shed fire dust.
+        // Multiplayer:   server decides from authoritative hit state and syncs the pursuit snapshot.
+        const int FlurryPursuitFirstFinaleStepIndex = 7;
+        const float FlurryPursuitTriggerRange = 112f;
+        const int FlurryPursuitMinRunTicks = 8;
+        const int FlurryPursuitMaxRunTicks = 36;
+        const float FlurryPursuitRunSpeedMult = 2.4f;
+        const float FlurryPursuitAccelerationMult = 1.3f;
+        const float FlurryPursuitLandingStandoff = 84f;
+        const float FlurryPursuitTargetLeadTicks = 10f;
+        const float FlurryPursuitMinUpSpeed = 7.5f;
+        const float FlurryPursuitMaxUpSpeed = 11f;
+        const float FlurryPursuitAscentTrackingStrength = 0.08f;
         // The finale's punish window: three seconds with no attack. The first MeleeRecoveryLingerTicks
         // are the planted landing beat, then the sword is put away and he walks forward at this
         // fraction of TopSpeed.
@@ -638,13 +681,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //      swipes, rising and falling in turn, each its own hit. The arcs are widened to 185°
             //      and share endpoints (see ModifyMeleeArcEndpoints), so every swipe begins exactly
             //      where the last one ended: no re-raise between hits. Facing is locked only while a
-            //      swipe is live; the 2-tick pause re-faces the player, so a roll through him costs
-            //      the current swipe and then the next one comes from the other side. Two whiffs in
-            //      a row against a retreating player turn the next overhand into a leap slam
-            //      (ModifyNextMeleeComboStep). It ends on a leap slam from the cocked pose the last
-            //      underhand finishes in, then a long planted recovery - the punish window.
-            new MeleeCombo { Name = WrathFlurryName, BaseWeight = 25, Preferred = ComboRangeBand.Any,
-                InitialFlashColor = Color.Red, CooldownAfterUse = 300, RecoveryTicks = FlurryFinalRecoveryTicks,
+            //      swipe is live; the 10-tick pause re-faces the player, so a roll through him costs
+            //      the current swipe and then the next one comes from the other side. Every missed
+            //      normal swipe rechecks reach; if the player escaped, Gwyn runs and jumps to land
+            //      in sword range before resuming the intended next cut. It ends on a leap slam from
+            //      the cocked pose the last underhand finishes in, then a long planted recovery -
+            //      the punish window.
+            new MeleeCombo { Name = WrathFlurryName, BaseWeight = 50, Preferred = ComboRangeBand.Any,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 240, RecoveryTicks = FlurryFinalRecoveryTicks,
                 HeavyCommit = true, HyperArmor = true,
                 Steps = new[] {
                     // 55 ticks each (10 building speed, 45 decaying onto the next start) + a 10-tick
@@ -820,39 +864,48 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return true;
         }
 
-        // Consecutive Wrath Flurry swipes that connected with nobody. Feeds the gap-close leap below.
-        int _flurryMissStreak;
+        // Server-authoritative, movement-only pursuit inserted into the normal inter-step pause.
+        // It does not consume or replace the upcoming authored swipe, which preserves the alternating
+        // shared endpoints and prevents a whiff from creating an extra damaging attack.
+        bool _flurryPursuitPending;
+        bool _flurryPursuitActive;
+        bool _flurryPursuitAirborne;
+        bool _flurryPursuitAwaitingServer;
+        int _flurryPursuitRunTicks;
+        int _flurryPursuitAirTicks;
+        float _flurryPursuitVelocityX;
+        int _flurryPursuitLockedDirection = 1;
 
-        ///<summary>Counts Wrath Flurry whiffs. Runs at the end of every step, before the pause; the
-        ///flurry always continues - this only records whether the swipe that just ended connected.</summary>
+        ///<summary>After every ordinary Wrath Flurry swipe, decide whether its inter-step pause needs
+        ///a run-and-jump pursuit. The final authored leap already closes distance and is left alone.</summary>
         protected override bool ShouldContinueMeleeCombo(
             string comboName, int nextStepIndex, Player target, bool previousStepHit)
         {
-            if (comboName == WrathFlurryName)
+            if (comboName == WrathFlurryName
+                && nextStepIndex < FlurryPursuitFirstFinaleStepIndex
+                && (ActiveMeleeComboMotion == ComboMotion.UnderhandArc
+                    || ActiveMeleeComboMotion == ComboMotion.OverheadArc))
             {
-                // nextStepIndex 1 = the first swipe just ended, so this is a fresh flurry.
-                if (nextStepIndex == 1)
+                if (Main.netMode == NetmodeID.MultiplayerClient)
                 {
-                    _flurryMissStreak = 0;
-                }
-
-                if (previousStepHit)
-                {
-                    _flurryMissStreak = 0;
+                    // Blade overlap is server-only. Hold the pause until the authoritative decision
+                    // arrives instead of assuming every client-side step was a whiff.
+                    _flurryPursuitAwaitingServer = true;
                 }
                 else
                 {
-                    _flurryMissStreak++;
+                    _flurryPursuitPending = !previousStepHit
+                        && target != null && target.active && !target.dead
+                        && NPC.Distance(target.Center) > FlurryPursuitTriggerRange;
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NPC.netUpdate = true;
+                    }
                 }
             }
             return base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
         }
 
-        ///<summary>Wrath Flurry gap-closer. After FlurryLeapAfterMisses whiffs in a row, with the player
-        ///past MeleeEngageRange (where no swipe can start a combo either), the next OVERHAND becomes a
-        ///leap slam at them. Only overhands are swapped: the leap is an overhead - carried high, slammed
-        ///down - so the under/over rhythm continues, and it can never come more than every other swipe.
-        ///A LeapSlam tops out near 280px of travel, so from further it closes most of the gap.</summary>
         protected override void ModifyNextMeleeComboStep(
             string comboName, int nextStepIndex, Player target, ref MeleeComboStep nextStep)
         {
@@ -867,22 +920,284 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 return;
             }
+        }
 
-            if (comboName != WrathFlurryName || nextStep.Motion != ComboMotion.OverheadArc)
+        void TickFlurryPursuit()
+        {
+            bool inFlurryPause = Phase == AttackPhase.MeleeComboPause
+                && ActiveMeleeComboName == WrathFlurryName;
+            if (!inFlurryPause)
+            {
+                if (_flurryPursuitPending || _flurryPursuitActive || _flurryPursuitAwaitingServer)
+                {
+                    ResetFlurryPursuit(releasePause: false);
+                }
+                return;
+            }
+
+            // Clients wait for the server's hit-confirm decision, then mirror the synced run/flight.
+            // They never derive a whiff locally because TickBladeHit is intentionally server-only.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                if (_flurryPursuitActive)
+                {
+                    if (_flurryPursuitAirborne)
+                    {
+                        _flurryPursuitAirTicks++;
+                        NPC.velocity.X = _flurryPursuitVelocityX;
+                        NPC.direction = _flurryPursuitLockedDirection;
+                        NPC.spriteDirection = _flurryPursuitLockedDirection;
+                    }
+                    else
+                    {
+                        _flurryPursuitRunTicks++;
+                    }
+                    EmitFlurryPursuitTravelDust();
+                }
+                return;
+            }
+
+            if (_flurryPursuitPending)
+            {
+                _flurryPursuitPending = false;
+                _flurryPursuitActive = true;
+                _flurryPursuitAirborne = false;
+                _flurryPursuitRunTicks = 0;
+                _flurryPursuitAirTicks = 0;
+                _flurryPursuitVelocityX = 0f;
+                SetAttackLabel("Wrath Flurry — Pursuit", 90);
+                NPC.netUpdate = true;
+            }
+
+            if (!_flurryPursuitActive)
             {
                 return;
             }
 
-            bool enoughWhiffs = _flurryMissStreak >= FlurryLeapAfterMisses;
-            bool outOfReach = NPC.Distance(target.Center) > MeleeEngageRange;
-            if (!enoughWhiffs || !outOfReach)
+            Player target = Main.player[NPC.target];
+            if (target == null || !target.active || target.dead)
             {
+                ResetFlurryPursuit(releasePause: true);
                 return;
             }
 
-            // Reach 1.2 throws the fire crescent on impact (OnComboStepCompleted).
-            nextStep = FlurryLeap(FlurryLeapPause, 1.0f);
-            _flurryMissStreak = 0;
+            if (!_flurryPursuitAirborne)
+            {
+                _flurryPursuitRunTicks++;
+                int towardTarget = target.Center.X < NPC.Center.X ? -1 : 1;
+                NPC.direction = towardTarget;
+                NPC.spriteDirection = towardTarget;
+
+                bool grounded = NPC.velocity.Y == 0f;
+                bool heightAccessible = NPC.Center.Y - target.Center.Y < 48f;
+                bool backInReach = NPC.Distance(target.Center) <= FlurryPursuitTriggerRange;
+                if (_flurryPursuitRunTicks >= FlurryPursuitMinRunTicks
+                    && grounded && heightAccessible && backInReach)
+                {
+                    ResetFlurryPursuit(releasePause: true);
+                    return;
+                }
+
+                bool canLaunch = TrySolveFlurryPursuitLaunch(target,
+                    out float launchVelocityX,
+                    out float launchUpSpeed,
+                    out bool fullyReachable);
+                if (grounded && _flurryPursuitRunTicks >= FlurryPursuitMinRunTicks
+                    && canLaunch
+                    && (fullyReachable || _flurryPursuitRunTicks >= FlurryPursuitMaxRunTicks))
+                {
+                    BeginFlurryPursuitJump(launchVelocityX, launchUpSpeed, towardTarget);
+                }
+                else if (grounded && _flurryPursuitRunTicks >= FlurryPursuitMaxRunTicks
+                    && !canLaunch)
+                {
+                    // A target more than the maximum jump height above Gwyn has no real ballistic
+                    // solution. Do not deadlock the combo pause; SF4 got its full run window, then
+                    // the next authored swipe is allowed to proceed normally.
+                    ResetFlurryPursuit(releasePause: true);
+                    return;
+                }
+            }
+            else
+            {
+                _flurryPursuitAirTicks++;
+                NPC.direction = _flurryPursuitLockedDirection;
+                NPC.spriteDirection = _flurryPursuitLockedDirection;
+
+                // Correct only while rising. At the apex the landing line becomes a committed,
+                // dodgeable trajectory rather than homing through the player's response.
+                if (NPC.velocity.Y < 0f
+                    && TrySolveRemainingFlurryPursuitVelocity(target, out float desiredVelocityX))
+                {
+                    _flurryPursuitVelocityX = MathHelper.Lerp(
+                        _flurryPursuitVelocityX,
+                        desiredVelocityX,
+                        FlurryPursuitAscentTrackingStrength);
+                }
+                NPC.velocity.X = _flurryPursuitVelocityX;
+
+                bool landed = _flurryPursuitAirTicks > 4
+                    && NPC.velocity.Y == 0f
+                    && Collision.TileCollision(NPC.position, Vector2.UnitY,
+                        NPC.width, NPC.height).Y < 1f;
+                if (landed)
+                {
+                    SpawnFlurryPursuitDust(14, 1.45f);
+                    ResetFlurryPursuit(releasePause: true);
+                    return;
+                }
+            }
+
+            EmitFlurryPursuitTravelDust();
+        }
+
+        bool TrySolveFlurryPursuitLaunch(
+            Player target,
+            out float velocityX,
+            out float upSpeed,
+            out bool fullyReachable)
+        {
+            float gravity = NPC.gravity > 0f ? NPC.gravity : 0.3f;
+            float rise = Math.Max(0f, NPC.Bottom.Y - target.Bottom.Y);
+            float riseSpeed = (float)Math.Sqrt(2f * gravity * (rise + 16f)) + 0.5f;
+            upSpeed = MathHelper.Clamp(riseSpeed,
+                FlurryPursuitMinUpSpeed,
+                FlurryPursuitMaxUpSpeed);
+
+            float landingDeltaY = target.Bottom.Y - NPC.Bottom.Y;
+            float discriminant = upSpeed * upSpeed + 2f * gravity * landingDeltaY;
+            if (discriminant < 0f)
+            {
+                velocityX = 0f;
+                fullyReachable = false;
+                return false;
+            }
+
+            float airtime = (upSpeed + (float)Math.Sqrt(discriminant)) / gravity;
+            int direction = target.Center.X < NPC.Center.X ? -1 : 1;
+            float targetLead = MathHelper.Clamp(
+                target.velocity.X * FlurryPursuitTargetLeadTicks,
+                -96f,
+                96f);
+            float landingX = target.Center.X + targetLead
+                - direction * FlurryPursuitLandingStandoff;
+            float rawVelocityX = (landingX - NPC.Center.X) / Math.Max(1f, airtime);
+            float maxVelocityX = TopSpeed * FlurryPursuitRunSpeedMult;
+            fullyReachable = Math.Abs(rawVelocityX) <= maxVelocityX;
+            velocityX = MathHelper.Clamp(rawVelocityX, -maxVelocityX, maxVelocityX);
+            return true;
+        }
+
+        bool TrySolveRemainingFlurryPursuitVelocity(Player target, out float velocityX)
+        {
+            float gravity = NPC.gravity > 0f ? NPC.gravity : 0.3f;
+            float landingDeltaY = target.Bottom.Y - NPC.Bottom.Y;
+            float discriminant = NPC.velocity.Y * NPC.velocity.Y + 2f * gravity * landingDeltaY;
+            if (discriminant < 0f)
+            {
+                velocityX = _flurryPursuitVelocityX;
+                return false;
+            }
+
+            float remainingTicks = (-NPC.velocity.Y + (float)Math.Sqrt(discriminant)) / gravity;
+            if (remainingTicks < 6f)
+            {
+                velocityX = _flurryPursuitVelocityX;
+                return false;
+            }
+
+            float targetLead = MathHelper.Clamp(
+                target.velocity.X * FlurryPursuitTargetLeadTicks,
+                -96f,
+                96f);
+            float landingX = target.Center.X + targetLead
+                - _flurryPursuitLockedDirection * FlurryPursuitLandingStandoff;
+            float rawVelocityX = (landingX - NPC.Center.X) / remainingTicks;
+            float maxVelocityX = TopSpeed * FlurryPursuitRunSpeedMult;
+            velocityX = MathHelper.Clamp(rawVelocityX, -maxVelocityX, maxVelocityX);
+
+            // Never reverse through the player during correction. A side-switch is answered by the
+            // normal re-face on landing before the next authored swipe starts.
+            if (Math.Abs(velocityX) > 0.05f
+                && Math.Sign(velocityX) != _flurryPursuitLockedDirection)
+            {
+                velocityX = 0f;
+            }
+            return true;
+        }
+
+        void BeginFlurryPursuitJump(float velocityX, float upSpeed, int direction)
+        {
+            _flurryPursuitAirborne = true;
+            _flurryPursuitAirTicks = 0;
+            _flurryPursuitVelocityX = velocityX;
+            _flurryPursuitLockedDirection = direction < 0 ? -1 : 1;
+            NPC.direction = _flurryPursuitLockedDirection;
+            NPC.spriteDirection = _flurryPursuitLockedDirection;
+            NPC.noGravity = false;
+            NPC.velocity = new Vector2(velocityX, -upSpeed);
+            SpawnFlurryPursuitDust(12, 1.65f);
+            if (!Main.dedServ)
+            {
+                SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.55f, Pitch = -0.25f }, NPC.Center);
+            }
+            NPC.netUpdate = true;
+        }
+
+        void ResetFlurryPursuit(bool releasePause)
+        {
+            _flurryPursuitPending = false;
+            _flurryPursuitActive = false;
+            _flurryPursuitAirborne = false;
+            _flurryPursuitAwaitingServer = false;
+            _flurryPursuitRunTicks = 0;
+            _flurryPursuitAirTicks = 0;
+            _flurryPursuitVelocityX = 0f;
+            if (releasePause && Phase == AttackPhase.MeleeComboPause)
+            {
+                PhaseTimer = 1;
+                NPC.velocity.X *= 0.35f;
+            }
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NPC.netUpdate = true;
+            }
+        }
+
+        void EmitFlurryPursuitTravelDust()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+            int interval = _flurryPursuitAirborne ? 3 : 2;
+            int timer = _flurryPursuitAirborne ? _flurryPursuitAirTicks : _flurryPursuitRunTicks;
+            if (timer % interval == 0)
+            {
+                SpawnFlurryPursuitDust(_flurryPursuitAirborne ? 1 : 2,
+                    _flurryPursuitAirborne ? 1.05f : 1.2f);
+            }
+        }
+
+        void SpawnFlurryPursuitDust(int count, float scale)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 position = NPC.Bottom + new Vector2(
+                    Main.rand.NextFloat(-NPC.width * 0.35f, NPC.width * 0.35f),
+                    Main.rand.NextFloat(-5f, 1f));
+                Vector2 velocity = new Vector2(
+                    -NPC.velocity.X * Main.rand.NextFloat(0.08f, 0.2f),
+                    Main.rand.NextFloat(-2.2f, -0.5f));
+                int dustType = Main.rand.NextBool(3) ? DustID.GoldFlame : DustID.Torch;
+                Dust dust = Dust.NewDustPerfect(position, dustType, velocity, 70, default,
+                    scale * Main.rand.NextFloat(0.8f, 1.2f));
+                dust.noGravity = true;
+            }
         }
 
         // ── Kept systems (original distances) ────────────────────────────────────
@@ -1071,6 +1386,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write((short)_riposteTimer);
             writer.Write((short)_riposteCd);
             writer.Write(_riposteCounterPending);
+            writer.Write(_flurryPursuitPending);
+            writer.Write(_flurryPursuitActive);
+            writer.Write(_flurryPursuitAirborne);
+            writer.Write((byte)Math.Clamp(_flurryPursuitRunTicks, 0, byte.MaxValue));
+            writer.Write((short)Math.Clamp(_flurryPursuitAirTicks, 0, short.MaxValue));
+            writer.Write(_flurryPursuitVelocityX);
+            writer.Write((sbyte)_flurryPursuitLockedDirection);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -1098,6 +1420,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _riposteTimer = reader.ReadInt16();
             _riposteCd = reader.ReadInt16();
             _riposteCounterPending = reader.ReadBoolean();
+            bool wasPursuitAirborne = _flurryPursuitAirborne;
+            _flurryPursuitPending = reader.ReadBoolean();
+            _flurryPursuitActive = reader.ReadBoolean();
+            _flurryPursuitAirborne = reader.ReadBoolean();
+            _flurryPursuitRunTicks = reader.ReadByte();
+            _flurryPursuitAirTicks = reader.ReadInt16();
+            _flurryPursuitVelocityX = reader.ReadSingle();
+            _flurryPursuitLockedDirection = reader.ReadSByte() < 0 ? -1 : 1;
+            _flurryPursuitAwaitingServer = false;
+            if (!wasPursuitAirborne && _flurryPursuitAirborne && !Main.dedServ)
+            {
+                SpawnFlurryPursuitDust(12, 1.65f);
+                SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.55f, Pitch = -0.25f }, NPC.Center);
+            }
         }
 
         public override void AI()
@@ -1119,7 +1455,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Contact only hurts during the Unbroken Advance march (all other damage is weapon hitboxes)
             NPC.damage = TooEarly ? TooEarlyDamage : (_advanceTimer > 0 ? MeleeDamage : 0);
 
+            // Keep the base inter-step pause from advancing while the miss-pursuit owns movement.
+            // Setting it to two is enough: PuppetNPC decrements once. After the three-tick linger it
+            // eases toward the next start, but the Flurry's shared endpoints make that the same pose.
+            bool holdingFlurryPursuit = Phase == AttackPhase.MeleeComboPause
+                && ActiveMeleeComboName == WrathFlurryName
+                && (_flurryPursuitPending || _flurryPursuitActive || _flurryPursuitAwaitingServer);
+            if (holdingFlurryPursuit)
+            {
+                PhaseTimer = 2;
+            }
+
             base.AI();
+
+            TickFlurryPursuit();
 
             // Wrath Flurry's 180-tick recovery (the punish window). The landing beat is planted -
             // the navigator runs every tick, recovery included, so zero its step. After that he has
@@ -2306,7 +2655,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         float ang = MathHelper.ToRadians(wave * 30f) + MathHelper.PiOver2 * i;
                         Vector2 pos = player.Center + ang.ToRotationVector2() * 340f;
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.Enemy.GwynSolarSpearNode>(), StormNodeDamage, 2f, Main.myPlayer, 22f);
+                            ModContent.ProjectileType<Projectiles.Enemy.GwynSolarSpearNode>(), StormNodeDamage, 2f, Main.myPlayer,
+                            22f, 1f); // ai[1]: Storm spears rebound once after a 90t terrain charge
                     }
                 }
                 //Radiance while he hangs aloft
@@ -2864,6 +3214,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             base.OnMeleeComboStarted(combo);
             _swordArcSpawnedForStep = false;
+            ResetFlurryPursuit(releasePause: false);
         }
 
         static bool IsGwynSwordSlashMotion(ComboMotion motion)
