@@ -11,13 +11,16 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     // Travels away from the slam point (spawned in a left/right pair) hugging the ground, growing
     // from a low flicker to a full 80px-tall wall over GrowTicks, then holds full size until it has
-    // traveled TravelDistance and dissipates. Uses the 5-frame EnemyAbyssBlaze sprite (86x82/frame) -
-    // the frame sequence itself depicts the flame growing, so frame index is driven by growth progress.
+    // traveled TravelDistance (or meets a wall) and dissipates. Uses the 5-frame EnemyAbyssBlaze
+    // sprite (86x82/frame) - the frame sequence itself depicts the flame growing, so frame index is
+    // driven by growth progress.
     class ArtoriasAbyssBlaze : ModProjectile
     {
         const int GrowTicks = 30;
-        const float TravelDistance = 400f;
+        const float TravelDistance = 1200f;
         const float Speed = 5f;
+        const float VisualGroundOffset = 16f;
+        const float RotationSpeed = 0.04f;
         const int FinalHeight = 80;
         const int FinalWidth = 32;
         const int StartHeight = 10;
@@ -25,6 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         float _spawnX;
         float _groundY;
+        float _visualRotation;
         int _elapsed;
 
         struct FlameTongue
@@ -55,7 +59,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.light = 0.7f;
-            Projectile.timeLeft = 200; // safety cap; normally ends via TravelDistance
+            Projectile.timeLeft = 300; // safety cap; normally ends via TravelDistance or terrain
         }
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
@@ -81,6 +85,24 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Projectile.frame = (int)(growT * (Main.projFrames[Type] - 1));
 
+            float direction = Projectile.velocity.X < 0f ? -1f : 1f;
+            // Positive sprite rotation is clockwise in screen space. Negating travel direction
+            // therefore turns right-moving fire counterclockwise and left-moving fire clockwise.
+            _visualRotation -= direction * RotationSpeed;
+
+            // Ignore the bottom strip so the ground-hugging flame does not mistake the floor for a
+            // wall. Any solid tile in front of the visible body ends the projectile immediately.
+            int collisionHeight = Math.Max(4, Projectile.height - 16);
+            float leadingX = direction > 0f
+                ? Projectile.Right.X + Projectile.velocity.X
+                : Projectile.Left.X + Projectile.velocity.X - 4f;
+            Vector2 wallProbePosition = new(leadingX, Projectile.Top.Y + 4f);
+            if (Collision.SolidCollision(wallProbePosition, 4, collisionHeight))
+            {
+                Projectile.Kill();
+                return;
+            }
+
             if (!Main.dedServ)
             {
                 for (int i = _wake.Count - 1; i >= 0; i--)
@@ -96,7 +118,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 // Ancient Demon's breath reads as fire because it is a stream of separately aging
                 // flame sprites. Keep that principle here, but cache the decorative tongues locally
                 // so the authoritative moving projectile and its damage volume remain unchanged.
-                if (_elapsed % 4 == 0)
+                if (_elapsed % 2 == 0)
                 {
                     float distanceProgress = MathHelper.Clamp(
                         Math.Abs(Projectile.Center.X - _spawnX) / TravelDistance, 0f, 1f);
@@ -112,13 +134,27 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * (0.65f + 0.6f * growT));
 
+            if (!Main.dedServ && Main.rand.NextBool(2))
+            {
+                float visualGroundY = _groundY + VisualGroundOffset;
+                Dust purple = Dust.NewDustPerfect(
+                    new Vector2(Projectile.Center.X + Main.rand.NextFloat(-Projectile.width, Projectile.width),
+                        visualGroundY + Main.rand.NextFloat(-44f, -6f)),
+                    DustID.PurpleTorch,
+                    new Vector2(-Projectile.velocity.X * Main.rand.NextFloat(0.02f, 0.10f),
+                        Main.rand.NextFloat(-2.8f, -0.8f)),
+                    70, new Color(174, 54, 236), Main.rand.NextFloat(0.82f, 1.18f));
+                purple.noGravity = true;
+            }
+
             if (!Main.dedServ && Main.rand.NextBool(3))
             {
                 Vector2 dustVel = new Vector2(Projectile.velocity.X * Main.rand.NextFloat(-0.05f, 0.12f),
                     Main.rand.NextFloat(-2.4f, -0.45f));
                 int type = Main.rand.NextBool(5) ? DustID.SilverFlame
                     : Main.rand.NextBool(3) ? DustID.ShadowbeamStaff : DustID.PurpleTorch;
-                Dust d = Dust.NewDustPerfect(Projectile.Bottom
+                Dust d = Dust.NewDustPerfect(new Vector2(Projectile.Center.X,
+                    _groundY + VisualGroundOffset)
                     + new Vector2(Main.rand.NextFloat(-Projectile.width, Projectile.width), Main.rand.NextFloat(-36f, -5f)),
                     type, dustVel, 80, new Color(170, 46, 226), Main.rand.NextFloat(0.68f, 1.08f));
                 d.noGravity = true;
@@ -136,6 +172,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             float direction = Projectile.velocity.X < 0f ? -1f : 1f;
             float travel = MathHelper.Clamp(Math.Abs(Projectile.Center.X - _spawnX) / TravelDistance, 0f, 1f);
             float fade = 1f - MathHelper.Clamp((travel - 0.88f) / 0.12f, 0f, 1f);
+            float visualGroundY = _groundY + VisualGroundOffset;
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             SpriteEffects effects = direction < 0f
                 ? SpriteEffects.FlipHorizontally
@@ -157,14 +194,13 @@ namespace tsorcRevamp.Projectiles.Enemy
                     * MathHelper.Lerp(0.82f, 1.12f, tongue.Seed);
                 float width = MathHelper.Lerp(16f, 46f, shapeT);
                 float rise = tongue.Age * MathHelper.Lerp(0.05f, 0.20f, shapeT);
-                float sway = (float)Math.Sin(Main.GlobalTimeWrappedHourly * 5.6f
-                    + tongue.Seed * MathHelper.TwoPi) * 0.07f * direction;
+                float rotation = -direction * tongue.Age * RotationSpeed;
                 Vector2 scale = new Vector2(width / wakeSource.Width, height / wakeSource.Height);
-                Vector2 bottom = new Vector2(tongue.X, _groundY - rise);
+                Vector2 bottom = new Vector2(tongue.X, visualGroundY - rise);
                 Color wakeColor = Color.Lerp(new Color(82, 24, 142),
                     new Color(224, 60, 210), shapeT) * (ageFade * 0.62f * fade);
                 Main.EntitySpriteDraw(texture, bottom - Main.screenPosition, wakeSource,
-                    wakeColor, sway, new Vector2(wakeSource.Width * 0.5f, wakeSource.Height),
+                    wakeColor, rotation, new Vector2(wakeSource.Width * 0.5f, wakeSource.Height),
                     scale, effects, 0f);
             }
 
@@ -172,7 +208,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 flameSize = new(
                 MathHelper.Lerp(28f, 76f, grow),
                 MathHelper.Lerp(34f, 118f, grow));
-            Vector2 bottomCenter = new(Projectile.Center.X, _groundY);
+            Vector2 bottomCenter = new(Projectile.Center.X, visualGroundY);
             Vector2 shaderCenter = bottomCenter - new Vector2(0f, flameSize.Y * 0.5f);
             ArtoriasVFX.DrawFloorFlame(texture, source, shaderCenter, flameSize,
                 direction, grow, fade, Projectile.identity * 0.071f);
@@ -181,7 +217,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             // the old problem where both left/right projectiles visibly curled to the right.
             Vector2 leadScale = new(flameSize.X / source.Width, flameSize.Y / source.Height);
             Main.EntitySpriteDraw(texture, bottomCenter - Main.screenPosition, source,
-                Color.White * fade, 0f, new Vector2(source.Width * 0.5f, source.Height),
+                Color.White * fade, _visualRotation,
+                new Vector2(source.Width * 0.5f, source.Height),
                 leadScale, effects, 0f);
             return false;
         }
@@ -195,7 +232,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             for (int i = 0; i < 6; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(4f, 4f) + new Vector2(0f, -2f);
-                Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.PurpleTorch, vel, 60, new Color(230, 120, 220), 1.3f);
+                Dust d = Dust.NewDustPerfect(Projectile.Center + new Vector2(0f, VisualGroundOffset),
+                    DustID.PurpleTorch, vel, 60, new Color(230, 120, 220), 1.3f);
                 d.noGravity = true;
             }
         }

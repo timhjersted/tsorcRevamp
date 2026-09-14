@@ -119,7 +119,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             ArtoriasVFX.DrawHomingFlameWisp(
                 Projectile.Center - direction * 34f + currentPerpendicular * currentWave,
                 direction, state, 0.88f, 32f, 104f);
-            ArtoriasVFX.DrawOrb(Projectile.Center, new Vector2(48f, 48f), Projectile.rotation, state, 0.94f);
+            ArtoriasVFX.DrawHomingVolleyOrb(Projectile.Center, new Vector2(48f, 48f), Projectile.rotation, state, 0.94f);
             if (warning > 0f && steering <= 0f)
             {
                 ArtoriasVFX.DrawTransitionFlash(Projectile.Center, Vector2.One * 62f,

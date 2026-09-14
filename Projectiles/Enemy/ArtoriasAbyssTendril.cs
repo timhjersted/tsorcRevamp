@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         const float MaxLength      = 550f;
         const int   MaxFlightTicks = 70;
+        const int   ReachAccelerationTicks = 12;
         const int   YankTicks      = 24;
         const float YankPullSpeed  = 7.5f;
         const float ReleaseHorizontalSpeed = 15f;
@@ -96,6 +97,18 @@ namespace tsorcRevamp.Projectiles.Enemy
         void FlyingAI(NPC owner)
         {
             launchTimer++;
+
+            // ai[2] is opt-in so the targeted Tendril Reach accelerates from its old 12 px/tick
+            // launch speed to 24 px/tick, while surge tendrils keep their existing radial motion.
+            float topSpeed = Projectile.ai[2];
+            if (topSpeed > 0f && Projectile.velocity.LengthSquared() > 0.001f)
+            {
+                float accelerationProgress = MathHelper.Clamp(
+                    launchTimer / (float)ReachAccelerationTicks, 0f, 1f);
+                float speed = MathHelper.SmoothStep(topSpeed * 0.5f, topSpeed,
+                    accelerationProgress);
+                Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitX) * speed;
+            }
 
             if (TryAttachToPlayer())
                 return;

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -11,20 +12,23 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
-    // Purple/white recolor of Deerclops's ice spike (ProjectileID.DeerclopsIceSpike). Reuses the same
-    // shape that made the original read well: spawned at an approximate ground X, it snaps itself down
-    // onto the actual solid surface, sits through a one-second dust-only telegraph with no hitbox, then
-    // "pops" (extra dust burst + tiny screenshake) into a brief active/damaging window before fading
-    // out and dying - entirely self-contained, so the boss side only has to decide where and when to
-    // spawn one of these.
+    // Attack spec — Abyss Shard / PuppetNPC.AbyssShardFire / AbyssShard.
+    // Tell: 60t at the exact snapped tile surface; a 2x2-pixelated abyss breach grows 1-3 tiles high
+    // while dark/bright purple motes rise from that surface. Birth: the five-frame shard rises from
+    // 52px below ground during the final 14t. Life: the original 20 damaging ticks remain fully
+    // exposed, followed by an 18t non-damaging retreat and fade back to that depth. Draw order:
+    // portal and shard behind solid tiles. Multiplayer: projectile
+    // spawn/damage remains server authoritative; shader phase derives from identity and dust is cosmetic.
     class AbyssShard : ModProjectile
     {
         const int TelegraphTicks = 60;
-        const int PopHoldTicks   = 10;
-        const int FadeTicks      = 10;
-        const int TotalTicks     = TelegraphTicks + PopHoldTicks + FadeTicks;
+        const int PopHoldTicks   = 20;
+        const int RetreatTicks   = 18;
+        const int DamageTicks    = 20;
+        const int TotalTicks     = TelegraphTicks + PopHoldTicks + RetreatTicks;
         const int EmergenceTicks = 14;
         const float EmergenceDepth = 52f;
+        static readonly Vector2 PortalSize = new(80f, 52f);
 
         bool _grounded;
         bool _popped;
@@ -68,9 +72,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (elapsed < TelegraphTicks)
             {
                 Projectile.alpha = 255;
-                if (!Main.dedServ && elapsed % 5 == 0)
+                if (!Main.dedServ && elapsed < TelegraphTicks - EmergenceTicks && elapsed % 4 == 0)
                 {
-                    SpawnTelegraphDust();
+                    float telegraphProgress = elapsed / (float)TelegraphTicks;
+                    SpawnSurfaceDust(true, telegraphProgress,
+                        1 + (int)(telegraphProgress * 2f));
                 }
                 return;
             }
@@ -81,17 +87,23 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Pop();
             }
 
-            Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.15f);
+            Lighting.AddLight(Projectile.Center, new Color(138, 40, 214).ToVector3() * 0.82f);
 
             int sincePop = elapsed - TelegraphTicks;
+            if (!Main.dedServ && sincePop % 2 == 0)
+            {
+                SpawnSurfaceDust(false, 1f - sincePop / (float)(PopHoldTicks + RetreatTicks), 2);
+            }
+
             if (sincePop < PopHoldTicks)
             {
                 Projectile.alpha = 0;
             }
             else
             {
-                float fadeT = (sincePop - PopHoldTicks) / (float)FadeTicks;
-                Projectile.alpha = (int)MathHelper.Clamp(fadeT * 255f, 0f, 255f);
+                float retreat = MathHelper.Clamp((sincePop - PopHoldTicks) / (float)RetreatTicks, 0f, 1f);
+                float fade = MathHelper.Clamp((retreat - 0.18f) / 0.82f, 0f, 1f);
+                Projectile.alpha = (int)MathHelper.SmoothStep(0f, 255f, fade);
             }
         }
 
@@ -133,18 +145,40 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        void SpawnTelegraphDust()
+        void SpawnSurfaceDust(bool upward, float intensity, int count)
         {
-            Vector2 pos = Projectile.Bottom - new Vector2(0f, 3f);
-            bool white = Main.rand.NextBool(5);
-            int dustType = white ? DustID.SilverFlame
-                : Main.rand.NextBool(3) ? DustID.ShadowbeamStaff : DustID.Smoke;
-            Color tint = white ? new Color(224, 214, 255)
-                : dustType == DustID.Smoke ? new Color(25, 8, 38) : new Color(118, 32, 180);
-            Dust d = Dust.NewDustPerfect(pos + new Vector2(Main.rand.NextFloat(-26f, 26f), Main.rand.NextFloat(-5f, 3f)),
-                dustType, new Vector2(Main.rand.NextFloat(-1.3f, 1.3f), Main.rand.NextFloat(-1.4f, -0.25f)),
-                110, tint, Main.rand.NextFloat(0.9f, 1.4f));
-            d.noGravity = true;
+            Vector2 surface = Projectile.Bottom - new Vector2(0f, 2f);
+            float direction = upward ? -1f : 1f;
+            for (int i = 0; i < count; i++)
+            {
+                bool bright = Main.rand.NextBool(3);
+                int dustType = bright ? DustID.PurpleTorch : DustID.ShadowbeamStaff;
+                Color tint = bright ? new Color(194, 62, 255) : new Color(34, 5, 62);
+                float speed = upward
+                    ? Main.rand.NextFloat(0.65f, 1.65f + intensity * 0.45f)
+                    : Main.rand.NextFloat(1.4f, 3.5f);
+                Vector2 velocity = new(Main.rand.NextFloat(-0.55f, 0.55f), direction * speed);
+                float scale = bright ? Main.rand.NextFloat(0.46f, 0.76f) : Main.rand.NextFloat(0.54f, 0.86f);
+                Dust dust = Dust.NewDustPerfect(
+                    surface + new Vector2(Main.rand.NextFloat(-30f, 30f), Main.rand.NextFloat(-2f, 2f)),
+                    dustType, velocity, bright ? 80 : 145, tint, scale);
+                dust.noGravity = true;
+                dust.noLight = !bright;
+                if (upward && !bright)
+                {
+                    // fadeIn is a grow-to-scale target. Using the post-jitter scale guarantees this
+                    // dark background layer actually billows before it naturally shrinks away.
+                    dust.fadeIn = dust.scale + Main.rand.NextFloat(0.22f, 0.38f);
+                }
+            }
+        }
+
+        /// <summary>The shard is buried in terrain at both ends of its lifecycle, so it belongs in
+        /// the behind-NPCs-and-tiles pass. Solid blocks then occlude the submerged portion naturally.</summary>
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
+            List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindNPCsAndTiles.Add(index);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -153,31 +187,28 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (elapsed < TelegraphTicks)
             {
                 float telegraph = elapsed / (float)TelegraphTicks;
-                ArtoriasVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 4f),
-                    new Vector2(76f, 32f), telegraph, 0.42f + telegraph * 0.42f);
+                Vector2 portalCenter = Projectile.Bottom - new Vector2(0f, PortalSize.Y * 0.5f - 2f);
+                float phase = (Projectile.identity * 0.173f) % 1f;
+                ArtoriasVFX.DrawAbyssShardPortal(portalCenter, PortalSize, telegraph,
+                    0.52f + telegraph * 0.38f, phase);
 
                 float emergence = MathHelper.Clamp(
                     (elapsed - (TelegraphTicks - EmergenceTicks)) / (float)EmergenceTicks, 0f, 1f);
                 if (emergence > 0f)
                 {
                     float eased = MathHelper.SmoothStep(0f, 1f, emergence);
-                    Vector2 source = Projectile.Bottom - new Vector2(0f, 5f);
-                    ArtoriasVFX.DrawOrb(source, new Vector2(68f, 28f),
-                        Main.GlobalTimeWrappedHourly * 1.8f, emergence, 0.58f * emergence);
                     DrawShardSprite(Projectile.Bottom + new Vector2(0f,
                         MathHelper.Lerp(EmergenceDepth, 0f, eased)),
-                        new Color(200, 140, 255, (int)(255f * emergence)));
+                        new Color(200, 140, 255) * emergence);
                 }
                 return false;
             }
 
-            float activeProgress = MathHelper.Clamp((elapsed - TelegraphTicks) / (float)(PopHoldTicks + FadeTicks), 0f, 1f);
-            float activeOpacity = 1f - MathHelper.Clamp((activeProgress - 0.55f) / 0.45f, 0f, 1f);
-            ArtoriasVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 4f),
-                new Vector2(58f, 26f), 1f, 0.65f * activeOpacity);
-            ArtoriasVFX.DrawEruption(Projectile.Center, Projectile.Size, activeProgress, 0.80f * activeOpacity);
-
-            DrawShardSprite(Projectile.Bottom, GetAlpha(lightColor) ?? lightColor);
+            int sincePop = elapsed - TelegraphTicks;
+            float retreat = MathHelper.Clamp((sincePop - PopHoldTicks) / (float)RetreatTicks, 0f, 1f);
+            float sink = MathHelper.SmoothStep(0f, 1f, retreat);
+            Vector2 retreatBottom = Projectile.Bottom + new Vector2(0f, EmergenceDepth * sink);
+            DrawShardSprite(retreatBottom, GetAlpha(lightColor) ?? lightColor);
             return false;
         }
 
@@ -202,21 +233,14 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            for (int i = 0; i < 12; i++)
-            {
-                Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : Color.White;
-                Vector2 vel = new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), Main.rand.NextFloat(-6f, -1.4f));
-                int type = i % 4 == 0 ? DustID.SilverFlame : DustID.ShadowbeamStaff;
-                Dust d = Dust.NewDustPerfect(Projectile.Bottom + new Vector2(Main.rand.NextFloat(-18f, 18f), -2f),
-                    type, vel, 70, tint, Main.rand.NextFloat(0.9f, 1.45f));
-                d.noGravity = true;
-            }
+            SpawnSurfaceDust(false, 1f, 14);
         }
 
         public override bool CanHitPlayer(Player target)
         {
             int elapsed = TotalTicks - Projectile.timeLeft;
-            return elapsed >= TelegraphTicks;
+            int sincePop = elapsed - TelegraphTicks;
+            return sincePop >= 0 && sincePop < DamageTicks;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

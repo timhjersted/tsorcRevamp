@@ -47,6 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Effect> quaraInkGeyser;
         static Asset<Effect> quaraTideRush;
         static Asset<Effect> greatBlackKnightFlail;
+        static Asset<Effect> voidExplosion;
 
         static Asset<Texture2D> circle;
         static Asset<Texture2D> gradient;
@@ -64,6 +65,20 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> wavyDetailNoise;
         static Asset<Texture2D> veinNoise;
         static Asset<Texture2D> turbulentNoise;
+        static Asset<Texture2D> voidExplosionDetail;
+        static Asset<Texture2D> fireExplosion;
+
+        // The Gwyn flipbook begins low in its 216x216 cells, then grows to fill them. These are the
+        // centres of each frame's non-transparent bounds relative to the cell centre, in source
+        // texels. Removing that baked-in drift keeps the reusable explosion centred on its caller.
+        static readonly Vector2[] VoidExplosionFrameCenterOffsets =
+        {
+            new(0.5f, 33.5f), new(0f, 31f), new(0.5f, 30.5f), new(0.5f, 30f), new(0.5f, 28f),
+            new(0.5f, 25.5f), new(1.5f, 23f), new(1.5f, 20.5f), new(2f, 18f), new(2.5f, 16f),
+            new(3f, 15f), new(4f, 14f), new(3f, 12.5f), new(2f, 10f), new(1.5f, 8f),
+            new(1.5f, 6f), new(1f, 4.5f), new(1f, 3f), new(1f, 1f), new(1f, -0.5f),
+            new(1f, -1f), new(0f, -1f), new(0f, -2f), new(0f, -2.5f), new(0f, -2f),
+        };
 
         static readonly Color CurseDark = new(8, 4, 15);
         static readonly Color CurseMid = new(98, 38, 138);
@@ -129,6 +144,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             quaraInkGeyser ??= ModContent.Request<Effect>(EffectRoot + "QuaraInkGeyser", AssetRequestMode.ImmediateLoad);
             quaraTideRush ??= ModContent.Request<Effect>(EffectRoot + "QuaraTideRush", AssetRequestMode.ImmediateLoad);
             greatBlackKnightFlail ??= ModContent.Request<Effect>(EffectRoot + "GreatBlackKnightFlail", AssetRequestMode.ImmediateLoad);
+            voidExplosion ??= ModContent.Request<Effect>(EffectRoot + "VoidExplosion", AssetRequestMode.ImmediateLoad);
 
             circle ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_CircleFit1", AssetRequestMode.ImmediateLoad);
             gradient ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Gradient_circle22", AssetRequestMode.ImmediateLoad);
@@ -157,6 +173,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             // lozenges) and "trail12" is a small centred 4-point star flare.
             veinNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "Vein_07-512x512", AssetRequestMode.ImmediateLoad);
             turbulentNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "Turbulence_05-512x512", AssetRequestMode.ImmediateLoad);
+            // Higher-resolution turbulence makes the shader's world-space 2x2 UV quantisation
+            // visible instead of letting an upscaled 216px flipbook cell hide it.
+            voidExplosionDetail ??= ModContent.Request<Texture2D>(NoiseRoot + "TurbulentNoise", AssetRequestMode.ImmediateLoad);
+            // Gwyn's Descent of the Sun explosion sheet. VoidExplosion samples only the selected
+            // frame's alpha as a reusable cloud silhouette, then supplies its own palette/material.
+            fireExplosion ??= ModContent.Request<Texture2D>(NoiseRoot + "T_fire_flipbook4_sm", AssetRequestMode.ImmediateLoad);
         }
 
         internal static void DrawBlackKnightHexCrystal(Vector2 center, Vector2 velocity, float dormantProgress, bool active)
@@ -600,6 +622,43 @@ namespace tsorcRevamp.Projectiles.Enemy
                 BlendState.AlphaBlend);
         }
 
+        /// <summary>
+        /// Draws a reusable large void AOE. Its animation is 11.1% larger than the supplied damage
+        /// radius, making the collision radius exactly 90% of the full visual radius without drawing
+        /// a circle, ring, or other imprint of that mechanical boundary.
+        /// </summary>
+        internal static void DrawVoidExplosion(Vector2 center, float radius, float progress, float opacity,
+            bool active, Color darkColor, Color midColor, Color accentColor, Color coreColor,
+            float pixelBlockSize = 2f)
+        {
+            LoadAssets();
+            const float visualScale = 1f / 0.9f;
+            const int columns = 5;
+            const int rows = 5;
+            Texture2D texture = fireExplosion.Value;
+            int frameWidth = texture.Width / columns;
+            int frameHeight = texture.Height / rows;
+            int frameCount = active ? columns * rows : 13;
+            int frame = System.Math.Min(frameCount - 1,
+                (int)(MathHelper.Clamp(progress, 0f, 1f) * (frameCount - 1)));
+            Rectangle source = new(frame % columns * frameWidth, frame / columns * frameHeight,
+                frameWidth, frameHeight);
+
+            float clampedProgress = MathHelper.Clamp(progress, 0f, 1f);
+            float growth = clampedProgress * (2f - clampedProgress);
+            float animationScale = active ? 1f : MathHelper.Lerp(0.1f, 1f, growth);
+            Vector2 drawSize = Vector2.One * radius * 2f * visualScale * animationScale;
+            Vector2 frameScale = drawSize / new Vector2(frameWidth, frameHeight);
+            Vector2 adjustedCenter = center - VoidExplosionFrameCenterOffsets[frame] * frameScale;
+
+            Draw(voidExplosion, active ? "VoidExplosionBlast" : "VoidExplosionCharge",
+                texture, voidExplosionDetail.Value, adjustedCenter, drawSize, 0f,
+                darkColor, midColor, coreColor, opacity, progress, active ? 1f : 0f,
+                1f, BlendState.AlphaBlend, sourceRectangle: source,
+                accentColor: accentColor,
+                pixelBlockSize: pixelBlockSize);
+        }
+
         internal static void DrawBurst(EnemyVFXBurstKind kind, Vector2 center, float progress, float opacity)
         {
             LoadAssets();
@@ -663,7 +722,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 worldCenter, Vector2 drawSize, float rotation,
             Color darkColor, Color midColor, Color coreColor,
             float opacity, float progress, float active, float direction,
-            BlendState blendState = null)
+            BlendState blendState = null, Color? accentColor = null, float pixelBlockSize = 2f)
         {
             if (primaryAsset == null)
             {
@@ -671,7 +730,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             Draw(effectAsset, techniqueName, primaryAsset.Value, detailAsset?.Value,
                 worldCenter, drawSize, rotation, darkColor, midColor, coreColor,
-                opacity, progress, active, direction, blendState, null);
+                opacity, progress, active, direction, blendState, null, accentColor, pixelBlockSize);
         }
 
         static void Draw(Asset<Effect> effectAsset, string techniqueName,
@@ -679,7 +738,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             Vector2 worldCenter, Vector2 drawSize, float rotation,
             Color darkColor, Color midColor, Color coreColor,
             float opacity, float progress, float active, float direction,
-            BlendState blendState = null, Rectangle? sourceRectangle = null)
+            BlendState blendState = null, Rectangle? sourceRectangle = null,
+            Color? accentColor = null, float pixelBlockSize = 2f)
         {
             if (Main.dedServ || effectAsset == null || primaryTexture == null)
             {
@@ -717,6 +777,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                 effect.Parameters["DarkColor"]?.SetValue(darkColor.ToVector3());
                 effect.Parameters["MidColor"]?.SetValue(midColor.ToVector3());
+                effect.Parameters["AccentColor"]?.SetValue((accentColor ?? midColor).ToVector3());
                 effect.Parameters["CoreColor"]?.SetValue(coreColor.ToVector3());
                 effect.Parameters["Opacity"]?.SetValue(opacity);
                 effect.Parameters["Time"]?.SetValue(Main.GlobalTimeWrappedHourly);
@@ -725,13 +786,13 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Direction"]?.SetValue(direction);
                 effect.Parameters["DrawSize"]?.SetValue(actualSize);
                 effect.Parameters["PixelDrawSize"]?.SetValue(drawSize);
-                // Pre-divided 2px pixel grid: xy = block count across the quad, zw = its reciprocal.
+                // Pre-divided pixel grid: xy = block count across the quad, zw = its reciprocal.
                 // Deliberately computed HERE rather than in HLSL. A raw ps_2_0 entry point has no
                 // preshader, so uniform-only math (the max() and the reciprocal) is emitted per pixel
                 // — measured at 12 arithmetic slots for BlackKnightHexCrystal's seal techniques, which
                 // is the difference between fitting the 64-slot Reach budget and not. Any technique
                 // that wants pixelation should take this rather than re-deriving it from a size.
-                Vector2 pixelBlocks = Vector2.Max(drawSize, Vector2.One) * 0.5f;
+                Vector2 pixelBlocks = Vector2.Max(drawSize / pixelBlockSize, Vector2.One);
                 effect.Parameters["PixelGrid"]?.SetValue(
                     new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                 effect.Parameters["PrimaryTextureSize"]?.SetValue(primaryTexture.Size());

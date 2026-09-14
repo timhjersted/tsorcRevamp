@@ -141,8 +141,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return false;
             }
 
-            ArtoriasVFX.DrawProjectileTrail(Projectile.Center - direction * 38f, rotation,
-                new Vector2(88f, 30f), 0.35f, 0.58f);
             float animationProgress = (Projectile.frame + Projectile.frameCounter / 4f)
                 / Main.projFrames[Type];
             // 94x110 = the old 78x92 at +20%, matching the approved C-shaped arc revamp

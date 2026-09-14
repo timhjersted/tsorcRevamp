@@ -86,8 +86,8 @@ namespace ShaderPreview
     }
 
     /// <summary>
-    /// Re-reads ArtoriasVFX.cs and reports whether each recipe's technique still appears with the
-    /// same primary texture and blend state. Not a parser - a deliberately shallow textual check,
+    /// Re-reads the Artorias and shared enemy VFX helpers and reports whether each recipe's
+    /// technique still appears with the same blend state. Not a parser - a deliberately shallow textual check,
     /// because the failure it guards against (someone retunes a call site and the preview silently
     /// keeps showing the old one) is exactly the kind a shallow check catches.
     /// </summary>
@@ -95,14 +95,15 @@ namespace ShaderPreview
     {
         internal static bool Run(string repoRoot, Recipe[] recipes)
         {
-            string source = Path.Combine(repoRoot, "Projectiles", "Enemy", "ArtoriasVFX.cs");
-            if (!File.Exists(source))
+            string artoriasSource = Path.Combine(repoRoot, "Projectiles", "Enemy", "ArtoriasVFX.cs");
+            string sharedSource = Path.Combine(repoRoot, "Projectiles", "Enemy", "EnemyVFX.cs");
+            if (!File.Exists(artoriasSource) || !File.Exists(sharedSource))
             {
-                Console.WriteLine($"cannot verify: {source} not found");
+                Console.WriteLine("cannot verify: a VFX call-site source file was not found");
                 return false;
             }
 
-            string text = File.ReadAllText(source);
+            string text = File.ReadAllText(artoriasSource) + "\n" + File.ReadAllText(sharedSource);
             bool ok = true;
 
             foreach (Recipe recipe in recipes)
@@ -128,7 +129,7 @@ namespace ShaderPreview
 
                 if (!found)
                 {
-                    Console.WriteLine($"  MISSING  {recipe.Name,-16} technique {needle} no longer in ArtoriasVFX.cs");
+                    Console.WriteLine($"  MISSING  {recipe.Name,-16} technique {needle} no longer in the VFX helpers");
                     ok = false;
                     continue;
                 }
@@ -146,7 +147,7 @@ namespace ShaderPreview
 
             Console.WriteLine(ok
                 ? "verify: recipes still match the call sites"
-                : "verify: DRIFT DETECTED - re-read ArtoriasVFX.cs and update Recipes.cs");
+                : "verify: DRIFT DETECTED - re-read the VFX helpers and update Recipes.cs");
             return ok;
         }
     }

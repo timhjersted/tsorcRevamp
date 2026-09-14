@@ -96,20 +96,44 @@ namespace ShaderPreview
 
                 // ArtoriasVFX.Draw: source rect is the full texture when fullTexture, else the draw
                 // size clamped to the texture; scale maps that source onto the requested world size.
-                int sourceWidth = recipe.FullTexture
-                    ? primary.Width
-                    : Math.Clamp((int)recipe.DrawSize.X, 1, primary.Width);
-                int sourceHeight = recipe.FullTexture
-                    ? primary.Height
-                    : Math.Clamp((int)recipe.DrawSize.Y, 1, primary.Height);
-                var source = new Rectangle(0, 0, sourceWidth, sourceHeight);
+                int sourceWidth;
+                int sourceHeight;
+                int sourceX = 0;
+                int sourceY = 0;
+                int frame = 0;
+                if (recipe.SourceColumns > 1 || recipe.SourceRows > 1)
+                {
+                    sourceWidth = primary.Width / recipe.SourceColumns;
+                    sourceHeight = primary.Height / recipe.SourceRows;
+                    frame = Math.Min(recipe.SourceFrameCount - 1,
+                        (int)(progress * (recipe.SourceFrameCount - 1)));
+                    sourceX = frame % recipe.SourceColumns * sourceWidth;
+                    sourceY = frame / recipe.SourceColumns * sourceHeight;
+                }
+                else
+                {
+                    sourceWidth = recipe.FullTexture
+                        ? primary.Width
+                        : Math.Clamp((int)recipe.DrawSize.X, 1, primary.Width);
+                    sourceHeight = recipe.FullTexture
+                        ? primary.Height
+                        : Math.Clamp((int)recipe.DrawSize.Y, 1, primary.Height);
+                }
+                var source = new Rectangle(sourceX, sourceY, sourceWidth, sourceHeight);
                 var actualSize = new Vector2(sourceWidth, sourceHeight);
+                float growth = progress * (2f - progress);
+                float progressScale = MathHelper.Lerp(recipe.MinimumProgressScale, 1f, growth);
+                Vector2 worldDrawSize = recipe.DrawSize * progressScale;
 
                 // The call site draws at its world size; we fit that into the preview square so the
                 // aspect ratio the technique was tuned against is preserved.
                 float fit = Math.Min(_size / recipe.DrawSize.X, _size / recipe.DrawSize.Y) * 0.9f;
-                Vector2 onScreen = recipe.DrawSize * fit;
+                Vector2 onScreen = worldDrawSize * fit;
                 Vector2 scale = onScreen / actualSize;
+                Vector2 frameOffset = recipe.SourceFrameCenterOffsets != null
+                    ? recipe.SourceFrameCenterOffsets[frame]
+                    : Vector2.Zero;
+                Vector2 drawPosition = new Vector2(_size / 2f, _size / 2f) - frameOffset * scale;
 
                 GraphicsDevice.Textures[1] = detail;
                 GraphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
@@ -117,6 +141,7 @@ namespace ShaderPreview
                 effect.CurrentTechnique = effect.Techniques[recipe.Technique];
                 effect.Parameters["DarkColor"]?.SetValue(recipe.Dark.ToVector3());
                 effect.Parameters["MidColor"]?.SetValue(recipe.Mid.ToVector3());
+                effect.Parameters["AccentColor"]?.SetValue(recipe.Accent.ToVector3());
                 effect.Parameters["CoreColor"]?.SetValue(recipe.Core.ToVector3());
                 effect.Parameters["Opacity"]?.SetValue(recipe.Opacity);
                 effect.Parameters["Time"]?.SetValue(recipe.Time);
@@ -125,16 +150,21 @@ namespace ShaderPreview
                 effect.Parameters["Direction"]?.SetValue(recipe.Direction);
                 effect.Parameters["DrawSize"]?.SetValue(actualSize);
                 effect.Parameters["PrimaryTextureSize"]?.SetValue(new Vector2(primary.Width, primary.Height));
-                effect.Parameters["WorldDrawSize"]?.SetValue(recipe.DrawSize);
+                effect.Parameters["WorldDrawSize"]?.SetValue(worldDrawSize);
+                effect.Parameters["uSourceRect"]?.SetValue(new Vector4(
+                    source.X / (float)primary.Width,
+                    source.Y / (float)primary.Height,
+                    source.Width / (float)primary.Width,
+                    source.Height / (float)primary.Height));
 
-                Vector2 blocks = Vector2.Max(recipe.DrawSize / recipe.PixelBlockSize, Vector2.One);
+                Vector2 blocks = Vector2.Max(worldDrawSize / recipe.PixelBlockSize, Vector2.One);
                 effect.Parameters["PixelGrid"]?.SetValue(
                     new Vector4(blocks.X, blocks.Y, 1f / blocks.X, 1f / blocks.Y));
 
                 var batch = new SpriteBatch(GraphicsDevice);
                 batch.Begin(SpriteSortMode.Immediate, recipe.Blend, SamplerState.LinearWrap,
                     DepthStencilState.None, RasterizerState.CullNone, effect);
-                batch.Draw(primary, new Vector2(_size / 2f, _size / 2f), source, Color.White,
+                batch.Draw(primary, drawPosition, source, Color.White,
                     recipe.Rotation, actualSize * 0.5f, scale, SpriteEffects.None, 0f);
                 batch.End();
 

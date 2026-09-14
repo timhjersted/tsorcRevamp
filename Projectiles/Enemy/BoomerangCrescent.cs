@@ -17,9 +17,9 @@ namespace tsorcRevamp.Projectiles.Enemy
     class BoomerangCrescent : ModProjectile
     {
         const float Speed = 7f;
-        const float CurveRatePerTick = 0.05f;
-        const float OvershootPastTarget = 400f; // how far beyond the player it commits to before turning
-        const int MaxOutboundTicks = 90; // safety cap so a tight curl can't loop forever without reaching the overshoot point
+        const float OutboundSteeringRate = 0.045f;
+        const float OvershootPastTarget = 500f;
+        const int MaxOutboundTicks = 360;
         const float CatchDistance = 50f;
         const float ReturnHomingRate = 0.10f;
 
@@ -35,6 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         bool _outboundParamsSet;
         Vector2 _launchOrigin;
         Vector2 _launchDir;
+        Vector2 _turnPoint;
         float _turnProjectedDistance;
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/AbyssSlash";
@@ -59,7 +60,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.light = 0.65f;
-            Projectile.timeLeft = 280;
+            Projectile.timeLeft = 720;
         }
 
         public override void AI()
@@ -74,30 +75,35 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (!_outboundParamsSet)
             {
-                // Lock the launch direction and turn-around point once, from this tick's still-
-                // unrotated velocity - a fixed tick count used to turn regardless of range, so at
-                // long range it could turn around before ever reaching the player. Instead: aim
-                // OvershootPastTarget beyond wherever the player was at launch, projected onto the
-                // launch direction, and turn once real forward progress reaches that point.
+                // Lock a real world-space turnaround point once. It sits exactly 500 pixels beyond
+                // the target's launch-time position along the owner-to-target line.
                 _launchOrigin = Projectile.Center;
-                _launchDir = Projectile.velocity.SafeNormalize(Vector2.UnitX);
 
                 Player launchTarget = owner != null && owner.active && owner.target >= 0
                     && owner.target < Main.maxPlayers ? Main.player[owner.target] : null;
-                Vector2 turnPoint = launchTarget != null && launchTarget.active
-                    ? launchTarget.Center + _launchDir * OvershootPastTarget
-                    : _launchOrigin + _launchDir * OvershootPastTarget;
-                _turnProjectedDistance = Vector2.Dot(turnPoint - _launchOrigin, _launchDir);
+                Vector2 targetPosition = launchTarget != null && launchTarget.active
+                    ? launchTarget.Center
+                    : _launchOrigin + Projectile.velocity.SafeNormalize(Vector2.UnitX) * OvershootPastTarget;
+                _launchDir = (targetPosition - _launchOrigin).SafeNormalize(
+                    Projectile.velocity.SafeNormalize(Vector2.UnitX));
+                _turnPoint = targetPosition + _launchDir * OvershootPastTarget;
+                _turnProjectedDistance = Vector2.Dot(_turnPoint - _launchOrigin, _launchDir);
                 _outboundParamsSet = true;
             }
 
             if (!_returning)
             {
-                // Continuously rotating velocity traces the wide curling "out past the player" arc.
-                Projectile.velocity = Projectile.velocity.RotatedBy(CurveRatePerTick * CurveDir);
+                // The deliberately wide launch angle supplies the curl. Gentle steering then bends
+                // that path into the fixed point instead of continuously rotating into a small loop.
+                Vector2 toTurnPoint = _turnPoint - Projectile.Center;
+                Vector2 desiredVelocity = toTurnPoint.SafeNormalize(_launchDir) * Speed;
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, desiredVelocity,
+                    OutboundSteeringRate).SafeNormalize(_launchDir) * Speed;
 
                 float traveledDistance = Vector2.Dot(Projectile.Center - _launchOrigin, _launchDir);
-                if (traveledDistance >= _turnProjectedDistance || elapsed >= MaxOutboundTicks)
+                if (toTurnPoint.LengthSquared() <= Speed * Speed * 4f
+                    || traveledDistance >= _turnProjectedDistance
+                    || elapsed >= MaxOutboundTicks)
                 {
                     _returning = true;
                     _turnFlashTimer = 12;

@@ -13,7 +13,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         static Asset<Effect> boundaryEffect;
         static Asset<Effect> swordSwipeEffect;
-        static Asset<Effect> detonationEffect;
         static Asset<Effect> impactEffect;
         static Asset<Effect> impactCoreEffect;
         static Asset<Effect> eruptionEffect;
@@ -26,6 +25,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Effect> mantleEffect;
         static Asset<Effect> purpleFireEffect;
         static Asset<Effect> floorFireEffect;
+        static Asset<Effect> homingVolleyEffect;
 
         static Asset<Texture2D> smoothNoise;
         static Asset<Texture2D> brokenNoise;
@@ -46,7 +46,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> particleFlame1;
         static Asset<Texture2D> particleFlame3;
         static Asset<Texture2D> particleTrace3;
-        static Asset<Texture2D> particleTrace7;
 
         static readonly Color VoidBlack = new(7, 5, 15);
         static readonly Color AbyssIndigo = new(53, 36, 111);
@@ -62,7 +61,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             boundaryEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssBoundary", AssetRequestMode.ImmediateLoad);
             swordSwipeEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasSwordSwipe", AssetRequestMode.ImmediateLoad);
-            detonationEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssDetonation", AssetRequestMode.ImmediateLoad);
             impactEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssImpact", AssetRequestMode.ImmediateLoad);
             impactCoreEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssImpactCore", AssetRequestMode.ImmediateLoad);
             eruptionEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssEruption", AssetRequestMode.ImmediateLoad);
@@ -75,6 +73,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             mantleEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssMantle", AssetRequestMode.ImmediateLoad);
             purpleFireEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasPurpleFire", AssetRequestMode.ImmediateLoad);
             floorFireEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasFloorFire", AssetRequestMode.ImmediateLoad);
+            homingVolleyEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasHomingVolley", AssetRequestMode.ImmediateLoad);
 
             smoothNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
             brokenNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_Noise41", AssetRequestMode.ImmediateLoad);
@@ -95,7 +94,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             particleFlame1 ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Particles/flame_01_a", AssetRequestMode.ImmediateLoad);
             particleFlame3 ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Particles/flame_03_a", AssetRequestMode.ImmediateLoad);
             particleTrace3 ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Particles/trace_03_a", AssetRequestMode.ImmediateLoad);
-            particleTrace7 ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Particles/trace_07_a", AssetRequestMode.ImmediateLoad);
         }
 
         internal static void DrawBoundary(Vector2 center, float radius, float halfWidth, float opacity, bool warning)
@@ -114,13 +112,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                     0f, radius, halfWidth, BlendState.AlphaBlend);
             }
 
-            Draw(boundaryEffect, "ArtoriasAbyssBoundaryInner", turbulentNoise, turbulentNoise,
-                center, size, 0f, new Color(7, 1, 18),
-                warning ? new Color(190, 34, 142) : new Color(108, 24, 174),
-                warning ? new Color(244, 82, 184) : new Color(210, 72, 214),
-                warning ? opacity * 0.52f : opacity * 0.64f,
-                warning ? 1f : 0f, radius, halfWidth, BlendState.Additive);
-
             Draw(boundaryEffect, "ArtoriasAbyssBoundaryEdge", turbulentNoise, turbulentNoise,
                 center, size, 0f, new Color(9, 2, 20), warning ? DangerMagenta : new Color(142, 34, 190),
                 warning ? new Color(255, 94, 190) : new Color(226, 106, 238), warning ? opacity * 0.72f : opacity * 0.82f,
@@ -129,10 +120,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         internal static void DrawDetonation(Vector2 center, float radius, float progress, float opacity, bool active)
         {
-            LoadAssets();
-            Draw(detonationEffect, "ArtoriasAbyssDetonation", circleGradient, brokenNoise,
-                center, Vector2.One * radius * 2f, 0f, VoidBlack, AbyssViolet, KnightSilver,
-                opacity, progress, 1f, active ? 1f : 0f, BlendState.Additive);
+            EnemyVFX.DrawVoidExplosion(center, radius, progress, opacity, active,
+                new Color(5, 1, 14), new Color(86, 20, 146),
+                new Color(226, 52, 166), new Color(246, 232, 255));
         }
 
         internal static void DrawImpactBlast(Vector2 center, float radius, float progress, float opacity)
@@ -213,6 +203,26 @@ namespace tsorcRevamp.Projectiles.Enemy
                 0f, stateIntensity, 1f, BlendState.Additive);
         }
 
+        internal static void DrawAbyssShardPortal(Vector2 center, Vector2 size, float progress,
+            float opacity, float phase)
+        {
+            LoadAssets();
+            Draw(eruptionEffect, "ArtoriasAbyssShardPortal", smoothNoise, turbulentNoise,
+                center, size, 0f, new Color(5, 1, 14), new Color(92, 26, 154),
+                new Color(242, 226, 255), opacity, progress, 1f, phase,
+                BlendState.AlphaBlend, fullTexture: true, pixelBlockSize: 2f);
+        }
+
+        internal static void DrawHomingVolleyOrb(Vector2 center, Vector2 size, float rotation,
+            float stateIntensity, float opacity)
+        {
+            LoadAssets();
+            Draw(homingVolleyEffect, "ArtoriasHomingVolleyOrb", marbleNoise, turbulentNoise,
+                center, size, rotation, new Color(5, 1, 14), new Color(122, 28, 186),
+                new Color(224, 176, 246), opacity, stateIntensity, stateIntensity, 1f,
+                BlendState.AlphaBlend, fullTexture: true, pixelBlockSize: 2f);
+        }
+
         internal static void DrawProjectileTrail(Vector2 center, float rotation, Vector2 size,
             float stateIntensity, float opacity)
         {
@@ -265,17 +275,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             LoadAssets();
             direction = direction.SafeNormalize(Vector2.UnitX);
             float rotation = direction.ToRotation() - MathHelper.PiOver2;
-            Draw(purpleFireEffect, "ArtoriasPurpleFireBody", particleTrace7, turbulentNoise,
+            Draw(homingVolleyEffect, "ArtoriasHomingVolleyWake", smoothNoise, turbulentNoise,
                 center, new Vector2(width, length), rotation,
-                new Color(7, 1, 18), new Color(96, 24, 168), new Color(210, 52, 204),
-                opacity * 0.78f, intensity, intensity, 1f,
-                BlendState.AlphaBlend, fullTexture: true, pixelBlockSize: 6f);
-            Draw(purpleFireEffect, "ArtoriasPurpleFireCore", particleFlame1, turbulentNoise,
-                center + direction * System.Math.Min(8f, length * 0.08f),
-                new Vector2(width * 0.52f, length * 0.72f), rotation,
-                new Color(7, 1, 18), new Color(180, 42, 226), new Color(236, 220, 255),
-                opacity, intensity, intensity, -1f,
-                BlendState.Additive, fullTexture: true, pixelBlockSize: 6f);
+                new Color(4, 1, 12), new Color(112, 24, 180), new Color(224, 164, 246),
+                opacity, intensity, intensity, 1f,
+                BlendState.AlphaBlend, fullTexture: true, pixelBlockSize: 2f);
         }
 
         internal static void DrawFloorFlame(Texture2D texture, Rectangle frame,
@@ -544,8 +548,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["PrimaryTextureSize"]?.SetValue(primary.Size());
                 effect.Parameters["WorldDrawSize"]?.SetValue(drawSize);
                 // Only consumed by techniques that declare PixelGrid (ArtoriasAbyssTendril's
-                // impale-burst variants, ArtoriasPurpleFire's homing wisp) - a no-op ?.SetValue for
-                // every technique that doesn't. Default 5px matches the impale burst
+                // impale-burst variants, ArtoriasPurpleFire, and ArtoriasHomingVolley) - a no-op
+                // ?.SetValue for every technique that doesn't. Default 5px matches the impale burst
                 // (ArtoriasImpaleV6); callers pass their own approved block size otherwise (see
                 // vfx-shader-tips §51f - the same block size reads very differently depending on how
                 // much contrast the underlying shape has, so this isn't one-size-fits-all).

@@ -184,7 +184,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   JumpSlashChance        => 5;
         protected override int   JumpSlashCooldownAfterUse => 420;
 
-        protected override int EstusChargesMax => 4;
+        // Artorias never disengages to drink; zero charges prevents the healing intercept from
+        // entering either FleeToHeal or Healing.
+        protected override int EstusChargesMax => 0;
 
         // ── Forward Flip Slash ───────────────────────────────────────────────────
         protected override bool  CanFlipSlash              => true;
@@ -225,10 +227,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool  CanTendrilGrab          => true;
         protected override float TendrilMinRange         => 150f;
         protected override float TendrilMaxRange          => 500f;
-        protected override int   TendrilChance            => 4;
+        protected override int   TendrilChance            => NPC.life <= NPC.lifeMax * 0.50f ? 8 : 4;
         protected override int   TendrilCooldownAfterUse  => 480;
 
         const int TendrilGrabDamage = 30;
+        const float TendrilLaunchSpeed = 12f;
+        const float TendrilTopSpeed = TendrilLaunchSpeed * 2f;
         internal Vector2 TendrilHandPosition => PuppetHandPosition;
 
         protected override bool DrawSpecialHeldWeapon(ref PlayerDrawSet drawInfo)
@@ -257,11 +261,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool defenseBroken = false;
         int textCooldown;
 
-        // Fixed-center arena boundary: captured at spawn and permanently contracts as Artorias
-        // weakens. Crossing into the visible exterior inflicts one survivable 50-damage pulse per
+        // Fixed-center arena boundary: captured at spawn and contracts during phase pressure events.
+        // Crossing into the visible exterior inflicts one survivable 50-damage pulse per
         // second and pushes the player inward, rather than delivering the old unavoidable instant kill.
         public const float RingRadius = 50 * 16f;      // 100-tile diameter
         const float RingBandHalfWidth = 40f;
+        const float RingBossSafetyPadding = 10f;
+        const float RingBossSteeringWidth = 48f;
         Vector2 _ringCenter;
         public Vector2 RingCenter => _ringCenter;
         public float RingBandHalfWidthPixels => RingBandHalfWidth;
@@ -269,15 +275,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         readonly int[] _ringDamageCooldown = new int[Main.maxPlayers];
 
         // Live effective radius. Everything that used to read RingRadius directly (damage, dust,
-        // boundary shader, and phase-two presentation) reads this value so visuals and gameplay
-        // remain locked together through both permanent contractions.
+        // boundary shader, and phase presentation) reads this value so visuals and gameplay
+        // remain locked together while the ring contracts, holds, and expands.
         float _currentRingRadius = RingRadius;
         public float EffectiveRingRadius => _currentRingRadius;
 
-        // ── Ring Collapse: at 50% and 30% HP the fixed ring warns, then permanently contracts.
+        // ── Ring Collapse: at 50% the ring contracts temporarily; at 30% it contracts permanently.
         // A preview dust/fire ring appears at the new radius before it moves, giving the player a
         // readable two-stage warning instead of silently shrinking the safe area under them.
-        enum RingCollapseState { Inactive, Telegraph, Contracting }
+        enum RingCollapseState { Inactive, Telegraph, Contracting, Holding, Expanding }
         RingCollapseState _ringCollapseState = RingCollapseState.Inactive;
         int _ringCollapseTimer;
         float _ringCollapseFrom;
@@ -289,6 +295,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float FinalPhaseRingRadius = RingRadius * 0.50f;
         const int   RingCollapseTelegraphTicks = 30;
         const int   RingCollapseMoveTicks      = 120;       // 2s each way - "slowly"
+        const int   PhaseTwoRingHoldTicks      = 12 * 60;
         public bool RingCollapseWarningActive => _ringCollapseState == RingCollapseState.Telegraph;
         public float RingCollapseWarningRadius => _ringCollapseTo > 0f ? _ringCollapseTo : _currentRingRadius;
 
@@ -392,6 +399,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             TickAbyssRing();
             TickRingCollapse();
+            ConstrainArtoriasToAbyssRing();
             TickAbyssSurges();
 
             if (!_abyssShardUnlocked && NPC.life <= NPC.lifeMax * 0.6f)
@@ -732,6 +740,63 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // ── Fixed abyss ring: a permanent lethal boundary at the spot Artorias first spawned ──
+        /// <summary>
+        /// Treats the live player-damage threshold as a circular wall for Artorias without teaching
+        /// every dash, leap, dodge, and navigation state about the arena. The soft band removes only
+        /// outward speed (so he naturally turns/slides along the edge), while the predicted-position
+        /// clamp catches committed high-speed moves before a single tick can carry his hitbox through.
+        /// A current-position clamp is still required for teleports and for a contracting ring moving
+        /// past him. The half-diagonal keeps every corner of his rectangular hitbox inside the pink ring.
+        /// </summary>
+        void ConstrainArtoriasToAbyssRing()
+        {
+            float hitboxExtent = NPC.Size.Length() * 0.5f;
+            float maxCenterDistance = Math.Max(0f,
+                _currentRingRadius - RingBandHalfWidth - hitboxExtent - RingBossSafetyPadding);
+
+            Vector2 fromRingCenter = NPC.Center - _ringCenter;
+            float distance = fromRingCenter.Length();
+            if (distance <= 0.001f)
+            {
+                return;
+            }
+
+            Vector2 outward = fromRingCenter / distance;
+            if (distance > maxCenterDistance)
+            {
+                NPC.Center = _ringCenter + outward * maxCenterDistance;
+                distance = maxCenterDistance;
+
+                float outwardSpeed = Vector2.Dot(NPC.velocity, outward);
+                if (outwardSpeed > 0f)
+                {
+                    NPC.velocity -= outward * outwardSpeed;
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.netUpdate = true;
+                }
+            }
+
+            float steeringStart = Math.Max(0f, maxCenterDistance - RingBossSteeringWidth);
+            float radialSpeed = Vector2.Dot(NPC.velocity, outward);
+            if (radialSpeed > 0f && distance > steeringStart)
+            {
+                float steeringProgress = MathHelper.Clamp(
+                    (distance - steeringStart) / Math.Max(1f, maxCenterDistance - steeringStart), 0f, 1f);
+                NPC.velocity -= outward * radialSpeed * MathHelper.SmoothStep(0f, 1f, steeringProgress);
+            }
+
+            Vector2 predictedOffset = NPC.Center + NPC.velocity - _ringCenter;
+            float predictedDistance = predictedOffset.Length();
+            if (predictedDistance > maxCenterDistance && predictedDistance > 0.001f)
+            {
+                Vector2 allowedCenter = _ringCenter + predictedOffset / predictedDistance * maxCenterDistance;
+                NPC.velocity = allowedCenter - NPC.Center;
+            }
+        }
+
         void TickAbyssRing()
         {
             if (_ringVfxTimer > 0)
@@ -849,6 +914,38 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (--_ringCollapseTimer <= 0)
                     {
                         _currentRingRadius = _ringCollapseTo;
+                        if (_ringCollapseTo == PhaseTwoRingRadius)
+                        {
+                            _ringCollapseState = RingCollapseState.Holding;
+                            _ringCollapseTimer = PhaseTwoRingHoldTicks;
+                        }
+                        else
+                        {
+                            _ringCollapseState = RingCollapseState.Inactive;
+                        }
+                        NPC.netUpdate = true;
+                    }
+                    break;
+                }
+
+                case RingCollapseState.Holding:
+                    if (--_ringCollapseTimer <= 0)
+                    {
+                        _ringCollapseFrom = _currentRingRadius;
+                        _ringCollapseTo = RingRadius;
+                        _ringCollapseState = RingCollapseState.Expanding;
+                        _ringCollapseTimer = RingCollapseMoveTicks;
+                        NPC.netUpdate = true;
+                    }
+                    break;
+
+                case RingCollapseState.Expanding:
+                {
+                    float t = 1f - _ringCollapseTimer / (float)RingCollapseMoveTicks;
+                    _currentRingRadius = MathHelper.Lerp(_ringCollapseFrom, _ringCollapseTo, EaseInOut(t));
+                    if (--_ringCollapseTimer <= 0)
+                    {
+                        _currentRingRadius = RingRadius;
                         _ringCollapseState = RingCollapseState.Inactive;
                         NPC.netUpdate = true;
                     }
@@ -1150,6 +1247,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void OnFlipSlashLand()
         {
+            // FlipSlashRise refreshes the shared dodge timer every airborne tick. Artorias's
+            // planted landing is a punish window, so discard the final refresh immediately:
+            // DodgeTimer otherwise grants i-frames and makes the global draw hook blink him.
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().DodgeTimer = 0;
             SpawnLandingImpactVFX(NPC.Bottom, 96f, 78f);
             switch (_flipVariant)
             {
@@ -1349,9 +1450,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             Player target = Main.player[NPC.target];
             Vector2 origin = PuppetHandPosition;
-            Vector2 vel = UsefulFunctions.Aim(origin, target.Center, 12f);
+            Vector2 vel = UsefulFunctions.Aim(origin, target.Center, TendrilLaunchSpeed);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssTendril>(), TendrilGrabDamage, 0f, Main.myPlayer, NPC.whoAmI);
+                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssTendril>(), TendrilGrabDamage, 0f,
+                Main.myPlayer, NPC.whoAmI, 0f, TendrilTopSpeed);
         }
 
         protected override void DoTendrilReachTick()
@@ -1684,9 +1786,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override bool CanBoomerang => true;
         protected override float BoomerangMinRange => 60f;
-        protected override float BoomerangMaxRange => 650f;
+        protected override float BoomerangMaxRange => 1300f;
         protected override int BoomerangChance => 9;
         protected override int BoomerangCooldownAfterUse => 330;
+        // Fire happens halfway through the 30-tick chop. A 95-tick post-swing recovery therefore
+        // expires 110 ticks after firing, preserving the old recovery budget while allowing the
+        // independently returning projectile to overlap Artorias's next move.
+        protected override int BoomerangRecoveryTicks => 95;
 
         protected override void DoBoomerangSwingTick(int elapsed, int total)
         {

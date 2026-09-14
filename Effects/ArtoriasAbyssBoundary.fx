@@ -73,8 +73,8 @@ float4 BoundaryEdgePixel(float4 vertexColor : COLOR0, float2 coords : TEXCOORD0)
     float signedDistance = radialDistance - safeRadius;
     float boundaryDistance = abs(signedDistance);
 
-    // A circular, outward-facing port of MarilithRoundedFirewall. Unlike the earlier symmetric
-    // band, flame height grows only into the damaging exterior, leaving the safe side readable.
+    // Mirror the moving purple flame body across the lethal pink seam. The seam itself remains
+    // centered on signedDistance == 0, so this visual change does not move the damage threshold.
     float2 tiledUV = localPosition / 142.0;
     tiledUV.x += Time * 0.055;
     tiledUV.y -= Time * 0.16;
@@ -85,11 +85,9 @@ float4 BoundaryEdgePixel(float4 vertexColor : COLOR0, float2 coords : TEXCOORD0)
     // The lethal seam remains centered exactly on signedDistance == 0, but its brightness now
     // rolls off over a wider eased shoulder instead of dropping through a narrow linear ramp.
     float coreBand = 1.0 - smoothstep(1.5, 13.0, boundaryDistance);
-    float outerDistance = max(signedDistance, 0.0);
     float flameReach = 28.0 + flameNoise * 82.0;
-    float flameBody = saturate(1.0 - outerDistance / flameReach);
+    float flameBody = saturate(1.0 - boundaryDistance / flameReach);
     flameBody *= saturate((flameNoise * 0.74 + breakup * 0.46 + flameBody - 0.46) * 1.8);
-    flameBody *= saturate((signedDistance + 10.0) / 18.0);
 
     // The lickingEdge highlight (a breakup-driven CoreColor accent on top of flameBody) was cut to
     // make room for the world-pixel quantization above - a decorative flourish, not part of the
@@ -107,32 +105,6 @@ float4 BoundaryEdgePixel(float4 vertexColor : COLOR0, float2 coords : TEXCOORD0)
     return float4(vertexColor.rgb * color, vertexColor.a * alpha);
 }
 
-float4 BoundaryInnerPixel(float4 vertexColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
-{
-    float2 uv = LocalUV(coords);
-    float2 localPosition = (uv - 0.5) * WorldDrawSize;
-    float radialDistance = length(localPosition);
-    float safeRadius = Active - max(Direction, 1.0);
-    float signedDistance = radialDistance - safeRadius;
-    float innerDistance = max(-signedDistance, 0.0);
-
-    float flow = tex2D(PrimarySampler,
-        localPosition / 132.0 + float2(Time * 0.055, -Time * 0.105)).r;
-    float breakup = tex2D(DetailSampler,
-        localPosition.yx / 78.0 + float2(-Time * 0.09, Time * 0.06)).g;
-    float innerReach = 34.0 + flow * 46.0;
-    float body = saturate(1.0 - innerDistance / innerReach);
-    body *= saturate((flow * 0.72 + breakup * 0.42 + body - 0.52) * 1.7);
-    body *= saturate((-signedDistance + 4.0) / 12.0);
-    body *= 0.48;
-
-    float3 color = DarkColor * body * 0.58
-        + MidColor * body * body * 0.72
-        + CoreColor * body * saturate((breakup - 0.62) * 1.9) * 0.12;
-    float alpha = saturate(body * 0.78) * Opacity;
-    return float4(vertexColor.rgb * color, vertexColor.a * alpha);
-}
-
 technique ArtoriasAbyssBoundaryShroud
 {
     pass ShroudPass { PixelShader = compile ps_2_0 BoundaryShroudPixel(); }
@@ -141,9 +113,4 @@ technique ArtoriasAbyssBoundaryShroud
 technique ArtoriasAbyssBoundaryEdge
 {
     pass EdgePass { PixelShader = compile ps_2_0 BoundaryEdgePixel(); }
-}
-
-technique ArtoriasAbyssBoundaryInner
-{
-    pass InnerPass { PixelShader = compile ps_2_0 BoundaryInnerPixel(); }
 }
