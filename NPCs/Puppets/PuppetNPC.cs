@@ -83,6 +83,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual string DespawnFlavorText => $"{InvaderTitle} melts away, its hunt unfinished...";
         protected virtual Color DespawnFlavorColor => Color.White;
 
+        /// <summary>False for summoned copies whose owner already runs the encounter's despawn (and removes
+        /// them): they skip the party-wipe check, so they never broadcast a second despawn line.</summary>
+        protected virtual bool DespawnsOnPartyWipe => true;
+
         public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.life > 0 || Main.dedServ)
@@ -529,6 +533,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int   BreathChance          => 3;
         /// <summary>Flash color for the breath telegraph.</summary>
         protected virtual Color BreathTelegraphFlashColor => Color.OrangeRed;
+        /// <summary>Opt-in pose for hand-cast breath attacks. Keeps the default breath presentation
+        /// unchanged, while allowing a puppet to visibly extend its empty casting hand through the tell.</summary>
+        protected virtual bool  UseAuthoredBreathHandPose => false;
+        protected virtual float BreathHandStartRotation => -0.35f;
+        protected virtual float BreathHandEndRotation => 0f;
         /// <summary>When true the puppet may begin a breath while airborne (and will strafe across to
         /// sweep the stream).  When false breath is grounded-only.</summary>
         protected virtual bool  BreathAllowedAirborne => false;
@@ -714,16 +723,38 @@ namespace tsorcRevamp.NPCs.Puppets
 
         /// <summary>Called every tick while airborne and spinning. Override for trail VFX/sound.</summary>
         protected virtual void DoFlipSlashRiseTick() { }
-        /// <summary>Fired once, the instant the spinning sword connects with the target. Spawn the
-        /// hit here (e.g. <c>TryMeleeHit()</c>) - the base class doesn't apply damage itself.</summary>
+        /// <summary>Fired once as the flip launches. Arm the spinning blade here (e.g. <c>TryMeleeHit()</c>):
+        /// the base class then tests the real swept blade every airborne tick, so the spin only hits where
+        /// the sword actually is. The base class doesn't apply damage itself.</summary>
         protected virtual void DoFlipSlashHit() { }
         /// <summary>Fired once on landing, before the slam pose hold begins. Override for the
-        /// screenshake / dirt dust — the base class does not apply these itself.</summary>
+        /// screenshake / dirt dust, and (with <see cref="UseFlipSlashLandingStrike"/>) to arm the strike.</summary>
         protected virtual void OnFlipSlashLand() { }
 
+        // Opt-in landing strike. The airborne spin is phase-locked so the blade reaches
+        // FlipSlashStrikeStartRotation at touchdown, then FlipSlashLand plays a Weighted overhead into the
+        // ground (EaseIn + EaseOut ticks), live while blade speed is >= 30% of peak. FlipSlashLandHoldTicks
+        // must cover the strike; whatever is left over is the planted hold.
+        protected virtual bool  UseFlipSlashLandingStrike    => false;
+        protected virtual float FlipSlashStrikeStartRotation => LeapSlamCarryRotation;
+        protected virtual float FlipSlashStrikeEndRotation   => LeapSlamImpactRotation;
+        protected virtual int   FlipSlashStrikeEaseInTicks   => 6;
+        protected virtual int   FlipSlashStrikeEaseOutTicks  => 28;
+        protected virtual float FlipSlashStrikeEaseOutDecay  => 6f;
+        /// <summary>Fired once on the strike's peak-speed tick (EaseInTicks after touchdown), the frame the
+        /// blade meets the ground. Override for the impact VFX / shake.</summary>
+        protected virtual void OnFlipSlashStrikeContact() { }
+
+        /// <summary>Strike ticks the blade stays live: the ease-in plus the ease-out span where speed is still
+        /// >= 30% of peak, out * ln(1/0.3) / k = out * 1.204 / k (attack-timing-design §3).</summary>
+        protected int FlipSlashStrikeLiveTicks => (int)Math.Ceiling(FlipSlashStrikeEaseInTicks
+            + FlipSlashStrikeEaseOutTicks * 1.204f / Math.Max(0.1f, FlipSlashStrikeEaseOutDecay));
+
         private int  _flipSlashDir;
-        private bool _flipHitConnected;
         protected int _flipSlashCooldown;
+        private float _flipSlashLaunchBottomY;        // feet height at launch; the phase-lock assumes landing back at it
+        private float _flipSlashSolvedSpinSpeed;      // rad/tick the phase-lock last solved
+        private float _flipSlashStrikeStartRotation;  // blade angle at touchdown, re-wrapped beside the cocked pose
 
         // ── Abyss Slash (optional ranged sword-projectile chain) ───────────────────
         // Underhand → 170° arc → held "post" pose (still walking) → a swipe that fires a projectile
@@ -1835,6 +1866,11 @@ namespace tsorcRevamp.NPCs.Puppets
         /// reach. Keeping this below 100 lets ordinary bows, crossbows, and throws still compete.</summary>
         protected virtual int RangedStartMeleeComboChance => MeleeComboChance;
 
+        /// <summary>While true, neutral attack selection is skipped: Idle picks nothing and ClosingDistance
+        /// drops back to Idle instead of starting a combo. Movement still runs (override RunMovementAI to
+        /// stand still). For authored holds: an owner idling while its summon arrives, a summon fading in/out.</summary>
+        protected virtual bool HoldAttackSelection => false;
+
         /// <summary>Optional bespoke combo pool that REPLACES the shared archetype table (for boss
         /// movesets).  null = use the archetype table.  Length defines the cooldown array.</summary>
         protected virtual MeleeCombo[] MeleeComboPoolOverride => null;
@@ -2242,445 +2278,6 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int AfterimageSampleLimit => NPC.oldPos.Length;
         protected virtual float AfterimageOpacity => 0.4f;
 
-        // ── Umbral Echo Step (optional dash follow-up) ─────────────────────────────
-        // A delayed afterimage materializes at a cached dash position, pursues on its own leap arc,
-        // then commits to one separately timed sword swing. The visible duplicate, sword pose, shader
-        // trail, and hostile volume all share this clock; the real puppet remains free to recover.
-        protected virtual bool  CanEchoStep        => false;
-        protected virtual int   EchoStepChance     => 40;    // % rolled once per eligible dash-end
-        protected virtual int   EchoStepDelayMin   => 45;
-        protected virtual int   EchoStepDelayMax   => 60;
-        protected virtual float EchoStepDamageMult => 0.65f; // fraction of MeleeDamage
-        protected virtual int   EchoStepWalkTicks  => 0;
-        protected virtual int   EchoStepLeapTicks  => 18;
-        protected virtual int   EchoStepSwingTicks => 18;
-        protected virtual int   EchoStepFadeTicks  => 0;
-        protected virtual int   EchoStepStrikeCount => 1;
-        protected virtual int   EchoStepInterStrikeRecoveryTicks => 0;
-        protected virtual int   EchoStepTellTicks  => EchoStepWalkTicks + EchoStepLeapTicks
-            + EchoStepSwingTicks + EchoStepFadeTicks;
-        protected virtual float EchoStepWalkTopSpeed => 2.2f;
-        protected virtual float EchoStepReach      => 90f;
-        protected virtual float EchoStepOpacity    => 0.75f; // mostly visible, not a faint afterimage
-        protected virtual float EchoStepLeapHeight => 68f;
-        protected virtual float EchoStepLeapTopSpeed => EchoStepMaxPursuitDistance / Math.Max(1f, EchoStepLeapTicks);
-        protected virtual float EchoStepMinPursuitDistance => 112f;
-        protected virtual float EchoStepMaxPursuitDistance => 300f;
-        protected virtual float EchoStepOwnerAdvanceSpeedMult => 0.5f;
-
-        private Vector2 _echoStepPos;
-        private Vector2 _echoStepStartPos;
-        private Vector2 _echoStepTargetPos;
-        private int     _echoStepDamage;
-        private int     _echoStepDelayTimer = -1; // -1 = inactive
-        private int     _echoStepLeapDuration;
-        private float   _echoStepRotation;
-        private int     _echoStepSwingDir = 1;
-        private bool    _echoStepHitResolved;
-        private int     _echoStepSequence;
-        private int     _echoStepCompletedStrikes;
-        private readonly Vector2[] _echoStepTrailPositions = new Vector2[4];
-        private int     _echoStepTrailSamples;
-        private int     _echoStepTrailRecordTimer;
-
-        private int EchoStepFadeEnd => EchoStepFadeTicks;
-        private int EchoStepSwingEnd => EchoStepFadeEnd + EchoStepSwingTicks;
-        private int EchoStepLeapEnd => EchoStepSwingEnd + Math.Max(1, _echoStepLeapDuration);
-        private int EchoStepVisibleEnd => EchoStepWalkTicks + Math.Max(1, _echoStepLeapDuration)
-            + EchoStepSwingTicks + EchoStepFadeTicks;
-        private bool IsEchoStepVisible => _echoStepDelayTimer > 0 && _echoStepDelayTimer <= EchoStepVisibleEnd;
-        private bool IsEchoStepWalking => _echoStepDelayTimer > EchoStepLeapEnd
-            && _echoStepDelayTimer <= EchoStepVisibleEnd;
-        private bool IsEchoStepLeaping => _echoStepDelayTimer > EchoStepSwingEnd
-            && _echoStepDelayTimer <= EchoStepLeapEnd;
-        private bool IsEchoStepSwinging => _echoStepDelayTimer > EchoStepFadeEnd
-            && _echoStepDelayTimer <= EchoStepSwingEnd;
-        private bool IsEchoStepFading => EchoStepFadeTicks > 0
-            && _echoStepDelayTimer > 0 && _echoStepDelayTimer <= EchoStepFadeEnd;
-        private float EchoStepVisualOpacity
-        {
-            get
-            {
-                int visibleElapsed = EchoStepVisibleEnd - _echoStepDelayTimer + 1;
-                float materialize = _echoStepCompletedStrikes == 0
-                    ? MathHelper.Clamp(visibleElapsed / 10f, 0f, 1f)
-                    : 1f;
-                float fade = IsEchoStepFading
-                    ? MathHelper.Clamp(_echoStepDelayTimer / (float)Math.Max(1, EchoStepFadeTicks), 0f, 1f)
-                    : 1f;
-                return EchoStepOpacity * materialize * fade;
-            }
-        }
-
-        /// <summary>Rolls <see cref="EchoStepChance"/>; on success, arms an echo at a recent cached
-        /// dash position, <see cref="EchoStepDelayMin"/>-<see cref="EchoStepDelayMax"/> ticks from now.
-        /// Call this from the end of a dash-type attack (hit or miss - the echo is a residual trace
-        /// of the motion, not tied to whether the real swing connected).</summary>
-        protected void TryArmEchoStep()
-        {
-            if (!CanEchoStep || Main.netMode == NetmodeID.MultiplayerClient || _echoStepDelayTimer >= 0
-                || Main.rand.Next(100) >= EchoStepChance)
-                return;
-
-            int historyIndex = Math.Min(NPC.oldPos.Length - 1, 6);
-            Vector2 historyCenter = historyIndex >= 0 && NPC.oldPos[historyIndex] != Vector2.Zero
-                ? NPC.oldPos[historyIndex] + NPC.Size * 0.5f
-                : NPC.Center - new Vector2(NPC.direction * 88f, 0f);
-            _echoStepPos = historyCenter;
-            _echoStepStartPos = historyCenter;
-            _echoStepTargetPos = historyCenter;
-            _echoStepDamage = (int)(MeleeDamage * EchoStepDamageMult);
-            _echoStepLeapDuration = Math.Max(1, EchoStepLeapTicks);
-            _echoStepDelayTimer = Main.rand.Next(EchoStepDelayMin, EchoStepDelayMax + 1);
-            _echoStepRotation = -1.3f;
-            _echoStepSwingDir = NPC.direction;
-            _echoStepHitResolved = false;
-            _echoStepCompletedStrikes = 0;
-            _echoStepSequence++;
-            _echoStepTrailSamples = 0;
-            _echoStepTrailRecordTimer = 0;
-            for (int i = 0; i < _echoStepTrailPositions.Length; i++)
-                _echoStepTrailPositions[i] = historyCenter;
-            NPC.netUpdate = true;
-        }
-
-        /// <summary>Called every AI tick regardless of Phase - the echo can resolve while the
-        /// puppet is doing something else entirely by the time it goes off.</summary>
-        private void TickEchoStep()
-        {
-            if (_echoStepDelayTimer < 0)
-                return;
-
-            if (!NPC.active)
-            {
-                _echoStepDelayTimer = -1;
-                return;
-            }
-
-            if (_echoStepDelayTimer == EchoStepVisibleEnd && !Main.dedServ)
-            {
-                if (_echoStepCompletedStrikes == 0)
-                    SpawnEchoStepDustBurst(materializing: true);
-                else
-                    SpawnEchoStepInterStrikeBurst();
-            }
-
-            if (_echoStepDelayTimer == EchoStepLeapEnd)
-                BeginEchoStepPursuit();
-
-            if (IsEchoStepVisible && !Main.dedServ)
-            {
-                Lighting.AddLight(_echoStepPos, new Vector3(0.36f, 0.12f, 0.56f));
-                bool fading = IsEchoStepFading;
-                if (Main.rand.NextBool(fading ? 2 : 3))
-                {
-                    Vector2 offset = Main.rand.NextVector2Circular(26f, 34f);
-                    Vector2 velocity = fading
-                        ? offset.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(0.7f, 1.8f)
-                        : -offset * 0.08f;
-                    Dust dust = Dust.NewDustPerfect(_echoStepPos + offset,
-                        Main.rand.NextBool(5) ? DustID.ShadowbeamStaff : DustID.PurpleTorch,
-                        velocity, 110, new Color(170, 74, 238), fading ? 0.72f : 0.85f);
-                    dust.noGravity = true;
-                }
-            }
-
-            if (IsEchoStepWalking)
-            {
-                TickEchoStepWalk();
-            }
-            else if (IsEchoStepLeaping)
-            {
-                float pursuitProgress = MathHelper.Clamp(
-                    (EchoStepLeapEnd - _echoStepDelayTimer + 1f) / Math.Max(1f, _echoStepLeapDuration), 0f, 1f);
-                // Linear pursuit keeps the configured travel speed as a real cap; the parabolic
-                // vertical offset below supplies the visible leap acceleration and hang time.
-                _echoStepPos = Vector2.Lerp(_echoStepStartPos, _echoStepTargetPos, pursuitProgress);
-                _echoStepPos.Y -= EchoStepLeapHeight * 4f * pursuitProgress * (1f - pursuitProgress);
-                _echoStepRotation = -1.3f;
-            }
-            else if (IsEchoStepSwinging)
-            {
-                float swingT = MathHelper.Clamp(
-                    (EchoStepSwingEnd - _echoStepDelayTimer + 1f) / Math.Max(1f, EchoStepSwingTicks), 0f, 1f);
-                _echoStepPos = _echoStepTargetPos
-                    + new Vector2(_echoStepSwingDir * MathHelper.SmoothStep(0f, 18f, swingT), 0f);
-                _echoStepRotation = MathHelper.SmoothStep(-1.3f, 1.0f, swingT);
-
-                if (!_echoStepHitResolved && swingT >= 0.55f)
-                {
-                    ResolveEchoStep();
-                    _echoStepHitResolved = true;
-                }
-            }
-
-            if (IsEchoStepSwinging && _echoStepDelayTimer == EchoStepFadeEnd + 1
-                && _echoStepCompletedStrikes + 1 < Math.Max(1, EchoStepStrikeCount))
-            {
-                _echoStepCompletedStrikes++;
-                _echoStepHitResolved = false;
-                _echoStepLeapDuration = Math.Max(1, EchoStepLeapTicks);
-                _echoStepRotation = 1f;
-                _echoStepSequence++;
-                _echoStepDelayTimer = EchoStepVisibleEnd + 1;
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                    NPC.netUpdate = true;
-            }
-
-            if (IsEchoStepVisible && ++_echoStepTrailRecordTimer >= 2)
-            {
-                _echoStepTrailRecordTimer = 0;
-                for (int i = _echoStepTrailPositions.Length - 1; i > 0; i--)
-                    _echoStepTrailPositions[i] = _echoStepTrailPositions[i - 1];
-                _echoStepTrailPositions[0] = _echoStepPos;
-                _echoStepTrailSamples = Math.Min(_echoStepTrailSamples + 1,
-                    _echoStepTrailPositions.Length);
-            }
-
-            if (_echoStepDelayTimer == 1 && !Main.dedServ)
-                SpawnEchoStepDustBurst(materializing: false);
-
-            _echoStepDelayTimer--;
-            if (_echoStepDelayTimer <= 0)
-            {
-                _echoStepDelayTimer = -1;
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                    NPC.netUpdate = true;
-            }
-        }
-
-        private void TickEchoStepWalk()
-        {
-            int walkElapsed = EchoStepVisibleEnd - _echoStepDelayTimer + 1;
-            if (_echoStepCompletedStrikes > 0
-                && walkElapsed <= EchoStepInterStrikeRecoveryTicks)
-            {
-                float recovery = walkElapsed / (float)Math.Max(1, EchoStepInterStrikeRecoveryTicks);
-                _echoStepRotation = MathHelper.Lerp(1f, -0.55f, recovery);
-                return;
-            }
-
-            _echoStepRotation = -0.55f;
-            if (!NPC.HasValidTarget)
-                return;
-
-            Player target = Main.player[NPC.target];
-            _echoStepSwingDir = target.Center.X < _echoStepPos.X ? -1 : 1;
-            float desiredX = target.Center.X - _echoStepSwingDir * EchoStepMinPursuitDistance;
-            float xStep = MathHelper.Clamp(desiredX - _echoStepPos.X,
-                -EchoStepWalkTopSpeed, EchoStepWalkTopSpeed);
-            _echoStepPos.X += xStep;
-            _echoStepPos.Y = MathHelper.Lerp(_echoStepPos.Y,
-                target.Bottom.Y - NPC.height * 0.5f, 0.16f);
-        }
-
-        private void SpawnEchoStepDustBurst(bool materializing)
-        {
-            int count = materializing ? 24 : 20;
-            for (int i = 0; i < count; i++)
-            {
-                Vector2 radial = (MathHelper.TwoPi * i / count + Main.rand.NextFloat(-0.16f, 0.16f))
-                    .ToRotationVector2();
-                float speed = materializing
-                    ? Main.rand.NextFloat(0.7f, 2.0f)
-                    : Main.rand.NextFloat(1.3f, 3.4f);
-                // Every 7th mote is a bright silver flash, every 3rd a shadowbeam, the rest plain purple.
-                int type = DustID.PurpleTorch;
-
-                if (i % 7 == 0)
-                {
-                    type = DustID.SilverFlame;
-                }
-                else if (i % 3 == 0)
-                {
-                    type = DustID.ShadowbeamStaff;
-                }
-
-                Dust dust = Dust.NewDustPerfect(_echoStepPos + radial * Main.rand.NextFloat(8f, 28f),
-                    type,
-                    radial * speed, 105, new Color(176, 72, 242),
-                    Main.rand.NextFloat(0.7f, 1.1f));
-                dust.noGravity = true;
-            }
-        }
-
-        private void SpawnEchoStepInterStrikeBurst()
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                Vector2 radial = Main.rand.NextVector2Unit();
-                Dust dust = Dust.NewDustPerfect(
-                    _echoStepPos + radial * Main.rand.NextFloat(8f, 22f),
-                    i % 4 == 0 ? DustID.SilverFlame : DustID.ShadowbeamStaff,
-                    -radial * Main.rand.NextFloat(0.4f, 1.3f), 110,
-                    new Color(158, 62, 226), Main.rand.NextFloat(0.62f, 0.94f));
-                dust.noGravity = true;
-            }
-        }
-
-        private void BeginEchoStepPursuit()
-        {
-            _echoStepStartPos = _echoStepPos;
-            if (!NPC.HasValidTarget)
-            {
-                _echoStepTargetPos = _echoStepStartPos + new Vector2(_echoStepSwingDir * EchoStepMinPursuitDistance, 0f);
-            }
-            else
-            {
-                Player target = Main.player[NPC.target];
-                _echoStepSwingDir = target.Center.X < _echoStepStartPos.X ? -1 : 1;
-                float horizontalDistance = Math.Abs(target.Center.X - _echoStepStartPos.X);
-                float rawDistance = horizontalDistance - EchoStepReach * 0.32f;
-                float pursuitDistance = MathHelper.Clamp(rawDistance,
-                    EchoStepMinPursuitDistance, EchoStepMaxPursuitDistance);
-                // Preserve a substantial leap when there is room, but never enforce the minimum so
-                // aggressively that a close target is crossed and the committed sword swing faces away.
-                pursuitDistance = Math.Min(pursuitDistance, Math.Max(0f, horizontalDistance - 8f));
-                _echoStepTargetPos = new Vector2(
-                    _echoStepStartPos.X + _echoStepSwingDir * pursuitDistance,
-                    target.Bottom.Y - NPC.height * 0.5f);
-            }
-
-            // Resolve travel time from the actual pursuit distance. Adjusting both the active
-            // countdown and its leap boundary keeps the completed approach/fade clocks intact while
-            // allowing nearby echoes to land sooner and distant echoes to take as long as needed.
-            int resolvedLeapDuration = Math.Max(1, (int)Math.Ceiling(
-                Vector2.Distance(_echoStepStartPos, _echoStepTargetPos)
-                / Math.Max(0.1f, EchoStepLeapTopSpeed)));
-            _echoStepDelayTimer += resolvedLeapDuration - _echoStepLeapDuration;
-            _echoStepLeapDuration = resolvedLeapDuration;
-
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-                NPC.netUpdate = true;
-        }
-
-        private void ResolveEchoStep()
-        {
-            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.45f, Pitch = -0.35f, PitchVariance = 0.1f }, _echoStepPos);
-
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-                return;
-
-            int boxW = (int)Math.Max(72f, EchoStepReach);
-            int boxH = 64;
-            Vector2 center = _echoStepPos + new Vector2(_echoStepSwingDir * EchoStepReach * 0.5f, -8f);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
-                _echoStepDamage, 3f, Main.myPlayer, boxW, boxH);
-        }
-
-        /// <summary>
-        /// Draws the echo through its approach and swing: jump legs during the independent leap,
-        /// then the same Use1-Use4 sword rows as a real swing, plus the held weapon drawn by hand using
-        /// the same offset table as <see cref="GetHandPosition"/>. Deliberately does NOT go through
-        /// <see cref="DrawingPuppetFor"/>/PuppetWeaponDrawLayer - that layer reads the puppet's LIVE
-        /// position/rotation/Phase, which would put the weapon back at the real Artorias instead of at
-        /// the fixed echo point. Drawn at high opacity - a visible second swordsman, not a faint trail.
-        /// </summary>
-        private void DrawEchoStepPuppet(SpriteBatch spriteBatch)
-        {
-            if (_puppet == null || Main.dedServ)
-                return;
-
-            bool attackPose = IsEchoStepSwinging || IsEchoStepFading;
-            // Body row: swing pose wins, else the walk row (3) or the neutral stand row (1).
-            int bodyRow = 1;
-
-            if (attackPose)
-            {
-                bodyRow = BodyRowFromWeaponRotation(_echoStepRotation, _echoStepSwingDir);
-            }
-            else if (IsEchoStepWalking)
-            {
-                bodyRow = 3;
-            }
-
-            _puppet.bodyFrame = new Rectangle(0, FrameHeight * bodyRow, 40, FrameHeight);
-
-            // Legs: cycle the 14-frame walk while moving, else planted (0 mid-swing, 5 at rest).
-            int legRow = 5;
-
-            if (IsEchoStepWalking)
-            {
-                legRow = (EchoStepTellTicks - _echoStepDelayTimer) / 5 % 14;
-            }
-            else if (attackPose)
-            {
-                legRow = 0;
-            }
-
-            _puppet.legFrame  = new Rectangle(0, FrameHeight * legRow, 40, FrameHeight);
-            _puppet.direction = _echoStepSwingDir;
-
-            bool wasFractal = _puppet.isFirstFractalAfterImage;
-            float wasOpacity = _puppet.firstFractalAfterImageOpacity;
-            bool wasDisplayDoll = _puppet.isDisplayDollOrInanimate;
-            bool wasIgnoreLight = _puppet.socialIgnoreLight;
-            _puppet.isFirstFractalAfterImage = true;
-            _puppet.isDisplayDollOrInanimate = true;
-            _puppet.socialIgnoreLight = true;
-
-            for (int i = _echoStepTrailSamples - 1; i >= 0; i--)
-            {
-                if (Vector2.DistanceSquared(_echoStepTrailPositions[i], _echoStepPos) < 16f)
-                    continue;
-
-                float trailStrength = (1f - (i + 1f) / (_echoStepTrailPositions.Length + 1f)) * 0.64f;
-                _puppet.firstFractalAfterImageOpacity = EchoStepVisualOpacity * trailStrength;
-                Vector2 trailTopLeft = _echoStepTrailPositions[i]
-                    - new Vector2(NPC.width / 2f, NPC.height / 2f);
-                Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, trailTopLeft,
-                    0f, Vector2.Zero, 0f, PuppetDrawScale);
-            }
-
-            _puppet.firstFractalAfterImageOpacity = EchoStepVisualOpacity;
-            Vector2 echoTopLeft = _echoStepPos - new Vector2(NPC.width / 2f, NPC.height / 2f);
-            Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, echoTopLeft, 0f, Vector2.Zero, 0f, PuppetDrawScale);
-
-            _puppet.isFirstFractalAfterImage = wasFractal;
-            _puppet.firstFractalAfterImageOpacity = wasOpacity;
-            _puppet.isDisplayDollOrInanimate = wasDisplayDoll;
-            _puppet.socialIgnoreLight = wasIgnoreLight;
-
-            DrawEchoStepWeapon(spriteBatch, bodyRow);
-        }
-
-        private void DrawEchoStepWeapon(SpriteBatch spriteBatch, int bodyRow)
-        {
-            if (_heldItemType <= 0)
-                return;
-
-            // Vanilla item textures are lazy-loaded; ensure they're in memory before drawing.
-            Main.instance.LoadItem(_heldItemType);
-            var texAsset = TextureAssets.Item[_heldItemType];
-            if (texAsset?.Value == null)
-                return;
-            Texture2D tex = texAsset.Value;
-
-            // Same arm-tip offset table as GetHandPosition(), just anchored to the echo's fixed
-            // position/direction instead of the puppet's live NPC.Center/direction.
-            Vector2 offset = bodyRow switch
-            {
-                1 => new Vector2(-8f, -9f),
-                2 => new Vector2(4f, -8f),
-                3 => new Vector2(4f, 2f),
-                4 => new Vector2(4f, 7f),
-                _ => new Vector2(4f, 2f),
-            };
-            Vector2 handWorldPos = _echoStepPos + new Vector2(offset.X * _echoStepSwingDir, offset.Y);
-            Vector2 drawPos = handWorldPos - Main.screenPosition;
-
-            float visualRotation = _echoStepSwingDir * (_echoStepRotation + MeleeWeaponRotationOffset * _echoStepSwingDir);
-            Vector2 handleNorm = MeleeHandleNorm;
-            float originX = _echoStepSwingDir == 1 ? tex.Width * handleNorm.X : tex.Width * (1f - handleNorm.X);
-            Vector2 origin = new Vector2(originX, tex.Height * handleNorm.Y);
-            SpriteEffects effects = _echoStepSwingDir == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Color light = Lighting.GetColor(handWorldPos.ToTileCoordinates());
-            Color color = Color.Lerp(light, new Color(190, 145, 245), 0.48f) * EchoStepVisualOpacity;
-
-            spriteBatch.Draw(tex, drawPos, null, color, visualRotation, origin, MeleeWeaponDrawScale, effects, 0f);
-        }
-
         // ─────────────────────────────────────────────────────────────────────────
         // AI
         // ─────────────────────────────────────────────────────────────────────────
@@ -2794,11 +2391,11 @@ namespace tsorcRevamp.NPCs.Puppets
                     return;
                 }
             }
-            else
+            else if (DespawnsOnPartyWipe)
             {
                 // Not a decoy — the real encounter instance. Illusions skip this: they're short-lived
                 // copies from a teleport ability, not the fight itself, and shouldn't independently
-                // track player deaths or broadcast their own despawn message.
+                // track player deaths or broadcast their own despawn message. Summoned copies opt out too.
                 UpdatePartyWipeDespawn();
             }
 
@@ -2908,7 +2505,6 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 AfterimageTicks--;
             }
-            TickEchoStep(); // independent of Phase - can resolve while the puppet is doing anything else
             if (_meleeComboCooldowns != null)
                 for (int i = 0; i < _meleeComboCooldowns.Length; i++)
                     if (_meleeComboCooldowns[i] > 0)
@@ -3086,10 +2682,6 @@ namespace tsorcRevamp.NPCs.Puppets
                 speedMult *= RunSpeedMult;
             if (Phase == AttackPhase.ClosingDistance)
                 speedMult *= ClosingDistanceSpeedMult;
-            // Once the echo becomes visible it owns the next threat. The real puppet keeps advancing
-            // deliberately, but does not sprint past or visually compete with its independent follow-up.
-            if (IsEchoStepVisible)
-                speedMult *= EchoStepOwnerAdvanceSpeedMult;
 
             // Capture direction before the movement AI might change it.
             int dirBefore = NPC.direction;
@@ -3433,19 +3025,6 @@ namespace tsorcRevamp.NPCs.Puppets
             writer.Write((short)Math.Clamp(globalNPC.ReactiveBlockTimer, 0, short.MaxValue));
             writer.Write(_shielding);
             writer.Write(_mountSpawned);
-            writer.Write((short)Math.Clamp(_echoStepDelayTimer, -1, short.MaxValue));
-            writer.Write((short)Math.Clamp(_echoStepLeapDuration, 1, short.MaxValue));
-            writer.Write(_echoStepPos.X);
-            writer.Write(_echoStepPos.Y);
-            writer.Write(_echoStepStartPos.X);
-            writer.Write(_echoStepStartPos.Y);
-            writer.Write(_echoStepTargetPos.X);
-            writer.Write(_echoStepTargetPos.Y);
-            writer.Write(_echoStepRotation);
-            writer.Write((sbyte)_echoStepSwingDir);
-            writer.Write(_echoStepHitResolved);
-            writer.Write(_echoStepSequence);
-            writer.Write((byte)Math.Clamp(_echoStepCompletedStrikes, 0, byte.MaxValue));
             writer.Write(_attackRuntimeV2.Active);
             if (!_attackRuntimeV2.Active)
                 return;
@@ -3464,16 +3043,6 @@ namespace tsorcRevamp.NPCs.Puppets
             int shieldTimer = reader.ReadInt16();
             bool shieldActive = reader.ReadBoolean();
             _mountSpawned = reader.ReadBoolean();
-            _echoStepDelayTimer = reader.ReadInt16();
-            _echoStepLeapDuration = reader.ReadInt16();
-            _echoStepPos = new Vector2(reader.ReadSingle(), reader.ReadSingle());
-            _echoStepStartPos = new Vector2(reader.ReadSingle(), reader.ReadSingle());
-            _echoStepTargetPos = new Vector2(reader.ReadSingle(), reader.ReadSingle());
-            _echoStepRotation = reader.ReadSingle();
-            _echoStepSwingDir = reader.ReadSByte() < 0 ? -1 : 1;
-            _echoStepHitResolved = reader.ReadBoolean();
-            _echoStepSequence = reader.ReadInt32();
-            _echoStepCompletedStrikes = reader.ReadByte();
             bool runtimeActive = reader.ReadBoolean();
             bool hadRuntime = _attackRuntimeV2.Active;
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -3596,11 +3165,12 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (_heldItemType <= 0)
                         SetDisplayWeapon(MeleeWeaponItemType >= 0 ? MeleeWeaponItemType : RangedWeaponItemType, swing: false);
 
-                    // The movement controller has already advanced the real puppet this tick. Hold
-                    // neutral selection until the visible echo finishes so this reads as one authored
-                    // delayed combo rather than two unrelated attacks overlapping each other.
-                    if (IsEchoStepVisible)
+                    // The movement controller has already advanced the puppet this tick. A subclass's own
+                    // authored hold (see HoldAttackSelection) skips neutral selection entirely.
+                    if (HoldAttackSelection)
+                    {
                         break;
+                    }
 
                     // Authored reactions such as "snare connected -> throw flask" take priority over
                     // neutral selection, but still require footing, line of sight, and a full wind-up.
@@ -3776,7 +3346,6 @@ namespace tsorcRevamp.NPCs.Puppets
                         && dist >= FlipSlashMinRange && dist <= FlipSlashMaxRange
                         && Main.rand.Next(100) < FlipSlashChance)
                     {
-                        _flipHitConnected = false;
                         EnterPhase(AttackPhase.FlipSlashRise, FlipSlashRiseMaxTicks);
                         break;
                     }
@@ -4454,10 +4023,6 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (--PhaseTimer <= 0)
                     {
                         NPC.velocity.X *= 0.4f;
-                        if (CanEchoStep)
-                        {
-                            TryArmEchoStep();
-                        }
                         EnterPhase(AttackPhase.PierceRecovery, PierceRecoveryTicks);
                     }
                     break;
@@ -4504,8 +4069,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // Shared recovery after either pierce variant ends — can walk, can't attack yet.
                 case AttackPhase.PierceRecovery:
                     LockAttackFacing();
-                    if (!IsEchoStepVisible)
-                        SlowDown();
+                    SlowDown();
                     if (--PhaseTimer <= 0)
                     {
                         _pierceCooldown = PierceCooldownAfterUse;
@@ -4628,6 +4192,10 @@ namespace tsorcRevamp.NPCs.Puppets
                         float vx = MathHelper.Clamp(dx / airtime, 2f, FlipSlashLaunchForwardSpeed);
                         NPC.velocity = new Vector2(_flipSlashDir * vx, -FlipSlashLaunchUpSpeed);
                         NPC.netUpdate = true;
+
+                        _flipSlashLaunchBottomY = NPC.Bottom.Y;
+                        _flipSlashSolvedSpinSpeed = FlipSlashSpinSpeed;
+                        DoFlipSlashHit();
                     }
                     else
                     {
@@ -4641,41 +4209,58 @@ namespace tsorcRevamp.NPCs.Puppets
                     LockAttackFacing();
                     DoFlipSlashRiseTick();
 
-                    if (!_flipHitConnected)
-                    {
-                        Rectangle reach = NPC.Hitbox;
-                        reach.Inflate(20, 10);
-                        if (reach.Intersects(target.Hitbox))
-                        {
-                            _flipHitConnected = true;
-                            DoFlipSlashHit();
-                        }
-                    }
+                    // The spin is a real sweeping blade for the whole flight. It was only ever armed
+                    // before (by an overlap with NPC.Hitbox) and never ticked, so it could not hit at all.
+                    TickBladeHit();
 
                     bool landedFlip = PhaseTimer < FlipSlashRiseMaxTicks && NPC.velocity.Y == 0f;
                     if (landedFlip || --PhaseTimer <= 0)
                     {
-                        OnFlipSlashLand();
-                        if (CanEchoStep)
+                        if (UseFlipSlashLandingStrike)
                         {
-                            TryArmEchoStep();
+                            // Re-wrap the free-running spin angle next to the cocked pose, so the strike
+                            // sweeps on from exactly where the blade is (no snap) and ends inside the normal
+                            // rotation range that recovery lerps back from.
+                            float cockedRotation = FlipSlashStrikeStartRotation;
+                            _flipSlashStrikeStartRotation = cockedRotation
+                                + MathHelper.WrapAngle(_weaponRotation - cockedRotation);
+                            _weaponRotation = _flipSlashStrikeStartRotation;
                         }
+
+                        OnFlipSlashLand();
                         EnterPhase(AttackPhase.FlipSlashLand, FlipSlashLandHoldTicks);
                     }
                     break;
                 }
 
-                // Sword settles into the slam pose (handled in the rotation table below) and is held
-                // there for the rest of the phase - a deliberate static pose.
+                // Legacy: the sword settles into the slam pose (rotation table below) and holds it.
+                // UseFlipSlashLandingStrike: a live overhead into the ground first, then the hold.
                 case AttackPhase.FlipSlashLand:
+                {
                     LockAttackFacing();
                     NPC.velocity.X *= 0.5f;
+
+                    if (UseFlipSlashLandingStrike)
+                    {
+                        int elapsedLand = FlipSlashLandHoldTicks - PhaseTimer;
+                        if (elapsedLand <= FlipSlashStrikeLiveTicks)
+                        {
+                            TickBladeHit();
+                        }
+
+                        if (elapsedLand == FlipSlashStrikeEaseInTicks)
+                        {
+                            OnFlipSlashStrikeContact();
+                        }
+                    }
+
                     if (--PhaseTimer <= 0)
                     {
                         _flipSlashCooldown = FlipSlashCooldownAfterUse;
                         EnterCasualOrIdle();
                     }
                     break;
+                }
 
                 // ── Abyss Slash ─────────────────────────────────────────────────
                 // Deliberately does not touch NPC.velocity.X - RunMovementAI's normal pursuit
@@ -4784,19 +4369,13 @@ namespace tsorcRevamp.NPCs.Puppets
                     TickBladeHit();
                     if (--PhaseTimer <= 0)
                     {
-                        // If the finishing swing whiffed too, a delayed echo picks up the same
-                        // swing shape a beat later - a second, separately-timed threat instead of
-                        // a free breather after the grab sequence.
-                        if (!_lastAttackHitConnected && CanEchoStep)
-                            TryArmEchoStep();
                         EnterPhase(AttackPhase.TendrilRecovery, TendrilRecoveryTicks);
                     }
                     break;
 
                 case AttackPhase.TendrilRecovery:
                     LockAttackFacing();
-                    if (!IsEchoStepVisible)
-                        SlowDown();
+                    SlowDown();
                     if (--PhaseTimer <= 0)
                     {
                         _tendrilCooldown = TendrilCooldownAfterUse;
@@ -5125,6 +4704,12 @@ namespace tsorcRevamp.NPCs.Puppets
                 // out of combo range (re-decide → may go ranged).
                 case AttackPhase.ClosingDistance:
                 {
+                    if (HoldAttackSelection)
+                    {
+                        EnterPhase(AttackPhase.Idle, 0);
+                        break;
+                    }
+
                     int faceC = target.Center.X < NPC.Center.X ? -1 : 1;
                     NPC.direction = faceC;
                     NPC.spriteDirection = faceC;
@@ -7364,6 +6949,26 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 _weaponRotation = MagicCastEndRotation;
             }
+            else if (UseAuthoredBreathHandPose && Phase == AttackPhase.BreathTelegraph)
+            {
+                float breathT = BreathTelegraphTicks > 0
+                    ? 1f - PhaseTimer / (float)BreathTelegraphTicks
+                    : 1f;
+                _weaponRotation = MathHelper.SmoothStep(BreathHandStartRotation, BreathHandEndRotation,
+                    MathHelper.Clamp(breathT, 0f, 1f));
+            }
+            else if (UseAuthoredBreathHandPose && Phase == AttackPhase.Breathing)
+            {
+                _weaponRotation = BreathHandEndRotation;
+            }
+            else if (UseAuthoredBreathHandPose && Phase == AttackPhase.BreathRecovery)
+            {
+                float recoveryT = BreathRecoveryTicks > 0
+                    ? 1f - PhaseTimer / (float)BreathRecoveryTicks
+                    : 1f;
+                _weaponRotation = MathHelper.SmoothStep(BreathHandEndRotation, HoldRotation,
+                    MathHelper.Clamp(recoveryT, 0f, 1f));
+            }
             else if (Phase == AttackPhase.PierceTelegraph)
             {
                 // Same "cocked, arm extended toward the player" pose as JoustDash's telegraph.
@@ -7433,11 +7038,50 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 // Continuous spin while airborne (same free-running style as ComboMotion.Spin) —
                 // no fixed start/end, just a steady rotation for as long as the flip lasts.
-                _weaponRotation += FlipSlashSpinSpeed;
+                float spinSpeed = FlipSlashSpinSpeed;
+
+                if (UseFlipSlashLandingStrike)
+                {
+                    // Phase-lock: re-solve the speed each tick so the blade reaches the cocked strike pose
+                    // just as the feet fall back to launch height. Ballistic fall time (gravity 0.3, +Y down)
+                    // t = (-vy + sqrt(vy^2 + 2*g*h)) / g, h = px above launch. The whole-turn count is the one
+                    // keeping speed nearest FlipSlashSpinSpeed. Under 3 ticks out, keep the last solve.
+                    const float FlipGravity = 0.3f;
+                    float heightAboveLaunch = Math.Max(0f, _flipSlashLaunchBottomY - NPC.Bottom.Y);
+                    float fallDiscriminant = NPC.velocity.Y * NPC.velocity.Y + 2f * FlipGravity * heightAboveLaunch;
+                    float ticksToLand = (-NPC.velocity.Y + (float)Math.Sqrt(fallDiscriminant)) / FlipGravity;
+
+                    if (ticksToLand > 3f)
+                    {
+                        float forwardToCocked = (FlipSlashStrikeStartRotation - _weaponRotation) % MathHelper.TwoPi;
+                        if (forwardToCocked < 0f)
+                        {
+                            forwardToCocked += MathHelper.TwoPi;
+                        }
+
+                        float authoredTurns = (FlipSlashSpinSpeed * ticksToLand - forwardToCocked) / MathHelper.TwoPi;
+                        float wholeTurns = Math.Max(0f, (float)Math.Round(authoredTurns));
+                        _flipSlashSolvedSpinSpeed = (forwardToCocked + wholeTurns * MathHelper.TwoPi) / ticksToLand;
+                    }
+
+                    spinSpeed = _flipSlashSolvedSpinSpeed;
+                }
+
+                _weaponRotation += spinSpeed;
                 if (_weaponRotation > MathHelper.TwoPi)
                 {
                     _weaponRotation -= MathHelper.TwoPi;
                 }
+            }
+            else if (Phase == AttackPhase.FlipSlashLand && UseFlipSlashLandingStrike)
+            {
+                // Weighted overhead into the ground from the touchdown angle; ApplyWeighted clamps elapsed,
+                // so once the strike's ticks are spent it simply holds the end pose for the rest of the phase.
+                int elapsedStrike = FlipSlashLandHoldTicks - PhaseTimer;
+                int strikeTicks = FlipSlashStrikeEaseInTicks + FlipSlashStrikeEaseOutTicks;
+                _weaponRotation = SwingEase.ApplyWeighted(_flipSlashStrikeStartRotation, FlipSlashStrikeEndRotation,
+                    elapsedStrike, strikeTicks, FlipSlashStrikeEaseInTicks, FlipSlashStrikeEaseOutTicks,
+                    FlipSlashStrikeEaseOutDecay);
             }
             else if (Phase == AttackPhase.FlipSlashLand)
             {
@@ -8312,46 +7956,6 @@ namespace tsorcRevamp.NPCs.Puppets
         protected float PuppetWeaponAnimationProgress => MathHelper.Clamp(
             _weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f, 0f, 1f);
 
-        /// <summary>True while an Umbral Echo Step duplicate is materialized.</summary>
-        protected bool PuppetEchoStepVisible => IsEchoStepVisible;
-        protected Vector2 PuppetEchoStepPosition => _echoStepPos;
-        protected Vector2 PuppetEchoStepHandPosition
-        {
-            get
-            {
-                // Same row choice as the echo-step draw: swing pose, else walk row 3, else stand row 1.
-                int bodyRow = 1;
-
-                if (IsEchoStepSwinging || IsEchoStepFading)
-                {
-                    bodyRow = BodyRowFromWeaponRotation(_echoStepRotation, _echoStepSwingDir);
-                }
-                else if (IsEchoStepWalking)
-                {
-                    bodyRow = 3;
-                }
-
-                Vector2 offset = bodyRow switch
-                {
-                    1 => new Vector2(-8f, -9f),
-                    2 => new Vector2(4f, -8f),
-                    3 => new Vector2(4f, 2f),
-                    4 => new Vector2(4f, 7f),
-                    _ => new Vector2(4f, 2f),
-                };
-                return _echoStepPos + new Vector2(offset.X * _echoStepSwingDir, offset.Y);
-            }
-        }
-        protected bool PuppetEchoStepSwinging => IsEchoStepSwinging;
-        protected float PuppetEchoStepVisualOpacity => EchoStepVisualOpacity;
-        protected float PuppetEchoStepSwingProgress => IsEchoStepSwinging
-            ? MathHelper.Clamp((EchoStepSwingEnd - _echoStepDelayTimer + 1f)
-                / Math.Max(1f, EchoStepSwingTicks), 0f, 1f)
-            : 0f;
-        protected float PuppetEchoStepWeaponRotation => _echoStepRotation;
-        protected int PuppetEchoStepDirection => _echoStepSwingDir;
-        protected int PuppetEchoStepSequence => _echoStepSequence;
-
         /// <summary>
         /// World-space unit direction the currently-drawn melee weapon sprite points, matching
         /// <see cref="DrawWeaponToLayer"/>'s actual render rotation exactly — including the
@@ -9168,12 +8772,6 @@ namespace tsorcRevamp.NPCs.Puppets
             _puppet.firstFractalAfterImageOpacity = previousOpacity;
             DrawingPuppetFor = null;
 
-            // Umbral Echo Step: drawn AFTER the real puppet (and outside DrawingPuppetFor, since
-            // PuppetWeaponDrawLayer reads the puppet's LIVE state, not this fixed echo point) so it
-            // never clobbers the real draw and its weapon renders in the right place.
-            if (IsEchoStepVisible)
-                DrawEchoStepPuppet(spriteBatch);
-
             return false;
         }
 
@@ -9253,6 +8851,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Phase == AttackPhase.MeleeAttack || Phase == AttackPhase.StabAttack
             || Phase == AttackPhase.SpearAttack || Phase == AttackPhase.MeleeComboAttack
             || Phase == AttackPhase.JumpSlashAttack || Phase == AttackPhase.FlipSlashLand
+            || Phase == AttackPhase.FlipSlashRise
             || Phase == AttackPhase.AbyssSlashSwipe || Phase == AttackPhase.TendrilSwing
             || Phase == AttackPhase.HomingVolleySwing || Phase == AttackPhase.BoomerangSwing
             || Phase == AttackPhase.SpiralFanSwing;
@@ -9319,6 +8918,19 @@ namespace tsorcRevamp.NPCs.Puppets
                     AttackPhase.SpiralFanSwing => 1f - PhaseTimer / (float)SpiralFanSwingTicks,
                     _ => progress,
                 };
+
+                // The flip's spin has no start or end, so its crescent holds sheet frame 1 (a full
+                // crescent; 0.3 * 4 frames). The landing strike's clock is its own ticks, not the hold.
+                if (Phase == AttackPhase.FlipSlashRise)
+                {
+                    progress = 0.3f;
+                }
+                else if (Phase == AttackPhase.FlipSlashLand && UseFlipSlashLandingStrike)
+                {
+                    int strikeTicks = FlipSlashStrikeEaseInTicks + FlipSlashStrikeEaseOutTicks;
+                    progress = (FlipSlashLandHoldTicks - PhaseTimer) / (float)Math.Max(1, strikeTicks);
+                }
+
                 progress = MathHelper.Clamp(progress, 0f, 1f);
             }
             sequence = _meleeSlashTrailSequence;

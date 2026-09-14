@@ -177,9 +177,11 @@ For ghost copies of the boss, soul-summoned past bosses, or echo clones:
 - **Owner behaviour while a copy is active:** state it. For example: the owner idles 120 ticks, then
   releases its attack lock.
 - **Frequency by phase** is stated.
-- **Reference implementations:** the puppet echo-step system (`EchoStep*` virtuals in
-  `PuppetNPC.cs`) and Artorias's spectral copies. Read them first, and fix their known issues in
-  the copy you build rather than inheriting them.
+- **Reference implementation:** `ArtoriasPhantom` (`NPCs/Bosses/SuperHardMode/ArtoriasPhantom.cs`),
+  a real invulnerable NPC on the shared `ArtoriasSwordsman` base, summoned by
+  `Artorias.TickSpectralPhantom`. It replaced the old scripted `EchoStep*` afterimage in `PuppetNPC.cs`
+  (now deleted), which floated, couldn't chase and whiffed. Build copies as real NPCs that reuse the
+  source's class, not as position-and-timer afterimages drawn by the owner.
 
 ## 8. Effects on the player
 

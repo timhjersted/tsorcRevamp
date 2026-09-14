@@ -10387,7 +10387,7 @@ Mods: {
 			BoulderDropLeft.DisplayName: 爆炸
 			BoulderDropRight.DisplayName: 爆炸
 			Bubble.DisplayName: 泡泡
-			BurningPhantomSeeker.DisplayName: 燃烧的幻影追逐者
+			PhantomFireStaffSeeker.DisplayName: 幻影火焰法杖追踪者
 			ChaosDeathAnimation.DisplayName: 混沌的生死切割
 			CrazedPurpleCrush.DisplayName: 虚空毒液
 			CrystalFire.DisplayName: 水晶之火
@@ -11522,6 +11522,10 @@ Mods: {
 				Open: 亚尔特留斯扩大了深渊！
 				BarrowBladeHint: 只有传说中的刀刃才能打破护盾！
 				Immune: 免疫！
+			}
+
+			ArtoriasPhantom: {
+				DisplayName: 幽灵亚尔特留斯
 			}
 
 			Blight: {

@@ -21,28 +21,28 @@ default, not written in the file · `.` off by default, never considered
 
 <!-- GENERATED:BEGIN -->
 
-| Enemy | archetype | arm | 2hnd | ease | clock | tele | mirr | aimC | aimA | flip | arcs | over | link | foll | land | pool | clip |
-|---|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| Program | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | Y |
-| PuppetProfile | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| HeroofLumelia | Broadsword | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| Artorias | Greatsword | Y | . | Y | Y | Y | Y | . | . | . | Y | Y | Y | Y | Y | . | . |
-| Gwyn | Greatsword | Y | Y | Y | Y | Y | Y | . | Y | n | Y | Y | Y | Y | Y | Y | Y |
-| SoulOfCinder | Broadsword | Y | . | Y | Y | Y | Y | . | Y | Y | . | . | Y | Y | . | Y | . |
-| ClericOfSorrow | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| DarkBloodKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | Y | . |
-| DarkKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | Y | . |
-| AbyssalNinjaInvader | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| BlackNinja | Flail | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| Blaidd | Greatsword | . | . | Y | . | . | Y | . | Y | . | . | . | . | . | . | Y | . |
-| CursedDragonInvader | Halberd | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| DreadWraith | — | Y | . | Y | . | Y | Y | . | Y | . | . | . | . | . | . | Y | . |
-| Kahlrun | Broadsword | Y | . | Y | . | Y | Y | . | Y | . | . | . | . | . | . | Y | Y |
-| Khaios | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| OwlFatherInvader | Axe | Y | . | Y | Y* | Y | Y | Y* | Y | n | Y | . | Y | Y | Y | Y | Y |
-| ShadowNinja | Rapier | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| SpiritOfKhaios | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| StuddedLeatherWarrior | Axe | Y | . | . | Y* | Y | Y | Y* | . | . | . | . | Y | Y | Y | Y | Y |
+| Enemy | archetype | arm | 2hnd | ease | clock | tele | mirr | aimC | aimA | flip | arcs | over | link | foll | land | fslm | pool | clip |
+|---|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Program | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | Y |
+| PuppetProfile | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| HeroofLumelia | Broadsword | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| Artorias | Greatsword | Y | . | Y | Y | Y | Y | . | . | . | Y | Y | Y | Y | Y | Y | . | . |
+| Gwyn | Greatsword | Y | Y | Y | Y | Y | Y | . | Y | n | Y | Y | Y | Y | Y | . | Y | Y |
+| SoulOfCinder | Broadsword | Y | . | Y | Y | Y | Y | . | Y | Y | . | . | Y | Y | . | . | Y | . |
+| ClericOfSorrow | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| DarkBloodKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
+| DarkKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
+| AbyssalNinjaInvader | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| BlackNinja | Flail | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| Blaidd | Greatsword | . | . | Y | . | . | Y | . | Y | . | . | . | . | . | . | . | Y | . |
+| CursedDragonInvader | Halberd | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| DreadWraith | — | Y | . | Y | . | Y | Y | . | Y | . | . | . | . | . | . | . | Y | . |
+| Kahlrun | Broadsword | Y | . | Y | . | Y | Y | . | Y | . | . | . | . | . | . | . | Y | Y |
+| Khaios | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| OwlFatherInvader | Axe | Y | . | Y | Y* | Y | Y | Y* | Y | n | Y | . | Y | Y | Y | . | Y | Y |
+| ShadowNinja | Rapier | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| SpiritOfKhaios | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| StuddedLeatherWarrior | Axe | Y | . | . | Y* | Y | Y | Y* | . | . | . | . | Y | Y | Y | . | Y | Y |
 
 <!-- GENERATED:END -->
 
@@ -66,6 +66,7 @@ default, not written in the file · `.` off by default, never considered
 | `link` | `MeleeComboInterStepLingerTicks` | Inter-step pause holds the contact pose, then eases into the **next** step's start angle | ~2 rad snap between combo steps |
 | `foll` | `MeleeRecoveryLingerTicks` | Recovery parks the finished pose before easing back to the carry | Follow-through cut off on the frame damage ends |
 | `land` | `UseLandingTimedLeapSlam` | `LeapSlam` resolves on real ground contact (`OnLeapSlamLanded`, `UpdateLeapSlamPose`) | Slam resolves on a tick countdown; the impact doesn't match the feet |
+| `fslm` | `UseFlipSlashLandingStrike` | Forward Flip Slash's spin is phase-locked to land cocked, then plays a live Weighted overhead into the ground | Spin snaps into a static held slam pose on touchdown, with no landing hit |
 | `pool` | `MeleeComboPoolOverride` | A bespoke combo table for this enemy | The shared `WeaponArchetypeTables` list for its archetype |
 | `clip` | `RuntimeV2Clip` | `PuppetAttackClip` single-clock executor (windup/active/recovery as one authored clip) | The legacy multi-phase rotation switch |
 

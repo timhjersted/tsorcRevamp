@@ -44,6 +44,10 @@ namespace tsorcRevamp.Projectiles.VFX
         Flame,
         /// <summary>BlockyFireSlash: the original chunky material, clipped to the crescent sprite.</summary>
         Blocky,
+        /// <summary>VoidSlashCrescent (Effects/VoidSlashCrescent.fx): Artorias's abyss material, crisp
+        /// leading rim and a noise-frayed wake, clipped to the crescent sprite. The three
+        /// CinderOverlay*Color fields feed its DarkColor / MidColor / CoreColor.</summary>
+        Void,
     }
 
     /// <summary>
@@ -80,7 +84,8 @@ namespace tsorcRevamp.Projectiles.VFX
 
         // Optional fire-material pass. It reuses the exact same source frame, pivot, rotation,
         // scale, and flip as the readable vanilla arc below, so the shader cannot drift away from
-        // the sword silhouette. Both styles live in Effects/GwynCinderTrail.fx.
+        // the sword silhouette. Flame and Blocky live in Effects/GwynCinderTrail.fx, Void in
+        // Effects/VoidSlashCrescent.fx.
         public bool DrawCinderOverlay;
         public VanillaSwordArcCinderStyle CinderOverlayStyle = VanillaSwordArcCinderStyle.Flame;
         public float CinderOverlayOpacity = 0.6f;
@@ -218,6 +223,7 @@ namespace tsorcRevamp.Projectiles.VFX
         // FireSlashFlame scrolls its noise continuously, so it needs a texture with no wrap seam.
         // T_Aurax44 (kept for the blocky style) has a hard seam on both axes that strobed through the fire.
         static Texture2D fireSlashFlameNoise;
+        static Effect voidSlashEffect;
 
         float Progress => MathHelper.Clamp(Projectile.localAI[0] / settings.Duration, 0f, 1f);
         int SweepDirection => settings.SweepAngle >= 0f ? 1 : -1;
@@ -658,14 +664,47 @@ namespace tsorcRevamp.Projectiles.VFX
                 Vector2 textureSize = texture.Size();
                 Rectangle drawSource = sourceRectangle;
                 Vector2 drawOrigin = origin;
+                Effect activeEffect = cinderOverlayEffect;
 
-                cinderOverlayEffect.Parameters["CinderColor"].SetValue(settings.CinderOverlayDarkColor.ToVector3());
-                cinderOverlayEffect.Parameters["FlameColor"].SetValue(settings.CinderOverlayFlameColor.ToVector3());
-                cinderOverlayEffect.Parameters["CoreColor"].SetValue(settings.CinderOverlayCoreColor.ToVector3());
-                cinderOverlayEffect.Parameters["Opacity"].SetValue(opacity);
-                cinderOverlayEffect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                if (settings.CinderOverlayStyle != VanillaSwordArcCinderStyle.Void)
+                {
+                    cinderOverlayEffect.Parameters["CinderColor"].SetValue(settings.CinderOverlayDarkColor.ToVector3());
+                    cinderOverlayEffect.Parameters["FlameColor"].SetValue(settings.CinderOverlayFlameColor.ToVector3());
+                    cinderOverlayEffect.Parameters["CoreColor"].SetValue(settings.CinderOverlayCoreColor.ToVector3());
+                    cinderOverlayEffect.Parameters["Opacity"].SetValue(opacity);
+                    cinderOverlayEffect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
+                }
 
-                if (settings.CinderOverlayStyle == VanillaSwordArcCinderStyle.Blocky)
+                if (settings.CinderOverlayStyle == VanillaSwordArcCinderStyle.Void)
+                {
+                    voidSlashEffect ??= ModContent.Request<Effect>(
+                        "tsorcRevamp/Effects/VoidSlashCrescent", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                    activeEffect = voidSlashEffect;
+
+                    // Same seamless noise as FireSlashFlame (both scroll continuously). No quad padding: the
+                    // void material never leaves the silhouette, so the draw stays exactly the sheet frame.
+                    graphicsDevice.Textures[1] = fireSlashFlameNoise;
+                    activeEffect.CurrentTechnique = activeEffect.Techniques["VoidSlashCrescent"];
+
+                    // Half-texel inset so the shader's clamp lands on this frame's edge texels. PixelGrid is
+                    // FireSlashFlame's 2x2-screen-pixel grid in atlas UV (blocks per UV unit = texels * scale / 2).
+                    Vector2 voidFrameMin = (sourceRectangle.TopLeft() + new Vector2(0.5f)) / textureSize;
+                    Vector2 voidFrameMax = (sourceRectangle.BottomRight() - new Vector2(0.5f)) / textureSize;
+                    Vector2 voidFrameUVScale = textureSize / sourceRectangle.Size();
+                    Vector2 voidPixelBlocks = textureSize * scale / FlamePixelBlockSize;
+
+                    activeEffect.Parameters["DarkColor"]?.SetValue(settings.CinderOverlayDarkColor.ToVector3());
+                    activeEffect.Parameters["MidColor"]?.SetValue(settings.CinderOverlayFlameColor.ToVector3());
+                    activeEffect.Parameters["CoreColor"]?.SetValue(settings.CinderOverlayCoreColor.ToVector3());
+                    activeEffect.Parameters["Opacity"]?.SetValue(opacity);
+                    activeEffect.Parameters["Time"]?.SetValue(Main.GlobalTimeWrappedHourly);
+                    activeEffect.Parameters["FrameMin"]?.SetValue(voidFrameMin);
+                    activeEffect.Parameters["FrameMax"]?.SetValue(voidFrameMax);
+                    activeEffect.Parameters["FrameUVScale"]?.SetValue(voidFrameUVScale);
+                    activeEffect.Parameters["PixelGrid"]?.SetValue(new Vector4(voidPixelBlocks.X,
+                        voidPixelBlocks.Y, 1f / voidPixelBlocks.X, 1f / voidPixelBlocks.Y));
+                }
+                else if (settings.CinderOverlayStyle == VanillaSwordArcCinderStyle.Blocky)
                 {
                     graphicsDevice.Textures[1] = cinderOverlayNoise;
                     cinderOverlayEffect.CurrentTechnique = cinderOverlayEffect.Techniques["BlockyFireSlash"];
@@ -720,7 +759,7 @@ namespace tsorcRevamp.Projectiles.VFX
                         pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                 }
 
-                cinderOverlayEffect.CurrentTechnique.Passes[0].Apply();
+                activeEffect.CurrentTechnique.Passes[0].Apply();
 
                 Main.EntitySpriteDraw(texture, drawPosition, drawSource, Color.White,
                     Projectile.rotation, drawOrigin, scale, effects, 0);

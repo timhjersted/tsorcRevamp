@@ -23,16 +23,14 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
-    [AutoloadBossHead]
-    class Artorias : PuppetNPC
+    /// <summary>
+    /// What Artorias and his spectral phantom (<see cref="ArtoriasPhantom"/>) share: the armour and greatsword
+    /// loadout, movement speed, the swing tuning (arc endpoints, combo customisation, landing-timed slam) and
+    /// the tracked void sword crescents. Boss-only systems (ring, novas, shield, special attacks) stay on
+    /// <see cref="Artorias"/>. Abstract, so tModLoader never loads it as an NPC of its own.
+    /// </summary>
+    abstract class ArtoriasSwordsman : PuppetNPC
     {
-        // PuppetNPC overrides Texture to a shared puppet placeholder, so the default
-        // Texture + "_Head_Boss" convention [AutoloadBossHead] relies on would look for
-        // "PuppetPlaceholder_Head_Boss" instead of this boss's actual head icon.
-        public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/Artorias_Head_Boss";
-
-        protected override string InvaderTitle => "Artorias";
-
         // ── Loadout: original dark-blue Artorias armor set ──────────────────────────
         protected override int HeadArmorItemType => ModContent.ItemType<ArtoriasHelmet>();
         protected override int BodyArmorItemType => ModContent.ItemType<ArtoriasArmor>();
@@ -42,6 +40,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyArtoriasGreatsword>();
         protected override int RangedWeaponItemType => -1; // melee-only
+        protected override int RangedDamage => 0; // unused, no ranged weapon
+
+        protected override float TopSpeed => 2.4f;
+        protected override float Acceleration => 0.12f;
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
         protected override bool UseCompositeArmSwing => true;
@@ -58,6 +60,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // predictive downswing (UpdateLeapSlamPose projects the landing a few frames ahead so the
         // blade arrives flat as the feet touch) and the OnLeapSlamLanded hook below.
         protected override bool UseLandingTimedLeapSlam => true;
+
+        // Artorias never disengages to drink; zero charges prevents the healing intercept from
+        // entering either FleeToHeal or Healing.
+        protected override int EstusChargesMax => 0;
+
+        /// <summary>Swing tempo for this wielder's combos (1 = Artorias). Multiplies every step's
+        /// SwingSpeedMult (the authored arc clock) and divides the recovery and inter-step pause floor, so a
+        /// faster wielder is faster everywhere without re-authoring the shared Greatsword table.</summary>
+        protected virtual float ComboTempoMult => 1f;
 
         protected override void ModifyMeleeArcEndpoints(
             ComboMotion motion, ref float startRotation, ref float endRotation)
@@ -86,16 +97,42 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction)
         {
-            combo.RecoveryTicks = combo.HeavyCommit ? 36 : 30;
-            if (combo.Steps == null)
-                return;
+            // Artorias's committed rhythm (36t heavy / 30t light recovery, 30t inter-step pause floor),
+            // divided by the tempo so a faster wielder recovers and re-engages proportionally sooner.
+            int heavyRecoveryTicks = (int)Math.Round(36f / ComboTempoMult);
+            int lightRecoveryTicks = (int)Math.Round(30f / ComboTempoMult);
+            int pauseFloorTicks = (int)Math.Round(30f / ComboTempoMult);
 
-            for (int i = 0; i < combo.Steps.Length - 1; i++)
+            combo.RecoveryTicks = lightRecoveryTicks;
+            if (combo.HeavyCommit)
+            {
+                combo.RecoveryTicks = heavyRecoveryTicks;
+            }
+
+            if (combo.Steps == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < combo.Steps.Length; i++)
             {
                 MeleeComboStep step = combo.Steps[i];
-                // Fifteen non-damaging frames stay planted at contact; the remaining pause then
-                // cocks the sword into the next authored starting pose instead of snapping there.
-                step.PostStepPause = Math.Max(step.PostStepPause, 30);
+
+                // Only a non-1 tempo touches the swing clock, so Artorias's own authored values stay as-is.
+                // An authored 0 means 1x, so it is folded in before scaling.
+                if (ComboTempoMult != 1f)
+                {
+                    float authoredSwingSpeed = step.SwingSpeedMult > 0f ? step.SwingSpeedMult : 1f;
+                    step.SwingSpeedMult = authoredSwingSpeed * ComboTempoMult;
+                }
+
+                // Every step but the last: the first non-damaging frames stay planted at contact, and the
+                // rest of the pause cocks the sword into the next authored starting pose instead of snapping.
+                if (i < combo.Steps.Length - 1)
+                {
+                    step.PostStepPause = Math.Max(step.PostStepPause, pauseFloorTicks);
+                }
+
                 combo.Steps[i] = step;
             }
 
@@ -120,7 +157,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // Ground Pound is the only LeapSlam-motion step in Artorias's moveset, so this fires exactly
-        // once per use: a shockwave-style impact under the boss the moment the slam actually touches
+        // once per use: a shockwave-style impact under the wielder the moment the slam actually touches
         // down. It hangs off OnLeapSlamLanded rather than DoComboMeleeHit because that hook only runs
         // on a real landing - a leap that times out airborne (blocked, or the player ran out of
         // reach) now ends with no ground effect instead of detonating a shockwave in open sky.
@@ -129,6 +166,190 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             SpawnLandingImpactVFX(NPC.Bottom, 86f, 68f);
             base.OnLeapSlamLanded(step);
         }
+
+        protected void SpawnLandingImpactVFX(Vector2 position, float width, float height)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
+                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasLandingImpactVFX>(), 0, 0f,
+                Main.myPlayer, width, height);
+        }
+
+        protected override void DoMeleeAttack()
+        {
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.6f, PitchVariance = 0.2f }, NPC.Center);
+            TryMeleeHit();
+            SpawnArtoriasSwordArc(GetMeleeSwingTicks(MeleeAttackTicks));
+        }
+
+        protected override void DoRangedAttack()
+        {
+            // No ranged weapon; never invoked (RangedWeaponItemType is -1).
+        }
+
+        // Authored holds (Artorias idling while his phantom arrives; the phantom's own fade in and out) stand
+        // the puppet still and facing its target instead of walking. Gravity still applies to velocity.Y.
+        protected override void RunMovementAI(float speedMult)
+        {
+            if (!HoldAttackSelection)
+            {
+                base.RunMovementAI(speedMult);
+                return;
+            }
+
+            NPC.velocity.X *= 0.8f;
+            if (NPC.HasValidTarget)
+            {
+                int facing = 1;
+                if (Main.player[NPC.target].Center.X < NPC.Center.X)
+                {
+                    facing = -1;
+                }
+
+                NPC.direction = facing;
+                NPC.spriteDirection = facing;
+            }
+        }
+
+        // ── Melee sweep crescents (Gwyn's VanillaSwordArc pattern) ───────────────────────────────
+        // Artorias's greatsword art is 70x70 with the default (0.10, 0.85) grip, so its farthest corner is
+        // sqrt(63^2 + 59.5^2) = 86.7px from the hand, x1.1 PuppetDrawScale = ~95px on screen. VanillaSwordArc
+        // puts its crescent's outer rim at Radius (94px reference x1.1 internal scale), so the cutting edge
+        // rides the real blade tip instead of stopping at the blade's midpoint.
+        protected const float ArtoriasSwordArcRadius = 95f;
+        // Mirrors PuppetNPC.LeapSlamDownswingTicks (private there): Ground Pound's landing downswing length.
+        const int LandingSwordArcTicks = 10;
+        static readonly Color SwordArcDark = new(24, 8, 48);
+        static readonly Color SwordArcBody = new(120, 52, 210);
+        static readonly Color SwordArcCore = new(210, 170, 255);
+        // Artorias's void palette: the crescent's shader overlay and his thrust sheath.
+        protected static readonly Color SlashDark = new(22, 6, 36);
+        protected static readonly Color SlashMid = new(143, 42, 190);
+        protected static readonly Color SlashCore = new(220, 166, 236);
+        bool _landingSwordArcSpawned;
+
+        /// <summary>Spawns the purple four-frame VanillaSwordArc for ONE real sword sweep, with the
+        /// VoidSlashCrescent shader drawn through the crescent sprite. Call it on the first tick the blade
+        /// sweeps; TrackPuppetBlade then pins it to the live hand and blade angle every frame, so it cannot
+        /// show outside the swing or drift off the sword.</summary>
+        /// <param name="duration">The sweep's own tick count; the arc fades out as it ends.</param>
+        /// <param name="reverse">True for sweeps that travel against the overhead direction (underhand).</param>
+        /// <param name="hitWindowEnd">Step fraction after which the blade is harmless; 0 = live all step.</param>
+        protected void SpawnArtoriasSwordArc(int duration, bool reverse = false, float hitWindowEnd = 0f)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            duration = Math.Max(1, duration);
+
+            // Every Artorias sweep raises its weapon rotation (the overhead-chop direction) except an
+            // underhand rise. The sign only flips the sheet vertically so the crescent trails the blade.
+            int sweepDirection = NPC.direction;
+            if (reverse)
+            {
+                sweepDirection = -sweepDirection;
+            }
+
+            // Fade over the last 5 ticks, or from the step's HitWindowEnd onward when it has one, so the
+            // crescent is gone once the blade stops being a hitbox. 2-tick fade-in stops a first-frame pop.
+            float fadeOutFraction = Math.Min(0.35f, 5f / duration);
+            if (hitWindowEnd > 0f)
+            {
+                fadeOutFraction = 1f - hitWindowEnd;
+            }
+
+            VanillaSwordArcSettings settings = new VanillaSwordArcSettings
+            {
+                Texture = VanillaSwordArcTexture.NightsEdge,
+                Easing = VanillaSwordArcEasing.Linear,
+                Duration = duration,
+                StartAngle = PuppetWeaponDirection.ToRotation(),
+                SweepAngle = sweepDirection * MathHelper.Pi,
+                Radius = ArtoriasSwordArcRadius,
+                Opacity = 0.66f,
+                FadeInFraction = Math.Min(0.12f, 2f / duration),
+                FadeOutFraction = fadeOutFraction,
+                AfterimageLag = MathHelper.PiOver4,
+                AfterimageOpacity = 0.58f,
+                BodyOpacity = 0.82f,
+                CoreOpacity = 0.2f,
+                DrawTipSparkle = false,
+                TintWithWorldLighting = true,
+                DarkColor = SwordArcDark,
+                BodyColor = SwordArcBody,
+                CoreColor = SwordArcCore,
+                DrawCinderOverlay = true,
+                CinderOverlayStyle = VanillaSwordArcCinderStyle.Void,
+                CinderOverlayOpacity = 0.8f,
+                CinderOverlayDarkColor = SlashDark,
+                CinderOverlayFlameColor = SlashMid,
+                CinderOverlayCoreColor = SlashCore,
+                DustType = -1,
+                DustCount = 0,
+                TrackPuppetBlade = true,
+                EnableCollision = false,
+            };
+
+            VanillaSwordArc.SpawnForNPC(NPC.GetSource_FromAI(), NPC, 0, 0f, Main.myPlayer,
+                settings, Vector2.Zero, hostile: false);
+        }
+
+        protected override void OnMeleeComboStarted(MeleeCombo combo)
+        {
+            base.OnMeleeComboStarted(combo);
+            _landingSwordArcSpawned = false;
+        }
+
+        protected override void OnMeleeComboAttackTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
+        {
+            base.OnMeleeComboAttackTick(combo, step, elapsed, total);
+
+            // One crescent per damaging sweep, on the step's first tick (elapsed reads 0 once per step).
+            // Thrusts (JoustDash) keep the sheath in Artorias.DrawSwordSlashVFX, and Ground Pound's LeapSlam
+            // waits for its landing downswing below, because the jump itself is a harmless carry.
+            bool sweepMotion = step.Motion == ComboMotion.OverheadArc || step.Motion == ComboMotion.UnderhandArc
+                || step.Motion == ComboMotion.HorizontalSweep || step.Motion == ComboMotion.VerticalChop
+                || step.Motion == ComboMotion.GroundSlam || step.Motion == ComboMotion.Spin;
+            if (elapsed != 0 || step.DamageMult <= 0f || !sweepMotion)
+            {
+                return;
+            }
+
+            bool underhand = step.Motion == ComboMotion.UnderhandArc;
+            SpawnArtoriasSwordArc(total, underhand, step.HitWindowEnd);
+        }
+
+        protected override void OnLandingTimedLeapSlamSwingTick(MeleeComboStep step, float progress)
+        {
+            base.OnLandingTimedLeapSlamSwingTick(step, progress);
+            if (_landingSwordArcSpawned || step.DamageMult <= 0f)
+            {
+                return;
+            }
+
+            // The downswing can begin a few frames before touchdown (predicted landing), so the arc only
+            // covers what is left of it. The 5-tick floor keeps a same-frame landing visible.
+            float remainingFraction = 1f - MathHelper.Clamp(progress, 0f, 1f);
+            int remainingSwingTicks = Math.Max(5, (int)Math.Ceiling(remainingFraction * LandingSwordArcTicks));
+            SpawnArtoriasSwordArc(remainingSwingTicks);
+            _landingSwordArcSpawned = true;
+        }
+    }
+
+    [AutoloadBossHead]
+    class Artorias : ArtoriasSwordsman
+    {
+        // PuppetNPC overrides Texture to a shared puppet placeholder, so the default
+        // Texture + "_Head_Boss" convention [AutoloadBossHead] relies on would look for
+        // "PuppetPlaceholder_Head_Boss" instead of this boss's actual head icon.
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/Artorias_Head_Boss";
+
+        protected override string InvaderTitle => "Artorias";
 
         protected override bool UseCompositeArmForAdditionalPhase =>
             Phase == AttackPhase.StabTelegraph || Phase == AttackPhase.StabAttack ||
@@ -152,10 +373,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Phase == AttackPhase.PierceRecovery || Phase == AttackPhase.SpiralFanRecovery;
 
         protected override int MeleeDamage => 55;
-        protected override int RangedDamage => 0; // unused, no ranged weapon
-
-        protected override float TopSpeed => 2.4f;
-        protected override float Acceleration => 0.12f;
 
         // ── Piercing Dash ────────────────────────────────────────────────────────
         protected override bool  CanPierce            => true;
@@ -184,16 +401,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   JumpSlashChance        => 5;
         protected override int   JumpSlashCooldownAfterUse => 420;
 
-        // Artorias never disengages to drink; zero charges prevents the healing intercept from
-        // entering either FleeToHeal or Healing.
-        protected override int EstusChargesMax => 0;
-
         // ── Forward Flip Slash ───────────────────────────────────────────────────
         protected override bool  CanFlipSlash              => true;
         protected override float FlipSlashMinRange         => 150f;
         protected override float FlipSlashMaxRange         => 450f;
         protected override int   FlipSlashChance           => 4;
         protected override int   FlipSlashCooldownAfterUse => 420;
+
+        // Landing strike timing sheet (attack-timing-design §3):
+        // Poses:   -1.62 (cocked behind the head) -> 2.36 (straight down): 228° envelope, ~182° live.
+        // Tell:    the whole ~53t somersault; the spin is phase-locked to arrive at -1.62 on touchdown.
+        // Strike:  in 6 / cruise 0 / out 28, k 6 -> peak 228 / (2 + 28 * 0.9975 / 6) = 34°/t on tick 6 (contact FX).
+        // Live:    6 + 28 * 1.204 / 6 = 12t from touchdown (< 22, rollable). The spin blade is live all flight.
+        // Open:    52t hold - 12t live = 40t planted punish window.
+        // Counter: roll through the spin as it crosses (~13t at roll speed), then space out of or roll the
+        //          slam. A spin hit puts the slam inside the 40t post-hit immunity, so the two never both land.
+        // Reach:   95px (ArtoriasSwordArcRadius) = the visible grip -> tip distance.
+        protected override bool  UseFlipSlashLandingStrike    => true;
+        protected override float FlipSlashStrikeStartRotation => -1.62f;
+        protected override float FlipSlashStrikeEndRotation   => 2.36f;
+        protected override int   FlipSlashLandHoldTicks       => 52;
 
         // ── Abyss Slash ──────────────────────────────────────────────────────────
         protected override bool  CanAbyssSlash              => true;
@@ -202,26 +429,88 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   AbyssSlashChance           => 5;
         protected override int   AbyssSlashCooldownAfterUse => 300;
 
-        // ── Umbral Echo Step ─────────────────────────────────────────────────────
-        // Rides along on Piercing Dash and Forward Flip Slash (see TryArmEchoStep call sites).
-        protected override bool CanEchoStep => NPC.life <= NPC.lifeMax * 0.50f;
-        protected override int EchoStepStrikeCount => 3;
-        protected override int EchoStepInterStrikeRecoveryTicks => 24;
-        protected override int EchoStepChance => 80;
-        protected override int EchoStepWalkTicks => 60;
-        protected override int EchoStepLeapTicks => 30;
-        protected override int EchoStepSwingTicks => 18;
-        protected override int EchoStepFadeTicks => 60;
-        protected override int EchoStepDelayMin => EchoStepTellTicks + 12;
-        protected override int EchoStepDelayMax => EchoStepTellTicks + 22;
-        protected override float EchoStepWalkTopSpeed => 2.1f;
-        protected override float EchoStepReach => 96f;
-        protected override float EchoStepOpacity => 0.92f;
-        protected override float EchoStepLeapHeight => 78f;
-        protected override float EchoStepLeapTopSpeed => 4.8f;
-        protected override float EchoStepMinPursuitDistance => 132f;
-        protected override float EchoStepMaxPursuitDistance => 260f;
-        protected override float EchoStepOwnerAdvanceSpeedMult => 0.5f;
+        // ── Spectral phantom (below 50% HP) ──────────────────────────────────────
+        // A real, invulnerable, melee-only Artorias (ArtoriasPhantom) that fights beside him. It replaced the
+        // scripted Umbral Echo Step afterimage, which floated, could not chase, and whiffed. One at a time:
+        // summoned from a free grounded moment, again PhantomSummonCooldownTicks after the last one fades.
+        // Artorias stands idle for PhantomOwnerIdleTicks so the arrival owns the threat, then fights freely.
+        const float PhantomHealthThreshold = 0.5f;
+        const int PhantomSummonCooldownTicks = 240;
+        const int PhantomOwnerIdleTicks = 120;
+        const float PhantomSpawnOffset = 56f; // px beside Artorias, on the target's side
+        int _phantomIndex = -1;
+        int _phantomSummonCooldown;
+        int _phantomOwnerIdleTimer;
+
+        protected override bool HoldAttackSelection => _phantomOwnerIdleTimer > 0;
+
+        void TickSpectralPhantom()
+        {
+            if (_phantomOwnerIdleTimer > 0)
+            {
+                _phantomOwnerIdleTimer--;
+            }
+
+            // Summoning is server-side; clients get the NPC and the idle timer through normal sync.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            bool phantomAlive = _phantomIndex >= 0
+                && Main.npc[_phantomIndex].active
+                && Main.npc[_phantomIndex].type == ModContent.NPCType<ArtoriasPhantom>();
+            if (phantomAlive)
+            {
+                return;
+            }
+
+            // The cooldown only runs while no phantom is out, so it measures from the last one fading.
+            _phantomIndex = -1;
+            if (_phantomSummonCooldown > 0)
+            {
+                _phantomSummonCooldown--;
+                return;
+            }
+
+            bool belowThreshold = NPC.life <= NPC.lifeMax * PhantomHealthThreshold;
+            bool freePhase = Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll
+                || Phase == AttackPhase.ClosingDistance;
+            bool grounded = NPC.velocity.Y == 0f;
+            if (!belowThreshold || !freePhase || !grounded || !NPC.HasValidTarget)
+            {
+                return;
+            }
+
+            // Stand it on Artorias's own footing, a step toward the player; if that spot is inside a wall,
+            // use his exact spot instead. NewNPC places the NPC's bottom-centre on (x, y).
+            Player target = Main.player[NPC.target];
+            int sideTowardTarget = 1;
+            if (target.Center.X < NPC.Center.X)
+            {
+                sideTowardTarget = -1;
+            }
+
+            Vector2 spawnBottom = NPC.Bottom + new Vector2(sideTowardTarget * PhantomSpawnOffset, 0f);
+            Vector2 spawnTopLeft = spawnBottom - new Vector2(NPC.width * 0.5f, NPC.height);
+            if (Collision.SolidCollision(spawnTopLeft, NPC.width, NPC.height))
+            {
+                spawnBottom = NPC.Bottom;
+            }
+
+            int phantomIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnBottom.X, (int)spawnBottom.Y,
+                ModContent.NPCType<ArtoriasPhantom>(), 0, NPC.whoAmI);
+            if (phantomIndex >= Main.maxNPCs)
+            {
+                return;
+            }
+
+            _phantomIndex = phantomIndex;
+            _phantomSummonCooldown = PhantomSummonCooldownTicks;
+            _phantomOwnerIdleTimer = PhantomOwnerIdleTicks;
+            EnterPhase(AttackPhase.Idle, 0);
+            NPC.netUpdate = true;
+        }
 
         // ── Abyss Tendril Grab ───────────────────────────────────────────────────
         protected override bool  CanTendrilGrab          => true;
@@ -251,7 +540,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         private int _impaleSwordProjIndex = -1;
         private int _impaleTargetIndex = -1;
-        private int _swordSlashSequence; // bumped per fresh swing; feeds VoidSlashVFX's per-swing noise phase
+        private int _swordSlashSequence; // bumped per fresh thrust; feeds VoidSlashVFX's per-thrust noise phase
         private bool _swordSlashWasActive;
         NPCDespawnHandler despawnHandler;
 
@@ -401,6 +690,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             TickRingCollapse();
             ConstrainArtoriasToAbyssRing();
             TickAbyssSurges();
+            TickSpectralPhantom();
 
             if (!_abyssShardUnlocked && NPC.life <= NPC.lifeMax * 0.6f)
             {
@@ -459,14 +749,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Projectiles.Enemy.ArtoriasVFX.DrawBoomerangCharge(
                     tip, bladeDirection, progress, MathHelper.Lerp(0.66f, 1f, progress));
             }
-            if (PuppetEchoStepVisible)
-            {
-                float intensity = PuppetEchoStepSwinging ? 1.2f : 0.88f;
-                Projectiles.Enemy.ArtoriasVFX.DrawMantle(PuppetEchoStepPosition + new Vector2(0f, -12f),
-                    new Vector2(148f, 190f),
-                    (PuppetEchoStepSwinging ? 0.52f : 0.38f) * PuppetEchoStepVisualOpacity,
-                    intensity, -1f);
-            }
 
             if (Phase == AttackPhase.PierceStabHold && _impaleTargetIndex >= 0
                 && _impaleTargetIndex < Main.maxPlayers)
@@ -520,19 +802,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void UpdateSwordSlashSequence()
         {
-            bool active = IsMainSwordSlashActive;
+            bool active = IsMainSwordThrust;
             if (active && !_swordSlashWasActive)
+            {
                 _swordSlashSequence++;
+            }
+
             _swordSlashWasActive = active;
         }
-
-        bool IsMainSwordSlashActive =>
-            Phase == AttackPhase.MeleeAttack || Phase == AttackPhase.StabAttack ||
-            Phase == AttackPhase.MeleeComboAttack || Phase == AttackPhase.PierceDash ||
-            Phase == AttackPhase.JumpSlashAttack || Phase == AttackPhase.FlipSlashRise ||
-            Phase == AttackPhase.FlipSlashLand || Phase == AttackPhase.AbyssSlashSwipe ||
-            Phase == AttackPhase.TendrilSwing || Phase == AttackPhase.HomingVolleySwing ||
-            Phase == AttackPhase.BoomerangSwing || Phase == AttackPhase.SpiralFanSwing;
 
         // A stab reads as danger straight ahead; sweeping the same broad crescent used for chops
         // over it would falsely promise danger to the sides, so those phases get the narrow thrust
@@ -543,21 +820,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 || ActiveMeleeComboMotion == ComboMotion.JoustDash
                 || ActiveMeleeComboMotion == ComboMotion.LeapThrust));
 
-        // Envelope ratios lifted from Nito's authored 255x323 sweep / 255x62 thrust quads at his
-        // ~170px blade reach (255/170 = 1.5, 323/170 = 1.9, 62/170 = 0.365) — see VoidSlashVFX.
-        // Multiplying by each wielder's OWN live reach instead of hardcoding pixels is what makes
-        // the shader read as "this sword's length" rather than "Nito's sword, borrowed".
+        // Envelope ratios lifted from Nito's authored 255x62 thrust quad at his ~170px blade reach
+        // (255/170 = 1.5, 62/170 = 0.365) — see VoidSlashVFX. Multiplying by each wielder's OWN live
+        // reach instead of hardcoding pixels is what makes the shader read as "this sword's length".
         const float SlashQuadWidthMult = 1.5f;
-        const float SlashQuadSweepHeightMult = 1.9f;
         const float SlashQuadThrustHeightMult = 0.365f;
-        static readonly Color SlashDark = new(22, 6, 36);
-        static readonly Color SlashMid = new(143, 42, 190);
-        static readonly Color SlashCore = new(220, 166, 236);
 
-        /// <summary>Draws the shared VoidSlashVFX shader slash over both the real sword (tracking
-        /// the live hand/weapon pose) and, while active, the Echo Step phantom's own blade. Purely
-        /// visual — TickBladeHit/the swept-collision system carries the actual hitbox regardless of
-        /// what this draws, same as the ribbon system it replaced.</summary>
+        /// <summary>Draws the VoidSlashVFX thrust sheath over the real sword during stabs. Sweeps are NOT
+        /// drawn here: they are tracked VanillaSwordArc projectiles (ArtoriasSwordsman.SpawnArtoriasSwordArc).
+        /// Purely visual — TickBladeHit carries the actual hitbox regardless of what this draws.</summary>
         void DrawSwordSlashVFX()
         {
             if (Main.dedServ)
@@ -565,47 +836,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            if (IsMainSwordSlashActive)
+            // A stab keeps the narrow sheath: a crescent would falsely promise danger to the sides.
+            // IsMainSwordThrust is only true during the thrust's own attack phase.
+            if (IsMainSwordThrust)
             {
                 Vector2 pivot = PuppetHandPosition;
                 Vector2 direction = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
                 // The 70x70 greatsword's authored handle-to-tip diagonal is about 87px; ordinary
-                // collision reach can be shorter, but the slash must still meet the blade that is
-                // visibly sweeping through the frame instead of stopping around its midpoint.
+                // collision reach can be shorter, but the sheath must still meet the visible blade.
                 float reach = Math.Max(86f, PuppetActiveBladeReach);
                 float progress = PuppetWeaponAnimationProgress;
                 Vector2 center = pivot + direction * (reach * 0.55f);
                 float rotation = direction.ToRotation();
 
-                if (IsMainSwordThrust)
-                {
-                    VoidSlashVFX.DrawThrust(center, rotation,
-                        new Vector2(reach * SlashQuadWidthMult, reach * SlashQuadThrustHeightMult),
-                        progress, 0.9f, SlashDark, SlashMid, SlashCore, _swordSlashSequence * 0.31f);
-                }
-                else
-                {
-                    VoidSlashVFX.DrawSweep(center, rotation,
-                        new Vector2(reach * SlashQuadWidthMult, reach * SlashQuadSweepHeightMult),
-                        progress, 0.9f, SlashDark, SlashMid, SlashCore, NPC.direction < 0);
-                }
-            }
-
-            if (PuppetEchoStepSwinging)
-            {
-                Vector2 pivot = PuppetEchoStepHandPosition;
-                int facing = PuppetEchoStepDirection;
-                float drawRotation = facing * (PuppetEchoStepWeaponRotation
-                    + MeleeWeaponRotationOffset * facing);
-                float naturalRotation = facing == 1 ? -MathHelper.PiOver4 : -3f * MathHelper.PiOver4;
-                Vector2 direction = (naturalRotation + drawRotation).ToRotationVector2();
-                float reach = EchoStepReach;
-                Vector2 center = pivot + direction * (reach * 0.55f);
-
-                VoidSlashVFX.DrawSweep(center, direction.ToRotation(),
-                    new Vector2(reach * SlashQuadWidthMult, reach * SlashQuadSweepHeightMult),
-                    PuppetEchoStepSwingProgress, 0.9f * PuppetEchoStepVisualOpacity,
-                    SlashDark, SlashMid, SlashCore, facing < 0);
+                VoidSlashVFX.DrawThrust(center, rotation,
+                    new Vector2(reach * SlashQuadWidthMult, reach * SlashQuadThrustHeightMult),
+                    progress, 0.9f, SlashDark, SlashMid, SlashCore, _swordSlashSequence * 0.31f);
             }
         }
 
@@ -977,17 +1223,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
-        protected override void DoMeleeAttack()
-        {
-            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.6f, PitchVariance = 0.2f }, NPC.Center);
-            TryMeleeHit();
-        }
-
-        protected override void DoRangedAttack()
-        {
-            // No ranged weapon; never invoked (RangedWeaponItemType is -1).
-        }
-
         // ── Piercing Dash / Stabbing Piercing Dash hooks ────────────────────────────
         protected override void DoPierceWindup(int elapsed)
         {
@@ -1195,6 +1430,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
             TryMeleeHit(reach: 100f);
+            SpawnArtoriasSwordArc(JumpSlashAttackTicks);
             SpawnLandingImpactVFX(NPC.Bottom, 86f, 68f);
         }
 
@@ -1239,10 +1475,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        // Fires as the somersault launches: arm the spinning blade (the base tests it every airborne tick)
+        // and track one crescent on it for the flight. 2 * launch speed / 0.3 gravity = flat-ground airtime.
         protected override void DoFlipSlashHit()
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
-            TryMeleeHit(reach: 90f);
+            TryMeleeHit(reach: ArtoriasSwordArcRadius);
+
+            int flightTicks = (int)Math.Ceiling(2f * FlipSlashLaunchUpSpeed / 0.3f);
+            SpawnArtoriasSwordArc(flightTicks);
         }
 
         protected override void OnFlipSlashLand()
@@ -1251,6 +1492,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // planted landing is a punish window, so discard the final refresh immediately:
             // DodgeTimer otherwise grants i-frames and makes the global draw hook blink him.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().DodgeTimer = 0;
+
+            // Re-arm for the overhead into the ground (live FlipSlashStrikeLiveTicks from touchdown), and
+            // give it its own crescent that fades once the blade stops being a hitbox.
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, Pitch = -0.25f, PitchVariance = 0.1f }, NPC.Center);
+            TryMeleeHit(reach: ArtoriasSwordArcRadius);
+
+            int strikeTicks = FlipSlashStrikeEaseInTicks + FlipSlashStrikeEaseOutTicks;
+            float strikeHitWindowEnd = FlipSlashStrikeLiveTicks / (float)strikeTicks;
+            SpawnArtoriasSwordArc(strikeTicks, hitWindowEnd: strikeHitWindowEnd);
+        }
+
+        // The blade meets the ground on the strike's peak tick, so the impact and the landing variant
+        // effects fire there instead of at touchdown, where they used to precede the swing.
+        protected override void OnFlipSlashStrikeContact()
+        {
             SpawnLandingImpactVFX(NPC.Bottom, 96f, 78f);
             switch (_flipVariant)
             {
@@ -1264,17 +1520,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     OnFlipSlashLandBasic();
                     break;
             }
-        }
-
-        void SpawnLandingImpactVFX(Vector2 position, float width, float height)
-        {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasLandingImpactVFX>(), 0, 0f,
-                Main.myPlayer, width, height);
         }
 
         void OnFlipSlashLandBasic()
@@ -1359,6 +1604,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoAbyssSlashFire(int swipeIndex)
         {
+            // Both variants release on a real AbyssSlashSwipe sweep, the orb finisher included.
+            SpawnArtoriasSwordArc(AbyssSlashSwipeTicks);
+
             if (swipeIndex == 0)
             {
                 _abyssSlashVariant = Main.rand.Next(AbyssSlashGapTables.Length);
@@ -1475,6 +1723,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
             TryMeleeHit(reach: 100f);
+            SpawnArtoriasSwordArc(TendrilSwingTicks);
         }
 
         // ── Charge-up Nova: one-shot set-piece at 50% / 20% / 10% HP ────────────────
@@ -1671,6 +1920,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoHomingVolleySwingTick(int elapsed, int total)
         {
+            if (elapsed == 0)
+            {
+                SpawnArtoriasSwordArc(total);
+            }
+
             if (Main.dedServ)
             {
                 return;
@@ -1796,6 +2050,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoBoomerangSwingTick(int elapsed, int total)
         {
+            if (elapsed == 0)
+            {
+                SpawnArtoriasSwordArc(total);
+            }
+
             if (Main.dedServ)
             {
                 return;
@@ -1875,6 +2134,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoSpiralFanSwingTick(int elapsed, int total)
         {
+            if (elapsed == 0)
+            {
+                SpawnArtoriasSwordArc(total);
+            }
+
             if (Main.dedServ)
             {
                 return;
@@ -1972,6 +2236,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SendExtraAI(BinaryWriter writer)
         {
             base.SendExtraAI(writer);
+            writer.Write((short)_phantomOwnerIdleTimer);
             if (NPC.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
             {
                 defenseBroken = true;
@@ -1992,6 +2257,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             base.ReceiveExtraAI(reader);
+            _phantomOwnerIdleTimer = reader.ReadInt16();
             bool receivedBrokenDef = reader.ReadBoolean();
             if (receivedBrokenDef)
             {

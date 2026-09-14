@@ -29,7 +29,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int MeleeWeaponItemType => ModContent.ItemType<SeveringDusk>();
         protected override int RangedWeaponItemType => UsesRangedMemory ? ModContent.ItemType<PurpleGemStaff>() : -1;
         protected override int SecondaryRangedWeaponItemType => UsesPyromancyMemory ? ModContent.ItemType<PurpleGemStaff>() : -1;
-        protected override int MagicWeaponItemType => UsesMagicMemory ? ModContent.ItemType<PurpleGemStaff>() : -1;
+        protected override int MagicWeaponItemType => UsesMagicMemory || (UsesAbyssMemory && IsStaffRangedPhase)
+            ? ModContent.ItemType<PurpleGemStaff>()
+            : -1;
 
         protected override Vector2 MeleeHandleNorm => new Vector2(0.14f, 0.87f);
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Broadsword;
@@ -58,6 +60,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float ComboReachBase => 138f;
         protected override float MeleeEngageRange => 132f;
         protected override float ComboMaxStartRange => 290f;
+        protected override int MeleeTelegraphTicks => 35 + WeaponReadyLeadTicks;
+        protected override int StabTelegraphTicks => 38 + WeaponReadyLeadTicks;
         protected override int MeleeComboChance => UsesAshenMemory ? 100 : SecondPhase ? 55 : 0;
         protected override int RangedStartMeleeComboChance => UsesAshenMemory ? 80 : SecondPhase ? 45 : 0;
         protected override float ComboTelegraphMultiplier => 1.15f;
@@ -89,7 +93,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override float RangedRange => 780f;
         protected override float MinRangedRange => 160f;
-        protected override int RangedTelegraphTicks => 45;
+        protected override int RangedTelegraphTicks => 45 + WeaponReadyLeadTicks;
         protected override int RangedAttackTicks => 10;
         protected override int RangedRecoveryTicks => 54;
         protected override int RangedCooldownAfterUse => 170;
@@ -99,7 +103,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override float SecondaryRangedRange => 920f;
         protected override float SecondaryRangedMinRange => 300f;
-        protected override int SecondaryRangedTelegraphTicks => 45;
+        protected override int SecondaryRangedTelegraphTicks => 45 + WeaponReadyLeadTicks;
         protected override int SecondaryRangedAttackTicks => 10;
         protected override int SecondaryRangedRecoveryTicks => 70;
         protected override int SecondaryRangedCooldownAfterUse => 210;
@@ -110,7 +114,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override float MagicRange => 1000f;
         protected override float MinMagicRange => 260f;
-        protected override int MagicTelegraphTicks => 45;
+        protected override int MagicTelegraphTicks => 45 + WeaponReadyLeadTicks;
         protected override int MagicAttackTicks => 16;
         protected override int MagicRecoveryTicks => 82;
         protected override int MagicCooldownAfterUse => 210;
@@ -122,21 +126,32 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             ? MathHelper.Lerp(-1.15f, 0.65f, _magicShotProgress)
             : -0.78f;
         protected override int MagicWeaponRecoveryHoldTicks => 20;
+        // PurpleGemStaff.png is 42x40. Its shaft runs from butt (0,39) to gem tip (41,0).
+        // (0.873, 0.127) stays on that line and shifts ordinary casts 18px bodyward at NPC.scale 1.15.
+        // Azure Wisp Fan deliberately grips 30% up from the butt instead.
+        protected override Vector2 MagicGripNorm => IsSpiralFanPhase
+            ? new Vector2(0.30f, 0.70f)
+            : new Vector2(0.873f, 0.127f);
 
         protected override bool CanBreathe => UsesPyromancyMemory;
         protected override float BreathRange => 680f;
         protected override float MinBreathRange => 120f;
-        protected override int BreathTelegraphTicks => 76;
+        const int WeaponReadyLeadTicks = 30;
+        const int BreathTellTicks = 76;
+        protected override int BreathTelegraphTicks => WeaponReadyLeadTicks + BreathTellTicks;
         protected override int BreathDurationTicks => SecondPhase ? 135 : 105;
         protected override int BreathRecoveryTicks => 70;
         protected override int BreathCooldownAfterUse => 360;
         protected override int BreathChance => 5;
+        protected override bool UseAuthoredBreathHandPose => true;
+        protected override bool UseCompositeArmForAdditionalPhase =>
+            Phase == AttackPhase.BreathTelegraph || Phase == AttackPhase.Breathing || Phase == AttackPhase.BreathRecovery;
 
         protected override bool CanPierce => UsesAshenMemory;
         protected override float PierceRange => 760f;
         protected override float MinPierceRange => 230f;
         protected override int PierceChance => 5;
-        protected override int PierceTelegraphTicks => 56;
+        protected override int PierceTelegraphTicks => 56 + WeaponReadyLeadTicks;
         protected override int PierceDashTicks => 34;
         protected override float PierceDashSpeed => SecondPhase ? 18f : 15.5f;
         protected override int PierceRecoveryTicks => 82;
@@ -174,6 +189,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int BoomerangChance => 7;
         protected override int BoomerangRecoveryTicks => 92;
         protected override int BoomerangCooldownAfterUse => 320;
+        protected override int BoomerangSwingTelegraphTicks => 20 + WeaponReadyLeadTicks;
 
         protected override bool CanSpiralFan => UsesSorceryMemory;
         protected override float SpiralFanMinRange => 220f;
@@ -181,7 +197,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int SpiralFanChance => 7;
         protected override int SpiralFanRecoveryTicks => 95;
         protected override int SpiralFanCooldownAfterUse => 360;
-        protected override int SpiralFanSwingTelegraphTicks => 45;
+        protected override int SpiralFanSwingTelegraphTicks => 45 + WeaponReadyLeadTicks;
         protected override int SpiralFanWeaponItemType => ModContent.ItemType<PurpleGemStaff>();
         protected override bool UseAuthoredSpiralFanCastPose => true;
         protected override float SpiralFanCastStartRotation => -0.12f;
@@ -226,7 +242,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             => new MeleeComboStep
             {
                 Motion = motion,
-                TelegraphTicks = telegraph,
+                TelegraphTicks = telegraph > 0 ? telegraph + WeaponReadyLeadTicks : 0,
                 AttackTicks = attack,
                 PostStepPause = pause,
                 DamageMult = damage,
@@ -347,6 +363,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int _magicBurstTotal;
         float _magicShotProgress;
         bool _magicPrepared;
+        int _greenRainShotIndex;
         CinderMemory _memory = CinderMemory.AshenWarrior;
         CinderCustomSequence _customSequence;
         AttackPhase _previousPhase = AttackPhase.Idle;
@@ -434,7 +451,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.scale = 1.15f;
             NPC.damage = 0;
             NPC.defense = BaseDefense;
-            NPC.lifeMax = 750000;
+            NPC.lifeMax = 200000;
             NPC.knockBackResist = 0f;
             NPC.boss = true;
             NPC.netAlways = true;
@@ -510,6 +527,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             TryStartSecondPhaseTransition();
             base.AI();
+            EnsureCorrectAttackWeapon();
             PrepareMagicTelegraph();
             SpawnStaffSpellPreviews();
             UpdateAttackLabel();
@@ -521,12 +539,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             TickDistanceRules();
         }
 
+        void EnsureCorrectAttackWeapon()
+        {
+            if (Phase == AttackPhase.JumpSlashDodgeback
+                || Phase == AttackPhase.JumpSlashRise
+                || Phase == AttackPhase.JumpSlashAttack
+                || Phase == AttackPhase.JumpSlashRecovery
+                || Phase == AttackPhase.FlipSlashRise
+                || Phase == AttackPhase.FlipSlashLand)
+            {
+                SetDisplayWeapon(MeleeWeaponItemType, swing: false);
+            }
+        }
+
         void EmitSpiralStaffDust()
         {
             if (Main.dedServ || !IsSpiralFanPhase || !Main.rand.NextBool(2))
                 return;
+            if (Phase == AttackPhase.SpiralFanSwingTelegraph && PhaseTimer > 45)
+                return;
 
-            Vector2 tip = NPC.Center + new Vector2(30f * NPC.direction, -42f);
+            Vector2 tip = StaffTipPosition;
             Dust purple = Dust.NewDustPerfect(tip, DustID.PurpleTorch, Main.rand.NextVector2Circular(0.7f, 0.7f), 100,
                 new Color(190, 85, 255), 0.85f);
             purple.noGravity = true;
@@ -543,6 +576,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             || Phase == AttackPhase.SpiralFanBurst
             || Phase == AttackPhase.SpiralFanPause;
 
+        bool IsStaffRangedPhase => Phase == AttackPhase.RangedTelegraph
+            || Phase == AttackPhase.RangedAttack
+            || Phase == AttackPhase.RangedRecovery;
+
+        internal Vector2 StaffTipPosition
+        {
+            get
+            {
+                Vector2 gripPx = MagicGripNorm * new Vector2(42f, 40f);
+                float gripToTip = Vector2.Distance(gripPx, new Vector2(41f, 0f)) * NPC.scale;
+                return PuppetWeaponTipPosition(gripToTip);
+            }
+        }
+
         void UpdateAttackLabel()
         {
             if (Phase == AttackPhase.Custom)
@@ -552,7 +599,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 AttackPhase.RangedTelegraph or AttackPhase.RangedAttack or AttackPhase.RangedRecovery
                     => _queuedRangedAttack == CinderRangedAttack.BioSpit ? "Emerald Rain Staff Volley"
-                     : _queuedRangedAttack == CinderRangedAttack.PhantomSeeker ? "Phantom Staff Seeker"
+                     : _queuedRangedAttack == CinderRangedAttack.PhantomSeeker ? "Phantom Fire Staff Seeker"
                      : "Dark Bead Staff Volley",
                 AttackPhase.MagicTelegraph or AttackPhase.MagicAttack or AttackPhase.MagicRecovery
                     => _queuedMagicAttack == CinderMagicAttack.IceStorm ? "Rising Ice Storm"
@@ -577,8 +624,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.dedServ || !Main.rand.NextBool(2))
                 return;
 
+            progress = MathHelper.Clamp((progress * RangedTelegraphTicks - WeaponReadyLeadTicks) / 45f, 0f, 1f);
+            if (progress <= 0f)
+                return;
+
             Color color = secondary ? Color.LimeGreen : new Color(125, 185, 255);
-            Vector2 tip = NPC.Center + new Vector2(30f * NPC.direction, -42f);
+            Vector2 tip = StaffTipPosition;
+            if (!secondary && _queuedRangedAttack == CinderRangedAttack.PhantomSeeker)
+            {
+                float angle = progress * MathHelper.TwoPi * 2.5f * NPC.direction;
+                float radius = MathHelper.Lerp(24f, 3f, progress);
+                Vector2 offset = angle.ToRotationVector2() * radius;
+                Vector2 inward = -offset.SafeNormalize(Vector2.Zero) * MathHelper.Lerp(0.7f, 2.5f, progress);
+                int dustType = ((int)(progress * 30f) & 1) == 0 ? DustID.GoldFlame : DustID.OrangeTorch;
+                Dust phantomDust = Dust.NewDustPerfect(tip + offset, dustType, inward, 85,
+                    dustType == DustID.GoldFlame ? Color.Gold : Color.OrangeRed,
+                    MathHelper.Lerp(0.5f, 0.9f, progress));
+                phantomDust.noGravity = true;
+                return;
+            }
             Dust dust = Dust.NewDustPerfect(tip, secondary ? DustID.GreenTorch : DustID.IceTorch,
                 Main.rand.NextVector2Circular(0.75f, 0.75f), 100, color, MathHelper.Lerp(0.7f, 1.15f, progress));
             dust.noGravity = true;
@@ -589,8 +653,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.dedServ || !Main.rand.NextBool(2))
                 return;
 
+            progress = MathHelper.Clamp((progress * MagicTelegraphTicks - WeaponReadyLeadTicks) / 45f, 0f, 1f);
+            if (progress <= 0f)
+                return;
+
             bool fireRitual = _queuedMagicAttack >= CinderMagicAttack.CinderConstellation;
-            Vector2 tip = NPC.Center + new Vector2(30f * NPC.direction, -42f);
+            Vector2 tip = StaffTipPosition;
             if (fireRitual)
             {
                 int ritual = (int)_queuedMagicAttack - (int)CinderMagicAttack.CinderConstellation;
@@ -666,16 +734,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void SpawnRemoteFirePattern(Player target, CinderMagicAttack pattern)
         {
-            int count = pattern == CinderMagicAttack.AshenOrbit ? 6 : 4;
+            int count = pattern == CinderMagicAttack.CinderConstellation ? 7
+                : pattern == CinderMagicAttack.AshenOrbit ? 6
+                : 4;
             float radius = pattern == CinderMagicAttack.CinderConstellation ? 190f
-                : pattern == CinderMagicAttack.AshenOrbit ? 220f : 165f;
+                : pattern == CinderMagicAttack.AshenOrbit ? 440f : 206.25f;
+            float angleOffset = pattern == CinderMagicAttack.CinderConstellation
+                ? Main.rand.NextFloat(MathHelper.TwoPi)
+                : 0f;
             for (int i = 0; i < count; i++)
             {
-                float angle = MathHelper.TwoPi * i / count + (pattern == CinderMagicAttack.CinderConstellation ? MathHelper.PiOver4 : 0f);
+                float angle = MathHelper.TwoPi * i / count + angleOffset;
                 int id = Projectile.NewProjectile(NPC.GetSource_FromThis(), target.Center + angle.ToRotationVector2() * radius,
                     Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.CinderRemoteFlame>(), FireBreathDamage, 0f,
-                    Main.myPlayer, target.whoAmI, pattern == CinderMagicAttack.CinderConstellation ? 0 : pattern == CinderMagicAttack.FirelinkCross ? 1 : 2);
+                    Main.myPlayer, target.whoAmI,
+                    pattern == CinderMagicAttack.CinderConstellation ? 0 : pattern == CinderMagicAttack.FirelinkCross ? 1 : 2,
+                    i);
                 Main.projectile[id].rotation = angle;
+                Main.projectile[id].netUpdate = true;
             }
             SoundEngine.PlaySound(pattern switch
             {
@@ -939,12 +1015,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoPierceWindup(int elapsed)
         {
-            if (Main.dedServ || elapsed % 3 != 0)
+            if (Main.dedServ || elapsed <= WeaponReadyLeadTicks || elapsed % 3 != 0)
             {
                 return;
             }
 
-            float progress = MathHelper.Clamp(elapsed / (float)PierceTelegraphTicks, 0f, 1f);
+            float progress = MathHelper.Clamp((elapsed - WeaponReadyLeadTicks) / 56f, 0f, 1f);
             Vector2 offset = Main.rand.NextVector2CircularEdge(58f, 28f);
             Dust dust = Dust.NewDustPerfect(
                 NPC.Center + offset,
@@ -1001,6 +1077,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (secondary)
             {
                 _queuedRangedAttack = CinderRangedAttack.BioSpit;
+                _greenRainShotIndex = 0;
                 return;
             }
 
@@ -1038,32 +1115,43 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void FireDarkBead(Player target)
         {
-            Vector2 baseVelocity = UsefulFunctions.Aim(NPC.Center, target.Center, 7f);
+            Vector2 origin = StaffTipPosition;
+            Vector2 baseVelocity = UsefulFunctions.Aim(origin, target.Center, 7f);
             for (int i = -1; i <= 1; i++)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, baseVelocity.RotatedBy(MathHelper.ToRadians(i * 9f)), ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), DarkBeadDamage, 0f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), origin,
+                    baseVelocity.RotatedBy(MathHelper.ToRadians(i * 9f)),
+                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), DarkBeadDamage, 0f, Main.myPlayer);
             }
             SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center);
         }
 
         void FirePhantomSeeker(Player target)
         {
-            int id = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20f, 20f), Main.rand.NextVector2Circular(5f, 5f), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), PhantomSeekerDamage, 0f, Main.myPlayer);
-            Main.projectile[id].timeLeft = 460;
-            Main.projectile[id].rotation = Main.rand.Next(700) / 100f;
-            Main.projectile[id].ai[0] = target.whoAmI;
+            Vector2 origin = StaffTipPosition;
+            Vector2 velocity = UsefulFunctions.Aim(origin, target.Center, 7.5f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
+                ModContent.ProjectileType<Projectiles.Enemy.PhantomFireStaffSeeker>(),
+                PhantomSeekerDamage, 0f, Main.myPlayer, target.whoAmI, Main.rand.NextFloat(MathHelper.TwoPi));
             SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
         }
 
         void FireBioSpit(Player target, int damage)
         {
+            float beyondSign = Math.Sign(target.Center.X - NPC.Center.X);
+            if (beyondSign == 0f)
+                beyondSign = NPC.direction;
+            float landingOffset = _greenRainShotIndex++ % 2 == 0
+                ? 0f
+                : beyondSign * Main.rand.NextFloat(50f, 100f);
+            Vector2 landingPoint = target.Center + new Vector2(landingOffset, 0f);
             float height = Main.rand.NextFloat(9f, 16f) * 16f;
             float verticalSpeed = -MathF.Sqrt(2f * 0.30f * height);
             float airTime = -2f * verticalSpeed / 0.30f;
-            float horizontalSpeed = MathHelper.Clamp((target.Center.X - NPC.Center.X) / airTime, -10f, 10f);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center,
+            float horizontalSpeed = MathHelper.Clamp((landingPoint.X - StaffTipPosition.X) / airTime, -18f, 18f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTipPosition,
                 new Vector2(horizontalSpeed, verticalSpeed), ModContent.ProjectileType<Projectiles.Enemy.CinderGreenRain>(),
-                damage, 5f, Main.myPlayer, target.whoAmI);
+                damage, 5f, Main.myPlayer, target.whoAmI, landingOffset);
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.5f }, NPC.Center);
         }
 
@@ -1094,6 +1182,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 _magicAttackTicksOverride = 30;
                 SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.55f, Pitch = -0.1f }, NPC.Center);
             }
+            else if (_queuedMagicAttack == CinderMagicAttack.LostSoulCurse)
+            {
+                _magicBurstTotal = SecondPhase ? 3 : 2;
+                _magicBurstsRemaining = _magicBurstTotal - 1;
+                _magicBurstTimer = 0;
+                _magicAttackTicksOverride = (_magicBurstTotal - 1) * 60 + 16;
+            }
             else
             {
                 _magicBurstTotal = SecondPhase ? 3 : 2;
@@ -1112,7 +1207,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             _magicBurstTimer++;
-            int interval = _queuedMagicAttack == CinderMagicAttack.IceStorm ? 12 : 18;
+            int interval = _queuedMagicAttack == CinderMagicAttack.IceStorm ? 12
+                : _queuedMagicAttack == CinderMagicAttack.LostSoulCurse ? 60
+                : 18;
             if (_magicBurstTimer >= interval)
             {
                 _magicBurstTimer = 0;
@@ -1127,24 +1224,47 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             switch (_queuedMagicAttack)
             {
                 case CinderMagicAttack.PhasedMatterBlast:
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 6f, 1.06f, true, true), ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>(), DisruptDamage, 5f, Main.myPlayer);
+                {
+                    Vector2 origin = StaffTipPosition;
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), origin,
+                        UsefulFunctions.BallisticTrajectory(origin, target.Center, 6f, 1.06f, true, true),
+                        ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>(), DisruptDamage, 5f, Main.myPlayer);
                     SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.2f, Pitch = 0.4f }, NPC.Center);
                     break;
+                }
                 case CinderMagicAttack.LostSoulCurse:
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.BallisticTrajectory(NPC.Center, target.Center, 8f, 1.06f, true, true), ProjectileID.DesertDjinnCurse, LostSoulDamage, 7f, Main.myPlayer);
+                {
+                    Vector2 origin = StaffTipPosition;
+                    for (int playerIndex = 0; playerIndex < Main.maxPlayers; playerIndex++)
+                    {
+                        Player fanTarget = Main.player[playerIndex];
+                        if (!fanTarget.active || fanTarget.dead)
+                            continue;
+
+                        Vector2 aim = UsefulFunctions.Aim(origin, fanTarget.Center, 8f);
+                        for (int fanIndex = -1; fanIndex <= 1; fanIndex++)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin,
+                                aim.RotatedBy(MathHelper.ToRadians(fanIndex * 20f)),
+                                ProjectileID.DesertDjinnCurse, LostSoulDamage, 7f, Main.myPlayer);
+                        }
+                    }
                     SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = 0.5f }, NPC.Center);
                     break;
+                }
                 case CinderMagicAttack.CinderConstellation:
                 case CinderMagicAttack.FirelinkCross:
                 case CinderMagicAttack.AshenOrbit:
                     // The brands were created at their remote positions during the last 30 tell ticks.
                     break;
                 default:
+                    Vector2 iceOrigin = StaffTipPosition;
                     float shotIndex = _magicBurstTotal - _magicBurstsRemaining - 1;
                     _magicShotProgress = _magicBurstTotal <= 1 ? 0.5f : shotIndex / (_magicBurstTotal - 1f);
                     float angle = MathHelper.Lerp(MathHelper.ToRadians(-145f), MathHelper.ToRadians(-35f), _magicShotProgress);
                     Vector2 velocity = angle.ToRotationVector2() * 12.5f;
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), IceStormDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), iceOrigin, velocity,
+                        ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), IceStormDamage, 0f, Main.myPlayer);
                     SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.3f }, NPC.Center);
                     break;
             }
@@ -1152,15 +1272,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoBreathWindup(int elapsed)
         {
-            if (Main.dedServ)
+            if (Main.dedServ || elapsed <= WeaponReadyLeadTicks)
             {
                 return;
             }
 
-            float t = MathHelper.Clamp(elapsed / (float)BreathTelegraphTicks, 0f, 1f);
-            float radius = MathHelper.Lerp(60f, 12f, t);
-            UsefulFunctions.DustRing(NPC.Center, (int)radius, DustID.Torch, 24, 2f);
-            Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * (1f + t * 3f));
+            // This is Massacre's former Juggernaut flame-breath tell, moved from the mouth to
+            // Soul of Cinder's authored outstretched hand. The first 30 ticks show the pose alone.
+            float t = MathHelper.Clamp((elapsed - WeaponReadyLeadTicks) / (float)BreathTellTicks, 0f, 1f);
+            float scale = t < 0.4f ? 0.45f : MathHelper.Lerp(0.6f, 1.9f, (t - 0.4f) / 0.6f);
+            Vector2 hand = PuppetHandPosition;
+            int count = t < 0.4f ? 1 : 2;
+            for (int i = 0; i < count; i++)
+            {
+                Dust dust = Dust.NewDustPerfect(hand + Main.rand.NextVector2Circular(3f, 3f), DustID.RedTorch,
+                    Main.rand.NextVector2Circular(0.6f, 0.6f), 0, default, scale);
+                dust.noGravity = true;
+            }
+            Lighting.AddLight(hand, 0.6f * scale, 0.05f, 0.05f);
         }
 
         protected override void OnBreathStart()
@@ -1177,8 +1306,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             Player target = Main.player[NPC.target];
-            Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, target.Center, 9f) + Main.rand.NextVector2Circular(1.5f, 1.5f);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(5f * NPC.direction, -12f), breathVel, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), FireBreathDamage, 0f, Main.myPlayer);
+            Vector2 hand = PuppetHandPosition;
+            Vector2 breathVel = UsefulFunctions.Aim(hand, target.Center, 9f) + Main.rand.NextVector2Circular(1.5f, 1.5f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), hand, breathVel, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), FireBreathDamage, 0f, Main.myPlayer);
             SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.12f, Pitch = 0.2f }, NPC.Center);
         }
 
@@ -1202,7 +1332,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             Player target = Main.player[NPC.target];
-            Vector2 origin = NPC.Center + new Vector2(30f * NPC.direction, -42f);
+            Vector2 origin = StaffTipPosition;
             int bulletCount = SecondPhase ? 7 : 5;
             float spread = SecondPhase ? 67f : 52.5f;
             Vector2 baseVelocity = UsefulFunctions.Aim(origin, target.Center, 24f);
@@ -1210,7 +1340,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Vector2 velocity = baseVelocity.RotatedBy(MathHelper.ToRadians(-((spread / (bulletCount - 1)) * i)));
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.CinderBlueWisp>(), OrangeProjDamage, 1f, Main.myPlayer);
+                    ModContent.ProjectileType<Projectiles.Enemy.CinderWispTelegraph>(), OrangeProjDamage, 1f, Main.myPlayer);
             }
         }
 

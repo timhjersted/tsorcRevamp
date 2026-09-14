@@ -30,7 +30,15 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             NPC caster = Main.npc[ownerNpc];
-            Projectile.Center = caster.Center + new Vector2(30f * caster.direction, -42f);
+            if (caster.ModNPC is NPCs.Bosses.SuperHardMode.SoulOfCinder cinder)
+            {
+                Projectile.Center = cinder.StaffTipPosition;
+            }
+            else
+            {
+                Projectile.Kill();
+                return;
+            }
             Projectile.rotation += 0.20f;
             if (Main.rand.NextBool(2))
             {

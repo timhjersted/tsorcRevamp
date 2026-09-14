@@ -492,9 +492,10 @@ these. Each is a base template Gwyn also reused; Artorias shows a fully-tuned co
   (via `GetSwordTipWorldPosition`), which FREEZES the player pinned to the sword tip, then RAISES them
   over `PierceStabRaiseTicks` (180) and flicks/throws them (`PierceStabFlickTicks` 20). If you want a
   "seize and hurl the player" mechanic, this already exists — don't rebuild it.
-- **Umbral Echo Step** (`CanEchoStep`): afterimage-trail teleport that *rides along on* other attacks
-  (armed from Piercing Dash + Forward Flip Slash via `TryArmEchoStep`). The model for "a mobility
-  flourish attached to an existing attack" rather than a standalone move.
+- **Spectral phantom** (`ArtoriasPhantom`, summoned by `TickSpectralPhantom` below 50% HP): a real,
+  invulnerable, melee-only copy on the shared `ArtoriasSwordsman` base, with the same navigator and
+  combo table at a faster tempo, while Artorias idles 120 ticks before fighting alongside it. The model
+  for a summoned copy of a boss. It replaced the scripted Umbral Echo Step afterimage, since deleted.
 - **Jumping Downward Slash** (`CanJumpSlash`): dodgeback → rise → slam. The template for any
   leap-and-crash (Gwyn could map a flame version here instead of AI-summoning it).
 - **Forward Flip Slash** (`CanFlipSlash`): acrobatic forward flip into a hit — the roll-catch gap-closer.

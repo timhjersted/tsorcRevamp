@@ -31,7 +31,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Player target = Main.player[targetIndex];
                 if (target.active && !target.dead)
                 {
-                    Vector2 desired = (target.Center - Projectile.Center).SafeNormalize(Vector2.Zero) * 10f;
+                    Vector2 correctedLanding = target.Center + new Vector2(Projectile.ai[1], 0f);
+                    Vector2 desired = (correctedLanding - Projectile.Center).SafeNormalize(Vector2.Zero) * 14f;
                     Projectile.velocity = Vector2.Lerp(Projectile.velocity, desired, 0.018f);
                 }
             }

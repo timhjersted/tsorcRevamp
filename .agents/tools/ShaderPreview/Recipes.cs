@@ -268,6 +268,12 @@ namespace ShaderPreview
                 GwynFireSlash("GwynFlameF3Cave", "FireSlashFlame", 3, 0f, CaveDark),
                 GwynFireSlash("GwynBlockyF1Cave", "BlockyFireSlash", 1, 0f, CaveDark),
 
+                // Artorias's melee sweep overlay (VanillaSwordArc.DrawCinderOverlay, Void style).
+                ArtoriasVoidSlash("ArtoriasVoidF0Sky", 0, 0f, SkyBlue),
+                ArtoriasVoidSlash("ArtoriasVoidF0Cave", 0, 0f, CaveDark),
+                ArtoriasVoidSlash("ArtoriasVoidF1Rot", 1, 2.2f, CaveDark),
+                ArtoriasVoidSlash("ArtoriasVoidF2Cave", 2, 0f, CaveDark),
+
                 // Gravity of the Sun field (GwynGravityWell.DrawVortexField) at three C# opacities, to
                 // measure how much of the background each really lets through.
                 GwynVortex("GwynVortex100Sky", 1f, SkyBlue),
@@ -313,6 +319,46 @@ namespace ShaderPreview
                     effect.Parameters["PixelGrid"].SetValue(new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                     effect.Parameters["PullRadius"].SetValue(760f);
                     effect.Parameters["InnerRadius"].SetValue(90f);
+                },
+            };
+        }
+
+        /// <summary>
+        /// Mirrors VanillaSwordArc.DrawCinderOverlay's Void branch with Artorias.SpawnArtoriasSwordArc's
+        /// settings: unpadded 170px frames of VanillaSwordArc.png, Turbulence_06 flow, overlay opacity
+        /// 0.66 arc * 0.8 overlay. Only the overlay is drawn, not the purple vanilla layers beneath it.
+        /// Progress drives Time, so the panels are animation snapshots rather than sweep positions.
+        /// </summary>
+        private static Recipe ArtoriasVoidSlash(string name, int frame, float rotation, Color clear)
+        {
+            const int frameSize = 170;
+            var textureSize = new Vector2(170f, 680f);
+            var frameRect = new Rectangle(0, frame * frameSize, frameSize, frameSize);
+
+            return new Recipe
+            {
+                Name = name,
+                Effect = "VoidSlashCrescent",
+                Technique = "VoidSlashCrescent",
+                Primary = "Projectiles/VFX/VanillaSwordArc",
+                Detail = "Turbulence_06-512x512",
+                DrawSize = new Vector2(frameSize),
+                Rotation = rotation,
+                Blend = BlendState.AlphaBlend,
+                SourceOverride = frameRect,
+                Clear = clear,
+                Configure = (effect, progress, scale) =>
+                {
+                    Vector2 pixelBlocks = textureSize * scale / 2f;
+                    effect.Parameters["DarkColor"]?.SetValue(new Color(22, 6, 36).ToVector3());
+                    effect.Parameters["MidColor"]?.SetValue(new Color(143, 42, 190).ToVector3());
+                    effect.Parameters["CoreColor"]?.SetValue(new Color(220, 166, 236).ToVector3());
+                    effect.Parameters["Opacity"]?.SetValue(0.66f * 0.8f);
+                    effect.Parameters["Time"]?.SetValue(12.5f + progress * 1.5f);
+                    effect.Parameters["FrameMin"]?.SetValue((new Vector2(frameRect.X, frameRect.Y) + new Vector2(0.5f)) / textureSize);
+                    effect.Parameters["FrameMax"]?.SetValue((new Vector2(frameRect.Right, frameRect.Bottom) - new Vector2(0.5f)) / textureSize);
+                    effect.Parameters["FrameUVScale"]?.SetValue(textureSize / new Vector2(frameSize));
+                    effect.Parameters["PixelGrid"]?.SetValue(new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                 },
             };
         }

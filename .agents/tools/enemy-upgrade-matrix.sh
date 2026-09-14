@@ -31,6 +31,7 @@ AXES=(
     "MeleeComboInterStepLingerTicks|link"
     "MeleeRecoveryLingerTicks|foll"
     "UseLandingTimedLeapSlam|land"
+    "UseFlipSlashLandingStrike|fslm"
     "MeleeComboPoolOverride|pool"
     "RuntimeV2Clip|clip"
 )

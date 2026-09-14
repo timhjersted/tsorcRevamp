@@ -12,7 +12,7 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias, SoulOfCinder, DarkKnight, DarkBloodKnight";
+        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
@@ -35,7 +35,10 @@ namespace SwingPreview
                 };
             }
 
-            if (puppet.Equals("Artorias", StringComparison.OrdinalIgnoreCase))
+            // ArtoriasPhantom wears Artorias's exact loadout (shared ArtoriasSwordsman base); in game only its
+            // spectral tint differs, which this renderer does not draw.
+            if (puppet.Equals("Artorias", StringComparison.OrdinalIgnoreCase)
+                || puppet.Equals("ArtoriasPhantom", StringComparison.OrdinalIgnoreCase))
             {
                 return new PuppetArt
                 {

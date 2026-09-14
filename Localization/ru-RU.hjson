@@ -10350,7 +10350,7 @@ Mods: {
 			BoulderDropLeft.DisplayName: Взрыв
 			BoulderDropRight.DisplayName: Взрыв
 			Bubble.DisplayName: Пузырь
-			BurningPhantomSeeker.DisplayName: Горящий Призрачный Искатель
+			PhantomFireStaffSeeker.DisplayName: Искатель фантомного огненного посоха
 			ChaosDeathAnimation.DisplayName: Анимация смерти Хаоса
 			CrazedPurpleCrush.DisplayName: Токсин пустоты
 			CrystalFire.DisplayName: Кристальный огонь
@@ -11485,6 +11485,10 @@ Mods: {
 				Open: Арториас открывает бездну!
 				BarrowBladeHint: Только легендарный клинок может разрушить этот щит!
 				Immune: Неуязвим!
+			}
+
+			ArtoriasPhantom: {
+				DisplayName: Призрачный Арториас
 			}
 
 			Blight: {

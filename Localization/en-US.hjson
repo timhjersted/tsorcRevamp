@@ -10393,7 +10393,7 @@ Mods: {
 			BoulderDropLeft.DisplayName: Explosion
 			BoulderDropRight.DisplayName: Explosion
 			Bubble.DisplayName: Bubble
-			BurningPhantomSeeker.DisplayName: Burning Phantom Seeker
+			PhantomFireStaffSeeker.DisplayName: Phantom Fire Staff Seeker
 			ChaosDeathAnimation.DisplayName: Chaos Death Animation
 			CrazedPurpleCrush.DisplayName: Void Toxin
 			CrystalFire.DisplayName: Crystal Fire
@@ -11528,6 +11528,10 @@ Mods: {
 				Open: Artorias opens the abyss!
 				BarrowBladeHint: Only a fabled blade can break this shield!
 				Immune: Immune!
+			}
+
+			ArtoriasPhantom: {
+				DisplayName: Spectral Artorias
 			}
 
 			Blight: {
