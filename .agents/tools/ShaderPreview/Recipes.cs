@@ -274,6 +274,52 @@ namespace ShaderPreview
                 ArtoriasVoidSlash("ArtoriasVoidF1Rot", 1, 2.2f, CaveDark),
                 ArtoriasVoidSlash("ArtoriasVoidF2Cave", 2, 0f, CaveDark),
 
+                // Flip Slash landing AOE (ArtoriasAbyssBlast -> DrawImpactBlast) at its 3x radius 225 (450px quad),
+                // one recipe per layer, full bloom sizes.
+                ImpactLayer("BlastBodyRound", "ArtoriasAbyssImpact", "ArtoriasAbyssImpactBody", "T_VFX_RoundSmoke71",
+                    450f, new Color(48, 20, 88), 0.52f * 0.94f, BlendState.AlphaBlend),
+                ImpactLayer("BlastBodySmoke", "ArtoriasAbyssImpact", "ArtoriasAbyssImpactBody", "T_smoke_b7",
+                    450f * 1.04f, AbyssViolet, 0.68f * 0.94f, BlendState.AlphaBlend),
+                ImpactLayer("BlastCoreRound", "ArtoriasAbyssImpactCore", "ArtoriasAbyssImpactCore", "T_VFX_RoundSmoke71",
+                    450f * 0.82f, AbyssViolet, 0.72f * 0.94f, BlendState.Additive, DangerMagenta),
+                ImpactLayer("BlastCoreFlare", "ArtoriasAbyssImpactCore", "ArtoriasAbyssImpactCore", "T_VFX_Flare_666",
+                    450f * 0.70f, DangerMagenta, 0.56f * 0.94f, BlendState.Additive, KnightSilver),
+
+                // Landing impact (ArtoriasLandingImpactVFX) at Jump Slash's 3x size: rift 258x102, tall eruption
+                // 0.62w x 1.12h = 160x228. Pillar's eruption uses the same technique at 150x420.
+                new Recipe
+                {
+                    Name = "LandingRift",
+                    Effect = "ArtoriasAbyssEruption",
+                    Technique = "ArtoriasGroundRift",
+                    Primary = "T_Cracks336",
+                    Detail = "T_VFX_Noise41",
+                    DrawSize = new Vector2(258f, 102f),
+                    Dark = VoidBlack,
+                    Mid = AbyssViolet,
+                    Core = KnightSilver,
+                    Opacity = 0.70f,
+                    Blend = BlendState.Additive,
+                    Clear = CaveDark,
+                    PixelBlockSize = 2f,
+                },
+                new Recipe
+                {
+                    Name = "LandingEruption",
+                    Effect = "ArtoriasAbyssEruption",
+                    Technique = "ArtoriasAbyssEruption",
+                    Primary = "T_smoke_b7",
+                    Detail = "T_VFX_Noise41",
+                    DrawSize = new Vector2(160f, 228f),
+                    Dark = VoidBlack,
+                    Mid = AbyssViolet,
+                    Core = KnightSilver,
+                    Opacity = 0.72f,
+                    Blend = BlendState.Additive,
+                    Clear = CaveDark,
+                    PixelBlockSize = 4f,   // DrawEruption passes 4
+                },
+
                 // Gravity of the Sun field (GwynGravityWell.DrawVortexField) at three C# opacities, to
                 // measure how much of the background each really lets through.
                 GwynVortex("GwynVortex100Sky", 1f, SkyBlue),
@@ -360,6 +406,28 @@ namespace ShaderPreview
                     effect.Parameters["FrameUVScale"]?.SetValue(textureSize / new Vector2(frameSize));
                     effect.Parameters["PixelGrid"]?.SetValue(new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                 },
+            };
+        }
+
+        /// <summary>One layer of ArtoriasVFX.DrawImpactBlast: a square quad of `diameter`, not full-texture.</summary>
+        private static Recipe ImpactLayer(string name, string effect, string technique, string primary,
+            float diameter, Color mid, float opacity, BlendState blend, Color? core = null)
+        {
+            return new Recipe
+            {
+                Name = name,
+                Effect = effect,
+                Technique = technique,
+                Primary = primary,
+                Detail = "T_VFX_Noise41",
+                DrawSize = new Vector2(diameter),
+                Dark = VoidBlack,
+                Mid = mid,
+                Core = core ?? KnightSilver,
+                Opacity = opacity,
+                Blend = blend,
+                Clear = CaveDark,
+                PixelBlockSize = 4f,   // DrawImpactBlast's BlastPixelBlock
             };
         }
 

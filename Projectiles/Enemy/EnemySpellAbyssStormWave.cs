@@ -40,6 +40,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                // Detonate at the impact point before the storm ring expands. Reusing the return
+                // explosion guarantees the same 100px damage circle, blue cloud sprite, damage,
+                // frostburn, and blue-crystal dust as the ring's final center collapse.
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center,
+                    Microsoft.Xna.Framework.Vector2.Zero,
+                    ModContent.ProjectileType<EnemySpellAbyssStormExplosion>(),
+                    Projectile.damage, 8f, Projectile.owner);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center.X, Projectile.Center.Y, 0, 0, ModContent.ProjectileType<EnemySpellAbyssStorm>(), Projectile.damage, 8f, Projectile.owner);
             }
             Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);

@@ -332,6 +332,10 @@ namespace tsorcRevamp.NPCs
         public int DirectPounceRecoveryTimer;
         public bool DirectPounceAfterimages = true;
         public int DodgeTimer;
+        // True while DodgeTimer belongs to an attack rather than a reactive dodge (a puppet's jump/flip slash
+        // arms its own i-frames). PreDraw then skips the every-5-frames blink, which otherwise hid the whole
+        // boss mid-swing and read as a translucent ghost. Rewritten every tick by the owner (PuppetNPC.AI).
+        public bool SuppressDodgeBlink;
         public int DodgeCooldown;
         // Planned rotating dodge-roll state. The server solves a safe direction, distance and
         // integer duration once; clients receive these values and reproduce the same roll/recovery.
@@ -3721,7 +3725,7 @@ namespace tsorcRevamp.NPCs
                 Main.EntitySpriteDraw(SunburnMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, SunburnMarksSprite.Height / 6 * SunburnMarks - 100), SunburnMarkSourceRectangle, Color.White, 0, SunburnMarkSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
             }
 
-            if (DodgeTimer > 0 && Main.GameUpdateCount % 10 < 5)
+            if (DodgeTimer > 0 && !SuppressDodgeBlink && Main.GameUpdateCount % 10 < 5)
             {
                 return false;
             }

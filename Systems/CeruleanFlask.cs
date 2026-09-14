@@ -155,8 +155,8 @@ namespace tsorcRevamp.Systems
                     Player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(CeruleanDrinkTimerMax * 60f));
                     // Chloranthy Ring (I or II): trade the standard drink slowdown for temporary
                     // vulnerability. Without the ring, the Crippled debuff blocks extra jumps, wings,
-                    // rocket boots, and reduces moveSpeed by 10% for the drink duration (ground-bound
-                    // and slowed). With the ring, those mobility losses are swapped for Ichor
+                    // and rocket boots for the drink duration (ground-bound). With the ring, those
+                    // mobility losses are swapped for Ichor
                     // (-15 defense + glow) — full mobility but more damage taken if you get hit.
                     // Completely removing the challenge behind finding moments to drink Estus in a single accessory that also grants other very powerful effects? NOPE
                     /*if (modPlayer.ChloranthyRing1 || modPlayer.ChloranthyRing2)

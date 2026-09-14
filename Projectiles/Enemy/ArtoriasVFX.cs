@@ -31,6 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> smoothNoise;
         static Asset<Texture2D> brokenNoise;
         static Asset<Texture2D> circleGradient;
+        static Asset<Texture2D> radialGlow;
         static Asset<Texture2D> cracks;
         static Asset<Texture2D> windstreak;
         static Asset<Texture2D> tendrilCoreMask;
@@ -81,6 +82,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             smoothNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
             brokenNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_Noise41", AssetRequestMode.ImmediateLoad);
             circleGradient ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Gradient_circle22", AssetRequestMode.ImmediateLoad);
+            radialGlow ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Particles/circle_05_a", AssetRequestMode.ImmediateLoad);
             cracks ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Cracks336", AssetRequestMode.ImmediateLoad);
             windstreak ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Windstreak3", AssetRequestMode.ImmediateLoad);
             tendrilCoreMask ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Wave66", AssetRequestMode.ImmediateLoad);
@@ -141,39 +143,44 @@ namespace tsorcRevamp.Projectiles.Enemy
             // The subdued full-radius layer is present from the first hostile frame. Brighter
             // inner layers expand through it, so the move reads as an explosion without drawing
             // a geometric ring around its circular collision volume.
+            // 4px blocks: the blast quad is ~450px of soft smoke, where 2-3px filters are too fine to read (previewed).
+            const float BlastPixelBlock = 4f;
             Draw(impactEffect, "ArtoriasAbyssImpactBody", roundSmoke, brokenNoise,
                 center, exactSize * pulse, 0f, VoidBlack, new Color(48, 20, 88), KnightSilver,
-                opacity * 0.52f, progress, 1f, 1f, BlendState.AlphaBlend);
+                opacity * 0.52f, progress, 1f, 1f, BlendState.AlphaBlend, pixelBlockSize: BlastPixelBlock);
             Draw(impactEffect, "ArtoriasAbyssImpactBody", smoke, brokenNoise,
                 center - new Vector2(0f, 3f),
                 exactSize * MathHelper.Lerp(0.68f, 1.04f, bloom), -0.16f,
                 VoidBlack, AbyssViolet, KnightSilver,
-                opacity * 0.68f, progress, 1f, 1f, BlendState.AlphaBlend);
+                opacity * 0.68f, progress, 1f, 1f, BlendState.AlphaBlend, pixelBlockSize: BlastPixelBlock);
             Draw(impactCoreEffect, "ArtoriasAbyssImpactCore", roundSmoke, brokenNoise,
                 center, exactSize * MathHelper.Lerp(0.38f, 0.82f, bloom), 0.10f,
                 VoidBlack, AbyssViolet, DangerMagenta,
-                opacity * 0.72f, progress, 1f, 1f, BlendState.Additive);
+                opacity * 0.72f, progress, 1f, 1f, BlendState.Additive, pixelBlockSize: BlastPixelBlock);
             Draw(impactCoreEffect, "ArtoriasAbyssImpactCore", flare, brokenNoise,
                 center, exactSize * MathHelper.Lerp(0.24f, 0.70f, bloom), -0.08f,
                 VoidBlack, DangerMagenta, KnightSilver,
                 opacity * MathHelper.Lerp(1f, 0.56f, progress),
-                progress, 1f, 1f, BlendState.Additive);
+                progress, 1f, 1f, BlendState.Additive, pixelBlockSize: BlastPixelBlock);
         }
 
         internal static void DrawGroundRift(Vector2 center, Vector2 size, float progress, float opacity)
         {
             LoadAssets();
+            // 2x2 gameplay-pixel filter, like the AbyssShard portal in the same .fx.
             Draw(eruptionEffect, "ArtoriasGroundRift", cracks, brokenNoise,
                 center, size, 0f, VoidBlack, AbyssViolet, KnightSilver, opacity,
-                progress, 1f, 1f, BlendState.Additive);
+                progress, 1f, 1f, BlendState.Additive, pixelBlockSize: 2f);
         }
 
         internal static void DrawEruption(Vector2 center, Vector2 size, float progress, float opacity)
         {
             LoadAssets();
+            // 4px blocks: the eruption is a smooth glowing column (160-420px tall at Jump Slash / Pillar size), and a 2px
+            // filter on smooth gradients that large renders indistinguishable from unfiltered (previewed).
             Draw(eruptionEffect, "ArtoriasAbyssEruption", smoke, brokenNoise,
                 center, size, 0f, VoidBlack, AbyssViolet, KnightSilver, opacity,
-                progress, 1f, 1f, BlendState.Additive);
+                progress, 1f, 1f, BlendState.Additive, pixelBlockSize: 4f);
         }
 
         internal static void DrawCrescent(Vector2 center, float rotation, Vector2 size, bool returning, float opacity)
@@ -424,7 +431,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         static void DrawImpaleGlow(Vector2 center, float radius, float opacity)
         {
             LoadAssets();
-            Texture2D texture = circleGradient.Value;
+            // circle_05_a is a true radial falloff (alpha 242 at the centre, 0 before every edge). The old
+            // T_Gradient_circle22 is a vertical beam that runs off its top edge, so the glow read as cut off at the top.
+            Texture2D texture = radialGlow.Value;
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp,
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

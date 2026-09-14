@@ -1635,7 +1635,6 @@ namespace tsorcRevamp
                 Player.jumpBoost = false;
                 Player.jumpSpeedBoost = 0f;
                 Player.wingTime = 0;
-                Player.moveSpeed *= 0.9f;
             }
 
             if (WitchkingsGrasp)

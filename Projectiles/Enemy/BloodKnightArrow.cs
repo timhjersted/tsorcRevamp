@@ -6,15 +6,12 @@ using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
-    /// <summary>A hostile, ballistic Blood Arrow whose clean misses teach its owning knight to lead farther.</summary>
+    /// <summary>A hostile ballistic Blood Arrow aimed by its owner with a gravity-aware intercept.</summary>
     public class BloodKnightArrow : ModProjectile
     {
         public const float Gravity = 0.075f;
 
-        private bool _reported;
-        private bool _tileCollision;
         private bool _impactSpawned;
-        private int _age;
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/BloodArrow";
 
@@ -34,7 +31,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             // Missed arrows remain physical until they strike a player or terrain.
             Projectile.timeLeft = 2;
-            _age++;
             Projectile.velocity.Y += Gravity;
             // The supplied sprite's point faces down-left (135 degrees in texture space).
             // Remove that native angle so the point, rather than the fletching, follows velocity.
@@ -48,25 +44,10 @@ namespace tsorcRevamp.Projectiles.Enemy
                     -Projectile.velocity * 0.06f, 90, default, blackfire ? 0.75f : 0.65f);
                 dust.noGravity = true;
             }
-
-            if (_reported || _tileCollision || _age < 6)
-                return;
-
-            int targetIndex = (int)Projectile.ai[1];
-            if (targetIndex < 0 || targetIndex >= Main.maxPlayers)
-                return;
-
-            Player target = Main.player[targetIndex];
-            if (target.active && !target.dead
-                && Vector2.Dot(target.Center - Projectile.Center, Projectile.velocity) < 0f)
-            {
-                ReportMiss();
-            }
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            _tileCollision = true;
             SpawnImpactDustOnce(oldVelocity);
             return true;
         }
@@ -75,12 +56,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             DarkBloodKnight.ApplyBloodArrowDebuffs(target, Projectile.ai[2] > 0.5f);
             SpawnImpactDustOnce(Projectile.velocity);
-            if (!_reported)
-            {
-                _reported = true;
-                if (TryGetOwner(out DarkBloodKnight knight))
-                    knight.ReportBloodArrowHit();
-            }
         }
 
         private void SpawnImpactDustOnce(Vector2 travelVelocity)
@@ -137,28 +112,5 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        private void ReportMiss()
-        {
-            _reported = true;
-            if (TryGetOwner(out DarkBloodKnight knight))
-                knight.ReportBloodArrowMiss();
-        }
-
-        private bool TryGetOwner(out DarkBloodKnight knight)
-        {
-            int ownerIndex = (int)Projectile.ai[0];
-            if (ownerIndex >= 0 && ownerIndex < Main.maxNPCs)
-            {
-                NPC owner = Main.npc[ownerIndex];
-                if (owner.active && owner.ModNPC is DarkBloodKnight bloodKnight)
-                {
-                    knight = bloodKnight;
-                    return true;
-                }
-            }
-
-            knight = null;
-            return false;
-        }
     }
 }

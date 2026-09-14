@@ -167,14 +167,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             base.OnLeapSlamLanded(step);
         }
 
-        protected void SpawnLandingImpactVFX(Vector2 position, float width, float height)
+        /// <summary>Ground fracture at <paramref name="position"/> (the feet). Damage 0 = cosmetic; above 0 the
+        /// projectile's hitbox covers exactly the eruption it draws.</summary>
+        protected void SpawnLandingImpactVFX(Vector2 position, float width, float height, int damage = 0)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
             Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasLandingImpactVFX>(), 0, 0f,
+                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasLandingImpactVFX>(), damage, 0f,
                 Main.myPlayer, width, height);
         }
 
@@ -383,7 +385,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   PierceDashTicks      => 40;
         protected override float PierceDashSpeed      => 16f;
         protected override int   PierceRecoveryTicks  => 90;
-        protected override int   PierceStabChance     => 50;
+        // Every connecting Piercing Dash impales. At 50% the plain lunge (damage + knockback, no hold) looked almost
+        // identical to the stab, so the hold read as randomly failing to trigger.
+        protected override int   PierceStabChance     => 100;
         protected override int   PierceStabRaiseTicks => 180;
         // The pose reaches vertical in a quick 12-tick snap instead of drifting there across the
         // whole 180-tick hold - the target reads as centered/impaled immediately, and PierceStabHold
@@ -391,6 +395,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   PierceStabRaiseAnimTicks => 12;
         protected override int   PierceStabFlickTicks => 20;
         protected override int   PierceCooldownAfterUse => 480;
+        // A whiffed or rolled-through dash re-aims and goes again, up to twice. The repeat tell is 40t (the
+        // heavy-tell floor): the next dash goes live >= 40t after the last one ended, clear of the 30t
+        // post-roll gap, so every dash in the chain is separately rollable.
+        protected override int   PierceWhiffRepeatCount     => 2;
+        protected override int   PierceRepeatTelegraphTicks => 40;
 
         // ── Jumping Downward Slash ───────────────────────────────────────────────
         protected override bool  CanJumpSlash          => true;
@@ -537,6 +546,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int PierceStabHealAmount  = 5000;
         const float PierceFlickDistance = 10 * 16f; // 10 tiles
         const float ImpaleSwordReach    = 70f;
+
+        // The whole Piercing Dash sequence cripples its target: Crippled (no wings/extra jumps, -10% speed, rolls
+        // still work) kept on for as long as this is true, under the same abyss mantle Tendril Reach wears.
+        // Recovery is excluded - that is the player's punish window.
+        bool PierceCrippleActive =>
+            Phase == AttackPhase.PierceTelegraph || Phase == AttackPhase.PierceDash
+            || Phase == AttackPhase.PierceStabHold || Phase == AttackPhase.PierceStabFlick;
+        const int PierceCrippleBuffTicks = 2;      // refreshed every tick, so it ends with the attack
+        const int PierceHazeFadeInTicks = 15;
+        int _pierceHazeTicks;                      // ticks the haze has been up; drives its fade-in
 
         private int _impaleSwordProjIndex = -1;
         private int _impaleTargetIndex = -1;
@@ -692,6 +711,52 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             TickAbyssSurges();
             TickSpectralPhantom();
 
+            // Pierce cripple: every machine runs the pierce phases, so the local player applies the debuff to
+            // themselves (player buffs are client-owned) and every client spawns the light purple motes.
+            if (!PierceCrippleActive)
+            {
+                _pierceHazeTicks = 0;
+            }
+
+            if (PierceCrippleActive && NPC.HasValidTarget)
+            {
+                _pierceHazeTicks = Math.Min(_pierceHazeTicks + 1, PierceHazeFadeInTicks);
+                Player crippledTarget = Main.player[NPC.target];
+
+                if (crippledTarget.whoAmI == Main.myPlayer)
+                {
+                    crippledTarget.AddBuff(ModContent.BuffType<Crippled>(), PierceCrippleBuffTicks);
+                }
+
+                if (!Main.dedServ && Main.rand.NextBool(2))
+                {
+                    Vector2 motePosition = crippledTarget.position
+                        + new Vector2(Main.rand.NextFloat(crippledTarget.width), Main.rand.NextFloat(crippledTarget.height));
+                    Vector2 moteVelocity = new Vector2(Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(-1.4f, -0.5f));
+                    Dust mote = Dust.NewDustPerfect(motePosition, DustID.WhiteTorch, moteVelocity, 90,
+                        new Color(206, 168, 255), Main.rand.NextFloat(0.8f, 1.15f));
+                    mote.noGravity = true;
+                }
+            }
+
+            // Jump Slash ground AOE: spawn at the feet on the first grounded tick of the slash or its recovery. If the
+            // attack leaves those phases first (dodge-punish chain, stagger) the AOE is dropped rather than spawned late.
+            if (_jumpSlashImpactPending)
+            {
+                bool inJumpSlash = Phase == AttackPhase.JumpSlashAttack || Phase == AttackPhase.JumpSlashRecovery;
+                bool grounded = NPC.velocity.Y == 0f;
+
+                if (!inJumpSlash)
+                {
+                    _jumpSlashImpactPending = false;
+                }
+                else if (grounded)
+                {
+                    SpawnLandingImpactVFX(NPC.Bottom, JumpSlashImpactWidth, JumpSlashImpactHeight, JumpSlashImpactDamage);
+                    _jumpSlashImpactPending = false;
+                }
+            }
+
             if (!_abyssShardUnlocked && NPC.life <= NPC.lifeMax * 0.6f)
             {
                 _abyssShardUnlocked = true;
@@ -748,6 +813,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Vector2 bladeDirection = (tip - hand).SafeNormalize(new Vector2(NPC.direction, -1f));
                 Projectiles.Enemy.ArtoriasVFX.DrawBoomerangCharge(
                     tip, bladeDirection, progress, MathHelper.Lerp(0.66f, 1f, progress));
+            }
+
+            // Pierce cripple haze: the Tendril Reach mantle (majorCast above), sized down to a player and faded
+            // in over PierceHazeFadeInTicks. Drawn from the NPC pass, so it sits behind the player sprite exactly
+            // like Artorias's own mantle sits behind him.
+            if (PierceCrippleActive && NPC.HasValidTarget)
+            {
+                Player hazeTarget = Main.player[NPC.target];
+                float hazeFade = _pierceHazeTicks / (float)PierceHazeFadeInTicks;
+                Projectiles.Enemy.ArtoriasVFX.DrawMantle(hazeTarget.Center + new Vector2(0f, -8f),
+                    new Vector2(112f, 150f), 0.34f * hazeFade, 0.72f, 1f);
             }
 
             if (Phase == AttackPhase.PierceStabHold && _impaleTargetIndex >= 0
@@ -1431,48 +1507,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
             TryMeleeHit(reach: 100f);
             SpawnArtoriasSwordArc(JumpSlashAttackTicks);
-            SpawnLandingImpactVFX(NPC.Bottom, 86f, 68f);
+            // The swing often starts mid-air (target in reach), so the ground AOE is queued for real touchdown in AI.
+            _jumpSlashImpactPending = true;
         }
 
-        // ── Forward Flip Slash hooks ─────────────────────────────────────────────
-        // Three cosmetic/landing-effect variants of the same jump-spin attack, rolled once per use.
-        private enum FlipVariant { Basic, PurpleOrbBlast, PurplePinkWall }
-        private FlipVariant _flipVariant;
+        // Jump Slash's ground AOE: 3x the base landing impact (86x68), damaging over exactly the eruption it draws.
+        const float JumpSlashImpactWidth = 86f * 3f;
+        const float JumpSlashImpactHeight = 68f * 3f;
+        const int JumpSlashImpactDamage = 55;
+        bool _jumpSlashImpactPending;
 
+        // ── Forward Flip Slash hooks ─────────────────────────────────────────────
+        // The somersault trails the same violet as the Homing Volley orbs its landing releases.
         protected override void DoFlipSlashRiseTick()
         {
-            if (Phase == AttackPhase.FlipSlashRise && PhaseTimer == FlipSlashRiseMaxTicks)
-            {
-                _flipVariant = (FlipVariant)Main.rand.Next(3);
-            }
-
             if (Main.dedServ || !Main.rand.NextBool(2))
             {
                 return;
             }
 
-            switch (_flipVariant)
-            {
-                case FlipVariant.PurpleOrbBlast:
-                {
-                    Dust d = Dust.NewDustPerfect(NPC.Center, DustID.PurpleTorch, -NPC.velocity * 0.3f, 100, new Color(160, 40, 220), 1.1f);
-                    d.noGravity = true;
-                    break;
-                }
-                case FlipVariant.PurplePinkWall:
-                {
-                    int dustId = Main.rand.NextBool(2) ? DustID.PurpleTorch : DustID.PinkTorch;
-                    Dust d = Dust.NewDustPerfect(NPC.Center, dustId, -NPC.velocity * 0.3f, 100, default, 1.1f);
-                    d.noGravity = true;
-                    break;
-                }
-                default:
-                {
-                    Dust d = Dust.NewDustPerfect(NPC.Center, DustID.SilverFlame, -NPC.velocity * 0.3f, 100, default, 1f);
-                    d.noGravity = true;
-                    break;
-                }
-            }
+            Dust trail = Dust.NewDustPerfect(NPC.Center, DustID.PurpleTorch, -NPC.velocity * 0.3f, 100,
+                new Color(160, 40, 220), 1.1f);
+            trail.noGravity = true;
         }
 
         // Fires as the somersault launches: arm the spinning blade (the base tests it every airborne tick)
@@ -1503,80 +1559,68 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             SpawnArtoriasSwordArc(strikeTicks, hitWindowEnd: strikeHitWindowEnd);
         }
 
-        // The blade meets the ground on the strike's peak tick, so the impact and the landing variant
-        // effects fire there instead of at touchdown, where they used to precede the swing.
+        // The blade meets the ground on the strike's peak tick, so the impact and the orb release fire
+        // there instead of at touchdown, where they used to precede the swing.
+        // Lifts the release point this far above the feet: the blade tip is buried in the floor at contact.
+        const float FlipSlashOrbReleaseHeight = 12f;
+        const int FlipBlastDamage = 60;
+        const int FlipPillarDamage = 60;
+        const int FlipBlazeDamage = 50;
+        const float FlipBlazeSpeed = 5f;
+
         protected override void OnFlipSlashStrikeContact()
         {
             SpawnLandingImpactVFX(NPC.Bottom, 96f, 78f);
-            switch (_flipVariant)
-            {
-                case FlipVariant.PurpleOrbBlast:
-                    OnFlipSlashLandPurpleOrbBlast();
-                    break;
-                case FlipVariant.PurplePinkWall:
-                    OnFlipSlashLandPurplePinkWall();
-                    break;
-                default:
-                    OnFlipSlashLandBasic();
-                    break;
-            }
-        }
-
-        void OnFlipSlashLandBasic()
-        {
-            UsefulFunctions.ScreenShake(NPC.Center, strength: 4f, frames: 10);
-
-            if (Main.dedServ)
-            {
-                return;
-            }
-
-            for (int i = 0; i < 8; i++)
-            {
-                float spawnX = Main.rand.NextFloat(-24f, 24f);
-                Vector2 spawnPos = NPC.Bottom + new Vector2(spawnX, -4f);
-                float angle = -MathHelper.PiOver2 + Main.rand.NextFloat(-0.6f, 0.6f);
-                Vector2 velocity = angle.ToRotationVector2() * Main.rand.NextFloat(1f, 6f);
-                Dust d = Dust.NewDustPerfect(spawnPos, DustID.Dirt, velocity, 60, default, Main.rand.NextFloat(1.1f, 1.5f));
-                d.noGravity = false;
-            }
-        }
-
-        // Purple circular AOE blast that, after lingering ~1/3 second, bursts into 6 seeking flame
-        // orbs fanning out in every direction.
-        const int FlipBlastDamage = 60;
-        void OnFlipSlashLandPurpleOrbBlast()
-        {
             UsefulFunctions.ScreenShake(NPC.Center, strength: 5f, frames: 11);
+            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.65f, Pitch = -0.1f }, NPC.Center);
 
-            if (Main.netMode == NetmodeID.MultiplayerClient)
+            if (Main.netMode == NetmodeID.MultiplayerClient || !NPC.HasValidTarget)
             {
                 return;
             }
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssBlast>(), FlipBlastDamage, 0f, Main.myPlayer);
-        }
 
-        // A tall pillar AOE at the slam point, then two purple flame walls peel off left and right,
-        // growing tall as they travel.
-        const int FlipPillarDamage = 60;
-        const int FlipBlazeDamage = 50;
-        void OnFlipSlashLandPurplePinkWall()
-        {
-            UsefulFunctions.ScreenShake(NPC.Center, strength: 5f, frames: 11);
-
-            if (Main.netMode == NetmodeID.MultiplayerClient)
+            // Ground AOE at the feet, a coin flip per landing: the circular abyss blast (lifted 0.35 of its radius so
+            // most of it sits above the floor) or the bottom-anchored eruption pillar.
+            if (Main.rand.NextBool())
             {
-                return;
+                Vector2 blastCenter = NPC.Bottom - new Vector2(0f, Projectiles.Enemy.ArtoriasAbyssBlast.Radius * 0.35f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), blastCenter, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssBlast>(), FlipBlastDamage, 0f, Main.myPlayer);
             }
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssPillar>(), FlipPillarDamage, 0f, Main.myPlayer);
+            else
+            {
+                Vector2 pillarCenter = NPC.Bottom - new Vector2(0f, Projectiles.Enemy.ArtoriasAbyssPillar.Height * 0.5f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), pillarCenter, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssPillar>(), FlipPillarDamage, 0f, Main.myPlayer);
 
-            Vector2 spawnPos = NPC.Bottom;
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(-5f, 0f),
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssBlaze>(), FlipBlazeDamage, 0f, Main.myPlayer);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(5f, 0f),
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssBlaze>(), FlipBlazeDamage, 0f, Main.myPlayer);
+                // The pillar's partner: two purple flame walls peel off left and right along the ground from the feet,
+                // growing tall as they travel (ArtoriasAbyssBlaze pins its feet to the spawn Y).
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Bottom, new Vector2(-FlipBlazeSpeed, 0f),
+                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssBlaze>(), FlipBlazeDamage, 0f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Bottom, new Vector2(FlipBlazeSpeed, 0f),
+                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssBlaze>(), FlipBlazeDamage, 0f, Main.myPlayer);
+            }
+
+            // The slam releases a Homing Volley from where the blade struck: the same HomingAbyssOrb (30 damage,
+            // passes through tiles, straight flight then a late bend onto the player), in one of the volley's
+            // three patterns. The orbs' own pre-bend flash is the telegraph.
+            Player target = Main.player[NPC.target];
+            Vector2 releasePoint = PuppetWeaponTipPosition(54f);
+            releasePoint.Y = Math.Min(releasePoint.Y, NPC.Bottom.Y - FlipSlashOrbReleaseHeight);
+
+            int pattern = Main.rand.Next(3);
+            if (pattern == 0)
+            {
+                FireStaggeredFan(releasePoint, target);
+            }
+            else if (pattern == 1)
+            {
+                FirePincerSplit(releasePoint, target);
+            }
+            else
+            {
+                FireLatticeSnap(releasePoint, target);
+            }
         }
 
         // ── Abyss Slash hooks ─────────────────────────────────────────────────────

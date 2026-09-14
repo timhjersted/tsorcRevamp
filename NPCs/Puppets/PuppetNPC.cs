@@ -630,6 +630,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int   PierceStabFlickDelayTicks  => 0;
         /// <summary>Cooldown after the whole sequence (dash or stab) ends before another can begin.</summary>
         protected virtual int   PierceCooldownAfterUse     => 480;
+        /// <summary>Extra dashes after one that doesn't connect (touched no one, or only a player in
+        /// i-frames). Each repeat re-faces the current target through its own telegraph. 0 = never.</summary>
+        protected virtual int   PierceWhiffRepeatCount     => 0;
+        /// <summary>Telegraph length for those repeats; the first dash keeps <see cref="PierceTelegraphTicks"/>.</summary>
+        protected virtual int   PierceRepeatTelegraphTicks => PierceTelegraphTicks;
 
         /// <summary>Called every tick of the PierceTelegraph phase, with elapsed ticks counting up from 0.
         /// Override to spawn the wind-up VFX (dust color etc. — vary by <see cref="IsPierceStab"/>).</summary>
@@ -657,6 +662,9 @@ namespace tsorcRevamp.NPCs.Puppets
         protected bool IsPierceStab => _pierceIsStab;
         private bool  _pierceIsStab;
         private bool  _pierceHitConnected;
+        private bool  _pierceContactDodged;       // the contact landed on a player in i-frames (rolled through)
+        private int   _pierceRepeatsUsed;         // whiff repeats spent this sequence (PierceWhiffRepeatCount)
+        private int   _pierceTelegraphTotalTicks; // length of the telegraph now playing (first or repeat)
         private int   _pierceDir;
         private Vector2 _pierceAnchorPos;
         private Player _pierceTarget;
@@ -1581,6 +1589,10 @@ namespace tsorcRevamp.NPCs.Puppets
             // being held, but nothing was drawing it. Gated on the same opt-in hold, so puppets that
             // leave MeleeRecoveryLingerTicks at 0 are unaffected.
             (IsWeaponRecoveryPhase && IsHoldingMeleeRecoveryFollowThrough()) ||
+            // A recovery that keeps the composite arm posed (Artorias lists every bespoke recovery in
+            // UseCompositeArmForAdditionalPhase) keeps the sword for its whole length. Hiding it after the
+            // linger left the arm raised toward HoldRotation gripping nothing.
+            (IsWeaponRecoveryPhase && CompositeArmActive) ||
             (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0));
 
         private bool IsMeleeComboPhase =>
@@ -2371,6 +2383,9 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             UpdateSpectralHistory();
             tsorcRevampGlobalNPC gnpc = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            // Attack-armed i-frames (AttackOwnsDodgeIFrames) must not blink the body out in GlobalNPC.PreDraw.
+            // Set before AI's early returns so it can never stay stuck on after the attack ends.
+            gnpc.SuppressDodgeBlink = AttackOwnsDodgeIFrames;
             if (gnpc.IsTeleportIllusion)
             {
                 NPC.boss = false;
@@ -3327,6 +3342,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     {
                         _pierceIsStab = Main.rand.Next(100) < PierceStabChance;
                         _pierceHitConnected = false;
+                        _pierceContactDodged = false;
+                        _pierceRepeatsUsed = 0;
+                        _pierceTelegraphTotalTicks = PierceTelegraphTicks;
                         EnterPhase(AttackPhase.PierceTelegraph, PierceTelegraphTicks);
                         break;
                     }
@@ -3972,14 +3990,16 @@ namespace tsorcRevamp.NPCs.Puppets
                     _pierceDir = faceP;
                     _attackFacingDir = faceP;
                     LockAttackFacing();
-                    if (PhaseTimer == PierceTelegraphTicks)
+                    // A repeat telegraph is shorter than the first, so the first tick is detected against the
+                    // length this telegraph actually started with.
+                    if (PhaseTimer == _pierceTelegraphTotalTicks)
                     {
                         _pierceAnchorPos = NPC.position;
                         NPC.velocity.X = 0f;
                     }
                     NPC.position = _pierceAnchorPos + Main.rand.NextVector2Circular(1.5f, 1.5f);
                     SetDisplayWeapon(FrontHandWeaponType, swing: false);
-                    DoPierceWindup(PierceTelegraphTicks - PhaseTimer);
+                    DoPierceWindup(_pierceTelegraphTotalTicks - PhaseTimer);
                     if (--PhaseTimer <= 0)
                     {
                         NPC.position = _pierceAnchorPos;
@@ -4008,6 +4028,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         if (reach.Intersects(target.Hitbox))
                         {
                             _pierceHitConnected = true;
+                            _pierceContactDodged = target.immune;
                             _pierceTarget = target;
                             OnPierceContact(target, _pierceIsStab);
 
@@ -4023,7 +4044,29 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (--PhaseTimer <= 0)
                     {
                         NPC.velocity.X *= 0.4f;
-                        EnterPhase(AttackPhase.PierceRecovery, PierceRecoveryTicks);
+
+                        // Didn't connect: nothing touched, or only a player mid-roll. The repeat re-enters the
+                        // telegraph, which re-faces the target and re-anchors. Not server-gated: like the rest
+                        // of the pierce sequence (Phase isn't in SendExtraAI), every machine runs it locally.
+                        bool whiffed = !_pierceHitConnected || _pierceContactDodged;
+                        bool repeatsLeft = _pierceRepeatsUsed < PierceWhiffRepeatCount;
+                        bool targetInReach = NPC.HasValidTarget && dist <= PierceRange;
+                        bool canRepeat = whiffed && repeatsLeft && targetInReach;
+
+                        if (canRepeat)
+                        {
+                            _pierceRepeatsUsed++;
+                            _pierceHitConnected = false;
+                            _pierceContactDodged = false;
+                            _pierceTarget = null;
+                            _pierceTelegraphTotalTicks = Math.Max(1, PierceRepeatTelegraphTicks);
+                            EnterPhase(AttackPhase.PierceTelegraph, _pierceTelegraphTotalTicks);
+                            NPC.netUpdate = true;
+                        }
+                        else
+                        {
+                            EnterPhase(AttackPhase.PierceRecovery, PierceRecoveryTicks);
+                        }
                     }
                     break;
                 }
@@ -4300,6 +4343,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.AbyssSlashPause:
+                    // Each swipe is its own aimed attack, so the facing lock lasts one swipe. Re-face here,
+                    // before DoAbyssSlashFire, or a player who rolled behind gets crescents out of his back.
+                    _attackFacingDir = target.Center.X < NPC.Center.X ? -1 : 1;
                     LockAttackFacing();
                     if (--PhaseTimer <= 0)
                     {
@@ -9462,6 +9508,8 @@ namespace tsorcRevamp.NPCs.Puppets
                                  && _activeRangedStyle == RangedStyle.Crossbow;
             bool heldBowLike = _heldItemType == _activeRangedItemType
                             && _activeRangedStyle == RangedStyle.Bow;
+            bool flipHeldRangedHorizontally = heldRangedLike
+                && ShouldFlipHeldRangedSpriteHorizontally(_heldItemType);
             // Melee scale comes from the equipped weapon so a per-attack swap rescales with it;
             // ranged/crossbow keep their own held-item scaling.
             float scale = FrontHandWeapon.DrawScale;
@@ -9501,7 +9549,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Vector2 origin;
             if (heldCrossbowLike)
             {
-                float hx = NPC.direction == 1 ? tex.Width * 0.22f : tex.Width * 0.78f;
+                float hx = flipHeldRangedHorizontally ? tex.Width * 0.78f : tex.Width * 0.22f;
                 origin = new Vector2(hx, tex.Height * 0.58f);
             }
             else if (heldBowLike)
@@ -9509,9 +9557,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 // Bow is held at its authored grip. Mirror the origin in texture space when the
                 // sprite flips so the same physical grip pixel remains pinned to the hand.
                 Vector2 gripNorm = GetHeldRangedGripNorm(_heldItemType);
-                float hx = NPC.direction == 1
-                    ? tex.Width * gripNorm.X
-                    : tex.Width * (1f - gripNorm.X);
+                float hx = flipHeldRangedHorizontally
+                    ? tex.Width * (1f - gripNorm.X)
+                    : tex.Width * gripNorm.X;
                 origin = new Vector2(hx, tex.Height * gripNorm.Y);
             }
             else if (heldRangedLike)
@@ -9520,7 +9568,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     // Staves grip lower on the shaft (not centred) so the hand holds near the base.
                     Vector2 magicGrip = MagicGripNorm;
-                    float mgx = NPC.direction == 1 ? tex.Width * magicGrip.X : tex.Width * (1f - magicGrip.X);
+                    float mgx = flipHeldRangedHorizontally
+                        ? tex.Width * (1f - magicGrip.X)
+                        : tex.Width * magicGrip.X;
                     origin = new Vector2(mgx, tex.Height * magicGrip.Y);
                 }
                 else
@@ -9545,7 +9595,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 origin = new Vector2(handleX, tex.Height * handleNorm.Y);
             }
 
-            SpriteEffects spriteFx = NPC.direction == -1
+            SpriteEffects spriteFx = (heldRangedLike
+                    ? flipHeldRangedHorizontally
+                    : NPC.direction == -1)
                 ? SpriteEffects.FlipHorizontally
                 : SpriteEffects.None;
             // Mirror single-bladed melee weapons (axes) for motions that swing opposite the
@@ -9802,6 +9854,9 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float GetHeldRangedDrawScale(int itemType) => 1f;
         /// <summary>Normalized grip pixel for a held bow sprite before horizontal mirroring.</summary>
         protected virtual Vector2 GetHeldRangedGripNorm(int itemType) => new Vector2(0.25f, 0.5f);
+        /// <summary>Whether this ranged sprite needs a horizontal flip for its current facing.
+        /// Override for custom art authored facing left instead of the usual right.</summary>
+        protected virtual bool ShouldFlipHeldRangedSpriteHorizontally(int itemType) => NPC.direction == -1;
 
         /// <summary>When true for the given held ranged item type, red "lit fuse" sparks are emitted
         /// off the top of it while it's in hand (e.g. a smoke bomb).  Default false.</summary>

@@ -11292,6 +11292,7 @@ Mods: {
 			CinderBlueWisp.DisplayName: Cinder Blue Wisp
 			CinderRemoteFlame.DisplayName: Cinder Remote Flame
 			GwynEmbraceOrb.DisplayName: Gwyn Embrace Orb
+			CinderWispTelegraph.DisplayName: Cinder Wisp Telegraph
 		}
 
 		NPCs: {
@@ -11530,9 +11531,7 @@ Mods: {
 				Immune: Immune!
 			}
 
-			ArtoriasPhantom: {
-				DisplayName: Spectral Artorias
-			}
+			ArtoriasPhantom.DisplayName: Spectral Artorias
 
 			Blight: {
 				DisplayName: Blight

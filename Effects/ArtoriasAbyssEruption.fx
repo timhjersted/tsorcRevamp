@@ -22,7 +22,9 @@ float2 LocalUV(float2 coords)
 
 float4 RiftPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
-    float2 uv = LocalUV(coords);
+    // LocalUV gives 0..1 across the on-screen quad; PixelGrid is built from that same world size, so this is a
+    // real 2x2 gameplay-pixel filter (ArtoriasVFX.DrawGroundRift passes pixelBlockSize 2).
+    float2 uv = PixelateShaderUV(LocalUV(coords), PixelGrid);
     float2 centered = uv - 0.5;
     float crack = tex2D(PrimarySampler, uv).r;
     float noise = tex2D(DetailSampler, uv * 3.6 + float2(Time * 0.08, -Time * 0.035)).r;
@@ -38,7 +40,9 @@ float4 RiftPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR
 
 float4 EruptionPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
-    float2 uv = LocalUV(coords);
+    // Gameplay-pixel filter like RiftPixel, but ArtoriasVFX.DrawEruption passes 4px blocks: 2px is invisible on this
+    // smooth column at its large sizes.
+    float2 uv = PixelateShaderUV(LocalUV(coords), PixelGrid);
     float smoke = tex2D(PrimarySampler, uv).r;
     float noise = tex2D(DetailSampler, uv * float2(2.5, 4.2) + float2(Time * 0.055, -Time * 0.24)).r;
     float x = abs(uv.x - 0.5);

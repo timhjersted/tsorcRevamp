@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -21,13 +22,22 @@ namespace tsorcRevamp.Projectiles.Enemy
         private const int TelegraphDuration = 46;
         private const int LashDuration = 30;
         private const int ReleaseBlendTicks = 6;
-        private const float WhipLength = 20f * 16f;
+        public const float MaximumReach = 27f * 16f;
         private const int DamageStart = 8;
         private const int DamageEnd = 19;
+        private const int AttachedDuration = 30;
+        private const int AttachedRetractDuration = 12;
+        private const float PullStopDistance = 82f;
+        private const float PullAcceleration = 1.35f;
+        private const float MaximumPullSpeed = 13f;
 
         private readonly List<Vector2> _controlPoints = new List<Vector2>(SegmentCount);
         private readonly List<Vector2> _telegraphPoints = new List<Vector2>(SegmentCount);
         private readonly List<Vector2> _lashPoints = new List<Vector2>(SegmentCount);
+        private int _attachedPlayer = -1;
+        private int _attachedAge;
+        private int _attachedRetractAge = -1;
+        private Vector2 _attachedRetractStart;
         private int Age => (int)Projectile.localAI[0];
         private int LashAge => Age - TelegraphDuration;
 
@@ -45,22 +55,28 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = TelegraphDuration + LashDuration + 2;
+            Projectile.timeLeft = TelegraphDuration + LashDuration + AttachedDuration
+                + AttachedRetractDuration + 4;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.hide = false;
+            Projectile.netImportant = true;
         }
 
         public override bool ShouldUpdatePosition() => false;
 
         public override bool? CanDamage()
-            => LashAge >= DamageStart && LashAge <= DamageEnd ? null : false;
+            => _attachedPlayer < 0
+                && _attachedRetractAge < 0
+                && LashAge >= DamageStart
+                && LashAge <= DamageEnd
+                    ? null
+                    : false;
 
         public override void AI()
         {
             if (!TryGetOwner(out DarkBloodKnight owner)
-                || !owner.IsBloodWhipActive
-                || Age >= TelegraphDuration + LashDuration)
+                || !owner.IsBloodWhipActive)
             {
                 Projectile.Kill();
                 return;
@@ -69,6 +85,28 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.Center = owner.BloodWhipAnchor;
             Projectile.direction = owner.NPC.direction;
             Projectile.spriteDirection = owner.NPC.direction;
+
+            if (_attachedPlayer >= 0)
+            {
+                UpdateAttachedWhip(owner);
+                Projectile.localAI[0]++;
+                return;
+            }
+
+            if (_attachedRetractAge >= 0)
+            {
+                BuildAttachedRetractPoints(owner.BloodWhipAnchor);
+                if (++_attachedRetractAge >= AttachedRetractDuration)
+                    Projectile.Kill();
+                Projectile.localAI[0]++;
+                return;
+            }
+
+            if (Age >= TelegraphDuration + LashDuration)
+            {
+                Projectile.Kill();
+                return;
+            }
 
             // Track throughout the readable portion of the tell, then commit for its last ten ticks.
             // The owner performs the same lock, so clients derive the same curve from synchronized NPC
@@ -99,6 +137,84 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             Projectile.localAI[0]++;
+        }
+
+        private void UpdateAttachedWhip(DarkBloodKnight owner)
+        {
+            if (_attachedPlayer < 0 || _attachedPlayer >= Main.maxPlayers)
+            {
+                BeginAttachedRetract(WhipTip);
+                return;
+            }
+
+            Player target = Main.player[_attachedPlayer];
+            if (!target.active || target.dead)
+            {
+                BeginAttachedRetract(WhipTip);
+                return;
+            }
+
+            BuildTetherPoints(owner.BloodWhipAnchor, target.Center, _controlPoints);
+            ApplyCollisionRespectingPull(owner.NPC, target);
+
+            if (!Main.dedServ && Main.rand.NextBool(3))
+            {
+                Dust dust = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Circular(7f, 9f),
+                    DustID.Blood, Main.rand.NextVector2Circular(1.5f, 1.5f), 70, default, 0.8f);
+                dust.noGravity = true;
+            }
+
+            _attachedAge++;
+            if (_attachedAge >= AttachedDuration)
+            {
+                StopPullMomentum(owner.NPC, target);
+                BeginAttachedRetract(target.Center);
+            }
+        }
+
+        private static void ApplyCollisionRespectingPull(NPC owner, Player target)
+        {
+            // Resolve this on the server and on the grabbed player's own client. Velocity keeps solid
+            // tiles authoritative; the tether never teleports the player through terrain.
+            if (Main.netMode == NetmodeID.MultiplayerClient && target.whoAmI != Main.myPlayer)
+                return;
+
+            Vector2 toKnight = owner.Center - target.Center;
+            float distance = toKnight.Length();
+            if (distance <= PullStopDistance)
+            {
+                StopPullMomentum(owner, target);
+                return;
+            }
+
+            Vector2 pullDirection = toKnight / distance;
+            float desiredSpeed = MathHelper.Clamp((distance - PullStopDistance) / 7f, 2.5f, MaximumPullSpeed);
+            float currentPullSpeed = Vector2.Dot(target.velocity, pullDirection);
+            if (currentPullSpeed < desiredSpeed)
+            {
+                target.velocity += pullDirection
+                    * Math.Min(PullAcceleration, desiredSpeed - currentPullSpeed);
+            }
+        }
+
+        private static void StopPullMomentum(NPC owner, Player target)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient && target.whoAmI != Main.myPlayer)
+                return;
+
+            Vector2 pullDirection = (owner.Center - target.Center).SafeNormalize(Vector2.Zero);
+            float inwardSpeed = Vector2.Dot(target.velocity, pullDirection);
+            if (inwardSpeed > 0f)
+                target.velocity -= pullDirection * inwardSpeed;
+        }
+
+        private void BeginAttachedRetract(Vector2 startTip)
+        {
+            _attachedRetractStart = startTip;
+            _attachedPlayer = -1;
+            _attachedRetractAge = 0;
+            Projectile.hostile = false;
+            Projectile.netUpdate = true;
         }
 
         private Vector2 WhipTip => _controlPoints.Count > 0 ? _controlPoints[^1] : Projectile.Center;
@@ -202,7 +318,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 bend = MathHelper.Lerp(0.08f, 0.38f, retract) * Projectile.spriteDirection;
             }
 
-            float segmentLength = WhipLength * extension / (SegmentCount - 1f);
+            float segmentLength = MaximumReach * extension / (SegmentCount - 1f);
             Vector2 point = anchor;
             for (int i = 1; i < SegmentCount; i++)
             {
@@ -212,6 +328,31 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Vector2 tangent = aim.RotatedBy(sweepOffset + taper + ripple);
                 point += tangent * segmentLength;
                 destination.Add(point);
+            }
+        }
+
+        private void BuildAttachedRetractPoints(Vector2 anchor)
+        {
+            float progress = MathHelper.SmoothStep(0f, 1f,
+                _attachedRetractAge / (float)Math.Max(1, AttachedRetractDuration - 1));
+            Vector2 aim = Projectile.velocity.SafeNormalize(new Vector2(Projectile.direction, 0f));
+            Vector2 restingTip = anchor + aim * (MaximumReach * 0.04f);
+            BuildTetherPoints(anchor, Vector2.Lerp(_attachedRetractStart, restingTip, progress), _controlPoints);
+        }
+
+        private static void BuildTetherPoints(Vector2 anchor, Vector2 tip, List<Vector2> destination)
+        {
+            destination.Clear();
+            Vector2 line = tip - anchor;
+            Vector2 normal = line.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2);
+            float bend = MathHelper.Clamp(line.Length() * 0.055f, 4f, 18f);
+            Vector2 control1 = anchor + line * 0.32f + normal * bend;
+            Vector2 control2 = anchor + line * 0.68f - normal * bend * 0.35f;
+
+            for (int i = 0; i < SegmentCount; i++)
+            {
+                float progress = i / (SegmentCount - 1f);
+                destination.Add(CubicBezier(anchor, control1, control2, tip, progress));
             }
         }
 
@@ -252,6 +393,40 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             DarkBloodKnight.ApplyBloodArrowDebuffs(target, blackfire: false);
+            if (_attachedPlayer >= 0 || _attachedRetractAge >= 0)
+                return;
+
+            _attachedPlayer = target.whoAmI;
+            _attachedAge = 0;
+            Projectile.hostile = false;
+            Projectile.netUpdate = true;
+
+            if (TryGetOwner(out DarkBloodKnight owner))
+                owner.ReportAttackHit();
+
+            SoundEngine.PlaySound(SoundID.NPCHit13 with
+            {
+                Volume = 0.52f,
+                Pitch = -0.28f,
+            }, target.Center);
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(_attachedPlayer);
+            writer.Write(_attachedAge);
+            writer.Write(_attachedRetractAge);
+            writer.WriteVector2(_attachedRetractStart);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            _attachedPlayer = reader.ReadInt32();
+            _attachedAge = reader.ReadInt32();
+            _attachedRetractAge = reader.ReadInt32();
+            _attachedRetractStart = reader.ReadVector2();
+            if (_attachedPlayer >= 0 || _attachedRetractAge >= 0)
+                Projectile.hostile = false;
         }
 
         public override bool PreDraw(ref Color lightColor)

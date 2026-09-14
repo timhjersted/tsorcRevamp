@@ -27,6 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         private const int BleedingDuration = 30 * 60;
         private const int DarkInfernoDuration = 5 * 60;
+        private const float AttackDamageIncrease = 1.4f;
         // BloodSword.png is 50x58px and its configured grip is (0.10, 0.85), at 1.05 draw scale.
         // Keep the decorative crescent inside this blade-length envelope plus a small collision allowance.
         private const float BloodSwordVisualReach = 66.7f;
@@ -45,15 +46,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             new[] { 2, 25, 2, 25, 2, 25, 2, 25, 2, 25, 2 },
         };
 
-        private static readonly int[][] PhraseAimSnapshots =
-        {
-            new[] { 0, 1, 2 },
-            new[] { 0, 3 },
-            new[] { 0, 2, 4 },
-            new[] { 0, 3, 4, 6 },
-            new[] { 0, 2, 4, 6, 8, 10 },
-        };
-
         private static readonly int[] BowTelegraphExtras = { 0, 4, 8, 14, 20 };
         private static readonly Color[] BowFlashColors =
         {
@@ -69,9 +61,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private bool _activeComboUsesWhip;
         private Vector2 _lockedWhipAim;
         private bool _bloodWhipProjectileSpawned;
-        private int _bowShotIndex;
-        private Vector2 _bowAimVelocity;
-        private int _leadMissStreak;
+        private int _darkHarvestLashIndex;
 
         protected override string InvaderTitle => "Demonic Blood Knight";
         protected override bool AnnounceInvasion => false;
@@ -90,9 +80,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         // Terraria doubles hostile projectile damage on player hit. These are pre-hit values;
         // keeping them near Dark Knight's Dark Wave avoids treating puppet attacks like contact damage.
-        protected override int MeleeDamage => (int)(34f * tsorcRevampWorld.SubtleSHMScale);
-        protected override int RangedDamage => (int)(23f * tsorcRevampWorld.SubtleSHMScale);
-        protected override int SecondaryRangedDamage => (int)(25f * tsorcRevampWorld.SubtleSHMScale);
+        protected override int MeleeDamage => (int)(34f * AttackDamageIncrease * tsorcRevampWorld.SubtleSHMScale);
+        protected override int RangedDamage => (int)(23f * AttackDamageIncrease * tsorcRevampWorld.SubtleSHMScale);
+        protected override int SecondaryRangedDamage => (int)(25f * AttackDamageIncrease * tsorcRevampWorld.SubtleSHMScale);
         protected override int EstusChargesMax => 0;
 
         protected override float TopSpeed => 2.7f;
@@ -118,6 +108,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             => itemType == ItemID.TendonBow
                 ? new Vector2(15f / 22f, 20f / 40f)
                 : base.GetHeldRangedGripNorm(itemType);
+        protected override bool ShouldFlipHeldRangedSpriteHorizontally(int itemType)
+            => itemType == ItemID.TendonBow
+                ? NPC.direction == 1
+                : base.ShouldFlipHeldRangedSpriteHorizontally(itemType);
         protected override Vector2 MeleeHandleNorm => new Vector2(0.1f, 0.85f);
         protected override float MeleeWeaponDrawScale => 1.05f;
         protected override float MeleeBladeWidth => 28f;
@@ -287,23 +281,31 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 MoveBrake = 0.34f,
                 Steps = new[]
                 {
-                    new MeleeComboStep
-                    {
-                        Motion = ComboMotion.HorizontalSweep,
-                        TelegraphTicks = 46,
-                        AttackTicks = 30,
-                        DamageMult = 0f,
-                        ReachMult = 3.55f,
-                        ForwardPushMult = 0f,
-                        SwingSpeedMult = 1f,
-                        Ease = SwingEaseStyle.Whip,
-                        HitWindowEnd = 0f,
-                        LeapHeightMult = 1f,
-                        LeapForwardSpeedMult = 1f,
-                    },
+                    DarkHarvestStep(46, 46),
+                    DarkHarvestStep(0, 46),
+                    DarkHarvestStep(0, 0),
                 },
             },
         };
+
+        private static MeleeComboStep DarkHarvestStep(int telegraphTicks, int pauseAfter)
+        {
+            return new MeleeComboStep
+            {
+                Motion = ComboMotion.HorizontalSweep,
+                TelegraphTicks = telegraphTicks,
+                AttackTicks = 30,
+                PostStepPause = pauseAfter,
+                DamageMult = 0f,
+                ReachMult = 4.8f,
+                ForwardPushMult = 0f,
+                SwingSpeedMult = 1f,
+                Ease = SwingEaseStyle.Whip,
+                HitWindowEnd = 0f,
+                LeapHeightMult = 1f,
+                LeapForwardSpeedMult = 1f,
+            };
+        }
 
         protected override MeleeCombo[] MeleeComboPoolOverride => BloodKnightCombos;
 
@@ -379,7 +381,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
             if (combo.Name == DarkHarvestLashName)
-                return distance >= 112f && distance <= 340f;
+                return distance >= 112f
+                    && distance <= Projectiles.Enemy.BloodKnightDarkHarvestWhip.MaximumReach;
             return true;
         }
 
@@ -388,6 +391,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             base.OnMeleeComboStarted(combo);
             _activeComboUsesWhip = combo.Name == DarkHarvestLashName;
             _bloodWhipProjectileSpawned = false;
+            _darkHarvestLashIndex = 0;
 
             if (_activeComboUsesWhip && NPC.HasValidTarget)
                 _lockedWhipAim = CalculateWhipAim(Main.player[NPC.target]);
@@ -402,7 +406,24 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 bool inReturnCut = Vector2.Distance(NPC.Center, target.Center) <= ComboReachBase * 1.18f + 36f;
                 return previousStepHit || (stillInFront && inReturnCut);
             }
+            if (comboName == DarkHarvestLashName)
+                return !previousStepHit && nextStepIndex <= 2;
             return base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
+        }
+
+        public override void PostAI()
+        {
+            base.PostAI();
+
+            // Later lash tells live in the combo's inter-step pause. Track for the readable portion
+            // of that tell and commit for its final ten ticks, exactly like the opening telegraph.
+            if (_activeComboUsesWhip
+                && Phase == AttackPhase.MeleeComboPause
+                && PhaseTimer > 10
+                && NPC.HasValidTarget)
+            {
+                _lockedWhipAim = CalculateWhipAim(Main.player[NPC.target]);
+            }
         }
 
         protected override void ModifyMeleeArcEndpoints(
@@ -450,9 +471,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (!_bloodWhipProjectileSpawned && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 _bloodWhipProjectileSpawned = true;
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), PuppetHandPosition, _lockedWhipAim,
-                    ModContent.ProjectileType<Projectiles.Enemy.BloodKnightDarkHarvestWhip>(),
-                    MeleeDamage, 4f, Main.myPlayer, NPC.whoAmI);
+                SpawnDarkHarvestWhip();
             }
 
             if (!Main.dedServ && elapsed % 5 == 0)
@@ -461,6 +480,34 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     Main.rand.NextVector2Circular(0.7f, 0.7f), 70, default, 0.85f);
                 dust.noGravity = true;
             }
+        }
+
+        protected override void OnComboStepCompleted(MeleeComboStep step)
+        {
+            if (ActiveMeleeComboName != DarkHarvestLashName)
+                return;
+
+            _darkHarvestLashIndex++;
+            if (CurrentComboStepHitConnected
+                || _darkHarvestLashIndex >= 3
+                || !NPC.HasValidTarget
+                || Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            // A whiff may chain into two retries. The preceding lash has reached the end of its
+            // 30-tick retract before this callback runs; the new projectile now spends the entire
+            // 46-tick inter-step pause replaying the same readable telegraph.
+            _lockedWhipAim = CalculateWhipAim(Main.player[NPC.target]);
+            SpawnDarkHarvestWhip();
+        }
+
+        private void SpawnDarkHarvestWhip()
+        {
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), PuppetHandPosition, _lockedWhipAim,
+                ModContent.ProjectileType<Projectiles.Enemy.BloodKnightDarkHarvestWhip>(),
+                MeleeDamage, 4f, Main.myPlayer, NPC.whoAmI);
         }
 
         protected override void OnMeleeComboAttackTick(
@@ -573,13 +620,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             base.DoComboMeleeHit(step);
         }
 
-        protected override void OnRangedBurstStarted(bool secondary)
-        {
-            base.OnRangedBurstStarted(secondary);
-            _bowShotIndex = 0;
-            _bowAimVelocity = Vector2.Zero;
-        }
-
         protected override void DoRangedAttack()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient || !NPC.HasValidTarget)
@@ -595,38 +635,62 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return;
             }
 
-            int pattern = Math.Clamp(ActiveBurstPatternIndex, 0, PhraseAimSnapshots.Length - 1);
-            if (_bowAimVelocity == Vector2.Zero || IsPhraseAimSnapshot(pattern, _bowShotIndex))
-                _bowAimVelocity = SolveArrowVelocity(target, 13.5f);
+            Vector2 arrowVelocity = SolveArrowVelocity(target, 13.5f);
 
             SoundEngine.PlaySound(SoundID.Item5 with { Volume = 0.58f, PitchVariance = 0.06f }, NPC.Center);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), PuppetHandPosition, _bowAimVelocity,
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), PuppetHandPosition, arrowVelocity,
                 ModContent.ProjectileType<Projectiles.Enemy.BloodKnightArrow>(),
                 RangedDamage, 3f, Main.myPlayer, NPC.whoAmI, NPC.target, IsBlackfirePhase ? 1f : 0f);
-            _bowShotIndex++;
-        }
-
-        private bool IsPhraseAimSnapshot(int pattern, int shotIndex)
-        {
-            int[] snapshots = PhraseAimSnapshots[pattern];
-            for (int i = 0; i < snapshots.Length; i++)
-            {
-                if (snapshots[i] == shotIndex)
-                    return true;
-            }
-            return false;
         }
 
         private Vector2 SolveArrowVelocity(Player target, float speed)
         {
             Vector2 origin = PuppetHandPosition;
-            float distance = Vector2.Distance(origin, target.Center);
-            float travelTicks = distance / speed;
-            float extraLeadTicks = _leadMissStreak * 2f;
-            float leadTicks = MathHelper.Clamp(travelTicks + extraLeadTicks, 3f, 70f);
-            Vector2 aimPoint = target.Center + target.velocity * leadTicks;
-            aimPoint.Y -= 0.5f * Projectiles.Enemy.BloodKnightArrow.Gravity * leadTicks * leadTicks;
-            return (aimPoint - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * speed;
+            const float maximumFlightTicks = 180f;
+
+            // Solve |required initial displacement at t| = arrowSpeed * t. This predicts the
+            // player's position at the arrow's actual arrival time and includes the arrow's discrete
+            // per-tick gravity, instead of estimating time from straight-line distance and then
+            // adding progressively more lead after misses.
+            float lowerTime = 0f;
+            float upperTime = maximumFlightTicks;
+            bool foundIntercept = false;
+            for (int tick = 1; tick <= (int)maximumFlightTicks; tick++)
+            {
+                float residual = RequiredArrowVelocity(target, origin, tick).Length() - speed;
+                if (residual <= 0f)
+                {
+                    lowerTime = tick - 1f;
+                    upperTime = tick;
+                    foundIntercept = true;
+                    break;
+                }
+            }
+
+            if (foundIntercept)
+            {
+                for (int iteration = 0; iteration < 10; iteration++)
+                {
+                    float midpoint = (lowerTime + upperTime) * 0.5f;
+                    float residual = RequiredArrowVelocity(target, origin, midpoint).Length() - speed;
+                    if (residual > 0f)
+                        lowerTime = midpoint;
+                    else
+                        upperTime = midpoint;
+                }
+            }
+
+            float arrivalTime = Math.Max(1f, upperTime);
+            return RequiredArrowVelocity(target, origin, arrivalTime)
+                .SafeNormalize(new Vector2(NPC.direction, 0f)) * speed;
+        }
+
+        private static Vector2 RequiredArrowVelocity(Player target, Vector2 origin, float flightTicks)
+        {
+            Vector2 predictedDisplacement = target.Center + target.velocity * flightTicks - origin;
+            predictedDisplacement.Y -= 0.5f * Projectiles.Enemy.BloodKnightArrow.Gravity
+                * flightTicks * (flightTicks + 1f);
+            return predictedDisplacement / Math.Max(1f, flightTicks);
         }
 
         private void FireBloodRain(Player target)
@@ -645,18 +709,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     SecondaryRangedDamage, 3f, Main.myPlayer,
                     NPC.whoAmI, i * 5f, IsBlackfirePhase ? 1f : 0f);
             }
-        }
-
-        public void ReportBloodArrowHit()
-        {
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-                _leadMissStreak = 0;
-        }
-
-        public void ReportBloodArrowMiss()
-        {
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-                _leadMissStreak = Math.Min(4, _leadMissStreak + 1);
         }
 
         public static void ApplyBloodArrowDebuffs(Player target, bool blackfire)

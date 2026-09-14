@@ -33,21 +33,23 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private const int PressureWindowTicks = 60;
         private const int PressureQueueLifetimeTicks = 180;
         private const float BlacksteelWindupCarryRotation = -0.30f;
+        private const float KnightsMeasureWindupCarryRotation = -0.30f;
         private const float FalseRetreatCarryRotation = -1.30f;
         private const float FalseRetreatImpactRotation = 2.54f;
         // The 10-tick airborne downswing covers about 45px at the leap's capped forward speed;
         // begin it only once the player is close enough for the sword to arrive with the knight.
         private const float FalseRetreatLeapStrikeRange = 120f;
-        private const float UmbralLungeStopOffset = 68f;
+        private const float UmbralLungeTargetOvershoot = 200f;
         private const float UmbralLungeMinTravel = 72f;
         private const float UmbralLungeOriginalMaxTravel = 238f;
-        private const float UmbralLungeMaxTravel = UmbralLungeOriginalMaxTravel * 3f;
-        private const int UmbralLungeApproachTicks = 24;
-        private const int UmbralLungeStrikeTicks = 22;
-        private const int UmbralLungeStrikeLiveTicks = 12;
-        private const float UmbralLungeStrikeRange = 92f;
+        private const float UmbralLungeMaxTargetRange = UmbralLungeOriginalMaxTravel * 3f + 68f;
+        private const float UmbralLungeMaxTravel = UmbralLungeMaxTargetRange + UmbralLungeTargetOvershoot;
+        private const int UmbralLungeDashTicks = 24;
+        private const int UmbralLungeLiveTicks = 22;
+        private const int UmbralLungeRecoveryTicks = 40;
         private const float UmbralLungeVibrationMaxX = 1.2f;
         private const float UmbralLungeVibrationMaxY = 0.45f;
+        private const float AttackDamageIncrease = 1.4f;
 
         private int _stormWaveDamage = 35;
         private int _recentPressureHits;
@@ -76,9 +78,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         // Hostile projectiles are doubled by Terraria when they hit a player. Keep puppet
         // hitboxes on the same pre-hit damage scale as Dark Wave rather than NPC contact damage.
-        protected override int MeleeDamage => (int)(35f * tsorcRevampWorld.SubtleSHMScale);
+        protected override int MeleeDamage => (int)(35f * AttackDamageIncrease * tsorcRevampWorld.SubtleSHMScale);
         protected override int RangedDamage => 0;
         protected override int MagicDamage => _stormWaveDamage;
+        private int EdgeOfNightProjectileDamage => (int)(MagicDamage * AttackDamageIncrease);
         protected override int EstusChargesMax => 0;
 
         protected override float TopSpeed => 2.65f;
@@ -88,8 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override float ComboReachBase => 88f;
         protected override float MeleeEngageRange => 100f;
         protected override float ComboMaxStartRange => 330f;
-        protected override float RangedStartComboMaxRange =>
-            UmbralLungeStopOffset + UmbralLungeMaxTravel;
+        protected override float RangedStartComboMaxRange => UmbralLungeMaxTargetRange;
         protected override float ClosingDistanceSpeedMult => 1.55f;
         protected override int ClosingDistanceMaxTicks => 100;
         protected override float ComboTelegraphAdvanceSpeedMult => 0.65f;
@@ -134,7 +136,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override float ComboTelegraphMultiplier => 1f;
         protected override int MinComboTelegraphTicks => 8;
         protected override int MeleeComboInterStepLingerTicks => 5;
-        protected override int MeleeRecoveryLingerTicks => 8;
+        protected override int MeleeRecoveryLingerTicks =>
+            ActiveMeleeComboName == UmbralLungeName ? UmbralLungeRecoveryTicks : 8;
 
         // ActiveMeleeComboName persists after recovery, so scope the landing-timed leap to the
         // combo phases. The backstep finishes at the exact carry pose, the brief pause re-faces,
@@ -241,22 +244,23 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         // Move              Tell   Strike Strike curve       Envelope/live  Tail  Pause Recovery
         // Blacksteel Cut     28     7 in / 26 out, k7     225° / ~180°    20t    -      26t
         // Rising Reversal    26     8 in / 28 out, k6     220° / ~176°    21t    -      28t
-        // Knight's Measure   30     8/24 k6 -> 8/32 k6    225° each       18/24  9t     36t
-        // Umbral Lunge       36     24t approach; 22t thrust             12t live 1t  42t
+        // Knight's Measure   30 direct raise; 8/24 k6 -> 8/32 k6, 225°  18/24  9t     36t
+        // Umbral Lunge       36     24t distance-solved thrust           22t live  -      40t
         // False Retreat       8     24t backstep; leap, 220° / full 10t    -     3t     48t
         // Edge of Night      46     6 in / 30 out, k8     240° / ~192°    24t    -      50t
         //
         // Standard cuts extend their END pose instead of folding farther behind the torso. The
-        // two Measure cuts share exact endpoints. False Retreat's ballistic leap carries the exact
+        // two Measure cuts share exact endpoints; its tell raises directly from carry instead of
+        // sweeping down through the body before the real attack. False Retreat's ballistic leap carries the exact
         // BackstepRaise end pose (-1.30) until the player is in sword range, then sweeps down through
         // 220° over 10 ticks. Edge of Night is the only
         // signature-wide cut and releases its crescent at the six-tick speed peak.
         // Blacksteel's tell deliberately holds the carry pose, then raises 72 degrees into its
         // cocked pose. Reusing the far end of its 225-degree live arc there made the arm retrace
         // a full cut before the strike, which folded the composite arm through an inhuman loop.
-        // Umbral Lunge is two beats: a harmless 72-714px distance-solved approach holding the couch,
-        // then a 22t thrust only if the collision-limited endpoint is within 92px. Its blade checks
-        // remain live for 12t (< the player's 22t roll), followed by 10t harmless settle + 42t recovery.
+        // Umbral Lunge commits its straight sword point throughout one distance-solved dash aimed
+        // 200px beyond the target's release position. The blade is live for 22t (one base roll),
+        // then remains straight and harmless for the full 40t recovery before disappearing.
         private static readonly MeleeCombo[] DarkKnightCombos =
         {
             new MeleeCombo
@@ -314,17 +318,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = new Color(80, 55, 175),
                 CooldownAfterUse = 145,
-                RecoveryTicks = 42,
+                RecoveryTicks = UmbralLungeRecoveryTicks,
                 RangedStartOnly = true,
                 MoveBrake = 0f,
                 Steps = new[]
                 {
-                    // The approach owns the movement but holds the sword couched and harmless.
-                    MotionStep(ComboMotion.Feint, 36, UmbralLungeApproachTicks, 1, 0f),
-                    // Only begins when ShouldContinueMeleeCombo confirms real sword range.
-                    MotionStep(ComboMotion.JoustDash, 0, UmbralLungeStrikeTicks, 0,
+                    // One continuous piercing dash: no planted follow-up swing at the endpoint.
+                    MotionStep(ComboMotion.JoustDash, 36, UmbralLungeDashTicks, 0,
                         1.12f, 1.24f,
-                        (UmbralLungeStrikeLiveTicks - 1f) / UmbralLungeStrikeTicks),
+                        (UmbralLungeLiveTicks - 1f) / UmbralLungeDashTicks),
                 },
             },
             new MeleeCombo
@@ -462,16 +464,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void AI()
         {
-            // Preserve the final authored approach velocity through the transition tick, then clear
-            // it before the following pause/strike tick so the actual sword thrust is planted.
+            // Preserve the final authored dash velocity through the transition tick, then clear it
+            // before recovery so the knight stops at the end of the piercing pass.
             if (Phase != AttackPhase.MeleeComboAttack)
                 _lungeVelocityThisTick = Vector2.Zero;
 
             base.AI();
             UpdatePressureCounter();
 
-            // The lunge distance is solved when the tell begins. Reapply its authored velocity after
-            // the base phase's movement brake so the real dash matches the timing sheet.
+            // Reapply the release-time distance-solved velocity after the base movement brake so the
+            // real dash matches the timing sheet and crosses the target's committed position.
             if (ActiveMeleeComboName == UmbralLungeName
                 && _lungeVelocityThisTick != Vector2.Zero)
             {
@@ -544,20 +546,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 bool insideReturnCut = Vector2.Distance(NPC.Center, target.Center) <= ComboReachBase * 1.18f + 34f;
                 return previousStepHit || (stillInFront && insideReturnCut);
             }
-            if (comboName == UmbralLungeName && nextStepIndex == 1)
-            {
-                Vector2 allowedFinalVelocity = Collision.TileCollision(
-                    NPC.position,
-                    _lungeVelocityThisTick,
-                    NPC.width,
-                    NPC.height);
-                Vector2 approachEndCenter = NPC.Center + allowedFinalVelocity;
-                float forwardDistance = Vector2.Dot(target.Center - approachEndCenter, _lungeDirection);
-                bool stillInFront = forwardDistance >= 0f;
-                bool insideSwordRange = Vector2.Distance(approachEndCenter, target.Center)
-                    <= UmbralLungeStrikeRange;
-                return stillInFront && insideSwordRange;
-            }
             return base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
         }
 
@@ -589,7 +577,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 SpawnNightEdgeSwingArc(combo.Name, step, LeapSlamImpactArcTicks, impactSlam: true);
             }
 
-            if (combo.Name == UmbralLungeName && step.Motion == ComboMotion.Feint)
+            if (combo.Name == UmbralLungeName && step.Motion == ComboMotion.JoustDash)
             {
                 // The 36-tick tell commits the facing direction, but the travel distance is solved
                 // again on release. A player who creates space during the tell can therefore draw
@@ -603,12 +591,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 float speed = _lungeDistance * LungeSpeedWeight(elapsed, total) / Math.Max(0.001f, totalWeight);
                 _lungeVelocityThisTick = _lungeDirection * speed;
-            }
-            else if (combo.Name == UmbralLungeName)
-            {
-                // Plant for the actual short-range sword thrust after the approach has connected.
-                _lungeVelocityThisTick = Vector2.Zero;
-                NPC.velocity.X = 0f;
             }
             else
             {
@@ -626,8 +608,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         private static bool IsNightEdgeArcSwing(ComboMotion motion)
             => motion == ComboMotion.OverheadArc
-                || motion == ComboMotion.UnderhandArc
-                || motion == ComboMotion.JoustDash;
+                || motion == ComboMotion.UnderhandArc;
 
         private const int LeapSlamImpactArcTicks = 10;
 
@@ -648,12 +629,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private void SpawnNightEdgeSwingArc(string comboName, MeleeComboStep step, int total,
             bool impactSlam = false)
         {
-            // JoustDash is deliberately just the sword's 90° couch-to-45° thrust, rather than
-            // a decorative broad crescent. TrackPuppetBlade replaces this fallback with the live
-            // blade pose every frame, including during the twelve-tick damage window.
-            float authoredSweep = step.Motion == ComboMotion.JoustDash
-                ? MathHelper.PiOver4 - MathHelper.PiOver2
-                : comboName switch
+            float authoredSweep = comboName switch
                 {
                     BlacksteelCutName or KnightsMeasureName => MathHelper.ToRadians(225f),
                     RisingReversalName or FalseRetreatName => MathHelper.ToRadians(220f),
@@ -716,7 +692,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             float forwardDistance = Vector2.Dot(target.Center - NPC.Center, _lungeDirection);
             _lungeDistance = MathHelper.Clamp(
-                forwardDistance - UmbralLungeStopOffset,
+                forwardDistance + UmbralLungeTargetOvershoot,
                 UmbralLungeMinTravel,
                 UmbralLungeMaxTravel);
         }
@@ -735,9 +711,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         protected override void OnComboStepCompleted(MeleeComboStep step)
         {
-            // Keep the approach's last velocity until the outer AI override applies it. It is
-            // cleared at the start of the following pause tick; every other step clears now.
-            if (ActiveMeleeComboName != UmbralLungeName || step.Motion != ComboMotion.Feint)
+            // Preserve the final authored dash velocity through this transition tick; AI() clears
+            // it before the first recovery tick, so the 24 speed weights still sum to full travel.
+            if (ActiveMeleeComboName != UmbralLungeName || step.Motion != ComboMotion.JoustDash)
                 _lungeVelocityThisTick = Vector2.Zero;
         }
 
@@ -767,7 +743,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     if (motion == ComboMotion.OverheadArc)
                     {
                         startRotation = -1.55f;
-                        endRotation = 2.38f; // 225 degree envelope, about 180 degrees live.
+                        endRotation = Phase == AttackPhase.MeleeComboTelegraph
+                            ? KnightsMeasureWindupCarryRotation
+                            : 2.38f; // 225 degree envelope, about 180 degrees live.
                     }
                     else if (motion == ComboMotion.UnderhandArc)
                     {
@@ -785,11 +763,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     break;
 
                 case UmbralLungeName:
-                    if (motion == ComboMotion.Feint)
+                    if (motion == ComboMotion.JoustDash)
                     {
-                        // Reuse JoustDash's couch-to-level poses, but hold the first pose throughout
-                        // the non-damaging approach. The next step owns the visible thrust.
-                        startRotation = MathHelper.PiOver2;
+                        // Night's Edge is already level when the dash begins and stays point-first
+                        // through the live pierce and the forty-tick recovery.
+                        startRotation = MathHelper.PiOver4;
                         endRotation = MathHelper.PiOver4;
                     }
                     break;
@@ -928,7 +906,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 .SafeNormalize(new Vector2(NPC.direction, 0f)) * 12f;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
                 ModContent.ProjectileType<Projectiles.Enemy.AbyssSlash>(),
-                MagicDamage, 5f, Main.myPlayer, NPC.whoAmI + 1);
+                EdgeOfNightProjectileDamage, 5f, Main.myPlayer, NPC.whoAmI + 1);
         }
 
         public override void SendExtraAI(BinaryWriter writer)
