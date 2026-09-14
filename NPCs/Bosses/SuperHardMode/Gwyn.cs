@@ -275,6 +275,45 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        // The flurry's finale leap has to actually arrive. The base 1.7x forward cap tops out near
+        // 280px, 0 lead aims at where the player WAS, and 0 tracking locks that at takeoff.
+        // Scoped to the flurry: Cindering Leap / Roll-Catch have reach gates tuned to the base cap.
+        protected override float LeapAttackForwardSpeed
+        {
+            get
+            {
+                if (WrathFlurrySwinging)
+                {
+                    return TopSpeed * FlurryLeapForwardSpeedMult;
+                }
+                return base.LeapAttackForwardSpeed;
+            }
+        }
+
+        protected override float LeapAttackTargetLeadTicks
+        {
+            get
+            {
+                if (WrathFlurrySwinging)
+                {
+                    return FlurryPursuitTargetLeadTicks;
+                }
+                return base.LeapAttackTargetLeadTicks;
+            }
+        }
+
+        protected override float LeapAttackAscentTrackingStrength
+        {
+            get
+            {
+                if (WrathFlurrySwinging)
+                {
+                    return FlurryLeapTrackingStrength;
+                }
+                return base.LeapAttackAscentTrackingStrength;
+            }
+        }
+
         protected override float LeapSlamImpactRotation
         {
             get
@@ -370,6 +409,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const string CinderingLeapName = "Cindering Leap";
         const string CinderfallName = "Cinderfall";
         const string ThreeHitName = "3-Hit";
+        // 3-Hit forward push (x TopSpeed) for cuts 2 and 3, and the surge either becomes when the
+        // target has left reach at the pause. Shared by the table and ModifyNextMeleeComboStep.
+        const float ThreeHitSecondPush = 0.95f;
+        const float ThreeHitThirdPush = 1.15f;
+        const float ThreeHitSurgePush = 1.45f;
         const string JudgmentGuillotineName = "Judgment Guillotine";
         const string RiposteCounterName = "Riposte Counter";
 
@@ -442,23 +486,39 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //
         // Trigger:       every completed normal Flurry swipe that hit nobody, while the next step is
         //                not the authored final leap and the target is >112px away.
-        // Run tell:      at least 8t; up to 36t while SF4 routes terrain and closes to a solvable arc.
-        // Jump:          7.5-11px/t upward, <=TopSpeed*2.4 horizontal, calculated from real gravity
-        //                and vertical displacement to land 84px short of a 10t-led target position.
-        // Tracking:      8% correction while rising; direction and trajectory lock on descent.
+        // Run tell:      4t kick-off, then jumps as soon as any ballistic line exists. The run only
+        //                lasts up to 36t when the target is too high to reach at all.
+        // Jump:          5.5-11.5px/t upward, <=11px/t horizontal. The arc is raised until 11px/t
+        //                covers the gap (flat ground: airtime 2u/g), so ~840px is reachable in one hop.
+        //                Lands 40px short of an 18t-led target, inside the ~88px visible blade.
+        // Tracking:      30% correction every tick of the flight (not only rising) until the last 6t.
+        //                Never reverses through the player. Up to 2 extra hops if still out of reach.
         // Damage/VFX:    no hitbox/projectile; sword holds the shared endpoint, feet shed fire dust.
+        //                The damage is the next swipe, which surges forward if he is still out of reach.
         // Multiplayer:   server decides from authoritative hit state and syncs the pursuit snapshot.
         const int FlurryPursuitFirstFinaleStepIndex = 7;
         const float FlurryPursuitTriggerRange = 112f;
-        const int FlurryPursuitMinRunTicks = 8;
+        const int FlurryPursuitMinRunTicks = 4;
         const int FlurryPursuitMaxRunTicks = 36;
         const float FlurryPursuitRunSpeedMult = 2.4f;
-        const float FlurryPursuitAccelerationMult = 1.3f;
-        const float FlurryPursuitLandingStandoff = 84f;
-        const float FlurryPursuitTargetLeadTicks = 10f;
-        const float FlurryPursuitMinUpSpeed = 7.5f;
-        const float FlurryPursuitMaxUpSpeed = 11f;
-        const float FlurryPursuitAscentTrackingStrength = 0.08f;
+        const float FlurryPursuitAccelerationMult = 2.5f;
+        const float FlurryPursuitLandingStandoff = 40f;
+        const float FlurryPursuitTargetLeadTicks = 18f;
+        const float FlurryPursuitTargetLeadMax = 160f;
+        const float FlurryPursuitMinUpSpeed = 5.5f;
+        const float FlurryPursuitMaxUpSpeed = 11.5f;
+        const float FlurryPursuitMaxLeapSpeed = 11f;
+        const float FlurryPursuitTrackingStrength = 0.3f;
+        const int FlurryPursuitMaxExtraHops = 2;
+        // Swipe forward drive (x TopSpeed, held for the whole 55t step). 0.8 = ~2.1px/t, ~115px per
+        // swipe; a swipe that starts with the player out of reach surges at 1.7 = ~4.4px/t, ~240px
+        // (5.4px/t in Wrath). Its 18t live window still loses to a roll away (~110px), by design.
+        const float FlurrySwipePush = 0.8f;
+        const float FlurrySwipeSurgePush = 1.7f;
+        // The finale leap: TopSpeed x 3.4 forward cap (8.8px/t, 10.9 in Wrath) over ~63t aloft reaches
+        // ~550-690px (the base 1.7 capped it near 280), led 18t, 20% ascent tracking.
+        const float FlurryLeapForwardSpeedMult = 3.4f;
+        const float FlurryLeapTrackingStrength = 0.2f;
         // The finale's punish window: three seconds with no attack. The first MeleeRecoveryLingerTicks
         // are the planted landing beat, then the sword is put away and he walks forward at this
         // fraction of TopSpeed.
@@ -551,7 +611,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             windupHoldTicks: 20);
 
         // Riposte Counter timing sheet
-        // The 60t guard has already raised the sword. On a successful melee bait, the counter holds
+        // The 90t guard has already raised the sword. On a successful melee bait, the counter holds
         // that pose for 18t while the clang lands, then cuts from -1.62 to 2.29 rad. Its 0.15-0.78
         // live interval is 15 of the 24 swing ticks, comfortably inside the player's 22t roll.
         // The 40t recovery is the reward for baiting or rolling the counter instead of trading.
@@ -665,8 +725,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 180, RecoveryTicks = 34,
                 Steps = new[] {
                     WeightedSwordSwing(ComboMotion.HorizontalSweep, 28, 9, 36, 6.5f, 10, 0.9f, 1.45f, 0.75f),
-                    WeightedSwordSwing(ComboMotion.UnderhandArc,     0, 9, 36, 6.5f, 10, 0.9f, 1.45f, 0.95f),
-                    WeightedSwordSwing(ComboMotion.OverheadArc,      0, 9, 36, 6.5f,  0, 1.3f, 1.50f, 1.15f),
+                    WeightedSwordSwing(ComboMotion.UnderhandArc,     0, 9, 36, 6.5f, 10, 0.9f, 1.45f, ThreeHitSecondPush),
+                    WeightedSwordSwing(ComboMotion.OverheadArc,      0, 9, 36, 6.5f,  0, 1.3f, 1.50f, ThreeHitThirdPush),
                 } },
             // 9 — Roll-Catch: leap in, then the flip slam lands where a panicked roll ends
             new MeleeCombo { Name = "Roll-Catch", BaseWeight = 30, Preferred = ComboRangeBand.Mid,
@@ -693,13 +753,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Steps = new[] {
                     // 55 ticks each (10 building speed, 45 decaying onto the next start) + a 10-tick
                     // hold. Reach stays under 1.15 so only the leaps throw a crescent.
-                    FlurrySwipe(ComboMotion.UnderhandArc, FlurryTelegraphTicks, 0.8f, 1.1f, 0.45f),
-                    FlurrySwipe(ComboMotion.OverheadArc,  0, 0.8f, 1.1f, 0.45f),
-                    FlurrySwipe(ComboMotion.UnderhandArc, 0, 0.8f, 1.1f, 0.45f),
-                    FlurrySwipe(ComboMotion.OverheadArc,  0, 0.8f, 1.1f, 0.45f),
-                    FlurrySwipe(ComboMotion.UnderhandArc, 0, 0.8f, 1.1f, 0.45f),
-                    FlurrySwipe(ComboMotion.OverheadArc,  0, 0.8f, 1.1f, 0.45f),
-                    FlurrySwipe(ComboMotion.UnderhandArc, 0, 0.8f, 1.1f, 0.45f),
+                    FlurrySwipe(ComboMotion.UnderhandArc, FlurryTelegraphTicks, 0.8f, 1.1f, FlurrySwipePush),
+                    FlurrySwipe(ComboMotion.OverheadArc,  0, 0.8f, 1.1f, FlurrySwipePush),
+                    FlurrySwipe(ComboMotion.UnderhandArc, 0, 0.8f, 1.1f, FlurrySwipePush),
+                    FlurrySwipe(ComboMotion.OverheadArc,  0, 0.8f, 1.1f, FlurrySwipePush),
+                    FlurrySwipe(ComboMotion.UnderhandArc, 0, 0.8f, 1.1f, FlurrySwipePush),
+                    FlurrySwipe(ComboMotion.OverheadArc,  0, 0.8f, 1.1f, FlurrySwipePush),
+                    FlurrySwipe(ComboMotion.UnderhandArc, 0, 0.8f, 1.1f, FlurrySwipePush),
                     // Finale: the underhand above ends cocked behind his head, which is exactly the
                     // leap's carry pose, so he launches straight out of the 10-tick hold.
                     FlurryLeap(0, 1.3f),
@@ -875,6 +935,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int _flurryPursuitAirTicks;
         float _flurryPursuitVelocityX;
         int _flurryPursuitLockedDirection = 1;
+        // Chained hops taken in this pause. Server-only decision, so it is not synced.
+        int _flurryPursuitHops;
 
         ///<summary>After every ordinary Wrath Flurry swipe, decide whether its inter-step pause needs
         ///a run-and-jump pursuit. The final authored leap already closes distance and is left alone.</summary>
@@ -911,14 +973,46 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (comboName == ThreeHitName)
             {
+                // Authored push for this cut. Assigned both ways: the pool is the static GwynCombos
+                // table, so the old one-way Math.Max raise stuck at 1.45 for every later 3-Hit.
+                float authoredPush = ThreeHitSecondPush;
+                if (nextStepIndex >= 2)
+                {
+                    authoredPush = ThreeHitThirdPush;
+                }
+
                 float nextReach = ComboReachBase * 0.7f * nextStep.ReachMult;
-                if (NPC.Distance(target.Center) > nextReach)
+                bool outOfReach = NPC.Distance(target.Center) > nextReach;
+                if (outOfReach)
                 {
                     // About 170px over the 45t step at base TopSpeed, enough to stay attached to a
                     // retreat without tracking through a player who rolled behind the committed cut.
-                    nextStep.ForwardPushMult = Math.Max(nextStep.ForwardPushMult, 1.45f);
+                    nextStep.ForwardPushMult = Math.Max(authoredPush, ThreeHitSurgePush);
+                }
+                else
+                {
+                    nextStep.ForwardPushMult = authoredPush;
                 }
                 return;
+            }
+
+            // Wrath Flurry swipes surge at a player who is still out of blade reach when the pause
+            // ends (a pursuit that landed short, or no pursuit because the swipe hit). Assigned both
+            // ways: the pool is the static GwynCombos table, so a one-way raise would stick forever.
+            bool flurrySwipe = comboName == WrathFlurryName
+                && (nextStep.Motion == ComboMotion.UnderhandArc || nextStep.Motion == ComboMotion.OverheadArc);
+            if (flurrySwipe)
+            {
+                float nextReach = ComboReachBase * 0.7f * nextStep.ReachMult;
+                bool outOfReach = NPC.Distance(target.Center) > nextReach;
+                if (outOfReach)
+                {
+                    nextStep.ForwardPushMult = FlurrySwipeSurgePush;
+                }
+                else
+                {
+                    nextStep.ForwardPushMult = FlurrySwipePush;
+                }
             }
         }
 
@@ -1000,11 +1094,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 bool canLaunch = TrySolveFlurryPursuitLaunch(target,
                     out float launchVelocityX,
-                    out float launchUpSpeed,
-                    out bool fullyReachable);
+                    out float launchUpSpeed);
+                // Jump as soon as a ballistic line exists. An out-of-range gap still launches at the
+                // 11px/t cap and keeps tracking; waiting to run into range is what made him slow.
                 if (grounded && _flurryPursuitRunTicks >= FlurryPursuitMinRunTicks
-                    && canLaunch
-                    && (fullyReachable || _flurryPursuitRunTicks >= FlurryPursuitMaxRunTicks))
+                    && canLaunch)
                 {
                     BeginFlurryPursuitJump(launchVelocityX, launchUpSpeed, towardTarget);
                 }
@@ -1024,15 +1118,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.direction = _flurryPursuitLockedDirection;
                 NPC.spriteDirection = _flurryPursuitLockedDirection;
 
-                // Correct only while rising. At the apex the landing line becomes a committed,
-                // dodgeable trajectory rather than homing through the player's response.
-                if (NPC.velocity.Y < 0f
-                    && TrySolveRemainingFlurryPursuitVelocity(target, out float desiredVelocityX))
+                // Track the whole flight: this hop carries no hitbox, so homing is pressure, not an
+                // undodgeable hit. The solver stops correcting inside the last 6 ticks of airtime.
+                if (TrySolveRemainingFlurryPursuitVelocity(target, out float desiredVelocityX))
                 {
                     _flurryPursuitVelocityX = MathHelper.Lerp(
                         _flurryPursuitVelocityX,
                         desiredVelocityX,
-                        FlurryPursuitAscentTrackingStrength);
+                        FlurryPursuitTrackingStrength);
                 }
                 NPC.velocity.X = _flurryPursuitVelocityX;
 
@@ -1043,6 +1136,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (landed)
                 {
                     SpawnFlurryPursuitDust(14, 1.45f);
+
+                    // Still out of reach (the player kept running): kick off again instead of
+                    // swiping at air. FlurryPursuitMaxExtraHops bounds it so the flurry resumes.
+                    bool stillOutOfReach = NPC.Distance(target.Center) > FlurryPursuitTriggerRange;
+                    if (stillOutOfReach && _flurryPursuitHops < FlurryPursuitMaxExtraHops)
+                    {
+                        _flurryPursuitHops++;
+                        _flurryPursuitAirborne = false;
+                        _flurryPursuitRunTicks = 0;
+                        _flurryPursuitAirTicks = 0;
+                        NPC.netUpdate = true;
+                        return;
+                    }
+
                     ResetFlurryPursuit(releasePause: true);
                     return;
                 }
@@ -1054,13 +1161,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool TrySolveFlurryPursuitLaunch(
             Player target,
             out float velocityX,
-            out float upSpeed,
-            out bool fullyReachable)
+            out float upSpeed)
         {
             float gravity = NPC.gravity > 0f ? NPC.gravity : 0.3f;
+            int direction = target.Center.X < NPC.Center.X ? -1 : 1;
+            float targetLead = MathHelper.Clamp(
+                target.velocity.X * FlurryPursuitTargetLeadTicks,
+                -FlurryPursuitTargetLeadMax,
+                FlurryPursuitTargetLeadMax);
+            float landingX = target.Center.X + targetLead
+                - direction * FlurryPursuitLandingStandoff;
+            float horizontalGap = Math.Abs(landingX - NPC.Center.X);
+
+            // Launch hard enough for BOTH the height and the distance. Height: v = sqrt(2g*rise).
+            // Distance: flat-ground airtime is 2u/g, so covering the gap at the 11px/t cap needs
+            // u = g*gap / (2*cap). Short gaps clamp to the 5.5 minimum, a fast ~37-tick hop.
             float rise = Math.Max(0f, NPC.Bottom.Y - target.Bottom.Y);
             float riseSpeed = (float)Math.Sqrt(2f * gravity * (rise + 16f)) + 0.5f;
-            upSpeed = MathHelper.Clamp(riseSpeed,
+            float distanceSpeed = gravity * horizontalGap / (2f * FlurryPursuitMaxLeapSpeed);
+            float neededUpSpeed = Math.Max(riseSpeed, distanceSpeed);
+            upSpeed = MathHelper.Clamp(neededUpSpeed,
                 FlurryPursuitMinUpSpeed,
                 FlurryPursuitMaxUpSpeed);
 
@@ -1069,21 +1189,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (discriminant < 0f)
             {
                 velocityX = 0f;
-                fullyReachable = false;
                 return false;
             }
 
             float airtime = (upSpeed + (float)Math.Sqrt(discriminant)) / gravity;
-            int direction = target.Center.X < NPC.Center.X ? -1 : 1;
-            float targetLead = MathHelper.Clamp(
-                target.velocity.X * FlurryPursuitTargetLeadTicks,
-                -96f,
-                96f);
-            float landingX = target.Center.X + targetLead
-                - direction * FlurryPursuitLandingStandoff;
             float rawVelocityX = (landingX - NPC.Center.X) / Math.Max(1f, airtime);
-            float maxVelocityX = TopSpeed * FlurryPursuitRunSpeedMult;
-            fullyReachable = Math.Abs(rawVelocityX) <= maxVelocityX;
+            float maxVelocityX = FlurryPursuitMaxLeapSpeed;
             velocityX = MathHelper.Clamp(rawVelocityX, -maxVelocityX, maxVelocityX);
             return true;
         }
@@ -1108,12 +1219,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             float targetLead = MathHelper.Clamp(
                 target.velocity.X * FlurryPursuitTargetLeadTicks,
-                -96f,
-                96f);
+                -FlurryPursuitTargetLeadMax,
+                FlurryPursuitTargetLeadMax);
             float landingX = target.Center.X + targetLead
                 - _flurryPursuitLockedDirection * FlurryPursuitLandingStandoff;
             float rawVelocityX = (landingX - NPC.Center.X) / remainingTicks;
-            float maxVelocityX = TopSpeed * FlurryPursuitRunSpeedMult;
+            float maxVelocityX = FlurryPursuitMaxLeapSpeed;
             velocityX = MathHelper.Clamp(rawVelocityX, -maxVelocityX, maxVelocityX);
 
             // Never reverse through the player during correction. A side-switch is answered by the
@@ -1153,6 +1264,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _flurryPursuitRunTicks = 0;
             _flurryPursuitAirTicks = 0;
             _flurryPursuitVelocityX = 0f;
+            _flurryPursuitHops = 0;
             if (releasePause && Phase == AttackPhase.MeleeComboPause)
             {
                 PhaseTimer = 1;
@@ -1971,13 +2083,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // ── Greatsword Boomerang (full-lane reach — the edge-camper punish) ──────
         // Attack spec — Greatsword Boomerang / PuppetNPC Boomerang phases + GwynGreatswordBoomerang.
         // Weapon: EnemySwordOfGwyn, raised for 26t then thrown halfway through a 28t overhead chop.
-        // Birth/life/death: launches from the forward hand at 15px/t, spins with a gold/fire dust
+        // Birth/life/death: leaves the forward hand nearly stationary and eases up to 15px/t over 40t
+        // (spin revs up from 15% on the same curve; damaging throughout, as the release tell), with a gold/fire dust
         // wake, passes through terrain deliberately, then homes to Gwyn and ends with the catch sound.
         // Reach: selectable from 200-2850px (3x the old 950px maximum); aim locks on release and the
         // outbound leg ends 300px beyond that player position before the return begins.
         // VFX: pixel-filtered cinder copies behind the crisp sword; additive, behind the projectile.
         // Selection: 7% eligible idle roll, 420t cooldown; 60t recovery leaves Gwyn punishable.
-        // Fairness: 26t raise + 14t of visible chop before release; rollable, terrain-piercing.
+        // Fairness: 26t raise + 14t of visible chop before release, then a 40t spin-up before the blade
+        // reaches full speed; rollable, terrain-piercing.
         // Multiplayer: the server locks and sends outbound distance; projectile damage remains hostile.
         protected override bool  CanBoomerang               => true;
         protected override float BoomerangMinRange          => 200f;
@@ -2015,7 +2129,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             Player target = Main.player[NPC.target];
             Vector2 origin = NPC.Center + new Vector2(NPC.direction * 26f, -14f);
-            Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 15f;
+            Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f))
+                * Projectiles.Enemy.GwynGreatswordBoomerang.LaunchSpeed;
             float outboundDistance = Vector2.Distance(origin, target.Center)
                 + Projectiles.Enemy.GwynGreatswordBoomerang.TargetOvershoot;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
@@ -2213,7 +2328,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         // ── Riposte Stance (reactive guard -> melee punish OR projectile return) ──
         // Attack spec
-        // Weapon / pose: EnemySwordOfGwyn remains visibly raised at -1.62 rad for the full 60t guard.
+        // Weapon / pose: EnemySwordOfGwyn remains visibly raised at -1.62 rad for the full 90t guard
+        // (was 60t, which read as gone before the player noticed it).
         // Entry: a far player's shot on a collision course starts it deterministically; a close melee hit
         // has a 1-in-3 chance to provoke it, while neutral bait is only a 1-in-180 roll. Every entry opens
         // the same 480t (8 second) cooldown.
@@ -2225,7 +2341,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // hostile shot aimed back at its owner. One guard reflects at most one projectile.
         // Multiplayer: guard/cooldown/counter state is extra-AI synchronized; spawn, capture, damage and
         // melee selection are server-authoritative. Each client generates only its local dust and lighting.
-        const int RiposteGuardTicks = 60;
+        const int RiposteGuardTicks = 90;
         const int RiposteCooldownTicks = 8 * 60;
         const float RiposteMeleeTriggerRange = 180f;
         const float RiposteReflectMinimumRange = 340f;

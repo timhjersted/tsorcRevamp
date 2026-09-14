@@ -92,7 +92,7 @@ namespace ShaderPreview
             {
                 var target = new RenderTarget2D(GraphicsDevice, _size, _size);
                 GraphicsDevice.SetRenderTarget(target);
-                GraphicsDevice.Clear(Color.Transparent);
+                GraphicsDevice.Clear(recipe.Clear);
 
                 // ArtoriasVFX.Draw: source rect is the full texture when fullTexture, else the draw
                 // size clamped to the texture; scale maps that source onto the requested world size.
@@ -101,7 +101,14 @@ namespace ShaderPreview
                 int sourceX = 0;
                 int sourceY = 0;
                 int frame = 0;
-                if (recipe.SourceColumns > 1 || recipe.SourceRows > 1)
+                if (recipe.SourceOverride.HasValue)
+                {
+                    sourceX = recipe.SourceOverride.Value.X;
+                    sourceY = recipe.SourceOverride.Value.Y;
+                    sourceWidth = recipe.SourceOverride.Value.Width;
+                    sourceHeight = recipe.SourceOverride.Value.Height;
+                }
+                else if (recipe.SourceColumns > 1 || recipe.SourceRows > 1)
                 {
                     sourceWidth = primary.Width / recipe.SourceColumns;
                     sourceHeight = primary.Height / recipe.SourceRows;
@@ -160,6 +167,8 @@ namespace ShaderPreview
                 Vector2 blocks = Vector2.Max(worldDrawSize / recipe.PixelBlockSize, Vector2.One);
                 effect.Parameters["PixelGrid"]?.SetValue(
                     new Vector4(blocks.X, blocks.Y, 1f / blocks.X, 1f / blocks.Y));
+
+                recipe.Configure?.Invoke(effect, progress, scale.X);
 
                 var batch = new SpriteBatch(GraphicsDevice);
                 batch.Begin(SpriteSortMode.Immediate, recipe.Blend, SamplerState.LinearWrap,
@@ -220,6 +229,7 @@ namespace ShaderPreview
                 Path.Combine(_repoRoot, "Textures", "Noise", name + ".png"),
                 Path.Combine(_repoRoot, "Textures", name + ".png"),
                 Path.Combine(_repoRoot, "Textures", "Particles", name + ".png"),
+                Path.Combine(_repoRoot, name + ".png"),
             };
 
             foreach (string candidate in candidates)

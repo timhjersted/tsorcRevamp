@@ -29,6 +29,10 @@ namespace tsorcRevamp.Projectiles.Enemy
         const float PullSpeed = 14f;
         const float CaptureStandoff = 72f;
         const int GrabPadding = 14;
+        // Tile-collision box, far smaller than the 46px player hitbox. The hand launches ~18px above
+        // Gwyn's feet, so a 46px box centred there sat ~5px inside the floor row: every level or
+        // downward throw hit a "wall" on its first tick and retracted into the hand unseen.
+        const int TileCollisionSize = 12;
         const int ShaderDrawSize = 58;
         const float PixelBlockSize = 2f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
@@ -214,6 +218,16 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool CanHitPlayer(Player target)
         {
             return State == StateFlying;
+        }
+
+        public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
+        {
+            // Shrink only the terrain box (see TileCollisionSize); Colliding() keeps the full grab reach.
+            // Platforms are passable so the one Gwyn stands on can't catch a downward throw either.
+            width = TileCollisionSize;
+            height = TileCollisionSize;
+            fallThrough = true;
+            return true;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

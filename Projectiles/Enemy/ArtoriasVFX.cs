@@ -21,6 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Effect> boomerangOrbitEffect;
         static Asset<Effect> boomerangTrailEffect;
         static Asset<Effect> tendrilEffect;
+        static Asset<Effect> tendrilReachEffect;
         static Asset<Effect> tendrilHandEffect;
         static Asset<Effect> mantleEffect;
         static Asset<Effect> purpleFireEffect;
@@ -32,6 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         static Asset<Texture2D> circleGradient;
         static Asset<Texture2D> cracks;
         static Asset<Texture2D> windstreak;
+        static Asset<Texture2D> tendrilCoreMask;
         static Asset<Texture2D> smoke;
         static Asset<Texture2D> roundSmoke;
         static Asset<Texture2D> aura;
@@ -69,6 +71,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             boomerangOrbitEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasBoomerangOrbit", AssetRequestMode.ImmediateLoad);
             boomerangTrailEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasBoomerangTrail", AssetRequestMode.ImmediateLoad);
             tendrilEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssTendril", AssetRequestMode.ImmediateLoad);
+            tendrilReachEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssTendrilReach", AssetRequestMode.ImmediateLoad);
             tendrilHandEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssHand", AssetRequestMode.ImmediateLoad);
             mantleEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasAbyssMantle", AssetRequestMode.ImmediateLoad);
             purpleFireEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasPurpleFire", AssetRequestMode.ImmediateLoad);
@@ -80,6 +83,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             circleGradient ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Gradient_circle22", AssetRequestMode.ImmediateLoad);
             cracks ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Cracks336", AssetRequestMode.ImmediateLoad);
             windstreak ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Windstreak3", AssetRequestMode.ImmediateLoad);
+            tendrilCoreMask ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Wave66", AssetRequestMode.ImmediateLoad);
             smoke ??= ModContent.Request<Texture2D>(NoiseRoot + "T_smoke_b7", AssetRequestMode.ImmediateLoad);
             roundSmoke ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_RoundSmoke71", AssetRequestMode.ImmediateLoad);
             aura ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Aurax44", AssetRequestMode.ImmediateLoad);
@@ -393,20 +397,23 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
 
             float rotation = delta.ToRotation();
-            Draw(tendrilEffect, "ArtoriasTendrilShadow", abyssFog, brokenNoise,
+            // Tendril Reach alone uses the copied 2x2-pixel shader family. The original
+            // ArtoriasAbyssTendril asset remains available to its impale consumers and as a
+            // smooth backup if this attack needs to be switched back independently.
+            Draw(tendrilReachEffect, "ArtoriasTendrilReachShadow", abyssFog, brokenNoise,
                 Vector2.Lerp(start, end, 0.5f), new Vector2(length, 76f), rotation,
                 VoidBlack, AbyssIndigo, KnightSilver, opacity * 0.86f, tension,
-                tension, 1f, BlendState.AlphaBlend);
-            Draw(tendrilEffect, "ArtoriasTendrilCore", windstreak, brokenNoise,
+                tension, 1f, BlendState.AlphaBlend, fullTexture: true, pixelBlockSize: 2f);
+            Draw(tendrilReachEffect, "ArtoriasTendrilReachCore", tendrilCoreMask, brokenNoise,
                 Vector2.Lerp(start, end, 0.5f), new Vector2(length, 46f), rotation,
                 VoidBlack, AbyssViolet, KnightSilver, opacity, tension,
-                tension, 1f, BlendState.Additive);
+                tension, 1f, BlendState.Additive, fullTexture: true, pixelBlockSize: 2f);
 
-            Draw(tendrilEffect, "ArtoriasTendrilTip", aura, brokenNoise,
+            Draw(tendrilReachEffect, "ArtoriasTendrilReachTip", aura, brokenNoise,
                 end, hostileTip ? new Vector2(62f, 54f) : new Vector2(46f, 38f), rotation,
                 VoidBlack, hostileTip ? DangerMagenta : AbyssViolet, KnightSilver,
                 hostileTip ? 0.94f : 0.50f, tension, hostileTip ? 1f : 0f, 1f,
-                BlendState.Additive);
+                BlendState.Additive, fullTexture: true, pixelBlockSize: 2f);
         }
 
         /// <summary>Soft radial halo behind the impale burst - a plain tinted draw of the existing

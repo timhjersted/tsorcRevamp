@@ -38,6 +38,14 @@ namespace tsorcRevamp.Projectiles.VFX
         NPC,
     }
 
+    public enum VanillaSwordArcCinderStyle : byte
+    {
+        /// <summary>FireSlashFlame: animated fire that rises past the crescent as wisps, 2px filter.</summary>
+        Flame,
+        /// <summary>BlockyFireSlash: the original chunky material, clipped to the crescent sprite.</summary>
+        Blocky,
+    }
+
     /// <summary>
     /// Appearance, timing, particles, and optional collision for <see cref="VanillaSwordArc"/>.
     /// Angles are world-space radians. Dust radial/tangential speeds are relative to the current
@@ -72,9 +80,9 @@ namespace tsorcRevamp.Projectiles.VFX
 
         // Optional fire-material pass. It reuses the exact same source frame, pivot, rotation,
         // scale, and flip as the readable vanilla arc below, so the shader cannot drift away from
-        // the sword silhouette. This uses the already-compiled GwynCinderBlade technique; enabling
-        // it does not require rebuilding an effect file.
+        // the sword silhouette. Both styles live in Effects/GwynCinderTrail.fx.
         public bool DrawCinderOverlay;
+        public VanillaSwordArcCinderStyle CinderOverlayStyle = VanillaSwordArcCinderStyle.Flame;
         public float CinderOverlayOpacity = 0.6f;
         public Color CinderOverlayDarkColor = new Color(64, 8, 2);
         public Color CinderOverlayFlameColor = new Color(255, 116, 14);
@@ -148,6 +156,10 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 Easing = VanillaSwordArcEasing.Linear;
             }
+            if (!Enum.IsDefined(typeof(VanillaSwordArcCinderStyle), CinderOverlayStyle))
+            {
+                CinderOverlayStyle = VanillaSwordArcCinderStyle.Flame;
+            }
 
             Duration = Math.Clamp(Duration, 1, 600);
             WeightedEaseInTicks = Math.Clamp(WeightedEaseInTicks, 0, Duration);
@@ -203,6 +215,9 @@ namespace tsorcRevamp.Projectiles.VFX
 
         static Effect cinderOverlayEffect;
         static Texture2D cinderOverlayNoise;
+        // FireSlashFlame scrolls its noise continuously, so it needs a texture with no wrap seam.
+        // T_Aurax44 (kept for the blocky style) has a hard seam on both axes that strobed through the fire.
+        static Texture2D fireSlashFlameNoise;
 
         float Progress => MathHelper.Clamp(Projectile.localAI[0] / settings.Duration, 0f, 1f);
         int SweepDirection => settings.SweepAngle >= 0f ? 1 : -1;
@@ -604,6 +619,21 @@ namespace tsorcRevamp.Projectiles.VFX
             return false;
         }
 
+        // FireSlashFlame geometry, in screen pixels at 1x zoom. Wisps rise up to FlameWispReachPixels past
+        // the crescent and lick up to +-FlameWispDriftPixels sideways: worst-case offset sqrt(10^2 + 8^2)
+        // = 12.8px. VanillaSwordArc.png keeps >= 4px of empty margin around every frame's art, plus 12px of
+        // quad padding = 16px, so the shader's displaced lookup at a quad edge always lands on empty
+        // texels and alpha provably reaches 0 before the edge. Changing these constants breaks that proof.
+        const float FlameWispReachPixels = 10f;
+        const float FlameWispDriftPixels = 8f;
+        const float FlameQuadPaddingPixels = 12f;
+        const float FlamePixelBlockSize = 2f;
+
+        // The blocky style never set its own PixelGrid: it inherited whatever GwynGreatswordBoomerang
+        // last left on the shared effect (96px sword * 0.85 draw scale / 2px = 40.8 blocks). Pinned so the
+        // copy keeps that exact look, instead of rendering nothing when no boomerang was thrown first.
+        const float BlockyPixelGridBlocks = 40.8f;
+
         void DrawCinderOverlay(Texture2D texture, Vector2 drawPosition, Rectangle sourceRectangle,
             Vector2 origin, float scale, SpriteEffects effects, float opacity, float progress)
         {
@@ -611,6 +641,8 @@ namespace tsorcRevamp.Projectiles.VFX
                 "tsorcRevamp/Effects/GwynCinderTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             cinderOverlayNoise ??= ModContent.Request<Texture2D>(
                 "tsorcRevamp/Textures/Noise/T_Aurax44", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            fireSlashFlameNoise ??= ModContent.Request<Texture2D>(
+                "tsorcRevamp/Textures/Noise/Turbulence_06-512x512", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp,
@@ -621,22 +653,77 @@ namespace tsorcRevamp.Projectiles.VFX
             SamplerState previousSampler = graphicsDevice.SamplerStates[1];
             try
             {
-                graphicsDevice.Textures[1] = cinderOverlayNoise;
                 graphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
 
-                cinderOverlayEffect.CurrentTechnique = cinderOverlayEffect.Techniques["GwynCinderBlade"];
+                Vector2 textureSize = texture.Size();
+                Rectangle drawSource = sourceRectangle;
+                Vector2 drawOrigin = origin;
+
                 cinderOverlayEffect.Parameters["CinderColor"].SetValue(settings.CinderOverlayDarkColor.ToVector3());
                 cinderOverlayEffect.Parameters["FlameColor"].SetValue(settings.CinderOverlayFlameColor.ToVector3());
                 cinderOverlayEffect.Parameters["CoreColor"].SetValue(settings.CinderOverlayCoreColor.ToVector3());
                 cinderOverlayEffect.Parameters["Opacity"].SetValue(opacity);
                 cinderOverlayEffect.Parameters["Time"].SetValue(Main.GlobalTimeWrappedHourly);
-                cinderOverlayEffect.Parameters["DrawSize"].SetValue(sourceRectangle.Size());
-                cinderOverlayEffect.Parameters["PrimaryTextureSize"].SetValue(texture.Size());
-                cinderOverlayEffect.Parameters["Progress"].SetValue(progress);
+
+                if (settings.CinderOverlayStyle == VanillaSwordArcCinderStyle.Blocky)
+                {
+                    graphicsDevice.Textures[1] = cinderOverlayNoise;
+                    cinderOverlayEffect.CurrentTechnique = cinderOverlayEffect.Techniques["BlockyFireSlash"];
+                    cinderOverlayEffect.Parameters["DrawSize"].SetValue(sourceRectangle.Size());
+                    cinderOverlayEffect.Parameters["PrimaryTextureSize"].SetValue(textureSize);
+                    cinderOverlayEffect.Parameters["Progress"].SetValue(progress);
+                    cinderOverlayEffect.Parameters["PixelGrid"].SetValue(new Vector4(BlockyPixelGridBlocks,
+                        BlockyPixelGridBlocks, 1f / BlockyPixelGridBlocks, 1f / BlockyPixelGridBlocks));
+                }
+                else
+                {
+                    graphicsDevice.Textures[1] = fireSlashFlameNoise;
+                    cinderOverlayEffect.CurrentTechnique = cinderOverlayEffect.Techniques["FireSlashFlame"];
+
+                    // Pad the quad so wisps have room past the crescent. A symmetric inflate keeps the
+                    // centre, so only the origin shifts and FlipVertically still mirrors about the same
+                    // axis. The shader clamps its sprite lookups back inside the unpadded frame.
+                    int paddingSourcePixels = (int)MathF.Ceiling(FlameQuadPaddingPixels / scale);
+                    drawSource.Inflate(paddingSourcePixels, paddingSourcePixels);
+                    drawOrigin += new Vector2(paddingSourcePixels);
+
+                    // World-up expressed in the sprite's own texel space, so flames rise on screen at any
+                    // swing angle: undo the quad rotation, then FlipVertically's mirrored V. Screen px ->
+                    // source px is / scale, source px -> atlas UV is / textureSize.
+                    Vector2 localUp = new Vector2(0f, -1f).RotatedBy(-Projectile.rotation);
+                    if (effects == SpriteEffects.FlipVertically)
+                    {
+                        localUp.Y = -localUp.Y;
+                    }
+
+                    Vector2 localRight = new Vector2(-localUp.Y, localUp.X);
+                    Vector2 frameSize = sourceRectangle.Size();
+                    Vector2 riseDirection = (localUp / frameSize).SafeNormalize(new Vector2(0f, -1f));
+                    Vector2 riseUV = localUp * (FlameWispReachPixels / scale) / textureSize;
+                    Vector2 driftUV = localRight * (FlameWispDriftPixels / scale) / textureSize;
+
+                    // Half-texel inset so the shader's clamp lands on this frame's edge texels, never the
+                    // neighbouring frame's.
+                    Vector2 frameMin = (sourceRectangle.TopLeft() + new Vector2(0.5f)) / textureSize;
+                    Vector2 frameMax = (sourceRectangle.BottomRight() - new Vector2(0.5f)) / textureSize;
+
+                    // 2x2 screen-pixel blocks measured in atlas UV: blocks per UV unit = texels * scale / 2.
+                    Vector2 pixelBlocks = textureSize * scale / FlamePixelBlockSize;
+
+                    cinderOverlayEffect.Parameters["FrameMin"].SetValue(frameMin);
+                    cinderOverlayEffect.Parameters["FrameMax"].SetValue(frameMax);
+                    cinderOverlayEffect.Parameters["FrameUVScale"].SetValue(textureSize / frameSize);
+                    cinderOverlayEffect.Parameters["RiseDirection"].SetValue(riseDirection);
+                    cinderOverlayEffect.Parameters["RiseUV"].SetValue(riseUV);
+                    cinderOverlayEffect.Parameters["DriftUV"].SetValue(driftUV);
+                    cinderOverlayEffect.Parameters["PixelGrid"].SetValue(new Vector4(pixelBlocks.X,
+                        pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
+                }
+
                 cinderOverlayEffect.CurrentTechnique.Passes[0].Apply();
 
-                Main.EntitySpriteDraw(texture, drawPosition, sourceRectangle, Color.White,
-                    Projectile.rotation, origin, scale, effects, 0);
+                Main.EntitySpriteDraw(texture, drawPosition, drawSource, Color.White,
+                    Projectile.rotation, drawOrigin, scale, effects, 0);
             }
             finally
             {
@@ -693,6 +780,7 @@ namespace tsorcRevamp.Projectiles.VFX
             writer.Write(settings.TintWithWorldLighting);
             writer.Write(settings.DrawCinderOverlay);
             writer.Write(settings.CinderOverlayOpacity);
+            writer.Write((byte)settings.CinderOverlayStyle);
             WriteColor(writer, settings.CinderOverlayDarkColor);
             WriteColor(writer, settings.CinderOverlayFlameColor);
             WriteColor(writer, settings.CinderOverlayCoreColor);
@@ -766,6 +854,7 @@ namespace tsorcRevamp.Projectiles.VFX
             settings.TintWithWorldLighting = reader.ReadBoolean();
             settings.DrawCinderOverlay = reader.ReadBoolean();
             settings.CinderOverlayOpacity = reader.ReadSingle();
+            settings.CinderOverlayStyle = (VanillaSwordArcCinderStyle)reader.ReadByte();
             settings.CinderOverlayDarkColor = ReadColor(reader);
             settings.CinderOverlayFlameColor = ReadColor(reader);
             settings.CinderOverlayCoreColor = ReadColor(reader);

@@ -12,6 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///Gwyn's hurled greatsword (shares the SwordOfGwyn item art): spins across the arena trailing
     ///fire, arcs at its apex, and returns to his hand — a full-lane horizontal wall that punishes
     ///edge-campers. While it flies, Gwyn is weaponless (the punish window if you're close).
+    ///It leaves the hand nearly stationary and spins up to full speed over SpinUpTicks as a tell.
     ///ai[0] = owner NPC whoAmI, ai[1] = launch-locked outbound distance in pixels,
     ///ai[2] = 1 once the return begins.
     ///</summary>
@@ -19,6 +20,11 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Broadswords/SwordOfGwyn";
 
+        public const float LaunchSpeed = 15f;
+        const int SpinUpTicks = 40;
+        const float FullSpinRate = 0.38f;  // radians per tick at full speed
+        const float SpinUpFloor = 0.15f;   // fraction of FullSpinRate on the first frame
+        const int Lifetime = 720;
         const float ReturnAccel = 1.1f;
         const float ReturnTopSpeed = 19f;
         const float CatchRange = 52f;
@@ -48,13 +54,22 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false; // a god's flaming blade doesn't stop for terrain
             Projectile.penetrate = -1;
             Projectile.aiStyle = 0;
-            Projectile.timeLeft = 720;
+            Projectile.timeLeft = Lifetime;
             Projectile.light = 0.7f;
         }
 
         public override void AI()
         {
-            Projectile.rotation += 0.38f * (Projectile.velocity.X >= 0f ? 1f : -1f);
+            // Spin-up tell: spin rate and outbound travel speed share one quadratic ease-in over
+            // SpinUpTicks. (age + 1) keeps tick 0 above zero speed, which preserves the launch direction
+            // through SafeNormalize below. Spin lerps up from SpinUpFloor so the blade visibly turns from
+            // its first frame; travel starts from zero. The return always begins after the ramp.
+            int age = Lifetime - Projectile.timeLeft;
+            float spinUp = MathHelper.Clamp((age + 1) / (float)SpinUpTicks, 0f, 1f);
+            float spinUpEased = spinUp * spinUp;
+            float spinRate = MathHelper.Lerp(SpinUpFloor, 1f, spinUpEased);
+            float spinDirection = Projectile.velocity.X >= 0f ? 1f : -1f;
+            Projectile.rotation += FullSpinRate * spinRate * spinDirection;
 
             NPC parent = ParentIndex >= 0 && ParentIndex < Main.maxNPCs ? Main.npc[ParentIndex] : null;
             if (Returning)
@@ -82,6 +97,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             else
             {
+                // Spin-up tell, travel half (curve computed at the top of AI): the blade leaves the hand
+                // nearly stationary and eases to LaunchSpeed, so the throw reads before it travels. Damage
+                // stays live throughout. The ramp covers ~208px, well short of the 500px minimum outbound
+                // (200px min range + 300px overshoot) minus the 180px apex stall, so they never overlap.
+                if (age < SpinUpTicks)
+                {
+                    float rampSpeed = LaunchSpeed * spinUpEased;
+                    Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitX) * rampSpeed;
+                }
+
                 // Distance, rather than a timer, owns the turn. ai[1] is locked by Gwyn at release
                 // to the target's distance + 300px, so movement after the tell cannot shorten the
                 // promised overshoot. Constant speed carries the blade across the expanded arena;

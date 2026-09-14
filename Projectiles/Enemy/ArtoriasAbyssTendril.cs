@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -25,14 +26,19 @@ namespace tsorcRevamp.Projectiles.Enemy
         const int   MaxFlightTicks = 70;
         const int   ReachAccelerationTicks = 12;
         const int   YankTicks      = 24;
+        const int   WhipBackTicks  = 10;
         const float YankPullSpeed  = 7.5f;
-        const float ReleaseHorizontalSpeed = 15f;
-        const float ReleaseVerticalSpeed = -10f;
+        const float WhipBackSpeed  = 18f;
+        // The old straight-back release was 15 px/tick. The forward crack peaks at exactly
+        // twice that speed while ordinary player collision remains responsible for stopping it.
+        const float WhipFlickSpeed = 30f;
+        const float WhipLiftSpeed  = 10f;
         const int   GrabPadding    = 16;
 
         int targetWho = -1;
         int launchTimer;
         int yankTimer;
+        float whipAwayDirection = 1f;
 
         const int GrabDebuffTicks = 10 * 60;
 
@@ -53,6 +59,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 240;
+            Projectile.netImportant = true;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.light = 0f;
         }
@@ -145,12 +152,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
 
-            Vector2 toOwner = owner.Center - player.Center;
-            if (toOwner.LengthSquared() > 1f)
-            {
-                Vector2 pullDir = toOwner.SafeNormalize(Vector2.Zero);
-                player.velocity = Vector2.Lerp(player.velocity, pullDir * YankPullSpeed, 0.12f);
-            }
+            ApplyWhipMotion(player);
 
             // Keep the three-pronged tip visibly embedded at the target throughout the grab.
             Projectile.Center = player.Center;
@@ -171,15 +173,52 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             yankTimer++;
-            if (yankTimer >= YankTicks)
+            if (yankTimer == WhipBackTicks)
             {
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item153 with { Volume = 0.72f, Pitch = -0.18f }, player.Center);
+                }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float outward = player.Center.X < owner.Center.X ? -1f : 1f;
-                    player.velocity = new Vector2(outward * ReleaseHorizontalSpeed, ReleaseVerticalSpeed);
+                    Projectile.netUpdate = true;
                 }
+            }
+            if (yankTimer >= YankTicks)
+            {
                 StartRetract();
             }
+        }
+
+        void ApplyWhipMotion(Player player)
+        {
+            // The server and the grabbed player's own client resolve the motion. Setting velocity
+            // rather than Center keeps every solid tile in the path authoritative and collidable.
+            if (Main.netMode == NetmodeID.MultiplayerClient && player.whoAmI != Main.myPlayer)
+                return;
+
+            if (yankTimer < WhipBackTicks)
+            {
+                // Blood Knight's lash cocks back broadly before the crack: move away more slowly,
+                // lift through the middle of the arc, then reverse at the ten-tick crest.
+                float progress = MathHelper.Clamp((yankTimer + 1f) / WhipBackTicks, 0f, 1f);
+                float eased = MathHelper.SmoothStep(0f, 1f, progress);
+                float speed = MathHelper.Lerp(YankPullSpeed, WhipBackSpeed, eased);
+                float lift = -(float)System.Math.Sin(progress * MathHelper.Pi) * WhipLiftSpeed;
+                Vector2 desiredVelocity = new(whipAwayDirection * speed, lift);
+                player.velocity = Vector2.Lerp(player.velocity, desiredVelocity, 0.42f);
+                return;
+            }
+
+            // Snap back toward Artorias faster than the wind-up, like the forward extension of
+            // Blood Knight's whip. The 30 px/tick peak is 2x the former 15 px/tick release.
+            float forwardProgress = MathHelper.Clamp(
+                (yankTimer - WhipBackTicks + 1f) / (YankTicks - WhipBackTicks), 0f, 1f);
+            float forwardEase = MathHelper.SmoothStep(0f, 1f, forwardProgress);
+            float forwardSpeed = MathHelper.Lerp(WhipBackSpeed, WhipFlickSpeed, forwardEase);
+            float forwardLift = -(1f - forwardProgress) * WhipLiftSpeed * 0.55f;
+            Vector2 forwardVelocity = new(-whipAwayDirection * forwardSpeed, forwardLift);
+            player.velocity = Vector2.Lerp(player.velocity, forwardVelocity, 0.58f);
         }
 
         void RetractAI(NPC owner)
@@ -252,11 +291,32 @@ namespace tsorcRevamp.Projectiles.Enemy
         void AttachToPlayer(Player target)
         {
             targetWho = target.whoAmI;
+            if (TryGetOwner(out NPC owner))
+            {
+                float deltaX = target.Center.X - owner.Center.X;
+                whipAwayDirection = deltaX == 0f ? owner.direction : System.Math.Sign(deltaX);
+            }
             Projectile.ai[1] = StateYanking;
             Projectile.hostile = false; // stop re-damaging while the yank is in progress
             yankTimer = 0;
             Projectile.netUpdate = true;
             SoundEngine.PlaySound(SoundID.NPCHit13 with { Volume = 0.5f, Pitch = -0.3f }, Projectile.Center);
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(targetWho);
+            writer.Write(launchTimer);
+            writer.Write(yankTimer);
+            writer.Write(whipAwayDirection);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            targetWho = reader.ReadInt32();
+            launchTimer = reader.ReadInt32();
+            yankTimer = reader.ReadInt32();
+            whipAwayDirection = reader.ReadSingle();
         }
 
         void StartRetract()

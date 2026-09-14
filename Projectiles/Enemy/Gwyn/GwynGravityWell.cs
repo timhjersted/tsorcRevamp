@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         //4px rather than the usual 2px. The quad is ~1580px across, so 2px blocks are sub-perceptible
         //at gameplay zoom on a field this large — the filter has to scale with the effect to read.
         const float PixelBlockSize = 4f;
-        const float VisualOpacity = 0.5f;
+        const float VisualOpacity = 0.3f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
 
         static Asset<Effect> solarVortexEffect;

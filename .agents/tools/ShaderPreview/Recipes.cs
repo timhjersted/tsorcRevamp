@@ -34,6 +34,14 @@ namespace ShaderPreview
         public float MinimumProgressScale = 1f;
         public float PixelBlockSize = 5f;
         public float Time = 12.5f;     // stands in for Main.GlobalTimeWrappedHourly
+
+        // For call sites outside ArtoriasVFX's shape: an exact source rect (e.g. a sheet frame padded past
+        // its edges), the background to render over (premultiplied effects only read true over opaque),
+        // and a hook for uniforms the generic block above doesn't know. Configure runs last and receives
+        // (effect, progress, on-screen scale).
+        public Rectangle? SourceOverride;
+        public Color Clear = Color.Transparent;
+        public System.Action<Effect, float, float> Configure;
     }
 
     /// <summary>
@@ -250,6 +258,126 @@ namespace ShaderPreview
                     Blend = BlendState.AlphaBlend,
                     FullTexture = true,
                     PixelBlockSize = 2f,
+                },
+
+                // Gwyn's melee slash overlay (VanillaSwordArc.DrawCinderOverlay). Progress drives Time
+                // here, so the three panels are animation snapshots rather than sweep positions.
+                GwynFireSlash("GwynFlameF0Sky", "FireSlashFlame", 0, 0f, SkyBlue),
+                GwynFireSlash("GwynFlameF1Cave", "FireSlashFlame", 1, 0f, CaveDark),
+                GwynFireSlash("GwynFlameF1Rot", "FireSlashFlame", 1, 2.2f, CaveDark),
+                GwynFireSlash("GwynFlameF3Cave", "FireSlashFlame", 3, 0f, CaveDark),
+                GwynFireSlash("GwynBlockyF1Cave", "BlockyFireSlash", 1, 0f, CaveDark),
+
+                // Gravity of the Sun field (GwynGravityWell.DrawVortexField) at three C# opacities, to
+                // measure how much of the background each really lets through.
+                GwynVortex("GwynVortex100Sky", 1f, SkyBlue),
+                GwynVortex("GwynVortex050Sky", 0.5f, SkyBlue),
+                GwynVortex("GwynVortex030Sky", 0.3f, SkyBlue),
+                GwynVortex("GwynVortex100Cave", 1f, CaveDark),
+                GwynVortex("GwynVortex050Cave", 0.5f, CaveDark),
+                GwynVortex("GwynVortex030Cave", 0.3f, CaveDark),
+            };
+        }
+
+        /// <summary>
+        /// Mirrors GwynGravityWell.DrawVortexField: VoronoiNoise (512px) drawn as a 1580px quad
+        /// (PullRadius 760 + 30 padding, x2), T_VFX_Noise41 at s1, 4px pixel filter, premultiplied
+        /// AlphaBlend. `opacity` is the value that reaches the shader's Opacity uniform.
+        /// </summary>
+        private static Recipe GwynVortex(string name, float opacity, Color clear)
+        {
+            const float fieldDiameter = 1580f;
+            const float webTextureSize = 512f;
+
+            return new Recipe
+            {
+                Name = name,
+                Effect = "GwynSolarVortex",
+                Technique = "GwynSolarVortex",
+                Primary = "VoronoiNoise",
+                Detail = "T_VFX_Noise41",
+                DrawSize = new Vector2(fieldDiameter),
+                Blend = BlendState.AlphaBlend,
+                SourceOverride = new Rectangle(0, 0, (int)fieldDiameter, (int)fieldDiameter),
+                Clear = clear,
+                Configure = (effect, progress, scale) =>
+                {
+                    Vector2 pixelBlocks = new Vector2(fieldDiameter) / 4f;
+                    effect.Parameters["BoundaryColor"].SetValue(new Color(255, 117, 16).ToVector3());
+                    effect.Parameters["StreamColor"].SetValue(new Color(255, 196, 62).ToVector3());
+                    effect.Parameters["CoreColor"].SetValue(new Color(255, 244, 180).ToVector3());
+                    effect.Parameters["Opacity"].SetValue(opacity);
+                    effect.Parameters["Time"].SetValue(12.5f);
+                    effect.Parameters["DrawSize"].SetValue(new Vector2(fieldDiameter));
+                    effect.Parameters["CoordScale"].SetValue(new Vector2(webTextureSize / fieldDiameter));
+                    effect.Parameters["PixelGrid"].SetValue(new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
+                    effect.Parameters["PullRadius"].SetValue(760f);
+                    effect.Parameters["InnerRadius"].SetValue(90f);
+                },
+            };
+        }
+
+        private static readonly Color SkyBlue = new Color(132, 176, 226);
+        private static readonly Color CaveDark = new Color(20, 16, 22);
+
+        /// <summary>
+        /// Mirrors VanillaSwordArc.DrawCinderOverlay with Gwyn.SpawnGwynSwordArc's settings: 170px frames
+        /// of Projectiles/VFX/VanillaSwordArc.png, overlay opacity 0.62 arc * 0.62 overlay, T_Aurax44 flow.
+        /// The FireSlashFlame branch pads the frame 12px and derives world-up in texel space exactly as the
+        /// C# does; the preview's own on-screen scale stands in for the game's 88/94*1.1.
+        /// </summary>
+        private static Recipe GwynFireSlash(string name, string technique, int frame, float rotation, Color clear)
+        {
+            const int frameSize = 170;
+            const float textureWidth = 170f;
+            const float textureHeight = 680f;
+            bool flame = technique == "FireSlashFlame";
+            int padding = flame ? 12 : 0;
+            var frameRect = new Rectangle(0, frame * frameSize, frameSize, frameSize);
+            var source = new Rectangle(frameRect.X - padding, frameRect.Y - padding,
+                frameSize + padding * 2, frameSize + padding * 2);
+
+            return new Recipe
+            {
+                Name = name,
+                Effect = "GwynCinderTrail",
+                Technique = technique,
+                Primary = "Projectiles/VFX/VanillaSwordArc",
+                Detail = flame ? "Turbulence_06-512x512" : "T_Aurax44",
+                DrawSize = new Vector2(source.Width, source.Height),
+                Rotation = rotation,
+                Blend = BlendState.AlphaBlend,
+                SourceOverride = source,
+                Clear = clear,
+                Configure = (effect, progress, scale) =>
+                {
+                    var textureSize = new Vector2(textureWidth, textureHeight);
+                    effect.Parameters["CinderColor"].SetValue(new Color(64, 8, 2).ToVector3());
+                    effect.Parameters["FlameColor"].SetValue(new Color(255, 116, 14).ToVector3());
+                    effect.Parameters["CoreColor"].SetValue(new Color(255, 236, 172).ToVector3());
+                    effect.Parameters["Opacity"].SetValue(0.62f * 0.62f);
+                    effect.Parameters["Time"].SetValue(12.5f + progress * 1.5f);
+
+                    if (!flame)
+                    {
+                        const float blocks = 40.8f;
+                        effect.Parameters["Progress"].SetValue(0.5f);
+                        effect.Parameters["PixelGrid"].SetValue(new Vector4(blocks, blocks, 1f / blocks, 1f / blocks));
+                        return;
+                    }
+
+                    Vector2 localUp = new Vector2(System.MathF.Sin(-rotation), -System.MathF.Cos(-rotation));
+                    Vector2 localRight = new Vector2(-localUp.Y, localUp.X);
+                    Vector2 riseDirection = Vector2.Normalize(localUp / new Vector2(frameSize));
+                    Vector2 pixelBlocks = textureSize * scale / 2f;
+
+                    effect.Parameters["FrameMin"].SetValue((new Vector2(frameRect.X, frameRect.Y) + new Vector2(0.5f)) / textureSize);
+                    effect.Parameters["FrameMax"].SetValue((new Vector2(frameRect.Right, frameRect.Bottom) - new Vector2(0.5f)) / textureSize);
+                    effect.Parameters["FrameUVScale"].SetValue(textureSize / new Vector2(frameSize));
+                    effect.Parameters["RiseDirection"].SetValue(riseDirection);
+                    effect.Parameters["RiseUV"].SetValue(localUp * (10f / scale) / textureSize);
+                    effect.Parameters["DriftUV"].SetValue(localRight * (8f / scale) / textureSize);
+                    effect.Parameters["PixelGrid"].SetValue(new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                 },
             };
         }
