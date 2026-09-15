@@ -41,6 +41,9 @@ namespace ShaderPreview
         // (effect, progress, on-screen scale).
         public Rectangle? SourceOverride;
         public Color Clear = Color.Transparent;
+        // s0 sampler. ArtoriasVFX.Draw uses LinearWrap; DrawBoomerang takes one per call (e.g. PointClamp
+        // for sprite-sheet frames, where wrapping would pull the opposite edge of the sheet into the quad).
+        public SamplerState PrimarySampler = SamplerState.LinearWrap;
         public System.Action<Effect, float, float> Configure;
     }
 
@@ -260,6 +263,14 @@ namespace ShaderPreview
                     PixelBlockSize = 2f,
                 },
 
+                // Spiral Fan's spinning crescent (ArtoriasVFX.DrawFanCrescent). Premultiplied, so sky AND
+                // cave; F3 is kept to show why AbyssSlash only cycles frames 0-2 for this draw.
+                FanCrescent("FanCrescentF0Sky", 0, 0f, SkyBlue),
+                FanCrescent("FanCrescentF0Cave", 0, 0f, CaveDark),
+                FanCrescent("FanCrescentF1Rot", 1, 2.2f, CaveDark),
+                FanCrescent("FanCrescentF2Sky", 2, 4.0f, SkyBlue),
+                FanCrescent("FanCrescentF3Cave", 3, 0f, CaveDark),
+
                 // Gwyn's melee slash overlay (VanillaSwordArc.DrawCinderOverlay). Progress drives Time
                 // here, so the three panels are animation snapshots rather than sweep positions.
                 GwynFireSlash("GwynFlameF0Sky", "FireSlashFlame", 0, 0f, SkyBlue),
@@ -405,6 +416,49 @@ namespace ShaderPreview
                     effect.Parameters["FrameMax"]?.SetValue((new Vector2(frameRect.Right, frameRect.Bottom) - new Vector2(0.5f)) / textureSize);
                     effect.Parameters["FrameUVScale"]?.SetValue(textureSize / new Vector2(frameSize));
                     effect.Parameters["PixelGrid"]?.SetValue(new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
+                },
+            };
+        }
+
+        /// <summary>
+        /// Mirrors ArtoriasVFX.DrawFanCrescent as AbyssSlash calls it: one 170px frame of AbyssSlash.png
+        /// padded 8 texels left/right only, 60 world px per frame, 2px blocks, PointClamp on s0.
+        /// </summary>
+        private static Recipe FanCrescent(string name, int frame, float rotation, Color clear)
+        {
+            const int frameSize = 170;
+            const int padding = 8;
+            const float frameDrawSize = 60f;
+            var textureSize = new Vector2(170f, 680f);
+            var source = new Rectangle(-padding, frame * frameSize,
+                frameSize + padding * 2, frameSize);
+            Vector2 drawSize = new Vector2(source.Width, source.Height) * (frameDrawSize / frameSize);
+
+            return new Recipe
+            {
+                Name = name,
+                Effect = "ArtoriasBoomerang",
+                Technique = "ArtoriasFanCrescentPixelated",
+                Primary = "Projectiles/Enemy/AbyssSlash",
+                Detail = "T_VFX_Noise41",
+                DrawSize = drawSize,
+                Rotation = rotation,
+                Dark = new Color(34, 8, 66),
+                Mid = new Color(146, 58, 238),
+                Core = new Color(222, 186, 255),
+                Blend = BlendState.AlphaBlend,
+                SourceOverride = source,
+                Clear = clear,
+                PixelBlockSize = 2f,
+                PrimarySampler = SamplerState.PointClamp,
+                Configure = (effect, progress, scale) =>
+                {
+                    Vector2 uvOrigin = new Vector2(source.X, source.Y) / textureSize;
+                    Vector2 uvScale = new Vector2(source.Width, source.Height) / textureSize;
+                    Vector2 blocks = Vector2.Max(drawSize / 2f, Vector2.One);
+                    effect.Parameters["FrameUVOrigin"]?.SetValue(uvOrigin);
+                    effect.Parameters["FrameUVScale"]?.SetValue(uvScale);
+                    effect.Parameters["FrameBlockStep"]?.SetValue(uvScale / blocks);
                 },
             };
         }

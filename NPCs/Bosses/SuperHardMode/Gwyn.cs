@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     ///state machine lands in Phase 2.
     ///</summary>
     [AutoloadBossHead]
-    class Gwyn : PuppetNPC
+    class Gwyn : PuppetNPC, IHumanoidMeleeHitEffects
     {
         // PuppetNPC overrides Texture to the shared puppet placeholder, so point the boss-head
         // icon at the existing Gwyn head texture explicitly (same workaround as Artorias).
@@ -116,8 +116,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         ///phase is Idle, and entering ClosingDistance locks the phase for up to 150 ticks — so
         ///inheriting the in-range chance out here would hand melee most of the out-of-range ticks
         ///and reduce a boss with thirteen ranged set-pieces to a chaser. 50 leaves a real share of
-        ///ticks for them while still meaning most gaps end in him arriving.</summary>
-        protected override int   RangedStartMeleeComboChance    => 50;
+        ///ticks for them while still meaning most gaps end in him arriving. The Estus punisher forces
+        ///100 for its short window, so a drink at range is always answered by an approach combo.</summary>
+        protected override int   RangedStartMeleeComboChance    => _estusPunishTimer > 0 ? 100 : 50;
         // Restores the authored 12-44 telegraph spread. At the inherited Max(30, tel * 1.35) every
         // windup below 23 ticks was flattened to the same 30, so his quick swings, pressure strings
         // and heavy punishes all opened identically and there was no rhythm to read.
@@ -198,7 +199,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             get
             {
-                if (WrathFlurrySwinging || UnderOverSwinging || ThreeHitSwinging)
+                // Cinderfall only pauses before its half-health hit-confirm follow-up, which shares its end pose.
+                if (WrathFlurrySwinging || UnderOverSwinging || ThreeHitSwinging || CinderfallSwinging)
                 {
                     return 3;
                 }
@@ -218,6 +220,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool CinderfallSwinging => ComboSwinging(CinderfallName);
         bool UnderOverSwinging => ComboSwinging(UnderOverName);
         bool ThreeHitSwinging => ComboSwinging(ThreeHitName);
+        bool AerialComboSwinging =>
+            ComboSwinging(SkywardUppercutName)
+            || ComboSwinging(HangingOverheadName)
+            || ComboSwinging(SkyLungeName);
+
+        static bool IsAerialComboName(string name) =>
+            name == SkywardUppercutName || name == HangingOverheadName || name == SkyLungeName;
+
+        // Below half health his melee tells can't be staggered either. Combo strikes are already
+        // committed in the base, CustomizeMeleeCombo extends that through the inter-step pauses, and
+        // AI() covers Winged Plunge's aim + dive. Ranged and magic tells stay interruptible.
+        protected override bool HyperArmorDuringTelegraph =>
+            HalfHealthMovesUnlocked
+            && (Phase == AttackPhase.MeleeComboTelegraph
+                || Phase == AttackPhase.MeleeTelegraph
+                || Phase == AttackPhase.StabTelegraph);
 
         // Wrath Flurry's recovery once the landing beat (MeleeRecoveryLingerTicks) is over: the
         // sword is put away and he walks. PhaseTimer counts DOWN from FlurryFinalRecoveryTicks.
@@ -359,7 +377,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            if ((UnderOverSwinging || ThreeHitSwinging)
+            // Cinderfall's half-health hit-confirm follow-up rises from exactly where the slam ended.
+            if (CinderfallSwinging && motion == ComboMotion.UnderhandArc)
+            {
+                startRotation = CinderfallLoweredPose;
+                endRotation = RefinedRaisedPose;
+                return;
+            }
+
+            // The aerial moves use the same ~224° refined cut; Sky Lunge's HorizontalSweep maps to the falling one.
+            if ((UnderOverSwinging || ThreeHitSwinging || AerialComboSwinging)
                 && (motion == ComboMotion.HorizontalSweep
                     || motion == ComboMotion.OverheadArc
                     || motion == ComboMotion.UnderhandArc))
@@ -395,7 +422,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int CB_CLEAVE = 0, CB_UNDEROVER = 1, CB_LEAP = 2, CB_SLIDE = 3, CB_SPIN = 4,
                   CB_CINDERFALL = 5, CB_GUILLOTINE = 6, CB_BACKHAND = 7, CB_THREEHIT = 8,
                   CB_ROLLCATCH = 9, CB_FLURRY = 10, CB_PURSUIT = 11, CB_JUDGMENT = 12,
-                  CB_RIPOSTE = 13;
+                  CB_RIPOSTE = 13,
+                  CB_CLEAVE_HALF = 14, CB_GUILLOTINE_HALF = 15, CB_JUDGMENT_HALF = 16,
+                  CB_RIPOSTE_HALF = 17, CB_BACKHAND_HALF = 18;
 
         // `ease` shapes the arc's velocity curve. It defaults to Smooth to match the shared S()
         // helper in MeleeComboSystem: leaving it off produced SwingEaseStyle.Linear (enum value 0),
@@ -416,6 +445,46 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float ThreeHitSurgePush = 1.45f;
         const string JudgmentGuillotineName = "Judgment Guillotine";
         const string RiposteCounterName = "Riposte Counter";
+        const string SkywardUppercutName = "Skyward Uppercut";
+        const string HangingOverheadName = "Hanging Overhead";
+        const string SkyLungeName = "Sky Lunge";
+
+        // ── Half-health pressure (NPC.life <= 50%) ──────────────────────────────
+        // Strikes 25% faster, recoveries and pauses 25% shorter. Tells are untouched: they are the
+        // player's read. Applied per activation in CustomizeMeleeCombo, and baked into the V2 clips'
+        // half-health pool twins because a client resolves a V2 clip by pool index.
+        const float HalfHealthStrikeSpeedMult = 1.25f;
+        const float HalfHealthRecoveryMult = 0.75f;
+        // A shortened pause never brings the next live window within 30 ticks of the last one ending:
+        // a late roll's 8-tick no-roll gap sits 22-30 ticks after it (attack-timing-design §2 rule 3).
+        const int MinTicksBetweenLiveWindows = 30;
+        // Hit-confirm follow-up: one more rising cut after a string ender, only if the ender connected,
+        // 40% of the time. The 18t pause keeps a hit on the ender's last live tick 40+ ticks before
+        // the follow-up goes live (worst case, 3-Hit's half-health ender: 24t left + 18 = 42), so the
+        // player's post-hit immunity can't swallow it.
+        const float HitConfirmFollowUpChance = 0.4f;
+        const int HitConfirmPauseTicks = 18;
+        const int HitConfirmEaseIn = 8;
+        const int HitConfirmEaseOut = 36;
+        const float HitConfirmDecay = 7f;
+        const float HitConfirmDamage = 1.0f;
+        const float HitConfirmReach = 1.45f;
+        const float HitConfirmPush = 0.75f;
+        const int HitConfirmAwaitMaxTicks = 20;
+        const byte HitConfirmUndecided = 0;
+        const byte HitConfirmApproved = 1;
+        const byte HitConfirmDeclined = 2;
+        // Delayed swing: 1 in 3 heavy tells (authored >= 25t, a legacy swing or leap) hold the cocked end
+        // for 8-14 ticks behind a blade glint. That catches rolls started ~9-21 ticks before the normal
+        // release (unless the player re-rolls); a roll AT the normal release is still safe.
+        const int DelayedSwingChanceDenominator = 3;
+        const int DelayedSwingMinTelegraph = 25;
+        const int DelayedSwingMinHold = 8;
+        const int DelayedSwingMaxHold = 14;
+        const int DelayedSwingGlintDust = 16;
+        // Estus punisher: drinking this close opens a window in which the next pick is a gap-closer.
+        const float EstusPunishRange = 450f;
+        const int EstusPunishWindowTicks = 120;
 
         // Default sword-language poses: a safe raised start and an end close to the player's own
         // straight-down broadsword finish. Their 3.91-rad (224-degree) envelope leaves about 180
@@ -646,6 +715,39 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             maxAimCorrection: 0.30f,
             aimLockTicksBeforeActive: 10);
 
+        /// <summary>A V2 clip's half-health twin: same tell and poses, active stage 25% faster, recovery
+        /// 25% shorter. Hit windows are fractions of the active stage, so they scale with it.</summary>
+        static PuppetAttackClip HalfHealthClip(PuppetAttackClip clip)
+        {
+            int activeTicks = (int)Math.Round(clip.ActiveTicks / HalfHealthStrikeSpeedMult);
+            int recoveryTicks = (int)Math.Round(clip.RecoveryTicks * HalfHealthRecoveryMult);
+
+            return new PuppetAttackClip(
+                name: clip.Name,
+                pose: clip.Pose,
+                windupTicks: clip.WindupTicks,
+                activeTicks: activeTicks,
+                recoveryTicks: recoveryTicks,
+                oppositeWindupRotation: clip.OppositeWindupRotation,
+                attackStartRotation: clip.AttackStartRotation,
+                attackEndRotation: clip.AttackEndRotation,
+                recoveryEndRotation: clip.RecoveryEndRotation,
+                hitWindowStart: clip.HitWindowStart,
+                hitWindowEnd: clip.HitWindowEnd,
+                swingEase: clip.SwingEase,
+                maxAimCorrection: clip.MaxAimCorrection,
+                aimTurnRate: clip.AimTurnRate,
+                aimLockTicksBeforeActive: clip.AimLockTicksBeforeActive,
+                windupHoldTicks: clip.WindupHoldTicks,
+                windupStartRotation: clip.WindupStartRotation);
+        }
+
+        static readonly PuppetAttackClip CleaveHalfV2 = HalfHealthClip(CleaveV2);
+        static readonly PuppetAttackClip GuillotineHalfV2 = HalfHealthClip(GuillotineV2);
+        static readonly PuppetAttackClip JudgmentGuillotineHalfV2 = HalfHealthClip(JudgmentGuillotineV2);
+        static readonly PuppetAttackClip RiposteCounterHalfV2 = HalfHealthClip(RiposteCounterV2);
+        static readonly PuppetAttackClip BackhandHalfV2 = HalfHealthClip(BackhandV2);
+
         // TWO POOLS, split by RangedStartOnly. This is the single most important thing about this
         // table. A combo's Preferred band is only a x2.0 / x0.4 weight, and a combo can only START
         // within MeleeEngageRange (MeleeRange + 24 = 134) — which is below closeMax (MeleeRange + 30
@@ -796,6 +898,51 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 HeavyCommit = true, HyperArmor = true, RuntimeV2Clip = RiposteCounterV2,
                 Steps = new[] { GS(ComboMotion.OverheadArc, 18, 24, 0, 1.55f, 1.10f, 0.30f,
                     ease: SwingEaseStyle.Whip) } },
+            // 14-18 — half-health twins of the V2 clips above (see HalfHealthClip): identical data with
+            // a faster clip. CanSelectMeleeCombo makes exactly one of each pair eligible. They are pool
+            // entries rather than a runtime swap because a client resolves a V2 clip by pool index.
+            new MeleeCombo { Name = "Cleave", BaseWeight = 100, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 40, RuntimeV2Clip = CleaveHalfV2,
+                Steps = new[] { GS(ComboMotion.HorizontalSweep, 15, 18, 0, 1.0f, 1.1f, 0.55f) } },
+            new MeleeCombo { Name = "Guillotine", BaseWeight = 45, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 200, HeavyCommit = true, RuntimeV2Clip = GuillotineHalfV2,
+                Steps = new[] { GS(ComboMotion.OverheadArc, 30, 22, 0, 1.8f, 1.15f, 0.35f, ease: SwingEaseStyle.Whip) } },
+            new MeleeCombo { Name = JudgmentGuillotineName, BaseWeight = 1, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = 0, RecoveryTicks = 36,
+                HeavyCommit = true, HyperArmor = true, RuntimeV2Clip = JudgmentGuillotineHalfV2,
+                Steps = new[] { GS(ComboMotion.OverheadArc, 60, 32, 0, 1.8f, 1.50f, 0.35f,
+                    ease: SwingEaseStyle.Whip) } },
+            new MeleeCombo { Name = RiposteCounterName, BaseWeight = 1, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = 0, RecoveryTicks = 30,
+                HeavyCommit = true, HyperArmor = true, RuntimeV2Clip = RiposteCounterHalfV2,
+                Steps = new[] { GS(ComboMotion.OverheadArc, 18, 24, 0, 1.55f, 1.10f, 0.30f,
+                    ease: SwingEaseStyle.Whip) } },
+            new MeleeCombo { Name = "Backhand Step", BaseWeight = 60, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 70, RuntimeV2Clip = BackhandHalfV2,
+                Steps = new[] { GS(ComboMotion.HorizontalSweep, 12, 16, 0, 0.9f, 1.1f, 0.85f, ease: SwingEaseStyle.Snap) } },
+            // 19 — Skyward Uppercut timing sheet (Aerial Engagement only)
+            // Poses 2.29 -> -1.62 rad: 224° envelope / about 180° live. Tell 36 authored = 41t on screen,
+            // hanging below-side of the player. Strike 10t cubic acceleration + 45t k7 decay: peak ~23°/t,
+            // live 18t (rollable). He climbs 8px/t, decaying with the cut. 37t harmless tail + 26t
+            // hovering recovery before he re-stages for the next move (well over 30t between live windows).
+            new MeleeCombo { Name = SkywardUppercutName, BaseWeight = 50, Preferred = ComboRangeBand.Any,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = 0, RecoveryTicks = 26,
+                Steps = new[] { WeightedSwordSwing(ComboMotion.UnderhandArc, 36, 10, 45, 7f, 0, 1.1f, 1.45f, 0f) } },
+            // 20 — Hanging Overhead timing sheet
+            // Poses -1.62 -> 2.29 rad: 224° envelope / about 180° live. Tell 40 authored = 46t on screen,
+            // hanging above the player. Strike 8t + 45t k8 decay: peak ~27°/t, live 15t; he drops 6px/t,
+            // decaying through the cut. 38t tail + 30t recovery.
+            new MeleeCombo { Name = HangingOverheadName, BaseWeight = 50, Preferred = ComboRangeBand.Any,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = 0, RecoveryTicks = 30,
+                Steps = new[] { WeightedSwordSwing(ComboMotion.OverheadArc, 40, 8, 45, 8f, 0, 1.35f, 1.50f, 0f) } },
+            // 21 — Sky Lunge timing sheet
+            // Poses -1.62 -> 2.29 rad (HorizontalSweep mapped to the refined falling cut). Tell 32 authored
+            // = 36t on screen, level with the player ~170px out. Strike 10t + 40t k7: peak ~25°/t, live 17t.
+            // The dash is solved at release (TickAerialEngagement) to pass 150px beyond the led player, so
+            // standing still gets hit and rolling through the dash is the answer. 33t tail + 28t recovery.
+            new MeleeCombo { Name = SkyLungeName, BaseWeight = 50, Preferred = ComboRangeBand.Any,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = 0, RecoveryTicks = 28,
+                Steps = new[] { WeightedSwordSwing(ComboMotion.HorizontalSweep, 32, 10, 40, 7f, 0, 1.2f, 1.45f, 0f) } },
         };
 
         protected override MeleeCombo[] MeleeComboPoolOverride => GwynCombos;
@@ -810,27 +957,79 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 return -1;
             }
+            // V2 entries resolve to their half-health twins below 50%. CanSelectMeleeCombo has already
+            // zeroed whichever of each pair is ineligible, so naming the other would just fall through.
+            int riposteIndex = HealthVariant(CB_RIPOSTE);
+            int guillotineIndex = HealthVariant(CB_GUILLOTINE);
+            int judgmentIndex = HealthVariant(CB_JUDGMENT);
+            int cleaveIndex = HealthVariant(CB_CLEAVE);
+            int backhandIndex = HealthVariant(CB_BACKHAND);
+
             // A live guard has just caught a melee strike. Consume its internal-only counter before
             // reading the ordinary movement reactions, so a roll-state cannot replace the promised punish.
             if (_riposteCounterPending)
             {
-                if (Ready(ready, CB_RIPOSTE)) { _riposteCounterPending = false; return CB_RIPOSTE; }
-                if (Ready(ready, CB_GUILLOTINE)) { _riposteCounterPending = false; return CB_GUILLOTINE; }
+                if (Ready(ready, riposteIndex))
+                {
+                    _riposteCounterPending = false;
+                    return riposteIndex;
+                }
+                if (Ready(ready, guillotineIndex))
+                {
+                    _riposteCounterPending = false;
+                    return guillotineIndex;
+                }
             }
             //Judgment from Behind: the teleport just planted him at the player's back — the queued
             //punish is the dedicated 60-tick heavy overhead the moment a combo can start.
             if (_judgmentPending > 0)
             {
-                if (Ready(ready, CB_JUDGMENT)) { _judgmentPending = 0; return CB_JUDGMENT; }
+                if (Ready(ready, judgmentIndex))
+                {
+                    _judgmentPending = 0;
+                    return judgmentIndex;
+                }
                 // Defensive fallback if a future pool edit makes the internal entry unavailable.
-                if (Ready(ready, CB_GUILLOTINE)) { _judgmentPending = 0; return CB_GUILLOTINE; }
-                if (Ready(ready, CB_UNDEROVER)) { _judgmentPending = 0; return CB_UNDEROVER; }
+                if (Ready(ready, guillotineIndex))
+                {
+                    _judgmentPending = 0;
+                    return guillotineIndex;
+                }
+                if (Ready(ready, CB_UNDEROVER))
+                {
+                    _judgmentPending = 0;
+                    return CB_UNDEROVER;
+                }
             }
             //Gravity of the Sun just reeled them in — greet them with the pressure string
             if (_pullComboNudge > 0)
             {
-                if (Ready(ready, CB_THREEHIT)) { _pullComboNudge = 0; return CB_THREEHIT; }
-                if (Ready(ready, CB_CLEAVE)) { _pullComboNudge = 0; return CB_CLEAVE; }
+                if (Ready(ready, CB_THREEHIT))
+                {
+                    _pullComboNudge = 0;
+                    return CB_THREEHIT;
+                }
+                if (Ready(ready, cleaveIndex))
+                {
+                    _pullComboNudge = 0;
+                    return cleaveIndex;
+                }
+            }
+            // Estus punisher (below half health, armed in AI): a drink near him is answered at once. From
+            // range the approach pool offers the gap-closers; up close the fastest re-engages. One answer
+            // per drink: AI only re-arms once the player has stopped drinking.
+            if (_estusPunishTimer > 0)
+            {
+                int[] punishers = { CB_PURSUIT, CB_SLIDE, CB_LEAP, backhandIndex, CB_THREEHIT };
+                for (int i = 0; i < punishers.Length; i++)
+                {
+                    if (Ready(ready, punishers[i]))
+                    {
+                        _estusPunishTimer = 0;
+                        _estusPunishConsumed = true;
+                        return punishers[i];
+                    }
+                }
             }
             bool rolling = player.GetModPlayer<tsorcRevampPlayer>().isDodging;
             bool launched = player.velocity.Y < -3f && player.Center.Y < NPC.Center.Y - 24f;
@@ -847,8 +1046,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (launched)
             {
                 // Popped into the air: catch them with the tracking leap, or juggle if already close.
-                if (Ready(ready, CB_LEAP)) { return CB_LEAP; }
-                if (Ready(ready, CB_UNDEROVER)) { return CB_UNDEROVER; }
+                if (Ready(ready, CB_LEAP))
+                {
+                    return CB_LEAP;
+                }
+                if (Ready(ready, CB_UNDEROVER))
+                {
+                    return CB_UNDEROVER;
+                }
             }
             // Player rolled through/behind at close range → spin covers every side
             if (rollingThrough && Ready(ready, CB_SPIN))
@@ -872,15 +1077,40 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     return CB_SLIDE;
                 }
-                if (Ready(ready, CB_BACKHAND))
+                if (Ready(ready, backhandIndex))
                 {
-                    return CB_BACKHAND;
+                    return backhandIndex;
                 }
             }
             return -1; // no live read — let the weighted roll pick a standard swing
         }
 
         static bool Ready(int[] ready, int idx) => idx >= 0 && idx < ready.Length && ready[idx] > 0;
+
+        /// <summary>The pool index of a V2 combo at the current health: its half-health twin below 50%.</summary>
+        int HealthVariant(int comboIndex)
+        {
+            if (!HalfHealthMovesUnlocked)
+            {
+                return comboIndex;
+            }
+
+            switch (comboIndex)
+            {
+                case CB_CLEAVE:
+                    return CB_CLEAVE_HALF;
+                case CB_GUILLOTINE:
+                    return CB_GUILLOTINE_HALF;
+                case CB_JUDGMENT:
+                    return CB_JUDGMENT_HALF;
+                case CB_RIPOSTE:
+                    return CB_RIPOSTE_HALF;
+                case CB_BACKHAND:
+                    return CB_BACKHAND_HALF;
+                default:
+                    return comboIndex;
+            }
+        }
 
         ///<summary>Hard reach gate for the approach pool. Preferred bands are only a x2.0 / x0.4
         ///weight, so a gap-closer stays selectable well past the distance it can physically cross —
@@ -897,6 +1127,38 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         ///inside MeleeRange * 1.05, so it crosses whatever the gap actually is.</summary>
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
+            // Exactly one of each V2 pair is eligible: the half-health twin below 50%, the original above.
+            if (combo.RuntimeV2Clip != null)
+            {
+                bool halfHealthTwin = combo.RuntimeV2Clip == CleaveHalfV2
+                    || combo.RuntimeV2Clip == GuillotineHalfV2
+                    || combo.RuntimeV2Clip == JudgmentGuillotineHalfV2
+                    || combo.RuntimeV2Clip == RiposteCounterHalfV2
+                    || combo.RuntimeV2Clip == BackhandHalfV2;
+                if (halfHealthTwin != HalfHealthMovesUnlocked)
+                {
+                    return false;
+                }
+            }
+            // The aerial moves start only from TickAerialEngagement, and only the staged one. No other
+            // combo may start while the engagement is running.
+            if (IsAerialComboName(combo.Name))
+            {
+                string stagedName = SkyLungeName;
+                if (_aerialMove == AerialMove.Uppercut)
+                {
+                    stagedName = SkywardUppercutName;
+                }
+                else if (_aerialMove == AerialMove.Overhead)
+                {
+                    stagedName = HangingOverheadName;
+                }
+                return _aerialStartRequested && combo.Name == stagedName;
+            }
+            if (_aerialPhase != AerialPhase.None)
+            {
+                return false;
+            }
             // This entry exists so the V2 network snapshot can resolve a dedicated clip by pool
             // index. It is never part of normal selection; Judgment's teleport opens the gate.
             if (combo.Name == JudgmentGuillotineName)
@@ -943,6 +1205,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool ShouldContinueMeleeCombo(
             string comboName, int nextStepIndex, Player target, bool previousStepHit)
         {
+            // Half-health hit-confirm follow-up (appended in CustomizeMeleeCombo): it plays only if the
+            // string ender connected, and then only HitConfirmFollowUpChance of the time.
+            if (nextStepIndex == _hitConfirmStepIndex)
+            {
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    // Blade overlap is server-only. Enter the pause and hold it (AI) until the decision arrives.
+                    _hitConfirmAwaitingServer = true;
+                    _hitConfirmAwaitTicks = 0;
+                    return true;
+                }
+
+                bool followUp = previousStepHit && Main.rand.NextFloat() < HitConfirmFollowUpChance;
+                _hitConfirmDecision = HitConfirmDeclined;
+                if (followUp)
+                {
+                    _hitConfirmDecision = HitConfirmApproved;
+                }
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NPC.netUpdate = true;
+                }
+                return followUp;
+            }
+
             if (comboName == WrathFlurryName
                 && nextStepIndex < FlurryPursuitFirstFinaleStepIndex
                 && (ActiveMeleeComboMotion == ComboMotion.UnderhandArc
@@ -1014,6 +1301,101 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     nextStep.ForwardPushMult = FlurrySwipePush;
                 }
             }
+        }
+
+        int _hitConfirmStepIndex = -1;  // index of the appended follow-up in the active combo, or -1
+        int _hitConfirmRecoveryTicks;   // the active combo's customized recovery, for a client-side decline
+        byte _hitConfirmDecision;       // server decision for the current combo, synced
+        bool _hitConfirmAwaitingServer;
+        int _hitConfirmAwaitTicks;
+        int _delayedSwingHoldTicks;     // synced; rolled in OnMeleeComboStarted, spent in AI
+        bool _delayedSwingGlinted;
+        int _estusPunishTimer;          // server only
+        bool _estusPunishConsumed;
+
+        ///<summary>Half-health pressure, applied to the per-activation copy TryStartMeleeCombo cloned (so
+        ///nothing leaks into the static GwynCombos table): strikes 25% faster, pauses and recovery 25%
+        ///shorter, hyper-armor through the pauses, and the hit-confirm follow-up on the string enders.
+        ///Skipped: Wrath Flurry (it only exists below 50%, and FlurryRecoveryWalking's landing beat is
+        ///keyed to its authored 180t recovery), V2 clips (their pool twins carry the timing), and
+        ///motions whose AttackTicks is a physics timeout (leaps, uppercut, run) or a fixed spin rate.</summary>
+        protected override void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction)
+        {
+            base.CustomizeMeleeCombo(ref combo, healthFraction);
+            _hitConfirmStepIndex = -1;
+
+            if (!HalfHealthMovesUnlocked)
+            {
+                return;
+            }
+
+            combo.HyperArmor = true;
+            if (combo.RuntimeV2Clip != null || combo.Name == WrathFlurryName || combo.Steps == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < combo.Steps.Length; i++)
+            {
+                MeleeComboStep step = combo.Steps[i];
+
+                if (step.Ease == SwingEaseStyle.Weighted && step.EaseOutDecay > 0f)
+                {
+                    // Scale both ramps so peak speed rises 25% and the hit window keeps its share of the swing.
+                    step.EaseInTicks = Math.Max(3, (int)Math.Round(step.EaseInTicks / HalfHealthStrikeSpeedMult));
+                    step.EaseOutTicks = Math.Max(6, (int)Math.Round(step.EaseOutTicks / HalfHealthStrikeSpeedMult));
+                    step.AttackTicks = step.EaseInTicks + step.EaseOutTicks;
+
+                    float armedSettleTicks = step.EaseOutTicks * (float)Math.Log(1f / RefinedArmedSpeedShare) / step.EaseOutDecay;
+                    step.HitWindowEnd = (step.EaseInTicks + armedSettleTicks) / step.AttackTicks;
+
+                    if (step.PostStepPause > 0)
+                    {
+                        int liveTicks = (int)Math.Ceiling(step.HitWindowEnd * step.AttackTicks);
+                        int tailTicks = step.AttackTicks - liveTicks;
+                        int scaledPause = (int)Math.Round(step.PostStepPause * HalfHealthRecoveryMult);
+                        int minimumPause = Math.Max(1, MinTicksBetweenLiveWindows - tailTicks);
+                        step.PostStepPause = Math.Max(scaledPause, minimumPause);
+                    }
+                }
+                else if (step.Motion == ComboMotion.GroundSlam)
+                {
+                    // Roll-Catch's Whip slam: a plain arc over AttackTicks.
+                    step.AttackTicks = Math.Max(6, (int)Math.Round(step.AttackTicks / HalfHealthStrikeSpeedMult));
+                }
+                else if (step.Motion == ComboMotion.JoustDash)
+                {
+                    // Sliding Thrust sweeps over the weapon's useAnimation, not AttackTicks, so the dash gets
+                    // 25% faster travel (and 25% more ground) instead of fewer ticks.
+                    step.ForwardPushMult *= HalfHealthStrikeSpeedMult;
+                }
+
+                combo.Steps[i] = step;
+            }
+
+            int authoredRecovery = combo.RecoveryTicks > 0 ? combo.RecoveryTicks : MeleeRecoveryTicks;
+            combo.RecoveryTicks = Math.Max(1, (int)Math.Round(authoredRecovery * HalfHealthRecoveryMult));
+            _hitConfirmRecoveryTicks = combo.RecoveryTicks;
+
+            bool stringEnder = combo.Name == UnderOverName
+                || combo.Name == ThreeHitName
+                || combo.Name == CinderfallName;
+            if (!stringEnder)
+            {
+                return;
+            }
+
+            // Hit-confirm follow-up: a rising cut from the ender's lowered end pose (shared endpoints, no
+            // re-raise). ShouldContinueMeleeCombo plays it only if the ender connected.
+            int enderIndex = combo.Steps.Length - 1;
+            MeleeComboStep[] extendedSteps = new MeleeComboStep[combo.Steps.Length + 1];
+            Array.Copy(combo.Steps, extendedSteps, combo.Steps.Length);
+            extendedSteps[enderIndex].PostStepPause = HitConfirmPauseTicks;
+            extendedSteps[enderIndex + 1] = WeightedSwordSwing(ComboMotion.UnderhandArc, 0,
+                HitConfirmEaseIn, HitConfirmEaseOut, HitConfirmDecay, 0,
+                HitConfirmDamage, HitConfirmReach, HitConfirmPush);
+            combo.Steps = extendedSteps;
+            _hitConfirmStepIndex = enderIndex + 1;
         }
 
         void TickFlurryPursuit()
@@ -1449,17 +1831,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override bool EvadesProjectiles => true;
 
-        ///<summary>The old Gwyn's on-hit debuff stack — a hit from the Lord of Cinder RUINS you.</summary>
-        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        // Sword-hit debuffs, delivered by PuppetMeleeHitbox on the hit player's machine. Every sword hit
+        // fractures armor for a minute and sets the player on fire; an aerial hit also Cripples (no extra
+        // jumps or rocket boots, which stops the aerial engagement re-triggering on the same hops), a
+        // ground hit breaks spirit (knockback resistance) instead. Body contact applies nothing: it only
+        // deals damage during Unbroken Advance. AerialStrikeActive reads the synced aerial/plunge state.
+        const int MeleeHitDebuffTicks = 7 * 60;
+        const int MeleeHitFracturingArmorTicks = 60 * 60;
+
+        public void OnHumanoidMeleeHit(Player target)
         {
-            target.AddBuff(BuffID.OnFire, 10 * 60, false);
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 40 * 60, false); //lose defense on hit
-            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 30 * 60, false);
-            target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30 * 60, false);    //lose knockback resistance
-            if (Main.rand.NextBool(2))
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), MeleeHitFracturingArmorTicks, false);
+            target.AddBuff(BuffID.OnFire, MeleeHitDebuffTicks, false);
+
+            if (AerialStrikeActive)
             {
-                target.AddBuff(BuffID.Weak, 10 * 60, false);
-                target.AddBuff(BuffID.BrokenArmor, 3 * 60, false);
+                target.AddBuff(ModContent.BuffType<Crippled>(), MeleeHitDebuffTicks, false);
+            }
+            else
+            {
+                target.AddBuff(ModContent.BuffType<BrokenSpirit>(), MeleeHitDebuffTicks, false);
             }
         }
 
@@ -1505,6 +1896,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write((short)Math.Clamp(_flurryPursuitAirTicks, 0, short.MaxValue));
             writer.Write(_flurryPursuitVelocityX);
             writer.Write((sbyte)_flurryPursuitLockedDirection);
+            writer.Write((byte)_aerialPhase);
+            writer.Write((byte)_aerialMove);
+            writer.Write((short)Math.Clamp(_aerialTimer, 0, short.MaxValue));
+            writer.Write((byte)Math.Clamp(_aerialMovesDone, 0, byte.MaxValue));
+            writer.WriteVector2(_aerialDashVelocity);
+            writer.Write((byte)Math.Clamp(_delayedSwingHoldTicks, 0, byte.MaxValue));
+            writer.Write(_hitConfirmDecision);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -1540,6 +1938,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _flurryPursuitAirTicks = reader.ReadInt16();
             _flurryPursuitVelocityX = reader.ReadSingle();
             _flurryPursuitLockedDirection = reader.ReadSByte() < 0 ? -1 : 1;
+            AerialPhase previousAerialPhase = _aerialPhase;
+            _aerialPhase = (AerialPhase)reader.ReadByte();
+            _aerialMove = (AerialMove)reader.ReadByte();
+            _aerialTimer = reader.ReadInt16();
+            _aerialMovesDone = reader.ReadByte();
+            _aerialDashVelocity = reader.ReadVector2();
+            _delayedSwingHoldTicks = reader.ReadByte();
+            _hitConfirmDecision = reader.ReadByte();
+            // A new strike on the server: start the matching staged combo locally on the next tick.
+            if (_aerialPhase == AerialPhase.Striking && previousAerialPhase != AerialPhase.Striking)
+            {
+                _aerialComboStarted = false;
+            }
             _flurryPursuitAwaitingServer = false;
             if (!wasPursuitAirborne && _flurryPursuitAirborne && !Main.dedServ)
             {
@@ -1565,7 +1976,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             //Contact only hurts during the Unbroken Advance march (all other damage is weapon hitboxes)
-            NPC.damage = TooEarly ? TooEarlyDamage : (_advanceTimer > 0 ? MeleeDamage : 0);
+            int contactDamage = 0;
+            if (TooEarly)
+            {
+                contactDamage = TooEarlyDamage;
+            }
+            else if (_advanceTimer > 0)
+            {
+                contactDamage = MeleeDamage;
+            }
+            NPC.damage = contactDamage;
 
             // Keep the base inter-step pause from advancing while the miss-pursuit owns movement.
             // Setting it to two is enough: PuppetNPC decrements once. After the three-tick linger it
@@ -1578,9 +1998,67 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 PhaseTimer = 2;
             }
 
+            // Delayed swing (rolled in OnMeleeComboStarted): pin the tell one tick short of release with
+            // the same PhaseTimer trick, so the cocked pose holds. The glint on the first held tick is the bait.
+            bool holdingDelayedSwing = _delayedSwingHoldTicks > 0
+                && Phase == AttackPhase.MeleeComboTelegraph
+                && PhaseTimer <= 2;
+            if (holdingDelayedSwing)
+            {
+                if (!_delayedSwingGlinted && !Main.dedServ)
+                {
+                    Vector2 glintTip = PuppetWeaponTipPosition(ComboReachBase * 0.7f);
+                    SoundEngine.PlaySound(SoundID.MaxMana with { Volume = 0.8f, Pitch = 0.35f }, glintTip);
+                    for (int i = 0; i < DelayedSwingGlintDust; i++)
+                    {
+                        Vector2 glintVelocity = Main.rand.NextVector2CircularEdge(3.5f, 3.5f);
+                        Dust glint = Dust.NewDustPerfect(glintTip, DustID.GoldFlame, glintVelocity,
+                            20, new Color(255, 240, 170), 1.3f);
+                        glint.noGravity = true;
+                    }
+                }
+                _delayedSwingGlinted = true;
+                PhaseTimer = 2;
+                _delayedSwingHoldTicks--;
+            }
+
+            // Hit-confirm follow-up on a client: hold the pause until the server says whether it plays.
+            if (_hitConfirmAwaitingServer && Phase == AttackPhase.MeleeComboPause)
+            {
+                _hitConfirmAwaitTicks++;
+                bool declined = _hitConfirmDecision == HitConfirmDeclined
+                    || _hitConfirmAwaitTicks > HitConfirmAwaitMaxTicks;
+                if (_hitConfirmDecision == HitConfirmApproved)
+                {
+                    _hitConfirmAwaitingServer = false;
+                }
+                else if (declined)
+                {
+                    _hitConfirmAwaitingServer = false;
+                    EnterPhase(AttackPhase.MeleeComboRecovery, _hitConfirmRecoveryTicks);
+                }
+                else
+                {
+                    PhaseTimer = 2;
+                }
+            }
+
             base.AI();
 
             TickFlurryPursuit();
+            TickAerialEngagement();
+
+            // Below half health Winged Plunge's aim beat and dive can't be staggered either. Written after
+            // base.AI (which recomputes the flags every tick), so it holds through this tick's hits.
+            bool plungeCommitted = HalfHealthMovesUnlocked
+                && _plungeTimer > 0
+                && (_plungePhase == 1 || _plungePhase == 2);
+            if (plungeCommitted)
+            {
+                tsorcRevampGlobalNPC plungeGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                plungeGlobalNPC.AttackCommitted = true;
+                plungeGlobalNPC.AttackTelegraphing = false;
+            }
 
             // Wrath Flurry's 180-tick recovery (the punish window). The landing beat is planted -
             // the navigator runs every tick, recovery included, so zero its step. After that he has
@@ -1606,7 +2084,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // A restrained neutral-white fill keeps Gwyn readable in unlit arena sections without
             // competing with the hotter attack lights on his blade and projectiles.
             if (!Main.dedServ)
+            {
                 Lighting.AddLight(NPC.Center, 0.42f, 0.42f, 0.42f);
+            }
 
             TickDefenseRing();
             TickCowardRing();
@@ -1629,6 +2109,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (_pullComboNudge > 0)
             {
                 _pullComboNudge--;
+            }
+
+            // Estus punisher (below half health): a drink within EstusPunishRange opens a window in which
+            // ReactiveComboIndex answers with a gap-closer and an approach combo always rolls. One answer
+            // per drink: the consumed flag only clears once the player stops drinking.
+            if (_estusPunishTimer > 0)
+            {
+                _estusPunishTimer--;
+            }
+            if (HalfHealthMovesUnlocked && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Player drinker = Main.player[NPC.target];
+                bool drinking = drinker.active && !drinker.dead
+                    && drinker.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking;
+                bool inPunishRange = NPC.Distance(drinker.Center) <= EstusPunishRange;
+                if (!drinking)
+                {
+                    _estusPunishConsumed = false;
+                }
+                else if (inPunishRange && !_estusPunishConsumed && _estusPunishTimer == 0)
+                {
+                    _estusPunishTimer = EstusPunishWindowTicks;
+                }
             }
 
             //Debug HUD attack label (DebugMode overlay reads DebugAttackLabel)
@@ -1768,7 +2271,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float LordEmbraceFlickSpeed = 12f;
         float _dashGrabEndX;
 
-        protected override int AfterimageSampleLimit => IsDashGrabSequence ? 72 : 24;
+        // The aerial engagement keeps a short trail: 10 cached positions at the base sample step of 2 = 5 echoes.
+        protected override int AfterimageSampleLimit
+        {
+            get
+            {
+                if (IsDashGrabSequence)
+                {
+                    return 72;
+                }
+                if (_aerialPhase != AerialPhase.None)
+                {
+                    return AerialAfterimageSamples;
+                }
+                return 24;
+            }
+        }
 
         bool IsDashGrabSequence =>
             Phase == AttackPhase.PierceTelegraph || Phase == AttackPhase.PierceDash ||
@@ -3225,6 +3743,445 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        // ── Aerial Engagement (the answer to a player above him) ─────────────────
+        // Attack spec — Aerial Engagement / _aerialPhase sequence.
+        // Trigger:     the player's feet >= 48px above his (mid-jump, or on a platform/ledge his ground
+        //              combos can't reach: those only start with the target within 48px vertically). A
+        //              meter fills 1/tick while that holds and drains 1/tick otherwise; 40 fires it, so a
+        //              single hop rarely does but repeated hops or standing up there will. Also needs
+        //              Idle/Stroll/Closing, grounded, the flight cooldown, no other set-piece, and its own
+        //              540-720t cooldown (360-480t below half health).
+        // Flow:        takeoff -> fly to the move's staging point (<=70t) -> one aerial combo -> re-stage
+        //              (2 moves, 3 below half health) -> exit. The exit is Winged Plunge's aim + dive slash
+        //              when the player is on the ground below him, otherwise a plain landing and a 40t
+        //              planted recovery (30t below half health) - the punish window.
+        // Moves:       Skyward Uppercut (below-side, rising cut + climb), Hanging Overhead (above, falling
+        //              cut + drop), Sky Lunge (level, dash solved to pass 150px beyond the player). Timing
+        //              sheets on the GwynCombos entries: tells 36-46t on screen, live 15-18t (rollable).
+        // Visuals:     gold spark spray on each swing's peak-speed tick plus a stream off the live blade
+        //              (OnMeleeComboAttackTick); 5 cached body echoes for the whole engagement.
+        // Hits:        Crippled 7s + On Fire 7s + Fracturing Armor 60s (OnHumanoidMeleeHit).
+        // Multiplayer: the server decides trigger, moves and exit; phase, move, timer and dash are synced,
+        //              and every machine runs the movement and starts the staged combo locally.
+        enum AerialPhase : byte
+        {
+            None,
+            Approach,
+            Striking,
+            Landing,
+        }
+
+        enum AerialMove : byte
+        {
+            Uppercut,
+            Overhead,
+            Lunge,
+        }
+
+        const float AerialTriggerHeight = 48f;
+        const float AerialTriggerMaxHorizontal = 520f;
+        const int AerialTriggerTicks = 40;
+        const int AerialCooldownTicks = 540;
+        const int AerialCooldownRandomTicks = 180;
+        const int AerialCooldownTicksHalfHealth = 360;
+        const int AerialCooldownRandomTicksHalfHealth = 120;
+        const int AerialMovesPerEngagement = 2;
+        const int AerialMovesPerEngagementHalfHealth = 3;
+        const int AerialParkTicks = 30;              // NovaRecovery park, refreshed whenever it lapses
+        const int AerialApproachMaxTicks = 70;
+        const int AerialMaxEngagementTicks = 600;    // the flight controller force-lands at 720
+        const int AerialLandingTimeoutTicks = 150;
+        const int AerialLandingRecoveryTicks = 40;
+        const int AerialDiveParkTicks = 140;
+        const int AerialAfterimageSamples = 10;
+        const int AerialPeakSparkCount = 16;
+        const float AerialArriveRadius = 28f;
+        const float AerialFlySpeed = 9f;
+        const float AerialFlySteer = 0.2f;
+        // Approach speed is capped at this fraction of the remaining distance, so he eases into the stage.
+        const float AerialFlyBrakeRatio = 0.15f;
+        const float AerialTellTracking = 0.08f;
+        const float AerialHoverDamping = 0.88f;
+        const float AerialAbandonDistance = 480f;
+        const float AerialDiveMinDrop = 40f;         // player's centre this far below his for the dive exit
+        const float AerialStrikeDecay = 3f;
+        // Staging offsets from the player's centre: +X is toward Gwyn's side, +Y is down.
+        static readonly Vector2 UppercutStageOffset = new Vector2(70f, 90f);
+        static readonly Vector2 OverheadStageOffset = new Vector2(60f, -140f);
+        static readonly Vector2 LungeStageOffset = new Vector2(170f, 0f);
+        const float UppercutClimbSpeed = 8f;
+        const float UppercutDriftSpeed = 2.5f;
+        const float OverheadDropSpeed = 6f;
+        const float OverheadDriftSpeed = 2f;
+        // Sky Lunge: speed v0*e^(-k*p) over the step covers the gap plus the overshoot. From the 170px
+        // stage v0 comes out near the 26px/t cap, so he reaches the player around the cut's 10-tick peak.
+        const float LungeOvershoot = 150f;
+        const float LungeLeadTicks = 12f;
+        const float LungeDecay = 4f;
+        const float LungeMaxSpeed = 26f;
+
+        AerialPhase _aerialPhase;
+        AerialMove _aerialMove;
+        int _aerialTimer;
+        int _aerialTotalTicks;         // only read on the server
+        int _aerialMovesDone;
+        int _aerialCd = 300;           // server only
+        int _aerialTriggerMeter;       // server only
+        bool _aerialComboStarted;
+        bool _aerialStartRequested;
+        int _aerialStrikeElapsed = -1; // written by OnMeleeComboAttackTick for the aerial combos
+        int _aerialStrikeTotal;
+        Vector2 _aerialDashVelocity;
+        Vector2 _aerialPreviousTip;    // spark direction sample, visual only
+
+        // Aerial debuffs apply for the whole engagement and for Winged Plunge (standalone or the aerial exit).
+        bool AerialStrikeActive => _aerialPhase != AerialPhase.None || _plungeTimer > 0;
+
+        void TickAerialEngagement()
+        {
+            Player player = Main.player[NPC.target];
+
+            if (_aerialPhase == AerialPhase.None)
+            {
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    return;
+                }
+                if (_aerialCd > 0)
+                {
+                    _aerialCd--;
+                }
+
+                bool playerAbove = player.active && !player.dead
+                    && NPC.Bottom.Y - player.Bottom.Y >= AerialTriggerHeight
+                    && Math.Abs(player.Center.X - NPC.Center.X) <= AerialTriggerMaxHorizontal;
+                if (playerAbove)
+                {
+                    _aerialTriggerMeter++;
+                }
+                else
+                {
+                    _aerialTriggerMeter = Math.Max(0, _aerialTriggerMeter - 1);
+                }
+
+                bool freePhase = Phase == AttackPhase.Idle
+                    || Phase == AttackPhase.CasualStroll
+                    || Phase == AttackPhase.ClosingDistance;
+                bool setPieceRunning = _stormTimer > 0 || _plungeTimer > 0 || _riposteTimer > 0
+                    || _advanceTimer > 0 || _gravityTimer > 0 || _judgmentTeleportTimer > 0
+                    || _spearJumpActive || _flurryPursuitActive;
+                bool canTakeOff = Flight != null
+                    && !Flight.IsAirborne
+                    && Flight.CooldownRemaining <= 0
+                    && NPC.velocity.Y == 0f;
+                bool triggered = _aerialTriggerMeter >= AerialTriggerTicks && _aerialCd <= 0;
+                if (!triggered || !freePhase || setPieceRunning || !canTakeOff)
+                {
+                    return;
+                }
+
+                // The player is above him, so the opener is always the rising cut.
+                _aerialTriggerMeter = 0;
+                _aerialPhase = AerialPhase.Approach;
+                _aerialMove = AerialMove.Uppercut;
+                _aerialTimer = 0;
+                _aerialTotalTicks = 0;
+                _aerialMovesDone = 0;
+                EnterPhase(AttackPhase.NovaRecovery, AerialParkTicks);
+                Flight.RequestTakeoff();
+                SetAttackLabel("Aerial Engagement", 90);
+                SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.7f, Pitch = 0.1f }, NPC.Center);
+                NPC.netUpdate = true;
+                return;
+            }
+
+            _aerialTimer++;
+            _aerialTotalTicks++;
+            AfterimageTicks = Math.Max(AfterimageTicks, 3);
+
+            // Keep the ground machine parked in NovaRecovery between moves, so no set-piece or ground
+            // combo starts mid-flight. The aerial combo's own phases replace the park while a move plays.
+            bool comboRunning = Phase == AttackPhase.MeleeComboTelegraph
+                || Phase == AttackPhase.MeleeComboAttack
+                || Phase == AttackPhase.MeleeComboPause
+                || Phase == AttackPhase.MeleeComboRecovery;
+            if (!comboRunning && Phase != AttackPhase.NovaRecovery)
+            {
+                EnterPhase(AttackPhase.NovaRecovery, AerialParkTicks);
+            }
+
+            bool staggered = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0;
+            bool lostTarget = !player.active || player.dead;
+            bool overtime = _aerialTotalTicks > AerialMaxEngagementTicks;
+            bool mustAbort = _aerialPhase != AerialPhase.Landing && (staggered || lostTarget || overtime);
+            if (mustAbort && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                BeginAerialLanding();
+                return;
+            }
+
+            switch (_aerialPhase)
+            {
+                case AerialPhase.Approach:
+                {
+                    // Clients never ran the server's takeoff request; RequestTakeoff ignores repeats.
+                    if (Flight != null && !Flight.IsAirborne)
+                    {
+                        Flight.RequestTakeoff();
+                    }
+                    NPC.noGravity = true;
+
+                    Vector2 stage = AerialStagePoint(player);
+                    Vector2 toStage = stage - NPC.Center;
+                    float stageDistance = toStage.Length();
+                    float flySpeed = Math.Min(AerialFlySpeed, stageDistance * AerialFlyBrakeRatio);
+                    Vector2 desiredVelocity = toStage.SafeNormalize(Vector2.Zero) * flySpeed;
+                    NPC.velocity = Vector2.Lerp(NPC.velocity, desiredVelocity, AerialFlySteer);
+
+                    int faceDirection = 1;
+                    if (player.Center.X < NPC.Center.X)
+                    {
+                        faceDirection = -1;
+                    }
+                    NPC.direction = faceDirection;
+                    NPC.spriteDirection = faceDirection;
+
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        break;
+                    }
+
+                    bool arrived = stageDistance <= AerialArriveRadius;
+                    if (!arrived && _aerialTimer < AerialApproachMaxTicks)
+                    {
+                        break;
+                    }
+                    if (NPC.Distance(player.Center) > AerialAbandonDistance)
+                    {
+                        BeginAerialLanding();
+                        break;
+                    }
+
+                    _aerialPhase = AerialPhase.Striking;
+                    _aerialTimer = 0;
+                    _aerialComboStarted = false;
+                    NPC.netUpdate = true;
+                    break;
+                }
+
+                case AerialPhase.Striking:
+                {
+                    NPC.noGravity = true;
+
+                    // Start the staged move on every machine. CanSelectMeleeCombo admits only that combo
+                    // while _aerialStartRequested is set, so every machine picks the same one.
+                    if (!_aerialComboStarted)
+                    {
+                        _aerialComboStarted = true;
+                        _aerialStartRequested = true;
+                        bool started = TryStartMeleeCombo(NPC.Distance(player.Center));
+                        _aerialStartRequested = false;
+                        if (!started && Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            BeginAerialLanding();
+                        }
+                        break;
+                    }
+
+                    if (Phase == AttackPhase.MeleeComboTelegraph)
+                    {
+                        // Hang at the stage through the tell, drifting with the player.
+                        Vector2 tellStage = AerialStagePoint(player);
+                        Vector2 tellVelocity = (tellStage - NPC.Center) * 0.1f;
+                        if (tellVelocity.Length() > AerialFlySpeed)
+                        {
+                            tellVelocity = tellVelocity.SafeNormalize(Vector2.Zero) * AerialFlySpeed;
+                        }
+                        NPC.velocity = Vector2.Lerp(NPC.velocity, tellVelocity, AerialTellTracking);
+                        break;
+                    }
+
+                    if (Phase == AttackPhase.MeleeComboAttack && _aerialStrikeElapsed >= 0)
+                    {
+                        float progress = _aerialStrikeElapsed / (float)Math.Max(1, _aerialStrikeTotal);
+                        float strikeFalloff = (float)Math.Exp(-AerialStrikeDecay * progress);
+
+                        if (_aerialMove == AerialMove.Uppercut)
+                        {
+                            NPC.velocity = new Vector2(NPC.direction * UppercutDriftSpeed * strikeFalloff,
+                                -UppercutClimbSpeed * strikeFalloff);
+                        }
+                        else if (_aerialMove == AerialMove.Overhead)
+                        {
+                            NPC.velocity = new Vector2(NPC.direction * OverheadDriftSpeed * strikeFalloff,
+                                OverheadDropSpeed * strikeFalloff);
+                        }
+                        else
+                        {
+                            if (_aerialStrikeElapsed == 0)
+                            {
+                                // Solve the dash at release: v0*e^(-k*p) over the step covers v0*T*(1-e^-k)/k,
+                                // set equal to the gap to the led player plus the overshoot.
+                                Vector2 aimPoint = player.Center + player.velocity * LungeLeadTicks;
+                                Vector2 toAim = aimPoint - NPC.Center;
+                                float travel = toAim.Length() + LungeOvershoot;
+                                float coverage = _aerialStrikeTotal * (1f - (float)Math.Exp(-LungeDecay)) / LungeDecay;
+                                float launchSpeed = Math.Min(LungeMaxSpeed, travel / Math.Max(1f, coverage));
+                                _aerialDashVelocity = toAim.SafeNormalize(new Vector2(NPC.direction, 0f)) * launchSpeed;
+                                if (Main.netMode == NetmodeID.Server)
+                                {
+                                    NPC.netUpdate = true;
+                                }
+                            }
+                            float dashFalloff = (float)Math.Exp(-LungeDecay * progress);
+                            NPC.velocity = _aerialDashVelocity * dashFalloff;
+                        }
+
+                        _aerialStrikeElapsed = -1;
+                        break;
+                    }
+
+                    if (comboRunning || Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        // Tail, pause and recovery: hang nearly still. This is the aerial punish window.
+                        NPC.velocity *= AerialHoverDamping;
+                        break;
+                    }
+
+                    _aerialMovesDone++;
+                    int movesAllowed = AerialMovesPerEngagement;
+                    if (HalfHealthMovesUnlocked)
+                    {
+                        movesAllowed = AerialMovesPerEngagementHalfHealth;
+                    }
+
+                    // The player is back on the ground below him: finish with Winged Plunge's dive slash,
+                    // entering at its hang-and-aim beat because he is already airborne.
+                    bool playerGroundedBelow = player.velocity.Y == 0f
+                        && player.Center.Y > NPC.Center.Y + AerialDiveMinDrop;
+                    if (playerGroundedBelow)
+                    {
+                        _aerialPhase = AerialPhase.None;
+                        _aerialCd = RollAerialCooldown();
+                        _plungeTimer = 1;
+                        _plungePhase = 1;
+                        EnterPhase(AttackPhase.NovaRecovery, AerialDiveParkTicks);
+                        SetAttackLabel("Aerial Engagement: Dive Slash", 90);
+                        NPC.netUpdate = true;
+                        break;
+                    }
+
+                    if (_aerialMovesDone >= movesAllowed)
+                    {
+                        BeginAerialLanding();
+                        break;
+                    }
+
+                    // Next move: the rising cut again only if the player is still above him, never the same
+                    // move twice in a row.
+                    bool stillAbove = player.Center.Y < NPC.Center.Y - AerialTriggerHeight;
+                    AerialMove nextMove = AerialMove.Lunge;
+                    if (stillAbove && _aerialMove != AerialMove.Uppercut)
+                    {
+                        nextMove = AerialMove.Uppercut;
+                    }
+                    else if (_aerialMove == AerialMove.Lunge)
+                    {
+                        nextMove = AerialMove.Overhead;
+                    }
+                    _aerialMove = nextMove;
+                    _aerialPhase = AerialPhase.Approach;
+                    _aerialTimer = 0;
+                    NPC.netUpdate = true;
+                    break;
+                }
+
+                case AerialPhase.Landing:
+                {
+                    // The flight controller's Land mode owns the descent; only the server ends the engagement.
+                    Flight?.RequestLand();
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        break;
+                    }
+
+                    bool landed = Flight == null || !Flight.IsAirborne;
+                    if (!landed && _aerialTimer <= AerialLandingTimeoutTicks)
+                    {
+                        break;
+                    }
+
+                    _aerialPhase = AerialPhase.None;
+                    _aerialCd = RollAerialCooldown();
+                    NPC.noGravity = false;
+                    int landingRecovery = AerialLandingRecoveryTicks;
+                    if (HalfHealthMovesUnlocked)
+                    {
+                        landingRecovery = (int)Math.Round(AerialLandingRecoveryTicks * HalfHealthRecoveryMult);
+                    }
+                    EnterPhase(AttackPhase.NovaRecovery, landingRecovery);
+                    NPC.netUpdate = true;
+                    break;
+                }
+            }
+        }
+
+        ///<summary>Where Gwyn hangs before the staged move, relative to the player on his own side. A point
+        ///inside terrain (a player standing on a ledge) falls back to the player's height, and the dome
+        ///ceiling caps it from above.</summary>
+        Vector2 AerialStagePoint(Player player)
+        {
+            Vector2 offset = LungeStageOffset;
+            if (_aerialMove == AerialMove.Uppercut)
+            {
+                offset = UppercutStageOffset;
+            }
+            else if (_aerialMove == AerialMove.Overhead)
+            {
+                offset = OverheadStageOffset;
+            }
+
+            int side = 1;
+            if (NPC.Center.X < player.Center.X)
+            {
+                side = -1;
+            }
+
+            Vector2 stage = player.Center + new Vector2(side * offset.X, offset.Y);
+            Vector2 stageTopLeft = stage - NPC.Size * 0.5f;
+            if (Collision.SolidCollision(stageTopLeft, NPC.width, NPC.height))
+            {
+                stage.Y = player.Center.Y;
+            }
+
+            float ceiling = FindCeilingY(stage, 20);
+            if (ceiling > 0f)
+            {
+                float highestAllowedCenter = ceiling + NPC.height * 0.5f + 8f;
+                stage.Y = Math.Max(stage.Y, highestAllowedCenter);
+            }
+            return stage;
+        }
+
+        void BeginAerialLanding()
+        {
+            Flight?.RequestLand();
+            // Also fall while a stagger has paused the flight controller's Land mode.
+            NPC.noGravity = false;
+            _aerialPhase = AerialPhase.Landing;
+            _aerialTimer = 0;
+            NPC.netUpdate = true;
+        }
+
+        int RollAerialCooldown()
+        {
+            if (HalfHealthMovesUnlocked)
+            {
+                return AerialCooldownTicksHalfHealth + Main.rand.Next(AerialCooldownRandomTicksHalfHealth);
+            }
+            return AerialCooldownTicks + Main.rand.Next(AerialCooldownRandomTicks);
+        }
+
         ///<summary>World Y of the first solid tile BOTTOM above the point (scanning up), or -1 if none
         ///in range — the dome-clearance check for the Winged Plunge's ascent.</summary>
         static float FindCeilingY(Vector2 worldPos, int maxTilesUp)
@@ -3331,6 +4288,32 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             base.OnMeleeComboStarted(combo);
             _swordArcSpawnedForStep = false;
             ResetFlurryPursuit(releasePause: false);
+            _hitConfirmDecision = HitConfirmUndecided;
+            _hitConfirmAwaitingServer = false;
+            _aerialStrikeElapsed = -1;
+
+            // Delayed swing (below half health): roll whether this heavy tell holds its cocked end.
+            _delayedSwingHoldTicks = 0;
+            _delayedSwingGlinted = false;
+            bool heavySwingTell = HalfHealthMovesUnlocked
+                && combo.HeavyCommit
+                && combo.RuntimeV2Clip == null
+                && combo.Name != WrathFlurryName
+                && combo.Steps != null
+                && combo.Steps.Length > 0
+                && combo.Steps[0].TelegraphTicks >= DelayedSwingMinTelegraph
+                && combo.Steps[0].Motion != ComboMotion.LowAxeRun;
+            bool rollsDelay = heavySwingTell
+                && Main.netMode != NetmodeID.MultiplayerClient
+                && Main.rand.NextBool(DelayedSwingChanceDenominator);
+            if (rollsDelay)
+            {
+                _delayedSwingHoldTicks = Main.rand.Next(DelayedSwingMinHold, DelayedSwingMaxHold + 1);
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NPC.netUpdate = true;
+                }
+            }
         }
 
         static bool IsGwynSwordSlashMotion(ComboMotion motion)
@@ -3448,9 +4431,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (!_swordArcSpawnedForStep && !landingTimedSlash && elapsed == 0
                 && step.DamageMult > 0f && IsGwynSwordSlashMotion(step.Motion))
             {
-                int duration = step.Motion == ComboMotion.RisingUppercutLeap
-                    ? Math.Min(total, Math.Max(1, GetMeleeSwingTicks(0)))
-                    : total;
+                int duration = total;
+                if (step.Motion == ComboMotion.RisingUppercutLeap)
+                {
+                    duration = Math.Min(total, Math.Max(1, GetMeleeSwingTicks(0)));
+                }
                 SpawnGwynSwordArc(step.Motion, duration, combo.Name == "Backhand Step");
                 _swordArcSpawnedForStep = true;
             }
@@ -3459,7 +4444,57 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // material still finish the real visual swing, but damaging-looking ember spray stops.
             bool followingThrough = step.HitWindowEnd > 0f && progress > step.HitWindowEnd;
             if (!followingThrough)
+            {
                 EmitSwingFireDust(bladeReach, elapsed);
+            }
+
+            bool aerialSwing = IsAerialComboName(combo.Name);
+            if (aerialSwing)
+            {
+                // TickAerialEngagement drives his flight from the swing's own clock.
+                _aerialStrikeElapsed = elapsed;
+                _aerialStrikeTotal = total;
+            }
+
+            // Aerial swings shed gold sparks along the tip's own motion: a spray on the peak-speed tick
+            // (EaseInTicks, the fastest frame of a Weighted cut) and a thin stream while the blade is live.
+            if (aerialSwing && !Main.dedServ)
+            {
+                Vector2 tip = PuppetWeaponTipPosition(bladeReach);
+                Vector2 tipMotion = Vector2.Zero;
+                if (elapsed > 0)
+                {
+                    tipMotion = tip - _aerialPreviousTip;
+                }
+                _aerialPreviousTip = tip;
+                Vector2 sparkDirection = tipMotion.SafeNormalize(new Vector2(NPC.direction, 0f));
+
+                if (elapsed == step.EaseInTicks)
+                {
+                    for (int i = 0; i < AerialPeakSparkCount; i++)
+                    {
+                        float spread = Main.rand.NextFloat(-0.5f, 0.5f);
+                        Vector2 sparkVelocity = sparkDirection.RotatedBy(spread) * Main.rand.NextFloat(4f, 10f);
+                        Dust spark = Dust.NewDustPerfect(tip, DustID.GoldFlame, sparkVelocity,
+                            20, new Color(255, 225, 100), Main.rand.NextFloat(0.9f, 1.4f));
+                        // Half keep gravity and fall away like embers.
+                        spark.noGravity = i % 2 == 0;
+                    }
+                }
+
+                if (!followingThrough && elapsed % 2 == 0)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Vector2 sparkPosition = tip + Main.rand.NextVector2Circular(8f, 8f);
+                        Vector2 sparkVelocity = sparkDirection * Main.rand.NextFloat(2f, 5f)
+                            + Main.rand.NextVector2Circular(1f, 1f);
+                        Dust spark = Dust.NewDustPerfect(sparkPosition, DustID.GoldFlame, sparkVelocity,
+                            30, new Color(255, 225, 100), Main.rand.NextFloat(0.7f, 1.1f));
+                        spark.noGravity = true;
+                    }
+                }
+            }
 
             // Leap hits resolve on landing; emitting their fire at takeoff would contradict the
             // telegraph. The rising uppercut is the opposite case: its blade sweep is over within a
@@ -3474,10 +4509,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     EmitComboCinders(step);
                 }
             }
-            else if (step.Motion != ComboMotion.LeapSlam
-                && elapsed == (step.Ease == SwingEaseStyle.Weighted ? step.EaseInTicks : total / 2))
+            else if (step.Motion != ComboMotion.LeapSlam)
             {
-                EmitComboCinders(step);
+                // Weighted cuts throw their crescent on the peak-speed tick; other eases at mid-step.
+                int cinderTick = total / 2;
+                if (step.Ease == SwingEaseStyle.Weighted)
+                {
+                    cinderTick = step.EaseInTicks;
+                }
+                if (elapsed == cinderTick)
+                {
+                    EmitComboCinders(step);
+                }
             }
         }
 

@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
@@ -48,6 +49,19 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
             Projectile.width  = newW;
             Projectile.height = newH;
             Projectile.Center = center;
+        }
+
+        // A connected blade hit hands its on-hit effects (debuffs) to the puppet that swung it, through
+        // the same interface HumanoidMeleeHitbox uses. Runs on the hit player's machine; puppets that
+        // don't implement IHumanoidMeleeHitEffects are unaffected.
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            tsorcGlobalProjectile globalProjectile = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>();
+            bool hasSource = globalProjectile.TryGetSourceNPC(out NPC sourceNPC);
+            if (hasSource && sourceNPC.ModNPC is IHumanoidMeleeHitEffects hitEffects)
+            {
+                hitEffects.OnHumanoidMeleeHit(target);
+            }
         }
     }
 }

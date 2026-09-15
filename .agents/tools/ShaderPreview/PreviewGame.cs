@@ -171,7 +171,7 @@ namespace ShaderPreview
                 recipe.Configure?.Invoke(effect, progress, scale.X);
 
                 var batch = new SpriteBatch(GraphicsDevice);
-                batch.Begin(SpriteSortMode.Immediate, recipe.Blend, SamplerState.LinearWrap,
+                batch.Begin(SpriteSortMode.Immediate, recipe.Blend, recipe.PrimarySampler,
                     DepthStencilState.None, RasterizerState.CullNone, effect);
                 batch.Draw(primary, drawPosition, source, Color.White,
                     recipe.Rotation, actualSize * 0.5f, scale, SpriteEffects.None, 0f);

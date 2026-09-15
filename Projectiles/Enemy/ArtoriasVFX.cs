@@ -318,6 +318,30 @@ namespace tsorcRevamp.Projectiles.Enemy
                 aura ? SamplerState.LinearClamp : SamplerState.PointClamp);
         }
 
+        // Spiral Fan's spinning crescent: the AbyssSlash sprite through a 2px-pixelated premultiplied
+        // technique instead of DrawBoomerangCore's crisp additive pass (which Boomerang Crescent still
+        // uses). The frame is padded 8 texels left AND right (symmetric, so the spin pivot stays the
+        // frame centre) because the sprite touches x=165 of its 170px frame, and the one-block glow
+        // past that edge needs room inside the quad. NOT padded vertically: that would sample the
+        // neighbouring sheet frames and draw their glow as stray specks; the sprite has 8-18 empty rows.
+        internal static void DrawFanCrescent(Texture2D texture, Rectangle frame, Vector2 center,
+            float rotation, float frameDrawSize, float opacity)
+        {
+            LoadAssets();
+            const int FramePadding = 8;
+            Rectangle paddedFrame = new(frame.X - FramePadding, frame.Y,
+                frame.Width + FramePadding * 2, frame.Height);
+            float worldPixelsPerTexel = frameDrawSize / frame.Width;
+            Vector2 drawSize = paddedFrame.Size() * worldPixelsPerTexel;
+
+            // PointClamp: the sprite's alpha is binary, and the shader's outline/glow read it per block.
+            DrawBoomerang(boomerangEffect, "ArtoriasFanCrescentPixelated", texture, paddedFrame,
+                brokenNoise.Value, center, drawSize, rotation, new Color(34, 8, 66),
+                new Color(146, 58, 238), new Color(222, 186, 255), opacity,
+                0f, 0f, 1f, 0f, SamplerState.PointClamp,
+                blendState: BlendState.AlphaBlend, pixelBlockSize: 2f);
+        }
+
         // Two passes: a solid pixelated underlay (fixes "too translucent" - pure additive can never
         // occlude, vfx-shader-tips §43), then the original crisp additive spiral on top at reduced
         // opacity so the counter-rotating arms stay readable instead of melting into the solid body.
@@ -626,11 +650,15 @@ namespace tsorcRevamp.Projectiles.Enemy
                 effect.Parameters["Layer"]?.SetValue(layer);
                 effect.Parameters["FrameUVOrigin"]?.SetValue(frameUVOrigin);
                 effect.Parameters["FrameUVScale"]?.SetValue(frameUVScale);
-                // Only consumed by the *Solid techniques (ArtoriasBoomerangOrbit/RibbonSolid) - a
-                // no-op ?.SetValue for every other technique in this file family.
+                // Only consumed by the *Solid techniques (ArtoriasBoomerangOrbit/RibbonSolid) and
+                // ArtoriasFanCrescentPixelated - a no-op ?.SetValue for every other technique here.
                 Vector2 pixelBlocks = Vector2.Max(drawSize / pixelBlockSize, Vector2.One);
                 effect.Parameters["PixelGrid"]?.SetValue(
                     new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
+                // One pixel block in atlas UV, for ArtoriasFanCrescentPixelated's neighbour samples.
+                // Divided here because ps_2_0 has no preshader.
+                Vector2 frameBlockStep = frameUVScale / pixelBlocks;
+                effect.Parameters["FrameBlockStep"]?.SetValue(frameBlockStep);
                 effect.CurrentTechnique.Passes[0].Apply();
 
                 Main.EntitySpriteDraw(primary, worldCenter - Main.screenPosition, source,

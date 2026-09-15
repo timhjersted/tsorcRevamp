@@ -52,7 +52,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool UseLogicalMeleeTelegraphs => true;
         protected override bool UseAuthoredComboSwingClock => true;
         protected override float OverheadWindupOvershoot => 0.18f;
-        protected override int MeleeAttackTicks => 30;
+        // Plain one-shot overhead (an in-reach swing that isn't a combo): in 9 / out 21, k 8 -> 38°/t, live 12.2t
+        // (~186°). 30t total on purpose: it must end with the greatsword's 30t useAnimation, which drives the Use frames.
+        protected override WeightedSwing MeleeAttackCurve => new WeightedSwing(9, 21, 8f);
+        protected override int MeleeAttackTicks => MeleeAttackCurve.TotalTicks;
         protected override int MeleeRecoveryTicks => 30;
         protected override int MeleeComboInterStepLingerTicks => 15;
         protected override int MeleeRecoveryLingerTicks => 30;
@@ -75,13 +78,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             switch (motion)
             {
+                // Weighted swings disarm under 30% of peak speed, so only ~0.8x of the envelope is live. Both
+                // arcs are widened toward the player's broadsword (~224° envelope = ~180° live): the overhead at
+                // its END (2.29, near the player's straight-down finish), the underhand at its low START, since
+                // its end can't go past about -1.7 before the arm folds behind the head.
                 case ComboMotion.OverheadArc:
                     startRotation = Math.Min(startRotation, -1.48f);
-                    endRotation = 1.35f;
+                    endRotation = 2.29f;
                     break;
                 case ComboMotion.UnderhandArc:
-                    startRotation = 1.35f;
-                    endRotation = -1.35f;
+                    startRotation = 2.05f;
+                    endRotation = -1.55f;
                     break;
                 case ComboMotion.HorizontalSweep:
                     startRotation = -1.08f;
@@ -94,6 +101,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     break;
             }
         }
+
+        // ── Swing curves (attack-timing-design §3) ────────────────────────────────────────────────
+        // Every Artorias sword swing is a Weighted strike: a short cubic ease-in, a fast peak, then an exponential
+        // settle that stops being a hitbox under 30% of peak speed. Each has its own in/out/decay, so no two read
+        // alike and none copy Gwyn's flurry (10/45 k7, 19°/t). peak = sweep / (in/3 + out * (1 - e^-k) / k).
+        //                    envelope  in/out  k     peak    live
+        //   Heavy Chop       216°      13/26   9     30°/t   16.5t ~190°  longest hang, heaviest drop
+        //   Rising Slash     206°       6/22   5.5   34°/t   10.8t ~165°  snaps up, long soft settle
+        //   Running Cleave   216°       5/26   6     36°/t   10.2t ~170°  lands straight off the dash
+        //   plain overhead   216°       9/21   8     38°/t   12.2t ~186°  MeleeAttackCurve, above
+        // Every live window is under the 22t roll, so each swing is separately rollable, and the tail is harmless
+        // (punish window = tail + recovery). The phantom's 1.4x tempo shortens each step and HitWindowEnd is a
+        // fraction of it, so the whole curve compresses proportionally.
+        static readonly WeightedSwing HeavyChopCurve = new WeightedSwing(13, 26, 9f);
+        static readonly WeightedSwing RisingSlashCurve = new WeightedSwing(6, 22, 5.5f);
+        static readonly WeightedSwing RunningCleaveCurve = new WeightedSwing(5, 26, 6f);
 
         protected override void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction)
         {
@@ -154,6 +177,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 slam.AttackTicks = 90;
                 combo.Steps[0] = slam;
             }
+
+            // The shared table's sword arcs, retimed onto Artorias's own Weighted curves (table above). The Motion
+            // checks stop a later edit of the shared table from putting a sword curve on a thrust or a spin.
+            if (combo.Name == "Heavy Chop" && combo.Steps.Length > 0 && combo.Steps[0].Motion == ComboMotion.OverheadArc)
+            {
+                ApplySwingCurve(ref combo.Steps[0], HeavyChopCurve);
+            }
+            else if (combo.Name == "Rising Slash" && combo.Steps.Length > 0 && combo.Steps[0].Motion == ComboMotion.UnderhandArc)
+            {
+                ApplySwingCurve(ref combo.Steps[0], RisingSlashCurve);
+            }
+            else if (combo.Name == "Running Cleave" && combo.Steps.Length > 1 && combo.Steps[1].Motion == ComboMotion.OverheadArc)
+            {
+                ApplySwingCurve(ref combo.Steps[1], RunningCleaveCurve);
+            }
+        }
+
+        /// <summary>Puts a combo step on a Weighted curve: its length becomes the curve's, and the blade disarms once
+        /// speed drops under 30% of peak (HitWindowEnd, which also fades the sword arc).</summary>
+        static void ApplySwingCurve(ref MeleeComboStep step, WeightedSwing curve)
+        {
+            step.Ease = SwingEaseStyle.Weighted;
+            step.EaseInTicks = curve.EaseInTicks;
+            step.EaseOutTicks = curve.EaseOutTicks;
+            step.EaseOutDecay = curve.EaseOutDecay;
+            step.AttackTicks = curve.TotalTicks;
+            step.HitWindowEnd = curve.HitWindowEnd;
         }
 
         // Ground Pound is the only LeapSlam-motion step in Artorias's moveset, so this fires exactly
@@ -184,7 +234,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.6f, PitchVariance = 0.2f }, NPC.Center);
             TryMeleeHit();
-            SpawnArtoriasSwordArc(GetMeleeSwingTicks(MeleeAttackTicks));
+            SpawnArtoriasSwordArc(GetMeleeSwingTicks(MeleeAttackTicks), hitWindowEnd: MeleeAttackCurve.HitWindowEnd);
         }
 
         protected override void DoRangedAttack()
@@ -409,6 +459,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float JumpSlashMaxUpSpeed    => 18f;
         protected override int   JumpSlashChance        => 5;
         protected override int   JumpSlashCooldownAfterUse => 420;
+        // Swipe: -60° cocked -> 110° (170° envelope; was 55°, widened at the END so ~142° stays live past the 30%
+        // disarm and still reaches a player at his feet). in 8 / out 22, k 7 -> 29°/t, live 11.8t. The 12t longer
+        // phase comes out of the recovery (70 -> 58): tail + recovery = ~76t punish window, was 70.
+        protected override WeightedSwing JumpSlashCurve   => new WeightedSwing(8, 22, 7f);
+        protected override int   JumpSlashAttackTicks     => JumpSlashCurve.TotalTicks;
+        protected override float JumpSlashEndRotation     => MathHelper.ToRadians(110f);
+        protected override int   JumpSlashRecoveryTicks   => 58;
 
         // ── Forward Flip Slash ───────────────────────────────────────────────────
         protected override bool  CanFlipSlash              => true;
@@ -420,9 +477,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Landing strike timing sheet (attack-timing-design §3):
         // Poses:   -1.62 (cocked behind the head) -> 2.36 (straight down): 228° envelope, ~182° live.
         // Tell:    the whole ~53t somersault; the spin is phase-locked to arrive at -1.62 on touchdown.
-        // Strike:  in 6 / cruise 0 / out 28, k 6 -> peak 228 / (2 + 28 * 0.9975 / 6) = 34°/t on tick 6 (contact FX).
-        // Live:    6 + 28 * 1.204 / 6 = 12t from touchdown (< 22, rollable). The spin blade is live all flight.
-        // Open:    52t hold - 12t live = 40t planted punish window.
+        // Strike:  in 7 / cruise 0 / out 30, k 9 -> peak 228 / (7/3 + 30 * 0.9999 / 9) = 40°/t on tick 7 (contact FX),
+        //          the fastest blade in his kit.
+        // Live:    7 + 30 * 1.204 / 9 = 11t from touchdown (< 22, rollable). The spin blade is live all flight.
+        // Open:    52t hold - 11t live = 41t planted punish window.
         // Counter: roll through the spin as it crosses (~13t at roll speed), then space out of or roll the
         //          slam. A spin hit puts the slam inside the 40t post-hit immunity, so the two never both land.
         // Reach:   95px (ArtoriasSwordArcRadius) = the visible grip -> tip distance.
@@ -430,6 +488,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float FlipSlashStrikeStartRotation => -1.62f;
         protected override float FlipSlashStrikeEndRotation   => 2.36f;
         protected override int   FlipSlashLandHoldTicks       => 52;
+        protected override int   FlipSlashStrikeEaseInTicks   => 7;
+        protected override int   FlipSlashStrikeEaseOutTicks  => 30;
+        protected override float FlipSlashStrikeEaseOutDecay  => 9f;
 
         // ── Abyss Slash ──────────────────────────────────────────────────────────
         protected override bool  CanAbyssSlash              => true;
@@ -437,6 +498,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float AbyssSlashMaxRange         => 900f;
         protected override int   AbyssSlashChance           => 5;
         protected override int   AbyssSlashCooldownAfterUse => 300;
+        // Release swipe: in 4 / out 18, k 6 -> 37°/t over 160°, a whip-crack off the held post (was a 16t Snap).
+        // No blade hit; the crescent leaves on swipe entry, 4t before the peak. The swipe is 6t longer, so the
+        // gap tables and the recovery (60 -> 54) are 6t shorter and the crescents keep their release spacing.
+        protected override WeightedSwing AbyssSlashSwipeCurve => new WeightedSwing(4, 18, 6f);
+        protected override int   AbyssSlashSwipeTicks       => AbyssSlashSwipeCurve.TotalTicks;
+        protected override int   AbyssSlashRecoveryTicks    => 54;
 
         // ── Spectral phantom (below 50% HP) ──────────────────────────────────────
         // A real, invulnerable, melee-only Artorias (ArtoriasPhantom) that fights beside him. It replaced the
@@ -527,6 +594,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float TendrilMaxRange          => 500f;
         protected override int   TendrilChance            => NPC.life <= NPC.lifeMax * 0.50f ? 8 : 4;
         protected override int   TendrilCooldownAfterUse  => 480;
+        // Finishing swing: -35° post -> 135° straight down (170° envelope; 10° wider at the end, the Flip Slash
+        // strike's end pose) so ~146° stays live past the 30% disarm. in 10 / out 22, k 7.5 -> 27°/t: his slowest-
+        // building blade, a deliberate cut at a player just yanked in. Live 13.5t. Tail +16t comes out of the
+        // recovery (60 -> 44), so tail + recovery stays ~62t.
+        protected override WeightedSwing TendrilSwingCurve => new WeightedSwing(10, 22, 7.5f);
+        protected override int   TendrilSwingTicks        => TendrilSwingCurve.TotalTicks;
+        protected override float TendrilSwingEndRotation  => MathHelper.ToRadians(180f - 45f);
+        protected override int   TendrilRecoveryTicks     => 44;
 
         const int TendrilGrabDamage = 30;
         const float TendrilLaunchSpeed = 12f;
@@ -970,6 +1045,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     dust.noGravity = true;
                 }
                 return;
+            }
+
+            if (Phase == AttackPhase.SpiralFanSwingTelegraph)
+            {
+                // Spiral Fan fires in every direction, so on top of the blade dust below its tell gathers
+                // inward from a ring at SpiralFanTelegraphDustRadius (2x the old spread) around his body.
+                for (int i = 0; i < 2; i++)
+                {
+                    float ringAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    float ringRadius = SpiralFanTelegraphDustRadius
+                        + Main.rand.NextFloat(-SpiralFanTelegraphDustJitter, SpiralFanTelegraphDustJitter);
+                    Vector2 ringPosition = NPC.Center + ringAngle.ToRotationVector2() * ringRadius;
+                    Vector2 inward = (NPC.Center - ringPosition).SafeNormalize(Vector2.Zero);
+                    Vector2 ringVelocity = inward * Main.rand.NextFloat(1.2f, 2.4f);
+                    bool silver = Main.rand.NextBool(4);
+                    int ringDustType = DustID.ShadowbeamStaff;
+                    Color ringTint = new Color(150, 60, 232);
+                    if (silver)
+                    {
+                        ringDustType = DustID.SilverFlame;
+                        ringTint = new Color(230, 220, 255);
+                    }
+
+                    Dust ringDust = Dust.NewDustPerfect(ringPosition, ringDustType, ringVelocity, 100,
+                        ringTint, Main.rand.NextFloat(0.8f, 1.2f));
+                    ringDust.noGravity = true;
+                }
             }
 
             for (int i = 0; i < 1; i++)
@@ -1506,7 +1608,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
             TryMeleeHit(reach: 100f);
-            SpawnArtoriasSwordArc(JumpSlashAttackTicks);
+            SpawnArtoriasSwordArc(JumpSlashAttackTicks, hitWindowEnd: JumpSlashCurve.HitWindowEnd);
             // The swing often starts mid-air (target in reach), so the ground AOE is queued for real touchdown in AI.
             _jumpSlashImpactPending = true;
         }
@@ -1635,9 +1737,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int _abyssSlashVariant;
         static readonly int[][] AbyssSlashGapTables = new int[][]
         {
-            new int[] { 40 },              // variant 0: swipe0 -> 40 ticks -> orb finisher (swipe1)
-            new int[] { 60, 60 },          // variant 1: swipe0 -> 60 -> swipe1 -> 60 -> swipe2
-            new int[] { 30, 60, 30, 30 },  // variant 2: swipe0 ->30-> swipe1 ->60-> swipe2 ->30-> swipe3 ->30-> swipe4
+            // Gaps count from the END of a swipe. The labelled 40/60/30 are the spacing after the old 16t swipe;
+            // every value is 6t under its label because the Weighted swipe is 22t, keeping the release spacing.
+            new int[] { 34 },              // variant 0: swipe0 -> 40 ticks -> orb finisher (swipe1)
+            new int[] { 54, 54 },          // variant 1: swipe0 -> 60 -> swipe1 -> 60 -> swipe2
+            new int[] { 24, 54, 24, 24 },  // variant 2: swipe0 ->30-> swipe1 ->60-> swipe2 ->30-> swipe3 ->30-> swipe4
         };
 
         protected override int NextAbyssSlashDelay(int completedSwipeIndex)
@@ -1649,7 +1753,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override void DoAbyssSlashFire(int swipeIndex)
         {
             // Both variants release on a real AbyssSlashSwipe sweep, the orb finisher included.
-            SpawnArtoriasSwordArc(AbyssSlashSwipeTicks);
+            SpawnArtoriasSwordArc(AbyssSlashSwipeTicks, hitWindowEnd: AbyssSlashSwipeCurve.HitWindowEnd);
 
             if (swipeIndex == 0)
             {
@@ -1767,7 +1871,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
             TryMeleeHit(reach: 100f);
-            SpawnArtoriasSwordArc(TendrilSwingTicks);
+            SpawnArtoriasSwordArc(TendrilSwingTicks, hitWindowEnd: TendrilSwingCurve.HitWindowEnd);
         }
 
         // ── Charge-up Nova: one-shot set-piece at 50% / 20% / 10% HP ────────────────
@@ -1961,6 +2065,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float HomingVolleyMaxRange => 650f;
         protected override int HomingVolleyChance => 10;
         protected override int HomingVolleyCooldownAfterUse => 300;
+        // Volley chop: -100° -> 70°, in 11 / out 24, k 6 -> 22°/t, the heaviest-looking launch (was Smooth 30t,
+        // ~8.5°/t). The orbs leave on the peak tick (11 of 35) instead of mid-arc, where a Weighted blade is already
+        // settling. Half a tick under the peak so float rounding can't push the release a tick late. Tail +5t comes
+        // out of the recovery (120 -> 115).
+        protected override WeightedSwing HomingVolleySwingCurve => new WeightedSwing(11, 24, 6f);
+        protected override int HomingVolleySwingTicks => HomingVolleySwingCurve.TotalTicks;
+        protected override float HomingVolleyFireProgress =>
+            (HomingVolleySwingCurve.EaseInTicks - 0.5f) / HomingVolleySwingCurve.TotalTicks;
+        protected override int HomingVolleyRecoveryTicks => 115;
 
         protected override void DoHomingVolleySwingTick(int elapsed, int total)
         {
@@ -1974,10 +2087,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            // Same overhead-chop angle range the rotation sync uses, recomputed here purely for
-            // the dust position - the sword itself is driven independently in PuppetNPC.cs.
-            float swingT = total > 0 ? elapsed / (float)total : 1f;
-            float angle = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            // Same overhead-chop angle range and Weighted curve the rotation sync uses, recomputed here purely
+            // for the dust position - the sword itself is driven independently in PuppetNPC.cs.
+            float angle = HomingVolleySwingCurve.Apply(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), elapsed);
             Vector2 dir = new Vector2(NPC.direction, 0f).RotatedBy(angle);
             Vector2 bladePos = NPC.Center + dir * 46f;
 
@@ -2087,10 +2199,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float BoomerangMaxRange => 1300f;
         protected override int BoomerangChance => 9;
         protected override int BoomerangCooldownAfterUse => 330;
-        // Fire happens halfway through the 30-tick chop. A 95-tick post-swing recovery therefore
-        // expires 110 ticks after firing, preserving the old recovery budget while allowing the
-        // independently returning projectile to overlap Artorias's next move.
-        protected override int BoomerangRecoveryTicks => 95;
+        // Chop: -100° -> 70°, in 6 / out 20, k 5 -> 28.5°/t, a quick throw (was Smooth 30t). The crescents fire on
+        // the peak tick (6 of 26; half a tick under so float rounding can't push it late). The recovery still
+        // expires 110 ticks after firing (20t settle + 90t), preserving the old budget while the independently
+        // returning projectile overlaps Artorias's next move.
+        protected override WeightedSwing BoomerangSwingCurve => new WeightedSwing(6, 20, 5f);
+        protected override int BoomerangSwingTicks => BoomerangSwingCurve.TotalTicks;
+        protected override float BoomerangFireProgress =>
+            (BoomerangSwingCurve.EaseInTicks - 0.5f) / BoomerangSwingCurve.TotalTicks;
+        protected override int BoomerangRecoveryTicks => 90;
 
         protected override void DoBoomerangSwingTick(int elapsed, int total)
         {
@@ -2104,8 +2221,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            float swingT = total > 0 ? elapsed / (float)total : 1f;
-            float angle = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            float angle = BoomerangSwingCurve.Apply(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), elapsed);
             Vector2 dir = new Vector2(NPC.direction, 0f).RotatedBy(angle);
             Vector2 bladePos = NPC.Center + dir * 46f;
 
@@ -2169,12 +2285,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         const int SpiralFanShotDamage = 18;
         const float SpiralFanShotSpeed = 8.5f;
+        // Telegraph dust distance from Artorias's centre, doubled from the old 46px blade-hugging arc
+        // (read as too small for a volley that fills the screen). Jitter doubled with it (6 -> 12).
+        const float SpiralFanTelegraphDustRadius = 92f;
+        const float SpiralFanTelegraphDustJitter = 12f;
 
         protected override bool CanSpiralFan => true;
         protected override float SpiralFanMinRange => 60f;
         protected override float SpiralFanMaxRange => 650f;
         protected override int SpiralFanChance => 8;
         protected override int SpiralFanCooldownAfterUse => 360;
+        // Wind-up chop before the burst: -100° -> 70°, in 12 / out 18, k 4.5 -> 21°/t with the softest settle in his
+        // kit, easing into the pose the burst holds. Kept at 30t so the burst starts exactly when it always did.
+        protected override WeightedSwing SpiralFanSwingCurve => new WeightedSwing(12, 18, 4.5f);
+        protected override int SpiralFanSwingTicks => SpiralFanSwingCurve.TotalTicks;
 
         protected override void DoSpiralFanSwingTick(int elapsed, int total)
         {
@@ -2188,18 +2312,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            float swingT = total > 0 ? elapsed / (float)total : 1f;
-            float angle = MathHelper.Lerp(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), swingT);
+            float angle = SpiralFanSwingCurve.Apply(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), elapsed);
             Vector2 dir = new Vector2(NPC.direction, 0f).RotatedBy(angle);
-            Vector2 bladePos = NPC.Center + dir * 46f;
+            Vector2 arcPosition = NPC.Center + dir * SpiralFanTelegraphDustRadius;
 
-            if (Main.rand.NextBool(2))
+            // One dust per tick (was 1 in 2): at double the radius the arc is twice as long, so the
+            // old rate would have left it half as dense.
+            Color tint = new Color(190, 90, 255);
+            if (Main.rand.NextBool())
             {
-                Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : new Color(255, 140, 210);
-                Dust d = Dust.NewDustPerfect(bladePos + Main.rand.NextVector2Circular(6f, 6f), DustID.PurpleTorch,
-                    Vector2.Zero, 100, tint, Main.rand.NextFloat(1f, 1.6f));
-                d.noGravity = true;
+                tint = new Color(255, 140, 210);
             }
+
+            Vector2 jitter = Main.rand.NextVector2Circular(SpiralFanTelegraphDustJitter, SpiralFanTelegraphDustJitter);
+            Dust dust = Dust.NewDustPerfect(arcPosition + jitter, DustID.PurpleTorch,
+                Vector2.Zero, 100, tint, Main.rand.NextFloat(1f, 1.6f));
+            dust.noGravity = true;
         }
 
         protected override void DoSpiralFanFire(int shotIndex)
@@ -2271,7 +2399,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Vector2 vel = angle.ToRotationVector2() * SpiralFanShotSpeed;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
                 ModContent.ProjectileType<Projectiles.Enemy.AbyssSlash>(), SpiralFanShotDamage, 0f,
-                Main.myPlayer, 0f, 1f);
+                Main.myPlayer, 0f, 1f, _spiralFanDir);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, Vector2.Zero,
                 ModContent.ProjectileType<Projectiles.Enemy.ArtoriasFanSourceVFX>(), 0, 0f,
                 Main.myPlayer, angle, _spiralFanDir);

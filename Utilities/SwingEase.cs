@@ -30,6 +30,49 @@ namespace tsorcRevamp.Utilities
         Weighted,
     }
 
+    /// <summary>A <see cref="SwingEaseStyle.Weighted"/> curve for a swing that lives outside the combo table
+    /// (a boss's bespoke attack phases). All-zero (default) means "not authored": callers keep their legacy
+    /// ease. Ticks in, the start..end angle out, same maths as <see cref="SwingEase.ApplyWeighted"/>.</summary>
+    public readonly struct WeightedSwing
+    {
+        /// <summary>Blade speed share of peak below which the swing stops being a hitbox (attack-timing-design §3).</summary>
+        public const float ArmedSpeedShare = 0.30f;
+
+        public readonly int EaseInTicks;
+        public readonly int EaseOutTicks;
+        public readonly float EaseOutDecay;
+
+        public WeightedSwing(int easeInTicks, int easeOutTicks, float easeOutDecay)
+        {
+            EaseInTicks = easeInTicks;
+            EaseOutTicks = easeOutTicks;
+            EaseOutDecay = easeOutDecay;
+        }
+
+        public bool IsSet => EaseInTicks + EaseOutTicks > 0;
+
+        /// <summary>The whole swing. No cruise: the ease-in runs straight into the decay.</summary>
+        public int TotalTicks => EaseInTicks + EaseOutTicks;
+
+        /// <summary>Ticks from swing start the blade is still live: the ease-in, plus the ease-out span where
+        /// speed is still >= 30% of peak. Speed there is v * e^(-k * p), so that span is out * ln(1/0.3) / k.</summary>
+        public float LiveTicks
+        {
+            get
+            {
+                float decay = EaseOutDecay > 0f ? EaseOutDecay : SwingEase.DefaultWeightedDecay;
+                float armedSettleTicks = EaseOutTicks * (float)Math.Log(1f / ArmedSpeedShare) / decay;
+                return EaseInTicks + armedSettleTicks;
+            }
+        }
+
+        /// <summary>LiveTicks as a fraction of the swing: the form MeleeComboStep.HitWindowEnd and sword-arc fades take.</summary>
+        public float HitWindowEnd => LiveTicks / Math.Max(1, TotalTicks);
+
+        public float Apply(float start, float end, float elapsedTicks)
+            => SwingEase.ApplyWeighted(start, end, elapsedTicks, TotalTicks, EaseInTicks, EaseOutTicks, EaseOutDecay);
+    }
+
     /// <summary>
     /// Optional non-linear replacement for a plain MathHelper.Lerp swing arc. Same keyframe approach
     /// as the player-weapon QuickSlashMeleeAnimation curve (BroadswordRework): reshape the timing of

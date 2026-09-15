@@ -367,6 +367,10 @@ namespace tsorcRevamp.NPCs.Puppets
         // MeleeAttackTicks is the fallback swing duration when item useAnimation is unavailable
         // within the attack phase rather than bleeding into recovery.
         protected virtual int MeleeAttackTicks     => DefaultWeaponAnimMax;
+        /// <summary>Optional Weighted curve for the plain one-shot swing (MeleeAttack). Unset (default) keeps the
+        /// legacy ease over the weapon's use animation. Set, MeleeAttackTicks should equal its TotalTicks, and the
+        /// blade disarms after its LiveTicks.</summary>
+        protected virtual WeightedSwing MeleeAttackCurve => default;
         protected virtual int MeleeRecoveryTicks   => 25;
 
         /// <summary>Recovery for the combo that just finished. Prefers the combo's own
@@ -695,6 +699,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float JumpSlashTriggerRange      => 90f;
         protected virtual int   JumpSlashAttackTicks       => 18;
         protected virtual int   JumpSlashRecoveryTicks     => 70;
+        /// <summary>Optional Weighted curve for the swipe. Unset (default) keeps the legacy Smooth sweep; set,
+        /// JumpSlashAttackTicks should equal its TotalTicks, and the blade disarms after its LiveTicks.</summary>
+        protected virtual WeightedSwing JumpSlashCurve     => default;
+        /// <summary>Swipe end pose, swing-space radians. The start is the -60° cocked pose the rise carries.</summary>
+        protected virtual float JumpSlashEndRotation       => MathHelper.ToRadians(55f);
 
         /// <summary>Called every tick of the backward dodgeroll. Override for VFX/sound.</summary>
         protected virtual void DoJumpSlashDodgebackTick() { }
@@ -779,6 +788,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Ticks the "post" pose is held (still walking) after the arc completes.</summary>
         protected virtual int   AbyssSlashHoldTicks         => 20;
         protected virtual int   AbyssSlashSwipeTicks        => 16;
+        /// <summary>Optional Weighted curve for each release swipe. Unset keeps the legacy Snap; set,
+        /// AbyssSlashSwipeTicks should equal its TotalTicks.</summary>
+        protected virtual WeightedSwing AbyssSlashSwipeCurve => default;
         protected virtual int   AbyssSlashRecoveryTicks     => 60;
 
         /// <summary>Fired once, the instant a swipe begins (index 0 = the first swipe out of the
@@ -813,6 +825,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int   TendrilSwingArcTicks        => 40;   // 180° -> 10°
         protected virtual int   TendrilSwingHoldTicks       => 12;   // held at 10° before releasing
         protected virtual int   TendrilSwingTicks           => 16;   // 10° -> 170° release
+        /// <summary>Optional Weighted curve for the finishing swing. Unset keeps the legacy Snap; set,
+        /// TendrilSwingTicks should equal its TotalTicks, and the blade disarms after its LiveTicks.</summary>
+        protected virtual WeightedSwing TendrilSwingCurve   => default;
+        /// <summary>Finishing swing end pose, swing-space radians (the "170°" in the labels above).</summary>
+        protected virtual float TendrilSwingEndRotation     => MathHelper.ToRadians(170f - 45f);
         protected virtual int   TendrilRecoveryTicks        => 60;
 
         /// <summary>Called every tick of the arm-dissolve wind-up, elapsed counting up from 0.</summary>
@@ -936,6 +953,9 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float HomingVolleyDodgebackSpeed      => 6f;
         protected virtual int   HomingVolleySwingTelegraphTicks => 20;
         protected virtual int   HomingVolleySwingTicks          => 30;
+        /// <summary>Optional Weighted curve for the chop. Unset keeps the legacy Smooth; set, HomingVolleySwingTicks
+        /// should equal its TotalTicks, and HomingVolleyFireProgress should put the release on its peak.</summary>
+        protected virtual WeightedSwing HomingVolleySwingCurve  => default;
         /// <summary>Fraction (0-1) through the swing at which <see cref="DoHomingVolleyFire"/> fires.</summary>
         protected virtual float HomingVolleyFireProgress        => 0.5f;
         protected virtual int   HomingVolleyRecoveryTicks       => 120;
@@ -979,6 +999,9 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int   BoomerangCooldownAfterUse   => 330;
         protected virtual int   BoomerangSwingTelegraphTicks => 20;
         protected virtual int   BoomerangSwingTicks         => 30;
+        /// <summary>Optional Weighted curve for the chop. Unset keeps the legacy Smooth; set, BoomerangSwingTicks
+        /// should equal its TotalTicks, and BoomerangFireProgress should put the release on its peak.</summary>
+        protected virtual WeightedSwing BoomerangSwingCurve => default;
         protected virtual float BoomerangFireProgress       => 0.5f;
         protected virtual int   BoomerangRecoveryTicks      => 110;
 
@@ -1000,6 +1023,9 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int   SpiralFanCooldownAfterUse   => 360;
         protected virtual int   SpiralFanSwingTelegraphTicks => 20;
         protected virtual int   SpiralFanSwingTicks         => 30;
+        /// <summary>Optional Weighted curve for the wind-up chop. Unset keeps the legacy Smooth; set,
+        /// SpiralFanSwingTicks should equal its TotalTicks.</summary>
+        protected virtual WeightedSwing SpiralFanSwingCurve => default;
         protected virtual int   SpiralFanFireTicks          => 4;
         protected virtual int   SpiralFanRecoveryTicks      => 90;
 
@@ -3596,7 +3622,16 @@ namespace tsorcRevamp.NPCs.Puppets
                         // server-only _activeBladeReach so multiplayer clients draw it too.
                         ArmFireSlashVFX(MeleeRange * 0.7f, meleeSwingProgress);
                     }
-                    TickBladeHit();
+
+                    // An authored MeleeAttackCurve disarms the blade once it slows under 30% of peak speed;
+                    // the rest of the swing is harmless follow-through. Unset = live for the whole phase.
+                    int elapsedMeleeSwingTicks = GetMeleeSwingTicks(MeleeAttackTicks) - PhaseTimer;
+                    bool meleeBladeLive = !MeleeAttackCurve.IsSet || elapsedMeleeSwingTicks <= MeleeAttackCurve.LiveTicks;
+                    if (meleeBladeLive)
+                    {
+                        TickBladeHit();
+                    }
+
                     if (--PhaseTimer <= 0)
                         EnterPhase(AttackPhase.MeleeRecovery, MeleeRecoveryTicks);
                     break;
@@ -4199,7 +4234,13 @@ namespace tsorcRevamp.NPCs.Puppets
                     // tracked blade check - TickBladeHit has to run every tick of the swing to
                     // actually test it, same as MeleeAttack/StabAttack below. Without this call the
                     // swing never connects via its real sprite sweep at all, standing player or not.
-                    TickBladeHit();
+                    // An authored JumpSlashCurve disarms it after the curve's LiveTicks (the harmless settle).
+                    int elapsedJumpSlashTicks = JumpSlashAttackTicks - PhaseTimer;
+                    bool jumpSlashBladeLive = !JumpSlashCurve.IsSet || elapsedJumpSlashTicks <= JumpSlashCurve.LiveTicks;
+                    if (jumpSlashBladeLive)
+                    {
+                        TickBladeHit();
+                    }
                     if (--PhaseTimer <= 0)
                     {
                         // Punish the dodge: a clean whiff chains straight into Abyss Slash instead
@@ -4412,7 +4453,14 @@ namespace tsorcRevamp.NPCs.Puppets
                             : 1f;
                         ArmFireSlashVFX(MeleeRange, tendrilSwingProgress);
                     }
-                    TickBladeHit();
+
+                    // An authored TendrilSwingCurve disarms it after the curve's LiveTicks (the harmless settle).
+                    int elapsedTendrilSwingTicks = TendrilSwingTicks - PhaseTimer;
+                    bool tendrilBladeLive = !TendrilSwingCurve.IsSet || elapsedTendrilSwingTicks <= TendrilSwingCurve.LiveTicks;
+                    if (tendrilBladeLive)
+                    {
+                        TickBladeHit();
+                    }
                     if (--PhaseTimer <= 0)
                     {
                         EnterPhase(AttackPhase.TendrilRecovery, TendrilRecoveryTicks);
@@ -7072,13 +7120,10 @@ namespace tsorcRevamp.NPCs.Puppets
             else if (Phase == AttackPhase.JumpSlashAttack)
             {
                 // The half-circle downward swipe: -60° (cocked) sweeping through vertical/forward to
-                // +55° (past horizontal, angled down-forward) — a ~115° arc.
-                // Smooth-eased rather than linear: the arc now starts slow out of the cocked pose,
-                // accelerates through the strike and settles into the follow-through instead of
-                // running at one constant speed and stopping dead on the last frame.
-                float slashT = JumpSlashAttackTicks > 0 ? 1f - (float)PhaseTimer / JumpSlashAttackTicks : 1f;
-                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(-60f), MathHelper.ToRadians(55f),
-                    slashT, SwingEaseStyle.Smooth);
+                // JumpSlashEndRotation (+55° by default: past horizontal, angled down-forward, a ~115° arc).
+                // Smooth-eased rather than linear, or a Weighted strike when the puppet authors JumpSlashCurve.
+                _weaponRotation = BespokeSwingRotation(MathHelper.ToRadians(-60f), JumpSlashEndRotation,
+                    JumpSlashAttackTicks, JumpSlashCurve, SwingEaseStyle.Smooth);
             }
             else if (Phase == AttackPhase.FlipSlashRise)
             {
@@ -7167,9 +7212,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 // follow-through, matching where the projectile fires from. Snap-eased — most of the
                 // arc is spent in the first third, so the release reads as a whip-crack off the hold
                 // rather than a uniform sweep, then decelerates into the follow-through.
-                float swipeT = AbyssSlashSwipeTicks > 0 ? 1f - (float)PhaseTimer / AbyssSlashSwipeTicks : 1f;
-                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(10f - 45f), MathHelper.ToRadians(170f - 45f),
-                    swipeT, SwingEaseStyle.Snap);
+                // An authored AbyssSlashSwipeCurve replaces the Snap with a Weighted strike on real ticks.
+                _weaponRotation = BespokeSwingRotation(MathHelper.ToRadians(10f - 45f), MathHelper.ToRadians(170f - 45f),
+                    AbyssSlashSwipeTicks, AbyssSlashSwipeCurve, SwingEaseStyle.Snap);
             }
             else if (Phase == AttackPhase.TendrilTelegraph || Phase == AttackPhase.TendrilReach)
             {
@@ -7197,9 +7242,9 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 // Same 10°→170° release as Abyss Slash's swipe - the "standard" underhand swing shape,
                 // sharing its Snap easing so the two read as the same motion.
-                float swingT = TendrilSwingTicks > 0 ? 1f - (float)PhaseTimer / TendrilSwingTicks : 1f;
-                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(10f - 45f), MathHelper.ToRadians(170f - 45f),
-                    swingT, SwingEaseStyle.Snap);
+                // TendrilSwingCurve / TendrilSwingEndRotation let a puppet retime and widen it.
+                _weaponRotation = BespokeSwingRotation(MathHelper.ToRadians(10f - 45f), TendrilSwingEndRotation,
+                    TendrilSwingTicks, TendrilSwingCurve, SwingEaseStyle.Snap);
             }
             else if (Phase == AttackPhase.HomingVolleySwingTelegraph)
             {
@@ -7213,9 +7258,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 // follow-through - the volley fires partway through this arc. Smooth-eased so the
                 // heavy blade builds speed out of the raise and settles at the end; the fire point
                 // is a progress fraction of the same clock, so it still lands mid-arc.
-                float swingT = HomingVolleySwingTicks > 0 ? 1f - (float)PhaseTimer / HomingVolleySwingTicks : 1f;
-                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f),
-                    swingT, SwingEaseStyle.Smooth);
+                _weaponRotation = BespokeSwingRotation(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f),
+                    HomingVolleySwingTicks, HomingVolleySwingCurve, SwingEaseStyle.Smooth);
             }
             else if (Phase == AttackPhase.SpiralFanSwingTelegraph && UseAuthoredSpiralFanCastPose)
             {
@@ -7240,17 +7284,15 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 // Same overhead chop shape (and easing) as Homing Volley - the crescent(s) fire
                 // partway through.
-                float swingT = BoomerangSwingTicks > 0 ? 1f - (float)PhaseTimer / BoomerangSwingTicks : 1f;
-                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f),
-                    swingT, SwingEaseStyle.Smooth);
+                _weaponRotation = BespokeSwingRotation(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f),
+                    BoomerangSwingTicks, BoomerangSwingCurve, SwingEaseStyle.Smooth);
             }
             else if (Phase == AttackPhase.SpiralFanSwing)
             {
                 // Same overhead chop shape (and easing) again, but purely a visual wind-up here - the
                 // burst that follows (SpiralFanBurst/Pause) carries the actual firing sequence.
-                float swingT = SpiralFanSwingTicks > 0 ? 1f - (float)PhaseTimer / SpiralFanSwingTicks : 1f;
-                _weaponRotation = SwingEase.Apply(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f),
-                    swingT, SwingEaseStyle.Smooth);
+                _weaponRotation = BespokeSwingRotation(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f),
+                    SpiralFanSwingTicks, SpiralFanSwingCurve, SwingEaseStyle.Smooth);
             }
             else if (Phase == AttackPhase.SpiralFanBurst || Phase == AttackPhase.SpiralFanPause)
             {
@@ -7316,10 +7358,19 @@ namespace tsorcRevamp.NPCs.Puppets
                         _weaponRotation = MathHelper.Lerp(_weaponRotation, a0, 0.30f);
                     }
                 }
+                else if (MeleeAttackCurve.IsSet)
+                {
+                    // Authored Weighted downswing on the phase's own ticks. MeleeAttackTicks should equal the
+                    // curve's TotalTicks, so it still ends with the weapon's use animation.
+                    int elapsedSwingTicks = GetMeleeSwingTicks(MeleeAttackTicks) - PhaseTimer;
+                    _weaponRotation = MeleeAttackCurve.Apply(a0, a1, elapsedSwingTicks);
+                }
                 else
+                {
                     // Downswing: full broadsword arc, raised behind head → slash down-forward
                     // t runs 0->1 over the held item useAnimation window (reset when swing begins)
                     _weaponRotation = SwingEase.Apply(a0, a1, t, UseSwingEasing || AimSwingActive);
+                }
             }
             else if (Phase == AttackPhase.MeleeComboTelegraph
                   || Phase == AttackPhase.MeleeComboAttack
@@ -10015,6 +10066,26 @@ namespace tsorcRevamp.NPCs.Puppets
 
             return UseAuthoredComboSwingClock ? SwingEase.Apply(a0, a1, t, step.Ease)
                               : SwingEase.Apply(a0, a1, t, UseSwingEasing);
+        }
+
+        /// <summary>Blade angle for a bespoke (non-combo) swing phase <paramref name="phaseTicks"/> long. An authored
+        /// Weighted <paramref name="curve"/> plays on real elapsed ticks; unset falls back to the phase's legacy
+        /// ease over the same 0..1 progress it always used, so puppets that author nothing are unchanged.</summary>
+        private float BespokeSwingRotation(float start, float end, int phaseTicks, WeightedSwing curve, SwingEaseStyle legacyEase)
+        {
+            if (curve.IsSet)
+            {
+                int elapsedTicks = phaseTicks - PhaseTimer;
+                return curve.Apply(start, end, elapsedTicks);
+            }
+
+            float progress = 1f;
+            if (phaseTicks > 0)
+            {
+                progress = 1f - (float)PhaseTimer / phaseTicks;
+            }
+
+            return SwingEase.Apply(start, end, progress, legacyEase);
         }
 
         /// <summary>The start angle a step's arc begins from, with the same flip / aim-bias transforms

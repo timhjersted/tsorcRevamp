@@ -80,7 +80,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.velocity = Vector2.Zero;
             Projectile.tileCollide = false;
-            Projectile.rotation = Projectile.ai[2] + MathHelper.Pi;
             Projectile.ai[1]++;
 
             if (Main.netMode != NetmodeID.Server)
@@ -150,6 +149,20 @@ namespace tsorcRevamp.Projectiles.Enemy
                     35, new Color(255, 225, 100), Main.rand.NextFloat(0.45f, 0.85f));
                 yellowSpark.noGravity = true;
             }
+
+            //Gold sparks kicked out of the tile along the firing line, so the rebound's launch reads at a glance.
+            //±0.6 rad (~35°) cone, faster and larger than the ring above; every other spark keeps gravity and falls like an ember.
+            Vector2 reboundDirection = Projectile.ai[2].ToRotationVector2();
+            for (int i = 0; i < 16; i++)
+            {
+                float spreadAngle = Main.rand.NextFloat(-0.6f, 0.6f);
+                float sparkSpeed = Main.rand.NextFloat(4f, 11f);
+                Vector2 velocity = reboundDirection.RotatedBy(spreadAngle) * sparkSpeed;
+
+                Dust goldSpark = Dust.NewDustPerfect(Projectile.Center, DustID.GoldFlame, velocity,
+                    20, new Color(255, 225, 100), Main.rand.NextFloat(0.9f, 1.4f));
+                goldSpark.noGravity = i % 2 == 0;
+            }
         }
 
         public override bool? CanDamage()
@@ -176,6 +189,17 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Main.netMode != NetmodeID.Server)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item94 with { Volume = 0.45f, Pitch = 0.45f }, Projectile.Center);
+
+                //Small gold flash where the spear buries itself, so the sprite hiding (see PreDraw) reads as an impact, not a pop-out.
+                for (int i = 0; i < 8; i++)
+                {
+                    float spreadAngle = Main.rand.NextFloat(-1f, 1f);
+                    Vector2 velocity = reboundDirection.RotatedBy(spreadAngle) * Main.rand.NextFloat(1.5f, 4.5f);
+
+                    Dust impactSpark = Dust.NewDustPerfect(Projectile.Center, DustID.GoldFlame, velocity,
+                        35, new Color(255, 225, 100), Main.rand.NextFloat(0.6f, 1f));
+                    impactSpark.noGravity = true;
+                }
             }
             return false;
         }
@@ -212,14 +236,18 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
+            //Hidden while buried in the tile: the crackle dust is the whole telegraph. The spear only
+            //reappears as the rebound projectile spawned when the 90t charge fires.
+            if (IsCharging)
+            {
+                return false;
+            }
+
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             int frameHeight = texture.Height / Main.projFrames[Projectile.type];
             Rectangle frame = new Rectangle(0, Projectile.frame * frameHeight, texture.Width, frameHeight);
             Vector2 origin = new Vector2(texture.Width / 2f, frameHeight / 2f);
-            Vector2 visualDirection = IsCharging
-                ? -(Projectile.ai[2].ToRotationVector2())
-                : Projectile.velocity;
-            SpriteEffects fx = visualDirection.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffects fx = Projectile.velocity.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame, Color.White, Projectile.rotation, origin, 0.45f, fx, 0);
             return false;
         }
