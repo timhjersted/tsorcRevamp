@@ -422,7 +422,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Phase == AttackPhase.JumpSlashRecovery || Phase == AttackPhase.AbyssSlashRecovery ||
             Phase == AttackPhase.TendrilRecovery || Phase == AttackPhase.HomingVolleyRecovery ||
             Phase == AttackPhase.BoomerangRecovery ||
-            Phase == AttackPhase.PierceRecovery || Phase == AttackPhase.SpiralFanRecovery;
+            Phase == AttackPhase.PierceRecovery || Phase == AttackPhase.SpiralFanRecovery ||
+            // Rising Uppercut / Skyward Lunge run on the generic Custom phase and drive the blade themselves.
+            (Phase == AttackPhase.Custom && _aerialStage != AerialStage.None);
 
         protected override int MeleeDamage => 55;
 
@@ -785,6 +787,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             ConstrainArtoriasToAbyssRing();
             TickAbyssSurges();
             TickSpectralPhantom();
+            TickAerialTriggers();
 
             // Pierce cripple: every machine runs the pierce phases, so the local player applies the debuff to
             // themselves (player buffs are client-owned) and every client spawns the light purple motes.
@@ -1872,6 +1875,612 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
             TryMeleeHit(reach: 100f);
             SpawnArtoriasSwordArc(TendrilSwingTicks, hitWindowEnd: TendrilSwingCurve.HitWindowEnd);
+        }
+
+        // ── Aerial answers: Rising Uppercut + Skyward Lunge ──────────────────────────────────────
+        // Both punish a target that stays airborne. They run on PuppetNPC's generic Custom phase (DoCustomTick below)
+        // with one shared stage machine, and alternate like a two-entry bag.
+        //
+        // Trigger:  target airborne >= 30t (hook-hanging counts), Artorias grounded, within 600px, shared 360t cooldown.
+        //           Opener: 6% per neutral tick. Follow-up: straight out of a melee recovery, skipping it. The ending
+        //           swing's tail plus either move's own tell keeps the next hit >= 30t after its live window.
+        //
+        // Rising Uppercut
+        // Tell:     a sprint (TopSpeed x 2.2 = 5.3 px/t), blade dragged down-back into the ground (2.75) throwing
+        //           sparks, >= 20t on screen, up to 150t.
+        // Takeoff:  rise h = target height gap + 24px, clamped 48..320px (20 tiles); vy = sqrt(2 * 0.3 * h) <= 14.4 px/t,
+        //           rise time T = vy / 0.3 <= 48t. He takes off once dx / T <= 9 px/t, then steers 10%/tick on the ascent.
+        // Strike:   when the target is within 120px (95px blade + bodies): 2.75 -> -1.35, 235° envelope,
+        //           in 4 / out 30, k 7.5 -> 44°/t peak (fastest cut in his kit), live 8.8t ~182°. No one in reach by the
+        //           apex = no swing; he falls with the blade low.
+        // Open:     25t harmless tail + 40t planted landing.
+        //
+        // Skyward Lunge
+        // Tell:     45t planted: blade points at the solved intercept point, body and sword shake 1 -> 3px, void motes
+        //           converge on the tip, and the last 20t draw a dust line along the dash path.
+        // Dash:     straight line, gravity off, at the target's position led by distance / 16 (<= 40t). Speed ramps
+        //           0 -> 16 px/t with the square of time over 5t. Ends on arrival + 8t overshoot, 40t max, a tile or a
+        //           blade hit; the blade is live the whole dash.
+        // Miss:     momentum x0.35 and a normal fall. 50% roll: double jump as the fall starts (cloud ring at the feet),
+        //           ballistic arc solved at the target (vy <= 11, vx <= 8 px/t), carrying the pose of the swing its height
+        //           calls for. Within 120px: target above his centre -> underhand 2.05 -> -1.55, in 6 / out 20, k 6
+        //           (~39°/t); else overhand -1.48 -> 2.29, in 8 / out 22, k 6.5 (~36°/t). Cut starts from the carried pose.
+        // Open:     50t planted landing.
+        // Counter:  air-roll through the 8.8t uppercut, or across the drawn dash line as it launches (it covers 100+px
+        //           inside the 22t roll); landing before 30t airborne never arms either move. None of it is
+        //           hyper-armoured: Custom is not a committed phase, so poise can stagger him out of any stage.
+        enum AerialStage { None, UppercutRun, UppercutRise, SkywardAim, SkywardDash, SkywardFall, SkywardArc, Strike, Falling, Landing }
+
+        const int AerialTargetAirborneTicks = 30;
+        const int AerialCooldownTicks = 360;
+        const int AerialOpenerChance = 6;
+        const float AerialMaxRange = 600f;
+        // Keeps the base Custom case from timing the phase out; every stage ends itself explicitly.
+        const int AerialPhaseSafetyTicks = 600;
+        const int AerialMaxAirTicks = 150;
+        const float AerialStrikeRange = 120f;
+        const float AerialGravity = 0.3f;
+
+        const float UppercutRunSpeedMult = 2.2f;
+        const int UppercutRunMinTicks = 20;
+        const int UppercutRunMaxTicks = 150;
+        const float UppercutMinRise = 48f;
+        const float UppercutMaxRise = 320f;
+        const float UppercutRiseOvershoot = 24f;
+        const float UppercutMaxForwardSpeed = 9f;
+        const float UppercutAscentTracking = 0.10f;
+        const float UppercutCarryRotation = 2.75f;
+        const float UppercutFinishRotation = -1.35f;
+        const int UppercutLandingTicks = 40;
+        static readonly WeightedSwing UppercutCurve = new WeightedSwing(4, 30, 7.5f);
+
+        const int SkywardAimTicks = 45;
+        const int SkywardAimLineTicks = 20;
+        const float SkywardDashSpeed = 16f;
+        const int SkywardDashAccelTicks = 5;
+        const int SkywardDashMaxTicks = 40;
+        const int SkywardOvershootTicks = 8;
+        const float SkywardMissMomentum = 0.35f;
+        const int SkywardDoubleJumpChance = 50;
+        const float SkywardDoubleJumpMaxRise = 11f;
+        const float SkywardDoubleJumpMaxForward = 8f;
+        const float SkywardArcApexMargin = 60f;
+        const int SkywardLandingTicks = 50;
+        const float AirUnderhandStartRotation = 2.05f;
+        const float AirUnderhandEndRotation = -1.55f;
+        const float AirOverhandStartRotation = -1.48f;
+        const float AirOverhandEndRotation = 2.29f;
+        static readonly WeightedSwing AirUnderhandCurve = new WeightedSwing(6, 20, 6f);
+        static readonly WeightedSwing AirOverhandCurve = new WeightedSwing(8, 22, 6.5f);
+
+        AerialStage _aerialStage;
+        int _aerialStageTicks;
+        int _aerialAirTicks;
+        int _aerialLandingTicks;
+        int _aerialCooldown;
+        int _targetAirborneTicks;
+        float _aerialRotation;
+        float _aerialVelocityX;
+        bool _aerialBladeHit;
+        bool _lastAerialWasLunge;
+        bool _aerialDoubleJumpPending;
+        Vector2 _skywardDirection;
+        int _skywardDashTicks;
+        float _strikeStartRotation;
+        float _strikeEndRotation;
+        WeightedSwing _strikeCurve;
+
+        protected override bool SlowDownDuringCustom => _aerialStage == AerialStage.None;
+
+        protected override float? CustomWeaponRotation => _aerialStage == AerialStage.None ? null : _aerialRotation;
+
+        // Skyward Lunge's tell: the whole rig (body and sword) shakes, 1 -> 3px across the aim. Two sines at unrelated
+        // rates instead of Main.rand, so every draw call in a frame agrees. Visual only; the hitbox stays put.
+        protected override Vector2 PuppetVisualOffset
+        {
+            get
+            {
+                if (_aerialStage != AerialStage.SkywardAim)
+                {
+                    return Vector2.Zero;
+                }
+
+                float aimProgress = MathHelper.Clamp(_aerialStageTicks / (float)SkywardAimTicks, 0f, 1f);
+                float amplitude = MathHelper.Lerp(1f, 3f, aimProgress);
+                float time = Main.GameUpdateCount;
+                float shakeX = (float)Math.Sin(time * 2.7f) * amplitude;
+                float shakeY = (float)Math.Sin(time * 3.9f) * amplitude * 0.5f;
+                return new Vector2(shakeX, shakeY);
+            }
+        }
+
+        protected override void OnBladeHit(Player player)
+        {
+            base.OnBladeHit(player);
+            _aerialBladeHit = true;
+        }
+
+        /// <summary>Counts how long the target has been off the ground and, past 30 ticks, starts a Rising Uppercut or a
+        /// Skyward Lunge: as an opener from neutral, or straight out of a melee recovery.</summary>
+        void TickAerialTriggers()
+        {
+            if (_aerialCooldown > 0)
+            {
+                _aerialCooldown--;
+            }
+
+            // Something else (a stagger, the nova) took the Custom phase away mid-attack: drop the state so the next
+            // one starts clean. SmartFighter4 hands gravity back by itself on its next tick.
+            if (_aerialStage != AerialStage.None && Phase != AttackPhase.Custom)
+            {
+                _aerialStage = AerialStage.None;
+                DebugAttackLabel = null;
+            }
+
+            if (!NPC.HasValidTarget)
+            {
+                _targetAirborneTicks = 0;
+                return;
+            }
+
+            // Airborne = not standing on anything, hook-hanging included. Grounded needs two still ticks in a row, so
+            // the zero-velocity apex of a jump doesn't reset the count.
+            Player target = Main.player[NPC.target];
+            bool targetGrounded = target.velocity.Y == 0f && target.oldVelocity.Y == 0f && target.grappling[0] < 0;
+            if (targetGrounded)
+            {
+                _targetAirborneTicks = 0;
+            }
+            else
+            {
+                _targetAirborneTicks++;
+            }
+
+            bool canStart = _aerialStage == AerialStage.None && _aerialCooldown <= 0 && !HoldAttackSelection
+                && NPC.velocity.Y == 0f && _targetAirborneTicks >= AerialTargetAirborneTicks;
+            if (!canStart)
+            {
+                return;
+            }
+
+            float distance = NPC.Distance(target.Center);
+            if (distance > AerialMaxRange)
+            {
+                return;
+            }
+
+            // Follow-up windows: every melee recovery, plus the Flip Slash landing hold once its strike is harmless.
+            int flipHoldElapsed = FlipSlashLandHoldTicks - PhaseTimer;
+            bool flipStrikeSpent = Phase == AttackPhase.FlipSlashLand && flipHoldElapsed > FlipSlashStrikeLiveTicks;
+            bool inMeleeRecovery = Phase == AttackPhase.MeleeRecovery || Phase == AttackPhase.MeleeComboRecovery
+                || Phase == AttackPhase.JumpSlashRecovery || Phase == AttackPhase.TendrilRecovery || flipStrikeSpent;
+            bool neutral = Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll
+                || Phase == AttackPhase.ClosingDistance;
+            bool openerRoll = neutral && Main.rand.Next(100) < AerialOpenerChance;
+            if (!inMeleeRecovery && !openerRoll)
+            {
+                return;
+            }
+
+            // Alternate the two moves, except the uppercut can't reach a target more than 20 tiles above him.
+            float riseNeeded = NPC.Center.Y - target.Center.Y;
+            bool uppercutReachable = riseNeeded <= UppercutMaxRise;
+            bool useLunge = true;
+            if (_lastAerialWasLunge && uppercutReachable)
+            {
+                useLunge = false;
+            }
+
+            _lastAerialWasLunge = useLunge;
+            _aerialStage = AerialStage.UppercutRun;
+            DebugAttackLabel = "Rising Uppercut";
+            if (useLunge)
+            {
+                _aerialStage = AerialStage.SkywardAim;
+                DebugAttackLabel = "Skyward Lunge";
+                SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.55f, Pitch = -0.4f }, NPC.Center);
+            }
+
+            _aerialStageTicks = 0;
+            _aerialAirTicks = 0;
+            _aerialBladeHit = false;
+            _aerialDoubleJumpPending = false;
+            _aerialCooldown = AerialCooldownTicks;
+            // Start from where the blade is actually drawn, so entering the move never snaps the sword.
+            _aerialRotation = BladeRotationToward(PuppetWeaponDirection);
+            StartCustomAttack(AerialPhaseSafetyTicks, MeleeWeaponItemType, swingPose: false);
+        }
+
+        protected override void DoCustomTick(int ticksRemaining)
+        {
+            if (_aerialStage == AerialStage.None)
+            {
+                return;
+            }
+
+            PhaseTimer = AerialPhaseSafetyTicks;
+            _aerialStageTicks++;
+
+            Player target = Main.player[NPC.target];
+            bool grounded = NPC.velocity.Y == 0f;
+            if (!grounded)
+            {
+                _aerialAirTicks++;
+            }
+
+            // Stuck in the air far longer than any arc takes: end the attack and let the navigator recover.
+            if (_aerialAirTicks > AerialMaxAirTicks)
+            {
+                NPC.noGravity = false;
+                _aerialStage = AerialStage.None;
+                DebugAttackLabel = null;
+                PhaseTimer = 1;
+                return;
+            }
+
+            switch (_aerialStage)
+            {
+                case AerialStage.UppercutRun:
+                {
+                    FaceTarget(target);
+                    NPC.velocity.X = NPC.direction * TopSpeed * UppercutRunSpeedMult;
+                    _aerialRotation = MathHelper.Lerp(_aerialRotation, UppercutCarryRotation, 0.25f);
+
+                    // Sparks where the dragged tip meets the floor, thrown back behind the run.
+                    if (!Main.dedServ && Main.rand.NextBool(2))
+                    {
+                        Vector2 scrapePoint = PuppetWeaponTipPosition(ArtoriasSwordArcRadius);
+                        scrapePoint.Y = Math.Min(scrapePoint.Y, NPC.Bottom.Y - 2f);
+                        Vector2 sparkVelocity = new Vector2(-NPC.direction * Main.rand.NextFloat(1.5f, 3.5f),
+                            Main.rand.NextFloat(-2.5f, -0.5f));
+                        Dust spark = Dust.NewDustPerfect(scrapePoint, DustID.SilverFlame, sparkVelocity, 100, default,
+                            Main.rand.NextFloat(0.8f, 1.2f));
+                        spark.noGravity = false;
+                    }
+
+                    // Jump solve: rise to the target's height + 24px (48..320px), vy = sqrt(2 g h), rise time T = vy / g.
+                    // Take off once the forward speed that meets the target's drifting X at the apex is <= 9 px/t.
+                    float riseHeight = MathHelper.Clamp(NPC.Center.Y - target.Center.Y + UppercutRiseOvershoot,
+                        UppercutMinRise, UppercutMaxRise);
+                    float launchSpeed = (float)Math.Sqrt(2f * AerialGravity * riseHeight);
+                    float riseTicks = launchSpeed / AerialGravity;
+                    float predictedTargetX = target.Center.X + target.velocity.X * riseTicks * 0.5f;
+                    float horizontalGap = predictedTargetX - NPC.Center.X;
+                    float neededForwardSpeed = Math.Abs(horizontalGap) / riseTicks;
+                    bool jumpReaches = neededForwardSpeed <= UppercutMaxForwardSpeed;
+                    bool tellShown = _aerialStageTicks >= UppercutRunMinTicks;
+
+                    if (tellShown && jumpReaches && grounded)
+                    {
+                        _aerialVelocityX = horizontalGap / riseTicks;
+                        NPC.velocity = new Vector2(_aerialVelocityX, -launchSpeed);
+                        NPC.netUpdate = true;
+                        SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, Pitch = -0.35f }, NPC.Center);
+                        _aerialStage = AerialStage.UppercutRise;
+                        _aerialStageTicks = 0;
+                    }
+                    else if (_aerialStageTicks >= UppercutRunMaxTicks)
+                    {
+                        // Never found a reachable jump (walled off, or the target kept its distance): stand down.
+                        BeginAerialLanding();
+                    }
+                    break;
+                }
+
+                case AerialStage.UppercutRise:
+                {
+                    // Steer 10%/tick toward the forward speed that still meets the target at the apex, blade held low
+                    // and back. The cut starts the moment the target is inside the blade's reach.
+                    FaceTarget(target);
+                    float remainingRiseTicks = Math.Max(1f, -NPC.velocity.Y / AerialGravity);
+                    float desiredVelocityX = (target.Center.X - NPC.Center.X) / remainingRiseTicks;
+                    desiredVelocityX = MathHelper.Clamp(desiredVelocityX, -UppercutMaxForwardSpeed, UppercutMaxForwardSpeed);
+                    _aerialVelocityX = MathHelper.Lerp(_aerialVelocityX, desiredVelocityX, UppercutAscentTracking);
+                    NPC.velocity.X = _aerialVelocityX;
+                    _aerialRotation = MathHelper.Lerp(_aerialRotation, UppercutCarryRotation, 0.25f);
+
+                    float targetDistance = NPC.Distance(target.Center);
+                    bool pastApex = NPC.velocity.Y >= 0f && _aerialStageTicks > 2;
+                    if (targetDistance <= AerialStrikeRange)
+                    {
+                        BeginAerialStrike(UppercutFinishRotation, UppercutCurve);
+                    }
+                    else if (pastApex)
+                    {
+                        _aerialStage = AerialStage.Falling;
+                        _aerialStageTicks = 0;
+                    }
+                    break;
+                }
+
+                case AerialStage.SkywardAim:
+                {
+                    NPC.velocity.X *= 0.8f;
+                    FaceTarget(target);
+
+                    // Intercept: lead the target's velocity by the dash's flight time (distance / 16, capped 40t),
+                    // refined once against the led position.
+                    float leadTicks = Math.Min(NPC.Distance(target.Center) / SkywardDashSpeed, SkywardDashMaxTicks);
+                    Vector2 ledPosition = target.Center + target.velocity * leadTicks;
+                    float refinedLeadTicks = Math.Min(Vector2.Distance(NPC.Center, ledPosition) / SkywardDashSpeed,
+                        SkywardDashMaxTicks);
+                    Vector2 interceptPoint = target.Center + target.velocity * refinedLeadTicks;
+                    Vector2 aimDirection = (interceptPoint - NPC.Center).SafeNormalize(new Vector2(NPC.direction, 0f));
+
+                    // AngleLerp takes the short way round, so the blade swings onto the aim instead of snapping.
+                    float aimRotation = BladeRotationToward(aimDirection);
+                    _aerialRotation = _aerialRotation.AngleLerp(aimRotation, 0.35f);
+
+                    if (!Main.dedServ)
+                    {
+                        // Motes converge on the tip from a ring that tightens 60 -> 20px over the aim.
+                        Vector2 bladeTip = PuppetWeaponTipPosition(ArtoriasSwordArcRadius);
+                        float ringRadius = MathHelper.Lerp(60f, 20f, _aerialStageTicks / (float)SkywardAimTicks);
+                        Vector2 moteStart = bladeTip + Main.rand.NextVector2CircularEdge(ringRadius, ringRadius);
+                        Vector2 moteVelocity = (bladeTip - moteStart) * 0.12f;
+                        Dust mote = Dust.NewDustPerfect(moteStart, DustID.ShadowbeamStaff, moteVelocity, 100, SlashMid, 1f);
+                        mote.noGravity = true;
+
+                        // The path line: 8 motes from his centre to the intercept point every 4t across the last 20t.
+                        int aimTicksLeft = SkywardAimTicks - _aerialStageTicks;
+                        bool drawPathLine = aimTicksLeft <= SkywardAimLineTicks && _aerialStageTicks % 4 == 0;
+                        if (drawPathLine)
+                        {
+                            float pathLength = Vector2.Distance(NPC.Center, interceptPoint);
+                            for (int i = 1; i <= 8; i++)
+                            {
+                                Vector2 linePoint = NPC.Center + aimDirection * (pathLength * i / 8f);
+                                Dust lineDust = Dust.NewDustPerfect(linePoint, DustID.PurpleTorch, Vector2.Zero, 100,
+                                    SlashCore, 0.9f);
+                                lineDust.noGravity = true;
+                            }
+                        }
+                    }
+
+                    if (_aerialStageTicks >= SkywardAimTicks)
+                    {
+                        // The ramp (speed grows with t² over 5t) covers a third of full-speed distance, so it adds 2/3 of
+                        // its ticks to the flight; then the 8t overshoot so an on-time dash always reaches the point.
+                        float pathTicks = Vector2.Distance(NPC.Center, interceptPoint) / SkywardDashSpeed;
+                        float rampLossTicks = SkywardDashAccelTicks * 2f / 3f;
+                        int flightTicks = (int)Math.Ceiling(pathTicks + rampLossTicks) + SkywardOvershootTicks;
+                        _skywardDashTicks = Math.Min(flightTicks, SkywardDashMaxTicks);
+                        _skywardDirection = aimDirection;
+                        _aerialRotation = aimRotation;
+                        _aerialBladeHit = false;
+                        TryMeleeHit(reach: ArtoriasSwordArcRadius);
+                        SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.6f, Pitch = 0.2f }, NPC.Center);
+                        _aerialStage = AerialStage.SkywardDash;
+                        _aerialStageTicks = 0;
+                    }
+                    break;
+                }
+
+                case AerialStage.SkywardDash:
+                {
+                    // Straight-line lunge with gravity off. SmartFighter4 hands gravity back every tick, so re-assert it.
+                    NPC.noGravity = true;
+                    float rampProgress = Math.Min(1f, _aerialStageTicks / (float)SkywardDashAccelTicks);
+                    float dashSpeed = SkywardDashSpeed * rampProgress * rampProgress;
+                    NPC.velocity = _skywardDirection * dashSpeed;
+                    if (_skywardDirection.X != 0f)
+                    {
+                        NPC.direction = Math.Sign(_skywardDirection.X);
+                        NPC.spriteDirection = NPC.direction;
+                    }
+
+                    _aerialRotation = BladeRotationToward(_skywardDirection);
+                    TickBladeHit();
+
+                    if (!Main.dedServ)
+                    {
+                        Vector2 trailPoint = NPC.Center + Main.rand.NextVector2Circular(12f, 12f);
+                        Dust trail = Dust.NewDustPerfect(trailPoint, DustID.PurpleTorch, -NPC.velocity * 0.2f, 100,
+                            SlashMid, Main.rand.NextFloat(1f, 1.4f));
+                        trail.noGravity = true;
+                    }
+
+                    // collideX/Y come from last tick's physics step; skip the first ticks, when the feet still touch the floor.
+                    bool blocked = _aerialStageTicks > 2 && (NPC.collideX || NPC.collideY);
+                    bool dashOver = _aerialStageTicks >= _skywardDashTicks;
+                    if (_aerialBladeHit || blocked || dashOver)
+                    {
+                        NPC.noGravity = false;
+                        NPC.velocity *= SkywardMissMomentum;
+                        NPC.netUpdate = true;
+                        bool missed = !_aerialBladeHit;
+                        _aerialDoubleJumpPending = missed && Main.rand.Next(100) < SkywardDoubleJumpChance;
+                        _aerialStage = AerialStage.SkywardFall;
+                        _aerialStageTicks = 0;
+                    }
+                    break;
+                }
+
+                case AerialStage.SkywardFall:
+                {
+                    // A normal fall from wherever the dash ended. A passed double-jump roll fires as the fall begins.
+                    _aerialRotation = MathHelper.Lerp(_aerialRotation, AirOverhandStartRotation, 0.12f);
+                    bool falling = NPC.velocity.Y > 0f;
+
+                    if (grounded && _aerialStageTicks > 1)
+                    {
+                        BeginAerialLanding();
+                    }
+                    else if (_aerialDoubleJumpPending && falling)
+                    {
+                        // Ballistic arc at the target: rise to its height + 60px (vy <= 11), forward speed = dx / rise
+                        // time (<= 8). Past the apex the arc keeps carrying him toward where the target was.
+                        float arcRise = Math.Max(0f, NPC.Center.Y - target.Center.Y) + SkywardArcApexMargin;
+                        float arcLaunchSpeed = Math.Min((float)Math.Sqrt(2f * AerialGravity * arcRise), SkywardDoubleJumpMaxRise);
+                        float arcRiseTicks = arcLaunchSpeed / AerialGravity;
+                        float arcVelocityX = MathHelper.Clamp((target.Center.X - NPC.Center.X) / arcRiseTicks,
+                            -SkywardDoubleJumpMaxForward, SkywardDoubleJumpMaxForward);
+                        NPC.velocity = new Vector2(arcVelocityX, -arcLaunchSpeed);
+                        NPC.netUpdate = true;
+                        _aerialDoubleJumpPending = false;
+                        SoundEngine.PlaySound(SoundID.DoubleJump, NPC.Center);
+
+                        if (!Main.dedServ)
+                        {
+                            // Cloud ring puffed out flat from the feet, like a Cloud in a Bottle jump.
+                            for (int i = 0; i < 20; i++)
+                            {
+                                float cloudAngle = MathHelper.TwoPi * i / 20f;
+                                Vector2 cloudVelocity = new Vector2((float)Math.Cos(cloudAngle) * 3f,
+                                    (float)Math.Sin(cloudAngle) + 1.5f);
+                                Dust cloud = Dust.NewDustPerfect(NPC.Bottom, DustID.Cloud, cloudVelocity, 100, default,
+                                    Main.rand.NextFloat(1.2f, 1.6f));
+                                cloud.noGravity = true;
+                            }
+                        }
+
+                        _aerialStage = AerialStage.SkywardArc;
+                        _aerialStageTicks = 0;
+                    }
+                    break;
+                }
+
+                case AerialStage.SkywardArc:
+                {
+                    // Carry the pose of the swing the target's height currently calls for, so the cut starts from where
+                    // the blade already is: above his centre -> low underhand wind-up, level or below -> raised overhand.
+                    FaceTarget(target);
+                    bool targetAbove = target.Center.Y < NPC.Center.Y;
+                    float carryPose = AirOverhandStartRotation;
+                    float strikeEnd = AirOverhandEndRotation;
+                    WeightedSwing strikeCurve = AirOverhandCurve;
+                    if (targetAbove)
+                    {
+                        carryPose = AirUnderhandStartRotation;
+                        strikeEnd = AirUnderhandEndRotation;
+                        strikeCurve = AirUnderhandCurve;
+                    }
+
+                    _aerialRotation = MathHelper.Lerp(_aerialRotation, carryPose, 0.2f);
+
+                    float targetDistance = NPC.Distance(target.Center);
+                    if (targetDistance <= AerialStrikeRange)
+                    {
+                        BeginAerialStrike(strikeEnd, strikeCurve);
+                    }
+                    else if (grounded && _aerialStageTicks > 2)
+                    {
+                        BeginAerialLanding();
+                    }
+                    break;
+                }
+
+                case AerialStage.Strike:
+                {
+                    // Weighted cut from the carried pose; the body stays ballistic. Live until blade speed < 30% of peak.
+                    int elapsedStrikeTicks = _aerialStageTicks - 1;
+                    _aerialRotation = _strikeCurve.Apply(_strikeStartRotation, _strikeEndRotation, elapsedStrikeTicks);
+                    if (elapsedStrikeTicks <= _strikeCurve.LiveTicks)
+                    {
+                        TickBladeHit();
+                    }
+
+                    if (grounded)
+                    {
+                        NPC.velocity.X *= 0.8f;
+                    }
+
+                    bool strikeDone = elapsedStrikeTicks >= _strikeCurve.TotalTicks;
+                    if (strikeDone && grounded)
+                    {
+                        BeginAerialLanding();
+                    }
+                    else if (strikeDone)
+                    {
+                        _aerialStage = AerialStage.Falling;
+                        _aerialStageTicks = 0;
+                    }
+                    break;
+                }
+
+                case AerialStage.Falling:
+                {
+                    // Harmless descent holding the finished pose, then the planted landing beat.
+                    if (grounded && _aerialStageTicks > 1)
+                    {
+                        BeginAerialLanding();
+                    }
+                    break;
+                }
+
+                case AerialStage.Landing:
+                {
+                    // The punish window: planted, blade held at its follow-through. PhaseTimer = 1 lets the base Custom
+                    // case end the phase into Idle this same tick.
+                    NPC.velocity.X *= 0.8f;
+                    if (_aerialStageTicks >= _aerialLandingTicks)
+                    {
+                        _aerialStage = AerialStage.None;
+                        DebugAttackLabel = null;
+                        PhaseTimer = 1;
+                    }
+                    break;
+                }
+            }
+        }
+
+        /// <summary>Starts a Weighted aerial cut from the blade's current pose to <paramref name="endRotation"/>: arms the
+        /// blade and tracks one crescent that fades with the hit window.</summary>
+        void BeginAerialStrike(float endRotation, WeightedSwing curve)
+        {
+            _strikeStartRotation = _aerialRotation;
+            _strikeEndRotation = endRotation;
+            _strikeCurve = curve;
+            _aerialBladeHit = false;
+            _aerialStage = AerialStage.Strike;
+            _aerialStageTicks = 0;
+
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.75f, PitchVariance = 0.15f }, NPC.Center);
+            TryMeleeHit(reach: ArtoriasSwordArcRadius);
+
+            // A rising cut travels against the overhead direction, so its crescent trails the other way.
+            bool risingCut = endRotation < _strikeStartRotation;
+            SpawnArtoriasSwordArc(curve.TotalTicks, risingCut, curve.HitWindowEnd);
+        }
+
+        void BeginAerialLanding()
+        {
+            _aerialStage = AerialStage.Landing;
+            _aerialStageTicks = 0;
+            _aerialLandingTicks = UppercutLandingTicks;
+            if (_lastAerialWasLunge)
+            {
+                _aerialLandingTicks = SkywardLandingTicks;
+            }
+        }
+
+        void FaceTarget(Player target)
+        {
+            int facing = 1;
+            if (target.Center.X < NPC.Center.X)
+            {
+                facing = -1;
+            }
+
+            NPC.direction = facing;
+            NPC.spriteDirection = facing;
+        }
+
+        /// <summary>Swing-space rotation that draws the blade along <paramref name="worldDirection"/> at the current facing.
+        /// Inverse of PuppetNPC.GetWeaponWorldDirection's mirrored path (no blade flip): facing right the drawn angle is
+        /// rest-offset (-45°) + rotation + draw offset; facing left it is -(180° - rest) - rotation - draw offset.</summary>
+        float BladeRotationToward(Vector2 worldDirection)
+        {
+            float worldAngle = worldDirection.ToRotation();
+            float drawOffset = FrontHandWeapon.RotationOffset;
+            float restRadians = MathHelper.ToRadians(MeleeNaturalRestAngleDeg);
+            if (NPC.direction == 1)
+            {
+                return MathHelper.WrapAngle(worldAngle + restRadians) - drawOffset;
+            }
+
+            float mirroredRestRadians = MathHelper.Pi - restRadians;
+            return -MathHelper.WrapAngle(worldAngle + mirroredRestRadians) - drawOffset;
         }
 
         // ── Charge-up Nova: one-shot set-piece at 50% / 20% / 10% HP ────────────────

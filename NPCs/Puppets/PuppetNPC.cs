@@ -6747,7 +6747,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// genuinely overlapping the target, instead of for the swing's entire duration regardless
         /// of where the blade is pointing (the old static-box behavior).
         /// </summary>
-        private void TickBladeHit()
+        protected void TickBladeHit()
         {
             if (!_bladeArmed || _activeBladeReach <= 0f || Main.netMode == NetmodeID.MultiplayerClient)
                 return;
