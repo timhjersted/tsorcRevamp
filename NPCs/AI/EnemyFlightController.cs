@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using Terraria;
 
 namespace tsorcRevamp.NPCs.AI
@@ -26,6 +27,9 @@ namespace tsorcRevamp.NPCs.AI
     {
         public EnemyFlightConfig Config;
         public FlightMode Mode { get; private set; } = FlightMode.Grounded;
+        /// <summary>Counts EnterMode calls. Every machine counts its own transitions, so a client can tell a
+        /// server mode change it has not reached from one it already predicted (see ReadNetworkState).</summary>
+        public int ModeSequence { get; private set; }
         public int ModeTimer { get; private set; }
         public int FlightTicksRemaining { get; private set; }
         public int CooldownRemaining { get; private set; }
@@ -377,6 +381,7 @@ namespace tsorcRevamp.NPCs.AI
         {
             Mode = mode;
             ModeTimer = duration;
+            ModeSequence++;
             if (mode == FlightMode.TakeOff)
                 FlightTicksRemaining = Config.MaxFlightTicks;
             // Reset drift state when leaving hover so it doesn't bleed into other modes.
@@ -456,6 +461,52 @@ namespace tsorcRevamp.NPCs.AI
                     return y * 16f;
             }
             return npc.Center.Y + 1024f; // no ground found (fall forever)
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Multiplayer
+        // ─────────────────────────────────────────────────────────────────────
+
+        /// <summary>Server side of the owner's SendExtraAI. Takeoff, dive and strafe requests come from
+        /// server-only attack decisions, so a client's controller only learns about them from this.</summary>
+        public void WriteNetworkState(BinaryWriter writer)
+        {
+            writer.Write(ModeSequence);
+            writer.Write((byte)Mode);
+            writer.Write((short)Math.Clamp(ModeTimer, 0, short.MaxValue));
+            writer.Write((short)Math.Clamp(FlightTicksRemaining, short.MinValue, short.MaxValue));
+            writer.Write((short)Math.Clamp(CooldownRemaining, 0, short.MaxValue));
+            writer.WriteVector2(TargetWaypoint);
+        }
+
+        /// <summary>Client side. Adopts the server's mode unless this client already predicted past it (a
+        /// landing or strafe end reached a tick early). The skip is bounded to 2 transitions so a client that
+        /// over-predicted cannot ignore the server forever, and a grounded client always follows a takeoff.</summary>
+        public void ReadNetworkState(BinaryReader reader)
+        {
+            int sequence = reader.ReadInt32();
+            FlightMode mode = (FlightMode)reader.ReadByte();
+            int modeTimer = reader.ReadInt16();
+            int flightTicksRemaining = reader.ReadInt16();
+            int cooldownRemaining = reader.ReadInt16();
+            Vector2 waypoint = reader.ReadVector2();
+
+            int predictedAhead = ModeSequence - sequence;
+            bool olderThanPrediction = predictedAhead > 0 && predictedAhead <= 2;
+            bool groundedWhileServerFlies = Mode == FlightMode.Grounded && mode != FlightMode.Grounded;
+            if (olderThanPrediction && !groundedWhileServerFlies)
+            {
+                return;
+            }
+
+            if (mode != Mode)
+            {
+                EnterMode(mode, modeTimer);
+            }
+            FlightTicksRemaining = flightTicksRemaining;
+            CooldownRemaining = cooldownRemaining;
+            TargetWaypoint = waypoint;
+            ModeSequence = sequence;
         }
     }
 

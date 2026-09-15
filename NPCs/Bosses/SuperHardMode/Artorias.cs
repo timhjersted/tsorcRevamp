@@ -2018,6 +2018,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         AerialStage _aerialStage;
         int _aerialStageTicks;
+        int _aerialStageSequence; // bumped by every EnterAerialStage on every machine; clients reconcile against it
         int _aerialAirTicks;
         int _aerialLandingTicks;
         int _aerialCooldown;
@@ -2072,11 +2073,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 _aerialCooldown--;
             }
 
+            // Starting, cancelling and the target-airborne count are server decisions (the opener rolls). Clients follow the
+            // stage from the snapshot EnterAerialStage requests; a client-side cancel here could drop a stage whose Custom
+            // phase simply hasn't been adopted yet.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
             // Something else (a stagger, the nova) took the Custom phase away mid-attack: drop the state so the next
             // one starts clean. SmartFighter4 hands gravity back by itself on its next tick.
             if (_aerialStage != AerialStage.None && Phase != AttackPhase.Custom)
             {
-                _aerialStage = AerialStage.None;
+                EnterAerialStage(AerialStage.None);
                 DebugAttackLabel = null;
             }
 
@@ -2135,16 +2144,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             _lastAerialWasLunge = useLunge;
-            _aerialStage = AerialStage.UppercutRun;
-            DebugAttackLabel = "Rising Uppercut";
+            AerialStage openingStage = AerialStage.UppercutRun;
             if (useLunge)
             {
-                _aerialStage = AerialStage.SkywardAim;
-                DebugAttackLabel = "Skyward Lunge";
-                SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.55f, Pitch = -0.4f }, NPC.Center);
+                openingStage = AerialStage.SkywardAim;
             }
 
-            _aerialStageTicks = 0;
+            EnterAerialStage(openingStage);
+            PlayAerialStageStartCue(openingStage);
             _aerialAirTicks = 0;
             _aerialBladeHit = false;
             _aerialDoubleJumpPending = false;
@@ -2175,7 +2182,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (_aerialAirTicks > AerialMaxAirTicks)
             {
                 NPC.noGravity = false;
-                _aerialStage = AerialStage.None;
+                EnterAerialStage(AerialStage.None);
                 DebugAttackLabel = null;
                 PhaseTimer = 1;
                 return;
@@ -2218,9 +2225,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         _aerialVelocityX = horizontalGap / riseTicks;
                         NPC.velocity = new Vector2(_aerialVelocityX, -launchSpeed);
                         NPC.netUpdate = true;
-                        SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, Pitch = -0.35f }, NPC.Center);
-                        _aerialStage = AerialStage.UppercutRise;
-                        _aerialStageTicks = 0;
+                        EnterAerialStage(AerialStage.UppercutRise);
+                        PlayAerialStageStartCue(AerialStage.UppercutRise);
                     }
                     else if (_aerialStageTicks >= UppercutRunMaxTicks)
                     {
@@ -2250,8 +2256,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     else if (pastApex)
                     {
-                        _aerialStage = AerialStage.Falling;
-                        _aerialStageTicks = 0;
+                        EnterAerialStage(AerialStage.Falling);
                     }
                     break;
                 }
@@ -2312,9 +2317,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         _aerialRotation = aimRotation;
                         _aerialBladeHit = false;
                         TryMeleeHit(reach: ArtoriasSwordArcRadius);
-                        SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.6f, Pitch = 0.2f }, NPC.Center);
-                        _aerialStage = AerialStage.SkywardDash;
-                        _aerialStageTicks = 0;
+                        EnterAerialStage(AerialStage.SkywardDash);
+                        PlayAerialStageStartCue(AerialStage.SkywardDash);
                     }
                     break;
                 }
@@ -2351,10 +2355,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         NPC.noGravity = false;
                         NPC.velocity *= SkywardMissMomentum;
                         NPC.netUpdate = true;
-                        bool missed = !_aerialBladeHit;
-                        _aerialDoubleJumpPending = missed && Main.rand.Next(100) < SkywardDoubleJumpChance;
-                        _aerialStage = AerialStage.SkywardFall;
-                        _aerialStageTicks = 0;
+                        // The double-jump roll is the server's; a client gets the result with this stage's snapshot.
+                        // _aerialBladeHit is server-only too, so a client ends the dash on a hit only by adopting the stage.
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            bool missed = !_aerialBladeHit;
+                            _aerialDoubleJumpPending = missed && Main.rand.Next(100) < SkywardDoubleJumpChance;
+                        }
+                        EnterAerialStage(AerialStage.SkywardFall);
                     }
                     break;
                 }
@@ -2381,24 +2389,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         NPC.velocity = new Vector2(arcVelocityX, -arcLaunchSpeed);
                         NPC.netUpdate = true;
                         _aerialDoubleJumpPending = false;
-                        SoundEngine.PlaySound(SoundID.DoubleJump, NPC.Center);
-
-                        if (!Main.dedServ)
-                        {
-                            // Cloud ring puffed out flat from the feet, like a Cloud in a Bottle jump.
-                            for (int i = 0; i < 20; i++)
-                            {
-                                float cloudAngle = MathHelper.TwoPi * i / 20f;
-                                Vector2 cloudVelocity = new Vector2((float)Math.Cos(cloudAngle) * 3f,
-                                    (float)Math.Sin(cloudAngle) + 1.5f);
-                                Dust cloud = Dust.NewDustPerfect(NPC.Bottom, DustID.Cloud, cloudVelocity, 100, default,
-                                    Main.rand.NextFloat(1.2f, 1.6f));
-                                cloud.noGravity = true;
-                            }
-                        }
-
-                        _aerialStage = AerialStage.SkywardArc;
-                        _aerialStageTicks = 0;
+                        EnterAerialStage(AerialStage.SkywardArc);
+                        PlayAerialStageStartCue(AerialStage.SkywardArc);
                     }
                     break;
                 }
@@ -2455,8 +2447,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     else if (strikeDone)
                     {
-                        _aerialStage = AerialStage.Falling;
-                        _aerialStageTicks = 0;
+                        EnterAerialStage(AerialStage.Falling);
                     }
                     break;
                 }
@@ -2478,7 +2469,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.velocity.X *= 0.8f;
                     if (_aerialStageTicks >= _aerialLandingTicks)
                     {
-                        _aerialStage = AerialStage.None;
+                        EnterAerialStage(AerialStage.None);
                         DebugAttackLabel = null;
                         PhaseTimer = 1;
                     }
@@ -2495,10 +2486,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _strikeEndRotation = endRotation;
             _strikeCurve = curve;
             _aerialBladeHit = false;
-            _aerialStage = AerialStage.Strike;
-            _aerialStageTicks = 0;
-
-            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.75f, PitchVariance = 0.15f }, NPC.Center);
+            EnterAerialStage(AerialStage.Strike);
+            PlayAerialStageStartCue(AerialStage.Strike);
             TryMeleeHit(reach: ArtoriasSwordArcRadius);
 
             // A rising cut travels against the overhead direction, so its crescent trails the other way.
@@ -2508,12 +2497,72 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void BeginAerialLanding()
         {
-            _aerialStage = AerialStage.Landing;
-            _aerialStageTicks = 0;
+            EnterAerialStage(AerialStage.Landing);
             _aerialLandingTicks = UppercutLandingTicks;
             if (_lastAerialWasLunge)
             {
                 _aerialLandingTicks = SkywardLandingTicks;
+            }
+        }
+
+        /// <summary>Every aerial stage change goes through here: restarts the stage clock, bumps _aerialStageSequence (clients
+        /// skip snapshots older than a change they already made) and, on the server, flushes a snapshot so clients follow
+        /// within network latency instead of waiting on the netSpam throttle.</summary>
+        void EnterAerialStage(AerialStage stage)
+        {
+            _aerialStage = stage;
+            _aerialStageTicks = 0;
+            _aerialStageSequence++;
+            RequestNetworkSnapshot();
+        }
+
+        /// <summary>Label, sound and dust for a stage's start. Called where the stage begins and when a client adopts it from a
+        /// snapshot, since the transition code that would have played it only ran on the server.</summary>
+        void PlayAerialStageStartCue(AerialStage stage)
+        {
+            switch (stage)
+            {
+                case AerialStage.UppercutRun:
+                    DebugAttackLabel = "Rising Uppercut";
+                    break;
+
+                case AerialStage.UppercutRise:
+                    SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, Pitch = -0.35f }, NPC.Center);
+                    break;
+
+                case AerialStage.SkywardAim:
+                    DebugAttackLabel = "Skyward Lunge";
+                    SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.55f, Pitch = -0.4f }, NPC.Center);
+                    break;
+
+                case AerialStage.SkywardDash:
+                    SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.6f, Pitch = 0.2f }, NPC.Center);
+                    break;
+
+                case AerialStage.SkywardArc:
+                    SoundEngine.PlaySound(SoundID.DoubleJump, NPC.Center);
+                    if (!Main.dedServ)
+                    {
+                        // Cloud ring puffed out flat from the feet, like a Cloud in a Bottle jump.
+                        for (int i = 0; i < 20; i++)
+                        {
+                            float cloudAngle = MathHelper.TwoPi * i / 20f;
+                            Vector2 cloudVelocity = new Vector2((float)Math.Cos(cloudAngle) * 3f,
+                                (float)Math.Sin(cloudAngle) + 1.5f);
+                            Dust cloud = Dust.NewDustPerfect(NPC.Bottom, DustID.Cloud, cloudVelocity, 100, default,
+                                Main.rand.NextFloat(1.2f, 1.6f));
+                            cloud.noGravity = true;
+                        }
+                    }
+                    break;
+
+                case AerialStage.Strike:
+                    SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.75f, PitchVariance = 0.15f }, NPC.Center);
+                    break;
+
+                case AerialStage.None:
+                    DebugAttackLabel = null;
+                    break;
             }
         }
 
@@ -3096,6 +3145,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write(_ringCollapseTo);
             writer.Write(_ringCollapseDone50);
             writer.Write(_ringCollapseDone30);
+
+            // Aerial attack (Rising Uppercut / Skyward Lunge): the stage machine runs on every machine, started and branched
+            // by the server; every stage change flushes a snapshot (EnterAerialStage). _aerialBladeHit and the cooldown stay
+            // server-only.
+            writer.Write(_aerialStageSequence);
+            writer.Write((byte)_aerialStage);
+            writer.Write((short)Math.Clamp(_aerialStageTicks, 0, short.MaxValue));
+            writer.Write((short)Math.Clamp(_aerialAirTicks, 0, short.MaxValue));
+            writer.Write((byte)Math.Clamp(_aerialLandingTicks, 0, byte.MaxValue));
+            writer.Write(_aerialRotation);
+            writer.Write(_aerialVelocityX);
+            writer.Write(_lastAerialWasLunge);
+            writer.Write(_aerialDoubleJumpPending);
+            writer.WriteVector2(_skywardDirection);
+            writer.Write((byte)Math.Clamp(_skywardDashTicks, 0, byte.MaxValue));
+            writer.Write(_strikeStartRotation);
+            writer.Write(_strikeEndRotation);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -3117,6 +3183,59 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _ringCollapseTo = reader.ReadSingle();
             _ringCollapseDone50 = reader.ReadBoolean();
             _ringCollapseDone30 = reader.ReadBoolean();
+
+            int aerialStageSequence = reader.ReadInt32();
+            AerialStage aerialStage = (AerialStage)reader.ReadByte();
+            int aerialStageTicks = reader.ReadInt16();
+            int aerialAirTicks = reader.ReadInt16();
+            int aerialLandingTicks = reader.ReadByte();
+            float aerialRotation = reader.ReadSingle();
+            float aerialVelocityX = reader.ReadSingle();
+            bool lastAerialWasLunge = reader.ReadBoolean();
+            bool aerialDoubleJumpPending = reader.ReadBoolean();
+            Vector2 skywardDirection = reader.ReadVector2();
+            int skywardDashTicks = reader.ReadByte();
+            float strikeStartRotation = reader.ReadSingle();
+            float strikeEndRotation = reader.ReadSingle();
+
+            // Skip a snapshot older than a stage change this client already made on its own, unless this client has dropped
+            // out of the attack while the server is still in it.
+            bool olderThanPrediction = aerialStageSequence < _aerialStageSequence;
+            bool droppedOut = _aerialStage == AerialStage.None && aerialStage != AerialStage.None;
+            if (olderThanPrediction && !droppedOut)
+            {
+                return;
+            }
+
+            // A different stage is adopted with the server's clock and its start cue; the same stage keeps this client's clock.
+            if (aerialStage != _aerialStage)
+            {
+                _aerialStage = aerialStage;
+                _aerialStageTicks = aerialStageTicks;
+                PlayAerialStageStartCue(aerialStage);
+            }
+            _aerialStageSequence = aerialStageSequence;
+            _aerialAirTicks = aerialAirTicks;
+            _aerialLandingTicks = aerialLandingTicks;
+            _aerialRotation = aerialRotation;
+            _aerialVelocityX = aerialVelocityX;
+            _lastAerialWasLunge = lastAerialWasLunge;
+            _aerialDoubleJumpPending = aerialDoubleJumpPending;
+            _skywardDirection = skywardDirection;
+            _skywardDashTicks = skywardDashTicks;
+            _strikeStartRotation = strikeStartRotation;
+            _strikeEndRotation = strikeEndRotation;
+
+            // The strike curve is one of three table constants, identified by the end pose BeginAerialStrike was given.
+            _strikeCurve = AirOverhandCurve;
+            if (strikeEndRotation == UppercutFinishRotation)
+            {
+                _strikeCurve = UppercutCurve;
+            }
+            else if (strikeEndRotation == AirUnderhandEndRotation)
+            {
+                _strikeCurve = AirUnderhandCurve;
+            }
         }
 
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)

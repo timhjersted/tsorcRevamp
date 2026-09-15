@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using Terraria;
+using Terraria.ID;
 using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.NPCs.AI
@@ -25,6 +27,9 @@ namespace tsorcRevamp.NPCs.AI
         public EnemyMountConfig Config;
 
         public MountMode Mode { get; private set; } = MountMode.Idle;
+        /// <summary>Counts EnterMode calls on every machine, so a client can tell a server mode change it has
+        /// not reached from one it already predicted (see ReadNetworkState).</summary>
+        public int ModeSequence { get; private set; }
         public int ModeTimer { get; private set; }
         public int CooldownRemaining { get; private set; }
 
@@ -125,6 +130,8 @@ namespace tsorcRevamp.NPCs.AI
         private Vector2 _navigationWaypoint;
         private bool _navigatorFinished;
         private bool _navigatorBlocked;
+        /// <summary>Client only: a special wind-up adopted from the server, raised as SpecialWindupStarted on the next Tick.</summary>
+        private bool _specialWindupPulsePending;
 
         public EnemyMountController(EnemyMountConfig config)
         {
@@ -146,7 +153,8 @@ namespace tsorcRevamp.NPCs.AI
         /// <summary>Force a charge from outside the FSM (e.g. an enrage). Ignored mid-charge or on cooldown.</summary>
         public bool RequestCharge(NPC npc, Player target)
         {
-            if (Mode != MountMode.Idle || CooldownRemaining > 0)
+            // Starting a charge rolls the special variant: server only.
+            if (Mode != MountMode.Idle || CooldownRemaining > 0 || Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return false;
             }
@@ -157,8 +165,10 @@ namespace tsorcRevamp.NPCs.AI
 
         public void Tick(NPC npc, Player target)
         {
-            // One-tick pulse: consumed by the owner during this same Tick call, cleared for the next.
-            SpecialWindupStarted = false;
+            // One-tick pulse: consumed by the owner right after this Tick call, cleared for the next. A client
+            // that adopted a special wind-up from the server raises its pulse here.
+            SpecialWindupStarted = _specialWindupPulsePending;
+            _specialWindupPulsePending = false;
 
             if (ModeTimer > 0)
             {
@@ -249,6 +259,13 @@ namespace tsorcRevamp.NPCs.AI
                 return;
             }
 
+            // The next pass (charge now or reposition, plus the special-charge roll) is the server's call. A
+            // client holds here until the owner's snapshot brings the chosen mode.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
             float horizontalDistance = Math.Abs(target.Center.X - npc.Center.X);
 
             if (horizontalDistance >= Config.ChargeMinRange && horizontalDistance <= Config.ChargeTriggerRange)
@@ -291,7 +308,9 @@ namespace tsorcRevamp.NPCs.AI
             bool inChargeBand = horizontalDistance >= Config.ChargeMinRange
                 && horizontalDistance <= Config.ChargeTriggerRange;
 
-            if (inChargeBand || ModeTimer <= 0)
+            // Server decision (it rolls the special variant); a client keeps approaching until the snapshot.
+            bool readyToCharge = inChargeBand || ModeTimer <= 0;
+            if (readyToCharge && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 BeginChargeSequence(npc, target);
             }
@@ -414,6 +433,7 @@ namespace tsorcRevamp.NPCs.AI
         {
             Mode = mode;
             ModeTimer = durationTicks;
+            ModeSequence++;
         }
 
         /// <summary>Ramp horizontal velocity toward direction * topSpeed. Vertical motion is left entirely
@@ -477,6 +497,73 @@ namespace tsorcRevamp.NPCs.AI
 
             npc.direction = facing;
             npc.spriteDirection = facing;
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Multiplayer
+        // ─────────────────────────────────────────────────────────────────────
+
+        /// <summary>Server side of the owner's SendExtraAI: the mode plus the charge commitment (direction,
+        /// crossing point, waypoint) a client needs to follow a pass it did not choose.</summary>
+        public void WriteNetworkState(BinaryWriter writer)
+        {
+            writer.Write(ModeSequence);
+            writer.Write((byte)Mode);
+            writer.Write((short)Math.Clamp(ModeTimer, 0, short.MaxValue));
+            writer.Write((short)Math.Clamp(CooldownRemaining, 0, short.MaxValue));
+            writer.Write(IsSpecialCharge);
+            writer.Write((sbyte)_chargeDirection);
+            writer.Write((sbyte)_approachSign);
+            writer.Write(_hasCrossed);
+            writer.Write(_crossingX);
+            writer.WriteVector2(_navigationWaypoint);
+            writer.Write(_navigatorFinished);
+            writer.Write(_navigatorBlocked);
+        }
+
+        /// <summary>Client side. Adopts the server's mode unless this client already predicted past it (an
+        /// overshoot or turnaround reached a tick early). The skip is bounded to 2 transitions so a client
+        /// that over-predicted cannot ignore the server forever.</summary>
+        public void ReadNetworkState(BinaryReader reader)
+        {
+            int sequence = reader.ReadInt32();
+            MountMode mode = (MountMode)reader.ReadByte();
+            int modeTimer = reader.ReadInt16();
+            int cooldownRemaining = reader.ReadInt16();
+            bool isSpecialCharge = reader.ReadBoolean();
+            int chargeDirection = reader.ReadSByte();
+            int approachSign = reader.ReadSByte();
+            bool hasCrossed = reader.ReadBoolean();
+            float crossingX = reader.ReadSingle();
+            Vector2 navigationWaypoint = reader.ReadVector2();
+            bool navigatorFinished = reader.ReadBoolean();
+            bool navigatorBlocked = reader.ReadBoolean();
+
+            int predictedAhead = ModeSequence - sequence;
+            bool olderThanPrediction = predictedAhead > 0 && predictedAhead <= 2;
+            if (olderThanPrediction)
+            {
+                return;
+            }
+
+            if (mode != Mode)
+            {
+                if (mode == MountMode.ChargeWindup)
+                {
+                    _specialWindupPulsePending = true;
+                }
+                EnterMode(mode, modeTimer);
+            }
+            CooldownRemaining = cooldownRemaining;
+            IsSpecialCharge = isSpecialCharge;
+            _chargeDirection = chargeDirection;
+            _approachSign = approachSign;
+            _hasCrossed = hasCrossed;
+            _crossingX = crossingX;
+            _navigationWaypoint = navigationWaypoint;
+            _navigatorFinished = navigatorFinished;
+            _navigatorBlocked = navigatorBlocked;
+            ModeSequence = sequence;
         }
     }
 

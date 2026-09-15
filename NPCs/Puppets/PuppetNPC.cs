@@ -863,6 +863,18 @@ namespace tsorcRevamp.NPCs.Puppets
         /// current attack as having connected (see <see cref="_lastAttackHitConnected"/>).</summary>
         public void ReportAttackHit()
         {
+            // Hostile projectile hits resolve on the victim's client, but the result feeds server decisions (dodge-punish
+            // chains, hit-confirms): forward it. tsorcRevamp.HandlePacket calls this again on the server.
+            if (IsMultiplayerClient)
+            {
+                ModPacket packet = Mod.GetPacket();
+                packet.Write(tsorcPacketID.ReportPuppetAttackHit);
+                packet.Write((short)NPC.whoAmI);
+                packet.Write(NPC.type);
+                packet.Send();
+                return;
+            }
+
             _lastAttackHitConnected = true;
             if (IsMeleeComboPhase)
                 _currentComboStepHitConnected = true;
@@ -876,6 +888,13 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private bool TryDodgePunishChain(float dist)
         {
+            // A roll on server-only hit results. A client predicts "no chain" (the plain recovery) and adopts
+            // the chained attack if the server picks one.
+            if (IsMultiplayerClient)
+            {
+                return false;
+            }
+
             if (_lastAttackHitConnected || Main.rand.Next(100) >= DodgePunishChainChance)
                 return false;
 
@@ -1371,6 +1390,55 @@ namespace tsorcRevamp.NPCs.Puppets
         }
         protected AttackPhase Phase = AttackPhase.Idle;
         protected int PhaseTimer;
+
+        // ── Multiplayer phase sync ────────────────────────────────────────────────
+        // Server-authoritative: attack selection, rolls and branch decisions run only where netMode !=
+        // MultiplayerClient. Every EnterPhase bumps _phaseSequence on every machine, and the server flushes
+        // a SyncNPC from PostAI whenever it (or a flight/mount mode) changed, bypassing vanilla's netSpam
+        // throttle (one queued packet per 30 ticks for non-boss NPCs). Clients keep ticking committed phases
+        // and predict timer-driven transitions (so sounds, dust and hooks still fire); ReceiveExtraAI reconciles.
+        private int _phaseSequence;
+        private int _lastSentPhaseSequence;
+        private int _lastSentFlightSequence;
+        private int _lastSentMountSequence;
+        /// <summary>Client only: the server sequence last adopted or confirmed.</summary>
+        private int _lastAcceptedPhaseSequence;
+        /// <summary>Client only: the tick the client first predicted past _lastAcceptedPhaseSequence.</summary>
+        private uint _predictionStartTick;
+        /// <summary>A snapshot one transition ahead that arrives within this many ticks of the client's own timer running
+        /// out waits for that local transition instead of cutting it short, so the expiry hooks (swing sounds, Do*/On*
+        /// cues) still fire here. Covers the arrival jitter around a transition.</summary>
+        private const int PredictionDeferWindowTicks = 6;
+        // Client only: a phase snapshot waiting on that local transition (null state = nothing waiting).
+        private byte[] _deferredSnapshotState;
+        private int _deferredSnapshotSequence;
+        private AttackPhase _deferredSnapshotPhase;
+        private int _deferredSnapshotTimer;
+        private int _deferredSnapshotComboIndex;
+        private int _deferredSnapshotStepIndex;
+        private int _deferredSnapshotTicksWaited;
+        private int _deferredSnapshotMaxWait;
+        /// <summary>Client only: an adopted phase whose entry cues still have to play. Runs at the start of the next AI
+        /// tick, after the subclass has read its own fields from the same packet.</summary>
+        private bool _adoptedPhaseEntryPending;
+        /// <summary>Server only: a subclass asked for a snapshot this tick (see RequestNetworkSnapshot).</summary>
+        private bool _snapshotRequested;
+
+        /// <summary>Sends a snapshot from PostAI this tick even without a phase change — for subclass set-piece state (an
+        /// aerial stage, a pursuit) that clients must follow promptly. No-op outside the server.</summary>
+        protected void RequestNetworkSnapshot()
+        {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                _snapshotRequested = true;
+            }
+        }
+        /// <summary>A snapshot older than the client's prediction is normally just latency. Once the prediction
+        /// has gone this many ticks unconfirmed the server has held the phase (a subclass PhaseTimer hold,
+        /// a pursuit) and the client adopts the snapshot instead.</summary>
+        private const int StalePhaseSnapshotToleranceTicks = 20;
+
+        private bool IsMultiplayerClient => Main.netMode == NetmodeID.MultiplayerClient;
 
         // Custom (set-piece) phase pose state — see StartCustomAttack / DoCustomAttack / DoCustomTick.
         private int  _customPoseWeapon = -1;   // item type held during the Custom phase, or -1 = bare-handed
@@ -1980,14 +2048,17 @@ namespace tsorcRevamp.NPCs.Puppets
                 ? _activeMeleeCombo.Steps[_meleeComboStepIndex].ReachMult
                 : 1f;
         /// <summary>Called after a step completes but before its next step is scheduled. Returning
-        /// false ends the combo in normal recovery, enabling honest hit-confirmed branches.</summary>
+        /// false ends the combo in normal recovery, enabling honest hit-confirmed branches.
+        /// Multiplayer: server only — clients predict the continuation and adopt a refusal.</summary>
         protected virtual bool ShouldContinueMeleeCombo(
             string comboName, int nextStepIndex, Player target, bool previousStepHit) => true;
         /// <summary>Called on an isolated copy of a newly selected combo. Subclasses may append
-        /// health-phase follow-ups without mutating the shared static combo table.</summary>
+        /// health-phase follow-ups without mutating the shared static combo table.
+        /// Multiplayer: server only — the customized copy reaches clients in every snapshot.</summary>
         protected virtual void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction) { }
         /// <summary>Called immediately before a later combo step begins. Subclasses may replace the
-        /// copied step using current spacing, enabling conditional retrieval or pursuit follow-ups.</summary>
+        /// copied step using current spacing, enabling conditional retrieval or pursuit follow-ups.
+        /// Multiplayer: server only — the edited step reaches clients in every snapshot.</summary>
         protected virtual void ModifyNextMeleeComboStep(
             string comboName, int nextStepIndex, Player target, ref MeleeComboStep nextStep) { }
 
@@ -2412,6 +2483,64 @@ namespace tsorcRevamp.NPCs.Puppets
             // Attack-armed i-frames (AttackOwnsDodgeIFrames) must not blink the body out in GlobalNPC.PreDraw.
             // Set before AI's early returns so it can never stay stuck on after the attack ends.
             gnpc.SuppressDodgeBlink = AttackOwnsDodgeIFrames;
+
+            // Client: entry cues of a phase adopted from a snapshot — its transition ran on the server, not here. Deferred
+            // from ReceiveExtraAI to this tick so the hooks read the subclass fields that arrived in the same packet.
+            if (_adoptedPhaseEntryPending)
+            {
+                _adoptedPhaseEntryPending = false;
+                switch (Phase)
+                {
+                    case AttackPhase.MeleeAttack:
+                    case AttackPhase.StabAttack:
+                    case AttackPhase.PierceDash:
+                        SetDisplayWeapon(FrontHandWeaponType, swing: true);
+                        break;
+
+                    case AttackPhase.MeleeComboAttack:
+                        SetDisplayWeapon(FrontHandWeaponType, swing: true);
+                        ComboMotion adoptedMotion = _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion;
+                        if (IsSwingingMotion(adoptedMotion))
+                        {
+                            PlayMeleeSwingSound();
+                        }
+                        break;
+
+                    case AttackPhase.SpearAttack:
+                        SetDisplayWeapon(SpearWeaponItemType, swing: true);
+                        break;
+
+                    case AttackPhase.MagicAttack:
+                        SetDisplayWeapon(MagicWeaponItemType, swing: true);
+                        break;
+
+                    case AttackPhase.RangedAttack:
+                        SetDisplayWeapon(_activeRangedItemType, swing: true);
+                        break;
+
+                    case AttackPhase.KnivesThrow:
+                        SetDisplayWeapon(CursedKnivesWeaponItemType, swing: true);
+                        break;
+
+                    case AttackPhase.PierceStabHold:
+                        // Contact was resolved on the server; replay the hook for its local impale state, sound and shake
+                        // (subclass spawns inside it are server-gated).
+                        if (_pierceTarget != null && _pierceTarget.active)
+                        {
+                            OnPierceContact(_pierceTarget, _pierceIsStab);
+                        }
+                        break;
+
+                    case AttackPhase.Custom:
+                        if (_customPoseWeapon >= 0)
+                        {
+                            SetDisplayWeapon(_customPoseWeapon, swing: _customSwingPose);
+                        }
+                        DoCustomAttack();
+                        break;
+                }
+            }
+
             if (gnpc.IsTeleportIllusion)
             {
                 NPC.boss = false;
@@ -2779,7 +2908,10 @@ namespace tsorcRevamp.NPCs.Puppets
             tsorcRevampAIs.TickQuickStep(NPC, gnpc);
 
             // ── Proactive evasion (neutral, off cooldown, not mid-backhop/quick-step) ─────────────
-            if (gnpc.DodgeTimer <= 0 && gnpc.DodgeCooldown <= 0 && _backhopTicks <= 0
+            // Both reactions roll (PreemptiveQuickStepChance, Agility): server only. DodgeTimer reaches clients
+            // through GlobalNPC's sync.
+            if (!IsMultiplayerClient
+                && gnpc.DodgeTimer <= 0 && gnpc.DodgeCooldown <= 0 && _backhopTicks <= 0
                 && gnpc.QuickStepTimer <= 0 && gnpc.QuickStepRecoveryTimer <= 0
                 && (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll))
             {
@@ -2820,6 +2952,54 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void PostAI()
         {
+            // Server: flush a snapshot on the tick a phase, flight mode or mount mode changes. A direct SyncNPC
+            // skips vanilla's netSpam throttle, so clients reconcile within network latency instead of up to
+            // 30 ticks late. PostAI runs after the subclass AI, so the snapshot includes this tick's decisions.
+            if (Main.netMode == NetmodeID.Server)
+            {
+                int flightSequence = 0;
+                if (_flight != null)
+                {
+                    flightSequence = _flight.ModeSequence;
+                }
+
+                int mountSequence = 0;
+                if (_mount != null)
+                {
+                    mountSequence = _mount.ModeSequence;
+                }
+
+                bool phaseChanged = _phaseSequence != _lastSentPhaseSequence;
+                bool flightChanged = flightSequence != _lastSentFlightSequence;
+                bool mountChanged = mountSequence != _lastSentMountSequence;
+                if (phaseChanged || flightChanged || mountChanged || _snapshotRequested)
+                {
+                    _lastSentPhaseSequence = _phaseSequence;
+                    _lastSentFlightSequence = flightSequence;
+                    _lastSentMountSequence = mountSequence;
+                    _snapshotRequested = false;
+                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPC.whoAmI);
+                }
+            }
+
+            // Client: a snapshot that waited on this client's own transition (see PredictionDeferWindowTicks). This tick's
+            // AI has run, so either the local transition happened or the client is holding for the server.
+            if (IsMultiplayerClient && _deferredSnapshotState != null)
+            {
+                _deferredSnapshotTicksWaited++;
+                bool predictionCaughtUp = _phaseSequence >= _deferredSnapshotSequence;
+                bool waitedLongEnough = _deferredSnapshotTicksWaited >= _deferredSnapshotMaxWait;
+                if (predictionCaughtUp || waitedLongEnough)
+                {
+                    byte[] deferredState = _deferredSnapshotState;
+                    _deferredSnapshotState = null;
+                    int timerNow = Math.Max(0, _deferredSnapshotTimer - _deferredSnapshotTicksWaited);
+                    ReconcilePhaseSnapshot(_deferredSnapshotSequence, _deferredSnapshotPhase, timerNow,
+                        _deferredSnapshotComboIndex, _deferredSnapshotStepIndex, deferredState,
+                        runtimeActive: false, allowDefer: false);
+                }
+            }
+
             if (Main.dedServ)
                 return;
 
@@ -3067,10 +3247,147 @@ namespace tsorcRevamp.NPCs.Puppets
             writer.Write(_shielding);
             writer.Write(_mountSpawned);
             writer.Write(_attackRuntimeV2.Active);
+
+            // ── Phase header (see _phaseSequence) ──
+            writer.Write(_phaseSequence);
+            writer.Write((byte)Phase);
+            writer.Write((short)Math.Clamp(PhaseTimer, short.MinValue, short.MaxValue));
+            writer.Write((short)_activeMeleeComboIndex);
+            writer.Write((byte)Math.Clamp(_meleeComboStepIndex, 0, byte.MaxValue));
+
+            // Flight and mount controllers reconcile on their own mode sequence.
+            bool hasFlight = _flight != null;
+            writer.Write(hasFlight);
+            if (hasFlight)
+            {
+                _flight.WriteNetworkState(writer);
+            }
+
+            bool hasMount = _mount != null;
+            writer.Write(hasMount);
+            if (hasMount)
+            {
+                _mount.WriteNetworkState(writer);
+            }
+
+            // ── Decision state ──
+            // Everything the server rolled, aimed or edited for the current phase. Length-prefixed so a client
+            // can skip it whole when the header is older than its own prediction.
+            MemoryStream stateStream = new MemoryStream();
+            BinaryWriter state = new BinaryWriter(stateStream);
+
+            // The per-activation combo copy, as CustomizeMeleeCombo / ModifyNextMeleeComboStep left it. First,
+            // because the client needs it before it can adopt a combo phase.
+            bool sendComboSteps = _activeMeleeComboIndex >= 0
+                && !_attackRuntimeV2.Active
+                && _activeMeleeCombo.Steps != null;
+            state.Write(sendComboSteps);
+            if (sendComboSteps)
+            {
+                state.Write((short)_activeMeleeCombo.RecoveryTicks);
+                state.Write(_activeMeleeCombo.HyperArmor);
+                state.Write(_activeMeleeCombo.MoveBrake);
+                state.Write((byte)_activeMeleeCombo.Steps.Length);
+                for (int i = 0; i < _activeMeleeCombo.Steps.Length; i++)
+                {
+                    MeleeComboStep step = _activeMeleeCombo.Steps[i];
+                    state.Write((byte)step.Motion);
+                    state.Write((short)step.TelegraphTicks);
+                    state.Write((short)step.AttackTicks);
+                    state.Write((short)step.PostStepPause);
+                    state.Write(step.DamageMult);
+                    state.Write(step.ReachMult);
+                    state.Write(step.ForwardPushMult);
+                    state.Write(step.SwingSpeedMult);
+                    state.Write((byte)step.Ease);
+                    state.Write((short)step.EaseInTicks);
+                    state.Write((short)step.EaseOutTicks);
+                    state.Write(step.EaseOutDecay);
+                    state.Write(step.LeapStrikeRange);
+                    state.Write(step.HitWindowEnd);
+                    state.Write(step.LeapHeightMult);
+                    state.Write(step.LeapForwardSpeedMult);
+                }
+            }
+
+            state.Write((sbyte)_attackFacingDir);
+            state.Write(_lastAttackHitConnected);
+            state.Write(_currentComboStepHitConnected);
+
+            // Combo motion: locked facing, leap launch and aim-adaptive arc.
+            state.Write((sbyte)_comboLockedDir);
+            state.Write(_comboLeapVx);
+            state.Write(_comboLeapLaunched);
+            state.Write((short)_activeComboStepTotalTicks);
+            state.Write(_comboAimBias);
+            state.Write(_comboSwingFlipped);
+            state.Write(_apexDiveStrikeStarted);
+            state.Write(_leapStrikeStarted);
+
+            // Bespoke attack phases: the directions, targets and counters their entry code rolled or aimed.
+            int pierceTargetIndex = -1;
+            if (_pierceTarget != null)
+            {
+                pierceTargetIndex = _pierceTarget.whoAmI;
+            }
+            state.Write(_pierceIsStab);
+            state.Write(_pierceHitConnected);
+            state.Write(_pierceContactDodged);
+            state.Write((byte)Math.Clamp(_pierceRepeatsUsed, 0, byte.MaxValue));
+            state.Write((short)_pierceTelegraphTotalTicks);
+            state.Write((sbyte)_pierceDir);
+            state.WriteVector2(_pierceAnchorPos);
+            state.Write((sbyte)pierceTargetIndex);
+            state.Write((sbyte)_jumpSlashDir);
+            state.Write(_jumpSlashLaunched);
+            state.Write(_jumpSlashFlightSpeed);
+            state.Write((sbyte)_flipSlashDir);
+            state.Write(_flipSlashLaunchBottomY);
+            state.Write(_flipSlashSolvedSpinSpeed);
+            state.Write(_flipSlashStrikeStartRotation);
+            state.Write((byte)Math.Clamp(_abyssSlashIndex, 0, byte.MaxValue));
+            state.Write((byte)Math.Clamp(_abyssShardIndex, 0, byte.MaxValue));
+            state.Write((byte)Math.Clamp(_spiralFanIndex, 0, byte.MaxValue));
+            state.Write((sbyte)_homingVolleyDir);
+            state.Write(_homingVolleyFired);
+            state.Write(_boomerangFired);
+            state.Write((sbyte)_swordLaunchDir);
+            state.Write((byte)_swordLaunchNextPhase);
+            state.Write((short)_swordLaunchNextTicks);
+            state.Write((sbyte)_fireVolleyDir);
+            state.Write(_fireVolleyArcVx);
+            state.Write(_fireVolleyArcFired);
+            state.Write((sbyte)_stabLungeDir);
+            state.Write((sbyte)_spearLungeDir);
+            state.Write((sbyte)_backhopDir);
+            state.Write((byte)Math.Clamp(_backhopTicks, 0, byte.MaxValue));
+            state.Write((byte)Math.Clamp(_cursedKnivesVolleysLeft, 0, byte.MaxValue));
+            state.Write((short)_cursedKnivesGap);
+            state.Write((short)_magicAttackTicksOverride);
+            state.Write((short)_customPoseWeapon);
+            state.Write(_customSwingPose);
+
+            // Ranged burst: SetupRangedBurst's rolled stance, shot count and pattern.
+            state.Write(_usingSecondaryRanged);
+            state.Write((byte)_activeRangedStyle);
+            state.Write((short)_activeRangedItemType);
+            state.Write(_activeRangedFlashColor.PackedValue);
+            state.Write((short)_activeRangedTelegraphTicks);
+            state.Write((short)_activeRangedAttackTicks);
+            state.Write((short)_activeRangedRecoveryTicks);
+            state.Write(_standingShot);
+            state.Write((byte)Math.Clamp(_rangedShotsRemaining, 0, byte.MaxValue));
+            state.Write((sbyte)_activeBurstPatternIndex);
+            state.Write((byte)Math.Clamp(_interShotPauseIndex, 0, byte.MaxValue));
+
+            state.Flush();
+            byte[] stateBytes = stateStream.ToArray();
+            writer.Write((ushort)stateBytes.Length);
+            writer.Write(stateBytes);
+
             if (!_attackRuntimeV2.Active)
                 return;
 
-            writer.Write(_activeMeleeComboIndex);
             writer.Write((byte)_attackRuntimeV2.Stage);
             writer.Write((short)_attackRuntimeV2.StageTick);
             writer.Write(_attackRuntimeV2.AimCorrection);
@@ -3085,38 +3402,69 @@ namespace tsorcRevamp.NPCs.Puppets
             bool shieldActive = reader.ReadBoolean();
             _mountSpawned = reader.ReadBoolean();
             bool runtimeActive = reader.ReadBoolean();
-            bool hadRuntime = _attackRuntimeV2.Active;
+
+            int receivedSequence = reader.ReadInt32();
+            AttackPhase receivedPhase = (AttackPhase)reader.ReadByte();
+            int receivedPhaseTimer = reader.ReadInt16();
+            int receivedComboIndex = reader.ReadInt16();
+            int receivedStepIndex = reader.ReadByte();
+
+            bool hasFlight = reader.ReadBoolean();
+            if (hasFlight)
+            {
+                _flight ??= new EnemyFlightController(FlightConfig);
+                _flight.ReadNetworkState(reader);
+            }
+
+            bool hasMount = reader.ReadBoolean();
+            if (hasMount)
+            {
+                _mount ??= new EnemyMountController(MountConfig);
+                _mount.ReadNetworkState(reader);
+            }
+            else if (!_mountSpawned)
+            {
+                // The server dropped its controller when the mount broke. Drop ours too, or mount-only effects
+                // gated on MountAI keep firing on this client (see DestroyMount).
+                _mount = null;
+            }
+
+            int stateLength = reader.ReadUInt16();
+            byte[] stateBytes = reader.ReadBytes(stateLength);
+
+            // Shield flags. The ShieldGuard phase itself arrives with the phase snapshot below.
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (runtimeActive)
+            {
+                shieldTimer = 0;
+                shieldActive = false;
+            }
+            if (shieldActive && !_shielding)
+            {
+                _shieldLockedDir = NPC.direction;
+            }
+            globalNPC.ReactiveBlockTimer = shieldTimer;
+            globalNPC.ShieldGuarding = shieldActive;
+            _shielding = shieldActive;
+            _shieldWasGuarding = shieldActive;
+
+            bool hadRuntime = _attackRuntimeV2.Active;
+            if (hadRuntime && !runtimeActive)
+            {
+                CancelAttackRuntimeV2(clearCombo: true);
+                _weaponVisible = false;
+            }
+
+            // A newer snapshot supersedes one still waiting on this client's own transition.
+            _deferredSnapshotState = null;
+            ReconcilePhaseSnapshot(receivedSequence, receivedPhase, receivedPhaseTimer, receivedComboIndex,
+                receivedStepIndex, stateBytes, runtimeActive, allowDefer: true);
+
             if (!runtimeActive)
             {
-                if (hadRuntime)
-                {
-                    CancelAttackRuntimeV2(clearCombo: true);
-                    _weaponVisible = false;
-                }
-
-                globalNPC.ReactiveBlockTimer = shieldTimer;
-                globalNPC.ShieldGuarding = shieldActive;
-                _shielding = shieldActive;
-                _shieldWasGuarding = shieldActive;
-                if (shieldActive)
-                {
-                    _shieldLockedDir = NPC.direction;
-                    Phase = AttackPhase.ShieldGuard;
-                    PhaseTimer = shieldTimer;
-                }
-                else if (Phase == AttackPhase.ShieldGuard || hadRuntime)
-                {
-                    EnterPhase(AttackPhase.Idle, 0);
-                }
                 return;
             }
 
-            _shielding = false;
-            globalNPC.ReactiveBlockTimer = 0;
-            globalNPC.ShieldGuarding = false;
-
-            int comboIndex = reader.ReadInt32();
             PuppetAttackStage stage = (PuppetAttackStage)reader.ReadByte();
             int stageTick = reader.ReadInt16();
             float aimCorrection = reader.ReadSingle();
@@ -3124,6 +3472,7 @@ namespace tsorcRevamp.NPCs.Puppets
             int lockedFacing = reader.ReadSByte();
 
             EnsureMeleeComboPool();
+            int comboIndex = receivedComboIndex;
             if (_meleeComboPool == null || comboIndex < 0 || comboIndex >= _meleeComboPool.Length
                 || _meleeComboPool[comboIndex].RuntimeV2Clip == null)
             {
@@ -3132,9 +3481,14 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             bool wasActive = _attackRuntimeV2.Active;
+            // OnMeleeComboStarted fires once per strike, not on every snapshot of it (it resets subclass state).
+            bool newRuntimeCombo = !wasActive || comboIndex != _activeMeleeComboIndex;
             _activeMeleeComboIndex = comboIndex;
             _activeMeleeCombo = _meleeComboPool[comboIndex];
-            OnMeleeComboStarted(_activeMeleeCombo);
+            if (newRuntimeCombo)
+            {
+                OnMeleeComboStarted(_activeMeleeCombo);
+            }
             _meleeComboStepIndex = 0;
             _comboLockedDir = lockedFacing < 0 ? -1 : 1;
             _attackRuntimeV2.LoadNetworkState(
@@ -3164,6 +3518,237 @@ namespace tsorcRevamp.NPCs.Puppets
                 PlayMeleeSwingSound();
         }
 
+        /// <summary>Client side of the phase snapshot (see _phaseSequence): confirms, adopts or skips the server's phase and
+        /// applies its decision-state blob. allowDefer lets a snapshot one transition ahead wait for this client's own
+        /// imminent transition; PostAI re-runs it with allowDefer false.</summary>
+        private void ReconcilePhaseSnapshot(int receivedSequence, AttackPhase receivedPhase, int receivedPhaseTimer,
+            int receivedComboIndex, int receivedStepIndex, byte[] stateBytes, bool runtimeActive, bool allowDefer)
+        {
+            // The same phase (and combo step) the client already predicted keeps the client's own timer. A snapshot
+            // older than that prediction is latency and is skipped, unless the client idles on a different phase or
+            // the prediction has gone unconfirmed long enough that the server must have held.
+            bool receivedComboPhase = receivedPhase == AttackPhase.MeleeComboTelegraph
+                || receivedPhase == AttackPhase.MeleeComboAttack
+                || receivedPhase == AttackPhase.MeleeComboPause
+                || receivedPhase == AttackPhase.MeleeComboRecovery;
+            bool sameComboPosition = receivedComboIndex == _activeMeleeComboIndex
+                && receivedStepIndex == _meleeComboStepIndex;
+            bool samePhase = receivedPhase == Phase && (!receivedComboPhase || sameComboPosition);
+            bool clientNeutral = Phase == AttackPhase.Idle
+                || Phase == AttackPhase.CasualStroll
+                || Phase == AttackPhase.ClosingDistance;
+
+            bool olderThanPrediction = receivedSequence < _phaseSequence;
+            bool divergedInNeutral = clientNeutral && !samePhase;
+            uint ticksSincePrediction = Main.GameUpdateCount - _predictionStartTick;
+            bool predictionUnconfirmed = ticksSincePrediction > StalePhaseSnapshotToleranceTicks;
+            bool snapshotIsStale = olderThanPrediction && !divergedInNeutral && !predictionUnconfirmed;
+
+            // A V2 strike is reconciled by its own stage data in ReceiveExtraAI, so its snapshot always applies.
+            if (snapshotIsStale && !runtimeActive)
+            {
+                return;
+            }
+
+            // One transition ahead with this client's own timer about to run out: let the local transition happen first so
+            // its expiry hooks fire. PostAI re-runs this afterwards and normally finds the two phases equal.
+            bool oneTransitionAhead = receivedSequence == _phaseSequence + 1;
+            bool localTransitionImminent = PhaseTimer >= 1 && PhaseTimer <= PredictionDeferWindowTicks;
+            bool deferToPrediction = allowDefer
+                && !runtimeActive
+                && !samePhase
+                && !clientNeutral
+                && oneTransitionAhead
+                && localTransitionImminent;
+            if (deferToPrediction)
+            {
+                _deferredSnapshotState = stateBytes;
+                _deferredSnapshotSequence = receivedSequence;
+                _deferredSnapshotPhase = receivedPhase;
+                _deferredSnapshotTimer = receivedPhaseTimer;
+                _deferredSnapshotComboIndex = receivedComboIndex;
+                _deferredSnapshotStepIndex = receivedStepIndex;
+                _deferredSnapshotTicksWaited = 0;
+                _deferredSnapshotMaxWait = PhaseTimer + 1;
+                return;
+            }
+
+            BinaryReader state = new BinaryReader(new MemoryStream(stateBytes));
+
+            bool hasComboSteps = state.ReadBoolean();
+            MeleeComboStep[] receivedSteps = null;
+            int receivedRecoveryTicks = 0;
+            bool receivedHyperArmor = false;
+            float receivedMoveBrake = 0f;
+            if (hasComboSteps)
+            {
+                receivedRecoveryTicks = state.ReadInt16();
+                receivedHyperArmor = state.ReadBoolean();
+                receivedMoveBrake = state.ReadSingle();
+                int stepCount = state.ReadByte();
+                receivedSteps = new MeleeComboStep[stepCount];
+                for (int i = 0; i < stepCount; i++)
+                {
+                    MeleeComboStep step = new MeleeComboStep();
+                    step.Motion = (ComboMotion)state.ReadByte();
+                    step.TelegraphTicks = state.ReadInt16();
+                    step.AttackTicks = state.ReadInt16();
+                    step.PostStepPause = state.ReadInt16();
+                    step.DamageMult = state.ReadSingle();
+                    step.ReachMult = state.ReadSingle();
+                    step.ForwardPushMult = state.ReadSingle();
+                    step.SwingSpeedMult = state.ReadSingle();
+                    step.Ease = (SwingEaseStyle)state.ReadByte();
+                    step.EaseInTicks = state.ReadInt16();
+                    step.EaseOutTicks = state.ReadInt16();
+                    step.EaseOutDecay = state.ReadSingle();
+                    step.LeapStrikeRange = state.ReadSingle();
+                    step.HitWindowEnd = state.ReadSingle();
+                    step.LeapHeightMult = state.ReadSingle();
+                    step.LeapForwardSpeedMult = state.ReadSingle();
+                    receivedSteps[i] = step;
+                }
+            }
+
+            if (!runtimeActive)
+            {
+                EnsureMeleeComboPool();
+                bool comboIndexValid = _meleeComboPool != null
+                    && receivedComboIndex >= 0
+                    && receivedComboIndex < _meleeComboPool.Length;
+                bool comboUsable = hasComboSteps
+                    && comboIndexValid
+                    && receivedStepIndex < receivedSteps.Length;
+
+                // A combo phase without its step data can't be ticked (Steps[...] would throw): wait in Idle.
+                if (receivedComboPhase && !comboUsable)
+                {
+                    receivedPhase = AttackPhase.Idle;
+                    receivedPhaseTimer = 0;
+                    samePhase = Phase == AttackPhase.Idle;
+                }
+
+                if (comboUsable)
+                {
+                    // Same index back-to-back is still a fresh activation when the telegraph restarts.
+                    bool newCombo = receivedComboIndex != _activeMeleeComboIndex
+                        || (receivedPhase == AttackPhase.MeleeComboTelegraph && Phase != AttackPhase.MeleeComboTelegraph);
+                    if (newCombo)
+                    {
+                        _activeMeleeCombo = _meleeComboPool[receivedComboIndex];
+                    }
+                    _activeMeleeCombo.Steps = receivedSteps;
+                    _activeMeleeCombo.RecoveryTicks = receivedRecoveryTicks;
+                    _activeMeleeCombo.HyperArmor = receivedHyperArmor;
+                    _activeMeleeCombo.MoveBrake = receivedMoveBrake;
+                    _activeMeleeComboIndex = receivedComboIndex;
+                    _meleeComboStepIndex = receivedStepIndex;
+                    if (newCombo)
+                    {
+                        OnMeleeComboStarted(_activeMeleeCombo);
+                    }
+                }
+                else
+                {
+                    _activeMeleeComboIndex = -1;
+                }
+
+                // Adopt a phase this client did not reach itself, with the server's full timer so tick hooks that key off
+                // elapsed == 0 still fire. Its entry cues play at the start of the next AI tick (_adoptedPhaseEntryPending).
+                if (!samePhase)
+                {
+                    EnterPhase(receivedPhase, 0);
+                    PhaseTimer = receivedPhaseTimer;
+                    _adoptedPhaseEntryPending = true;
+                }
+            }
+
+            _attackFacingDir = state.ReadSByte();
+            _lastAttackHitConnected = state.ReadBoolean();
+            _currentComboStepHitConnected = state.ReadBoolean();
+
+            _comboLockedDir = state.ReadSByte();
+            _comboLeapVx = state.ReadSingle();
+            _comboLeapLaunched = state.ReadBoolean();
+            _activeComboStepTotalTicks = state.ReadInt16();
+            _comboAimBias = state.ReadSingle();
+            _comboSwingFlipped = state.ReadBoolean();
+            _apexDiveStrikeStarted = state.ReadBoolean();
+            _leapStrikeStarted = state.ReadBoolean();
+
+            _pierceIsStab = state.ReadBoolean();
+            _pierceHitConnected = state.ReadBoolean();
+            _pierceContactDodged = state.ReadBoolean();
+            _pierceRepeatsUsed = state.ReadByte();
+            _pierceTelegraphTotalTicks = state.ReadInt16();
+            _pierceDir = state.ReadSByte();
+            _pierceAnchorPos = state.ReadVector2();
+            int pierceTargetIndex = state.ReadSByte();
+            _pierceTarget = null;
+            if (pierceTargetIndex >= 0 && pierceTargetIndex < Main.maxPlayers)
+            {
+                _pierceTarget = Main.player[pierceTargetIndex];
+            }
+            _jumpSlashDir = state.ReadSByte();
+            _jumpSlashLaunched = state.ReadBoolean();
+            _jumpSlashFlightSpeed = state.ReadSingle();
+            _flipSlashDir = state.ReadSByte();
+            _flipSlashLaunchBottomY = state.ReadSingle();
+            _flipSlashSolvedSpinSpeed = state.ReadSingle();
+            _flipSlashStrikeStartRotation = state.ReadSingle();
+            _abyssSlashIndex = state.ReadByte();
+            _abyssShardIndex = state.ReadByte();
+            _spiralFanIndex = state.ReadByte();
+            _homingVolleyDir = state.ReadSByte();
+            _homingVolleyFired = state.ReadBoolean();
+            _boomerangFired = state.ReadBoolean();
+            _swordLaunchDir = state.ReadSByte();
+            _swordLaunchNextPhase = (AttackPhase)state.ReadByte();
+            _swordLaunchNextTicks = state.ReadInt16();
+            _fireVolleyDir = state.ReadSByte();
+            _fireVolleyArcVx = state.ReadSingle();
+            _fireVolleyArcFired = state.ReadBoolean();
+            _stabLungeDir = state.ReadSByte();
+            _spearLungeDir = state.ReadSByte();
+            _backhopDir = state.ReadSByte();
+            _backhopTicks = state.ReadByte();
+            _cursedKnivesVolleysLeft = state.ReadByte();
+            _cursedKnivesGap = state.ReadInt16();
+            _magicAttackTicksOverride = state.ReadInt16();
+            _customPoseWeapon = state.ReadInt16();
+            _customSwingPose = state.ReadBoolean();
+
+            _usingSecondaryRanged = state.ReadBoolean();
+            _activeRangedStyle = (RangedStyle)state.ReadByte();
+            _activeRangedItemType = state.ReadInt16();
+            _activeRangedFlashColor = new Color { PackedValue = state.ReadUInt32() };
+            _activeRangedTelegraphTicks = state.ReadInt16();
+            _activeRangedAttackTicks = state.ReadInt16();
+            _activeRangedRecoveryTicks = state.ReadInt16();
+            _standingShot = state.ReadBoolean();
+            _rangedShotsRemaining = state.ReadByte();
+            _activeBurstPatternIndex = state.ReadSByte();
+            _interShotPauseIndex = state.ReadByte();
+
+            // The inter-shot pause array is a row of the pattern table: rebuild it from the synced index.
+            int[][] patternPool = PrimaryRangedBurstPatterns;
+            if (_usingSecondaryRanged)
+            {
+                patternPool = SecondaryRangedBurstPatterns;
+            }
+            _interShotPauses = null;
+            bool patternIndexValid = patternPool != null
+                && _activeBurstPatternIndex >= 0
+                && _activeBurstPatternIndex < patternPool.Length;
+            if (patternIndexValid)
+            {
+                _interShotPauses = patternPool[_activeBurstPatternIndex];
+            }
+
+            _phaseSequence = receivedSequence;
+            _lastAcceptedPhaseSequence = receivedSequence;
+        }
+
         private void PuppetAttackAI()
         {
             Player target = Main.player[NPC.target];
@@ -3172,7 +3757,9 @@ namespace tsorcRevamp.NPCs.Puppets
 
             // ── Healing intercept (highest priority) ──────────────────────────────
             // Check before the main switch so any phase can be interrupted to flee and heal.
-            if (ShouldHeal())
+            // Both intercepts are decisions (HP thresholds, one-shot subclass state): server only. A client
+            // follows the FleeToHeal / NovaCharge phase from the snapshot.
+            if (!IsMultiplayerClient && ShouldHeal())
             {
                 CancelAttackRuntimeV2(clearCombo: true);
                 EnterPhase(AttackPhase.FleeToHeal, FleeToHealMaxTicks);
@@ -3181,7 +3768,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
             // ── Charge-up Nova intercept (health-threshold set-piece) ─────────────
             // Also checked before the main switch: a nova can interrupt any in-progress attack.
-            if (CanNova && Phase != AttackPhase.NovaCharge && Phase != AttackPhase.NovaBlast
+            if (!IsMultiplayerClient && CanNova && Phase != AttackPhase.NovaCharge && Phase != AttackPhase.NovaBlast
                 && Phase != AttackPhase.NovaRecovery && ShouldTriggerNova())
             {
                 CancelAttackRuntimeV2(clearCombo: true);
@@ -3209,6 +3796,13 @@ namespace tsorcRevamp.NPCs.Puppets
                     // The movement controller has already advanced the puppet this tick. A subclass's own
                     // authored hold (see HoldAttackSelection) skips neutral selection entirely.
                     if (HoldAttackSelection)
+                    {
+                        break;
+                    }
+
+                    // Everything below picks the next attack (rolls, range bands, takeoff): server only. A
+                    // client idles here until the snapshot brings the chosen phase.
+                    if (IsMultiplayerClient)
                     {
                         break;
                     }
@@ -4056,7 +4650,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     NPC.velocity.X = _pierceDir * PierceDashSpeed;
                     DoPierceDashTick();
 
-                    if (!_pierceHitConnected)
+                    // Contact is hit resolution: server only. A client adopts PierceStabHold (and the synced
+                    // _pierceTarget) from the snapshot, so the impaled player's own machine runs the hold.
+                    if (!_pierceHitConnected && !IsMultiplayerClient)
                     {
                         Rectangle reach = NPC.Hitbox;
                         reach.Inflate(24, 12);
@@ -4078,11 +4674,18 @@ namespace tsorcRevamp.NPCs.Puppets
 
                     if (--PhaseTimer <= 0)
                     {
+                        // Repeat vs recovery rests on the server-only contact result: a client holds the end of
+                        // the dash until the snapshot says which.
+                        if (IsMultiplayerClient)
+                        {
+                            PhaseTimer = 0;
+                            break;
+                        }
+
                         NPC.velocity.X *= 0.4f;
 
                         // Didn't connect: nothing touched, or only a player mid-roll. The repeat re-enters the
-                        // telegraph, which re-faces the target and re-anchors. Not server-gated: like the rest
-                        // of the pierce sequence (Phase isn't in SendExtraAI), every machine runs it locally.
+                        // telegraph, which re-faces the target and re-anchors.
                         bool whiffed = !_pierceHitConnected || _pierceContactDodged;
                         bool repeatsLeft = _pierceRepeatsUsed < PierceWhiffRepeatCount;
                         bool targetInReach = NPC.HasValidTarget && dist <= PierceRange;
@@ -4369,6 +4972,14 @@ namespace tsorcRevamp.NPCs.Puppets
                     LockAttackFacing();
                     if (--PhaseTimer <= 0)
                     {
+                        // The delay hook may read rolled, unsynced subclass state (Artorias's variant): the
+                        // server picks the next swipe or recovery and a client holds this pose until then.
+                        if (IsMultiplayerClient)
+                        {
+                            PhaseTimer = 0;
+                            break;
+                        }
+
                         int delay = NextAbyssSlashDelay(_abyssSlashIndex);
                         if (delay < 0)
                         {
@@ -4517,6 +5128,13 @@ namespace tsorcRevamp.NPCs.Puppets
                     SlowDown();
                     if (--PhaseTimer <= 0)
                     {
+                        // Same as Abyss Slash: the delay hook reads subclass variant state, so the server decides.
+                        if (IsMultiplayerClient)
+                        {
+                            PhaseTimer = 0;
+                            break;
+                        }
+
                         int delay = NextAbyssShardDelay(_abyssShardIndex);
                         if (delay < 0)
                         {
@@ -4702,6 +5320,13 @@ namespace tsorcRevamp.NPCs.Puppets
                     SetDisplayWeapon(SpiralFanWeaponItemType, swing: false);
                     if (--PhaseTimer <= 0)
                     {
+                        // Same as Abyss Slash: the delay hook reads subclass variant state, so the server decides.
+                        if (IsMultiplayerClient)
+                        {
+                            PhaseTimer = 0;
+                            break;
+                        }
+
                         int delaySf = NextSpiralFanDelay(_spiralFanIndex);
                         if (delaySf < 0)
                         {
@@ -4730,8 +5355,16 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.SpiralFanRecovery:
                     LockAttackFacing();
                     SlowDown();
-                    if (--PhaseTimer <= 0 && !TryContinueSpiralFanChain())
-                        EnterCasualOrIdle();
+                    if (--PhaseTimer <= 0)
+                    {
+                        // The chain hook is a server decision; a client predicts the plain end and adopts a
+                        // chained volley from the snapshot.
+                        bool chained = !IsMultiplayerClient && TryContinueSpiralFanChain();
+                        if (!chained)
+                        {
+                            EnterCasualOrIdle();
+                        }
+                    }
                     break;
 
                 // ── Fire Volley chain: backward hop, facing the player ────────
@@ -4752,8 +5385,12 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
 
                     bool landedFv = PhaseTimer < FireVolleyBackLeapTicks && NPC.velocity.Y == 0f;
-                    if (landedFv || --PhaseTimer <= 0)
+                    bool backLeapDone = landedFv || --PhaseTimer <= 0;
+                    // The landing hook picks the next volley: server only. A client holds until the snapshot.
+                    if (backLeapDone && !IsMultiplayerClient)
+                    {
                         OnFireVolleyRepositionLanded();
+                    }
                     break;
                 }
 
@@ -4772,8 +5409,12 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                     tsorcRevampAIs.TickQuickStep(NPC, globalNpcFv);
                     bool resolvedFv = globalNpcFv.QuickStepTimer <= 0 && globalNpcFv.QuickStepRecoveryTimer <= 0;
-                    if (resolvedFv || --PhaseTimer <= 0)
+                    bool dodgeThroughDone = resolvedFv || --PhaseTimer <= 0;
+                    // The landing hook picks the next volley: server only. A client holds until the snapshot.
+                    if (dodgeThroughDone && !IsMultiplayerClient)
+                    {
                         OnFireVolleyRepositionLanded();
+                    }
                     break;
                 }
 
@@ -4787,8 +5428,12 @@ namespace tsorcRevamp.NPCs.Puppets
                         DoFireVolleyArcFire();
                     }
                     bool landedArc = _fireVolleyArcFired && NPC.velocity.Y == 0f && PhaseTimer < 100;
-                    if (landedArc || --PhaseTimer <= 0)
+                    bool arcJumpDone = landedArc || --PhaseTimer <= 0;
+                    // The landing hook picks what follows: server only. A client holds until the snapshot.
+                    if (arcJumpDone && !IsMultiplayerClient)
+                    {
                         OnFireVolleyArcJumpLanded();
+                    }
                     break;
                 }
 
@@ -4798,15 +5443,21 @@ namespace tsorcRevamp.NPCs.Puppets
                 // out of combo range (re-decide → may go ranged).
                 case AttackPhase.ClosingDistance:
                 {
+                    int faceC = target.Center.X < NPC.Center.X ? -1 : 1;
+                    NPC.direction = faceC;
+                    NPC.spriteDirection = faceC;
+
+                    // Starting the combo or giving up is the server's call; a client just runs in.
+                    if (IsMultiplayerClient)
+                    {
+                        break;
+                    }
+
                     if (HoldAttackSelection)
                     {
                         EnterPhase(AttackPhase.Idle, 0);
                         break;
                     }
-
-                    int faceC = target.Center.X < NPC.Center.X ? -1 : 1;
-                    NPC.direction = faceC;
-                    NPC.spriteDirection = faceC;
                     bool inReach = dist <= MeleeEngageRange && NPC.velocity.Y == 0f
                                    && NPC.Center.Y - target.Center.Y < 48f;
                     if (inReach)
@@ -5110,11 +5761,17 @@ namespace tsorcRevamp.NPCs.Puppets
                         _bladeArmed = false;
                         _hasPreviousBladeSample = false;
                         bool hasNextStep = nextIdx < _activeMeleeCombo.Steps.Length;
-                        bool continueCombo = hasNextStep && ShouldContinueMeleeCombo(
-                            _activeMeleeCombo.Name,
-                            nextIdx,
-                            target,
-                            _currentComboStepHitConnected);
+                        // Continuing is a server decision (it may read the server-only blade result). A client
+                        // predicts the authored continuation and adopts the recovery if the server refuses.
+                        bool continueCombo = hasNextStep;
+                        if (hasNextStep && !IsMultiplayerClient)
+                        {
+                            continueCombo = ShouldContinueMeleeCombo(
+                                _activeMeleeCombo.Name,
+                                nextIdx,
+                                target,
+                                _currentComboStepHitConnected);
+                        }
                         if (continueCombo)
                             EnterPhase(AttackPhase.MeleeComboPause, Math.Max(1, step.PostStepPause));
                         else
@@ -5151,12 +5808,17 @@ namespace tsorcRevamp.NPCs.Puppets
                         // Recapture the lock direction for the upcoming step.
                         _comboLockedDir = NPC.direction;
                         MeleeComboStep nextStep = _activeMeleeCombo.Steps[_meleeComboStepIndex];
-                        ModifyNextMeleeComboStep(
-                            _activeMeleeCombo.Name,
-                            _meleeComboStepIndex,
-                            target,
-                            ref nextStep);
-                        _activeMeleeCombo.Steps[_meleeComboStepIndex] = nextStep;
+                        // Spacing-based step edits run on the server; the edited step reaches clients in the
+                        // combo copy every snapshot carries.
+                        if (!IsMultiplayerClient)
+                        {
+                            ModifyNextMeleeComboStep(
+                                _activeMeleeCombo.Name,
+                                _meleeComboStepIndex,
+                                target,
+                                ref nextStep);
+                            _activeMeleeCombo.Steps[_meleeComboStepIndex] = nextStep;
+                        }
                         _currentComboStepHitConnected = false;
                         BeginComboStepAttack(nextStep);
                     }
@@ -5317,6 +5979,12 @@ namespace tsorcRevamp.NPCs.Puppets
 
         private bool TryStartQueuedRangedFollowUp()
         {
+            // Consuming the queue checks line of sight and range: a server decision.
+            if (IsMultiplayerClient)
+            {
+                return false;
+            }
+
             if (_queuedRangedFollowupSlot < 0 || _queuedRangedFollowupTicks <= 0
                 || NPC.velocity.Y != 0f)
             {
@@ -5391,6 +6059,13 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         protected bool TryStartMeleeCombo(float dist, bool rangedStartOnly = false)
         {
+            // Combo selection is server-authoritative; a client adopts the chosen combo, with its customized
+            // steps, from the snapshot. Returning false lets any caller fall through safely.
+            if (IsMultiplayerClient)
+            {
+                return false;
+            }
+
             EnsureMeleeComboPool();
             if (_meleeComboPool == null || _meleeComboPool.Length == 0)
             {
@@ -5497,14 +6172,6 @@ namespace tsorcRevamp.NPCs.Puppets
 
             if (_activeMeleeCombo.RuntimeV2Clip != null)
             {
-                // V2 selection is server-authoritative in multiplayer. The client starts the
-                // matching visual when the runtime snapshot arrives through ReceiveExtraAI.
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                {
-                    _activeMeleeComboIndex = -1;
-                    return true;
-                }
-
                 StartAttackRuntimeV2(_activeMeleeCombo.RuntimeV2Clip);
                 return true;
             }
@@ -6371,6 +7038,13 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         protected void EnterCasualOrIdle()
         {
+            // The stroll roll is the server's. A client drops to Idle and adopts a stroll from the snapshot.
+            if (IsMultiplayerClient)
+            {
+                EnterPhase(AttackPhase.Idle, 0);
+                return;
+            }
+
             if (NPC.HasValidTarget && NPC.Distance(Main.player[NPC.target].Center) <= StabRange + 40f)
             {
                 EnterPhase(AttackPhase.Idle, 0);
@@ -6580,6 +7254,14 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 _flashFired = false;
             }
+
+            // Multiplayer transition counter (see _phaseSequence). A client's first prediction past the last
+            // server-confirmed state starts the stale-snapshot clock ReceiveExtraAI checks.
+            if (IsMultiplayerClient && _phaseSequence == _lastAcceptedPhaseSequence)
+            {
+                _predictionStartTick = Main.GameUpdateCount;
+            }
+            _phaseSequence++;
         }
 
         private void SlowDown() => NPC.velocity.X *= 0.80f;
@@ -6671,29 +7353,41 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         // ── Damage tracking for emergency heal + reactive shield ──────────────────
+        // Hit hooks run only on the client that dealt the hit (never on a multiplayer server). Singleplayer handles the hit
+        // here; in multiplayer GlobalNPC's hit report delivers it to the server, which calls RegisterHit.
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            _recentDamage += (float)damageDone / NPC.lifeMax;
-            // Only a FRONT hit can snap the guard up — a backstab must not re-raise it.
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (Main.netMode != NetmodeID.MultiplayerClient && AllowReactiveDefense && HasShield
-                && _shieldGuardCooldown <= 0 && globalNPC.ReactiveBlockTimer <= 0
-                && (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll)
-                && NPC.velocity.Y == 0f
-                && Math.Sign(player.Center.X - NPC.Center.X) == NPC.direction)
-                tsorcRevampAIs.TryOnHitBlock(NPC, globalNPC, true, ShieldGuardTicksRanged);
+            if (!IsMultiplayerClient)
+            {
+                RegisterHit(player.Center, damageDone, meleeHit: true);
+            }
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
+            if (!IsMultiplayerClient)
+            {
+                RegisterHit(projectile.Center, damageDone, projectile.DamageType == DamageClass.Melee);
+            }
+        }
+
+        /// <summary>Burst-damage memory for the emergency heal, plus the reactive shield raise. Only a FRONT hit can snap
+        /// the guard up — a backstab must not re-raise it. Runs where hits are authoritative: locally in singleplayer,
+        /// on the server from a client's hit report (tsorcRevamp.HandlePacket → GlobalNPC.ApplyHitReport).</summary>
+        internal void RegisterHit(Vector2 sourceCenter, int damageDone, bool meleeHit)
+        {
             _recentDamage += (float)damageDone / NPC.lifeMax;
+
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (Main.netMode != NetmodeID.MultiplayerClient && AllowReactiveDefense && HasShield
-                && _shieldGuardCooldown <= 0 && globalNPC.ReactiveBlockTimer <= 0
-                && (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll)
-                && NPC.velocity.Y == 0f
-                && Math.Sign(projectile.Center.X - NPC.Center.X) == NPC.direction)
-                tsorcRevampAIs.TryOnHitBlock(NPC, globalNPC, projectile.DamageType == DamageClass.Melee, ShieldGuardTicksRanged);
+            bool frontHit = Math.Sign(sourceCenter.X - NPC.Center.X) == NPC.direction;
+            bool neutral = Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll;
+            bool guardReady = _shieldGuardCooldown <= 0 && globalNPC.ReactiveBlockTimer <= 0;
+            bool canRaiseGuard = AllowReactiveDefense && HasShield && guardReady && neutral
+                && NPC.velocity.Y == 0f && frontHit;
+            if (canRaiseGuard)
+            {
+                tsorcRevampAIs.TryOnHitBlock(NPC, globalNPC, meleeHit, ShieldGuardTicksRanged);
+            }
         }
 
         // ── Reactive shield: reduce FRONT damage while guarding (backstabs bypass) ──

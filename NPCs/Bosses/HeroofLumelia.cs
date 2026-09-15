@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
@@ -123,6 +124,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         int _vanishTimer;
         int _vanishCd = 260;
+        Vector2 _vanishOrigin; // where the blink left from, for the clients' departure smoke
         const int VanishTotal = 48;
 
         int _bombTimer;
@@ -136,6 +138,10 @@ namespace tsorcRevamp.NPCs.Bosses
         int _rallyTimer;
         int _rallyStage; // 0 = none fired, 1 = 50% fired, 2 = 25% fired
         const int RallyTotal = 300;
+
+        enum HeroSetPiece { Vanish, Bomb, Horn, Rally }
+        // A client plays a set-piece's start cue when its synced timer arrives within this many ticks of full length.
+        const int SetPieceStartCueWindowTicks = 10;
 
         public override void SetStaticDefaults()
         {
@@ -213,14 +219,13 @@ namespace tsorcRevamp.NPCs.Bosses
             base.AI();
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
-            if (_attackLabelTimer > 0 && --_attackLabelTimer == 0)
+            if (_attackLabelTimer > 0)
             {
-                DebugAttackLabel = null;
-            }
-
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
+                _attackLabelTimer--;
+                if (_attackLabelTimer == 0)
+                {
+                    DebugAttackLabel = null;
+                }
             }
 
             Player target = Main.player[NPC.target];
@@ -229,7 +234,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 return;
             }
 
-            // Rally is HP-gated and preempts the cooldown set-pieces; the rest run while idle.
+            // Rally is HP-gated and preempts the cooldown set-pieces; the rest run while idle. The set-piece bodies run on
+            // every machine off the synced timers (movement, dust, sounds); starting one rolls, teleports and spawns, so the
+            // start checks inside each tick are server-only.
             TickRally(target);
             TickVanish(target);
             TickHorn(target);
@@ -240,6 +247,88 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             DebugAttackLabel = name;
             _attackLabelTimer = ticks;
+        }
+
+        /// <summary>Label, sound and smoke for a set-piece's start. Called where it starts (server / singleplayer) and on a
+        /// client when the synced timer shows it began, since the start roll only runs on the server.</summary>
+        void PlaySetPieceStartCue(HeroSetPiece piece)
+        {
+            switch (piece)
+            {
+                case HeroSetPiece.Vanish:
+                    SetAttackLabel("Vanishing Strike", 60);
+                    SmokePuff(_vanishOrigin);
+                    SmokePuff(NPC.Center);
+                    SoundEngine.PlaySound(SoundID.Item8 with { Pitch = -0.2f }, NPC.Center);
+                    break;
+
+                case HeroSetPiece.Bomb:
+                    SetAttackLabel("Alchemist's Bomb", 50);
+                    break;
+
+                case HeroSetPiece.Horn:
+                    SetAttackLabel("Archer's Volley", 110);
+                    // War-cry / horn signal (swap for a dedicated horn sound if one is added).
+                    SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.55f, Pitch = 0.2f }, NPC.Center);
+                    break;
+
+                case HeroSetPiece.Rally:
+                    SetAttackLabel("Rally the Warband", 120);
+                    SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.7f, Pitch = -0.3f }, NPC.Center);
+                    break;
+            }
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            // Set-piece timers: the bodies run on every machine off these, so clients move, dust and cue in step.
+            writer.Write((short)_vanishTimer);
+            writer.Write((short)_bombTimer);
+            writer.Write((short)_hornTimer);
+            writer.Write((short)_rallyTimer);
+            writer.Write((byte)_rallyStage);
+            writer.WriteVector2(_vanishOrigin);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            int vanishTimer = reader.ReadInt16();
+            int bombTimer = reader.ReadInt16();
+            int hornTimer = reader.ReadInt16();
+            int rallyTimer = reader.ReadInt16();
+            _rallyStage = reader.ReadByte();
+            _vanishOrigin = reader.ReadVector2();
+
+            // A timer idle here that arrives near its full length started on the server this tick. The window ignores a
+            // late snapshot of a set-piece this client already counted down.
+            bool vanishStarted = _vanishTimer <= 0 && vanishTimer > VanishTotal - SetPieceStartCueWindowTicks;
+            bool bombStarted = _bombTimer <= 0 && bombTimer > BombTotal - SetPieceStartCueWindowTicks;
+            bool hornStarted = _hornTimer <= 0 && hornTimer > HornTotal - SetPieceStartCueWindowTicks;
+            bool rallyStarted = _rallyTimer <= 0 && rallyTimer > RallyTotal - SetPieceStartCueWindowTicks;
+
+            _vanishTimer = vanishTimer;
+            _bombTimer = bombTimer;
+            _hornTimer = hornTimer;
+            _rallyTimer = rallyTimer;
+
+            if (vanishStarted)
+            {
+                PlaySetPieceStartCue(HeroSetPiece.Vanish);
+            }
+            if (bombStarted)
+            {
+                PlaySetPieceStartCue(HeroSetPiece.Bomb);
+            }
+            if (hornStarted)
+            {
+                PlaySetPieceStartCue(HeroSetPiece.Horn);
+            }
+            if (rallyStarted)
+            {
+                PlaySetPieceStartCue(HeroSetPiece.Rally);
+            }
         }
 
         private bool CanStartSetPiece =>
@@ -255,7 +344,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 _vanishTimer--;
                 NPC.velocity.X *= 0.7f;
                 int face = target.Center.X < NPC.Center.X ? -1 : 1;
-                NPC.direction = face; NPC.spriteDirection = face;
+                NPC.direction = face;
+                NPC.spriteDirection = face;
 
                 if (_vanishTimer == VanishTotal - 26) // ~26t after reappearing = the strike
                 {
@@ -265,24 +355,40 @@ namespace tsorcRevamp.NPCs.Bosses
                 return;
             }
 
-            if (_vanishCd > 0) { _vanishCd--; return; }
-            if (!CanStartSetPiece) return;
+            // Starting rolls and teleports: server only. A client starts from the synced timer (ReceiveExtraAI).
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            if (_vanishCd > 0)
+            {
+                _vanishCd--;
+                return;
+            }
+
+            if (!CanStartSetPiece)
+            {
+                return;
+            }
 
             float dist = NPC.Distance(target.Center);
-            if (dist < 150f || dist > 720f || !Main.rand.NextBool(150)) return;
+            bool inBand = dist >= 150f && dist <= 720f;
+            if (!inBand || !Main.rand.NextBool(150))
+            {
+                return;
+            }
 
             _vanishCd = 380 + Main.rand.Next(200);
             _vanishTimer = VanishTotal;
-            SetAttackLabel("Vanishing Strike", 60);
-            SmokePuff(NPC.Center);
-            SoundEngine.PlaySound(SoundID.Item8 with { Pitch = -0.2f }, NPC.Center);
+            _vanishOrigin = NPC.Center;
 
             // Reappear just behind the player (opposite their facing).
             float destX = target.Center.X - target.direction * 64f;
             NPC.Bottom = new Vector2(destX, target.Bottom.Y);
             NPC.direction = target.Center.X > NPC.Center.X ? 1 : -1;
             NPC.spriteDirection = NPC.direction;
-            SmokePuff(NPC.Center);
+            PlaySetPieceStartCue(HeroSetPiece.Vanish);
             SpawnTelegraphFlash(new Color(200, 200, 200));
 
             EnterPhase(AttackPhase.NovaRecovery, VanishTotal + 6); // park the combat machine
@@ -297,34 +403,57 @@ namespace tsorcRevamp.NPCs.Bosses
                 _bombTimer--;
                 NPC.velocity.X *= 0.85f;
                 int face = target.Center.X < NPC.Center.X ? -1 : 1;
-                NPC.direction = face; NPC.spriteDirection = face;
+                NPC.direction = face;
+                NPC.spriteDirection = face;
 
                 if (Main.rand.NextBool(2))
                 {
-                    Dust d = Dust.NewDustPerfect(NPC.Center + new Vector2(NPC.direction * 10f, -8f), DustID.Torch, Main.rand.NextVector2Circular(1f, 1f), 60, new Color(180, 90, 220), 1.2f);
-                    d.noGravity = true;
+                    Dust fuseDust = Dust.NewDustPerfect(NPC.Center + new Vector2(NPC.direction * 10f, -8f), DustID.Torch, Main.rand.NextVector2Circular(1f, 1f), 60, new Color(180, 90, 220), 1.2f);
+                    fuseDust.noGravity = true;
                 }
 
                 if (_bombTimer == BombTotal - 22) // throw near the end of the wind-up
                 {
-                    Vector2 muzzle = NPC.Center + new Vector2(NPC.direction * 10f, -8f);
-                    Vector2 vel = UsefulFunctions.BallisticTrajectory(muzzle, target.Center, 10f, fallback: true);
-                    vel += Main.rand.NextVector2Circular(1.5f, 0f);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, vel, ModContent.ProjectileType<Projectiles.Enemy.HeroPotionBomb>(), potionBombDamage, 0f, Main.myPlayer);
+                    // The flask is a server spawn; the throw sound plays everywhere.
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 muzzle = NPC.Center + new Vector2(NPC.direction * 10f, -8f);
+                        Vector2 vel = UsefulFunctions.BallisticTrajectory(muzzle, target.Center, 10f, fallback: true);
+                        vel += Main.rand.NextVector2Circular(1.5f, 0f);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, vel, ModContent.ProjectileType<Projectiles.Enemy.HeroPotionBomb>(), potionBombDamage, 0f, Main.myPlayer);
+                    }
                     SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center);
                 }
                 return;
             }
 
-            if (_bombCd > 0) { _bombCd--; return; }
-            if (!CanStartSetPiece) return;
+            // Starting rolls: server only. A client starts from the synced timer (ReceiveExtraAI).
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            if (_bombCd > 0)
+            {
+                _bombCd--;
+                return;
+            }
+
+            if (!CanStartSetPiece)
+            {
+                return;
+            }
 
             float dist = NPC.Distance(target.Center);
-            if (dist < 120f || dist > 620f || !Main.rand.NextBool(180)) return;
+            bool inBand = dist >= 120f && dist <= 620f;
+            if (!inBand || !Main.rand.NextBool(180))
+            {
+                return;
+            }
 
             _bombCd = 420 + Main.rand.Next(180);
             _bombTimer = BombTotal;
-            SetAttackLabel("Alchemist's Bomb", 50);
+            PlaySetPieceStartCue(HeroSetPiece.Bomb);
             EnterPhase(AttackPhase.NovaRecovery, BombTotal + 6);
             NPC.netUpdate = true;
         }
@@ -339,7 +468,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 _hornTimer--;
                 NPC.velocity.X *= 0.8f;
                 int face = target.Center.X < NPC.Center.X ? -1 : 1;
-                NPC.direction = face; NPC.spriteDirection = face;
+                NPC.direction = face;
+                NPC.spriteDirection = face;
 
                 int elapsed = HornTotal - _hornTimer;
                 // Telegraph (first 45t): rally pose — gold motes rising off his raised arm.
@@ -347,43 +477,63 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.rand.NextBool(2))
                     {
-                        Dust d = Dust.NewDustPerfect(NPC.Center + new Vector2(NPC.direction * 8f, -18f) + Main.rand.NextVector2Circular(6f, 6f), DustID.GoldFlame, new Vector2(0f, -1.4f), 60, default, 1.4f);
-                        d.noGravity = true;
+                        Dust moteDust = Dust.NewDustPerfect(NPC.Center + new Vector2(NPC.direction * 8f, -18f) + Main.rand.NextVector2Circular(6f, 6f), DustID.GoldFlame, new Vector2(0f, -1.4f), 60, default, 1.4f);
+                        moteDust.noGravity = true;
                     }
                     Lighting.AddLight(NPC.Center, 0.9f, 0.7f, 0.2f);
                 }
-                // Active (45..95t): march a falling line of arrows across the player.
+                // Active (45..95t): march a falling line of arrows across the player. Arrows spawn on the server; the loose
+                // sound plays everywhere.
                 else if (elapsed >= 45 && elapsed < 95 && elapsed % 5 == 0)
                 {
-                    float sweep = MathHelper.Lerp(-320f, 320f, (elapsed - 45) / 50f);
-                    float x = target.Center.X + sweep;
-                    for (int i = 0; i < 2; i++)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(),
-                            x + Main.rand.Next(-30, 30), target.Center.Y - 780f,
-                            (-30 + Main.rand.Next(60)) / 10f, 8.4f,
-                            ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer);
+                        float sweep = MathHelper.Lerp(-320f, 320f, (elapsed - 45) / 50f);
+                        float x = target.Center.X + sweep;
+                        for (int i = 0; i < 2; i++)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(),
+                                x + Main.rand.Next(-30, 30), target.Center.Y - 780f,
+                                (-30 + Main.rand.Next(60)) / 10f, 8.4f,
+                                ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer);
+                        }
                     }
                     SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
                 }
                 return;
             }
 
-            if (_hornCd > 0) { _hornCd--; return; }
-            if (!CanStartSetPiece) return;
+            // Starting rolls: server only. A client starts from the synced timer (ReceiveExtraAI).
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            if (_hornCd > 0)
+            {
+                _hornCd--;
+                return;
+            }
+
+            if (!CanStartSetPiece)
+            {
+                return;
+            }
 
             float dist = NPC.Distance(target.Center);
-            if (dist < 130f || !Main.rand.NextBool(150)) return;
+            bool tooClose = dist < 130f;
+            if (tooClose || !Main.rand.NextBool(150))
+            {
+                return;
+            }
 
             _hornCd = 520 + Main.rand.Next(260);
             _hornTimer = HornTotal;
-            SetAttackLabel("Archer's Volley", 110);
+            PlaySetPieceStartCue(HeroSetPiece.Horn);
             if (Main.rand.NextBool(3))
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.HeroofLumelia.Archers1"), 175, 75, 255);
             }
-            // War-cry / horn signal (swap for a dedicated horn sound if one is added).
-            SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.55f, Pitch = 0.2f }, NPC.Center);
             SpawnTelegraphFlash(Color.Gold);
             EnterPhase(AttackPhase.NovaRecovery, HornTotal + 6);
             NPC.netUpdate = true;
@@ -399,17 +549,23 @@ namespace tsorcRevamp.NPCs.Bosses
                 int elapsed = RallyTotal - _rallyTimer;
                 _rallyTimer--;
 
-                // Widen spacing: back away from the player while the warband forms.
+                // Widen spacing: back away from the player while the warband forms (fast inside 440px, a drift beyond).
                 int awayDir = NPC.Center.X > target.Center.X ? 1 : -1;
                 float dist = NPC.Distance(target.Center);
-                NPC.velocity.X = dist < 440f ? awayDir * 3.4f : awayDir * 0.6f;
-                NPC.direction = -awayDir; NPC.spriteDirection = -awayDir; // still face the player
+                float backAwaySpeed = 0.6f;
+                if (dist < 440f)
+                {
+                    backAwaySpeed = 3.4f;
+                }
+                NPC.velocity.X = awayDir * backAwaySpeed;
+                NPC.direction = -awayDir; // still face the player
+                NPC.spriteDirection = -awayDir;
 
                 // Grey smoke roiling off him.
                 if (Main.rand.NextBool(2))
                 {
-                    Dust d = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(14f, 20f), DustID.Smoke, new Vector2(0f, -0.6f), 120, new Color(150, 150, 150), 1.5f);
-                    d.noGravity = true;
+                    Dust smokeDust = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(14f, 20f), DustID.Smoke, new Vector2(0f, -0.6f), 120, new Color(150, 150, 150), 1.5f);
+                    smokeDust.noGravity = true;
                 }
 
                 // Call in ManHunters one after another (five, at a steady cadence).
@@ -418,34 +574,55 @@ namespace tsorcRevamp.NPCs.Bosses
                     SpawnSupport(ModContent.NPCType<NPCs.Enemies.ManHunter>());
                     SoundEngine.PlaySound(SoundID.NPCHit6 with { Volume = 0.3f }, NPC.Center);
                 }
-                // Potion bombs to cover the assembly.
+                // Potion bombs to cover the assembly (server spawn, sound everywhere).
                 if (elapsed == 90 || elapsed == 190)
                 {
-                    Vector2 muzzle = NPC.Center + new Vector2(NPC.direction * 10f, -8f);
-                    Vector2 vel = UsefulFunctions.BallisticTrajectory(muzzle, target.Center, 10f, fallback: true);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, vel, ModContent.ProjectileType<Projectiles.Enemy.HeroPotionBomb>(), potionBombDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 muzzle = NPC.Center + new Vector2(NPC.direction * 10f, -8f);
+                        Vector2 vel = UsefulFunctions.BallisticTrajectory(muzzle, target.Center, 10f, fallback: true);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, vel, ModContent.ProjectileType<Projectiles.Enemy.HeroPotionBomb>(), potionBombDamage, 0f, Main.myPlayer);
+                    }
                     SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center);
                 }
                 // Capstone lieutenant.
                 if (elapsed == 250)
                 {
-                    SpawnSupport(_rallyStage >= 2 ? ModContent.NPCType<NPCs.Enemies.RedCloudHunter>() : ModContent.NPCType<NPCs.Enemies.Assassin>());
+                    int lieutenantType = ModContent.NPCType<NPCs.Enemies.Assassin>();
+                    if (_rallyStage >= 2)
+                    {
+                        lieutenantType = ModContent.NPCType<NPCs.Enemies.RedCloudHunter>();
+                    }
+                    SpawnSupport(lieutenantType);
                     SoundEngine.PlaySound(SoundID.NPCHit6 with { Volume = 0.35f, Pitch = 0.1f }, NPC.Center);
                 }
                 return;
             }
 
+            // Starting is the server's call. A client starts from the synced timer (ReceiveExtraAI).
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
             // The HP trigger only fires from a free phase (it arms silently while busy).
-            if (Phase != AttackPhase.Idle && Phase != AttackPhase.CasualStroll) return;
+            bool freePhase = Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll;
+            if (!freePhase)
+            {
+                return;
+            }
 
             float hpFrac = (float)NPC.life / NPC.lifeMax;
-            bool trigger = (_rallyStage == 0 && hpFrac <= 0.5f) || (_rallyStage == 1 && hpFrac <= 0.25f);
-            if (!trigger) return;
+            bool firstRally = _rallyStage == 0 && hpFrac <= 0.5f;
+            bool secondRally = _rallyStage == 1 && hpFrac <= 0.25f;
+            if (!firstRally && !secondRally)
+            {
+                return;
+            }
 
             _rallyStage++;
             _rallyTimer = RallyTotal;
-            SetAttackLabel("Rally the Warband", 120);
-            SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.7f, Pitch = -0.3f }, NPC.Center);
+            PlaySetPieceStartCue(HeroSetPiece.Rally);
             SpawnTelegraphFlash(Color.Gold);
             EnterPhase(AttackPhase.NovaRecovery, RallyTotal + 6);
             NPC.netUpdate = true;
@@ -595,16 +772,24 @@ namespace tsorcRevamp.NPCs.Bosses
 
         private void SpawnTelegraphFlash(Color color)
         {
-            if (Main.netMode == NetmodeID.Server) return;
+            // The flash is a synced projectile: the server spawns it once for everyone (a client spawn would duplicate it).
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
             Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(color));
         }
 
         private void SpawnSupport(int npcType)
         {
-            NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, npcType, 0);
+            // The ally is a server spawn; the summon sparkle plays everywhere.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, npcType, 0);
+                NPC.netUpdate = true;
+            }
             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
-            NPC.netUpdate = true;
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)

@@ -819,6 +819,19 @@ namespace tsorcRevamp.NPCs
             {
                 return;
             }
+            // A parry resolves on the blocking player's client; poise is server state. tsorcRevamp.HandlePacket calls this
+            // again on the server.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                ModPacket packet = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                packet.Write(tsorcPacketID.ReportParryPoise);
+                packet.Write((short)npc.whoAmI);
+                packet.Write(npc.type);
+                packet.Write(poiseFraction);
+                packet.WriteVector2(sourceCenter);
+                packet.Send();
+                return;
+            }
             if (PoiseBreakCooldown > 0)
             {
                 return; // post-stagger i-frames — same anti-stunlock rule as ordinary hits
@@ -836,6 +849,41 @@ namespace tsorcRevamp.NPCs
                 TriggerStagger(npc, sourceCenter);
             }
             npc.netUpdate = true;
+        }
+
+        /// <summary>Client → server hit report. Hit hooks run only on the client that dealt the hit, but poise, stagger and
+        /// puppet hit reactions (heal memory, reactive shield) are server state. Sends the poise damage this client computed
+        /// before multipliers; the server applies it with its own hyper-armor state. Skipped for NPCs that use neither.</summary>
+        private void SendHitReport(NPC npc, float poiseDamage, Vector2 sourceCenter, int damageDone, bool meleeHit)
+        {
+            PoiseWillBreakThisHit = false;
+
+            bool usesPoise = PoiseMax > 0f;
+            bool isPuppet = npc.ModNPC is Puppets.PuppetNPC;
+            if (!usesPoise && !isPuppet)
+            {
+                return;
+            }
+
+            ModPacket packet = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+            packet.Write(tsorcPacketID.ReportNPCHit);
+            packet.Write((short)npc.whoAmI);
+            packet.Write(npc.type);
+            packet.Write(poiseDamage);
+            packet.WriteVector2(sourceCenter);
+            packet.Write(damageDone);
+            packet.Write(meleeHit);
+            packet.Send();
+        }
+
+        /// <summary>Server side of SendHitReport.</summary>
+        public void ApplyHitReport(NPC npc, float poiseDamage, Vector2 sourceCenter, int damageDone, bool meleeHit)
+        {
+            HandlePoiseOnHit(npc, poiseDamage, sourceCenter);
+            if (npc.ModNPC is Puppets.PuppetNPC puppet)
+            {
+                puppet.RegisterHit(sourceCenter, damageDone, meleeHit);
+            }
         }
 
         /// <summary>Enter the staggered state: launch, freeze, cancel a windup attack, and escalate.</summary>
@@ -2052,6 +2100,16 @@ namespace tsorcRevamp.NPCs
             SendGuardPressureBehavior(binaryWriter);
             SendKiteThreat(binaryWriter);
             SendCombatTempo(binaryWriter);
+
+            // Poise / stagger: server state (clients report hits to it), mirrored so clients freeze, draw the bar and
+            // cancel attacks in step.
+            binaryWriter.Write(Poise);
+            binaryWriter.Write((short)Math.Clamp(StaggerTimer, 0, short.MaxValue));
+            binaryWriter.Write((short)Math.Clamp(PoiseBreakCooldown, 0, short.MaxValue));
+            binaryWriter.Write((short)Math.Clamp(PoiseRegenDelay, 0, short.MaxValue));
+            binaryWriter.Write((byte)Math.Clamp(PoiseEscalationStacks, 0, byte.MaxValue));
+            binaryWriter.Write((short)Math.Clamp(PoiseEscalationTimer, 0, short.MaxValue));
+            binaryWriter.Write(staggerSlideVelocity);
         }
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
@@ -2096,6 +2154,24 @@ namespace tsorcRevamp.NPCs
             ReceiveGuardPressureBehavior(binaryReader);
             ReceiveKiteThreat(binaryReader);
             ReceiveCombatTempo(binaryReader);
+
+            Poise = binaryReader.ReadSingle();
+            int staggerTimer = binaryReader.ReadInt16();
+            PoiseBreakCooldown = binaryReader.ReadInt16();
+            PoiseRegenDelay = binaryReader.ReadInt16();
+            PoiseEscalationStacks = binaryReader.ReadByte();
+            PoiseEscalationTimer = binaryReader.ReadInt16();
+            staggerSlideVelocity = binaryReader.ReadSingle();
+
+            // TriggerStagger's cues play on the server, where they are silent: play them on the first snapshot of a new
+            // stagger. The 10-tick window ignores a late snapshot of a stagger this client already counted down.
+            bool staggerStarted = StaggerTimer <= 0 && staggerTimer > StaggerDurationTicks - 10;
+            StaggerTimer = staggerTimer;
+            if (staggerStarted && !Main.dedServ)
+            {
+                SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.6f, PitchVariance = 0.15f }, npc.Center);
+                SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = -0.3f, Volume = 0.8f }, npc.Center);
+            }
         }
 
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
@@ -3187,7 +3263,15 @@ namespace tsorcRevamp.NPCs
             }
             if (magicGhostHit || !IsPhysicalGhost(npc))
             {
-                HandlePoiseOnHit(npc, poiseKnockback, player.Center);
+                // Hit hooks run only on the attacking client; poise and stagger are server state (see SendHitReport).
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    SendHitReport(npc, poiseKnockback, player.Center, damageDone, meleeHit: true);
+                }
+                else
+                {
+                    HandlePoiseOnHit(npc, poiseKnockback, player.Center);
+                }
             }
             if (magicGhostHit)
             {
@@ -3225,7 +3309,15 @@ namespace tsorcRevamp.NPCs
             }
             if (magicGhostHit || !IsPhysicalGhost(npc))
             {
-                HandlePoiseOnHit(npc, poiseKnockback, projectile.Center);
+                // Hit hooks run only on the projectile owner's client; poise and stagger are server state (see SendHitReport).
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    SendHitReport(npc, poiseKnockback, projectile.Center, damageDone, projectile.DamageType == DamageClass.Melee);
+                }
+                else
+                {
+                    HandlePoiseOnHit(npc, poiseKnockback, projectile.Center);
+                }
             }
             if (magicGhostHit)
             {

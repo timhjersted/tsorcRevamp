@@ -1357,7 +1357,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write((byte)Math.Clamp(_memoryAttacksRemaining, 0, byte.MaxValue));
             writer.Write(_memoryShiftPending);
             writer.Write(_secondPhaseStarted);
-            writer.Write((short)(_customSequence == CinderCustomSequence.None ? 0 : Math.Max(1, PhaseTimer)));
             writer.Write((byte)_queuedRangedAttack);
             writer.Write((byte)_queuedMagicAttack);
             writer.Write((byte)Math.Clamp(_magicBurstsRemaining, 0, byte.MaxValue));
@@ -1367,36 +1366,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            CinderCustomSequence previousCustomSequence = _customSequence;
+            // The Custom phase, its timer and DoCustomAttack's cue arrive through the PuppetNPC phase snapshot; this only
+            // carries the state those read.
             base.ReceiveExtraAI(reader);
             _memory = (CinderMemory)reader.ReadByte();
             _customSequence = (CinderCustomSequence)reader.ReadByte();
             _memoryAttacksRemaining = reader.ReadByte();
             _memoryShiftPending = reader.ReadBoolean();
             _secondPhaseStarted = reader.ReadBoolean();
-            int customTicksRemaining = reader.ReadInt16();
             _queuedRangedAttack = (CinderRangedAttack)reader.ReadByte();
             _queuedMagicAttack = (CinderMagicAttack)reader.ReadByte();
             _magicBurstsRemaining = reader.ReadByte();
             _magicBurstTotal = reader.ReadByte();
             _magicShotProgress = reader.ReadSingle();
-
-            if (_customSequence != CinderCustomSequence.None)
-            {
-                if (previousCustomSequence != _customSequence || Phase != AttackPhase.Custom)
-                {
-                    StartCustomAttack(Math.Max(1, customTicksRemaining));
-                }
-                else
-                {
-                    PhaseTimer = Math.Max(1, customTicksRemaining);
-                }
-            }
-            else if (previousCustomSequence != CinderCustomSequence.None && Phase == AttackPhase.Custom)
-            {
-                DebugAttackLabel = null;
-                EnterPhase(AttackPhase.Idle, 0);
-            }
         }
 
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)

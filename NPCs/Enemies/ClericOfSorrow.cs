@@ -144,11 +144,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
         int Scaled(int dmg) => tsorcRevampWorld.SuperHardMode ? (int)(dmg * 1.3f) : dmg;
 
-        // MP: the base PuppetNPC doesn't sync Phase/PhaseTimer (every peer simulates its own copy off
-        // synced position/life/target — see EnemyRedesignSkillGuide G0.7); a subclass syncs whatever of ITS
-        // OWN state matters. Here: the active ranged cast + set-piece kind (so remote clients show the same
-        // spell instead of independently re-rolling), the heal target, the cooldowns, and the one-time
-        // Last Rites flag.
+        // MP: the base PuppetNPC syncs Phase/PhaseTimer and replays DoCustomAttack when a client adopts a Custom phase.
+        // This syncs the Cleric's own state those read: the active ranged cast + set-piece kind (so remote clients show
+        // the same spell instead of re-rolling), the heal target, the cooldowns, and the one-time Last Rites flag.
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write((byte)_magicCast);
@@ -205,9 +203,18 @@ namespace tsorcRevamp.NPCs.Enemies
 
             base.AI(); // puppet render/flight/weapon/phase machine + ranged-magic selection
 
-            if (_undertowCd > 0) _undertowCd--;
-            if (_shellCd > 0) _shellCd--;
-            if (_communionCd > 0) _communionCd--;
+            if (_undertowCd > 0)
+            {
+                _undertowCd--;
+            }
+            if (_shellCd > 0)
+            {
+                _shellCd--;
+            }
+            if (_communionCd > 0)
+            {
+                _communionCd--;
+            }
 
             // Frost identity + cold aura; extra propulsion motes at the feet while submerged.
             Lighting.AddLight(NPC.Center, 0.25f, 0.45f, 0.7f);
@@ -218,9 +225,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 Main.dust[jet].velocity = new Vector2(Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(0.6f, 1.6f));
             }
 
-            // ── Set-piece triggers (all conditions are deterministic — no Main.rand — so every peer
-            // reaches them at the same tick off synced life/position/cooldowns; no server gate needed on
-            // the TRIGGER, only on the projectile spawns / cross-entity writes inside them). ──
+            // ── Set-piece triggers: server only. They read Phase, which a client can briefly hold different while it waits
+            // on a snapshot, so a client-side trigger could start a set-piece the server never did. The base snapshot
+            // carries the Custom phase; _customKind rides this class's sync. ──
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
             Player target = Main.player[NPC.target];
 
             // Last Rites: hard interrupt the instant HP drops below 5% (interrupts any phase).

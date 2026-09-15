@@ -2638,6 +2638,82 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.ReportNPCHit:
+                    {
+                        int npcIndex = reader.ReadInt16();
+                        int npcType = reader.ReadInt32();
+                        float poiseDamage = reader.ReadSingle();
+                        Vector2 sourceCenter = reader.ReadVector2();
+                        int damageDone = reader.ReadInt32();
+                        bool meleeHit = reader.ReadBoolean();
+
+                        bool validTarget = Main.netMode == NetmodeID.Server
+                            && npcIndex >= 0 && npcIndex < Main.maxNPCs
+                            && Main.npc[npcIndex].active && Main.npc[npcIndex].type == npcType;
+                        if (!validTarget)
+                        {
+                            break;
+                        }
+
+                        // Bounded so a bad report can't one-shot a poise bar or fake a huge burst.
+                        poiseDamage = MathHelper.Clamp(poiseDamage, 0f, 1000f);
+                        damageDone = Math.Max(0, damageDone);
+
+                        NPC hitNPC = Main.npc[npcIndex];
+                        NPCs.tsorcRevampGlobalNPC hitGlobalNPC = hitNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>();
+                        int staggerBefore = hitGlobalNPC.StaggerTimer;
+                        hitGlobalNPC.ApplyHitReport(hitNPC, poiseDamage, sourceCenter, damageDone, meleeHit);
+
+                        // Push a new stagger at once; TriggerStagger's netUpdate waits on the netSpam throttle.
+                        bool newlyStaggered = staggerBefore <= 0 && hitGlobalNPC.StaggerTimer > 0;
+                        if (newlyStaggered)
+                        {
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npcIndex);
+                        }
+                        break;
+                    }
+                case tsorcPacketID.ReportParryPoise:
+                    {
+                        int npcIndex = reader.ReadInt16();
+                        int npcType = reader.ReadInt32();
+                        float poiseFraction = reader.ReadSingle();
+                        Vector2 sourceCenter = reader.ReadVector2();
+
+                        bool validTarget = Main.netMode == NetmodeID.Server
+                            && npcIndex >= 0 && npcIndex < Main.maxNPCs
+                            && Main.npc[npcIndex].active && Main.npc[npcIndex].type == npcType;
+                        if (!validTarget)
+                        {
+                            break;
+                        }
+
+                        poiseFraction = MathHelper.Clamp(poiseFraction, 0f, 1f);
+                        NPC parriedNPC = Main.npc[npcIndex];
+                        NPCs.tsorcRevampGlobalNPC parriedGlobalNPC = parriedNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>();
+                        int staggerBefore = parriedGlobalNPC.StaggerTimer;
+                        parriedGlobalNPC.ApplyParryPoise(parriedNPC, poiseFraction, sourceCenter);
+
+                        bool newlyStaggered = staggerBefore <= 0 && parriedGlobalNPC.StaggerTimer > 0;
+                        if (newlyStaggered)
+                        {
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npcIndex);
+                        }
+                        break;
+                    }
+                case tsorcPacketID.ReportPuppetAttackHit:
+                    {
+                        int npcIndex = reader.ReadInt16();
+                        int npcType = reader.ReadInt32();
+
+                        bool validTarget = Main.netMode == NetmodeID.Server
+                            && npcIndex >= 0 && npcIndex < Main.maxNPCs
+                            && Main.npc[npcIndex].active && Main.npc[npcIndex].type == npcType;
+                        if (validTarget && Main.npc[npcIndex].ModNPC is NPCs.Puppets.PuppetNPC puppet)
+                        {
+                            puppet.ReportAttackHit();
+                        }
+                        break;
+                    }
                 case tsorcPacketID.TeleportAllPlayers:
                     {
                         Vector2 targetLocation = reader.ReadVector2();
@@ -4905,6 +4981,13 @@ namespace tsorcRevamp
         public const byte SyncRightClickSlot = 23;
         public const byte SyncDwarvenContract = 24;
         public const byte ReportBlockedAttack = 25;
+        /// <summary>Client → server: an NPC hit's poise damage and puppet hit data. Hit hooks only run on the attacker's
+        /// client, but poise, stagger and puppet reactions are server state.</summary>
+        public const byte ReportNPCHit = 26;
+        /// <summary>Client → server: a perfect parry's poise damage against the attacking NPC.</summary>
+        public const byte ReportParryPoise = 27;
+        /// <summary>Client → server: a puppet's hostile projectile hit a player (credits the attack for server decisions).</summary>
+        public const byte ReportPuppetAttackHit = 28;
     }
 
     //config moved to separate file

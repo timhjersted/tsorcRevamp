@@ -470,10 +470,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float HitConfirmDamage = 1.0f;
         const float HitConfirmReach = 1.45f;
         const float HitConfirmPush = 0.75f;
-        const int HitConfirmAwaitMaxTicks = 20;
-        const byte HitConfirmUndecided = 0;
-        const byte HitConfirmApproved = 1;
-        const byte HitConfirmDeclined = 2;
         // Delayed swing: 1 in 3 heavy tells (authored >= 25t, a legacy swing or leap) hold the cocked end
         // for 8-14 ticks behind a blade glint. That catches rolls started ~9-21 ticks before the normal
         // release (unless the player re-rolls); a roll AT the normal release is still safe.
@@ -1192,7 +1188,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool _flurryPursuitPending;
         bool _flurryPursuitActive;
         bool _flurryPursuitAirborne;
-        bool _flurryPursuitAwaitingServer;
         int _flurryPursuitRunTicks;
         int _flurryPursuitAirTicks;
         float _flurryPursuitVelocityX;
@@ -1201,7 +1196,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int _flurryPursuitHops;
 
         ///<summary>After every ordinary Wrath Flurry swipe, decide whether its inter-step pause needs
-        ///a run-and-jump pursuit. The final authored leap already closes distance and is left alone.</summary>
+        ///a run-and-jump pursuit. The final authored leap already closes distance and is left alone.
+        ///PuppetNPC calls this on the server only: clients predict the continuation, adopt a declined
+        ///hit-confirm as a recovery, and hold the pause through the synced pursuit flags.</summary>
         protected override bool ShouldContinueMeleeCombo(
             string comboName, int nextStepIndex, Player target, bool previousStepHit)
         {
@@ -1209,24 +1206,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // string ender connected, and then only HitConfirmFollowUpChance of the time.
             if (nextStepIndex == _hitConfirmStepIndex)
             {
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                {
-                    // Blade overlap is server-only. Enter the pause and hold it (AI) until the decision arrives.
-                    _hitConfirmAwaitingServer = true;
-                    _hitConfirmAwaitTicks = 0;
-                    return true;
-                }
-
                 bool followUp = previousStepHit && Main.rand.NextFloat() < HitConfirmFollowUpChance;
-                _hitConfirmDecision = HitConfirmDeclined;
-                if (followUp)
-                {
-                    _hitConfirmDecision = HitConfirmApproved;
-                }
-                if (Main.netMode == NetmodeID.Server)
-                {
-                    NPC.netUpdate = true;
-                }
                 return followUp;
             }
 
@@ -1235,21 +1215,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 && (ActiveMeleeComboMotion == ComboMotion.UnderhandArc
                     || ActiveMeleeComboMotion == ComboMotion.OverheadArc))
             {
-                if (Main.netMode == NetmodeID.MultiplayerClient)
+                _flurryPursuitPending = !previousStepHit
+                    && target != null && target.active && !target.dead
+                    && NPC.Distance(target.Center) > FlurryPursuitTriggerRange;
+                if (Main.netMode == NetmodeID.Server)
                 {
-                    // Blade overlap is server-only. Hold the pause until the authoritative decision
-                    // arrives instead of assuming every client-side step was a whiff.
-                    _flurryPursuitAwaitingServer = true;
-                }
-                else
-                {
-                    _flurryPursuitPending = !previousStepHit
-                        && target != null && target.active && !target.dead
-                        && NPC.Distance(target.Center) > FlurryPursuitTriggerRange;
-                    if (Main.netMode == NetmodeID.Server)
-                    {
-                        NPC.netUpdate = true;
-                    }
+                    NPC.netUpdate = true;
                 }
             }
             return base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
@@ -1303,11 +1274,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        int _hitConfirmStepIndex = -1;  // index of the appended follow-up in the active combo, or -1
-        int _hitConfirmRecoveryTicks;   // the active combo's customized recovery, for a client-side decline
-        byte _hitConfirmDecision;       // server decision for the current combo, synced
-        bool _hitConfirmAwaitingServer;
-        int _hitConfirmAwaitTicks;
+        int _hitConfirmStepIndex = -1;  // index of the appended follow-up in the active combo, or -1 (server only)
         int _delayedSwingHoldTicks;     // synced; rolled in OnMeleeComboStarted, spent in AI
         bool _delayedSwingGlinted;
         int _estusPunishTimer;          // server only
@@ -1375,7 +1342,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             int authoredRecovery = combo.RecoveryTicks > 0 ? combo.RecoveryTicks : MeleeRecoveryTicks;
             combo.RecoveryTicks = Math.Max(1, (int)Math.Round(authoredRecovery * HalfHealthRecoveryMult));
-            _hitConfirmRecoveryTicks = combo.RecoveryTicks;
 
             bool stringEnder = combo.Name == UnderOverName
                 || combo.Name == ThreeHitName
@@ -1404,15 +1370,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 && ActiveMeleeComboName == WrathFlurryName;
             if (!inFlurryPause)
             {
-                if (_flurryPursuitPending || _flurryPursuitActive || _flurryPursuitAwaitingServer)
+                if (_flurryPursuitPending || _flurryPursuitActive)
                 {
                     ResetFlurryPursuit(releasePause: false);
                 }
                 return;
             }
 
-            // Clients wait for the server's hit-confirm decision, then mirror the synced run/flight.
-            // They never derive a whiff locally because TickBladeHit is intentionally server-only.
+            // Clients mirror the synced run/flight. The pursuit decision is the server's: it rests on the
+            // server-only blade result, and PuppetNPC only calls ShouldContinueMeleeCombo there.
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 if (_flurryPursuitActive)
@@ -1642,7 +1608,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _flurryPursuitPending = false;
             _flurryPursuitActive = false;
             _flurryPursuitAirborne = false;
-            _flurryPursuitAwaitingServer = false;
             _flurryPursuitRunTicks = 0;
             _flurryPursuitAirTicks = 0;
             _flurryPursuitVelocityX = 0f;
@@ -1902,7 +1867,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write((byte)Math.Clamp(_aerialMovesDone, 0, byte.MaxValue));
             writer.WriteVector2(_aerialDashVelocity);
             writer.Write((byte)Math.Clamp(_delayedSwingHoldTicks, 0, byte.MaxValue));
-            writer.Write(_hitConfirmDecision);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -1938,20 +1902,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _flurryPursuitAirTicks = reader.ReadInt16();
             _flurryPursuitVelocityX = reader.ReadSingle();
             _flurryPursuitLockedDirection = reader.ReadSByte() < 0 ? -1 : 1;
-            AerialPhase previousAerialPhase = _aerialPhase;
             _aerialPhase = (AerialPhase)reader.ReadByte();
             _aerialMove = (AerialMove)reader.ReadByte();
             _aerialTimer = reader.ReadInt16();
             _aerialMovesDone = reader.ReadByte();
             _aerialDashVelocity = reader.ReadVector2();
             _delayedSwingHoldTicks = reader.ReadByte();
-            _hitConfirmDecision = reader.ReadByte();
-            // A new strike on the server: start the matching staged combo locally on the next tick.
-            if (_aerialPhase == AerialPhase.Striking && previousAerialPhase != AerialPhase.Striking)
-            {
-                _aerialComboStarted = false;
-            }
-            _flurryPursuitAwaitingServer = false;
             if (!wasPursuitAirborne && _flurryPursuitAirborne && !Main.dedServ)
             {
                 SpawnFlurryPursuitDust(12, 1.65f);
@@ -1992,7 +1948,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // eases toward the next start, but the Flurry's shared endpoints make that the same pose.
             bool holdingFlurryPursuit = Phase == AttackPhase.MeleeComboPause
                 && ActiveMeleeComboName == WrathFlurryName
-                && (_flurryPursuitPending || _flurryPursuitActive || _flurryPursuitAwaitingServer);
+                && (_flurryPursuitPending || _flurryPursuitActive);
             if (holdingFlurryPursuit)
             {
                 PhaseTimer = 2;
@@ -2020,27 +1976,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 _delayedSwingGlinted = true;
                 PhaseTimer = 2;
                 _delayedSwingHoldTicks--;
-            }
-
-            // Hit-confirm follow-up on a client: hold the pause until the server says whether it plays.
-            if (_hitConfirmAwaitingServer && Phase == AttackPhase.MeleeComboPause)
-            {
-                _hitConfirmAwaitTicks++;
-                bool declined = _hitConfirmDecision == HitConfirmDeclined
-                    || _hitConfirmAwaitTicks > HitConfirmAwaitMaxTicks;
-                if (_hitConfirmDecision == HitConfirmApproved)
-                {
-                    _hitConfirmAwaitingServer = false;
-                }
-                else if (declined)
-                {
-                    _hitConfirmAwaitingServer = false;
-                    EnterPhase(AttackPhase.MeleeComboRecovery, _hitConfirmRecoveryTicks);
-                }
-                else
-                {
-                    PhaseTimer = 2;
-                }
             }
 
             base.AI();
@@ -3973,15 +3908,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     NPC.noGravity = true;
 
-                    // Start the staged move on every machine. CanSelectMeleeCombo admits only that combo
-                    // while _aerialStartRequested is set, so every machine picks the same one.
-                    if (!_aerialComboStarted)
+                    // Start the staged move on the server; PuppetNPC's phase snapshot carries it to clients.
+                    // CanSelectMeleeCombo admits only that combo while _aerialStartRequested is set.
+                    if (!_aerialComboStarted && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         _aerialComboStarted = true;
                         _aerialStartRequested = true;
                         bool started = TryStartMeleeCombo(NPC.Distance(player.Center));
                         _aerialStartRequested = false;
-                        if (!started && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (!started)
                         {
                             BeginAerialLanding();
                         }
@@ -4288,8 +4223,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             base.OnMeleeComboStarted(combo);
             _swordArcSpawnedForStep = false;
             ResetFlurryPursuit(releasePause: false);
-            _hitConfirmDecision = HitConfirmUndecided;
-            _hitConfirmAwaitingServer = false;
             _aerialStrikeElapsed = -1;
 
             // Delayed swing (below half health): roll whether this heavy tell holds its cocked end.
