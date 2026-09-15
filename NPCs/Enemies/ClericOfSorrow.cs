@@ -85,6 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         MagicCast _magicCast = MagicCast.Hail;     // which ranged cast is running
         MagicCast _lastMagicCast = MagicCast.Hail;
+        bool _magicCastPicked;                     // server: the current telegraph's cast has been rolled
         CustomKind _customKind = CustomKind.None;  // which set-piece is running (read only while Phase==Custom)
         int _undertowCd = 0;
         int _shellCd = 0;
@@ -202,6 +203,19 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.TargetClosest(true);
 
             base.AI(); // puppet render/flight/weapon/phase machine + ranged-magic selection
+
+            // Roll the ranged cast the tick the telegraph starts (base.AI entered MagicTelegraph this tick), so the PostAI
+            // phase snapshot carries the pick and clients show the right spell from the first frame of the telegraph.
+            bool inMagicCast = Phase == AttackPhase.MagicTelegraph || Phase == AttackPhase.MagicAttack;
+            if (!inMagicCast)
+            {
+                _magicCastPicked = false;
+            }
+            else if (!_magicCastPicked && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                _magicCastPicked = true;
+                PickMagicCast();
+            }
 
             if (_undertowCd > 0)
             {
@@ -328,39 +342,64 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         #region Ranged offense (base MAGIC phase — Hail / Veil / Undertow)
-        protected override void DoMagicAttack()
+        /// <summary>Weighted pick of the ranged cast — a genuine coin-flip, so server/singleplayer only. Rolled at telegraph
+        /// start (AI) instead of at release, so the pick rides the telegraph's snapshot and clients never show the previous
+        /// cast's label, sound or channel length.</summary>
+        void PickMagicCast()
         {
-            // The weighted RANDOM pick is a genuine coin-flip — server/singleplayer only (Phase 7 rule);
-            // clients keep the last-synced cast so they never independently pick a different spell.
-            bool authority = Main.netMode != NetmodeID.MultiplayerClient;
             Player target = Main.player[NPC.target];
             float distTiles = NPC.Distance(target.Center) / 16f;
+            bool undertowOk = _undertowCd <= 0 && distTiles >= UndertowMinTiles && distTiles <= UndertowMaxTiles;
 
-            if (authority)
+            float veilWeight = 0f;
+            if (distTiles < 45f)
             {
-                bool undertowOk = _undertowCd <= 0 && distTiles >= UndertowMinTiles && distTiles <= UndertowMaxTiles;
-                Span<(MagicCast cast, float weight)> pool = stackalloc (MagicCast, float)[]
-                {
-                    (MagicCast.Hail,     1f),
-                    (MagicCast.Veil,     distTiles < 45f ? 1f : 0f),
-                    (MagicCast.Undertow, undertowOk ? 1.2f : 0f),
-                };
-                float total = 0f;
-                for (int i = 0; i < pool.Length; i++)
-                {
-                    if (pool[i].cast == _lastMagicCast) pool[i].weight *= 0.5f;
-                    total += pool[i].weight;
-                }
-                float roll = Main.rand.NextFloat(total);
-                MagicCast pick = MagicCast.Hail;
-                for (int i = 0; i < pool.Length; i++)
-                {
-                    roll -= pool[i].weight;
-                    if (roll <= 0f) { pick = pool[i].cast; break; }
-                }
-                _magicCast = pick;
-                NPC.netUpdate = true;
+                veilWeight = 1f;
             }
+            float undertowWeight = 0f;
+            if (undertowOk)
+            {
+                undertowWeight = 1.2f;
+            }
+
+            Span<(MagicCast cast, float weight)> pool = stackalloc (MagicCast, float)[]
+            {
+                (MagicCast.Hail,     1f),
+                (MagicCast.Veil,     veilWeight),
+                (MagicCast.Undertow, undertowWeight),
+            };
+
+            // The last cast counts half, so the same spell rarely repeats.
+            float total = 0f;
+            for (int i = 0; i < pool.Length; i++)
+            {
+                if (pool[i].cast == _lastMagicCast)
+                {
+                    pool[i].weight *= 0.5f;
+                }
+                total += pool[i].weight;
+            }
+
+            float roll = Main.rand.NextFloat(total);
+            MagicCast pick = MagicCast.Hail;
+            for (int i = 0; i < pool.Length; i++)
+            {
+                roll -= pool[i].weight;
+                if (roll <= 0f)
+                {
+                    pick = pool[i].cast;
+                    break;
+                }
+            }
+
+            _magicCast = pick;
+            NPC.netUpdate = true;
+        }
+
+        protected override void DoMagicAttack()
+        {
+            // _magicCast was picked on the server when the telegraph started (PickMagicCast) and synced with it.
+            bool authority = Main.netMode != NetmodeID.MultiplayerClient;
             _lastMagicCast = _magicCast;
 
             switch (_magicCast)

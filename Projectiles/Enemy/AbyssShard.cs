@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,22 +13,37 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.Projectiles.Enemy
 {
     // Attack spec — Abyss Shard / PuppetNPC.AbyssShardFire / AbyssShard.
-    // Tell: 60t at the exact snapped tile surface; a 2x2-pixelated abyss breach grows 1-3 tiles high
-    // while dark/bright purple motes rise from that surface. Birth: the five-frame shard rises from
-    // 52px below ground during the final 14t. Life: the original 20 damaging ticks remain fully
-    // exposed, followed by an 18t non-damaging retreat and fade back to that depth. Draw order:
-    // portal and shard behind solid tiles. Multiplayer: projectile
-    // spawn/damage remains server authoritative; shader phase derives from identity and dust is cosmetic.
+    // Tell: 46t 2x2-pixelated abyss breach at the snapped tile surface while purple motes rise from it.
+    // Birth: the shard starts FULLY buried (tip inside the surface tile) and rises 14t to full height;
+    // sound, shake and a dust burst fire the moment it breaks the surface. Life: rise + 20t hold are
+    // damaging. Death: 18t non-damaging sink all the way back under, then a 10t fade while buried.
+    // Hitbox: the above-ground part of the drawn sprite, sliced per frame from the texture (Colliding).
+    // Draw order: behind solid tiles (Projectile.hide + DrawBehind), which is what hides the buried length.
+    // Multiplayer: spawn/damage server authoritative; shader phase derives from identity; dust is cosmetic.
     class AbyssShard : ModProjectile
     {
-        const int TelegraphTicks = 60;
-        const int PopHoldTicks   = 20;
-        const int RetreatTicks   = 18;
-        const int DamageTicks    = 20;
-        const int TotalTicks     = TelegraphTicks + PopHoldTicks + RetreatTicks;
-        const int EmergenceTicks = 14;
-        const float EmergenceDepth = 52f;
+        const int PortalTicks     = 46;
+        const int RiseTicks       = 14;
+        const int HoldTicks       = 20;
+        const int SinkTicks       = 18;
+        const int BuriedFadeTicks = 10;
+        const int RiseStart       = PortalTicks;
+        const int HoldStart       = RiseStart + RiseTicks;
+        const int SinkStart       = HoldStart + HoldTicks;
+        const int BuriedFadeStart = SinkStart + SinkTicks;
+        const int TotalTicks      = BuriedFadeStart + BuriedFadeTicks;
+        // Buried depth = the sprite's full length plus this, so the tip sits inside the surface tile
+        // rather than flush with its top edge (flush reads as a sliver already poking out).
+        const float BuryMargin = 8f;
         static readonly Vector2 PortalSize = new(80f, 52f);
+
+        // Per-frame hitbox profile, built once from the texture: [frame][band] = (left, right) pixel
+        // offsets from the shard's centreline, one band per HitboxBandLength px of shard length.
+        const int HitboxBandLength = 10;
+        // Pixels at or below this alpha are anti-aliasing fringe, not blade.
+        const byte HitboxAlphaThreshold = 40;
+        static Point[][] _hitboxBands;
+        static int _hitboxShardLength;
 
         bool _grounded;
         bool _popped;
@@ -42,6 +57,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
+            // Spawn/ground-snap footprint only. The real hitbox is the drawn shard's shape, in Colliding.
             Projectile.width = 24;
             Projectile.height = 48;
             Projectile.hostile = true;
@@ -52,11 +68,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.ignoreWater = true;
             Projectile.alpha = 255;
             Projectile.timeLeft = TotalTicks;
-        }
-
-        public override void OnSpawn(IEntitySource source)
-        {
-            Projectile.frame = Main.rand.Next(Main.projFrames[Type]);
+            // REQUIRED for DrawBehind below to mean anything. Main.CacheProjDraws calls DrawBehind for
+            // EVERY active projectile, but Main.DrawProjectiles only skips hidden ones - so without this
+            // the shard drew twice: once correctly behind the tiles, then again on top of them.
+            Projectile.hide = true;
         }
 
         public override void AI()
@@ -65,16 +80,21 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 SnapToGround();
                 _grounded = true;
+
+                // Sprite variant from identity, not Main.rand in OnSpawn: OnSpawn only runs on the machine
+                // that called NewProjectile (the server), and frame isn't in the projectile sync packet, so
+                // every client saw variant 0. identity IS synced, so all machines pick the same variant.
+                Projectile.frame = Projectile.identity % Main.projFrames[Type];
             }
 
             int elapsed = TotalTicks - Projectile.timeLeft;
 
-            if (elapsed < TelegraphTicks)
+            if (elapsed < RiseStart)
             {
                 Projectile.alpha = 255;
-                if (!Main.dedServ && elapsed < TelegraphTicks - EmergenceTicks && elapsed % 4 == 0)
+                if (!Main.dedServ && elapsed % 4 == 0)
                 {
-                    float telegraphProgress = elapsed / (float)TelegraphTicks;
+                    float telegraphProgress = elapsed / (float)PortalTicks;
                     SpawnSurfaceDust(true, telegraphProgress,
                         1 + (int)(telegraphProgress * 2f));
                 }
@@ -87,23 +107,25 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Pop();
             }
 
-            Lighting.AddLight(Projectile.Center, new Color(138, 40, 214).ToVector3() * 0.82f);
-
-            int sincePop = elapsed - TelegraphTicks;
-            if (!Main.dedServ && sincePop % 2 == 0)
+            int sinceRise = elapsed - RiseStart;
+            if (elapsed < BuriedFadeStart)
             {
-                SpawnSurfaceDust(false, 1f - sincePop / (float)(PopHoldTicks + RetreatTicks), 2);
-            }
-
-            if (sincePop < PopHoldTicks)
-            {
+                // Fully opaque while any part of it can be above ground.
                 Projectile.alpha = 0;
+                Lighting.AddLight(Projectile.Center, new Color(138, 40, 214).ToVector3() * 0.82f);
+
+                if (!Main.dedServ && sinceRise % 2 == 0)
+                {
+                    float remaining = 1f - sinceRise / (float)(BuriedFadeStart - RiseStart);
+                    SpawnSurfaceDust(false, remaining, 2);
+                }
             }
             else
             {
-                float retreat = MathHelper.Clamp((sincePop - PopHoldTicks) / (float)RetreatTicks, 0f, 1f);
-                float fade = MathHelper.Clamp((retreat - 0.18f) / 0.82f, 0f, 1f);
-                Projectile.alpha = (int)MathHelper.SmoothStep(0f, 255f, fade);
+                // Only fades once fully buried; the tiles already hide it, so this just covers spots
+                // with no solid tile under the surface (a platform or a ledge edge).
+                float fade = MathHelper.Clamp((elapsed - BuriedFadeStart) / (float)BuriedFadeTicks, 0f, 1f);
+                Projectile.alpha = (int)(fade * 255f);
             }
         }
 
@@ -174,7 +196,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         /// <summary>The shard is buried in terrain at both ends of its lifecycle, so it belongs in
-        /// the behind-NPCs-and-tiles pass. Solid blocks then occlude the submerged portion naturally.</summary>
+        /// the behind-NPCs-and-tiles pass. Solid blocks then occlude the submerged portion naturally.
+        /// Only takes effect because SetDefaults sets Projectile.hide.</summary>
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs,
             List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
@@ -184,45 +207,187 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreDraw(ref Color lightColor)
         {
             int elapsed = TotalTicks - Projectile.timeLeft;
-            if (elapsed < TelegraphTicks)
-            {
-                float telegraph = elapsed / (float)TelegraphTicks;
-                Vector2 portalCenter = Projectile.Bottom - new Vector2(0f, PortalSize.Y * 0.5f - 2f);
-                float phase = (Projectile.identity * 0.173f) % 1f;
-                ArtoriasVFX.DrawAbyssShardPortal(portalCenter, PortalSize, telegraph,
-                    0.52f + telegraph * 0.38f, phase);
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Rectangle source = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
+            // Frames point right and are drawn rotated upward, so the frame WIDTH (200px) is the shard's height.
+            float buryDepth = source.Width * Projectile.scale + BuryMargin;
 
-                float emergence = MathHelper.Clamp(
-                    (elapsed - (TelegraphTicks - EmergenceTicks)) / (float)EmergenceTicks, 0f, 1f);
-                if (emergence > 0f)
-                {
-                    float eased = MathHelper.SmoothStep(0f, 1f, emergence);
-                    DrawShardSprite(Projectile.Bottom + new Vector2(0f,
-                        MathHelper.Lerp(EmergenceDepth, 0f, eased)),
-                        new Color(200, 140, 255) * emergence);
-                }
-                return false;
+            float raised = GetRaised(elapsed);
+
+            if (elapsed >= RiseStart)
+            {
+                Vector2 shardBottom = Projectile.Bottom + new Vector2(0f, buryDepth * (1f - raised));
+                Color shardColor = GetAlpha(lightColor) ?? lightColor;
+                // Every authored frame points right; rotating all frames the same way makes every shard
+                // rise upward. Origin is the frame's left-middle, i.e. the shard's base.
+                Vector2 origin = new Vector2(0f, source.Height * 0.5f);
+                Main.EntitySpriteDraw(texture, shardBottom - Main.screenPosition, source, shardColor,
+                    -MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
             }
 
-            int sincePop = elapsed - TelegraphTicks;
-            float retreat = MathHelper.Clamp((sincePop - PopHoldTicks) / (float)RetreatTicks, 0f, 1f);
-            float sink = MathHelper.SmoothStep(0f, 1f, retreat);
-            Vector2 retreatBottom = Projectile.Bottom + new Vector2(0f, EmergenceDepth * sink);
-            DrawShardSprite(retreatBottom, GetAlpha(lightColor) ?? lightColor);
+            // The breach draws AFTER the shard: its shader restarts the spritebatch with LinearClamp, which
+            // would blur the pixel-art shard if drawn first. It fades out across the rise instead of popping.
+            if (elapsed < HoldStart)
+            {
+                float telegraph = MathHelper.Clamp(elapsed / (float)PortalTicks, 0f, 1f);
+                float portalOpacity = 0.52f + telegraph * 0.38f;
+                if (elapsed >= RiseStart)
+                {
+                    float riseProgress = (elapsed - RiseStart) / (float)RiseTicks;
+                    portalOpacity *= 1f - riseProgress;
+                }
+
+                Vector2 portalCenter = Projectile.Bottom - new Vector2(0f, PortalSize.Y * 0.5f - 2f);
+                float phase = (Projectile.identity * 0.173f) % 1f;
+                ArtoriasVFX.DrawAbyssShardPortal(portalCenter, PortalSize, telegraph, portalOpacity, phase);
+            }
             return false;
         }
 
-        void DrawShardSprite(Vector2 bottom, Color color)
+        /// <summary>1 = full height, 0 = fully buried. Rise and sink both ease, so it slows into and out of
+        /// the hold. Shared by PreDraw and Colliding so the hitbox moves exactly with the drawn shard.</summary>
+        float GetRaised(int elapsed)
         {
-            Texture2D texture = TextureAssets.Projectile[Type].Value;
-            Rectangle source = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
-            // Every authored frame points right; the previous alternating assumption inverted
-            // odd-numbered frames. Rotating all frames the same way makes every shard rise upward.
-            Vector2 origin = new Vector2(0f, source.Height * 0.5f);
-            Main.EntitySpriteDraw(texture, bottom - Main.screenPosition, source, color,
-                -MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0);
+            if (elapsed >= RiseStart && elapsed < HoldStart)
+            {
+                float rise = (elapsed - RiseStart) / (float)RiseTicks;
+                return MathHelper.SmoothStep(0f, 1f, rise);
+            }
+
+            if (elapsed >= HoldStart && elapsed < SinkStart)
+            {
+                return 1f;
+            }
+
+            if (elapsed >= SinkStart && elapsed < BuriedFadeStart)
+            {
+                float sink = (elapsed - SinkStart) / (float)SinkTicks;
+                return 1f - MathHelper.SmoothStep(0f, 1f, sink);
+            }
+
+            return 0f;
         }
 
+        /// <summary>The hitbox is the ABOVE-GROUND part of the drawn shard: a stack of HitboxBandLength
+        /// slices, each as wide as that slice's opaque pixels, so it tapers, leans and rises/sinks with the
+        /// sprite. WHEN it can hit is still CanHitPlayer's call.</summary>
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            // Hostile hits are resolved on the client of the player being hit (Projectile.Damage), so the
+            // server never needs this - and it has no texture to read.
+            if (Main.dedServ)
+            {
+                return null;
+            }
+
+            if (_hitboxBands == null)
+            {
+                Texture2D texture = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad).Value;
+                _hitboxBands = BuildHitboxBands(texture, Main.projFrames[Type]);
+                _hitboxShardLength = texture.Width;
+            }
+
+            int elapsed = TotalTicks - Projectile.timeLeft;
+            float raised = GetRaised(elapsed);
+            float scale = Projectile.scale;
+            float buryDepth = _hitboxShardLength * scale + BuryMargin;
+            float surfaceY = Projectile.Bottom.Y;
+            // Same maths as PreDraw: the base is buryDepth under the surface when buried, on it at full height.
+            float baseY = surfaceY + buryDepth * (1f - raised);
+            float bandLength = HitboxBandLength * scale;
+            Point[] frameBands = _hitboxBands[Projectile.frame];
+
+            for (int band = 0; band < frameBands.Length; band++)
+            {
+                Point extent = frameBands[band];
+                int bandWidth = extent.Y - extent.X;
+                if (bandWidth <= 0)
+                {
+                    continue;
+                }
+
+                // Band k spans k to k+1 band lengths above the base. The part below the surface is inside
+                // the ground where no player can stand, so each slice is clipped to the surface.
+                float bandBottom = baseY - band * bandLength;
+                float bandTop = bandBottom - bandLength;
+                if (bandTop >= surfaceY)
+                {
+                    continue;
+                }
+
+                float visibleBottom = System.Math.Min(bandBottom, surfaceY);
+                int sliceHeight = (int)System.Math.Ceiling(visibleBottom - bandTop);
+                Rectangle slice = new Rectangle(
+                    (int)(Projectile.Bottom.X + extent.X * scale),
+                    (int)bandTop,
+                    (int)(bandWidth * scale),
+                    sliceHeight);
+                if (slice.Intersects(targetHitbox))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>Reads each frame's opaque pixels into width bands. Built from the texture itself so
+        /// redrawn art can never leave a stale hardcoded hitbox behind. Frames point right and draw rotated
+        /// upward about their left-middle, so texture x = height above the base and (texture y - half the
+        /// frame height) = horizontal offset from the centreline. Empty bands stay (0,0), i.e. zero width.</summary>
+        static Point[][] BuildHitboxBands(Texture2D texture, int frameCount)
+        {
+            int frameHeight = texture.Height / frameCount;
+            int halfFrameHeight = frameHeight / 2;
+            int bandCount = (texture.Width + HitboxBandLength - 1) / HitboxBandLength;
+            Color[] pixels = new Color[texture.Width * texture.Height];
+            texture.GetData(pixels);
+
+            Point[][] bands = new Point[frameCount][];
+            for (int frame = 0; frame < frameCount; frame++)
+            {
+                bands[frame] = new Point[bandCount];
+
+                for (int band = 0; band < bandCount; band++)
+                {
+                    int left = int.MaxValue;
+                    int right = int.MinValue;
+                    int bandStartX = band * HitboxBandLength;
+                    int bandEndX = System.Math.Min(texture.Width, bandStartX + HitboxBandLength);
+
+                    for (int x = bandStartX; x < bandEndX; x++)
+                    {
+                        for (int y = 0; y < frameHeight; y++)
+                        {
+                            int pixelIndex = (frame * frameHeight + y) * texture.Width + x;
+                            if (pixels[pixelIndex].A <= HitboxAlphaThreshold)
+                            {
+                                continue;
+                            }
+
+                            // A pixel at row y covers horizontal offsets [y - half, y - half + 1).
+                            int offset = y - halfFrameHeight;
+                            left = System.Math.Min(left, offset);
+                            right = System.Math.Max(right, offset + 1);
+                        }
+                    }
+
+                    if (right > left)
+                    {
+                        bands[frame][band] = new Point(left, right);
+                    }
+                }
+            }
+
+            return bands;
+        }
+
+        public override void Unload()
+        {
+            _hitboxBands = null;
+        }
+
+        /// <summary>Fires as the shard's tip breaks the surface (start of the rise).</summary>
         void Pop()
         {
             SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.6f, Pitch = -0.1f }, Projectile.Center);
@@ -236,11 +401,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             SpawnSurfaceDust(false, 1f, 14);
         }
 
+        // Damaging from the moment the tip breaks the surface until the hold ends; the sink is harmless.
         public override bool CanHitPlayer(Player target)
         {
             int elapsed = TotalTicks - Projectile.timeLeft;
-            int sincePop = elapsed - TelegraphTicks;
-            return sincePop >= 0 && sincePop < DamageTicks;
+            bool risen = elapsed >= RiseStart;
+            bool beforeSink = elapsed < SinkStart;
+            return risen && beforeSink;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

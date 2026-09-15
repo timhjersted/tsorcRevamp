@@ -471,6 +471,8 @@ namespace tsorcRevamp.NPCs
 
         // Shared cooldown for the on-hit evasive reaction + wall-pin escape, so an enemy doesn't react every frame of a combo.
         public int FighterEvasionCooldown;
+        /// <summary>Client only: a ModNPC hit hook asked for EvasiveOnHit this hit; the hit report sends it to the server.</summary>
+        public bool EvasiveOnHitRequested;
 
         // === Evasive on-hit capability flags (see EvasiveProfile + tsorcRevampAIs.EvasiveOnHit) ===
         // Opt-in per enemy in SetDefaults (directly, or via an EvasiveProfile.* bundle). The shared EvasiveOnHit
@@ -851,39 +853,151 @@ namespace tsorcRevamp.NPCs
             npc.netUpdate = true;
         }
 
-        /// <summary>Client → server hit report. Hit hooks run only on the client that dealt the hit, but poise, stagger and
-        /// puppet hit reactions (heal memory, reactive shield) are server state. Sends the poise damage this client computed
-        /// before multipliers; the server applies it with its own hyper-armor state. Skipped for NPCs that use neither.</summary>
-        private void SendHitReport(NPC npc, float poiseDamage, Vector2 sourceCenter, int damageDone, bool meleeHit)
+        /// <summary>One hit's effect on an NPC's AI. Built in OnHitBy* — which run only on the client that dealt the hit, never
+        /// on a multiplayer server — and applied by ApplyHitReport: directly in singleplayer, on the server via
+        /// tsorcPacketID.ReportNPCHit.</summary>
+        public struct NPCHitReport
         {
+            public int NPCIndex;
+            public int NPCType;
+            public int AttackerPlayer;          // not serialized: the server takes it from the sending client
+            public bool AppliesPoise;           // false for a physical ghost's non-magic hit
+            public float PoiseDamage;           // before PoiseDamageMultiplier / shield guard (HandlePoiseOnHit applies those)
+            public Vector2 SourceCenter;
+            public int DamageDone;
+            public bool MeleeHit;
+            public bool FromProjectile;
+            public bool FriendlyProjectile;
+            public bool CrossedFleeThreshold;   // this hit took it below 1/5 life, judged from the hitter's pre-hit life
+            public bool EvasiveOnHitRequested;  // a ModNPC hook called tsorcRevampAIs.EvasiveOnHit for this hit
+
+            public void Write(BinaryWriter writer)
+            {
+                writer.Write((short)NPCIndex);
+                writer.Write(NPCType);
+                writer.Write(AppliesPoise);
+                writer.Write(PoiseDamage);
+                writer.WriteVector2(SourceCenter);
+                writer.Write(DamageDone);
+                writer.Write(MeleeHit);
+                writer.Write(FromProjectile);
+                writer.Write(FriendlyProjectile);
+                writer.Write(CrossedFleeThreshold);
+                writer.Write(EvasiveOnHitRequested);
+            }
+
+            public static NPCHitReport Read(BinaryReader reader)
+            {
+                NPCHitReport report = new NPCHitReport();
+                report.NPCIndex = reader.ReadInt16();
+                report.NPCType = reader.ReadInt32();
+                report.AppliesPoise = reader.ReadBoolean();
+                report.PoiseDamage = reader.ReadSingle();
+                report.SourceCenter = reader.ReadVector2();
+                report.DamageDone = reader.ReadInt32();
+                report.MeleeHit = reader.ReadBoolean();
+                report.FromProjectile = reader.ReadBoolean();
+                report.FriendlyProjectile = reader.ReadBoolean();
+                report.CrossedFleeThreshold = reader.ReadBoolean();
+                report.EvasiveOnHitRequested = reader.ReadBoolean();
+                report.AttackerPlayer = -1;
+                return report;
+            }
+        }
+
+        /// <summary>Applies the report where hits are authoritative, or sends it there: locally in singleplayer, to the server
+        /// from a multiplayer client. Consumes this hit's EvasiveOnHitRequested flag (set by the ModNPC hook, which tModLoader
+        /// runs just before this GlobalNPC hook).</summary>
+        private void SubmitHitReport(NPC npc, NPCHitReport report)
+        {
+            report.EvasiveOnHitRequested = EvasiveOnHitRequested;
+            EvasiveOnHitRequested = false;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                ApplyHitReport(npc, report);
+                return;
+            }
+
+            // The pre-strike break decision is only meaningful to the local HandlePoiseOnHit, which doesn't run here.
             PoiseWillBreakThisHit = false;
 
-            bool usesPoise = PoiseMax > 0f;
-            bool isPuppet = npc.ModNPC is Puppets.PuppetNPC;
-            if (!usesPoise && !isPuppet)
+            // Town NPCs and critters have no hit reaction on the server.
+            if (npc.friendly || npc.townNPC)
             {
                 return;
             }
 
             ModPacket packet = ModContent.GetInstance<tsorcRevamp>().GetPacket();
             packet.Write(tsorcPacketID.ReportNPCHit);
-            packet.Write((short)npc.whoAmI);
-            packet.Write(npc.type);
-            packet.Write(poiseDamage);
-            packet.WriteVector2(sourceCenter);
-            packet.Write(damageDone);
-            packet.Write(meleeHit);
+            report.Write(packet);
             packet.Send();
         }
 
-        /// <summary>Server side of SendHitReport.</summary>
-        public void ApplyHitReport(NPC npc, float poiseDamage, Vector2 sourceCenter, int damageDone, bool meleeHit)
+        /// <summary>A hit's effect on the NPC's AI: poise/stagger, puppet hit memory (heal + reactive shield), no-LOS pursuit
+        /// boost, beast re-engage, combat-tempo damage, the kite window or ranged-pause interrupt, the cowardice flee roll and
+        /// a requested evasion. Returns true when the hit started a stagger or an evasion — short states clients should get
+        /// now, not after the netSpam throttle.</summary>
+        public bool ApplyHitReport(NPC npc, NPCHitReport report)
         {
-            HandlePoiseOnHit(npc, poiseDamage, sourceCenter);
+            int staggerBefore = StaggerTimer;
+            int evasionCooldownBefore = FighterEvasionCooldown;
+
+            if (report.AppliesPoise)
+            {
+                HandlePoiseOnHit(npc, report.PoiseDamage, report.SourceCenter);
+            }
             if (npc.ModNPC is Puppets.PuppetNPC puppet)
             {
-                puppet.RegisterHit(sourceCenter, damageDone, meleeHit);
+                puppet.RegisterHit(report.SourceCenter, report.DamageDone, report.MeleeHit);
             }
+
+            Player attacker = null;
+            if (report.AttackerPlayer >= 0 && report.AttackerPlayer < Main.maxPlayers)
+            {
+                attacker = Main.player[report.AttackerPlayer];
+            }
+            TriggerNoLosPursuitBoost(npc, attacker);
+            RegisterHitForBeast(npc);
+            RegisterCombatTempoDamage(npc, report.DamageDone);
+
+            if (report.FromProjectile)
+            {
+                bool distantProjectileThreat = RegisterKiteThreatFromProjectile(npc, attacker, report.FriendlyProjectile);
+                bool breaksRangedPause = report.FriendlyProjectile && (!report.MeleeHit || distantProjectileThreat);
+                if (breaksRangedPause)
+                {
+                    // Preserve the legacy ranged-evasion hand-off flag for non-melee DamageClass hits. A distant
+                    // melee-class projectile still breaks the pause so pursuit can begin, but remains a melee hit for
+                    // the enemy's separately-authored EvasiveOnHit response.
+                    if (!report.MeleeHit)
+                    {
+                        FighterRangedHitInterruptedPause = FighterPostAttackPauseTimer > 0
+                                                         || FighterRangedStandShotsRemaining > 0;
+                    }
+                    FighterPostAttackPauseTimer = 0;
+                    FighterRangedStandShotsRemaining = 0;
+                }
+            }
+            else
+            {
+                RegisterKiteThreatFromItem(npc, attacker);
+            }
+
+            // If this hit took it below 1/5th health, roll a chance to flee based on its Cowardice trait.
+            if (report.CrossedFleeThreshold && !npc.boss && Main.rand.NextFloat() < Cowardice)
+            {
+                Fleeing = true;
+            }
+
+            if (report.EvasiveOnHitRequested)
+            {
+                tsorcRevampAIs.EvasiveOnHit(npc, report.MeleeHit);
+            }
+
+            bool staggerStarted = staggerBefore <= 0 && StaggerTimer > 0;
+            bool evasionStarted = FighterEvasionCooldown > evasionCooldownBefore;
+            return staggerStarted || evasionStarted;
         }
 
         /// <summary>Enter the staggered state: launch, freeze, cancel a windup attack, and escalate.</summary>
@@ -2110,6 +2224,17 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write((byte)Math.Clamp(PoiseEscalationStacks, 0, byte.MaxValue));
             binaryWriter.Write((short)Math.Clamp(PoiseEscalationTimer, 0, short.MaxValue));
             binaryWriter.Write(staggerSlideVelocity);
+
+            // Evasion / quick-step: the server rolls and arms these (EvasiveOnHit, preemptive steps). Clients need them for the
+            // step velocity, the i-frames (CanBeHit*/CanHitPlayer read QuickStepTimer) and the RunningDash telegraph.
+            binaryWriter.Write((short)Math.Clamp(QuickStepTimer, 0, short.MaxValue));
+            binaryWriter.Write((short)Math.Clamp(QuickStepRecoveryTimer, 0, short.MaxValue));
+            binaryWriter.Write((sbyte)QuickStepDir);
+            binaryWriter.Write(InSustainedEvasion);
+            binaryWriter.Write((byte)CurrentEvasion);
+            binaryWriter.Write((short)Math.Clamp(EvasiveTimer, 0, short.MaxValue));
+            binaryWriter.Write(EvasiveTelegraphing);
+            binaryWriter.Write((short)Math.Clamp(FighterEvasionCooldown, 0, short.MaxValue));
         }
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
@@ -2172,6 +2297,15 @@ namespace tsorcRevamp.NPCs
                 SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.6f, PitchVariance = 0.15f }, npc.Center);
                 SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = -0.3f, Volume = 0.8f }, npc.Center);
             }
+
+            QuickStepTimer = binaryReader.ReadInt16();
+            QuickStepRecoveryTimer = binaryReader.ReadInt16();
+            QuickStepDir = binaryReader.ReadSByte();
+            InSustainedEvasion = binaryReader.ReadBoolean();
+            CurrentEvasion = (EvasiveBehavior)binaryReader.ReadByte();
+            EvasiveTimer = binaryReader.ReadInt16();
+            EvasiveTelegraphing = binaryReader.ReadBoolean();
+            FighterEvasionCooldown = binaryReader.ReadInt16();
         }
 
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
@@ -3261,37 +3395,26 @@ namespace tsorcRevamp.NPCs
             {
                 poiseKnockback = Math.Max(poiseKnockback, GhostMagicPoiseKnockbackFloor);
             }
-            if (magicGhostHit || !IsPhysicalGhost(npc))
-            {
-                // Hit hooks run only on the attacking client; poise and stagger are server state (see SendHitReport).
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                {
-                    SendHitReport(npc, poiseKnockback, player.Center, damageDone, meleeHit: true);
-                }
-                else
-                {
-                    HandlePoiseOnHit(npc, poiseKnockback, player.Center);
-                }
-            }
+            // Everything the hit changes in the NPC's AI is server state, but this hook runs only on the attacking client: one
+            // report, applied here in singleplayer and sent to the server in multiplayer (see NPCHitReport).
+            NPCHitReport report = new NPCHitReport();
+            report.NPCIndex = npc.whoAmI;
+            report.NPCType = npc.type;
+            report.AttackerPlayer = player.whoAmI;
+            report.AppliesPoise = magicGhostHit || !IsPhysicalGhost(npc);
+            report.PoiseDamage = poiseKnockback;
+            report.SourceCenter = player.Center;
+            report.DamageDone = damageDone;
+            report.MeleeHit = true;
+            report.CrossedFleeThreshold = npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5;
+            SubmitHitReport(npc, report);
+
+            // After the report: in singleplayer poise is applied first, so a hit that staggers skips the flinch.
             if (magicGhostHit)
             {
                 ApplyGhostMagicFlinch(npc, player.Center);
             }
             RestoreMagicGhostKnockback(npc);
-
-            TriggerNoLosPursuitBoost(npc, player);
-            RegisterHitForBeast(npc);
-            RegisterKiteThreatFromItem(npc, player);
-            RegisterCombatTempoDamage(npc, damageDone);
-
-            //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
-            if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
-            {
-                if (Main.rand.NextFloat() < npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Cowardice && !npc.boss)
-                {
-                    Fleeing = true;
-                }
-            }
 
             if (!CrystalNunchakuProc && CrystalNunchakuStacks > 0 && markedByCrystalNunchaku)
             {
@@ -3307,46 +3430,28 @@ namespace tsorcRevamp.NPCs
             {
                 poiseKnockback = Math.Max(poiseKnockback, GhostMagicPoiseKnockbackFloor);
             }
-            if (magicGhostHit || !IsPhysicalGhost(npc))
-            {
-                // Hit hooks run only on the projectile owner's client; poise and stagger are server state (see SendHitReport).
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                {
-                    SendHitReport(npc, poiseKnockback, projectile.Center, damageDone, projectile.DamageType == DamageClass.Melee);
-                }
-                else
-                {
-                    HandlePoiseOnHit(npc, poiseKnockback, projectile.Center);
-                }
-            }
+            // Everything the hit changes in the NPC's AI is server state, but this hook runs only on the projectile owner's
+            // client: one report, applied here in singleplayer and sent to the server in multiplayer (see NPCHitReport).
+            NPCHitReport report = new NPCHitReport();
+            report.NPCIndex = npc.whoAmI;
+            report.NPCType = npc.type;
+            report.AttackerPlayer = projectile.owner;
+            report.AppliesPoise = magicGhostHit || !IsPhysicalGhost(npc);
+            report.PoiseDamage = poiseKnockback;
+            report.SourceCenter = projectile.Center;
+            report.DamageDone = damageDone;
+            report.MeleeHit = projectile.DamageType == DamageClass.Melee;
+            report.FromProjectile = true;
+            report.FriendlyProjectile = projectile.friendly;
+            report.CrossedFleeThreshold = npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5;
+            SubmitHitReport(npc, report);
+
+            // After the report: in singleplayer poise is applied first, so a hit that staggers skips the flinch.
             if (magicGhostHit)
             {
                 ApplyGhostMagicFlinch(npc, projectile.Center);
             }
             RestoreMagicGhostKnockback(npc);
-
-            if (projectile.owner >= 0 && projectile.owner < Main.maxPlayers)
-            {
-                TriggerNoLosPursuitBoost(npc, Main.player[projectile.owner]);
-            }
-            RegisterHitForBeast(npc);
-            bool distantProjectileThreat = RegisterKiteThreatFromProjectile(npc, projectile);
-            RegisterCombatTempoDamage(npc, damageDone);
-
-            if (projectile.friendly && (projectile.DamageType != DamageClass.Melee || distantProjectileThreat))
-            {
-                tsorcRevampGlobalNPC hitGlobalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-                // Preserve the legacy ranged-evasion hand-off flag for non-melee DamageClass hits. A distant
-                // melee-class projectile still breaks the pause so pursuit can begin, but remains a melee hit for
-                // the enemy's separately-authored EvasiveOnHit response.
-                if (projectile.DamageType != DamageClass.Melee)
-                {
-                    hitGlobalNPC.FighterRangedHitInterruptedPause = hitGlobalNPC.FighterPostAttackPauseTimer > 0
-                                                                  || hitGlobalNPC.FighterRangedStandShotsRemaining > 0;
-                }
-                hitGlobalNPC.FighterPostAttackPauseTimer = 0;
-                hitGlobalNPC.FighterRangedStandShotsRemaining = 0;
-            }
 
             Player player = Main.player[projectile.owner];
             var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
@@ -3396,14 +3501,7 @@ namespace tsorcRevamp.NPCs
                 }
             }
             
-            //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
-            if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
-            {
-                if (Main.rand.NextFloat() < npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Cowardice && !npc.boss)
-                {
-                    Fleeing = true;
-                }
-            }
+            // (The cowardice flee roll moved into ApplyHitReport with the other AI reactions.)
 
             #region Vanilla Whips applying their modded counterparts
             if (projectile.type == ProjectileID.BlandWhip)

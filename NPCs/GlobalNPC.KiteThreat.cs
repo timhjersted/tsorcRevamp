@@ -84,15 +84,16 @@ namespace tsorcRevamp.NPCs
         /// from a point-blank shot.
         /// </summary>
         /// <returns>True when this hit clears the kite window and returns the enemy to aggression.</returns>
-        internal bool RegisterKiteThreatFromProjectile(NPC npc, Projectile projectile)
+        /// <remarks>Takes the projectile's owner and friendliness rather than the projectile: on a multiplayer server this
+        /// runs from a client's hit report (ApplyHitReport), when the projectile itself may already be gone.</remarks>
+        internal bool RegisterKiteThreatFromProjectile(NPC npc, Player player, bool friendlyProjectile)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient || KiteRangeMax <= 0f || !projectile.friendly
-                || projectile.owner < 0 || projectile.owner >= Main.maxPlayers)
+            if (Main.netMode == NetmodeID.MultiplayerClient || KiteRangeMax <= 0f || !friendlyProjectile
+                || player == null)
             {
                 return false;
             }
 
-            Player player = Main.player[projectile.owner];
             if (!player.active || player.dead || npc.target != player.whoAmI)
             {
                 return false;

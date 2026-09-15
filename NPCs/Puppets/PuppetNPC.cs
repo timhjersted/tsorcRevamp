@@ -7295,6 +7295,8 @@ namespace tsorcRevamp.NPCs.Puppets
             tsorcRevampAIs.ArmQuickStep(NPC, gnpc, allowForward: true);
             gnpc.DodgeCooldown = 120; // shared proactive-evasion cooldown (~2 s)
             NPC.netUpdate = true;
+            // A 16-tick step would be over before a throttled netUpdate reached clients.
+            RequestNetworkSnapshot();
         }
 
         /// <summary>
@@ -7347,33 +7349,17 @@ namespace tsorcRevamp.NPCs.Puppets
 
                     gnpc.DodgeCooldown = (int)(300 * (1f - gnpc.Agility));
                     NPC.netUpdate = true;
+                    // The jump / i-frame roll is short: push it now rather than after the netSpam throttle.
+                    RequestNetworkSnapshot();
                 }
                 break; // react to at most one projectile per tick
             }
         }
 
         // ── Damage tracking for emergency heal + reactive shield ──────────────────
-        // Hit hooks run only on the client that dealt the hit (never on a multiplayer server). Singleplayer handles the hit
-        // here; in multiplayer GlobalNPC's hit report delivers it to the server, which calls RegisterHit.
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            if (!IsMultiplayerClient)
-            {
-                RegisterHit(player.Center, damageDone, meleeHit: true);
-            }
-        }
-
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            if (!IsMultiplayerClient)
-            {
-                RegisterHit(projectile.Center, damageDone, projectile.DamageType == DamageClass.Melee);
-            }
-        }
-
         /// <summary>Burst-damage memory for the emergency heal, plus the reactive shield raise. Only a FRONT hit can snap
-        /// the guard up — a backstab must not re-raise it. Runs where hits are authoritative: locally in singleplayer,
-        /// on the server from a client's hit report (tsorcRevamp.HandlePacket → GlobalNPC.ApplyHitReport).</summary>
+        /// the guard up — a backstab must not re-raise it. Called by GlobalNPC.ApplyHitReport, which runs where hits are
+        /// authoritative: from the hit hook in singleplayer, from a client's ReportNPCHit on a multiplayer server.</summary>
         internal void RegisterHit(Vector2 sourceCenter, int damageDone, bool meleeHit)
         {
             _recentDamage += (float)damageDone / NPC.lifeMax;

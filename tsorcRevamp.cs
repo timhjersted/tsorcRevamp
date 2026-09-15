@@ -2640,35 +2640,28 @@ namespace tsorcRevamp
                     }
                 case tsorcPacketID.ReportNPCHit:
                     {
-                        int npcIndex = reader.ReadInt16();
-                        int npcType = reader.ReadInt32();
-                        float poiseDamage = reader.ReadSingle();
-                        Vector2 sourceCenter = reader.ReadVector2();
-                        int damageDone = reader.ReadInt32();
-                        bool meleeHit = reader.ReadBoolean();
+                        NPCs.tsorcRevampGlobalNPC.NPCHitReport report = NPCs.tsorcRevampGlobalNPC.NPCHitReport.Read(reader);
 
                         bool validTarget = Main.netMode == NetmodeID.Server
-                            && npcIndex >= 0 && npcIndex < Main.maxNPCs
-                            && Main.npc[npcIndex].active && Main.npc[npcIndex].type == npcType;
+                            && report.NPCIndex >= 0 && report.NPCIndex < Main.maxNPCs
+                            && Main.npc[report.NPCIndex].active && Main.npc[report.NPCIndex].type == report.NPCType;
                         if (!validTarget)
                         {
                             break;
                         }
 
-                        // Bounded so a bad report can't one-shot a poise bar or fake a huge burst.
-                        poiseDamage = MathHelper.Clamp(poiseDamage, 0f, 1000f);
-                        damageDone = Math.Max(0, damageDone);
+                        // Bounded so a bad report can't one-shot a poise bar or fake a huge burst. The attacker is the sender.
+                        report.PoiseDamage = MathHelper.Clamp(report.PoiseDamage, 0f, 1000f);
+                        report.DamageDone = Math.Max(0, report.DamageDone);
+                        report.AttackerPlayer = whoAmI;
 
-                        NPC hitNPC = Main.npc[npcIndex];
-                        NPCs.tsorcRevampGlobalNPC hitGlobalNPC = hitNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>();
-                        int staggerBefore = hitGlobalNPC.StaggerTimer;
-                        hitGlobalNPC.ApplyHitReport(hitNPC, poiseDamage, sourceCenter, damageDone, meleeHit);
+                        NPC hitNPC = Main.npc[report.NPCIndex];
+                        bool needsImmediateSync = hitNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ApplyHitReport(hitNPC, report);
 
-                        // Push a new stagger at once; TriggerStagger's netUpdate waits on the netSpam throttle.
-                        bool newlyStaggered = staggerBefore <= 0 && hitGlobalNPC.StaggerTimer > 0;
-                        if (newlyStaggered)
+                        // A new stagger or evasion is short-lived; their netUpdate alone waits on the netSpam throttle.
+                        if (needsImmediateSync)
                         {
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npcIndex);
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, report.NPCIndex);
                         }
                         break;
                     }

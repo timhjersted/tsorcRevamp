@@ -2711,6 +2711,15 @@ namespace tsorcRevamp.NPCs
         {
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
+            // Callers are ModNPC.OnHitBy* hooks, which run only on the client that dealt the hit; the roll and the evasion are
+            // server decisions. Flag the hit instead: tModLoader runs GlobalNPC.OnHitBy* right after the ModNPC hook, and its
+            // hit report carries the flag to the server, which calls back here (tsorcRevampGlobalNPC.ApplyHitReport).
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                globalNPC.EvasiveOnHitRequested = true;
+                return;
+            }
+
             // PuppetNPC owns a continuous authored attack sequencer. Its default contract is that
             // ordinary hits add light poise flinch but cannot replace neutral selection with an
             // evasive action; only a completed poise break calls PuppetNPC.OnStagger and cancels it.
