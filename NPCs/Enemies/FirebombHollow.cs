@@ -11,7 +11,7 @@ using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class FirebombHollow : ModNPC
+    class FirebombHollow : ModNPC, IHitReactor
     {
         public override void SetStaticDefaults()
         {
@@ -368,21 +368,28 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             tsorcRevampAIs.FighterOnHit(NPC, true);
-
-            if (AI_State == State_Firebombing && AI_State_Timer_1 < 45)
-            {
-                AI_State_Timer_1 = -10;
-            }
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, true);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            bool melee = projectile.DamageType == DamageClass.Melee;
+            tsorcRevampAIs.FighterOnHit(NPC, melee);
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, melee);
+        }
 
-            if (AI_State == State_Firebombing && AI_State_Timer_1 < 45)
+        /// <summary>Getting hit mid-throw sets the windup back: a melee hit staggers the arm further (-10) than a shot
+        /// does (10), so a rushdown buys more time than plinking. Only while the throw is still early (&lt; 45), so a
+        /// committed bomb still lands. Server/singleplayer only (see IHitReactor) — AI_State_Timer_1 is an npc.ai slot,
+        /// so vanilla carries the change to clients with the next NPC sync.</summary>
+        void IHitReactor.OnServerHit(NPC npc, bool melee)
+        {
+            if (AI_State != State_Firebombing || AI_State_Timer_1 >= 45)
             {
-                AI_State_Timer_1 = 10;
+                return;
             }
+
+            AI_State_Timer_1 = melee ? -10 : 10;
         }
 
         #endregion

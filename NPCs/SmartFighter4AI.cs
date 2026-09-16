@@ -2101,9 +2101,9 @@ namespace tsorcRevamp.NPCs
             // distance-aware attacks can claim the body naturally when their melee or ranged band becomes valid.
             if (globalNPC.IsClosingOnRangedThreat(npc, player))
             {
-                nav.KiteTargetDist = 0f;
-                nav.KiteRerollTimer = 0;
-                nav.KiteLetClose = false;
+                globalNPC.KiteTargetDist = 0f;
+                globalNPC.KiteRerollTimer = 0;
+                globalNPC.KiteLetClose = false;
                 return false;
             }
 
@@ -2127,21 +2127,24 @@ namespace tsorcRevamp.NPCs
             npc.direction = faceP;
             npc.spriteDirection = faceP; // always face the player to shoot
 
-            // Re-roll the drifting target distance + the looseness window occasionally → non-robotic spacing.
-            if (nav.KiteRerollTimer <= 0)
+            // Re-roll the drifting target distance + the looseness window occasionally → non-robotic spacing. The
+            // server owns the roll; clients tick the same timer and keep the last band until the new one arrives,
+            // so the enemy holds one spacing on every screen instead of a different one per client.
+            if (globalNPC.KiteRerollTimer <= 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                nav.KiteTargetDist = MathHelper.Lerp(globalNPC.KiteRangeMin, globalNPC.KiteRangeMax, Main.rand.NextFloat());
-                nav.KiteLetClose = Main.rand.NextFloat() < globalNPC.KiteLooseness;
-                nav.KiteHoldDrift = Main.rand.NextBool() ? 1 : -1; // +1 = forward toward player, -1 = backward from player
-                nav.KiteRerollTimer = Main.rand.Next(90, 240); // ~1.5-4s
+                globalNPC.KiteTargetDist = MathHelper.Lerp(globalNPC.KiteRangeMin, globalNPC.KiteRangeMax, Main.rand.NextFloat());
+                globalNPC.KiteLetClose = Main.rand.NextFloat() < globalNPC.KiteLooseness;
+                globalNPC.KiteHoldDrift = Main.rand.NextBool() ? 1 : -1; // +1 = forward toward player, -1 = backward from player
+                globalNPC.KiteRerollTimer = Main.rand.Next(90, 240); // ~1.5-4s
+                globalNPC.RequestNetworkSnapshot();
             }
-            else
+            else if (globalNPC.KiteRerollTimer > 0)
             {
-                nav.KiteRerollTimer--;
+                globalNPC.KiteRerollTimer--;
             }
 
             const float deadband = 1.5f; // hysteresis so it doesn't jitter at the target ring
-            if (distTiles < nav.KiteTargetDist - deadband && !nav.KiteLetClose)
+            if (distTiles < globalNPC.KiteTargetDist - deadband && !globalNPC.KiteLetClose)
             {
                 // Too close → back off, but don't reverse into a wall/cliff (hold + fire if cornered).
                 int away = -faceP;
@@ -2164,18 +2167,18 @@ namespace tsorcRevamp.NPCs
                     ApplyChase(npc, away, topSpeed, acceleration); // ApplyChase toward `away` = backpedal
                     npc.spriteDirection = faceP;                   // keep facing the player while moving back
                     action = "kite-back";
-                    reason = $"d={distTiles:F0}<t{nav.KiteTargetDist:F0}";
+                    reason = $"d={distTiles:F0}<t{globalNPC.KiteTargetDist:F0}";
                 }
                 return true;
             }
 
             // In the band (or a let-close window) → creep forward/back slowly and fire.
             const float holdDriftSpeedMult = 0.35f;
-            if (nav.KiteHoldDrift == 0)
+            if (globalNPC.KiteHoldDrift == 0)
             {
-                nav.KiteHoldDrift = -1;
+                globalNPC.KiteHoldDrift = -1;
             }
-            int drift = nav.KiteHoldDrift;
+            int drift = globalNPC.KiteHoldDrift;
             int driftDir = drift * faceP;
             int driftFrontX = GetFrontTileX(npc, driftDir);
             if (IsCliffAhead(npc, driftDir) || GetObstacleHeight(driftFrontX, GetFeetTileY(npc)) > 1)
@@ -2184,7 +2187,7 @@ namespace tsorcRevamp.NPCs
                 int otherFrontX = GetFrontTileX(npc, otherDir);
                 if (!IsCliffAhead(npc, otherDir) && GetObstacleHeight(otherFrontX, GetFeetTileY(npc)) <= 1)
                 {
-                    nav.KiteHoldDrift *= -1;
+                    globalNPC.KiteHoldDrift *= -1;
                     driftDir = otherDir;
                     drift *= -1;
                 }
@@ -2202,14 +2205,14 @@ namespace tsorcRevamp.NPCs
                     npc.velocity.X *= 0.6f;
                 }
                 action = "kite-hold";
-                reason = nav.KiteLetClose ? $"d={distTiles:F0} let-close blocked" : $"d={distTiles:F0} band blocked";
+                reason = globalNPC.KiteLetClose ? $"d={distTiles:F0} let-close blocked" : $"d={distTiles:F0} band blocked";
             }
             else
             {
                 ApplyChase(npc, driftDir, topSpeed * holdDriftSpeedMult, acceleration);
                 npc.spriteDirection = faceP;
                 action = drift > 0 ? "kite-drift-forward" : "kite-drift-back";
-                reason = nav.KiteLetClose ? $"d={distTiles:F0} let-close" : $"d={distTiles:F0} band";
+                reason = globalNPC.KiteLetClose ? $"d={distTiles:F0} let-close" : $"d={distTiles:F0} band";
             }
             return true;
         }
@@ -2296,20 +2299,21 @@ namespace tsorcRevamp.NPCs
             // Re-roll the band target occasionally so it can't reverse course every frame (hysteresis).
             if (closeOnRangedThreat)
             {
-                nav.KiteTargetDist = 0f;
-                nav.KiteRerollTimer = 0;
+                globalNPC.KiteTargetDist = 0f;
+                globalNPC.KiteRerollTimer = 0;
             }
-            else if (nav.KiteRerollTimer <= 0)
+            else if (globalNPC.KiteRerollTimer <= 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 float bandMin = globalNPC.KiteRangeMin > 0 ? globalNPC.KiteRangeMin : 6f;
                 float bandMax = globalNPC.KiteRangeMax > 0 ? globalNPC.KiteRangeMax : 20f;
-                nav.KiteTargetDist = MathHelper.Lerp(bandMin, bandMax, Main.rand.NextFloat());
-                nav.KiteHoldDrift = Main.rand.NextBool() ? 1 : -1;
-                nav.KiteRerollTimer = Main.rand.Next(90, 240); // ~1.5-4s committed
+                globalNPC.KiteTargetDist = MathHelper.Lerp(bandMin, bandMax, Main.rand.NextFloat());
+                globalNPC.KiteHoldDrift = Main.rand.NextBool() ? 1 : -1;
+                globalNPC.KiteRerollTimer = Main.rand.Next(90, 240); // ~1.5-4s committed
+                globalNPC.RequestNetworkSnapshot();
             }
-            else
+            else if (globalNPC.KiteRerollTimer > 0)
             {
-                nav.KiteRerollTimer--;
+                globalNPC.KiteRerollTimer--;
             }
 
             const float deadband = 2f;
@@ -2321,19 +2325,19 @@ namespace tsorcRevamp.NPCs
                 desired = faceP;
                 speed = topSpeed; // pressure posture: approach-only
             }
-            else if (!approachBlocked && distTiles > nav.KiteTargetDist + deadband)
+            else if (!approachBlocked && distTiles > globalNPC.KiteTargetDist + deadband)
             {
                 desired = faceP;
                 speed = topSpeed; // too far → close as far as terrain allows
             }
-            else if (distTiles < nav.KiteTargetDist - deadband)
+            else if (distTiles < globalNPC.KiteTargetDist - deadband)
             {
                 desired = -faceP;
                 speed = BeastRetreatSpeed(globalNPC); // too close → back off (hit-scaled)
             }
             else
             {
-                desired = nav.KiteHoldDrift * faceP;                              // in band (or approach blocked) → slow drift in/out
+                desired = globalNPC.KiteHoldDrift * faceP;                        // in band (or approach blocked) → slow drift in/out
                 speed = Math.Max(topSpeed * 0.45f, globalNPC.BeastRetreatSpeedCalm);
             }
 
@@ -2341,7 +2345,7 @@ namespace tsorcRevamp.NPCs
             ApplyChase(npc, moveDir, speed, acceleration);
             npc.spriteDirection = faceP;
             action = closeOnRangedThreat ? "beast-ranged-pursuit" : "beast-oscillate";
-            reason = $"d={distTiles:F0} t={nav.KiteTargetDist:F0}";
+            reason = $"d={distTiles:F0} t={globalNPC.KiteTargetDist:F0}";
         }
 
         // ── Phase 2: bull through thin (<= BeastPhaseMaxWidth) body/head obstructions ─────────────────────────────
@@ -4872,10 +4876,8 @@ namespace tsorcRevamp.NPCs
             public int HardStuckStrikes;   // consecutive ~2s windows with no real net progress (Fix C v3)
             // Ranged kiting (TryRangedKite): drifting target distance, hold-drift direction,
             // re-roll timer, and a per-window "let melee close".
-            public float KiteTargetDist;
-            public int KiteRerollTimer;
-            public bool KiteLetClose;
-            public int KiteHoldDrift;
+            // The kite band (target distance, drift, let-close window, re-roll timer) moved to tsorcRevampGlobalNPC so
+            // it can be synced: the server rolls it and every machine holds the same spacing. See GlobalNPC.KiteThreat.cs.
             // Large-beast positioner (TryBeastReposition): post-touch retreat countdown so it bobs out of melee
             // instead of grinding centered on the player (the sprite-glitch / "trapped on top of you" case).
             public int BeastContactBackoff;

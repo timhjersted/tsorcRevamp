@@ -353,6 +353,9 @@ namespace tsorcRevamp.NPCs
         public int FighterAttacksSincePause;
         public bool FighterRangedHitInterruptedPause;
         public int FighterRangedStandShotsRemaining;  // >0 = standing-fire mode; decrement each shot, exit when zero
+        /// <summary>Whether THIS attack is taken planted. Decided once, on the server, at the first tick of the
+        /// telegraph window and held for the whole window — see the stop-to-fire block in SimpleProjectile.</summary>
+        public bool StandingFireThisAttack;
         public int FighterNoLosPursuitBoostTimer;
 
         // Single source of truth for "this enemy is committed to an attack and cannot be interrupted/knocked back".
@@ -473,6 +476,15 @@ namespace tsorcRevamp.NPCs
         public int FighterEvasionCooldown;
         /// <summary>Client only: a ModNPC hit hook asked for EvasiveOnHit this hit; the hit report sends it to the server.</summary>
         public bool EvasiveOnHitRequested;
+        /// <summary>Client only: a shield enemy's hit hook asked to raise its guard this hit, and the hold length it
+        /// asked for. The hit report carries both to the server, which does the roll (tsorcRevampAIs.TryOnHitBlock).</summary>
+        public bool OnHitBlockRequested;
+        public int OnHitBlockRequestTicks;
+        /// <summary>Client only: a ModNPC hit hook asked for the legacy FighterOnHit reaction this hit; the hit report
+        /// sends it to the server, which runs the rolls and the resulting hop/dash/teleport.</summary>
+        public bool FighterOnHitRequested;
+        /// <summary>Client only: a ModNPC asked for its own IHitReactor reaction this hit (see RequestHitReaction).</summary>
+        public bool HitReactionRequested;
 
         // === Evasive on-hit capability flags (see EvasiveProfile + tsorcRevampAIs.EvasiveOnHit) ===
         // Opt-in per enemy in SetDefaults (directly, or via an EvasiveProfile.* bundle). The shared EvasiveOnHit
@@ -870,6 +882,10 @@ namespace tsorcRevamp.NPCs
             public bool FriendlyProjectile;
             public bool CrossedFleeThreshold;   // this hit took it below 1/5 life, judged from the hitter's pre-hit life
             public bool EvasiveOnHitRequested;  // a ModNPC hook called tsorcRevampAIs.EvasiveOnHit for this hit
+            public bool OnHitBlockRequested;    // a shield enemy's hook called tsorcRevampAIs.TryOnHitBlock for this hit
+            public int OnHitBlockTicks;         // the guard hold that hook asked for (clamped server-side)
+            public bool FighterOnHitRequested;  // a ModNPC hook called tsorcRevampAIs.FighterOnHit for this hit
+            public bool HitReactionRequested;   // a ModNPC hook asked for its own IHitReactor reaction for this hit
 
             public void Write(BinaryWriter writer)
             {
@@ -884,6 +900,10 @@ namespace tsorcRevamp.NPCs
                 writer.Write(FriendlyProjectile);
                 writer.Write(CrossedFleeThreshold);
                 writer.Write(EvasiveOnHitRequested);
+                writer.Write(OnHitBlockRequested);
+                writer.Write((short)Math.Clamp(OnHitBlockTicks, 0, short.MaxValue));
+                writer.Write(FighterOnHitRequested);
+                writer.Write(HitReactionRequested);
             }
 
             public static NPCHitReport Read(BinaryReader reader)
@@ -900,8 +920,29 @@ namespace tsorcRevamp.NPCs
                 report.FriendlyProjectile = reader.ReadBoolean();
                 report.CrossedFleeThreshold = reader.ReadBoolean();
                 report.EvasiveOnHitRequested = reader.ReadBoolean();
+                report.OnHitBlockRequested = reader.ReadBoolean();
+                report.OnHitBlockTicks = reader.ReadInt16();
+                report.FighterOnHitRequested = reader.ReadBoolean();
+                report.HitReactionRequested = reader.ReadBoolean();
                 report.AttackerPlayer = -1;
                 return report;
+            }
+        }
+
+        /// <summary>Run this enemy's own <see cref="IHitReactor"/> reaction where hits are authoritative. Call it from a
+        /// ModNPC.OnHitBy* hook in place of reacting there directly: that hook runs only on the attacking client, so on a
+        /// client this just flags the request and the hit's report carries it to the server.</summary>
+        public void RequestHitReaction(NPC npc, bool melee)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                HitReactionRequested = true;
+                return;
+            }
+
+            if (npc.ModNPC is IHitReactor reactor)
+            {
+                reactor.OnServerHit(npc, melee);
             }
         }
 
@@ -912,6 +953,14 @@ namespace tsorcRevamp.NPCs
         {
             report.EvasiveOnHitRequested = EvasiveOnHitRequested;
             EvasiveOnHitRequested = false;
+            report.OnHitBlockRequested = OnHitBlockRequested;
+            report.OnHitBlockTicks = OnHitBlockRequestTicks;
+            OnHitBlockRequested = false;
+            OnHitBlockRequestTicks = 0;
+            report.FighterOnHitRequested = FighterOnHitRequested;
+            FighterOnHitRequested = false;
+            report.HitReactionRequested = HitReactionRequested;
+            HitReactionRequested = false;
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -942,6 +991,7 @@ namespace tsorcRevamp.NPCs
         {
             int staggerBefore = StaggerTimer;
             int evasionCooldownBefore = FighterEvasionCooldown;
+            bool fleeingBefore = Fleeing;
 
             if (report.AppliesPoise)
             {
@@ -990,14 +1040,39 @@ namespace tsorcRevamp.NPCs
                 Fleeing = true;
             }
 
-            if (report.EvasiveOnHitRequested)
+            // Legacy fighter reaction (hop back, dash away, blink). Its hook runs on the attacker's machine only, and
+            // its teleport helpers are server-gated internally, so before this routing it never ran at all in MP.
+            if (report.FighterOnHitRequested)
+            {
+                tsorcRevampAIs.FighterOnHit(npc, report.MeleeHit);
+            }
+
+            // The enemy's own bespoke reaction, in the same order its hit hook used: FighterOnHit first, then its own.
+            if (report.HitReactionRequested && npc.ModNPC is IHitReactor reactor)
+            {
+                reactor.OnServerHit(npc, report.MeleeHit);
+            }
+
+            // Shield enemies roll the guard first and only evade if it failed — that order lives in their hit hooks
+            // ("if (!TryOnHitBlock(...)) EvasiveOnHit(...)", see LothricKnight.OnHitByItem). On a client both requests
+            // ride the same report, so the precedence has to be reproduced here instead.
+            bool blockedThisHit = false;
+            if (report.OnHitBlockRequested)
+            {
+                blockedThisHit = tsorcRevampAIs.TryOnHitBlock(npc, this, report.MeleeHit, report.OnHitBlockTicks);
+            }
+
+            if (report.EvasiveOnHitRequested && !blockedThisHit)
             {
                 tsorcRevampAIs.EvasiveOnHit(npc, report.MeleeHit);
             }
 
             bool staggerStarted = staggerBefore <= 0 && StaggerTimer > 0;
             bool evasionStarted = FighterEvasionCooldown > evasionCooldownBefore;
-            return staggerStarted || evasionStarted;
+            bool fleeStarted = !fleeingBefore && Fleeing; // turning tail changes the whole AI; clients need it at once
+            // FighterOnHit and a bespoke reaction both move the body on several branches; flush rather than track each.
+            return staggerStarted || evasionStarted || blockedThisHit || fleeStarted
+                || report.FighterOnHitRequested || report.HitReactionRequested;
         }
 
         /// <summary>Enter the staggered state: launch, freeze, cancel a windup attack, and escalate.</summary>
@@ -1959,7 +2034,9 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            if (CanSelfHeal && Main.rand.NextBool(SelfHealChance))
+            // Server-only, like the heal-allies roll above it: a client rolling its own heal shows a phantom heal
+            // number and a life bar that disagrees with the server until the next sync.
+            if (CanSelfHeal && Main.rand.NextBool(SelfHealChance) && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 npc.life = Math.Min(npc.life + SelfHealAmount, npc.lifeMax);
                 npc.HealEffect(SelfHealAmount);
@@ -1985,6 +2062,14 @@ namespace tsorcRevamp.NPCs
             // Stagger freeze: override the AI's movement so a staggered enemy is stunned in place. Last write to
             // velocity in the common PostAI path so it wins over pursuit/confusion/standoff set above.
             ApplyStaggerMovement(npc);
+
+            // Send anything this tick's AI asked to push immediately (see RequestNetworkSnapshot). Sits above the
+            // ghost-wall early return so every NPC reaches it; a request made inside that section goes out next tick.
+            if (snapshotRequested && Main.netMode == NetmodeID.Server)
+            {
+                snapshotRequested = false;
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
+            }
 
             if (!CanPassThroughWalls)
                 return;
@@ -2170,6 +2255,25 @@ namespace tsorcRevamp.NPCs
             return false; // far side is solid earth
         }
 
+        // ── Instant network snapshot ──────────────────────────────────────────────
+        // Vanilla holds a queued npc.netUpdate to one packet per 5 ticks for a boss and per 30 for everything else
+        // (netSpam, decompiled NPC.cs ~107840) — far too slow for state a client has to follow on the tick it changes:
+        // an armed dodge roll's i-frames, a raised guard, a teleport countdown. Server code calls
+        // RequestNetworkSnapshot() and PostAI sends one SyncNPC for this NPC, bypassing the throttle. Mirrors
+        // PuppetNPC.RequestNetworkSnapshot so both AI families flush the same way.
+        private bool snapshotRequested;
+
+        /// <summary>Server only: send this NPC's whole state (including SendExtraAI) at the end of this tick rather
+        /// than waiting on vanilla's netSpam throttle. No-op in singleplayer and on clients, so it is always safe to
+        /// call right where the state changes.</summary>
+        public void RequestNetworkSnapshot()
+        {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                snapshotRequested = true;
+            }
+        }
+
         public override void SendExtraAI(NPC npc, BitWriter bitWriter, BinaryWriter binaryWriter)
         {
             binaryWriter.Write(DoorBreakProgress);
@@ -2235,6 +2339,50 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write((short)Math.Clamp(EvasiveTimer, 0, short.MaxValue));
             binaryWriter.Write(EvasiveTelegraphing);
             binaryWriter.Write((short)Math.Clamp(FighterEvasionCooldown, 0, short.MaxValue));
+
+            // Reactive guard. Server-rolled (pre-emptive scan + the on-hit roll in ApplyHitReport); clients need it
+            // because their own AI reads it every tick to pose the shield and set ShieldGuarding, which the attacker's
+            // ModifyHitBy uses for damage reduction. Lives here rather than per-enemy so every shield user is covered.
+            binaryWriter.Write((short)Math.Clamp(ReactiveBlockTimer, 0, short.MaxValue));
+
+            // Stop-to-fire rhythm, all server-rolled in SimpleProjectile: the attack a client must telegraph next, and
+            // the two counters that decide whether the enemy stands still instead of advancing. A standing enemy is
+            // below vanilla's proximity-stream speed threshold, so nothing else would correct these on a client.
+            binaryWriter.Write((short)Math.Clamp(NextAttackIndex, 0, short.MaxValue));
+            binaryWriter.Write((short)Math.Clamp(FighterRangedStandShotsRemaining, 0, short.MaxValue));
+            binaryWriter.Write((short)Math.Clamp(FighterPostAttackPauseTimer, 0, short.MaxValue));
+            binaryWriter.Write(StandingFireThisAttack);
+
+            // Low-HP flee (rolled from Cowardice in ApplyHitReport). It gates firing, the pursuit FSM and the ledge
+            // halt, so a client that never learns about it keeps chasing and telegraphing shots the server won't fire.
+            binaryWriter.Write(Fleeing);
+
+            // Pounce / patrol / kite-band state, all server-decided. Grouped behind one presence flag because this
+            // global rides EVERY NPC's sync and most NPCs in a world never pounce, patrol or kite: they pay one bool
+            // instead of ~30 bytes. Keep the write order below identical to the read order in ReceiveExtraAI.
+            bool hasMovementState = PounceTimer != 0 || PounceCooldown != 0 || HeavyPounceAirborne
+                || DirectPounceRecoveryTimer != 0 || DirectPounceAfterimageTimer != 0
+                || PatrolDirection != 0 || PatrolIdleTimer != 0 || PatrolLegRemaining != 0
+                || KiteRerollTimer != 0 || KiteTargetDist != 0f;
+            binaryWriter.Write(hasMovementState);
+            if (hasMovementState)
+            {
+                binaryWriter.Write((short)Math.Clamp(PounceTimer, 0, short.MaxValue));
+                binaryWriter.Write((short)Math.Clamp(PounceCooldown, 0, short.MaxValue));
+                binaryWriter.WriteVector2(PounceTarget);
+                binaryWriter.Write(HeavyPounceAirborne);
+                binaryWriter.Write((short)Math.Clamp(DirectPounceRecoveryTimer, 0, short.MaxValue));
+                binaryWriter.Write((short)Math.Clamp(DirectPounceAfterimageTimer, 0, short.MaxValue));
+
+                binaryWriter.Write((sbyte)Math.Clamp(PatrolDirection, -1, 1));
+                binaryWriter.Write((short)Math.Clamp(PatrolIdleTimer, 0, short.MaxValue));
+                binaryWriter.Write((short)Math.Clamp(PatrolLegRemaining, 0, short.MaxValue));
+
+                binaryWriter.Write(KiteTargetDist);
+                binaryWriter.Write((sbyte)Math.Clamp(KiteHoldDrift, -1, 1));
+                binaryWriter.Write(KiteLetClose);
+                binaryWriter.Write((short)Math.Clamp(KiteRerollTimer, 0, short.MaxValue));
+            }
         }
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
@@ -2306,6 +2454,52 @@ namespace tsorcRevamp.NPCs
             EvasiveTimer = binaryReader.ReadInt16();
             EvasiveTelegraphing = binaryReader.ReadBoolean();
             FighterEvasionCooldown = binaryReader.ReadInt16();
+            ReactiveBlockTimer = binaryReader.ReadInt16();
+            NextAttackIndex = binaryReader.ReadInt16();
+            FighterRangedStandShotsRemaining = binaryReader.ReadInt16();
+            FighterPostAttackPauseTimer = binaryReader.ReadInt16();
+            StandingFireThisAttack = binaryReader.ReadBoolean();
+            Fleeing = binaryReader.ReadBoolean();
+
+            // Mirrors the movement block in SendExtraAI. When the flag is false the server holds no such state, so
+            // clear ours rather than leaving stale values behind from an earlier packet.
+            bool hasMovementState = binaryReader.ReadBoolean();
+            if (hasMovementState)
+            {
+                PounceTimer = binaryReader.ReadInt16();
+                PounceCooldown = binaryReader.ReadInt16();
+                PounceTarget = binaryReader.ReadVector2();
+                HeavyPounceAirborne = binaryReader.ReadBoolean();
+                DirectPounceRecoveryTimer = binaryReader.ReadInt16();
+                DirectPounceAfterimageTimer = binaryReader.ReadInt16();
+
+                PatrolDirection = binaryReader.ReadSByte();
+                PatrolIdleTimer = binaryReader.ReadInt16();
+                PatrolLegRemaining = binaryReader.ReadInt16();
+
+                KiteTargetDist = binaryReader.ReadSingle();
+                KiteHoldDrift = binaryReader.ReadSByte();
+                KiteLetClose = binaryReader.ReadBoolean();
+                KiteRerollTimer = binaryReader.ReadInt16();
+            }
+            else
+            {
+                PounceTimer = 0;
+                PounceCooldown = 0;
+                PounceTarget = Vector2.Zero;
+                HeavyPounceAirborne = false;
+                DirectPounceRecoveryTimer = 0;
+                DirectPounceAfterimageTimer = 0;
+
+                PatrolDirection = 0;
+                PatrolIdleTimer = 0;
+                PatrolLegRemaining = 0;
+
+                KiteTargetDist = 0f;
+                KiteHoldDrift = 0;
+                KiteLetClose = false;
+                KiteRerollTimer = 0;
+            }
         }
 
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)

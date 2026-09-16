@@ -115,7 +115,12 @@ namespace tsorcRevamp
             {
                 s.StuckTimer = 0;
                 s.ReplanTimer = 0;
-                self.velocity += new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-4f, -1f));
+                // The nudge is a random shove: server-only, or every machine shoves the floater a different way and
+                // it visibly fights itself between position syncs. Clients keep replanning and take the velocity.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    self.velocity += new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-4f, -1f));
+                }
             }
         }
 

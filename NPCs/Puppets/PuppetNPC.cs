@@ -3243,7 +3243,8 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             writer.Write((short)Math.Clamp(_shieldGuardCooldown, 0, short.MaxValue));
-            writer.Write((short)Math.Clamp(globalNPC.ReactiveBlockTimer, 0, short.MaxValue));
+            // ReactiveBlockTimer is NOT written here: tsorcRevampGlobalNPC syncs it for every shield user, puppet or
+            // not. Only the puppet-specific guard pose/cooldown belong in this packet.
             writer.Write(_shielding);
             writer.Write(_mountSpawned);
             writer.Write(_attackRuntimeV2.Active);
@@ -3398,7 +3399,6 @@ namespace tsorcRevamp.NPCs.Puppets
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             _shieldGuardCooldown = reader.ReadInt16();
-            int shieldTimer = reader.ReadInt16();
             bool shieldActive = reader.ReadBoolean();
             _mountSpawned = reader.ReadBoolean();
             bool runtimeActive = reader.ReadBoolean();
@@ -3432,18 +3432,18 @@ namespace tsorcRevamp.NPCs.Puppets
             int stateLength = reader.ReadUInt16();
             byte[] stateBytes = reader.ReadBytes(stateLength);
 
-            // Shield flags. The ShieldGuard phase itself arrives with the phase snapshot below.
+            // Shield flags. The ShieldGuard phase itself arrives with the phase snapshot below, and the guard's
+            // remaining hold (ReactiveBlockTimer) lands a moment later: tModLoader reads this ModNPC block first and
+            // the GlobalNPC blocks straight after (NPCLoader.ReceiveExtraAI), so nothing here may depend on it.
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             if (runtimeActive)
             {
-                shieldTimer = 0;
                 shieldActive = false;
             }
             if (shieldActive && !_shielding)
             {
                 _shieldLockedDir = NPC.direction;
             }
-            globalNPC.ReactiveBlockTimer = shieldTimer;
             globalNPC.ShieldGuarding = shieldActive;
             _shielding = shieldActive;
             _shieldWasGuarding = shieldActive;

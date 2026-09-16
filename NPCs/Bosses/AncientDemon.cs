@@ -14,7 +14,7 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Bosses
 {
     [AutoloadBossHead]
-    class AncientDemon : ModNPC
+    class AncientDemon : ModNPC, IHitReactor
     {
         int meteorDamage = 16;
         int cultistFireDamage = 36;
@@ -79,45 +79,61 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             tsorcRevampAIs.FighterOnHit(NPC, true);
-
-            //JUSTHIT CODE
-            //MELEE RANGE
-            if (NPC.Distance(player.Center) < 100 && NPC.localAI[1] < 70f) //npc.justHit && 
-            {
-                NPC.localAI[1] = 50f;
-
-                //TELEPORT MELEE
-                if (Main.rand.NextBool(5) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
-                {
-                    tsorcRevampAIs.QueueTeleport(NPC, 25, true);
-                }
-            }
-            //RISK ZONE
-            if (NPC.Distance(player.Center) < 300 && NPC.localAI[1] < 70f && Main.rand.NextBool(5))//npc.justHit && 
-            {
-                NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
-                float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-10f, -7f);
-                NPC.velocity.X = v;
-                NPC.netUpdate = true;
-            }
-
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, true);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            //TELEPORT RANGED
-            if (Main.rand.NextBool(12) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
-            {
-                tsorcRevampAIs.QueueTeleport(NPC, 20, true);
-                NPC.localAI[1] = 70f;
-            }
-            //RANGED
-            if (NPC.Distance(player.Center) > 201 && NPC.velocity.Y == 0f && Main.rand.NextBool(3))//npc.justHit &&
-            {
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, false);
+        }
 
-                NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(11f, 8f);
-                NPC.netUpdate = true;
+        /// <summary>Punished for standing still: in melee it may blink out, and inside the "risk zone" (300px) it
+        /// shoves itself backwards; from range it blinks more rarely and hops back instead. localAI[1] is its own
+        /// post-hit lockout, so the reactions can't chain every frame of a combo. Server/singleplayer only (see
+        /// IHitReactor) — the rolls and QueueTeleport belong on the machine that owns this NPC, and distance is
+        /// measured to its current target rather than to whoever landed this particular hit.</summary>
+        void IHitReactor.OnServerHit(NPC npc, bool melee)
+        {
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            if (melee)
+            {
+                //MELEE RANGE
+                if (npc.Distance(player.Center) < 100 && npc.localAI[1] < 70f)
+                {
+                    npc.localAI[1] = 50f;
+
+                    //TELEPORT MELEE
+                    if (Main.rand.NextBool(5) && globalNPC.TeleportCountdown == 0)
+                    {
+                        tsorcRevampAIs.QueueTeleport(npc, 25, true);
+                    }
+                }
+
+                //RISK ZONE
+                if (npc.Distance(player.Center) < 300 && npc.localAI[1] < 70f && Main.rand.NextBool(5))
+                {
+                    npc.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
+                    npc.velocity.X += npc.direction * Main.rand.NextFloat(-10f, -7f);
+                    npc.netUpdate = true;
+                }
+
+                return;
+            }
+
+            //TELEPORT RANGED
+            if (Main.rand.NextBool(12) && globalNPC.TeleportCountdown == 0)
+            {
+                tsorcRevampAIs.QueueTeleport(npc, 20, true);
+                npc.localAI[1] = 70f;
+            }
+
+            //RANGED
+            if (npc.Distance(player.Center) > 201 && npc.velocity.Y == 0f && Main.rand.NextBool(3))
+            {
+                npc.velocity.Y = Main.rand.NextFloat(-9f, -3f);
+                npc.velocity.X += npc.direction * Main.rand.NextFloat(11f, 8f);
+                npc.netUpdate = true;
             }
         }
 

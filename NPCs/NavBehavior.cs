@@ -248,6 +248,9 @@ namespace tsorcRevamp.NPCs
             // immediately, and ReturnToSpawn should start walking back to its anchor immediately.
             globalNPC.PatrolIdleTimer = globalNPC.PatrolMode == PatrolMode.Idle ? IdleStandTicks : 0;
             globalNPC.PatrolElapsed = 0;
+            // Giving up the chase resets direction and both patrol timers at once — push the whole lot rather than
+            // letting clients discover it field by field on the next throttled update.
+            globalNPC.RequestNetworkSnapshot();
         }
 
         // =====================================================================================
@@ -318,8 +321,13 @@ namespace tsorcRevamp.NPCs
                 if (!StepAlong(npc, globalNPC.PatrolDirection, topSpeed, acceleration))
                 {
                     globalNPC.PatrolLegRemaining = 0;
-                    if (!TryStartIdleLeg(npc, globalNPC, topSpeed, acceleration, -globalNPC.PatrolDirection))
+                    // Choosing the next leg is a decision (it rolls a length); a client holds still on the spot until
+                    // the server's leg arrives, rather than walking a different way from everyone else.
+                    if (Main.netMode != NetmodeID.MultiplayerClient
+                        && !TryStartIdleLeg(npc, globalNPC, topSpeed, acceleration, -globalNPC.PatrolDirection))
+                    {
                         globalNPC.PatrolIdleTimer = IdleStandTicks;
+                    }
                 }
                 else if (globalNPC.PatrolLegRemaining == 0)
                 {
@@ -333,7 +341,8 @@ namespace tsorcRevamp.NPCs
                 {
                     globalNPC.PatrolIdleTimer--;
                 }
-                else if (!TryStartIdleLeg(npc, globalNPC, topSpeed, acceleration, Main.rand.NextBool() ? 1 : -1))
+                else if (Main.netMode != NetmodeID.MultiplayerClient
+                    && !TryStartIdleLeg(npc, globalNPC, topSpeed, acceleration, Main.rand.NextBool() ? 1 : -1))
                 {
                     // Neither side is safe (for example, a roof with deep drops on both sides). Retry after a
                     // bounded pause instead of rerolling an arbitrarily long stationary chain every frame.
@@ -353,12 +362,14 @@ namespace tsorcRevamp.NPCs
             {
                 globalNPC.PatrolDirection = firstDirection;
                 globalNPC.PatrolLegRemaining = Math.Max(0, walkFrames - 1); // StepAlong already moved this first frame.
+                globalNPC.RequestNetworkSnapshot();
                 return true;
             }
             if (StepAlong(npc, secondDirection, topSpeed, acceleration))
             {
                 globalNPC.PatrolDirection = secondDirection;
                 globalNPC.PatrolLegRemaining = Math.Max(0, walkFrames - 1);
+                globalNPC.RequestNetworkSnapshot();
                 return true;
             }
             return false;
@@ -387,7 +398,9 @@ namespace tsorcRevamp.NPCs
         {
             if (globalNPC.PatrolDirection == 0)
             {
-                globalNPC.PatrolDirection = Main.rand.NextBool() ? 1 : -1;
+                // Deterministic fallback rather than a roll: EnterPatrol normally seeds this from npc.direction, and
+                // every machine has to agree on it without waiting for a packet.
+                globalNPC.PatrolDirection = npc.direction != 0 ? npc.direction : 1;
             }
             if (globalNPC.PatrolTerrainRecoveryTimer > 0)
             {
@@ -421,8 +434,10 @@ namespace tsorcRevamp.NPCs
                 {
                     globalNPC.PatrolIdleTimer--;
                 }
-                else
+                else if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    // Both the turn and the commit length are rolls, so the server picks them and the snapshot in
+                    // ChooseNextWanderDirection carries the new leg.
                     ChooseNextWanderDirection(npc, globalNPC);
                     globalNPC.PatrolIdleTimer = GetWanderCommitFrames(globalNPC, topSpeed);
                 }
@@ -471,7 +486,7 @@ namespace tsorcRevamp.NPCs
                 {
                     globalNPC.PatrolIdleTimer--;
                 }
-                else
+                else if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     ChooseNextWanderDirection(npc, globalNPC);
                     globalNPC.PatrolIdleTimer = GetWanderCommitFrames(globalNPC, topSpeed);
@@ -487,6 +502,7 @@ namespace tsorcRevamp.NPCs
                 if (playerDirection != 0 && Main.rand.NextFloat() < globalNPC.PatrolTargetDirectionBias)
                 {
                     globalNPC.PatrolDirection = playerDirection;
+                    globalNPC.RequestNetworkSnapshot();
                     return;
                 }
             }
@@ -495,6 +511,8 @@ namespace tsorcRevamp.NPCs
             {
                 globalNPC.PatrolDirection = -globalNPC.PatrolDirection;
             }
+
+            globalNPC.RequestNetworkSnapshot();
         }
 
         private static int GetWanderCommitFrames(tsorcRevampGlobalNPC globalNPC, float topSpeed, int minimumTiles = 0)

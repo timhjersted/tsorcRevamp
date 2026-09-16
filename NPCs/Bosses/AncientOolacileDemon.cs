@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses
 {
     [AutoloadBossHead]
 
-    class AncientOolacileDemon : ModNPC
+    class AncientOolacileDemon : ModNPC, IHitReactor
     {
         int meteorDamage = 11;
         int cultistFireDamage = 15;
@@ -123,49 +123,61 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             tsorcRevampAIs.FighterOnHit(NPC, true);
-
-            //JUSTHIT CODE
-            //MELEE RANGE
-            if (NPC.Distance(player.Center) < 100 && NPC.localAI[1] < 70f)
-            {
-                NPC.localAI[1] = 40f;
-
-                //TELEPORT MELEE
-                if (Main.rand.NextBool(12) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
-                {
-                    tsorcRevampAIs.QueueTeleport(NPC, 25, true, 180);
-                    NPC.localAI[1] = 0f;
-                }
-            }
-            //RISK ZONE
-            if (NPC.Distance(player.Center) < 300 && NPC.localAI[1] < 70f && Main.rand.NextBool(5))
-            {
-                NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
-                float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-10f, -7f);
-                NPC.velocity.X = v;
-
-                NPC.netUpdate = true;
-            }
-
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, true);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, false);
+        }
+
+        /// <summary>Same shape as the Ancient Demon's reaction but slower to blink (1/12 melee, 1/24 ranged) and with a
+        /// 180-tick teleport telegraph. localAI[1] is its post-hit lockout; a successful blink zeroes it so the demon is
+        /// immediately reactive again on arrival. Server/singleplayer only (see IHitReactor); distances are measured to
+        /// its current target, not to whoever landed this hit.</summary>
+        void IHitReactor.OnServerHit(NPC npc, bool melee)
+        {
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            if (melee)
+            {
+                //MELEE RANGE
+                if (npc.Distance(Player.Center) < 100 && npc.localAI[1] < 70f)
+                {
+                    npc.localAI[1] = 40f;
+
+                    //TELEPORT MELEE
+                    if (Main.rand.NextBool(12) && globalNPC.TeleportCountdown == 0)
+                    {
+                        tsorcRevampAIs.QueueTeleport(npc, 25, true, 180);
+                        npc.localAI[1] = 0f;
+                    }
+                }
+
+                //RISK ZONE
+                if (npc.Distance(Player.Center) < 300 && npc.localAI[1] < 70f && Main.rand.NextBool(5))
+                {
+                    npc.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
+                    npc.velocity.X += npc.direction * Main.rand.NextFloat(-10f, -7f);
+                    npc.netUpdate = true;
+                }
+
+                return;
+            }
 
             //TELEPORT RANGED
-            if (Main.rand.NextBool(24) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
+            if (Main.rand.NextBool(24) && globalNPC.TeleportCountdown == 0)
             {
-                tsorcRevampAIs.QueueTeleport(NPC, 25, true, 180);
-                NPC.localAI[1] = 0f;
+                tsorcRevampAIs.QueueTeleport(npc, 25, true, 180);
+                npc.localAI[1] = 0f;
             }
+
             //RANGED
-            if (NPC.Distance(Player.Center) > 201 && NPC.velocity.Y == 0f && Main.rand.NextBool(3))
+            if (npc.Distance(Player.Center) > 201 && npc.velocity.Y == 0f && Main.rand.NextBool(3))
             {
-
-                NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(11f, 8f);
-                NPC.netUpdate = true;
-
+                npc.velocity.Y = Main.rand.NextFloat(-9f, -3f);
+                npc.velocity.X += npc.direction * Main.rand.NextFloat(11f, 8f);
+                npc.netUpdate = true;
             }
         }
 

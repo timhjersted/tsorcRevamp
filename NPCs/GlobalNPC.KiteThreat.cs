@@ -30,6 +30,15 @@ namespace tsorcRevamp.NPCs
         public float AdvanceAndShootSpeedMultiplier = 1.45f;
         public float AdvanceAndShootAccelerationMultiplier = 1.35f;
 
+        // === Kite band (SmartFighter4AI's ranged spacing + the large-beast oscillator) ===
+        // These lived in SF4's per-machine NavState, so every client rolled its own preferred distance and the enemy
+        // held different spacing on each screen. They live here so the server can roll them once and sync them: SF4
+        // reads them every tick, only the server re-rolls, and they ride the movement block in the main SendExtraAI.
+        public float KiteTargetDist;  // preferred distance this cycle, in tiles
+        public int KiteHoldDrift;     // +1 = drift toward the player while in band, -1 = away
+        public bool KiteLetClose;     // this cycle tolerates the player closing inside the band
+        public int KiteRerollTimer;   // ticks until the next band roll (~1.5-4s)
+
         /// <summary>
         /// True when this kiting enemy is in its default aggressive posture — pursuing the player rather
         /// than maintaining the kite band. This is the DEFAULT state. It is only false when the enemy is
@@ -159,6 +168,8 @@ namespace tsorcRevamp.NPCs
 
         internal void SendKiteThreat(BinaryWriter writer)
         {
+            // NOTE: the kite BAND below is written in the main SendExtraAI's movement block, not here — it shares one
+            // presence flag with the pounce/patrol state so an NPC that never kites pays a single bool for all of it.
             writer.Write(KiteRangedThreatTimer);
             writer.Write(KiteRangedThreatPlayer);
         }

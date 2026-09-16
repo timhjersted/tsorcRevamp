@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -5,6 +7,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Utilities;
 
@@ -233,6 +236,111 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
             int[] bodyTypes = SerpentAI.BuildBodyTypes();
             //4f pursue speed -- deliberately slow (hardmode pacing); kiting caps it further near the player.
             SerpentAI.Run(NPC, ModContent.NPCType<GreatSerpentHead>(), bodyTypes, ModContent.NPCType<GreatSerpentTail>(), TotalSegmentCount, 4f);
+        }
+
+        /// <summary>
+        /// The serpent's whole decision state. SerpentAI rolls every attack, charge, cross-over, tail stab and ambush
+        /// on the server; before this packet existed each machine rolled its own, so a client could animate a bite
+        /// while the server breathed fire, and since contact damage resolves against the copy on the victim's own
+        /// screen, the lunge that hurt you matched the real one only by coincidence.
+        /// <para/>
+        /// Timers ride along so a client can keep predicting a committed attack between packets. The three values
+        /// locked from the player's position at a transition — LungeVelocity, BreathBaseAngle, TailStabTarget — must
+        /// be sent rather than recomputed, or each machine locks a slightly different line. Derived per-tick values
+        /// (TailStabTip/Anchor, the posed chain) are deliberately absent.
+        /// </summary>
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write((byte)Attack);
+            writer.Write((short)Math.Clamp(AttackTimer, short.MinValue, short.MaxValue));
+            writer.Write((short)Math.Clamp(AttackCooldown, short.MinValue, short.MaxValue));
+            writer.Write(AttackAnchorY);
+            writer.WriteVector2(LungeVelocity);
+            writer.Write(BreathBaseAngle);
+            writer.Write((byte)Math.Clamp(SpitVariation, 0, byte.MaxValue));
+            writer.Write((short)Math.Clamp(SpitTick, 0, short.MaxValue));
+            writer.Write((byte)Math.Clamp(MouthTransitionTimer, 0, byte.MaxValue));
+
+            writer.Write((byte)TailStab);
+            writer.Write((byte)TailStabMode);
+            writer.Write((short)Math.Clamp(TailStabTimer, short.MinValue, short.MaxValue));
+            writer.Write((short)Math.Clamp(TailStabCooldown, 0, short.MaxValue));
+            writer.Write((byte)Math.Clamp(TailStabCombo, 0, byte.MaxValue));
+            writer.WriteVector2(TailStabTarget);
+            writer.Write(TailStabDamaging);
+            writer.Write(TailExtend);
+
+            writer.Write((byte)Ambush);
+            writer.Write((short)Math.Clamp(AmbushTimer, short.MinValue, short.MaxValue));
+            writer.Write((byte)Math.Clamp(AmbushThresholdsTriggered, 0, byte.MaxValue));
+            writer.Write((short)Math.Clamp(CloakAlphaTarget, 0, short.MaxValue));
+            writer.Write((short)Math.Clamp(CloakCooldown, 0, short.MaxValue));
+
+            writer.Write((short)Math.Clamp(ChargeTelegraphTimer, 0, short.MaxValue));
+            writer.Write((short)Math.Clamp(ChargeTimer, 0, short.MaxValue));
+            writer.Write((short)Math.Clamp(ChargeCooldown, 0, short.MaxValue));
+            writer.WriteVector2(ChargeDirection);
+
+            writer.Write(CrossingOver);
+            writer.Write((sbyte)CrossOverDir);
+            writer.Write((short)Math.Clamp(CrossOverCooldown, 0, short.MaxValue));
+            writer.Write((sbyte)Facing);
+            writer.Write((short)Math.Clamp(StuckWanderTimer, 0, short.MaxValue));
+            //Drives the give-up wander and then the despawn. Its inputs (line of sight and distance to the target)
+            //differ slightly per machine, so without this a client could wander off while the server still pursues.
+            writer.Write((short)Math.Clamp(UnreachableTimer, 0, short.MaxValue));
+
+            writer.Write((short)Math.Clamp(AcidBodyTimer, 0, short.MaxValue));
+            writer.Write((short)Math.Clamp(AcidBodyCooldown, 0, short.MaxValue));
+
+            writer.Write(IsDying);
+            writer.Write((short)Math.Clamp(DeathFadeTimer, 0, short.MaxValue));
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Attack = (AttackState)reader.ReadByte();
+            AttackTimer = reader.ReadInt16();
+            AttackCooldown = reader.ReadInt16();
+            AttackAnchorY = reader.ReadSingle();
+            LungeVelocity = reader.ReadVector2();
+            BreathBaseAngle = reader.ReadSingle();
+            SpitVariation = reader.ReadByte();
+            SpitTick = reader.ReadInt16();
+            MouthTransitionTimer = reader.ReadByte();
+
+            TailStab = (TailStabState)reader.ReadByte();
+            TailStabMode = (TailStabKind)reader.ReadByte();
+            TailStabTimer = reader.ReadInt16();
+            TailStabCooldown = reader.ReadInt16();
+            TailStabCombo = reader.ReadByte();
+            TailStabTarget = reader.ReadVector2();
+            TailStabDamaging = reader.ReadBoolean();
+            TailExtend = reader.ReadSingle();
+
+            Ambush = (AmbushState)reader.ReadByte();
+            AmbushTimer = reader.ReadInt16();
+            AmbushThresholdsTriggered = reader.ReadByte();
+            CloakAlphaTarget = reader.ReadInt16();
+            CloakCooldown = reader.ReadInt16();
+
+            ChargeTelegraphTimer = reader.ReadInt16();
+            ChargeTimer = reader.ReadInt16();
+            ChargeCooldown = reader.ReadInt16();
+            ChargeDirection = reader.ReadVector2();
+
+            CrossingOver = reader.ReadBoolean();
+            CrossOverDir = reader.ReadSByte();
+            CrossOverCooldown = reader.ReadInt16();
+            Facing = reader.ReadSByte();
+            StuckWanderTimer = reader.ReadInt16();
+            UnreachableTimer = reader.ReadInt16();
+
+            AcidBodyTimer = reader.ReadInt16();
+            AcidBodyCooldown = reader.ReadInt16();
+
+            IsDying = reader.ReadBoolean();
+            DeathFadeTimer = reader.ReadInt16();
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)

@@ -2653,6 +2653,9 @@ namespace tsorcRevamp
                         // Bounded so a bad report can't one-shot a poise bar or fake a huge burst. The attacker is the sender.
                         report.PoiseDamage = MathHelper.Clamp(report.PoiseDamage, 0f, 1000f);
                         report.DamageDone = Math.Max(0, report.DamageDone);
+                        // 10s ceiling: the guard hold comes from the sending client, and an unbounded value would pin
+                        // a shield up permanently. The authored holds are 75-311 ticks.
+                        report.OnHitBlockTicks = Math.Clamp(report.OnHitBlockTicks, 0, 600);
                         report.AttackerPlayer = whoAmI;
 
                         NPC hitNPC = Main.npc[report.NPCIndex];

@@ -541,14 +541,17 @@ namespace tsorcRevamp.NPCs
             //itself right as the next attack's telegraph starts. Never interrupts an attack/tailstab/forced-
             //wander already in progress -- only arms between them.
             int thresholdsCrossed = (int)((1f - npc.life / (float)npc.lifeMax) / AmbushHpThresholdFraction);
+            //Server arms it: the HP step is the same number everywhere, but a client's copy of npc.life lags, so two
+            //machines would start the vanish on different ticks and the reveal (which forces an attack) would drift.
             if (thresholdsCrossed > data.AmbushThresholdsTriggered && data.Ambush == GreatSerpentHead.AmbushState.None
                 && data.TailStab == GreatSerpentHead.TailStabState.None && data.Attack == GreatSerpentHead.AttackState.None
-                && data.StuckWanderTimer <= 0 && data.ChargeTelegraphTimer <= 0 && data.ChargeTimer <= 0)
+                && data.StuckWanderTimer <= 0 && data.ChargeTelegraphTimer <= 0 && data.ChargeTimer <= 0
+                && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 data.AmbushThresholdsTriggered = thresholdsCrossed;
                 data.Ambush = GreatSerpentHead.AmbushState.Vanish;
                 data.AmbushTimer = AmbushVanishTicks;
-                npc.netUpdate = true;
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
             }
 
             if (data.Ambush != GreatSerpentHead.AmbushState.None)
@@ -572,7 +575,9 @@ namespace tsorcRevamp.NPCs
                 data.UnreachableTimer++;
             }
 
-            if (data.UnreachableTimer >= DespawnTicks)
+            //Removing the boss is the server's call; clients get it through the normal NPC sync. UnreachableTimer is
+            //synced so every machine reaches the threshold together, but a client must never retire it on its own.
+            if (data.UnreachableTimer >= DespawnTicks && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 DespawnPoof(npc);
                 return;
@@ -762,7 +767,9 @@ namespace tsorcRevamp.NPCs
 
                     bool closeEnough = Math.Abs(dx) <= AmbushRepositionRangeTiles * TileSize
                         && Collision.CanHit(npc.position, npc.width, npc.height, player.position, player.width, player.height);
-                    if (closeEnough || data.AmbushTimer <= 0)
+                    //The reveal picks the attack it bursts out with, so the server owns it; a client holds the
+                    //reposition until the snapshot brings the chosen attack.
+                    if ((closeEnough || data.AmbushTimer <= 0) && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         data.Ambush = GreatSerpentHead.AmbushState.None;
                         data.CloakAlphaTarget = 0; //reveal exactly as the forced telegraph below begins
@@ -773,7 +780,7 @@ namespace tsorcRevamp.NPCs
                         data.AttackTimer = pounce ? PounceTelegraphTicks : BiteTelegraphTicks;
                         data.MouthTransitionTimer = GreatSerpentHead.MouthTransitionTicks;
                         data.AttackAnchorY = npc.position.Y;
-                        npc.netUpdate = true;
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
                     }
                     break;
                 }
@@ -892,10 +899,12 @@ namespace tsorcRevamp.NPCs
                 //In kite range: stop advancing (don't back up), hold and attack. Occasionally commit to a cross.
                 desiredX = 0f;
                 if (absDx <= CrossOverTriggerTiles * TileSize && data.CrossOverCooldown <= 0
-                    && data.TailStab == GreatSerpentHead.TailStabState.None && Main.rand.NextBool(CrossOverTriggerRoll))
+                    && data.TailStab == GreatSerpentHead.TailStabState.None && Main.rand.NextBool(CrossOverTriggerRoll)
+                    && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     data.CrossingOver = true;
                     data.CrossOverDir = data.Facing; //forward, through the player, to the far side
+                    npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
                 }
             }
             else
@@ -1027,12 +1036,13 @@ namespace tsorcRevamp.NPCs
 
             //Charge: only from range, and not while kiting/crossing/plan-navigating (a blind charge at a wall
             //mid-route would just wedge it).
-            if (!hasPlanStep && !data.CrossingOver && data.ChargeCooldown <= 0 && distanceToPlayer >= ChargeMinDistanceTiles * TileSize && Main.rand.NextBool(ChargeTriggerRoll))
+            if (!hasPlanStep && !data.CrossingOver && data.ChargeCooldown <= 0 && distanceToPlayer >= ChargeMinDistanceTiles * TileSize && Main.rand.NextBool(ChargeTriggerRoll)
+                && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 data.ChargeTelegraphTimer = ChargeTelegraphTicks;
                 data.ChargeDirection = new Vector2(data.Facing, 0f);
                 data.ChargeCooldown = ChargeCooldownTicks;
-                npc.netUpdate = true;
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
             }
 
             TryStartAttack(npc, data, player, distanceToPlayer);
@@ -1042,7 +1052,7 @@ namespace tsorcRevamp.NPCs
             //  2. The snake straddles the player (it slithered past, player now between head and tail) and the
             //     tail is close to the player -> horizontal S. This one can fire even while crossing over.
             if (data.TailStab == GreatSerpentHead.TailStabState.None && data.TailStabCooldown <= 0
-                && Main.rand.NextBool(TailStabTriggerRoll))
+                && Main.rand.NextBool(TailStabTriggerRoll) && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 bool kiteCase = !data.CrossingOver && !hasPlanStep && playerAbsDx <= KiteRangeTiles * TileSize
                     && Collision.CanHit(npc.position, npc.width, npc.height, player.position, player.width, player.height);
@@ -1278,7 +1288,9 @@ namespace tsorcRevamp.NPCs
             data.TailStabDamaging = false;
             data.RippleTimer = 0;
             data.TailStabTip = tail != null ? tail.Center : npc.Center;
-            npc.netUpdate = true;
+            //Reached only from the server-gated trigger above; the mode is picked from geometry here, so clients must
+            //be told which arc is coming rather than choosing their own.
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
         }
 
         ///<summary>True if there's `tiles` of open (non-solid) space straight above the head -- room for the C.</summary>
@@ -1890,6 +1902,14 @@ namespace tsorcRevamp.NPCs
 
         static void TryStartAttack(NPC npc, GreatSerpentHead data, Player player, float distanceToPlayer)
         {
+            //Server picks the attack. Which one it is decides the telegraph the player reads and, for bite/pounce,
+            //where the damaging lunge goes — a client picking its own would show a tell for an attack that never
+            //comes. Clients receive Attack/AttackTimer and run the same state machine from there.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
             if (data.AttackCooldown > 0 || !Main.rand.NextBool(AttackTriggerRoll))
             {
                 return;
@@ -1932,7 +1952,7 @@ namespace tsorcRevamp.NPCs
                 //Purple flash right away -- the whole 25-tick telegraph is the warning window
                 tsorcRevampAIs.SpawnTelegraphFlash(npc, Color.Purple, EyePosition(npc));
             }
-            npc.netUpdate = true;
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
         }
 
         static void RunAttack(NPC npc, GreatSerpentHead data, tsorcRevampGlobalNPC poise)
@@ -2225,9 +2245,14 @@ namespace tsorcRevamp.NPCs
         {
             data.Attack = GreatSerpentHead.AttackState.None;
             data.MouthTransitionTimer = 0;
-            data.AttackCooldown = AttackCooldownBaseTicks + Main.rand.Next(120);
+            //Clients run this transition too (it is timer-driven), but only the server rolls the gap to the next
+            //attack — that roll decides when the next telegraph starts, and it arrives with the snapshot.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                data.AttackCooldown = AttackCooldownBaseTicks + Main.rand.Next(120);
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
+            }
             ClearAttackPoise(poise);
-            npc.netUpdate = true;
         }
 
         static void SpawnMouthVenomDust(NPC npc)

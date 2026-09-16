@@ -219,6 +219,13 @@ namespace tsorcRevamp.NPCs
         /// </summary>
         public bool RecoverFromNarrowPerch(NPC npc, tsorcRevampGlobalNPC globalNPC, Player player)
         {
+            // Launching the beast is a decision that moves the body, and this controller's timers are per-machine, so
+            // each client was free to hop on its own schedule. Server decides; the launch snapshot carries the arc.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return false;
+            }
+
             if (perchRecoveryCooldown > 0)
             {
                 perchRecoveryCooldown--;
@@ -406,7 +413,9 @@ namespace tsorcRevamp.NPCs
             npc.velocity.X = leapVelocityX;
             npc.direction = Math.Sign(leapVelocityX);
             npc.spriteDirection = npc.direction;
-            npc.netUpdate = true;
+            // Every launch path ends here, so this is the one place the arc has to reach clients. A queued netUpdate
+            // would wait out the throttle and the beast would already be mid-flight before anyone else saw it move.
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
             Log(npc, action, $"from=({npc.Center.X / 16f:F1},{npc.Bottom.Y / 16f:F1}) to=({landingCenterX / 16f:F1},{(plannedLandingPosition.Y + npc.height) / 16f:F1}) t={flightTime:F0} vel=({leapVelocityX:F2},{launchVelocityY:F2})");
         }
 

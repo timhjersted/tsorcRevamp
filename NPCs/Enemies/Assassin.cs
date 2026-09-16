@@ -7,7 +7,7 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    public class Assassin : ModNPC
+    public class Assassin : ModNPC, IHitReactor
     {
         public override void SetStaticDefaults()
         {
@@ -166,25 +166,29 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-
             tsorcRevampAIs.FighterOnHit(NPC, true);
-
-            if (Main.rand.NextBool(15))
-            {
-                tsorcRevampAIs.TeleportImmediately(NPC, 30, false);
-            }
-
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, true);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            bool melee = projectile.DamageType == DamageClass.Melee;
+            tsorcRevampAIs.FighterOnHit(NPC, melee);
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, melee);
+        }
 
-            if (Main.rand.NextBool(15))
+        /// <summary>Blink away from roughly one hit in fifteen — further when the hit came from range, since the
+        /// assassin is trying to break a shooter's line rather than step out of a swing. Server/singleplayer only
+        /// (see IHitReactor): the roll and the teleport must happen once, on the machine that owns this NPC.</summary>
+        void IHitReactor.OnServerHit(NPC npc, bool melee)
+        {
+            if (!Main.rand.NextBool(15))
             {
-                tsorcRevampAIs.TeleportImmediately(NPC, 40, false);
+                return;
             }
 
+            int teleportRange = melee ? 30 : 40;
+            tsorcRevampAIs.TeleportImmediately(npc, teleportRange, false);
         }
 
         bool introDone = false;

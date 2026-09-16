@@ -1143,6 +1143,7 @@ namespace tsorcRevamp.NPCs
 
         private static void LaunchHighArcPounce(NPC npc, float topSpeed)
         {
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             float pounceSpeed = topSpeed * 5;
             bool hasTrajectory = false;
             while (!hasTrajectory)
@@ -1156,7 +1157,7 @@ namespace tsorcRevamp.NPCs
                     if (pounceSpeed > 20)
                     {
                         npc.velocity = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), 20);
-                        npc.netUpdate = true;
+                        globalNPC.RequestNetworkSnapshot();
                         break;
                     }
                 }
@@ -1164,7 +1165,7 @@ namespace tsorcRevamp.NPCs
                 {
                     hasTrajectory = true;
                     npc.velocity = trajectory;
-                    npc.netUpdate = true;
+                    globalNPC.RequestNetworkSnapshot();
                 }
             }
         }
@@ -1234,7 +1235,8 @@ namespace tsorcRevamp.NPCs
                 // is interrupted mid-air (staggered, teleported) simply never pays off.
                 globalNPC.HeavyPounceAirborne = true;
             }
-            npc.netUpdate = true;
+            // Launch velocity plus the armed slam/afterimage state — clients need all of it on the launch tick.
+            globalNPC.RequestNetworkSnapshot();
         }
 
         /// <summary>
@@ -1314,6 +1316,15 @@ namespace tsorcRevamp.NPCs
         private static void RunFighterCombatTriggers(NPC npc, tsorcRevampGlobalNPC globalNPC, bool fleeing, bool lineOfSight, bool canDodgeroll, bool canPounce)
         {
             if (globalNPC.CombatMeleeActive || globalNPC.HasPendingCombatComboMove || globalNPC.InGuardPressureRecovery)
+            {
+                return;
+            }
+
+            // Everything below is a DECISION (Main.rand rolls that arm a dodge, an evade jump or a pounce), so the
+            // server owns it. A dodge is not cosmetic: CanBeHitByItem/Projectile reject hits while DodgeTimer > 0, and
+            // those hooks run on whichever client resolved the hit — a client rolling its own dodge would make that
+            // player's attacks whiff against a roll the server never made. Clients receive the armed timers instead.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
@@ -1404,7 +1415,7 @@ namespace tsorcRevamp.NPCs
                 {
                     globalNPC.PounceTimer = 30;
                     globalNPC.PounceCooldown = 300;
-                    npc.netUpdate = true;
+                    globalNPC.RequestNetworkSnapshot();
                 }
             }
         }
@@ -1439,7 +1450,8 @@ namespace tsorcRevamp.NPCs
             globalNPC.PounceTarget = player.Center + new Vector2(direction * overshoot, -8f);
             globalNPC.PounceTimer = (int)MathHelper.Lerp(36f, 24f, aggressionCurve);
             globalNPC.PounceCooldown = (int)MathHelper.Lerp(420f, 180f, aggressionCurve);
-            npc.netUpdate = true;
+            // The run-up starts THIS tick and is the whole tell; a throttled update would land after the leap.
+            globalNPC.RequestNetworkSnapshot();
         }
 
         private static float GetPounceAggressionCurve(tsorcRevampGlobalNPC globalNPC)
@@ -1767,10 +1779,34 @@ namespace tsorcRevamp.NPCs
             if (globalNPC.CanStopToFire && globalNPC.CurrentAttack.stopBefore && !globalNPC.CanPassThroughWalls
                 && !globalNPC.CanUseMovingFireDuringAdvance(npc, Main.player[npc.target]))
             {
-                bool inTelegraphWindow = globalNPC.ProjectileTimer > globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime;
-                float stopBeforeChance = GetStandingFireChance(globalNPC, globalNPC.CurrentAttack.stopBeforeChance);
+                int telegraphStartTick = globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime;
+                bool inTelegraphWindow = globalNPC.ProjectileTimer > telegraphStartTick;
 
-                if (inTelegraphWindow && Main.rand.NextFloat() < stopBeforeChance)
+                // Decide ONCE per attack, on the first tick of the telegraph window, whether this shot is taken
+                // planted, and hold that for the whole window. The old code re-rolled every tick, so the enemy braked
+                // on a random subset of ticks (a visible stutter even in singleplayer) and every machine picked a
+                // different subset in multiplayer. The server decides and the flag rides the packet.
+                if (globalNPC.ProjectileTimer == telegraphStartTick + 1 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float stopBeforeChance = GetStandingFireChance(globalNPC, globalNPC.CurrentAttack.stopBeforeChance);
+                    globalNPC.StandingFireThisAttack = Main.rand.NextFloat() < stopBeforeChance;
+
+                    // Standing-fire burst: a planted tier-2 NPC may commit to firing N shots in a row without
+                    // resuming movement. Aggression lowers the chance to stand; Patience raises the burst count.
+                    if (globalNPC.StandingFireThisAttack && globalNPC.FighterRangedStandShotsRemaining == 0
+                        && globalNPC.CombatTempo == null)
+                    {
+                        float aggressionFraction = Math.Clamp(globalNPC.Aggression / 2.5f, 0f, 1f);
+                        if (Main.rand.NextFloat() > aggressionFraction)
+                        {
+                            globalNPC.FighterRangedStandShotsRemaining = 1 + Main.rand.Next(0, 1 + (int)globalNPC.Patience);
+                        }
+                    }
+
+                    globalNPC.RequestNetworkSnapshot();
+                }
+
+                if (inTelegraphWindow && globalNPC.StandingFireThisAttack)
                 {
                     // SF4 owns its movement decision and applies this request only at a navigation hazard.
                     // LocalMover enemies retain the legacy immediate stop behavior.
@@ -1778,21 +1814,6 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.velocity.X = 0;
                         npc.velocity.Y = 0f; // suppress jump-frame animation while aiming
-                    }
-
-                    // Standing-fire roll: on the first frame of the telegraph window, tier-2 NPCs
-                    // may commit to firing N shots in a row without resuming movement.
-                    // Aggression lowers the chance to stand; Patience raises the burst count.
-                    if (globalNPC.CanStopToFire && globalNPC.FighterRangedStandShotsRemaining == 0
-                        && globalNPC.CombatTempo == null
-                        && globalNPC.ProjectileTimer == globalNPC.CurrentAttack.timerCap - globalNPC.CurrentAttack.telegraphTime + 1
-                        && Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        float aggressionFraction = Math.Clamp(globalNPC.Aggression / 2.5f, 0f, 1f);
-                        if (Main.rand.NextFloat() > aggressionFraction)
-                        {
-                            globalNPC.FighterRangedStandShotsRemaining = 1 + Main.rand.Next(0, 1 + (int)globalNPC.Patience);
-                        }
                     }
                 }
             }
@@ -1820,7 +1841,13 @@ namespace tsorcRevamp.NPCs
                 }
 
                 globalNPC.AttackSucceeded = globalNPC.AttackIndex;
-                if (globalNPC.CombatTempo == null)
+                // Server-only: picking the next attack is a Main.rand roll, and the client reads CurrentAttack for the
+                // telegraph colour, its length, the aim lock and the commit window. A client that rolled its own pick
+                // would telegraph one attack while the server fired another — the tell would lie about what to dodge.
+                // The stop-to-fire bookkeeping below (pause counter, standing-fire charges) is part of the same
+                // decision, so it stays with it; clients follow all of it from the snapshot. A client falls through to
+                // the final else, which just clears the telegraph flags.
+                if (globalNPC.CombatTempo == null && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     RegisterFighterAttack(npc);
                     int completedGuardPressureStacks = globalNPC.CompleteGuardPressureSequence(npc);
@@ -1840,6 +1867,10 @@ namespace tsorcRevamp.NPCs
                             npc.TargetClosest(true); // resume pursuit
                         }
                     }
+
+                    // Push the new pick and the stop-to-fire state now: the next telegraph starts within a few ticks,
+                    // long before vanilla's throttle would send this NPC again.
+                    globalNPC.RequestNetworkSnapshot();
                 }
                 else if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -2295,6 +2326,10 @@ namespace tsorcRevamp.NPCs
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown = TeleportTelegraphTime;
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportTelegraph = potentialNewPos.Value;
                         SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.6f, PitchVariance = 0.1f }, npc.Center); // exit/departure cue
+                        // One send for every caller (reacquire, lava escape, the bosses' own blinks). The countdown IS
+                        // the telegraph — the knights use 30 ticks, shorter than vanilla's 30-tick throttle for a
+                        // non-boss — so without this a client could miss the hide window entirely and see a raw snap.
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -2536,6 +2571,16 @@ namespace tsorcRevamp.NPCs
 
         public static void FighterOnHit(NPC npc, bool melee)
         {
+            // Callers are ModNPC.OnHitBy* hooks, which run only on the client that dealt the hit. Everything below is
+            // a server decision (rolls, velocity, teleports — and the teleport helpers no-op on a client anyway, so in
+            // MP this reaction never happened at all). Flag it instead: the GlobalNPC hit hook runs right after and
+            // carries the flag to the server, which calls back here from ApplyHitReport.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().FighterOnHitRequested = true;
+                return;
+            }
+
             if (melee)
             {
                 npc.localAI[1] = 80f; // was 100
@@ -2639,6 +2684,14 @@ namespace tsorcRevamp.NPCs
         /// </summary>
         public static bool TryPreemptiveBlock(NPC npc, tsorcRevampGlobalNPC globalNPC, int holdTicks = 75)
         {
+            // The guard roll is a server decision: ReactiveBlockTimer drives the enemy's ShieldGuarding flag, which
+            // the attacker's ModifyHitBy reads for damage reduction and the server reads for poise. Rolling it per
+            // machine let every client block on its own roll. Clients take the timer from the sync instead.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return false;
+            }
+
             if (globalNPC.PreemptiveBlockChance <= 0f || globalNPC.ReactiveBlockTimer > 0)
             {
                 return false;
@@ -2652,6 +2705,7 @@ namespace tsorcRevamp.NPCs
                 return false;
             }
             globalNPC.ReactiveBlockTimer = holdTicks;
+            globalNPC.RequestNetworkSnapshot(); // a raised guard changes how the next hit resolves — clients need it now
             return true;
         }
 
@@ -2661,11 +2715,24 @@ namespace tsorcRevamp.NPCs
         /// </summary>
         public static bool TryOnHitBlock(NPC npc, tsorcRevampGlobalNPC globalNPC, bool melee, int holdTicks = 75)
         {
+            // Hit hooks run only on the client that landed the hit, never on the server, so a client records the
+            // request and this hit's NPCHitReport carries it (tModLoader runs the ModNPC hook first, then the
+            // GlobalNPC one that submits the report). The server rolls it in ApplyHitReport. Returning false here is
+            // deliberate: it lets the caller's "block, else evade" line request the evasion too, and the server
+            // applies that precedence once it knows the roll.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                globalNPC.OnHitBlockRequested = true;
+                globalNPC.OnHitBlockRequestTicks = holdTicks;
+                return false;
+            }
+
             if (globalNPC.OnHitBlockChance <= 0f || Main.rand.NextFloat() >= globalNPC.OnHitBlockChance)
             {
                 return false;
             }
             globalNPC.ReactiveBlockTimer = holdTicks;
+            globalNPC.RequestNetworkSnapshot(); // the guard has to be up on every machine before the next hit lands
             return true;
         }
 
@@ -2953,6 +3020,11 @@ namespace tsorcRevamp.NPCs
             globalNPC.DodgeTimer = ticks;
             globalNPC.DodgeRecoveryTimer = 0;
             globalNPC.LastDodgeWasForward = forward;
+
+            // Every arming path funnels through here, so this is the one place the roll has to be pushed to clients.
+            // The dodge fields are already in SendExtraAI; without an immediate send they would wait out netSpam (up
+            // to 30 ticks) and a 30-tick roll would be over before any client saw its i-frames.
+            globalNPC.RequestNetworkSnapshot();
         }
 
         private static float RollRecoveryDistance(float initialSpeed)
