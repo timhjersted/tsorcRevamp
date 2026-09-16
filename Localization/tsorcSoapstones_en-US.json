@@ -696,7 +696,8 @@
   "tileX": 3306,
   "tileY": 353,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "- You\u0027ve found the Shrine of The Triad - --NEWLINE  --NEWLINE \u0022I need something that can break Adamantite...\u0022",
@@ -899,14 +900,16 @@
   "tileY": 896,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+  "category": "lore",
+  "skipOnExpanded": true
 }
 {
   "text": "The tunnel has collapsed.  --NEWLINE  --NEWLINE \u0022I need to find another way in.\u0022",
   "tileX": 3749,
   "tileY": 1024,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "- You have discovered the Path of Ambition - --NEWLINE  --NEWLINE A feeling in your gut makes you think it would not be wise to venture farther down this path... ",
@@ -1842,7 +1845,8 @@
   "tileX": 5145,
   "tileY": 1563,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "This stone gate must open from the other side.",

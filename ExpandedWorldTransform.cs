@@ -169,6 +169,35 @@ namespace tsorcRevamp
                 $"[ExpandedTransform] legacy ({legacyX},{legacyY}) -> ({newX},{newY}) [{source}]");
         }
 
+        /// <summary>
+        /// Where the piecewise formula alone would land a legacy coord, ignoring the override table. This is the
+        /// position a world that loaded BEFORE an override existed would have placed the content at, so it is the
+        /// stale spot to clean up after a sign is relocated. Identity on non-expanded worlds.
+        /// </summary>
+        public static Point FormulaOnlyMapTile(int legacyTileX, int legacyTileY)
+        {
+            if (!Active)
+                return new Point(legacyTileX, legacyTileY);
+
+            int dy = legacyTileY >= FoldThreshold ? BelowFoldOffset : AboveFoldOffset;
+            return new Point(legacyTileX, legacyTileY + dy);
+        }
+
+        /// <summary>Legacy coords carrying an override entry. Paired with <see cref="FormulaOnlyMapTile"/> this
+        /// identifies content an already-played world put in the pre-override spot.</summary>
+        public static IEnumerable<(int x, int y)> OverriddenLegacyCoords
+        {
+            get
+            {
+                if (_overrides == null)
+                {
+                    return System.Array.Empty<(int, int)>();
+                }
+
+                return _overrides.Keys;
+            }
+        }
+
         /// <summary>Maps an integer legacy tile coordinate to the current world's tile space.</summary>
         public static Point MapTile(int legacyTileX, int legacyTileY)
         {

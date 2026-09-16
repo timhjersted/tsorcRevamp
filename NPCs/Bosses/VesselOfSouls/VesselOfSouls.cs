@@ -113,6 +113,15 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         bool _deathSpectacleDone;
         bool _hideBody;             // reforming from dust: draw dust only
         Vector2 _swallowReturnPos;  // where to drop the local player after the swallow (client-local; not synced)
+        // Swallow stage latches. Per-machine bookkeeping of which stages THIS machine has already played, so
+        // deliberately not synced. The timeline runs off AttackTimer, which ReceiveExtraAI overwrites wholesale —
+        // a snapshot landing on the transition tick makes the client's next evaluated value one PAST it, and an
+        // exact-tick check is stepped straight over. Missing the reveal stage strands the player inside the boss,
+        // so every stage fires on the first tick at OR PAST its threshold and latches instead.
+        bool _swallowOpened;
+        bool _swallowCaptured;
+        bool _swallowRevealed;
+        bool _swallowReformed;
 
         NPCDespawnHandler despawnHandler;
 
@@ -170,6 +179,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         {
             writer.Write((byte)State);
             writer.Write((byte)Mood);
+            writer.Write(MoodTimer);
             writer.Write((byte)CurrentAttack);
             writer.Write(AttackTimer);
             writer.Write(AttackCooldown);
@@ -191,6 +201,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         {
             State = (VesselState)reader.ReadByte();
             Mood = (MoveMood)reader.ReadByte();
+            MoodTimer = reader.ReadInt32();
             CurrentAttack = (VesselAttack)reader.ReadByte();
             AttackTimer = reader.ReadInt32();
             AttackCooldown = reader.ReadInt32();
@@ -284,9 +295,14 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 return;
             }
 
-            // One-time phase transition at 50%.
-            if (!Phase2 && State == VesselState.Idle && NPC.life <= NPC.lifeMax / 2)
+            // One-time phase transition at 50%. Server-only: the State this reads lags on a client, so a client
+            // still showing Idle would open the swallow — screen shake, capture cue and all — while the server is
+            // mid-attack, then get yanked back by the next snapshot.
+            if (Main.netMode != NetmodeID.MultiplayerClient
+                && !Phase2 && State == VesselState.Idle && NPC.life <= NPC.lifeMax / 2)
+            {
                 StartPhaseTransition();
+            }
 
             switch (State)
             {
@@ -364,18 +380,29 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         void UpdateMood(Player player)
         {
+            // Every machine runs the countdown so the synced Mood expires at the same time on all of them.
+            if (MoodTimer > 0)
+            {
+                MoodTimer--;
+            }
+
+            // Clients never CHOOSE a mood. SetMood rolls OrbitDir, OrbitRadius and DriftAnchor, which together
+            // decide the whole flight path; those ride the mood's own snapshot. This gate sits above the
+            // proximity escape below because that escape calls SetMood too.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
             float distTiles = NPC.Distance(player.Center) / 16f;
+
+            // Inside 10 tiles: break off immediately, interrupting whatever mood is still running.
             if (distTiles < 10f && Mood != MoveMood.Retreat)
             {
                 SetMood(MoveMood.Retreat, 40);
                 return;
             }
             if (MoodTimer > 0)
-            {
-                MoodTimer--;
-                return;
-            }
-            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
@@ -983,6 +1010,13 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             CurrentAttack = VesselAttack.None;
             AttackTimer = 0;
             MouthOpen = true;
+            // Arm the stage latches. A client never reaches here (this is server/singleplayer only) — it adopts
+            // State through ReceiveExtraAI and relies on these defaulting to false on the freshly spawned NPC,
+            // which holds because the swallow runs exactly once per fight.
+            _swallowOpened = false;
+            _swallowCaptured = false;
+            _swallowRevealed = false;
+            _swallowReformed = false;
             KillOwnedWells();
             NPC.netUpdate = true;
         }
@@ -1003,8 +1037,9 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             Player local = Main.dedServ ? null : Main.LocalPlayer;
             tsorcRevampPlayer localMp = local != null ? local.GetModPlayer<tsorcRevampPlayer>() : null;
 
-            if (AttackTimer == 1)
+            if (!_swallowOpened)
             {
+                _swallowOpened = true;
                 UsefulFunctions.ScreenShake(NPC.Center, 8f, 24);
                 SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 1f, Pitch = -0.8f }, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1024,9 +1059,12 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 }
             }
 
-            // Capture: remember where to drop the player later; implode into the mouth.
-            if (AttackTimer == SwallowCapture)
+            // Capture: remember where to drop the player later; implode into the mouth. On an overshoot the player
+            // is already part-way down the well's pull, so the remembered spot is a little closer to the mouth
+            // than intended — still far better than not remembering one and leaving them inside.
+            if (AttackTimer >= SwallowCapture && !_swallowCaptured)
             {
+                _swallowCaptured = true;
                 if (local != null && local.active && !local.dead)
                 {
                     _swallowReturnPos = local.Center;
@@ -1061,8 +1099,9 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             }
 
             // Full black → reveal: drop the player back on solid ground, warp + reform the boss, void ON.
-            if (AttackTimer == SwallowFadeDone)
+            if (AttackTimer >= SwallowFadeDone && !_swallowRevealed)
             {
+                _swallowRevealed = true;
                 VesselOfSoulsFadeSystem.FadeAlpha = 1f;
                 if (localMp != null && local.active && !local.dead)
                 {
@@ -1086,9 +1125,11 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             if (AttackTimer > SwallowFadeDone && AttackTimer < SwallowUnfadeDone)
                 VesselOfSoulsFadeSystem.FadeAlpha = 1f - (AttackTimer - SwallowFadeDone) / (float)(SwallowUnfadeDone - SwallowFadeDone);
 
-            // Reform from a purple/black dust cloud.
-            if (AttackTimer == SwallowFadeDone + 1)
+            // Reform from a purple/black dust cloud. Normally the tick after the reveal; on a big overshoot both
+            // fire together, which reads as one hard cut rather than a missing reform.
+            if (_swallowRevealed && !_swallowReformed && AttackTimer > SwallowFadeDone)
             {
+                _swallowReformed = true;
                 _hideBody = false;
                 UsefulFunctions.ScreenShake(NPC.Center, 7f, 20);
                 SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.9f, Pitch = -0.2f }, NPC.Center);

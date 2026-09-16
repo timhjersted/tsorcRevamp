@@ -1261,8 +1261,17 @@ namespace tsorcRevamp
                 string bigJson = System.Text.Encoding.UTF8.GetString(jsonBytes);
 
                 List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
+                ApplyLocationNameFallback(texts, RemixMap ? RemixjsonPath : jsonPath);
+
                 foreach (SignJSONSerializable sign in texts)
                 {
+                    //Signs retired on the expanded map only. Legacy adventure and the expanded map share this JSON,
+                    //so deleting the entry would drop the sign from both; this skips placement on expanded alone.
+                    if (sign.skipOnExpanded && ExpandedWorldTransform.Active)
+                    {
+                        continue;
+                    }
+
                     //Soapstone JSON coords are legacy (2000-space). On the expanded world, route them through the
                     //transform (+200/+400) so they land at the shifted sign positions; identity on legacy/remix.
                     Microsoft.Xna.Framework.Point mapped = ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
@@ -1312,6 +1321,7 @@ namespace tsorcRevamp
                 string bigJson = System.Text.Encoding.UTF8.GetString(jsonBytes);
 
                 List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
+                ApplyLocationNameFallback(texts, RemixMap ? RemixjsonPath : jsonPath);
 
                 // Build a coord lookup of existing soapstone entities.
                 Dictionary<(int, int), SoapstoneTileEntity> existing = new();
@@ -1325,6 +1335,13 @@ namespace tsorcRevamp
                 int skippedOccupiedCount = 0;
                 foreach (SignJSONSerializable sign in texts)
                 {
+                    //Retired on expanded (see the fresh-place path above). Skipped before the coord mapping so a
+                    //re-sync never re-places one of these on a world that already dropped them.
+                    if (sign.skipOnExpanded && ExpandedWorldTransform.Active)
+                    {
+                        continue;
+                    }
+
                     //Legacy (2000-space) JSON coords -> current-world coords (+200/+400 on expanded, identity else).
                     Microsoft.Xna.Framework.Point mapped = ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
                     int locX = mapped.X;
@@ -1369,6 +1386,130 @@ namespace tsorcRevamp
                 }
                 if (placedCount > 0 || skippedOccupiedCount > 0)
                     mod.Logger.Info($"Soapstone re-sync: placed {placedCount} new, skipped {skippedOccupiedCount} occupied.");
+
+                // Stale-sign sweep, expanded map only. A world played BEFORE a sign was retired (skipOnExpanded)
+                // or relocated (override table) still has the old soapstone sitting there, and the loop above only
+                // ever adds - so without this a retired sign lingers forever and a moved one shows up twice.
+                // Runs every load; it is idempotent, since a cleaned position simply has nothing left to match.
+                if (ExpandedWorldTransform.Active)
+                {
+                    // Each candidate is a position that should now be empty, plus the exact text the sign we are
+                    // retiring had. The text must match before anything is removed, so a coord collision with an
+                    // unrelated soapstone can only ever be a no-op.
+                    List<(int locX, int locY, string expectedText)> stale = new();
+
+                    foreach (SignJSONSerializable sign in texts)
+                    {
+                        if (!sign.skipOnExpanded)
+                        {
+                            continue;
+                        }
+
+                        Microsoft.Xna.Framework.Point retired = ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
+                        stale.Add((retired.X, retired.Y, sign.text));
+                    }
+
+                    // A relocated sign's old home is wherever the bare formula would have put it. Covers "move"
+                    // entries and "fix" entries alike - both mean the pre-override position now holds a wrong sign.
+                    foreach ((int legacyX, int legacyY) in ExpandedWorldTransform.OverriddenLegacyCoords)
+                    {
+                        SignJSONSerializable moved = texts.Find(s => s.tileX == legacyX && s.tileY == legacyY);
+                        if (moved == null)
+                        {
+                            continue;
+                        }
+
+                        Microsoft.Xna.Framework.Point oldSpot = ExpandedWorldTransform.FormulaOnlyMapTile(legacyX, legacyY);
+                        stale.Add((oldSpot.X, oldSpot.Y, moved.text));
+                    }
+
+                    int retiredCount = 0;
+
+                    foreach ((int locX, int locY, string expectedText) in stale)
+                    {
+                        if (!TileUtils.TryGetTileEntityAs(locX, locY, out SoapstoneTileEntity old))
+                        {
+                            continue;
+                        }
+
+                        if (old.text != expectedText)
+                        {
+                            continue;
+                        }
+
+                        WorldGen.KillTile(locX, locY, noItem: true);
+                        retiredCount++;
+                    }
+
+                    if (retiredCount > 0)
+                        mod.Logger.Info($"Soapstone re-sync: retired {retiredCount} stale soapstone(s) left by an earlier world load.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Fills in <c>locationName</c> from the en-US file for any record whose own locale left it blank.
+        /// <para>
+        /// <c>category</c> is a code token and is authored in English in every locale file, but <c>locationName</c>
+        /// is display text that the ru-RU / zh-Hans files were never given - so without this, no location banner
+        /// and no map marker fires at all outside English. An English banner beats no banner, and a translated
+        /// name in the locale file always wins, so this quietly stops mattering as translations land.
+        /// </para>
+        /// </summary>
+        private static void ApplyLocationNameFallback(List<SignJSONSerializable> texts, string loadedPath)
+        {
+            // Already reading the English file (en-US, or any locale without its own soapstone set).
+            if (loadedPath.Contains("_en-US"))
+            {
+                return;
+            }
+
+            string fallbackPath = "tsorcRevamp/Localization/tsorcSoapstones_en-US.json";
+            if (RemixMap)
+            {
+                fallbackPath = "tsorcRevamp/Localization/tsorcRemixSoapstones_en-US.json";
+            }
+
+            Byte[] fallbackBytes = ModContent.GetFileBytes(fallbackPath);
+            if (fallbackBytes == null)
+            {
+                return;
+            }
+
+            string fallbackJson = System.Text.Encoding.UTF8.GetString(fallbackBytes);
+            List<SignJSONSerializable> englishTexts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(fallbackJson).ToList();
+
+            // Joined on the legacy tile coord, the same key the rest of the soapstone pipeline uses.
+            Dictionary<(int, int), string> englishNames = new();
+
+            foreach (SignJSONSerializable englishSign in englishTexts)
+            {
+                if (!string.IsNullOrWhiteSpace(englishSign.locationName))
+                {
+                    englishNames[(englishSign.tileX, englishSign.tileY)] = englishSign.locationName;
+                }
+            }
+
+            int filledCount = 0;
+
+            foreach (SignJSONSerializable sign in texts)
+            {
+                if (!string.IsNullOrWhiteSpace(sign.locationName))
+                {
+                    continue;
+                }
+
+                if (englishNames.TryGetValue((sign.tileX, sign.tileY), out string englishName))
+                {
+                    sign.locationName = englishName;
+                    filledCount++;
+                }
+            }
+
+            if (filledCount > 0)
+            {
+                ModContent.GetInstance<tsorcRevamp>().Logger.Info(
+                    $"Soapstones: filled {filledCount} untranslated locationName(s) from en-US ({loadedPath}).");
             }
         }
 
@@ -2069,8 +2210,17 @@ namespace tsorcRevamp
                 List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
                 foreach (SignJSONSerializable sign in texts)
                 {
-                    int locX = sign.tileX;
-                    int locY = sign.tileY;
+                    //Same two rules as BuildSoapstones: signs retired on the expanded map are skipped, and the
+                    //legacy (2000-space) coords are transformed (+200/+400) so they land where the map shifted them.
+                    //Without this the dev reload placed every sign 200 tiles too high on the expanded world.
+                    if (sign.skipOnExpanded && ExpandedWorldTransform.Active)
+                    {
+                        continue;
+                    }
+
+                    Microsoft.Xna.Framework.Point mapped = ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
+                    int locX = mapped.X;
+                    int locY = mapped.Y;
                     Dust.QuickBox(new Vector2(locX, locY) * 16, new Vector2(locX + 1, locY + 1) * 16, 2, Color.YellowGreen, null);
 
 

@@ -3758,7 +3758,10 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.TownSlimePurple
                     || npc.type == NPCID.TownSlimeRainbow
                     || npc.type == NPCID.TownSlimeRed
-                    || npc.type == NPCID.TownSlimeYellow)
+                    || npc.type == NPCID.TownSlimeYellow
+                    || npc.type == NPCID.FaceMonster
+                    || npc.type == NPCID.BloodCrawler
+                    || npc.type == NPCID.BloodCrawlerWall)
                 {
                     npc.active = false;
                 }
@@ -3795,12 +3798,9 @@ namespace tsorcRevamp.NPCs
                             || npc.type == NPCID.BigCrimera
                             || npc.type == NPCID.LittleCrimera
                             || npc.type == NPCID.WallCreeperWall
-                            || npc.type == NPCID.FaceMonster
                             || npc.type == NPCID.SnowFlinx
                             || npc.type == NPCID.SpikedJungleSlime
                             || npc.type == NPCID.SpikedIceSlime
-                            || npc.type == NPCID.BloodCrawler
-                            || npc.type == NPCID.BloodCrawlerWall 
                             || npc.type == NPCID.WalkingAntlion
                             || npc.type == NPCID.FlyingAntlion
                             || npc.type == NPCID.TorchZombie

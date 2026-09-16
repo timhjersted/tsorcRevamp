@@ -5,6 +5,14 @@
   "belowFoldOffset": 400,
   "overrides": [
     {
+      "legacyX": 5422,
+      "legacyY": 925,
+      "newX": 5014,
+      "newY": 1482,
+      "type": "move",
+      "note": "\"Lost Oolacile Forest\" location soapstone. Formula alone would put it at 5422,1125; it was relocated on the expanded map only. Legacy adventure + remix keep it at its own 5422,925."
+    },
+    {
       "legacyX": 1553,
       "legacyY": 1778,
       "newX": 1553,

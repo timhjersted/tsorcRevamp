@@ -2599,14 +2599,13 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.LacBeetle, 0.02f);
                 pool.Add(NPCID.Drippler, 0.2f);
-                pool.Add(NPCID.BloodCrawler, 0.002f);
-                pool.Add(NPCID.BloodCrawlerWall, 0.002f);
+                // Blood Crawlers removed to create a different vibe. Crimson will get a new unique enemy soon
             }
             //meteor
             if (spawnInfo.Player.ZoneMeteor && !Main.hardMode)
             {
-                pool.Add(NPCID.GraniteFlyer, 0.4f);
-                pool.Add(NPCID.Salamander4, 0.4f);
+                pool.Add(NPCID.GraniteFlyer, 0.3f);
+                pool.Add(NPCID.Salamander4, 0.2f);
                 pool.Add(NPCID.MeteorHead, 0.01f);
             }
             //graveyard
@@ -2683,7 +2682,7 @@ namespace tsorcRevamp.NPCs
             if (spawnInfo.Player.ZoneJungle && spawnInfo.Player.ZoneRockLayerHeight && Main.hardMode)
             {
                 pool.Add(NPCID.Derpling, 0.25f);
-                pool.Add(NPCID.GiantFlyingFox, 0.25f);
+                pool.Add(NPCID.GiantFlyingFox, 0.1f);
             }
 
             //SUPER HARD MODE SECTION

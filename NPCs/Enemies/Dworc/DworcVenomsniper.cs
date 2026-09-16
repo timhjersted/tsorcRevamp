@@ -36,10 +36,11 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             int venomBoltType = ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>();
             UsefulFunctions.AddAttack(NPC, 180, venomBoltType, 9, 8, SoundID.Item63, telegraphColor: Color.GreenYellow);
 
-            // Step 6: sniper gains a single re-acquire blink toward an elevated firing spot.
+            // No teleport: the sniper repositions on foot only. It keeps its distance through the evasive
+            // profile below (retreat-and-shoot + quick-step), and where SF4 would have blinked to recover an
+            // unreachable target it now disengages instead.
             tsorcRevampGlobalNPC sniperGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            sniperGlobalNPC.CanTeleport = true;
-            sniperGlobalNPC.TeleportMaxCharges = 1;
+            sniperGlobalNPC.CanTeleport = false;
             sniperGlobalNPC.PrefersHighGround = true;
             sniperGlobalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
             EvasiveProfile.DworcSniper(sniperGlobalNPC); // kite when meleed, quick-step through incoming fire

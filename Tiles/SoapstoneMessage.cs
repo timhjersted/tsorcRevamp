@@ -77,5 +77,9 @@ namespace tsorcRevamp.Tiles
         // Optional. Display name for the on-screen banner when category includes "location"
         // (or when this field is present regardless of category). Rendered in uppercase by the UI.
         public string locationName { get; set; }
+        // Optional. True -> this sign is placed on the legacy 2000-tall adventure map but skipped on the
+        // expanded 2400-tall one. The two maps share this JSON, so a plain deletion would remove the sign
+        // from both; this drops it from the expanded map only. Coords stay legacy-space either way.
+        public bool skipOnExpanded { get; set; }
     }
 }

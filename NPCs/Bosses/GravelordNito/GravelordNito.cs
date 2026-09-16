@@ -1672,7 +1672,16 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             // the next action instead of expiring during a four-second idle.
             float phaseRecoveryScale = PhaseTwo ? 0.78f : 1f;
             int variance = PhaseTwo ? 14 : 22;
-            AttackCooldown = Math.Max(30, (int)(cooldown * phaseRecoveryScale)) + Main.rand.Next(variance);
+            AttackCooldown = Math.Max(30, (int)(cooldown * phaseRecoveryScale));
+
+            // Only the server rolls the variance — it is the only machine that picks the next attack, and the
+            // result rides this transition's snapshot. A client rolling its own would idle for a different
+            // length than the boss it is watching until that packet lands.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                AttackCooldown += Main.rand.Next(variance);
+            }
+
             if (QueuedAttack != AttackState.None)
             {
                 // These are authored continuations (rain -> thrust, smog -> advance, etc.), not a
@@ -2034,10 +2043,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         void TelegraphCue(Color color)
         {
             SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.75f, Pitch = -0.35f }, NPC.Center);
-            if (Main.netMode != NetmodeID.Server)
-            {
-                tsorcRevampAIs.SpawnTelegraphFlash(NPC, color, NPC.Center + new Vector2(0f, -85f));
-            }
+            // No netMode guard here: SpawnTelegraphFlash spawns a NETWORKED projectile and gates itself to
+            // server/singleplayer. The old "!= Server" wrapper meant the server skipped it and the client was
+            // refused inside — so every attack's tell was invisible in multiplayer.
+            tsorcRevampAIs.SpawnTelegraphFlash(NPC, color, NPC.Center + new Vector2(0f, -85f));
         }
 
         void SwordTelegraphDust(int kind)
