@@ -21,7 +21,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             Item.value = PriceByRarity.Pink_5;
             Item.expert = true;
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().HasYoungHunterAccessory = true;
 
@@ -41,10 +41,6 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
                     player.whoAmI
                 );
             }
-        }
-
-        public override void UpdateAccessory(Player player, bool hideVisual)
-        {
             if (!hideVisual && player.direction == 1)
             {
                 int dust = Dust.NewDust(player.position + new Vector2(9, 9), 2, 2, 107, 0f, 0f, 100, default(Color), .7f);

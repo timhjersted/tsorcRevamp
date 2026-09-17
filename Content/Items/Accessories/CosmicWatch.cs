@@ -26,6 +26,7 @@ namespace tsorcRevamp.Content.Items.Accessories
             Item.rare = ItemRarityID.Blue;
         }
 
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

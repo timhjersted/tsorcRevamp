@@ -25,7 +25,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
         }
 
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
             {

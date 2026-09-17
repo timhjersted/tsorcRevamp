@@ -38,7 +38,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis = true;
 

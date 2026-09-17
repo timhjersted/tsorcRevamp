@@ -48,7 +48,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Magic.Bands
             recipe2.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.lifeRegen += (int)LifeRegen;
             player.statManaMax2 += MaxManaIncrease;

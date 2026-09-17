@@ -22,7 +22,7 @@ namespace tsorcRevamp.Content.Items.Accessories
             Item.value = PriceByRarity.LightPurple_6;
             Item.vanity = true;
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.CanSeeInvisibleBlocks = true;
         }

@@ -22,7 +22,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             Item.rare = ItemRarityID.LightRed;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().ConditionOverload = true;
         }

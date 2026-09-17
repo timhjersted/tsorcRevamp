@@ -36,7 +36,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             return base.CanAccessoryBeEquippedWith(equippedItem, incomingItem, player);
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             // Under Active Shields Revamp the passive thorns + % DR become an on-block reflect instead.
             if (!tsorcRevampActiveShieldPlayer.ActiveFor(player))

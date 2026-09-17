@@ -24,7 +24,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
             Item.rare = ItemRarityID.Green;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampEstusPlayer>().EstusRing = true;
         }

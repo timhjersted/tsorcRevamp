@@ -90,7 +90,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
             }
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.WingsOfSeathLevel;
             if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)

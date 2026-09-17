@@ -47,7 +47,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SteraksGage = true;
             player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;

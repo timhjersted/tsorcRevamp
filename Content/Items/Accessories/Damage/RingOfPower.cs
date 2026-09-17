@@ -22,7 +22,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             Item.expert = true;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.AddBuff(BuffID.Darkness, 2, false);
             player.AddBuff(BuffID.Battle, 2, false);

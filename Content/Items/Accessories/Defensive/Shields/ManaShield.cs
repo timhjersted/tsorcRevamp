@@ -39,7 +39,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             // Under Active Shields Revamp this ward blocks on demand (held, via FreeDodge, 360°, mana + a stamina
             // sip) — no passive mana-tank, no DR, and the damage penalty is dropped so other classes can use it.

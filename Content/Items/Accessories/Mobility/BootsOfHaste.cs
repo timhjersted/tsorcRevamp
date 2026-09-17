@@ -35,7 +35,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.accRunSpeed = 6;
             player.moveSpeed *= 1f + MoveSpeedMult / 100f;

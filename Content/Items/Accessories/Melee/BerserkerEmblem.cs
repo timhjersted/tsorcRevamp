@@ -36,7 +36,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetDamage(DamageClass.Melee) += MeleeDmgCrit / 100f;
             player.GetCritChance(DamageClass.Melee) += MeleeDmgCrit;

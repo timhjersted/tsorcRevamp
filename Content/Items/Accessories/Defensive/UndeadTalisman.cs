@@ -36,7 +36,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().UndeadTalisman = true;
         }

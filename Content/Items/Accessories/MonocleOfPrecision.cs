@@ -23,7 +23,7 @@ namespace tsorcRevamp.Content.Items.Accessories
             Item.value = PriceByRarity.Green_2;
             Item.rare = ItemRarityID.Green;
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetCritChance(DamageClass.Generic) += CriticalStrikeChance;
             player.GetModPlayer<tsorcRevampPlayer>().WhipTipHitboxSize = WhipCritHitboxSize;

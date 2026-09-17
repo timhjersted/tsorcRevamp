@@ -37,16 +37,15 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;
             player.magmaStone = true;
-            
-        }
 
-        public override void UpdateAccessory(Player player, bool hideVisual)
-        {
-            if (!hideVisual) player.inferno = true;
+            if (!hideVisual)
+            {
+                player.inferno = true;
+            }
         }
     }
 }

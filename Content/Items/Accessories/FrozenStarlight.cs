@@ -21,7 +21,7 @@ namespace tsorcRevamp.Content.Items.Accessories
             Item.value = PriceByRarity.Blue_1;
             Item.vanity = true;
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             int playerX = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int playerY = (int)(player.position.Y + 2f) / 16;

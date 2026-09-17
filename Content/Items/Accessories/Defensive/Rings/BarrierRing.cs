@@ -36,7 +36,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().BarrierRing = true;
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Barrier>()] == 0 && player.whoAmI == Main.myPlayer)

@@ -41,7 +41,7 @@ namespace tsorcRevamp.Content.Items.Accessories
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SoulSerpentRing = true;
             player.GetModPlayer<tsorcRevampPlayer>().SoulSickle = true;

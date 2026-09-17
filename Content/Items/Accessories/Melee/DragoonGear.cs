@@ -41,16 +41,17 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().DragoonHorn = true;
             player.GetModPlayer<tsorcRevampPlayer>().DragoonBoots = true;
             player.moveSpeed *= 1f + MoveSpeedMult / 100f;
             player.runAcceleration *= 1.6f;
-        }
-        public override void UpdateAccessory(Player player, bool hideVisual)
-        {
-            if (!hideVisual) player.GetModPlayer<tsorcRevampPlayer>().Shockwave = true;
+            
+            if (!hideVisual)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().Shockwave = true;
+            }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

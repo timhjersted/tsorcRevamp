@@ -18,7 +18,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             Item.expert = true;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.SetAuraState(tsorcAuraState.Ion);

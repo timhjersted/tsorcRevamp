@@ -34,7 +34,7 @@ namespace tsorcRevamp.Content.Items.Accessories
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 5;
             player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += ConsSoulChance / 5;

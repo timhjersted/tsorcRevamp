@@ -19,13 +19,9 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
             Item.value = 1000000;
             Item.rare = ItemRarityID.Cyan;
         }
-        public override void UpdateEquip(Player player)
-        {
-            player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge = true;
-        }
-
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
+            player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge = true;
             if (!hideVisual && player.direction == -1)
             {
                 int dust = Dust.NewDust(player.position + new Vector2(1, 9), 2, 2, 111, 0f, 0f, 100, default(Color), .6f);

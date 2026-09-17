@@ -21,7 +21,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon
             Item.expert = true;
             Item.value = PriceByRarity.Purple_11;
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetDamage(DamageClass.Summon) *= 1f - BadSummonDmgMultiplier / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().MaxMinionTurretMultiplier = 2;

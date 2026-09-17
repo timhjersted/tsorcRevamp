@@ -42,7 +42,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Magic
 
             recipe.Register();
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.statManaMax2 += MaxMana;
             player.manaCost -= ManaCost / 100f;

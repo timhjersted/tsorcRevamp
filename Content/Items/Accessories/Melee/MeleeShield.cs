@@ -33,7 +33,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             Item.accessory = true;
             Item.rare = ItemRarityID.Orange;
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             // Utility immunities stay passive in both modes (and in either slot).
             player.buffImmune[BuffID.Burning] = true;
@@ -83,7 +83,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
         }
 
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             base.UpdateEquip(player);
             // "Watchful" — the gazing eye reveals nearby enemies (Hunter effect). Passive whenever equipped,
@@ -122,7 +122,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             Item.rare = ItemRarityID.Pink;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             base.UpdateEquip(player);
         }
@@ -158,7 +158,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             Item.rare = ItemRarityID.Purple;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             base.UpdateEquip(player);
             player.buffImmune[BuffID.OnFire] = true;
@@ -195,7 +195,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             Item.rare = ModContent.RarityType<OrangeRed>();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             base.UpdateEquip(player);
             player.buffImmune[BuffID.OnFire] = true;

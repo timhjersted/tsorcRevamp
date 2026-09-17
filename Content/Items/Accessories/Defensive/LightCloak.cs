@@ -37,7 +37,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.lifeRegen += (int)LifeRegen1;
             if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))

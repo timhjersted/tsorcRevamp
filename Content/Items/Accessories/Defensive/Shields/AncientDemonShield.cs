@@ -36,7 +36,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             return base.CanAccessoryBeEquippedWith(equippedItem, incomingItem, player);
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             // Knockback immunity and fire-walking are utility effects that stay passive.
             player.noKnockback = true;

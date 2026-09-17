@@ -21,7 +21,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             Item.expert = true;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().DragoonHorn = true;
         }

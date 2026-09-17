@@ -28,7 +28,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "killcount", LangUtils.GetTextValue("Items.BurningStone.Count") + ((tsorcRevampWorld.NewSlain == null) ? 0 : tsorcRevampWorld.NewSlain.Count)));
             base.ModifyTooltips(tooltips);
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (Main.netMode != NetmodeID.Server && player == Main.LocalPlayer)
             {

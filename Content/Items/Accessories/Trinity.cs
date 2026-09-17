@@ -20,7 +20,7 @@ namespace tsorcRevamp.Content.Items.Accessories
             Item.value = PriceByRarity.Cyan_9;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().Trinity = true;
 

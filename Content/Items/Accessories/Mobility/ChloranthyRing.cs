@@ -29,7 +29,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility
             Item.expert = true;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRecoverySpeed / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().StaminaReaper = 4;

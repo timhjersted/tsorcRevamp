@@ -25,7 +25,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Magic
         }
 
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.statLifeMax2 = (int)(player.statLifeMax2 * (1f - BadMaxLife / 100f));
             player.GetDamage(DamageClass.Magic) += MagicDmg / 100f;

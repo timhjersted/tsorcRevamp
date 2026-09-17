@@ -27,7 +27,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon
             Item.rare = ItemRarityID.LightRed;
             Item.defense = 8;
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetKnockback(DamageClass.SummonMeleeSpeed) += 2f;
             player.autoReuseGlove = true;

@@ -44,7 +44,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             // Kept in both modes (and in either slot): the max-mana boost. Flat rather than percent-based so it
             // doesn't depend on MaxManaAmplifier being consumed after every equip source has contributed to it —

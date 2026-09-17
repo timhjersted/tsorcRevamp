@@ -23,7 +23,7 @@ namespace tsorcRevamp.Content.Items.Accessories
             Item.value = PriceByRarity.LightRed_4; //prohibitively expensive soul cost
             Item.expert = true;
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing = true;
             int posX = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;

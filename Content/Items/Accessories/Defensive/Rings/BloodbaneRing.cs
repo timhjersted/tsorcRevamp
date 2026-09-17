@@ -37,7 +37,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.buffImmune[BuffID.Poisoned] = true;
             player.buffImmune[BuffID.Bleeding] = true;

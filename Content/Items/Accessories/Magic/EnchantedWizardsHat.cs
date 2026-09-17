@@ -39,7 +39,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Magic
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetDamage(DamageClass.Magic) += Dmg / 100f;
             player.GetAttackSpeed(DamageClass.Magic) += CastSpeed / 100f;

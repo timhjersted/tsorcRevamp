@@ -23,7 +23,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             Item.expert = true;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetDamage(DamageClass.Generic) += Dmg / 100f;
             player.GetArmorPenetration(DamageClass.Generic) += ArmorPen;

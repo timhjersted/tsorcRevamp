@@ -38,7 +38,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             return base.CanAccessoryBeEquippedWith(equippedItem, incomingItem, player);
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             // Under Active Shields Revamp the % damage reduction (and its paired move-speed penalty)
             // is replaced by on-demand active blocking; only the flat Item.defense stays passive.

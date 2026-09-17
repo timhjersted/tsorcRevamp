@@ -65,7 +65,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon
             recipe3.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetDamage(DamageClass.Summon) += SummonDamage / 100f;
             player.maxTurrets += MaximumTurretIncrease;

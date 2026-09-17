@@ -38,7 +38,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Ranged
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetDamage(DamageClass.Ranged) += RangedDmg / 100f;
             player.GetDamage(DamageClass.Ranged).Flat = FlatRangedDmg;

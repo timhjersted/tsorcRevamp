@@ -41,7 +41,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().ShadowmoonCloak = true;
             player.GetCritChance(DamageClass.Generic) += DamageAndCritIncrease1;
@@ -55,10 +55,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
                 player.GetDamage(DamageClass.Generic) += DamageAndCritIncrease2 / 100f;
 
             }
-        }
-
-        public override void UpdateAccessory(Player player, bool hideVisual)
-        {
+            
             if (!hideVisual)
             {
                 if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))

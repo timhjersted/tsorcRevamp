@@ -30,7 +30,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
             Item.expert = true;
             Item.value = PriceByRarity.LightRed_4;
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().PhoenixSkull = true;
         }

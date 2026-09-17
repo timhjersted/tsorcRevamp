@@ -37,7 +37,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             Item.value = PriceByRarity.Green_2;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             base.UpdateEquip(player);
 

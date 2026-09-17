@@ -50,18 +50,17 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             return true;
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             var modPlayer  = player.GetModPlayer<DragonStonePlayer>();
             modPlayer.DragonStoneImmunity = true;
             modPlayer.DragonStonePotency = true;
             player.GetModPlayer<tsorcRevampPlayer>().DragonSoulEffect = true;
-            player.GetDamage(DamageClass.Generic) += DamageIncrease / 100f;     
-        }
-
-        public override void UpdateAccessory(Player player, bool hideVisual)
-        {
-            if (!hideVisual) player.inferno = true;
+            player.GetDamage(DamageClass.Generic) += DamageIncrease / 100f;
+            if (!hideVisual)
+            {
+                player.inferno = true;
+            }
         }
 
 

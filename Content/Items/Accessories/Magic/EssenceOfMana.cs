@@ -33,7 +33,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Magic
 
             recipe.Register();
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().MaxManaAmplifier += PercentMaxManaAmplifier;
         }

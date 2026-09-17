@@ -26,16 +26,13 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
         }
 
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().WolfRing = true;
             player.buffImmune[BuffID.Frozen] = true;
             player.buffImmune[BuffID.Blackout] = true;
             player.buffImmune[BuffID.Obstructed] = true;
             player.buffImmune[BuffID.Venom] = true;
-        }
-        public override void UpdateAccessory(Player player, bool hideVisual)
-        {
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)

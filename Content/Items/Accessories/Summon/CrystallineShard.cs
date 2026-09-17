@@ -26,7 +26,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon
             Item.rare = ItemRarityID.Cyan;
             Item.value = PriceByRarity.Cyan_9;
         }
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.maxMinions += 2;
             player.GetModPlayer<tsorcRevampPlayer>().CrystallineShard = true;

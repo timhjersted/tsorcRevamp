@@ -48,7 +48,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility
             recipe3.Register();
         }
 
-        public override void UpdateEquip(Player player)
+        public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.noKnockback = true;
             player.moveSpeed += 0.2f; //???? higher tiers ain't got any movement speed
