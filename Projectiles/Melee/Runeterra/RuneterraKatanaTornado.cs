@@ -7,7 +7,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {

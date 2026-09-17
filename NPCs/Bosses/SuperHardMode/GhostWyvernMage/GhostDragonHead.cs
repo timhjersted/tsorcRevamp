@@ -6,8 +6,10 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Projectiles.Enemy.WyvernMage;
 
@@ -136,7 +138,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBagByCondition(new GhostDiscipleDropCondition(), ModContent.ItemType<Items.BossBags.WyvernMageShadowBag>()));
+            npcLoot.Add(ItemDropRule.BossBagByCondition(new GhostDiscipleDropCondition(), ModContent.ItemType<WyvernMageShadowBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GhostDiscipleDropCondition(), ModContent.ItemType<HolyWarElixir>()));
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GhostDiscipleDropCondition(), ModContent.ItemType<GhostWyvernSoul>(), 1, 3, 6));

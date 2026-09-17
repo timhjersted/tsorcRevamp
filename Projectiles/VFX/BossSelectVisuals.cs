@@ -9,6 +9,8 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Content.Items.BossItems;
+using tsorcRevamp.Content.Items.Debug;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.Utilities;
 
@@ -56,7 +58,7 @@ namespace tsorcRevamp.Projectiles.VFX
                     PreHardmodeRarities.Add(tempNPC.rarity);
                     PreHardmodeIds.Add(id);
                     PreHardmodeDownedBosses.Add(new NPC());
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == NPCID.EaterofWorldsHead && NPC.downedBoss2) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == NPCID.EaterofWorldsHead && NPC.downedBoss2) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
                         PreHardmodeDownedBosses[PreHardmodeDownedBosses.Count - 1].SetDefaults(id);
                     }
@@ -72,7 +74,7 @@ namespace tsorcRevamp.Projectiles.VFX
                     HardmodeIds.Add(id);
                     HardmodeDownedBosses.Add(new NPC());
 
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
                         //Draw golems head instead of its body
                         int newID = id;
@@ -94,7 +96,7 @@ namespace tsorcRevamp.Projectiles.VFX
                     SHMRarities.Add(tempNPC.rarity);
                     SHMIds.Add(id);
                     SHMDownedBosses.Add(new NPC());
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<DebugTome>()) || ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                     {
                         int newID = id;
                         if (newID == NPCID.MoonLordCore)
@@ -162,7 +164,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 }
             }
 
-            if (Main.player[Projectile.owner].HeldItem.type != ModContent.ItemType<Items.BossItems.BossRematchTome>())
+            if (Main.player[Projectile.owner].HeldItem.type != ModContent.ItemType<BossRematchTome>())
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

@@ -7,8 +7,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Accessories.Magic;
-using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Utilities;
 

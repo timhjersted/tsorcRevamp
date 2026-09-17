@@ -3,7 +3,8 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using static tsorcRevamp.oSpawnHelper;
 using static tsorcRevamp.SpawnHelper;
 
@@ -126,7 +127,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.SwiftnessPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.SpelunkerPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Axes.DunlendingAxe>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DunlendingAxe>(), 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoostPotion>(), 10));
             npcLoot.Add(new CommonDrop(ItemID.ShinePotion, 25, 1, 1, 3));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 5, 1, 1));

@@ -8,6 +8,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.ObjectData;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Tiles
 {
@@ -15,7 +16,7 @@ namespace tsorcRevamp.Tiles
     public class SoapstoneTile : ModTile
     {
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
         public override void SetStaticDefaults()
         {
             Main.tileFrameImportant[Type] = true;

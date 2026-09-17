@@ -7,8 +7,6 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.VanillaItems;
 
 namespace tsorcRevamp.Projectiles.Melee.Broadswords
 {

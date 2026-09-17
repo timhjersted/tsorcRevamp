@@ -20,23 +20,6 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Accessories.Damage;
-using tsorcRevamp.Items.Armors.Melee;
-using tsorcRevamp.Items.Debug;
-using tsorcRevamp.Items.ItemCrates;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.VanillaItems;
-using tsorcRevamp.Items.Weapons.Magic.Runeterra;
-using tsorcRevamp.Items.Weapons.Ranged;
-using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
-using tsorcRevamp.Items.Weapons.Ranged.Specialist;
-using tsorcRevamp.Items.Weapons.Summon;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
-using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Projectiles;
@@ -51,8 +34,23 @@ using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 using tsorcRevamp;
-using tsorcRevamp.Items.Weapons.Classless;
-using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Damage;
+using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Items.ItemCrates;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.VanillaItems;
+using tsorcRevamp.Content.Items.Weapons.Classless;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs
@@ -2941,12 +2939,12 @@ namespace tsorcRevamp.NPCs
             {
                 if (Main.rand.NextBool(2))
                 {
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<StaminaDroplet>(), 1);
                 }
 
                 if (Main.rand.NextBool(12))
                 {
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<StaminaDroplet>(), 1);
                 }
             }
 

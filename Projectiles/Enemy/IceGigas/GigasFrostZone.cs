@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GigasFrostZone : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const int Duration = 320; //90 (first suck) + 100*2 (later sets) + 30 tail for the last burst to read
         const int FirstSpawnAge = 41; //spawns here, vibrates 50 more -> fires ~90 ticks after cast

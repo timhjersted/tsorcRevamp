@@ -1,0 +1,112 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Content.Items.BossItems
+{
+    class MindflayerIllusionRelic : ModItem
+    {
+
+        public override void SetStaticDefaults()
+        {
+        }
+
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.Red;
+            Item.width = 38;
+            Item.height = 34;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.consumable = false;
+            Item.channel = true;
+        }
+        public override bool? UseItem(Player player)
+        {
+            int offset = 50 * 16;
+            int effectOffset = 65;
+            Vector2 spawnPoint = player.Center + new Vector2(0, -300);
+
+            Vector2 vfx = spawnPoint;
+            if (player.direction == 1)
+            {
+                spawnPoint.X += offset;
+                vfx.X += offset - effectOffset;
+            }
+            else
+            {
+                spawnPoint.X -= offset;
+                vfx.X -= offset;
+            }
+
+
+            NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>());
+
+            /*
+            for (int i = 0; i < 50; i++)
+            {
+                vfx = Attraidies.Center;
+                Vector2 vel = Main.rand.NextVector2Circular(10, 10);
+                int dust;
+                dust = Dust.NewDust(vfx, 30, 30, DustType, vel.X, vel.Y, 100, default, 5f);
+                Main.dust[dust].noGravity = true;
+                Dust.NewDust(vfx, 30, 30, DustType, vel.X, vel.Y, 240, default, 5f);
+                Main.dust[dust].noGravity = true;
+                Dust.NewDust(vfx, 30, 30, DustID.Torch, vel.X, vel.Y, 200, default, 3f);
+
+                Dust.NewDustPerfect(player.position, DustType, vel, 100, default, 5f).noGravity = true;
+            }*/
+
+            //Flip it turnways if the player is facing the other way
+            spawnPoint.X -= 14 * player.direction;
+
+            if (Main.netMode != NetmodeID.SinglePlayer && (player.whoAmI == Main.LocalPlayer.whoAmI))
+            {
+                ModPacket timePacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                timePacket.Write(tsorcPacketID.SyncTimeChange);
+                timePacket.Write(false);
+                timePacket.Write(0);
+                timePacket.Send();
+            }
+            else
+            {
+                Main.dayTime = false;
+                Main.time = 0;
+            }
+            return true;
+        }
+
+        //Was gonna make it have to charge up for a second to activate, but... eh
+        //int cast = 0;
+        public override bool CanUseItem(Player player)
+        {
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            {
+                return false;
+            }
+            for (int i = 0; i < 50; i++)
+            {
+                Dust.NewDustPerfect(player.Center, DustID.PurpleCrystalShard, Main.rand.NextVector2Circular(10, 10), 100, default, 5f).noGravity = true;
+            }
+            return true;
+        }
+        float rotation = 0;
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                rotation += 0.01f;
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i + rotation) * 5;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Violet * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+
+                offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i - rotation) * 5;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Violet * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+            }
+            return true;
+        }
+    }
+}

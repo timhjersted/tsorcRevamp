@@ -7,9 +7,11 @@ using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Utilities;
 
@@ -651,7 +653,7 @@ namespace tsorcRevamp.NPCs.Puppets
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherMask>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherArmor>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherGreaves>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Axes.AncientFireAxe>(), 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncientFireAxe>(), 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 500, 750));
         }
 

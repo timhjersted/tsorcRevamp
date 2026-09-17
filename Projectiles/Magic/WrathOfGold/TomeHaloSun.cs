@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Magic
     ///</summary>
     class TomeHaloSun : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float OrbitRadius = 52f;
         const float OrbitSpeed = 0.06f;

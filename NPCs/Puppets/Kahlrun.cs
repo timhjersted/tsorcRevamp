@@ -4,8 +4,8 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Armors.Magic;
-using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Armor.Magic;
+using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 

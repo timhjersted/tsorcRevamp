@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Magic
     ///</summary>
     class TomeFreezeRing : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float ExpandSpeed = 9f;
         const float RingHalfThickness = 22f;

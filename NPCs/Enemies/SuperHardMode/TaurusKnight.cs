@@ -4,7 +4,9 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -280,7 +282,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 1, 2));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<RedTitanite>(), 1, 3, 5));
         }
     }

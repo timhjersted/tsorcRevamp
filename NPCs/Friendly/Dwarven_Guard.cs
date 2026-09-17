@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using tsorcRevamp.Content.Items.Weapons.Melee.Hammers;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -99,7 +100,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref Rectangle itemFrame, ref int itemSize, ref float scale, ref Vector2 offset)
         {
-            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.Hammers.AncientWarhammer>()];
+            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<AncientWarhammer>()];
             scale = 1.1f;
             itemSize = 38;
         }

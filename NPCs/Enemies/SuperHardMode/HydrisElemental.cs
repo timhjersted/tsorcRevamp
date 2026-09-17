@@ -4,7 +4,8 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {

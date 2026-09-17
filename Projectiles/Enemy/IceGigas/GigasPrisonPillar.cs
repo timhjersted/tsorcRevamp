@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GigasPrisonPillar : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         int RiseTicks => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 20;
         int ShatterTick => (int)Projectile.ai[1] > 0 ? (int)Projectile.ai[1] : 70;

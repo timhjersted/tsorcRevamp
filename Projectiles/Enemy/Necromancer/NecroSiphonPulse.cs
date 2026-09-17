@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class NecroSiphonPulse : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

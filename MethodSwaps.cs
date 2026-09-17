@@ -19,15 +19,17 @@ using Terraria.ModLoader.Config;
 using Terraria.UI;
 using Terraria.Utilities;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Tools;
+using tsorcRevamp.Content.Items.VanillaItems;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee._Animations;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.MainMenu;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Items.VanillaItems;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
-using tsorcRevamp.Items.Weapons.Melee.Spears;
-using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.Bosses.Pinwheel;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
@@ -2980,7 +2982,7 @@ namespace tsorcRevamp
             if (item.stack <= 0 || item.type <= 0 || item.buffType <= 0 || item.CountsAsClass(DamageClass.Summon) || item.buffType == 90)
                 return;
 
-            if (item.type == ModContent.ItemType<Items.Potions.HealingElixir>() || item.type == ModContent.ItemType<Items.Potions.HolyWarElixir>())
+            if (item.type == ModContent.ItemType<HealingElixir>() || item.type == ModContent.ItemType<HolyWarElixir>())
             {
                 return;
             }
@@ -3011,7 +3013,7 @@ namespace tsorcRevamp
                 return;
             }
 
-            if (item.type == ModContent.ItemType<Items.Potions.HolyWarElixir>())
+            if (item.type == ModContent.ItemType<HolyWarElixir>())
             {
                 return;
             }
@@ -3094,11 +3096,11 @@ namespace tsorcRevamp
                 return;
             }
             Item selectedItem = player.QuickMana_GetItemToUse();
-            if (player.HasItemInInventoryOrOpenVoidBag(ModContent.ItemType<Items.Potions.SupremeManaPotion>()))
+            if (player.HasItemInInventoryOrOpenVoidBag(ModContent.ItemType<SupremeManaPotion>()))
             {
                 for (int i = 0; i < player.inventory.Length; i++)
                 {
-                    if (player.inventory[i] != null && player.inventory[i].type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
+                    if (player.inventory[i] != null && player.inventory[i].type == ModContent.ItemType<SupremeManaPotion>())
                     {
                         selectedItem = player.inventory[i];
                     }
@@ -3118,7 +3120,7 @@ namespace tsorcRevamp
                 {
                     if (PotionBagItems[i] != null)
                     {
-                        if (PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && (player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true)) || PotionBagItems[i].type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
+                        if (PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && (player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true)) || PotionBagItems[i].type == ModContent.ItemType<SupremeManaPotion>())
                         {
                             selectedItem = PotionBagItems[i];
                         }
@@ -3362,7 +3364,7 @@ namespace tsorcRevamp
                 if (Main.myPlayer == player.whoAmI)
                     player.ManaEffect(healMana);
             }
-            if (item.type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
+            if (item.type == ModContent.ItemType<SupremeManaPotion>())
             {
                 player.AddBuff(BuffID.ManaSickness, SupremeManaPotion.SicknessDuration * 60);
                 if (Main.myPlayer == player.whoAmI)

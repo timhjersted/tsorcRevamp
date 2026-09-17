@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons;
 
 namespace tsorcRevamp.Utilities.Balance
 {
@@ -105,7 +106,7 @@ namespace tsorcRevamp.Utilities.Balance
 
         /// <summary>
         /// Runs are keyed by weapon *and* which of its attacks fired, because a single item here can
-        /// carry up to four distinct attacks (see <see cref="Items.Weapons.FourAttackWeaponControls"/>).
+        /// carry up to four distinct attacks (see <see cref="FourAttackWeaponControls"/>).
         /// Keying on item alone would average a light poke together with a committed heavy swing and
         /// report a number that describes neither.
         /// </summary>
@@ -153,7 +154,7 @@ namespace tsorcRevamp.Utilities.Balance
         {
             try
             {
-                return Items.Weapons.FourAttackWeaponControls.GetAttackMode(player);
+                return FourAttackWeaponControls.GetAttackMode(player);
             }
             catch
             {
@@ -418,7 +419,7 @@ namespace tsorcRevamp.Utilities.Balance
             bool advanced = false;
             try
             {
-                advanced = Items.Weapons.FourAttackWeaponControls.AdvancedControlsEnabled;
+                advanced = FourAttackWeaponControls.AdvancedControlsEnabled;
             }
             catch
             {

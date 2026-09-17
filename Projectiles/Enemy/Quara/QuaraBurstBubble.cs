@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class QuaraBurstBubble : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float PopRange = 48f;
         const float DriftSpeed = 2.6f;

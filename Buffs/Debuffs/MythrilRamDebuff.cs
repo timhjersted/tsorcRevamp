@@ -1,7 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Accessories.Damage;
+using tsorcRevamp.Content.Items.Accessories.Damage;
 using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Buffs.Debuffs

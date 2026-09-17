@@ -2,7 +2,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs

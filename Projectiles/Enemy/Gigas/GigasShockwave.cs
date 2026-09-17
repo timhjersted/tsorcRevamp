@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GigasShockwave : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float WaveSpeed = 7f;
         const int WaveTravelTicks = 32; //~14 tiles of travel after arming

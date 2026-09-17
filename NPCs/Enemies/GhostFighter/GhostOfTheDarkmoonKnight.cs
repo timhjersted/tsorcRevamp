@@ -6,6 +6,8 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
@@ -124,12 +126,12 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Axes.GigantAxe>(), 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 4));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GigantAxe>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 4));
             npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofVenom));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 4));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 4));
             npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 3));
 
 

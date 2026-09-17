@@ -9,9 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using tsorcRevamp.Items.Materials;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {

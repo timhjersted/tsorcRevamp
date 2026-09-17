@@ -3,7 +3,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
-using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips.SearingLash

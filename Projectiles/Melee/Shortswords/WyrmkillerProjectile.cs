@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.NPCs.Bosses.JungleWyvern;
 using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;

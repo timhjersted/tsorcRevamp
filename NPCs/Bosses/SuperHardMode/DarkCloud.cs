@@ -9,12 +9,15 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Items.Weapons.Ranged.Bows;
-using tsorcRevamp.Items.Weapons.Magic.Tomes;
-using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Guns;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Utilities;
 
@@ -1962,12 +1965,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Main.spriteBatch.Draw(darkSparkTexture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, NPC.scale, SpriteEffects.None, 0);
         }
 
-        static Texture2D antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.Guns.AntimatRifle>()).Texture);
+        static Texture2D antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<AntimatRifle>()).Texture);
         public void AntiMatDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             if (antimatTexture == null || darkSparkTexture.IsDisposed)
             {
-                antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.Guns.AntimatRifle>()).Texture);
+                antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<AntimatRifle>()).Texture);
             }
             float targetPoint = UsefulFunctions.Aim(NPC.Center, Target.Center, 1).ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 3 == 0))
@@ -1984,12 +1987,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Main.spriteBatch.Draw(antimatTexture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, NPC.scale, theseEffects, 0f);
         }
 
-        static Texture2D cernosTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>()).Texture);
+        static Texture2D cernosTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<CernosPrime>()).Texture);
         public void ArrowRainDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             if (cernosTexture == null || darkSparkTexture.IsDisposed)
             {
-                cernosTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>()).Texture);
+                cernosTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<CernosPrime>()).Texture);
             }
             float targetPoint = arrowRainTargetingVector.ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 80 == 20))
@@ -2104,7 +2107,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DarkCloudBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<DarkCloudBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 2, 4));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GuardianSoul>(), 1, 2, 4));

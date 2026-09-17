@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class NecroCurseNova : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float ExpandSpeed = 7f;
         const float RingHalfThickness = 18f;

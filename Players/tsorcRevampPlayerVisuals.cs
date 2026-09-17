@@ -7,12 +7,20 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items.Armor.Summon;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Melee;
 using tsorcRevamp.Projectiles.Melee.Spears;
 using tsorcRevamp.Projectiles.Summon.ShatteredReflection;
 using tsorcRevamp.Systems;
+using ManaShield = tsorcRevamp.Content.Items.Accessories.Defensive.Shields.ManaShield;
 
 namespace tsorcRevamp
 {
@@ -238,7 +246,7 @@ namespace tsorcRevamp
 
             #region Glaive Beam HeldItem glowmask and animation
             //If the player is holding the glaive beam
-            if (thisItem.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.GlaiveBeam>())
+            if (thisItem.type == ModContent.ItemType<GlaiveBeam>())
             {
                 //And the projectile that creates the laser exists
                 if (modPlayer.Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>()] > 0)
@@ -319,43 +327,43 @@ namespace tsorcRevamp
                 if (thisItem.ModItem != null && thisItem.ModItem.Mod == ModLoader.GetMod("tsorcRevamp"))
                 {
                     Texture2D texture = null;
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.Pulsar>())
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Pulsar>())
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PulsarGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.GWPulsar>())
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<GWPulsar>())
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GWPulsarGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.Polaris>())
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Polaris>())
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PolarisGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.ToxicCatalyzer>())
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<ToxicCatalyzer>())
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ToxicCatalyzerGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.VirulentCatalyzer>())
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<VirulentCatalyzer>())
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.VirulentCatalyzerGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.Biohazard>())
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Biohazard>())
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.BiohazardGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.MoonlightGreatsword>() && !Main.dayTime)
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<MoonlightGreatsword>() && !Main.dayTime)
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MoonlightGreatswordGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.UltimaWeapon>())
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<UltimaWeapon>())
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeaponGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Tomes.LightOfDawn>())
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<LightOfDawn>())
                     {
                         texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Magic/Tomes/LightOfDawnCrystal", ReLogic.Content.AssetRequestMode.ImmediateLoad);
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.SeveringDusk>())
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<SeveringDusk>())
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.SeveringDuskGlowmask];
                     }
@@ -392,7 +400,7 @@ namespace tsorcRevamp
                         Color drawColor = Color.White;
 
                         //Idk why this was necessary, but it was
-                        if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Tomes.LightOfDawn>())
+                        if (modPlayer.Player.HeldItem.type == ModContent.ItemType<LightOfDawn>())
                         {
                             originOffset.X += 10;
                             Color baseColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
@@ -588,7 +596,7 @@ namespace tsorcRevamp
             #region mana shield
             if (modPlayer.manaShield > 0 && !modPlayer.Player.dead)
             {
-                if (modPlayer.Player.statMana > Items.Accessories.Defensive.Shields.ManaShield.manaCost)
+                if (modPlayer.Player.statMana > ManaShield.manaCost)
                 {
                     //If they didn't have enough mana for the shield last frame but do now, play a sound to let them know it's back up
                     if (!modPlayer.shieldUp)
@@ -833,7 +841,7 @@ namespace tsorcRevamp
             #endregion
 
             #region Runeterra Gauntlets
-            if (drawPlayer.HeldItem.type == ModContent.ItemType<Items.Weapons.Summon.Runeterra.ScorchingPoint>() && drawPlayer.HeldItem.type != 0)
+            if (drawPlayer.HeldItem.type == ModContent.ItemType<ScorchingPoint>() && drawPlayer.HeldItem.type != 0)
             {
                 //1) Get texture
                 Texture2D scorchingPointTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Summon/Runeterra/ScorchingPoint_Hand");
@@ -894,7 +902,7 @@ namespace tsorcRevamp
                 //4) Call the draw function with all the info
                 drawInfo.DrawDataCache.Add(new DrawData(scorchingPointTexture, drawPosition - Main.screenPosition, sourceRectangle, Color.White, drawRotation, origin, 1, effect, 0));
             }
-            if (drawPlayer.HeldItem.type == ModContent.ItemType<Items.Weapons.Summon.Runeterra.InterstellarVesselGauntlet>() && drawPlayer.HeldItem.type != 0)
+            if (drawPlayer.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && drawPlayer.HeldItem.type != 0)
             {
                 //1) Get texture
                 Texture2D interstellarVesselGauntletTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Summon/Runeterra/InterstellarVesselGauntlet_Hand");
@@ -955,7 +963,7 @@ namespace tsorcRevamp
                 //4) Call the draw function with all the info
                 drawInfo.DrawDataCache.Add(new DrawData(interstellarVesselGauntletTexture, drawPosition - Main.screenPosition, sourceRectangle, Color.White, drawRotation, origin, 1, effect, 0));
             }
-            if (drawPlayer.HeldItem.type == ModContent.ItemType<Items.Weapons.Summon.Runeterra.CenterOfTheUniverse>() && drawPlayer.HeldItem.type != 0)
+            if (drawPlayer.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && drawPlayer.HeldItem.type != 0)
             {
                 //1) Get texture
                 Texture2D centerOfTheUniverseTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Summon/Runeterra/CenterOfTheUniverse_Hand");
@@ -1035,8 +1043,8 @@ namespace tsorcRevamp
         protected override void Draw(ref PlayerDrawSet drawInfo)
         {
             if (!drawInfo.drawPlayer.dead &&
-               ((drawInfo.drawPlayer.armor[1].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>() && drawInfo.drawPlayer.armor[11].type == 0) ||
-               (drawInfo.drawPlayer.armor[11].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>())))
+               ((drawInfo.drawPlayer.armor[1].type == ModContent.ItemType<TarantulaCarapace>() && drawInfo.drawPlayer.armor[11].type == 0) ||
+               (drawInfo.drawPlayer.armor[11].type == ModContent.ItemType<TarantulaCarapace>())))
             {
                 Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Armors/Summon/TarantulaCarapace_Backpack");
                 Vector2 drawPos = drawInfo.Center - Main.screenPosition;

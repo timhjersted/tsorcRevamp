@@ -1,7 +1,8 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
 
 namespace tsorcRevamp.Projectiles
 {

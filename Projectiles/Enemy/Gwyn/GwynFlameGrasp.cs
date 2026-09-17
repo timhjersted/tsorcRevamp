@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GwynFlameGrasp : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const int StateFlying = 0;
         const int StateGrasping = 1;

@@ -6,8 +6,9 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {

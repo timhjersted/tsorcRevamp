@@ -5,10 +5,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Accessories.Magic.Bands;
-using tsorcRevamp.Items.Accessories.Mobility;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Potions.PermanentPotions;
+using tsorcRevamp.Content.Items.Accessories.Magic.Bands;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -572,7 +571,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.OolacileDemonBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<OolacileDemonBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BandOfCosmicPower>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PermanentShinePotion>()));

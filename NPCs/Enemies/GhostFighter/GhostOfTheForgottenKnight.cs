@@ -4,7 +4,9 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
@@ -302,11 +304,11 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.DownedSkeletronRule, ModContent.ItemType<Items.Weapons.Throwing.EphemeralThrowingSpear>(), 5, 25, 30, 2));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.DownedSkeletronRule, ModContent.ItemType<EphemeralThrowingSpear>(), 5, 25, 30, 2));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.DownedSkeletronRule, ModContent.ItemType<EphemeralDust>(), 1, 3, 9));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.DownedSkeletronRule, ItemID.GoldenKey, 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Throwing.RoyalThrowingSpear>(), 4, 25, 35));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 5, 1, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RoyalThrowingSpear>(), 4, 25, 35));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<HealingElixir>(), 5, 1, 1, 2));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 35));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 35));
             npcLoot.Add(new CommonDrop(ItemID.HunterPotion, 100, 1, 1, 8));

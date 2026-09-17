@@ -8,15 +8,15 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Weapons.Melee.Axes;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Tools;
+using tsorcRevamp.Content.Items.Weapons.Melee.Hammers;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -294,19 +294,19 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherHelmet>())
+            shop.Add(new Item(ModContent.ItemType<StuddedLeatherHelmet>())
             {
                 shopCustomPrice = 25,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherArmor>())
+            shop.Add(new Item(ModContent.ItemType<StuddedLeatherArmor>())
             {
                 shopCustomPrice = 40,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherGreaves>())
+            shop.Add(new Item(ModContent.ItemType<StuddedLeatherGreaves>())
             {
                 shopCustomPrice = 33,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -444,7 +444,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 }, Condition.Hardmode);
             }  
 
-            shop.Add(new Item(ModContent.ItemType<Items.Materials.ImpHead>())
+            shop.Add(new Item(ModContent.ItemType<ImpHead>())
             {
                 shopCustomPrice = 6000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -478,7 +478,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref Rectangle itemFrame, ref int itemSize, ref float scale, ref Vector2 offset)
         {
-            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.Hammers.AncientWarhammer>()];
+            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<AncientWarhammer>()];
             scale = 1.2f;
             itemSize = 38;
         }

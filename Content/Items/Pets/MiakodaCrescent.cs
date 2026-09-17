@@ -1,0 +1,56 @@
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+
+namespace tsorcRevamp.Content.Items.Pets
+{
+    class MiakodaCrescent : ModItem
+    {
+        public static float Dmg1 = 4f;
+        public static float Dmg2 = 8f;
+        public static float BoostDuration = 2.5f;
+        public static int BoostCooldown = 12;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg1, Dmg2, BoostDuration, BoostCooldown);
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
+        {
+            Item.CloneDefaults(ItemID.DD2PetGhost);
+            Item.shoot = ModContent.ProjectileType<Projectiles.Pets.MiakodaCrescent>();
+            Item.buffType = ModContent.BuffType<Buffs.MiakodaCrescent>();
+        }
+
+        public override void UseStyle(Player player, Rectangle rectangle)
+        {
+            if (player.whoAmI == Main.myPlayer && player.itemTime == 0)
+            {
+                player.AddBuff(Item.buffType, 3600, true);
+            }
+        }
+
+        public override void AddRecipes()
+        {
+            {
+                Recipe recipe = CreateRecipe();
+                recipe.AddIngredient(ModContent.ItemType<MiakodaFull>());
+                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
+                recipe.AddTile(TileID.DemonAltar);
+
+                recipe.Register();
+            }
+            {
+                Recipe recipe = CreateRecipe();
+                recipe.AddIngredient(ModContent.ItemType<MiakodaNew>());
+                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
+                recipe.AddTile(TileID.DemonAltar);
+
+                recipe.Register();
+            }
+        }
+    }
+}

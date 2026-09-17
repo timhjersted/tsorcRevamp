@@ -1,7 +1,7 @@
 ﻿using Terraria.GameContent.UI;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
+using tsorcRevamp.Content.Items;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp

@@ -10,9 +10,11 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Audio;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Projectiles.Enemy.OolacileSorcerer;
 
@@ -366,7 +368,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.OolacileSorcererBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<OolacileSorcererBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 2, 4));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());

@@ -1,7 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs

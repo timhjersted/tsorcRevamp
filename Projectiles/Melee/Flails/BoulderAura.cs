@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
 
     public class BerserkerNightmareAura : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
         public override void SetDefaults()
         {
             Projectile.width = 120;
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
 
     public class HeavensTearAura : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
         public override void SetDefaults()
         {
             Projectile.width = 154;
@@ -108,7 +108,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
 
     public class SunderingLightAura : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
         public override void SetDefaults()
         {
             Projectile.width = 230;

@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.GameInput;
 using Terraria.ModLoader;
 using Terraria.UI;
+using tsorcRevamp.Content.Items;
 
 namespace tsorcRevamp.UI
 {
@@ -71,7 +72,7 @@ namespace tsorcRevamp.UI
                 {
                     valid = true;
                 }
-                if (Main.mouseItem.type == ModContent.ItemType<Items.PotionBag>()) //No
+                if (Main.mouseItem.type == ModContent.ItemType<PotionBag>()) //No
                 {
                     valid = false;
                 }

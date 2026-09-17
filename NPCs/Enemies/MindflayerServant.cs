@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

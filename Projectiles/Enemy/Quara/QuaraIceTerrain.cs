@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Quara
     {
         const int IgniteDelay = 3;
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {
@@ -94,7 +94,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Quara
     {
         const int Lifetime = 12;
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         int ActiveTiles => Math.Min(8, Lifetime - Projectile.timeLeft + 1);
 
@@ -150,7 +150,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Quara
         const int DustDuration = 3 * 60;
         const int DetonationDelay = 15;
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

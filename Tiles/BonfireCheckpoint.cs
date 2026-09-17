@@ -12,7 +12,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Placeable;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Placeable;
 using tsorcRevamp.NPCs.Special;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
@@ -297,7 +298,7 @@ namespace tsorcRevamp.Tiles
                             bonfireEffectTimer++;
                         }
 
-                        if (player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && distance < 120f && player.HeldItem.type == ModContent.ItemType<Items.SublimeBoneDust>() && player.itemTime != 0)
+                        if (player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && distance < 120f && player.HeldItem.type == ModContent.ItemType<SublimeBoneDust>() && player.itemTime != 0)
                         {
                             boneDustEffectTimer++;
                             if (boneDustEffectTimer == 1)

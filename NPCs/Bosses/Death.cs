@@ -9,10 +9,11 @@ using Terraria.ModLoader;
 using Terraria.DataStructures;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Tools;
+using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -223,7 +224,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DeathBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<DeathBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 2, 4));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GreatMagicShieldScroll>(), 6));

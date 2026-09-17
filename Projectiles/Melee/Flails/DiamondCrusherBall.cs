@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
     public class DiamondCrusherBall : ModProjectile
     {
 
-        private const string ChainTexturePath = "tsorcRevamp/Projectiles/Melee/Flails/DiamondCrusherChain"; // The folder path to the flail chain sprite
+        public string ChainTexturePath = UsefulFunctions.RefactorableFilepath(typeof(DiamondCrusherBall)) + "_Chain"; // The folder path to the flail chain sprite
 
         private enum AIState
         {
@@ -544,7 +544,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
 
     public class DiamondCrusherShockwave : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

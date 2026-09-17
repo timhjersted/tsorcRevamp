@@ -1,0 +1,43 @@
+﻿using Terraria;
+using Terraria.ID;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee._Animations;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.ItemComponents;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.ItemOverhauls;
+
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee._Overhauls;
+
+public partial class Broadsword : ItemOverhaul
+{
+    public override bool ShouldApplyItemOverhaul(Item item)
+    {
+        // Broadswords always swing, don't have channeling, and are visible
+        if (item.useStyle != ItemUseStyleID.Swing || item.noMelee || item.channel || item.noUseGraphic)
+        {
+            return false;
+        }
+
+        // let's only exclude pickaxes
+        if (item.pick > 0 || item.createTile >= TileID.Dirt || item.createWall >= 0)
+        {
+            return false;
+        }
+
+        if (item.damage <= 0) return false;
+        return true;
+    }
+
+    public override void SetDefaults(Item item)
+    {
+        base.SetDefaults(item);
+
+        // Components
+        item.EnableComponent<ItemMeleeAttackAiming>();
+
+        // Animation
+        item.EnableComponent<QuickSlashMeleeAnimation>(c =>
+        {
+            c.FlipAttackEachSwing = true;
+            c.AnimateLegs = true;
+        });
+    }
+}

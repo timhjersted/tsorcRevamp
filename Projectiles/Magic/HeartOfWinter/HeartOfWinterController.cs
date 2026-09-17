@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Magic
     ///</summary>
     class HeartOfWinterController : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const int TapWindow = 18;   //released before this = the tap spell
         const int ChargeTicks = 60; //cursor-low hold: charge time after the window before the nova

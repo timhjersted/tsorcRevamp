@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GigasLightHand : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         // The pair begins 800px apart: each slab is 400px from the committed strike point.
         const float HandStartOffset = 400f;

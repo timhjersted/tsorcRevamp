@@ -4,8 +4,9 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee._Animations;
 
 namespace tsorcRevamp.Projectiles.VFX
 {

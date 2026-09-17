@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class QuaraIchorGlob : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public const int DousedSeconds = 6;
 

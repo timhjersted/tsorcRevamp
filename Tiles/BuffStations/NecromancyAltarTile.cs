@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using tsorcRevamp.Items.Placeable.BuffStations;
+using tsorcRevamp.Content.Items.Placeable.BuffStations;
 
 namespace tsorcRevamp.Tiles.BuffStations
 {

@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class QuaraClawSwipe : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const int Life = 16;
 

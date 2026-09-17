@@ -6,6 +6,10 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.SpawnHelper;
 
@@ -680,7 +684,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 direction = over.Value;
             }
 
-            if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.Specialist.BlizzardBlasterShot>())
+            if (projectile.type != ModContent.ProjectileType<BlizzardBlasterShot>())
             {
                 if (shielding && !slashing && !jumpSlashing)
                 {
@@ -858,10 +862,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 2, 4));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 2, 4));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 30));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 15));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Lifegem>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 15));
 
         }
 

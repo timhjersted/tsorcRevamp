@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles.Summon.NullSprite
 {
     public class NullSpriteBeam : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetStaticDefaults()
         {

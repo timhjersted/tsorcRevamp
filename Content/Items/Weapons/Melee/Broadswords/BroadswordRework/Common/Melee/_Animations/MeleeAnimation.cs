@@ -1,0 +1,86 @@
+﻿using System;
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.ItemComponents;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities._Extensions;
+
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee._Animations;
+
+public abstract class MeleeAnimation : ItemComponent
+{
+    public abstract float GetItemRotation(Player player, Item item);
+
+    public override void UseItemFrame(Item item, Player player)
+    {
+        if (!Enabled)
+        {
+            return;
+        }
+
+        if (item.useStyle != ItemUseStyleID.Swing)
+        {
+            return;
+        }
+
+        if (item.TryGetGlobalItem(out ItemMeleeAttackAiming aiming) && aiming.Enabled && Math.Abs(aiming.AttackDirection.X) > 0.1f)
+        {
+            player.direction = Math.Sign(aiming.AttackDirection.X);
+        }
+
+        float animationRotation = GetItemRotation(player, item);
+        float weaponRotation = MathUtils.Modulo(animationRotation, MathHelper.TwoPi);
+        var weaponDirection = weaponRotation.ToRotationVector2();
+
+        float pitch = MathUtils.RadiansToPitch(weaponRotation);
+
+        // Clamp pitch at the extremes when the weapon has crossed the vertical plane.
+        // After the direction fix above this should only fire in edge-case rotations.
+        if (Math.Sign(weaponDirection.X) != player.direction)
+        {
+            pitch = weaponDirection.Y < 0f ? 1f : 0f;
+        }
+
+        player.bodyFrame = PlayerFrames.Use3.ToRectangle();
+
+        Vector2 locationOffset;
+
+        if (pitch > 0.95f)
+        {
+            player.bodyFrame = PlayerFrames.Use1.ToRectangle();
+            locationOffset = new Vector2(-8f, -9f);
+        }
+        else if (pitch > 0.7f)
+        {
+            player.bodyFrame = PlayerFrames.Use2.ToRectangle();
+            locationOffset = new Vector2(4f, -8f);
+        }
+        else if (pitch > 0.3f)
+        {
+            player.bodyFrame = PlayerFrames.Use3.ToRectangle();
+            locationOffset = new Vector2(4f, 2f);
+        }
+        else if (pitch > 0.05f)
+        {
+            player.bodyFrame = PlayerFrames.Use4.ToRectangle();
+            locationOffset = new Vector2(4f, 7f);
+        }
+        else
+        {
+            player.bodyFrame = PlayerFrames.Walk5.ToRectangle();
+            var foo = PlayerFrames.Walk5.ToRectangle();
+            locationOffset = new Vector2(-8f, 2f);
+        }
+
+        player.itemRotation = weaponRotation + MathHelper.PiOver4;
+
+        if (player.direction < 0)
+        {
+            player.itemRotation += MathHelper.PiOver2;
+        }
+
+        player.itemLocation = player.Center + new Vector2(locationOffset.X * player.direction, locationOffset.Y);
+
+    }
+}

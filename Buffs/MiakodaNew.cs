@@ -24,7 +24,7 @@ namespace tsorcRevamp.Buffs
                 Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.MiakodaNew>(), 0, 0f, player.whoAmI);
             }
 
-            player.moveSpeed += Items.Pets.MiakodaNew.MoveSpeed1 / 100f;
+            player.moveSpeed += Content.Items.Pets.MiakodaNew.MoveSpeed1 / 100f;
         }
     }
 }

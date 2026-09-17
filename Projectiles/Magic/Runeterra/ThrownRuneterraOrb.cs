@@ -6,8 +6,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra

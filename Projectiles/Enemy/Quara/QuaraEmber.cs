@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class QuaraEmber : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public const float IgniteRadius = 96f;
 

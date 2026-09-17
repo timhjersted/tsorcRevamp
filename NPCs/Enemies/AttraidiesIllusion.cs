@@ -5,7 +5,8 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Accessories.Magic;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
@@ -387,7 +388,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new CommonDrop(ItemID.IronskinPotion, 35, 1, 1, 2));
             npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 30, 1, 1, 9));
             npcLoot.Add(new CommonDrop(ItemID.GoldenKey, 10, 1, 1, 3));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Magic.AquamarineRing>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AquamarineRing>(), 20));
             npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 10, 2, 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<HealingElixir>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 2));

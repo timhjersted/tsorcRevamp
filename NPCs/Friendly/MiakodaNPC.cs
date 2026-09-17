@@ -16,13 +16,13 @@ using tsorcRevamp.Projectiles.Pets;
 using System.Collections;
 using rail;
 using Steamworks;
+using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.NPCs.Bosses.Serris;
 using tsorcRevamp.NPCs.Bosses.PrimeV2;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
-using tsorcRevamp.Items.BossItems;
 
 namespace tsorcRevamp.NPCs.Friendly
 {

@@ -8,7 +8,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Utilities;
 

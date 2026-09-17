@@ -4,14 +4,14 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Items.Armors;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.Projectiles.Melee.Broadswords
 {
     class SwordOfLordGwynController : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const int TapWindow = 14;
         const int NovaChargeTicks = 54;

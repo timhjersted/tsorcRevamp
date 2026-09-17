@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -131,10 +132,10 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 20));
             npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 25));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 50));
 
         }
     }

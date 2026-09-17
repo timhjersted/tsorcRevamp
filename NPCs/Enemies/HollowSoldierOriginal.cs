@@ -6,7 +6,12 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items.Armor.Magic;
+using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.SpawnHelper;
 
@@ -688,7 +693,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 direction = over.Value;
             }
 
-            if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.Specialist.BlizzardBlasterShot>())
+            if (projectile.type != ModContent.ProjectileType<BlizzardBlasterShot>())
             {
                 if (shielding)
                 {
@@ -857,19 +862,19 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 3, 9));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 3, 9));
             npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 30));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 30));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 10));
             //npcLoot.Add(ItemDropRule.Common(ItemID.CobaltShield, 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<IronShield>(), 15));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 15));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Lifegem>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RadiantLifegem>(), 30));
 
             int[] armorIDs = new int[] {
-                ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
-                ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),
-                ModContent.ItemType<Items.Armors.Magic.RedClothPants>(),
+                ModContent.ItemType<RedClothHat>(),
+                ModContent.ItemType<RedClothTunic>(),
+                ModContent.ItemType<RedClothPants>(),
             };
             npcLoot.Add(new DropMultiple(armorIDs, 30, 1, !NPC.downedBoss1));
         }

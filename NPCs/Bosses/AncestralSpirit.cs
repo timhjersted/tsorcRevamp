@@ -3,9 +3,10 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Placeable.Relics;
-using tsorcRevamp.Items.Placeable.Trophies;
-using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Placeable.Relics;
+using tsorcRevamp.Content.Items.Placeable.Trophies;
+using tsorcRevamp.Content.Items.Vanity;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -35,7 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.AncestralSpiritBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<AncestralSpiritBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<AncestralSpiritMask>(), 7));
             npcLoot.Add(notExpertCondition);

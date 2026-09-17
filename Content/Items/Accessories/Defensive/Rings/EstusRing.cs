@@ -1,0 +1,33 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
+{
+    public class EstusRing : ModItem
+    {
+        public const int HealIncrease = 30;
+        public const int PercentHealIncrease = 10;
+        public const float DrinkTimeReduction = 33f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(HealIncrease, PercentHealIncrease, DrinkTimeReduction);
+        public override void SetStaticDefaults()
+        {
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 28;
+            Item.height = 28;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Green_2;
+            Item.rare = ItemRarityID.Green;
+        }
+
+        public override void UpdateEquip(Player player)
+        {
+            player.GetModPlayer<tsorcRevampEstusPlayer>().EstusRing = true;
+        }
+
+    }
+}

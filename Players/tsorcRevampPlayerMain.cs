@@ -25,29 +25,32 @@ using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Accessories.Summon;
-using tsorcRevamp.Items.Ammo;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Armors.Magic;
-using tsorcRevamp.Items.Armors.Melee;
-using tsorcRevamp.Items.Armors.Ranged;
-using tsorcRevamp.Items.Armors.Summon;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Items.VanillaItems;
-using tsorcRevamp.Items.Weapons.Magic;
-using tsorcRevamp.Items.Weapons.Magic.Runeterra;
-using tsorcRevamp.Items.Weapons.Enemy;
-using tsorcRevamp.Items.Weapons.Melee.Axes;
-using tsorcRevamp.Items.Weapons.Melee.Runeterra;
-using tsorcRevamp.Items.Weapons.Ranged;
-using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items.Ammo;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.Armor.Ranged;
+using tsorcRevamp.Content.Items.Armor.Summon;
+using tsorcRevamp.Content.Items.Lore;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Tools;
+using tsorcRevamp.Content.Items.VanillaItems;
+using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
@@ -541,8 +544,8 @@ namespace tsorcRevamp
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().BarrierRing && !Player.HasBuff(ModContent.BuffType<BarrierCooldown>()))
             {
-                Player.AddBuff(ModContent.BuffType<BarrierCooldown>(), Items.Accessories.Defensive.Rings.BarrierRing.Cooldown * 60);
-                Player.SetImmuneTimeForAllTypes((int)(Items.Accessories.Defensive.Rings.BarrierRing.ImmuneTimeAfterHit * 60f));
+                Player.AddBuff(ModContent.BuffType<BarrierCooldown>(), Content.Items.Accessories.Defensive.Rings.BarrierRing.Cooldown * 60);
+                Player.SetImmuneTimeForAllTypes((int)(Content.Items.Accessories.Defensive.Rings.BarrierRing.ImmuneTimeAfterHit * 60f));
                 return true;
             }
             return base.ImmuneTo(damageSource, cooldownCounter, dodgeable);
@@ -821,9 +824,9 @@ namespace tsorcRevamp
                     dust.velocity.Y = Main.rand.NextFloat(-4, -0f);
                     dust.velocity.X = Main.rand.NextFloat(5, 1.5f);
                 }
-                Player.statLife = (int)(Player.statLifeMax2 * Items.Accessories.Defensive.PhoenixSkull.HealthPercent / 100f);
-                Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Items.Accessories.Defensive.PhoenixSkull.Cooldown * 60);
-                Player.AddBuff(ModContent.BuffType<PhoenixRebirthBuff>(), Items.Accessories.Defensive.PhoenixSkull.Duration * 60);
+                Player.statLife = (int)(Player.statLifeMax2 * Content.Items.Accessories.Defensive.PhoenixSkull.HealthPercent / 100f);
+                Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Content.Items.Accessories.Defensive.PhoenixSkull.Cooldown * 60);
+                Player.AddBuff(ModContent.BuffType<PhoenixRebirthBuff>(), Content.Items.Accessories.Defensive.PhoenixSkull.Duration * 60);
                 Player.SetImmuneTimeForAllTypes(1 * 60 + 30);
                 return false;
             }
@@ -1016,7 +1019,7 @@ namespace tsorcRevamp
             switch (startingClass)
             {
                 case StartingClass.Ranged:
-                    startingItems.Add(CreateStartingItem(ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>(), prefix: PrefixID.Awful));
+                    startingItems.Add(CreateStartingItem(ModContent.ItemType<Crossbow>(), prefix: PrefixID.Awful));
                     startingItems.Add(CreateStartingItem(ModContent.ItemType<Bolt>(), 50));
                     startingItems.Add(CreateStartingItem(ItemID.IronShortsword, prefix: PrefixID.Dull));
                     break;
@@ -1047,7 +1050,7 @@ namespace tsorcRevamp
         {
             return startingClass switch
             {
-                StartingClass.Ranged => new[] { ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>(), ItemID.IronShortsword },
+                StartingClass.Ranged => new[] { ModContent.ItemType<Crossbow>(), ItemID.IronShortsword },
                 StartingClass.Magic => new[] { ModContent.ItemType<ApprenticesWand>(), ItemID.BorealWoodSword },
                 StartingClass.Summoner => new[] { ModContent.ItemType<RustedChain>(), ItemID.BabyBirdStaff },
                 StartingClass.Deprived => new[] { (int)ItemID.CopperShortsword },
@@ -1071,7 +1074,7 @@ namespace tsorcRevamp
 
             // Reference book for the mod's non-vanilla systems. Right-click pages through it.
             Item GameManual = new Item();
-            GameManual.SetDefaults(ModContent.ItemType<Items.Lore.GameManual>());
+            GameManual.SetDefaults(ModContent.ItemType<GameManual>());
             startingItems.Add(GameManual);
 
             if (!mediumCoreDeath)
@@ -1257,7 +1260,7 @@ namespace tsorcRevamp
             }
             if (MaskOfTheFather)
             {
-                modifiers.CritDamage += Items.Armors.MaskOfTheFather.CritDmgIncrease / 100f;
+                modifiers.CritDamage += Content.Items.Armor.MaskOfTheFather.CritDmgIncrease / 100f;
             }
         }
         public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
@@ -1304,15 +1307,15 @@ namespace tsorcRevamp
                     modifiers.SetCrit();
                 }
             }
-            if (CanUseItemsWhileDodging && !ArtoriasAbysswalker && isDodging && (proj.type == ProjectileID.NebulaBlaze2) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.YianBlade>())
+            if (CanUseItemsWhileDodging && !ArtoriasAbysswalker && isDodging && (proj.type == ProjectileID.NebulaBlaze2) && Player.HeldItem.type == ModContent.ItemType<YianBlade>())
             {
                 modifiers.FinalDamage -= ArtoriasArmor.DmgMultWhileRolling;
             }
             if (modifiers.DamageType == DamageClass.Ranged && InfinityEdge)
             {
-                modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
+                modifiers.CritDamage += Content.Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
             }
-            if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
+            if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<CernosPrime>())
             {
                 modifiers.FinalDamage *= 0.55f;
             }
@@ -1322,7 +1325,7 @@ namespace tsorcRevamp
             }
             if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !Player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung && ProjectileID.Sets.IsAWhip[proj.type])
             {
-                modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f / 3f;
+                modifiers.SourceDamage += Content.Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f / 3f;
             }
             if (ProjectileID.Sets.IsAWhip[proj.type] && WhipTipHit(proj, proj.WhipPointsForCollision, target.Hitbox))
             {
@@ -1330,7 +1333,7 @@ namespace tsorcRevamp
             }
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {
-                modifiers.TargetDamageMultiplier *= 1f + Items.Accessories.Damage.BurningStone.DamageIncrease / 100f;
+                modifiers.TargetDamageMultiplier *= 1f + Content.Items.Accessories.Damage.BurningStone.DamageIncrease / 100f;
             }
             if (proj.type == ProjectileID.StardustDragon1 || proj.type == ProjectileID.StardustDragon2 || proj.type == ProjectileID.StardustDragon3 || proj.type == ProjectileID.StardustDragon4)
             {
@@ -1442,14 +1445,14 @@ namespace tsorcRevamp
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
             }
             SpendArtoriasAbysswalkerPoise(target, hit);
-            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
+            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Content.Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
             {
-                Player.HealEffect((int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
-                Player.statLife += ((int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
+                Player.HealEffect((int)(Content.Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
+                Player.statLife += ((int)(Content.Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
             }
             if (MiakodaFull)
             { //Miakoda Full Moon
-                if (MiakodaEffectsTimer > Items.Pets.MiakodaFull.HealCooldown * 60)
+                if (MiakodaEffectsTimer > Content.Items.Pets.MiakodaFull.HealCooldown * 60)
                 {
                     if (hit.Crit) //summoner has decent options for crits now
                     {
@@ -1457,7 +1460,7 @@ namespace tsorcRevamp
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
 
                         //2 per 100 max hp, plus 2
-                        int HealAmount = (int)((Math.Floor((double)(Player.statLifeMax2 / 100)) * Items.Pets.MiakodaFull.MaxHPHealPercent) + Items.Pets.MiakodaFull.BaseHealing);
+                        int HealAmount = (int)((Math.Floor((double)(Player.statLifeMax2 / 100)) * Content.Items.Pets.MiakodaFull.MaxHPHealPercent) + Content.Items.Pets.MiakodaFull.BaseHealing);
                         Player.statLife += HealAmount;
                         Player.HealEffect(HealAmount, false);
                         if (Player.statLife > Player.statLifeMax2)
@@ -1474,7 +1477,7 @@ namespace tsorcRevamp
 
             if (MiakodaCrescent)
             { //Miakoda Crescent Moon
-                if (MiakodaEffectsTimer > Items.Pets.MiakodaCrescent.BoostCooldown * 60)
+                if (MiakodaEffectsTimer > Content.Items.Pets.MiakodaCrescent.BoostCooldown * 60)
                 {
                     if (hit.Crit) //summoner has decent options for crits now
                     {
@@ -1491,7 +1494,7 @@ namespace tsorcRevamp
 
             if (MiakodaNew)
             { //Miakoda New Moon
-                if (MiakodaEffectsTimer > Items.Pets.MiakodaNew.BoostCooldown * 60)
+                if (MiakodaEffectsTimer > Content.Items.Pets.MiakodaNew.BoostCooldown * 60)
                 {
                     if (hit.Crit)
                     {
@@ -1508,7 +1511,7 @@ namespace tsorcRevamp
         }
         public override void ModifyWeaponDamage(Item item, ref StatModifier damage)
         {
-            if (item.type == ModContent.ItemType<Items.Weapons.Melee.Spears.PilgrimSpontoon>() && PilgrimSpontoonBuff)
+            if (item.type == ModContent.ItemType<PilgrimSpontoon>() && PilgrimSpontoonBuff)
             {
                 Player.GetAttackSpeed(DamageClass.Melee) *= 27f / 21f; //reduced the use time of pilgrim spontoon
             }
@@ -1628,11 +1631,11 @@ namespace tsorcRevamp
                     Vector2 velocity = UsefulFunctions.Aim(target.Bottom, Main.npc[closest.Value].Top, 3);
                     if (Main.myPlayer == Player.whoAmI)
                     {
-                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(-1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
-                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(0, -3), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
-                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(-1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Content.Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(0, -3), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Content.Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Content.Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
                     }
-                    Main.player[proj.owner].AddBuff(ModContent.BuffType<LudensTempestCooldown>(), Items.Accessories.Magic.LudensTempest.Cooldown * 60);
+                    Main.player[proj.owner].AddBuff(ModContent.BuffType<LudensTempestCooldown>(), Content.Items.Accessories.Magic.LudensTempest.Cooldown * 60);
                 }
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/LudensTempest") with { Volume = 0.25f }, target.Center);
             }
@@ -1642,8 +1645,8 @@ namespace tsorcRevamp
             }
             if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung)
             {
-                Player.statLife += (int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1);
-                Player.HealEffect((int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1));
+                Player.statLife += (int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Content.Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1);
+                Player.HealEffect((int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Content.Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1));
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerHit") with { Volume = 0.25f }, target.Center);
                 GoredrinkerHits++;
             }
@@ -1711,7 +1714,7 @@ namespace tsorcRevamp
             {
                 if (tsorcRevamp.UndeadNPCs.Contains(npc.type))
                 {
-                    modifiers.FinalDamage.Flat -= Items.Accessories.Defensive.UndeadTalisman.FlatDR;
+                    modifiers.FinalDamage.Flat -= Content.Items.Accessories.Defensive.UndeadTalisman.FlatDR;
                 }
             }
 
@@ -1794,7 +1797,7 @@ namespace tsorcRevamp
             {
                 if (proj.type == ProjectileID.SkeletonBone || proj.type == ProjectileID.Skull)
                 {
-                    modifiers.FinalDamage.Flat -= Items.Accessories.Defensive.UndeadTalisman.FlatDR;
+                    modifiers.FinalDamage.Flat -= Content.Items.Accessories.Defensive.UndeadTalisman.FlatDR;
                 }
             }
         }
@@ -2192,20 +2195,20 @@ namespace tsorcRevamp
             }
             if (manaShield == 1)
             {
-                if (Player.statMana >= Items.Accessories.Defensive.Shields.ManaShield.manaCost)
+                if (Player.statMana >= ManaShield.manaCost)
                 {
-                    SpendManaOnHit(Items.Accessories.Defensive.Shields.ManaShield.manaCost); // also applies the Unkindled mana-regen delay
-                    Player.manaRegenDelay = Items.Accessories.Defensive.Shields.ManaShield.regenDelay * 60;
-                    Player.maxRegenDelay = Items.Accessories.Defensive.Shields.ManaShield.regenDelay * 60;
+                    SpendManaOnHit(ManaShield.manaCost); // also applies the Unkindled mana-regen delay
+                    Player.manaRegenDelay = ManaShield.regenDelay * 60;
+                    Player.maxRegenDelay = ManaShield.regenDelay * 60;
                 }
             }
             if (manaShield == 2)
             {
-                if (Player.statMana >= Items.Accessories.Defensive.Celestriad.manaCost)
+                if (Player.statMana >= Content.Items.Accessories.Defensive.Celestriad.manaCost)
                 {
-                    SpendManaOnHit(Items.Accessories.Defensive.Celestriad.manaCost);
-                    Player.manaRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay * 60;
-                    Player.maxRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay * 60;
+                    SpendManaOnHit(Content.Items.Accessories.Defensive.Celestriad.manaCost);
+                    Player.manaRegenDelay = Content.Items.Accessories.Defensive.Celestriad.regenDelay * 60;
+                    Player.maxRegenDelay = Content.Items.Accessories.Defensive.Celestriad.regenDelay * 60;
                 }
             }
             // stamina shield code
@@ -2213,7 +2216,7 @@ namespace tsorcRevamp
             {
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 75)
                 {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= Items.Accessories.Defensive.Shields.DragonCrestShield.staminaCost;
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= DragonCrestShield.staminaCost;
                     //return;
                 }
             }
@@ -2490,7 +2493,7 @@ namespace tsorcRevamp
                 {
                     return StartingClass.Summoner;
                 }
-                if (itemType == ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>() || itemType == ItemID.IronShortsword)
+                if (itemType == ModContent.ItemType<Crossbow>() || itemType == ItemID.IronShortsword)
                 {
                     return StartingClass.Ranged;
                 }

@@ -4,12 +4,13 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.AI;
-
-using tsorcRevamp.Items.Weapons.Melee.Flails;
 using System;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails;
+
 namespace tsorcRevamp.NPCs.Puppets
 {
     [AutoloadBossHead]
@@ -175,7 +176,7 @@ namespace tsorcRevamp.NPCs.Puppets
             npcLoot.Add(ItemDropRule.Common(ItemID.NinjaShirt));
             npcLoot.Add(ItemDropRule.Common(ItemID.NinjaPants));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DiamondCrusher>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<global::tsorcRevamp.Items.Weapons.Throwing.Caltrop>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Throwing.Caltrop>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 300, 500));
         }
 
@@ -189,7 +190,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Terraria.ModLoader.Config.NPCDefinition definition = new(ModContent.NPCType<BlackNinja>());
             if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
             {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Items.StaminaDroplet>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Content.Items.StaminaDroplet>());
                 tsorcRevampWorld.NewSlain.Add(definition, 1);
 
                 if (Main.netMode == NetmodeID.Server)

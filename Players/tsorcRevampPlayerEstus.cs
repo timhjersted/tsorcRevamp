@@ -5,7 +5,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Accessories.Defensive.Rings;
 
 namespace tsorcRevamp
 {
@@ -38,7 +37,7 @@ namespace tsorcRevamp
         public const float EstusDrinkTimerMaxBase = 2f;
         public const float EstusPStoneDrinkTimeReduction = 25f;
         public const float EstusDrinkTimeReductionPStone = EstusDrinkTimerMaxBase * (EstusPStoneDrinkTimeReduction / 100f);
-        public const float EstusDrinkTimeReductionRing = EstusDrinkTimerMaxBase * (Items.Accessories.Defensive.Rings.EstusRing.DrinkTimeReduction / 100f);
+        public const float EstusDrinkTimeReductionRing = EstusDrinkTimerMaxBase * (Content.Items.Accessories.Defensive.Rings.EstusRing.DrinkTimeReduction / 100f);
         public float EstusDrinkTimeReduction = 0;
         public float EstusDrinkTimerMax = EstusDrinkTimerMaxBase; //This is actually seconds. How long it takes to drink a charge
         public const float UnkindledEstusDrinkTimerReduction = 25f; //final drink time *= 1f - this / 100f in Unkindled
@@ -111,8 +110,8 @@ namespace tsorcRevamp
             }
             if (EstusRing)
             {
-                EstusHealthGainMaxHealthBonus += Items.Accessories.Defensive.Rings.EstusRing.PercentHealIncrease;
-                EstusHealthGainBonus += Items.Accessories.Defensive.Rings.EstusRing.HealIncrease;
+                EstusHealthGainMaxHealthBonus += Content.Items.Accessories.Defensive.Rings.EstusRing.PercentHealIncrease;
+                EstusHealthGainBonus += Content.Items.Accessories.Defensive.Rings.EstusRing.HealIncrease;
                 EstusDrinkTimeReduction += EstusDrinkTimeReductionRing;
             }
             

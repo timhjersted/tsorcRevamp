@@ -1,0 +1,22 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Content.Items.Materials
+{
+    public class FlameOfTheAbyss : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 14;
+            Item.height = 16;
+            Item.rare = ItemRarityID.Red;
+            Item.value = 50000;
+            Item.maxStack = Item.CommonMaxStack;
+        }
+    }
+}

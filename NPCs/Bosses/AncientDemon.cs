@@ -5,10 +5,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Accessories.Defensive.Rings;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -565,7 +566,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.AncientDemonBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<AncientDemonBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<EyeOfTheGods>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BarrierRing>()));

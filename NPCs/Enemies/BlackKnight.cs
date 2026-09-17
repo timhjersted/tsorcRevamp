@@ -9,10 +9,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Weapons.Classless;
-using tsorcRevamp.Items.Weapons.Enemy;
-using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Mobility;
+using tsorcRevamp.Content.Items.Weapons.Classless;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Throwing;
 using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -1005,11 +1006,11 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OilPot>(), 1, 2, 6));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 1));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Weapons.Throwing.ThrowingSpear>(), 100, 1, 50, 30));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Weapons.Throwing.RoyalThrowingSpear>(), 100, 1, 50, 30));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Mobility.BootsOfHaste>(), 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Spears.AncientDragonLance>(), 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Spears.OldHalberd>(), 5));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<ThrowingSpear>(), 100, 1, 50, 30));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<RoyalThrowingSpear>(), 100, 1, 50, 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BootsOfHaste>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncientDragonLance>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OldHalberd>(), 5));
             npcLoot.Add(new CommonDrop(ItemID.IronskinPotion, 5, 1, 50, 2));
             npcLoot.Add(new CommonDrop(ItemID.ArcheryPotion, 5, 1, 50, 2));
             npcLoot.Add(new CommonDrop(ItemID.RegenerationPotion, 5, 1, 50, 2));

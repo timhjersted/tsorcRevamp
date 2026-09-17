@@ -4,8 +4,9 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {

@@ -6,9 +6,10 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Weapons.Classless;
-using tsorcRevamp.Items.Weapons.Melee.Shortswords;
-using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Classless;
+using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 using static tsorcRevamp.oSpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -369,8 +370,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 35));
             npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 35));
             npcLoot.Add(ItemDropRule.Common(ItemID.SpelunkerPotion, 35));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 40));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Summon.SpiritBell>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 40));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SpiritBell>(), 20));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFlight));
             npcLoot.Add(hmCondition);

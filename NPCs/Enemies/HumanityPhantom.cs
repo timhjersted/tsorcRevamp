@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -128,7 +129,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             //"0.5f scale phantoms have 20% chance of dropping, scaling up towards 1f scale phantoms dropping humanity 70% of the time"
             //haha fuck that, 45% flat it is
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Humanity>(), 100, 1, 1, 45));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Humanity>(), 100, 1, 1, 45));
         }
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {

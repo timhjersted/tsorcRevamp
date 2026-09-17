@@ -3,8 +3,10 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies.Dworc
 {
@@ -97,7 +99,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 4));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 4));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 5, 5, 9));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.SporePowder>(), 100));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SporePowder>(), 100));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 5, 1));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 14));
         }

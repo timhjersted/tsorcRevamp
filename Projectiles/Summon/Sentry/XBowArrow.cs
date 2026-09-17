@@ -5,8 +5,8 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Summon.Sentry;
 using tsorcRevamp.Projectiles.VFX;
-using tsorcRevamp.Items.Weapons.Summon.Sentry;
 
 namespace tsorcRevamp.Projectiles
 {

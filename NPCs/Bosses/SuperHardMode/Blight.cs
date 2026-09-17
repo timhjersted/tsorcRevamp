@@ -8,8 +8,10 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -607,7 +609,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.BlightBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<BlightBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DivineSpark>()));

@@ -5,7 +5,6 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
-using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Summon

@@ -1,6 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 
 namespace tsorcRevamp.Buffs.Weapons.Melee
 {

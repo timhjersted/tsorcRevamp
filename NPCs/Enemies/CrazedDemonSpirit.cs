@@ -6,9 +6,10 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -660,7 +661,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Tools.GreatMagicShieldScroll>(), 100, 1, 1, 3));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<GreatMagicShieldScroll>(), 100, 1, 1, 3));
             npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 20));
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 25));

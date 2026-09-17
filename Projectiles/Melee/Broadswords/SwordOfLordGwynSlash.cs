@@ -4,12 +4,13 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.Projectiles.Melee.Broadswords
 {
     class SwordOfLordGwynSlash : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Broadswords/SwordOfGwyn";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(SwordOfLordGwyn));
 
         // Player-facing draw scale for the 128px SwordOfGwyn sprite. At 1.0 it filled the screen;
         // 0.5 reads as a large greatsword. (User asked for "0.05" — that would be ~6px / invisible,

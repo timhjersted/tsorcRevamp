@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     /// </summary>
     public class GreatBlackKnightFlailEmber : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         private const float Gravity = 0.2f;
         private const int SpreadTiles = 1; // a small cluster per ember, not a full FireFlask-sized spread
@@ -107,7 +107,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     /// <summary>The 9-second stuck-burning half of an ember — sits wherever it landed and applies Frostburn.</summary>
     public class GreatBlackKnightFlailEmberLingering : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

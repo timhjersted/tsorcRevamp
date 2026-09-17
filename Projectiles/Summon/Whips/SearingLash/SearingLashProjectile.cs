@@ -7,7 +7,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips.SearingLash

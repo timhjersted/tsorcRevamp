@@ -12,7 +12,8 @@ using Terraria.GameInput;
 using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Content.Items.Debug;
+using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Textures;
@@ -524,15 +525,15 @@ namespace tsorcRevamp
         public override void UpdateUI(GameTime gameTime)
         {
 
-            if (Items.Debug.EnemyDebugTome.JustClosedUI && !Main.mouseLeft && !Main.mouseRight)
+            if (EnemyDebugTome.JustClosedUI && !Main.mouseLeft && !Main.mouseRight)
             {
-                Items.Debug.EnemyDebugTome.JustClosedUI = false;
+                EnemyDebugTome.JustClosedUI = false;
             }
 
             tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
 
             // If the player is no longer holding the Enemy Debug Tome, close its menus and drop any selection.
-            if (Main.LocalPlayer.HeldItem.type != ModContent.ItemType<Items.Debug.EnemyDebugTome>())
+            if (Main.LocalPlayer.HeldItem.type != ModContent.ItemType<EnemyDebugTome>())
             {
                 if (mod.SpawnPointConfigUI.Visible)
                 {
@@ -2011,7 +2012,7 @@ namespace tsorcRevamp
         {
             EditorHoverTooltip = null; // always clear so tooltip doesn't persist after unequipping the tome
 
-            if (Main.LocalPlayer.HeldItem.type == ModContent.ItemType<Items.Debug.EnemyDebugTome>())
+            if (Main.LocalPlayer.HeldItem.type == ModContent.ItemType<EnemyDebugTome>())
             {
                 var mod = ModContent.GetInstance<tsorcRevamp>();
                 var enemyUI = mod.EnemySelectionUI;

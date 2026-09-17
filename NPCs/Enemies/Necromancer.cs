@@ -6,7 +6,8 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Accessories.Mobility;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -725,7 +726,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Mobility.BootsOfHaste>(), 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BootsOfHaste>(), 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 40));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 20));

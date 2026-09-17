@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GwynGravityWell : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float PullRadius = 760f;
         const float PullPerTick = 0.28f;

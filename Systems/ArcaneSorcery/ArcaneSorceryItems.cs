@@ -5,9 +5,8 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Accessories.Magic;
-using tsorcRevamp.Items.Armors.Magic;
-using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Content.Items.Accessories.Magic;
+using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Systems.ArcaneSorcery;

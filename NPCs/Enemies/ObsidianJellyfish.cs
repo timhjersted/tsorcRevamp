@@ -3,8 +3,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Classless;
-using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Content.Items.Weapons.Classless;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

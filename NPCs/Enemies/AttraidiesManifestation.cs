@@ -7,7 +7,8 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -367,7 +368,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new CommonDrop(ItemID.MagicPowerPotion, 10, 1, 1, 6));
             npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.GillsPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfFrost>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<WandOfFrost>(), 20));
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 2));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 2));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 5, 2, 2));

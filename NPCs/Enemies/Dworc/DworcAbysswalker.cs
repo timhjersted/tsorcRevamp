@@ -4,8 +4,8 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.NPCs.Enemies.Dworc

@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     // drawn behind the player sprite so it reads as skewering through them.
     public class ArtoriasImpalingSword : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Broadswords/ArtoriasGreatsword";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Content.Items.Weapons.Melee.Broadswords.ArtoriasGreatsword));
 
         int OwnerWhoAmI => (int)Projectile.ai[0];
         int TargetWhoAmI => (int)Projectile.ai[1];

@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Magic
     ///</summary>
     class WrathOfGoldController : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const int TapWindow = 18;
         const int ChargeTicks = 50;    //cursor-low hold: charge time after the window before the sweep

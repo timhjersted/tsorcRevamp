@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         int Duration => IsOutput ? OutputTelegraphTicks : IntakeTicks;
         float Progress => MathHelper.Clamp(Projectile.localAI[0] / Duration, 0f, 1f);
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

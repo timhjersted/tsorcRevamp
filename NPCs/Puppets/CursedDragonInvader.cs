@@ -5,10 +5,11 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Enemy;
-using tsorcRevamp.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 using tsorcRevamp.NPCs.AI;
 
 namespace tsorcRevamp.NPCs.Puppets

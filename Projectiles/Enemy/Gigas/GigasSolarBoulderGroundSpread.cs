@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     /// </summary>
     class GigasSolarBoulderGroundSpread : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         int Variant => (int)Projectile.ai[0];
         int SpanTiles => Projectile.ai[1] > 0f ? (int)Projectile.ai[1] : GigasConsecratedGround.BoulderSpanTiles;

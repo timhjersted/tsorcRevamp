@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Systems;
 

@@ -5,8 +5,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.VanillaItems;
-using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra

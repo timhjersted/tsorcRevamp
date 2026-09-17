@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Guns;
 using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Utilities;
 
@@ -254,12 +255,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         #region Draw Functions
 
-        static Texture2D antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.Guns.AntimatRifle>()).Texture);
+        static Texture2D antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<AntimatRifle>()).Texture);
         public void AntiMatDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             if (antimatTexture == null || antimatTexture.IsDisposed)
             {
-                antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.Guns.AntimatRifle>()).Texture);
+                antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<AntimatRifle>()).Texture);
             }
             float targetPoint = UsefulFunctions.Aim(NPC.Center, Target.Center, 1).ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 3 == 0))

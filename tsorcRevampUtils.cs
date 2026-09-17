@@ -16,10 +16,11 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.VFX;
-using tsorcRevamp.Items;
 
 namespace tsorcRevamp
 {
@@ -272,13 +273,25 @@ namespace tsorcRevamp
                         return Purple_11;
                     }
             }
-
             return 0;
         }
     }
 
     public static class UsefulFunctions
     {
+        /// <summary>
+        /// Puts out a string that will adhere to automatic code refactoring when files are moved
+        /// </summary>
+        /// <param name="className">The original class that uses the texture</param>
+        /// <returns></returns>
+        public static string RefactorableFilepath(Type className)
+        {
+            if (className != null)
+            {
+                return className.Namespace.Replace(".", "/") + "/" + className.Name;
+            }
+            return "null";
+        }
         /// <summary>
         /// Whether an NPC is a genuine combat threat to the player. This deliberately does not inspect
         /// <see cref="NPC.damage"/> because puppet and invader enemies deal damage through weapon hitboxes

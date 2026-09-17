@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GigasUndertowZone : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public const float PullPerTick = 0.22f;
         const float PullSpeedCap = 6f;   //never accelerates a player beyond this toward the giant

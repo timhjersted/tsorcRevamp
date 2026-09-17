@@ -5,10 +5,13 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.Buffs;
-using tsorcRevamp.Items.Accessories.Defensive.Shields;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Classless;
-using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.ItemCrates;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Classless;
+using GreenBlossom = tsorcRevamp.Content.Items.Potions.GreenBlossom;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -99,19 +102,19 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Potions.GlowingMushroomSkewer>())
+            shop.Add(new Item(ModContent.ItemType<GlowingMushroomSkewer>())
             {
                 shopCustomPrice = 5,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Potions.HealingElixir>())
+            shop.Add(new Item(ModContent.ItemType<HealingElixir>())
             {
                 shopCustomPrice = 30,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Potions.GreenBlossom>())
+            shop.Add(new Item(ModContent.ItemType<GreenBlossom>())
             {
                 shopCustomPrice = 10,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -135,19 +138,19 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.HollowSoldierHelmet>())
+            shop.Add(new Item(ModContent.ItemType<HollowSoldierHelmet>())
             {
                 shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.HollowSoldierBreastplate>())
+            shop.Add(new Item(ModContent.ItemType<HollowSoldierBreastplate>())
             {
                 shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.HollowSoldierWaistcloth>())
+            shop.Add(new Item(ModContent.ItemType<HollowSoldierWaistcloth>())
             {
                 shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -155,7 +158,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
 
 
-            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.ThrowingKnifeCrate>())
+            shop.Add(new Item(ModContent.ItemType<ThrowingKnifeCrate>())
             {
                 shopCustomPrice = 10,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -177,7 +180,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.Hardmode);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Potions.RadiantLifegem>())
+            shop.Add(new Item(ModContent.ItemType<RadiantLifegem>())
             {
                 shopCustomPrice = 60,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -201,7 +204,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
 
 
-            shop.Add(new Item(ModContent.ItemType<Items.PurgingStone>())
+            shop.Add(new Item(ModContent.ItemType<PurgingStone>())
             {
                 shopCustomPrice = 10000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -209,19 +212,19 @@ namespace tsorcRevamp.NPCs.Friendly
 
 
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.MaskOfTheChild>())
+            shop.Add(new Item(ModContent.ItemType<MaskOfTheChild>())
             {
                 shopCustomPrice = 1000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.BloodMoon);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.MaskOfTheFather>())
+            shop.Add(new Item(ModContent.ItemType<MaskOfTheFather>())
             {
                 shopCustomPrice = 1000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.BloodMoon);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.MaskOfTheMother>())
+            shop.Add(new Item(ModContent.ItemType<MaskOfTheMother>())
             {
                 shopCustomPrice = 1000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -264,7 +267,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override bool CanTownNPCSpawn(int numTownNPCs)/* tModPorter Suggestion: Copy the implementation of NPC.SpawnAllowed_Merchant in vanilla if you to count money, and be sure to set a flag when unlocked, so you don't count every tick. */
         {
-            int type = ModContent.ItemType<Items.SoulCoin>();
+            int type = ModContent.ItemType<SoulCoin>();
 
             for (int i = 0; i < Main.maxPlayers; i++)
             {

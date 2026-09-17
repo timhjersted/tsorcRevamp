@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///<summary>A harmless inward-collapsing preview of Gwyn's Cinder Nova damage ring.</summary>
     class GwynCinderNovaTelegraph : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float StartRadius = 155f;
         const float EndRadius = 18f;

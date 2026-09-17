@@ -7,7 +7,11 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items.Ammo;
+using tsorcRevamp.Content.Items.Armor.Ranged;
+using tsorcRevamp.Content.Items.ItemCrates;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -85,31 +89,31 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void AddShops()
         {
             NPCShop shop = new(NPC.type);
-            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.BoltCrate>())
+            shop.Add(new Item(ModContent.ItemType<BoltCrate>())
             {
                 shopCustomPrice = 8,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.WoodenArrowCrate>())
+            shop.Add(new Item(ModContent.ItemType<WoodenArrowCrate>())
             {
                 shopCustomPrice = 6,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Ranged.LeatherHelmet>())
+            shop.Add(new Item(ModContent.ItemType<LeatherHelmet>())
             {
                 shopCustomPrice = 25,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Ranged.LeatherArmor>())
+            shop.Add(new Item(ModContent.ItemType<LeatherArmor>())
             {
                 shopCustomPrice = 50,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Ranged.LeatherGreaves>())
+            shop.Add(new Item(ModContent.ItemType<LeatherGreaves>())
             {
                 shopCustomPrice = 33,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -127,27 +131,27 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Ranged.Crossbows.Crossbow>())
+            shop.Add(new Item(ModContent.ItemType<Crossbow>())
             {
                 shopCustomPrice = 75,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.FrostburnArrowCrate>())
+            shop.Add(new Item(ModContent.ItemType<FrostburnArrowCrate>())
             {
                 shopCustomPrice = 12,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             },
             Condition.DownedEyeOfCthulhu);
 
-            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.UnholyArrowCrate>())
+            shop.Add(new Item(ModContent.ItemType<UnholyArrowCrate>())
             {
                 shopCustomPrice = 25,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             },
             Condition.DownedEyeOfCthulhu);
 
-            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.RoyalThrowingSpearCrate>())
+            shop.Add(new Item(ModContent.ItemType<RoyalThrowingSpearCrate>())
             {
                 shopCustomPrice = 12,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -156,13 +160,13 @@ namespace tsorcRevamp.NPCs.Friendly
 
 
 
-            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.MeteorShotCrate>())
+            shop.Add(new Item(ModContent.ItemType<MeteorShotCrate>())
             {
                 shopCustomPrice = 30,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gaibon>()))));
 
-            shop.Add(new Item(ModContent.ItemType<Items.Ammo.PowerBolt>())
+            shop.Add(new Item(ModContent.ItemType<PowerBolt>())
             {
                 shopCustomPrice = 1,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId

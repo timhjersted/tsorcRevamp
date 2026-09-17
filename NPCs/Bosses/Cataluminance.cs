@@ -11,12 +11,13 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Lore;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Placeable.Relics;
-using tsorcRevamp.Items.Placeable.Trophies;
-using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Lore;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Placeable.Relics;
+using tsorcRevamp.Content.Items.Placeable.Trophies;
+using tsorcRevamp.Content.Items.Vanity;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -1262,7 +1263,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TriadBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<TriadBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedCrystal>()));

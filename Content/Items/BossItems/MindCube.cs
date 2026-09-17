@@ -1,0 +1,97 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Lore;
+using tsorcRevamp.NPCs.Bosses.Okiku.FirstForm;
+using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
+using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
+
+namespace tsorcRevamp.Content.Items.BossItems
+{
+    class MindCube : ModItem
+    {
+
+        public override void SetStaticDefaults()
+        {
+        }
+
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.LightRed;
+            Item.width = 38;
+            Item.height = 34;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.consumable = false;
+        }
+
+
+        public override bool? UseItem(Player player)
+        {
+            NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)player.position.X, (int)player.position.Y - 64, ModContent.NPCType<DarkShogunMask>());
+            return true;
+        }
+        public override bool CanUseItem(Player player)
+        {
+            if (NPC.AnyNPCs(ModContent.NPCType<DarkShogunMask>())
+                || NPC.AnyNPCs(ModContent.NPCType<DarkDragonMask>())
+                || NPC.AnyNPCs(ModContent.NPCType<Okiku>())
+                || NPC.AnyNPCs(ModContent.NPCType<BrokenOkiku>())
+                )
+            {
+                return false;
+            }
+            return true;
+        }
+        float rotation = 0;
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                rotation += 0.01f;
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i + rotation) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Red * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+
+                offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i - rotation) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Red * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+            }
+            return true;
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<CrestOfFire>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfWater>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfEarth>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfSky>(), 3);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfCorruption>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CrestOfSteel>(), 1);
+            // CrestOfLife removed — Plantera is optional now, Temple Key moved to TheMachine (Crest of Steel dropper).
+            recipe.AddIngredient(ModContent.ItemType<CrestOfStone>(), 1);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
+            recipe.Register();
+
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.LightShard, 99);
+            recipe2.AddIngredient(ItemID.DarkShard, 99);
+            recipe2.AddIngredient(ModContent.ItemType<CrestOfFire>(), 1);
+            recipe2.AddIngredient(ModContent.ItemType<CrestOfWater>(), 1);
+            recipe2.AddIngredient(ModContent.ItemType<CrestOfEarth>(), 1);
+            recipe2.AddIngredient(ModContent.ItemType<CrestOfSky>(), 3);
+            recipe2.AddIngredient(ModContent.ItemType<CrestOfCorruption>(), 1);
+            recipe2.AddIngredient(ModContent.ItemType<CrestOfSteel>(), 1);
+            // CrestOfLife removed — Plantera is optional now, Temple Key moved to TheMachine (Crest of Steel dropper).
+            recipe2.AddIngredient(ModContent.ItemType<CrestOfStone>(), 1);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.AddCondition(tsorcRevampWorld.AdventureModeEnabled);
+            recipe2.Register();
+        }
+    }
+}

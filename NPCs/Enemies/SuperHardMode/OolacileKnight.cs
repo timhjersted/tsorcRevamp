@@ -7,7 +7,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -301,7 +303,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<RedTitanite>(), 1, 2, 3));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Humanity>(), 100, 1, 1, 30));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<Humanity>(), 100, 1, 1, 30));
         }
     }
 }

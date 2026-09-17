@@ -7,7 +7,9 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -588,7 +590,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             int shieldPower = NPC.defense * 3;
 
-            if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.Specialist.BlizzardBlasterShot>())
+            if (projectile.type != ModContent.ProjectileType<BlizzardBlasterShot>())
             {
                 if (shielding)
                 {
@@ -694,7 +696,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 6));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 12));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 12));
             npcLoot.Add(new CommonDrop(ItemID.RagePotion, 100, 1, 1, 10));
             npcLoot.Add(new CommonDrop(ItemID.WrathPotion, 100, 1, 1, 10));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<CrimsonPotion>(), 100, 1, 1, 10));

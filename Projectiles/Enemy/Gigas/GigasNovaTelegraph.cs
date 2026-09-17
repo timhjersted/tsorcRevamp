@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 300f;
         int GigasIndex => (int)Projectile.ai[1];
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
         public override void SetDefaults()
         {
             Projectile.width = Projectile.height = 2;

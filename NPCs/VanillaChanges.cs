@@ -9,16 +9,24 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Mobility;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Lore;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Pets;
+using tsorcRevamp.Content.Items.Placeable.Relics;
+using tsorcRevamp.Content.Items.Placeable.Trophies;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Tools;
+using tsorcRevamp.Content.Items.Vanity;
+using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Lore;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Pets;
-using tsorcRevamp.Items.Placeable.Relics;
-using tsorcRevamp.Items.Placeable.Trophies;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Vanity;
-using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs
@@ -6462,7 +6470,7 @@ namespace tsorcRevamp.NPCs
             {
                 if (Main.rand.NextBool(8))
                 {
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Armors.SymbolOfAvarice>());
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SymbolOfAvarice>());
                 }
             }
 
@@ -6483,17 +6491,17 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.PossessedArmor && Main.rand.NextBool(50) && !Main.expertMode)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Tools.GreatMagicShieldScroll>());
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<GreatMagicShieldScroll>());
             }
 
             if ((npc.type == NPCID.PossessedArmor || npc.type == NPCID.Wraith) && Main.rand.NextBool(25) && Main.expertMode)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Tools.GreatMagicShieldScroll>());
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<GreatMagicShieldScroll>());
             }
 
             if (npc.type == NPCID.Shark && Main.rand.NextBool(20))
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.CoralSword>(), 1, false, -1);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CoralSword>(), 1, false, -1);
             }
 
             if (Main.rand.NextBool(25) && ((npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
@@ -6552,17 +6560,17 @@ namespace tsorcRevamp.NPCs
 
                 if (Main.rand.NextBool(100))
                 { // 1%
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Specialist.Pulsar>(), 1, false, -1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Pulsar>(), 1, false, -1);
                 }
 
                 else if (Main.rand.NextBool(100))
                 { // 1% 
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Specialist.ToxicCatalyzer>(), 1, false, -1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<ToxicCatalyzer>(), 1, false, -1);
                 }
 
                 if (Main.rand.NextBool(120))
                 { // 0.8%
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Accessories.Mobility.BootsOfHaste>(), 1, false, -1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<BootsOfHaste>(), 1, false, -1);
                 }
             }
 
@@ -6571,7 +6579,7 @@ namespace tsorcRevamp.NPCs
 
                 if (Main.rand.NextBool(15))
                 {
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.WandOfDarkness2>(), 1, false, -1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<WandOfDarkness2>(), 1, false, -1);
                 }
             }
 
@@ -6590,7 +6598,7 @@ namespace tsorcRevamp.NPCs
 
                 if (Main.rand.NextBool(500))
                 { // 0.2%
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Armors.SymbolOfAvarice>(), 1, false, -1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SymbolOfAvarice>(), 1, false, -1);
                 }
             }
 
@@ -6601,7 +6609,7 @@ namespace tsorcRevamp.NPCs
 
                 if (Main.rand.NextBool(100))
                 { // 1%
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Armors.SymbolOfAvarice>(), 1, false, -1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SymbolOfAvarice>(), 1, false, -1);
                 }
 
                 if (Main.rand.NextBool(5))
@@ -6615,7 +6623,7 @@ namespace tsorcRevamp.NPCs
 
                 if (Main.rand.NextBool(20))
                 { // 5%
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Armors.SymbolOfAvarice>(), 1, false, -1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SymbolOfAvarice>(), 1, false, -1);
                 }
                 
                 if (Main.rand.NextBool(4))
@@ -6641,16 +6649,16 @@ namespace tsorcRevamp.NPCs
             }
             if (npc.type == NPCID.Snatcher || npc.type == NPCID.ManEater || npc.type == NPCID.AngryTrapper)
             {
-                if (Main.rand.NextBool(3)) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
+                if (Main.rand.NextBool(3)) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<GreenBlossom>());
             }
             if (npc.type == NPCID.HornetLeafy || npc.type == NPCID.BigHornetLeafy || npc.type == NPCID.LittleHornetLeafy)
             {
-                if (Main.rand.NextBool(5)) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
+                if (Main.rand.NextBool(5)) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<GreenBlossom>());
             }
             if (npc.type == NPCID.WallCreeper || npc.type == NPCID.WallCreeperWall || npc.type == NPCID.BlackRecluse || npc.type == NPCID.BlackRecluseWall || npc.type == NPCID.JungleCreeper || npc.type == NPCID.JungleCreeperWall || npc.type == NPCID.DesertScorpionWalk || npc.type == NPCID.DesertScorpionWall)
             {
-                if (Main.rand.NextBool(5)) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
-                if (Main.rand.NextBool(5) && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
+                if (Main.rand.NextBool(5)) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Humanity>());
+                if (Main.rand.NextBool(5) && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Humanity>());
             }
 
 
@@ -6667,7 +6675,7 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.Deerclops)
             {
                 npcLoot.RemoveWhere(_ => true);
-                npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.AncestralSpiritBag>()));
+                npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<AncestralSpiritBag>()));
                 IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
                 notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<AncestralSpiritMask>(), 7));
                 npcLoot.Add(notExpertCondition);

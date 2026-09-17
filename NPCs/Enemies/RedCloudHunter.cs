@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -86,12 +88,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 6));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 6));
             npcLoot.Add(ItemDropRule.Common(ItemID.AmmoReservationPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.HolyArrow, 1, 30, 60));
             npcLoot.Add(ItemDropRule.Common(ItemID.UnicornHorn, 3, 1, 1));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 6, 8));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Summon.ArcherSpiritBell>(), 1));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 6, 8));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ArcherSpiritBell>(), 1));
         }
 
         #region Spawn

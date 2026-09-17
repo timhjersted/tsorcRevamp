@@ -11,7 +11,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet;
 

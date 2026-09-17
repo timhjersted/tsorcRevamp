@@ -3,8 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using System;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.Projectiles.Melee
 {

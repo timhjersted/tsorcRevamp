@@ -5,8 +5,9 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
-using tsorcRevamp.Items.Potions.PermanentPotions;
-using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Throwing;
 
 
 namespace tsorcRevamp.UI
@@ -67,7 +68,7 @@ namespace tsorcRevamp.UI
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if (!Main.playerInventory || Main.LocalPlayer.chest != -1 || (!Main.LocalPlayer.HasItem(ModContent.ItemType<Items.PotionBag>()) && (Main.mouseItem.type != ModContent.ItemType<Items.PotionBag>())))
+            if (!Main.playerInventory || Main.LocalPlayer.chest != -1 || (!Main.LocalPlayer.HasItem(ModContent.ItemType<PotionBag>()) && (Main.mouseItem.type != ModContent.ItemType<PotionBag>())))
             {
                 Visible = false;
             }
@@ -82,13 +83,13 @@ namespace tsorcRevamp.UI
         public static bool IsValidPotion(Item item)
         {
             bool valid = false;
-            if (item.type == ModContent.ItemType<Items.PotionBag>()) return false;
+            if (item.type == ModContent.ItemType<PotionBag>()) return false;
             if (item.buffType == BuffID.WellFed || item.buffType == BuffID.WellFed2 || item.buffType == BuffID.WellFed3)
                 valid = true;
 
             if (item.ModItem is PermanentPotion)
                 valid = true;
-            if (Items.tsorcGlobalItem.potionList.Contains(item.type))
+            if (tsorcGlobalItem.potionList.Contains(item.type))
             {
                 valid = true;
             }
@@ -106,23 +107,23 @@ namespace tsorcRevamp.UI
             }
 
             //Whitelist
-            if (item.type == ModContent.ItemType<Items.Potions.MushroomSkewer>())
+            if (item.type == ModContent.ItemType<MushroomSkewer>())
             {
                 valid = true;
             }
-            if (item.type == ModContent.ItemType<Items.Potions.ChickenGlowingMushroomSkewer>())
+            if (item.type == ModContent.ItemType<ChickenGlowingMushroomSkewer>())
             {
                 valid = true;
             }
-            if (item.type == ModContent.ItemType<Items.Potions.ChickenMushroomSkewer>())
+            if (item.type == ModContent.ItemType<ChickenMushroomSkewer>())
             {
                 valid = true;
             }
-            if (item.type == ModContent.ItemType<Items.Potions.GlowingMushroomSkewer>())
+            if (item.type == ModContent.ItemType<GlowingMushroomSkewer>())
             {
                 valid = true;
             }
-            if (item.type == ModContent.ItemType<Items.Potions.CookedChicken>())
+            if (item.type == ModContent.ItemType<CookedChicken>())
             {
                 valid = true;
             }
@@ -133,7 +134,7 @@ namespace tsorcRevamp.UI
 
             //Blacklist
 
-            if (item.type == ModContent.ItemType<Items.EstusFlaskShard>())
+            if (item.type == ModContent.ItemType<EstusFlaskShard>())
             {
                 valid = false;
             }
@@ -149,17 +150,17 @@ namespace tsorcRevamp.UI
             }
 
             //Excluding these specifically because for now they need to be used by hand. May change in the future.
-            if (item.type == ModContent.ItemType<Items.Potions.Lifegem>())
+            if (item.type == ModContent.ItemType<Lifegem>())
             {
                 valid = false;
             }
 
-            if (item.type == ModContent.ItemType<Items.Potions.RadiantLifegem>())
+            if (item.type == ModContent.ItemType<RadiantLifegem>())
             {
                 valid = false;
             }
 
-            if (item.type == ModContent.ItemType<Items.PotionBag>())
+            if (item.type == ModContent.ItemType<PotionBag>())
             {
                 valid = false;
             }

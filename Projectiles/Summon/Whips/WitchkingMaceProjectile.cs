@@ -9,7 +9,7 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips

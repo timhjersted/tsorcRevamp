@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GwynCinderNova : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float ExpandSpeed = 10f;
         const int FadeOutTicks = 15;

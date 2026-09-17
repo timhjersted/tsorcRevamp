@@ -6,6 +6,8 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -82,7 +84,7 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void ModifyActiveShop(string shopName, Item[] shop)
         {
             int nextSlot = 0;
-            shop[nextSlot].SetDefaults(ModContent.ItemType<Items.MysteriousIdol>());
+            shop[nextSlot].SetDefaults(ModContent.ItemType<MysteriousIdol>());
             nextSlot++;
             shop[nextSlot].SetDefaults(ItemID.MeteorShot);
             nextSlot++;
@@ -108,7 +110,7 @@ namespace tsorcRevamp.NPCs.Friendly
             nextSlot++;
             shop[nextSlot].SetDefaults(ItemID.Grenade);
             nextSlot++;
-            shop[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CosmicWatch>());
+            shop[nextSlot].SetDefaults(ModContent.ItemType<CosmicWatch>());
             nextSlot++;
             shop[nextSlot].SetDefaults(ItemID.TinkerersWorkshop);
             nextSlot++;
@@ -176,7 +178,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 {
                     continue;
                 }
-                if (p.HasItem(ModContent.ItemType<Items.MysteriousIdol>()))
+                if (p.HasItem(ModContent.ItemType<MysteriousIdol>()))
                 {
                     return true;
                 }

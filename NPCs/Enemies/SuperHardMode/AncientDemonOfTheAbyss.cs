@@ -4,6 +4,10 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -578,10 +582,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 10, 10, 40));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Materials.FlameOfTheAbyss>(), 1, 2, 4));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Materials.CursedSoul>(), 1, 5, 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1, 1, 2));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<StrengthPotion>(), 100, 10, 10, 40));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<FlameOfTheAbyss>(), 1, 2, 4));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<CursedSoul>(), 1, 5, 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 1, 2));
         }
     }
 }

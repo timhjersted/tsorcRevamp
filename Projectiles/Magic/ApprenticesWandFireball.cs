@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Magic;
 
 namespace tsorcRevamp.Projectiles.Magic
 {

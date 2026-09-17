@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons;
 
 namespace tsorcRevamp.Utilities.Balance
 {
@@ -20,7 +21,7 @@ namespace tsorcRevamp.Utilities.Balance
         /// <summary>
         /// Which of a multi-attack weapon's attacks produced this projectile, captured at spawn because
         /// it is unrecoverable later. Many weapons here map several attacks to one item via
-        /// <see cref="Items.Weapons.FourAttackWeaponControls"/> (Sword of Lord Gwyn has four), and those
+        /// <see cref="FourAttackWeaponControls"/> (Sword of Lord Gwyn has four), and those
         /// attacks can differ in damage by a wide margin — averaging them together measures nothing.
         /// </summary>
         internal int SourceAttackMode;

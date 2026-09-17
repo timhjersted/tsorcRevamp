@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GigasHaloSun : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float OrbitRadius = 58f;
         const float OrbitSpeed = 0.045f;

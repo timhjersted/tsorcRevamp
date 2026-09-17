@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles

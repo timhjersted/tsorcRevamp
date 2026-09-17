@@ -7,7 +7,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
-using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon.Tetsujin
 {

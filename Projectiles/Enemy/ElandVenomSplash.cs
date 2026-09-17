@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     /// </summary>
     public class ElandVenomSplash : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         // Matches the 92px draw size of the ElandVenomImpact burst.
         const float Radius = 46f;

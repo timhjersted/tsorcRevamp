@@ -12,10 +12,12 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using tsorcRevamp;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Lore;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Items.Debug;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Runeterra;
 using tsorcRevamp.Utilities;
@@ -298,7 +300,7 @@ namespace tsorcRevamp
             List<Vector2> FireLurkerAmbush1EnemyLocations = new List<Vector2>() { new Vector2(3559, 1248), new Vector2(3629, 1248) };
             ScriptedEvent FireLurkerAmbush1 = new ScriptedEvent(new Vector2(3591, 1248), 6, FireLurkerAmbush1EnemyTypeList, FireLurkerAmbush1EnemyLocations, DustID.DungeonWater, true, false, false, LangUtils.GetTextValue("Events.FireLurker"), Color.Red, false, default, FireLurkerPainCustomAction);
             FireLurkerAmbush1.SetCustomStats(500, 12, 70, 650);
-            FireLurkerAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.GreenBlossom>() }, new List<int>() { 5 }, true);
+            FireLurkerAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<GreenBlossom>() }, new List<int>() { 5 }, true);
 
             //DEATH
             ScriptedEvent Death = new ScriptedEvent(new Vector2(1066, 529), 30, ModContent.NPCType<NPCs.Bosses.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false, OnlyAdventureMapCondition);
@@ -367,19 +369,19 @@ namespace tsorcRevamp
 
             //DEFILED DEMON (FORGOTTEN CITY, CLOSE TO FIRE TEMPLE)
             ScriptedEvent AncientDemon = new ScriptedEvent(new Vector2(5317, 1800), 25, ModContent.NPCType<NPCs.Bosses.AncientDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.AncientDemon"), Color.MediumPurple, false);
-            AncientDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 5000 });
+            AncientDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 5000 });
 
             //ANCIENT OOLACILE DEMON (EARLY-GAME)
             ScriptedEvent AODE = new ScriptedEvent(new Vector2(5652, 971), 27, ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.AncientOolacileDemon"), Color.MediumPurple, false);
-            AODE.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
+            AODE.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
 
             //GOBLIN SUMMONER IN WMF
             ScriptedEvent GoblinWizardWMF = new ScriptedEvent(new Vector2(7153, 411), 20, NPCID.GoblinSummoner, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.GoblinSummoner1"), Color.MediumPurple, false);
-            GoblinWizardWMF.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
+            GoblinWizardWMF.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
 
             //GOBLIN SUMMONER IN THE CLOUDS (WMF)
             ScriptedEvent GoblinWizardClouds = new ScriptedEvent(new Vector2(7822, 118), 40, NPCID.GoblinSummoner, DustID.MagicMirror, true, false, false, LangUtils.GetTextValue("Events.GoblinSummoner2"), Color.MediumPurple, false);
-            GoblinWizardClouds.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
+            GoblinWizardClouds.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
 
             //ICE GOLEM WYVERN COMBO
             List<int> Golem2EnemyTypeList = new List<int>() { NPCID.WyvernHead, NPCID.IceGolem };
@@ -604,26 +606,26 @@ namespace tsorcRevamp
             List<Vector2> LothricAmbush1EnemyLocations = new List<Vector2>() { new Vector2(5148, 1757), new Vector2(5197, 1757) };
             ScriptedEvent LothricAmbush1 = new ScriptedEvent(new Vector2(5173, 1750), 6, LothricAmbush1EnemyTypeList, LothricAmbush1EnemyLocations, DustID.DungeonWater, true, false, false, LangUtils.GetTextValue("Events.LothricAmbush1"), Color.Red, false, PreMechCustomCondition, null);
             LothricAmbush1.SetCustomStats(null, null, null, 500);
-            LothricAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.GreenBlossom>() }, new List<int>() { 5 }, true);
+            LothricAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<GreenBlossom>() }, new List<int>() { 5 }, true);
 
             //LOTHRIC AMBUSH 2 - IN ROOM BEFORE TRIPLE ENCHANTED SWORDS, UNDER EARTH TEMPLE ENTRANCE
             List<int> LothricAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.LothricKnight>() };
             List<Vector2> LothricAmbush2EnemyLocations = new List<Vector2>() { new Vector2(4596, 946) };
             ScriptedEvent LothricAmbush2 = new ScriptedEvent(new Vector2(4574, 945), 12, LothricAmbush2EnemyTypeList, LothricAmbush2EnemyLocations, DustID.DungeonWater, true, false, false, LangUtils.GetTextValue("Events.LothricAmbush2"), Color.Red, false, PreMechCustomCondition, null);
             LothricAmbush2.SetCustomStats(null, null, 70, 600); // Lower damage than normal, slightly more souls than normal
-            LothricAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.RadiantLifegem>() }, new List<int>() { 5 });
+            LothricAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<RadiantLifegem>() }, new List<int>() { 5 });
 
             //GHOST OF THE DROWNED AMBUSH 1 - NEAR ENTRANCE OF CATACOMBS OF THE DROWNED
             List<int> DrownedAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostFighter.GhostOfTheDrowned>() };
             List<Vector2> DrownedAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4294, 778) };
             ScriptedEvent DrownedAmbush1 = new ScriptedEvent(new Vector2(4318, 768), 11, DrownedAmbush1EnemyTypeList, DrownedAmbush1EnemyLocations, DustID.Water, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
-            DrownedAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.HealingElixir>() }, new List<int>() { 1 });
+            DrownedAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<HealingElixir>() }, new List<int>() { 1 });
 
             //GHOST OF THE DROWNED AMBUSH 1 - NEAR ENTRANCE OF CATACOMBS OF THE DROWNED
             List<int> DrownedAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostFighter.GhostOfTheDrowned>() };
             List<Vector2> DrownedAmbush2EnemyLocations = new List<Vector2>() { new Vector2(4117, 823) };
             ScriptedEvent DrownedAmbush2 = new ScriptedEvent(new Vector2(4090, 828), 11, DrownedAmbush2EnemyTypeList, DrownedAmbush2EnemyLocations, DustID.Water, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
-            DrownedAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.BoostPotion>() }, new List<int>() { 2 }); 
+            DrownedAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<BoostPotion>() }, new List<int>() { 2 }); 
 
             //Sandstorm Elemental in the Solar Island
             ScriptedEvent SandstormElementalEvent = new ScriptedEvent(new Vector2(2021, 351), 40, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow, false, RemixMapCondition);
@@ -696,7 +698,7 @@ namespace tsorcRevamp
             Dutchman.SetCustomStats(null, null, null, 8000);
 
             ScriptedEvent EnragedQB = new ScriptedEvent(new Vector2(5954, 401), 50, NPCID.QueenBee, DustID.GoldFlame, true, true, false, LangUtils.GetTextValue("Events.EnragedQB"), Color.Yellow, false, RemixMapCondition);
-            EnragedQB.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.RagePotion, ModContent.ItemType<Items.Materials.EternalCrystal>() }, new List<int>() { 3, 1, 1 });
+            EnragedQB.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.RagePotion, ModContent.ItemType<EternalCrystal>() }, new List<int>() { 3, 1, 1 });
             EnragedQB.SetCustomStats(null, null, null, 2000);
 
             ScriptedEvent FoundryEvent = new ScriptedEvent(new Vector2(5229, 1254), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition);
@@ -715,11 +717,11 @@ namespace tsorcRevamp
             List<int> WingTrioEventEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.TheRage>(), ModContent.NPCType<NPCs.Bosses.TheSorrow>(), ModContent.NPCType<NPCs.Bosses.TheHunter>() };
             List<Vector2> WingTrioEventEnemyLocations = new List<Vector2>() { new Vector2(3838, 1425), new Vector2(3879, 1425), new Vector2(3858, 1410) };
             ScriptedEvent WingTrioEvent = new ScriptedEvent(new Vector2(3858, 1420), 40, WingTrioEventEnemyTypeList, WingTrioEventEnemyLocations, 292, true, true, true, LangUtils.GetTextValue("Events.WingTrio"), Color.Yellow, false, RemixMapCondition);
-            WingTrioEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Materials.EternalCrystal>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>(), ModContent.ItemType<Items.Accessories.Trinity>()}, new List<int>() { 3, 1, 1, 1, 1 });
+            WingTrioEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<EternalCrystal>(), ModContent.ItemType<Trinity>(), ModContent.ItemType<Trinity>(), ModContent.ItemType<Trinity>(), ModContent.ItemType<Trinity>()}, new List<int>() { 3, 1, 1, 1, 1 });
             WingTrioEvent.SetCustomStats(null, null, null, 40000);
 
             ScriptedEvent SkeletronPrimeEvent = new ScriptedEvent(new Vector2(1765, 1479), 30, NPCID.SkeletronPrime, DustID.Flare, true, true, false, LangUtils.GetTextValue("Events.SkeletronPrimeRemix"), Color.Red, false, RemixMapCondition, SetNightCustomAction);
-            SkeletronPrimeEvent.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ModContent.ItemType<Items.Materials.EternalCrystal>() }, new List<int>() { 6, 3 });
+            SkeletronPrimeEvent.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ModContent.ItemType<EternalCrystal>() }, new List<int>() { 6, 3 });
 
             ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, OnlyAdventureMapCondition, SetNightCustomAction);
             GoblinSharkTropicalIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 3, 1 });
@@ -1712,7 +1714,7 @@ namespace tsorcRevamp
                     {
                         if (Main.player[i].active && Main.player[i].GetModPlayer<tsorcRevampPlayer>().SoulsMode)
                         {
-                            Item.NewItem(new EntitySource_Misc("Scripted Event"), Main.player[i].Center, ModContent.ItemType<Items.EstusFlaskShard>());
+                            Item.NewItem(new EntitySource_Misc("Scripted Event"), Main.player[i].Center, ModContent.ItemType<EstusFlaskShard>());
                         }
                     }
                     return EventActionStatus.CompletedEvent;
@@ -2200,7 +2202,7 @@ namespace tsorcRevamp
                 }
 
                 //Check if the player is in range of any inactive events
-                if (Main.player[index].HeldItem.type != ModContent.ItemType<Items.Debug.EnemyDebugTome>())
+                if (Main.player[index].HeldItem.type != ModContent.ItemType<EnemyDebugTome>())
                 {
                     for (int i = 0; i < EnabledEvents.Count; i++)
                     {

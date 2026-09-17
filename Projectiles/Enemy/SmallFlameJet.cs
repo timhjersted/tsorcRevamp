@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class SmallFlameJet : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Content.Items.Weapons.Melee.ThrowingAxe));
 
         public override void SetDefaults()
         {

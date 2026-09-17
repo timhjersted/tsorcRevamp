@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
     /// </summary>
     class SwordOfLordGwynImpactLightning : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const int Lifetime = 16;
         const float BoltLength = 72f;

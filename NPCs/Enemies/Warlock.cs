@@ -3,8 +3,9 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies

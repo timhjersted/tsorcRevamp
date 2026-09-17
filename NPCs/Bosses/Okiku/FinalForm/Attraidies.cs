@@ -8,13 +8,15 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Items.Lore;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Items.Weapons.Magic.Tomes;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Items.Weapons.Ranged.Guns;
-using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Lore;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Tools;
+using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Guns;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 using tsorcRevamp.Utilities;
 
@@ -1305,7 +1307,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.AttraidiesBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<AttraidiesBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheEnd>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ShatteredReflection>()));

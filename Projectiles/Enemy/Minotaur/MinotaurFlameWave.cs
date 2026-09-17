@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class MinotaurFlameWave : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float WaveSpeed = 6f;
         const int WaveTravelTicks = 22; //~8 tiles after arming

@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GwynFirestorm : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const int TelegraphTicks = 40;
         const int DropInterval = 7;   // a fireball wave every N ticks

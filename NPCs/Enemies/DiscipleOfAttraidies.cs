@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -203,7 +204,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>(), 1, 1, 3));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<HealingElixir>(), 1, 1, 3));
         }
         public override void HitEffect(NPC.HitInfo hit)
         {

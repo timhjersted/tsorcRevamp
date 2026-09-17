@@ -8,8 +8,11 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
-using tsorcRevamp.Items.Weapons.Melee.Axes;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.ItemCrates;
+using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -93,38 +96,38 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void AddShops()
         {
             NPCShop shop = new(NPC.type);
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.CorruptedTooth>())
+            shop.Add(new Item(ModContent.ItemType<CorruptedTooth>())
             {
                 shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.SunBlade>())
+            shop.Add(new Item(ModContent.ItemType<SunBlade>())
             {
                 shopCustomPrice = 1000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId,
             }, Condition.Hardmode //cmonBruh
             );
 
-            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.ThrowingAxeCrate>())
+            shop.Add(new Item(ModContent.ItemType<ThrowingAxeCrate>())
             {
                 shopCustomPrice = 8,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Melee.AncientGoldenHelmet>())
+            shop.Add(new Item(ModContent.ItemType<AncientGoldenHelmet>())
             {
                 shopCustomPrice = 25,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Melee.AncientGoldenArmor>())
+            shop.Add(new Item(ModContent.ItemType<AncientGoldenArmor>())
             {
                 shopCustomPrice = 50,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Melee.AncientGoldenGreaves>())
+            shop.Add(new Item(ModContent.ItemType<AncientGoldenGreaves>())
             {
                 shopCustomPrice = 33,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -146,25 +149,25 @@ namespace tsorcRevamp.NPCs.Friendly
 
 
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Axes.ForgottenPoisonAxe>())
+            shop.Add(new Item(ModContent.ItemType<ForgottenPoisonAxe>())
             {
                 shopCustomPrice = ForgottenPoisonAxe.CoinPrice,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheRage>()))));
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenIceBrand>())
+            shop.Add(new Item(ModContent.ItemType<ForgottenIceBrand>())
             {
                 shopCustomPrice = ForgottenIceBrand.CoinPrice,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>()))));
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenSwordbreaker>())
+            shop.Add(new Item(ModContent.ItemType<ForgottenSwordbreaker>())
             {
                 shopCustomPrice = ForgottenSwordbreaker.CoinPrice,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheHunter>()))));
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Spears.HiRyuuSpear>())
+            shop.Add(new Item(ModContent.ItemType<HiRyuuSpear>())
             {
                 shopCustomPrice = 10000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -239,7 +242,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref Rectangle itemFrame, ref int itemSize, ref float scale, ref Vector2 offset)
         {
-            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.Broadswords.SunBlade>()];
+            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<SunBlade>()];
             scale = 1f;
             itemSize = 36;
         }

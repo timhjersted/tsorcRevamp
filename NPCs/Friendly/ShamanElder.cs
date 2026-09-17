@@ -6,8 +6,12 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
-using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.BossItems;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Armor.Summon;
+using tsorcRevamp.Content.Items.BossItems;
+using tsorcRevamp.Content.Items.Weapons.Summon.Sentry;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -224,19 +228,19 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             NPCShop shop = new(NPC.type);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainCoif>())
+            shop.Add(new Item(ModContent.ItemType<OldChainCoif>())
             {
                 shopCustomPrice = 25,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainArmor>())
+            shop.Add(new Item(ModContent.ItemType<OldChainArmor>())
             {
                 shopCustomPrice = 50,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainGreaves>())
+            shop.Add(new Item(ModContent.ItemType<OldChainGreaves>())
             {
                 shopCustomPrice = 33,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -266,25 +270,25 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Darksign>())
+            shop.Add(new Item(ModContent.ItemType<Darksign>())
             {
                 shopCustomPrice = 5,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.MastersScroll>())
+            shop.Add(new Item(ModContent.ItemType<MastersScroll>())
             {
                 shopCustomPrice = 5,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Summon.Sentry.EnergyStrikeScroll>())
+            shop.Add(new Item(ModContent.ItemType<EnergyStrikeScroll>())
             {
                 shopCustomPrice = 4000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedPlantera);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>())
+            shop.Add(new Item(ModContent.ItemType<CovenantOfArtorias>())
             {
                 shopCustomPrice = 4000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId

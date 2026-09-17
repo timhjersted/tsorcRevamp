@@ -5,8 +5,11 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Projectiles.Enemy.OolacileSorcerer;
 
@@ -417,9 +420,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<HealingElixir>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<RedTitanite>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>(), 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 2));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<CrimsonPotion>(), 100, 1, 1, 5));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<StrengthPotion>(), 100, 1, 1, 5));

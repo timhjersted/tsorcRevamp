@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Flamethrowers;
 
 namespace tsorcRevamp.Projectiles.Ranged
 {
@@ -63,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Ranged
 
             if (owner.whoAmI == Main.myPlayer)
             {
-                Item dummyItem = new Item(ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>());
+                Item dummyItem = new Item(ModContent.ItemType<Meltdown>());
                 Item gelStack = owner.ChooseAmmo(dummyItem);
                 if (gelStack == null)
                 {

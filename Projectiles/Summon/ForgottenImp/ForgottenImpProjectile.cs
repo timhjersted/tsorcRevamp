@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
-using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.NPCs;
 using static Humanizer.In;
 

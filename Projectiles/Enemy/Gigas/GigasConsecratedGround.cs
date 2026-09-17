@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GigasConsecratedGround : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public const int PatchWidth = 16; // one terrain tile per module
         public const int SlamHeight = 32; // twice the former 16px damaging fire height

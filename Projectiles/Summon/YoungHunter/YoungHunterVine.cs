@@ -3,8 +3,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Accessories.Damage;
 using tsorcRevamp.Projectiles.Enemy;
-using tsorcRevamp.Items.Accessories.Damage;
 
 namespace tsorcRevamp.Projectiles.Summon.YoungHunter
 {

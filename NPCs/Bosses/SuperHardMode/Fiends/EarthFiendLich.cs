@@ -6,10 +6,12 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Projectiles.Enemy.Triad;
 
@@ -577,7 +579,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.LichBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<LichBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());

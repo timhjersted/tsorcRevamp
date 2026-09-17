@@ -10,10 +10,13 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Accessories.Defensive.Rings;
-using tsorcRevamp.Items.Armors.Melee;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
+using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Projectiles.Melee.Shortswords;
@@ -3241,7 +3244,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             //item.type == ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() doesn't work since Barrow Blade only damages with its projectile now, put that into its projectile below
-            if (item.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenGaiaSword>())
+            if (item.type == ModContent.ItemType<ForgottenGaiaSword>())
             {
                 defenseBroken = true;
             }
@@ -3295,7 +3298,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.ArtoriasBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<ArtoriasBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AdventureModeRule, ItemID.LargeAmethyst));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
