@@ -102,6 +102,7 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.NPCs.Runeterra;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Projectiles.Enemy.Gwyn;
@@ -5424,6 +5425,7 @@ namespace tsorcRevamp
             Pinwheel,
             PinwheelFireglow,
             ConsecratedLightTransparent,
+            RunePrison,
         }
 
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -5485,6 +5487,7 @@ namespace tsorcRevamp
                 {TransparentTextureType.SeveringDuskGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(SeveringDusk)) + "Glowmask", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.Pinwheel, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Pinwheel)), AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.PinwheelFireglow, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Pinwheel)) + "_Fireglow", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.RunePrison, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(RunePrison)), AssetRequestMode.ImmediateLoad)},
 
             };
 
