@@ -280,6 +280,27 @@ namespace tsorcRevamp
     public static class UsefulFunctions
     {
         /// <summary>
+        /// Basic animation loop for a projectile. Use this in Projectile AI. Don't forget to set Main.projFrames first!
+        /// </summary>
+        /// <param name="projectile">The Projectile</param>
+        /// <param name="frameDuration">The duration of each frame, higher means slower animation, lower means the animation plays faster</param>
+        public static void BasicAnimationLoop(Projectile projectile, int frameDuration)
+        {
+            projectile.frameCounter++;
+
+            if (projectile.frameCounter >= frameDuration)
+            {
+                projectile.frameCounter = 0;
+                projectile.frame++;
+
+                if (projectile.frame >= Main.projFrames[projectile.type])
+                {
+                    projectile.frame = 0;
+                }
+            }
+        }
+        
+        /// <summary>
         /// Whether an NPC is a genuine combat threat to the player. This deliberately does not inspect
         /// <see cref="NPC.damage"/> because puppet and invader enemies deal damage through weapon hitboxes
         /// and projectiles while keeping their contact damage at zero.

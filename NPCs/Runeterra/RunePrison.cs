@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -5,8 +6,10 @@ namespace tsorcRevamp.NPCs.Runeterra;
 
 public class RunePrison : ModProjectile
 {
+    public const int Frames = 5;
     public override void SetStaticDefaults()
     {
+        Main.projFrames[Type] = Frames;
     }
 
     public override void SetDefaults()
@@ -25,5 +28,13 @@ public class RunePrison : ModProjectile
         Player owner = Main.player[Projectile.owner];
         Projectile.velocity = owner.velocity;
         owner.AddBuff(ModContent.BuffType<RunePrisonDebuff>(), 2);
+        
+        UsefulFunctions.BasicAnimationLoop(Projectile, 5);
+    }
+    
+    public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers,
+        List<int> overWiresUI)
+    {
+        overPlayers.Add(index);
     }
 }
