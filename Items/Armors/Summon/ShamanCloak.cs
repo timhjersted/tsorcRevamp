@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Armor;
+using tsorcRevamp.Items.Armors.SetBonuses;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().Shunpo = true;
+            player.GetModPlayer<Shunpo>().HasShunpo = true;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

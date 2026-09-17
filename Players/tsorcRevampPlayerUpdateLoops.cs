@@ -184,9 +184,6 @@ namespace tsorcRevamp
 
         public bool MythrilOrichalcumCritDamage = false;
         public bool PilgrimSpontoonBuff = false;
-        public bool Shunpo = false;
-        public float ShunpoTimer = 0;
-        public Vector2 ShunpoVelocity;
         public float WhipTipHitboxSize = 1f;
 
         public int SteelTempestStacks = 0;
@@ -566,7 +563,6 @@ namespace tsorcRevamp
 
             MythrilOrichalcumCritDamage = false;
             PilgrimSpontoonBuff = false;
-            Shunpo = false;
             WhipTipHitboxSize = 1;
 
             PhoenixSkull = false;
@@ -1568,21 +1564,6 @@ namespace tsorcRevamp
             if (manaShield > 0)
             {
                 Player.manaRegenBuff = false;
-            }
-
-            if (Shunpo && !Player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
-            {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    NPC other = Main.npc[i];
-
-                    if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)))
-                    {
-                        Lighting.AddLight(other.Center, Color.Red.ToVector3() * 0.35f);
-                        UsefulFunctions.DustRing(other.Center, other.width / 2, DustID.Titanium, 5, 1);
-                        UsefulFunctions.DustRing(other.Center, other.width / 4, DustID.Adamantite, 5, 2);
-                    }
-                }
             }
             if (ShadowWeight)
             {
