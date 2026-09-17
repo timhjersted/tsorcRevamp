@@ -594,9 +594,9 @@ Also check dust/emission **gating** when a trail "stops": EvilEye's trail died m
 
 - **Verify per-technique, not per-file.** Counting `tex2D(PrimarySampler` matches *per file* and attributing them to whichever technique used a suspect texture produced a confidently wrong bug count — most `.fx` files hold 2–4 techniques. Open the actual pixel-shader function and confirm the specific sampler use. One false positive (a technique that never sampled the texture at all) and several missed hits came from that shortcut.
 - **State findings at the confidence you actually have.** "Six confirmed, one ruled out, three more of a different kind" is worth far more than a round number that collapses under one question.
-- **Distinguish real compile errors from the build lock.** With tModLoader open, `dotnet build` fails at *packaging* (`TML003`) — but `csc` has already run. Grep for the specific error class to confirm your code is sound:
+- **Compile-check without touching the game.** `-t:Compile` is safe with the game open. A full `dotnet build` also runs tModLoader's `-server -build` packaging step — fine with the game closed, but with it open that step fails on the mod lock (`TML003`). Never kill the user's game client to get past the lock:
 ```bash
-dotnet build tsorcRevamp.csproj 2>&1 | grep -E "error CS[0-9]+"   # empty = C# compiled clean
+dotnet build tsorcRevamp.csproj -t:Compile 2>&1 | grep -E "error CS[0-9]+"   # empty = C# compiled clean
 ```
 - **Round-trip the toolchain before trusting it.** Compile an unmodified `.fx` and `cmp` the output against the checked-in `.xnb`; byte-identical proves the pipeline before you start blaming your own code.
 

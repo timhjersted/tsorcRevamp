@@ -27,6 +27,8 @@ namespace SwingPreview
         public int StepCount = 1;
         public string Motion;
         public bool WeaponHidden;         // PuppetNPC.WeaponSheathed: no weapon, arms at rest
+        public float FrontSwingBlend = 1f; // dual wield: 1 = front hand follows WeaponRotation, 0 = carry pose
+        public float BackSwingBlend;       // dual wield: same for the back hand
     }
 
     /// <summary>Which sprite sheets to composite, and the handful of numbers the pose maths needs.</summary>
@@ -49,6 +51,12 @@ namespace SwingPreview
         /// exactly as PuppetNPC.DrawWeaponToLayer uses it as the draw origin.</summary>
         public float HandleNormX = 0.10f;
         public float HandleNormY = 0.85f;
+
+        /// <summary>Dual wield: sprite in the back hand (null = single weapon). Uses the same grip and scale
+        /// as the front weapon, and the puppet's OffHandCarryRotation for the non-swinging hand.</summary>
+        public string OffHandWeaponSprite;
+        public float OffHandCarryRotation = -0.30f;
+        public float OffHandWeaponScale = 1f;
     }
 
     /// <summary>
@@ -98,11 +106,12 @@ namespace SwingPreview
             using Bitmap legs = Load(art.LegsSheet);
             using Bitmap head = Load(art.HeadSheet);
             using Bitmap weapon = Load(art.WeaponSprite);
+            using Bitmap offHandWeapon = art.OffHandWeaponSprite == null ? null : Load(art.OffHandWeaponSprite);
 
             var rendered = new List<Bitmap>();
             foreach (PoseFrame frame in frames)
             {
-                rendered.Add(DrawFrame(art, frame, body, legs, head, weapon, zoom));
+                rendered.Add(DrawFrame(art, frame, body, legs, head, weapon, offHandWeapon, zoom));
             }
 
             string safe = Sanitize(label);
@@ -139,7 +148,7 @@ namespace SwingPreview
         }
 
         private static Bitmap DrawFrame(PuppetArt art, PoseFrame frame,
-            Bitmap body, Bitmap legs, Bitmap head, Bitmap weapon, int zoom)
+            Bitmap body, Bitmap legs, Bitmap head, Bitmap weapon, Bitmap offHandWeapon, int zoom)
         {
             // Canvas padding sized to the weapon: its reach from the grip to the farthest texture
             // corner, so a full-scale greatsword (Gwyn's is ~117px) never runs off the frame.
@@ -205,15 +214,37 @@ namespace SwingPreview
             bool armOverShoulder = VanillaShoulderOrder
                 && Array.IndexOf(ArmOverShoulderRows, frame.BodyRow) >= 0;
 
+            // Dual wield (PuppetNPC.FrontHandPoseRotation / BackHandPoseRotation): each hand crossfades between
+            // the carry pose and the live swing, and the back arm is posed from its OWN weapon instead of trailing
+            // the front arm at 0.55x.
+            bool dualWield = offHandWeapon != null && !frame.WeaponHidden;
+            float frontWeaponRotation = frame.WeaponRotation;
+            float backArmRotation = armRotation * 0.55f;
+            float backWeaponRotation = art.OffHandCarryRotation;
+            if (dualWield)
+            {
+                frontWeaponRotation = Lerp(art.OffHandCarryRotation, frame.WeaponRotation, frame.FrontSwingBlend);
+                backWeaponRotation = Lerp(art.OffHandCarryRotation, frame.WeaponRotation, frame.BackSwingBlend);
+                armRotation = frontWeaponRotation - (float)Math.PI / 2f;
+                backArmRotation = backWeaponRotation - (float)Math.PI / 2f;
+            }
+
             // ---- vanilla layer order ----
             DrawStatic(g, legs, legFrame, flip);
-            DrawRotated(g, body, backArmCell, BackArmPivot, armRotation * 0.55f, flip);
+            DrawRotated(g, body, backArmCell, BackArmPivot, backArmRotation, flip);
+            if (dualWield)
+            {
+                // PuppetBackWeaponDrawLayer sits right after Skin: over the back arm, under the torso.
+                PointF backHand = BackHandInCell(backArmRotation);
+                DrawWeapon(g, offHandWeapon, art, backWeaponRotation, backHand, flip, art.OffHandWeaponScale);
+            }
             DrawStatic(g, body, backShoulderCell, flip);
             DrawStatic(g, body, torsoCell, flip);
             DrawStatic(g, head, headFrame, flip);
             if (!frame.WeaponHidden)
             {
-                DrawWeapon(g, weapon, art, frame.WeaponRotation, armRotation, flip);
+                PointF frontHand = FrontHandInCell(armRotation, flip);
+                DrawWeapon(g, weapon, art, frontWeaponRotation, frontHand, flip, art.WeaponScale);
             }
 
             if (armOverShoulder)
@@ -299,9 +330,8 @@ namespace SwingPreview
         /// GetFrontHandPosition maths relative to the cell, and the sprite is pinned by its lower-left
         /// (the hilt corner for a Terraria sword), which is the convention the real draw starts from.
         /// </summary>
-        private static void DrawWeapon(Graphics g, Bitmap weapon, PuppetArt art, float weaponRotation, float armRotation, bool flip)
+        private static void DrawWeapon(Graphics g, Bitmap weapon, PuppetArt art, float weaponRotation, PointF hand, bool flip, float weaponScale)
         {
-            PointF hand = FrontHandInCell(armRotation, flip);
             float degrees = (float)((weaponRotation + art.WeaponRotationOffset) * 180.0 / Math.PI);
 
             GraphicsState state = g.Save();
@@ -320,14 +350,33 @@ namespace SwingPreview
             // MeleeHandleNorm texel to the hand and rotate about it - DrawWeaponToLayer's origin.
             // (This used to pin the texture's bottom-left CORNER, i.e. beyond the pommel, which made
             // every puppet look like it held the very end of its sword.)
-            float w = weapon.Width * art.WeaponScale;
-            float h = weapon.Height * art.WeaponScale;
+            float w = weapon.Width * weaponScale;
+            float h = weapon.Height * weaponScale;
             float originX = w * art.HandleNormX;
             float originY = h * art.HandleNormY;
             g.DrawImage(weapon, new RectangleF(-originX, -originY, w, h),
                 new RectangleF(0f, 0f, weapon.Width, weapon.Height), GraphicsUnit.Pixel);
 
             g.Restore(state);
+        }
+
+        private static float Lerp(float from, float to, float amount) => from + (to - from) * amount;
+
+        /// <summary>Vanilla Player.GetBackHandPosition in facing-right cell space: the arm ellipse for the
+        /// stretch plus the (+6, -2) back-shoulder offset, with no wrist nudge. Mirroring is the canvas flip.</summary>
+        private static PointF BackHandInCell(float rotation)
+        {
+            float angle = rotation + (float)Math.PI / 2f;
+            (float radiusX, float radiusY) = Math.Clamp(ArmStretch, 0, 3) switch
+            {
+                0 => (10f, 12f),
+                1 => (8f, 10f),
+                2 => (6f, 8f),
+                _ => (4f, 6f),
+            };
+            float x = (float)Math.Cos(angle) * radiusX + 6f;
+            float y = (float)Math.Sin(angle) * radiusY - 2f;
+            return new PointF(20f + x, 28f + y);
         }
 
         /// <summary>Vanilla Player.GetFrontHandPosition, expressed in cell space rather than world

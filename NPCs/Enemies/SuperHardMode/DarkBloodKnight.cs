@@ -72,8 +72,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override int BodyArmorItemType => ModContent.ItemType<DarkKnightArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<DarkKnightGreaves>();
         protected override int HeadArmorDyeItemType => ItemID.BloodbathDye;
-        protected override int BodyArmorDyeItemType => ItemID.BloodbathDye;
-        protected override int LegsArmorDyeItemType => ItemID.BloodbathDye;
+        protected override int BodyArmorDyeItemType => ItemID.RedDye;
+        protected override int LegsArmorDyeItemType => ItemID.RedDye;
 
         protected override int MeleeWeaponItemType => _activeComboUsesWhip ? ItemID.ScytheWhip : ItemID.BloodButcherer;
         protected override int RangedWeaponItemType => ItemID.TendonBow;

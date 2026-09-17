@@ -12,7 +12,7 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight";
+        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, OolacileCultist";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
@@ -92,6 +92,25 @@ namespace SwingPreview
                     LegsSheet = P("Items", "Armors", "Melee", "DarkKnightGreaves_Legs.png"),
                     HeadSheet = P("Items", "Armors", "Melee", "DarkKnightHelmet_Head.png"),
                     WeaponSprite = P("Projectiles", "Enemy", "Weapons", "BloodSword.png"),
+                    WeaponRotationOffset = 0f,
+                    DrawScale = 1f,
+                };
+            }
+
+            if (puppet.Equals("OolacileCultist", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "OolacileCultist",
+                    // The game draws vanilla Brain of Cthulhu Mask + Solar Cultist Robe, which this tool cannot
+                    // load headlessly. Kahlrun's red cloth set is an offline body proxy only; the claw is real.
+                    BodySheet = P("Items", "Armors", "Magic", "RedClothTunic_Body.png"),
+                    LegsSheet = P("Items", "Armors", "Magic", "RedClothPants_Legs.png"),
+                    HeadSheet = P("Items", "Armors", "Magic", "RedClothHat_Head.png"),
+                    WeaponSprite = P("Projectiles", "Enemy", "Weapons", "BeastClaw.png"),
+                    OffHandWeaponSprite = P("Projectiles", "Enemy", "Weapons", "BeastClaw.png"),
+                    OffHandWeaponScale = 0.5f,     // OolacileCultist.OffHandClawDrawScale
+                    OffHandCarryRotation = 0.485f, // OolacileCultist.ClawCarryRotation (-0.30 + PiOver4)
                     WeaponRotationOffset = 0f,
                     DrawScale = 1f,
                 };

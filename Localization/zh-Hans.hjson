@@ -9082,6 +9082,16 @@ Mods: {
 				// Tooltip: ""
 				// DisplayName: Purple Gem Staff
 			}
+
+			OolacileCultistStaff: {
+				// Tooltip: ""
+				// DisplayName: Oolacile Cultist Staff
+			}
+
+			EnemyBeastClaw: {
+				// Tooltip: ""
+				// DisplayName: Beast Claw
+			}
 		}
 
 		Buffs: {
@@ -11253,6 +11263,8 @@ Mods: {
 			// FirstRunePrison.DisplayName: First Rune Prison
 			// CinderRainDrop.DisplayName: Cinder Rain Drop
 			// KahlrunFarronDart.DisplayName: Kahlrun Farron Dart
+			// OolacileFireBolt.DisplayName: Oolacile Fire Bolt
+			// OolacileFirePatch.DisplayName: Oolacile Fire Patch
 			// RedCourtLancePortal.DisplayName: Red Court Lance Portal
 			// RedKnightAdderSpear.DisplayName: Red Knight's Adder Spear
 			// RedKnightPoisonCurtainController.DisplayName: Red Knight's Poison Curtain
@@ -12933,6 +12945,7 @@ Mods: {
 			HomingMissile.DisplayName: 追踪导弹
 			Byakhee.DisplayName: 拜亚基
 			ClericOfSorrow.DisplayName: 悲怆骑士
+			// OolacileCultist.DisplayName: Oolacile Cultist
 			Willowisp.DisplayName: 飞絮
 			GreatRedThresher.DisplayName: 殷红勾魂使
 			LeonhardPhase2.DisplayName: 李奥纳德

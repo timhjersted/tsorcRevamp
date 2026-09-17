@@ -75,7 +75,8 @@ when `!Main.dedServ`.
   tell begins, so it isn't conjured on frame one of the attack.
 - **Every attack has a tell, with its own pose.** A staff cast raises or aims the staff (for
   example, raised to 45° for a lob, pointed at the player for an aimed shot). A tell made only of a
-  timer is not a tell.
+  timer is not a tell. Puppets can only walk, run, jump and move their arms — no hunch, crouch or
+  kneel poses exist (see `enemy-redesign` G0), so build the pose from the arm and weapon.
 - **Build-up dust** at the tip or spawn point, colour-matched. For multi-shot sequences it continues
   through the whole sequence, not just the first shot.
 - **Aimed shots get telegraph lines** when the direction matters. Don't drop an existing aim line in

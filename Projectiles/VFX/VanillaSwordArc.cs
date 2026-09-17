@@ -130,6 +130,9 @@ namespace tsorcRevamp.Projectiles.VFX
         // Opt in for puppet weapons when the arc must follow the live hand and blade pose.
         public bool TrackPuppetBlade;
 
+        // With TrackPuppetBlade: follow a dual-wielding puppet's BACK-hand weapon instead of the front one.
+        public bool TrackPuppetBackHand;
+
         public VanillaSwordArcSettings Clone()
         {
             return (VanillaSwordArcSettings)MemberwiseClone();
@@ -400,7 +403,7 @@ namespace tsorcRevamp.Projectiles.VFX
         {
             if (!puppet.TryGetMeleeSlashTrailPose(out Vector2 pivot,
                 out Vector2 direction, out _, out float progress, out _,
-                out _, out _, out _))
+                out _, out _, out _, settings.TrackPuppetBackHand))
             {
                 return false;
             }
@@ -854,6 +857,7 @@ namespace tsorcRevamp.Projectiles.VFX
             writer.WriteVector2(settings.WorldVelocity);
             writer.Write(settings.FollowAnchorRotation);
             writer.Write(settings.TrackPuppetBlade);
+            writer.Write(settings.TrackPuppetBackHand);
 
             // Preserve an impact pose when the source combo has already advanced by the time a
             // remote client receives this cosmetic projectile.
@@ -928,6 +932,7 @@ namespace tsorcRevamp.Projectiles.VFX
             settings.WorldVelocity = reader.ReadVector2();
             settings.FollowAnchorRotation = reader.ReadBoolean();
             settings.TrackPuppetBlade = reader.ReadBoolean();
+            settings.TrackPuppetBackHand = reader.ReadBoolean();
             hasEverTrackedPuppetBlade = reader.ReadBoolean();
             Projectile.Center = reader.ReadVector2();
             trackedPuppetBladeDirection = reader.ReadVector2();
