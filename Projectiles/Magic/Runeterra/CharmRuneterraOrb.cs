@@ -5,7 +5,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {

@@ -1,0 +1,41 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Content.Items.Potions
+{
+    public class CrimsonPotion : ModItem
+    {
+        public const int Duration = 300;
+        public const int BaseDoT = 20;
+        public const int DefenseReduction = 5;
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
+        {
+            Item.width = 14;
+            Item.height = 24;
+            Item.useStyle = ItemUseStyleID.DrinkLiquid;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.useTurn = true;
+            Item.UseSound = SoundID.Item3;
+            Item.maxStack = Item.CommonMaxStack;
+            Item.consumable = true;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = 1000;
+            Item.buffType = ModContent.BuffType<Buffs.CrimsonDrain>();
+            Item.buffTime = Duration * 60;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.ThornsPotion, 1);
+            recipe.AddIngredient(ItemID.SoulofNight, 1);
+            recipe.AddTile(TileID.Bottles);
+
+            recipe.Register();
+        }
+    }
+}

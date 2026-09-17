@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.Projectiles.Enemy.Cinder
 {
@@ -17,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Cinder
         const float SpinSpeed = 0.34f;
         static readonly Vector2 HandleNorm = new Vector2(0.14f, 0.87f);
 
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Broadswords/SeveringDusk";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(SeveringDusk));
 
         public override void SetDefaults()
         {

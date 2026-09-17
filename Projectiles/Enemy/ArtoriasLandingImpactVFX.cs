@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         // The eruption's solid core spans |uv.x - 0.5| < 0.39 of its quad (ArtoriasAbyssEruption.fx exactCore).
         const float EruptionCoreHalfWidth = 0.39f;
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

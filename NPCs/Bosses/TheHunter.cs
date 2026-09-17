@@ -9,10 +9,11 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Lore;
-using tsorcRevamp.Items.Placeable.Relics;
-using tsorcRevamp.Items.Placeable.Trophies;
-using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Lore;
+using tsorcRevamp.Content.Items.Placeable.Relics;
+using tsorcRevamp.Content.Items.Placeable.Trophies;
+using tsorcRevamp.Content.Items.Vanity;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
@@ -665,7 +666,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheHunterBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<TheHunterBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrestOfEarth>(), 1, 2, 2));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Drax));

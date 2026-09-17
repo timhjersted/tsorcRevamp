@@ -7,7 +7,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using tsorcRevamp.Items.Placeable;
+using tsorcRevamp.Content.Items.Placeable;
 
 namespace tsorcRevamp.Tiles
 {

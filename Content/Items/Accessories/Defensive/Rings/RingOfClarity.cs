@@ -1,0 +1,57 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+
+namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
+{
+    class RingOfClarity : ModItem
+    {
+        public const float LifeRegen = 2f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CrackedDragonStone.DR, LifeRegen / 2f);
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
+        {
+            Item.width = 24;
+            Item.height = 24;
+            Item.accessory = true;
+            Item.defense = 7;
+            Item.rare = ItemRarityID.Pink;
+            Item.value = PriceByRarity.Pink_5;
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<BloodbaneRing>());
+            recipe.AddIngredient(ItemID.HallowedBar, 5);
+            recipe.AddIngredient(ModContent.ItemType<CrackedDragonStone>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            player.noKnockback = true;
+            player.fireWalk = true;
+            player.buffImmune[BuffID.OnFire] = true;
+            player.buffImmune[BuffID.Burning] = true;
+            player.buffImmune[BuffID.Chilled] = true;
+            player.buffImmune[BuffID.CursedInferno] = true;
+            player.buffImmune[BuffID.Ichor] = true;
+            player.buffImmune[BuffID.Gravitation] = true;
+            player.buffImmune[BuffID.Frostburn] = true;
+            player.buffImmune[BuffID.Bleeding] = true;
+            player.buffImmune[BuffID.Poisoned] = true;
+            player.buffImmune[ModContent.BuffType<Frostbite>()] = true;
+            player.endurance += CrackedDragonStone.DR / 100f;
+            player.lifeRegen += (int)LifeRegen;
+        }
+    }
+}

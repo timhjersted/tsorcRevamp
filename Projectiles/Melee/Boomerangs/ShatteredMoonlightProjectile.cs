@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Melee;
 
 namespace tsorcRevamp.Projectiles.Melee.Boomerangs
 {
@@ -200,7 +201,7 @@ namespace tsorcRevamp.Projectiles.Melee.Boomerangs
                 {
                     for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
                     {
-                        Item.NewItem(Projectile.GetSource_FromThis(), Projectile.position, ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1, false, -1);
+                        Item.NewItem(Projectile.GetSource_FromThis(), Projectile.position, ModContent.ItemType<ShatteredMoonlight>(), 1, false, -1);
                     }
                 }
                 for (int i = 0; i < 10; i++)

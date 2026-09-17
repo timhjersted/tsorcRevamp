@@ -6,7 +6,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class BlindingPulse : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe"; //invis so doesnt matter
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj)); //invis so doesnt matter
 
         public override void SetDefaults()
         {

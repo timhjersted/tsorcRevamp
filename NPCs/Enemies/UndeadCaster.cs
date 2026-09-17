@@ -4,8 +4,11 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Armor.Magic;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Magic;
 using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -97,19 +100,19 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.SpellTome, 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DeadChicken>(), 25));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.AttraidiesRelic>(), 100, 1, 1, 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfFire>(), 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfDarkness>(), 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WoodenWand>(), 5));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<AttraidiesRelic>(), 100, 1, 1, 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<WandOfFire>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<WandOfDarkness>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<WoodenWand>(), 5));
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 1, 1, 3));
             npcLoot.Add(ItemDropRule.Common(ItemID.HealingPotion, 12, 2, 2));
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 8));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 4));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 10));
             int[] armorIDs = new int[] {
-                ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
-                ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),
-                ModContent.ItemType<Items.Armors.Magic.RedClothPants>(),
+                ModContent.ItemType<RedClothHat>(),
+                ModContent.ItemType<RedClothTunic>(),
+                ModContent.ItemType<RedClothPants>(),
             };
             //i just wanna say that, while terraria's convention is (denominator, numerator)
             //and im following that convention with DropMultiple, i completely detest it

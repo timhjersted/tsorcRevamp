@@ -6,7 +6,11 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Accessories.Defensive.Rings;
+using tsorcRevamp.Content.Items.Accessories.Damage;
+using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items.Accessories.Melee;
 using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp
@@ -152,7 +156,7 @@ namespace tsorcRevamp
                 // One-time white twinkle the instant a Celestriad ward reaches its 2s charge, signalling the
                 // seeking-bolt volley is now armed (it fires on release, see OnBlockReleased).
                 if (blockHoldFrames == CelestriadChargeFrames
-                    && activeShieldType == ModContent.ItemType<Items.Accessories.Defensive.Celestriad>()
+                    && activeShieldType == ModContent.ItemType<Celestriad>()
                     && Player.whoAmI == Main.myPlayer)
                 {
                     SpawnChargeTwinkle();
@@ -883,7 +887,7 @@ namespace tsorcRevamp
                 return;
             }
             // Lowering the shield (or a guard break, which forces isBlocking false) snuffs it out.
-            if (!isBlocking || activeShieldType != ModContent.ItemType<Items.Accessories.Defensive.Shields.DragonCrestShield>())
+            if (!isBlocking || activeShieldType != ModContent.ItemType<DragonCrestShield>())
             {
                 fireBreathActive = false;
                 return;
@@ -1031,16 +1035,16 @@ namespace tsorcRevamp
             }
 
             // Thorns shields reflect the blocked damage back at the attacker.
-            if (shieldType == ModContent.ItemType<Items.Accessories.Defensive.Shields.SpikedIronShield>()
-                || shieldType == ModContent.ItemType<Items.Accessories.Defensive.Shields.AncientDemonShield>())
+            if (shieldType == ModContent.ItemType<SpikedIronShield>()
+                || shieldType == ModContent.ItemType<AncientDemonShield>())
             {
                 attacker.SimpleStrikeNPC(info.SourceDamage > 0 ? info.SourceDamage : info.Damage, -info.HitDirection);
             }
 
             // Mythril Bulwark applies its Vulnerability debuff to the attacker on block...
-            if (shieldType == ModContent.ItemType<Items.Accessories.Damage.MythrilBulwark>())
+            if (shieldType == ModContent.ItemType<MythrilBulwark>())
             {
-                attacker.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
+                attacker.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), MythrilBulwark.VulnerabilityDuration * 60);
                 // ...and deflects a blocked hostile projectile straight back at its source.
                 if (attackingProjectile != null && attackingProjectile.active && attackingProjectile.hostile
                     && attackingProjectile.type !=
@@ -1056,16 +1060,16 @@ namespace tsorcRevamp
             }
 
             // Eye line — the shield's gaze unsettles attackers, escalating across the tier.
-            if (shieldType == ModContent.ItemType<Items.Accessories.Melee.BeholderShield>())
+            if (shieldType == ModContent.ItemType<BeholderShield>())
             {
                 if (Main.rand.NextFloat() < 0.4f) attacker.AddBuff(BuffID.Confused, 120);
             }
-            else if (shieldType == ModContent.ItemType<Items.Accessories.Melee.BeholderShield2>())
+            else if (shieldType == ModContent.ItemType<BeholderShield2>())
             {
                 if (Main.rand.NextFloat() < 0.5f) attacker.AddBuff(BuffID.Confused, 150);
                 if (Main.rand.NextFloat() < 0.25f) attacker.AddBuff(BuffID.Frozen, 60); // brief "petrify"
             }
-            else if (shieldType == ModContent.ItemType<Items.Accessories.Melee.EnchantedBeholderShield2>())
+            else if (shieldType == ModContent.ItemType<EnchantedBeholderShield2>())
             {
                 if (Main.rand.NextFloat() < 0.6f) attacker.AddBuff(BuffID.Confused, 180);
                 if (Main.rand.NextFloat() < 0.35f) attacker.AddBuff(BuffID.Frozen, 90);
@@ -1080,14 +1084,14 @@ namespace tsorcRevamp
 
             // Dragon Crest — ignite the sustained fire-breath (perfect-parry gated like the others, above).
             // The breath itself is driven per-frame by UpdateFireBreath; this only lights it.
-            if (shieldType == ModContent.ItemType<Items.Accessories.Defensive.Shields.DragonCrestShield>()
+            if (shieldType == ModContent.ItemType<DragonCrestShield>()
                 && Player.whoAmI == Main.myPlayer)
             {
                 TryIgniteFireBreath();
             }
 
             // Icebound Mythril Aegis — a small frost nova on block.
-            if (shieldType == ModContent.ItemType<Items.Accessories.Defensive.Shields.IceboundMythrilAegis>())
+            if (shieldType == ModContent.ItemType<IceboundMythrilAegis>())
             {
                 attacker.AddBuff(BuffID.Frostburn, 180);
                 if (Main.rand.NextFloat() < 0.25f) attacker.AddBuff(BuffID.Frozen, 60);
@@ -1184,7 +1188,7 @@ namespace tsorcRevamp
                 n.velocity = away * pushSpeed * MathHelper.Clamp(n.knockBackResist, 0.6f, 1f);
                 n.netUpdate = true;
             }
-            if (shieldType == ModContent.ItemType<Items.Accessories.Defensive.Celestriad>()
+            if (shieldType == ModContent.ItemType<Celestriad>()
                 && holdFrames >= CelestriadChargeFrames && Player.statMana >= CelestriadBoltManaCost)
             {
                 Player.GetModPlayer<tsorcRevampPlayer>().SpendManaOnHit(CelestriadBoltManaCost); // routes through the Unkindled mana-delay path

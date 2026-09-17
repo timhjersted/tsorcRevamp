@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     /// </summary>
     public class GreatBlackKnightFlailPulse : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

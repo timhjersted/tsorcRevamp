@@ -1,0 +1,22 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Content.Items.Materials
+{
+    class WorldRune : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+        }
+        public override void SetDefaults()
+        {
+            Item.width = 38;
+            Item.height = 42;
+            Item.maxStack = Item.CommonMaxStack;
+            Item.value = 250000;
+            Item.rare = ItemRarityID.Blue;
+        }
+    }
+}

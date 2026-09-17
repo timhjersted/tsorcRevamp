@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         private const int CurseBuildupPerTick = 2;
         private const int BuffRefreshTicks = 120;
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         private int TelegraphTicks => (int)Projectile.ai[0];
         private int CarriedDamage => (int)Projectile.ai[1];

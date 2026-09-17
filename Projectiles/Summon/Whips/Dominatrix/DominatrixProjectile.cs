@@ -6,7 +6,6 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips.Dominatrix
 {

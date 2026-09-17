@@ -8,12 +8,13 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Accessories.Defensive.Rings;
-using tsorcRevamp.Items.Accessories.Magic;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Magic;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.NPCs.VanillaChanges;
 
@@ -628,11 +629,11 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBagByCondition(new WyvernMageDropCondition(), ModContent.ItemType<Items.BossBags.WyvernMageBag>()));
+            npcLoot.Add(ItemDropRule.BossBagByCondition(new WyvernMageDropCondition(), ModContent.ItemType<WyvernMageBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 2, 4));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1, 1, 2));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 1, 2));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<LampTome>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GemBox>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.AngelWings));

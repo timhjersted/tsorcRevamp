@@ -9,7 +9,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Projectiles.Enemy;               // GigasIceShard, GigasUndertowZone (reused)

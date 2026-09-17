@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GigasFrostBreathPuff : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         //Lifetime and decay solved together (alongside the 7.5->9 launch speed bump in
         //RunFrostBreath) for ~2x the old ~171px travel (now ~340px) over a correspondingly longer

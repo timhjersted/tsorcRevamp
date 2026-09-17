@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class SpearheadFire : ModProjectile          //Same as Spearhead, but also bleeds the player and has red dusts
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe"; //invis so doesnt matter
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj)); //invis so doesnt matter
 
         public override void SetDefaults()
         {

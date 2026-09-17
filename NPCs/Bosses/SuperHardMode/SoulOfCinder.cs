@@ -7,9 +7,10 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Weapons.Enemy;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
 
@@ -1408,7 +1409,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SoulOfCinderBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<SoulOfCinderBag>()));
         }
 
     }

@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GigasSweepBeam : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public const int BeamLength = 720; //45 tiles
         public const int BeamHeight = 48;  //3 tiles — jumpable

@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using tsorcRevamp.Items.Placeable.Trophies;
+using tsorcRevamp.Content.Items.Placeable.Trophies;
 using tsorcRevamp.Tiles.Relics;
 
 namespace tsorcRevamp.Tiles.Trophies

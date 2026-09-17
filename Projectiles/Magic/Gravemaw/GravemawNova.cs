@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Magic.Gravemaw
     ///Soul Nova). Colliding() only hits the current radius band, so it sweeps outward once. ai[0]=max radius.</summary>
     class GravemawNova : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float ExpandSpeed = 9f;
         const float RingHalfThickness = 24f;

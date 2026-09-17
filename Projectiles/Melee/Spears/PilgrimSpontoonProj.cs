@@ -3,8 +3,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Buffs.Weapons.Melee;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 
 //using tsorcRevamp.Dusts;
 

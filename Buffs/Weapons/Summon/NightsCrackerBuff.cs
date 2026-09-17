@@ -2,7 +2,6 @@ using Humanizer;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon

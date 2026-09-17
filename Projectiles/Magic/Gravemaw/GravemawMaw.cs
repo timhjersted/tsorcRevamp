@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Magic.Gravemaw
     ///</summary>
     class GravemawMaw : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float Range = 230f;
         const float ConeHalfAngle = 0.62f; // ~35°

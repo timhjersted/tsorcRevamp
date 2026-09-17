@@ -2,9 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Classless;
-using tsorcRevamp.Items.Weapons.Enemy;
-using tsorcRevamp.Items.Weapons.Throwing;
+using tsorcRevamp.Content.Items.Weapons.Classless;
 
 namespace tsorcRevamp.Projectiles.Throwing
 {

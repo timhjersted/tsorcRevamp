@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     // exact same arc via the shared GravelordNito.Slash* helpers so the hitbox tracks the visual.
     class NitoSwordSlash : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         int OwnerIndex => (int)Projectile.ai[0];
         int Kind => (int)Projectile.ai[1];
@@ -227,7 +227,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
     class NitoDeathNova : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float ExpandSpeed = 8f;
         const float RingHalfThickness = 24f;
@@ -469,7 +469,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class NitoGraveHand : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         int TelegraphTicks => Projectile.ai[0] > 0f ? (int)Projectile.ai[0] : 18;
         float ConvergeCenterX => Projectile.ai[1];
@@ -791,7 +791,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class NitoPyreFire : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const int BurnTicks = 180;  // 3 seconds
         const int FadeTicks = 30;
@@ -968,7 +968,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
     class NitoMiasmaCloud : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

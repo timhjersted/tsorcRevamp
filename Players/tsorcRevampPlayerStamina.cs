@@ -8,8 +8,9 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
-using tsorcRevamp.Items.Accessories.Defensive.Rings;
-using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
+using tsorcRevamp.Content.Items.Accessories.Mobility;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
@@ -585,11 +586,11 @@ namespace tsorcRevamp
                 tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
                 if (modPlayer.ChloranthyRing2)
                 {
-                    return Items.Accessories.Mobility.ChloranthyRing2.RegenDelayReduction / 100f;
+                    return ChloranthyRing2.RegenDelayReduction / 100f;
                 }
                 if (modPlayer.ChloranthyRing1)
                 {
-                    return Items.Accessories.Mobility.ChloranthyRing.RegenDelayReduction / 100f;
+                    return ChloranthyRing.RegenDelayReduction / 100f;
                 }
                 return 0f;
             }

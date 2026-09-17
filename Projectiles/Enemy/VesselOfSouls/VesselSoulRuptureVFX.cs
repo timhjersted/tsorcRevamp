@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
         bool Exploding => Projectile.ai[1] >= 0.5f;
         int Duration => Projectile.ai[2] > 0f ? (int)Projectile.ai[2] : 24;
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

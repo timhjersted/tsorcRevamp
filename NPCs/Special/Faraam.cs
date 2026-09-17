@@ -6,6 +6,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Projectiles.Melee.Boomerangs;
 
 namespace tsorcRevamp.NPCs.Special
@@ -552,18 +554,18 @@ namespace tsorcRevamp.NPCs.Special
                     //Main.NewText("[c/CCCCCC:???:] Very good, a worthy opponent. Take these, for your trouble", 109, 145, 138); //Send message to chat
                     for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
                     {
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulCoin>(), 25);
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulCoin>(), 25);
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulCoin>(), 25);
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulCoin>(), 25);
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulCoin>(), 25);
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulCoin>(), 25);
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulCoin>(), 25);
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulCoin>(), 25);
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulCoin>(), 25);
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulCoin>(), 25);
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1);
-                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.StaminaVessel>(), 1);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SoulCoin>(), 25);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SoulCoin>(), 25);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SoulCoin>(), 25);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SoulCoin>(), 25);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SoulCoin>(), 25);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SoulCoin>(), 25);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SoulCoin>(), 25);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SoulCoin>(), 25);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SoulCoin>(), 25);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SoulCoin>(), 25);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<NamelessSoldierSoul>(), 1);
+                        Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<StaminaVessel>(), 1);
                     }
                 }
 

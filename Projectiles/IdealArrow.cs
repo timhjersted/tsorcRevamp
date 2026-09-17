@@ -5,13 +5,14 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Ammo;
 
 namespace tsorcRevamp.Projectiles
 {
     public class IdealArrow : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Items/Ammo/ArrowOfBard";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(ArrowOfBard));
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Ideal Arrow");

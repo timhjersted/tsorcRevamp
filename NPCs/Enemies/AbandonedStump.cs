@@ -4,10 +4,11 @@ using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Melee;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Melee;
+using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.NPCs.Friendly;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Magic;
@@ -343,7 +344,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //fire melee
-            if (player.HasBuff(BuffID.WeaponImbueFire) || item.type == ModContent.ItemType<AncientFireSword>() || item.type == ModContent.ItemType<Items.Weapons.Melee.Axes.AncientFireAxe>()
+            if (player.HasBuff(BuffID.WeaponImbueFire) || item.type == ModContent.ItemType<AncientFireSword>() || item.type == ModContent.ItemType<AncientFireAxe>()
                  || item.type == ModContent.ItemType<ForgottenRisingSun>() || item.type == ModContent.ItemType<MagmaTooth>()
                  || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == ModContent.ItemType<SunBlade>())
             {
@@ -412,7 +413,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.Wood, 1, 2, 4));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.GreenBlossom>(), 5, 1, 1, 4));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<GreenBlossom>(), 5, 1, 1, 4));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 3));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LivingLog>(), 12, 1, 2));
 

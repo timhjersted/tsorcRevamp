@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GwynFireArc : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const int Lifetime = 22;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";

@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     /// </summary>
     class GwynDescentColumn : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public const int TelegraphMode = 0;
         public const int ImpactMode = 1;

@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Projectiles.Summon.Whips.TerraFall;
 using tsorcRevamp.Utilities;
 

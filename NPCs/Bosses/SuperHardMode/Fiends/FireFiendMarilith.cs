@@ -7,12 +7,13 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Magic.Tomes;
-using tsorcRevamp.Items.Weapons.Melee;
-using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Melee;
+using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
 using tsorcRevamp.Utilities;
 
@@ -647,7 +648,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.MarilithBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<MarilithBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AdventureModeRule, ItemID.LargeSapphire));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));

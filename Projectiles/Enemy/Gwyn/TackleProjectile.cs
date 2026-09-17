@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
     class TackleProjectile : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetStaticDefaults()
         {

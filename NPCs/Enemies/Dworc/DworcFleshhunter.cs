@@ -3,6 +3,9 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies.Dworc
 {
@@ -61,9 +64,9 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.SporePowder>(), 100));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 20, 2, 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SporePowder>(), 100));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 20, 2, 3));
 
         }
 

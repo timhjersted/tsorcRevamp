@@ -1,6 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
+using tsorcRevamp.Content.Items;
 
 namespace tsorcRevamp.Prefixes
 {

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Enums;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 
 namespace tsorcRevamp.Projectiles.Melee.Shortswords
 {

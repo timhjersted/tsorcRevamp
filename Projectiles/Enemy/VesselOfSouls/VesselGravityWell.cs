@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy.VesselOfSouls
     ///</summary>
     class VesselGravityWell : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float DefaultPullSpeedCap = 6.5f;
         const float InnerDeadzone = 70f;

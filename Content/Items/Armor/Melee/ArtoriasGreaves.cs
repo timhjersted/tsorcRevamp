@@ -1,0 +1,45 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+
+namespace tsorcRevamp.Content.Items.Armor.Melee
+{
+    [LegacyName("GreavesOfArtorias")]
+    [AutoloadEquip(EquipType.Legs)]
+    public class ArtoriasGreaves : ModItem
+    {
+        public const int SoulCost = 70000;
+        public static float AtkSpeedMult = 44f;
+        public static float MoveSpeed = 40f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeedMult, MoveSpeed);
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
+        {
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 31;
+            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.value = PriceByRarity.Purple_11;
+        }
+        public override void UpdateEquip(Player player)
+        {
+            player.GetAttackSpeed(DamageClass.Melee) += AtkSpeedMult / 100f;
+            player.moveSpeed += MoveSpeed / 100f;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+    }
+}
+

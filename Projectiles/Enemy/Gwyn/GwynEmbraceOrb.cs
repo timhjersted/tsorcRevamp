@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
     /// </summary>
     class GwynEmbraceOrb : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         int OwnerIndex => (int)Projectile.ai[0];
         int TargetIndex => (int)Projectile.ai[1];

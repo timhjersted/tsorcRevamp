@@ -4,7 +4,8 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 
@@ -279,7 +280,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Terraria.ModLoader.Config.NPCDefinition definition = new(ModContent.NPCType<Blaidd>());
             if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
             {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Items.StaminaDroplet>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Content.Items.StaminaDroplet>());
                 tsorcRevampWorld.NewSlain.Add(definition, 1);
 
                 if (Main.netMode == NetmodeID.Server)

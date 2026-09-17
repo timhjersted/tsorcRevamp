@@ -6,7 +6,10 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossItems;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Friendly
@@ -70,7 +73,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.FirstEncounter");
             }
 
-            if (player.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
+            if (player.HasItem(ModContent.ItemType<EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
             {
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
                 return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.HasShard");
@@ -122,7 +125,7 @@ namespace tsorcRevamp.NPCs.Friendly
             button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button1");
 
             // Shard reinforcement takes priority regardless of sequence state.
-            if (player.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
+            if (player.HasItem(ModContent.ItemType<EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
             {
                 button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v3");
                 return;
@@ -162,11 +165,11 @@ namespace tsorcRevamp.NPCs.Friendly
             }
 
             // Shard reinforcement takes priority at any sequence state.
-            if (player.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
+            if (player.HasItem(ModContent.ItemType<EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item37);
                 Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BringShards");
-                int shardIndex = player.FindItem(ModContent.ItemType<Items.EstusFlaskShard>());
+                int shardIndex = player.FindItem(ModContent.ItemType<EstusFlaskShard>());
                 if (player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
                 {
                     player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax += 1;
@@ -202,7 +205,7 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.TomeGiven");
                 modPlayer.ReceivedHuntingTome = true;
-                player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.BossItems.BossRematchTome>());
+                player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<BossRematchTome>());
                 modPlayer.heraldChatState = 1;
                 return;
             }
@@ -233,26 +236,26 @@ namespace tsorcRevamp.NPCs.Friendly
                 if (modPlayer.BearerOfTheCurse)
                 {
                     Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BotCGift");
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.Lifegem>(), 10);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.StarlightShard>(), 4);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.AdventurersCard>());
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<MushroomSkewer>(), 10);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<SoulCoin>(), 100);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Lifegem>(), 10);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<StarlightShard>(), 4);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<AdventurersCard>());
                 }
                 else if (modPlayer.Unkindled)
                 {
                     Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.UnkindledGift");
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.Lifegem>(), 5);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.AdventurersCard>());
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<MushroomSkewer>(), 10);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<SoulCoin>(), 100);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Lifegem>(), 5);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<AdventurersCard>());
                 }
                 else
                 {
                     Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Gift");
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Items.AdventurersCard>());
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<MushroomSkewer>(), 10);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<SoulCoin>(), 100);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<AdventurersCard>());
                 }
 
                 // Everyone starts with only the vanilla Copper Pickaxe (Deprived excepted) - the mining upgrade

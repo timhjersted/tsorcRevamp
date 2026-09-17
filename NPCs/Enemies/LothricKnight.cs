@@ -9,7 +9,11 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -494,7 +498,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             int shieldPower = NPC.defense * 3;
 
-            if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.Specialist.BlizzardBlasterShot>())
+            if (projectile.type != ModContent.ProjectileType<BlizzardBlasterShot>())
             {
                 if (shielding)
                 {
@@ -611,13 +615,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 12, 24));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 12, 24));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofLight));
             npcLoot.Add(hmCondition);
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Items.Potions.RadiantLifegem>(), 4, 1, 2));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 4, 1, 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SpikedIronShield>(), 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LostUndeadSoul>(), 5));
             npcLoot.Add(ItemDropRule.Common(ItemID.RagePotion, 13));
             npcLoot.Add(ItemDropRule.Common(ItemID.WrathPotion, 13));
         }

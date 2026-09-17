@@ -5,7 +5,6 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Melee;
-using tsorcRevamp.Items.Weapons.Melee.Spears;
 
 namespace tsorcRevamp.Projectiles.Melee.Spears
 {

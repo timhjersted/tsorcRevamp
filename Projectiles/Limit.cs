@@ -5,7 +5,7 @@ namespace tsorcRevamp.Projectiles
     class Limit : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Limit";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Content.Items.Weapons.Melee.Limit));
         public override void SetDefaults()
         {
             Projectile.width = 58;

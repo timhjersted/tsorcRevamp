@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -250,7 +251,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 15, 1, 1, 3));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<HealingElixir>(), 15, 1, 1, 3));
             npcLoot.Add(new CommonDrop(ItemID.SpellTome, 100, 1, 1, 7));
             npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 32));
             npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 20));

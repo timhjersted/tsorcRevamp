@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.NPCs.AI;
 
 namespace tsorcRevamp.NPCs.Puppets

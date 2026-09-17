@@ -9,12 +9,14 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Items.Weapons.Ranged.Bows;
-using tsorcRevamp.Items.Weapons.Magic.Tomes;
-using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Utilities;
 
@@ -175,7 +177,7 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DarkCloudBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<DarkCloudBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 2, 4));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GuardianSoul>(), 1, 2, 4));

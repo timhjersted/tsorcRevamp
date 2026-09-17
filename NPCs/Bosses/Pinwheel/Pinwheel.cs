@@ -7,14 +7,13 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Accessories.Defensive.Rings;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Items.Weapons.Melee.Shortswords;
-using tsorcRevamp.Items.Weapons.Melee.Spears;
-using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Utilities;
 
@@ -1067,7 +1066,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         {
                             if (Main.expertMode || Main.masterMode)
                             {
-                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<Items.BossBags.PinwheelBag>(), 1, false, -1);
+                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<PinwheelBag>(), 1, false, -1);
                             }
                             else
                             {

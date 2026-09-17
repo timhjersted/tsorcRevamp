@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 
 namespace tsorcRevamp.Projectiles.Enemy.Weapons
 {
@@ -13,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Weapons
     /// </summary>
     public class PuppetThrownDualBladedAxe : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Axes/DualBladedAxe";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(DualBladedAxe));
 
         private bool Embedded => Projectile.ai[0] == 1f;
         private int OwnerNpcIndex => (int)Projectile.ai[1];

@@ -3,6 +3,9 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Ammo;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -59,20 +62,20 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Ammo.ArrowOfBard>(), 6, 3, 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ArrowOfBard>(), 6, 3, 5));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofCursedFlames, 25));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 30));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 36));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 28));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 25));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 36));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 28));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 22));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 22));
             npcLoot.Add(ItemDropRule.Common(ItemID.HolyArrow, 1, 100, 150));
             npcLoot.Add(ItemDropRule.Common(ItemID.UnicornHorn, 1, 1, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 3, 6));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 3, 6));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofNight));
             npcLoot.Add(hmCondition);

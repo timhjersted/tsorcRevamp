@@ -2,8 +2,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.VanillaItems;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles;
 
 namespace tsorcRevamp.Buffs.Runeterra.Summon

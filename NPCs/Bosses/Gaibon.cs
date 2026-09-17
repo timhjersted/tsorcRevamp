@@ -8,11 +8,11 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Accessories.Defensive.Rings;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Ranged;
-using tsorcRevamp.Items.Weapons.Ranged.Specialist;
-using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -578,7 +578,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBagByCondition(new GaibonDropCondition(), ModContent.ItemType<Items.BossBags.GaibonBag>()));
+            npcLoot.Add(ItemDropRule.BossBagByCondition(new GaibonDropCondition(), ModContent.ItemType<GaibonBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<BloodbaneRing>()));
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<DarkTrident>()));

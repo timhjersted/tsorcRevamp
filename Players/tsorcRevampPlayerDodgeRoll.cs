@@ -8,12 +8,15 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Weapons.Melee.Flails;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Flamethrowers;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Textures;
+using Freezethrower = tsorcRevamp.Content.Items.Weapons.Ranged.Flamethrowers.Freezethrower;
 
 namespace tsorcRevamp
 {
@@ -215,10 +218,10 @@ namespace tsorcRevamp
                     return true;
                 }
 
-                if (!startedAnimation && item.type != ItemID.Harpoon && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()
-                     && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>()
-                      && item.type != ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()
-                       && item.type != ModContent.ItemType<Items.Weapons.Magic.DivineSpark>())
+                if (!startedAnimation && item.type != ItemID.Harpoon && item.type != ModContent.ItemType<Freezethrower>()
+                     && item.type != ModContent.ItemType<Meltdown>()
+                      && item.type != ModContent.ItemType<DivineBoomCannon>()
+                       && item.type != ModContent.ItemType<DivineSpark>())
                 {
                     return true;
                 }
@@ -260,7 +263,7 @@ namespace tsorcRevamp
                     return true;
                 }
 
-                else if (item.damage <= 1 || item.type == ModContent.ItemType<Items.Weapons.Ranged.Specialist.GlaiveBeam>() || item.type == ModContent.ItemType<Items.Weapons.Magic.ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
+                else if (item.damage <= 1 || item.type == ModContent.ItemType<GlaiveBeam>() || item.type == ModContent.ItemType<ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
                 {
                     return true;
                 }
@@ -271,8 +274,8 @@ namespace tsorcRevamp
                 }
 
                 //Note: This is where EVERY other weapon aside from these exceptions applies its stamina usage
-                else if (item.type != ItemID.PiranhaGun && item.type != ItemID.Harpoon && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>() && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()
-                    && !(item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
+                else if (item.type != ItemID.PiranhaGun && item.type != ItemID.Harpoon && item.type != ModContent.ItemType<Meltdown>() && item.type != ModContent.ItemType<Freezethrower>()
+                    && !(item.type == ModContent.ItemType<DivineSpark>() || item.type == ModContent.ItemType<DivineBoomCannon>()))
                 {
                     modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation) * mult;
                 }
@@ -283,12 +286,12 @@ namespace tsorcRevamp
                     modPlayer.staminaResourceCurrent -= 14 * mult;
                 }
 
-                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()))
+                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Meltdown>() || item.type == ModContent.ItemType<Freezethrower>()))
                 {
                     modPlayer.staminaResourceCurrent -= 0.7f * mult;
                 }
 
-                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
+                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<DivineSpark>() || item.type == ModContent.ItemType<DivineBoomCannon>()))
                 {
                     modPlayer.staminaResourceCurrent -= 1.2f * mult;
                 }
@@ -734,7 +737,7 @@ namespace tsorcRevamp
 
                         if (!other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
                         {
-                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
+                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
                         }
                     }
                 }
@@ -746,20 +749,20 @@ namespace tsorcRevamp
 
                         if (!other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
                         {
-                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
-                            other.AddBuff(BuffID.Frostburn2, Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
+                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
+                            other.AddBuff(BuffID.Frostburn2, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
 
                             if (Main.rand.NextBool(3))
                             {
-                                other.AddBuff(BuffID.Confused, Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
+                                other.AddBuff(BuffID.Confused, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
                             }
                             if (Main.rand.NextBool(3))
                             {
-                                other.AddBuff(BuffID.Bleeding, Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
+                                other.AddBuff(BuffID.Bleeding, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
                             }
                             if (Main.rand.NextBool(3))
                             {
-                                other.AddBuff(BuffID.Poisoned, Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
+                                other.AddBuff(BuffID.Poisoned, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
                             }
                         }
                     }

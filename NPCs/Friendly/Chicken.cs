@@ -3,7 +3,7 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Friendly
 {

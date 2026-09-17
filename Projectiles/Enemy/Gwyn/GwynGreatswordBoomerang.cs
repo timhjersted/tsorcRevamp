@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GwynGreatswordBoomerang : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Broadswords/SwordOfGwyn";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(SwordOfLordGwyn));
 
         public const float LaunchSpeed = 15f;
         const int SpinUpTicks = 40;

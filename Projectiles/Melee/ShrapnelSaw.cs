@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee;
+using tsorcRevamp.Content.Items.Weapons.Melee;
 using tsorcRevamp.Systems.LethalTempo;
 
 namespace tsorcRevamp.Projectiles.Melee

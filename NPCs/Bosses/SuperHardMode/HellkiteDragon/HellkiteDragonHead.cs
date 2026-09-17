@@ -3,14 +3,14 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.BossItems;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Melee.Runeterra;
-using tsorcRevamp.Items.Weapons.Melee.Spears;
-using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.BossItems;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 {
@@ -232,7 +232,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.HellkiteBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<HellkiteBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));

@@ -4,9 +4,9 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss

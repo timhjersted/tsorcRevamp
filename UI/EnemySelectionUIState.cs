@@ -9,8 +9,8 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Debug;
 using Terraria.GameInput;
+using tsorcRevamp.Content.Items.Debug;
 
 namespace tsorcRevamp.UI
 {

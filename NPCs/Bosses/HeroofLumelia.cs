@@ -8,12 +8,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Ammo;
-using tsorcRevamp.Items.Armors.Ranged;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Ammo;
+using tsorcRevamp.Content.Items.Armor.Ranged;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Tools;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
@@ -833,7 +834,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.HeroOfLumeliaBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<HeroOfLumeliaBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 7, 14));

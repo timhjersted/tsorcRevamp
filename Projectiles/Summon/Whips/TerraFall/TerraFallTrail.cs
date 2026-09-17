@@ -9,7 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Summon.Whips.NightsCracker;
 using tsorcRevamp.Projectiles.VFX;

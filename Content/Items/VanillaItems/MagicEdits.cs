@@ -1,0 +1,247 @@
+using System.Collections.Generic;
+using Humanizer;
+using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Armor.Magic;
+using tsorcRevamp.Utilities;
+
+namespace tsorcRevamp.Content.Items.VanillaItems
+{
+    class MagicEdits : GlobalItem
+    {
+        public static int RedClothMaxManaBoost = 40;
+        public static float RedClothManaCostReduction = 5f;
+        
+
+        public override void SetDefaults(Item item)
+        {
+            if (item.type == ItemID.AmberStaff)
+            {
+                item.damage = 30;
+                item.useTime = 30;
+                item.useAnimation = 30;
+                item.mana = 10;
+            }
+            if (item.type == ItemID.CrimsonRod)
+            {
+                item.DamageType = DamageClass.MagicSummonHybrid;
+            }
+            if (item.type == ItemID.NimbusRod)
+            {
+                item.DamageType = DamageClass.MagicSummonHybrid;
+            }
+            if (item.type == ItemID.ClingerStaff)
+            {
+                item.DamageType = DamageClass.MagicSummonHybrid;
+            }
+            if (item.type == ItemID.MagnetSphere)
+            {
+                item.DamageType = DamageClass.MagicSummonHybrid;
+            }
+            if (item.type == ItemID.RainbowGun)
+            {
+                item.DamageType = DamageClass.MagicSummonHybrid; 
+            }
+
+            if (item.type == ItemID.BeeGun)
+            {
+                item.damage = 8; //vanilla 9
+                item.mana = 7;
+            }
+            if (item.type == ItemID.FairyQueenMagicItem)
+            {
+                item.damage = 40; //vanilla 50
+            }
+            if (item.type == ItemID.SparkleGuitar)
+            {
+                item.damage = 70; 
+                item.mana = 18;
+            }
+            if (item.type == ItemID.LeafBlower)
+            {
+                item.damage = 58; //vanilla 48
+            }
+            if (item.type == ItemID.NettleBurst)
+            {
+                item.damage = 40; //vanilla 35
+            }
+            if (item.type == ItemID.WaspGun)
+            {
+                item.damage = 42; //vanilla 31, with HiveBackpack is 36
+            }
+            if (item.type == ItemID.HeatRay)
+            {
+                item.damage = 110; //vanilla 90
+                item.useTime = 20; //vanilla 24
+            }
+            if (item.type == ItemID.BatScepter)
+            {
+                item.damage = 65; //SHM
+                item.useTime = 11; 
+            }
+            if (item.type == ItemID.Razorpine)
+            {
+                item.damage = 52; //SHM
+                item.useTime = 7; 
+                item.mana = 6;
+            }
+            if (item.type == ItemID.BlizzardStaff)
+            {
+                item.damage = 85; //SHM
+            }
+            if (item.type == ItemID.LaserMachinegun)
+            {
+                item.damage = 80; //vanilla 60, buff as SHM weapon
+                item.mana = 12; //vanilla 6
+            }
+            if (item.type == ItemID.ChargedBlasterCannon)
+            {
+                item.damage = 135; //SHM
+            }
+            if (item.type == ItemID.ToxicFlask)
+            {
+                item.damage = 140; //vanilla 52, buff as SHM weapon
+                item.mana = 50; //vanilla 30
+            }
+            if (item.type == ItemID.BubbleGun) 	
+            {
+                item.damage = 60; //vanilla 70
+                item.mana = 10; //vanilla 5
+            }
+
+            //Lunar items
+            if (item.type == ItemID.NebulaBlaze)
+            {
+                item.mana = 20;
+            }
+            if (item.type == ItemID.NebulaArcanum)
+            {
+                item.mana = 40;
+            }
+            if (item.type == ItemID.LastPrism)
+            {
+                item.mana = 22;
+            }
+            if (item.type == ItemID.LunarFlareBook)
+            {
+                item.damage = 92;
+                item.mana = 14;
+            }
+        }
+        public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
+        {
+            if (tsorcRevampWorld.NewSlain != null)
+            {
+                if (item.type == ItemID.ApprenticeStaffT3 & tsorcRevampWorld.isHellkiteDragonDead)
+                {
+                    damage *= 1.25f;
+                }
+                if (item.type == ItemID.ChargedBlasterCannon & NPC.downedMartians)
+                {
+                    damage *= 1.15f;
+                }
+                if (item.type == ItemID.LaserMachinegun & NPC.downedMartians)
+                {
+                    damage *= 1.15f;
+                }
+            }
+        }
+        public override string IsArmorSet(Item head, Item body, Item legs)
+        {
+            if (head.type == ModContent.ItemType<RedClothHat>() && body.type == ItemID.GypsyRobe && legs.type == ModContent.ItemType<RedClothPants>())
+            {
+                return "RedClothRobe";
+            }
+            else return base.IsArmorSet(head, body, legs);
+        }
+        public override void UpdateArmorSet(Player player, string set)
+        {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (set == "RedClothRobe")
+            {
+                player.setBonus = Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RedClothRobe").FormatWith(RedClothMaxManaBoost, RedClothManaCostReduction);
+
+                player.statManaMax2 += RedClothMaxManaBoost;
+                player.manaCost -= RedClothManaCostReduction / 100f;
+            }
+        }
+        public override void ModifyWeaponCrit(Item item, Player player, ref float crit)
+        {
+            if (item.DamageType == DamageClass.MagicSummonHybrid)
+            {
+                DamageClass damageClass;
+                if (player.GetCritChance(DamageClass.Magic) < player.GetCritChance(DamageClass.Summon))
+                {
+                    damageClass = DamageClass.Magic;
+                }
+                else
+                {
+                    damageClass = DamageClass.Summon;
+                }
+                crit -= player.GetCritChance(damageClass);
+            }
+        }
+        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+        {
+            Player player = Main.player[Main.myPlayer];
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (item.DamageType == DamageClass.MagicSummonHybrid && item.damage > 0)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Damage");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} " + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicSummonHybridDamageClass")));
+                }
+            }
+            bool isWearingMagicHatGypsyRobe = player.armor[0].type == ItemID.MagicHat &&
+                                              player.armor[1].type == ItemID.GypsyRobe && item.type == player.armor[2].type;
+            if (tsorcRevamp.ManaIncreasingItems.ContainsKey(item.type) | isWearingMagicHatGypsyRobe)
+            {
+                List<int> setBonusKeys = new List<int>()
+                {
+                    ItemID.MagicHat, ItemID.GypsyRobe, ModContent.ItemType<RedClothTunic>(), ModContent.ItemType<RedClothHat>(), ModContent.ItemType<RedClothPants>()
+                };
+                int manaIncrease = !isWearingMagicHatGypsyRobe ? tsorcRevamp.ManaIncreasingItems[item.type] : tsorcRevamp.ManaIncreasingItems[ItemID.MagicHat];;
+            
+                if (item.type == ItemID.GypsyRobe &&
+                    player.armor[0].type == ModContent.ItemType<RedClothHat>() &&
+                    player.armor[2].type == ModContent.ItemType<RedClothPants>())
+                {
+                    manaIncrease = tsorcRevamp.ManaIncreasingItems[ModContent.ItemType<RedClothTunic>()];
+                }
+                bool isSetBonus = setBonusKeys.Contains(item.type) | isWearingMagicHatGypsyRobe;
+                string setBonusAdd = isSetBonus ? LangUtils.GetTextValue("CommonItemTooltip.SetBonus") : "";
+                int ttindex = tooltips.FindIndex(t => t.Text.Contains(manaIncrease.ToString()));
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "MaxManaIncreaseScaled", setBonusAdd + Language.GetTextValue("CommonItemTooltip.IncreasesMaxManaBy", (int)((float)manaIncrease * (1f + modPlayer.MaxManaAmplifier / 100f)))));
+                }
+
+                if (tsorcRevamp.ManaIncreasingItems.ContainsKey(item.type) && isWearingMagicHatGypsyRobe)
+                {
+                    int manaIncrease2 = tsorcRevamp.ManaIncreasingItems[item.type];
+                    int ttindex1 = tooltips.FindIndex(t => t.Text.Contains(manaIncrease2.ToString()));
+                    if (ttindex1 != -1)
+                    {
+                        tooltips.RemoveAt(ttindex1);
+                        tooltips.Insert(ttindex1, new TooltipLine(Mod, "MaxManaIncreaseScaled", Language.GetTextValue("CommonItemTooltip.IncreasesMaxManaBy", (int)((float)manaIncrease2 * (1f + modPlayer.MaxManaAmplifier / 100f)))));
+                    }
+                }
+            }
+
+        }
+        public override void ModifyHitNPC(Item item, Player player, NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (item.type == ItemID.SoulDrain && target.type == NPCID.TheDestroyerBody)
+            {
+                modifiers.FinalDamage -= 0.5f;
+            }
+        }
+        
+    
+    }
+}

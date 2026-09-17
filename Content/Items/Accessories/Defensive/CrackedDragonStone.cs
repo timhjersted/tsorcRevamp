@@ -1,0 +1,52 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+
+namespace tsorcRevamp.Content.Items.Accessories.Defensive
+{
+    public class CrackedDragonStone : ModItem
+    {
+        public static float DR = 6f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DR);
+        public override void SetStaticDefaults()
+        {
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 26;
+            Item.height = 26;
+            Item.accessory = true;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.rare = ItemRarityID.LightRed;
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            player.endurance += DR / 100f;
+            player.noKnockback = true;
+            player.fireWalk = true;
+            player.buffImmune[BuffID.OnFire] = true;
+            player.buffImmune[BuffID.Burning] = true;
+            player.buffImmune[BuffID.Chilled] = true;
+            player.buffImmune[BuffID.Frostburn] = true;
+            player.buffImmune[ModContent.BuffType<Frostbite>()] = true;
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.CobaltBar, 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+
+
+    }
+}

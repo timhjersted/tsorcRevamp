@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
@@ -318,7 +319,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
         public override void OnKill()
         {
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<HealingElixir>());
         }
     }
 }

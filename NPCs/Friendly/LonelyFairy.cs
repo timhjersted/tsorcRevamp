@@ -9,9 +9,10 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Items.Weapons.Melee.Axes;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -129,13 +130,13 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId,
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Potions.GreaterRestorationPotion>())
+            shop.Add(new Item(ModContent.ItemType<GreaterRestorationPotion>())
             {
                 shopCustomPrice = 70,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedPlantera);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Potions.SupremeManaPotion>())
+            shop.Add(new Item(ModContent.ItemType<SupremeManaPotion>())
             {
                 shopCustomPrice = 65,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -216,13 +217,13 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Condition.DownedTwins"), () => NPC.downedMechBoss2));
             
-            shop.Add(new Item(ModContent.ItemType<Items.Materials.CursedSoul>())
+            shop.Add(new Item(ModContent.ItemType<CursedSoul>())
             {
                 shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()))));
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>())
+            shop.Add(new Item(ModContent.ItemType<BarrowBlade>())
             {
                 shopCustomPrice = 2000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId

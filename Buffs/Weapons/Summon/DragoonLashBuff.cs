@@ -1,8 +1,6 @@
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {

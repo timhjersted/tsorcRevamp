@@ -8,7 +8,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Armors.Ranged;
+using tsorcRevamp.Content.Items.Armor.Ranged;
 
 namespace tsorcRevamp.Projectiles.Ranged
 {

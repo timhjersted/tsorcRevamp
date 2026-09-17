@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///<summary>A large cinder wave that rolls away from Gwyn's Winged Plunge impact.</summary>
     class GwynGroundFireWave : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float WaveSpeed = 7f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";

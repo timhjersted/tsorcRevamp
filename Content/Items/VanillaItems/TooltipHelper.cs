@@ -1,0 +1,196 @@
+﻿using System.Collections.Generic;
+using Humanizer;
+using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.BossItems;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.NPCs.Bosses.WyvernMage;
+using tsorcRevamp.Utilities;
+
+namespace tsorcRevamp.Content.Items.VanillaItems
+{
+    class TooltipHelper : GlobalItem
+    {
+
+        private static bool IsLargeGem(int itemType)
+        {
+            return itemType == ItemID.LargeAmber
+                || itemType == ItemID.LargeAmethyst
+                || itemType == ItemID.LargeDiamond
+                || itemType == ItemID.LargeEmerald
+                || itemType == ItemID.LargeRuby
+                || itemType == ItemID.LargeSapphire
+                || itemType == ItemID.LargeTopaz;
+        }
+
+        //this method adds potentially multiple tooltip lines to the end of an item's tooltip stack 
+        public static void SimpleModTooltip(Mod mod, Item item, List<TooltipLine> tooltips, int ItemID, string TipToAdd1, string TipToAdd2 = null)
+        {
+            if (item.type == ItemID)
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
+                if (ttindex != -1)
+                {// if we find one
+                    //insert the extra tooltip line
+                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", TipToAdd1));
+                    if (TipToAdd2 != null)
+                    {
+                        tooltips.Insert(ttindex + 2, new TooltipLine(mod, "", TipToAdd2));
+                    }
+                }
+            }
+        }
+
+        public static void SimpleGlobalModTooltip(Mod mod, List<TooltipLine> tooltips, string TipToAdd1, string TipToAdd2 = null) //Same but not linked to a specific item.
+        {
+            int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria"); //find the last tooltip line
+            if (ttindex != -1)
+            {// if we find one
+             //insert the extra tooltip line
+                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", TipToAdd1));
+                if (TipToAdd2 != null)
+                {
+                    tooltips.Insert(ttindex + 2, new TooltipLine(mod, "", TipToAdd2));
+                }
+            }
+
+        }
+
+        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+        {
+            if (IsLargeGem(item.type))
+            {
+                // Large Gems only use their vanilla tooltip to describe the retired Capture the Gem
+                // minigame. Keep the mod's own gem descriptions, but remove that obsolete line.
+                tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
+            }
+
+            //SimpleModTooltip(mod, item, tooltips, ItemID., "a");
+            //SimpleModTooltip(mod, item, tooltips, ItemID., "a", "b");
+            //SimpleModTooltip(mod, item, tooltips, ItemID.FlaskofFire, "Adds 10% melee damage");  don't do this. flask of fire's tooltip goes at a specific index, not the end
+
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WyvernMage>())))
+            {
+                SimpleModTooltip(Mod, item, tooltips, ItemID.AngelWings, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.AngelWings"));
+            }
+
+            SimpleModTooltip(Mod, item, tooltips, ItemID.AdamantiteDrill, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.AdamantiteDrill"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.BandofRegeneration, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.BandOfRegeneration"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.BandofStarpower, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.BandOfStarpower"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.CobaltDrill, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CobaltDrill"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.DivingHelmet, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.DivingHelmet"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.MechanicalSkull, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalSkull"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.MechanicalWorm, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalWorm"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.MoltenPickaxe, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MoltenPickaxe"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.StickyBomb, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.StickyBomb"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.WormFood, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.WormFood"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.CopperAxe, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CopperAxe"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.Diamond, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.Diamond"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.IronOre, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.IronOre"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.MagicMirror, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RecallItem"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.RecallPotion, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RecallItem"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.LargeAmethyst, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeAmethyst"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.ApprenticeStaffT3, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.IncinerationHex"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.MonkStaffT3, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.DD2SquireBetsySword, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.DD2BetsyBow, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
+            SimpleModTooltip(Mod, item, tooltips, ModContent.ItemType<EtherianWyvernStaff>(), Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.InfluxWaver, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.ChargedBlasterCannon, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.LaserMachinegun, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.ElectrosphereLauncher, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.Xenopopper, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.XenoStaff, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.StarinaBottle, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.StarinaBottle"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.ManaRegenerationBand, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaRegenerationBand"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.CoinGun, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CoinGun"));
+
+            if (tsorcRevampWorld.RemixMap)
+            {
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeRuby, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeRuby"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeSapphire, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeSapphire"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeEmerald, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeEmerald"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeDiamond, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RemixLargeDiamond"));
+            }
+
+            if (!tsorcRevampWorld.RemixMap)
+            {
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeRuby, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeRuby"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeSapphire, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeSapphire"));
+                SimpleModTooltip(Mod, item, tooltips, ItemID.LargeAmber, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeAmber"));
+            }
+
+
+            Player player = Main.LocalPlayer;
+
+            if ((item.type == ItemID.ExtendoGrip || item.type == ItemID.ArchitectGizmoPack || item.type == ItemID.HandOfCreation || item.type == ItemID.Toolbelt || item.type == ItemID.Toolbox || item.type == ItemID.BuilderPotion) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.ItemDisabled"));
+            }
+
+            if ((item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("Items.VanillaItems.LockedCrates"));
+            }
+
+            if (item.type == ItemID.Blowpipe || item.type == ItemID.Blowgun || item.type == ModContent.ItemType<ToxicShot>() || item.type == ModContent.ItemType<AlienGun>() || item.type == ModContent.ItemType<OmegaSquadRifle>())
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Ranged.SeedBag"));
+            }
+
+            if (ItemID.Sets.StaffMinionSlotsRequired[item.type] > 1f)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Summon.SlotsRequired", ItemID.Sets.StaffMinionSlotsRequired[item.type]));
+            }
+
+            if (ItemID.Sets.StaffMinionSlotsRequired[item.type] < 1f)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Summon.PercentOfASlot", ItemID.Sets.StaffMinionSlotsRequired[item.type] * 100f));
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.healLife > 0)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.BotCNoHeal"));
+            }
+
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.type == ModContent.ItemType<AaronsProtectionStone>())
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("Items.AaronsProtectionStone.BotCOnly", (int)AaronsProtectionStone.DamageIncrease));
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.whoAmI == Main.myPlayer && (item.type == ItemID.PhilosophersStone || item.type == ItemID.CharmofMyths || item.type == ModContent.ItemType<DragoonHelmet2>()))
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.EstusPStone", tsorcRevampEstusPlayer.EstusPStoneDrinkTimeReduction));
+            }
+
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.WellFedItemsBotC").FormatWith(MinorEdits.BotCWellFedStaminaRegen));
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed2)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.WellFedItemsBotC").FormatWith(MinorEdits.BotCPlentySatisfiedStaminaRegen));
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed3)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.WellFedItemsBotC").FormatWith(MinorEdits.BotCExquisitelyStuffedStaminaRegen));
+            }
+
+            /*if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<CrystalNunchaku>())
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, "May make the [c/6d8827:Bearer of the Curse] more vulnerable");
+            }*/
+
+
+        }
+    }
+}

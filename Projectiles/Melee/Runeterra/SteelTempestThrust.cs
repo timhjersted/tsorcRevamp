@@ -5,7 +5,7 @@ using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Projectiles.Melee.Shortswords;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra

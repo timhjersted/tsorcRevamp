@@ -8,8 +8,9 @@ using Terraria.ModLoader;
 using tsorcRevamp.Achievements;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

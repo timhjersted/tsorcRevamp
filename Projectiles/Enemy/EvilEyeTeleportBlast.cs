@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     /// </summary>
     public class EvilEyeTeleportBlast : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float Radius = 90f;
         const int ActiveStart = 3;

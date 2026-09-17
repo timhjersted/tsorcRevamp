@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies{
@@ -174,7 +175,7 @@ namespace tsorcRevamp.NPCs.Enemies{
         public override void ModifyNPCLoot(Terraria.ModLoader.NPCLoot npcLoot)
         {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.ByCondition(
-                new NonSHMFirstKillRule(), ModContent.ItemType<Items.Weapons.Magic.WrathOfGold>()));
+                new NonSHMFirstKillRule(), ModContent.ItemType<WrathOfGold>()));
         }
 
         public override void SendExtraAI(BinaryWriter writer)

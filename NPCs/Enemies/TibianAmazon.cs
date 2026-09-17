@@ -4,7 +4,8 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items.Armor.Magic;
+using tsorcRevamp.Content.Items.Materials;
 using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -76,9 +77,9 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             int[] armorIDs = new int[] {
-                ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
-                ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),
-                ModContent.ItemType<Items.Armors.Magic.RedClothPants>(),
+                ModContent.ItemType<RedClothHat>(),
+                ModContent.ItemType<RedClothTunic>(),
+                ModContent.ItemType<RedClothPants>(),
             };
             npcLoot.Add(new DropMultiple(armorIDs, 30, 1, !NPC.downedBoss1));
 

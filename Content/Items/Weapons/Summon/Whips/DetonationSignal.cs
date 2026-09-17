@@ -1,0 +1,59 @@
+using Terraria;
+using Terraria.GameContent.Creative;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Projectiles.Summon;
+
+namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
+{
+    public class DetonationSignal : ModItem
+    {
+        public const float SummonTagScalingDamage = 225f;
+        public const float BonusContactDamage = 50f;
+        public const int BonusContactDamageDuration = ModdedWhipProjectile.DefaultWhipDebuffDuration;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagScalingDamage, BonusContactDamage, BonusContactDamageDuration);
+        public override void SetStaticDefaults()
+        {
+            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
+        }
+        public override void SetDefaults()
+        {
+
+            Item.height = 84;
+            Item.width = 88;
+
+            Item.DamageType = DamageClass.SummonMeleeSpeed;
+            Item.damage = 190;
+            Item.knockBack = 6;
+            Item.rare = ModContent.RarityType<OrangeRed>();
+            Item.value = Item.buyPrice(2, 40, 0, 0);
+
+            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.DetonationSignalProjectile>();
+            Item.shootSpeed = 4;
+
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 25;
+            Item.useAnimation = 25;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
+
+        }
+        public override bool MeleePrefix()
+        {
+            return true;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.FireWhip);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 135000);
+
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
+        }
+    }
+}

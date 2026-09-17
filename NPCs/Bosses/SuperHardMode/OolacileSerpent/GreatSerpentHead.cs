@@ -9,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
@@ -405,7 +406,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.OolacileSerpentBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<OolacileSerpentBag>()));
         }
 
         //Poise break: cancel whatever SerpentAI was mid-doing so the flop doesn't fight leftover state.

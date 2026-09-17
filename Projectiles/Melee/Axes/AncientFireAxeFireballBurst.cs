@@ -7,7 +7,6 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Melee.Axes

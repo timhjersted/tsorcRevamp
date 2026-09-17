@@ -6,7 +6,8 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.BossItems;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
@@ -396,7 +397,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.MindflayerIllusionBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<MindflayerIllusionBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MindflayerIllusionRelic>()));
             npcLoot.Add(notExpertCondition);

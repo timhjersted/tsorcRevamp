@@ -15,10 +15,8 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Armors.Ranged;
-using tsorcRevamp.Items.Weapons.Melee;
-using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Accessories.Summon;
+using tsorcRevamp.Content.Items.Armor.Ranged;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Enemy.Golem;
 using tsorcRevamp.Projectiles.Melee;
@@ -28,7 +26,6 @@ using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Utilities;
 using MiakodaCrescent = tsorcRevamp.Projectiles.Pets.MiakodaCrescent;
 using MiakodaNew = tsorcRevamp.Projectiles.Pets.MiakodaNew;
-using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.LegacyCode;
 using tsorcRevamp.Systems.Conqueror;
 using tsorcRevamp.Systems.LethalTempo;
@@ -784,7 +781,7 @@ namespace tsorcRevamp.Projectiles
                 var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
                 if (modPlayer.Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[projectile.type] && modPlayer.GoredrinkerSwung)
                 {
-                    owner.AddBuff(ModContent.BuffType<GoredrinkerCooldown>(), Items.Accessories.Summon.Goredrinker.Cooldown * 60);
+                    owner.AddBuff(ModContent.BuffType<GoredrinkerCooldown>(), Goredrinker.Cooldown * 60);
                     modPlayer.GoredrinkerReady = false;
                     modPlayer.GoredrinkerSwung = false;
                 }

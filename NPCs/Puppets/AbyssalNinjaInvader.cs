@@ -7,11 +7,11 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Melee.Runeterra;
-using tsorcRevamp.Items.Weapons.Melee;
-using tsorcRevamp.Items.Weapons.Ranged.Crossbows;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Weapons.Melee;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.AI;
 
@@ -329,7 +329,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Terraria.ModLoader.Config.NPCDefinition definition = new(ModContent.NPCType<AbyssalNinjaInvader>());
             if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
             {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Items.StaminaDroplet>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Content.Items.StaminaDroplet>());
                 tsorcRevampWorld.NewSlain.Add(definition, 1);
 
                 if (Main.netMode == NetmodeID.Server)

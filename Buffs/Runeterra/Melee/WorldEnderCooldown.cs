@@ -4,7 +4,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Melee
 {

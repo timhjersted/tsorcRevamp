@@ -1,5 +1,5 @@
 ﻿using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Summon
 {

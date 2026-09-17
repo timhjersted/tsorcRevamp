@@ -2,7 +2,7 @@
 using Terraria.Audio;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {

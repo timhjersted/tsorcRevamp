@@ -2,7 +2,7 @@
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Potions;
 using static tsorcRevamp.oSpawnHelper;
 using static tsorcRevamp.SpawnHelper;
 

@@ -18,13 +18,17 @@ using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Weapons.Summon;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Accessories.Defensive.Rings;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.VanillaItems;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Mobility;
+using tsorcRevamp.Content.Items.Accessories.Mobility.Wings;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.VanillaItems;
+using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
@@ -184,9 +188,6 @@ namespace tsorcRevamp
 
         public bool MythrilOrichalcumCritDamage = false;
         public bool PilgrimSpontoonBuff = false;
-        public bool Shunpo = false;
-        public float ShunpoTimer = 0;
-        public Vector2 ShunpoVelocity;
         public float WhipTipHitboxSize = 1f;
 
         public int SteelTempestStacks = 0;
@@ -566,7 +567,6 @@ namespace tsorcRevamp
 
             MythrilOrichalcumCritDamage = false;
             PilgrimSpontoonBuff = false;
-            Shunpo = false;
             WhipTipHitboxSize = 1;
 
             PhoenixSkull = false;
@@ -852,7 +852,7 @@ namespace tsorcRevamp
             {
                 MiakodaCrescentBoostTimer++;
             }
-            if (MiakodaCrescentBoostTimer > Items.Pets.MiakodaCrescent.BoostDuration * 60)
+            if (MiakodaCrescentBoostTimer > Content.Items.Pets.MiakodaCrescent.BoostDuration * 60)
             {
                 Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = false;
                 MiakodaCrescentBoostTimer = 0;
@@ -873,7 +873,7 @@ namespace tsorcRevamp
                 Player.armorEffectDrawShadow = true;
 
             }
-            if (MiakodaNewBoostTimer > Items.Pets.MiakodaNew.BoostDuration * 60)
+            if (MiakodaNewBoostTimer > Content.Items.Pets.MiakodaNew.BoostDuration * 60)
             {
                 Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = false;
                 MiakodaNewBoostTimer = 0;
@@ -1043,7 +1043,7 @@ namespace tsorcRevamp
                 Player.channel = false;
             }
 
-            if (Player.itemAnimation != 0 && (Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
+            if (Player.itemAnimation != 0 && (Player.HeldItem.type == ModContent.ItemType<DivineSpark>() || Player.HeldItem.type == ModContent.ItemType<DivineBoomCannon>()))
             {
                 Player.statMana -= 1;
                 if (Player.statMana < 1) { Player.channel = false; }
@@ -1100,7 +1100,7 @@ namespace tsorcRevamp
             if (Player.HasBuff(ModContent.BuffType<NondescriptOwlBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>()] == 0)
             {
                 Item staff = new();
-                staff.SetDefaults(ModContent.ItemType<Items.Weapons.Summon.PeculiarSphere>());
+                staff.SetDefaults(ModContent.ItemType<PeculiarSphere>());
                 int damage = staff.damage;
                 if (Main.myPlayer == Player.whoAmI)
                 {
@@ -1112,7 +1112,7 @@ namespace tsorcRevamp
             if (Player.HasBuff(ModContent.BuffType<SunsetQuasarBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>()] == 0)
             {
                 Item staff = new();
-                staff.SetDefaults(ModContent.ItemType<Items.Weapons.Summon.SunsetQuasar>());
+                staff.SetDefaults(ModContent.ItemType<SunsetQuasar>());
                 int damage = staff.damage;
                 if (Main.myPlayer == Player.whoAmI)
                 {
@@ -1219,7 +1219,7 @@ namespace tsorcRevamp
             {
                 if (Player.GetModPlayer<tsorcRevampPlayer>().SoulVessel > 0)
                 {
-                    Player.statManaMax2 += Player.GetModPlayer<tsorcRevampPlayer>().SoulVessel * Items.SoulVessel.MaxManaIncrease;
+                    Player.statManaMax2 += Player.GetModPlayer<tsorcRevampPlayer>().SoulVessel * Content.Items.SoulVessel.MaxManaIncrease;
                 }
             }
 
@@ -1369,13 +1369,13 @@ namespace tsorcRevamp
 
             if (MiakodaCrescentBoost)
             {
-                Player.GetDamage(DamageClass.Generic) += Items.Pets.MiakodaCrescent.Dmg2 / 100f;
+                Player.GetDamage(DamageClass.Generic) += Content.Items.Pets.MiakodaCrescent.Dmg2 / 100f;
             }
 
             if (MiakodaNewBoost)
             {
-                Player.moveSpeed += Items.Pets.MiakodaNew.MoveSpeed2 / 100f;
-                Player.endurance += Items.Pets.MiakodaNew.DamageReduction / 100f;
+                Player.moveSpeed += Content.Items.Pets.MiakodaNew.MoveSpeed2 / 100f;
+                Player.endurance += Content.Items.Pets.MiakodaNew.DamageReduction / 100f;
                 Player.noKnockback = true;
             }
 
@@ -1416,7 +1416,7 @@ namespace tsorcRevamp
         {
             if (WolfRing && EnterTheAbyss)
             {
-                Player.statDefense += Items.Accessories.Defensive.Rings.WolfRing.AbyssDef;
+                Player.statDefense += Content.Items.Accessories.Defensive.Rings.WolfRing.AbyssDef;
             }
 
             if (CovenantOfArtoriasEquipped && Player.HasBuff(ModContent.BuffType<Abyss>()))
@@ -1546,7 +1546,7 @@ namespace tsorcRevamp
             }
             if (PhoenixSkull && tsorcRevampWorld.BossAlive && !BossBlockedPhoenixRevive)
             {
-                Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Items.Accessories.Defensive.PhoenixSkull.BossChargeDuration * 60);
+                Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Content.Items.Accessories.Defensive.PhoenixSkull.BossChargeDuration * 60);
                 BossBlockedPhoenixRevive = true;
             }
             if (BossBlockedPhoenixRevive && !tsorcRevampWorld.BossAlive)
@@ -1568,21 +1568,6 @@ namespace tsorcRevamp
             if (manaShield > 0)
             {
                 Player.manaRegenBuff = false;
-            }
-
-            if (Shunpo && !Player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
-            {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    NPC other = Main.npc[i];
-
-                    if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)))
-                    {
-                        Lighting.AddLight(other.Center, Color.Red.ToVector3() * 0.35f);
-                        UsefulFunctions.DustRing(other.Center, other.width / 2, DustID.Titanium, 5, 1);
-                        UsefulFunctions.DustRing(other.Center, other.width / 4, DustID.Adamantite, 5, 2);
-                    }
-                }
             }
             if (ShadowWeight)
             {
@@ -1875,7 +1860,7 @@ namespace tsorcRevamp
                 }
             }
             #endregion
-            if (Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && Player.statLife >= Player.statLifeMax2 * Items.Accessories.Defensive.PhoenixSkull.LifeThreshold / 100f)
+            if (Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && Player.statLife >= Player.statLifeMax2 * Content.Items.Accessories.Defensive.PhoenixSkull.LifeThreshold / 100f)
             {
                 Player.ClearBuff(ModContent.BuffType<PhoenixRebirthBuff>());
             }
@@ -1887,11 +1872,11 @@ namespace tsorcRevamp
             {
                 UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<BarrierCooldown>(), -1);
             }
-            if (SteraksGage && Player.statLife < (Player.statLifeMax2 * Items.Accessories.Melee.SteraksGage.LifeThreshold / 100f) && !Player.HasBuff(ModContent.BuffType<SteraksGageCooldown>()))
+            if (SteraksGage && Player.statLife < (Player.statLifeMax2 * Content.Items.Accessories.Melee.SteraksGage.LifeThreshold / 100f) && !Player.HasBuff(ModContent.BuffType<SteraksGageCooldown>()))
             {
-                Player.statLife += Items.Accessories.Melee.SteraksGage.ShieldHeal;
+                Player.statLife += Content.Items.Accessories.Melee.SteraksGage.ShieldHeal;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteraksGageShield") with { Volume = 0.6f }, Player.Center);
-                Player.AddBuff(ModContent.BuffType<SteraksGageCooldown>(), Items.Accessories.Melee.SteraksGage.Cooldown * 60);
+                Player.AddBuff(ModContent.BuffType<SteraksGageCooldown>(), Content.Items.Accessories.Melee.SteraksGage.Cooldown * 60);
             }
             if (DragoonBoots && DragoonBootsEnable)
             {
@@ -1900,7 +1885,7 @@ namespace tsorcRevamp
             }
             if (DragoonHorn && (((Player.gravDir == 1f) && (Player.velocity.Y > 0)) || ((Player.gravDir == -1f) && (Player.velocity.Y < 0))))
             {
-                Player.GetDamage(DamageClass.Melee) += Items.Accessories.Melee.DragoonHorn.MeleeDmg / 100f;
+                Player.GetDamage(DamageClass.Melee) += Content.Items.Accessories.Melee.DragoonHorn.MeleeDmg / 100f;
             }
             if (BrokenSpirit)
             {
@@ -1911,10 +1896,10 @@ namespace tsorcRevamp
 
             if (CrystallineShard)
             {
-                CrystallinePower = Player.maxMinions / MaxMinionTurretMultiplier * Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion;
-                Player.GetDamage(DamageClass.SummonMeleeSpeed) += CrystallinePower * ((float)Items.Accessories.Summon.CrystallineShard.WhipDmgAmp / (float)Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion) / 100f;
+                CrystallinePower = Player.maxMinions / MaxMinionTurretMultiplier * Content.Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion;
+                Player.GetDamage(DamageClass.SummonMeleeSpeed) += CrystallinePower * ((float)Content.Items.Accessories.Summon.CrystallineShard.WhipDmgAmp / (float)Content.Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion) / 100f;
                 SummonTagStrength += CrystallinePower / 100f;
-                Player.whipRangeMultiplier -= CrystallinePower * ((float)Items.Accessories.Summon.CrystallineShard.BadWhipRange / (float)Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion) / 100f;
+                Player.whipRangeMultiplier -= CrystallinePower * ((float)Content.Items.Accessories.Summon.CrystallineShard.BadWhipRange / (float)Content.Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion) / 100f;
             }
 
             if (Player.HasAmmo(Player.HeldItem) && Player.HeldItem.useAmmo != 0 && AmmoBox)
@@ -1924,7 +1909,7 @@ namespace tsorcRevamp
 
             if (ZirconRing)
             {
-                Player.statLifeMax2 += (int)(Player.statLifeMax2 * Items.Accessories.Defensive.Rings.ZirconRing.MaxLifeIncrease / 100f);
+                Player.statLifeMax2 += (int)(Player.statLifeMax2 * Content.Items.Accessories.Defensive.Rings.ZirconRing.MaxLifeIncrease / 100f);
             }
 
             if (CurseActive || powerfulCurseActive)
@@ -1964,7 +1949,7 @@ namespace tsorcRevamp
 				Main.NewText((player.GetDamage(DamageClass.Magic) - player.GetDamage(DamageClass.Magic)Mult) * .5f);*/
                 if (Player.HasBuff(ModContent.BuffType<MagicWeapon>()))
                 {
-                    float bonusDamage = ((Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * Items.tsorcGlobalItem.BonusDamage1 / 100f;
+                    float bonusDamage = ((Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * tsorcGlobalItem.BonusDamage1 / 100f;
                     if (bonusDamage >= 0)
                     {
                         Player.GetDamage(DamageClass.Melee) += bonusDamage;
@@ -1972,7 +1957,7 @@ namespace tsorcRevamp
                 }
                 if (Player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()))
                 {
-                    float bonusDamage = ((Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * Items.tsorcGlobalItem.BonusDamage2 / 100f;
+                    float bonusDamage = ((Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * tsorcGlobalItem.BonusDamage2 / 100f;
                     if (bonusDamage >= 0)
                     {
                         Player.GetDamage(DamageClass.Melee) += bonusDamage;
@@ -1980,7 +1965,7 @@ namespace tsorcRevamp
                 }
                 if (Player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>()))
                 {
-                    float bonusDamage = (Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) * Items.tsorcGlobalItem.BonusDamage3 / 100f;
+                    float bonusDamage = (Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) * tsorcGlobalItem.BonusDamage3 / 100f;
                     if (bonusDamage >= 0)
                     {
                         Player.GetDamage(DamageClass.Melee) += bonusDamage;
@@ -2312,11 +2297,11 @@ namespace tsorcRevamp
                 // should cost what both cost.
                 if (SOADrain)
                 {
-                    Player.lifeRegen -= PercentLifeDrain(Items.Armors.SymbolOfAvarice.LifeDrainPercent);
+                    Player.lifeRegen -= PercentLifeDrain(SymbolOfAvarice.LifeDrainPercent);
                 }
                 if (PowerWithin)
                 {
-                    Player.lifeRegen -= PercentLifeDrain(Items.Tools.PowerWithin.LifeDrainPercent);
+                    Player.lifeRegen -= PercentLifeDrain(Content.Items.Tools.PowerWithin.LifeDrainPercent);
                 }
                 if (Main.rand.NextBool(3))
                 {
@@ -2546,7 +2531,7 @@ namespace tsorcRevamp
                     bool hasRing = false;
                     for (int j = 3; j < 8 + Player.GetAmountOfExtraAccessorySlotsToShow(); j++)
                     {
-                        if (Player.armor[j].type == ModContent.ItemType<Items.Accessories.Mobility.ChloranthyRing>() || Player.armor[j].type == ModContent.ItemType<Items.Accessories.Mobility.ChloranthyRing2>())
+                        if (Player.armor[j].type == ModContent.ItemType<ChloranthyRing>() || Player.armor[j].type == ModContent.ItemType<ChloranthyRing2>())
                         {
                             hasRing = true;
                             break;
@@ -2571,7 +2556,7 @@ namespace tsorcRevamp
         {
             return player.controlDown
                 && player.equippedWings != null
-                && player.equippedWings.type == ModContent.ItemType<Items.Accessories.Mobility.Wings.WingsOfSeath>();
+                && player.equippedWings.type == ModContent.ItemType<WingsOfSeath>();
         }
 
         internal static bool IsWingFallProtected(Player player)

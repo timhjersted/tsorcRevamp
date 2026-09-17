@@ -10,6 +10,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
@@ -168,9 +171,9 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         {
             // Expert: the treasure bag (holds 2× Soul of the Vessel). Non-expert: drop the 2 souls
             // directly so those players can still craft the Soul Reliquary + Gravemaw Tome.
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.VesselOfSoulsBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<VesselOfSoulsBag>()));
             IItemDropRule notExpert = new LeadingConditionRule(new Conditions.NotExpert());
-            notExpert.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Materials.SoulOfTheVessel>(), 1, 2, 2));
+            notExpert.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulOfTheVessel>(), 1, 2, 2));
             npcLoot.Add(notExpert);
         }
 

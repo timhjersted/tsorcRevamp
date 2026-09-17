@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities._Extensions;
 
 namespace tsorcRevamp.Projectiles.Melee.Broadswords
 {

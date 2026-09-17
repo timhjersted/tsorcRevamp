@@ -1,0 +1,100 @@
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.Audio;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Melee.Broadswords;
+
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
+{
+    class ForgottenGaiaSword : ModItem
+    {
+
+        public override void SetStaticDefaults()
+        {
+            // Tooltip.SetDefault("A blade made to slay the Witchking.\n" + "[c/ffbf00:Does 3x damage to the Witchking and dispels the defensive shield of the Witchking and Artorias]");
+        }
+
+        public override void SetDefaults()
+        {
+            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.autoReuse = true;
+            Item.damage = 275;
+            Item.width = 66;
+            Item.height = 66;
+            Item.knockBack = 8;
+            Item.scale = 1.25f;
+            Item.DamageType = DamageClass.Melee;
+            Item.useAnimation = 30;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 30;
+            Item.value = PriceByRarity.Purple_11;
+            Item.shoot = ModContent.ProjectileType<Projectiles.InvisibleNothingProj>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Gold;
+        }
+
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
+        {
+            if (player.velocity.Y == 0f)
+            {
+                damage *= 1.25f;
+            }
+        }
+
+        /*public override void AddRecipes() {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.FallenStar, 120);
+            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 10);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000); 
+            recipe.AddTile(TileID.DemonAltar);
+            
+            recipe.Register();
+        }*/
+
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>() || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())
+            {
+                target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
+                if (Main.netMode != NetmodeID.SinglePlayer)
+                {
+                    NetMessage.SendData(MessageID.AddNPCBuff, number: target.whoAmI, number2: ModContent.BuffType<Buffs.DispelShadow>(), number3: 36000);
+                    ModPacket shadowPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                    shadowPacket.Write((byte)tsorcPacketID.DispelShadow);
+                    shadowPacket.Write(target.whoAmI);
+                    shadowPacket.Send();
+                }
+            }
+
+            if (player.velocity.Y == 0f)
+            {
+                target.AddBuff(BuffID.BetsysCurse, 360);
+            }
+            
+            if (Main.rand.NextBool(2))
+            {
+                Projectile.NewProjectile(
+                    player.GetSource_OnHit(target),
+                    target.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<GaiaSmash>(),
+                    (int)(damageDone * 0.5f), 
+                    0f,
+                    player.whoAmI
+                );
+                SoundEngine.PlaySound(SoundID.Item89 with { Volume = 0.6f }, player.Center);
+            }
+        }
+
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (player.velocity.Y == 0f && target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())
+            {
+                modifiers.FinalDamage *= 1.25f;
+            }
+        }
+    }
+}

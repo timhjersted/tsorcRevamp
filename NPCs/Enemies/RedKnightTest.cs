@@ -5,15 +5,15 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Armors.Magic;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Classless;
-using tsorcRevamp.Items.Weapons.Magic;
-using tsorcRevamp.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Armor.Magic;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Items.Weapons.Classless;
+using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Throwing;
 using tsorcRevamp.NPCs.EnemySpriteRendering;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -729,7 +729,7 @@ namespace tsorcRevamp.NPCs.Enemies
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.RegenerationPotion, 30));
             npcLoot.Add(hmCondition);
             IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 2, 3);
-            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 20);
+            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<PurgingStone>(), 20);
             SuperHardmodeRule SHM = new();
             IItemDropRule shmCondition = new LeadingConditionRule(SHM);
             shmCondition.OnSuccess(drop);

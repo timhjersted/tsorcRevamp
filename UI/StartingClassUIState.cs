@@ -8,7 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.UI;
 using Terraria.UI;
-using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.UI

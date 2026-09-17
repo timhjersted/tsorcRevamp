@@ -1,0 +1,27 @@
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Content.Items.Armor
+{
+    ///<summary>The Lord of Cinder's greaves. Phase 1: dresses the LordGwyn invader puppet.</summary>
+    [AutoloadEquip(EquipType.Legs)]
+    public class LordGwynLeggings : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
+            int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Legs);
+            ArmorIDs.Legs.Sets.HidesTopSkin[equipSlot] = true;
+            ArmorIDs.Legs.Sets.HidesBottomSkin[equipSlot] = true;
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 22;
+            Item.rare = ItemRarityID.Purple;
+            Item.value = Item.sellPrice(gold: 25);
+        }
+    }
+}

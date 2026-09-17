@@ -8,7 +8,6 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Summon.Whips.TerraFall;
 using tsorcRevamp.Projectiles.VFX;

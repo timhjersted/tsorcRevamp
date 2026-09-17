@@ -1,0 +1,62 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+
+namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
+{
+
+    [AutoloadEquip(EquipType.Shield)]
+
+    public class IronShield : ModItem
+    {
+        public static float DR = 4f;
+        public static float BadMoveSpeedMult = 5f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DR, BadMoveSpeedMult);
+        public override void SetStaticDefaults()
+        {
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 28;
+            Item.height = 28;
+            Item.accessory = true;
+            Item.defense = 2;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = PriceByRarity.Blue_1;
+        }
+
+        public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
+        {
+            if (incomingItem.type == ModContent.ItemType<SpikedIronShield>() || incomingItem.type == ModContent.ItemType<AncientDemonShield>())
+            {
+                return false;
+            }
+            return base.CanAccessoryBeEquippedWith(equippedItem, incomingItem, player);
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            // Under Active Shields Revamp the % damage reduction (and its paired move-speed penalty)
+            // is replaced by on-demand active blocking; only the flat Item.defense stays passive.
+            if (!tsorcRevampActiveShieldPlayer.ActiveFor(player))
+            {
+                player.endurance += DR / 100f;
+                player.moveSpeed *= 1f - BadMoveSpeedMult / 100f;
+            }
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.IronBar, 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+    }
+}

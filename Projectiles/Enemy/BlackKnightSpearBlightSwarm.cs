@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         // the damaging area rather than spilling past its edge.
         float Radius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 50f;
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

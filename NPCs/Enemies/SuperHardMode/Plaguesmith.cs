@@ -13,7 +13,8 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {

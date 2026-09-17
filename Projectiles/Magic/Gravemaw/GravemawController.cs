@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Magic.Gravemaw
     ///</summary>
     class GravemawController : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const int TapWindow = 18;
         const int ChargeTicks = 55;      // cursor-high hold: charge before the Reliquary Nova

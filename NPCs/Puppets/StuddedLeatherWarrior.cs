@@ -6,16 +6,16 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Accessories.Defensive.Shields;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Ranged.Crossbows;
-using tsorcRevamp.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 
-using tsorcRevamp.Items.Weapons.Melee.Axes;
-using tsorcRevamp.Items;
 namespace tsorcRevamp.NPCs.Puppets
 {
     [AutoloadBossHead]
@@ -755,7 +755,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BrokenDualBladedAxe>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ProudKnightSoul>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<global::tsorcRevamp.Items.Weapons.Throwing.FireFlask>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Throwing.FireFlask>()));
         }
 
         // On-kill (150 Blood) and the party-wipe despawn both come from PuppetNPC's shared defaults —
@@ -771,7 +771,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Terraria.ModLoader.Config.NPCDefinition definition = new(ModContent.NPCType<StuddedLeatherWarrior>());
             if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
             {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Items.StaminaDroplet>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Content.Items.StaminaDroplet>());
                 tsorcRevampWorld.NewSlain.Add(definition, 1);
 
                 if (Main.netMode == NetmodeID.Server)

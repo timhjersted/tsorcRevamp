@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Accessories.Summon;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -91,7 +92,7 @@ namespace tsorcRevamp.NPCs.Friendly
             //Drop one for each player
             for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
             {
-                Main.LocalPlayer.QuickSpawnItem(NPC.GetSource_FromThis(), ModContent.ItemType<Items.Accessories.Summon.CrystallineShard>(), 1);
+                Main.LocalPlayer.QuickSpawnItem(NPC.GetSource_FromThis(), ModContent.ItemType<CrystallineShard>(), 1);
             }
 
             if (Main.netMode == NetmodeID.MultiplayerClient)

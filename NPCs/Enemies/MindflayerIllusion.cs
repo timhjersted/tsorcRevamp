@@ -5,7 +5,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -290,7 +290,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart); //no it cant be a stack of 2. it has to be 2 stacks of 1
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<HealingElixir>());
 
             UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.MindflayerIllusion.Destroy"), 150, 150, 150);
             if (!Main.dedServ)

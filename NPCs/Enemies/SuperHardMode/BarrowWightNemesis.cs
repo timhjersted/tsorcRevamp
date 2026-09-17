@@ -7,7 +7,10 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -427,8 +430,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 3, 3));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>(), 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BarrowBlade>(), 5));
         }
 
         #region Glowing Eye Effect

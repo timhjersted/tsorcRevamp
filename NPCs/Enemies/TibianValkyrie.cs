@@ -4,8 +4,11 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Accessories.Defensive.Shields;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items.Armor.Magic;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Throwing;
 using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -106,16 +109,16 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             int[] armorIDs = new int[] {
-                ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
-                ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),
-                ModContent.ItemType<Items.Armors.Magic.RedClothPants>(),
+                ModContent.ItemType<RedClothHat>(),
+                ModContent.ItemType<RedClothTunic>(),
+                ModContent.ItemType<RedClothPants>(),
             };
             npcLoot.Add(new DropMultiple(armorIDs, 30, 1, !NPC.downedBoss1));
 
             npcLoot.Add(ItemDropRule.Common(ItemID.Torch, 10, 10, 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Throwing.ThrowingSpear>(), 1, 20, 75));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ThrowingSpear>(), 1, 20, 75));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<IronShield>(), 30));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Spears.OldHalberd>(), 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OldHalberd>(), 30));
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DeadChicken>(), 10));
         }

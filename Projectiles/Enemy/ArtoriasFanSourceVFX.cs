@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         const int Lifetime = 14;
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         float ShotAngle => Projectile.ai[0];
         float SpiralDirection => Projectile.ai[1] < 0f ? -1f : 1f;

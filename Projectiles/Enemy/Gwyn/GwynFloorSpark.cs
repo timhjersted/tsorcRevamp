@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     ///</summary>
     class GwynFloorSpark : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float SparkSpeed = 8f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";

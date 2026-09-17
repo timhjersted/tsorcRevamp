@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class MediumWeaponSlashCrimson : ModProjectile //Same as Medium Weapon Slash, but also bleeds the player and has red dusts
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe"; //invis so doesnt matter
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj)); //invis so doesnt matter
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Crimson Medium Weapon Slash");

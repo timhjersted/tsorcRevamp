@@ -7,7 +7,8 @@ using Terraria.GameContent.UI.ResourceSets;
 using Terraria.ID;
 using Terraria.ModLoader;
 using TerraUI.Objects;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp

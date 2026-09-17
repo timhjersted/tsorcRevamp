@@ -1,6 +1,5 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.VanillaItems;
 
 namespace tsorcRevamp.Buffs
 {

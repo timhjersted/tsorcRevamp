@@ -8,11 +8,13 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Placeable.Relics;
-using tsorcRevamp.Items.Placeable.Trophies;
-using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Lore;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Placeable.Relics;
+using tsorcRevamp.Content.Items.Placeable.Trophies;
+using tsorcRevamp.Content.Items.Vanity;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
@@ -951,11 +953,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheMachineBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<TheMachineBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedMechanicalScrap>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Lore.CrestOfSteel>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrestOfSteel>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.TempleKey));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.HallowedBar, 1, 25, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFright, 1, 20, 40));

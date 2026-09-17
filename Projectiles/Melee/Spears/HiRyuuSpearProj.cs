@@ -2,7 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 
 //using tsorcRevamp.Dusts;
 

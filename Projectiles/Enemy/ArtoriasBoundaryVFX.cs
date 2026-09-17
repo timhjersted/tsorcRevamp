@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class ArtoriasBoundaryVFX : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         int OwnerIndex => (int)Projectile.ai[0];
 

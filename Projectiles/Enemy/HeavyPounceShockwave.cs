@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         private const float GrowthPerTick = 1.9f;
         private const int StaggerTicks = 60; // 1s, per design — shorter than Stagger's own 2s default
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         private float Direction => Projectile.ai[0] >= 0f ? 1f : -1f;
         private float FanPhase => Projectile.ai[1];

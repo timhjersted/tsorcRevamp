@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles
 
             if (owner.whoAmI == Main.myPlayer)
             {
-                Item dummyItem = new Item(ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>());
+                Item dummyItem = new Item(ModContent.ItemType<Content.Items.Weapons.Ranged.Flamethrowers.Freezethrower>());
                 Item gelStack = owner.ChooseAmmo(dummyItem);
                 if (gelStack == null)
                 {

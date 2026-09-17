@@ -1,0 +1,59 @@
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Ammo;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
+
+namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
+{
+    public class FocusedEnergyBeam : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
+        }
+
+        public override void SetDefaults()
+        {
+            Item.DamageType = DamageClass.Ranged;
+            Item.shoot = ModContent.ProjectileType<RedLaserBeam>();
+            Item.damage = 710;
+            Item.width = 52;
+            Item.height = 22;
+            Item.knockBack = 9.0f;
+            Item.noMelee = true;
+            Item.autoReuse = true;
+            Item.rare = ItemRarityID.Purple;
+            Item.useAmmo = ModContent.ItemType<TeslaBolt>();
+            Item.shootSpeed = 30;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.UseSound = SoundID.Item12;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.value = PriceByRarity.Purple_11;
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 4);
+            recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 2);
+            recipe.AddIngredient(ItemID.SpaceGun, 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
+
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+
+        public override Vector2? HoldoutOffset()
+        {
+            return new Vector2(-6, 0);
+        }
+    }
+}

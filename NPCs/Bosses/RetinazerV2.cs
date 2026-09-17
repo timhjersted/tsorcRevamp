@@ -10,7 +10,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Placeable.Trophies;
+using tsorcRevamp.Content.Items.Placeable.Trophies;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses

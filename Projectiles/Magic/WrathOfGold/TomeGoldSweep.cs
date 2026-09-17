@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Magic
     ///</summary>
     class TomeGoldSweep : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public const int BeamLength = 640; //40 tiles
         public const int BeamHeight = 60;

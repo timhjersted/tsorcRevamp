@@ -1,7 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Systems;
 

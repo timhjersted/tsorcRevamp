@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Accessories;
-using tsorcRevamp.Items.Accessories.Damage;
+using tsorcRevamp.Content.Items.Accessories.Damage;
 
 namespace tsorcRevamp.Projectiles.Summon.YoungHunter
 {

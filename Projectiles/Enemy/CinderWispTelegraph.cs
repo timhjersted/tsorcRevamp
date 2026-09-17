@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         const int TelegraphTicks = 30;
         const float LineLength = 420f;
 
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

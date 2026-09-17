@@ -1,0 +1,157 @@
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+
+namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
+{
+    [AutoloadEquip(EquipType.Wings, EquipType.Shoes)]
+    public class SupersonicWings2 : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 32;
+            Item.height = 28;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Red_10;
+            Item.rare = ItemRarityID.Red;
+        }
+
+        public override void AddRecipes()
+        {
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ModContent.ItemType<SupersonicWings>());
+            recipe2.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
+            recipe2.AddIngredient(ItemID.EmpressFlightBooster);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.Register();
+
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<SupersonicWings>());
+            recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
+        }
+
+        public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
+                            ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)
+        {
+            ascentWhenFalling = 0.85f;
+            ascentWhenRising = 0.15f;
+            maxCanAscendMultiplier = 1f;
+            maxAscentMultiplier = 2.6f;
+            constantAscend = 0.135f;
+
+        }
+
+        public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
+        {
+            speed = 6.5f;
+            acceleration = 0.3f;
+            if (SoulsModeMobility.Enabled(player))
+            {
+                speed = SoulsModeMobility.SupersonicWings2FlightSpeed;
+                acceleration = SoulsModeMobility.SupersonicWings2FlightAcceleration;
+            }
+            SoulsModeMobility.ApplyFlightCap(player, ref speed, ref acceleration);
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            player.jumpBoost = true;
+            player.fireWalk = true;
+            player.noKnockback = true;
+            player.canRocket = true;
+            player.iceSkate = true;
+            int flightTime = SoulsModeMobility.Enabled(player) ? SoulsModeMobility.SupersonicWings2FlightTime : 1200;
+            player.rocketTime = flightTime;
+            player.rocketBoots = 2;
+            player.rocketTimeMax = flightTime;
+            player.jumpSpeedBoost = 3.2f;
+            player.wingTimeMax = flightTime;
+
+            if (!ModContent.GetInstance<tsorcRevampConfig>().DisableSupersonicWings2ExtraJumps)
+            {
+                player.GetJumpState(ExtraJump.CloudInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                player.GetJumpState(ExtraJump.BlizzardInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                player.GetJumpState(ExtraJump.SandstormInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+            }
+
+            bool restricted = false;
+            if (player.mount.Active || player.vortexStealthActive)
+            {
+                restricted = true;
+            }
+            for (int i = 3; i <= 8; i++)
+            {
+                if (player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
+                    || player.armor[i].type == ItemID.LightningBoots || player.armor[i].type == ItemID.FlurryBoots
+                    || player.armor[i].type == ItemID.FrostsparkBoots || player.armor[i].type == ItemID.SailfishBoots)
+                {
+                    restricted = true;
+                }
+            }
+            if (!restricted)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.SupersonicWings2Level;
+
+                // Fall faster if player holds down
+                if (player.TryingToHoverDown && !player.controlJump &&
+                    !ModContent.GetInstance<tsorcRevampConfig>().DisableModWingsFallControlDuringFlight)
+                {
+                    player.gravity += 0.1f;
+                    player.maxFallSpeed += 10f;
+                }
+
+                /** W1K's original code
+                if (player.controlLeft) {
+                    if (player.velocity.X > -3) player.velocity.X -= (float)(player.moveSpeed - 1f) / 10;
+
+                    if (player.velocity.X < -3 && player.velocity.X > -6 * player.moveSpeed) {
+                        if (player.velocity.Y != 0) player.velocity.X -= 0.1f;
+                        else player.velocity.X -= 0.2f;
+                        player.velocity.X -= 0.02f + ((player.moveSpeed - 1f) / 10);
+                    }
+
+                }
+
+                if (player.controlRight) {
+                    if (player.velocity.X < 3) player.velocity.X += (float)(player.moveSpeed - 1f) / 10;
+                    if (player.velocity.X > 3 && player.velocity.X < 6 * player.moveSpeed) {
+                        if (player.velocity.Y != 0) player.velocity.X += 0.1f;
+                        else player.velocity.X += 0.2f;
+                        player.velocity.X += 0.02f + ((player.moveSpeed - 1f) / 10);
+                    }
+                } **/
+
+                if (player.velocity.X > 6 || player.velocity.X < -6)
+                {
+                    player.waterWalk = true;
+                    int sonicDust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 16, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, default, 2f);
+                    Main.dust[sonicDust].noGravity = true;
+                    Main.dust[sonicDust].noLight = false;
+
+                }
+            }
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (SoulsModeMobility.Enabled(Main.LocalPlayer))
+            {
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitWingTimed", SoulsModeMobility.SupersonicWings2RunSpeed, SoulsModeMobility.SupersonicWings2FlightSpeed, SoulsModeMobility.SupersonicWings2FlightTime / 60)));
+            }
+        }
+    }
+}

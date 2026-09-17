@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Items.Weapons.Classless;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossItems;
+using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Tools;
+using tsorcRevamp.Content.Items.Weapons.Classless;
+using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 
 
 namespace tsorcRevamp.Tiles
@@ -86,19 +92,19 @@ namespace tsorcRevamp.Tiles
             //SOUL SKULLS - They are 2x2, so use 2, 2 in the rectangle. In TEdit, these are SlimeBlock-PinkSlimeBlock(facing left) and PinkSlimeBlock-SlimeBlock(facing right)
 
             //In Aaron's home in Ashenpeak Village
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
 
             //In Village Mountain in cave accessible from rope vine jumping puzzle
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3689, 414, 2, 2), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3689, 414, 2, 2), ModContent.ItemType<NamelessSoldierSoul>(), 1));
 
             //Earth temple, by the first altar
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4248, 984, 2, 2), ModContent.ItemType<GreatMagicMirror>(), 1));
 
             //Giant Tree, bottom left by roots.
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(2542, 1486, 2, 2), ModContent.ItemType<Items.ProudKnightSoul>(), 3));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(2542, 1486, 2, 2), ModContent.ItemType<ProudKnightSoul>(), 3));
 
             //Big Queen Bee Larvae trap room, above the pyramid
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5832, 1531, 2, 2), ItemID.WaspGun, 1, -1));
@@ -107,22 +113,22 @@ namespace tsorcRevamp.Tiles
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3790, 696, 2, 2), ItemID.Boomstick, 1, PrefixID.Unreal));
 
             //Tunnel after twin EoW fight
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3931, 1300, 2, 2), ModContent.ItemType<Items.Humanity>(), 3));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3931, 1300, 2, 2), ModContent.ItemType<Humanity>(), 3));
 
             //Jumping puzzle in mountain maze
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3533, 417, 2, 2), ModContent.ItemType<GreatMagicMirror>(), 1));
 
             //Under the familiar bridge
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4652, 899, 2, 2), ModContent.ItemType<Items.Potions.GreenBlossom>(), 3));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4652, 899, 2, 2), ModContent.ItemType<GreenBlossom>(), 3));
 
             //Right side of Red Knight event arena on PoP
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3957, 1206, 2, 2), ModContent.ItemType<Items.Potions.RadiantLifegem>(), 3));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3957, 1206, 2, 2), ModContent.ItemType<RadiantLifegem>(), 3));
 
             //Very leftmost top of tower in Forgotten City 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4090, 1580, 2, 2), ModContent.ItemType<Items.ProudKnightSoul>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4090, 1580, 2, 2), ModContent.ItemType<ProudKnightSoul>(), 1));
 
             //Behind safehouse under Forgotten City leading to early Underworld 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4810, 1819, 2, 2), ModContent.ItemType<Items.Weapons.Melee.Broadswords.RuneBlade>(), 1, PrefixID.Legendary));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4810, 1819, 2, 2), ModContent.ItemType<RuneBlade>(), 1, PrefixID.Legendary));
 
             //WoF summoning pedestal
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3397, 1827, 2, 2), ModContent.ItemType<PowerWithin>(), 1));
@@ -131,7 +137,7 @@ namespace tsorcRevamp.Tiles
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3235, 1839, 2, 2), ItemID.HeartreachPotion, 9));
 
             //Somewhere in the hallowed Caves
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(7070, 1383, 2, 2), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(7070, 1383, 2, 2), ModContent.ItemType<NamelessSoldierSoul>(), 1));
 
 
 
@@ -139,57 +145,57 @@ namespace tsorcRevamp.Tiles
             //HANGING SOUL SKELLYS - They are 3x3, so use 3, 3 in the rectangle. In TEdit, these are a ConfettiBlock (hanging from wrists) and BlackConfettiBlock, also called MidnightConfettiBlock (hanging from ankles)
 
             // Catacombs of the Drowned (below Ashenpeak)
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4233, 785, 3, 3), ModContent.ItemType<Items.Weapons.Magic.FarronDart>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4233, 785, 3, 3), ModContent.ItemType<FarronDart>(), 1));
 
             //Near end of Path of Ambition at the top of the parkour section
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3467, 944, 3, 3), ModContent.ItemType<Items.NamelessSoldierSoul>(), 2));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3467, 944, 3, 3), ModContent.ItemType<NamelessSoldierSoul>(), 2));
 
             //Above FireLurker arena, in hanging prison cell with chest in Path of Ambition
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3585, 1209, 3, 3), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3585, 1209, 3, 3), ModContent.ItemType<NamelessSoldierSoul>(), 1));
 
             //In FireLurker arena (in left cave beside main big room), on Path of Ambition
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3541, 1242, 3, 3), ModContent.ItemType<Items.StaminaVessel>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3541, 1242, 3, 3), ModContent.ItemType<StaminaVessel>(), 1));
 
             //By bonfire leading up to Earth Temple EoC arena, by shortcut
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4170, 1133, 3, 3), ModContent.ItemType<Firebomb>(), 7));
 
             //Ceiling of Red Knight event arena in Path of Ambition/Pain
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3897, 1195, 3, 3), ModContent.ItemType<Items.PurgingStone>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3897, 1195, 3, 3), ModContent.ItemType<PurgingStone>(), 1));
 
             //Entrance of Artorias room, where 2 lothric event spawns
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5168, 1749, 3, 3), ModContent.ItemType<Items.Potions.StrengthPotion>(), 3));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5168, 1749, 3, 3), ModContent.ItemType<StrengthPotion>(), 3));
 
             //Jungle Ruins after getting hook
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5470, 1093, 2, 2), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5470, 1093, 2, 2), ModContent.ItemType<NamelessSoldierSoul>(), 1));
 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3108, 337, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3108, 337, 2, 2), ModContent.ItemType<DwarvenContract>(), 1));
 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4080, 908, 3, 3), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4080, 908, 3, 3), ModContent.ItemType<DwarvenContract>(), 1));
 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3531, 1276, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3531, 1276, 2, 2), ModContent.ItemType<DwarvenContract>(), 1));
 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4612, 1506, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4612, 1506, 2, 2), ModContent.ItemType<DwarvenContract>(), 1));
 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(6749, 1440, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(6749, 1440, 2, 2), ModContent.ItemType<DwarvenContract>(), 1));
             
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(7651, 1402, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(7651, 1402, 2, 2), ModContent.ItemType<DwarvenContract>(), 1));
 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(2107, 1493, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(2107, 1493, 2, 2), ModContent.ItemType<DwarvenContract>(), 1));
 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4451, 413, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4451, 413, 2, 2), ModContent.ItemType<DwarvenContract>(), 1));
 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3444, 1537, 2, 2), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3444, 1537, 2, 2), ModContent.ItemType<DwarvenContract>(), 1));
 
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(320, 1743, 3, 3), ModContent.ItemType<Items.Tools.DwarvenContract>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(320, 1743, 3, 3), ModContent.ItemType<DwarvenContract>(), 1));
 
             if (tsorcRevampWorld.RemixMap)
             {
-                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(6941, 1583, 2, 2), ModContent.ItemType<Items.HeroSoul>(), 1));
+                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(6941, 1583, 2, 2), ModContent.ItemType<HeroSoul>(), 1));
 
-                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
-                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
-                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
-                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
+                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
+                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
+                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
+                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
             }
 
             // Expanded Adventure (2400-tall) offset. These cache rects are legacy 2000-space TILE coords, but the

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Systems.SummonerRework

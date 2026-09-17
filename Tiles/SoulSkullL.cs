@@ -6,9 +6,8 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using tsorcRevamp.Items.Accessories.Defensive.Rings;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Placeable;
+using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Placeable;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Tiles

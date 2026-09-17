@@ -1,0 +1,55 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Melee;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.NPCs;
+
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
+{
+    class ShadowSickle : ModItem
+    {
+        public const int BaseDamage = 44;
+        public static int ManaRefund = 15;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ManaRefund);
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.Blue;
+            Item.damage = BaseDamage;
+            Item.width = 32;
+            Item.height = 32;
+            Item.scale = 1.25f;
+            Item.knockBack = 6f;
+            Item.DamageType = DamageClass.Melee;
+            Item.useAnimation = 42;
+            Item.useTime = 42;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = 13500;
+            Item.shoot = ModContent.ProjectileType<Projectiles.InvisibleNothingProj>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.DarkMagenta;
+        }
+
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerShadowSickle = player;
+            target.AddBuff(ModContent.BuffType<SickleSlashes>(), 5 * 60);
+            player.statMana += ManaRefund;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.DemoniteBar, 8);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+    }
+}

@@ -813,7 +813,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
     internal class EnemyShaderBurst : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         EnemyVFXBurstKind Kind => (EnemyVFXBurstKind)(int)Projectile.ai[0];
         int Duration => Kind switch
@@ -891,7 +891,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
     internal class BlackKnightGravefallTelegraph : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         public override void SetDefaults()
         {

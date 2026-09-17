@@ -1,0 +1,30 @@
+﻿using Terraria;
+using Terraria.Localization;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Content.Items.Accessories.Melee
+{
+    public class DragoonHorn : ModItem
+    {
+        public const float MeleeDmg = 50f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg);
+        public override void SetStaticDefaults()
+        {
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 24;
+            Item.height = 24;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Red_10;
+            Item.expert = true;
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().DragoonHorn = true;
+        }
+
+    }
+}

@@ -9,6 +9,10 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
@@ -682,7 +686,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 direction = over.Value;
             }
 
-            if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.Specialist.BlizzardBlasterShot>())
+            if (projectile.type != ModContent.ProjectileType<BlizzardBlasterShot>())
             {
                 if (AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Shooting)
                 {
@@ -854,11 +858,11 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 2, 4));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 2, 4));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 10));
             npcLoot.Add(ItemDropRule.Common(ItemID.GillsPotion, 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 15));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Lifegem>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 15));
             npcLoot.Add(ItemDropRule.Common(ItemID.Trident, 10));
 
         }

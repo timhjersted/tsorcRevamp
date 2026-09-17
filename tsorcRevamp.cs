@@ -29,14 +29,6 @@ using Terraria.UI;
 using tsorcRevamp.Banners;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.BossBags;
-using tsorcRevamp.Items.Lore;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Pets;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Summon;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.NPCs.Bosses.JungleWyvern;
 using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
@@ -83,13 +75,47 @@ using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
 using System.Linq;
 using Terraria.Net;
-using tsorcRevamp.Items.Accessories.Magic;
-using tsorcRevamp.Items.Accessories.Magic.Bands;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Armors.Magic;
-using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Damage;
+using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items.Accessories.Magic;
+using tsorcRevamp.Content.Items.Accessories.Magic.Bands;
+using tsorcRevamp.Content.Items.Accessories.Melee;
+using tsorcRevamp.Content.Items.Accessories.Mobility;
+using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Armor.Magic;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.BossItems;
+using tsorcRevamp.Content.Items.Lore;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Items.Pets;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Melee;
+using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Weapons.Melee.Hammers;
+using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Projectiles.Enemy.DarkCloud;
+using tsorcRevamp.Projectiles.Enemy.Gwyn;
+using tsorcRevamp.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Projectiles.Enemy.WyvernMage;
+using tsorcRevamp.Projectiles.Magic;
+using tsorcRevamp.Projectiles.Melee.Boomerangs;
+using tsorcRevamp.Projectiles.Ranged;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
+using tsorcRevamp.Projectiles.Throwing;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Textures;
+using DemonSpirit = tsorcRevamp.NPCs.Enemies.DemonSpirit;
 
 namespace tsorcRevamp
 {
@@ -485,9 +511,9 @@ namespace tsorcRevamp
             ActiveShieldRegistry = new Dictionary<int, ActiveShieldData>
             {
                 //--- Mod physical shields (stamina) --- ActiveShieldData(base, factor, moveMult, activeDefense, knockback[, resource]). moveMult slow ~12%(0.88)→1%(0.99); knockback 4→7.
-                { ModContent.ItemType<Items.Accessories.Defensive.Shields.IronShield>(),          new ActiveShieldData(32f, 0.42f, 0.88f, 2, 4.0f) },
-                { ModContent.ItemType<Items.Accessories.Defensive.Shields.SpikedIronShield>(),     new ActiveShieldData(29f, 0.39f, 0.89f, 3, 4.2f) },
-                { ModContent.ItemType<Items.Accessories.Defensive.Shields.AncientDemonShield>(),    new ActiveShieldData(25f, 0.36f, 0.91f, 5, 4.8f) },
+                { ModContent.ItemType<IronShield>(),          new ActiveShieldData(32f, 0.42f, 0.88f, 2, 4.0f) },
+                { ModContent.ItemType<SpikedIronShield>(),     new ActiveShieldData(29f, 0.39f, 0.89f, 3, 4.2f) },
+                { ModContent.ItemType<AncientDemonShield>(),    new ActiveShieldData(25f, 0.36f, 0.91f, 5, 4.8f) },
                 // GREATSHIELD archetype: takes no chip at all (dragonscale stops the whole blow), and pays for it with
                 // a much longer post-block regen pause, a heavier slow, and an always-on regen tax ("equip load") that
                 // costs you even when you never raise it. The alternative to leaking HP is leaking tempo.
@@ -495,19 +521,19 @@ namespace tsorcRevamp
                 // All three trimmed -0.15 off blockRegenDelayMult (was 1.75/1.7/1.6) — the no-chip trade was
                 // landing as more punishing than intended; the flat trim keeps the relative spacing/progression
                 // between the three untouched while softening the pause across the board.
-                { ModContent.ItemType<Items.Accessories.Defensive.Shields.DragonCrestShield>(),     new ActiveShieldData(24f, 0.35f, 0.87f, 5, 5.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.60f, passiveRegenPenalty: 0.05f) }, // repositioned to mid pre-hardmode
-                { ModContent.ItemType<Items.Accessories.Damage.MythrilBulwark>(),                   new ActiveShieldData(22f, 0.32f, 0.92f, 6, 5.2f) },
-                { ModContent.ItemType<Items.Accessories.Defensive.Shields.IceboundMythrilAegis>(),  new ActiveShieldData(9f,  0.14f, 0.99f, 15, 7.0f) },
+                { ModContent.ItemType<DragonCrestShield>(),     new ActiveShieldData(24f, 0.35f, 0.87f, 5, 5.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.60f, passiveRegenPenalty: 0.05f) }, // repositioned to mid pre-hardmode
+                { ModContent.ItemType<MythrilBulwark>(),                   new ActiveShieldData(22f, 0.32f, 0.92f, 6, 5.2f) },
+                { ModContent.ItemType<IceboundMythrilAegis>(),  new ActiveShieldData(9f,  0.14f, 0.99f, 15, 7.0f) },
 
                 //--- Melee Shield family (stamina) ---
-                { ModContent.ItemType<Items.Accessories.Melee.GazingShield>(),                      new ActiveShieldData(24f, 0.34f, 0.91f, 6, 5.0f) },
-                { ModContent.ItemType<Items.Accessories.Melee.BeholderShield>(),                    new ActiveShieldData(20f, 0.29f, 0.94f, 8, 5.6f) },
-                { ModContent.ItemType<Items.Accessories.Melee.BeholderShield2>(),                   new ActiveShieldData(14f, 0.21f, 0.96f, 11, 6.2f) },
-                { ModContent.ItemType<Items.Accessories.Melee.EnchantedBeholderShield2>(),          new ActiveShieldData(11f, 0.18f, 0.98f, 13, 6.6f) },
+                { ModContent.ItemType<GazingShield>(),                      new ActiveShieldData(24f, 0.34f, 0.91f, 6, 5.0f) },
+                { ModContent.ItemType<BeholderShield>(),                    new ActiveShieldData(20f, 0.29f, 0.94f, 8, 5.6f) },
+                { ModContent.ItemType<BeholderShield2>(),                   new ActiveShieldData(14f, 0.21f, 0.96f, 11, 6.2f) },
+                { ModContent.ItemType<EnchantedBeholderShield2>(),          new ActiveShieldData(11f, 0.18f, 0.98f, 13, 6.6f) },
 
                 //--- Magic wards (mana + a flat stamina sip) --- activeDefense 0
-                { ModContent.ItemType<Items.Accessories.Defensive.Shields.ManaShield>(),            new ActiveShieldData(40f, 0.45f, 0.95f, 0, 5.0f, ShieldResource.Mana) },
-                { ModContent.ItemType<Items.Accessories.Defensive.Celestriad>(),                    new ActiveShieldData(30f, 0.35f, 0.97f, 0, 4.0f, ShieldResource.Mana) },
+                { ModContent.ItemType<ManaShield>(),            new ActiveShieldData(40f, 0.45f, 0.95f, 0, 5.0f, ShieldResource.Mana) },
+                { ModContent.ItemType<Celestriad>(),                    new ActiveShieldData(30f, 0.35f, 0.97f, 0, 4.0f, ShieldResource.Mana) },
 
                 //--- Vanilla physical shields (stamina) --- keep native vanilla defense (activeDefense unused for these)
                 { ItemID.CobaltShield,    new ActiveShieldData(30f, 0.40f, 0.89f, 0, 4.4f) },
@@ -558,13 +584,13 @@ namespace tsorcRevamp
             StaminaPrefixAccessories = new HashSet<int>
             {
                 // --- Mod mobility accessories (Items/Accessories/Mobility/) ---
-                ModContent.ItemType<Items.Accessories.Mobility.BootsOfHaste>(),
-                ModContent.ItemType<Items.Accessories.Mobility.ChloranthyRing>(),
-                ModContent.ItemType<Items.Accessories.Mobility.ChloranthyRing2>(),
-                ModContent.ItemType<Items.Accessories.Mobility.DragoonBoots>(),
-                ModContent.ItemType<Items.Accessories.Mobility.ReflectionShift>(),
-                ModContent.ItemType<Items.Accessories.Mobility.SpeedTalisman>(),
-                ModContent.ItemType<Items.Accessories.Mobility.SupersonicBoots>(),
+                ModContent.ItemType<BootsOfHaste>(),
+                ModContent.ItemType<ChloranthyRing>(),
+                ModContent.ItemType<ChloranthyRing2>(),
+                ModContent.ItemType<DragoonBoots>(),
+                ModContent.ItemType<ReflectionShift>(),
+                ModContent.ItemType<SpeedTalisman>(),
+                ModContent.ItemType<SupersonicBoots>(),
 
                 // --- Vanilla movement-speed accessories --- included so a player on vanilla boots isn't shut
                 // out arbitrarily. Deliberately the SPEED line only, not every mobility item: wings, balloons and
@@ -611,15 +637,15 @@ namespace tsorcRevamp
             // belongs here. A genuine tool (built for mining/chopping, damage is incidental) should not.
             WeaponClassifiedTools = new HashSet<int>
             {
-                ModContent.ItemType<Items.Weapons.Melee.Axes.AncientFireAxe>(),
-                ModContent.ItemType<Items.Weapons.Melee.Axes.BrokenDualBladedAxe>(),
-                ModContent.ItemType<Items.Weapons.Melee.Axes.DualBladedAxe>(),
-                ModContent.ItemType<Items.Weapons.Melee.Axes.DunlendingAxe>(),
-                ModContent.ItemType<Items.Weapons.Melee.Axes.ForgottenPoisonAxe>(),
-                ModContent.ItemType<Items.Weapons.Melee.Axes.ForgottenRuneAxe>(),
-                ModContent.ItemType<Items.Weapons.Melee.Axes.GigantAxe>(),
-                ModContent.ItemType<Items.Weapons.Melee.Hammers.AncientWarhammer>(),
-                ModContent.ItemType<Items.Weapons.Melee.Hammers.Mjolnir>(),
+                ModContent.ItemType<AncientFireAxe>(),
+                ModContent.ItemType<BrokenDualBladedAxe>(),
+                ModContent.ItemType<DualBladedAxe>(),
+                ModContent.ItemType<DunlendingAxe>(),
+                ModContent.ItemType<ForgottenPoisonAxe>(),
+                ModContent.ItemType<ForgottenRuneAxe>(),
+                ModContent.ItemType<GigantAxe>(),
+                ModContent.ItemType<AncientWarhammer>(),
+                ModContent.ItemType<Mjolnir>(),
             };
             #endregion
             //--------
@@ -2623,7 +2649,7 @@ namespace tsorcRevamp
                         if (attackingProjectile != null)
                         {
                             bool mythrilReflection = perfectParry
-                                && shieldPlayer.activeShieldType == ModContent.ItemType<Items.Accessories.Damage.MythrilBulwark>()
+                                && shieldPlayer.activeShieldType == ModContent.ItemType<MythrilBulwark>()
                                 && attackingProjectile.type !=
                                     ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>();
                             if (mythrilReflection)
@@ -2943,7 +2969,7 @@ namespace tsorcRevamp
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
-                    ModContent.ItemType<Items.Weapons.Summon.ArcherSpiritBell>(),
+                    ModContent.ItemType<ArcherSpiritBell>(),
                     ModContent.BuffType<ArcherSpiritBuff>(),
                     new Dictionary<string, object>()
                     {
@@ -3088,7 +3114,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<LeonhardPhase1>(), Language.GetText("Mods.tsorcRevamp.NPCs.LeonhardPhase1.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.LeonhardDesc"),
-                        ["collectibles"] = ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(),
+                        ["collectibles"] = ModContent.ItemType<ShatteredMoonlight>(),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/LeonhardPhase1_Head_Boss"
                     }
                     );
@@ -3118,7 +3144,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>(), Language.GetText("Mods.tsorcRevamp.NPCs.VesselOfSouls.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.VesselOfSoulsDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.VesselOfSoulsSpawner>()
+                        ["spawnItems"] = ModContent.ItemType<VesselOfSoulsSpawner>()
                     }
                     );
 
@@ -3165,7 +3191,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Slogra>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.SlograAndGaibonName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SlograAndGaibonDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.TomeOfSlograAndGaibon>(),
+                        ["spawnItems"] = ModContent.ItemType<TomeOfSlograAndGaibon>(),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/SlograAndGaibon_Head_Boss",
                         ["customPortrait"] = SlograAndGaibonPortrait
                     }
@@ -3189,7 +3215,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Bosses.GravelordNito.GravelordNito>(), Language.GetText("Mods.tsorcRevamp.NPCs.GravelordNito.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.GravelordNitoDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.GravelordNitoSpawner>(),
+                        ["spawnItems"] = ModContent.ItemType<GravelordNitoSpawner>(),
                     }
                     );
 
@@ -3205,7 +3231,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<JungleWyvernHead>(), Language.GetText("Mods.tsorcRevamp.NPCs.JungleWyvernHead.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.JungleWyvernDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.JungleFeather>(),
+                        ["spawnItems"] = ModContent.ItemType<JungleFeather>(),
                         ["customPortrait"] = JungleWyvernPortrait
                     }
                     );
@@ -3241,7 +3267,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Enemies.IceGigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.IceGigas.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
-                        ["collectibles"] = ModContent.ItemType<Items.Weapons.Magic.HeartOfWinter>()
+                        ["collectibles"] = ModContent.ItemType<HeartOfWinter>()
                     }
                     );
 
@@ -3256,7 +3282,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Enemies.Gigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.Gigas.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
-                        ["collectibles"] = ModContent.ItemType<Items.Weapons.Magic.WrathOfGold>()
+                        ["collectibles"] = ModContent.ItemType<WrathOfGold>()
                     }
                     );
 
@@ -3271,7 +3297,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<TheRage>(), Language.GetText("Mods.tsorcRevamp.NPCs.TheRage.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.TheRageDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.FieryEgg>()
+                        ["spawnItems"] = ModContent.ItemType<FieryEgg>()
                     }
                     );
 
@@ -3287,7 +3313,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<WyvernMage>(), Language.GetText("Mods.tsorcRevamp.NPCs.WyvernMage.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WyvernMageDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.WingOfTheFallen>(),
+                        ["spawnItems"] = ModContent.ItemType<WingOfTheFallen>(),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/WyvernMageAndMechaDragon_Head_Boss",
                         ["customPortrait"] = WyvernMagePortrait
                     }
@@ -3305,7 +3331,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<TheSorrow>(), Language.GetText("Mods.tsorcRevamp.NPCs.TheSorrow.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.TheSorrowDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.WateryEgg>()
+                        ["spawnItems"] = ModContent.ItemType<WateryEgg>()
                     }
                     );
 
@@ -3321,7 +3347,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<TheHunter>(), Language.GetText("Mods.tsorcRevamp.NPCs.TheHunter.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.TheHunterDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.GrassyEgg>()
+                        ["spawnItems"] = ModContent.ItemType<GrassyEgg>()
                     }
                     );
 
@@ -3337,7 +3363,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<SerrisX>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.SerrisName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SerrisDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.SerrisBait>(),
+                        ["spawnItems"] = ModContent.ItemType<SerrisBait>(),
                         ["customPortrait"] = SerrisPortrait
                     }
                     );
@@ -3354,7 +3380,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Death>(), Language.GetText("Mods.tsorcRevamp.NPCs.Death.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.DeathDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DeathBringer>()
+                        ["spawnItems"] = ModContent.ItemType<DeathBringer>()
                     }
                     );
 
@@ -3370,7 +3396,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<BrokenOkiku>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.AttraidiesName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AttraidiesDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.MindCube>()
+                        ["spawnItems"] = ModContent.ItemType<MindCube>()
                     }
                     );
 
@@ -3386,7 +3412,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Attraidies>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.RealAttraidiesName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.RealAttraidiesDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>(),
+                        ["spawnItems"] = ModContent.ItemType<MindflayerIllusionRelic>(),
                         ["availability"] = (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<BrokenOkiku>())))
                     }
                     );
@@ -3409,7 +3435,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<HellkiteDragonHead>(), Language.GetText("Mods.tsorcRevamp.NPCs.HellkiteDragonHead.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.HellkiteDragonDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.HellkiteStone>(),
+                        ["spawnItems"] = ModContent.ItemType<HellkiteStone>(),
                         ["customPortrait"] = HellkiteDragonPortrait
                     }
                     );
@@ -3426,7 +3452,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<GreatSerpentHead>(), Language.GetText("Mods.tsorcRevamp.NPCs.GreatSerpentHead.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.GreatSerpentStone>()
+                        ["spawnItems"] = ModContent.ItemType<GreatSerpentStone>()
                     }
                     );
 
@@ -3442,7 +3468,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Blight>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.BlightName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.BlightDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.BlightStone>()
+                        ["spawnItems"] = ModContent.ItemType<BlightStone>()
                     }
                     );
 
@@ -3458,7 +3484,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<EarthFiendLich>(), Language.GetText("Mods.tsorcRevamp.NPCs.EarthFiendLich.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.EarthFiendLichDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingEarthCrystal>()
+                        ["spawnItems"] = ModContent.ItemType<DyingEarthCrystal>()
                     }
                     );
 
@@ -3474,7 +3500,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Witchking>(), Language.GetText("Mods.tsorcRevamp.NPCs.Witchking.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WitchkingDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DarkMagicRing>()
+                        ["spawnItems"] = ModContent.ItemType<DarkMagicRing>()
                     }
                     );
 
@@ -3490,7 +3516,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Artorias>(), Language.GetText("Mods.tsorcRevamp.NPCs.Artorias.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.ArtoriasDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DarkMagicRing>()
+                        ["spawnItems"] = ModContent.ItemType<DarkMagicRing>()
                     }
                     );
 
@@ -3506,7 +3532,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<WaterFiendKraken>(), Language.GetText("Mods.tsorcRevamp.NPCs.WaterFiendKraken.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WaterFiendKrakenDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingWaterCrystal>()
+                        ["spawnItems"] = ModContent.ItemType<DyingWaterCrystal>()
                     }
                     );
 
@@ -3522,7 +3548,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<SeathTheScalelessHead>(), Language.GetText("Mods.tsorcRevamp.NPCs.SeathTheScalelessHead.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SeathTheScalelessDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.StoneOfSeath>(),
+                        ["spawnItems"] = ModContent.ItemType<StoneOfSeath>(),
                         ["customPortrait"] = SeathPortrait
                     }
                     );
@@ -3539,7 +3565,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<AbysmalOolacileSorcerer>(), Language.GetText("Mods.tsorcRevamp.NPCs.AbysmalOolacileSorcerer.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AbysmalOolacileSorcererDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.AbysmalStone>()
+                        ["spawnItems"] = ModContent.ItemType<AbysmalStone>()
                     }
                     );
 
@@ -3555,7 +3581,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<FireFiendMarilith>(), Language.GetText("Mods.tsorcRevamp.NPCs.FireFiendMarilith.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.FireFiendMarilithDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingFireCrystal>()
+                        ["spawnItems"] = ModContent.ItemType<DyingFireCrystal>()
                     }
                     );
 
@@ -3571,7 +3597,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<WyvernMageShadow>(), Language.GetText("Mods.tsorcRevamp.NPCs.WyvernMageShadow.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WyvernMageShadowDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.WingOfTheGhostWyvern>()
+                        ["spawnItems"] = ModContent.ItemType<WingOfTheGhostWyvern>()
                     }
                     );
 
@@ -3587,7 +3613,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Chaos>(), Language.GetText("Mods.tsorcRevamp.NPCs.Chaos.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.ChaosDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingDarkCrystal>()
+                        ["spawnItems"] = ModContent.ItemType<DyingDarkCrystal>()
                     }
                     );
 
@@ -3603,7 +3629,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<DarkCloud>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.DarkCloudName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.DarkCloudDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DarkMirror>()
+                        ["spawnItems"] = ModContent.ItemType<DarkMirror>()
                     }
                     );
 
@@ -3619,7 +3645,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.SoulOfCinderName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.SoulOfCinderSpawner>()
+                        ["spawnItems"] = ModContent.ItemType<SoulOfCinderSpawner>()
                     }
                     );
 
@@ -3635,7 +3661,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<Gwyn>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.GwynName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.GwynDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.LostScrollOfGwyn>()
+                        ["spawnItems"] = ModContent.ItemType<LostScrollOfGwyn>()
                     }
                     );
 
@@ -5406,59 +5432,59 @@ namespace tsorcRevamp
             //Generates the dictionary of textures
             TransparentTextures = new Dictionary<TransparentTextureType, Texture2D>()
             {
-                {TransparentTextureType.PhasedMatterBlast, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/PhasedMatterBlast", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.AntiGravityBlast, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.EnemyPlasmaOrb, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.ManaShield, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ManaShield", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.CrazedOrb, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb", AssetRequestMode.ImmediateLoad)}, 
-                {TransparentTextureType.MasterBuster, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/MasterBuster", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.HighCaliberRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/HighCaliberRound", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.AntiMaterialRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/AntiMaterialRound", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.GlaiveBeam, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/GlaiveBeamLaser", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.GlaiveBeamItemGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Specialist/GlaiveBeam_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.GlaiveBeamHeldGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Specialist/GlaiveBeamHeld_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.GenericLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/GenericLaser", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.GenericLaserTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/GenericLaserTargeting", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.DarkLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaser", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.DarkLaserTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.PulsarGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Specialist/Pulsar_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.GWPulsarGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Specialist/GWPulsar_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.PolarisGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Specialist/Polaris_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.ToxicCatalyzerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Specialist/ToxicCatalyzer_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.VirulentCatalyzerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Specialist/VirulentCatalyzer_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.BiohazardGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Specialist/Biohazard_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.HealingElixirGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Potions/HealingElixir_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.DarkDivineSpark, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkDivineSpark", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.ShatteredMoonlightGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Melee/Boomerangs/ShatteredMoonlightProjectile_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.VenomBladeGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Throwing/VenomBlade_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.GreySlashGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/GreySlash_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.UltimaWeapon, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/UltimaWeaponTransparent", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.UltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/UltimaWeaponGlowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.DarkUltimaWeapon, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeapon", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.DarkUltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeaponGlowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.ReflectionShift, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Accessories/Mobility/ReflectionShift", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.PhazonRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/PhazonRound", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.MoonlightGreatsword, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/MoonlightGreatsword", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.MoonlightGreatswordGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/MoonlightGreatsword_Glowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.EstusFlask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/EstusFlask_drinking", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.CeruleanFlask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CeruleanFlask_drinking", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.ElfinArrow, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/ElfinArrow", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.ElfinTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/ElfinTargeting", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.HumanityPhantom, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/HumanityPhantom", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.BarbarousThornBladeGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Shortswords/BarbarousThornBlade_Glow", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.RedLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/Ammo/RedLaserBeam", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.RedLaserTransparent, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyRedLaser", AssetRequestMode.ImmediateLoad)}, //A transparent and non-transparent version of this exists because the current focused energy beam laser projectile stacks a lot of beam midsections on top of each other, which fucks up transparency
-                {TransparentTextureType.ConsecratedLightTransparent, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyConsecratedLight", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.LightrifleFire, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Magic/LightrifleFire", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.Lightning, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyLightningStrike", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.RedLightning, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/WyvernMage/RedLightning", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.BulletHellLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Gwyn/BulletHellLaser", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.HeavenPiercerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/HeavenPiercerGlowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.SoapstoneMessage, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Tiles/SoapstoneMessage_1", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.CrystalRay, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/CrystalRayTrail", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.SeveringDuskGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/SeveringDuskGlowmask", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.Pinwheel, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Pinwheel/Pinwheel", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.PinwheelFireglow, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Pinwheel/Pinwheel_Fireglow", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.PhasedMatterBlast, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(PhasedMatterBlast)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.AntiGravityBlast, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(AntiGravityBlast)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.EnemyPlasmaOrb, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyPlasmaOrb)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ManaShield, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(ManaShieldSprite)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.CrazedOrb, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(CrazedOrb)), AssetRequestMode.ImmediateLoad)}, 
+                {TransparentTextureType.MasterBuster, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(MasterBuster)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.HighCaliberRound, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HighCaliberRound)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.AntiMaterialRound, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(AntiMaterialRound)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GlaiveBeam, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(GlaiveBeamLaser)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GlaiveBeamItemGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(GlaiveBeam)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GlaiveBeamHeldGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(GlaiveBeam)) + "Held_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GenericLaser, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(GenericLaser)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GenericLaserTargeting, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(GenericLaser)) + "Targeting", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.DarkLaser, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkLaser)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.DarkLaserTargeting, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkLaser)) + "Targeting", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.PulsarGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Pulsar)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GWPulsarGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(GWPulsar)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.PolarisGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Polaris)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ToxicCatalyzerGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(ToxicCatalyzer)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.VirulentCatalyzerGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(VirulentCatalyzer)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.BiohazardGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Biohazard)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.HealingElixirGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HealingElixir)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.DarkDivineSpark, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkDivineSpark)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ShatteredMoonlightGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(ShatteredMoonlightProjectile)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.VenomBladeGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(VenomBlade)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.GreySlashGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(GreySlash)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.UltimaWeapon, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(UltimaWeapon)) + "Transparent", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.UltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(UltimaWeapon)) + "Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.DarkUltimaWeapon, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkUltimaWeapon)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.DarkUltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkUltimaWeapon)) + "Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ReflectionShift, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(ReflectionShift)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.PhazonRound, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(PhazonRound)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.MoonlightGreatsword, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(MoonlightGreatsword)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.MoonlightGreatswordGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(MoonlightGreatsword)) + "_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.EstusFlask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EstusDrinkSprite)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.CeruleanFlask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(CeruleanDrinkSprite)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ElfinArrow, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(ElfinArrow)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ElfinTargeting, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(ElfinTargeting)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.HumanityPhantom, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HumanityPhantom)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.BarbarousThornBladeGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(BarbarousThornBlade)) + "_Glow", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.RedLaser, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(RedLaserBeam)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.RedLaserTransparent, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyRedLaser)), AssetRequestMode.ImmediateLoad)}, //A transparent and non-transparent version of this exists because the current focused energy beam laser projectile stacks a lot of beam midsections on top of each other, which fucks up transparency
+                {TransparentTextureType.ConsecratedLightTransparent, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyConsecratedLight)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.LightrifleFire, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(LightrifleFire)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.Lightning, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyLightningStrike)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.RedLightning, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(RedLightning)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.BulletHellLaser, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(BulletHellLaser)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.HeavenPiercerGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HeavenPiercer)) + "Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.SoapstoneMessage, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(SoapstoneMessage)) + "_1", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.CrystalRay, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(CrystalRay)) + "Trail", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.SeveringDuskGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(SeveringDusk)) + "Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.Pinwheel, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Pinwheel)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.PinwheelFireglow, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Pinwheel)) + "_Fireglow", AssetRequestMode.ImmediateLoad)},
 
             };
 

@@ -1,0 +1,54 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Titanite;
+
+namespace tsorcRevamp.Content.Items.Accessories.Magic.Bands
+{
+    [AutoloadEquip(EquipType.HandsOn)]
+    public class BandOfStarforging : ModItem
+    {
+        public const float LifeRegen = 5f;
+        public const float MaxManaPercentIncrease = 75f;
+        public const int ManaRegen = 50;
+        public const float ManaRegenDelay = 150f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen / 2f, MaxManaPercentIncrease, ManaRegen, ManaRegenDelay);
+        public override void SetStaticDefaults()
+        {
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 28;
+            Item.height = 28;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Purple_11;
+            Item.rare = ItemRarityID.Purple;
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<BandOfPhenomenalCosmicPower>());
+            recipe.AddIngredient(ModContent.ItemType<EssenceOfMana>());
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 85000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            player.lifeRegen += (int)LifeRegen;
+            player.GetModPlayer<tsorcRevampPlayer>().MaxManaAmplifier += MaxManaPercentIncrease;
+            player.manaRegenBonus += ManaRegen;
+            player.manaRegenDelayBonus += ManaRegenDelay / 100f;
+        }
+
+    }
+}

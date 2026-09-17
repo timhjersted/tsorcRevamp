@@ -7,7 +7,8 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile;
 using tsorcRevamp.Utilities;
 
@@ -357,7 +358,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.JungleWyvernBag>()));
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<JungleWyvernBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Amethyst, 1, 1, 7));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Topaz, 1, 1, 7));

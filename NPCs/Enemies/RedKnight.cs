@@ -8,7 +8,9 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Utilities;
 
@@ -1015,14 +1017,14 @@ namespace tsorcRevamp.NPCs.Enemies
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.RegenerationPotion, 30));
             npcLoot.Add(hmCondition);
             IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 2, 3);
-            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 20);
+            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<PurgingStone>(), 20);
             SuperHardmodeRule SHM = new();
             IItemDropRule shmCondition = new LeadingConditionRule(SHM);
             shmCondition.OnSuccess(drop);
             shmCondition.OnSuccess(drop2);
             npcLoot.Add(shmCondition);
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<FlameOfTheAbyss>()));
-            npcLoot.Add(ItemDropRule.ByCondition(new FirstBossKillRule(), ModContent.ItemType<Items.StaminaVessel>()));
+            npcLoot.Add(ItemDropRule.ByCondition(new FirstBossKillRule(), ModContent.ItemType<StaminaVessel>()));
         }
         #endregion
 
