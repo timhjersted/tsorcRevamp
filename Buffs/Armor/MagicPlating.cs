@@ -2,7 +2,7 @@ using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.Buffs
+namespace tsorcRevamp.Buffs.Armor
 {
     public class MagicPlating : ModBuff
     {
