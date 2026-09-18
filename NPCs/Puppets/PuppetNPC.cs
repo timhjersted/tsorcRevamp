@@ -3360,7 +3360,9 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.netUpdate = true;
         }
 
-        public void OnStagger(NPC npc)
+        /// <summary>Virtual so a subclass with its own set-piece state (a custom-phase stage machine, a
+        /// pending spell, in-flight channel dust) can clear it too. Always call base.</summary>
+        public virtual void OnStagger(NPC npc)
         {
             bool cancelledHeal = Phase == AttackPhase.FleeToHeal || Phase == AttackPhase.Healing;
             if (cancelledHeal)
@@ -4027,6 +4029,7 @@ namespace tsorcRevamp.NPCs.Puppets
                                     || Main.rand.Next(100) < MagicPreferenceChance);
                                 if (useMagic)
                                 {
+                                    OnMagicTelegraphStarting();
                                     EnterPhase(AttackPhase.MagicTelegraph, MagicTelegraphTicks);
                                 }
                                 else
@@ -4341,6 +4344,7 @@ namespace tsorcRevamp.NPCs.Puppets
                                         || Main.rand.Next(100) < MagicPreferenceChance);
                         if (useMagic)
                         {
+                            OnMagicTelegraphStarting();
                             EnterPhase(AttackPhase.MagicTelegraph, MagicTelegraphTicks);
                         }
                         else
@@ -7333,6 +7337,13 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         protected virtual  void DoMagicAttack() { }
 
+        /// <summary>Called on the SERVER immediately before the MagicTelegraph phase is entered, i.e. before
+        /// <see cref="MagicTelegraphTicks"/> is read.  Default no-op.  A boss whose spells have different
+        /// wind-ups rolls its next spell here and returns per-spell values from MagicTelegraphTicks /
+        /// MagicRecoveryTicks / MagicCooldownAfterUse; the rolled spell reaches clients in the same snapshot
+        /// as the phase, so a rolled-then-read telegraph length is consistent everywhere.</summary>
+        protected virtual  void OnMagicTelegraphStarting() { }
+
         /// <summary>Called every tick of the MagicAttack phase with the ticks remaining.  Default no-op;
         /// override (together with <see cref="_magicAttackTicksOverride"/>) for channeled casts such as a
         /// timed meteor rain.</summary>
@@ -7619,6 +7630,17 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
             float r = reach < 0 ? MeleeRange * 0.7f : reach;
             ArmBladeHit(r, MeleeDamage, knockback: 3f);
+        }
+
+        /// <summary>Closes a bespoke attack's tracked-blade window without changing phase. Ordinary melee
+        /// phases disarm automatically when they enter recovery; Custom phases need an explicit close so
+        /// their harmless follow-through / landing tail cannot remain flagged as an active strike.</summary>
+        protected void StopMeleeHit()
+        {
+            _bladeArmed = false;
+            _hasPreviousBladeSample = false;
+            _backHand.HasPreviousBladeSample = false;
+            _bladeHitPlayers.Clear();
         }
 
         /// <summary>
@@ -10409,7 +10431,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (!_slashVFXTexLoadAttempted)
             {
                 _slashVFXTexLoadAttempted = true;
-                const string path = "tsorcRevamp/Items/Weapons/Melee/Broadswords/BroadswordRework/Common/Melee/Slash";
+                const string path = "tsorcRevamp/Content/Items/Weapons/Melee/Broadswords/BroadswordRework/Common/Melee/Slash";
                 if (ModContent.HasAsset(path))
                     _slashVFXTex = ModContent.Request<Texture2D>(path, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }

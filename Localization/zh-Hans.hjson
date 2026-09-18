@@ -379,6 +379,7 @@ Mods: {
 				       菜就多练定出头。
 				'''
 			WallDeathReason: 被血肉之墙吞噬
+			// MadnessDeathReason: "{0} succumbed to madness"
 			BotC1: 被诅咒者模式可以随时关闭...
 			BotC2: 被诅咒者模式是为有通关经验的玩家设计的...
 			BotC3: 请查看暗符获取关于被诅咒者模式的详细信息
@@ -9092,6 +9093,21 @@ Mods: {
 				// Tooltip: ""
 				// DisplayName: Beast Claw
 			}
+
+			EnemyOccultistStaff: {
+				// Tooltip: ""
+				// DisplayName: Grand Oolacile Staff
+			}
+
+			EnemyOccultistAxe: {
+				// Tooltip: ""
+				// DisplayName: Grand Oolacile Axe
+			}
+
+			EnemyDestinedDeathFlask: {
+				// DisplayName: Enemy Destined Death Flask
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -9212,6 +9228,20 @@ Mods: {
 			CurseBuildup: {
 				DisplayName: 诅咒
 				Description: 你被诅咒了！
+			}
+
+			MadnessBuildup: {
+				// DisplayName: Madness Buildup
+				// Description: At {0} buildup, take 200 damage and become staggered. Current buildup: {1}
+			}
+
+			Madness: {
+				// DisplayName: Madness
+				/* Description:
+					'''
+					Your perception fractures into lingering afterimages
+					25% increased melee attack speed and 10x mana regeneration
+					''' */
 			}
 
 			DarkInferno: {
@@ -11173,6 +11203,8 @@ Mods: {
 			// OccultistDarkOrb.DisplayName: Occultist Dark Orb
 			// OccultistStar.DisplayName: Occultist Star
 			// OccultistStarBig.DisplayName: Occultist Star Big
+			// OccultistAbyssRing.DisplayName: Abyss Ring
+			// OccultistMagicRing.DisplayName: Occultist Magic Ring
 			// AbyssTeleportBlast.DisplayName: Abyss Teleport Blast
 			// AbyssTeleportMistLinger.DisplayName: Abyss Teleport Mist Linger
 			// AbyssSlash.DisplayName: Abyss Slash
@@ -11300,6 +11332,11 @@ Mods: {
 			// GwynEmbraceOrb.DisplayName: Gwyn Embrace Orb
 			// CinderWispTelegraph.DisplayName: Cinder Wisp Telegraph
 			// InvisibleNothingProj.DisplayName: Invisible Nothing Proj
+			// OccultistAxeImpactField.DisplayName: Occultist Axe Impact Field
+			// OccultistDestinedDeathField.DisplayName: Occultist Destined Death Field
+			// OccultistDestinedDeathFlameColumn.DisplayName: Occultist Destined Death Flame Column
+			// OccultistDestinedDeathFlask.DisplayName: Occultist Destined Death Flask
+			// OccultistThrownAxe.DisplayName: Occultist Thrown Axe
 		}
 
 		NPCs: {
@@ -11828,6 +11865,7 @@ Mods: {
 			FallenNecromancer.DisplayName: 堕落巫师
 			ObsidianJellyfish.DisplayName: 黑曜石水母
 			Parasprite.DisplayName: 精灵飞蝇
+			// Locust.DisplayName: Locust
 			PrimeLaserProbe.DisplayName: 激光探针
 			QuaraHydromancer.DisplayName: 夸拉水魔
 			RedCloudHunter.DisplayName: 赤云猎人
@@ -13070,6 +13108,7 @@ Mods: {
 			// RingedKnightOriginal.DisplayName: Old Ringed Knight
 			// CursedDragonInvader.DisplayName: Cursed Dragon
 			// AbysmalOolacileSorcererTEST.DisplayName: Abysmal Oolacile Sorcerer T E S T
+			// AbysmalOolacileSorcererOriginal.DisplayName: Old Grand Occultist of Oolacile
 			// OwlFatherInvader.DisplayName: Owl Father Invader
 			// SpiritOfKhaios.DisplayName: Spirit Of Khaios
 			// KhaiosTransitionOrb.DisplayName: Khaios Transition Orb

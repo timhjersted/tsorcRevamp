@@ -74,5 +74,24 @@ namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
                 Main.dust[dust].noGravity = false;
             }
         }
+
+        // The star used to have no death event at all — it simply stopped existing and its trail dust aged
+        // out. Every ending (tile, player, timeout) now shows the same burst.
+        public override void OnKill(int timeLeft)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.5f, Pitch = 0.2f }, Projectile.Center);
+            for (int i = 0; i < 70; i++)
+            {
+                Vector2 outward = Main.rand.NextVector2Circular(4.5f, 4.5f);
+                Dust shard = Dust.NewDustPerfect(Projectile.Center, DustID.Shadowflame, outward, 50, default,
+                    Main.rand.NextFloat(1f, 1.8f));
+                shard.noGravity = true;
+            }
+        }
     }
 }

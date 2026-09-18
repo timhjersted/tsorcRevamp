@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
             collisionPadding = 0;
             collisionEndPadding = 1;
             collisionFrequency = 2;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/OolacileBolt", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
         public bool accel = true;
         float teleAlpha = 0.5f;
@@ -81,6 +81,16 @@ namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
             effect.Parameters["baseNoise"].SetValue(tsorcRevamp.NoiseSmooth);
             effect.Parameters["baseNoiseUOffset"].SetValue(baseNoiseUOffset);
             //effect.Parameters["secondaryNoise"].SetValue(noiseTexture);
+
+            const float pixelBlockSize = 2f;
+            Vector2 pixelGridSize = new Vector2(
+                Math.Max(trailCurrentLength / pixelBlockSize, 1f),
+                Math.Max((trailWidth * 2f) / pixelBlockSize, 1f));
+            effect.Parameters["PixelGrid"].SetValue(new Vector4(
+                pixelGridSize.X,
+                pixelGridSize.Y,
+                1f / pixelGridSize.X,
+                1f / pixelGridSize.Y));
 
             visualizeTrail = false;
 

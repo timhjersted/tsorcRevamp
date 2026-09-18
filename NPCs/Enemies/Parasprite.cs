@@ -24,6 +24,10 @@ namespace tsorcRevamp.NPCs.Enemies
         const int MaxSwarm = 20;
         const int MaxAttached = 3;
         const int BloatTicks = 60;
+        //The 60-tick bloat stays readable; 40 + 0..29 cooldown makes the full repeat cycle
+        //~115 ticks instead of the old ~460 ticks, i.e. four times as many splits over time.
+        const int BreedIntervalTicks = 40;
+        const int BreedJitterTicks = 30;
         const int DartWindupTicks = 20;
         const int DartMaxTicks = 40;
         const int MaxLatchTicks = 600;
@@ -198,9 +202,9 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Breeder)
             {
                 breedTimer++;
-                if (breedTimer >= 300)
+                if (breedTimer >= BreedIntervalTicks)
                 {
-                    breedTimer = -Main.rand.Next(200);
+                    breedTimer = -Main.rand.Next(BreedJitterTicks);
                     if (CountSwarm() < MaxSwarm)
                     {
                         mode = Mode.Bloat;

@@ -518,7 +518,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         private void DrawWings(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            Texture2D wingLeftTexture = useAltWing ? ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkWing").Value : ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkWingAlt").Value;
+            Texture2D wingLeftTexture = useAltWing ? ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Wings/DarkWing").Value : ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Wings/DarkWingAlt").Value;
             Texture2D wingRightTexture = wingLeftTexture;
 
             Vector2 leftWingOrigin = wingLeftTexture.Size() * (useAltWing ? new Vector2(0.7f, 0.2f) : new Vector2(1.1f, 0.8f));

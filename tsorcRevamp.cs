@@ -2736,6 +2736,36 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.ReportMadnessBuildup:
+                    {
+                        int buildup = reader.ReadByte();
+                        int durationTicks = reader.ReadInt16();
+
+                        if (Main.netMode == NetmodeID.Server
+                            && whoAmI >= 0 && whoAmI < Main.maxPlayers
+                            && Main.player[whoAmI].active && !Main.player[whoAmI].dead)
+                        {
+                            buildup = Math.Clamp(buildup, 1, Buffs.Debuffs.MadnessBuildup.MaximumBuildup);
+                            durationTicks = Math.Clamp(durationTicks, 1, 60 * 60);
+                            Main.player[whoAmI].GetModPlayer<MadnessPlayer>()
+                                .ApplyBuildupAuthoritative(buildup, durationTicks);
+                        }
+                        break;
+                    }
+                case tsorcPacketID.SyncMadnessState:
+                    {
+                        int playerIndex = reader.ReadByte();
+                        int buildup = reader.ReadByte();
+                        bool playTriggerEffects = reader.ReadBoolean();
+
+                        if (Main.netMode == NetmodeID.MultiplayerClient
+                            && playerIndex >= 0 && playerIndex < Main.maxPlayers)
+                        {
+                            Main.player[playerIndex].GetModPlayer<MadnessPlayer>()
+                                .ReceiveState(buildup, playTriggerEffects);
+                        }
+                        break;
+                    }
                 case tsorcPacketID.TeleportAllPlayers:
                     {
                         Vector2 targetLocation = reader.ReadVector2();
@@ -5010,6 +5040,10 @@ namespace tsorcRevamp
         public const byte ReportParryPoise = 27;
         /// <summary>Client → server: a puppet's hostile projectile hit a player (credits the attack for server decisions).</summary>
         public const byte ReportPuppetAttackHit = 28;
+        /// <summary>Victim client → server: a hit applied bounded Madness buildup.</summary>
+        public const byte ReportMadnessBuildup = 29;
+        /// <summary>Server → clients: authoritative Madness meter value and one-shot trigger visuals.</summary>
+        public const byte SyncMadnessState = 30;
     }
 
     //config moved to separate file

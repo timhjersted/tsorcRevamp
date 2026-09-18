@@ -26,8 +26,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.scale = 1.22f;
         }
 
-        Vector2[] lastpos = new Vector2[20];
-        int lastposindex = 0;
         public override void AI()
         {
             Projectile.rotation++;
@@ -53,12 +51,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 
 
-            lastpos[lastposindex] = this.Projectile.position;
-            lastposindex++;
-            if (lastposindex > 19) lastposindex = 0;
-
-
-
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 54, 0, 0, 100, Color.Black, 1.0f);
             Main.dust[dust].noGravity = true;
 
@@ -74,10 +66,23 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override bool PreKill(int timeLeft)
+        // A real death event. This replaces the old PreKill, which reassigned Projectile.type to vanilla 41
+        // so the engine would play THAT projectile's death instead — the seeker had no death of its own.
+        public override void OnKill(int timeLeft)
         {
-            Projectile.type = 41;
-            return base.PreKill(timeLeft);
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.6f, Pitch = -0.2f }, Projectile.Center);
+            for (int i = 0; i < 70; i++)
+            {
+                Vector2 outward = Main.rand.NextVector2Circular(5f, 5f);
+                Dust shard = Dust.NewDustPerfect(Projectile.Center, DustID.Wraith, outward, 90, Color.Black,
+                    Main.rand.NextFloat(1f, 1.8f));
+                shard.noGravity = true;
+            }
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

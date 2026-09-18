@@ -154,7 +154,7 @@ class RuneMage : ModNPC
     Texture2D WorldRuneSprite;
     public void DrawWorldRune(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
-        WorldRuneSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Materials/WorldRune"); 
+        WorldRuneSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Materials/WorldRune"); 
         Rectangle WorldRuneSourceRectangle = new Rectangle(0, 0, WorldRuneSprite.Width, WorldRuneSprite.Height); 
         Main.EntitySpriteDraw(WorldRuneSprite, WorldRunePosition - screenPos, WorldRuneSourceRectangle,
             Color.White, 0, WorldRuneSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);

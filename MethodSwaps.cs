@@ -1891,6 +1891,10 @@ namespace tsorcRevamp
             {
                 self.manaRegen = 0;
             }
+            if (self.HasBuff(ModContent.BuffType<Buffs.Debuffs.Madness>()))
+            {
+                self.manaRegen *= Buffs.Debuffs.Madness.ManaRegenerationMultiplier;
+            }
             self.manaRegenCount += self.manaRegen;
             while (self.manaRegenCount >= 120)
             {

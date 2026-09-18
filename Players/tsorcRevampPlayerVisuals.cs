@@ -361,7 +361,7 @@ namespace tsorcRevamp
                     }
                     if (modPlayer.Player.HeldItem.type == ModContent.ItemType<LightOfDawn>())
                     {
-                        texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Magic/Tomes/LightOfDawnCrystal", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                        texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Weapons/Magic/Tomes/LightOfDawnCrystal", ReLogic.Content.AssetRequestMode.ImmediateLoad);
                     }
                     if (modPlayer.Player.HeldItem.type == ModContent.ItemType<SeveringDusk>())
                     {
@@ -844,7 +844,7 @@ namespace tsorcRevamp
             if (drawPlayer.HeldItem.type == ModContent.ItemType<ScorchingPoint>() && drawPlayer.HeldItem.type != 0)
             {
                 //1) Get texture
-                Texture2D scorchingPointTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Summon/Runeterra/ScorchingPoint_Hand");
+                Texture2D scorchingPointTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Weapons/Summon/Runeterra/ScorchingPoint_Hand");
 
                 //2) Get the players hand position
                 Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);
@@ -905,7 +905,7 @@ namespace tsorcRevamp
             if (drawPlayer.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && drawPlayer.HeldItem.type != 0)
             {
                 //1) Get texture
-                Texture2D interstellarVesselGauntletTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Summon/Runeterra/InterstellarVesselGauntlet_Hand");
+                Texture2D interstellarVesselGauntletTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Weapons/Summon/Runeterra/InterstellarVesselGauntlet_Hand");
 
                 //2) Get the players hand position
                 Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);
@@ -966,7 +966,7 @@ namespace tsorcRevamp
             if (drawPlayer.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && drawPlayer.HeldItem.type != 0)
             {
                 //1) Get texture
-                Texture2D centerOfTheUniverseTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Summon/Runeterra/CenterOfTheUniverse_Hand");
+                Texture2D centerOfTheUniverseTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Weapons/Summon/Runeterra/CenterOfTheUniverse_Hand");
 
                 //2) Get the players hand position
                 Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);
@@ -1046,7 +1046,7 @@ namespace tsorcRevamp
                ((drawInfo.drawPlayer.armor[1].type == ModContent.ItemType<TarantulaCarapace>() && drawInfo.drawPlayer.armor[11].type == 0) ||
                (drawInfo.drawPlayer.armor[11].type == ModContent.ItemType<TarantulaCarapace>())))
             {
-                Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Armors/Summon/TarantulaCarapace_Backpack");
+                Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Armor/Summon/TarantulaCarapace_Backpack");
                 Vector2 drawPos = drawInfo.Center - Main.screenPosition;
                 Vector2 drawOffset = new Vector2(0, 0);
                 Rectangle sourceRectangle = drawInfo.drawPlayer.bodyFrame;
