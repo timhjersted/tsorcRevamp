@@ -22,16 +22,6 @@ using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Puppets;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Ranged;
-using tsorcRevamp.Projectiles.Summon;
-using tsorcRevamp.Projectiles.Summon.Archer;
-using tsorcRevamp.Projectiles.Summon.SamuraiBeetle;
-using tsorcRevamp.Projectiles.Summon.Whips;
-using tsorcRevamp.Projectiles.Summon.Whips.Dominatrix;
-using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
-using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 using tsorcRevamp;
 using tsorcRevamp.Content.Items;
@@ -51,6 +41,14 @@ using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Ranged;
+using tsorcRevamp.Content.Projectiles.Summon;
+using tsorcRevamp.Content.Projectiles.Summon.Whips;
+using tsorcRevamp.Content.Projectiles.Summon.Whips.Dominatrix;
+using tsorcRevamp.Content.Projectiles.Summon.Whips.EnchantedWhip;
+using tsorcRevamp.Content.Projectiles.Summon.Whips.PolarisLeash;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs
@@ -2030,7 +2028,7 @@ namespace tsorcRevamp.NPCs
                     ally.HealEffect(heal);
                     ally.netUpdate = true;
                     if (Main.netMode != NetmodeID.Server)
-                        Projectile.NewProjectile(npc.GetSource_FromAI(), ally.Center, Microsoft.Xna.Framework.Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.HealSpriteVFX>(), 0, 0);
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), ally.Center, Microsoft.Xna.Framework.Vector2.Zero, ModContent.ProjectileType<HealSpriteVFX>(), 0, 0);
                 }
             }
 
@@ -2042,7 +2040,7 @@ namespace tsorcRevamp.NPCs
                 npc.HealEffect(SelfHealAmount);
                 npc.netUpdate = true;
                 if (Main.netMode != NetmodeID.Server)
-                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Microsoft.Xna.Framework.Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.HealSpriteVFX>(), 0, 0);
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Microsoft.Xna.Framework.Vector2.Zero, ModContent.ProjectileType<HealSpriteVFX>(), 0, 0);
             }
 
             if (CanGoInvisible)
@@ -3797,7 +3795,7 @@ namespace tsorcRevamp.NPCs
                         shockwaveCreated = true;
                         if (projectile.type == ModContent.ProjectileType<ToxicCatDetonator>() && Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 300 * (tags / 12f), 45 * (tags / 12f));
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 300 * (tags / 12f), 45 * (tags / 12f));
                         }
                     }
 
@@ -3848,7 +3846,7 @@ namespace tsorcRevamp.NPCs
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 400 * (tags / 12f), 50 * (tags / 12f));
+                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 400 * (tags / 12f), 50 * (tags / 12f));
                             }
                         }
                     }
@@ -3898,7 +3896,7 @@ namespace tsorcRevamp.NPCs
                         shockwaveCreated = true;
                         if (projectile.type == ModContent.ProjectileType<BiohazardDetonator>() && Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500 * (tags / 12f), 60 * (tags / 12f));
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 500 * (tags / 12f), 60 * (tags / 12f));
                         }
                     }
                 }

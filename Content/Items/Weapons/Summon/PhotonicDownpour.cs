@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Summon.PhotonicDownpour;
+using tsorcRevamp.Content.Projectiles.Summon.PhotonicDownpour;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon
 {

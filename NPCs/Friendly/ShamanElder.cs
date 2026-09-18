@@ -12,6 +12,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive;
 using tsorcRevamp.Content.Items.Armor.Summon;
 using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.Weapons.Summon.Sentry;
+using tsorcRevamp.Content.Projectiles;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -365,7 +366,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
         {
-            projType = ModContent.ProjectileType<Projectiles.ShamanBolt>();
+            projType = ModContent.ProjectileType<ShamanBolt>();
             attackDelay = 5;
         }
 

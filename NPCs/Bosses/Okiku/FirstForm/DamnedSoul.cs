@@ -6,8 +6,8 @@ using Terraria.GameContent;
 using Terraria.GameContent.UI.BigProgressBar;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy.Okiku;
-using tsorcRevamp.Projectiles.VFX;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 {
@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 550, 20);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
                 }
 
                 NPC.active = false;

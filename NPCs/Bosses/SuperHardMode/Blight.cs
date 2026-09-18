@@ -12,6 +12,10 @@ using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Ranged;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -318,7 +322,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X + 20, NPC.position.Y + 50), new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer, NPC.target, Main.rand.Next(700) / 100f); //Phantom Seeker
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X + 20, NPC.position.Y + 50), new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), ModContent.ProjectileType<PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer, NPC.target, Main.rand.Next(700) / 100f); //Phantom Seeker
                             //Main.projectile[num54].rotation = Main.rand.Next(700) / 100f;
                         } 
                     }
@@ -335,7 +339,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float posX = Main.player[NPC.target].position.X + Main.rand.Next(-1400, 1400);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), posX, Main.player[NPC.target].position.Y - 650, 0, 5, ModContent.ProjectileType<Projectiles.Comet>(), cometDamage, 0f, Main.myPlayer, 0, 5.5f); //Comet
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), posX, Main.player[NPC.target].position.Y - 650, 0, 5, ModContent.ProjectileType<Comet>(), cometDamage, 0f, Main.myPlayer, 0, 5.5f); //Comet
                     }
                 }
             }
@@ -352,7 +356,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X + 20, NPC.position.Y + 50), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.PhantomSpiral>(), darkAstronomyDamage, 0f, Main.myPlayer, NPC.whoAmI, Main.rand.Next(200, 2500), Main.rand.Next(700) / 100f); //Phantom Spiral
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X + 20, NPC.position.Y + 50), new Vector2(0, 0), ModContent.ProjectileType<PhantomSpiral>(), darkAstronomyDamage, 0f, Main.myPlayer, NPC.whoAmI, Main.rand.Next(200, 2500), Main.rand.Next(700) / 100f); //Phantom Spiral
                         }
                     }
                 }
@@ -376,7 +380,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         float n = (float)Math.Cos(j) * -s;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X + Main.rand.Next(-25, 25), NPC.position.Y + Main.rand.Next(50, 150)), new Vector2(m, n), ModContent.ProjectileType<Projectiles.Comet>(), antimatterCannonDamage, 0f, Main.myPlayer, Main.rand.Next(50, 100) / 75f, 10, 300); //Antimatter Cannon
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X + Main.rand.Next(-25, 25), NPC.position.Y + Main.rand.Next(50, 150)), new Vector2(m, n), ModContent.ProjectileType<Comet>(), antimatterCannonDamage, 0f, Main.myPlayer, Main.rand.Next(50, 100) / 75f, 10, 300); //Antimatter Cannon
                         }
                     }
                 }
@@ -413,12 +417,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             //Spawn the abyssal fracture
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), fissureLocation + Main.rand.NextVector2Circular(20, 20), Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.RealityBomb>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), fissureLocation + Main.rand.NextVector2Circular(20, 20), Vector2.Zero, ModContent.ProjectileType<RealityBomb>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
 
                             Vector2 aimVec = UsefulFunctions.Aim(NPC.Center, fissureLocation, 1);
                             float aimLength = (fissureLocation - NPC.Center).Length();
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(20, 20), aimVec, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 4, UsefulFunctions.ColorToFloat(Color.White), aimLength);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(20, 20), aimVec, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 4, UsefulFunctions.ColorToFloat(Color.Cyan), aimLength);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(20, 20), aimVec, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 4, UsefulFunctions.ColorToFloat(Color.White), aimLength);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(20, 20), aimVec, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 4, UsefulFunctions.ColorToFloat(Color.Cyan), aimLength);
 
 
                             for (int i = 0; i < 8; i++)
@@ -426,7 +430,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 Vector2 targetVec = UsefulFunctions.Aim(fissureLocation, NPC.Center, 5.5f);
                                 Vector2 spawnPos = fissureLocation + Main.rand.NextVector2Circular(50, 50);
                                 float distance = Vector2.Distance(NPC.Center, spawnPos) / 5.5f;
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPos, targetVec, ModContent.ProjectileType<Projectiles.Comet>(), darkAstronomyDamage, 0, Main.myPlayer, ai0: -(int)distance, ai2: 1000);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPos, targetVec, ModContent.ProjectileType<Comet>(), darkAstronomyDamage, 0, Main.myPlayer, ai0: -(int)distance, ai2: 1000);
                             }
                         }
                         realityTearFrequency *= 0.96f;
@@ -438,8 +442,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(20, 20), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.White));
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(20, 20), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(20, 20), Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.White));
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(20, 20), Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
                         }
                     }
                     if (cataclysmTimer >= 1440)
@@ -453,16 +457,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Special.AbyssCataclysm>());
 
 
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.Cyan));
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.Cyan));
 
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 3200, 180);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 3000, 180);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 2000, 150);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1500, 120);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 900, 45);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 600, 30);
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 300, 20);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 3200, 180);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 3000, 180);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 2000, 150);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1500, 120);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 900, 45);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 600, 30);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 300, 20);
                         }
                     }
                 }
@@ -493,15 +497,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.Cyan));
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 3200, 180);
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 3000, 180);
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 2000, 150);
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1500, 120);
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 900, 45);
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 600, 30);
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 300, 20);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.Cyan));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 3200, 180);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 3000, 180);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 2000, 150);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1500, 120);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 900, 45);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 600, 30);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 300, 20);
             }
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 

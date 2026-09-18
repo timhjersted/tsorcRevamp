@@ -14,7 +14,9 @@ using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Weapons.Classless;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Content.Items.Weapons.Throwing;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -23,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
     // the attacks need direct access to this class's gravefall wave state, SpawnSpearProjectile and the
     // combo-followup helpers — a separate class would need a large callback surface to reach all of it, and
     // unlike RedKnightAttackController it would only ever serve one enemy.
-    partial class BlackKnight : ModNPC, IHumanoidMeleeHitEffects, IDebugAttackLabel, IStaggerable, Projectiles.Enemy.Weapons.ISpearMeleeWielder
+    partial class BlackKnight : ModNPC, IHumanoidMeleeHitEffects, IDebugAttackLabel, IStaggerable, ISpearMeleeWielder
     {
         public int redKnightsSpearDamage = 15;
         const int HomingComboMoveKey = -10;
@@ -170,7 +172,7 @@ namespace tsorcRevamp.NPCs.Enemies
             blackKnightGlobalNPC.KiteRangeMax = 15f;
             blackKnightGlobalNPC.KiteLooseness = 0.6f;
 
-            int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>();
+            int spearProjectileType = ModContent.ProjectileType<BlackThrowingSpear>();
             HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Elite(
                 redKnightsSpearDamage,
                 (int)(redKnightsSpearDamage * 1.3f),
@@ -277,7 +279,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             int projectileIndex = Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), NPC.Center, velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(),
+                ModContent.ProjectileType<BlackThrowingSpear>(),
                 redKnightsSpearDamage, 0f, Main.myPlayer);
             tsorcGlobalProjectile.SetDefenseTraits(projectileIndex, globalNPC.ActiveAttackDefenseTraits);
         }
@@ -290,7 +292,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             else
             {
-                TryQueueComboFollowup(globalNPC, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>());
+                TryQueueComboFollowup(globalNPC, ModContent.ProjectileType<BlackThrowingSpear>());
             }
         }
 
@@ -389,13 +391,13 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, fallVelocity,
-                            ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage,
+                            ModContent.ProjectileType<EnemyBlackCursedBreath>(), redMagicDamage,
                             knockback, Main.myPlayer, 1f);
 
                         // Brief "portal opening" flash at the same spawn point — a fast pre-cue riding
                         // on top of the drop's own longer frozen-spin windup.
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.Enemy.BlackKnightGravefallTelegraph>(), 0, 0f, Main.myPlayer);
+                            ModContent.ProjectileType<BlackKnightGravefallTelegraph>(), 0, 0f, Main.myPlayer);
                     }
                 }
             }
@@ -488,7 +490,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // only chooses openers. Previously this "addressed" an attack by dropping the conveyor to the
             // tick just before its window (124 / 269 / 869) and letting the belt run into it.
             BlackKnightAttack queuedAttack;
-            if (moveKey == ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>())
+            if (moveKey == ModContent.ProjectileType<BlackThrowingSpear>())
             {
                 queuedAttack = BlackKnightAttack.SpearThrow;
             }
@@ -661,7 +663,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 10f, fallback: true);
                         speed += player.velocity / 2f;
                         speed = speed.RotatedBy(angle);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 1f, Pitch = -0.3f, PitchVariance = 0.2f }, NPC.Center);
                     NPC.netUpdate = true;
@@ -853,11 +855,11 @@ namespace tsorcRevamp.NPCs.Enemies
             if (CurrentAttack == BlackKnightAttack.DeathSeal)
             {
                 int t = AttackTimer;
-                Projectiles.Enemy.EnemyVFX.DrawBlackKnightDeathSeal(NPC.Center,
+                EnemyVFX.DrawBlackKnightDeathSeal(NPC.Center,
                     MathHelper.Clamp(t / (float)DeathSealTelegraphTicks, 0f, 1f));
                 if (t >= DeathSealFlashTick && storedPlayerPosition != Vector2.Zero)
                 {
-                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition,
+                    EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition,
                         MathHelper.Clamp((t - DeathSealFlashTick) / (float)(DeathSealTelegraphTicks - DeathSealFlashTick), 0f, 1f));
                 }
             }
@@ -866,7 +868,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.life <= NPC.lifeMax / 3 && stormCycle >= 400)
             {
                 float stormProgress = MathHelper.Clamp((stormCycle - 400f) / 20f, 0f, 1f);
-                Projectiles.Enemy.EnemyVFX.DrawBlackKnightHexCrystal(NPC.Center, Vector2.Zero, stormProgress, false);
+                EnemyVFX.DrawBlackKnightHexCrystal(NPC.Center, Vector2.Zero, stormProgress, false);
             }
         }
 
@@ -904,7 +906,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     Vector2 forward = new Vector2(meleeDirection, 0f);
                     float tipReach = (SpearGripOrigin.Y + BaseSpearGripSlide(spriteScale) + thrustOffset)
                         * NPC.scale * spriteScale;
-                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
+                    EnemyVFX.DrawBlackKnightSpearWake(
                         handWorld + Main.screenPosition + forward * tipReach,
                         forward.ToRotation(), new Vector2(82f, 18f), 0.62f);
                 }
@@ -944,7 +946,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // The Moonfury shader used to be drawn here and sat visibly offset from the bomb
                 // sprite. Replaced with a red fuse spark, which cannot drift out of alignment.
                 spriteBatch.Draw(bombTexture, handWorld, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
-                Projectiles.Enemy.EnemyVFX.SpawnBombFuseSparks(handWorld + Main.screenPosition, fuseProgress);
+                EnemyVFX.SpawnBombFuseSparks(handWorld + Main.screenPosition, fuseProgress);
                 DrawHandOverlay(spriteBatch, drawColor);
             }
 
@@ -969,7 +971,7 @@ namespace tsorcRevamp.NPCs.Enemies
             float wardRise = CurseWardRise;
             if (wardRise > 0.001f)
             {
-                Projectiles.Enemy.EnemyVFX.DrawBlackKnightCurseWard(NPC.Center, CurseWardFacing, wardRise, 0.9f * wardRise);
+                EnemyVFX.DrawBlackKnightCurseWard(NPC.Center, CurseWardFacing, wardRise, 0.9f * wardRise);
             }
 
             DrawBlackKnightMagicOverlays();

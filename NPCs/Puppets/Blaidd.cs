@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 
@@ -327,7 +328,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.GetSource_FromThis(),
                 muzzle,
                 velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.EnemyShadowflameArrow>(),
+                ModContent.ProjectileType<EnemyShadowflameArrow>(),
                 RangedDamage,
                 3f,
                 Main.myPlayer);

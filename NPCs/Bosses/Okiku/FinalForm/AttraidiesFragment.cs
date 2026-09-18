@@ -5,7 +5,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 {

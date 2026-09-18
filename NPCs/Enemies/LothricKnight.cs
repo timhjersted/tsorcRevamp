@@ -14,6 +14,8 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -217,16 +219,16 @@ namespace tsorcRevamp.NPCs.Enemies
                             if (NPC.direction == 1)
                             {
                                 if (!grounded)
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -66), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -66), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                                 else
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                             else
                             {
                                 if (!grounded)
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -66), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -66), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                                 else
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -20), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                         }
                     }
@@ -269,7 +271,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     jumpSlashing = true;
                     shielding = false;
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
                 }
 
                 if (jumpSlashing)
@@ -310,9 +312,9 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             if (NPC.direction == 1)
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(lothricDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), (int)(lothricDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             else
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(lothricDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), (int)(lothricDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
                         }
                     }
 
@@ -346,7 +348,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     stabbing = true;
                     shielding = false;
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Yellow));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Yellow));
                 }
 
                 if (stabbing)
@@ -374,13 +376,13 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (NPC.direction == 1)
                             {
-                                Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), (int)(lothricDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                                Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), (int)(lothricDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                                 NPC.velocity.X += 10.5f;
                                 NPC.velocity.Y -= 2f;
                             }
                             else
                             {
-                                Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), (int)(lothricDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                                Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), (int)(lothricDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                                 NPC.velocity.X -= 10.5f;
                                 NPC.velocity.Y -= 2f;
                             }

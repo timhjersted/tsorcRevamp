@@ -1,11 +1,12 @@
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.Content.Items.Weapons.Enemy
 {
     public class EnemySmokeBomb : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/EnemySmokebomb";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemySmokebomb));
 
         public override void SetDefaults()
         {

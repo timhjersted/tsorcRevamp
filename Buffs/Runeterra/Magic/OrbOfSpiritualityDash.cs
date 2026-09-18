@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
-using tsorcRevamp.Projectiles.Magic.Runeterra;
+using tsorcRevamp.Content.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Magic
 {

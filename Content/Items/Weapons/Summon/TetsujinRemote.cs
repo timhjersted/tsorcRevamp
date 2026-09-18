@@ -9,7 +9,7 @@ using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Summon.Tetsujin;
+using tsorcRevamp.Content.Projectiles.Summon.Tetsujin;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon
 {

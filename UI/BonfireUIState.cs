@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
+using tsorcRevamp.Content.Projectiles.Pets;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.UI
@@ -119,7 +120,7 @@ namespace tsorcRevamp.UI
             bool anyBanks = false;
             foreach (Projectile projectile in Main.projectile)
             {
-                if (projectile.active && projectile.type == ModContent.ProjectileType<Projectiles.Pets.PiggyBankProjectile>() && projectile.owner == player.whoAmI)
+                if (projectile.active && projectile.type == ModContent.ProjectileType<PiggyBankProjectile>() && projectile.owner == player.whoAmI)
                 {
                     //kill any active when the button is pressed again
                     anyBanks = true;
@@ -137,7 +138,7 @@ namespace tsorcRevamp.UI
             if (!anyBanks)
             { //only spawn a safe if there is no existing safe
                 //Main.playerInventory = true; //force open inventory
-                Projectile.NewProjectile(new EntitySource_Misc("Bonfire"), new Vector2(player.position.X - 48, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.PiggyBankProjectile>(), 0, 0, player.whoAmI);
+                Projectile.NewProjectile(new EntitySource_Misc("Bonfire"), new Vector2(player.position.X - 48, player.position.Y), Vector2.Zero, ModContent.ProjectileType<PiggyBankProjectile>(), 0, 0, player.whoAmI);
                 Recipe.FindRecipes();
             }
         }
@@ -149,7 +150,7 @@ namespace tsorcRevamp.UI
 
             foreach (Projectile projectile in Main.projectile)
             {
-                if (projectile.active && projectile.type == ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>() && projectile.owner == player.whoAmI)
+                if (projectile.active && projectile.type == ModContent.ProjectileType<SafeProjectile>() && projectile.owner == player.whoAmI)
                 {
                     anySafes = true;
                     projectile.active = false;
@@ -164,7 +165,7 @@ namespace tsorcRevamp.UI
             if (!anySafes)
             {
                 //Main.playerInventory = true;
-                Projectile.NewProjectile(new EntitySource_Misc("Bonfire"), new Vector2(player.position.X + 64, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>(), 0, 0, player.whoAmI);
+                Projectile.NewProjectile(new EntitySource_Misc("Bonfire"), new Vector2(player.position.X + 64, player.position.Y), Vector2.Zero, ModContent.ProjectileType<SafeProjectile>(), 0, 0, player.whoAmI);
                 Recipe.FindRecipes();
             }
         }

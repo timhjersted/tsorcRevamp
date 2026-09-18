@@ -4,6 +4,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Prime;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
@@ -91,7 +93,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
                 }
                 NPC.active = false;
                 return;
@@ -139,7 +141,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HomingMissile>(), ai0: Target.whoAmI);
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<HomingMissile>(), ai0: Target.whoAmI);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.6f }, NPC.Center);
                         auraBonus = 0.1f;
@@ -152,7 +154,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HomingMissile>(), ai0: Target.whoAmI, ai1: 1);
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<HomingMissile>(), ai0: Target.whoAmI, ai1: 1);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.6f }, NPC.Center);
                         auraBonus = 0.1f;
@@ -168,7 +170,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HomingMissile>(), ai0: Target.whoAmI);
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<HomingMissile>(), ai0: Target.whoAmI);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.8f }, NPC.Center);
                         auraBonus = 0.2f;
@@ -181,7 +183,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HomingMissile>(), ai0: Target.whoAmI, ai1: 2);
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<HomingMissile>(), ai0: Target.whoAmI, ai1: 2);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.6f }, NPC.Center);
                         auraBonus = 0.2f;
@@ -202,8 +204,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
                 }
                 UsefulFunctions.SimpleGore(NPC, "Siege_Damaged_1");
                 UsefulFunctions.SimpleGore(NPC, "Siege_Damaged_2");

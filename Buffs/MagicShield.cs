@@ -19,7 +19,7 @@ namespace tsorcRevamp.Buffs
             player.GetModPlayer<tsorcRevampPlayer>().magicDefense += MagicShieldScroll.DefenseIncrease;
             if (player.whoAmI == Main.myPlayer)
             {
-                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.MagicShield>(), 0, 0, player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, player.velocity, ModContent.ProjectileType<Content.Projectiles.MagicShield>(), 0, 0, player.whoAmI);
             }
         }
     }

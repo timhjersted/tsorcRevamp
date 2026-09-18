@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Melee.Runeterra;
+using tsorcRevamp.Content.Projectiles.Melee.Runeterra;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra
 {

@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -114,7 +115,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 float num48 = 3f;
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                int type = ModContent.ProjectileType<Projectiles.Enemy.TheOracle>();
+                int type = ModContent.ProjectileType<TheOracle>();
                 float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -247,7 +248,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         speedX *= num51;
                         speedY *= num51;
                         //int damage = 50;//(int) (14f * npc.scale);
-                        int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>();//44;//0x37; //14;
+                        int type = ModContent.ProjectileType<EnemySpellIce3Ball>();//44;//0x37; //14;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, ice3Damage, 0f, Main.myPlayer);

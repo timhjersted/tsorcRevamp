@@ -6,6 +6,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -83,7 +84,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         speedX *= num51;
                         speedY *= num51;
                         int damage = 8;//(int) (14f * npc.scale);
-                        int type = ModContent.ProjectileType<Projectiles.Enemy.TheOracle>();//44;//0x37; //14;
+                        int type = ModContent.ProjectileType<TheOracle>();//44;//0x37; //14;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
@@ -111,7 +112,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         speedX *= num51;
                         speedY *= num51;
                         int damage = 13;//(int) (14f * npc.scale);
-                        int type = ModContent.ProjectileType<Projectiles.Enemy.AntiGravityBlast>();//44;//0x37; //14;
+                        int type = ModContent.ProjectileType<AntiGravityBlast>();//44;//0x37; //14;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer, Main.player[NPC.target].whoAmI);

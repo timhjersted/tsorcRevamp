@@ -18,10 +18,10 @@ namespace tsorcRevamp.Buffs
             player.buffTime[buffIndex] = 18000;
             player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescent = true;
 
-            bool petProjectileNotSpawned = player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Pets.MiakodaCrescent>()] <= 0;
+            bool petProjectileNotSpawned = player.ownedProjectileCounts[ModContent.ProjectileType<Content.Projectiles.Pets.MiakodaCrescent>()] <= 0;
             if (petProjectileNotSpawned && player.whoAmI == Main.myPlayer)
             {
-                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.MiakodaCrescent>(), 0, 0f, player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.Zero, ModContent.ProjectileType<Content.Projectiles.Pets.MiakodaCrescent>(), 0, 0f, player.whoAmI);
             }
 
             player.GetDamage(DamageClass.Generic) += Content.Items.Pets.MiakodaCrescent.Dmg1 / 100f;

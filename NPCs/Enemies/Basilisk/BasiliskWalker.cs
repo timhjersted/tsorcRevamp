@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.Basilisk
 {
@@ -58,9 +59,9 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             BannerItem = ModContent.ItemType<Banners.BasiliskWalkerBanner>();
             // "Bio Spit" — aimed acid glob. commitFraction 0.5: the flash→fire tell is half cancellable (poise-stagger
             // can interrupt the windup), half committed (hyperarmor). telegraphTime 40 gives a readable stun window.
-            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, telegraphColor: Color.GreenYellow, telegraphTime: 40, commitFraction: 0.5f, lockAimAtTelegraph: true);
+            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<EnemyBioSpitBall>(), bioSpitDamage, 8, SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, telegraphColor: Color.GreenYellow, telegraphTime: 40, commitFraction: 0.5f, lockAimAtTelegraph: true);
             // "Hypnotic Disrupter" — rare heavy lob (longer tell)
-            UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, weight: 0.08f, telegraphColor: Color.Purple, telegraphTime: 50, commitFraction: 0.5f, lockAimAtTelegraph: true);
+            UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, weight: 0.08f, telegraphColor: Color.Purple, telegraphTime: 50, commitFraction: 0.5f, lockAimAtTelegraph: true);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.MaxJumpPower = 9f;
@@ -110,12 +111,12 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            Projectiles.Enemy.BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
+            BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
             tsorcRevampAIs.EvasiveOnHit(NPC, true);
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            Projectiles.Enemy.BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
+            BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
             tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
@@ -225,8 +226,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 return;
             }
 
-            int bioSpitType = ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>();
-            int disruptorType = ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>();
+            int bioSpitType = ModContent.ProjectileType<EnemyBioSpitBall>();
+            int disruptorType = ModContent.ProjectileType<HypnoticDisrupter>();
             if (globalNPC.CurrentAttack.type == bioSpitType)
             {
                 BasiliskHeldProjectileDraw.Draw(NPC, spriteBatch, drawColor, bioSpitType, Color.GreenYellow);

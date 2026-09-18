@@ -4,6 +4,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -31,8 +32,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 20000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.FallenNecromancerBanner>();
-            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17);
-            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<EnemySpellEffectHealing>(), 0, 0, SoundID.Item17);
 
             // Step 6 caster levers: remember last-known position; pace when it does patrol.
             tsorcRevampGlobalNPC casterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();

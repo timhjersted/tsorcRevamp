@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Magic;
+using tsorcRevamp.Content.Projectiles.Magic.WrathOfGold;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic
 {

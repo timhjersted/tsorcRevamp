@@ -10,6 +10,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -42,7 +43,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 80;             
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
             NPC.lavaImmune = true;
-            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), earthTridentDamage, 11, SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<EarthTrident>(), earthTridentDamage, 11, SoundID.Item17);
         }
 
         int dragonsBreathDamage = 42;
@@ -147,7 +148,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 {
                     Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), dragonsBreathDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<CursedDragonsBreath>(), dragonsBreathDamage, 0f, Main.myPlayer);
                     NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
                 }
             }
@@ -162,7 +163,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
                 }
             }
 

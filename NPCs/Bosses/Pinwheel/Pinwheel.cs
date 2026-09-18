@@ -14,6 +14,8 @@ using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Utilities;
 
@@ -775,7 +777,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 if (Phase > 1 && Phase < 5) shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 1f);
                 if (Phase == 5) shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 0.6f);
                 if (Phase == 6) shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 1.4f);
-                int projectileType = ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>();
+                int projectileType = ModContent.ProjectileType<SmallFlameJet>();
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -889,7 +891,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(Main.rand.NextFloat(NPC.Center.X, NPC.Center.X + 120), NPC.Bottom.Y), new Vector2(0, Main.rand.NextFloat(-3.5f, -1.5f)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(Main.rand.NextFloat(NPC.Center.X, NPC.Center.X + 120), NPC.Bottom.Y), new Vector2(0, Main.rand.NextFloat(-3.5f, -1.5f)), ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
                     }
                 }
 
@@ -897,7 +899,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(Main.rand.NextFloat(NPC.Center.X - 120, NPC.Center.X), NPC.Bottom.Y), new Vector2(0, Main.rand.NextFloat(-3.5f, -1.5f)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(Main.rand.NextFloat(NPC.Center.X - 120, NPC.Center.X), NPC.Bottom.Y), new Vector2(0, Main.rand.NextFloat(-3.5f, -1.5f)), ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
                     }
                 }
 
@@ -906,7 +908,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie81 with { Volume = 0.8f, Pitch = -1f, PitchVariance = 1f, MaxInstances = 5 }, NPC.Center); //wraith
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X, NPC.Center.Y - 30), new Vector2(0, Main.rand.NextFloat(0, -1f)), ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X, NPC.Center.Y - 30), new Vector2(0, Main.rand.NextFloat(0, -1f)), ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
                     }
                 }
             }
@@ -946,7 +948,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             position += NPC.Center;
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
 
-                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 3f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier), 0f, Main.myPlayer);
+                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 3f, ModContent.ProjectileType<BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier), 0f, Main.myPlayer);
                             shot1.timeLeft = 90;
                         }
                     }
@@ -963,7 +965,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 30f);
                             position += NPC.Center;
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
-                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier), 0f, Main.myPlayer);
+                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier), 0f, Main.myPlayer);
                             shot1.timeLeft = 105;
                         }
                         for (int i = 0; i < 20; i++)
@@ -1056,7 +1058,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + explosionLocation, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 100, 30);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + explosionLocation, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 100, 30);
                         }
                     }
 
@@ -1194,7 +1196,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 6, 0f, Main.myPlayer);
+                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 6, 0f, Main.myPlayer);
                             shot1.timeLeft = 105;
                         }
                     }
@@ -1211,7 +1213,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 6, 0f, Main.myPlayer);
+                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 6, 0f, Main.myPlayer);
                             shot1.timeLeft = 105;
                         }
                     }
@@ -1228,7 +1230,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 12f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 10, 0f, Main.myPlayer);
+                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 12f, ModContent.ProjectileType<BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 10, 0f, Main.myPlayer);
                             shot1.timeLeft = 80;
                         }
                     }

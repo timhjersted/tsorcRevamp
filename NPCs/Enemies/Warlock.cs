@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -43,9 +44,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 750;
                 NPC.value = 12500;
             }
-            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>(), energyBallDamage, 8, SoundID.Item28 with { Volume = 0.2f, Pitch = -0.8f });
-            UsefulFunctions.AddAttack(NPC, 250, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBeamBall>(), greatEnergyBeamDamage, 8, weight: 0.3f);
-            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 1, 0, SoundID.Item17, needsLineOfSight: false, weight: 0.2f);
+            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<EnemySpellGreatEnergyBall>(), energyBallDamage, 8, SoundID.Item28 with { Volume = 0.2f, Pitch = -0.8f });
+            UsefulFunctions.AddAttack(NPC, 250, ModContent.ProjectileType<EnemySpellGreatEnergyBeamBall>(), greatEnergyBeamDamage, 8, weight: 0.3f);
+            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<EnemySpellEffectHealing>(), 1, 0, SoundID.Item17, needsLineOfSight: false, weight: 0.2f);
 
             // Step 6 caster levers: remember last-known position, and blink aggressively to re-acquire LOS.
             tsorcRevampGlobalNPC casterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();

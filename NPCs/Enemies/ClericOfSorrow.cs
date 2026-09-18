@@ -10,10 +10,14 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy.ClericOfSorrow;
+using tsorcRevamp.Content.Projectiles.Enemy.IceGigas;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
-using tsorcRevamp.Projectiles.Enemy;               // GigasIceShard, GigasUndertowZone (reused)
-using tsorcRevamp.Projectiles.Enemy.ClericOfSorrow; // ClericLastRitesRing
+// GigasIceShard, GigasUndertowZone (reused)
+
+// ClericLastRitesRing
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -601,7 +605,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     ally.netUpdate = true;
                 }
                 if (Main.netMode != NetmodeID.Server)
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), ally.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.HealSpriteVFX>(), 0, 0);
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), ally.Center, Vector2.Zero, ModContent.ProjectileType<HealSpriteVFX>(), 0, 0);
                 SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.4f, Pitch = 0.5f }, NPC.Center);
             }
         }

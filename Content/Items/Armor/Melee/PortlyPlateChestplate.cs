@@ -7,7 +7,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Melee;
+using tsorcRevamp.Content.Projectiles.Melee;
 
 namespace tsorcRevamp.Content.Items.Armor.Melee
 {

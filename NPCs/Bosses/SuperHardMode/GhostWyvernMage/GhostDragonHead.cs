@@ -10,8 +10,8 @@ using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy.WyvernMage;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Projectiles.Enemy.WyvernMage;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {

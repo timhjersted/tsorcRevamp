@@ -5,6 +5,8 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Quara;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -481,7 +483,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Vector2 lobVelocity = LobVelocity(Maw, player.Center, 9.5f, 3.2f).RotatedByRandom(0.18f);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), Maw, lobVelocity,
-                            ModContent.ProjectileType<Projectiles.Enemy.QuaraIchorGlob>(), GlobDamage, 1f, Main.myPlayer, 0.18f);
+                            ModContent.ProjectileType<QuaraIchorGlob>(), GlobDamage, 1f, Main.myPlayer, 0.18f);
                     }
                 }
             }
@@ -512,7 +514,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     Vector2 lobVelocity = LobVelocity(Maw, player.Center, 10f, 3.5f);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), Maw, lobVelocity,
-                        ModContent.ProjectileType<Projectiles.Enemy.QuaraEmber>(), EmberDamage, 1f, Main.myPlayer, 0.2f);
+                        ModContent.ProjectileType<QuaraEmber>(), EmberDamage, 1f, Main.myPlayer, 0.2f);
                 }
             }
             else if (AttackTimer >= EmberTelegraphTicks + 26)
@@ -602,7 +604,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.QuaraClawSwipe>(), ClawDamage, 2f, Main.myPlayer, NPC.direction, NPC.whoAmI);
+                    ModContent.ProjectileType<QuaraClawSwipe>(), ClawDamage, 2f, Main.myPlayer, NPC.direction, NPC.whoAmI);
                 NPC.netUpdate = true;
             }
         }
@@ -936,7 +938,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(new Color(150, 110, 40)));
+                        ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(new Color(150, 110, 40)));
                 }
             }
 

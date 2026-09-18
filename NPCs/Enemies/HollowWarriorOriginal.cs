@@ -10,6 +10,7 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.SpawnHelper;
 
@@ -378,12 +379,12 @@ namespace tsorcRevamp.NPCs.Enemies
                             {
                                 if (!standing_on_solid_tile)
                                 {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -56), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -56), new Vector2(0, 4f), ModContent.ProjectileType<SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
 
                                 }
                                 else
                                 {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                                 }
                             }
 
@@ -391,12 +392,12 @@ namespace tsorcRevamp.NPCs.Enemies
                             {
                                 if (!standing_on_solid_tile)
                                 {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -56), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -56), new Vector2(0, 4f), ModContent.ProjectileType<SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
 
                                 }
                                 else
                                 {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                                 }
                             }
                         }    
@@ -517,12 +518,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (NPC.direction == 1)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), bigSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<SmallWeaponSlash>(), bigSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
 
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), bigSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-20, -20), new Vector2(0, 4f), ModContent.ProjectileType<SmallWeaponSlash>(), bigSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                         }                          
                     }

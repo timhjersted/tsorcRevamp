@@ -15,12 +15,12 @@ using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Melee;
-using tsorcRevamp.Projectiles.Melee.Spears;
-using tsorcRevamp.Projectiles.Summon.ShatteredReflection;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Melee;
+using tsorcRevamp.Content.Projectiles.Summon.ShatteredReflection;
 using tsorcRevamp.Systems;
 using ManaShield = tsorcRevamp.Content.Items.Accessories.Defensive.Shields.ManaShield;
+using PiercingGaze = tsorcRevamp.Content.Projectiles.Ranged.PiercingGaze;
 
 namespace tsorcRevamp
 {
@@ -249,21 +249,21 @@ namespace tsorcRevamp
             if (thisItem.type == ModContent.ItemType<GlaiveBeam>())
             {
                 //And the projectile that creates the laser exists
-                if (modPlayer.Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>()] > 0)
+                if (modPlayer.Player.ownedProjectileCounts[ModContent.ProjectileType<GlaiveBeamLaser>()] > 0)
                 {
-                    Projectiles.GlaiveBeamLaser heldBeam;
+                    GlaiveBeamLaser heldBeam;
 
                     //Then find the laser in the projectile array
                     for (int i = 0; i < Main.projectile.Length; i++)
                     {
                         //If it found it, we're in business.
-                        if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>() && Main.projectile[i].owner == modPlayer.Player.whoAmI)
+                        if (Main.projectile[i].type == ModContent.ProjectileType<GlaiveBeamLaser>() && Main.projectile[i].owner == modPlayer.Player.whoAmI)
                         {
                             //Get the transparent texture
                             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GlaiveBeamHeldGlowmask];
 
                             //Get the animation frame
-                            heldBeam = (Projectiles.GlaiveBeamLaser)Main.projectile[i].ModProjectile;
+                            heldBeam = (GlaiveBeamLaser)Main.projectile[i].ModProjectile;
                             int textureFrames = 10;
                             int frameHeight = (int)texture.Height / textureFrames;
                             int startY = frameHeight * (int)Math.Floor(9 * (heldBeam.Charge / GlaiveBeamHoldout.MaxCharge));
@@ -1410,7 +1410,7 @@ namespace tsorcRevamp
                 modPlayer.timeFactor = 2;
                 modPlayer.fadeValue = -1;
             }
-            else if (drawPlayer.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Ranged.PiercingGaze>()] != 0)
+            else if (drawPlayer.ownedProjectileCounts[ModContent.ProjectileType<PiercingGaze>()] != 0)
             {
                 modPlayer.effectRadius = 300;
                 modPlayer.fadeValue = -5;

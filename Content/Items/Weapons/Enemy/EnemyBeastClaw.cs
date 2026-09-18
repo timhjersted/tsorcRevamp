@@ -8,7 +8,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Enemy
     /// below half health. Vanilla bladed gloves are a plain fast swing (useStyle 1, useAnimation 8).</summary>
     public class EnemyBeastClaw : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/BeastClaw";
 
         public override void SetDefaults()
         {

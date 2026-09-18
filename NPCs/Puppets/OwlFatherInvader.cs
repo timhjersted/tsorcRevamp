@@ -12,7 +12,7 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
-using tsorcRevamp.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Puppets

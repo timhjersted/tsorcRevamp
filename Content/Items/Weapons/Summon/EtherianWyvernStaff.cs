@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
-using tsorcRevamp.Projectiles.Summon.EtherianWyvern;
+using tsorcRevamp.Content.Projectiles.Summon.EtherianWyvern;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon
 {

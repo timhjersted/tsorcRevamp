@@ -9,6 +9,7 @@ using tsorcRevamp.Content.Items.Armor.Magic;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Content.Items.Weapons.Throwing;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -61,7 +62,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             // "Throwing Spear" - calm aimed spear toss.
-            int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();
+            int spearProjectileType = ModContent.ProjectileType<BlackKnightSpear>();
             UsefulFunctions.AddAttack(NPC, 190, spearProjectileType, spearDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, needsLineOfSight: true, telegraphTime: 30, commitFraction: 0f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();

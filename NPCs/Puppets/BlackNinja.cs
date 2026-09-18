@@ -10,6 +10,8 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Flails;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using EnemyCaltrop = tsorcRevamp.Content.Items.Weapons.Enemy.EnemyCaltrop;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
@@ -206,11 +208,11 @@ namespace tsorcRevamp.NPCs.Puppets
             // stash its slot so the bomb cuts it the instant it detonates.
             if (secondary && !Main.dedServ)
             {
-                if (SoundEngine.TryGetActiveSound(Projectiles.Enemy.Weapons.PuppetSmokeBomb.ActiveFuseSlot, out var prev))
+                if (SoundEngine.TryGetActiveSound(PuppetSmokeBomb.ActiveFuseSlot, out var prev))
                     prev.Stop();
                 // Item172 is the longer 3 s fuse — saved for a future bigger bomb:
                 // ...ActiveFuseSlot = SoundEngine.PlaySound(SoundID.Item172 with { Volume = 0.5f }, NPC.Center);
-                Projectiles.Enemy.Weapons.PuppetSmokeBomb.ActiveFuseSlot =
+                PuppetSmokeBomb.ActiveFuseSlot =
                     SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.5f }, NPC.Center);
             }
         }
@@ -244,7 +246,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.GetSource_FromThis(),
                 origin,
                 spin ? Vector2.Zero : velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.EnemyDiamondCrusherBall>(),
+                ModContent.ProjectileType<EnemyDiamondCrusherBall>(),
                 damage,
                 3.5f,
                 Main.myPlayer,
@@ -274,7 +276,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     NPC.GetSource_FromThis(),
                     origin,
                     smokeVelocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetSmokeBomb>(),
+                    ModContent.ProjectileType<PuppetSmokeBomb>(),
                     SecondaryRangedDamage,
                     0f,
                     Main.myPlayer);
@@ -294,7 +296,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.GetSource_FromThis(),
                 origin,
                 starVelocity,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.EnemyNinjaStarProj>(),
+                ModContent.ProjectileType<EnemyNinjaStarProj>(),
                 RangedDamage,
                 2f,
                 Main.myPlayer);
@@ -311,7 +313,7 @@ namespace tsorcRevamp.NPCs.Puppets
             PlayThrowSound();
             Vector2 origin = NPC.Center + new Vector2(NPC.direction * 12f, -NPC.height * 0.25f);
             Vector2 throwTarget = target.Center + target.velocity * 16f;
-            Projectiles.Enemy.Weapons.EnemyCaltrop.ThrowSpread(NPC.GetSource_FromThis(), origin, throwTarget, MagicDamage, 1.4f, Main.myPlayer);
+            Content.Projectiles.Enemy.Weapons.EnemyCaltrop.ThrowSpread(NPC.GetSource_FromThis(), origin, throwTarget, MagicDamage, 1.4f, Main.myPlayer);
         }
     }
 }

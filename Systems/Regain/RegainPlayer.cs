@@ -3,7 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Utilities.Balance;
 
 namespace tsorcRevamp.Systems.Regain

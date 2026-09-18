@@ -1,0 +1,65 @@
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.Graphics.Shaders;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
+
+namespace tsorcRevamp.Content.Projectiles.Enemy
+{
+    class InkJet : ModProjectile
+    {
+
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(PoisonSmog));
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.timeLeft = 90;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+        }
+
+
+        public override void AI()
+        {
+            Lighting.AddLight(Projectile.Center, Color.Blue.ToVector3());
+            if (Main.GameUpdateCount % 4 == 0)
+            {
+                Dust thisDust = Main.dust[Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Asphalt, Projectile.velocity.X, Projectile.velocity.Y, 0, new Color(), 4)];
+                thisDust.noGravity = true;
+
+                thisDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.BlackDye), Main.LocalPlayer);
+            }
+        }
+
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            int buffLengthMod = 1;
+            if (Main.expertMode)
+            {
+                buffLengthMod = 2;
+            }
+            //Ink sticks to a soaked target: the Hydromancer's Wet setup doubles the ink durations
+            int wetMod = target.HasBuff(BuffID.Wet) ? 2 : 1;
+
+            target.AddBuff(BuffID.BrokenArmor, 600 * wetMod / buffLengthMod, false);
+            target.AddBuff(BuffID.Blackout, 600 * wetMod / buffLengthMod, false);
+            target.AddBuff(BuffID.Venom, 240 * wetMod / buffLengthMod, false);
+            target.AddBuff(BuffID.Obstructed, 120 * wetMod / buffLengthMod, false);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            EnemyVFX.DrawQuaraInkJet(Projectile.Center, Projectile.velocity);
+            return true;
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.QuaraInkBurst);
+        }
+    }
+}

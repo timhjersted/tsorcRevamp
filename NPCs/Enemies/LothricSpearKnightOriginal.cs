@@ -14,6 +14,7 @@ using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -565,7 +566,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                             stab.timeLeft = 6;
                             stab.velocity.X = 5;
                         }
@@ -576,7 +577,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                             stab.timeLeft = 6;
                             stab.velocity.X = 5;
                         }
@@ -587,7 +588,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                             stab.timeLeft = 6;
                             stab.velocity.X = 5;
                         }
@@ -600,7 +601,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                             stab.timeLeft = 6;
                             stab.velocity.X = -5;
                         }
@@ -611,7 +612,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                             stab.timeLeft = 6;
                             stab.velocity.X = -5;
                         }
@@ -622,7 +623,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                             stab.timeLeft = 6;
                             stab.velocity.X = -5;
                         }
@@ -710,7 +711,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(28, +38), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricBigDamage, 5, Main.myPlayer, NPC.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(28, +38), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), lothricBigDamage, 5, Main.myPlayer, NPC.whoAmI, 0)];
                             stab.timeLeft = 2;
                         }
 
@@ -721,7 +722,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-28, +38), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricBigDamage, 5, Main.myPlayer, NPC.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-28, +38), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), lothricBigDamage, 5, Main.myPlayer, NPC.whoAmI, 0)];
                             stab.timeLeft = 2;
                         }
 
@@ -806,12 +807,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (NPC.direction == 1)
                     {
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricDamage, 5, Main.myPlayer, NPC.whoAmI, 0)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(80, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), lothricDamage, 5, Main.myPlayer, NPC.whoAmI, 0)];
                         stab.timeLeft = 2;
                     }
                     else
                     {
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricDamage, 5, Main.myPlayer, NPC.whoAmI, 0)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-80, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), lothricDamage, 5, Main.myPlayer, NPC.whoAmI, 0)];
                         stab.timeLeft = 2;
                     }
                 }

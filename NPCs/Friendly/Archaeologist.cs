@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Projectiles;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -159,7 +160,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
         {
-            projType = ModContent.ProjectileType<Projectiles.ArcheologistWhip>();
+            projType = ModContent.ProjectileType<ArcheologistWhip>();
 
             attackDelay = 1;
         }

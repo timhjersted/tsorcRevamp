@@ -8,7 +8,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Potions;
-using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Necromancer;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

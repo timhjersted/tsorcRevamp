@@ -1,6 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Summon.YoungHunter;
+using tsorcRevamp.Content.Projectiles.Summon.YoungHunter;
 
 namespace tsorcRevamp.Buffs.Accessories
 {

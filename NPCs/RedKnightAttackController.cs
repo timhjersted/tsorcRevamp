@@ -6,10 +6,11 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Enemy;
-using tsorcRevamp.Projectiles.Enemy.Weapons;
-using tsorcRevamp.Projectiles.VFX;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.Enemy.WyvernMage;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs
 {
@@ -1972,7 +1973,7 @@ namespace tsorcRevamp.NPCs
         {
             Vector2 aim = UsefulFunctions.Aim(npc.Center, point, 1);
             Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, aim,
-                ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.SmallRedLightning>(),
+                ModContent.ProjectileType<SmallRedLightning>(),
                 damage, 1f, Main.myPlayer, 0, npc.whoAmI);
         }
 

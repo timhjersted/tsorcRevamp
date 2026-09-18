@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Necromancer;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

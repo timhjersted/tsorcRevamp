@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.Basilisk
 {
@@ -84,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             Lighting.AddLight(npc.Center, Color.DeepPink.ToVector3() * 0.7f);
             if (Main.rand.NextBool(2))
             {
-                Vector2 mouth = Projectiles.Enemy.BasiliskLeechTongue.GetMouthPosition(npc);
+                Vector2 mouth = BasiliskLeechTongue.GetMouthPosition(npc);
                 Dust dust = Dust.NewDustPerfect(mouth + Main.rand.NextVector2Circular(10f, 8f), DustID.PinkTorch, Main.rand.NextVector2Circular(1.5f, 1.5f), 80, Color.HotPink, 1.2f);
                 dust.noGravity = true;
             }
@@ -97,16 +98,16 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 return;
             }
 
-            Vector2 mouth = Projectiles.Enemy.BasiliskLeechTongue.GetMouthPosition(npc);
+            Vector2 mouth = BasiliskLeechTongue.GetMouthPosition(npc);
             Vector2 target = player.Center + new Vector2(0f, -120f);
-            Vector2 velocity = UsefulFunctions.BallisticTrajectory(mouth, target, 8.5f, Projectiles.Enemy.BasiliskLeechTongue.Gravity, true, true);
-            Projectile.NewProjectile(npc.GetSource_FromThis(), mouth, velocity, ModContent.ProjectileType<Projectiles.Enemy.BasiliskLeechTongue>(), damage, 0f, Main.myPlayer, npc.whoAmI);
+            Vector2 velocity = UsefulFunctions.BallisticTrajectory(mouth, target, 8.5f, BasiliskLeechTongue.Gravity, true, true);
+            Projectile.NewProjectile(npc.GetSource_FromThis(), mouth, velocity, ModContent.ProjectileType<BasiliskLeechTongue>(), damage, 0f, Main.myPlayer, npc.whoAmI);
             SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.45f, Pitch = 0.35f }, npc.Center);
         }
 
         private static bool HasActiveTongue(NPC npc)
         {
-            int tongueType = ModContent.ProjectileType<Projectiles.Enemy.BasiliskLeechTongue>();
+            int tongueType = ModContent.ProjectileType<BasiliskLeechTongue>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile projectile = Main.projectile[i];

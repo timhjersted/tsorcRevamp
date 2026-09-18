@@ -4,7 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Melee.Shortswords;
+using tsorcRevamp.Content.Projectiles.Melee.Shortswords;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Shortswords
 {

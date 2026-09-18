@@ -16,7 +16,9 @@ using tsorcRevamp.Content.Items.Placeable.Relics;
 using tsorcRevamp.Content.Items.Placeable.Trophies;
 using tsorcRevamp.Content.Items.Vanity;
 using tsorcRevamp.Content.Items.Weapons.Summon;
-using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Birbs;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -123,7 +125,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (deathTimer % 5 == 0 && Main.myPlayer != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.OrangeRed));
                 }
             }
 
@@ -238,7 +240,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVel, ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageFireBreath>(), rageBreathDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVel, ModContent.ProjectileType<RageFireBreath>(), rageBreathDamage, 0f, Main.myPlayer);
                 }
             }
             if (breathTimer > 580)
@@ -251,7 +253,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             if (breathTimer == 580 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.GlowingEnergy>(), 0, 0, Main.myPlayer, NPC.whoAmI, UsefulFunctions.ColorToFloat(Color.Red));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GlowingEnergy>(), 0, 0, Main.myPlayer, NPC.whoAmI, UsefulFunctions.ColorToFloat(Color.Red));
             }
 
 
@@ -280,8 +282,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageFirebomb>(), rageFirebombDamage, 0.5f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageFirebomb>(), rageFirebombDamage, 0.5f, Main.myPlayer); //ProjectileID.LostSoulHostile
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<RageFirebomb>(), rageFirebombDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<RageFirebomb>(), rageFirebombDamage, 0.5f, Main.myPlayer); //ProjectileID.LostSoulHostile
                     }
                 }
             }
@@ -308,7 +310,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62, NPC.Center);
                 }
@@ -399,9 +401,9 @@ namespace tsorcRevamp.NPCs.Bosses
                         {
                             Vector2 speed = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
 
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, speed.RotatedBy(0.15f), ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageDemonBolt>(), demonBoltDamage, 0f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageDemonBolt>(), demonBoltDamage, 0f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, speed.RotatedBy(-0.15f), ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageDemonBolt>(), demonBoltDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, speed.RotatedBy(0.15f), ModContent.ProjectileType<RageDemonBolt>(), demonBoltDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, speed, ModContent.ProjectileType<RageDemonBolt>(), demonBoltDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, speed.RotatedBy(-0.15f), ModContent.ProjectileType<RageDemonBolt>(), demonBoltDamage, 0f, Main.myPlayer);
                         }
 
                         FlameShotTimer2 = 0;
@@ -520,7 +522,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
                     }
 
 
@@ -621,7 +623,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
             }
 
             Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 1.3f });

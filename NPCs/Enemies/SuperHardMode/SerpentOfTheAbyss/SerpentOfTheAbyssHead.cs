@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
 {

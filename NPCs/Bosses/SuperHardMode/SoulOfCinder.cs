@@ -11,6 +11,10 @@ using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Cinder;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
 
@@ -717,14 +721,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 && _queuedRangedAttack == CinderRangedAttack.DarkBead)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.CinderDarkBeadPreview>(), 0, 0f, Main.myPlayer, NPC.whoAmI);
+                    ModContent.ProjectileType<CinderDarkBeadPreview>(), 0, 0f, Main.myPlayer, NPC.whoAmI);
             }
             else if (Phase == AttackPhase.MagicTelegraph && PhaseTimer == 30)
             {
                 if (_queuedMagicAttack == CinderMagicAttack.IceStorm)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.Enemy.CinderIceSpellPreview>(), 0, 0f, Main.myPlayer, NPC.whoAmI);
+                        ModContent.ProjectileType<CinderIceSpellPreview>(), 0, 0f, Main.myPlayer, NPC.whoAmI);
                 }
                 else if (_queuedMagicAttack >= CinderMagicAttack.CinderConstellation)
                 {
@@ -747,7 +751,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 float angle = MathHelper.TwoPi * i / count + angleOffset;
                 int id = Projectile.NewProjectile(NPC.GetSource_FromThis(), target.Center + angle.ToRotationVector2() * radius,
-                    Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.CinderRemoteFlame>(), FireBreathDamage, 0f,
+                    Vector2.Zero, ModContent.ProjectileType<CinderRemoteFlame>(), FireBreathDamage, 0f,
                     Main.myPlayer, target.whoAmI,
                     pattern == CinderMagicAttack.CinderConstellation ? 0 : pattern == CinderMagicAttack.FirelinkCross ? 1 : 2,
                     i);
@@ -1065,7 +1069,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.GetSource_FromThis(),
                 target.Center,
                 new Vector2(NPC.direction * 0.01f, 0f),
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
+                ModContent.ProjectileType<PuppetMeleeHitbox>(),
                 MeleeDamage + 7,
                 6f,
                 Main.myPlayer,
@@ -1122,7 +1126,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), origin,
                     baseVelocity.RotatedBy(MathHelper.ToRadians(i * 9f)),
-                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), DarkBeadDamage, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<ArtoriasDarkBead>(), DarkBeadDamage, 0f, Main.myPlayer);
             }
             SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center);
         }
@@ -1132,7 +1136,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Vector2 origin = StaffTipPosition;
             Vector2 velocity = UsefulFunctions.Aim(origin, target.Center, 7.5f);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.PhantomFireStaffSeeker>(),
+                ModContent.ProjectileType<PhantomFireStaffSeeker>(),
                 PhantomSeekerDamage, 0f, Main.myPlayer, target.whoAmI, Main.rand.NextFloat(MathHelper.TwoPi));
             SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
         }
@@ -1151,7 +1155,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             float airTime = -2f * verticalSpeed / 0.30f;
             float horizontalSpeed = MathHelper.Clamp((landingPoint.X - StaffTipPosition.X) / airTime, -18f, 18f);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTipPosition,
-                new Vector2(horizontalSpeed, verticalSpeed), ModContent.ProjectileType<Projectiles.Enemy.CinderGreenRain>(),
+                new Vector2(horizontalSpeed, verticalSpeed), ModContent.ProjectileType<CinderGreenRain>(),
                 damage, 5f, Main.myPlayer, target.whoAmI, landingOffset);
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.5f }, NPC.Center);
         }
@@ -1229,7 +1233,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Vector2 origin = StaffTipPosition;
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), origin,
                         UsefulFunctions.BallisticTrajectory(origin, target.Center, 6f, 1.06f, true, true),
-                        ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>(), DisruptDamage, 5f, Main.myPlayer);
+                        ModContent.ProjectileType<PhasedMatterBlast>(), DisruptDamage, 5f, Main.myPlayer);
                     SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.2f, Pitch = 0.4f }, NPC.Center);
                     break;
                 }
@@ -1265,7 +1269,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     float angle = MathHelper.Lerp(MathHelper.ToRadians(-145f), MathHelper.ToRadians(-35f), _magicShotProgress);
                     Vector2 velocity = angle.ToRotationVector2() * 12.5f;
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), iceOrigin, velocity,
-                        ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), IceStormDamage, 0f, Main.myPlayer);
+                        ModContent.ProjectileType<EnemySpellIce3Ball>(), IceStormDamage, 0f, Main.myPlayer);
                     SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.3f }, NPC.Center);
                     break;
             }
@@ -1309,7 +1313,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player target = Main.player[NPC.target];
             Vector2 hand = PuppetHandPosition;
             Vector2 breathVel = UsefulFunctions.Aim(hand, target.Center, 9f) + Main.rand.NextVector2Circular(1.5f, 1.5f);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), hand, breathVel, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), FireBreathDamage, 0f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), hand, breathVel, ModContent.ProjectileType<FireBreath>(), FireBreathDamage, 0f, Main.myPlayer);
             SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.12f, Pitch = 0.2f }, NPC.Center);
         }
 
@@ -1322,7 +1326,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             Player target = Main.player[NPC.target];
             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, target.Center, 18f);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Cinder.SwordOfCinder>(), SwordProjectileDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<SwordOfCinder>(), SwordProjectileDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
         }
 
         protected override void DoSpiralFanFire(int shotIndex)
@@ -1341,7 +1345,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Vector2 velocity = baseVelocity.RotatedBy(MathHelper.ToRadians(-((spread / (bulletCount - 1)) * i)));
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.CinderWispTelegraph>(), OrangeProjDamage, 1f, Main.myPlayer);
+                    ModContent.ProjectileType<CinderWispTelegraph>(), OrangeProjDamage, 1f, Main.myPlayer);
             }
         }
 

@@ -14,7 +14,8 @@ using tsorcRevamp.Content.Items.Lore;
 using tsorcRevamp.Content.Items.Placeable.Relics;
 using tsorcRevamp.Content.Items.Placeable.Trophies;
 using tsorcRevamp.Content.Items.Vanity;
-using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -113,7 +114,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
                     }
 
                     for (int i = 0; i < 50; i++)
@@ -154,7 +155,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (deathTimer % 5 == 0 && Main.myPlayer != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.YellowGreen));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.YellowGreen));
                 }
             }
 
@@ -252,7 +253,7 @@ namespace tsorcRevamp.NPCs.Bosses
                             //Telegraph breath
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.GlowingEnergy>(), 0, 0, Main.myPlayer, NPC.whoAmI, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GlowingEnergy>(), 0, 0, Main.myPlayer, NPC.whoAmI, UsefulFunctions.ColorToFloat(Color.OrangeRed));
                             }
                         }
                     }
@@ -366,7 +367,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         //Telegraph breath
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.GlowingEnergy>(), 0, 0, Main.myPlayer, NPC.whoAmI, UsefulFunctions.ColorToFloat(Color.YellowGreen));
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GlowingEnergy>(), 0, 0, Main.myPlayer, NPC.whoAmI, UsefulFunctions.ColorToFloat(Color.YellowGreen));
                         }
                     }
 
@@ -409,7 +410,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         {
                             Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
                             breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
                         }
 
                         //play breath sound
@@ -488,7 +489,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
                     }
                     for (int i = 0; i < 40; i++)
                     {
@@ -689,7 +690,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.YellowGreen));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.YellowGreen));
             }
 
             if (!Main.dedServ)

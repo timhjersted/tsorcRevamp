@@ -5,6 +5,10 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Content.Projectiles.Enemy.Triad;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -113,7 +117,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     for (int i = 0; i < projectilesInRing; i++)
                     {
                         Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / projectilesInRing);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.Okiku.EnemyAttraidiesBlackFire>(), DamageNumbers["BlackFire"], 0, Main.myPlayer, -1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), DamageNumbers["BlackFire"], 0, Main.myPlayer, -1);
                     }
                 }
             }
@@ -136,7 +140,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, TargetVector * 15, ModContent.ProjectileType<Projectiles.Enemy.Triad.RetDeathLaser>(), DamageNumbers["DeathLaser"], 0, Main.myPlayer, -1);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, TargetVector * 15, ModContent.ProjectileType<RetDeathLaser>(), DamageNumbers["DeathLaser"], 0, Main.myPlayer, -1);
                 }
             }
 
@@ -149,7 +153,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     for (int i = 0; i < projectilesInRing; i++)
                     {
                         Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / projectilesInRing);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.Okiku.EnemyAttraidiesBlackFire>(), DamageNumbers["BlackFire"], 0, Main.myPlayer, -1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), DamageNumbers["BlackFire"], 0, Main.myPlayer, -1);
                     }
                 }
             }
@@ -164,7 +168,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(10, 10), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), DamageNumbers["PlasmaOrb"], 0, Main.myPlayer, -1);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(10, 10), ModContent.ProjectileType<EnemyPlasmaOrb>(), DamageNumbers["PlasmaOrb"], 0, Main.myPlayer, -1);
                 }
             }
 
@@ -173,7 +177,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, TargetVector * 15, ModContent.ProjectileType<Projectiles.Enemy.Triad.RetDeathLaser>(), DamageNumbers["DeathLaser"], 0, Main.myPlayer, -1);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, TargetVector * 15, ModContent.ProjectileType<RetDeathLaser>(), DamageNumbers["DeathLaser"], 0, Main.myPlayer, -1);
                 }
             }
         }
@@ -192,7 +196,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(10, 10), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), DamageNumbers["PlasmaOrb"], 0, Main.myPlayer, -1);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(10, 10), ModContent.ProjectileType<EnemySpellSuddenDeathBall>(), DamageNumbers["PlasmaOrb"], 0, Main.myPlayer, -1);
                 }
             }
 
@@ -208,7 +212,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 60);
                 }
                 attackTransitionTimeRemaining = attackTransitionDuration;
             }
@@ -218,7 +222,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), DamageNumbers["PlasmaOrb"], 0, Main.myPlayer, -1);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<EnemyPlasmaOrb>(), DamageNumbers["PlasmaOrb"], 0, Main.myPlayer, -1);
                 }
             }
 
@@ -227,7 +231,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 60);
                 }
                 attackTransitionTimeRemaining = attackTransitionDuration;
             }
@@ -257,7 +261,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(100, 100), Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 200, 40);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(100, 100), Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 200, 40);
                 }
             }
 
@@ -287,7 +291,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 60);
                 }
             }
         }

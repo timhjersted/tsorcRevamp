@@ -1,6 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Summon.Phoenix;
+using tsorcRevamp.Content.Projectiles.Summon.Phoenix;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {

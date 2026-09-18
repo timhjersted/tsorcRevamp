@@ -5,7 +5,8 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp.NPCs
 {
@@ -562,7 +563,7 @@ namespace tsorcRevamp.NPCs
 
             int projectileIndex = Projectile.NewProjectile(
                 npc.GetSource_FromThis(), npc.Center, new Vector2(CombatMeleeLockedDirection, 0f),
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>(),
+                ModContent.ProjectileType<HumanoidMeleeHitbox>(),
                 move.Damage, move.Knockback, Main.myPlayer, move.HitboxReach, move.HitboxHeight);
             tsorcGlobalProjectile.SetDefenseTraits(projectileIndex, ActiveAttackDefenseTraits);
         }

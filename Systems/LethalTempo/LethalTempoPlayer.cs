@@ -3,7 +3,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Melee;
 
 namespace tsorcRevamp.Systems.LethalTempo;
 

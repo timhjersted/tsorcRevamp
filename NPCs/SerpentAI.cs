@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent;
 using tsorcRevamp.Utilities;
 
@@ -1216,12 +1217,12 @@ namespace tsorcRevamp.NPCs
 
             npc.localAI[1] = centerTileX;
 
-            Vector2 poolCenter = new Vector2(centerTileX * TileSize + TileSize / 2f, groundTileY * TileSize - Projectiles.Enemy.AcidPool.PoolHeight / 2f + AcidPoolGroundOffset);
+            Vector2 poolCenter = new Vector2(centerTileX * TileSize + TileSize / 2f, groundTileY * TileSize - AcidPool.PoolHeight / 2f + AcidPoolGroundOffset);
             if (AcidPoolExistsNear(poolCenter))
             {
                 return; //ground here is already covered -- don't stack another pool (and another dust source) on top
             }
-            Projectile.NewProjectile(npc.GetSource_FromAI(), poolCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.AcidPool>(), AcidBodyPoolDamage, 0f, Main.myPlayer, AcidBodyPoolLifetime);
+            Projectile.NewProjectile(npc.GetSource_FromAI(), poolCenter, Vector2.Zero, ModContent.ProjectileType<AcidPool>(), AcidBodyPoolDamage, 0f, Main.myPlayer, AcidBodyPoolLifetime);
         }
 
         ///<summary>True if a live AcidPool projectile already sits within AcidPoolDedupRadiusTiles of `center` --
@@ -1230,7 +1231,7 @@ namespace tsorcRevamp.NPCs
         ///and a real chunk of the lag: every live pool also spawns its own dust every tick).</summary>
         static bool AcidPoolExistsNear(Vector2 center)
         {
-            int poolType = ModContent.ProjectileType<Projectiles.Enemy.AcidPool>();
+            int poolType = ModContent.ProjectileType<AcidPool>();
             float radius = AcidPoolDedupRadiusTiles * TileSize;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
@@ -2093,7 +2094,7 @@ namespace tsorcRevamp.NPCs
                     if (data.AttackTimer % 3 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 vel = angle.ToRotationVector2() * 10f;
-                        Projectile.NewProjectile(npc.GetSource_FromThis(), MouthPosition(npc), vel, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), BreathDamage, 1f, Main.myPlayer);
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), MouthPosition(npc), vel, ModContent.ProjectileType<FireBreath>(), BreathDamage, 1f, Main.myPlayer);
                     }
                     if (data.AttackTimer % 12 == 0)
                     {
@@ -2295,7 +2296,7 @@ namespace tsorcRevamp.NPCs
                     velocity = angle.ToRotationVector2() * SpitStraightSpeed;
                     gravity = 0f;
                 }
-                Projectile.NewProjectile(npc.GetSource_FromThis(), mouth, velocity, ModContent.ProjectileType<Projectiles.Enemy.VenomSpit>(), SpitDamage, 1f, Main.myPlayer, gravity);
+                Projectile.NewProjectile(npc.GetSource_FromThis(), mouth, velocity, ModContent.ProjectileType<VenomSpit>(), SpitDamage, 1f, Main.myPlayer, gravity);
             }
         }
 

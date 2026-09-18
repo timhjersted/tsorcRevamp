@@ -14,6 +14,7 @@ using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Debug;
 using tsorcRevamp.Content.Items.Tools;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Textures;
@@ -934,7 +935,7 @@ namespace tsorcRevamp
 
             // Boss Tome center text is queued during projectile drawing, then rendered here so it
             // appears above players and all other world-space character art.
-            Projectiles.VFX.BossSelectVisuals.DrawCenterTextOverlay();
+            BossSelectVisuals.DrawCenterTextOverlay();
             DrawLocationBanner(spriteBatch);
 
             // Soapstone / location-banner diagnostic overlay (lower-left, DebugMode only).

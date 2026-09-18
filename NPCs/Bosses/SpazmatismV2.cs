@@ -11,6 +11,8 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Placeable.Trophies;
+using tsorcRevamp.Content.Projectiles.Enemy.Triad;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -208,7 +210,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.velocity = UsefulFunctions.Aim(NPC.Center, target.Center, 21);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), FireJetDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<SpazFireJet>(), FireJetDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
                     }
                     NPC.netUpdate = true;
                 }
@@ -261,7 +263,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>(), CursedMalestromDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<CursedMalestrom>(), CursedMalestromDamage, 0.5f, Main.myPlayer);
                     }
                 }
             }
@@ -277,7 +279,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         float angle = -MathHelper.Pi / 3;
                         for (int i = 0; i < 3; i++)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 4).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazCursedFireball>(), CursedFireballDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 4).RotatedBy(angle), ModContent.ProjectileType<SpazCursedFireball>(), CursedFireballDamage, 0.5f, Main.myPlayer);
                             angle += MathHelper.Pi / 3;
                         }
                     }
@@ -313,7 +315,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     baseRadius = 0.4f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<Projectiles.Enemy.Triad.IchorGlob>());
+                        NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<IchorGlob>());
                     }
                 }
             }
@@ -325,7 +327,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     baseRadius = 0.4f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<Projectiles.Enemy.Triad.IchorMissile>());
+                        NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<IchorMissile>());
                     }
                 }
             }
@@ -375,7 +377,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.MaliciousGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<MaliciousGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 1);
                     }
                 }
 
@@ -412,7 +414,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.velocity = UsefulFunctions.Aim(NPC.Center, target.Center, 27);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), FireJetDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<SpazFireJet>(), FireJetDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
                 }
                 NPC.netUpdate = true;
             }
@@ -656,7 +658,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(NPC.Hitbox), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.GreenYellow));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(NPC.Hitbox), Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.GreenYellow));
                 }
                 lightCooldown = lightTimer;
             }
@@ -668,11 +670,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     Filters.Scene["tsorcRevamp:SpazShockwave"].Deactivate();
                 }
-                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.LightRay>());
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<LightRay>());
                 deathTimer = 0;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.GreenYellow));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.GreenYellow));
                 }
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 

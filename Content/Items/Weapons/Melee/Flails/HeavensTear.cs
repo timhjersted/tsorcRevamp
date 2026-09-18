@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Melee.Flails;
+using tsorcRevamp.Content.Projectiles.Melee.Flails;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails
 {

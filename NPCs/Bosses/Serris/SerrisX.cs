@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.Serris
@@ -111,7 +112,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item91 with { Volume = 0.8f, Pitch = -0.65f }, NPC.Center);
                     }
                     if (extraProjs)
@@ -120,10 +121,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speed, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -speed, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speed, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -speed, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speed, speed, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -speed, speed, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speed, -speed, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -speed, -speed, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item91 with { Volume = 0.85f, Pitch = -0.75f }, NPC.Center);
                             }
                             projRotate = false;
@@ -132,10 +133,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speed, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -speed, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, 0, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, 0, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speed, 0, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -speed, 0, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, 0, speed, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, 0, -speed, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item91 with { Volume = 0.85f, Pitch = -0.75f }, NPC.Center);
                             }
                             projRotate = true;
@@ -176,7 +177,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
                             }
                         }
                     }
@@ -192,17 +193,17 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item91 with { Volume = 0.6f, Pitch = -0.65f }, NPC.Center);
                         }
                         if (projRotate)
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item91 with { Volume = 0.7f, Pitch = -0.75f }, NPC.Center);
                             }
                             projRotate = false;
@@ -211,10 +212,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item91 with { Volume = 0.7f, Pitch = -0.75f }, NPC.Center);
                             }
                             projRotate = true;

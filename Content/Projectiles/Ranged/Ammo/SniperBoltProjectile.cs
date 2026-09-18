@@ -1,0 +1,33 @@
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Content.Projectiles.Ranged.Ammo
+{
+    public class SniperBoltProjectile : ModProjectile
+    {
+        public override void SetDefaults()
+        {
+            Projectile.scale = 1.2f;
+            Projectile.friendly = true;
+            Projectile.height = 20;
+            Projectile.penetrate = 4;
+            Projectile.tileCollide = true;
+            Projectile.width = 10;
+            AIType = ProjectileID.WoodenArrowFriendly;
+            Projectile.aiStyle = 1;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.ArmorPenetration = 15;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 60;
+            Projectile.extraUpdates = 1;
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
+        }
+    }
+
+}

@@ -13,6 +13,8 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
@@ -269,7 +271,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     spawnOffset *= 80; //Multiply it so it has a length of 16. The length determines how far offset the projectile will be, 16 units = 1 tile
 
                     //float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)(NPC.Center.X + spawnOffset.X), (int)(NPC.Center.Y + spawnOffset.Y), NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)(NPC.Center.X + spawnOffset.X), (int)(NPC.Center.Y + spawnOffset.Y), NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
 
 
 
@@ -312,7 +314,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
                 if (Main.netMode != NetmodeID.MultiplayerClient) //ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>()
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 300 + Main.rand.Next(300), (float)nT.position.Y - 630f, (float)(-50 + Main.rand.Next(100)) / 10, 4f, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), smallShardDamage, 2.5f, Main.myPlayer); //ProjectileID.FrostBlastHostile //ProjectileID.FrostShard 5 was 10.1f was 14.9f is speed - 1f was 2f
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 300 + Main.rand.Next(300), (float)nT.position.Y - 630f, (float)(-50 + Main.rand.Next(100)) / 10, 4f, ModContent.ProjectileType<FrozenSaw>(), smallShardDamage, 2.5f, Main.myPlayer); //ProjectileID.FrostBlastHostile //ProjectileID.FrostShard 5 was 10.1f was 14.9f is speed - 1f was 2f
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit5 with { Volume = 0.1f, Pitch = 0.0f }, NPC.Center); //
 
@@ -355,7 +357,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     num51 = num48 / num51;
                     speedX *= num51;
                     speedY *= num51;
-                    int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.MassiveCrystalShardsSpell>();
+                    int type = ModContent.ProjectileType<MassiveCrystalShardsSpell>();
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, largeShardDamage, 0f, Main.myPlayer);
@@ -394,7 +396,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     num51 = num48 / num51;
                     speedX *= num51;
                     speedY *= num51;
-                    int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>();
+                    int type = ModContent.ProjectileType<EnemySpellIcestormBall>();
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);

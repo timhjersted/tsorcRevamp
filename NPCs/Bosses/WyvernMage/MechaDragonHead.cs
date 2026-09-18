@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.WyvernMage
@@ -125,7 +126,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     spawnOffset *= 80; //Multiply it so it has a length of 16. The length determines how far offset the projectile will be, 16 units = 1 tile
 
                     //float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)(NPC.Center.X + spawnOffset.X), (int)(NPC.Center.Y + spawnOffset.Y), NPC.velocity.X * 2f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 2f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)(NPC.Center.X + spawnOffset.X), (int)(NPC.Center.Y + spawnOffset.Y), NPC.velocity.X * 2f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 2f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
 
 
 

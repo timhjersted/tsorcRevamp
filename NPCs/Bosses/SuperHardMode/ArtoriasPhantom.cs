@@ -5,6 +5,7 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.NPCs.Puppets;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -253,7 +254,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     mantleIntensity = 1.2f;
                 }
 
-                Projectiles.Enemy.ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -12f),
+                ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -12f),
                     new Vector2(148f, 190f), mantleOpacity * visible, mantleIntensity, -1f);
             }
 

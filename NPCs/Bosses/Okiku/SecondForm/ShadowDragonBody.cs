@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 {
@@ -77,7 +78,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
                 rotation += (Main.rand.Next(-50, 50) / 100);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)(Math.Cos(rotation) * speed * -1.0), (float)(Math.Sin(rotation) * speed * -1.0), ModContent.ProjectileType<Projectiles.Enemy.Okiku.ObscureSaw>(), ObscureSawDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)(Math.Cos(rotation) * speed * -1.0), (float)(Math.Sin(rotation) * speed * -1.0), ModContent.ProjectileType<ObscureSaw>(), ObscureSawDamage, 0f, Main.myPlayer);
                 }
                 Timer = -300 - Main.rand.Next(300);
             }

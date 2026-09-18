@@ -9,7 +9,7 @@ using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Titanite;
-using tsorcRevamp.Projectiles.Summon.SamuraiBeetle;
+using tsorcRevamp.Content.Projectiles.Summon.SamuraiBeetle;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon
 {

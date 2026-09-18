@@ -1,6 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Summon.Archer;
+using tsorcRevamp.Content.Projectiles.Summon.Archer;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {
@@ -14,7 +14,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
-            int minionType = ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherSpirit>();
+            int minionType = ModContent.ProjectileType<ArcherSpirit>();
             bool minionAlive = false;
 
             for (int i = 0; i < Main.maxProjectiles; i++)

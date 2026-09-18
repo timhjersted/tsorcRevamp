@@ -1,0 +1,32 @@
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Classless;
+
+namespace tsorcRevamp.Content.Projectiles.Throwing
+{
+    class OilPotShard3 : ModProjectile
+    {
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 4;
+            Projectile.height = 4;
+            Projectile.hostile = false;
+            Projectile.friendly = true;
+            Projectile.timeLeft = 240;
+            Projectile.aiStyle = ProjAIStyleID.ThrownProjectile;
+            Projectile.knockBack = 9;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.ContinuouslyUpdateDamageStats = true;
+
+            // These 2 help the projectile hitbox be centered on the projectile sprite.
+            DrawOffsetX = -5;
+            DrawOriginOffsetY = -5;
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.Oiled, OilPot.OiledDurationInSeconds * 60);
+        }
+    }
+}

@@ -8,7 +8,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.ObjectData;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Content.Projectiles;
 
 namespace tsorcRevamp.Tiles
 {

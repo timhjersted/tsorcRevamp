@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Melee.Broadswords;
+using tsorcRevamp.Content.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 {

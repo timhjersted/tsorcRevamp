@@ -1,6 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Summon.TripleThreat;
+using tsorcRevamp.Content.Projectiles.Summon.TripleThreat;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {

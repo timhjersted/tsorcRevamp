@@ -1,0 +1,71 @@
+﻿using System;
+using Terraria;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Content.Projectiles
+{
+    class Bolt2Bolt : ModProjectile
+    {
+
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 8;
+        }
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 70;
+            Projectile.height = 124;
+            Projectile.penetrate = 6;
+            Projectile.friendly = true;
+            Projectile.tileCollide = false;
+            Projectile.light = 0.6f;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 25;
+            Projectile.DamageType = DamageClass.Magic;
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (Main.rand.NextBool(5))
+            {
+                target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 120);
+            }
+        }
+        bool Initialized;
+        public override void AI()
+        {
+            if (!Initialized)
+            {
+                Initialized = true;
+                if (Projectile.ai[0] != 0)
+                {
+                    Projectile.DamageType = DamageClass.Melee;
+                }
+            }
+            if (Projectile.ai[0] == 0)
+            {
+                Projectile.velocity.X *= 0.001f;
+                Projectile.velocity.Y *= 0.001f;
+                Projectile.ai[0] = 1;
+            }
+            Projectile.frameCounter++;
+            Projectile.frame = (int)Math.Floor((double)Projectile.frameCounter / 4);
+
+            if (Projectile.frame >= 8)
+            {
+                Projectile.frame = 6;
+            }
+            if (Projectile.frameCounter > 35)
+            { // (projFrames * 4.5) - 1
+                Projectile.alpha += 15;
+            }
+
+            if (Projectile.alpha >= 255)
+            {
+                Projectile.Kill();
+            }
+        }
+    }
+}
+

@@ -15,6 +15,8 @@ using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
@@ -421,7 +423,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Vector2 muzzle = NPC.Center + new Vector2(NPC.direction * 10f, -8f);
                         Vector2 vel = UsefulFunctions.BallisticTrajectory(muzzle, target.Center, 10f, fallback: true);
                         vel += Main.rand.NextVector2Circular(1.5f, 0f);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, vel, ModContent.ProjectileType<Projectiles.Enemy.HeroPotionBomb>(), potionBombDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, vel, ModContent.ProjectileType<HeroPotionBomb>(), potionBombDamage, 0f, Main.myPlayer);
                     }
                     SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center);
                 }
@@ -496,7 +498,7 @@ namespace tsorcRevamp.NPCs.Bosses
                             Projectile.NewProjectile(NPC.GetSource_FromThis(),
                                 x + Main.rand.Next(-30, 30), target.Center.Y - 780f,
                                 (-30 + Main.rand.Next(60)) / 10f, 8.4f,
-                                ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer);
+                                ModContent.ProjectileType<HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer);
                         }
                     }
                     SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
@@ -582,7 +584,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         Vector2 muzzle = NPC.Center + new Vector2(NPC.direction * 10f, -8f);
                         Vector2 vel = UsefulFunctions.BallisticTrajectory(muzzle, target.Center, 10f, fallback: true);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, vel, ModContent.ProjectileType<Projectiles.Enemy.HeroPotionBomb>(), potionBombDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, vel, ModContent.ProjectileType<HeroPotionBomb>(), potionBombDamage, 0f, Main.myPlayer);
                     }
                     SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center);
                 }
@@ -662,7 +664,7 @@ namespace tsorcRevamp.NPCs.Bosses
             for (int i = 0; i < count; i++)
             {
                 Vector2 vel = baseAim.RotatedBy(MathHelper.ToRadians(start + step * i)) * speed;
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, vel, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, vel, ModContent.ProjectileType<EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
             }
         }
 
@@ -738,7 +740,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 Player target = Main.player[NPC.target];
                 Vector2 origin = NPC.Center + new Vector2(NPC.direction * 24f, -6f);
                 Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 8f;
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel, ModContent.ProjectileType<Projectiles.Enemy.HeroFireArc>(), fireArcDamage, 3f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel, ModContent.ProjectileType<HeroFireArc>(), fireArcDamage, 3f, Main.myPlayer);
                 SoundEngine.PlaySound(SoundID.Item73 with { Volume = 0.5f, Pitch = 0.2f }, NPC.Center);
             }
         }
@@ -778,7 +780,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 return;
             }
-            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(color));
+            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(color));
         }
 
         private void SpawnSupport(int npcType)

@@ -20,15 +20,6 @@ using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.Projectiles.Ranged;
-using tsorcRevamp.Projectiles.Summon;
-using tsorcRevamp.Projectiles.Summon.Archer;
-using tsorcRevamp.Projectiles.Summon.SamuraiBeetle;
-using tsorcRevamp.Projectiles.Summon.Whips;
-using tsorcRevamp.Projectiles.Summon.Whips.Dominatrix;
-using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
-using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 using tsorcRevamp;
 

@@ -17,7 +17,9 @@ using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Guns;
 using tsorcRevamp.Content.Items.Weapons.Summon;
-using tsorcRevamp.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Content.Projectiles.Enemy.Marilith;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
@@ -280,7 +282,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<VortexOrb>());
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<SolarDetonator>());
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<SolarBlast>());
-            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>());
+            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<MarilithLightning>());
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<DarkLaser>());
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<StardustShot>());
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<StardustBeam>());
@@ -301,7 +303,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
             if (introTimer == 60 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(32, 32), Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(32, 32), Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<RealityCrack>(), 0, 0, Main.myPlayer);
             }
 
             if (introTimer == 120)
@@ -309,7 +311,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0") with { Volume = 2f });
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer);
                 }
                 animationState = 1;
                 animationTimer = 90;
@@ -1263,7 +1265,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/EvilLaugh") with { Volume = 2, PlayOnlyIfFocused = false, MaxInstances = 0 });
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer, 1);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<RealityCrack>(), 0, 0, Main.myPlayer, 1);
                 }
             }
 

@@ -9,9 +9,9 @@ using Terraria.GameContent.UI.BigProgressBar;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy.Marilith;
-using tsorcRevamp.Projectiles.Enemy.Okiku;
-using tsorcRevamp.Projectiles.VFX;
+using tsorcRevamp.Content.Projectiles.Enemy.Marilith;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -162,7 +162,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 550, 20);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
                         }
                     }
 
@@ -181,7 +181,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                                     NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DamnedSoul>(), 0, i, NPC.whoAmI, shield);
                                 }
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 550, 20);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
                             }
                             attackMode++;
                             if (attackMode > 3)
@@ -241,7 +241,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                             NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DamnedSoul>(), 0, i, NPC.whoAmI, shield);
                         }
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 550, 20);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
                     }
                     DamnedSoulsSpawned = true;
                 }
@@ -271,7 +271,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                             NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DamnedSoul>(), 0, -i, NPC.whoAmI);
                         }
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 550, 20);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
                     }
                 }
 
@@ -454,7 +454,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
         {
             foreach (Projectile proj in Main.projectile)
             {
-                if (proj.active && proj.type == ModContent.ProjectileType<Projectiles.VFX.BossSelectVisuals>())
+                if (proj.active && proj.type == ModContent.ProjectileType<BossSelectVisuals>())
                 {
                     return true; 
                 }

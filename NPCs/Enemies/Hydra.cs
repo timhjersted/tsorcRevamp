@@ -9,6 +9,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Golem;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -430,8 +433,8 @@ namespace tsorcRevamp.NPCs.Enemies
                     // Original 250px ExplosionFlash & ShockwaveEffect VFX rings!
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), headPos, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 550, 20);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), headPos, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), headPos, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 550, 20);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), headPos, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
                     }
 
                     // Burst of purple and red dust
@@ -590,7 +593,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.9f, Pitch = -0.1f }, spawnPos);
 
-            int projType = ModContent.ProjectileType<Projectiles.Enemy.Golem.SmallGolemFireball>();
+            int projType = ModContent.ProjectileType<SmallGolemFireball>();
             Vector2 toPlayerDir = (player.Center - spawnPos).SafeNormalize(Vector2.UnitX * NPC.direction);
 
             void SpawnFireball(Vector2 velocity, int damage)
@@ -680,7 +683,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 case AttackID.ConsecratedLight:
                     Vector2 spawnPos = FrontHeadWorldPosition != Vector2.Zero ? FrontHeadWorldPosition : NPC.Center;
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, Vector2.UnitY, ModContent.ProjectileType<Projectiles.Enemy.EnemyConsecratedLight>(), 35, 0f, Main.myPlayer, 0f, NPC.whoAmI);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, Vector2.UnitY, ModContent.ProjectileType<EnemyConsecratedLight>(), 35, 0f, Main.myPlayer, 0f, NPC.whoAmI);
                     holyBeamActiveTimer = 135;
                     break;
             }
@@ -782,7 +785,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             // Shifted 32px lower (204f Y offset instead of 236f) so the bottom edge of lightning animation hits the ground
             Vector2 spawnPosition = position - new Vector2(0f, 204f);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.ConsecratedLightning>(), SmiteDamage, 0f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<ConsecratedLightning>(), SmiteDamage, 0f, Main.myPlayer);
         }
 
         public override void AI()

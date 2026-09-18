@@ -1,0 +1,51 @@
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
+
+namespace tsorcRevamp.Content.Projectiles.Ranged.Ammo
+{
+    public class AbyssBulletProjectile : ModProjectile
+    {
+
+        public override void SetDefaults()
+        {
+			Projectile.width = 8; 
+			Projectile.height = 8; 
+			Projectile.aiStyle = 1; 
+			Projectile.friendly = true; 
+			Projectile.hostile = false; 
+			Projectile.DamageType = DamageClass.Ranged; 
+			Projectile.timeLeft = 600; 
+			Projectile.light = 0.5f; 
+			Projectile.ignoreWater = true; 
+			Projectile.tileCollide = true; 
+            Projectile.penetrate = 3;
+			Projectile.extraUpdates = 2;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 60; 
+			AIType = ProjectileID.Bullet; 
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(ModContent.BuffType<AbyssInferno>(), 5 * 60);
+        }
+
+		public override void AI()
+        {
+            Lighting.AddLight(Projectile.Center, 0.8f, 0.1f, 0.7f);
+        }
+
+		public override void OnKill(int timeLeft) 
+        {
+            Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.position);
+            for (int i = 0; i < 5; i++)
+			{
+				Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 223, 1f);
+				dust.noGravity = true;
+            }
+        }
+    }
+}

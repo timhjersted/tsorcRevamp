@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using tsorcRevamp.Content.Projectiles;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -108,7 +109,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
         {
-            projType = ModContent.ProjectileType<Projectiles.Ice2Ball>();
+            projType = ModContent.ProjectileType<Ice2Ball>();
             attackDelay = 2;
         }
 

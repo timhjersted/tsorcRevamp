@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 {
@@ -184,7 +185,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.1f, PitchVariance = 0.2f }, NPC.Center);
                     NPC.netUpdate = true; //new      
@@ -205,7 +206,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                         NPC.netUpdate = true; //new

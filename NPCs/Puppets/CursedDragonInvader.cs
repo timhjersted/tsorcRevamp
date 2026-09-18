@@ -10,6 +10,8 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
 
 namespace tsorcRevamp.NPCs.Puppets
@@ -414,7 +416,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 Vector2 vel = ang.ToRotationVector2() * 8f;
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), origin, vel,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.EnemyPilgrimArcaneBall>(),
+                    ModContent.ProjectileType<EnemyPilgrimArcaneBall>(),
                     RangedDamage, 1f, Main.myPlayer);
             }
         }
@@ -428,7 +430,7 @@ namespace tsorcRevamp.NPCs.Puppets
             SoundEngine.PlaySound(SoundID.Item25 with { Volume = 0.6f, PitchVariance = 0.12f }, NPC.Center);
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), muzzle, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.EnemyPilgrimArcaneBall>(),
+                ModContent.ProjectileType<EnemyPilgrimArcaneBall>(),
                 RangedDamage, 2f, Main.myPlayer);
         }
 
@@ -443,7 +445,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 Vector2 vel = baseAim.RotatedBy(spread) * Main.rand.NextFloat(9.5f, 12f);
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), muzzle, vel,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.EnemyVenomStaffProj>(),
+                    ModContent.ProjectileType<EnemyVenomStaffProj>(),
                     SecondaryRangedDamage, 2f, Main.myPlayer);
             }
         }
@@ -463,7 +465,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 Vector2 vel = (aimAt - spawn).SafeNormalize(Vector2.UnitY) * 3.9f; // ~70% slower than before
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), spawn, vel,
-                    ModContent.ProjectileType<Projectiles.Enemy.EnemyMeteorStormMeteor>(),
+                    ModContent.ProjectileType<EnemyMeteorStormMeteor>(),
                     MagicDamage, 2f, Main.myPlayer);
             }
         }
@@ -581,7 +583,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Vector2 vel = (targetPos - spawn).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(3.5f, 4.4f); // ~70% slower than before
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), spawn, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.EnemyMeteorStormMeteor>(),
+                ModContent.ProjectileType<EnemyMeteorStormMeteor>(),
                 MagicDamage, 2f, Main.myPlayer);
         }
 
@@ -624,7 +626,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Vector2 mouth = MouthPosition;
             Vector2 vel = UsefulFunctions.Aim(mouth, target.Center, 9f) + Main.rand.NextVector2Circular(1.5f, 1.5f);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), mouth, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.CursedDragonInvaderBreath>(), BreathDamage, 0f, Main.myPlayer);
+                ModContent.ProjectileType<CursedDragonInvaderBreath>(), BreathDamage, 0f, Main.myPlayer);
         }
 
         // ── Cursed Knives: throw 3 sticky knives in a tight 45° spread ──────────────
@@ -644,7 +646,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 Vector2 vel = baseAim.RotatedBy(MathHelper.ToRadians(22.5f) * i) * 11f;
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), muzzle, vel,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.CursedDragonKnife>(),
+                    ModContent.ProjectileType<CursedDragonKnife>(),
                     CursedKnivesDamage, 2f, Main.myPlayer);
             }
         }
@@ -670,7 +672,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Vector2 center = NPC.Center + new Vector2(NPC.direction * 30f, 0f);
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
+                ModContent.ProjectileType<PuppetMeleeHitbox>(),
                 (int)(SpearDamage * 1.25f), 4f, Main.myPlayer, boxW, boxH);
         }
 

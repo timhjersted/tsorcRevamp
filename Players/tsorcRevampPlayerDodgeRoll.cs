@@ -12,7 +12,7 @@ using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Melee.Flails;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Flamethrowers;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Textures;

@@ -10,7 +10,9 @@ using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
+using EnemyCaltrop = tsorcRevamp.Content.Items.Weapons.Enemy.EnemyCaltrop;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
@@ -256,7 +258,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     NPC.GetSource_FromThis(),
                     muzzle,
                     velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.EnemyTaintedArrow>(),
+                    ModContent.ProjectileType<EnemyTaintedArrow>(),
                     SecondaryRangedDamage,
                     3f,
                     Main.myPlayer);
@@ -270,7 +272,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.GetSource_FromThis(),
                 muzzle,
                 starVelocity,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetThrowingStar>(),
+                ModContent.ProjectileType<PuppetThrowingStar>(),
                 RangedDamage,
                 2f,
                 Main.myPlayer);
@@ -287,7 +289,7 @@ namespace tsorcRevamp.NPCs.Puppets
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.65f, PitchVariance = 0.2f }, NPC.Center);
             Vector2 origin = NPC.Center + new Vector2(NPC.direction * 12f, -NPC.height * 0.25f);
             Vector2 throwTarget = target.Center + target.velocity * 18f;
-            Projectiles.Enemy.Weapons.EnemyCaltrop.ThrowSpread(NPC.GetSource_FromThis(), origin, throwTarget, MagicDamage, 1.5f, Main.myPlayer);
+            Content.Projectiles.Enemy.Weapons.EnemyCaltrop.ThrowSpread(NPC.GetSource_FromThis(), origin, throwTarget, MagicDamage, 1.5f, Main.myPlayer);
         }
     }
 }

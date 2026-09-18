@@ -15,11 +15,17 @@ using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Potions;
+<<<<<<< Updated upstream
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Projectiles.Enemy.OolacileSorcerer;
+=======
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer;
+using tsorcRevamp.Content.Projectiles.VFX;
+>>>>>>> Stashed changes
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -2284,7 +2290,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.dontTakeDamage = false;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+<<<<<<< Updated upstream
                 NPC.StrikeInstantKill();
+=======
+                if (Main.rand.NextBool(240))
+                {
+                    Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
+                    projVelocity.Y -= 5;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<OolacileDarkOrb>(), darkOrbDamage, 0f, Main.myPlayer);
+                    }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24, NPC.Center);
+                    NPCSpawningTimer = 1f;
+                    SecondAttackCounter = 0;
+                }
+
+                if (Main.rand.NextBool(30))
+                {
+                    Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<OolacileSeeker>(), seekerDamage, 0f, Main.myPlayer);
+                    }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    NPCSpawningTimer = 1f;
+                }
+>>>>>>> Stashed changes
             }
         }
 
@@ -3091,6 +3123,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+<<<<<<< Updated upstream
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
                     ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 1,
                     UsefulFunctions.ColorToFloat(Color.OrangeRed));
@@ -3154,6 +3187,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             for (int i = 0; i < SpellCount; i++)
             {
                 _spellCooldowns[i] = reader.ReadInt16();
+=======
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+>>>>>>> Stashed changes
             }
         }
         #endregion

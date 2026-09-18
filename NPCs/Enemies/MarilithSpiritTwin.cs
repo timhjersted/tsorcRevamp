@@ -7,7 +7,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
-using tsorcRevamp.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -89,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             num51 = num48 / num51;
                             speedX *= num51;
                             speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>();//44;//0x37; //14;
+                            int type = ModContent.ProjectileType<EnemySpellLightning3Ball>();//44;//0x37; //14;
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
@@ -138,7 +139,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             speedX *= num51;
                             speedY *= num51;
                             //(int) (14f * npc.scale);
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>();//44;//0x37; //14;
+                            int type = ModContent.ProjectileType<CrazedPurpleCrush>();//44;//0x37; //14;
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);

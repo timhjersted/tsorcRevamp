@@ -3,15 +3,15 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Melee;
-using tsorcRevamp.Projectiles.Melee.Axes;
-using tsorcRevamp.Projectiles.Melee.Boomerangs;
-using tsorcRevamp.Projectiles.Melee.Broadswords;
-using tsorcRevamp.Projectiles.Melee.Flails;
-using tsorcRevamp.Projectiles.Melee.Hammers;
-using tsorcRevamp.Projectiles.Melee.Shortswords;
-using tsorcRevamp.Projectiles.Melee.Spears;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Melee;
+using tsorcRevamp.Content.Projectiles.Melee.Axes;
+using tsorcRevamp.Content.Projectiles.Melee.Boomerangs;
+using tsorcRevamp.Content.Projectiles.Melee.Broadswords;
+using tsorcRevamp.Content.Projectiles.Melee.Flails;
+using tsorcRevamp.Content.Projectiles.Melee.Hammers;
+using tsorcRevamp.Content.Projectiles.Melee.Shortswords;
+using tsorcRevamp.Content.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Systems.LethalTempo;
 

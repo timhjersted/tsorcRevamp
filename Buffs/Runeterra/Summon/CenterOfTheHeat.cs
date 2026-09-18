@@ -1,7 +1,7 @@
 using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
-using tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles;
+using tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles;
 
 namespace tsorcRevamp.Buffs.Runeterra.Summon
 {

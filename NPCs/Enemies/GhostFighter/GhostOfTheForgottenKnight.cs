@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Throwing;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
@@ -55,7 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             }
 
             // "Spectral Spear Throw" — commitFraction 0.5: first half cancellable (by magic), second half hyperarmor.
-            int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();
+            int spearProjectileType = ModContent.ProjectileType<BlackKnightSpear>();
             UsefulFunctions.AddAttack(NPC, 180, spearProjectileType, spearDamage, 8, SoundID.Item17,
                 telegraphColor: Color.LightBlue, stopBeforeFiring: false, needsLineOfSight: true,
                 telegraphTime: 45, commitFraction: 0.5f, lockAimAtTelegraph: true);

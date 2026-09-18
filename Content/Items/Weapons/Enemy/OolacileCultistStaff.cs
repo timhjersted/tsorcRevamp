@@ -7,7 +7,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Enemy
     /// <summary>Presentation-only pyromancy staff held by the Oolacile Cultist above half health.</summary>
     public class OolacileCultistStaff : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/OrangeGemStaff";
 
         public override void SetStaticDefaults() => Item.staff[Type] = true;
 

@@ -8,8 +8,8 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy;
-using tsorcRevamp.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp.NPCs.Puppets
 {

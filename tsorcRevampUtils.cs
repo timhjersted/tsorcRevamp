@@ -18,9 +18,10 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.BossItems;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy.Triad;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp
 {
@@ -1156,9 +1157,9 @@ namespace tsorcRevamp
         ///<param name="type">The type of projectile being checked</param>
         public static bool IsProjectileSafeToFuckWith(int type)
         {
-            if (Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>() ||
-                Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>() ||
-                Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>() ||
+            if (Main.projectile[type].type == ModContent.ProjectileType<CataluminanceTrail>() ||
+                Main.projectile[type].type == ModContent.ProjectileType<SpazFireJet>() ||
+                Main.projectile[type].type == ModContent.ProjectileType<CursedMalestrom>() ||
                 Main.projectile[type].type == ProjectileID.PhantasmalDeathray || Main.projectile[type].type == ProjectileID.SaucerDeathray)
             {
                 return false;

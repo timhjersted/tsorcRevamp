@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -249,7 +250,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 5, (float)((Math.Cos(rotation) * 25) * -1), (float)((Math.Sin(rotation) * 25) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 5, (float)((Math.Cos(rotation) * 25) * -1), (float)((Math.Sin(rotation) * 25) * -1), ModContent.ProjectileType<EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 30;
                         }
                         NPC.netUpdate = true;
@@ -287,7 +288,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             num51 = num48 / num51;
                             speedX *= num51;
                             speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>();//44;//0x37; //14;
+                            int type = ModContent.ProjectileType<EnemyBioSpitBall>();//44;//0x37; //14;
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, bioSpitDamage, 0f, Main.myPlayer);

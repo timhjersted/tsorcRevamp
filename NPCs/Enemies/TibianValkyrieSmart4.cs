@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -64,7 +65,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // shots reach an elevated player; if still short, the player is simply out of range.
             // overshoot (0,-16): aim ~1 tile ABOVE the player so standoff shots clear the ledge the
             // player stands on instead of grazing its lip (the "aim a bit low" report). Tunable.
-            UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 11, shootSound: SoundID.Item17, overshoot: new Vector2(0, -16));
+            UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<BlackKnightSpear>(), spearDamage, 11, shootSound: SoundID.Item17, overshoot: new Vector2(0, -16));
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.MaxJumpPower = 9f;

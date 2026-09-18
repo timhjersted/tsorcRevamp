@@ -8,6 +8,7 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.Dworc
 {
@@ -35,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             AnimationType = NPCID.Skeleton;
             Main.npcFrameCount[NPC.type] = 15;
             // "Venom Bolt" — long-range aimed arrow (green telegraph)
-            int venomBoltType = ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>();
+            int venomBoltType = ModContent.ProjectileType<ArcherBolt>();
             UsefulFunctions.AddAttack(NPC, 180, venomBoltType, 9, 8, SoundID.Item63, telegraphColor: Color.GreenYellow);
 
             // No teleport: the sniper repositions on foot only. It keeps its distance through the evasive

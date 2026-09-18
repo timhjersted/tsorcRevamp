@@ -4,7 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Ranged.Ammo;
+using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
 {

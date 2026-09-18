@@ -4,7 +4,7 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm

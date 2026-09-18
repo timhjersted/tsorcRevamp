@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Quara;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -244,7 +245,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (dir != Vector2.Zero) dir.Normalize();
                     Vector2 v = dir * 9f - new Vector2(0f, 3f);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), Maw, v,
-                        ModContent.ProjectileType<Projectiles.Enemy.QuaraIchorGlob>(), GlobDamage, 1f, Main.myPlayer, 0.18f);
+                        ModContent.ProjectileType<QuaraIchorGlob>(), GlobDamage, 1f, Main.myPlayer, 0.18f);
                 }
                 spitTimer = 0;
                 spitCooldown = 150 + Main.rand.Next(60);

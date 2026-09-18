@@ -15,6 +15,8 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Placeable.Relics;
 using tsorcRevamp.Content.Items.Placeable.Trophies;
 using tsorcRevamp.Content.Items.Vanity;
+using tsorcRevamp.Content.Projectiles.Enemy.Prime;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
@@ -172,7 +174,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 80);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 80);
                     }
                 }
                 if (fireChargeTimer >= 120)
@@ -298,7 +300,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 60);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 60);
                 }
                 SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
             }
@@ -359,12 +361,12 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 4, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.White));
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2CircularEdge(100, 100), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2CircularEdge(100, 100), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 0, 80);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 50, 0, Main.myPlayer, 1);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 50, 0, Main.myPlayer, 2);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 4, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.White));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2CircularEdge(100, 100), Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2CircularEdge(100, 100), Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 0, 80);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<SyntheticFirestorm>(), 50, 0, Main.myPlayer, 1);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<SyntheticFirestorm>(), 50, 0, Main.myPlayer, 2);
                 }
                 finalStand = true;
                 NPC.defense = 0;
@@ -585,8 +587,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 randomPoint = Main.rand.NextVector2Circular(20, 20);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 800, 40);
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 800, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
                 }
             }
 
@@ -595,23 +597,23 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 randomPoint = Main.rand.NextVector2Circular(20, 20);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), BeamNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), BeamNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), BeamNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), BeamNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), IonNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), IonNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), IonNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), IonNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), BuzzsawNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), BuzzsawNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), BuzzsawNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), BuzzsawNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), GatlingNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), GatlingNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), GatlingNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), GatlingNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), LauncherNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), LauncherNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), LauncherNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), LauncherNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), SeverNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), SeverNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), SeverNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 600, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), SeverNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
                 }
             }
 
@@ -632,35 +634,35 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     //Having to write this was punishment for my hubris and lack of foresight (not just putting these in an array I can loop through)
                     if (BeamNPC != null && BeamNPC.active)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), BeamNPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), BeamNPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
                         BeamNPC.StrikeInstantKill();
                         BeamNPC.netUpdate = true;
                     }
 
                     if (IonNPC != null && IonNPC.active)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), IonNPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), IonNPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
                         IonNPC.StrikeInstantKill();
                         IonNPC.netUpdate = true;
                     }
 
                     if (BuzzsawNPC != null && BuzzsawNPC.active)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), BuzzsawNPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), BuzzsawNPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
                         BuzzsawNPC.StrikeInstantKill();
                         BuzzsawNPC.netUpdate = true;
                     }
 
                     if (GatlingNPC != null && GatlingNPC.active)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), GatlingNPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), GatlingNPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
                         GatlingNPC.StrikeInstantKill();
                         GatlingNPC.netUpdate = true;
                     }
 
                     if (LauncherNPC != null && LauncherNPC.active)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), LauncherNPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), LauncherNPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
                         LauncherNPC.StrikeInstantKill();
                         LauncherNPC.netUpdate = true;
                     }
@@ -669,16 +671,16 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         SeverNPC.StrikeInstantKill();
                         SeverNPC.netUpdate = true;
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), SeverNPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), SeverNPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
                     }
 
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 2400, 120);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 900, 60);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 600, 60);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 400, 60);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 200, 60);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 2400, 120);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 900, 60);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 600, 60);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 400, 60);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 200, 60);
                 }
             }
 
@@ -733,7 +735,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 60);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 60);
                 }
                 SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
             }
@@ -750,8 +752,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 80);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 50, 0, Main.myPlayer, 0);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 80);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<SyntheticFirestorm>(), 50, 0, Main.myPlayer, 0);
                 }
             }
         }

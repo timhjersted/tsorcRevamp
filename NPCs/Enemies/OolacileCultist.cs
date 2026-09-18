@@ -8,10 +8,10 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.OolacileCultist;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
-using tsorcRevamp.Projectiles.Enemy.OolacileCultist;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies

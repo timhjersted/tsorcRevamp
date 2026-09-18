@@ -9,7 +9,7 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.VanillaItems;
-using tsorcRevamp.Projectiles.Melee.Broadswords;
+using tsorcRevamp.Content.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 {

@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Magic.Scrolls;
+using tsorcRevamp.Content.Projectiles.Magic.Scrolls;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Sentry
 {

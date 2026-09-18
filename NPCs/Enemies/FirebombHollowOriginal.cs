@@ -10,6 +10,7 @@ using tsorcRevamp.Content.Items.Armor.Magic;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Classless;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -482,15 +483,15 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (!Main.hardMode)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 18, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<EnemyFirebomb>(), 18, 0f, Main.myPlayer);
                         }
                         else if (Main.hardMode && !tsorcRevampWorld.SuperHardMode)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 30, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<EnemyFirebomb>(), 30, 0f, Main.myPlayer);
                         }
                         else if (tsorcRevampWorld.SuperHardMode)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 40, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<EnemyFirebomb>(), 40, 0f, Main.myPlayer);
                         }
                     }
                 }

@@ -7,6 +7,8 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -246,11 +248,11 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            const int size = Projectiles.Enemy.PoisonTrailCloud.MinSize;
+            const int size = PoisonTrailCloud.MinSize;
             float behindX = -NPC.direction * (NPC.width * 0.5f + 24f);
             Vector2 spawn = NPC.Center + new Vector2(behindX, -8f) - new Vector2(size, size) * 0.5f;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.PoisonTrailCloud>(), 0, 0f, Main.myPlayer);
+                ModContent.ProjectileType<PoisonTrailCloud>(), 0, 0f, Main.myPlayer);
         }
 
         // ================================================================================
@@ -437,7 +439,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 case SpitAttack.StickySpit:
                     schedule = BuildSchedule(attack);
-                    currentProjType = ModContent.ProjectileType<Projectiles.Enemy.StickySpitBall>();
+                    currentProjType = ModContent.ProjectileType<StickySpitBall>();
                     currentDamage = Tiered(40, 60, 80); // "poison strike"
                     currentSpeed = 8f;
                     currentGravity = 0.3f;
@@ -447,7 +449,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     break; // handled by their own Firing routines
                 default:
                     schedule = BuildSchedule(attack);
-                    currentProjType = ModContent.ProjectileType<Projectiles.Enemy.PoisonSpitBall>();
+                    currentProjType = ModContent.ProjectileType<PoisonSpitBall>();
                     currentDamage = Tiered(50, 70, 90); // "spit"
                     currentSpeed = 9f;
                     currentGravity = 0.25f;
@@ -458,7 +460,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (attack != SpitAttack.ToxicGasNova)
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity,
-                        ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer,
+                        ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer,
                         UsefulFunctions.ColorToFloat(Color.LimeGreen));
             }
         }
@@ -746,7 +748,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 aimPoint = frozenTarget + offset;
                 Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, aimPoint, currentSpeed, currentGravity);
                 float cloudDamageTicks = activeSpit == SpitAttack.ComboB
-                    ? Projectiles.Enemy.ElandVenomSplash.ComboBDamageTicks
+                    ? ElandVenomSplash.ComboBDamageTicks
                     : 0f;
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, currentProjType,
                     currentDamage, 0f, Main.myPlayer, currentGravity, cloudDamageTicks);
@@ -780,7 +782,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.ToxicGasNovaFog>(), 0, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<ToxicGasNovaFog>(), 0, 0f, Main.myPlayer);
             }
 
             if (Main.netMode != NetmodeID.Server)
@@ -850,7 +852,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 aimPoint = frozenTarget + new Vector2(dirSign * ChargeSuppressionDistances[i], (i - 2) * 10f);
                 Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, aimPoint, 9f, 0.25f);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.PoisonSpitBall>(), damage, 0f, Main.myPlayer, 0.25f);
+                    ModContent.ProjectileType<PoisonSpitBall>(), damage, 0f, Main.myPlayer, 0.25f);
             }
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f }, NPC.Center);
         }
@@ -868,7 +870,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (spitState == SpitState.Firing && activeSpit == SpitAttack.ChargeJump && chargeLaunched && NPC.velocity.Y != 0f)
             {
-                Projectiles.Enemy.EnemyVFX.DrawElandVenomProjectile(
+                EnemyVFX.DrawElandVenomProjectile(
                     NPC.Center, NPC.velocity, new Vector2(116f, 42f), 0.58f);
             }
         }
@@ -886,7 +888,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 float rotation = MathHelper.TwoPi * i / burstCount;
                 Vector2 velocity = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * (0.5f + Main.rand.NextFloat(-0.15f, 0.15f));
                 Projectile.NewProjectile(NPC.GetSource_Death(), center, velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.PoisonBurstCloud>(), damage, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<PoisonBurstCloud>(), damage, 0f, Main.myPlayer);
             }
         }
 

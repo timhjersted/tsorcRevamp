@@ -13,6 +13,8 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
@@ -654,7 +656,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     // Pink "dash incoming" flash at the mouth, ~25 ticks before the dash launches.
                     if (AttackTimer == Math.Max(1, LungeWindupTicks - 25) && Main.netMode != NetmodeID.MultiplayerClient)
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Mouth(), Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.HotPink));
+                            ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.HotPink));
                     if (!Main.dedServ && AttackTimer >= LungeWindupTicks - 25 && Main.rand.NextBool(3))
                     {
                         Vector2 pinkMouth = Mouth();
@@ -729,7 +731,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 float spread = MathHelper.ToRadians((idx - 3) * 9f);
                 Vector2 vel = (baseAng + spread).ToRotationVector2() * 8f;
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), mouth, vel,
-                    ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.PurpleSkull>(), SkullDamage, 1f, Main.myPlayer, 0.02f);
+                    ModContent.ProjectileType<PurpleSkull>(), SkullDamage, 1f, Main.myPlayer, 0.02f);
                 SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.35f, Pitch = 0.2f }, NPC.Center);
             }
             if (AttackTimer >= SpewTelegraphTicks + 45)
@@ -756,7 +758,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             if (AttackTimer == TugTelegraphTicks + 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), Mouth(), Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselGravityWell>(), 0, 0f, Main.myPlayer,
+                    ModContent.ProjectileType<VesselGravityWell>(), 0, 0f, Main.myPlayer,
                     NPC.whoAmI, 45f, 450f); // gentle: short duration, small radius → weak pull
             }
             // Black Nip: a tight point-blank cone after the pull.
@@ -768,7 +770,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 {
                     Vector2 vel = (baseAng + MathHelper.ToRadians(i * 12f)).ToRotationVector2() * 10f;
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), mouth, vel,
-                        ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.PurpleSkull>(), ConeDamage, 1f, Main.myPlayer, 0f);
+                        ModContent.ProjectileType<PurpleSkull>(), ConeDamage, 1f, Main.myPlayer, 0f);
                 }
                 SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.5f, Pitch = -0.2f }, NPC.Center);
             }
@@ -819,7 +821,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.9f, Pitch = -0.7f }, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), Mouth(), Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselGravityWell>(), 0, 0f, Main.myPlayer,
+                            ModContent.ProjectileType<VesselGravityWell>(), 0, 0f, Main.myPlayer,
                             NPC.whoAmI, WellTelegraphTicks, 760f); // full pull (radius ≥700 → strong)
                 }
                 MouthChargeTelegraph();
@@ -836,7 +838,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     UsefulFunctions.ScreenShake(NPC.Center, 7f, 18);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.MediumPurple));
+                            ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.MediumPurple));
                 }
                 // Black Breath: wide cone waves fired where the pull left the player.
                 if ((wellTick == 2 || wellTick == 12 || wellTick == 22) && Main.netMode != NetmodeID.MultiplayerClient)
@@ -849,7 +851,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                         // without changing the speed of the Vessel's other skull patterns.
                         Vector2 vel = (baseAng + MathHelper.ToRadians(i * 12f)).ToRotationVector2() * Main.rand.NextFloat(4.2f, 5.4f);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), mouth, vel,
-                            ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.PurpleSkull>(), BreathDamage, 1f, Main.myPlayer, 0f);
+                            ModContent.ProjectileType<PurpleSkull>(), BreathDamage, 1f, Main.myPlayer, 0f);
                     }
                     SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.6f, Pitch = -0.4f }, NPC.Center);
                 }
@@ -927,12 +929,12 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselSoulNova>(), NovaDamage, 4f, Main.myPlayer, 480f);
+                        ModContent.ProjectileType<VesselSoulNova>(), NovaDamage, 4f, Main.myPlayer, 480f);
                     for (int i = 0; i < 12; i++)
                     {
                         Vector2 vel = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 7f;
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
-                            ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.PurpleSkull>(), NovaDamage, 1f, Main.myPlayer, 0f);
+                            ModContent.ProjectileType<PurpleSkull>(), NovaDamage, 1f, Main.myPlayer, 0f);
                     }
                 }
             }
@@ -977,13 +979,13 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                                ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselSoulRuptureVFX>(),
+                                ModContent.ProjectileType<VesselSoulRuptureVFX>(),
                                 0, 0f, Main.myPlayer, 145f, 1f, 20f);
                             for (int i = 0; i < 14; i++)
                             {
                                 Vector2 vel = (MathHelper.TwoPi * i / 14f).ToRotationVector2() * Main.rand.NextFloat(6f, 8.5f);
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
-                                    ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.PurpleSkull>(), PlungeDamage, 1f, Main.myPlayer, 0f);
+                                    ModContent.ProjectileType<PurpleSkull>(), PlungeDamage, 1f, Main.myPlayer, 0f);
                             }
                         }
                         AttackPhase = 2;
@@ -1047,7 +1049,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 1f, Pitch = -0.8f }, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), Mouth(), Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselGravityWell>(), 0, 0f, Main.myPlayer,
+                        ModContent.ProjectileType<VesselGravityWell>(), 0, 0f, Main.myPlayer,
                         NPC.whoAmI, SwallowCapture, 1000f); // swallow well owns the 2s gentle + 2s ramp curve
             }
 
@@ -1076,12 +1078,12 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 {
                     SoundEngine.PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Mouth(), Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.MediumPurple));
+                        ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.MediumPurple));
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), Mouth(), Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselSoulRuptureVFX>(),
+                        ModContent.ProjectileType<VesselSoulRuptureVFX>(),
                         0, 0f, Main.myPlayer, 185f, 0f, 22f);
                 }
             }
@@ -1138,7 +1140,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.9f, Pitch = -0.2f }, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselSoulRuptureVFX>(),
+                        ModContent.ProjectileType<VesselSoulRuptureVFX>(),
                         0, 0f, Main.myPlayer, 220f, 0f, 28f);
                 if (!Main.dedServ)
                     for (int i = 0; i < 18; i++)
@@ -1208,7 +1210,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     float ang = NPC.rotation + MathHelper.PiOver2 + MathHelper.ToRadians(i * 180f);
                     Vector2 vel = ang.ToRotationVector2() * 6f;
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), mouth, vel,
-                        ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.PurpleSkull>(), SkullDamage, 1f, Main.myPlayer, 0f);
+                        ModContent.ProjectileType<PurpleSkull>(), SkullDamage, 1f, Main.myPlayer, 0f);
                 }
             }
             // Radial dust engulfing the body, growing.
@@ -1246,7 +1248,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselSoulRuptureVFX>(),
+                        ModContent.ProjectileType<VesselSoulRuptureVFX>(),
                         0, 0f, Main.myPlayer, 430f, 1f, 38f);
                     _deathSpectacleDone = true;
                     NPC.dontTakeDamage = false;
@@ -1329,7 +1331,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         void KillOwnedWells()
         {
-            int type = ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselGravityWell>();
+            int type = ModContent.ProjectileType<VesselGravityWell>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile proj = Main.projectile[i];
@@ -1446,7 +1448,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 && CurrentAttack == VesselAttack.VoidPlunge && AttackPhase == 1;
             if (lunge || plunge)
             {
-                Projectiles.Enemy.VesselOfSouls.VesselVFX.DrawRammingWake(
+                VesselVFX.DrawRammingWake(
                     NPC.Center, NPC.velocity, NPC.Size, plunge);
             }
 
@@ -1525,7 +1527,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 }
             }
 
-            Projectiles.Enemy.VesselOfSouls.VesselVFX.DrawMaw(
+            VesselVFX.DrawMaw(
                 Mouth(), radius, progress, committed, innerDeadzone: 26f);
         }
 

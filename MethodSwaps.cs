@@ -29,17 +29,18 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Commo
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee._Animations;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Marilith;
+using tsorcRevamp.Content.Projectiles.Enemy.Triad;
+using tsorcRevamp.Content.Projectiles.Enemy.WyvernMage;
+using tsorcRevamp.Content.Projectiles.Magic;
+using tsorcRevamp.Content.Projectiles.Melee;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.MainMenu;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.Bosses.Pinwheel;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Enemy;
-using tsorcRevamp.Projectiles.Enemy.Marilith;
-using tsorcRevamp.Projectiles.Enemy.Triad;
-using tsorcRevamp.Projectiles.Enemy.WyvernMage;
-using tsorcRevamp.Projectiles.Magic;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.UI;
@@ -2178,9 +2179,9 @@ namespace tsorcRevamp
                             Main.spriteBatch.End();
                             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                         }
-                        if (Main.projectile[i].ModProjectile is Projectiles.Melee.FetidExhaustProjectile)
+                        if (Main.projectile[i].ModProjectile is FetidExhaustProjectile)
                         {
-                            Projectiles.Melee.FetidExhaustProjectile jet = (Projectiles.Melee.FetidExhaustProjectile)Main.projectile[i].ModProjectile;
+                            FetidExhaustProjectile jet = (FetidExhaustProjectile)Main.projectile[i].ModProjectile;
                             jet.additiveContext = true;
                             Color color = Color.White;
                             jet.PreDraw(ref color);

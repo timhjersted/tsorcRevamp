@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
@@ -107,7 +108,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 projectileVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVelocity.X, projectileVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVelocity.X, projectileVelocity.Y, ModContent.ProjectileType<FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 NPC.ai[0] = 0;

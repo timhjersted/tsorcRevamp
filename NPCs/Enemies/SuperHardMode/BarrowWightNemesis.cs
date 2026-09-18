@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -168,7 +169,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<FrozenDragonsBreath>(), breathDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 30;
                         }
                     }

@@ -5,6 +5,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -220,7 +221,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 5f);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<ArtoriasDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //acid flame
 
@@ -276,7 +277,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                                          player.position.Y - 400f,
                                                          finalVelocity.X,
                                                          finalVelocity.Y,
-                                                         ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(),
+                                                         ModContent.ProjectileType<ShadowShot>(),
                                                          redMagicDamage,
                                                          2f,
                                                          Main.myPlayer);
@@ -324,7 +325,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                                                  position.Y,
                                                                  velocity.X,
                                                                  velocity.Y,
-                                                                 ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(),
+                                                                 ModContent.ProjectileType<ShadowShot>(),
                                                                  redMagicDamage,
                                                                  2f,
                                                                  Main.myPlayer);
@@ -349,7 +350,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                                                         player.position.Y + 300f,
                                                                         finalVelocity.X,
                                                                         finalVelocity.Y,
-                                                                        ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(),
+                                                                        ModContent.ProjectileType<ShadowShot>(),
                                                                         redMagicDamage,
                                                                         2f,
                                                                         Main.myPlayer);
@@ -372,7 +373,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                                                     position.Y,
                                                                     velocity.X,
                                                                     velocity.Y,
-                                                                    ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(),
+                                                                    ModContent.ProjectileType<ShadowShot>(),
                                                                     redMagicDamage,
                                                                     2f,
                                                                     Main.myPlayer);
@@ -415,7 +416,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 540f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), poisonStrikeDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 540f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<EnemyCursedBreath>(), poisonStrikeDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.2f, Pitch = 0.01f }); //flamethrower
                             NPC.netUpdate = true;

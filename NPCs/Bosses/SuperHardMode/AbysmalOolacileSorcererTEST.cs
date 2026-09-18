@@ -16,8 +16,8 @@ using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer;
 using UtfUnknown.Core.Models.SingleByte.Croatian;
-using tsorcRevamp.Projectiles.Enemy.OolacileSorcerer;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {

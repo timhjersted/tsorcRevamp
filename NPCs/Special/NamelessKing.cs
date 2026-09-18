@@ -10,6 +10,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.NPCs.Bosses;
 
 namespace tsorcRevamp.NPCs.Special
@@ -311,12 +312,12 @@ namespace tsorcRevamp.NPCs.Special
                         {
                             if (Math.Abs(NPC.velocity.X) < 4.5f) //If not moving at extreme speed, use this proj
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
                             }
 
                             else //If moving at extreme speeds, use this higher damage projectile
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 12, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<GreySlash>(), 12, 0f, Main.myPlayer, 0, NPC.whoAmI);
                             }
                         }
 
@@ -324,12 +325,12 @@ namespace tsorcRevamp.NPCs.Special
                         {
                             if (Math.Abs(NPC.velocity.X) < 4.5f) //If not moving at extreme speed, use this proj
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 8, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<GreySlash>(), 8, 0f, Main.myPlayer, 0, NPC.whoAmI);
                             }
 
                             else //If moving at extreme speeds, use this higher damage projectile
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
                             }
                         }
                     }
@@ -423,12 +424,12 @@ namespace tsorcRevamp.NPCs.Special
                                     {
                                         if (NPC.direction == 1)
                                         {
-                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<EnemyFirebomb>(), 20, 0);
                                         }
 
                                         else
                                         {
-                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<EnemyFirebomb>(), 20, 0);
                                         }
                                     }
 
@@ -436,12 +437,12 @@ namespace tsorcRevamp.NPCs.Special
                                     {
                                         if (NPC.direction == 1)
                                         {
-                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<EnemyFirebomb>(), 20, 0);
                                         }
 
                                         else
                                         {
-                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<EnemyFirebomb>(), 20, 0);
                                         }
                                     }
 
@@ -449,12 +450,12 @@ namespace tsorcRevamp.NPCs.Special
                                     {
                                         if (NPC.direction == 1)
                                         {
-                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<EnemyFirebomb>(), 20, 0);
                                         }
 
                                         else
                                         {
-                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<EnemyFirebomb>(), 20, 0);
                                         }
                                     }
                                 }

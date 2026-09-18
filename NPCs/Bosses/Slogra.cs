@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -106,7 +107,7 @@ namespace tsorcRevamp.NPCs.Bosses
                             Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPoint, 12, .1f, true, true);
                             if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, ModContent.ProjectileType<EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
                             }
                         }
 
@@ -116,7 +117,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8, .1f, true, true);
                         if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.player[NPC.target].velocity / 1.5f, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.player[NPC.target].velocity / 1.5f, ModContent.ProjectileType<EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
                         }
                     }
 
@@ -338,7 +339,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (moveTimer % 15 == 0)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7), ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7), ModContent.ProjectileType<EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
                     }
 
                     if (moveTimer % 15 == 7)
@@ -427,7 +428,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
 
-                if (Projectiles.Enemy.EarthTrident.texture != null && !Projectiles.Enemy.EarthTrident.texture.IsDisposed)
+                if (EarthTrident.texture != null && !EarthTrident.texture.IsDisposed)
                 {
                     float rotation = 0;
                     if (NPC.direction == 1)
@@ -438,9 +439,9 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         rotation -= 0.15f;
                     }
-                    Rectangle sourceRectangle = new Rectangle(0, 0, Projectiles.Enemy.EarthTrident.texture.Width, Projectiles.Enemy.EarthTrident.texture.Height);
+                    Rectangle sourceRectangle = new Rectangle(0, 0, EarthTrident.texture.Width, EarthTrident.texture.Height);
                     Vector2 origin = sourceRectangle.Size() / 2f;
-                    Main.EntitySpriteDraw(Projectiles.Enemy.EarthTrident.texture,
+                    Main.EntitySpriteDraw(EarthTrident.texture,
                         NPC.Center - Main.screenPosition,
                         sourceRectangle, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
                     Main.spriteBatch.End();

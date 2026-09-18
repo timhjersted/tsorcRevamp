@@ -18,7 +18,10 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Guns;
 using tsorcRevamp.Content.Items.Weapons.Summon;
-using tsorcRevamp.Projectiles.Enemy.DarkCloud;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.DarkCloud;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -165,7 +168,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.GenericLaser>())
+                    if (Main.projectile[i].type == ModContent.ProjectileType<GenericLaser>())
                     {
                         Main.projectile[i].Kill();
                     }
@@ -1300,7 +1303,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>())
+                    if (Main.projectile[i].type == ModContent.ProjectileType<EnemyArrowOfDarkCloud>())
                     {
                         for (int j = 0; j < 3; j++)
                         {
@@ -1691,7 +1694,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.AntimatTargeting>(), 0, 0.5f, Main.myPlayer, i, NPC.whoAmI);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<AntimatTargeting>(), 0, 0.5f, Main.myPlayer, i, NPC.whoAmI);
                     }
                 }
             }
@@ -1924,12 +1927,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         #region Draw Functions
-        static Texture2D darkSparkTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
+        static Texture2D darkSparkTexture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkCloudSpark)));
         public void DivineSparkDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             if (darkSparkTexture == null || darkSparkTexture.IsDisposed)
             {
-                darkSparkTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
+                darkSparkTexture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkCloudSpark)));
             }
             float targetPoint;
             if ((AttackModeCounter % turnLength) > chargeTime && (AttackModeCounter % turnLength) < turnLength)
@@ -2134,10 +2137,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Clean up projectiles
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.GenericLaser>()
+                if (Main.projectile[i].type == ModContent.ProjectileType<GenericLaser>()
                     || Main.projectile[i].type == ModContent.ProjectileType<DarkFlow>()
-                    || Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>()
-                    || Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkFreezeBolt>())
+                    || Main.projectile[i].type == ModContent.ProjectileType<EnemyArrowOfDarkCloud>()
+                    || Main.projectile[i].type == ModContent.ProjectileType<DarkFreezeBolt>())
                 {
                     Main.projectile[i].Kill();
                 }
@@ -2156,7 +2159,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
             }
         }
 
@@ -2341,7 +2344,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             int shot_rate = 70;  //  rate at which archers/bombers fire; 70 for skeleton archer, 180 for goblin archer, 450 for clown; atm must be an even # or won't fire at shot_rate/2
                                  //int fuse_time = 300;  //  fuse time on bombs, 300 for clown bombs
                                  //int projectile_damage = 35;  //  projectile dmg: 35 for Skeleton Archer, 11 for Goblin Archer
-            int projectile_id = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellMeteor>(); // projectile id: 82(Flaming Arrow) for Skeleton Archer, 81(Wooden Arrow) for Goblin Archer, 75(Happy Bomb) for Clown
+            int projectile_id = ModContent.ProjectileType<EnemySpellMeteor>(); // projectile id: 82(Flaming Arrow) for Skeleton Archer, 81(Wooden Arrow) for Goblin Archer, 75(Happy Bomb) for Clown
             float projectile_velocity = 11; // initial velocity? 11 for Skeleton Archers, 9 for Goblin Archers, bombs have fixed speed & direction atm
 
             // can_pass_doors only
@@ -2639,7 +2642,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemySpellSuddenDeathBall>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, deathBallDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 6;
                                 Main.projectile[num54].aiStyle = 1;
@@ -2664,7 +2667,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 700;
                                 Main.projectile[num54].aiStyle = 23;
@@ -2699,7 +2702,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemySpellHoldBall>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 105;
                                 Main.projectile[num54].aiStyle = 1;
@@ -2726,7 +2729,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyDragoonLance>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemyDragoonLance>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, dragoonLanceDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 700;
                                 Main.projectile[num54].aiStyle = 1;
@@ -2753,7 +2756,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 600;
                                 Main.projectile[num54].aiStyle = 23;
@@ -2781,7 +2784,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 speedX *= num51;
                                 speedY *= num51;
                                 //int damage = 80;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 450;
                                 Main.projectile[num54].aiStyle = 23;
@@ -2807,7 +2810,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellArmageddonBlastBall>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemySpellArmageddonBlastBall>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, armageddonDamage, 0f, Main.myPlayer);
                                 //Main.projectile[num54].timeLeft = 0;
                                 Main.projectile[num54].aiStyle = 23;
@@ -2834,7 +2837,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity1Ball>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemySpellGravity1Ball>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 40;
                                 Main.projectile[num54].aiStyle = 1;
@@ -2858,7 +2861,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 270;
                                 Main.projectile[num54].aiStyle = 23;
@@ -2882,7 +2885,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<CrazedPurpleCrush>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 600;
                                 Main.projectile[num54].aiStyle = 1;
@@ -2917,7 +2920,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<ShadowShot>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, shadowShotDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 200;
                                 Main.projectile[num54].aiStyle = 23; //was 23
@@ -2942,7 +2945,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>();//44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemySpellIcestormBall>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 0;//was 70
                                 Main.projectile[num54].aiStyle = 1;
@@ -2971,7 +2974,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>(); //44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemyArrowOfDarkCloud>(); //44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 1300;
                                 Main.projectile[num54].aiStyle = 1;
@@ -2997,7 +3000,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormWave>(); //44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemySpellAbyssStormWave>(); //44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, stormWaveDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 1300;
                                 Main.projectile[num54].aiStyle = 1;
@@ -3024,7 +3027,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>(); //44;//0x37; //14;
+                                int type = ModContent.ProjectileType<EnemyArrowOfDarkCloud>(); //44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 1300;
                                 Main.projectile[num54].aiStyle = 1;

@@ -13,11 +13,14 @@ using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Weapons.Classless;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Content.Items.Weapons.Throwing;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    public class GreatBlackKnight : ModNPC, IStaggerable, IFlailAnchor, IDebugAttackLabel, IHumanoidMeleeHitEffects, Projectiles.Enemy.Weapons.ISpearMeleeWielder
+    public class GreatBlackKnight : ModNPC, IStaggerable, IFlailAnchor, IDebugAttackLabel, IHumanoidMeleeHitEffects, ISpearMeleeWielder
     {
         public int redKnightsSpearDamage = 45;
         public int redMagicDamage = 40;
@@ -609,7 +612,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Color color = kind == AttackKind.Homing ? Color.Orange : Color.OrangeRed;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(color));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(color));
                 if (kind == AttackKind.Bomb)
                 {
                     Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
@@ -686,7 +689,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Vector2 vel = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, speed, fallback: true) + player.velocity;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, vel.X, vel.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, vel.X, vel.Y, ModContent.ProjectileType<BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
             }
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
             EndAttack();
@@ -744,7 +747,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 int projectileIndex = Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), NPC.Center, new Vector2(direction, 0f),
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.GreatBlackKnightSpearHitbox>(),
+                    ModContent.ProjectileType<GreatBlackKnightSpearHitbox>(),
                     redKnightsGreatDamage, 4f, Main.myPlayer, SpearMeleeReach, SpearMeleeHeight);
                 tsorcGlobalProjectile.SetDefenseTraits(projectileIndex,
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ActiveAttackDefenseTraits);
@@ -851,7 +854,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, vel.X, vel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, vel.X, vel.Y, ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
                 }
             }
             EndAttack();
@@ -883,7 +886,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, vel.X, vel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, vel.X, vel.Y, ModContent.ProjectileType<EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
             }
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
             EndAttack();
@@ -894,7 +897,7 @@ namespace tsorcRevamp.NPCs.Enemies
         /// the next one can't launch until this one retracts to the hand and self-destructs.</summary>
         private bool HasActiveFlail()
         {
-            int flailType = ModContent.ProjectileType<Projectiles.Enemy.Weapons.GreatBlackKnightFlail>();
+            int flailType = ModContent.ProjectileType<GreatBlackKnightFlail>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile p = Main.projectile[i];
@@ -942,7 +945,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), anchor, velocity, ModContent.ProjectileType<Projectiles.Enemy.Weapons.GreatBlackKnightFlail>(), redFlailDamage, 3f, Main.myPlayer, NPC.whoAmI, spin ? 1f : 0f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), anchor, velocity, ModContent.ProjectileType<GreatBlackKnightFlail>(), redFlailDamage, 3f, Main.myPlayer, NPC.whoAmI, spin ? 1f : 0f);
             }
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.2f }, NPC.Center);
             EndAttack();
@@ -963,7 +966,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 2f, fallback: true) + Main.rand.NextVector2Circular(1, 5);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer);
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center);
 
@@ -971,7 +974,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 2f, fallback: true) + Main.rand.NextVector2Circular(-5, 5);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer);
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.9f, PitchVariance = 2f }, NPC.Center);
                 NPC.netUpdate = true;
@@ -1008,7 +1011,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 10f, fallback: true);
                     speed += player.velocity / 2f;
                     speed = speed.RotatedBy(angle);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 1f, Pitch = -0.3f, PitchVariance = 0.2f }, NPC.Center);
                 NPC.netUpdate = true;
@@ -1216,20 +1219,20 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (currentAttack == AttackKind.Homing)
                 {
-                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightHexCrystal(hand, Vector2.Zero, progress, phase == Phase.Committed);
+                    EnemyVFX.DrawBlackKnightHexCrystal(hand, Vector2.Zero, progress, phase == Phase.Committed);
                 }
                 else if (currentAttack == AttackKind.Ultrakill)
                 {
-                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightDeathSeal(NPC.Center,
+                    EnemyVFX.DrawBlackKnightDeathSeal(NPC.Center,
                         phase == Phase.Telegraph ? progress : 1f);
                     if (phase == Phase.Committed && storedPlayerPosition != Vector2.Zero)
                     {
-                        Projectiles.Enemy.EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition, progress);
+                        EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition, progress);
                     }
                 }
                 else if (currentAttack == AttackKind.Flail)
                 {
-                    Projectiles.Enemy.EnemyVFX.DrawGreatBlackKnightFlail(hand, Vector2.Zero, phase == Phase.Committed);
+                    EnemyVFX.DrawGreatBlackKnightFlail(hand, Vector2.Zero, phase == Phase.Committed);
                 }
             }
 
@@ -1237,7 +1240,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.life <= NPC.lifeMax / 3 && stormCycle >= 400)
             {
                 float stormProgress = MathHelper.Clamp((stormCycle - 400f) / 20f, 0f, 1f);
-                Projectiles.Enemy.EnemyVFX.DrawBlackKnightHexCrystal(NPC.Center, Vector2.Zero, stormProgress, false);
+                EnemyVFX.DrawBlackKnightHexCrystal(NPC.Center, Vector2.Zero, stormProgress, false);
             }
         }
 
@@ -1274,7 +1277,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (SpearMeleeHitWindow)
                 {
                     Vector2 forward = new Vector2(facing, 0f);
-                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
+                    EnemyVFX.DrawBlackKnightSpearWake(
                         handWorld + Main.screenPosition + forward * (34f + gripSlide),
                         forward.ToRotation(), new Vector2(86f, 18f), 0.6f);
                 }
@@ -1296,7 +1299,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (phase == Phase.Committed)
                 {
                     Vector2 forward = spearAim.SafeNormalize(new Vector2(NPC.spriteDirection, 0f));
-                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
+                    EnemyVFX.DrawBlackKnightSpearWake(
                         handWorld + Main.screenPosition + forward * 34f,
                         forward.ToRotation(), new Vector2(74f, 16f), 0.52f);
                 }
@@ -1322,7 +1325,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // sprite. Replaced with a red fuse spark at the bomb's own fuse, which needs no
                 // alignment between a quad and a sprite to read correctly.
                 spriteBatch.Draw(bombTexture, handWorld, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, BombGripOrigin, NPC.scale, SpriteEffects.None, 0);
-                Projectiles.Enemy.EnemyVFX.SpawnBombFuseSparks(handWorld + Main.screenPosition, fuseProgress);
+                EnemyVFX.SpawnBombFuseSparks(handWorld + Main.screenPosition, fuseProgress);
                 // NPC.spriteDirection, not bombAim's sign: CurrentHandWorld() (used for handWorld above)
                 // anchors on spriteDirection, and the arm must mirror the same way as the hand it grips.
                 DrawArmOverlay(spriteBatch, drawColor, NPC.spriteDirection);

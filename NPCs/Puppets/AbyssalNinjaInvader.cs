@@ -12,6 +12,7 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Weapons.Melee;
 using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.AI;
 
@@ -384,7 +385,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 Vector2 vel  = toTarget.RotatedBy(spread) * 14f; // HeavyCrossbow shootSpeed (higher than friendly bolt to compensate for reduced gravity)
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), muzzle, vel,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetCrossbowBolt>(),
+                    ModContent.ProjectileType<PuppetCrossbowBolt>(),
                     SecondaryRangedDamage, 4f, Main.myPlayer);
             }
             else
@@ -400,7 +401,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     Vector2 vel  = toTarget.RotatedBy(spread) * 10f;
                     Projectile.NewProjectile(
                         NPC.GetSource_FromThis(), NPC.Center, vel,
-                        ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetThrowingStar>(),
+                        ModContent.ProjectileType<PuppetThrowingStar>(),
                         RangedDamage, 2f, Main.myPlayer);
                 }
             }

@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor.Magic;
 using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -47,7 +48,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 throwingKnifeDamage = 20;
             }
             // "Throwing Knife" - quick aimed knife toss.
-            int throwingKnifeType = ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>();
+            int throwingKnifeType = ModContent.ProjectileType<EnemyThrowingKnife>();
             UsefulFunctions.AddAttack(NPC, 160, throwingKnifeType, throwingKnifeDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, needsLineOfSight: true, telegraphTime: 25, commitFraction: 0f);
 
             // paces around its post when it gives up.

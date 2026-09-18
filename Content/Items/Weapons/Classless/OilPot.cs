@@ -1,7 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Throwing;
+using tsorcRevamp.Content.Projectiles.Throwing;
 
 namespace tsorcRevamp.Content.Items.Weapons.Classless
 {

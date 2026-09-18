@@ -1,6 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Summon.ShatteredReflection;
+using tsorcRevamp.Content.Projectiles.Summon.ShatteredReflection;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {

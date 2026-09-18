@@ -8,8 +8,8 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Ranged;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Ranged;
 
 namespace tsorcRevamp.NPCs
 {
@@ -92,8 +92,8 @@ namespace tsorcRevamp.NPCs
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            bool IsFlamethrower = projectile.type == ModContent.ProjectileType<Projectiles.Freezethrower>()
-            || projectile.type == ModContent.ProjectileType<Projectiles.Ranged.MeltdownFirestorm>();
+            bool IsFlamethrower = projectile.type == ModContent.ProjectileType<Freezethrower>()
+            || projectile.type == ModContent.ProjectileType<MeltdownFirestorm>();
 
             if (tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type))
             {

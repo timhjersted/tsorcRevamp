@@ -6,7 +6,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Melee.Broadswords;
+using tsorcRevamp.Content.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Content.Items.Armor
 {

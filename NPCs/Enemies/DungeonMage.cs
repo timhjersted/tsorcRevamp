@@ -5,6 +5,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -82,7 +83,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int type = ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>();
+                    int type = ModContent.ProjectileType<PoisonFlames>();
                     int damage = 18;
                     float num48 = 2f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -218,7 +219,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     speedX *= num51;
                     speedY *= num51;
                     int damage = 25;
-                    int type = ModContent.ProjectileType<Projectiles.Enemy.MiracleSprouter>();
+                    int type = ModContent.ProjectileType<MiracleSprouter>();
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), myPos.X, myPos.Y, speedX, speedY, type, damage, 0f, NPC.whoAmI, 110);

@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.Serris
@@ -191,7 +192,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                 float angle = (float)Math.Atan2(speedY, speedX);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.GravityDistortion>(), distortionDamage, 0f, Main.myPlayer, 0, speed);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<GravityDistortion>(), distortionDamage, 0f, Main.myPlayer, 0, speed);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item91 with { Volume = 0.7f, Pitch = -0.8f }, NPC.Center);
                 }
             }

@@ -9,6 +9,9 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 
@@ -2397,7 +2400,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (HasSlashTrailVFX && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.PuppetSwordSlashTrail>(), 0, 0f,
+                    ModContent.ProjectileType<PuppetSwordSlashTrail>(), 0, 0f,
                     Main.myPlayer, NPC.whoAmI);
             }
 
@@ -2704,7 +2707,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 if (Main.netMode != NetmodeID.MultiplayerClient && --gnpc.TeleportIllusionTimeLeft <= 0)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.VFX.TeleportIllusionDissolve>(),
+                        ModContent.ProjectileType<TeleportIllusionDissolve>(),
                         0, 0f, Main.myPlayer);
                     NPC.active = false;
                     if (Main.netMode == NetmodeID.Server)
@@ -7243,7 +7246,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Vector2 hitCenter = NPC.Center + attackDirection * 38f;
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), hitCenter, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
+                ModContent.ProjectileType<PuppetMeleeHitbox>(),
                 (int)(MeleeDamage * 1.2f), 4f, Main.myPlayer, boxW, boxH);
         }
 
@@ -7773,7 +7776,7 @@ namespace tsorcRevamp.NPCs.Puppets
             int box = (int)size;
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
+                ModContent.ProjectileType<PuppetMeleeHitbox>(),
                 damage, knockback, Main.myPlayer, box, box);
         }
 
@@ -7813,7 +7816,7 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             Projectile.NewProjectileDirect(
                 NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(),
+                ModContent.ProjectileType<TelegraphFlash>(),
                 0, 0, Main.myPlayer,
                 UsefulFunctions.ColorToFloat(color));
         }
@@ -9984,7 +9987,7 @@ namespace tsorcRevamp.NPCs.Puppets
             || Phase == AttackPhase.HomingVolleySwing || Phase == AttackPhase.BoomerangSwing
             || Phase == AttackPhase.SpiralFanSwing;
 
-        /// <summary>Bumped once per fresh swing so <see cref="Projectiles.Enemy.PuppetSwordSlashTrail"/>
+        /// <summary>Bumped once per fresh swing so <see cref="PuppetSwordSlashTrail"/>
         /// knows to reset its ribbon history instead of interpolating across the gap between two
         /// unrelated swings (e.g. two different combo steps).</summary>
         private void UpdateMeleeSlashTrailSequence()

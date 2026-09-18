@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Summon;
-using tsorcRevamp.Projectiles.Summon.EtherianWyvern;
+using tsorcRevamp.Content.Projectiles.Summon.EtherianWyvern;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {

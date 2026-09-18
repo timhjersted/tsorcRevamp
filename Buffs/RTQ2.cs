@@ -15,7 +15,7 @@ namespace tsorcRevamp.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             bool unused = false;
-            player.BuffHandle_SpawnPetIfNeededAndSetTime(buffIndex, ref unused, ModContent.ProjectileType<Projectiles.Pets.RTQ2>());
+            player.BuffHandle_SpawnPetIfNeededAndSetTime(buffIndex, ref unused, ModContent.ProjectileType<Content.Projectiles.Pets.RTQ2>());
         }
 
     }

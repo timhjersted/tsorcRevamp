@@ -10,6 +10,8 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -128,14 +130,14 @@ namespace tsorcRevamp.NPCs.Enemies
             Lighting.AddLight(NPC.Center, .28f, .16f, .04f);
 
             int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
-            var projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>();
-            var projStab = ModContent.ProjectileType<Projectiles.Enemy.Spearhead>();
+            var projSlash = ModContent.ProjectileType<MediumWeaponSlash>();
+            var projStab = ModContent.ProjectileType<Spearhead>();
 
             #region enrage (≤60% HP: fire projectiles + one-time +25% damage + ambient flame)
             if (lifePercentage <= 60)
             {
-                projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlashFire>();
-                projStab = ModContent.ProjectileType<Projectiles.Enemy.SpearheadFire>();
+                projSlash = ModContent.ProjectileType<MediumWeaponSlashFire>();
+                projStab = ModContent.ProjectileType<SpearheadFire>();
                 if (!hasEnraged)
                     enrage = true;
             }
@@ -305,7 +307,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     jumpSlashing = true;
                     shielding = false;
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
                 }
 
                 if (jumpSlashing)
@@ -379,7 +381,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.ai[1] = 430;
                 slashing = false;
                 NPC.ai[3] = 0;
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Yellow));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Yellow));
             }
 
             if (stabbing)
@@ -476,13 +478,13 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
 
                     if (NPC.ai[2] == 355 && NPC.Distance(player.Center) > 55 && NPC.Distance(player.Center) < 300)
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Orange));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Orange));
 
                     if (NPC.ai[2] > 380 && NPC.ai[2] < 460 && NPC.Distance(player.Center) > 55 && NPC.Distance(player.Center) < 300)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (20f * NPC.direction), NPC.Center.Y, 8f * NPC.direction, Main.rand.NextFloat(-1.5f, 0f), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), fireDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (20f * NPC.direction), NPC.Center.Y, 8f * NPC.direction, Main.rand.NextFloat(-1.5f, 0f), ModContent.ProjectileType<SmallFlameJet>(), fireDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 25;
                             if (Main.rand.NextBool(3))
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, PitchVariance = 0.1f }, NPC.Center);

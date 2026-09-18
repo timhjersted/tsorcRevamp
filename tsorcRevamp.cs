@@ -52,19 +52,6 @@ using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss;
 using tsorcRevamp.NPCs.Special;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Summon;
-using tsorcRevamp.Projectiles.Summon.Archer;
-using tsorcRevamp.Projectiles.Summon.NullSprite;
-using tsorcRevamp.Projectiles.Summon.Phoenix;
-using tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles;
-using tsorcRevamp.Projectiles.Summon.SamuraiBeetle;
-using tsorcRevamp.Projectiles.Summon.SunsetQuasar;
-using tsorcRevamp.Projectiles.Summon.Tetsujin;
-using tsorcRevamp.Projectiles.Summon.EtherianWyvern;
-using tsorcRevamp.Projectiles.Summon.PhotonicDownpour;
-using tsorcRevamp.Projectiles.Summon.ShatteredReflection;
-using tsorcRevamp.Projectiles.Summon.TripleThreat;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.Tiles.BuffStations;
 using tsorcRevamp.Tiles.Relics;
@@ -102,16 +89,30 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
-using tsorcRevamp.Projectiles.Enemy;
-using tsorcRevamp.Projectiles.Enemy.DarkCloud;
-using tsorcRevamp.Projectiles.Enemy.Gwyn;
-using tsorcRevamp.Projectiles.Enemy.Okiku;
-using tsorcRevamp.Projectiles.Enemy.WyvernMage;
-using tsorcRevamp.Projectiles.Magic;
-using tsorcRevamp.Projectiles.Melee.Boomerangs;
-using tsorcRevamp.Projectiles.Ranged;
-using tsorcRevamp.Projectiles.Ranged.Ammo;
-using tsorcRevamp.Projectiles.Throwing;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.DarkCloud;
+using tsorcRevamp.Content.Projectiles.Enemy.Gwyn;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.Enemy.WyvernMage;
+using tsorcRevamp.Content.Projectiles.Magic;
+using tsorcRevamp.Content.Projectiles.Melee.Boomerangs;
+using tsorcRevamp.Content.Projectiles.Ranged;
+using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
+using tsorcRevamp.Content.Projectiles.Summon;
+using tsorcRevamp.Content.Projectiles.Summon.Archer;
+using tsorcRevamp.Content.Projectiles.Summon.EtherianWyvern;
+using tsorcRevamp.Content.Projectiles.Summon.NullSprite;
+using tsorcRevamp.Content.Projectiles.Summon.Phoenix;
+using tsorcRevamp.Content.Projectiles.Summon.PhotonicDownpour;
+using tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles;
+using tsorcRevamp.Content.Projectiles.Summon.SamuraiBeetle;
+using tsorcRevamp.Content.Projectiles.Summon.ShatteredReflection;
+using tsorcRevamp.Content.Projectiles.Summon.SunsetQuasar;
+using tsorcRevamp.Content.Projectiles.Summon.Tetsujin;
+using tsorcRevamp.Content.Projectiles.Summon.TripleThreat;
+using tsorcRevamp.Content.Projectiles.Throwing;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Textures;
@@ -2651,7 +2652,7 @@ namespace tsorcRevamp
                             bool mythrilReflection = perfectParry
                                 && shieldPlayer.activeShieldType == ModContent.ItemType<MythrilBulwark>()
                                 && attackingProjectile.type !=
-                                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>();
+                                    ModContent.ProjectileType<HumanoidMeleeHitbox>();
                             if (mythrilReflection)
                             {
                                 attackingProjectile.hostile = false;
@@ -3003,7 +3004,7 @@ namespace tsorcRevamp
                     ModContent.BuffType<ArcherSpiritBuff>(),
                     new Dictionary<string, object>()
                     {
-                        ["ProjID"] = ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherSpirit>(),
+                        ["ProjID"] = ModContent.ProjectileType<ArcherSpirit>(),
                         ["Slot"] = 2f,
                     }
                     );

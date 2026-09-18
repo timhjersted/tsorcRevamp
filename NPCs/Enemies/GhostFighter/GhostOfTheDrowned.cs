@@ -13,6 +13,8 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
@@ -374,7 +376,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
                             stab.timeLeft = 6;
                             stab.velocity.X = 5;
                         }
@@ -385,7 +387,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
                             stab.timeLeft = 6;
                             stab.velocity.X = 5;
                         }
@@ -396,7 +398,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
                             stab.timeLeft = 6;
                             stab.velocity.X = 5;
                         }
@@ -409,7 +411,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
                             stab.timeLeft = 6;
                             stab.velocity.X = -5;
                         }
@@ -420,7 +422,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
                             stab.timeLeft = 6;
                             stab.velocity.X = -5;
                         }
@@ -431,7 +433,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
                             stab.timeLeft = 6;
                             stab.velocity.X = -5;
                         }
@@ -466,7 +468,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 if (AI_Timer == 65 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     // Blue telegraph flash 25 ticks before the first bubble at 90 (hyper-armored from here).
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Blue));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Blue));
                 }
 
                 int dustQuantity = (int)AI_Timer / 6;
@@ -502,7 +504,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                         {
                             Vector2 boltVelocity = (player.Center - shootPos).SafeNormalize(Vector2.UnitX * NPC.direction) * 5.5f;
                             float boltDrift = Main.rand.NextFloat(-2.5f, 2.5f);
-                            Projectile bolt = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), shootPos, boltVelocity, ModContent.ProjectileType<Projectiles.Enemy.GhostBubbleBolt>(), spearStabDamage, 5, Main.myPlayer, boltDrift)];
+                            Projectile bolt = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), shootPos, boltVelocity, ModContent.ProjectileType<GhostBubbleBolt>(), spearStabDamage, 5, Main.myPlayer, boltDrift)];
                             bolt.friendly = false;
                             bolt.hostile = true;
                         }

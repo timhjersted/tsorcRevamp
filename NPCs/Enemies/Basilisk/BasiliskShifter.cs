@@ -9,6 +9,8 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Enemies.Basilisk
 {
@@ -118,12 +120,12 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            Projectiles.Enemy.BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
+            BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
             tsorcRevampAIs.EvasiveOnHit(NPC, true);
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            Projectiles.Enemy.BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
+            BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
             tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
@@ -184,7 +186,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 breathVel = GetConeLimitedBreathVelocity(player, 9f) + Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreathCollides>(), cursedBreathDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<EnemyCursedBreathCollides>(), cursedBreathDamage, 0f, Main.myPlayer);
                     NPC.ai[3] = 0; // no teleporting mid-breath
                 }
             }
@@ -249,7 +251,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(purpleAttack ? Color.Purple : Color.GreenYellow));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(purpleAttack ? Color.Purple : Color.GreenYellow));
                 }
             }
             // Fire (committed). Lob sprays AtkFire..AtkSprayEnd every 8t; the others are single shots at AtkFire.
@@ -330,7 +332,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         private void FireSpit(Player player)
         {
             Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, GetLockedTargetPosition(player), 9);
-            int p = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
+            int p = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
             Main.projectile[p].timeLeft = 300;
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
         }
@@ -338,7 +340,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         private void FireFinal(Player player)
         {
             Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, GetLockedTargetPosition(player), 10);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.1f }, NPC.Center);
         }
 
@@ -346,7 +348,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         {
             Vector2 targetPosition = GetDisrupterTargetPosition(player, shotIndex);
             Vector2 velocity = GetDisrupterLaunchVelocity(targetPosition, shotIndex);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer, targetPosition.X, -targetPosition.Y);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<HypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer, targetPosition.X, -targetPosition.Y);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, player.Center);
         }
 
@@ -456,8 +458,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             return lockedAttack switch
             {
                 0 => ProjectileID.DD2DrakinShot,
-                3 => ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(),
-                _ => ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>()
+                3 => ModContent.ProjectileType<HypnoticDisrupter>(),
+                _ => ModContent.ProjectileType<EnemyBioSpitBall>()
             };
         }
 
