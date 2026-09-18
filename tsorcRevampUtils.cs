@@ -281,7 +281,17 @@ namespace tsorcRevamp
     public static class UsefulFunctions
     {
         /// <summary>
-        /// Puts out a string that will adhere to automatic code refactoring when files are moved
+        /// Returns a string for usage of any vanilla texture
+        /// </summary>
+        /// <param name="iD">The ID of the object</param>
+        /// <param name="suffix">The type of object you are looking for, defaults to Item</param>
+        /// <returns></returns>
+        public static string VanillaTextureFilepath(int iD, string suffix = "Item")
+        {
+            return "Terraria/Images/" + suffix + "_" + iD;
+        }
+        /// <summary>
+        /// Returns a string that will adhere to automatic code refactoring when files are moved
         /// </summary>
         /// <param name="className">The original class that uses the texture</param>
         /// <returns></returns>

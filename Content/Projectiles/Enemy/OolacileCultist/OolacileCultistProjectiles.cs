@@ -240,11 +240,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileCultist
         private const int GroundSearchTiles = 4;
         private const int BurnDebuffTicks = 120;
 
-<<<<<<< Updated upstream:Projectiles/Enemy/OolacileCultist/OolacileCultistProjectiles.cs
-        // Projectiles/InvisibleProj.png was deleted when the mod consolidated on InvisibleNothingProj; this
-        // hardcoded path outlived it and threw MissingResourceException at load.
-=======
->>>>>>> Stashed changes:Content/Projectiles/Enemy/OolacileCultist/OolacileCultistProjectiles.cs
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         private float Age

@@ -1,15 +1,11 @@
-using Microsoft.Xna.Framework;
-<<<<<<< Updated upstream:Projectiles/Enemy/OolacileSorcerer/OccultistStarBig.cs
+
+
 using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-=======
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode;
->>>>>>> Stashed changes:Content/Projectiles/Enemy/OolacileSorcerer/OccultistStarBig.cs
+using tsorcRevamp.Projectiles.Enemy.OolacileSorcerer;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer
 {

@@ -1,8 +1,8 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -12,20 +12,15 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.BossBags;
-using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Potions;
-<<<<<<< Updated upstream
 using tsorcRevamp.Content.Items.Weapons.Enemy;
-using tsorcRevamp.NPCs.AI;
-using tsorcRevamp.NPCs.Enemies;
-using tsorcRevamp.NPCs.Puppets;
-using tsorcRevamp.Projectiles.Enemy.OolacileSorcerer;
-=======
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer;
 using tsorcRevamp.Content.Projectiles.VFX;
->>>>>>> Stashed changes
+using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.Projectiles.Enemy.OolacileSorcerer;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -926,7 +921,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             bool orbGone = _seekerOrbIndex < 0
                 || _seekerOrbIndex >= Main.maxProjectiles
                 || !Main.projectile[_seekerOrbIndex].active
-                || Main.projectile[_seekerOrbIndex].type != ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkOrb>();
+                || Main.projectile[_seekerOrbIndex].type != ModContent.ProjectileType<OolacileDarkOrb>();
             if (orbGone)
             {
                 _seekerOrbIndex = -1;
@@ -1338,7 +1333,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             // ai[0] = the player it homes on, ai[1] = 1 selects the slow "Seeker Orb" tuning.
             _seekerOrbIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), tip, velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkOrb>(), 59, 1f, Main.myPlayer,
+                ModContent.ProjectileType<OolacileDarkOrb>(), 59, 1f, Main.myPlayer,
                 target.whoAmI, 1f);
             NPC.netUpdate = true;
         }
@@ -2194,7 +2189,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.9f, Pitch = 0.6f }, NPC.Center);
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer,
+                        ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer,
                         UsefulFunctions.ColorToFloat(new Color(190, 20, 45)));
                 }
             }
@@ -2288,11 +2283,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             _desperationComplete = true;
             NPC.dontTakeDamage = false;
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            /*if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-<<<<<<< Updated upstream
                 NPC.StrikeInstantKill();
-=======
                 if (Main.rand.NextBool(240))
                 {
                     Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
@@ -2316,8 +2309,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPCSpawningTimer = 1f;
                 }
->>>>>>> Stashed changes
-            }
+            }*/
         }
 
         private void TickWingedAxeRush(int elapsed, int ticksRemaining)
@@ -3123,9 +3115,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-<<<<<<< Updated upstream
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 1,
+                    ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 1,
                     UsefulFunctions.ColorToFloat(Color.OrangeRed));
             }
         }
@@ -3187,9 +3178,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             for (int i = 0; i < SpellCount; i++)
             {
                 _spellCooldowns[i] = reader.ReadInt16();
-=======
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
->>>>>>> Stashed changes
             }
         }
         #endregion
