@@ -2788,6 +2788,15 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.MoonLeech, 4*60);
             }
 
+            // ZoneLihzhardTemple is true only while the player occupies the unsafe Lihzahrd
+            // Brick wall used by the Forbidden dungeon, so nearby Jungle terrain is unaffected.
+            // This is shared by the original and Remix Adventure maps.
+            if (Player.ZoneLihzhardTemple && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                Player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
+                Player.AddBuff(ModContent.BuffType<Suppressed>(), 1 * 60, false);
+            }
+
             if (tsorcRevampWorld.RemixMap)
             {
                 if (!Main.LocalPlayer.ZoneHallow && Main.tile[(Player.Center / 16).ToPoint()].WallType == WallID.HallowUnsafe2 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.hardMode)

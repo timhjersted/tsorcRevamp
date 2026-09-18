@@ -729,8 +729,8 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.FirebombHollow>(0.4f, 26f);
             Add<Enemies.Basilisk.BasiliskShifter>(0.4f, 26f);
             // Light / agile
-            Add<Enemies.ClericOfSorrow>(0.4f, 26f); // amphibious frost ritual-caster: Necromancer tier; its Communion/Undertow channels are the stagger windows
-            Add<Enemies.OolacileCultist>(0.45f, 15f); // pre-HM pyromancer → claw frenzy: the first 40t of every cast and the Recoil Flare tell are the stagger windows
+            Add<Puppets.ClericOfSorrow>(0.4f, 26f); // amphibious frost ritual-caster: Necromancer tier; its Communion/Undertow channels are the stagger windows
+            Add<Puppets.OolacileCultist>(0.45f, 15f); // pre-HM pyromancer → claw frenzy: the first 40t of every cast and the Recoil Flare tell are the stagger windows
             Add<Enemies.Assassin>(0.45f, 20f);
             Add<Enemies.TibianAmazon>(0.45f, 20f);
             Add<Enemies.TibianValkyrie>(0.45f, 20f);
@@ -2611,6 +2611,12 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.BigMisassembledSkeleton, 0.03f);
                 pool.Add(NPCID.BoneThrowingSkeleton2, 0.03f);
+            }
+
+            // The Catacombs use the Cursed Pink Tiled Wall rather than a vanilla biome flag.
+            if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.PinkDungeonTileUnsafe)
+            {
+                pool.Add(ModContent.NPCType<Puppets.OolacileCultist>(), 0.2f);
             }
 
             //HARD MODE SECTION

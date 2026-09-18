@@ -14,10 +14,10 @@ using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>
-    /// Owl Father's companion owl. Spawned alongside him (see OwlFatherInvader.OnSpawn), wanders the
+    /// Owl Father's companion owl. Spawned alongside him (see OwlFather.OnSpawn), wanders the
     /// battlefield on FloaterAI, alternates between distant dive-bombs, airborne molten-orb volleys,
     /// and tree-perched eye beams. It is killed by Owl Father when his health crosses 50% (see
-    /// OwlFatherInvader's threshold check) — that kill is what triggers Owl Father's spectral form,
+    /// OwlFather's threshold check) — that kill is what triggers Owl Father's spectral form,
     /// not anything this class tracks on its own.
     /// </summary>
     public class OwlCompanion : ModNPC
@@ -187,7 +187,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // Owner despawned/died by some means other than the 50%-health trigger (which kills this
             // NPC directly and never reaches this check) — nothing left to escort, so just leave too.
             if (OwnerNpcIndex < 0 || OwnerNpcIndex >= Main.maxNPCs || !Main.npc[OwnerNpcIndex].active
-                || Main.npc[OwnerNpcIndex].ModNPC is not OwlFatherInvader)
+                || Main.npc[OwnerNpcIndex].ModNPC is not OwlFather)
             {
                 // The owner's spawn packet can arrive later than this companion's packet.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -867,7 +867,7 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         // Killed via Owl Father's NPC.StrikeInstantKill() call at the 50%-health threshold (see
-        // OwlFatherInvader) — that routes through the normal StrikeNPC/checkDead pipeline, so OnKill
+        // OwlFather) — that routes through the normal StrikeNPC/checkDead pipeline, so OnKill
         // fires exactly like any other death regardless of dontTakeDamage above.
         public override void OnKill()
         {

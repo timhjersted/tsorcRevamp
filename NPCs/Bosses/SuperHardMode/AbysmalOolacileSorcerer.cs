@@ -177,7 +177,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         private const int LocustSwarmSpawnInterval = 3;
         private const int LocustSwarmStreamTicks = LocustSwarmCount * LocustSwarmSpawnInterval;
         private const int LocustSwarmLandTicks = 60;
-        private const int LocustSwarmCooldown = 20 * 60;
+        private const int LocustSwarmCooldown = 90 * 60;
         private const float LocustCloudWidth = 15f * 16f;
         private const float LocustCloudHeight = 4f * 16f;
         private const float LocustCloudAltitude = 9f * 16f;

@@ -41,9 +41,9 @@ namespace tsorcRevamp.NPCs.Enemies
         static int SpearVisualItemType => ModContent.ItemType<SpearOfMage>();
         static int BombVisualItemType => ModContent.ItemType<Firebomb>();
         static int MagicVisualItemType => ModContent.ItemType<PoisonBombRune>();
-        const string SpearVisualTexturePath = "tsorcRevamp/Projectiles/Enemy/EnemyForgottenPearlSpearProj";
-        string BombVisualTexturePath = UsefulFunctions.RefactorableFilepath(typeof(EnemyFirebomb));
-        const string MagicVisualTexturePath = "tsorcRevamp/Projectiles/Enemy/EnemySpellAbyssPoisonStrikeBall";
+        static string SpearVisualTexturePath => UsefulFunctions.RefactorableFilepath(typeof(EnemyForgottenPearlSpearProj));
+        static string BombVisualTexturePath => UsefulFunctions.RefactorableFilepath(typeof(EnemyFirebomb));
+        static string MagicVisualTexturePath => UsefulFunctions.RefactorableFilepath(typeof(EnemySpellAbyssPoisonStrikeBall));
 
 
         public override void SetStaticDefaults()

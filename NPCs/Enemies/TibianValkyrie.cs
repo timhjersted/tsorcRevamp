@@ -237,7 +237,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            if (globalNPC.ProjectileTimer >= 140 || globalNPC.CombatMeleeActive)
+            // The combo scheduler parks ProjectileTimer at the next attack's telegraph boundary during recovery,
+            // so a raw timer threshold makes the thrown spear immediately reappear in her hand. Follow the
+            // authored attack phases instead: visible while winding up/committing a throw or performing melee,
+            // hidden from the release frame through the full mobile recovery.
+            bool telegraphingSpearThrow = globalNPC.AttackTelegraphing || globalNPC.AttackCommitted;
+            if (telegraphingSpearThrow || globalNPC.CombatMeleeActive)
             {
                 Texture2D spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/TibianValkyrie_Spear");
                 int facingDirection = globalNPC.CombatMeleeActive ? globalNPC.ActiveCombatMeleeDirection : NPC.spriteDirection;

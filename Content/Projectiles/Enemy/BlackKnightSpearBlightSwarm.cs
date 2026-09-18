@@ -13,7 +13,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     /// Great Black Knight spear's on-hit plague cloud (PlagueTeleportCloud, spawned alongside this in
     /// BlackThrowingSpear.OnKill). Kept as its own class rather than folded into
     /// PlagueTeleportCloud.cs — that class is also used by every Plague-style teleport in the mod
-    /// (Artorias, this knight's own teleport, CursedDragonInvader), and this effect should NOT show
+    /// (Artorias, this knight's own teleport, CursedDragon), and this effect should NOT show
     /// up there.
     /// </summary>
     public class BlackKnightSpearBlightSwarm : ModProjectile

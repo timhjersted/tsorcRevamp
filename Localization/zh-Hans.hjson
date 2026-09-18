@@ -11342,6 +11342,7 @@ Mods: {
 			// OmnirsEnemySpellTsunami.DisplayName: Omnirs Enemy Spell Tsunami
 			// OmnirsEnemySpellTsunamiReverse.DisplayName: Omnirs Enemy Spell Tsunami Reverse
 			// FireFlaskProj.DisplayName: Fire Flask Proj
+			// OolacileCultistDeathExplosion.DisplayName: Oolacile Cultist Death Explosion
 		}
 
 		NPCs: {
@@ -13014,7 +13015,7 @@ Mods: {
 			LeonhardRemix.DisplayName: 李奥纳德
 			TrueDeath.DisplayName: 死神
 			// DarkCloudShadow.DisplayName: Dark Cloud Shadow
-			// AbyssalNinjaInvader.DisplayName: Abyssal Ninja Invader
+			// AbyssalNinja.DisplayName: Abyssal Ninja
 			// StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
 			// Blaidd.DisplayName: Blaidd
 			// ShadowNinja.DisplayName: Shadow Ninja
@@ -13111,10 +13112,10 @@ Mods: {
 			// LothricSpearKnightOriginal.DisplayName: Old Lothric Spear Knight
 			// LothricBlackKnightOriginal.DisplayName: Old Lothric Black Knight
 			// RingedKnightOriginal.DisplayName: Old Ringed Knight
-			// CursedDragonInvader.DisplayName: Cursed Dragon
+			// CursedDragon.DisplayName: Cursed Dragon
 			// AbysmalOolacileSorcererTEST.DisplayName: Abysmal Oolacile Sorcerer T E S T
 			// AbysmalOolacileSorcererOriginal.DisplayName: Old Grand Occultist of Oolacile
-			// OwlFatherInvader.DisplayName: Owl Father Invader
+			// OwlFather.DisplayName: Owl Father
 			// SpiritOfKhaios.DisplayName: Spirit Of Khaios
 			// KhaiosTransitionOrb.DisplayName: Khaios Transition Orb
 			// Khaios.DisplayName: Khaios

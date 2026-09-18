@@ -19,9 +19,9 @@ using tsorcRevamp.NPCs.AI;
 namespace tsorcRevamp.NPCs.Puppets
 {
     [AutoloadBossHead]
-    public class AbyssalNinjaInvader : PuppetNPC
+    public class AbyssalNinja : PuppetNPC
     {
-        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/AbyssalNinjaInvader_Head_Boss";
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/AbyssalNinja_Head_Boss";
 
         // ── Config ────────────────────────────────────────────────────────────────
         /// <summary>Master config toggle: when true, every spawned Abyssal Ninja has wings
@@ -327,7 +327,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
             }
 
-            Terraria.ModLoader.Config.NPCDefinition definition = new(ModContent.NPCType<AbyssalNinjaInvader>());
+            Terraria.ModLoader.Config.NPCDefinition definition = new(ModContent.NPCType<AbyssalNinja>());
             if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Content.Items.StaminaDroplet>());

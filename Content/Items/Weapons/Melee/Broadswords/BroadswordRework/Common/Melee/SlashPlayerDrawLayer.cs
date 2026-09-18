@@ -95,7 +95,11 @@ public class SlashPlayerDrawLayer : PlayerDrawLayer
         float rotation = attackAngle;
         Vector2 origin = sourceRectangle.Size() * 0.5f;
         float scale = attackRange / 30f * visualScale;
-        var effect = player.direction > 0 ^ flipped ? SpriteEffects.FlipVertically : SpriteEffects.None;
+        // The source sheet's unflipped arc is authored for the animation's flipped (rising/
+        // underhand) swing. The old XOR mapping mirrored it for the wrong attack, making an
+        // overhead swing read as underhand and vice versa. Keep the overlay's vertical mirror
+        // in the same convention as QuickSlashMeleeAnimation's IsAttackFlipped flag.
+        var effect = player.direction > 0 ^ !flipped ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
         // Color calculation
         Main.instance.LoadItem(item.type);

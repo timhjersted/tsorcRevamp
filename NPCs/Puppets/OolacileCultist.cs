@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.OolacileCultist;
 using tsorcRevamp.Content.Projectiles.VFX;
@@ -14,7 +15,7 @@ using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Enemies
+namespace tsorcRevamp.NPCs.Puppets
 {
     // PLACEHOLDER sprite (copy of ClericOfSorrow.png) — the puppet body is drawn by PuppetNPC, this sheet is
     // only the NPC's own required texture; replace with bespoke bestiary art.
@@ -96,9 +97,10 @@ namespace tsorcRevamp.NPCs.Enemies
         private const float RakeLowPose = 1.42f;
 
         private const int BleedingDebuffTicks = 15 * 60;
-        private const int HeartDropCount = 2;
-        private const int ManaStarDropCount = 2;
-        private const int DeathCloudCount = 15;
+        private const int DeathExplosionBaseDamage = 10;
+        private const int MadnessBuildupAmount = 45;
+        private const int MadnessBuildupWindowTicks = 30 * 60;
+        private static readonly Color MadnessYellow = new Color(255, 220, 45);
 
         private const string RakeName = "Rake";
         private const string TwinRakeName = "Twin Rake";
@@ -1051,6 +1053,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         protected override void OnMeleeComboAttackTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
+            if (tsorcRevampWorld.SuperHardMode && !Main.dedServ)
+            {
+                EmitMadnessMeleeVFX();
+            }
+
             if (Main.netMode == NetmodeID.MultiplayerClient || step.DamageMult <= 0f)
             {
                 return;
@@ -1143,11 +1150,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 BodyOpacity = 0.7f,
                 CoreOpacity = 0.3f,
                 TipSparkleOpacity = 0f,
-                DarkColor = new Color(40, 0, 6),
-                BodyColor = new Color(170, 20, 35),
-                CoreColor = new Color(240, 110, 110),
-                DustType = DustID.Blood,
-                DustColor = new Color(170, 20, 35),
+                DarkColor = tsorcRevampWorld.SuperHardMode ? new Color(48, 38, 0) : new Color(40, 0, 6),
+                BodyColor = tsorcRevampWorld.SuperHardMode ? new Color(225, 180, 20) : new Color(170, 20, 35),
+                CoreColor = tsorcRevampWorld.SuperHardMode ? MadnessYellow : new Color(240, 110, 110),
+                DustType = tsorcRevampWorld.SuperHardMode ? DustID.YellowTorch : DustID.Blood,
+                DustColor = tsorcRevampWorld.SuperHardMode ? MadnessYellow : new Color(170, 20, 35),
                 DustCount = 1,
                 DustAlpha = 80,
                 DustScale = 0.8f,
@@ -1163,6 +1170,21 @@ namespace tsorcRevamp.NPCs.Enemies
             };
 
             VanillaSwordArc.SpawnForNPC(NPC.GetSource_FromAI(), NPC, 0, 0f, Main.myPlayer, settings, Vector2.Zero, hostile: false);
+        }
+
+        private void EmitMadnessMeleeVFX()
+        {
+            Vector2 bladePoint = PuppetHandPosition + PuppetWeaponDirection * 14f;
+            Dust ember = Dust.NewDustPerfect(bladePoint + Main.rand.NextVector2Circular(8f, 8f),
+                DustID.YellowTorch, Main.rand.NextVector2Circular(0.8f, 0.8f), 50, MadnessYellow,
+                Main.rand.NextFloat(0.65f, 1f));
+            ember.noGravity = true;
+
+            Dust wraith = Dust.NewDustPerfect(bladePoint + Main.rand.NextVector2Circular(8f, 8f),
+                DustID.Wraith, Main.rand.NextVector2Circular(0.45f, 0.45f), 130, Color.Black,
+                Main.rand.NextFloat(0.6f, 0.9f));
+            wraith.noGravity = true;
+            Lighting.AddLight(bladePoint, 0.55f, 0.42f, 0.06f);
         }
 
         protected override bool ShouldContinueMeleeCombo(string comboName, int nextStepIndex, Player target, bool previousStepHit)
@@ -1231,6 +1253,20 @@ namespace tsorcRevamp.NPCs.Enemies
         public void OnHumanoidMeleeHit(Player target)
         {
             target.AddBuff(BuffID.Bleeding, BleedingDebuffTicks);
+            ApplyMadnessBuildup(target);
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        {
+            ApplyMadnessBuildup(target);
+        }
+
+        private static void ApplyMadnessBuildup(Player target)
+        {
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                MadnessBuildup.Apply(target, MadnessBuildupAmount, MadnessBuildupWindowTicks);
+            }
         }
         #endregion
 
@@ -1270,28 +1306,33 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            // 15 red-tinted animated clouds spinning 1–2 tiles outward.
-            int cloudType = ModContent.GoreType<OolacileRedCloudGore>();
-            for (int i = 0; i < DeathCloudCount; i++)
+            int bloodSplat = Mod.Find<ModGore>("Blood Splat").Type;
+            int bloodSplat2 = Mod.Find<ModGore>("Blood Splat 2").Type;
+            for (int i = 0; i < 15; i++)
             {
-                Vector2 outward = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(1f, 2f);
-                Vector2 spawnPosition = NPC.Center - new Vector2(14f) + Main.rand.NextVector2Circular(8f, 12f);
-                Gore cloud = Gore.NewGoreDirect(NPC.GetSource_Death(), spawnPosition, outward, cloudType, Main.rand.NextFloat(0.9f, 1.3f));
-                cloud.velocity = outward;
+                Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(3.5f, 3.5f),
+                    bloodSplat, Main.rand.NextFloat(0.85f, 1.2f));
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(3.5f, 3.5f),
+                    bloodSplat2, Main.rand.NextFloat(0.85f, 1.2f));
             }
         }
 
         public override void OnKill()
         {
-            for (int i = 0; i < HeartDropCount; i++)
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
+                return;
             }
-            for (int i = 0; i < ManaStarDropCount; i++)
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Star);
-            }
+
+            Projectile.NewProjectile(NPC.GetSource_Death(), NPC.Center, Vector2.Zero,
+                ModContent.ProjectileType<OolacileCultistDeathExplosion>(),
+                DeathExplosionBaseDamage * DeathExplosionScale, 0f, Main.myPlayer);
         }
+
+        private static int DeathExplosionScale => tsorcRevampWorld.SuperHardMode ? 3 : Main.hardMode ? 2 : 1;
 
         public override void SendExtraAI(BinaryWriter writer)
         {
@@ -1312,65 +1353,4 @@ namespace tsorcRevamp.NPCs.Enemies
         }
     }
 
-    /// <summary>
-    /// Death cloud for the Oolacile Cultist: Gores/SmallGreyCloud.png (28x112, four 28x28 frames, no padding)
-    /// tinted blood red. Cycles its frames, spins, and drifts outward under drag (~16x its launch speed in px,
-    /// so a 1–2 px/tick launch travels the intended 1–2 tiles) before fading. A separate class so the shared
-    /// grey cloud stays grey for anything else.
-    /// </summary>
-    public class OolacileRedCloudGore : ModGore
-    {
-        private const int LifetimeTicks = 60;
-        private const int FadeTicks = 25;
-        private const int TicksPerFrame = 6;
-        private const float Drag = 0.94f;
-
-        public override string Texture => "tsorcRevamp/Gores/SmallGreyCloud";
-
-        public override void OnSpawn(Gore gore, IEntitySource source)
-        {
-            gore.Frame = new SpriteFrame(1, 4) { PaddingX = 0, PaddingY = 0 };
-            gore.Frame.CurrentRow = (byte)Main.rand.Next(4);
-            gore.timeLeft = LifetimeTicks;
-            gore.alpha = 40;
-            gore.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
-        }
-
-        // Returns false: this fully replaces vanilla gore physics (no gravity, no sticking to tiles).
-        public override bool Update(Gore gore)
-        {
-            gore.position += gore.velocity;
-            gore.velocity *= Drag;
-
-            int spinDirection = gore.velocity.X < 0f ? -1 : 1;
-            gore.rotation += 0.05f * spinDirection;
-
-            gore.frameCounter++;
-            if (gore.frameCounter >= TicksPerFrame)
-            {
-                gore.frameCounter = 0;
-                gore.Frame.CurrentRow = (byte)((gore.Frame.CurrentRow + 1) % 4);
-            }
-
-            gore.timeLeft--;
-            if (gore.timeLeft < FadeTicks)
-            {
-                float fadeProgress = 1f - gore.timeLeft / (float)FadeTicks;
-                gore.alpha = 40 + (int)(215f * fadeProgress);
-            }
-
-            if (gore.timeLeft <= 0)
-            {
-                gore.active = false;
-            }
-            return false;
-        }
-
-        public override Color? GetAlpha(Gore gore, Color lightColor)
-        {
-            Color bloodRed = new Color(190, 30, 40);
-            float opacity = 1f - gore.alpha / 255f;
-            return Color.Lerp(lightColor, bloodRed, 0.7f) * opacity;
-        }
-    }
 }

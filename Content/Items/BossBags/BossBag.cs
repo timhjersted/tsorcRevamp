@@ -122,7 +122,14 @@ namespace tsorcRevamp.Content.Items.BossBags
         {
             // Two Souls of the Vessel → one crafts the Soul Reliquary, one the Gravemaw Tome.
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfTheVessel>(), 1, 2, 2));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 3000, 3000));
+
+            // Match the Eye of Cthulhu bag's custom early-game kit. The shared bag registry supplies
+            // the first-bag Stamina Vessel and Cursed-world Sublime Bone Dust below.
+            itemLoot.Add(ItemDropRule.Common(ItemID.HermesBoots));
+            itemLoot.Add(ItemDropRule.Common(ItemID.HerosHat));
+            itemLoot.Add(ItemDropRule.Common(ItemID.HerosPants));
+            itemLoot.Add(ItemDropRule.Common(ItemID.HerosShirt));
+            itemLoot.Add(ItemDropRule.Common(ItemID.EoCShield));
         }
     }
     public class OolacileDemonBag : BossBag
@@ -678,6 +685,14 @@ namespace tsorcRevamp.Content.Items.BossBags
             }
 
             int itemID = item.type;
+
+            // The Eye of Cthulhu's bag is intentionally a Dark-Souls-only reward. Its once-per-player
+            // Dark Soul grant is handled by RightClick above; remove every rolled vanilla/custom entry.
+            if (itemID == ItemID.EyeOfCthulhuBossBag)
+            {
+                loot.Get().Clear();
+                return;
+            }
 
             // take into account blocked items
             if (tsorcRevamp.RemovedBossBagLoot.ContainsKey(itemID))

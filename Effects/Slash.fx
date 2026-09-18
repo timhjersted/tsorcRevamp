@@ -1,3 +1,5 @@
+#include "PixelShaderCommon.fxh"
+
 matrix WorldViewProjection;
 texture baseNoise;
 sampler baseNoiseSampler = sampler_state
@@ -24,6 +26,9 @@ float2 samplePointOffset1;
 float2 samplePointOffset2;
 float baseNoiseUOffset;
 float intensity;
+// xy = live 2x2-pixel block count across the slash trail, zw = its reciprocal.
+// Slash computes this from its current world-space arc length and full strip width.
+float4 PixelGrid;
 
 struct VertexShaderInput
 {
@@ -51,7 +56,9 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
 float4 MainPS(VertexShaderOutput input) : COLOR0
 {
-    float2 uv = input.TextureCoordinates;
+    // Snap before all silhouette and noise work so this is a real 2x2 gameplay-pixel
+    // filter across the rendered arc, rather than pixelating only a texture sample.
+    float2 uv = PixelateShaderUV(input.TextureCoordinates, PixelGrid);
     
     //Calculate how close the current pixel is to the center line of the screen
     float intensity = 0.84;

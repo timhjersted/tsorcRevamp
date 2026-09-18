@@ -61,7 +61,11 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 {
                     AttackId = aimingInit.AttackId;
                 }
-                flippedSwing = AttackId % 2 != 0;
+                // The trail's radial path is authored in the opposite screen-space winding from
+                // the held-item rotation, so the same AttackId parity must be inverted here.
+                // Without this, a rising/bottom-up sword swing leaves the descending/top-down
+                // slash trail (and vice versa).
+                flippedSwing = AttackId % 2 == 0;
                 trailWidth = (int)(Math.Sqrt(owner.HeldItem.height * owner.HeldItem.height + owner.HeldItem.width * owner.HeldItem.width) * owner.HeldItem.scale);
                 trailWidth = Math.Max(trailWidth, 50);
                 Projectile.timeLeft = owner.itemAnimationMax + 10;
@@ -120,6 +124,11 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                     trailRotations.RemoveAt(0);
                 }
             }
+
+            // Slash owns its trail points instead of calling DynamicTrail.AI(), so keep the
+            // length field current here. The 2x2 shader grid uses this value for its X block count;
+            // leaving it at zero collapses the whole arc to one UV sample and produces a solid shape.
+            trailCurrentLength = CalculateLength();
             lastPercent = Projectile.rotation;
         }
 
@@ -167,6 +176,16 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             effect.Parameters["baseNoise"].SetValue(tsorcRevamp.NoiseSmooth);
             effect.Parameters["baseNoiseUOffset"].SetValue(baseNoiseUOffset);
             effect.Parameters["secondaryNoise"].SetValue(noiseTexture);
+
+            const float pixelBlockSize = 2f;
+            Vector2 pixelGridSize = new Vector2(
+                Math.Max(trailCurrentLength / pixelBlockSize, 1f),
+                Math.Max((trailWidth * 2f) / pixelBlockSize, 1f));
+            effect.Parameters["PixelGrid"].SetValue(new Vector4(
+                pixelGridSize.X,
+                pixelGridSize.Y,
+                1f / pixelGridSize.X,
+                1f / pixelGridSize.Y));
 
             visualizeTrail = false;
             if (Projectile.timeLeft < 15)

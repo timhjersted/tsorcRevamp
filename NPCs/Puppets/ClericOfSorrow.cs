@@ -19,7 +19,7 @@ using tsorcRevamp.NPCs.Puppets;
 
 // ClericLastRitesRing
 
-namespace tsorcRevamp.NPCs.Enemies
+namespace tsorcRevamp.NPCs.Puppets
 {
     // A REGULAR enemy (not an invader — no "INVADED BY" banner) rendered on the PuppetNPC puppet system.
     // A drowned priest of The Sorrow: a Capricorn-masked, black-robed cultist on Jim's Wings that FLIES

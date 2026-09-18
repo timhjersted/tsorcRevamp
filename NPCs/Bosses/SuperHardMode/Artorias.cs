@@ -741,7 +741,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // Proactive dodge: scans for an incoming aimed projectile and jumps/i-frame rolls it away
-        // (rolls Agility above), same mechanism CursedDragonInvader uses - evasion BEFORE getting hit.
+        // (rolls Agility above), same mechanism CursedDragon uses - evasion BEFORE getting hit.
         protected override bool EvadesProjectiles => true;
 
         public override void OnSpawn(IEntitySource source)

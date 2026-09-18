@@ -1113,8 +1113,7 @@ namespace tsorcRevamp
             {   
                 #region Vanilla
                 {   ItemID.KingSlimeBossBag         , BossExtras.StaminaVessel      },
-                {   ItemID.EyeOfCthulhuBossBag      , BossExtras.StaminaVessel
-                                                    | BossExtras.SublimeBoneDust    },
+                {   ItemID.EyeOfCthulhuBossBag      , BossExtras.DarkSoulsOnly      },
                 {   ItemID.EaterOfWorldsBossBag     , BossExtras.EstusFlaskShard    },
                 {   ItemID.BrainOfCthulhuBossBag    , BossExtras.StaminaVessel      },
                 {   ItemID.QueenBeeBossBag          , BossExtras.DarkSoulsOnly      },
@@ -1137,6 +1136,8 @@ namespace tsorcRevamp
                 #region tsorc
                 {   ModContent.ItemType<PinwheelBag>()              , BossExtras.EstusFlaskShard
                                                                     | BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<VesselOfSoulsBag>()         , BossExtras.StaminaVessel
+                                                                    | BossExtras.SublimeBoneDust    },
                 {   ModContent.ItemType<OolacileDemonBag>()         , BossExtras.SublimeBoneDust    },
                 {   ModContent.ItemType<SlograBag>()                , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<GaibonBag>()                , BossExtras.StaminaVessel      },
@@ -1219,6 +1220,7 @@ namespace tsorcRevamp
                 //--------
                 #region tsorc
                 {   ModContent.ItemType<PinwheelBag>()              , ModContent.NPCType<Pinwheel>()                                                    },
+                {   ModContent.ItemType<VesselOfSoulsBag>()         , ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>()                    },
                 {   ModContent.ItemType<OolacileDemonBag>()         , ModContent.NPCType<AncientOolacileDemon>()                                        },
                 {   ModContent.ItemType<SlograBag>()                , ModContent.NPCType<Slogra>()                                                      },
                 {   ModContent.ItemType<GaibonBag>()                , ModContent.NPCType<Gaibon>()                                                      },
@@ -1302,10 +1304,11 @@ namespace tsorcRevamp
                                                         }                                                          },
                 {   ItemID.EyeOfCthulhuBossBag      ,   new List<IItemDropRule>()
                                                         {
-                                                            ItemDropRule.Common(ItemID.HermesBoots),
-                                                            ItemDropRule.Common(ItemID.HerosHat),
-                                                            ItemDropRule.Common(ItemID.HerosPants),
-                                                            ItemDropRule.Common(ItemID.HerosShirt)
+                                                            // Vessel of Souls now owns the Eye's early-game kit.
+                                                            // ItemDropRule.Common(ItemID.HermesBoots),
+                                                            // ItemDropRule.Common(ItemID.HerosHat),
+                                                            // ItemDropRule.Common(ItemID.HerosPants),
+                                                            // ItemDropRule.Common(ItemID.HerosShirt)
                                                         }                                                                                },
                 {   ItemID.EaterOfWorldsBossBag     ,   new List<IItemDropRule>()
                                                         {

@@ -25,9 +25,9 @@ namespace tsorcRevamp.NPCs.Puppets
     /// <see cref="PuppetNPC"/> state machine.
     /// </summary>
     [AutoloadBossHead]
-    public class CursedDragonInvader : PuppetNPC
+    public class CursedDragon : PuppetNPC
     {
-        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/CursedDragonInvader_Head_Boss";
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/CursedDragon_Head_Boss";
 
         // Index into SecondaryRangedBurstPatterns that ends with the meteor pentagram finisher.
         private const int VenomFinisherPattern = 3;

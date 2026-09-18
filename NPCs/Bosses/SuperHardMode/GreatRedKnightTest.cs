@@ -867,17 +867,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (spearTexture == null)
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyAncientBloodLanceProj)));
+                spearTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyAncientBloodLanceProj)),
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
             if (bombTexture == null)
             {
-                bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyFirebomb)));
+                bombTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyFirebomb)),
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
             if (magicBallTexture == null)
             {
-                magicBallTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemySpellAbyssPoisonStrikeBall");
+                magicBallTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemySpellAbyssPoisonStrikeBall)),
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
             if (handTexture == null)

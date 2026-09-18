@@ -1248,12 +1248,12 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (spearTexture == null || spearTexture.IsDisposed)
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackThrowingSpear");
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Content/Projectiles/Enemy/BlackThrowingSpear");
             }
 
             if (bombTexture == null || bombTexture.IsDisposed)
             {
-                bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyMoonfuryBomb");
+                bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Content/Projectiles/Enemy/EnemyMoonfuryBomb");
             }
 
             if (armOverlayTexture == null || armOverlayTexture.IsDisposed)

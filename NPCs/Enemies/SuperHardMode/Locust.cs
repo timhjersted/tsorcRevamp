@@ -4,6 +4,7 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials.Souls;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -73,7 +74,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = ContactDamage;
             NPC.defense = 0;
             NPC.lifeMax = 300;
-            NPC.value = 25;
+            // Individual locusts have no standard value or global stamina-droplet drops. The
+            // swarm's final member awards its fixed Dark Soul cache in OnKill instead.
+            NPC.value = 0;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SuppressGlobalOnKillDrops = true;
             NPC.knockBackResist = 0.9f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -92,6 +96,16 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             return 0.2f;
+        }
+
+        public override void OnKill()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || !IsLastLivingGroupMember())
+            {
+                return;
+            }
+
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 2000);
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -283,7 +297,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (breedTimer <= 0)
             {
                 breedTimer = Main.rand.Next(90, 151);
-                if (CountActive() < PopulationCap)
+                if (CountActive() < PopulationCap && !AbysmalOolacileSorcererIsAlive())
                 {
                     ChangeMode(Mode.Reproducing);
                 }
@@ -501,7 +515,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 //Both authoritative server and owning client already execute this AI; quiet avoids
                 //broadcasting two buff refresh packets every tick while preserving identical timers.
                 player.AddBuff(BuffID.Venom, 60, true);
-                player.AddBuff(BuffID.Obstructed, 120, true);
+                player.AddBuff(BuffID.Blackout, 60, true);
             }
 
             if (!Main.dedServ)
@@ -520,6 +534,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
         void RunReproductionTell()
         {
+            // The boss's active NPC state is authoritative. Cancel a tell already in progress too,
+            // so a sorcerer appearing mid-cycle can never allow one final offspring to spawn.
+            if (Main.netMode != NetmodeID.MultiplayerClient && AbysmalOolacileSorcererIsAlive())
+            {
+                NPC.scale = 1f;
+                ChangeMode(Mode.Swarming);
+                return;
+            }
+
             modeTimer++;
             NPC.alpha = 0;
             NPC.velocity *= 0.9f;
@@ -676,6 +699,24 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             return count;
         }
+
+        bool IsLastLivingGroupMember()
+        {
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC other = Main.npc[i];
+                if (other.active && other.whoAmI != NPC.whoAmI && other.type == Type
+                    && other.ModNPC is Locust locust && locust.groupId == groupId)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        static bool AbysmalOolacileSorcererIsAlive()
+            => NPC.AnyNPCs(ModContent.NPCType<Bosses.SuperHardMode.AbysmalOolacileSorcerer>());
 
         static int NewGroupId()
         {

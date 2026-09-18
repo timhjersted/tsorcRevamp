@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Puppets
     /// greatfire crescents and the final-phase firefall array.
     /// </summary>
     [AutoloadBossHead]
-    public class OwlFatherInvader : PuppetNPC
+    public class OwlFather : PuppetNPC
     {
         private const string HighLeapingSlamName = "High Leaping Slam";
         private const string HighLeapFollowUpName = "High Leaping Slam - Rising Follow-Up";
@@ -43,7 +43,7 @@ namespace tsorcRevamp.NPCs.Puppets
         private const float GreatfireCrescentStartRaiseRadians = 0.2617994f; // 15 degrees
         private const int FireColumnBladeChargeTicks = 60;
 
-        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/OwlFatherInvader_Head_Boss";
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/OwlFather_Head_Boss";
 
         protected override string InvaderTitle => "Owl Father";
 

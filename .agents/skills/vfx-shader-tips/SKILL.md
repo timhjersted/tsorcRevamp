@@ -1029,7 +1029,27 @@ field — the blocks are below what the eye resolves at gameplay zoom. `GwynGrav
 If someone says the pixel filter is missing and the code plainly sets it, check the quad size before
 checking the wiring.
 
-### 51g. Removing a defect is not the same job as making it good
+### 51g. A correct pixel shader still fails when the caller passes a one-block grid
+
+`PixelateShaderUV` trusts `PixelGrid` exactly. If either block-count axis is clamped to `1`, every
+pixel on that axis snaps to the same coordinate: `(floor(uv * 1) + 0.5) / 1 = 0.5`. A textured
+slash or trail then becomes a solid wedge, band, or other large uniform shape even though the HLSL,
+block size, and compiled `.xnb` are all correct.
+
+This happened to the player broadsword `Slash`: unlike `OolacileBolt`, it overrides
+`DynamicTrail.AI()` and does not call the base implementation that maintains `trailCurrentLength`.
+Its 2px grid used `max(trailCurrentLength / 2, 1)`, so the never-updated zero length silently became
+one block across the entire arc. Recalculating the length after the custom code adds or removes trail
+points restored the original noise and gradients while keeping the intended 2x2 filter.
+
+Before changing shader maths for a newly solid pixelated effect, trace every `PixelGrid` input back
+to live geometry and confirm it is updated **before the draw call**. For custom trails, either maintain
+the inherited length field after editing the point list or calculate a local draw length directly;
+do not assume a base-class measurement still runs after overriding its update method. A collapsed
+shape following the intended geometry points to a one-block grid; a rectangle matching the whole
+quad still points to the premultiplied-alpha failure in §43.
+
+### 51h. Removing a defect is not the same job as making it good
 
 The vortex's first rewrite deleted the tiling repeat, correctly — and deleted the interference
 pattern with it, leaving one smooth noise field and a hard analytic rim. It was defensible on every

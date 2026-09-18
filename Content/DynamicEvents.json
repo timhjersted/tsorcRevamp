@@ -161,7 +161,7 @@
     "EventID": "24964429-60d7-4ded-b362-8645aab130e6",
     "CenterX": 5596.0,
     "CenterY": 926.0,
-    "Radius": 25600.0,
+    "Radius": 57600.0,
     "Square": false,
     "TriggerDust": 158,
     "VisibleRing": true,
@@ -175,12 +175,12 @@
     "Npcs": [
       {
         "NpcName": "tsorcRevamp/RedKnight",
-        "SpawnX": 5596.0,
-        "SpawnY": 926.0,
-        "CustomHealth": 1000,
+        "SpawnX": 5616.0,
+        "SpawnY": 934.0,
+        "CustomHealth": 600,
         "CustomDamage": 55,
         "CustomDefense": 9,
-        "CustomSouls": 1250
+        "CustomSouls": 700
       }
     ],
     "ExtraLootItemNames": [
@@ -491,10 +491,10 @@
     "CenterY": 1138.0,
     "Radius": 102400.0,
     "Square": false,
-    "TriggerDust": 15,
+    "TriggerDust": 27,
     "VisibleRing": true,
     "SaveOnCompletion": true,
-    "TextToDisplay": "The Eye sees you!",
+    "TextToDisplay": "The Vessel of Souls has awoken!",
     "TextColorHex": "0000FFFF",
     "WorldCondition": null,
     "MapCondition": "DefaultCondition",
@@ -502,9 +502,9 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "EyeofCthulhu",
+        "NpcName": "tsorcRevamp/VesselOfSouls",
         "SpawnX": 3900.0,
-        "SpawnY": 1138.0,
+        "SpawnY": 1146.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,
@@ -3739,8 +3739,17 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/StuddedLeatherWarrior",
-        "SpawnX": 4532.0,
+        "NpcName": "tsorcRevamp/TibianValkyrie",
+        "SpawnX": 4543.0,
+        "SpawnY": 1069.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/UndeadCaster",
+        "SpawnX": 4548.0,
         "SpawnY": 1069.0,
         "CustomHealth": null,
         "CustomDamage": null,
@@ -4347,11 +4356,11 @@
     "EventID": "e097381b-58a8-4dce-9fe8-4e1e5e0edf29",
     "CenterX": 3842.0,
     "CenterY": 897.0,
-    "Radius": 6400.0,
+    "Radius": 25600.0,
     "Square": false,
     "TriggerDust": 27,
     "VisibleRing": false,
-    "SaveOnCompletion": true,
+    "SaveOnCompletion": false,
     "TextToDisplay": null,
     "TextColorHex": null,
     "WorldCondition": "OnlyAdventureMapCondition",
@@ -4363,60 +4372,6 @@
         "NpcName": "GlowingSnail",
         "SpawnX": 3862.0,
         "SpawnY": 912.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      }
-    ]
-  },
-  {
-    "EventID": "f6f715c8-099b-48a4-b5cd-fc7dee344375",
-    "CenterX": 3891.0,
-    "CenterY": 898.0,
-    "Radius": 230400.0,
-    "Square": false,
-    "TriggerDust": 27,
-    "VisibleRing": false,
-    "SaveOnCompletion": true,
-    "TextToDisplay": null,
-    "TextColorHex": null,
-    "WorldCondition": "OnlyAdventureMapCondition",
-    "MapCondition": "",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcName": "FairyCritterPink",
-        "SpawnX": 3915.0,
-        "SpawnY": 924.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      }
-    ]
-  },
-  {
-    "EventID": "fad5f098-dc81-46c0-8aeb-c60566fe7471",
-    "CenterX": 4033.0,
-    "CenterY": 858.0,
-    "Radius": 25600.0,
-    "Square": false,
-    "TriggerDust": 27,
-    "VisibleRing": false,
-    "SaveOnCompletion": true,
-    "TextToDisplay": null,
-    "TextColorHex": null,
-    "WorldCondition": "OnlyAdventureMapCondition",
-    "MapCondition": "",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcName": "LightningBug",
-        "SpawnX": 4039.0,
-        "SpawnY": 860.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,
@@ -4444,6 +4399,267 @@
         "NpcName": "Werewolf",
         "SpawnX": 4108.0,
         "SpawnY": 156.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "76485672-86ef-49ae-a05f-8164cb1f9e0e",
+    "CenterX": 5348.0,
+    "CenterY": 1090.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 297,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "BrainofCthulhu",
+        "SpawnX": 5317.0,
+        "SpawnY": 1067.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "283732ad-2144-40c6-9fd2-6659b1ef754d",
+    "CenterX": 5450.0,
+    "CenterY": 997.0,
+    "Radius": 6400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/OolacileCultist",
+        "SpawnX": 5489.0,
+        "SpawnY": 998.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/OolacileCultist",
+        "SpawnX": 5457.0,
+        "SpawnY": 968.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "3371564f-1dd6-41c9-8aaf-3795dbcaad7d",
+    "CenterX": 5498.0,
+    "CenterY": 997.0,
+    "Radius": 6400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/OolacileCultist",
+        "SpawnX": 5548.0,
+        "SpawnY": 998.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "26fb8838-15f0-42be-814d-bfa1099aa6cd",
+    "CenterX": 3983.0,
+    "CenterY": 919.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/BlackNinja",
+        "SpawnX": 3946.0,
+        "SpawnY": 931.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "3d252bf5-6b1f-4a19-a667-b01179de64a7",
+    "CenterX": 4023.0,
+    "CenterY": 845.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 3996.0,
+        "SpawnY": 838.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 4014.0,
+        "SpawnY": 835.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 4019.0,
+        "SpawnY": 840.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 3980.0,
+        "SpawnY": 840.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 3964.0,
+        "SpawnY": 837.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 3974.0,
+        "SpawnY": 844.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 4017.0,
+        "SpawnY": 829.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 3951.0,
+        "SpawnY": 839.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 3938.0,
+        "SpawnY": 833.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 3922.0,
+        "SpawnY": 838.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "LightningBug",
+        "SpawnX": 3932.0,
+        "SpawnY": 821.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "6aac9a7c-78ae-4fc2-ad53-1a5b9feae8aa",
+    "CenterX": 3674.0,
+    "CenterY": 789.0,
+    "Radius": 6400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/StuddedLeatherWarrior",
+        "SpawnX": 3633.0,
+        "SpawnY": 794.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,
