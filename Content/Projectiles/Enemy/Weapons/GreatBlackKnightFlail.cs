@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Melee.Flails;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
@@ -26,9 +27,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         protected override float ReturnSpeed => 15f;
         protected override int Lifetime => 110;
 
-        protected override string ChainTexturePath => "tsorcRevamp/Projectiles/Melee/Flails/BerserkerNightmareChain";
+        protected override string ChainTexturePath => UsefulFunctions.RefactorableFilepath(typeof(BerserkerNightmareBall)) + "_Chain";
 
-        public override string Texture => "tsorcRevamp/Projectiles/Melee/Flails/BerserkerNightmareBall";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(BerserkerNightmareBall));
 
         private const int PulseInterval = 24; // ~0.4s between AOE pulses while the flail is out
         private const float EmpoweredChance = 0.5f;

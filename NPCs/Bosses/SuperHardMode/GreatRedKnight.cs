@@ -695,12 +695,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (spearTexture == null)
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyAncientBloodLanceProj");
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyAncientBloodLanceProj)));
             }
 
             if (bombTexture == null)
             {
-                bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyFirebomb");
+                bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyFirebomb)));
             }
 
             if (armOverlayTexture == null)

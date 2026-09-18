@@ -24,7 +24,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles
         public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/";
         public override int BuffType => ModContent.BuffType<InterstellarCommander>();
         public override int dustID => DustID.MartianSaucerSpark;
-        public override string Texture => "tsorcRevamp/Projectiles/Summon/Runeterra/CirclingProjectiles/InterstellarVesselShip";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InterstellarVesselShip));
         public override void OnSpawn(IEntitySource source)
         {
             InterstellarVesselGauntlet.projectiles.Add(this);

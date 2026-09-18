@@ -103,7 +103,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         int Age => (int)Projectile.localAI[0];
         Vector2 PlantPoint => new(Projectile.ai[1], Projectile.ai[2]);
 
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/BlackKnightSpear";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(BlackKnightSpear));
 
         public override void SetDefaults()
         {
@@ -301,7 +301,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         bool initialized;
         int dynamicFlightTicks;
 
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/EnemyAncientBloodLanceProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemyAncientBloodLanceProj));
 
         KnightStandardMode Mode => (KnightStandardMode)(int)Projectile.ai[2];
         int FlightTicks => Mode == KnightStandardMode.RedKnight ? 24 : 30;
@@ -724,7 +724,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         Vector2 startPosition;
         bool initialized;
 
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/EnemyFirebomb";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemyFirebomb));
 
         Vector2 GroundPoint => new Vector2(Projectile.ai[0], Projectile.ai[1]);
         Vector2 RestingCenter => GroundPoint - new Vector2(0f, 9f);

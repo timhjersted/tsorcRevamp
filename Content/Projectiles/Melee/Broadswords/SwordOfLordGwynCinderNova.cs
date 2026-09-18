@@ -4,12 +4,13 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Gwyn;
 
 namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
 {
     class SwordOfLordGwynCinderNova : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/GwynCinderNova";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(GwynCinderNova));
 
         const float ExpandSpeed = 11f;
         const float RingHalfThickness = 32f;

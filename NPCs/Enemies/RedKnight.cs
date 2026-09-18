@@ -1218,12 +1218,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spearTexture == null)
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightSpear"); // the spear Tibian Valkyrie uses (14x62)
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(BlackKnightSpear))); // the spear Tibian Valkyrie uses (14x62)
             }
 
             if (bombTexture == null)
             {
-                bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyFirebomb");
+                bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyFirebomb)));
             }
 
             if (magicBallTexture == null)

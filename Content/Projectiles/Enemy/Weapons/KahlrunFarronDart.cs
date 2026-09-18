@@ -11,7 +11,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// <summary>Hostile counterpart to the player Farron Dart, including delayed volley telegraphs.</summary>
     public class KahlrunFarronDart : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/FarronDart";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(FarronDart));
 
         public override void SetDefaults()
         {

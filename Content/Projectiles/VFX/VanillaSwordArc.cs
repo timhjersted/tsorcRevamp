@@ -205,7 +205,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
     /// </summary>
     public class VanillaSwordArc : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/VFX/VanillaSwordArc";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(VanillaSwordArc));
 
         VanillaSwordArcSettings settings = new VanillaSwordArcSettings();
         VanillaSwordArcAnchor anchorType;

@@ -11,7 +11,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Enemy
     /// </summary>
     public class EnemyOccultistStaff : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/GrandOolacileStaff";
 
         public override void SetStaticDefaults() => Item.staff[Type] = true;
 

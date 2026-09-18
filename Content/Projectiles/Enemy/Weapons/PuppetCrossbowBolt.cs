@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
@@ -14,7 +15,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     public class PuppetCrossbowBolt : ModProjectile
     {
         // Reuse the existing bolt sprite — no separate .png file needed.
-        public override string Texture => "tsorcRevamp/Projectiles/Ranged/Ammo/BoltProjectile";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(BoltProjectile));
 
         public override void SetDefaults()
         {

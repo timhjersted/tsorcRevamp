@@ -17,7 +17,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// </summary>
     public class EnemyGreatFireAxeFireball : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/MoltenOrb";
 
         // Public so a future attack variant can spawn this with different tuning.
         public float RiseHeightAboveTarget = 140f;

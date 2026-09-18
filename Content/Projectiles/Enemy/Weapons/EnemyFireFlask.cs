@@ -3,12 +3,13 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Ranged;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
     public class EnemyFireFlask : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/FireFlask";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(FireFlaskProj));
 
         private const float Gravity = 0.18f;
         private const int FireSpreadTiles = 5;
@@ -106,7 +107,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
     public class EnemyFireFlaskLingeringFlame : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/FireFlask";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(FireFlaskProj));
 
         public override void SetDefaults()
         {

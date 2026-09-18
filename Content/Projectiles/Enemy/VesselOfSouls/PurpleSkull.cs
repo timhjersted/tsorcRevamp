@@ -16,7 +16,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls
     ///</summary>
     class PurpleSkull : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/VesselOfSouls/PurpleSkull";
 
         float Homing => Projectile.ai[0];
 

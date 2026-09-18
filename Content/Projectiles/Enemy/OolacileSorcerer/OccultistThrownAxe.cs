@@ -5,8 +5,10 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer;
 
 namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
 {
@@ -18,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
     /// </summary>
     public class OccultistThrownAxe : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/GrandOolacileAxe";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemyOccultistAxe));
 
         private bool Embedded => Projectile.ai[0] == 1f;
         private int OwnerNpcIndex => (int)Projectile.ai[1];

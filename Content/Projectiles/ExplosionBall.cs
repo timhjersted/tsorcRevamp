@@ -9,7 +9,7 @@ namespace tsorcRevamp.Content.Projectiles
     class ExplosionBall : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Projectiles/GreatFireballBall";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(GreatFireballBall));
 
         public override void SetDefaults()
         {

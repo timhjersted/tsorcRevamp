@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls;
 
 namespace tsorcRevamp.Content.Projectiles.Summon.VesselOfSouls
 {
@@ -11,7 +12,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.VesselOfSouls
     ///Reuses the PurpleSkull sprite. ai[0] = homing factor.</summary>
     class LesserVesselSkull : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/VesselOfSouls/PurpleSkull";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(PurpleSkull));
 
         float Homing => Projectile.ai[0];
 

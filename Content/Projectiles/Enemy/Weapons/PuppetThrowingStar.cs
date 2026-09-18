@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Melee;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
@@ -17,7 +18,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     public class PuppetThrowingStar : ModProjectile
     {
         // Reuse the player-version sprite; no need to duplicate the asset.
-        public override string Texture => "tsorcRevamp/Projectiles/Melee/AbyssalStarProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(AbyssalStarProj));
 
         public override void SetDefaults()
         {

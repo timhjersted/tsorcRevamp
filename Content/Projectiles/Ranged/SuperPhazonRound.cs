@@ -8,7 +8,7 @@ namespace tsorcRevamp.Content.Projectiles.Ranged
 {
     class SuperPhazonRound : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Ranged/PhazonRound";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(PhazonRound));
         public override void SetDefaults()
         {
             Projectile.width = 10;

@@ -9,7 +9,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Enemy
     /// </summary>
     public class EnemyDestinedDeathFlask : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/DestinedDeathFlask";
 
         public override void SetDefaults()
         {
@@ -24,7 +23,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Enemy
             Item.useAnimation = 60;
             Item.useTime = 60;
             Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<global::tsorcRevamp.Projectiles.Enemy.OolacileSorcerer.OccultistDestinedDeathFlask>();
+            Item.shoot = ModContent.ProjectileType<global::tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer.OccultistDestinedDeathFlask>();
             Item.shootSpeed = 13f;
             Item.DamageType = DamageClass.Magic;
             Item.value = 0;

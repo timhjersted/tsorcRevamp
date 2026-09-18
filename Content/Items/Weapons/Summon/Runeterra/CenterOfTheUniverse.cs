@@ -10,7 +10,6 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles;
 using tsorcRevamp.Content.Projectiles.Summon.Runeterra.Dragons;
-using tsorcRevamp.Content.Projectiles.Summon.Runeterra.Dragons.StarForger;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra
 {

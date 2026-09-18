@@ -11,7 +11,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// </summary>
     public class EnemyVenomStaffProj : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/EnemyVenomStaffProj";
 
         private const int TotalFrames = 4;
         private const int TicksPerFrame = 5;

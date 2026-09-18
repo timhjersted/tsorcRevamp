@@ -13,7 +13,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Runeterra.Dragons.GrandComet
 {
     class GrandCometExplosion : DynamicTrail
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Summon/Runeterra/Dragons/GrandComet/GrandCometExplosion";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(GrandCometExplosion));
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();

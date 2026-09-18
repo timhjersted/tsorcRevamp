@@ -1,11 +1,12 @@
 ﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Projectiles
 {
     class HealingWater : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/MusicalNote";
+        public override string Texture => UsefulFunctions.VanillaTextureFilepath(ProjectileID.HolyWater, "Projectile");
         public override void SetDefaults()
         {
             Projectile.aiStyle = 0;

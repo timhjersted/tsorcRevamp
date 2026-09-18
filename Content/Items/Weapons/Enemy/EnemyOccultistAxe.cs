@@ -12,7 +12,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Enemy
     /// </summary>
     public class EnemyOccultistAxe : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/GrandOolacileAxe";
 
         public override void SetDefaults()
         {

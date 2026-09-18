@@ -160,7 +160,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return false;
 
             Texture2D texture = ModContent.Request<Texture2D>(
-                "tsorcRevamp/Projectiles/Enemy/FireBreath").Value;
+                UsefulFunctions.RefactorableFilepath(typeof(FireBreath))).Value;
             Vector2 origin = texture.Size() * 0.5f;
 
             for (int i = 0; i < TotalLobeCount; i++)

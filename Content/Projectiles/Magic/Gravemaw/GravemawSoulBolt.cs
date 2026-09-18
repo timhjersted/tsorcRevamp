@@ -2,13 +2,14 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls;
 
 namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 {
     ///<summary>Soulspit's homing soul-bolt (friendly magic). Reuses the PurpleSkull sprite. ai[0]=homing.</summary>
     class GravemawSoulBolt : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/VesselOfSouls/PurpleSkull";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(PurpleSkull));
 
         float Homing => Projectile.ai[0];
 

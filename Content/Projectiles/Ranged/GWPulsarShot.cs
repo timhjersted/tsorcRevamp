@@ -3,12 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Melee.Flails;
 
 namespace tsorcRevamp.Content.Projectiles.Ranged
 {
     class GWPulsarShot : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Ranged/PulsarShot";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(PulsarShot));
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 8;

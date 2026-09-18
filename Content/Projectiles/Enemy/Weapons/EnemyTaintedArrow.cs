@@ -2,12 +2,14 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Ranged;
+using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
     public class EnemyTaintedArrow : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Ranged/Ammo/TaintedArrowProjectile";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(TaintedArrowProjectile));
 
         public override void SetDefaults()
         {

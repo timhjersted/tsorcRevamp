@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls;
 
 namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 {
@@ -14,7 +15,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
     ///</summary>
     class GravemawOrb : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/VesselOfSouls/PurpleSkull";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(PurpleSkull));
 
         const float PullRadius = 240f;
 

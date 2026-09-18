@@ -1,6 +1,8 @@
 ﻿using Terraria.ModLoader;
 
-namespace tsorcRevamp.Content.Projectiles.Enemy.UnusedAssets{
+namespace tsorcRevamp.Content.Projectiles.Enemy.UnusedAssets
+{
+	[Autoload(false)] //doesn't seem to have a texture?
 	public class OmnirsEnemySpellToxin : ModProjectile
 	{
 		public override void SetDefaults()

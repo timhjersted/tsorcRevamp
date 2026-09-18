@@ -6,7 +6,7 @@ namespace tsorcRevamp.Content.Projectiles
     class FireField : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Projectiles/GreatFireStrike";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(GreatFireStrike));
 
         public override void SetStaticDefaults()
         {

@@ -62,7 +62,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 EnemyVFX.DrawBlackKnightSpearWake(Projectile.Center - direction * 16f,
                     direction.ToRotation(), new Vector2(84f, 18f), 0.62f);
                 Texture2D basicSpear = ModContent.Request<Texture2D>(
-                    "tsorcRevamp/Projectiles/Enemy/BlackKnightSpear").Value;
+                    UsefulFunctions.RefactorableFilepath(typeof(BlackKnightSpear))).Value;
                 Main.EntitySpriteDraw(basicSpear, Projectile.Center - Main.screenPosition, null,
                     lightColor, Projectile.rotation, basicSpear.Size() * 0.5f,
                     0.8f, SpriteEffects.None, 0f);

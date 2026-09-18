@@ -14,7 +14,7 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
     public class BerserkerNightmareBall : ModProjectile
     {
 
-        private const string ChainTexturePath = "tsorcRevamp/Projectiles/Melee/Flails/BerserkerNightmareChain"; // The folder path to the flail chain sprite
+        private string ChainTexturePath = UsefulFunctions.RefactorableFilepath(typeof(BerserkerNightmareBall)) + "_Chain"; // The folder path to the flail chain sprite
 
         private enum AIState
         {

@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles;
 
-namespace tsorcRevamp.Content.Projectiles.Summon.Runeterra.Dragons.ASOL13
+namespace tsorcRevamp.Content.Projectiles.Summon.Runeterra.Dragons //correct for this
 {
     public class ASOL13 : RuneterraDragon
     {

@@ -12,7 +12,7 @@ namespace tsorcRevamp.Content.Projectiles.Ranged
 {
     public class KrakenTsunamiShark : DynamicTrail
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Ranged/KrakenTsunamiShark";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(KrakenTsunamiShark));
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;

@@ -9,6 +9,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
+using tsorcRevamp.Content.Items.Ammo;
+using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
@@ -22,7 +24,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private const int FlightWebCount = 8;
         private const float FlightWebRadius = 24f;
 
-        public override string Texture => "tsorcRevamp/Projectiles/Ranged/Ammo/BoltProjectile";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(BoltProjectile));
 
         public override void SetDefaults()
         {

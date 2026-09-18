@@ -27,7 +27,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private const int WaveColumnSpawnInterval = 4;
         private int _waveColumnTimer;
 
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/FireBreath";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(FireBreath));
 
         public override void SetDefaults()
         {

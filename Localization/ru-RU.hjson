@@ -11300,6 +11300,11 @@ Mods: {
 			// OccultistDestinedDeathFlameColumn.DisplayName: Occultist Destined Death Flame Column
 			// OccultistDestinedDeathFlask.DisplayName: Occultist Destined Death Flask
 			// OccultistThrownAxe.DisplayName: Occultist Thrown Axe
+			// OmnirsEnemySpellFire3Flame1.DisplayName: Omnirs Enemy Spell Fire3 Flame1
+			// OmnirsEnemySpellFire3Flame2.DisplayName: Omnirs Enemy Spell Fire3 Flame2
+			// OmnirsEnemySpellTsunami.DisplayName: Omnirs Enemy Spell Tsunami
+			// OmnirsEnemySpellTsunamiReverse.DisplayName: Omnirs Enemy Spell Tsunami Reverse
+			// FireFlaskProj.DisplayName: Fire Flask Proj
 		}
 
 		NPCs: {

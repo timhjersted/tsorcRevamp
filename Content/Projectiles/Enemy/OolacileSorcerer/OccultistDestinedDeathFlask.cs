@@ -1,16 +1,15 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Content.Projectiles;
-using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
 
-namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
+namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer
 {
     /// <summary>
     /// Grand Occultist-only flask. It mirrors Studded Leather Warrior's ballistic flask lifecycle,
@@ -19,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
     /// </summary>
     public class OccultistDestinedDeathFlask : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/DestinedDeathFlask";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemyDestinedDeathFlask));
 
         private const float Gravity = 0.18f;
 
@@ -245,7 +244,7 @@ namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
     /// </summary>
     public class OccultistDestinedDeathFlameColumn : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/DestinedDeathBlaze";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(DestinedDeathBlaze));
 
         private const int FrameCount = 5;
         private const int TicksPerFrame = 6;

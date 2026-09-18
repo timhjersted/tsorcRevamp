@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls;
 
 namespace tsorcRevamp.Content.Projectiles.Summon.VesselOfSouls
 {
@@ -27,7 +28,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.VesselOfSouls
         const float SpriteScale = 1f;
 
         public override string Texture => UseStrangeEyeSprite
-            ? "tsorcRevamp/Projectiles/Enemy/VesselOfSouls/StrangeEye"
+            ? UsefulFunctions.RefactorableFilepath(typeof(StrangeEye))
             : "tsorcRevamp/NPCs/Bosses/VesselOfSouls/SoulVessel";
 
         int shootTimer;

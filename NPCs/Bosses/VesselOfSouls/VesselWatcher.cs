@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
     ///</summary>
     class VesselWatcher : ModNPC
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/VesselOfSouls/StrangeEye";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(StrangeEye));
 
         // If the gaze looks the wrong way, bump this (the sprite's frame-0 facing may differ).
         const int GazeFrameOffset = 0;

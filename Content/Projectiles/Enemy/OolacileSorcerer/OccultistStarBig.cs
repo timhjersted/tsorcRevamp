@@ -19,7 +19,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer
     /// </summary>
     public class OccultistStarBig : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/BlueElectricRing";
 
         private const int TravelTicks = 70;
         private const int HoldTicks = 55;

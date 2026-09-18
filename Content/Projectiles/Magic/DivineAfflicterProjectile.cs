@@ -10,7 +10,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic
 {
     class DivineAfflicterProjectile : DynamicTrail
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Magic/CursedTormentorProjectile";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(CursedTormentorProjectile));
         public override void SetDefaults()
         {
             Projectile.width = 16;

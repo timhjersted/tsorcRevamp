@@ -25,7 +25,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles
         public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/";
         public override int BuffType => ModContent.BuffType<CenterOfTheUniverseBuff>();
         public override int dustID => DustID.AncientLight;
-        public override string Texture => "tsorcRevamp/Projectiles/Summon/Runeterra/CirclingProjectiles/CenterOfTheUniverseStar";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(CenterOfTheUniverseStar));
         public override void OnSpawn(IEntitySource source)
         {
             CenterOfTheUniverse.projectiles2.Add(this);

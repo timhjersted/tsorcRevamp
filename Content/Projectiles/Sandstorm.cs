@@ -7,7 +7,7 @@ namespace tsorcRevamp.Content.Projectiles
     class Sandstorm : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Projectiles/Sand";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Sand));
 
         public override void SetStaticDefaults()
         {

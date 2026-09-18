@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
+namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer
 {
     /// <summary>
     /// The payload Star Cascade's electric ring bursts into. It is NOT a shot that appears already moving:
@@ -14,7 +14,6 @@ namespace tsorcRevamp.Projectiles.Enemy.OolacileSorcerer
     /// </summary>
     public class OccultistMagicRing : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/BlueMagicRing";
 
         private const int FormTicks = 30;
         private const int LifetimeTicks = FormTicks + 260;

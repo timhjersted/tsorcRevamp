@@ -17,7 +17,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// </summary>
     public class PuppetFireWaveColumn : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/FireBreath";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(FireBreath));
 
         // ai[0] = full column height (px), ai[1] = signed horizontal fan-out at the column's top (px)
         private float ColumnHeight => Projectile.ai[0];

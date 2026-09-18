@@ -7,7 +7,7 @@ namespace tsorcRevamp.Content.Projectiles
 {
     class Icicle2 : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Icicle";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Icicle));
         public override void SetDefaults()
         {
             //projectile.aiStyle = 9;

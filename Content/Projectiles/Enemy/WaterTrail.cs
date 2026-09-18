@@ -10,7 +10,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 {
     class WaterTrail : DynamicTrail
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/WaterTrail";
 
         public override void SetStaticDefaults()
         {

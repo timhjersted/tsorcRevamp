@@ -8,7 +8,7 @@ namespace tsorcRevamp.Content.Projectiles
     class PoisonBombBall : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Projectiles/PoisonFieldBall";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(PoisonFieldBall));
         public override void SetDefaults()
         {
             Projectile.friendly = true;

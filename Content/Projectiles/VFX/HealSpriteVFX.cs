@@ -1,12 +1,13 @@
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.Content.Projectiles.VFX
 {
     // Stationary, non-damaging version of EnemySpellEffectHealing for use on healed NPCs.
     class HealSpriteVFX : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/EnemySpellEffectHealing";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemySpellEffectHealing));
 
         public override void SetDefaults()
         {

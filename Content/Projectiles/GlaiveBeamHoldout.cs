@@ -9,7 +9,6 @@ namespace tsorcRevamp.Content.Projectiles
     class GlaiveBeamHoldout : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Projectiles/GlaiveBeamHoldout";
 
         private const int NumAnimationFrames = 11;
 

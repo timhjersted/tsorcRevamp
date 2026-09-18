@@ -184,7 +184,7 @@ namespace tsorcRevamp.Content.Projectiles.Ranged
 
     public class FireFlaskLingeringFlame : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/FireFlask";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(FireFlaskProj));
 
         public override void SetDefaults()
         {
