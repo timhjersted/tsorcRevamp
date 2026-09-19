@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Content.Items.Materials
         {
             Lighting.AddLight(Item.Center, .5f, .35f, .35f);
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
-            Texture2D textureglow = (Texture2D)Mod.Assets.Request<Texture2D>("Items/Materials/EternalCrystal_Glow");
+            Texture2D textureglow = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EternalCrystal)) + "_Glow");
             var myrectangle = texture.Frame(1, 25, 0, itemframe);
             spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(14, 25), Item.scale, SpriteEffects.None, 0.1f);
             spriteBatch.Draw(textureglow, Item.Center - Main.screenPosition, myrectangle, Color.White, 0f, new Vector2(14, 25), Item.scale, SpriteEffects.None, 0);

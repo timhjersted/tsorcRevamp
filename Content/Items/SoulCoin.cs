@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
@@ -116,7 +116,7 @@ namespace tsorcRevamp.Content.Items
         {
 
             Lighting.AddLight(Item.Center, 0.1f, 0.45f, 0.21f);
-            Texture2D texture = (Texture2D)Mod.Assets.Request<Texture2D>("Items/SoulCoin_InWorld");
+            Texture2D texture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(SoulCoin)) + "_InWorld");
             var myrectangle = texture.Frame(1, 8, 0, itemframe);
             spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(7, 11), Item.scale, SpriteEffects.None, 0.1f);
 
