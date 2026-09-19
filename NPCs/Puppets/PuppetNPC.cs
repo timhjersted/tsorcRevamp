@@ -1619,6 +1619,11 @@ namespace tsorcRevamp.NPCs.Puppets
         private float _weaponRotation;    // direction-neutral draw angle
         private int   _weaponAnim;        // counts down current weapon use animation during swings
         private float _prevWeaponRotation; // last tick's _weaponRotation, for swing-speed-gated VFX
+        // Projectile-owned flails update this pose after the NPC tick. Keeping the last pose for one
+        // tick makes the hand/chain anchor stable regardless of whether NPCs or projectiles update first.
+        private bool _flailArmPoseActive;
+        private long _flailArmPoseTick = -1;
+        private float _flailArmPoseRotation;
         private float _spearGrip = 0.5f;  // 0=grip at head, 1=grip at base; animated for spear extend/retract
         private int   _weaponAnimMax = DefaultWeaponAnimMax;
         private bool  _forceExportHeldWeapon;
@@ -2202,6 +2207,15 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Final eligibility gate after range/cooldown classification. Useful for health
         /// phase unlocks and attacks that require live projectiles or another encounter resource.</summary>
         protected virtual bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction) => true;
+        /// <summary>Whether the normal melee telegraph may re-face during its early read window.
+        /// Projectile-authored paths that are already visibly orbiting a locked side can disable this
+        /// per combo so the body, arm, chain, and eventual release keep one coherent mirror.</summary>
+        protected virtual bool TrackMeleeComboFacingDuringTelegraph(MeleeCombo combo) => true;
+        /// <summary>Facing captured when a legacy combo starts. Most attacks face the target; a
+        /// reactive follow-up may preserve the previous committed facing so its rear attack remains
+        /// honest. Return values are normalized to -1 or +1 by the caller.</summary>
+        protected virtual int GetMeleeComboStartFacing(MeleeCombo combo, Player target)
+            => target.Center.X < NPC.Center.X ? -1 : 1;
         /// <summary>Per-tick events driven by the same combo clocks as animation and collision.</summary>
         protected virtual void OnMeleeComboTelegraphTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total) { }
         protected virtual void OnMeleeComboAttackTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total) { }
@@ -5758,7 +5772,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     // Same 8px dead zone as the neutral re-face, so an overlapping player can't flip it each tick.
                     {
                         float horizontalGap = target.Center.X - NPC.Center.X;
-                        bool beforeFlash = PhaseTimer > TelegraphFacingCommitTicks;
+                        bool beforeFlash = PhaseTimer > TelegraphFacingCommitTicks
+                            && TrackMeleeComboFacingDuringTelegraph(_activeMeleeCombo);
                         bool clearlyToOneSide = Math.Abs(horizontalGap) > NeutralRefaceDeadZone;
                         if (beforeFlash && clearlyToOneSide)
                         {
@@ -6434,7 +6449,7 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             Player target = Main.player[NPC.target];
-            _comboLockedDir = target.Center.X < NPC.Center.X ? -1 : 1;
+            _comboLockedDir = GetMeleeComboStartFacing(_activeMeleeCombo, target) < 0 ? -1 : 1;
             NPC.direction = _comboLockedDir;
             NPC.spriteDirection = _comboLockedDir;
             ArmSwingVariation(NPC.HasValidTarget ? NPC.Center.Y - Main.player[NPC.target].Center.Y : 0f);
@@ -7009,7 +7024,8 @@ namespace tsorcRevamp.NPCs.Puppets
         private static bool IsSwingingMotion(ComboMotion m)
             => m != ComboMotion.Feint && m != ComboMotion.ChargeChop
             && m != ComboMotion.LowAxeRun && m != ComboMotion.ThrownWeaponRetrieve
-            && m != ComboMotion.BackstepRaise && m != ComboMotion.ApexDiveCleave;
+            && m != ComboMotion.BackstepRaise && m != ComboMotion.ApexDiveCleave
+            && m != ComboMotion.FlailBrace;
 
         /// <summary>
         /// Drives the bounded reactive shield action each AI tick (no-op without a shield): raise the
@@ -8576,6 +8592,14 @@ namespace tsorcRevamp.NPCs.Puppets
                             _weaponRotation -= MathHelper.TwoPi;
                         }
                         break;
+                    case ComboMotion.FlailBrace:
+                        // The hand is the chain anchor. Ease it forward during the tell, then hold it
+                        // still while the ball-and-chain projectile owns every visible orbit and lash.
+                        if (inTel)
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.20f);
+                        else
+                            _weaponRotation = MathHelper.PiOver4;
+                        break;
                     case ComboMotion.IaidoDraw:
                     {
                         var (a0, a1) = Endpoints(ComboMotion.IaidoDraw);
@@ -9708,6 +9732,9 @@ namespace tsorcRevamp.NPCs.Puppets
                         {
                             bodyRow = 4;
                         }
+                        break;
+                    case ComboMotion.FlailBrace:
+                        bodyRow = 3;
                         break;
                     case ComboMotion.IaidoDraw:
                         bodyRow = inTel ? 4 : 3;
@@ -11415,9 +11442,50 @@ namespace tsorcRevamp.NPCs.Puppets
             (Phase == AttackPhase.ClosingDistance && ShowMeleeWeaponWhileClosingDistance) ||
             UseCompositeArmForAdditionalPhase);
 
+        /// <summary>Receives the current ball position from a projectile-owned flail. Most patterns
+        /// use a deliberately bounded shoulder motion. A specifically authored projectile path can
+        /// instead pass its direct facing-right arm angle; this also lets full-orbit attacks retain an
+        /// unwrapped 360° value without <see cref="MathHelper.WrapAngle(float)"/> reversing at the seam.</summary>
+        internal void UpdateFlailProjectileArmPose(Vector2 hand, Vector2 ball,
+            bool useAuthoredPose = false, float authoredArmFacingRight = 0f)
+        {
+            if (useAuthoredPose)
+            {
+                _flailArmPoseRotation = authoredArmFacingRight * NPC.direction;
+                _flailArmPoseActive = true;
+                _flailArmPoseTick = (long)Main.GameUpdateCount;
+                return;
+            }
+
+            Vector2 local = (ball - hand) * NPC.direction;
+            if (local.LengthSquared() < 1f)
+                return;
+
+            float angle = local.ToRotation();
+            float desiredFacingRight = -1.23f
+                + 0.72f * (float)Math.Sin(angle)
+                - 0.14f * (float)Math.Cos(angle);
+            float desired = desiredFacingRight * NPC.direction;
+
+            if (!_flailArmPoseActive || _flailArmPoseTick < Main.GameUpdateCount - 1)
+            {
+                _flailArmPoseRotation = (FrontHandPoseRotation - MathHelper.PiOver2
+                    + CompositeArmRotationOffset + MeleeCompositeArmRotationOffset) * NPC.direction;
+            }
+
+            _flailArmPoseRotation = MathHelper.WrapAngle(_flailArmPoseRotation
+                + MathHelper.WrapAngle(desired - _flailArmPoseRotation) * 0.28f);
+            _flailArmPoseActive = true;
+            _flailArmPoseTick = (long)Main.GameUpdateCount;
+        }
+
+        private bool HasRecentFlailArmPose =>
+            _flailArmPoseActive && (long)Main.GameUpdateCount - _flailArmPoseTick <= 1;
+
         /// <summary>True when the composite-arm swing path should be active this frame.</summary>
         private bool CompositeArmActive =>
-            UseCompositeArmSwing && CompositeArmSwingMasterEnable && IsMeleeSwingPosePhase;
+            CompositeArmSwingMasterEnable && IsMeleeSwingPosePhase
+            && (UseCompositeArmSwing || HasRecentFlailArmPose);
 
         private bool TwoHandedCompositeArmActive =>
             CompositeArmActive && UseTwoHandedCompositeSwing;
@@ -11430,8 +11498,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// passing the weapon angle raw (the old behavior) trailed the arm 90° behind the swing,
         /// which read as "arm pointing backwards / hand behind the NPC".  Mirrored by facing —
         /// vanilla callers pre-negate for direction −1 the same way (e.g. useStyle 9).</summary>
-        private float CompositeArmRotation =>
-            (FrontHandPoseRotation - MathHelper.PiOver2 + CompositeArmRotationOffset
+        private float CompositeArmRotation => HasRecentFlailArmPose
+            ? _flailArmPoseRotation
+            : (FrontHandPoseRotation - MathHelper.PiOver2 + CompositeArmRotationOffset
                 + MeleeCompositeArmRotationOffset) * NPC.direction;
 
         /// <summary>Same weapon-space → composite-arm conversion as <see cref="CompositeArmRotation"/>, for the

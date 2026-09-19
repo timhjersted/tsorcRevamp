@@ -72,6 +72,31 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Flail;
 
+        // Reverse Halo and Ankle Reaper live in the reusable optional mace table. Black Ninja opts
+        // into them explicitly; bespoke flail users such as Dread Wraith keep their current pool until
+        // they choose to add the same entries and selection rules.
+        private static readonly MeleeCombo[] BlackNinjaMaceCombos = BuildBlackNinjaMaceComboPool();
+        protected override MeleeCombo[] MeleeComboPoolOverride => BlackNinjaMaceCombos;
+
+        // Server-only branch memory. A completed mace move can expose Backlash Reversal while the
+        // target remains behind the facing that move committed to. The selected combo index and its
+        // locked facing are already carried by PuppetNPC's normal snapshot.
+        private ulong _backlashReadyUntil;
+        private int _backlashFollowupFacing;
+        private int _backlashAttackFacing;
+
+        private static MeleeCombo[] BuildBlackNinjaMaceComboPool()
+        {
+            MeleeCombo[] core = WeaponArchetypeTables.Flail;
+            MeleeCombo[] levelLashes = WeaponArchetypeTables.FlailLevelLashes;
+            MeleeCombo[] reactive = WeaponArchetypeTables.FlailReactiveFollowups;
+            MeleeCombo[] combined = new MeleeCombo[core.Length + levelLashes.Length + reactive.Length];
+            Array.Copy(core, 0, combined, 0, core.Length);
+            Array.Copy(levelLashes, 0, combined, core.Length, levelLashes.Length);
+            Array.Copy(reactive, 0, combined, core.Length + levelLashes.Length, reactive.Length);
+            return combined;
+        }
+
         // The flail's visual is its ball + chain projectile, so don't draw the held item icon.
         protected override bool HideHeldMeleeSprite => true;
 
@@ -136,7 +161,7 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override Color MagicTelegraphFlashColor => new Color(80, 80, 80);
 
         public Vector2 GetFlailAnchor()
-            => NPC.Center + new Vector2(NPC.direction * 2f, -NPC.height * 0.2f + 10f);
+            => PuppetHandPosition;
 
         protected override float TopSpeed => 2.85f;
         protected override float Acceleration => 0.105f;
@@ -144,8 +169,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override float StabRange => 180f;
         protected override float ComboMaxStartRange => 225f;
         protected override int MeleeComboChance => 100;
-        protected override float ComboTelegraphMultiplier => 1.45f;
-        protected override int MinComboTelegraphTicks => 60;
+        // Flail tells are authored in on-screen ticks because the projectile itself draws the tell.
+        // Forty ticks gives the new patterns exactly one harmless orbit before release.
+        protected override float ComboTelegraphMultiplier => 1f;
+        protected override int MinComboTelegraphTicks => 40;
         protected override int MeleeTelegraphTicks => 60;
         protected override Color MeleeTelegraphFlashColor => Color.LightYellow;
         protected override int CasualStrollChance => 6;
@@ -296,7 +323,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>True while this Ninja still owns a mace head and its chain. A new launch must wait
         /// until that projectile has reeled in and removed itself; checking the NPC owner in ai[0]
         /// prevents another Ninja's flail from blocking this one.</summary>
-        private bool HasActiveMaceBall()
+        private bool TryGetActiveMaceBall(out Projectile activeBall)
         {
             int ballType = ModContent.ProjectileType<EnemyDiamondCrusherBall>();
 
@@ -305,25 +332,178 @@ namespace tsorcRevamp.NPCs.Puppets
                 Projectile projectile = Main.projectile[i];
                 if (projectile.active && projectile.type == ballType && (int)projectile.ai[0] == NPC.whoAmI)
                 {
+                    activeBall = projectile;
                     return true;
                 }
             }
 
+            activeBall = null;
             return false;
         }
 
-        // The shared Flail table contains multi-step patterns. Once the first head has launched, end
-        // that pattern and allow its full wind-up/outward/retract lifecycle before a new telegraph.
+        private bool HasActiveMaceBall() => TryGetActiveMaceBall(out _);
+
+        protected override void OnMeleeComboStarted(MeleeCombo combo)
+        {
+            base.OnMeleeComboStarted(combo);
+
+            if (Main.netMode == NetmodeID.MultiplayerClient
+                || !EnemyFlailAttackPatterns.TryResolve(combo.Name, out EnemyFlailAttackPattern pattern)
+                || HasActiveMaceBall())
+            {
+                return;
+            }
+
+            int facing;
+            if (pattern == EnemyFlailAttackPattern.BacklashReversal)
+            {
+                facing = _backlashFollowupFacing == 0
+                    ? (NPC.direction == 0 ? 1 : NPC.direction)
+                    : _backlashFollowupFacing;
+                _backlashAttackFacing = facing;
+                _backlashReadyUntil = 0;
+            }
+            else
+            {
+                _backlashReadyUntil = 0;
+                facing = NPC.direction == 0 ? 1 : NPC.direction;
+                if (NPC.HasValidTarget)
+                {
+                    facing = Main.player[NPC.target].Center.X < NPC.Center.X ? -1 : 1;
+                }
+            }
+
+            int damage = (int)(MeleeDamage * combo.Steps[0].DamageMult);
+            Projectile projectile = Projectile.NewProjectileDirect(
+                NPC.GetSource_FromThis(),
+                GetFlailAnchor(),
+                new Vector2(facing, 0f),
+                ModContent.ProjectileType<EnemyDiamondCrusherBall>(),
+                damage,
+                3.5f,
+                Main.myPlayer,
+                NPC.whoAmI,
+                (float)pattern,
+                EnemyFlailAttackPatterns.ReachFor(pattern));
+            projectile.timeLeft = EnemyFlailAttackPatterns.MaximumLifetime;
+            projectile.netUpdate = true;
+            TrackEncounterProjectile(projectile.whoAmI);
+        }
+
+        // Defensive rule for any future multi-step flail entry: a step may not create another head
+        // while the projectile-owned sequence is still using the first one.
         protected override bool ShouldContinueMeleeCombo(string comboName, int nextStepIndex, Player target, bool previousStepHit)
             => !HasActiveMaceBall() && base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
 
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
-            => !HasActiveMaceBall() && base.CanSelectMeleeCombo(combo, distance, healthFraction);
+        {
+            if (HasActiveMaceBall() || !base.CanSelectMeleeCombo(combo, distance, healthFraction))
+                return false;
+
+            if (combo.Name == EnemyFlailAttackPatterns.BacklashName)
+                return BacklashFollowupStillValid();
+
+            if (!EnemyFlailAttackPatterns.RequiresLevelTarget(combo.Name))
+                return true;
+
+            if (!NPC.HasValidTarget)
+                return false;
+
+            Player target = Main.player[NPC.target];
+            return Math.Abs(target.Center.Y - NPC.Center.Y)
+                <= EnemyFlailAttackPatterns.LevelTargetVerticalTolerance;
+        }
+
+        protected override bool TrackMeleeComboFacingDuringTelegraph(MeleeCombo combo)
+            => !EnemyFlailAttackPatterns.LocksFacingDuringTell(combo.Name);
+
+        protected override int GetMeleeComboStartFacing(MeleeCombo combo, Player target)
+            => combo.Name == EnemyFlailAttackPatterns.BacklashName && _backlashAttackFacing != 0
+                ? _backlashAttackFacing
+                : base.GetMeleeComboStartFacing(combo, target);
+
+        protected override int ReactiveComboIndex(float dist, ComboRangeBand band, int[] ready)
+        {
+            if (!BacklashFollowupStillValid())
+                return base.ReactiveComboIndex(dist, band, ready);
+
+            for (int i = 0; i < BlackNinjaMaceCombos.Length && i < ready.Length; i++)
+            {
+                if (ready[i] > 0 && BlackNinjaMaceCombos[i].Name == EnemyFlailAttackPatterns.BacklashName)
+                    return i;
+            }
+
+            return base.ReactiveComboIndex(dist, band, ready);
+        }
+
+        protected override void OnComboStepCompleted(MeleeComboStep step)
+        {
+            base.OnComboStepCompleted(step);
+
+            if (Main.netMode == NetmodeID.MultiplayerClient
+                || !NPC.HasValidTarget
+                || !EnemyFlailAttackPatterns.TryResolve(
+                    ActiveMeleeComboName, out EnemyFlailAttackPattern completedPattern)
+                || completedPattern == EnemyFlailAttackPattern.BacklashReversal)
+            {
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            int facing = NPC.direction == 0 ? 1 : NPC.direction;
+            if (TargetQualifiesForBacklash(target, facing))
+            {
+                _backlashFollowupFacing = facing;
+                // Covers the ordinary 60t recovery plus the immediate post-recovery selection.
+                _backlashReadyUntil = Main.GameUpdateCount + 120UL;
+            }
+            else
+            {
+                _backlashReadyUntil = 0;
+            }
+        }
+
+        private bool BacklashFollowupStillValid()
+        {
+            if (_backlashReadyUntil == 0
+                || Main.GameUpdateCount > _backlashReadyUntil
+                || !NPC.HasValidTarget)
+            {
+                return false;
+            }
+
+            return TargetQualifiesForBacklash(Main.player[NPC.target], _backlashFollowupFacing);
+        }
+
+        private bool TargetQualifiesForBacklash(Player target, int facing)
+        {
+            if (!target.active || target.dead || facing == 0)
+                return false;
+
+            float horizontalBehind = (target.Center.X - NPC.Center.X) * facing;
+            return horizontalBehind < -24f
+                && Math.Abs(target.Center.Y - NPC.Center.Y)
+                    <= EnemyFlailAttackPatterns.BacklashTargetVerticalTolerance
+                && Vector2.Distance(target.Center, NPC.Center)
+                    <= EnemyFlailAttackPatterns.BacklashReach + 48f;
+        }
 
         protected override void DoComboMeleeHit(MeleeComboStep step)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
+                return;
+            }
+
+            // The projectile was created at combo start so its orbit IS the visible telegraph. Release
+            // that same head now; never spawn a second ball for a follow-up movement.
+            if (EnemyFlailAttackPatterns.TryResolve(ActiveMeleeComboName, out _))
+            {
+                if (TryGetActiveMaceBall(out Projectile activeBall)
+                    && activeBall.ModProjectile is EnemyFlailProjectileBase flail)
+                {
+                    flail.ReleaseAuthoredPattern();
+                }
                 return;
             }
 

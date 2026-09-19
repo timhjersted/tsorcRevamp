@@ -29,6 +29,16 @@ namespace SwingPreview
         public bool WeaponHidden;         // PuppetNPC.WeaponSheathed: no weapon, arms at rest
         public float FrontSwingBlend = 1f; // dual wield: 1 = front hand follows WeaponRotation, 0 = carry pose
         public float BackSwingBlend;       // dual wield: same for the back hand
+        public bool FlailVisible;
+        public float FlailOffsetX;
+        public float FlailOffsetY;
+        public float FlailRotation;
+        public bool FlailDamageActive;
+        public string FlailStage;
+        public bool FlailHasTarget;
+        public float FlailTargetX;
+        public float FlailTargetY;
+        public string FlailTargetLabel;
     }
 
     /// <summary>Which sprite sheets to composite, and the handful of numbers the pose maths needs.</summary>
@@ -41,6 +51,10 @@ namespace SwingPreview
         public string WeaponSprite;
         public float WeaponRotationOffset;   // MeleeWeaponRotationOffset
         public float DrawScale = 1f;
+
+        /// <summary>The live puppet hides a held weapon because a projectile owns the complete prop
+        /// (for example, a flail head and chain). The sprite path is still used to size the canvas.</summary>
+        public bool ForceHideWeapon;
 
         /// <summary>Weapon sprite scale relative to the body cells: the puppet's MeleeWeaponDrawScale,
         /// read from the mod (DrawPlayer's PuppetDrawScale scales body and weapon together, so it
@@ -57,6 +71,8 @@ namespace SwingPreview
         public string OffHandWeaponSprite;
         public float OffHandCarryRotation = -0.30f;
         public float OffHandWeaponScale = 1f;
+        public string FlailBallSprite;
+        public string FlailChainSprite;
     }
 
     /// <summary>
@@ -107,11 +123,14 @@ namespace SwingPreview
             using Bitmap head = Load(art.HeadSheet);
             using Bitmap weapon = Load(art.WeaponSprite);
             using Bitmap offHandWeapon = art.OffHandWeaponSprite == null ? null : Load(art.OffHandWeaponSprite);
+            using Bitmap flailBall = art.FlailBallSprite == null ? null : Load(art.FlailBallSprite);
+            using Bitmap flailChain = art.FlailChainSprite == null ? null : Load(art.FlailChainSprite);
 
             var rendered = new List<Bitmap>();
             foreach (PoseFrame frame in frames)
             {
-                rendered.Add(DrawFrame(art, frame, body, legs, head, weapon, offHandWeapon, zoom));
+                rendered.Add(DrawFrame(art, frame, body, legs, head, weapon, offHandWeapon,
+                    flailBall, flailChain, frames, zoom));
             }
 
             string safe = Sanitize(label);
@@ -148,7 +167,8 @@ namespace SwingPreview
         }
 
         private static Bitmap DrawFrame(PuppetArt art, PoseFrame frame,
-            Bitmap body, Bitmap legs, Bitmap head, Bitmap weapon, Bitmap offHandWeapon, int zoom)
+            Bitmap body, Bitmap legs, Bitmap head, Bitmap weapon, Bitmap offHandWeapon,
+            Bitmap flailBall, Bitmap flailChain, List<PoseFrame> allFrames, int zoom)
         {
             // Canvas padding sized to the weapon: its reach from the grip to the farthest texture
             // corner, so a full-scale greatsword (Gwyn's is ~117px) never runs off the frame.
@@ -161,6 +181,23 @@ namespace SwingPreview
             int weaponReach = (int)Math.Ceiling(Math.Sqrt(farX * farX + farY * farY));
             int PadX = Math.Max(60, weaponReach + 12);
             int PadY = Math.Max(50, weaponReach + 12);
+            if (flailBall != null && allFrames.Exists(p => p.FlailVisible))
+            {
+                float maxFlailX = 0f;
+                float maxFlailY = 0f;
+                foreach (PoseFrame pose in allFrames)
+                {
+                    maxFlailX = Math.Max(maxFlailX, Math.Abs(pose.FlailOffsetX));
+                    maxFlailY = Math.Max(maxFlailY, Math.Abs(pose.FlailOffsetY));
+                    if (pose.FlailHasTarget)
+                    {
+                        maxFlailX = Math.Max(maxFlailX, Math.Abs(pose.FlailTargetX));
+                        maxFlailY = Math.Max(maxFlailY, Math.Abs(pose.FlailTargetY));
+                    }
+                }
+                PadX = Math.Max(PadX, (int)Math.Ceiling(maxFlailX + flailBall.Width * 0.5f + 24f));
+                PadY = Math.Max(PadY, (int)Math.Ceiling(maxFlailY + flailBall.Height * 0.5f + 24f));
+            }
             int w = (CellW + PadX * 2) * zoom;
             int h = (CellH + PadY * 2) * zoom;
 
@@ -183,6 +220,7 @@ namespace SwingPreview
             // separately got the weapon's rotate/mirror order wrong: blade and arm pointed apart.
             bool flip = false;
             float armRotation = frame.CompositeArmRotation * frame.Direction;   // back to facing-right space
+            bool weaponSpriteHidden = frame.WeaponHidden || art.ForceHideWeapon;
             if (frame.WeaponHidden)
             {
                 // Sheathed: no composite arm pose in game, so the arms hang in the natural draw.
@@ -217,7 +255,7 @@ namespace SwingPreview
             // Dual wield (PuppetNPC.FrontHandPoseRotation / BackHandPoseRotation): each hand crossfades between
             // the carry pose and the live swing, and the back arm is posed from its OWN weapon instead of trailing
             // the front arm at 0.55x.
-            bool dualWield = offHandWeapon != null && !frame.WeaponHidden;
+            bool dualWield = offHandWeapon != null && !weaponSpriteHidden;
             float frontWeaponRotation = frame.WeaponRotation;
             float backArmRotation = armRotation * 0.55f;
             float backWeaponRotation = art.OffHandCarryRotation;
@@ -229,7 +267,23 @@ namespace SwingPreview
                 backArmRotation = backWeaponRotation - (float)Math.PI / 2f;
             }
 
+            PointF flailHand = FrontHandInCell(armRotation, flip: false);
+            PointF flailCenter = new PointF(
+                flailHand.X + frame.FlailOffsetX,
+                flailHand.Y + frame.FlailOffsetY);
+            PointF flailTarget = new PointF(
+                CellW * 0.5f + frame.FlailTargetX,
+                CellH * 0.5f + frame.FlailTargetY);
+
             // ---- vanilla layer order ----
+            if (frame.FlailHasTarget)
+            {
+                DrawTargetMarker(g, flailTarget, frame.FlailTargetLabel);
+            }
+            if (frame.FlailVisible && flailChain != null)
+            {
+                DrawFlailChain(g, flailChain, flailHand, flailCenter);
+            }
             DrawStatic(g, legs, legFrame, flip);
             DrawRotated(g, body, backArmCell, BackArmPivot, backArmRotation, flip);
             if (dualWield)
@@ -241,7 +295,7 @@ namespace SwingPreview
             DrawStatic(g, body, backShoulderCell, flip);
             DrawStatic(g, body, torsoCell, flip);
             DrawStatic(g, head, headFrame, flip);
-            if (!frame.WeaponHidden)
+            if (!weaponSpriteHidden)
             {
                 PointF frontHand = FrontHandInCell(armRotation, flip);
                 DrawWeapon(g, weapon, art, frontWeaponRotation, frontHand, flip, art.WeaponScale);
@@ -256,6 +310,11 @@ namespace SwingPreview
             {
                 DrawRotated(g, body, frontArmCell, FrontArmPivot, armRotation, flip);
                 DrawStatic(g, body, frontShoulderCell, flip);
+            }
+
+            if (frame.FlailVisible && flailBall != null)
+            {
+                DrawFlailBall(g, flailBall, flailCenter, frame.FlailRotation, frame.FlailDamageActive);
             }
 
             g.ResetTransform();
@@ -360,6 +419,63 @@ namespace SwingPreview
             g.Restore(state);
         }
 
+        private static void DrawFlailChain(Graphics g, Bitmap chain, PointF hand, PointF ball)
+        {
+            float dx = ball.X - hand.X;
+            float dy = ball.Y - hand.Y;
+            float distance = (float)Math.Sqrt(dx * dx + dy * dy);
+            if (distance < 1f) { return; }
+
+            float ux = dx / distance;
+            float uy = dy / distance;
+            float spacing = Math.Max(2f, chain.Height * 0.92f);
+            float degrees = (float)(Math.Atan2(dy, dx) * 180.0 / Math.PI) + 90f;
+            for (float along = spacing * 0.5f; along < distance - 4f; along += spacing)
+            {
+                GraphicsState state = g.Save();
+                g.TranslateTransform(hand.X + ux * along, hand.Y + uy * along);
+                g.RotateTransform(degrees);
+                g.DrawImage(chain,
+                    new RectangleF(-chain.Width * 0.5f, -chain.Height * 0.5f, chain.Width, chain.Height),
+                    new RectangleF(0f, 0f, chain.Width, chain.Height), GraphicsUnit.Pixel);
+                g.Restore(state);
+            }
+        }
+
+        private static void DrawFlailBall(Graphics g, Bitmap ball, PointF center, float rotation, bool active)
+        {
+            GraphicsState state = g.Save();
+            g.TranslateTransform(center.X, center.Y);
+            g.RotateTransform((float)(rotation * 180.0 / Math.PI));
+            g.DrawImage(ball,
+                new RectangleF(-ball.Width * 0.5f, -ball.Height * 0.5f, ball.Width, ball.Height),
+                new RectangleF(0f, 0f, ball.Width, ball.Height), GraphicsUnit.Pixel);
+            g.Restore(state);
+
+            if (active)
+            {
+                using var pen = new Pen(Color.FromArgb(220, 255, 80, 70), 1.5f);
+                g.DrawEllipse(pen, center.X - ball.Width * 0.62f, center.Y - ball.Height * 0.62f,
+                    ball.Width * 1.24f, ball.Height * 1.24f);
+            }
+        }
+
+        private static void DrawTargetMarker(Graphics g, PointF center, string label)
+        {
+            using var outer = new Pen(Color.FromArgb(190, 90, 180, 255), 1.5f);
+            using var inner = new Pen(Color.FromArgb(130, 90, 180, 255), 1f);
+            g.DrawEllipse(outer, center.X - 9f, center.Y - 9f, 18f, 18f);
+            g.DrawEllipse(inner, center.X - 3f, center.Y - 3f, 6f, 6f);
+            g.DrawLine(inner, center.X - 13f, center.Y, center.X + 13f, center.Y);
+            g.DrawLine(inner, center.X, center.Y - 13f, center.X, center.Y + 13f);
+            if (!string.IsNullOrWhiteSpace(label))
+            {
+                using var font = new Font(FontFamily.GenericMonospace, 6f, FontStyle.Regular, GraphicsUnit.Pixel);
+                using var brush = new SolidBrush(Color.FromArgb(220, 120, 195, 245));
+                g.DrawString(label, font, brush, center.X + 11f, center.Y - 11f);
+            }
+        }
+
         private static float Lerp(float from, float to, float amount) => from + (to - from) * amount;
 
         /// <summary>Vanilla Player.GetBackHandPosition in facing-right cell space: the arm ellipse for the
@@ -409,6 +525,14 @@ namespace SwingPreview
             using var brush = new SolidBrush(tint);
             string air = frame.Airborne ? " air" : "";
             g.DrawString($"t{frame.Tick} {ShortPhase(frame.Phase)}{air}", font, brush, 4, 4);
+
+            if (!string.IsNullOrWhiteSpace(frame.FlailStage))
+            {
+                using var stageBrush = new SolidBrush(frame.FlailDamageActive
+                    ? Color.FromArgb(255, 245, 105, 90)
+                    : Color.FromArgb(255, 120, 190, 235));
+                g.DrawString(frame.FlailStage, font, stageBrush, 4, 18);
+            }
 
             if (frame.StepCount > 1)
             {
@@ -506,6 +630,10 @@ namespace SwingPreview
                     steps.Append(',');
                 }
                 string tag = ShortPhase(poses[i].Phase) + (poses[i].Armed ? "*" : "") + (poses[i].Airborne ? " air" : "");
+                if (!string.IsNullOrWhiteSpace(poses[i].FlailStage))
+                {
+                    tag += " - " + poses[i].FlailStage;
+                }
                 if (poses[i].StepCount > 1)
                 {
                     tag = $"step {poses[i].StepIndex + 1}/{poses[i].StepCount} {poses[i].Motion} - {tag}";

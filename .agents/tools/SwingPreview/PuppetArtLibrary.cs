@@ -12,7 +12,7 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, OolacileCultist, AbysmalOolacileSorcerer";
+        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, DreadWraith";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
@@ -130,6 +130,44 @@ namespace SwingPreview
                     WeaponSprite = P("Projectiles", "Enemy", "Weapons", "GrandOolacileAxe.png"),
                     WeaponRotationOffset = 0f,
                     DrawScale = 1f,
+                };
+            }
+
+            if (puppet.Equals("BlackNinja", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "BlackNinja",
+                    // The game wears vanilla Ninja armor, which is packed in XNB files. The mod's
+                    // Abyssal Ninja set is the closest offline rig proxy; the arm geometry is exact.
+                    BodySheet = P("Content", "Items", "Armor", "AbyssalNinjaTop_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "AbyssalNinjaBottoms_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "AbyssalNinjaMask_Head.png"),
+                    WeaponSprite = P("Content", "Projectiles", "Melee", "Flails", "DiamondCrusherBall.png"),
+                    FlailBallSprite = P("Content", "Projectiles", "Melee", "Flails", "DiamondCrusherBall.png"),
+                    FlailChainSprite = P("Content", "Projectiles", "Melee", "Flails", "DiamondCrusherBall_Chain.png"),
+                    WeaponRotationOffset = 0f,
+                    DrawScale = 1f,
+                    ForceHideWeapon = true,
+                };
+            }
+
+            if (puppet.Equals("DreadWraith", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "DreadWraith",
+                    // Wills' set and Skeletron Mask are vanilla XNBs. Witchking supplies a similarly
+                    // robed offline proxy while preserving the real composite-arm/body-row maths.
+                    BodySheet = P("Content", "Items", "Armor", "Summon", "WitchkingRobe_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Summon", "WitchkingPants_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Summon", "WitchkingHelmet_Head.png"),
+                    WeaponSprite = P("Content", "Projectiles", "Enemy", "Weapons", "DreadWraithMaceBall.png"),
+                    FlailBallSprite = P("Content", "Projectiles", "Enemy", "Weapons", "DreadWraithMaceBall.png"),
+                    FlailChainSprite = P("Content", "Projectiles", "Enemy", "Weapons", "DreadWraithMaceChain.png"),
+                    WeaponRotationOffset = 0f,
+                    DrawScale = 1f,
+                    ForceHideWeapon = true,
                 };
             }
 

@@ -29,6 +29,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         protected override void OnFlailTick(NPC owner, Vector2 hand)
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             // Continuous flame licking off the ball every tick, since the placeholder sprite itself
             // isn't fire-colored yet — a slight upward drift so it reads as fire, not sparks.
             Dust fire = Dust.NewDustPerfect(Projectile.Center, DustID.Torch, Main.rand.NextVector2Circular(1f, 1f) - new Vector2(0f, 1f), 100, default, Main.rand.NextFloat(0.9f, 1.4f));

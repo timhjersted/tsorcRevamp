@@ -39,6 +39,7 @@ namespace SwingPreview
         public int RollThroughStep;
         public bool Airborne;
         public float WeaponRotationOffset;
+        public FlailPreviewDefinition FlailDemo;
 
         public string StepSummary()
         {
@@ -57,6 +58,7 @@ namespace SwingPreview
         public string Archetype;
         public string Combo;
         public string Motion;
+        public string FlailDemo;
         public string Ease;
         public int EaseIn = -1;
         public int EaseOut = -1;
@@ -100,6 +102,8 @@ SwingPreview - run the mod's real swing maths headless and emit telemetry JSONL.
   --profile                       print every phase's speed profile: sweep, peak deg/tick, the first-
                                   frame jump into it, armed ticks, and the deg/tick of every frame
   --motion <ComboMotion>          prototype a single motion instead of a table combo
+  --flail-demo <name|all>         preview-only projectile tracks: Chain Cross, Reverse Halo, Ankle Reaper,
+                                  Backlash Reversal; draws the real head and chain with --body
   --ease <Linear|Smooth|Snap|Whip|Trapezoidal|Weighted>   override every step's authored Ease
   --ease-in / --ease-out <ticks>  override Weighted easing's acceleration / deceleration ticks
   --ease-decay <float>            override Weighted easing's exponential settle rate
@@ -127,6 +131,7 @@ Examples:
   SwingPreview --puppet Gwyn --combo ""Wrath Flurry"" --step-linger 6 --body
   SwingPreview --archetype Greatsword --combo ""Heavy Chop"" --compare-eases
   SwingPreview --motion OverheadArc --telegraph 45 --attack 26 --ease Whip --overshoot 0.18
+  SwingPreview --puppet BlackNinja --flail-demo all --body --zoom 1
 ");
         }
 
@@ -161,6 +166,7 @@ Examples:
                     case "--archetype": options.Archetype = Next(); break;
                     case "--combo": options.Combo = Next(); break;
                     case "--motion": options.Motion = Next(); break;
+                    case "--flail-demo": options.FlailDemo = Next(); break;
                     case "--ease": options.Ease = Next(); break;
                     case "--ease-in": options.EaseIn = int.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--ease-out": options.EaseOut = int.Parse(Next(), CultureInfo.InvariantCulture); break;
@@ -252,6 +258,48 @@ Examples:
                     PrintPool(bespoke.Pool);
                 }
 
+                return specs;
+            }
+
+            // Preview-only projectile path: no combo-table or gameplay-code changes involved.
+            if (!string.IsNullOrWhiteSpace(FlailDemo))
+            {
+                IReadOnlyList<FlailPreviewDefinition> demos = FlailPreviewLibrary.Resolve(FlailDemo);
+                if (demos.Count == 0)
+                {
+                    Console.WriteLine($"unknown flail demo: {FlailDemo}. Known: {FlailPreviewLibrary.Known}");
+                    return specs;
+                }
+
+                foreach (FlailPreviewDefinition demo in demos)
+                {
+                    // Convert the desired ON-SCREEN 40t tell back through this puppet's multiplier.
+                    // Black Ninja uses 1.0; Dread Wraith uses the base 1.35 multiplier.
+                    int authoredTell = Math.Max(1,
+                        (int)Math.Ceiling(demo.TelegraphTicks / profile.ComboTelegraphMultiplier));
+                    while (Math.Max(profile.MinComboTelegraphTicks,
+                        (int)(authoredTell * profile.ComboTelegraphMultiplier)) < demo.TelegraphTicks)
+                    {
+                        authoredTell++;
+                    }
+
+                    var step = new MeleeComboStep
+                    {
+                        Motion = ComboMotion.FlailBrace,
+                        TelegraphTicks = authoredTell,
+                        AttackTicks = demo.AttackTicks,
+                        Ease = SwingEaseStyle.Smooth,
+                    };
+                    var prototype = new MeleeCombo
+                    {
+                        Name = demo.Name + " [preview]",
+                        RecoveryTicks = demo.RecoveryTicks,
+                        Steps = new[] { step },
+                    };
+                    SwingSpec spec = NewSpec(profile, prototype, prototype.Name, prototype.Steps);
+                    spec.FlailDemo = demo;
+                    specs.Add(spec);
+                }
                 return specs;
             }
 

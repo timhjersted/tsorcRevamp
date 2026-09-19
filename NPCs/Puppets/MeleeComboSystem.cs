@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Puppets
@@ -57,6 +58,7 @@ namespace tsorcRevamp.NPCs.Puppets
         RisingUppercutLeap, // rising axe cut that launches the puppet, then holds overhead while falling
         BackstepRaise,    // hop away while visibly raising the weapon; next step is the re-entry strike
         ApexDiveCleave,   // high jump, limited tracking on ascent, then an active descending blade sweep
+        FlailBrace,       // stable forward hand/anchor; a ball-and-chain projectile owns the visible motion
         // Ranged motions reuse RangedStyle on PuppetNPC; ranged combos pick at burst level
     }
 
@@ -697,26 +699,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 Steps = new[] { S(ComboMotion.OverheadArc, 26, 22, 0, 1.1f, 1.2f) }
             },
             new MeleeCombo {
-                Name = "Wind-Up Spin", BaseWeight = 60, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 150,
-                Steps = new[] {
-                    S(ComboMotion.Spin,        35, 18, 6, 0.0f),
-                    S(ComboMotion.OverheadArc,  0, 22, 0, 1.5f, 1.3f),
-                }
-            },
-            new MeleeCombo {
                 Name = "Step-In Slam", BaseWeight = 50, Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.LightYellow, CooldownAfterUse = 130,
                 Steps = new[] { S(ComboMotion.VerticalChop, 24, 22, 0, 1.3f, 1.2f, 1.2f) }
-            },
-            new MeleeCombo {
-                Name = "3-Swing Combo", BaseWeight = 50, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.Cyan, CooldownAfterUse = 170,
-                Steps = new[] {
-                    S(ComboMotion.OverheadArc,  20, 16, 14, 0.8f),
-                    S(ComboMotion.UnderhandArc,  0, 16, 14, 0.8f),
-                    S(ComboMotion.OverheadArc,   0, 18, 0,  1.2f),
-                }
             },
             new MeleeCombo {
                 Name = "Long Spin Finisher", BaseWeight = 30, Preferred = ComboRangeBand.Mid,
@@ -724,6 +709,94 @@ namespace tsorcRevamp.NPCs.Puppets
                 Steps = new[] {
                     S(ComboMotion.Spin, 60, 30, 0, 1.6f, 1.5f),
                 }
+            },
+
+            // Authored ball-and-chain attacks. One projectile owns every beat; these are deliberately
+            // single-step instead of asking each combo step to spawn another mace head.
+            //
+            // Chainfall / Chainrise timing sheet:
+            // Tell: 40t on screen, one harmless revolution at 60px. Strike: 18t expanding quarter-arc
+            //       from 60px to 240px (15 tiles), fully rollable inside the base 22t roll.
+            // Tail: 18t harmless retract. Open: tail 18t + recovery 60t = 78t punish window.
+            // Counter: roll through the head; crossing behind the owner also beats the locked facing.
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.OverheadName, BaseWeight = 70, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 160, RecoveryTicks = 60,
+                Steps = new[] { S(ComboMotion.OverheadArc, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.ArcAttackTicks, 0, 1.15f, 1f) }
+            },
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.UnderhandName, BaseWeight = 70, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 160, RecoveryTicks = 60,
+                Steps = new[] { S(ComboMotion.UnderhandArc, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.ArcAttackTicks, 0, 1.10f, 1f) }
+            },
+
+            // Advancing Chainstorm timing sheet:
+            // Tell: 40t, one harmless 60px revolution. Live: one 36t expanding revolution followed by
+            //       three 36t revolutions at 240px; a point is crossed every 36t, after the 30t roll
+            //       cooldown has reopened. Four rolls maximum if the player stays in its path; spacing
+            //       outside 240px or crossing through the committed owner also escapes.
+            // Tail: 18t harmless retract. Move: ~1.6px/t in the committed direction. Recovery: 120t.
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.CycloneName, BaseWeight = 30, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 360, RecoveryTicks = 120,
+                HeavyCommit = true, HyperArmor = true, MoveBrake = 0f,
+                // FlailBrace keeps the hand still while the projectile owns the real spin.
+                // Using ComboMotion.Spin would make the hidden held-item clock rewind ~325° in recovery.
+                Steps = new[] { S(ComboMotion.FlailBrace, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.CycloneAttackTicks, 0, 0.75f, 1f, 0.56f) }
+            },
+        };
+
+        /// <summary>Optional projectile-owned level lashes for mace users with a real chain/head
+        /// implementation. They are kept outside the automatic Flail table so an NPC must opt in and
+        /// provide the level-target selection gate rather than inheriting them accidentally.</summary>
+        public static readonly MeleeCombo[] FlailLevelLashes = new[]
+        {
+            // Reverse Halo spec card:
+            // Tell 40t: harmless backward 3->6->9->12->3 orbit, 60->96px, bounded shoulder.
+            // Strike 16t: locked-facing level lash to 208px; frames 3-16 are live. Tail 18t retract.
+            // Selection: target centre within +/-48px vertically. Counter: jump, roll through, or
+            // cross behind after facing locks. Recovery: 60t. One existing projectile owns all beats.
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.ReverseHaloName, BaseWeight = 55,
+                Preferred = ComboRangeBand.Mid, InitialFlashColor = new Color(255, 170, 75),
+                CooldownAfterUse = 190, RecoveryTicks = 60, MoveBrake = 0.05f,
+                Steps = new[] { S(ComboMotion.FlailBrace, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.LevelLashAttackTicks, 0, 1.05f, 1f) }
+            },
+
+            // Ankle Reaper spec card:
+            // Tell 40t: harmless 3->12->9->6->3 counter-clockwise loop, 60->96px; the arm follows
+            // the exact unwrapped 360 degrees. Eight ticks accelerate, then cruise into an immediate
+            // 16t ease-out extension to 208px (live frames 3-16), followed by 18t harmless retract.
+            // Same +/-48px level gate and jump/roll/cross-behind counters; 60t punish recovery.
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.AnkleReaperName, BaseWeight = 55,
+                Preferred = ComboRangeBand.Mid, InitialFlashColor = Color.Cyan,
+                CooldownAfterUse = 190, RecoveryTicks = 60, MoveBrake = 0.05f,
+                Steps = new[] { S(ComboMotion.FlailBrace, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.LevelLashAttackTicks, 0, 1.10f, 1f) }
+            },
+        };
+
+        /// <summary>Optional mace reactions that require an owning NPC to establish their live
+        /// branch condition. These must never enter an ordinary weighted pool without that gate.</summary>
+        public static readonly MeleeCombo[] FlailReactiveFollowups = new[]
+        {
+            // Backlash Reversal spec card:
+            // Branch only after another authored mace move finishes with the target behind the
+            // attacker's still-locked facing. Tell 40t: harmless ground load from (60,0) to (76,42).
+            // Strike: 6t planted reversal load, then an 18t Weighted cubic whip to 192px behind;
+            // whip frames 3-17 are live (15t, fully rollable). Tail 18t retract; recovery 60t.
+            // Counter: stay in front, leave the 12-tile rear lane, or roll the reverse whip.
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.BacklashName, BaseWeight = 1,
+                Preferred = ComboRangeBand.Any, InitialFlashColor = Color.OrangeRed,
+                CooldownAfterUse = 240, RecoveryTicks = 60, MoveBrake = 0.10f,
+                Steps = new[] { S(ComboMotion.FlailBrace, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.BacklashAttackTicks, 0, 1.15f, 1f) }
             },
         };
 

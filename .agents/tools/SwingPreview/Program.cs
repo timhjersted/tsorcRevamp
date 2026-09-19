@@ -198,6 +198,42 @@ namespace SwingPreview
                                   $" first {firstJump,5:0.0}°  armed {armedTicks}");
                 Console.WriteLine($"            deg/tick: {string.Join(" ", perTick)}");
 
+                bool hasFlail = false;
+                float headPeak = 0f;
+                int headPeakAt = 0;
+                float headPath = 0f;
+                float headFirst = 0f;
+                var headPerTick = new List<string>();
+                for (int i = start; i <= end; i++)
+                {
+                    hasFlail |= poses[i].FlailVisible;
+                    float speed = 0f;
+                    if (i > start)
+                    {
+                        float dx = poses[i].FlailOffsetX - poses[i - 1].FlailOffsetX;
+                        float dy = poses[i].FlailOffsetY - poses[i - 1].FlailOffsetY;
+                        speed = (float)Math.Sqrt(dx * dx + dy * dy);
+                        headPath += speed;
+                    }
+                    else if (start > 0 && poses[start - 1].FlailVisible && poses[i].FlailVisible)
+                    {
+                        float dx = poses[i].FlailOffsetX - poses[start - 1].FlailOffsetX;
+                        float dy = poses[i].FlailOffsetY - poses[start - 1].FlailOffsetY;
+                        headFirst = (float)Math.Sqrt(dx * dx + dy * dy);
+                    }
+                    if (speed > headPeak)
+                    {
+                        headPeak = speed;
+                        headPeakAt = i - start;
+                    }
+                    headPerTick.Add(speed.ToString("0.0", CultureInfo.InvariantCulture));
+                }
+                if (hasFlail)
+                {
+                    Console.WriteLine($"            head path {headPath:0}px  peak {headPeak:0.0}px/t @{headPeakAt}  first {headFirst:0.0}px");
+                    Console.WriteLine($"            px/tick:  {string.Join(" ", headPerTick)}");
+                }
+
                 start = end + 1;
             }
         }
@@ -206,6 +242,14 @@ namespace SwingPreview
         /// what the game actually does with each authored value instead of leaving it to be inferred.</summary>
         private static void PrintSteps(SwingSpec spec)
         {
+            if (spec.FlailDemo != null)
+            {
+                Console.WriteLine($"        projectile track  tel {spec.FlailDemo.TelegraphTicks}  atk {spec.FlailDemo.AttackTicks}  recovery {spec.FlailDemo.RecoveryTicks}");
+                Console.WriteLine($"        easing: {spec.FlailDemo.TimingSummary}");
+                Console.WriteLine("        arm: authored from the same projectile sample; head motion measured below in px/tick");
+                return;
+            }
+
             if (spec.V2Clip != null)
             {
                 PuppetAttackClip clip = spec.V2Clip;
@@ -642,6 +686,10 @@ namespace SwingPreview
                     }
                     return spun;
                 }
+                case ComboMotion.FlailBrace:
+                    return inTel
+                        ? MathHelper.Lerp(rotation, MathHelper.PiOver4, 0.20f)
+                        : MathHelper.PiOver4;
                 case ComboMotion.IaidoDraw:
                     if (inTel)
                     {
@@ -899,6 +947,7 @@ namespace SwingPreview
                 case ComboMotion.ChargeChop:
                 case ComboMotion.Feint:
                 case ComboMotion.LowAxeRun:
+                case ComboMotion.FlailBrace:
                     return false;
                 default:
                     return true;
@@ -948,11 +997,27 @@ namespace SwingPreview
             int tick, string phase, ComboMotion motion, int stepIndex, int stepCount, float rotation, bool armed,
             int direction, bool airborne, bool weaponHidden)
         {
-            WriteFrame(writer, spec, run, tick, phase, motion, rotation, armed);
+            FlailPreviewSample flail = default;
+            if (spec.FlailDemo != null)
+            {
+                flail = FlailPreviewLibrary.Sample(spec.FlailDemo, tick, phase);
+                // Projectile-owned moves use the ball's actual live window, never the hidden held-item clock.
+                armed = flail.DamageActive;
+            }
 
             // Vanilla composite-arm space: 0 = arm hanging straight down, -PI/2 = level forward.
             // The mod's swing space differs by exactly -PI/2, then mirrors with facing.
             float compositeArmRotation = (rotation - MathHelper.PiOver2) * direction;
+            float poseRotation = rotation;
+            if (flail.ArmOverride)
+            {
+                // A projectile-owned flail still needs an authored shoulder pose. The sample is in
+                // facing-right composite-arm space; mirroring happens exactly like a melee swing.
+                compositeArmRotation = flail.ArmRotation * direction;
+                poseRotation = flail.ArmRotation + MathHelper.PiOver2;
+            }
+
+            WriteFrame(writer, spec, run, tick, phase, motion, poseRotation, armed);
 
             // Dual wield (port of PuppetNPC.TickHandPoses): each hand's blend toward the live swing moves 1/4 per
             // tick from the previous frame, and snaps to 1 for a hand that is swinging in an attack frame.
@@ -994,7 +1059,7 @@ namespace SwingPreview
             int bodyRow = 5;
             if (!airborne)
             {
-                bodyRow = PuppetNPC.BodyRowFromWeaponRotation(rotation, direction, spec.WeaponRotationOffset);
+                bodyRow = PuppetNPC.BodyRowFromWeaponRotation(poseRotation, direction, spec.WeaponRotationOffset);
             }
 
             poses.Add(new PoseFrame
@@ -1003,7 +1068,7 @@ namespace SwingPreview
                 Phase = phase,
                 Armed = armed,
                 Airborne = airborne,
-                WeaponRotation = rotation,
+                WeaponRotation = poseRotation,
                 CompositeArmRotation = compositeArmRotation,
                 Direction = direction,
                 BodyRow = bodyRow,
@@ -1014,6 +1079,16 @@ namespace SwingPreview
                 WeaponHidden = weaponHidden,
                 FrontSwingBlend = frontBlend,
                 BackSwingBlend = backBlend,
+                FlailVisible = flail.Visible,
+                FlailOffsetX = flail.X,
+                FlailOffsetY = flail.Y,
+                FlailRotation = flail.Rotation,
+                FlailDamageActive = flail.DamageActive,
+                FlailStage = flail.Stage,
+                FlailHasTarget = flail.HasTarget,
+                FlailTargetX = flail.TargetX,
+                FlailTargetY = flail.TargetY,
+                FlailTargetLabel = flail.TargetLabel,
             });
         }
 

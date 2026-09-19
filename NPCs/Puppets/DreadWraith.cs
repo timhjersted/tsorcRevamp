@@ -130,7 +130,10 @@ namespace tsorcRevamp.NPCs.Puppets
         // lance finished its whole thrust animation stranded well short of the target. ChargeTopSpeed
         // matches the goat's actual charge pace, since this is meant to read as a couched charge.
         protected override float ComboForwardPushTopSpeed =>
-            IsMounted && MountAI != null ? MountConfig.ChargeTopSpeed : TopSpeed;
+            EnemyFlailAttackPatterns.TryResolve(ActiveMeleeComboName, out EnemyFlailAttackPattern pattern)
+                && pattern == EnemyFlailAttackPattern.AdvancingCyclone
+                    ? 2.85f
+                    : IsMounted && MountAI != null ? MountConfig.ChargeTopSpeed : TopSpeed;
 
         protected override int MeleeDamage => 26;
         protected override int RangedDamage => 24;
@@ -476,6 +479,18 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
             }
 
+            // Authored mace patterns create their one head when the combo starts so the player sees
+            // the real ball and chain during the tell. Release that same projectile into its strike.
+            if (EnemyFlailAttackPatterns.TryResolve(ActiveMeleeComboName, out _))
+            {
+                if (TryGetActiveMaceBall(out Projectile activeBall)
+                    && activeBall.ModProjectile is EnemyFlailProjectileBase flail)
+                {
+                    flail.ReleaseAuthoredPattern();
+                }
+                return;
+            }
+
             // One head on the chain at a time. Without this a combo can start its next extension while the
             // previous ball is still out, which reads as the mace firing twice with no telegraph between.
             // The combo cooldowns are set longer than a full spin+lash+retract cycle; this is the failsafe.
@@ -520,7 +535,7 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         /// <summary>True while this wraith already has a mace head out on the chain.</summary>
-        private bool HasActiveMaceBall()
+        private bool TryGetActiveMaceBall(out Projectile activeBall)
         {
             int ballType = ModContent.ProjectileType<DreadWraithMaceBall>();
 
@@ -530,19 +545,22 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 if (projectile.active && projectile.type == ballType && (int)projectile.ai[0] == NPC.whoAmI)
                 {
+                    activeBall = projectile;
                     return true;
                 }
             }
 
+            activeBall = null;
             return false;
         }
 
+        private bool HasActiveMaceBall() => TryGetActiveMaceBall(out _);
+
         // ── Melee combos ──────────────────────────────────────────────────────────
-        // Deliberately ALL single-step. The shared Flail archetype table has 2- and 3-step combos, which
-        // fired the mace repeatedly inside one combo with no telegraph between extensions. Here every
-        // swing is its own attack: retract fully, spin to telegraph, then lash. Cooldowns comfortably
-        // exceed the ball's full 42+9+18 tick cycle so the chain is always empty before the next wind-up.
-        private static MeleeComboStep MaceStep(ComboMotion motion, int telegraphTicks, int attackTicks, float damageMult)
+        // Deliberately ALL single-step. Every entry gives one projectile sole ownership of its entire
+        // mace sequence: retract fully, recover, and only then permit another head to be created.
+        private static MeleeComboStep MaceStep(ComboMotion motion, int telegraphTicks, int attackTicks,
+            float damageMult, float forwardPushMult = 0f)
             => new MeleeComboStep
             {
                 Motion = motion,
@@ -551,7 +569,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 PostStepPause = 0,
                 DamageMult = damageMult,
                 ReachMult = 1.2f,
-                ForwardPushMult = 0f,
+                ForwardPushMult = forwardPushMult,
                 SwingSpeedMult = 1f,
                 Ease = SwingEaseStyle.Smooth,
                 LeapHeightMult = 1f,
@@ -575,8 +593,37 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected override void OnMeleeComboStarted(MeleeCombo combo)
         {
-            base.OnMeleeComboStarted(combo); // rebuilds the cached FrontHandWeapon — see its doc comment
             _activeComboUsesSpear = combo.Name != null && combo.Name.StartsWith(SpearComboPrefix);
+            base.OnMeleeComboStarted(combo); // rebuilds the cached FrontHandWeapon — see its doc comment
+
+            if (_activeComboUsesSpear
+                || Main.netMode == NetmodeID.MultiplayerClient
+                || !EnemyFlailAttackPatterns.TryResolve(combo.Name, out EnemyFlailAttackPattern pattern)
+                || HasActiveMaceBall())
+            {
+                return;
+            }
+
+            int facing = NPC.direction == 0 ? 1 : NPC.direction;
+            if (NPC.HasValidTarget)
+            {
+                facing = Main.player[NPC.target].Center.X < NPC.Center.X ? -1 : 1;
+            }
+
+            int damage = (int)(MeleeDamage * combo.Steps[0].DamageMult);
+            Projectile projectile = Projectile.NewProjectileDirect(
+                NPC.GetSource_FromThis(),
+                GetFlailAnchor(),
+                new Vector2(facing, 0f),
+                ModContent.ProjectileType<DreadWraithMaceBall>(),
+                damage,
+                4f,
+                Main.myPlayer,
+                NPC.whoAmI,
+                (float)pattern,
+                EnemyFlailAttackPatterns.MaximumReach);
+            projectile.timeLeft = EnemyFlailAttackPatterns.MaximumLifetime;
+            projectile.netUpdate = true;
         }
 
         // The spear is also the forward-pierce weapon via PuppetNPC's own spear phase — that's the
@@ -813,6 +860,49 @@ namespace tsorcRevamp.NPCs.Puppets
                 HeavyCommit = true,
                 MoveBrake = 0.04f,
                 Steps = new[] { MaceStep(ComboMotion.VerticalChop, 30, 20, 1.25f) },
+            },
+
+            // Projectile-owned chain patterns: one head is created at combo start, draws the full
+            // telegraph, changes motion at release, retracts, and only then enters recovery.
+            new MeleeCombo
+            {
+                Name = EnemyFlailAttackPatterns.OverheadName,
+                BaseWeight = 75,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = new Color(255, 190, 80),
+                CooldownAfterUse = 160,
+                RecoveryTicks = 60,
+                MoveBrake = 0.05f,
+                // Authored 30 * the default 1.35 multiplier = 40 on-screen ticks.
+                Steps = new[] { MaceStep(ComboMotion.OverheadArc, 30,
+                    EnemyFlailAttackPatterns.ArcAttackTicks, 1.15f) },
+            },
+            new MeleeCombo
+            {
+                Name = EnemyFlailAttackPatterns.UnderhandName,
+                BaseWeight = 75,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Orange,
+                CooldownAfterUse = 160,
+                RecoveryTicks = 60,
+                MoveBrake = 0.05f,
+                Steps = new[] { MaceStep(ComboMotion.UnderhandArc, 30,
+                    EnemyFlailAttackPatterns.ArcAttackTicks, 1.10f) },
+            },
+            new MeleeCombo
+            {
+                Name = EnemyFlailAttackPatterns.CycloneName,
+                BaseWeight = 35,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Red,
+                CooldownAfterUse = 360,
+                RecoveryTicks = 120,
+                HeavyCommit = true,
+                HyperArmor = true,
+                MoveBrake = 0f,
+                // Stable forward brace; DreadWraithMaceBall owns the visible circular motion.
+                Steps = new[] { MaceStep(ComboMotion.FlailBrace, 30,
+                    EnemyFlailAttackPatterns.CycloneAttackTicks, 0.75f, 0.56f) },
             },
         };
 
