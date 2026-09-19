@@ -21,16 +21,9 @@ public class Shunpo : ModPlayer
 
     public override void ProcessTriggers(TriggersSet triggersSet)
     {
-        Player player = Main.player[Main.myPlayer];
-        for (int i = 0; i < Main.maxNPCs; i++)
+        if (tsorcRevamp.Shunpo.JustReleased && HasShunpo)
         {
-            NPC other = Main.npc[i];
-            Vector2 MouseHitboxSize = new Vector2(100, 100);
-
-            if (tsorcRevamp.Shunpo.JustReleased && HasShunpo)
-            {
-                DoShunpo();
-            }
+            DoShunpo();
         }
     }
 
