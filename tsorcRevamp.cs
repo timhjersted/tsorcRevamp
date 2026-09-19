@@ -52,6 +52,7 @@ using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss;
 using tsorcRevamp.NPCs.Special;
+using tsorcRevamp.NPCs.Runeterra;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.Tiles.BuffStations;
 using tsorcRevamp.Tiles.Relics;
