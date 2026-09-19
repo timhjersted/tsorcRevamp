@@ -1,0 +1,84 @@
+
+					NPC nPC2 = Main.npc[number];
+					writer.Write((short)number);
+					writer.WriteVector2(nPC2.position);
+					writer.WriteVector2(nPC2.velocity);
+					writer.Write((ushort)nPC2.target);
+					int num23 = nPC2.life;
+					if (!nPC2.active)
+					{
+						num23 = 0;
+					}
+					if (!nPC2.active || nPC2.life <= 0)
+					{
+						nPC2.netSkip = 0;
+					}
+					short value3 = (short)nPC2.netID;
+					bool[] array = new bool[4];
+					BitsByte bitsByte23 = (byte)0;
+					bitsByte23[0] = nPC2.direction > 0;
+					bitsByte23[1] = nPC2.directionY > 0;
+					bitsByte23[2] = (array[0] = nPC2.ai[0] != 0f);
+					bitsByte23[3] = (array[1] = nPC2.ai[1] != 0f);
+					bitsByte23[4] = (array[2] = nPC2.ai[2] != 0f);
+					bitsByte23[5] = (array[3] = nPC2.ai[3] != 0f);
+					bitsByte23[6] = nPC2.spriteDirection > 0;
+					bitsByte23[7] = num23 == nPC2.lifeMax;
+					writer.Write(bitsByte23);
+					BitsByte bitsByte24 = (byte)0;
+					bitsByte24[0] = nPC2.statsAreScaledForThisManyPlayers > 1;
+					bitsByte24[1] = nPC2.SpawnedFromStatue;
+					bitsByte24[2] = nPC2.strengthMultiplier != 1f;
+					byte[] extraAI = NPCLoader.WriteExtraAI(nPC2);
+					bool hasExtraAI = (bitsByte24[3] = extraAI != null && extraAI.Length != 0);
+					writer.Write(bitsByte24);
+					for (int m = 0; m < NPC.maxAI; m++)
+					{
+						if (array[m])
+						{
+							writer.Write(nPC2.ai[m]);
+						}
+					}
+					writer.Write(value3);
+					if (bitsByte24[0])
+					{
+						writer.Write((byte)nPC2.statsAreScaledForThisManyPlayers);
+					}
+					if (bitsByte24[2])
+					{
+						writer.Write(nPC2.strengthMultiplier);
+					}
+					if (!bitsByte23[7])
+					{
+						byte b2 = 1;
+						if (nPC2.lifeMax > 32767)
+						{
+							b2 = 4;
+						}
+						else if (nPC2.lifeMax > 127)
+						{
+							b2 = 2;
+						}
+						writer.Write(b2);
+						switch (b2)
+						{
+						case 2:
+							writer.Write((short)num23);
+							break;
+						case 4:
+							writer.Write(num23);
+							break;
+						default:
+							writer.Write((sbyte)num23);
+							break;
+						}
+					}
+					if (nPC2.type >= 0 && Main.npcCatchable[nPC2.type])
+					{
+						writer.Write((byte)nPC2.releaseOwner);
+					}
+					if (hasExtraAI)
+					{
+						NPCLoader.SendExtraAI(writer, extraAI);
+					}
+					break;
