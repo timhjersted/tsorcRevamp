@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.AI;
 using System;
+using System.Collections.Generic;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
@@ -19,6 +20,25 @@ namespace tsorcRevamp.NPCs.Puppets
     [AutoloadBossHead]
     public class BlackNinja : PuppetNPC, IFlailAnchor
     {
+        // Smoke bomb spec: a low ballistic lob released after its 60-tick throw tell. At 11 px/t
+        // against the projectile's 0.18 px/t² gravity it can solve a static target anywhere in the
+        // 20-tile selection radius (including one directly overhead); the 250px-radius cloud covers small
+        // target movement during its roughly 30-tick maximum flight.
+        private const float SmokeBombThrowSpeed = 11f;
+        private const float SmokeBombGravity = 0.18f;
+        private const float SmokeBombMaximumRange = 20f * 16f;
+
+        private struct EncounterProjectile
+        {
+            public int Slot;
+            public int Identity;
+            public int Type;
+        }
+
+        // Black Ninja's stars, caltrops, smoke cloud and flail are encounter-owned. Their normal
+        // lifetimes are intentional during combat, but they must not outlive a party-wipe despawn.
+        private readonly List<EncounterProjectile> _encounterProjectiles = new();
+
         public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/BlackNinja_Head_Boss";
 
         protected override string InvaderTitle => "Black Ninja";
@@ -96,7 +116,7 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int[] PrimaryRangedBurstChances => new int[] { 85, 60, 40, 20, 8 };
 
         protected override RangedStyle SecondaryRangedAnimStyle => RangedStyle.Throw;
-        protected override float SecondaryRangedRange => 360f;
+        protected override float SecondaryRangedRange => SmokeBombMaximumRange;
         protected override float SecondaryRangedMinRange => 120f;
         protected override int SecondaryRangedTelegraphTicks => 60;
         protected override int SecondaryRangedAttackTicks => 10;
@@ -135,10 +155,57 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override bool PuppetCanDoubleJump => true;
         protected override float PuppetDoubleJumpPower => 6.2f;
 
-        protected override int TeleportTelegraphTicks => 120;
+        // This invader's smoke blink is a rapid reposition, not a long disappearance.
+        protected override int TeleportTelegraphTicks => 30;
         protected override int TeleportDustCount => 24;
         protected override Color TeleportDustTint => new Color(70, 70, 70);
         protected override int TeleportDustTypeId => DustID.Smoke;
+
+        private void TrackEncounterProjectile(int projectileSlot)
+        {
+            if (projectileSlot < 0 || projectileSlot >= Main.maxProjectiles)
+            {
+                return;
+            }
+
+            Projectile projectile = Main.projectile[projectileSlot];
+            if (projectile.active)
+            {
+                _encounterProjectiles.Add(new EncounterProjectile
+                {
+                    Slot = projectileSlot,
+                    Identity = projectile.identity,
+                    Type = projectile.type,
+                });
+            }
+        }
+
+        private void ClearEncounterProjectiles()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            foreach (EncounterProjectile tracked in _encounterProjectiles)
+            {
+                Projectile projectile = Main.projectile[tracked.Slot];
+                // Slot + identity + type prevents an old slot from clearing an unrelated projectile
+                // after Terraria has reused that slot.
+                if (projectile.active && projectile.identity == tracked.Identity && projectile.type == tracked.Type)
+                {
+                    projectile.Kill();
+                }
+            }
+            _encounterProjectiles.Clear();
+        }
+
+        protected override void OnPartyWipeDespawnStarted()
+        {
+            base.OnPartyWipeDespawnStarted();
+            PuppetSmokeBomb.StopFuse();
+            ClearEncounterProjectiles();
+        }
 
         public override void SetStaticDefaults()
         {
@@ -171,6 +238,8 @@ namespace tsorcRevamp.NPCs.Puppets
             globalNPC.CanTeleport = true;
             globalNPC.TeleportStyle = TeleportStyle.Aggressive;
             globalNPC.TeleportVisualStyle = TeleportVisualStyle.GreySmoke;
+            globalNPC.TeleportAppearanceDelay = 0;
+            globalNPC.TeleportArrivalMistTime = 0;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -224,9 +293,43 @@ namespace tsorcRevamp.NPCs.Puppets
             TryMeleeHit();
         }
 
+        /// <summary>True while this Ninja still owns a mace head and its chain. A new launch must wait
+        /// until that projectile has reeled in and removed itself; checking the NPC owner in ai[0]
+        /// prevents another Ninja's flail from blocking this one.</summary>
+        private bool HasActiveMaceBall()
+        {
+            int ballType = ModContent.ProjectileType<EnemyDiamondCrusherBall>();
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (projectile.active && projectile.type == ballType && (int)projectile.ai[0] == NPC.whoAmI)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // The shared Flail table contains multi-step patterns. Once the first head has launched, end
+        // that pattern and allow its full wind-up/outward/retract lifecycle before a new telegraph.
+        protected override bool ShouldContinueMeleeCombo(string comboName, int nextStepIndex, Player target, bool previousStepHit)
+            => !HasActiveMaceBall() && base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
+
+        protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
+            => !HasActiveMaceBall() && base.CanSelectMeleeCombo(combo, distance, healthFraction);
+
         protected override void DoComboMeleeHit(MeleeComboStep step)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            // Mirrors Dread Wraith's one-head-at-a-time rule. This server-authoritative failsafe also
+            // covers an interrupted combo or a client/server phase correction.
+            if (HasActiveMaceBall())
             {
                 return;
             }
@@ -253,6 +356,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 Main.myPlayer,
                 NPC.whoAmI,
                 spin ? 1f : 0f);
+            TrackEncounterProjectile(projectile.whoAmI);
 
             projectile.timeLeft = spin ? Math.Max(34, step.AttackTicks + 8) : Math.Max(44, step.AttackTicks + 31);
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.56f, PitchVariance = 0.22f }, NPC.Center);
@@ -272,15 +376,19 @@ namespace tsorcRevamp.NPCs.Puppets
             if (IsSecondaryRangedActive)
             {
                 PlayThrowSound();
-                Vector2 smokeVelocity = UsefulFunctions.BallisticTrajectory(origin, aimAt, 7.2f, 0.18f, highAngle: false, fallback: true);
-                Projectile.NewProjectile(
+                // Solve against the target's current center. The old 7.2 px/t throw could only reach
+                // 18 tiles at this gravity, despite the move being eligible at 22.5 tiles, causing it
+                // to fall back to a straight (and consequently short) throw.
+                Vector2 smokeVelocity = UsefulFunctions.BallisticTrajectory(origin, target.Center,
+                    SmokeBombThrowSpeed, SmokeBombGravity, highAngle: false, fallback: true);
+                TrackEncounterProjectile(Projectile.NewProjectile(
                     NPC.GetSource_FromThis(),
                     origin,
                     smokeVelocity,
                     ModContent.ProjectileType<PuppetSmokeBomb>(),
                     SecondaryRangedDamage,
                     0f,
-                    Main.myPlayer);
+                    Main.myPlayer));
                 return;
             }
 
@@ -293,14 +401,14 @@ namespace tsorcRevamp.NPCs.Puppets
 
             PlayThrowSound();
             Vector2 starVelocity = toTarget.RotatedBy(MathHelper.ToRadians(Main.rand.NextFloat(-7f, 7f))) * 10.5f;
-            Projectile.NewProjectile(
+            TrackEncounterProjectile(Projectile.NewProjectile(
                 NPC.GetSource_FromThis(),
                 origin,
                 starVelocity,
                 ModContent.ProjectileType<EnemyNinjaStarProj>(),
                 RangedDamage,
                 2f,
-                Main.myPlayer);
+                Main.myPlayer));
         }
 
         protected override void DoMagicAttack()
@@ -314,7 +422,11 @@ namespace tsorcRevamp.NPCs.Puppets
             PlayThrowSound();
             Vector2 origin = NPC.Center + new Vector2(NPC.direction * 12f, -NPC.height * 0.25f);
             Vector2 throwTarget = target.Center + target.velocity * 16f;
-            Content.Projectiles.Enemy.Weapons.EnemyCaltrop.ThrowSpread(NPC.GetSource_FromThis(), origin, throwTarget, MagicDamage, 1.4f, Main.myPlayer);
+            foreach (int projectileSlot in Content.Projectiles.Enemy.Weapons.EnemyCaltrop.ThrowSpread(
+                NPC.GetSource_FromThis(), origin, throwTarget, MagicDamage, 1.4f, Main.myPlayer))
+            {
+                TrackEncounterProjectile(projectileSlot);
+            }
         }
     }
 }

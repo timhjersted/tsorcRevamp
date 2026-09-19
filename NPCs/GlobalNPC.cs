@@ -1403,6 +1403,12 @@ namespace tsorcRevamp.NPCs
         public bool RunningCustomFighterAI = false;
         // Teleport visual tuning. Defaults reproduce the current smoke-flash behavior.
         public int TeleportTelegraphTime = 140;
+        // Smoke/fire/plague styles normally hold at the destination for 30 ticks before revealing.
+        // Fast movers can opt out and snap immediately when their telegraph ends.
+        public int TeleportAppearanceDelay = 30;
+        // Additional exit/entry mist created when a smoke/fire teleport completes. Zero keeps the
+        // queued telegraph mist as the whole visual sequence instead of adding a second cloud pair.
+        public int TeleportArrivalMistTime = 60;
         public int TeleportDustType = DustID.Smoke;
         public Color TeleportDustColor = Color.White;
         public float TeleportDustScale = 0.8f;
@@ -1545,7 +1551,7 @@ namespace tsorcRevamp.NPCs
         // === Teleport visual style ===
         public TeleportVisualStyle TeleportVisualStyle = TeleportVisualStyle.Default;
         // Frames remaining before NPC position snaps to TeleportTelegraph (smoke/fire styles only).
-        // Set to 30 by ExecuteQueuedTeleport so the NPC moves halfway through the 1s smoke cloud.
+        // Set by ExecuteQueuedTeleport from TeleportAppearanceDelay.
         public int TeleportAppearanceTimer = 0;
 
         // === Ally heal aura ===

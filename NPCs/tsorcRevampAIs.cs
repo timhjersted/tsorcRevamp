@@ -29,8 +29,6 @@ namespace tsorcRevamp.NPCs
 {
     public static class tsorcRevampAIs
     {
-        private const int SmokeFireTeleportCloudTicks = 60;
-        private const int SmokeFireTeleportSnapTicks = 30;
         private const float TeleportMistVisualScale = 1.25f;
         private const float FireTeleportFlameSpeed = 5.6f;
         private const int FireTeleportFlameCount = 12;
@@ -2324,12 +2322,12 @@ namespace tsorcRevamp.NPCs
                                     // and immediately spawn an near-identical SECOND pair in
                                     // ExecuteQueuedTeleport for the reveal phase, which read exactly like
                                     // the whole teleport firing twice in a row. Life now covers
-                                    // TeleportTelegraphTime + the reveal snap (SmokeFireTeleportSnapTicks),
+                                    // TeleportTelegraphTime + the reveal snap delay,
                                     // capped at the projectile's own max duration.
                                     //
                                     // The clouds are now deliberately DECOUPLED from the hidden window and
-                                    // always run their full lifetime. Tying them to
-                                    // TeleportTelegraphTime + SmokeFireTeleportSnapTicks meant the reveal
+                                    // always run their full lifetime. Tying them to the telegraph plus
+                                    // reveal delay meant the reveal
                                     // landed exactly as the clouds expired, so the visible effect finished
                                     // and then a knight faded in next to the empty space where it had been.
                                     // Running long instead lets him step OUT of a cloud that is still
@@ -2520,16 +2518,16 @@ namespace tsorcRevamp.NPCs
                     float style = isFireTeleport ? 1f : 0f;
                     float radius = Math.Max(npc.width, npc.height) * 0.5f * TeleportMistVisualScale;
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && globalNPC.TeleportArrivalMistTime > 0)
                     {
-                        // Both clouds start simultaneously. NPC moves halfway through the 1s cloud.
+                        // Both clouds start simultaneously. NPC normally moves partway through the cloud.
                         var exitMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
                             ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
-                        exitMist.timeLeft = SmokeFireTeleportCloudTicks;
+                        exitMist.timeLeft = globalNPC.TeleportArrivalMistTime;
 
                         var entryMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero,
                             ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
-                        entryMist.timeLeft = SmokeFireTeleportCloudTicks;
+                        entryMist.timeLeft = globalNPC.TeleportArrivalMistTime;
 
                         if (isFireTeleport)
                         {
@@ -2539,8 +2537,20 @@ namespace tsorcRevamp.NPCs
                     }
                 }
 
-                // Position snaps to destination after 0.5s (30 frames), handled by FighterAI.
-                globalNPC.TeleportAppearanceTimer = SmokeFireTeleportSnapTicks;
+                if (globalNPC.TeleportAppearanceDelay > 0)
+                {
+                    // FighterAI/PuppetNPC holds the body hidden, then reveals it at this destination.
+                    globalNPC.TeleportAppearanceTimer = globalNPC.TeleportAppearanceDelay;
+                }
+                else
+                {
+                    // A speed-focused teleport (Black Ninja) ends when its telegraph ends: no second
+                    // hidden hold and no replacement smoke cloud after the initial 30-tick pair.
+                    npc.Center = globalNPC.TeleportTelegraph;
+                    globalNPC.TeleportTelegraph = Vector2.Zero;
+                    npc.alpha = 0;
+                    npc.netUpdate = true;
+                }
             }
         }
 

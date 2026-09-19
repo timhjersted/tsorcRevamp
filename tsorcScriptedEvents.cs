@@ -3056,12 +3056,7 @@ namespace tsorcRevamp
 
                 NPC thisNPC = eventNPCs[i].npc;
 
-                // Burst of trigger dust as the enemy materializes — the payoff at the end of the smoke telegraph.
-                // (The old burst fired at trigger time; it now coincides with the actual spawn.)
-                for (int d = 0; d < 50; d++)
-                {
-                    Dust.NewDustPerfect(thisNPC.Center, dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3).noGravity = true;
-                }
+                SpawnMaterializationDust(thisNPC);
 
                 thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventOwner = this;
                 thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventIndex = i;
@@ -3104,6 +3099,31 @@ namespace tsorcRevamp
                 {
                     UsefulFunctions.SyncNPCExtraStats(eventNPCs[i].npc);
                 }
+            }
+        }
+
+        private void SpawnMaterializationDust(NPC npc)
+        {
+            // Keep each mote the same size; scale the area they occupy to the NPC instead. The event's dustID is
+            // also the dust used by its trigger ring, so the ring and the materialization payoff share a palette.
+            float radiusX = Math.Max(npc.width * 0.5f, 4f);
+            float radiusY = Math.Max(npc.height * 0.5f, 4f);
+            float averageDiameter = (npc.width + npc.height) * 0.5f;
+            int dustCount = (int)MathHelper.Clamp(averageDiameter, 12f, 60f);
+            float burstSpeed = MathHelper.Clamp((float)Math.Sqrt(npc.width * npc.height) / 20f, 0.75f, 3f);
+
+            for (int i = 0; i < dustCount; i++)
+            {
+                Vector2 offset = Main.rand.NextVector2Circular(radiusX, radiusY);
+                Vector2 direction = offset.SafeNormalize(Main.rand.NextVector2Unit());
+                Dust dust = Dust.NewDustPerfect(
+                    npc.Center + offset,
+                    dustID,
+                    direction * Main.rand.NextFloat(burstSpeed * 0.55f, burstSpeed),
+                    200,
+                    default,
+                    1f);
+                dust.noGravity = true;
             }
         }
 

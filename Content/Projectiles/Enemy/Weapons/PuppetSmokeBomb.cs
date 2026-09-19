@@ -11,7 +11,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     public class PuppetSmokeBomb : ModProjectile
     {
         private const float Gravity = 0.18f;
-        private const int CloudRadius = 150;
+        // Smoke-bomb spec: 500px diameter, non-damaging obscuring cloud for 120 ticks. Its particles
+        // fill that same footprint rather than remaining concentrated at the impact point.
+        private const int CloudRadius = 250;
+        private const int CloudDuration = 120;
+        private const int CloudParticlesPerTick = 2;
+        private const int DarknessDuration = 3 * 60;
 
         private bool Exploded => Projectile.ai[0] == 1f;
 
@@ -22,7 +27,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemySmokebomb));
 
-        private static void StopFuse()
+        /// <summary>Stops the one active Black Ninja fuse when the encounter or its bomb ends.</summary>
+        internal static void StopFuse()
         {
             if (SoundEngine.TryGetActiveSound(ActiveFuseSlot, out ActiveSound fuse))
                 fuse.Stop();
@@ -52,9 +58,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 Projectile.velocity = Vector2.Zero;
                 Projectile.alpha = 255;
 
-                if (Main.rand.NextBool(2))
+                for (int i = 0; i < CloudParticlesPerTick; i++)
                 {
-                    Vector2 offset = Main.rand.NextVector2Circular(CloudRadius * 0.5f, CloudRadius * 0.5f);
+                    Vector2 offset = Main.rand.NextVector2Circular(CloudRadius, CloudRadius);
                     Dust dust = Dust.NewDustPerfect(Projectile.Center + offset, DustID.Smoke, Main.rand.NextVector2Circular(2.4f, 2.4f), 140, Color.Gray, Main.rand.NextFloat(1.6f, 2.7f));
                     dust.noGravity = true;
                 }
@@ -115,7 +121,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             Projectile.ai[0] = 1f;
             Projectile.velocity = Vector2.Zero;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 90;
+            Projectile.timeLeft = CloudDuration;
             Projectile.position = Projectile.Center - new Vector2(CloudRadius);
             Projectile.width = CloudRadius * 2;
             Projectile.height = CloudRadius * 2;
@@ -127,7 +133,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             for (int i = 0; i < 85; i++)
             {
                 Vector2 velocity = Main.rand.NextVector2Circular(5.5f, 5.5f);
-                Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), DustID.Smoke, velocity, 120, Color.Gray, Main.rand.NextFloat(1.5f, 3.1f));
+                Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(CloudRadius, CloudRadius), DustID.Smoke, velocity, 120, Color.Gray, Main.rand.NextFloat(1.5f, 3.1f));
                 dust.noGravity = true;
             }
 
@@ -146,6 +152,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             target.AddBuff(ModContent.BuffType<Crippled>(), 6 * 60);
             target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 30 * 60);
             target.AddBuff(BuffID.Slow, 3 * 60);
+            target.AddBuff(BuffID.Darkness, DarknessDuration);
         }
     }
 }

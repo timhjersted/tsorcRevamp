@@ -645,8 +645,8 @@ namespace tsorcRevamp.UI
 
         // Recomputes soulsPreview's text from the currently-typed/committed value + the LIVE player's game mode and
         // equipped soul-ring bonuses (via CheckSoulsMultiplier), so it always reflects what would actually drop right
-        // now. Formula mirrors tsorcScriptedEvents' spawn-time (npc.value = souls * 10, or *25 in Expert) and
-        // kill-time (enemyValue = npc.value / (divisor * 15|20|25)) conversion exactly.
+        // now. Custom values mirror tsorcScriptedEvents' spawn-time conversion; an empty field uses SetDefaults'
+        // already difficulty-scaled npc.value directly, just like the spawned NPC does.
         private void RefreshSoulsPreview()
         {
             if (soulsPreview == null || editingNpc == null)
@@ -656,13 +656,13 @@ namespace tsorcRevamp.UI
 
             NPC temp = new NPC();
             temp.SetDefaults(editingNpc.NpcID);
-            int baseSouls = soulsInput.Value ?? (int)(temp.value / 10);
 
             bool expert = Main.expertMode;
             bool master = Main.masterMode;
-            // Spawn-time: only expert mode gets the *25 branch (master falls through to *10, same as normal —
-            // this is how the actual spawn code behaves, not a simplification for the preview).
-            int npcValue = baseSouls * (expert ? 25 : 10);
+            int customValueMultiplier = GetCustomSoulValueMultiplier();
+            int npcValue = soulsInput.Value.HasValue
+                ? soulsInput.Value.Value * customValueMultiplier
+                : (int)temp.value;
             float killDivisor = 15f;
 
             if (master)
@@ -687,6 +687,12 @@ namespace tsorcRevamp.UI
                 modeName = "Expert";
             }
             soulsPreview.SetText($"~ {actualDrop} souls/kill ({modeName}{(ringMultiplier != 1f ? $", rings x{ringMultiplier:0.##}" : "")})");
+        }
+
+        private static int GetCustomSoulValueMultiplier()
+        {
+            // Keep this identical to ScriptedEvent.SpawnNPCs' customSouls -> npc.value conversion.
+            return Main.expertMode ? 25 : 10;
         }
 
         private UIText MakeStatLabel(string text)
@@ -782,7 +788,7 @@ namespace tsorcRevamp.UI
             temp.SetDefaults(npc.NpcID);
             editTitle.SetText($"EDIT  {temp.TypeName.ToUpper()}");
             PopulateStatField(healthInput, npc.CustomHealth, temp.lifeMax);
-            PopulateStatField(soulsInput, npc.CustomSouls, (int)(temp.value / 10));
+            PopulateStatField(soulsInput, npc.CustomSouls, (int)(temp.value / GetCustomSoulValueMultiplier()));
             PopulateStatField(damageInput, npc.CustomDamage, temp.damage);
             PopulateStatField(defenseInput, npc.CustomDefense, temp.defense);
             spawnTextInput.Text = CurrentEvent?.TextToDisplay ?? "";

@@ -132,17 +132,63 @@ namespace tsorcRevamp.NPCs.Puppets
         private NPCDespawnHandler PartyWipeDespawnHandler
             => _partyWipeDespawnHandler ??= new NPCDespawnHandler(DespawnFlavorText, DespawnFlavorColor, DespawnDustType);
 
-        /// <summary>Runs the despawn check and, on the exact tick it signals imminent removal, the big
-        /// custom burst — called from the top of AI() below. NPC.life is still positive here; this is a
-        /// disappearance, not a kill, so it deliberately doesn't go through HitEffect.</summary>
-        private void UpdatePartyWipeDespawn()
+        /// <summary>Called once when every tracked player has died and this encounter begins its
+        /// fade-out. Subclasses can stop encounter-owned projectiles/sounds here; this is deliberately
+        /// separate from <see cref="OnKill"/>, because a party wipe is not an NPC death.</summary>
+        protected virtual void OnPartyWipeDespawnStarted()
         {
+            // The handler takes 240 ticks to fade the encounter out. Do not leave a telegraph, attack
+            // runtime, or held weapon frozen on-screen for that interval.
+            // NPCDespawnHandler describes this as setting a 240-tick lifetime, but the handler itself
+            // only owns an internal counter. Give the NPC that lifetime here as a deterministic
+            // backstop: a puppet can never remain active forever if a specialised AI stops reaching
+            // the handler while it is disappearing.
+            NPC.timeLeft = 240;
+            CancelAttackRuntimeV2(clearCombo: true);
+            _bladeArmed = false;
+            _jumpSlashLaunched = false;
+            _comboLeapLaunched = false;
+            _risingUppercutFallHoldTimer = 0;
+            _weaponVisible = false;
+            NPC.velocity = Vector2.Zero;
+            EnterPhase(AttackPhase.Idle, 0);
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.AttackCommitted = false;
+            globalNPC.AttackTelegraphing = false;
+            globalNPC.SuppressDodgeBlink = false;
+            // A smoke teleport normally advances inside the main combat loop. Party-wipe fading exits
+            // that loop deliberately, so its countdown must be cancelled rather than left holding an
+            // invisible, frozen puppet at the departure cloud.
+            globalNPC.TeleportCountdown = 0;
+            globalNPC.TeleportAppearanceTimer = 0;
+            globalNPC.TeleportTelegraph = Vector2.Zero;
+            NPC.alpha = 0;
+        }
+
+        /// <summary>Runs the despawn check and returns whether the encounter is currently fading out.
+        /// NPC.life is still positive here; this is a disappearance, not a kill, so it deliberately
+        /// doesn't go through HitEffect.</summary>
+        private bool UpdatePartyWipeDespawn()
+        {
+            bool wasDespawning = PartyWipeDespawnHandler.IsDespawning;
             bool aboutToDespawn = PartyWipeDespawnHandler.TargetAndDespawn(NPC.whoAmI);
+
+            if (!wasDespawning && PartyWipeDespawnHandler.IsDespawning)
+            {
+                OnPartyWipeDespawnStarted();
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NPC.netUpdate = true;
+                }
+            }
 
             if (aboutToDespawn && !Main.dedServ)
             {
                 EmitDeathDustBurst(DespawnDustType, DespawnDustColor, DespawnDustCount, DespawnDustTravelMult);
             }
+
+            return PartyWipeDespawnHandler.IsDespawning;
         }
 
         // ── Layer coordination ────────────────────────────────────────────────────
@@ -2640,6 +2686,14 @@ namespace tsorcRevamp.NPCs.Puppets
             // Set before AI's early returns so it can never stay stuck on after the attack ends.
             gnpc.SuppressDodgeBlink = AttackOwnsDodgeIFrames;
 
+            // Once a party wipe starts the shared handler owns the remaining 240-tick fade. Returning
+            // here prevents a frozen player from being targeted and, importantly, stops an in-progress
+            // attack from continuing to spawn its own VFX or hazards during that fade.
+            if (!gnpc.IsTeleportIllusion && DespawnsOnPartyWipe && UpdatePartyWipeDespawn())
+            {
+                return;
+            }
+
             // Client: entry cues of a phase adopted from a snapshot — its transition ran on the server, not here. Deferred
             // from ReceiveExtraAI to this tick so the hooks read the subclass fields that arrived in the same packet.
             if (_adoptedPhaseEntryPending)
@@ -2717,14 +2771,6 @@ namespace tsorcRevamp.NPCs.Puppets
                     return;
                 }
             }
-            else if (DespawnsOnPartyWipe)
-            {
-                // Not a decoy — the real encounter instance. Illusions skip this: they're short-lived
-                // copies from a teleport ability, not the fight itself, and shouldn't independently
-                // track player deaths or broadcast their own despawn message. Summoned copies opt out too.
-                UpdatePartyWipeDespawn();
-            }
-
             // Cheap edge-detect every tick regardless of HasSlashTrailVFX — a puppet that never
             // opts in just never has anything read _meleeSlashTrailSequence.
             UpdateMeleeSlashTrailSequence();

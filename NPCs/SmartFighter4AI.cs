@@ -853,7 +853,13 @@ namespace tsorcRevamp.NPCs
                 bool activeRopeRide = nav.Plan != null && nav.PlanIndex < nav.Plan.Count
                     && nav.Plan[nav.PlanIndex].Kind == StepKind.RopeClimb
                     && (nav.RopeEngaged || npc.noGravity);
-                if (pstate == PursuitState.Pursue && !canEngage && !activeRopeRide
+                // Aggressive teleporters are hunters, not stationary ranged turrets. Even while an
+                // in-range shot remains possible, they must enter the confirmed-stuck recovery path
+                // so a hill loop cannot keep them firing from the same bad foothold indefinitely.
+                bool aggressiveTeleportRecovery = globalNPC.CanTeleport
+                    && globalNPC.TeleportStyle == TeleportStyle.Aggressive;
+                bool shouldMonitorStuck = !canEngage || aggressiveTeleportRecovery;
+                if (pstate == PursuitState.Pursue && shouldMonitorStuck && !activeRopeRide
                     && (nav.Plan != null || actionLabel == "blocked"))
                 {
                     if (nav.HardStuckCheckX == float.MaxValue)
@@ -920,7 +926,7 @@ namespace tsorcRevamp.NPCs
                 // up the plan, and open a grace window so the no-plan chase doesn't immediately undo it. Repeated
                 // stalls therefore pile up bad edges until A* genuinely reports no-path, at which point the
                 // NoPathStrikes escalation owns the disengage decision — one give-up path, not two.
-                if (pstate == PursuitState.Pursue && !canEngage && !activeRopeRide)
+                if (pstate == PursuitState.Pursue && shouldMonitorStuck && !activeRopeRide)
                 {
                     float distToPlayer = npc.Distance(player.Center);
 
@@ -944,7 +950,34 @@ namespace tsorcRevamp.NPCs
                         nav.PursuitStallFrames = 0;
                         nav.PursuitBestDist = distToPlayer; // re-baseline so the next window judges the new route
                         nav.PlanGraceFrames = PlanGraceDuration;
-                        nav.LastPlanResult = $"progress-stall d={distToPlayer / TileF:F1}";
+
+                        // An aggressive teleporter does not need to keep demonstrating pathfinding
+                        // while it can technically throw at the player. A four-second failure to get
+                        // even two tiles closer is a genuine traversal failure, so blink to a legal
+                        // re-acquire point instead of restarting the same hill-loop.
+                        if (aggressiveTeleportRecovery
+                            && globalNPC.TeleportCountdown == 0
+                            && globalNPC.TeleportAppearanceTimer == 0
+                            && globalNPC.TeleportChargesRemaining > 0
+                            && globalNPC.TeleportCooldownTimer == 0
+                            && Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            if (tsorcRevampAIs.TryTeleportReacquire(npc, globalNPC))
+                            {
+                                nav.LastPlanResult = $"progress-stall blink d={distToPlayer / TileF:F1}";
+                            }
+                            else
+                            {
+                                // No legal landing this frame. Throttle the expensive 100-point search;
+                                // the next no-progress window will retry rather than spinning every tick.
+                                globalNPC.TeleportCooldownTimer = 30;
+                                nav.LastPlanResult = $"progress-stall blink-failed d={distToPlayer / TileF:F1}";
+                            }
+                        }
+                        else
+                        {
+                            nav.LastPlanResult = $"progress-stall d={distToPlayer / TileF:F1}";
+                        }
                     }
                 }
                 else

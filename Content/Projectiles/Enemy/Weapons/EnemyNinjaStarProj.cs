@@ -22,6 +22,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         private const int StuckDurationTicks = 180; // 3 s
         private const float ExplodeAoeRadius = 44f;
+        private const float FlightSpinRadiansPerTick = 0.42f; // ~24°: clearly readable at the star's small scale
 
         public override void SetDefaults()
         {
@@ -55,8 +56,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return;
             }
 
-            // Flying: spin and trail light grey smoke.
-            Projectile.rotation += Math.Sign(Projectile.velocity.X) * MathHelper.ToRadians(16f);
+            // Flying: lock the spin handedness once, so vertical throws still visibly rotate.
+            // localAI is cosmetic; every client receives the same initial velocity and makes the
+            // same choice. The stuck branch above returns before this line, freezing the embedded star.
+            if (Projectile.localAI[0] == 0f)
+            {
+                Projectile.localAI[0] = Projectile.velocity.X < 0f ? -1f : 1f;
+            }
+            Projectile.rotation += Projectile.localAI[0] * FlightSpinRadiansPerTick;
             if (Main.rand.NextBool(2))
             {
                 int d = Dust.NewDust(Projectile.Center - new Vector2(5f), 1, 1, DustID.Smoke,
