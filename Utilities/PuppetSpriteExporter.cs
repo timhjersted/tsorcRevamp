@@ -73,7 +73,17 @@ namespace tsorcRevamp.Utilities
                 return;
             }
 
-            string outputDirectory = Path.Combine(Main.SavePath, "PuppetExports", Mod.Name);
+            // Each run gets its own timestamped folder so an export never overwrites an earlier one. Prefer the
+            // private tsorcDocs folder in the mod source (buildIgnore'd, so exports never ship in the .tmod);
+            // fall back to the tModLoader save folder when there is no source checkout.
+            string runFolder = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
+            string docsDirectory = Path.Combine(Main.SavePath, "ModSources", Mod.Name, "tsorcDocs");
+            string outputDirectory = Path.Combine(Main.SavePath, "PuppetExports", Mod.Name, runFolder);
+            if (Directory.Exists(docsDirectory))
+            {
+                outputDirectory = Path.Combine(docsDirectory, "PuppetExports", runFolder);
+            }
+
             PuppetSpriteExporterSystem.Queue(selected, outputDirectory);
             caller.Reply(
                 $"Queued {selected.Count * 2} portrait exports ({selected.Count} puppets). " +

@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -111,8 +112,8 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             Player player = Main.player[NPC.target];
-            var projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>();
-            var projStab = ModContent.ProjectileType<Projectiles.Enemy.Spearhead>();
+            var projSlash = ModContent.ProjectileType<MediumWeaponSlash>();
+            var projStab = ModContent.ProjectileType<Spearhead>();
             int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
             float acceleration = 0.01f;
             //float top_speed = (lifePercentage * 0.02f) + .2f; //good calculation to remember for decreasing speed the lower the enemy HP%
@@ -130,8 +131,8 @@ namespace tsorcRevamp.NPCs.Enemies
             if (lifePercentage <= 60)
             {
                 top_speed *= 1.4f;
-                projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlashFire>();
-                projStab = ModContent.ProjectileType<Projectiles.Enemy.SpearheadFire>();
+                projSlash = ModContent.ProjectileType<MediumWeaponSlashFire>();
+                projStab = ModContent.ProjectileType<SpearheadFire>();
 
                 if (!hasEnraged)
                 {
@@ -875,7 +876,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (20f * NPC.direction), NPC.Center.Y, 8f * NPC.direction, Main.rand.NextFloat(-1.5f, 0f), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), fireDamage, 0f, Main.myPlayer);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (20f * NPC.direction), NPC.Center.Y, 8f * NPC.direction, Main.rand.NextFloat(-1.5f, 0f), ModContent.ProjectileType<SmallFlameJet>(), fireDamage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 25;
                         //play breath sound
                         if (Main.rand.NextBool(3))

@@ -18,9 +18,10 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.BossItems;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy.Triad;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp
 {
@@ -326,7 +327,17 @@ namespace tsorcRevamp
             }
         }
         /// <summary>
-        /// Puts out a string that will adhere to automatic code refactoring when files are moved
+        /// Returns a string for usage of any vanilla texture
+        /// </summary>
+        /// <param name="iD">The ID of the object</param>
+        /// <param name="suffix">The type of object you are looking for, defaults to Item</param>
+        /// <returns></returns>
+        public static string VanillaTextureFilepath(int iD, string suffix = "Item")
+        {
+            return "Terraria/Images/" + suffix + "_" + iD;
+        }
+        /// <summary>
+        /// Returns a string that will adhere to automatic code refactoring when files are moved
         /// </summary>
         /// <param name="className">The original class that uses the texture</param>
         /// <param name="directorySeperator">The symbol you need for separation of directories, Terraria usually looks for a "/" inbetween directories</param>
@@ -1203,9 +1214,9 @@ namespace tsorcRevamp
         ///<param name="type">The type of projectile being checked</param>
         public static bool IsProjectileSafeToFuckWith(int type)
         {
-            if (Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>() ||
-                Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>() ||
-                Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>() ||
+            if (Main.projectile[type].type == ModContent.ProjectileType<CataluminanceTrail>() ||
+                Main.projectile[type].type == ModContent.ProjectileType<SpazFireJet>() ||
+                Main.projectile[type].type == ModContent.ProjectileType<CursedMalestrom>() ||
                 Main.projectile[type].type == ProjectileID.PhantasmalDeathray || Main.projectile[type].type == ProjectileID.SaucerDeathray)
             {
                 return false;

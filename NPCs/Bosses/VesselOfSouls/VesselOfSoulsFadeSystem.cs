@@ -6,6 +6,7 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
+using tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls;
 
 namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 {
@@ -174,7 +175,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             // Full opacity: the shader now owns the whole density profile (near-transparent at the
             // centre so the interior background reads through, weight carried at the edges and
             // corners). The old 0.76 scale-down existed only because the fog was a flat wash.
-            Projectiles.Enemy.VesselOfSouls.VesselVFX.DrawVoidSpace(
+            VesselVFX.DrawVoidSpace(
                 spriteBatch, MathHelper.Clamp(opacity, 0f, 1f));
         }
 

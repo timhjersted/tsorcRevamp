@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.VFX
 {
@@ -153,10 +155,10 @@ namespace tsorcRevamp.VFX
                 return;
             }
 
-            sparkTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/VFX/DynamicTrail").Value;
+            sparkTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DynamicTrail))).Value;
             smokeTextureA = ModContent.Request<Texture2D>("tsorcRevamp/Textures/Clouds/Cloud_0").Value;
             smokeTextureB = ModContent.Request<Texture2D>("tsorcRevamp/Textures/Clouds/Cloud_3").Value;
-            beamCapTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/GenericLaser").Value;
+            beamCapTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(GenericLaser))).Value;
         }
 
         public override void Unload()

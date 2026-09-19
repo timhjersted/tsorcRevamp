@@ -14,6 +14,7 @@ using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -237,7 +238,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         Vector2 mouth = MouthPosition;
                         Vector2 vel = UsefulFunctions.Aim(mouth, target.Center, 9f) + Main.rand.NextVector2Circular(1.5f, 1.5f);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), mouth, vel,
-                            ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), FireBreathDamage, 0f, Main.myPlayer);
+                            ModContent.ProjectileType<FireBreath>(), FireBreathDamage, 0f, Main.myPlayer);
                     }
                     if (--_attackTimer <= 0)
                     {
@@ -328,7 +329,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             Vector2 vel = UsefulFunctions.Aim(spawn, predictedTarget, projSpeed);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), RainFireballDamage, 2f, Main.myPlayer);
+                ModContent.ProjectileType<DragonMeteor>(), RainFireballDamage, 2f, Main.myPlayer);
         }
 
         // Red mouth ember during the telegraph: small/steady for the first ~1 s (smoulder), then

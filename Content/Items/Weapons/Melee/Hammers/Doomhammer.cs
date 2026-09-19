@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
-using tsorcRevamp.Projectiles.Melee.Hammers;
+using tsorcRevamp.Content.Projectiles.Melee.Hammers;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Hammers
 {

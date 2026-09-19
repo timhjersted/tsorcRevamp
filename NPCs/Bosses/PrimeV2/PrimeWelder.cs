@@ -4,6 +4,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Prime;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
@@ -89,7 +91,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
                 }
                 NPC.active = false;
                 return;
@@ -113,7 +115,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
 
             NPC.rotation = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
-            if ((!damaged && !UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.MoltenWeld>())) || (damaged && AttackTimer % 60 == 0))
+            if ((!damaged && !UsefulFunctions.AnyProjectile(ModContent.ProjectileType<MoltenWeld>())) || (damaged && AttackTimer % 60 == 0))
             {
                 float aiZero = 0;
                 if (damaged)
@@ -122,7 +124,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.MoltenWeld>(), WeldDamage / 4, 0.5f, Main.myPlayer, ai0: aiZero, ai1: NPC.whoAmI);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<MoltenWeld>(), WeldDamage / 4, 0.5f, Main.myPlayer, ai0: aiZero, ai1: NPC.whoAmI);
                 }
             }
 
@@ -196,8 +198,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
                 }
                 UsefulFunctions.SimpleGore(NPC, "Welder_Damaged_2");
                 NPC.life = 1;

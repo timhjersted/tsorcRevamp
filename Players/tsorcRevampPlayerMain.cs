@@ -51,11 +51,18 @@ using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.Magic;
+using tsorcRevamp.Content.Projectiles.Magic.Runeterra.LudensTempest;
+using tsorcRevamp.Content.Projectiles.Melee;
+using tsorcRevamp.Content.Projectiles.Melee.Runeterra;
+using tsorcRevamp.Content.Projectiles.Pets;
+using tsorcRevamp.Content.Projectiles.Ranged;
+using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Enemies;
-using tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest;
-using tsorcRevamp.Projectiles.Melee.Runeterra;
-using tsorcRevamp.Projectiles.Pets;
-using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 using static Humanizer.In;
@@ -771,8 +778,8 @@ namespace tsorcRevamp
             {
                 Projectile sourceProjectile = Main.projectile[sourceProjectileIndex];
                 if (sourceProjectile.active
-                    && sourceProjectile.type == ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>()
-                    && sourceProjectile.GetGlobalProjectile<Projectiles.tsorcGlobalProjectile>().TryGetSourceNPC(out NPC sourceNPC))
+                    && sourceProjectile.type == ModContent.ProjectileType<HumanoidMeleeHitbox>()
+                    && sourceProjectile.GetGlobalProjectile<tsorcGlobalProjectile>().TryGetSourceNPC(out NPC sourceNPC))
                 {
                     damageSource = PlayerDeathReason.ByNPC(sourceNPC.whoAmI);
                 }
@@ -847,7 +854,7 @@ namespace tsorcRevamp
         {
             if (Main.myPlayer == Player.whoAmI)
             {
-                Projectile.NewProjectile(Player.GetSource_Misc("Bloodsign"), Player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, Player.whoAmI);
+                Projectile.NewProjectile(Player.GetSource_Misc("Bloodsign"), Player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Bloodsign>(), 0, 0, Player.whoAmI);
             }
             //Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
 
@@ -1191,13 +1198,13 @@ namespace tsorcRevamp
                         velocity = new Vector2(Player.direction, 0);
                     }
                     velocity.Normalize();
-                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center - velocity * 24f, velocity * 14f, ModContent.ProjectileType<Projectiles.Melee.ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Melee).ApplyTo(hit.SourceDamage * 0.55f), 4f, Player.whoAmI, velocity.ToRotation());
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center - velocity * 24f, velocity * 14f, ModContent.ProjectileType<ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Melee).ApplyTo(hit.SourceDamage * 0.55f), 4f, Player.whoAmI, velocity.ToRotation());
                 }
                 else if (ArtoriasAbysswalkerCounterType == ArtoriasAbysswalkerMagicCounter)
                 {
-                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Magic.ArtoriasAbyssShockwave>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.45f), 5f, Player.whoAmI);
-                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, new Vector2(-9f, 0f), ModContent.ProjectileType<Projectiles.Melee.ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.25f), 3f, Player.whoAmI, MathHelper.Pi, 1f);
-                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, new Vector2(9f, 0f), ModContent.ProjectileType<Projectiles.Melee.ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.25f), 3f, Player.whoAmI, 0f, 1f);
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, Vector2.Zero, ModContent.ProjectileType<ArtoriasAbyssShockwave>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.45f), 5f, Player.whoAmI);
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, new Vector2(-9f, 0f), ModContent.ProjectileType<ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.25f), 3f, Player.whoAmI, MathHelper.Pi, 1f);
+                    Projectile.NewProjectile(Player.GetSource_OnHit(target), target.Center, new Vector2(9f, 0f), ModContent.ProjectileType<ArtoriasAbyssSlash>(), (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(hit.SourceDamage * 0.25f), 3f, Player.whoAmI, 0f, 1f);
                 }
             }
 
@@ -1331,7 +1338,7 @@ namespace tsorcRevamp
             {
                 modifiers.SourceDamage += WhipTipHitBonusDamage / 100f;
             }
-            if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
+            if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<HomingFireball>())
             {
                 modifiers.TargetDamageMultiplier *= 1f + Content.Items.Accessories.Damage.BurningStone.DamageIncrease / 100f;
             }
@@ -1697,7 +1704,7 @@ namespace tsorcRevamp
                 }
             }
 
-            if (proj.type == ModContent.ProjectileType<Projectiles.Ranged.PiercingPlasma>())
+            if (proj.type == ModContent.ProjectileType<PiercingPlasma>())
             {
                 PiercingGazeCharge++;
                 if (PiercingGazeCharge == 16)
@@ -1728,7 +1735,7 @@ namespace tsorcRevamp
             {
                 for (int b = 0; b < 5; b++)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.Damage * 2, 4f, Player.whoAmI, 0, 1);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<BoneRevenge>(), hurtInfo.Damage * 2, 4f, Player.whoAmI, 0, 1);
                 }
             }
 
@@ -1736,11 +1743,11 @@ namespace tsorcRevamp
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 2, 7f, Player.whoAmI);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<SoulSickle>(), hurtInfo.SourceDamage * 2, 7f, Player.whoAmI);
                 }
                 else
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 4, 9f, Player.whoAmI);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<SoulSickle>(), hurtInfo.SourceDamage * 4, 9f, Player.whoAmI);
                 }
             }
             if (npc.type == NPCID.SkeletronPrime && Main.rand.NextBool(2))
@@ -1761,7 +1768,7 @@ namespace tsorcRevamp
             {
                 for (int b = 0; b < 5; b++)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.Damage * 2, 4f, Player.whoAmI, 0, 1);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<BoneRevenge>(), hurtInfo.Damage * 2, 4f, Player.whoAmI, 0, 1);
                 }
             }
 
@@ -1769,11 +1776,11 @@ namespace tsorcRevamp
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 2, 6f, Player.whoAmI);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<SoulSickle>(), hurtInfo.SourceDamage * 2, 6f, Player.whoAmI);
                 }
                 else
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 4, 8f, Player.whoAmI);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<SoulSickle>(), hurtInfo.SourceDamage * 4, 8f, Player.whoAmI);
                 }
             }
             if (proj.type == ProjectileID.DeathLaser && Main.rand.NextBool(2))
@@ -1784,7 +1791,7 @@ namespace tsorcRevamp
 
             if (hurtInfo.Damage >= Player.statLife)
             {
-                if (proj.type == ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>() && proj.damage > 999)
+                if (proj.type == ModContent.ProjectileType<EnemyThrowingKnifeSmall>() && proj.damage > 999)
                 {
                     Player.GetModPlayer<tsorcRevampPlayer>().DeathTextOverride = LangUtils.GetTextValue("DeathText.Tonberry");
                 }
@@ -1847,7 +1854,7 @@ namespace tsorcRevamp
                                 Player.GetSource_Misc("WitchScream"),
                                 Player.Center,
                                 Vector2.Zero,
-                                ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(),
+                                ModContent.ProjectileType<ExplosionFlash>(),
                                 0,
                                 0,
                                 Player.whoAmI,
@@ -1858,7 +1865,7 @@ namespace tsorcRevamp
                                 Player.GetSource_Misc("WitchScream"),
                                 Player.Center,
                                 Vector2.Zero,
-                                ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(),
+                                ModContent.ProjectileType<ShockwaveEffect>(),
                                 0,
                                 0,
                                 Player.whoAmI,
@@ -2063,7 +2070,7 @@ namespace tsorcRevamp
                 {
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile Shroom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
+                        Projectile Shroom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<NuclearMushroom>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
                     }
                     Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), OmegaSquadRifle.ShroomCooldown * 60);
                 }

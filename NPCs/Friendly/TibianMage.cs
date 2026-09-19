@@ -13,6 +13,8 @@ using tsorcRevamp.Content.Items.ItemCrates;
 using tsorcRevamp.Content.Items.Weapons;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Scrolls;
+using tsorcRevamp.Content.Projectiles;
+using FarronDart = tsorcRevamp.Content.Items.Weapons.Magic.FarronDart;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -308,12 +310,12 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             if (weaponChoice < 8)
             {
-                projType = ModContent.ProjectileType<Projectiles.GreatSoulArrow>();
+                projType = ModContent.ProjectileType<GreatSoulArrow>();
                 attackDelay = 8;
             }
             if (weaponChoice >= 8)
             {
-                projType = ModContent.ProjectileType<Projectiles.BlackFire>();
+                projType = ModContent.ProjectileType<BlackFire>();
                 attackDelay = 8;
             }
         }

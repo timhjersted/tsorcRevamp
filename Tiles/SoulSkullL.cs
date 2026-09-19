@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
 using tsorcRevamp.Content.Items.Placeable;
+using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Tiles
@@ -222,7 +223,7 @@ namespace tsorcRevamp.Tiles
                         UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Tiles.SoulSkullL.AnnoyedTalk2"), 120, 190, 240);
                         for (int b = 0; b < 12; b++)
                         {
-                            Projectile.NewProjectile(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(i * 16 + 10, j * 16 + 10), new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -6), ModContent.ProjectileType<Projectiles.BoneHostile>(), 15, 2f);
+                            Projectile.NewProjectile(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(i * 16 + 10, j * 16 + 10), new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -6), ModContent.ProjectileType<BoneHostile>(), 15, 2f);
                         }
                     }
                     else
@@ -242,7 +243,7 @@ namespace tsorcRevamp.Tiles
                     UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Tiles.SoulSkullL.AnnoyedTalk5"), 255, 40, 40);
                     for (int b = 0; b < 25; b++)
                     {
-                        Projectile.NewProjectile(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(i * 16 + 10, j * 16 + 10), new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -6), ModContent.ProjectileType<Projectiles.BoneHostile>(), 25, 2f);
+                        Projectile.NewProjectile(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(i * 16 + 10, j * 16 + 10), new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -6), ModContent.ProjectileType<BoneHostile>(), 25, 2f);
                     }
                 }
             }

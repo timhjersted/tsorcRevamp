@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Melee;
-using tsorcRevamp.Projectiles.Melee.Shortswords;
+using tsorcRevamp.Content.Projectiles.Melee.Shortswords;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Shortswords
 {

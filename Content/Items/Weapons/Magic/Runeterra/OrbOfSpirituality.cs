@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Magic.Runeterra;
+using tsorcRevamp.Content.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra
 {

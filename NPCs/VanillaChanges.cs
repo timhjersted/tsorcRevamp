@@ -26,6 +26,7 @@ using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.Utilities;
 
@@ -5865,7 +5866,7 @@ namespace tsorcRevamp.NPCs
                     Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center, 1);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 40, 0, Main.myPlayer, npc.target, npc.whoAmI);
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<EnemyRedLaser>(), 40, 0, Main.myPlayer, npc.target, npc.whoAmI);
                     }
                 }
             }
@@ -5888,14 +5889,14 @@ namespace tsorcRevamp.NPCs
                             if (destroyerChargeTimer > -180 && destroyerChargeTimer <= 740 && destroyerChargeTimer % 120 == 0 && laserToggle)
                             {
                                 Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
-                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 80, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
+                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<EnemyLingeringLaser>(), 80, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
                             }
 
                             //Shoot confining lasers above it to keep the player from circling
                             if (destroyerChargeTimer > -60 && (Main.GameUpdateCount + npc.whoAmI * 5) % 300 == 0)
                             {
                                 Vector2 projVel = new Vector2(Main.rand.NextFloat(-1, 1), Main.rand.NextFloat(-1, 0.05f));
-                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -4, npc.whoAmI);
+                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -4, npc.whoAmI);
                             }
                         }
                     }
@@ -5935,7 +5936,7 @@ namespace tsorcRevamp.NPCs
                             //Cancel the attack if it's too close to a "safe angle", which ensures the player can always avoid the attack
                             if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2 && Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, style, npc.whoAmI);
+                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<EnemyLingeringLaser>(), 40, 0, Main.myPlayer, style, npc.whoAmI);
                             }
                         }
                     }
@@ -5946,7 +5947,7 @@ namespace tsorcRevamp.NPCs
                         Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center, 1);
                         if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.Pi / 6f && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.Pi / 6f && Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<EnemyLingeringLaser>(), 40, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
                         }
                     }
 
@@ -6028,7 +6029,7 @@ namespace tsorcRevamp.NPCs
                                     //Clean up
                                     for (int i = 0; i < Main.maxProjectiles; i++)
                                     {
-                                        if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>())
+                                        if (Main.projectile[i].type == ModContent.ProjectileType<EnemyLingeringLaser>())
                                         {
                                             Main.projectile[i].Kill();
                                         }
@@ -6053,7 +6054,7 @@ namespace tsorcRevamp.NPCs
                                         {
                                             subRotation += 2 * MathHelper.Pi / 3;
 
-                                            Projectile.NewProjectile(npc.GetSource_FromThis(), Main.player[npc.target].Center, new Vector2(0, 1).RotatedBy(laserRotation + subRotation), ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -3, npc.whoAmI);
+                                            Projectile.NewProjectile(npc.GetSource_FromThis(), Main.player[npc.target].Center, new Vector2(0, 1).RotatedBy(laserRotation + subRotation), ModContent.ProjectileType<EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -3, npc.whoAmI);
                                         }
                                     }
                                 }
@@ -6081,7 +6082,7 @@ namespace tsorcRevamp.NPCs
                                     {
                                         for (int i = 0; i < 15; i++)
                                         {
-                                            horizontalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -1, npc.whoAmI));
+                                            horizontalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -1, npc.whoAmI));
                                             startPos += step;
                                         }
 
@@ -6091,7 +6092,7 @@ namespace tsorcRevamp.NPCs
                                         laserVel = new Vector2(1, 1).RotatedBy(laserRotation); //Aim down right
                                         for (int i = 0; i < 15; i++)
                                         {
-                                            verticalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -1, npc.whoAmI));
+                                            verticalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -1, npc.whoAmI));
                                             startPos += step;
                                         }
 

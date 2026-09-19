@@ -7,7 +7,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Enemy
     /// <summary>Presentation-only staff used by Soul of Cinder's purple/blue spell memories.</summary>
     public class PurpleGemStaff : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/PurpleGemStaff";
 
         public override void SetStaticDefaults() => Item.staff[Type] = true;
 

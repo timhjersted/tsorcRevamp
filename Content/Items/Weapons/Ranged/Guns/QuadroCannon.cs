@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Titanite;
-using tsorcRevamp.Projectiles.Ranged;
+using tsorcRevamp.Content.Projectiles.Ranged;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Guns
 {

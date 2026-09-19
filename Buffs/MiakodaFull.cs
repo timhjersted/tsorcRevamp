@@ -18,10 +18,10 @@ namespace tsorcRevamp.Buffs
             player.buffTime[buffIndex] = 18000;
             player.GetModPlayer<tsorcRevampPlayer>().MiakodaFull = true;
 
-            bool petProjectileNotSpawned = player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Pets.MiakodaFull>()] <= 0;
+            bool petProjectileNotSpawned = player.ownedProjectileCounts[ModContent.ProjectileType<Content.Projectiles.Pets.MiakodaFull>()] <= 0;
             if (petProjectileNotSpawned && player.whoAmI == Main.myPlayer)
             {
-                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.MiakodaFull>(), 0, 0f, player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.Zero, ModContent.ProjectileType<Content.Projectiles.Pets.MiakodaFull>(), 0, 0f, player.whoAmI);
             }
 
             player.endurance += Content.Items.Pets.MiakodaFull.DamageReduction / 100f;

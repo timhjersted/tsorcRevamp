@@ -7,9 +7,10 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.IceGigas;
+using tsorcRevamp.Content.Projectiles.Enemy.Quara;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.Projectiles.Enemy;
-using tsorcRevamp.Projectiles.Enemy.Quara;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -844,18 +845,18 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (AttackTimer <= RushDissolveTicks)
                 {
-                    Projectiles.Enemy.EnemyVFX.DrawQuaraTideRush(NPC.Center,
+                    EnemyVFX.DrawQuaraTideRush(NPC.Center,
                         new Vector2(NPC.width, NPC.height), AttackTimer / (float)RushDissolveTicks, false, NPC.direction);
                 }
                 else if (AttackTimer <= RushDissolveTicks + RushMaxSurgeTicks)
                 {
-                    Projectiles.Enemy.EnemyVFX.DrawQuaraTideRush(NPC.Center,
+                    EnemyVFX.DrawQuaraTideRush(NPC.Center,
                         new Vector2(NPC.width, NPC.height), 1f, false, rushDir);
                 }
                 else
                 {
                     float reform = MathHelper.Clamp((AttackTimer - RushDissolveTicks - RushMaxSurgeTicks) / (float)RushReformTicks, 0f, 1f);
-                    Projectiles.Enemy.EnemyVFX.DrawQuaraTideRush(NPC.Center,
+                    EnemyVFX.DrawQuaraTideRush(NPC.Center,
                         new Vector2(NPC.width, NPC.height), reform, true, rushDir);
                 }
                 return;
@@ -892,7 +893,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 default:
                     return;
             }
-            Projectiles.Enemy.EnemyVFX.DrawQuaraCast(StaffTip, progress, pattern);
+            EnemyVFX.DrawQuaraCast(StaffTip, progress, pattern);
         }
 
         #region Gore

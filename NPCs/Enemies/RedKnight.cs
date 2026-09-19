@@ -11,7 +11,10 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.WyvernMage;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -276,7 +279,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             int projectileIndex = Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), NPC.Center, velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(),
+                ModContent.ProjectileType<BlackKnightSpear>(),
                 redKnightsSpearDamage, 0f, Main.myPlayer, ai2: 1f);
             tsorcGlobalProjectile.SetDefenseTraits(projectileIndex, globalNPC.ActiveAttackDefenseTraits);
         }
@@ -367,7 +370,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             int timerBeforeWindup;
-            if (moveKey == ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>())
+            if (moveKey == ModContent.ProjectileType<BlackKnightSpear>())
             {
                 timerBeforeWindup = 149;
             }
@@ -587,7 +590,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer,
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer,
                             UsefulFunctions.ColorToFloat(globalNPC.ActiveAttackBypassesShield ? Color.Red : Color.OrangeRed));
                     }
 
@@ -634,7 +637,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     targetPosition = Vector2.Zero;
 
                     NPC.ai[1] = 230f;
-                    int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();
+                    int spearProjectileType = ModContent.ProjectileType<BlackKnightSpear>();
                     if (hasPlayerLOS)
                     {
                         TryQueueComboFollowup(globalNPC, spearProjectileType, unblockableSpear);
@@ -656,7 +659,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.GreenYellow));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.GreenYellow));
                     }
                 }
 
@@ -685,7 +688,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer, ai2: 1f);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer, ai2: 1f);
                             }
                         }
                     }
@@ -705,7 +708,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Green));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Green));
                     }
                 }
 
@@ -734,7 +737,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer, ai2: 1f);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer, ai2: 1f);
                             }
                         }
                     }
@@ -786,7 +789,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer,
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer,
                             UsefulFunctions.ColorToFloat(globalNPC.ActiveAttackBypassesShield ? Color.Red : Color.OrangeRed));
                     }
                     Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
@@ -809,7 +812,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, target, bombProjectileSpeed, 0.2f, highAngle: false, fallback: true);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsBombDamage, 0f, Main.myPlayer, ai2: 1f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyFirebomb>(), redKnightsBombDamage, 0f, Main.myPlayer, ai2: 1f);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
                     }
@@ -845,7 +848,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 360f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 1f, Main.myPlayer, ai2: 2f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 360f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 1f, Main.myPlayer, ai2: 2f);
                         }
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
@@ -858,7 +861,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 400 + Main.rand.Next(800), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 1.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer, ai2: 2f);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 400 + Main.rand.Next(800), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 1.1f, ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer, ai2: 2f);
                         }
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
@@ -892,7 +895,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.White));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.White));
 
                     }
                     // Store the player's center
@@ -923,7 +926,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     speed += Main.rand.NextVector2Circular(-6, -8);//was -4, -2, then -12, -16
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyGreatAttack>(), redKnightsGreatDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyGreatAttack>(), redKnightsGreatDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center); //Play flame sound
 
@@ -954,7 +957,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Vector2 targetVector = UsefulFunctions.Aim(NPC.Center, closestPlayer.Center, 1);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.SmallRedLightning>(), 30, 1, Main.myPlayer, 0, NPC.whoAmI);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<SmallRedLightning>(), 30, 1, Main.myPlayer, 0, NPC.whoAmI);
                         }
                     }
                 }
@@ -1054,7 +1057,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.alpha < 255 && globalNPC.TeleportCountdown <= 0 && globalNPC.TeleportAppearanceTimer <= 0
                 && specialAttacks.IsSpectralHandBarrage)
             {
-                Projectiles.Enemy.RedKnightVFX.DrawUltrakillSeal(NPC.Center,
+                RedKnightVFX.DrawUltrakillSeal(NPC.Center,
                     specialAttacks.SpectralGatherProgress);
             }
 
@@ -1215,17 +1218,20 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spearTexture == null)
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightSpear"); // the spear Tibian Valkyrie uses (14x62)
+                spearTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(BlackKnightSpear)),
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value; // the spear Tibian Valkyrie uses (14x62)
             }
 
             if (bombTexture == null)
             {
-                bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyFirebomb");
+                bombTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyFirebomb)),
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
             if (magicBallTexture == null)
             {
-                magicBallTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemySpellAbyssPoisonStrikeBall");
+                magicBallTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemySpellAbyssPoisonStrikeBall)),
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
             if (armOverlayTexture == null)
@@ -1252,7 +1258,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     // Was RedKnightVFX.DrawSpearWake; now the shared Black Knight grey wake. The
                     // old `empowered` flag (unblockable attacks) becomes a bigger, stronger quad.
                     bool unblockable = globalNPC.ActiveAttackBypassesShield;
-                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
+                    EnemyVFX.DrawBlackKnightSpearWake(
                         handWorld + Main.screenPosition + forward * (thrustOffset * 0.5f),
                         forward.ToRotation(),
                         unblockable ? new Vector2(80f, 18f) : new Vector2(72f, 16f),
@@ -1278,7 +1284,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (magicBallTexture != null && ((NPC.ai[1] >= 225 && NPC.ai[1] <= 325f) || (NPC.ai[1] >= 375 && NPC.ai[1] <= 405f)))
             {
                 Vector2 magicBallWorld = CurrentMagicBallWorld();
-                Projectiles.Enemy.RedKnightVFX.DrawToxicMotes(magicBallWorld, 2, 0.72f, 16f);
+                RedKnightVFX.DrawToxicMotes(magicBallWorld, 2, 0.72f, 16f);
                 DrawArmOverlay(spriteBatch, drawColor, globalNPC, NPC.spriteDirection);
             }
             // Bomb
@@ -1289,7 +1295,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 float rotation = bombAim.ToRotation() + MathHelper.PiOver2;
 
                 Vector2 fusePoint = handWorld + Main.screenPosition + new Vector2(0f, -15f).RotatedBy(rotation);
-                Projectiles.Enemy.RedKnightVFX.DrawBombFuse(fusePoint,
+                RedKnightVFX.DrawBombFuse(fusePoint,
                     MathHelper.Clamp((NPC.ai[1] - 895f) / 60f, 0f, 1f), planted: false);
                 spriteBatch.Draw(bombTexture, handWorld, null, drawColor, rotation, BombGripOrigin, 1f, SpriteEffects.None, 0);
                 DrawArmOverlay(spriteBatch, drawColor, globalNPC, NPC.spriteDirection);
@@ -1309,7 +1315,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
                     // Was RedKnightVFX.DrawSpearWake; now the shared Black Knight grey wake.
-                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
+                    EnemyVFX.DrawBlackKnightSpearWake(
                         handWorld + forward * (gripSlide * 0.5f), forward.ToRotation(),
                         new Vector2(74f, 16f), 0.54f);
                 }
@@ -1324,7 +1330,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 handWorld = CurrentHandWorld(specialAttacks.Direction);
                 float rotation = new Vector2(specialAttacks.Direction, 0f).ToRotation() + MathHelper.PiOver2;
                 Vector2 fusePoint = handWorld + new Vector2(0f, -15f).RotatedBy(rotation);
-                Projectiles.Enemy.RedKnightVFX.DrawBombFuse(fusePoint,
+                RedKnightVFX.DrawBombFuse(fusePoint,
                     specialAttacks.TelegraphProgress, planted: false);
                 spriteBatch.Draw(bombTexture, handWorld - Main.screenPosition, null, drawColor,
                     rotation, BombGripOrigin, 1f, SpriteEffects.None, 0f);
@@ -1335,7 +1341,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (heldProp == KnightHeldProp.Magic)
             {
                 Vector2 magicBallWorld = CurrentMagicBallWorld();
-                Projectiles.Enemy.RedKnightVFX.DrawToxicMotes(magicBallWorld, 2,
+                RedKnightVFX.DrawToxicMotes(magicBallWorld, 2,
                     specialAttacks.TelegraphProgress, 16f);
                 DrawArmOverlay(spriteBatch, drawColor, globalNPC, specialAttacks.Direction);
             }

@@ -5,6 +5,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -138,7 +139,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             num51 = num48 / num51;
                             speedX *= num51;
                             speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>();//44;//0x37; //14;
+                            int type = ModContent.ProjectileType<CrystalFire>();//44;//0x37; //14;
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, crystalFireDamage, 0f, Main.myPlayer);
@@ -163,7 +164,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             num51 = num48 / num51;
                             speedX *= num51;
                             speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>();//44;//0x37; //14; was purple crush
+                            int type = ModContent.ProjectileType<CrystalFire>();//44;//0x37; //14; was purple crush
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, crystalFireDamage, 0f, Main.myPlayer);

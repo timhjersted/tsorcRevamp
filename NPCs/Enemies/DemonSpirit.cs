@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -476,7 +477,7 @@ namespace tsorcRevamp.NPCs.Enemies
         void FireDemonSpiritNeedle(Player target)
         {
             Vector2 velocity = AimAtTarget(target, 8f, 20f);
-            SpawnProjectile(NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 120);
+            SpawnProjectile(NPC.Center, velocity, ModContent.ProjectileType<Content.Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 120);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
         }
 
@@ -485,7 +486,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Vector2 velocity = AimAtTarget(target, 7.2f, 10f);
             for (int i = -1; i <= 1; i++)
             {
-                SpawnProjectile(NPC.Center, velocity.RotatedBy(MathHelper.ToRadians(14f * i)), ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 120);
+                SpawnProjectile(NPC.Center, velocity.RotatedBy(MathHelper.ToRadians(14f * i)), ModContent.ProjectileType<Content.Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 120);
             }
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
         }
@@ -495,15 +496,15 @@ namespace tsorcRevamp.NPCs.Enemies
             Vector2 velocity = AimAtTarget(target, 6.6f, 8f);
             Vector2 perpendicular = velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 20f;
 
-            SpawnProjectile(NPC.Center + perpendicular, velocity.RotatedBy(MathHelper.ToRadians(-8f)), ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 135);
-            SpawnProjectile(NPC.Center - perpendicular, velocity.RotatedBy(MathHelper.ToRadians(8f)), ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 135);
+            SpawnProjectile(NPC.Center + perpendicular, velocity.RotatedBy(MathHelper.ToRadians(-8f)), ModContent.ProjectileType<Content.Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 135);
+            SpawnProjectile(NPC.Center - perpendicular, velocity.RotatedBy(MathHelper.ToRadians(8f)), ModContent.ProjectileType<Content.Projectiles.Enemy.DemonSpirit>(), (int)(14f * NPC.scale), 135);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
         }
 
         void FirePurpleCrushShot(Player target)
         {
             Vector2 velocity = AimAtTarget(target, 3f, 0f);
-            SpawnProjectile(NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.PurpleCrush>(), 19, 150);
+            SpawnProjectile(NPC.Center, velocity, ModContent.ProjectileType<PurpleCrush>(), 19, 150);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, NPC.Center);
         }
 
@@ -512,7 +513,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Vector2 velocity = AimAtTarget(target, 2.7f, 0f);
             for (int i = -1; i <= 1; i++)
             {
-                SpawnProjectile(NPC.Center, velocity.RotatedBy(MathHelper.ToRadians(18f * i)), ModContent.ProjectileType<Projectiles.Enemy.PurpleCrush>(), 19, 150);
+                SpawnProjectile(NPC.Center, velocity.RotatedBy(MathHelper.ToRadians(18f * i)), ModContent.ProjectileType<PurpleCrush>(), 19, 150);
             }
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, NPC.Center);
         }
@@ -522,8 +523,8 @@ namespace tsorcRevamp.NPCs.Enemies
             Vector2 velocity = AimAtTarget(target, 2.4f, 0f);
             for (int i = -1; i <= 1; i += 2)
             {
-                SpawnProjectile(NPC.Center + new Vector2(0, 18f * i), velocity.RotatedBy(MathHelper.ToRadians(24f * i)), ModContent.ProjectileType<Projectiles.Enemy.PurpleCrush>(), 19, 170);
-                SpawnProjectile(NPC.Center + new Vector2(18f * i, 0), velocity.RotatedBy(MathHelper.ToRadians(-24f * i)), ModContent.ProjectileType<Projectiles.Enemy.PurpleCrush>(), 19, 170);
+                SpawnProjectile(NPC.Center + new Vector2(0, 18f * i), velocity.RotatedBy(MathHelper.ToRadians(24f * i)), ModContent.ProjectileType<PurpleCrush>(), 19, 170);
+                SpawnProjectile(NPC.Center + new Vector2(18f * i, 0), velocity.RotatedBy(MathHelper.ToRadians(-24f * i)), ModContent.ProjectileType<PurpleCrush>(), 19, 170);
             }
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, NPC.Center);
         }
@@ -591,7 +592,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 float progress = MathHelper.Clamp(1f - attackDelay / 30f, 0f, 1f);
                 Vector2 aimDirection = Main.player[NPC.target].Center - NPC.Center;
-                Projectiles.Enemy.EnemyVFX.DrawDemonSpiritCastSigil(NPC.Center, plannedAttackPattern, progress, aimDirection);
+                EnemyVFX.DrawDemonSpiritCastSigil(NPC.Center, plannedAttackPattern, progress, aimDirection);
             }
         }
         #endregion

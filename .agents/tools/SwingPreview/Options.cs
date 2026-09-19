@@ -58,6 +58,9 @@ namespace SwingPreview
         public string Combo;
         public string Motion;
         public string Ease;
+        public int EaseIn = -1;
+        public int EaseOut = -1;
+        public float EaseOutDecay = float.NaN;
         public string Puppet = "Preview";
         public int Telegraph = -1;
         public int Attack = -1;
@@ -97,7 +100,9 @@ SwingPreview - run the mod's real swing maths headless and emit telemetry JSONL.
   --profile                       print every phase's speed profile: sweep, peak deg/tick, the first-
                                   frame jump into it, armed ticks, and the deg/tick of every frame
   --motion <ComboMotion>          prototype a single motion instead of a table combo
-  --ease <Linear|Smooth|Snap|Whip|Trapezoidal>   override every step's authored Ease
+  --ease <Linear|Smooth|Snap|Whip|Trapezoidal|Weighted>   override every step's authored Ease
+  --ease-in / --ease-out <ticks>  override Weighted easing's acceleration / deceleration ticks
+  --ease-decay <float>            override Weighted easing's exponential settle rate
   --compare-eases                 emit the same run once per ease style, to A/B curves
   --clock <on|off>                override UseAuthoredComboSwingClock (gate 1 of 3)
   --step-linger <ticks>           override MeleeComboInterStepLingerTicks (the between-hits hold)
@@ -157,6 +162,9 @@ Examples:
                     case "--combo": options.Combo = Next(); break;
                     case "--motion": options.Motion = Next(); break;
                     case "--ease": options.Ease = Next(); break;
+                    case "--ease-in": options.EaseIn = int.Parse(Next(), CultureInfo.InvariantCulture); break;
+                    case "--ease-out": options.EaseOut = int.Parse(Next(), CultureInfo.InvariantCulture); break;
+                    case "--ease-decay": options.EaseOutDecay = float.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--clock": options.Clock = Next(); break;
                     case "--puppet": options.Puppet = Next(); break;
                     case "--out": options.OutFile = Next(); break;
@@ -354,6 +362,16 @@ Examples:
                     Enum.TryParse(Ease, ignoreCase: true, out SwingEaseStyle parsed))
                 {
                     step.Ease = parsed;
+                }
+                if (EaseIn >= 0) { step.EaseInTicks = EaseIn; }
+                if (EaseOut >= 0) { step.EaseOutTicks = EaseOut; }
+                if (!float.IsNaN(EaseOutDecay)) { step.EaseOutDecay = EaseOutDecay; }
+                if (step.Ease == SwingEaseStyle.Weighted
+                    && step.EaseInTicks + step.EaseOutTicks > 0)
+                {
+                    var weighted = new WeightedSwing(
+                        step.EaseInTicks, step.EaseOutTicks, step.EaseOutDecay);
+                    step.HitWindowEnd = Math.Min(1f, weighted.HitWindowEnd);
                 }
                 spec.Steps[i] = step;
             }

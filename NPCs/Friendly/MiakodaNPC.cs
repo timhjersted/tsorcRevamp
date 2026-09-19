@@ -12,7 +12,6 @@ using Terraria.Utilities;
 using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.NPCs.Bosses.JungleWyvern;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
-using tsorcRevamp.Projectiles.Pets;
 using System.Collections;
 using rail;
 using Steamworks;

@@ -8,7 +8,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Melee.Runeterra;
+using tsorcRevamp.Content.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra

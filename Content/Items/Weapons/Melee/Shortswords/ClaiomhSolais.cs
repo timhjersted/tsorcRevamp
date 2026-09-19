@@ -6,7 +6,7 @@ using tsorcRevamp.Buffs.Weapons.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Titanite;
-using tsorcRevamp.Projectiles.Melee.Shortswords;
+using tsorcRevamp.Content.Projectiles.Melee.Shortswords;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Shortswords
 {

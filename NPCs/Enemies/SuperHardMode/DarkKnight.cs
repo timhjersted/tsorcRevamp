@@ -9,9 +9,10 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -876,7 +877,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Vector2 velocity = (target.Center + target.velocity * 8f - origin)
                 .SafeNormalize(new Vector2(NPC.direction, 0f)) * 14f;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormWave>(),
+                ModContent.ProjectileType<EnemySpellAbyssStormWave>(),
                 MagicDamage, 8f, Main.myPlayer);
         }
 
@@ -906,7 +907,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Vector2 velocity = (target.Center + target.velocity * 4f - origin)
                 .SafeNormalize(new Vector2(NPC.direction, 0f)) * 12f;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.AbyssSlash>(),
+                ModContent.ProjectileType<AbyssSlash>(),
                 EdgeOfNightProjectileDamage, 5f, Main.myPlayer, NPC.whoAmI + 1);
         }
 

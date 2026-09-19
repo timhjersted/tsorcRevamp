@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Summon.VesselOfSouls;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {
@@ -16,7 +17,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
-            int minionType = ModContent.ProjectileType<Projectiles.Summon.VesselOfSouls.LesserVessel>();
+            int minionType = ModContent.ProjectileType<LesserVessel>();
             bool minionAlive = false;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {

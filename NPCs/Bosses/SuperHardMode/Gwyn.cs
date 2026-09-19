@@ -12,10 +12,14 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Gigas;
+using tsorcRevamp.Content.Projectiles.Enemy.Gwyn;
+using tsorcRevamp.Content.Projectiles.Melee.Broadswords;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Puppets;
-using tsorcRevamp.Projectiles.Melee.Broadswords;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 // NOTE: the folder is Gwyn/, but the namespace stays flat (…SuperHardMode) — a namespace segment
@@ -2089,7 +2093,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     continue;
                 }
 
-                var source = projectile.GetGlobalProjectile<Projectiles.tsorcGlobalProjectile>();
+                var source = projectile.GetGlobalProjectile<tsorcGlobalProjectile>();
                 if (source.SourceNPCIndex == NPC.whoAmI && source.SourceNPCType == NPC.type)
                 {
                     // Quiet removal is intentional: Kill() can run a projectile's impact burst or
@@ -2360,7 +2364,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), target.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.Gwyn.GwynEmbraceOrb>(), 0, 0f,
+                    ModContent.ProjectileType<GwynEmbraceOrb>(), 0, 0f,
                     Main.myPlayer, NPC.whoAmI, target.whoAmI);
                 NPC.netUpdate = true;
             }
@@ -2430,8 +2434,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.direction, dodgeable: false, scalingArmorPenetration: 1f);
                 target.AddBuff(BuffID.OnFire, 10 * 60);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), explosionCenter + new Vector2(0f, 48f),
-                    Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.GwynDescentColumn>(),
-                    0, 0f, Main.myPlayer, Projectiles.Enemy.GwynDescentColumn.ExplosionOnlyMode);
+                    Vector2.Zero, ModContent.ProjectileType<GwynDescentColumn>(),
+                    0, 0f, Main.myPlayer, GwynDescentColumn.ExplosionOnlyMode);
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -2583,11 +2587,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player target = Main.player[NPC.target];
             Vector2 origin = NPC.Center + new Vector2(NPC.direction * 26f, -14f);
             Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f))
-                * Projectiles.Enemy.GwynGreatswordBoomerang.LaunchSpeed;
+                * GwynGreatswordBoomerang.LaunchSpeed;
             float outboundDistance = Vector2.Distance(origin, target.Center)
-                + Projectiles.Enemy.GwynGreatswordBoomerang.TargetOvershoot;
+                + GwynGreatswordBoomerang.TargetOvershoot;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.GwynGreatswordBoomerang>(), BoomerangDamage,
+                ModContent.ProjectileType<GwynGreatswordBoomerang>(), BoomerangDamage,
                 6f, Main.myPlayer, NPC.whoAmI, outboundDistance);
         }
 
@@ -3005,7 +3009,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             Vector2 impact = incoming.Center;
             Projectile.NewProjectile(NPC.GetSource_FromAI(), impact, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.GigasHolyShieldVortex>(), 0, 0f, Main.myPlayer, -1f, 0f);
+                ModContent.ProjectileType<GigasHolyShieldVortex>(), 0, 0f, Main.myPlayer, -1f, 0f);
 
             if (TryFindRiposteVortexPosition(player, impact, out Vector2 output))
             {
@@ -3024,8 +3028,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 incoming.netUpdate = true;
 
                 Projectile outputVortex = Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), output, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.GigasHolyShieldVortex>(), 0, 0f, player.whoAmI,
-                    incoming.whoAmI, Projectiles.Enemy.GigasHolyShieldVortex.OutputMode);
+                    ModContent.ProjectileType<GigasHolyShieldVortex>(), 0, 0f, player.whoAmI,
+                    incoming.whoAmI, GigasHolyShieldVortex.OutputMode);
                 outputVortex.localAI[1] = returnSpeed;
                 outputVortex.netUpdate = true;
             }
@@ -3053,7 +3057,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             float[] verticalSlots = { -90f, -30f, 30f, 90f };
             float[] lateralSlots = { -30f, 30f };
-            int vortexType = ModContent.ProjectileType<Projectiles.Enemy.GigasHolyShieldVortex>();
+            int vortexType = ModContent.ProjectileType<GigasHolyShieldVortex>();
             foreach (float yOffset in verticalSlots)
             {
                 foreach (float xOffset in lateralSlots)
@@ -3064,7 +3068,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         Projectile portal = Main.projectile[i];
                         if (portal.active && portal.type == vortexType && portal.owner == player.whoAmI
-                            && portal.ai[1] == Projectiles.Enemy.GigasHolyShieldVortex.OutputMode
+                            && portal.ai[1] == GigasHolyShieldVortex.OutputMode
                             && Vector2.DistanceSquared(portal.Center, candidate) < 54f * 54f)
                         {
                             occupied = true;
@@ -3224,7 +3228,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         float ang = MathHelper.ToRadians(wave * 30f) + MathHelper.PiOver2 * i;
                         Vector2 pos = player.Center + ang.ToRotationVector2() * 340f;
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.Enemy.GwynSolarSpearNode>(), StormNodeDamage, 2f, Main.myPlayer,
+                            ModContent.ProjectileType<GwynSolarSpearNode>(), StormNodeDamage, 2f, Main.myPlayer,
                             22f, 1f); // ai[1]: Storm spears rebound once after a 90t terrain charge
                     }
                 }
@@ -3323,7 +3327,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {
                             SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.7f, Pitch = -0.6f }, NPC.Center);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                                ModContent.ProjectileType<Projectiles.Enemy.GwynGravityWell>(), 0, 0f, Main.myPlayer,
+                                ModContent.ProjectileType<GwynGravityWell>(), 0, 0f, Main.myPlayer,
                                 NPC.whoAmI, GravityWellTicks);
                             _pullComboNudge = GravityWellTicks;
                         }
@@ -3635,15 +3639,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {
                             Vector2 spawn = NPC.Center + new Vector2(NPC.direction * 24f, -8f);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
-                                ModContent.ProjectileType<Projectiles.Enemy.GwynFireArc>(), (int)(MeleeDamage * 0.7f), 4f, Main.myPlayer, NPC.direction, 2f);
+                                ModContent.ProjectileType<GwynFireArc>(), (int)(MeleeDamage * 0.7f), 4f, Main.myPlayer, NPC.direction, 2f);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), impactPosition, Vector2.Zero,
-                                ModContent.ProjectileType<Projectiles.Enemy.GwynDescentColumn>(),
+                                ModContent.ProjectileType<GwynDescentColumn>(),
                                 Math.Max(1, (int)(MeleeDamage * PlungeExplosionDamageMult)), 6f, Main.myPlayer,
-                                Projectiles.Enemy.GwynDescentColumn.WingedPlungeExplosionMode);
+                                GwynDescentColumn.WingedPlungeExplosionMode);
                             for (int direction = -1; direction <= 1; direction += 2)
                             {
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), impactPosition, Vector2.Zero,
-                                    ModContent.ProjectileType<Projectiles.Enemy.GwynGroundFireWave>(), (int)(MeleeDamage * 0.55f), 5f,
+                                    ModContent.ProjectileType<GwynGroundFireWave>(), (int)(MeleeDamage * 0.55f), 5f,
                                     Main.myPlayer, direction, PlungeGroundWaveReachTiles);
                             }
                         }
@@ -4167,7 +4171,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 SetAttackLabel("Firestorm", 190);
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.RainsDeath"), 235, 130, 40);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.GwynFirestorm>(), 0, 0f, Main.myPlayer, FirestormDamage, 150f);
+                    ModContent.ProjectileType<GwynFirestorm>(), 0, 0f, Main.myPlayer, FirestormDamage, 150f);
             }
         }
 
@@ -4196,7 +4200,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Fury"), 255, 200, 60);
                 Vector2 spawn = new Vector2(player.Center.X, player.Center.Y - 640f);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.GwynDescentMeteor>(), DescentDamage, 0f,
+                    ModContent.ProjectileType<GwynDescentMeteor>(), DescentDamage, 0f,
                     Main.myPlayer, DescentDamage, player.Center.X, ArenaCenter.Y);
             }
         }
@@ -4557,7 +4561,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
                 Vector2 bladeTip = PuppetWeaponTipPosition(bladeReach);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), bladeTip, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.GwynFireArc>(), (int)(MeleeDamage * step.DamageMult * 0.6f), 2f, Main.myPlayer, NPC.direction, vBias);
+                    ModContent.ProjectileType<GwynFireArc>(), (int)(MeleeDamage * step.DamageMult * 0.6f), 2f, Main.myPlayer, NPC.direction, vBias);
             }
         }
 
@@ -4712,7 +4716,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 : new Vector2(NPC.direction, 0f);
 
             Texture2D texture = ModContent.Request<Texture2D>(
-                "tsorcRevamp/Projectiles/Enemy/Gwyn/GwynLightningSpear").Value;
+                UsefulFunctions.RefactorableFilepath(typeof(GwynLightningSpear))).Value;
             int frameHeight = texture.Height / GwynLightningSpearFrames.FrameCount;
             int frameIndex = (int)(Main.GameUpdateCount / 5UL) % GwynLightningSpearFrames.FrameCount;
             Rectangle frame = new Rectangle(0, frameIndex * frameHeight, texture.Width, frameHeight);
@@ -4747,7 +4751,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             Vector2 handPosition = PuppetHandPosition + new Vector2(NPC.direction * 4f, -2f);
             float rotation = NPC.direction > 0 ? 0f : MathHelper.Pi;
-            Projectiles.Enemy.GwynFlameGrasp.DrawHandAura(handPosition, rotation,
+            GwynFlameGrasp.DrawHandAura(handPosition, rotation,
                 scale * NPC.scale, 1f, drawUnblockableOutline: true);
             Lighting.AddLight(handPosition, 1.15f, 0.24f, 0.06f);
         }
@@ -4791,7 +4795,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Vector2 origin = PuppetHandPosition;
             Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 15f;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.GwynLightningSpear>(), LightningSpearDamage, 4f, Main.myPlayer);
+                ModContent.ProjectileType<GwynLightningSpear>(), LightningSpearDamage, 4f, Main.myPlayer);
 
             _spearThrowsThisJump++;
             if (_spearThrowsThisJump == 1)
@@ -4842,7 +4846,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (elapsed == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.GwynCinderNovaTelegraph>(), 0, 0f,
+                    ModContent.ProjectileType<GwynCinderNovaTelegraph>(), 0, 0f,
                     Main.myPlayer, NPC.whoAmI, total);
             }
             if (Main.dedServ)
@@ -4875,7 +4879,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.GwynCinderNova>(), NovaDamage, 10f, Main.myPlayer, 840f);
+                ModContent.ProjectileType<GwynCinderNova>(), NovaDamage, 10f, Main.myPlayer, 840f);
         }
 
         const int NovaDamage = 60;
@@ -4913,7 +4917,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 float spreadX = (fireIndex - 1) * 90f + (i == 0 ? -55f : 55f);
                 Vector2 pos = target.Center + new Vector2(spreadX, -220f - Main.rand.NextFloat(40f));
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.GwynSolarSpearNode>(), SunlightSpearDamage, 2f, Main.myPlayer, 20f);
+                    ModContent.ProjectileType<GwynSolarSpearNode>(), SunlightSpearDamage, 2f, Main.myPlayer, 20f);
             }
         }
 
@@ -5002,8 +5006,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             float speed = MathHelper.Lerp(baseGraspSpeed, baseGraspSpeed * 2f, distanceFactor);
             Vector2 vel = UsefulFunctions.Aim(origin, target.Center, speed);
             int graspIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.GwynFlameGrasp>(), GraspDamage, 8f, Main.myPlayer, NPC.whoAmI);
-            Projectiles.tsorcGlobalProjectile.SetDefenseTraits(
+                ModContent.ProjectileType<GwynFlameGrasp>(), GraspDamage, 8f, Main.myPlayer, NPC.whoAmI);
+            tsorcGlobalProjectile.SetDefenseTraits(
                 graspIndex, AttackDefenseTraits.BypassesActiveShield);
         }
 
@@ -5142,7 +5146,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Slight horizontal drift so the column is not a perfectly vertical line of pixels.
                 Vector2 velocity = new Vector2(Main.rand.NextFloat(-2.2f, 2.2f), 0.5f);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(spawnX, spawnY), velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(),
+                    ModContent.ProjectileType<EnemySpellSuddenDeathBall>(),
                     RainOfDeathDamage, 1f, Main.myPlayer);
             }
 
@@ -5183,7 +5187,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gwyn Gore 3").Type, 1.5f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gwyn Gore 2").Type, 1.5f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gwyn Gore 3").Type, 1.5f);
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Orange));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Orange));
 
             }
             tsorcRevampWorld.InitiateTheEnd();

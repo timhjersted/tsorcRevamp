@@ -8,10 +8,10 @@ using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Melee;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Magic;
-using tsorcRevamp.Projectiles.Ranged.Ammo;
-using tsorcRevamp.Projectiles.Summon.Whips;
+using tsorcRevamp.Content.Projectiles.Magic;
+using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
+using tsorcRevamp.Content.Projectiles.Summon.Whips;
+using tsorcRevamp.Content.Projectiles.Summon.Whips.SearingLash;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -425,7 +425,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             //However... If it is a fire projectile...
             if (projectile.Name.Contains("Fire") || projectile.Name.Contains("fire") || projectile.Name.Contains("Flame") || projectile.Name.Contains("flame") || projectile.Name.Contains("Curse") ||
-                projectile.Name.Contains("Flare") || projectile.Name.Contains("Molotov") || projectile.Name.Contains("Meteor") || projectile.type == ProjectileID.Hellwing || projectile.type == ModContent.ProjectileType<Projectiles.Summon.Whips.SearingLash.SearingLashProjectile>() || projectile.type == ModContent.ProjectileType<DetonationSignalProjectile>() ||
+                projectile.Name.Contains("Flare") || projectile.Name.Contains("Molotov") || projectile.Name.Contains("Meteor") || projectile.type == ProjectileID.Hellwing || projectile.type == ModContent.ProjectileType<SearingLashProjectile>() || projectile.type == ModContent.ProjectileType<DetonationSignalProjectile>() ||
                 projectile.type == ProjectileID.Spark || projectile.type == ProjectileID.Cascade || projectile.type == ProjectileID.SolarWhipSword || projectile.type == ProjectileID.SolarWhipSwordExplosion ||
                 projectile.type == ProjectileID.Daybreak || projectile.type == ProjectileID.DD2PhoenixBowShot ||
                 (projectile.ModProjectile != null && (projectile.ModProjectile.Name.Contains("Fire") || projectile.ModProjectile.Name.Contains("Flame") || projectile.ModProjectile.Name.Contains("Explosion") || projectile.ModProjectile.Name.Contains("Meteor"))) ||

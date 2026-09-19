@@ -17,11 +17,13 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.Melee.Shortswords;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
-using tsorcRevamp.Projectiles.Melee.Shortswords;
-using tsorcRevamp.Projectiles.Enemy.Weapons;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -236,7 +238,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
             Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasLandingImpactVFX>(), damage, 0f,
+                ModContent.ProjectileType<ArtoriasLandingImpactVFX>(), damage, 0f,
                 Main.myPlayer, width, height);
         }
 
@@ -739,7 +741,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // Proactive dodge: scans for an incoming aimed projectile and jumps/i-frame rolls it away
-        // (rolls Agility above), same mechanism CursedDragonInvader uses - evasion BEFORE getting hit.
+        // (rolls Agility above), same mechanism CursedDragon uses - evasion BEFORE getting hit.
         protected override bool EvadesProjectiles => true;
 
         public override void OnSpawn(IEntitySource source)
@@ -748,7 +750,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), _ringCenter, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasBoundaryVFX>(), 0, 0f,
+                    ModContent.ProjectileType<ArtoriasBoundaryVFX>(), 0, 0f,
                     Main.myPlayer, NPC.whoAmI);
             }
             NPC.netUpdate = true;
@@ -929,9 +931,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 float chargeProgress = MathHelper.Clamp(1f - PhaseTimer / (float)NovaChargeTicks, 0f, 1f);
                 float radius = NovaStages[_novaStageIndex].radius;
-                Projectiles.Enemy.ArtoriasVFX.DrawDetonation(NPC.Center, radius, chargeProgress,
+                ArtoriasVFX.DrawDetonation(NPC.Center, radius, chargeProgress,
                     MathHelper.Lerp(0.20f, 0.62f, chargeProgress), active: false);
-                Projectiles.Enemy.ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -16f),
+                ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -16f),
                     new Vector2(190f, 240f), 0.40f + chargeProgress * 0.32f,
                     0.8f + chargeProgress * 0.55f, -1f);
             }
@@ -944,7 +946,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 || Phase == AttackPhase.SpiralFanSwingTelegraph;
             if (majorCast && !AbyssSurgeActive)
             {
-                Projectiles.Enemy.ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -14f),
+                ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -14f),
                     new Vector2(150f, 205f), 0.34f, 0.72f, 1f);
             }
             if (Phase == AttackPhase.BoomerangSwingTelegraph)
@@ -954,7 +956,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Vector2 hand = PuppetHandPosition;
                 Vector2 tip = PuppetWeaponTipPosition(62f);
                 Vector2 bladeDirection = (tip - hand).SafeNormalize(new Vector2(NPC.direction, -1f));
-                Projectiles.Enemy.ArtoriasVFX.DrawBoomerangCharge(
+                ArtoriasVFX.DrawBoomerangCharge(
                     tip, bladeDirection, progress, MathHelper.Lerp(0.66f, 1f, progress));
             }
 
@@ -965,7 +967,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Player hazeTarget = Main.player[NPC.target];
                 float hazeFade = _pierceHazeTicks / (float)PierceHazeFadeInTicks;
-                Projectiles.Enemy.ArtoriasVFX.DrawMantle(hazeTarget.Center + new Vector2(0f, -8f),
+                ArtoriasVFX.DrawMantle(hazeTarget.Center + new Vector2(0f, -8f),
                     new Vector2(112f, 150f), 0.34f * hazeFade, 0.72f, 1f);
             }
 
@@ -979,7 +981,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     // The blade points from Artorias THROUGH the impaled target - the wind wisps
                     // stream on out that far side, not radially.
                     Vector2 windDirection = (impaled.Center - NPC.Center).SafeNormalize(new Vector2(NPC.direction, 0f));
-                    Projectiles.Enemy.ArtoriasVFX.DrawImpaleTendrils(
+                    ArtoriasVFX.DrawImpaleTendrils(
                         impaled.Center, windDirection, raise, 0.86f);
                 }
             }
@@ -1014,7 +1016,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 ? MathHelper.Clamp(1f - PhaseTimer / (float)TendrilTelegraphTicks, 0f, 1f)
                 : 1f;
             Vector2 hand = PuppetHandPosition;
-            Projectiles.Enemy.ArtoriasVFX.DrawTendrilHand(
+            ArtoriasVFX.DrawTendrilHand(
                 hand - new Vector2(NPC.direction * 8f, 1f), new Vector2(94f, 108f),
                 charge, Phase == AttackPhase.TendrilReach, 0.92f);
         }
@@ -1213,7 +1215,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.GetSource_FromThis(),
                 NPC.Center,
                 Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasSurgeAura>(),
+                ModContent.ProjectileType<ArtoriasSurgeAura>(),
                 0,
                 0f,
                 Main.myPlayer,
@@ -1224,7 +1226,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 float angle = MathHelper.TwoPi * i / AbyssSurgeTendrilCount;
                 Vector2 velocity = angle.ToRotationVector2() * AbyssSurgeTendrilSpeed;
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssTendril>(), TendrilGrabDamage, 0f,
+                    ModContent.ProjectileType<ArtoriasAbyssTendril>(), TendrilGrabDamage, 0f,
                     Main.myPlayer, NPC.whoAmI);
             }
 
@@ -1526,7 +1528,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Main.myPlayer,
                 target.width + 12f,
                 target.height + 8f);
-            Projectiles.tsorcGlobalProjectile.SetDefenseTraits(
+            tsorcGlobalProjectile.SetDefenseTraits(
                 hitboxIndex, AttackDefenseTraits.BypassesActiveShield);
 
             if (!isStab)
@@ -1539,7 +1541,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             UsefulFunctions.ScreenShake(target.Center, strength: 6f, frames: 12);
 
             _impaleSwordProjIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasImpalingSword>(), 0, 0f, Main.myPlayer, NPC.whoAmI, target.whoAmI);
+                ModContent.ProjectileType<ArtoriasImpalingSword>(), 0, 0f, Main.myPlayer, NPC.whoAmI, target.whoAmI);
 
             var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.ImpaleFreezeTimer = 10;
@@ -1753,22 +1755,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // most of it sits above the floor) or the bottom-anchored eruption pillar.
             if (Main.rand.NextBool())
             {
-                Vector2 blastCenter = NPC.Bottom - new Vector2(0f, Projectiles.Enemy.ArtoriasAbyssBlast.Radius * 0.35f);
+                Vector2 blastCenter = NPC.Bottom - new Vector2(0f, ArtoriasAbyssBlast.Radius * 0.35f);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), blastCenter, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssBlast>(), FlipBlastDamage, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<ArtoriasAbyssBlast>(), FlipBlastDamage, 0f, Main.myPlayer);
             }
             else
             {
-                Vector2 pillarCenter = NPC.Bottom - new Vector2(0f, Projectiles.Enemy.ArtoriasAbyssPillar.Height * 0.5f);
+                Vector2 pillarCenter = NPC.Bottom - new Vector2(0f, ArtoriasAbyssPillar.Height * 0.5f);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), pillarCenter, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssPillar>(), FlipPillarDamage, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<ArtoriasAbyssPillar>(), FlipPillarDamage, 0f, Main.myPlayer);
 
                 // The pillar's partner: two purple flame walls peel off left and right along the ground from the feet,
                 // growing tall as they travel (ArtoriasAbyssBlaze pins its feet to the spawn Y).
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Bottom, new Vector2(-FlipBlazeSpeed, 0f),
-                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssBlaze>(), FlipBlazeDamage, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<ArtoriasAbyssBlaze>(), FlipBlazeDamage, 0f, Main.myPlayer);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Bottom, new Vector2(FlipBlazeSpeed, 0f),
-                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssBlaze>(), FlipBlazeDamage, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<ArtoriasAbyssBlaze>(), FlipBlazeDamage, 0f, Main.myPlayer);
             }
 
             // The slam releases a Homing Volley from where the blade struck: the same HomingAbyssOrb (30 damage,
@@ -1853,7 +1855,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player target = Main.player[NPC.target];
             Vector2 vel = UsefulFunctions.Aim(NPC.Center, target.Center, AbyssSlashSpeed);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.AbyssSlash>(), AbyssSlashDamage, 0f, Main.myPlayer, NPC.whoAmI + 1);
+                ModContent.ProjectileType<AbyssSlash>(), AbyssSlashDamage, 0f, Main.myPlayer, NPC.whoAmI + 1);
         }
 
         void FireAbyssOrbFinisher()
@@ -1873,7 +1875,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // ai[1] is offset by +1 (0 = "no owner") since ArtoriasAbyssBlast's own orb-fan
                 // spawns this same projectile without an owner - see ArtoriasFlameOrb.OnHitPlayer.
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
-                    ModContent.ProjectileType<Projectiles.Enemy.ArtoriasFlameOrb>(), AbyssOrbFinisherDamage, 0f, Main.myPlayer, 0f, NPC.whoAmI + 1);
+                    ModContent.ProjectileType<ArtoriasFlameOrb>(), AbyssOrbFinisherDamage, 0f, Main.myPlayer, 0f, NPC.whoAmI + 1);
             }
         }
 
@@ -1916,7 +1918,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Vector2 origin = PuppetHandPosition;
             Vector2 vel = UsefulFunctions.Aim(origin, target.Center, TendrilLaunchSpeed);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasAbyssTendril>(), TendrilGrabDamage, 0f,
+                ModContent.ProjectileType<ArtoriasAbyssTendril>(), TendrilGrabDamage, 0f,
                 Main.myPlayer, NPC.whoAmI, 0f, TendrilTopSpeed);
         }
 
@@ -2671,7 +2673,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasChargeNova>(), damage, 6f, Main.myPlayer, radius);
+                ModContent.ProjectileType<ArtoriasChargeNova>(), damage, 6f, Main.myPlayer, radius);
         }
 
         // ── Abyss Shard: ground-spike combos, unlocked permanently at 60% HP ────────
@@ -2773,7 +2775,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
             Projectile.NewProjectile(NPC.GetSource_FromThis(), worldPos, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.AbyssShard>(), AbyssShardDamage, 0f, Main.myPlayer);
+                ModContent.ProjectileType<AbyssShard>(), AbyssShardDamage, 0f, Main.myPlayer);
         }
 
         // ── Homing Volley: dodgeback + overhead chop that fires one of 3 delayed-homing patterns ──
@@ -2910,7 +2912,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
             Projectile.NewProjectile(NPC.GetSource_FromThis(), position, velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.HomingAbyssOrb>(), HomingVolleyOrbDamage, 0f,
+                ModContent.ProjectileType<HomingAbyssOrb>(), HomingVolleyOrbDamage, 0f,
                 Main.myPlayer, straightTicks, HomingVolleyCurveTicks);
         }
 
@@ -2994,10 +2996,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void SpawnBoomerang(Vector2 position, Vector2 velocity, float curveDir)
         {
             Projectile.NewProjectile(NPC.GetSource_FromThis(), position, velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.BoomerangCrescent>(), BoomerangDamage, 0f,
+                ModContent.ProjectileType<BoomerangCrescent>(), BoomerangDamage, 0f,
                 Main.myPlayer, curveDir, NPC.whoAmI);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasFanSourceVFX>(), 0, 0f,
+                ModContent.ProjectileType<ArtoriasFanSourceVFX>(), 0, 0f,
                 Main.myPlayer, velocity.ToRotation(), curveDir);
         }
 
@@ -3122,10 +3124,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             Vector2 vel = angle.ToRotationVector2() * SpiralFanShotSpeed;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.AbyssSlash>(), SpiralFanShotDamage, 0f,
+                ModContent.ProjectileType<AbyssSlash>(), SpiralFanShotDamage, 0f,
                 Main.myPlayer, 0f, 1f, _spiralFanDir);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.ArtoriasFanSourceVFX>(), 0, 0f,
+                ModContent.ProjectileType<ArtoriasFanSourceVFX>(), 0, 0f,
                 Main.myPlayer, angle, _spiralFanDir);
         }
 

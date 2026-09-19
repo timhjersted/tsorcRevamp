@@ -1,11 +1,12 @@
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp.Content.Items.Weapons.Enemy
 {
     public class EnemyNinjaStar : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/NinjaStarProj";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemyNinjaStarProj));
 
         public override void SetDefaults()
         {

@@ -14,6 +14,7 @@ using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Debug;
 using tsorcRevamp.Content.Items.Tools;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Textures;
@@ -934,7 +935,7 @@ namespace tsorcRevamp
 
             // Boss Tome center text is queued during projectile drawing, then rendered here so it
             // appears above players and all other world-space character art.
-            Projectiles.VFX.BossSelectVisuals.DrawCenterTextOverlay();
+            BossSelectVisuals.DrawCenterTextOverlay();
             DrawLocationBanner(spriteBatch);
 
             // Soapstone / location-banner diagnostic overlay (lower-left, DebugMode only).
@@ -1981,7 +1982,7 @@ namespace tsorcRevamp
             }
 
             // Draw the center icon
-            Texture2D icon = ModContent.Request<Texture2D>("tsorcRevamp/Items/Debug/EnemyDebugTome", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            Texture2D icon = ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Debug/EnemyDebugTome", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             if (icon != null)
             {
                 Color iconColor = isDormant ? Color.White * 0.4f : Color.White;
@@ -2128,7 +2129,7 @@ namespace tsorcRevamp
                     // Draw the center icon. Quick-add events use their single NPC as the marker, so no book icon.
                     if (!scriptedEvent.SingleNpcMarker)
                     {
-                        Texture2D icon = ModContent.Request<Texture2D>("tsorcRevamp/Items/Debug/EnemyDebugTome", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                        Texture2D icon = ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Debug/EnemyDebugTome", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
                         if (icon != null)
                         {
                             Main.spriteBatch.Draw(icon, centerPos - Main.screenPosition, null, Color.White, 0f, icon.Size() / 2f, 1f, SpriteEffects.None, 0f);

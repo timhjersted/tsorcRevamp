@@ -7,6 +7,7 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.Dworc
 {
@@ -45,9 +46,9 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             }
 
             // "Poison Strike" — fast aimed poison bolt
-            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, SoundID.Item20);
+            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<EnemySpellGreatPoisonStrikeBall>(), 7, 8, SoundID.Item20);
             // "Poison Storm" — heavy lobbed storm ball (long cooldown)  [magic-ring candidate: set commitFraction: 0.5f if this is the shrinking ring]
-            UsefulFunctions.AddAttack(NPC, 700, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, SoundID.Item100);
+            UsefulFunctions.AddAttack(NPC, 700, ModContent.ProjectileType<EnemySpellPoisonStormBall>(), 9, 0, SoundID.Item100);
 
             // Step 6 caster lever: remember last-known position before patrolling.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
@@ -156,7 +157,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             tsorcRevampAIs.FighterAI(NPC, 0.8f, 0.02f, 0.2f, true, enragePercent: 0.5f, enrageTopSpeed: 1.6f, canPounce: false);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            bool telegraphingPoisonStorm = globalNPC.CurrentAttack.type == ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>();
+            bool telegraphingPoisonStorm = globalNPC.CurrentAttack.type == ModContent.ProjectileType<EnemySpellPoisonStormBall>();
             float stormTelegraphStart = globalNPC.CurrentAttack.timerCap - 180f;
             if (telegraphingPoisonStorm && globalNPC.ProjectileTimer >= stormTelegraphStart)//SHRINKING CIRCLE DUST
             {

@@ -5,7 +5,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
+using tsorcRevamp.Content.Projectiles.Summon.Whips.EnchantedWhip;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
 {

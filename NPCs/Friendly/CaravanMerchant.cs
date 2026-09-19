@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using tsorcRevamp.Content.Projectiles.Throwing;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -106,7 +107,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
         {
-            projType = ModContent.ProjectileType<Projectiles.Throwing.ThrowingSpear>();
+            projType = ModContent.ProjectileType<ThrowingSpear>();
             attackDelay = 2;
         }
 

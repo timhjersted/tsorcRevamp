@@ -5,7 +5,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Enemy
 {
     public class EnemyCaltrop : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/Caltrop";
 
         public override void SetDefaults()
         {
@@ -20,7 +19,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Enemy
             Item.useAnimation = 60;
             Item.useTime = 60;
             Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<global::tsorcRevamp.Projectiles.Enemy.Weapons.EnemyCaltrop>();
+            Item.shoot = ModContent.ProjectileType<global::tsorcRevamp.Content.Projectiles.Enemy.Weapons.EnemyCaltrop>();
             Item.shootSpeed = 8f;
             Item.DamageType = DamageClass.Ranged;
             Item.value = 0;

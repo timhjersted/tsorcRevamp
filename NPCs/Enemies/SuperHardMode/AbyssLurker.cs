@@ -9,6 +9,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -51,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             globalNPC.KiteRangeMin = 10f;
             globalNPC.KiteRangeMax = 25f;
             globalNPC.KiteLooseness = 0.5f;
-            UsefulFunctions.AddAttack(NPC, 4 * 60, ModContent.ProjectileType<Projectiles.Enemy.AbyssLurkerFlameOrb>(), lostSoulDamage, 2.4f, SoundID.Item20 with { Volume = 0.35f, Pitch = -0.2f }, 0, -1, -ReleasedFlameOrbTime, telegraphColor: Color.Purple, telegraphTime: 22);
+            UsefulFunctions.AddAttack(NPC, 4 * 60, ModContent.ProjectileType<AbyssLurkerFlameOrb>(), lostSoulDamage, 2.4f, SoundID.Item20 with { Volume = 0.35f, Pitch = -0.2f }, 0, -1, -ReleasedFlameOrbTime, telegraphColor: Color.Purple, telegraphTime: 22);
         }
 
 
@@ -114,14 +115,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return;
             }
 
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top + new Vector2(0, -56), Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.AbyssLurkerFlameOrb>(), lostSoulDamage, 0, Main.myPlayer, NPC.whoAmI, slot);
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top + new Vector2(0, -56), Vector2.Zero, ModContent.ProjectileType<AbyssLurkerFlameOrb>(), lostSoulDamage, 0, Main.myPlayer, NPC.whoAmI, slot);
         }
 
         int GetOpenFlameOrbSlot()
         {
             bool[] occupiedSlots = new bool[MaxFlameOrbs];
             int activeOrbs = 0;
-            int orbType = ModContent.ProjectileType<Projectiles.Enemy.AbyssLurkerFlameOrb>();
+            int orbType = ModContent.ProjectileType<AbyssLurkerFlameOrb>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile projectile = Main.projectile[i];
@@ -174,7 +175,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
             Vector2 flameTrapPosition = target.Center - new Vector2(target.direction * 62f, 0);
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), flameTrapPosition, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.AbyssLurkerMeteor>(), NPC.damage / 2, 0, Main.myPlayer, lostSoulDamage);
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), flameTrapPosition, Vector2.Zero, ModContent.ProjectileType<AbyssLurkerMeteor>(), NPC.damage / 2, 0, Main.myPlayer, lostSoulDamage);
         }
 
         void ReleaseFlameOrbs()
@@ -186,7 +187,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return;
             }
 
-            int orbType = ModContent.ProjectileType<Projectiles.Enemy.AbyssLurkerFlameOrb>();
+            int orbType = ModContent.ProjectileType<AbyssLurkerFlameOrb>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile projectile = Main.projectile[i];

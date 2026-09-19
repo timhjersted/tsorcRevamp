@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
@@ -35,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
             // "Shadow Shot" — commitFraction 0.5: first half of the tell cancellable (by magic), second half hyperarmor.
-            int shadowShotType = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();
+            int shadowShotType = ModContent.ProjectileType<ShadowShot>();
             UsefulFunctions.AddAttack(NPC, 170, shadowShotType, 20, 9, SoundID.Item17, stopBeforeFiring: false, telegraphTime: 45, commitFraction: 0.5f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -281,7 +282,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             }
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            int shadowShotType = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();
+            int shadowShotType = ModContent.ProjectileType<ShadowShot>();
             Texture2D heldProjTexture = TextureAssets.Projectile[shadowShotType].Value;
             if (handTexture == null || handTexture.IsDisposed)
             {

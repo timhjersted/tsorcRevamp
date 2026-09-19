@@ -126,7 +126,10 @@ no code written that turn at all.
    `ilspycmd` decompile of `tModLoader.dll`, one level above the mod (its `README.md` has the regen
    command). Dust IDs, SoundIDs, vanilla projectile IDs and their `Main.projFrames` counts. Never
    trust recall for these; several different-sounding names alias the same index.
-6. **Compile-check loop:** `dotnet build tsorcRevamp.csproj` from the repo root works and is fast.
+6. **Compile-check loop:** `dotnet build tsorcRevamp.csproj -t:Compile` from the repo root works and is fast,
+   and is safe with the game open. A full build (no `-t:`) also packages the mod via tModLoader's
+   `-server -build`; that's fine with the game closed, but with it open it fails on the mod lock (TML003).
+   Never kill the user's tModLoader game client.
    Build after every major file. (A rework that deletes legacy code should *reduce* the warning
    count — watch it as a sanity signal.)
 
@@ -476,8 +479,23 @@ Souls boss → PuppetNPC. If it's a beast/caster/giant that moves and casts → 
 - **`SlowDownBeforeMelee`** — set **false** so it pursues through the windup (no walking out of the
   telegraph). The direction lock snaps on at swing commit, not through the whole windup.
 - **`TryMeleeHit(reach)`** — spawn a melee hitbox; used by any bespoke swing/slash.
+- **Dual wield** — `EquipWeapon(PuppetHandSlot.Back, new PuppetWeapon(...))` puts a second weapon in the
+  back hand (needs `UseCompositeArmSwing`; not with `UseTwoHandedCompositeSwing`). Both sprites draw
+  whenever the melee weapon is out; each legacy `MeleeComboStep.Hand` (`Front`/`Back`/`Both`) picks which
+  arm follows the ONE swing clock, the other crossfades to `OffHandCarryRotation`. Blade capsules, slash
+  VFX and blade flip all follow the swinging hand. A step that switches hands needs `PostStepPause` ≥
+  `DualWieldHandBlendTicks` (4). V2 clips are front-hand only. Reference: `OolacileCultist` claws.
 - **A DebugMode HUD** (`DrawPuppetAttackDebug` in `tsorcRevampSystems.cs`) reading `DebugPhaseName`/
   `DebugComboTag`.
+
+**What a puppet body can actually do — never propose a pose outside this.** A puppet (and a
+sprite-sheet enemy) can **walk, run, jump, and swing/aim its arm(s)**. That is the whole vocabulary.
+There is no hunch, crouch, cower, bow, kneel or slump pose — don't write "hunched pose" or "crouch
+tell" into a proposal; express the tell through the arm, the held weapon, dust, flash, sound and
+movement instead. The one untried body option is **tilting the body/chest piece forward ~10°**
+(legs stay put) — seen in other mods, never done in this one, looks unproven. If you suggest it,
+say it in those exact in-game terms and flag it as untested; it likely won't work on two-piece robes
+(a robe spans the body AND legs slots, so tilting only the torso splits it).
 
 ## G0.5 — The Artorias catalog: what's ALREADY BUILT to draw from
 

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles;
 
 namespace tsorcRevamp.Buffs
 {
@@ -16,9 +17,9 @@ namespace tsorcRevamp.Buffs
         {
             player.statDefense += DefenseIncrease;
             Lighting.AddLight(player.Center, .450f, .450f, .600f);
-            if (Main.myPlayer == player.whoAmI && player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Barrier>()] == 0)
+            if (Main.myPlayer == player.whoAmI && player.ownedProjectileCounts[ModContent.ProjectileType<Barrier>()] == 0)
             {
-                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.Barrier>(), 0, 0f, player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, player.velocity, ModContent.ProjectileType<Barrier>(), 0, 0f, player.whoAmI);
             }
         }
     }

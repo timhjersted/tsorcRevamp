@@ -5,6 +5,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Classless;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -57,7 +58,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 if (closestPlayer != null && Collision.CanHit(NPC, closestPlayer))
                 {
                     Vector2 targetVector = UsefulFunctions.Aim(NPC.Center, closestPlayer.Center, 1);
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), 60, 1, Main.myPlayer, 0, NPC.whoAmI);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<JellyfishLightning>(), 60, 1, Main.myPlayer, 0, NPC.whoAmI);
                 }
             }
         }

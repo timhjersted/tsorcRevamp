@@ -1,11 +1,12 @@
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Ranged;
 
 namespace tsorcRevamp.Content.Items.Weapons.Enemy
 {
     public class EnemyFireFlask : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/FireFlask";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(FireFlaskProj));
 
         public override void SetDefaults()
         {
@@ -20,7 +21,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Enemy
             Item.useAnimation = 60;
             Item.useTime = 60;
             Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<global::tsorcRevamp.Projectiles.Enemy.Weapons.EnemyFireFlask>();
+            Item.shoot = ModContent.ProjectileType<global::tsorcRevamp.Content.Projectiles.Enemy.Weapons.EnemyFireFlask>();
             Item.shootSpeed = 7.5f;
             Item.DamageType = DamageClass.Ranged;
             Item.value = 0;

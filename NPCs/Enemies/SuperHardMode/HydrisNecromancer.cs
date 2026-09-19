@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -39,8 +40,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 12000; //life / 2.5 : was 1600 souls
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.HydrisNecromancerBanner>();
-            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17, telegraphColor: Color.Black);
-            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, SoundID.Item17, telegraphColor: Color.Black);
+            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17, telegraphColor: Color.Black);
+            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<EnemySpellEffectHealing>(), 0, 0, SoundID.Item17, telegraphColor: Color.Black);
 
             // Step 6 caster levers: remember last-known position; pace when it does patrol.
             tsorcRevampGlobalNPC casterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();

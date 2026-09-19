@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Summon.SunsetQuasar;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {
@@ -13,7 +14,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarToken>()] > 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarToken>()] > 0)
             {
                 player.buffTime[buffIndex] = 18000;
             }

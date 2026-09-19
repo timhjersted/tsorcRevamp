@@ -15,6 +15,11 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Marilith;
+using tsorcRevamp.Content.Projectiles.Enemy.WyvernMage;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.NPCs.VanillaChanges;
 
@@ -123,15 +128,15 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     int rand = Main.rand.Next(10);
                     if (rand == 0)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
                     }
                     if (rand == 1)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.BlueViolet));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.BlueViolet));
                     }
                     if(rand == 2)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(new Color(0, 30, 255)));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(10, 10), Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(new Color(0, 30, 255)));
                     }
                 }
 
@@ -139,7 +144,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 {
                     for(int i = 0; i < 16; i++)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(0.7f, 0.7f).RotatedBy(MathHelper.PiOver2 * Main.rand.Next(0, 4)), ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), 0, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(0.7f, 0.7f).RotatedBy(MathHelper.PiOver2 * Main.rand.Next(0, 4)), ModContent.ProjectileType<MarilithLightning>(), 0, 0f, Main.myPlayer);
                     }
                 }
 
@@ -206,7 +211,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                         {
                             spawnVec = spawnVec.RotatedBy(MathHelper.PiOver2);
                             Vector2 aimVec = -Vector2.Normalize(spawnVec);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnVec, aimVec, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnVec, aimVec, ModContent.ProjectileType<MarilithLightning>(), frozenSawDamage, 0f, Main.myPlayer);
                         }
                     }
                 }
@@ -254,7 +259,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                         projVelocity = projVelocity.RotatedBy(startRotation + MathHelper.ToRadians(15) * ShotCount);
 
                         //Fire it
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     OrbTimer = 0;
@@ -279,7 +284,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                         {
                             Vector2 spawnPos = delayedTargetPosition;
                             spawnPos.X += Main.rand.Next(-50, 50);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Bolt>(), frozenSawDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, Vector2.Zero, ModContent.ProjectileType<EnemySpellLightning4Bolt>(), frozenSawDamage, 0f, Main.myPlayer);
                             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1f, Pitch = 0f }, spawnPos); 
                         }
                         lightningDelayTimer = -1;
@@ -297,13 +302,13 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                         Vector2 projVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
                         if (dragonAlive)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<JellyfishLightning>(), frozenSawDamage, 0f, Main.myPlayer);
                         }
                         else
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(-0.15f) * 4, ModContent.ProjectileType<Projectiles.Ice4Icicle>(), frozenSawDamage, 0f, Main.myPlayer, 1);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), frozenSawDamage, 0f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(0.15f) * 4, ModContent.ProjectileType<Projectiles.Ice4Icicle>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(-0.15f) * 4, ModContent.ProjectileType<Ice4Icicle>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<MarilithLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel.RotatedBy(0.15f) * 4, ModContent.ProjectileType<Ice4Icicle>(), frozenSawDamage, 0f, Main.myPlayer, 1);
                         }
                     }
                 }
@@ -319,7 +324,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                             Vector2 spawnPos = Main.player[NPC.target].Center;
                             spawnPos.Y += -600;
                             spawnPos.X += -800 + (250 * i);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
                         }
                     }
                 }                
@@ -335,7 +340,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Enemy.WyvernMage.WyvernIcicle>(), frozenSawDamage, 0f, Main.myPlayer, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<WyvernIcicle>(), frozenSawDamage, 0f, Main.myPlayer, 1);
                     }
                 }
 
@@ -346,7 +351,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     projVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<MarilithLightning>(), frozenSawDamage, 0f, Main.myPlayer);
                     }
                 }
             }
@@ -468,8 +473,8 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), nextWarpPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), nextWarpPoint, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
                 }
 
                 NPC.Center = nextWarpPoint;
@@ -541,7 +546,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), nextWarpPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: teleportCooldown);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), nextWarpPoint, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: teleportCooldown);
             }
             
             NPC.netUpdate = true;
@@ -663,11 +668,11 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 900, 60);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 600, 60);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 400, 60);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 200, 60);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1400, 80);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 900, 60);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 600, 60);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 400, 60);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 200, 60);
             }
 
             if (!Main.dedServ)

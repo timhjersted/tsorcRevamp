@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Melee.Boomerangs;
+using tsorcRevamp.Content.Projectiles.Melee.Boomerangs;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee
 {

@@ -18,6 +18,7 @@ using tsorcRevamp.Content.Items.Debug;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Runeterra;
 using tsorcRevamp.Utilities;
@@ -1397,7 +1398,7 @@ namespace tsorcRevamp
                 {
                     for (int j = 0; j < 10; j++)
                     {
-                        Projectile.NewProjectile(new EntitySource_Misc("Scripted Event"), (float)Main.player[i].position.X - 100 + Main.rand.Next(200), (float)Main.player[i].position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), thisEvent.eventNPCs[0].npc.damage / 4, 2f, Main.myPlayer);
+                        Projectile.NewProjectile(new EntitySource_Misc("Scripted Event"), (float)Main.player[i].position.X - 100 + Main.rand.Next(200), (float)Main.player[i].position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<DragonMeteor>(), thisEvent.eventNPCs[0].npc.damage / 4, 2f, Main.myPlayer);
                     }
                 }
             }
@@ -1605,7 +1606,7 @@ namespace tsorcRevamp
 
         public static EventActionStatus BoulderfallEvent1Action(ScriptedEvent thisEvent)
         {
-            Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(4401 * 16, 895 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
+            Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(4401 * 16, 895 * 16), new Vector2(0, 0), ModContent.ProjectileType<BoulderDropLeft>(), 70, 1);
             return EventActionStatus.CompletedEvent;
         }
 
@@ -1618,11 +1619,11 @@ namespace tsorcRevamp
 
             if (thisEvent.eventTimer == 1)
             {
-                Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(3515 * 16, 409 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
+                Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(3515 * 16, 409 * 16), new Vector2(0, 0), ModContent.ProjectileType<BoulderDropLeft>(), 70, 1);
             }
             if (thisEvent.eventTimer == rand1)
             {
-                Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(3528 * 16, 409 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
+                Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(3528 * 16, 409 * 16), new Vector2(0, 0), ModContent.ProjectileType<BoulderDropLeft>(), 70, 1);
                 thisEvent.eventTimer = 42;
             }
             if (thisEvent.eventTimer == 41)
@@ -1635,7 +1636,7 @@ namespace tsorcRevamp
             }
             if (thisEvent.eventTimer == rand2)
             {
-                Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(3523 * 16, 409 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
+                Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(3523 * 16, 409 * 16), new Vector2(0, 0), ModContent.ProjectileType<BoulderDropLeft>(), 70, 1);
                 return EventActionStatus.CompletedEvent;
             }
             return EventActionStatus.Continue;
@@ -1645,7 +1646,7 @@ namespace tsorcRevamp
 
         public static EventActionStatus BoulderfallEvent3Action(ScriptedEvent thisEvent)
         {
-            Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(3639 * 16, 349 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropRight>(), 70, 1);
+            Projectile.NewProjectile(new EntitySource_Misc("ScriptedEvent"), new Vector2(3639 * 16, 349 * 16), new Vector2(0, 0), ModContent.ProjectileType<BoulderDropRight>(), 70, 1);
             return EventActionStatus.CompletedEvent;
         }
 

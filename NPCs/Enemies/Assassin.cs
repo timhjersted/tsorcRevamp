@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -226,7 +227,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             NPC.timeLeft = 100;
-            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>(), 50, 14, 100, 2f, .1f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f, telegraphColor: Color.Green, telegraphTicks: 30);
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<EnemyArrowOfBard>(), 50, 14, 100, 2f, .1f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f, telegraphColor: Color.Green, telegraphTicks: 30);
         }
 
 

@@ -1,6 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Summon.PhotonicDownpour;
+using tsorcRevamp.Content.Projectiles.Summon.PhotonicDownpour;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {

@@ -5,6 +5,8 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Prime;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
@@ -102,7 +104,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
                 }
                 NPC.active = false;
                 return;
@@ -129,11 +131,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     if (!damaged)
                     {
                         //Fire a bouncing saw
-                        if (!UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>()))
+                        if (!UsefulFunctions.AnyProjectile(ModContent.ProjectileType<PrimeSaw>()))
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 62), UsefulFunctions.Aim(NPC.Center, Target.Center, 12f), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 62), UsefulFunctions.Aim(NPC.Center, Target.Center, 12f), ModContent.ProjectileType<PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
                             auraBonus = 0.2f;
@@ -142,11 +144,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     else
                     {
                         //Fire a damaged slower bouncing saw that spawns shards of metal on impacts
-                        if (!UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>()))
+                        if (!UsefulFunctions.AnyProjectile(ModContent.ProjectileType<PrimeSaw>()))
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 62), UsefulFunctions.Aim(NPC.Center, Target.Center, 11f), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, 1, NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 62), UsefulFunctions.Aim(NPC.Center, Target.Center, 11f), ModContent.ProjectileType<PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, 1, NPC.whoAmI);
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
                             auraBonus = 0.2f;
@@ -202,8 +204,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
                 }
                 UsefulFunctions.SimpleGore(NPC, "Buzzsaw_Damaged_1");
                 UsefulFunctions.SimpleGore(NPC, "Buzzsaw_Damaged_2");
@@ -273,7 +275,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             //Draw metal bones
 
 
-            if (!UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>()))
+            if (!UsefulFunctions.AnyProjectile(ModContent.ProjectileType<PrimeSaw>()))
             {
                 sawFrameCounter++;
                 if (sawFrameCounter > 1)

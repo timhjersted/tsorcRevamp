@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 {
@@ -93,7 +94,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     rotation += Main.rand.Next(-50, 50) / 100;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.HostileFreezeBolt>() , HostileFreezeBoltDamage, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<HostileFreezeBolt>() , HostileFreezeBoltDamage, Main.myPlayer);
                     }
                     Timer = 0;
                 }

@@ -12,6 +12,7 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -137,8 +138,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30, false);
             }
 
-            var projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>();
-            var projStab = ModContent.ProjectileType<Projectiles.Enemy.Spearhead>();
+            var projSlash = ModContent.ProjectileType<MediumWeaponSlash>();
+            var projStab = ModContent.ProjectileType<Spearhead>();
             int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
             float acceleration = 0.02f;
             float top_speed = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ComputeHealthScaledSpeed(NPC, 2.5f);
@@ -151,8 +152,8 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 top_speed *= 1.5f;
                 damage = (int)(1.3f * damage);
-                projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlashCrimson>();
-                projStab = ModContent.ProjectileType<Projectiles.Enemy.SpearheadCrimson>();
+                projSlash = ModContent.ProjectileType<MediumWeaponSlashCrimson>();
+                projStab = ModContent.ProjectileType<SpearheadCrimson>();
 
                 if (!hasEnraged)
                 {

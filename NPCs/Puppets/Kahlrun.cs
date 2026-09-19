@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 
@@ -373,7 +374,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.GetSource_FromThis(),
                 position,
                 velocity,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.KahlrunFarronDart>(),
+                ModContent.ProjectileType<KahlrunFarronDart>(),
                 MagicDamage,
                 1.5f,
                 Main.myPlayer,

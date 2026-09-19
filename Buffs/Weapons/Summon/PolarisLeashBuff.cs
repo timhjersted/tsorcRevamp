@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
-using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
+using tsorcRevamp.Content.Projectiles.Summon.Whips.PolarisLeash;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {

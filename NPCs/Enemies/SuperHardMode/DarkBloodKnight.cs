@@ -8,9 +8,10 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -72,8 +73,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override int BodyArmorItemType => ModContent.ItemType<DarkKnightArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<DarkKnightGreaves>();
         protected override int HeadArmorDyeItemType => ItemID.BloodbathDye;
-        protected override int BodyArmorDyeItemType => ItemID.BloodbathDye;
-        protected override int LegsArmorDyeItemType => ItemID.BloodbathDye;
+        protected override int BodyArmorDyeItemType => ItemID.RedDye;
+        protected override int LegsArmorDyeItemType => ItemID.RedDye;
 
         protected override int MeleeWeaponItemType => _activeComboUsesWhip ? ItemID.ScytheWhip : ItemID.BloodButcherer;
         protected override int RangedWeaponItemType => ItemID.TendonBow;
@@ -383,7 +384,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (combo.Name == DarkHarvestLashName)
                 return distance >= 112f
-                    && distance <= Projectiles.Enemy.BloodKnightDarkHarvestWhip.MaximumReach;
+                    && distance <= BloodKnightDarkHarvestWhip.MaximumReach;
             return true;
         }
 
@@ -507,7 +508,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private void SpawnDarkHarvestWhip()
         {
             Projectile.NewProjectile(NPC.GetSource_FromThis(), PuppetHandPosition, _lockedWhipAim,
-                ModContent.ProjectileType<Projectiles.Enemy.BloodKnightDarkHarvestWhip>(),
+                ModContent.ProjectileType<BloodKnightDarkHarvestWhip>(),
                 MeleeDamage, 4f, Main.myPlayer, NPC.whoAmI);
         }
 
@@ -640,7 +641,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             SoundEngine.PlaySound(SoundID.Item5 with { Volume = 0.58f, PitchVariance = 0.06f }, NPC.Center);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), PuppetHandPosition, arrowVelocity,
-                ModContent.ProjectileType<Projectiles.Enemy.BloodKnightArrow>(),
+                ModContent.ProjectileType<BloodKnightArrow>(),
                 RangedDamage, 3f, Main.myPlayer, NPC.whoAmI, NPC.target, IsBlackfirePhase ? 1f : 0f);
         }
 
@@ -689,7 +690,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private static Vector2 RequiredArrowVelocity(Player target, Vector2 origin, float flightTicks)
         {
             Vector2 predictedDisplacement = target.Center + target.velocity * flightTicks - origin;
-            predictedDisplacement.Y -= 0.5f * Projectiles.Enemy.BloodKnightArrow.Gravity
+            predictedDisplacement.Y -= 0.5f * BloodKnightArrow.Gravity
                 * flightTicks * (flightTicks + 1f);
             return predictedDisplacement / Math.Max(1f, flightTicks);
         }
@@ -706,7 +707,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Vector2 destination = predictedCenter + new Vector2(offset * 0.35f, 8f);
                 Vector2 velocity = (destination - spawn).SafeNormalize(Vector2.UnitY) * 15f;
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.BloodKnightRainArrow>(),
+                    ModContent.ProjectileType<BloodKnightRainArrow>(),
                     SecondaryRangedDamage, 3f, Main.myPlayer,
                     NPC.whoAmI, i * 5f, IsBlackfirePhase ? 1f : 0f);
             }

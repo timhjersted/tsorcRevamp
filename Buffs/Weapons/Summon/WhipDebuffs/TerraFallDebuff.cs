@@ -3,7 +3,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.NPCs;
-using tsorcRevamp.Projectiles.Summon;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs
 {

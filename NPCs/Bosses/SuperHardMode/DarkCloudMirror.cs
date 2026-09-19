@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Guns;
-using tsorcRevamp.Projectiles.Enemy.DarkCloud;
+using tsorcRevamp.Content.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode

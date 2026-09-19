@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -79,7 +80,7 @@ namespace tsorcRevamp.NPCs.Enemies
             hunterGlobalNPC.QuickStepForwardChance = 0.85f;
             hunterGlobalNPC.QuickStepMaxForwardTicks = 40;
 
-            int frostburnArrowType = ModContent.ProjectileType<Projectiles.Enemy.EnemyFrostburnArrow>();
+            int frostburnArrowType = ModContent.ProjectileType<EnemyFrostburnArrow>();
             CombatTempoProfile.Elite(hunterGlobalNPC, frostburnArrowType);
 
             // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
@@ -121,7 +122,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyFrostburnArrow>(), archerBoltDamage, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<EnemyFrostburnArrow>(), archerBoltDamage, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
         }
 
         // SkeletonArcher's VanillaFindFrame gates walk frames on strict velocity.Y == 0f, so any

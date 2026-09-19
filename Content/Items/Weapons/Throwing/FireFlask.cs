@@ -7,7 +7,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Throwing
 {
     class FireFlask : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/FireFlask";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Projectiles.Ranged.FireFlaskProj));
 
         public override void SetDefaults()
         {
@@ -20,7 +20,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Throwing
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = 1800;
-            Item.shoot = ModContent.ProjectileType<global::tsorcRevamp.Projectiles.Ranged.FireFlask>();
+            Item.shoot = ModContent.ProjectileType<global::tsorcRevamp.Content.Projectiles.Ranged.FireFlaskProj>();
             Item.shootSpeed = 7.5f;
             Item.useAnimation = 44;
             Item.useTime = 44;

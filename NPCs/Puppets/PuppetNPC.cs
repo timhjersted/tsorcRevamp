@@ -9,6 +9,9 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 
@@ -515,6 +518,10 @@ namespace tsorcRevamp.NPCs.Puppets
             && PhaseTimer > Math.Max(0, MagicRecoveryTicks - MagicWeaponRecoveryHoldTicks);
         /// <summary>Client-side cosmetic hook sampled after the magic staff pose updates.</summary>
         protected virtual void DoMagicTelegraphVFX(float progress) { }
+        /// <summary>Whether the magic telegraph and cast brake the puppet to a stop. Default true keeps the
+        /// planted cast. False lets RunMovementAI (which runs every tick before the phase switch) keep
+        /// kiting through the whole cast, so a caster can backpedal while it channels and fires.</summary>
+        protected virtual bool BrakeDuringMagicCast => true;
 
         // ── Fire breath (optional, opt-in per subclass) ───────────────────────────
         /// <summary>Master toggle: when true this puppet can perform a sustained fire-breath attack
@@ -1678,6 +1685,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Phase == AttackPhase.FireVolleyBackLeap || Phase == AttackPhase.FireVolleyDodgeThrough ||
             Phase == AttackPhase.FireVolleyArcJump ||
             (Phase == AttackPhase.Custom && _customPoseWeapon >= 0) ||
+            (Phase == AttackPhase.ClosingDistance && ShowMeleeWeaponWhileClosingDistance) ||
             // Keep the blade on screen for the follow-through hold of the bespoke sword recoveries.
             // Without this the greatsword vanished on the frame the swing ended — the pose was still
             // being held, but nothing was drawing it. Gated on the same opt-in hold, so puppets that
@@ -1719,6 +1727,14 @@ namespace tsorcRevamp.NPCs.Puppets
         /// the navigator would otherwise flip direction every single tick.
         /// </summary>
         private int _directionHoldTicks;
+
+        /// <summary>Neutral re-face radius (px) and horizontal dead zone (px); see the Idle phase.</summary>
+        private const float NeutralRefaceRange = 320f;
+        private const float NeutralRefaceDeadZone = 8f;
+
+        /// <summary>A melee combo telegraph tracks the player until this many ticks remain, then commits its
+        /// facing. Matches the telegraph flash lead (CheckAndFireFlash's default 30) so the flash IS the commit.</summary>
+        private const int TelegraphFacingCommitTicks = 30;
 
         /// <summary>
         /// Facing captured when the current committed attack began, and re-applied every tick of
@@ -1770,10 +1786,8 @@ namespace tsorcRevamp.NPCs.Puppets
         private bool _runtimeHasPreviousBladeSample;
 
         // ── Hand slots (dual-wield foundation) ───────────────────────────────────
-        // Each hand owns the weapon it currently holds plus that arm's own swing clock and blade
-        // tracking, so two weapons can eventually swing on independent timelines. Only the front
-        // hand is driven today; the back hand exists holding PuppetWeapon.None and stays inert
-        // until a puppet opts into a second weapon.
+        // Each hand owns the weapon it currently holds plus that arm's blade tracking. The back hand holds
+        // PuppetWeapon.None until a puppet equips a second weapon — see the Dual wield section below.
         private readonly PuppetHand _frontHand = new PuppetHand(PuppetHandSlot.Front);
         private readonly PuppetHand _backHand = new PuppetHand(PuppetHandSlot.Back);
 
@@ -1846,6 +1860,148 @@ namespace tsorcRevamp.NPCs.Puppets
 
             hand.Weapon = weapon ?? PuppetWeapon.None;
         }
+
+        // ── Dual wield ────────────────────────────────────────────────────────────
+        // A puppet dual-wields once a weapon is equipped in the BACK hand (EquipWeapon(Back, ...), e.g. from
+        // SetDefaults for a permanent off-hand). Both weapons are drawn whenever the melee weapon is out. There
+        // is still ONE swing clock (_weaponRotation): each combo step's Hand picks which arm follows it, and the
+        // other arm crossfades to OffHandCarryRotation. Everything a step authors — arcs, easing, hit window,
+        // aim bias, blade flip — therefore applies to whichever hand swings. Needs the composite arm (the back
+        // hand has no legacy 4-frame pose) and is mutually exclusive with the two-handed great-weapon grip.
+
+        /// <summary>Draw the melee weapon(s) while running in to start a melee combo (ClosingDistance), not
+        /// only from the telegraph on. Default false keeps the weapon hidden until the tell.</summary>
+        protected virtual bool ShowMeleeWeaponWhileClosingDistance => false;
+
+        /// <summary>Weapon-space angle the carried melee weapon eases to outside attacks, and that a logical
+        /// telegraph settles from. Default HoldRotation (-0.30). Positive turns the weapon clockwise when facing
+        /// right (mirrored when facing left), e.g. +PiOver4 = 45° lower.</summary>
+        protected virtual float MeleeCarryRotation => HoldRotation;
+
+        /// <summary>Pose (weapon-space radians) the non-swinging hand carries its weapon at.</summary>
+        protected virtual float OffHandCarryRotation => HoldRotation;
+
+        /// <summary>Ticks for a hand to crossfade between its carry pose and the live swing when the swinging
+        /// hand changes. A chained step that switches hands needs a PostStepPause at least this long, or the
+        /// incoming hand is snapped onto the swing when its attack begins.</summary>
+        protected virtual int DualWieldHandBlendTicks => 4;
+
+        // 1 = this hand follows the live swing exactly, 0 = it sits at OffHandCarryRotation.
+        private float _frontHandSwingBlend = 1f;
+        private float _backHandSwingBlend;
+
+        protected bool DualWieldActive =>
+            !_backHand.Weapon.IsEmpty
+            && UseCompositeArmSwing
+            && CompositeArmSwingMasterEnable
+            && !UseTwoHandedCompositeSwing;
+
+        /// <summary>Hand(s) the current combo step swings with. During an inter-step pause this is already
+        /// the NEXT step's hand, so the incoming hand crossfades in while the outgoing one settles.</summary>
+        protected ComboHand ActiveComboSwingHand
+        {
+            get
+            {
+                if (!DualWieldActive || !IsMeleeComboPhase || _activeMeleeComboIndex < 0 || _activeMeleeCombo.Steps == null)
+                {
+                    return ComboHand.Front;
+                }
+
+                int stepIndex = _meleeComboStepIndex;
+                bool pausingIntoNextStep = Phase == AttackPhase.MeleeComboPause
+                    && stepIndex + 1 < _activeMeleeCombo.Steps.Length;
+                if (pausingIntoNextStep)
+                {
+                    stepIndex++;
+                }
+
+                if (stepIndex < 0 || stepIndex >= _activeMeleeCombo.Steps.Length)
+                {
+                    return ComboHand.Front;
+                }
+
+                return _activeMeleeCombo.Steps[stepIndex].Hand;
+            }
+        }
+
+        /// <summary>The front arm/weapon pose. Identical to _weaponRotation for every puppet that isn't
+        /// dual-wielding, and for any non-melee item (staff, bow) held in the front hand.</summary>
+        private float FrontHandPoseRotation
+        {
+            get
+            {
+                if (!DualWieldActive || _heldItemType != FrontHandWeaponType)
+                {
+                    return _weaponRotation;
+                }
+
+                return MathHelper.Lerp(OffHandCarryRotation, _weaponRotation, _frontHandSwingBlend);
+            }
+        }
+
+        private float BackHandPoseRotation => MathHelper.Lerp(OffHandCarryRotation, _weaponRotation, _backHandSwingBlend);
+
+        /// <summary>The back weapon is drawn exactly when the front melee weapon is.</summary>
+        private bool BackHandWeaponVisible =>
+            DualWieldActive
+            && _weaponVisible
+            && !WeaponSheathed
+            && _heldItemType > 0
+            && _heldItemType == FrontHandWeaponType
+            && Phase != AttackPhase.Healing
+            && Phase != AttackPhase.FleeToHeal;
+
+        // Runs once per tick after the swing clock updates. Moves each hand's blend toward "swinging" or
+        // "carrying" at 1/DualWieldHandBlendTicks per tick. A hand that is live in an attack phase is forced
+        // fully onto the swing so the hitbox never tracks a half-blended pose.
+        private void TickHandPoses()
+        {
+            if (!DualWieldActive)
+            {
+                _frontHandSwingBlend = 1f;
+                _backHandSwingBlend = 0f;
+                return;
+            }
+
+            ComboHand swingHand = ActiveComboSwingHand;
+            float blendStep = 1f / Math.Max(1, DualWieldHandBlendTicks);
+            float frontTarget = 1f;
+            float backTarget = 0f;
+
+            if (swingHand == ComboHand.Back)
+            {
+                frontTarget = 0f;
+            }
+            if (swingHand != ComboHand.Front)
+            {
+                backTarget = 1f;
+            }
+
+            _frontHandSwingBlend = MoveBlendToward(_frontHandSwingBlend, frontTarget, blendStep);
+            _backHandSwingBlend = MoveBlendToward(_backHandSwingBlend, backTarget, blendStep);
+
+            if (Phase == AttackPhase.MeleeComboAttack)
+            {
+                if (frontTarget > 0f)
+                {
+                    _frontHandSwingBlend = 1f;
+                }
+                if (backTarget > 0f)
+                {
+                    _backHandSwingBlend = 1f;
+                }
+            }
+        }
+
+        private static float MoveBlendToward(float current, float target, float maxStep)
+        {
+            if (current < target)
+            {
+                return Math.Min(target, current + maxStep);
+            }
+            return Math.Max(target, current - maxStep);
+        }
+
         /// <summary>Direction locked for the entire active combo.  Player can dodgeroll through
         /// and end up safely behind the swing arc — FighterAI's direction flips are overridden
         /// across all four MeleeCombo* phases.</summary>
@@ -2244,7 +2400,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (HasSlashTrailVFX && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.PuppetSwordSlashTrail>(), 0, 0f,
+                    ModContent.ProjectileType<PuppetSwordSlashTrail>(), 0, 0f,
                     Main.myPlayer, NPC.whoAmI);
             }
 
@@ -2551,7 +2707,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 if (Main.netMode != NetmodeID.MultiplayerClient && --gnpc.TeleportIllusionTimeLeft <= 0)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.VFX.TeleportIllusionDissolve>(),
+                        ModContent.ProjectileType<TeleportIllusionDissolve>(),
                         0, 0f, Main.myPlayer);
                     NPC.active = false;
                     if (Main.netMode == NetmodeID.Server)
@@ -3207,7 +3363,9 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.netUpdate = true;
         }
 
-        public void OnStagger(NPC npc)
+        /// <summary>Virtual so a subclass with its own set-piece state (a custom-phase stage machine, a
+        /// pending spell, in-flight channel dust) can clear it too. Always call base.</summary>
+        public virtual void OnStagger(NPC npc)
         {
             bool cancelledHeal = Phase == AttackPhase.FleeToHeal || Phase == AttackPhase.Healing;
             if (cancelledHeal)
@@ -3793,6 +3951,28 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (_heldItemType <= 0)
                         SetDisplayWeapon(MeleeWeaponItemType >= 0 ? MeleeWeaponItemType : RangedWeaponItemType, swing: false);
 
+                    // Neutral re-face. The navigator only turns the sprite when it walks, so a puppet standing
+                    // in range after an attack could keep its back to a player who rolled through. Once the
+                    // post-attack hold (_directionHoldTicks) runs out, face a nearby, same-level, visible player
+                    // directly. The 8px dead zone stops flip-flopping while the player overlaps the puppet;
+                    // skipped airborne (the flight controller owns facing) and while mounted.
+                    {
+                        float horizontalGap = target.Center.X - NPC.Center.X;
+                        bool clearlyToOneSide = Math.Abs(horizontalGap) > NeutralRefaceDeadZone;
+                        bool sameLevel = Math.Abs(target.Center.Y - NPC.Center.Y) < 48f;
+                        bool nearby = dist <= NeutralRefaceRange;
+                        bool airborne = _flight != null && _flight.IsAirborne;
+                        bool canReface = _directionHoldTicks <= 0 && clearlyToOneSide && sameLevel && nearby
+                            && hasLOS && !airborne && !IsMounted;
+
+                        if (canReface)
+                        {
+                            int faceTarget = Math.Sign(horizontalGap);
+                            NPC.direction = faceTarget;
+                            NPC.spriteDirection = faceTarget;
+                        }
+                    }
+
                     // The movement controller has already advanced the puppet this tick. A subclass's own
                     // authored hold (see HoldAttackSelection) skips neutral selection entirely.
                     if (HoldAttackSelection)
@@ -3852,6 +4032,7 @@ namespace tsorcRevamp.NPCs.Puppets
                                     || Main.rand.Next(100) < MagicPreferenceChance);
                                 if (useMagic)
                                 {
+                                    OnMagicTelegraphStarting();
                                     EnterPhase(AttackPhase.MagicTelegraph, MagicTelegraphTicks);
                                 }
                                 else
@@ -4166,6 +4347,7 @@ namespace tsorcRevamp.NPCs.Puppets
                                         || Main.rand.Next(100) < MagicPreferenceChance);
                         if (useMagic)
                         {
+                            OnMagicTelegraphStarting();
                             EnterPhase(AttackPhase.MagicTelegraph, MagicTelegraphTicks);
                         }
                         else
@@ -4434,7 +4616,10 @@ namespace tsorcRevamp.NPCs.Puppets
                 // Charge-up then fire a spell projectile.  The puppet brakes to a
                 // halt during the telegraph so it reads as a deliberate cast.
                 case AttackPhase.MagicTelegraph:
-                    SlowDown();
+                    if (BrakeDuringMagicCast)
+                    {
+                        SlowDown();
+                    }
                     SetDisplayWeapon(MagicWeaponItemType, swing: false);
                     CheckAndFireFlash(MagicTelegraphFlashColor, MagicTelegraphFlashLeadTicks);
                     if (--PhaseTimer <= 0)
@@ -4451,7 +4636,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.MagicAttack:
-                    NPC.velocity.X *= 0.5f; // momentum bleeds off during cast follow-through
+                    if (BrakeDuringMagicCast)
+                    {
+                        NPC.velocity.X *= 0.5f; // momentum bleeds off during cast follow-through
+                    }
                     DoMagicTick(PhaseTimer);
                     if (--PhaseTimer <= 0)
                         EnterPhase(AttackPhase.MagicRecovery, MagicRecoveryTicks);
@@ -5447,6 +5635,13 @@ namespace tsorcRevamp.NPCs.Puppets
                     NPC.direction = faceC;
                     NPC.spriteDirection = faceC;
 
+                    // Opt-in: the melee attack is already chosen, so draw the weapon for the whole run-in.
+                    // Before the client early-out so every peer shows it.
+                    if (ShowMeleeWeaponWhileClosingDistance)
+                    {
+                        SetDisplayWeapon(MeleeWeaponItemType, swing: false);
+                    }
+
                     // Starting the combo or giving up is the server's call; a client just runs in.
                     if (IsMultiplayerClient)
                     {
@@ -5511,6 +5706,19 @@ namespace tsorcRevamp.NPCs.Puppets
                         telegraphStep,
                         Math.Max(0, telegraphTotal - PhaseTimer),
                         telegraphTotal);
+                    // Keep turning to the player until the telegraph flash (the last TelegraphFacingCommitTicks),
+                    // then commit. Rolling through early just gets tracked; only a roll after the flash ends up
+                    // behind the swing. A 30-tick telegraph (the minimum) commits from its first tick as before.
+                    // Same 8px dead zone as the neutral re-face, so an overlapping player can't flip it each tick.
+                    {
+                        float horizontalGap = target.Center.X - NPC.Center.X;
+                        bool beforeFlash = PhaseTimer > TelegraphFacingCommitTicks;
+                        bool clearlyToOneSide = Math.Abs(horizontalGap) > NeutralRefaceDeadZone;
+                        if (beforeFlash && clearlyToOneSide)
+                        {
+                            _comboLockedDir = Math.Sign(horizontalGap);
+                        }
+                    }
                     LockComboDirection();
                     // Per-move brake for aim-swing pilots (0 = keep momentum); blanket SlowDown otherwise.
                     if (SlowDownBeforeMelee)
@@ -5671,6 +5879,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         {
                             _bladeArmed = false;
                             _hasPreviousBladeSample = false;
+                            _backHand.HasPreviousBladeSample = false;
                         }
 
                         if (_comboLeapLaunched && NPC.velocity.Y >= 0f)
@@ -5734,6 +5943,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         {
                             _bladeArmed = false;
                             _hasPreviousBladeSample = false;
+                            _backHand.HasPreviousBladeSample = false;
                         }
                         else
                         {
@@ -5760,6 +5970,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         int nextIdx = _meleeComboStepIndex + 1;
                         _bladeArmed = false;
                         _hasPreviousBladeSample = false;
+                        _backHand.HasPreviousBladeSample = false;
                         bool hasNextStep = nextIdx < _activeMeleeCombo.Steps.Length;
                         // Continuing is a server decision (it may read the server-only blade result). A client
                         // predicts the authored continuation and adopts the recovery if the server refuses.
@@ -6381,8 +6592,23 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 return;
             }
-            float reach = ComboReachBase * 0.7f * step.ReachMult;
-            int   dmg   = (int)(MeleeDamage * step.DamageMult);
+            float reachBase = ComboReachBase;
+            int baseDamage = MeleeDamage;
+
+            // Dual wield: a back-hand-only step strikes with the back weapon's own reach and damage when it
+            // sets them (negative = inherit the puppet's values). A Both step keeps the front weapon's numbers.
+            bool backHandOnly = DualWieldActive && step.Hand == ComboHand.Back;
+            if (backHandOnly && BackHandWeapon.ReachBase >= 0f)
+            {
+                reachBase = BackHandWeapon.ReachBase;
+            }
+            if (backHandOnly && BackHandWeapon.Damage >= 0)
+            {
+                baseDamage = BackHandWeapon.Damage;
+            }
+
+            float reach = reachBase * 0.7f * step.ReachMult;
+            int   dmg   = (int)(baseDamage * step.DamageMult);
             if (dmg <= 0)
                 return;
             // Arms the tracked blade check (see TickBladeHit) instead of hitting immediately —
@@ -7020,7 +7246,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Vector2 hitCenter = NPC.Center + attackDirection * 38f;
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), hitCenter, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
+                ModContent.ProjectileType<PuppetMeleeHitbox>(),
                 (int)(MeleeDamage * 1.2f), 4f, Main.myPlayer, boxW, boxH);
         }
 
@@ -7113,6 +7339,13 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <see cref="DoMagicTick"/>.
         /// </summary>
         protected virtual  void DoMagicAttack() { }
+
+        /// <summary>Called on the SERVER immediately before the MagicTelegraph phase is entered, i.e. before
+        /// <see cref="MagicTelegraphTicks"/> is read.  Default no-op.  A boss whose spells have different
+        /// wind-ups rolls its next spell here and returns per-spell values from MagicTelegraphTicks /
+        /// MagicRecoveryTicks / MagicCooldownAfterUse; the rolled spell reaches clients in the same snapshot
+        /// as the phase, so a rolled-then-read telegraph length is consistent everywhere.</summary>
+        protected virtual  void OnMagicTelegraphStarting() { }
 
         /// <summary>Called every tick of the MagicAttack phase with the ticks remaining.  Default no-op;
         /// override (together with <see cref="_magicAttackTicksOverride"/>) for channeled casts such as a
@@ -7236,6 +7469,7 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 _bladeArmed = false;
                 _hasPreviousBladeSample = false;
+                _backHand.HasPreviousBladeSample = false;
             }
 
             // Dropping back to neutral releases the attack's facing commitment, so the navigator is
@@ -7401,6 +7635,17 @@ namespace tsorcRevamp.NPCs.Puppets
             ArmBladeHit(r, MeleeDamage, knockback: 3f);
         }
 
+        /// <summary>Closes a bespoke attack's tracked-blade window without changing phase. Ordinary melee
+        /// phases disarm automatically when they enter recovery; Custom phases need an explicit close so
+        /// their harmless follow-through / landing tail cannot remain flagged as an active strike.</summary>
+        protected void StopMeleeHit()
+        {
+            _bladeArmed = false;
+            _hasPreviousBladeSample = false;
+            _backHand.HasPreviousBladeSample = false;
+            _bladeHitPlayers.Clear();
+        }
+
         /// <summary>
         /// Arms the tracked blade check for the swing/step that's about to play: TickBladeHit will
         /// test every subsequent tick (until the phase ends) and only actually connect on the
@@ -7416,6 +7661,7 @@ namespace tsorcRevamp.NPCs.Puppets
             _activeBladeDamage    = damage;
             _activeBladeKnockback = knockback;
             _hasPreviousBladeSample = false;
+            _backHand.HasPreviousBladeSample = false;
             _bladeHitPlayers.Clear();
         }
 
@@ -7426,18 +7672,48 @@ namespace tsorcRevamp.NPCs.Puppets
         /// exact angle actually rendered — so a hit can only land on the tick(s) the sprite is
         /// genuinely overlapping the target, instead of for the swing's entire duration regardless
         /// of where the blade is pointing (the old static-box behavior).
+        /// Dual wield: tests the capsule of every hand the current step swings with. Both hands share one
+        /// hit list, so a Both step still strikes each player at most once.
         /// </summary>
         protected void TickBladeHit()
         {
             if (!_bladeArmed || _activeBladeReach <= 0f || Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            // Capsule thickness follows the equipped weapon, so a swapped-in weapon is tested at its
-            // own width instead of whatever the puppet's default melee weapon happened to be.
-            float bladeWidth = FrontHandWeapon.BladeWidth;
+            ComboHand swingHand = ActiveComboSwingHand;
 
-            Vector2 origin = GetHandPosition();
-            Vector2 tip    = origin + GetWeaponWorldDirection() * _activeBladeReach;
+            if (swingHand != ComboHand.Back)
+            {
+                // Capsule thickness follows the equipped weapon, so a swapped-in weapon is tested at its
+                // own width instead of whatever the puppet's default melee weapon happened to be.
+                Vector2 origin = GetHandPosition();
+                Vector2 tip = origin + GetWeaponWorldDirection() * _activeBladeReach;
+                TestBladeCapsule(origin, tip, FrontHandWeapon.BladeWidth,
+                    ref _hasPreviousBladeSample, ref _previousBladeOrigin, ref _previousBladeTip);
+            }
+
+            if (swingHand != ComboHand.Front)
+            {
+                Vector2 backOrigin = GetBackHandPosition();
+                Vector2 backTip = backOrigin + GetBackWeaponWorldDirection() * _activeBladeReach;
+                bool backHasPrevious = _backHand.HasPreviousBladeSample;
+                Vector2 backPreviousOrigin = _backHand.PreviousBladeOrigin;
+                Vector2 backPreviousTip = _backHand.PreviousBladeTip;
+
+                TestBladeCapsule(backOrigin, backTip, BackHandWeapon.BladeWidth,
+                    ref backHasPrevious, ref backPreviousOrigin, ref backPreviousTip);
+
+                _backHand.HasPreviousBladeSample = backHasPrevious;
+                _backHand.PreviousBladeOrigin = backPreviousOrigin;
+                _backHand.PreviousBladeTip = backPreviousTip;
+            }
+        }
+
+        // One hand's blade this tick: sweep from last tick's capsule to this one (so fast arcs can't tunnel)
+        // against every player not yet hit, spawn the damage hitbox on overlap, then store this tick's capsule.
+        private void TestBladeCapsule(Vector2 origin, Vector2 tip, float bladeWidth,
+            ref bool hasPreviousSample, ref Vector2 previousOrigin, ref Vector2 previousTip)
+        {
             float earlyOutRange = _activeBladeReach + bladeWidth + 40f;
             if (HasSpectralOverlay)
                 earlyOutRange += Vector2.Distance(NPC.Center, origin);
@@ -7456,10 +7732,10 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 Vector2 hitOrigin = origin;
                 Vector2 hitTip = tip;
-                bool intersects = _hasPreviousBladeSample
+                bool intersects = hasPreviousSample
                     ? MeleeBladeCollision.SweptSegmentIntersectsRect(
-                        _previousBladeOrigin,
-                        _previousBladeTip,
+                        previousOrigin,
+                        previousTip,
                         origin,
                         tip,
                         bladeWidth,
@@ -7480,9 +7756,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 OnBladeHit(player);
             }
 
-            _previousBladeOrigin = origin;
-            _previousBladeTip = tip;
-            _hasPreviousBladeSample = true;
+            previousOrigin = origin;
+            previousTip = tip;
+            hasPreviousSample = true;
         }
 
         /// <summary>Fires once per confirmed real blade-overlap hit (see <see cref="TickBladeHit"/>),
@@ -7500,7 +7776,7 @@ namespace tsorcRevamp.NPCs.Puppets
             int box = (int)size;
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetMeleeHitbox>(),
+                ModContent.ProjectileType<PuppetMeleeHitbox>(),
                 damage, knockback, Main.myPlayer, box, box);
         }
 
@@ -7540,7 +7816,7 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             Projectile.NewProjectileDirect(
                 NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(),
+                ModContent.ProjectileType<TelegraphFlash>(),
                 0, 0, Main.myPlayer,
                 UsefulFunctions.ColorToFloat(color));
         }
@@ -7586,7 +7862,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (progress < settleFraction)
             {
                 float settle = MathHelper.SmoothStep(0f, 1f, progress / settleFraction);
-                return MathHelper.Lerp(HoldRotation, oppositeEnd, settle);
+                return MathHelper.Lerp(MeleeCarryRotation, oppositeEnd, settle);
             }
 
             float raise = MathHelper.SmoothStep(0f, 1f,
@@ -7602,6 +7878,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // renderer-side bookkeeping here; the legacy animation clock must not overwrite it.
                 SpawnSwingVFX(_weaponRotation - _prevWeaponRotation);
                 _prevWeaponRotation = _weaponRotation;
+                TickHandPoses();
                 return;
             }
 
@@ -8470,7 +8747,7 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 // Idle / walking / jumping / recovery:
                 // Ease the weapon back to the natural hold angle so it always looks carried.
-                _weaponRotation = MathHelper.Lerp(_weaponRotation, HoldRotation, 0.10f);
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, MeleeCarryRotation, 0.10f);
             }
 
             if (UseCompositeArmForAdditionalPhase)
@@ -8479,7 +8756,7 @@ namespace tsorcRevamp.NPCs.Puppets
             UpdateSpearGrip();
             SpawnSwingVFX(_weaponRotation - _prevWeaponRotation);
             _prevWeaponRotation = _weaponRotation;
-
+            TickHandPoses();
         }
 
         /// <summary>
@@ -8719,6 +8996,35 @@ namespace tsorcRevamp.NPCs.Puppets
         /// (e.g. a staff muzzle). Add <c>aimDirection * reach</c> to reach the weapon tip.</summary>
         protected Vector2 PuppetHandPosition => GetHandPosition();
 
+        /// <summary>Dual wield: world-space back-hand position and back-weapon direction, for subclass VFX
+        /// anchored to the off-hand blade.</summary>
+        protected Vector2 PuppetBackHandPosition => GetBackHandPosition();
+        protected Vector2 PuppetBackWeaponDirection => GetBackWeaponWorldDirection();
+
+        private Vector2 GetBackHandPosition()
+        {
+            Vector2 hand = GetUnscaledBackHandPosition();
+            return HasSpectralOverlay ? NPC.Bottom + (hand - NPC.Bottom) * SpectralOverlayScale : hand;
+        }
+
+        // Vanilla's back composite hand for the back arm's pose. Falls back to just behind the front hand if the
+        // puppet player isn't built yet or vanilla reports nothing.
+        private Vector2 GetUnscaledBackHandPosition()
+        {
+            if (_puppet == null)
+            {
+                return PuppetVisualCenter;
+            }
+
+            Vector2 composite = _puppet.GetBackHandPosition(CompositeArmStretch, BackCompositeArmRotation);
+            if (composite != Vector2.Zero)
+            {
+                return composite;
+            }
+
+            return GetUnscaledHandPosition() + new Vector2(-6f * NPC.direction, 0f);
+        }
+
         /// <summary>World-space point along the currently drawn melee weapon's blade.</summary>
         protected Vector2 PuppetWeaponTipPosition(float reach) => GetHandPosition() + GetWeaponWorldDirection() * reach;
 
@@ -8746,39 +9052,59 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private Vector2 GetWeaponWorldDirection()
         {
-            float drawRotation = _weaponRotation;
             if (_heldItemType == MagicWeaponItemType)
-                drawRotation += MagicWeaponRotationOffset;
-            else if (DrawWeaponAsSpear)
-                drawRotation += SpearDrawRotationOffset;
-            else if (MirrorMeleeSwingRotationByFacing)
             {
-                drawRotation = GetMeleeDrawRotation();
-                // Blade's natural rest angle, mirrored by facing; the flip swaps which side it hangs.
-                // Base angle is MeleeNaturalRestAngleDeg (45° = standard broadsword convention, the
-                // default every puppet except Dread Wraith actually uses); dir=-1 mirrors it about the
-                // vertical axis (180 - base) rather than hardcoding a second unrelated magic number.
-                float baseDeg = MeleeNaturalRestAngleDeg;
-                float naturalDeg;
+                return GetDiagonalSpriteWorldDirection(_weaponRotation + MagicWeaponRotationOffset, BladeFlipActive);
+            }
+            if (DrawWeaponAsSpear)
+            {
+                return GetDiagonalSpriteWorldDirection(_weaponRotation + SpearDrawRotationOffset, BladeFlipActive);
+            }
+            return GetMeleeWorldDirection(FrontHandPoseRotation, FrontHandWeapon);
+        }
 
-                if (NPC.direction == 1)
-                {
-                    naturalDeg = BladeFlipActive ? baseDeg : -baseDeg;
-                }
-                else
-                {
-                    naturalDeg = BladeFlipActive ? (180f - baseDeg) : -(180f - baseDeg);
-                }
+        /// <summary>World direction of the dual-wield back weapon — the back-hand twin of
+        /// <see cref="GetWeaponWorldDirection"/>, used by its draw and its blade capsule.</summary>
+        private Vector2 GetBackWeaponWorldDirection() => GetMeleeWorldDirection(BackHandPoseRotation, BackHandWeapon);
 
-                float actualAngle = MathHelper.ToRadians(naturalDeg + MathHelper.ToDegrees(drawRotation));
-                return new Vector2((float)Math.Cos(actualAngle), (float)Math.Sin(actualAngle));
+        // A melee weapon's world direction for one hand's pose. Shared by both hands so drawing and hit
+        // detection can never disagree about where either blade points.
+        private Vector2 GetMeleeWorldDirection(float handRotation, PuppetWeapon weapon)
+        {
+            bool bladeFlip = BladeFlipActiveFor(weapon);
+
+            if (!MirrorMeleeSwingRotationByFacing)
+            {
+                return GetDiagonalSpriteWorldDirection(handRotation + weapon.RotationOffset * NPC.direction, bladeFlip);
+            }
+
+            float drawRotation = GetMeleeDrawRotation(handRotation, weapon);
+            // Blade's natural rest angle, mirrored by facing; the flip swaps which side it hangs.
+            // Base angle is MeleeNaturalRestAngleDeg (45° = standard broadsword convention, the
+            // default every puppet except Dread Wraith actually uses); dir=-1 mirrors it about the
+            // vertical axis (180 - base) rather than hardcoding a second unrelated magic number.
+            float baseDeg = MeleeNaturalRestAngleDeg;
+            float naturalDeg;
+
+            if (NPC.direction == 1)
+            {
+                naturalDeg = bladeFlip ? baseDeg : -baseDeg;
             }
             else
-                drawRotation += MeleeWeaponRotationOffset * NPC.direction;
+            {
+                naturalDeg = bladeFlip ? (180f - baseDeg) : -(180f - baseDeg);
+            }
 
+            float actualAngle = MathHelper.ToRadians(naturalDeg + MathHelper.ToDegrees(drawRotation));
+            return new Vector2((float)Math.Cos(actualAngle), (float)Math.Sin(actualAngle));
+        }
+
+        // Tip direction of a sprite on the broadsword diagonal for the legacy (non-mirrored) draw path.
+        private Vector2 GetDiagonalSpriteWorldDirection(float drawRotation, bool bladeFlip)
+        {
             // FlipVertically mirrors the source rect across its local horizontal centerline before
             // rotation is applied, so the pre-rotation tip angle reflects to the opposite side.
-            float correctedNaturalDeg = BladeFlipActive ? 45f : -45f;
+            float correctedNaturalDeg = bladeFlip ? 45f : -45f;
             float rotDeg = MathHelper.ToDegrees(drawRotation);
             float angleDeg = NPC.direction == 1
                 ? correctedNaturalDeg + rotDeg
@@ -8920,6 +9246,29 @@ namespace tsorcRevamp.NPCs.Puppets
             _puppet.head = _puppet.armor[0].headSlot;
             _puppet.body = _puppet.armor[1].bodySlot;
             _puppet.legs = _puppet.armor[2].legSlot;
+
+            // Robe bodies (cultist robes, mage robes...) get their floor-length skirt from an implied leg slot
+            // that vanilla's PlayerFrame assigns through Player.SetMatch — which puppets never run. Apply it only
+            // when no leg armor is set, so a puppet that picked explicit legs keeps them. SetMatch returns -1 for
+            // bodies with no implied legs; wearsRobe switches the draw to the Robe layer instead of Leggings.
+            if (_puppet.legs <= 0)
+            {
+                bool wearsRobe = false;
+                Player.SetMatchRequest robeRequest = new Player.SetMatchRequest
+                {
+                    Head = _puppet.head,
+                    Body = _puppet.body,
+                    Legs = _puppet.legs,
+                    Male = _puppet.Male,
+                    ArmorSlotRequested = 1,
+                };
+                int impliedLegs = Player.SetMatch(robeRequest, ref wearsRobe);
+                if (impliedLegs != -1)
+                {
+                    _puppet.legs = impliedLegs;
+                }
+                _puppet.wearsRobe = wearsRobe;
+            }
 
             // Wings — populated only when HasWings, so wing layer renders behind the body
             if (HasWings && WingsAccessoryItemType > 0)
@@ -9113,6 +9462,11 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 ResolveTwoHandedBackArmPose();
                 _puppet.SetCompositeArmBack(true, _twoHandedBackStretch, _twoHandedBackRotation);
+            }
+            else if (BackHandWeaponVisible)
+            {
+                // Dual wield: the back arm holds its own weapon, posed from its own blended rotation.
+                _puppet.SetCompositeArmBack(true, CompositeArmStretch, BackCompositeArmRotation);
             }
             else
             {
@@ -9633,7 +9987,7 @@ namespace tsorcRevamp.NPCs.Puppets
             || Phase == AttackPhase.HomingVolleySwing || Phase == AttackPhase.BoomerangSwing
             || Phase == AttackPhase.SpiralFanSwing;
 
-        /// <summary>Bumped once per fresh swing so <see cref="Projectiles.Enemy.PuppetSwordSlashTrail"/>
+        /// <summary>Bumped once per fresh swing so <see cref="PuppetSwordSlashTrail"/>
         /// knows to reset its ribbon history instead of interpolating across the gap between two
         /// unrelated swings (e.g. two different combo steps).</summary>
         private void UpdateMeleeSlashTrailSequence()
@@ -9650,10 +10004,16 @@ namespace tsorcRevamp.NPCs.Puppets
         /// should fade its trail history out rather than snapping it away.</summary>
         internal bool TryGetMeleeSlashTrailPose(out Vector2 pivot, out Vector2 direction,
             out float reach, out float progress, out int sequence,
-            out Color darkColor, out Color centerColor, out Color edgeColor)
+            out Color darkColor, out Color centerColor, out Color edgeColor, bool backHand = false)
         {
             pivot = PuppetHandPosition;
             direction = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
+            // Dual wield: an effect tracking the back weapon reads the back hand's pivot and blade instead.
+            if (backHand && DualWieldActive)
+            {
+                pivot = PuppetBackHandPosition;
+                direction = PuppetBackWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
+            }
             reach = Math.Max(MeleeRange * 0.7f, PuppetActiveBladeReach);
             if (Phase == AttackPhase.MeleeComboAttack && _activeMeleeComboIndex >= 0
                 && _activeMeleeCombo.Steps != null && _meleeComboStepIndex >= 0
@@ -10074,7 +10434,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (!_slashVFXTexLoadAttempted)
             {
                 _slashVFXTexLoadAttempted = true;
-                const string path = "tsorcRevamp/Items/Weapons/Melee/Broadswords/BroadswordRework/Common/Melee/Slash";
+                const string path = "tsorcRevamp/Content/Items/Weapons/Melee/Broadswords/BroadswordRework/Common/Melee/Slash";
                 if (ModContent.HasAsset(path))
                     _slashVFXTex = ModContent.Request<Texture2D>(path, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
@@ -10131,6 +10491,10 @@ namespace tsorcRevamp.NPCs.Puppets
             var frame = new SpriteFrame(1, 3) { CurrentRow = (byte)Math.Min(2, (int)(t * 3f)) };
 
             Vector2 direction = GetWeaponWorldDirection();
+            if (ActiveComboSwingHand == ComboHand.Back)
+            {
+                direction = GetBackWeaponWorldDirection();
+            }
             float rotation = direction.ToRotation();
             // Match BroadswordRework's player layer: the arc is centered on the wielder, while
             // rotation and scale communicate the live blade direction and reach.
@@ -10152,6 +10516,66 @@ namespace tsorcRevamp.NPCs.Puppets
 
             drawInfo.DrawDataCache.Add(new DrawData(
                 _slashVFXTex, position - Main.screenPosition, sourceRectangle, color, rotation, origin, scale, spriteFx, 0));
+        }
+
+        /// <summary>
+        /// Dual wield: draws the back-hand weapon, called from <see cref="PuppetBackWeaponDrawLayer"/> so it
+        /// renders over the back arm but under the torso. Handle-anchored at the back composite hand with the
+        /// same grip-mirroring and blade-flip rules as the front melee branch of <see cref="DrawWeaponToLayer"/>,
+        /// reading everything off the back hand's own <see cref="PuppetWeapon"/>.
+        /// </summary>
+        internal void DrawBackHandWeaponToLayer(ref PlayerDrawSet drawInfo)
+        {
+            if (!BackHandWeaponVisible)
+            {
+                return;
+            }
+
+            PuppetWeapon weapon = BackHandWeapon;
+            if (weapon.HideHeldSprite)
+            {
+                return;
+            }
+
+            Main.instance.LoadItem(weapon.ItemType);
+            Texture2D texture = TextureAssets.Item[weapon.ItemType]?.Value;
+            if (texture == null)
+            {
+                return;
+            }
+
+            // Origin is in pre-flip texture space, so mirror the grip for FlipHorizontally (and FlipVertically).
+            float handleX = texture.Width * weapon.HandleNorm.X;
+            if (NPC.direction != 1)
+            {
+                handleX = texture.Width * (1f - weapon.HandleNorm.X);
+            }
+            Vector2 origin = new Vector2(handleX, texture.Height * weapon.HandleNorm.Y);
+
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (NPC.direction == -1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+            if (BladeFlipActiveFor(weapon))
+            {
+                spriteEffects |= SpriteEffects.FlipVertically;
+                origin.Y = texture.Height - origin.Y;
+            }
+
+            float drawRotation = GetMeleeDrawRotation(BackHandPoseRotation, weapon);
+            Vector2 drawPosition = GetUnscaledBackHandPosition() - Main.screenPosition;
+
+            drawInfo.DrawDataCache.Add(new DrawData(
+                texture,
+                drawPosition,
+                null,
+                _layerDrawColor,
+                drawRotation,
+                origin,
+                NPC.scale * weapon.DrawScale,
+                spriteEffects,
+                0));
         }
 
         internal void DrawWeaponToLayer(ref PlayerDrawSet drawInfo)
@@ -10616,12 +11040,23 @@ namespace tsorcRevamp.NPCs.Puppets
 
         // Offset comes off the equipped weapon, not the puppet, so swapping to a sprite on the
         // opposite diagonal (a mace head vs a sword tip) corrects itself.
-        private float GetMeleeDrawRotation()
-            => MirrorMeleeSwingRotationByFacing
-                ? (_weaponRotation + FrontHandWeapon.RotationOffset
-                    - (BladeFlipActive && PreserveShaftDirectionOnBladeFlip
-                        ? MathHelper.ToRadians(2f * MeleeNaturalRestAngleDeg) : 0f)) * NPC.direction
-                : _weaponRotation + FrontHandWeapon.RotationOffset * NPC.direction;
+        private float GetMeleeDrawRotation() => GetMeleeDrawRotation(FrontHandPoseRotation, FrontHandWeapon);
+
+        // Per-hand form: the back hand passes its own pose and weapon.
+        private float GetMeleeDrawRotation(float handRotation, PuppetWeapon weapon)
+        {
+            if (!MirrorMeleeSwingRotationByFacing)
+            {
+                return handRotation + weapon.RotationOffset * NPC.direction;
+            }
+
+            float shaftCorrection = 0f;
+            if (BladeFlipActiveFor(weapon) && PreserveShaftDirectionOnBladeFlip)
+            {
+                shaftCorrection = MathHelper.ToRadians(2f * MeleeNaturalRestAngleDeg);
+            }
+            return (handRotation + weapon.RotationOffset - shaftCorrection) * NPC.direction;
+        }
 
         /// <summary>Reflect the cutting edge across the diagonal shaft without turning that shaft.</summary>
         protected virtual bool PreserveShaftDirectionOnBladeFlip => false;
@@ -10650,20 +11085,21 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>True when the current combo step's motion should mirror the weapon sprite this
         /// frame. Only meaningful during combo phases — the plain one-shot MeleeAttack/MeleeTelegraph
         /// path (outside the combo system) always uses OverheadArc's shape, so it never flips.</summary>
-        private bool BladeFlipActive
+        private bool BladeFlipActive => BladeFlipActiveFor(FrontHandWeapon);
+
+        private bool BladeFlipActiveFor(PuppetWeapon weapon)
         {
-            get
+            // Asymmetry is a property of the weapon in hand, so a swap to a symmetric one stops flipping.
+            if (!weapon.SingleBladed || !BladeFlipMasterEnable)
             {
-                // Asymmetry is a property of the weapon in hand, so a swap to a symmetric one stops flipping.
-                if (!FrontHandWeapon.SingleBladed || !BladeFlipMasterEnable)
-                {
-                    return false;
-                }
-                if (!IsMeleeComboPhase || _activeMeleeComboIndex < 0 || _activeMeleeCombo.Steps == null
-                    || _meleeComboStepIndex < 0 || _meleeComboStepIndex >= _activeMeleeCombo.Steps.Length)
-                    return false;
-                return BladeFlipsForMotion(_activeMeleeCombo.Steps[_meleeComboStepIndex].Motion);
+                return false;
             }
+            if (!IsMeleeComboPhase || _activeMeleeComboIndex < 0 || _activeMeleeCombo.Steps == null
+                || _meleeComboStepIndex < 0 || _meleeComboStepIndex >= _activeMeleeCombo.Steps.Length)
+            {
+                return false;
+            }
+            return BladeFlipsForMotion(_activeMeleeCombo.Steps[_meleeComboStepIndex].Motion);
         }
 
         // ── Aim-centered swing (full 360° player-style aim) ─────────────────────────
@@ -10928,6 +11364,9 @@ namespace tsorcRevamp.NPCs.Puppets
             Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery ||
             Phase == AttackPhase.TendrilSwingTelegraph || Phase == AttackPhase.TendrilSwing ||
             Phase == AttackPhase.BoomerangSwingTelegraph || Phase == AttackPhase.BoomerangSwing ||
+            // A weapon shown during the run-in is held on the composite arm too. Otherwise the arm plays the walk
+            // cycle while the sprite sits at the static 4-row hand offset, and the two visibly drift apart.
+            (Phase == AttackPhase.ClosingDistance && ShowMeleeWeaponWhileClosingDistance) ||
             UseCompositeArmForAdditionalPhase);
 
         /// <summary>True when the composite-arm swing path should be active this frame.</summary>
@@ -10946,7 +11385,13 @@ namespace tsorcRevamp.NPCs.Puppets
         /// which read as "arm pointing backwards / hand behind the NPC".  Mirrored by facing —
         /// vanilla callers pre-negate for direction −1 the same way (e.g. useStyle 9).</summary>
         private float CompositeArmRotation =>
-            (_weaponRotation - MathHelper.PiOver2 + CompositeArmRotationOffset
+            (FrontHandPoseRotation - MathHelper.PiOver2 + CompositeArmRotationOffset
+                + MeleeCompositeArmRotationOffset) * NPC.direction;
+
+        /// <summary>Same weapon-space → composite-arm conversion as <see cref="CompositeArmRotation"/>, for the
+        /// dual-wield back arm.</summary>
+        private float BackCompositeArmRotation =>
+            (BackHandPoseRotation - MathHelper.PiOver2 + CompositeArmRotationOffset
                 + MeleeCompositeArmRotationOffset) * NPC.direction;
 
         /// <summary>

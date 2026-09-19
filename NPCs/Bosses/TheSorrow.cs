@@ -16,7 +16,9 @@ using tsorcRevamp.Content.Items.Lore;
 using tsorcRevamp.Content.Items.Placeable.Relics;
 using tsorcRevamp.Content.Items.Placeable.Trophies;
 using tsorcRevamp.Content.Items.Vanity;
-using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Birbs;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -114,7 +116,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
                     }
 
                     for (int i = 0; i < 50; i++)
@@ -146,7 +148,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (deathTimer % 5 == 0 && Main.myPlayer != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
                 }
             }
 
@@ -236,7 +238,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.GlowingEnergy>(), 0, 0, Main.myPlayer, NPC.whoAmI, UsefulFunctions.ColorToFloat(Color.Blue));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GlowingEnergy>(), 0, 0, Main.myPlayer, NPC.whoAmI, UsefulFunctions.ColorToFloat(Color.Blue));
                 }
             }
             if (breathTimer > breathCap - 200)
@@ -258,7 +260,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVel, ModContent.ProjectileType<Projectiles.Enemy.Birbs.SorrowFrozenBreath>(), sorrowFrozenBreathDamage, 0f, Main.myPlayer, -breathTimer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVel, ModContent.ProjectileType<SorrowFrozenBreath>(), sorrowFrozenBreathDamage, 0f, Main.myPlayer, -breathTimer);
                 }
             }
 
@@ -293,8 +295,8 @@ namespace tsorcRevamp.NPCs.Bosses
                     velocity += Target.velocity / 1.5f;
                     if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceShardDamage / 4, 0.5f, Main.myPlayer); //EnemySpellIcestormBall
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceShardDamage / 4, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<EnemySpellIce3Ball>(), iceShardDamage / 4, 0.5f, Main.myPlayer); //EnemySpellIcestormBall
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<EnemySpellIce3Ball>(), iceShardDamage / 4, 0.5f, Main.myPlayer);
                     }
                 }
 
@@ -526,7 +528,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
                     }
                     for (int i = 0; i < 40; i++)
                     {
@@ -737,7 +739,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.Cyan));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.Cyan));
             }
 
             SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1.3f });

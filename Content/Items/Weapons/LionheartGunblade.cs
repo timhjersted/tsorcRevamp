@@ -6,8 +6,8 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons;
+using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.NPCs;
-using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Content.Items.Weapons
 {

@@ -2,12 +2,13 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
 
 namespace tsorcRevamp.Content.Items.Weapons.Throwing
 {
     class Caltrop : ModItem
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Weapons/Caltrop";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemyCaltrop));
 
         public override void SetDefaults()
         {
@@ -20,7 +21,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Throwing
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = 1500;
-            Item.shoot = ModContent.ProjectileType<global::tsorcRevamp.Projectiles.Melee.Caltrop>();
+            Item.shoot = ModContent.ProjectileType<global::tsorcRevamp.Content.Projectiles.Melee.Caltrop>();
             Item.shootSpeed = 8f;
             Item.useAnimation = 36;
             Item.useTime = 36;
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Throwing
         {
             if (player.whoAmI == Main.myPlayer)
             {
-                global::tsorcRevamp.Projectiles.Melee.Caltrop.ThrowSpread(source, position, Main.MouseWorld, damage, knockback, player.whoAmI);
+                global::tsorcRevamp.Content.Projectiles.Melee.Caltrop.ThrowSpread(source, position, Main.MouseWorld, damage, knockback, player.whoAmI);
             }
 
             return false;

@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -41,7 +42,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 70000; // already was double life
                 NPC.damage = 0;
             }
-            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<EnemyThrowingKnifeSmall>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
 
             // Step 6: inexorable stalker — investigate last-known position to keep creeping after the player.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;

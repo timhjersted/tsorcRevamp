@@ -7,6 +7,7 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Ranged;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 
 namespace tsorcRevamp.NPCs.Special
@@ -88,7 +89,7 @@ namespace tsorcRevamp.NPCs.Special
                     Vector2 targetVec = UsefulFunctions.Aim(NPC.Center, targetPoint, 5.5f);
                     Vector2 spawnPos = NPC.Center + Main.rand.NextVector2Circular(50, 50);
                     float distance = Vector2.Distance(spawnPos, targetPoint) / 5.5f;
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPos, targetVec, ModContent.ProjectileType<Projectiles.Comet>(), 60, 0, Main.myPlayer, ai0: -(int)distance, ai2: 1000);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPos, targetVec, ModContent.ProjectileType<Comet>(), 60, 0, Main.myPlayer, ai0: -(int)distance, ai2: 1000);
                 }
             }
 

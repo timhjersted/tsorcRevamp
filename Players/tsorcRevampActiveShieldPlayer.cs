@@ -11,7 +11,8 @@ using tsorcRevamp.Content.Items.Accessories.Defensive;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Accessories.Melee;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp
 {
@@ -1048,7 +1049,7 @@ namespace tsorcRevamp
                 // ...and deflects a blocked hostile projectile straight back at its source.
                 if (attackingProjectile != null && attackingProjectile.active && attackingProjectile.hostile
                     && attackingProjectile.type !=
-                        ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>())
+                        ModContent.ProjectileType<HumanoidMeleeHitbox>())
                 {
                     Projectile p = attackingProjectile;
                     p.hostile = false;
@@ -1141,7 +1142,7 @@ namespace tsorcRevamp
             }
 
             bool sourceAnchoredMelee = attackingProjectile != null
-                && attackingProjectile.type == ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>();
+                && attackingProjectile.type == ModContent.ProjectileType<HumanoidMeleeHitbox>();
             bool meleeImpact = attackingProjectile == null || sourceAnchoredMelee;
             if (meleeImpact)
             {
@@ -1217,7 +1218,7 @@ namespace tsorcRevamp
             {
                 Vector2 vel = d.SafeNormalize(-Vector2.UnitY) * 10f;
                 Projectile.NewProjectile(Player.GetSource_Misc("ActiveShieldBlock"), Player.Center, vel,
-                    ModContent.ProjectileType<Projectiles.SoulArrow>(), 300, 1f, Player.whoAmI);
+                    ModContent.ProjectileType<SoulArrow>(), 300, 1f, Player.whoAmI);
             }
         }
 

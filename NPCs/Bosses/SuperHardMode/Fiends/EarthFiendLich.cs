@@ -12,8 +12,9 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Projectiles.Enemy.Triad;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Projectiles.Enemy.Triad;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {
@@ -119,7 +120,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                         {
                             Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 10);
                             projVector += Main.rand.NextVector2Circular(4, 4);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), ichorDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<IchorFragment>(), ichorDamage, 0f, Main.myPlayer);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         ProjectileTimer = 1f;
@@ -144,7 +145,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                         {
                             Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 11);
                             projVector += Main.rand.NextVector2Circular(5, 5);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.Triad.IchorFragment>(), ichorDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<IchorFragment>(), ichorDamage, 0f, Main.myPlayer);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         ProjectileTimer = 1f;
@@ -252,7 +253,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     NPC.velocity = Vector2.Zero;
 
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                        ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
 
                     if (NPC.life > NPC.lifeMax * 0.60f)
                     {
@@ -601,7 +602,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
             }
         }
     }

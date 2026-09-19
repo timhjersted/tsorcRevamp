@@ -8,8 +8,8 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles;
-using tsorcRevamp.Projectiles.Summon.Runeterra.Dragons;
+using tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles;
+using tsorcRevamp.Content.Projectiles.Summon.Runeterra.Dragons;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra
 {

@@ -954,6 +954,41 @@ namespace SwingPreview
             // The mod's swing space differs by exactly -PI/2, then mirrors with facing.
             float compositeArmRotation = (rotation - MathHelper.PiOver2) * direction;
 
+            // Dual wield (port of PuppetNPC.TickHandPoses): each hand's blend toward the live swing moves 1/4 per
+            // tick from the previous frame, and snaps to 1 for a hand that is swinging in an attack frame.
+            // Harmless for single-weapon puppets — the renderer only reads it when the art has an off-hand.
+            const float handBlendStep = 1f / 4f;
+            ComboHand swingHand = SwingHandFor(spec, phase, stepIndex);
+            float previousFrontBlend = 1f;
+            float previousBackBlend = 0f;
+            if (poses.Count > 0)
+            {
+                previousFrontBlend = poses[poses.Count - 1].FrontSwingBlend;
+                previousBackBlend = poses[poses.Count - 1].BackSwingBlend;
+            }
+
+            float frontTarget = 1f;
+            float backTarget = 0f;
+            if (swingHand == ComboHand.Back)
+            {
+                frontTarget = 0f;
+            }
+            if (swingHand != ComboHand.Front)
+            {
+                backTarget = 1f;
+            }
+
+            float frontBlend = MoveToward(previousFrontBlend, frontTarget, handBlendStep);
+            float backBlend = MoveToward(previousBackBlend, backTarget, handBlendStep);
+            if (phase == PhaseAttack && frontTarget > 0f)
+            {
+                frontBlend = 1f;
+            }
+            if (phase == PhaseAttack && backTarget > 0f)
+            {
+                backBlend = 1f;
+            }
+
             // Airborne uses body row 5, which is also where vanilla suppresses the shoulder caps
             // (CreateCompositeData case 5) unless the armour opts into showsShouldersWhileJumping.
             int bodyRow = 5;
@@ -977,7 +1012,39 @@ namespace SwingPreview
                 StepCount = stepCount,
                 Motion = motion.ToString(),
                 WeaponHidden = weaponHidden,
+                FrontSwingBlend = frontBlend,
+                BackSwingBlend = backBlend,
             });
+        }
+
+        private static float MoveToward(float current, float target, float maxStep)
+        {
+            if (current < target)
+            {
+                return Math.Min(target, current + maxStep);
+            }
+            return Math.Max(target, current - maxStep);
+        }
+
+        /// <summary>Port of PuppetNPC.ActiveComboSwingHand: the current step's hand, or the NEXT step's during
+        /// an inter-step pause. Front for single-step V2 clips (they carry no hand).</summary>
+        private static ComboHand SwingHandFor(SwingSpec spec, string phase, int stepIndex)
+        {
+            if (spec.Steps == null || spec.V2Clip != null)
+            {
+                return ComboHand.Front;
+            }
+
+            int index = stepIndex;
+            if (phase == PhasePause && index + 1 < spec.Steps.Length)
+            {
+                index++;
+            }
+            if (index < 0 || index >= spec.Steps.Length)
+            {
+                return ComboHand.Front;
+            }
+            return spec.Steps[index].Hand;
         }
 
         /// <summary>Port of PuppetNPC.LogicalSwingWindup - settle from the carry pose toward the

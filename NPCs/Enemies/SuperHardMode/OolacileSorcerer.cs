@@ -10,8 +10,9 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Projectiles.Enemy.OolacileSorcerer;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -290,7 +291,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int type = ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkOrb>();//44;//0x37; //14;
+                        int type = ModContent.ProjectileType<OolacileDarkOrb>();//44;//0x37; //14;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, darkOrbDamage, 0f, Main.myPlayer);
@@ -319,7 +320,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int type = ModContent.ProjectileType<Projectiles.Enemy.OolacileSeeker>();//44;//0x37; //14;
+                        int type = ModContent.ProjectileType<OolacileSeeker>();//44;//0x37; //14;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, seekerDamage, 0f, Main.myPlayer);

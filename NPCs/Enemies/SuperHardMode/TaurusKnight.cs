@@ -7,6 +7,8 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -42,7 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.TaurusKnightBanner>();
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 40; // Phase 2: SmartFighter4AI movement
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
-            UsefulFunctions.AddAttack(NPC, 136, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 14, SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 136, ModContent.ProjectileType<EarthTrident>(), tridentDamage, 14, SoundID.Item17);
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
@@ -157,7 +159,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.OrangeRed));
                     }
                 }
 
@@ -170,14 +172,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), Main.player[NPC.target].position.X - 200 + Main.rand.Next(500), Main.player[NPC.target].position.Y - 400f, (float)(-50 + Main.rand.Next(100)) / 5, 4.1f, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), crystalFireDamage, 2f, Main.myPlayer); //was 8.9f near 10, tried Main.rand.Next(2, 5)
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), Main.player[NPC.target].position.X - 200 + Main.rand.Next(500), Main.player[NPC.target].position.Y - 400f, (float)(-50 + Main.rand.Next(100)) / 5, 4.1f, ModContent.ProjectileType<PoisonCrystalFire>(), crystalFireDamage, 2f, Main.myPlayer); //was 8.9f near 10, tried Main.rand.Next(2, 5)
                             }
                         }
                     else
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-500, 500), NPC.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), disrupterDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-500, 500), NPC.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<HypnoticDisrupter>(), disrupterDamage, 0f, Main.myPlayer);
                         }
                     }
                     fireBreathTimer = 0;
@@ -222,7 +224,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
                             breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f); if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), breathDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<FireBreath>(), breathDamage, 0f, Main.myPlayer);
                             }
                             NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
                         }

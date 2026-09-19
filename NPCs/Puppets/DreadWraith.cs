@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 
@@ -253,13 +254,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     _emberTrailTimer = EmberTrailInterval;
 
-                    float groundY = Projectiles.Enemy.Weapons.PuppetGroundDustWave.FindGroundY(NPC.Center.X, NPC.Bottom.Y);
+                    float groundY = PuppetGroundDustWave.FindGroundY(NPC.Center.X, NPC.Bottom.Y);
 
                     Projectile.NewProjectile(
                         NPC.GetSource_FromThis(),
                         new Vector2(NPC.Center.X, groundY - 2f),
                         Vector2.Zero,
-                        ModContent.ProjectileType<Projectiles.Enemy.Weapons.DreadWraithEmberTrail>(),
+                        ModContent.ProjectileType<DreadWraithEmberTrail>(),
                         MagicDamage,
                         0f,
                         Main.myPlayer);
@@ -492,7 +493,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.GetSource_FromThis(),
                 origin,
                 Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.DreadWraithMaceBall>(),
+                ModContent.ProjectileType<DreadWraithMaceBall>(),
                 damage,
                 4f,
                 Main.myPlayer,
@@ -520,7 +521,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>True while this wraith already has a mace head out on the chain.</summary>
         private bool HasActiveMaceBall()
         {
-            int ballType = ModContent.ProjectileType<Projectiles.Enemy.Weapons.DreadWraithMaceBall>();
+            int ballType = ModContent.ProjectileType<DreadWraithMaceBall>();
 
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
@@ -847,12 +848,12 @@ namespace tsorcRevamp.NPCs.Puppets
                 marchDirection = NPC.direction;
             }
 
-            int pillarType = ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetFirefallPillar>();
+            int pillarType = ModContent.ProjectileType<PuppetFirefallPillar>();
 
             for (int i = 0; i < EruptionCount; i++)
             {
                 float eruptionX = NPC.Center.X + marchDirection * EruptionSpacing * (i + 1);
-                float groundY = Projectiles.Enemy.Weapons.PuppetGroundDustWave.FindGroundY(eruptionX, NPC.Bottom.Y);
+                float groundY = PuppetGroundDustWave.FindGroundY(eruptionX, NPC.Bottom.Y);
 
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(),
@@ -864,7 +865,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     Main.myPlayer,
                     EruptionBaseDelay + i * EruptionStagger,
                     0f,
-                    Projectiles.Enemy.Weapons.PuppetFirefallPillar.DreadWraithFireVisualStyle);
+                    PuppetFirefallPillar.DreadWraithFireVisualStyle);
                     // Explicit opt-in: Owl Father retains the shared projectile's legacy visuals.
             }
 
@@ -1081,7 +1082,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     NPC.GetSource_FromThis(),
                     origin + spawnJitter,
                     velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.DreadWraithSkull>(),
+                    ModContent.ProjectileType<DreadWraithSkull>(),
                     MagicDamage,
                     3f,
                     Main.myPlayer,

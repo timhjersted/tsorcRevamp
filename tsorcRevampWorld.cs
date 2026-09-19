@@ -19,6 +19,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.Utilities;
@@ -401,7 +402,7 @@ namespace tsorcRevamp
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile projectile = Main.projectile[i];
-                if (!projectile.active || projectile.type != ModContent.ProjectileType<Projectiles.SoulDrop>())
+                if (!projectile.active || projectile.type != ModContent.ProjectileType<SoulDrop>())
                 {
                     continue;
                 }
@@ -1899,8 +1900,8 @@ namespace tsorcRevamp
                     continue;
                 }
 
-                int soulDropIndex = Projectile.NewProjectile(new EntitySource_Misc("DroppedDeathSoulWorldLoad"), PendingDroppedSoulPositions[i], Vector2.Zero, ModContent.ProjectileType<Projectiles.SoulDrop>(), 0, 0, ownerIndex, PendingDroppedSoulStacks[i], ownerIndex);
-                int bloodsignIndex = Projectile.NewProjectile(new EntitySource_Misc("DroppedDeathSoulWorldLoad"), PendingDroppedSoulPositions[i], Vector2.Zero, ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, ownerIndex);
+                int soulDropIndex = Projectile.NewProjectile(new EntitySource_Misc("DroppedDeathSoulWorldLoad"), PendingDroppedSoulPositions[i], Vector2.Zero, ModContent.ProjectileType<SoulDrop>(), 0, 0, ownerIndex, PendingDroppedSoulStacks[i], ownerIndex);
+                int bloodsignIndex = Projectile.NewProjectile(new EntitySource_Misc("DroppedDeathSoulWorldLoad"), PendingDroppedSoulPositions[i], Vector2.Zero, ModContent.ProjectileType<Bloodsign>(), 0, 0, ownerIndex);
 
                 if (Main.netMode == NetmodeID.Server)
                 {

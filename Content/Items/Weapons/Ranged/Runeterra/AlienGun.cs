@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Ranged.Runeterra;
+using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
 {

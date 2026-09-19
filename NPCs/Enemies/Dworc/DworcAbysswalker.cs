@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.NPCs.Enemies.Dworc
@@ -41,11 +42,11 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AbysswalkerBanner>();
             // "Abyss Poison Strike" — fast aimed poison bolt (green telegraph)
-            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, SoundID.Item20, telegraphColor: Color.GreenYellow);
+            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, SoundID.Item20, telegraphColor: Color.GreenYellow);
             // "Abyss Storm" — heavy lobbed storm ball (blue telegraph)  [magic-ring candidate: set commitFraction: 0.5f if this is the shrinking ring]
-            UsefulFunctions.AddAttack(NPC, 400, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, SoundID.Item100, weight: 0.3f, telegraphColor: Color.Blue);
+            UsefulFunctions.AddAttack(NPC, 400, ModContent.ProjectileType<EnemySpellAbyssStormBall>(), stormBallDamage, 0, SoundID.Item100, weight: 0.3f, telegraphColor: Color.Blue);
             // "Demon Spirit" — summons a homing spirit (purple telegraph)
-            UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 35, 0, SoundID.Item100, weight: 0.2f, telegraphColor: Color.Purple);
+            UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Content.Projectiles.Enemy.DemonSpirit>(), 35, 0, SoundID.Item100, weight: 0.2f, telegraphColor: Color.Purple);
 
             // Step 6 caster lever: remember last-known position before patrolling.
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;

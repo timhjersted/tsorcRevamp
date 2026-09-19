@@ -4,7 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Melee.Broadswords;
+using tsorcRevamp.Content.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 {

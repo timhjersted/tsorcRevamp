@@ -5,7 +5,12 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles; // tsorcGlobalProjectile.SetDefenseTraits
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.VFX;
+
+// tsorcGlobalProjectile.SetDefenseTraits
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -787,7 +792,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 spawnPosition.X += NPC.width;
             }
             Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity,
-                ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer,
+                ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer,
                 UsefulFunctions.ColorToFloat(color));
         }
 
@@ -901,7 +906,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity,
-                        ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(),
+                        ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(),
                         redMagicDamage, 0f, Main.myPlayer);
                 }
             }
@@ -957,7 +962,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.EnemyMoonfuryBomb>(),
+                    ModContent.ProjectileType<EnemyMoonfuryBomb>(),
                     redKnightsSpearDamage, 0f, Main.myPlayer);
             }
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
@@ -1049,13 +1054,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 skullVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, aim, 2f, fallback: true)
                     + Main.rand.NextVector2Circular(1, 5);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, skullVelocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(),
+                    ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(),
                     redKnightsGreatDamage, 0f, Main.myPlayer, 1f);
 
                 Vector2 breathVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, aim, 2f, fallback: true)
                     + Main.rand.NextVector2Circular(-5, 5);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVelocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(),
+                    ModContent.ProjectileType<EnemyBlackCursedBreath>(),
                     redKnightsGreatDamage, 0f, Main.myPlayer, 2f);
             }
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center);
@@ -1107,7 +1112,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // Arrived. Cash the ambush in for an immediate melee punish if one is available at this range;
             // otherwise the reposition alone was the payoff.
             NPC.TargetClosest(true);
-            TryQueueComboFollowup(globalNPC, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>());
+            TryQueueComboFollowup(globalNPC, ModContent.ProjectileType<BlackThrowingSpear>());
             EndAttack(cooldown: globalNPC.HasPendingCombatComboMove ? 0 : OpenerCooldownTicks);
         }
 
@@ -1149,7 +1154,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
             var cloud = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Bottom, Vector2.Zero,
-                ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0f, Main.myPlayer,
+                ModContent.ProjectileType<PlagueTeleportCloud>(), 0, 0f, Main.myPlayer,
                 1f, PlagueTrailRadius);
             cloud.timeLeft = PlagueTrailLifetime;
             NPC.netUpdate = true;
@@ -1443,7 +1448,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            int columnType = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightPlagueColumn>();
+            int columnType = ModContent.ProjectileType<BlackKnightPlagueColumn>();
 
             // 1) Under the player, on a short floor warning so it is still dodgeable.
             SpawnPlagueColumn(columnType, player.Bottom.X, SealFirstTelegraphTicks);
@@ -1470,10 +1475,10 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             var column = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
-                new Vector2(surface.X, surface.Y - Projectiles.Enemy.BlackKnightPlagueColumn.ColumnHeight * 0.5f),
+                new Vector2(surface.X, surface.Y - BlackKnightPlagueColumn.ColumnHeight * 0.5f),
                 Vector2.Zero, columnType, 0, 0f, Main.myPlayer,
                 telegraphTicks, redMagicDamage);
-            column.timeLeft = Projectiles.Enemy.BlackKnightPlagueColumn.ActiveTicks;
+            column.timeLeft = BlackKnightPlagueColumn.ActiveTicks;
         }
 
         /// <summary>Casting motes streaming off the staff head while the seals are being drawn.</summary>
@@ -1501,7 +1506,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
             int index = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(direction, 0f),
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.GreatBlackKnightSpearHitbox>(),
+                ModContent.ProjectileType<GreatBlackKnightSpearHitbox>(),
                 redKnightsGreatDamage, 4f, Main.myPlayer, reach, height);
             tsorcGlobalProjectile.SetDefenseTraits(index, globalNPC.ActiveAttackDefenseTraits);
         }

@@ -18,6 +18,8 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Placeable.Relics;
 using tsorcRevamp.Content.Items.Placeable.Trophies;
 using tsorcRevamp.Content.Items.Vanity;
+using tsorcRevamp.Content.Projectiles.Enemy.Triad;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -112,7 +114,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
                 }
                 int? retID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<RetinazerV2>());
                 if (retID.HasValue)
@@ -124,7 +126,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.npc[retID.Value].Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.npc[retID.Value].Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
                     }
                 }
                 int? spazID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<SpazmatismV2>());
@@ -137,7 +139,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.npc[spazID.Value].Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.npc[spazID.Value].Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
                     }
                 }
             }
@@ -271,14 +273,14 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (finalStandTimer == 0 && finalStandLevel == 0)
                 {
                     UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Cataluminance.Desperation"), Color.Cyan);
-                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>());
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<CataluminanceTrail>());
                 }
 
                 if (finalStandLevel == 0 && !NPC.AnyNPCs(ModContent.NPCType<RetinazerV2>()))
                 {
-                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.IncineratingGaze>());
-                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.MaliciousGaze>());
-                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.BlindingGaze>());
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<IncineratingGaze>());
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<MaliciousGaze>());
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<BlindingGaze>());
                     finalStandDelay = 0;
                     finalStandTimer = 0;
                     finalStandLevel = 1;
@@ -348,7 +350,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     baseRadius = .4f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
                     }
                 }
             }
@@ -360,7 +362,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     baseRadius = .3f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0);
                     }
                 }
             }
@@ -368,7 +370,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //Clear all homing stars when attack is over
             if (MoveTimer == 899)
             {
-                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>());
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<HomingStar>());
             }
         }
 
@@ -383,7 +385,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (MoveTimer == 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
             }
             float homingStrength = 0.17f;
             if (PhaseTwo)
@@ -430,11 +432,11 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         //Stars fired upward for effect
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -60), new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 5);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -60), new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 5);
 
                         //Stars rain down
                         Vector2 spawnPos = target.Center + new Vector2(Main.rand.NextFloat(-2000, 2000), -700);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 4);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 4);
                     }
                 }
             }
@@ -445,11 +447,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     //Stars fired upward for effect
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -60), new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 3);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -60), new Vector2(Main.rand.NextFloat(-20, 20), -37).RotatedBy(angle), ModContent.ProjectileType<HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 3);
 
                     //Stars rain down
                     Vector2 spawnPos = target.Center + new Vector2(Main.rand.NextFloat(-2500, 2500), -700);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
                 }
             }
         }
@@ -497,7 +499,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.BlindingGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 2);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<BlindingGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 2);
                     }
                 }
 
@@ -517,7 +519,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (finalStandTimer == 61 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 2, NPC.whoAmI);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 2, NPC.whoAmI);
             }
 
             UsefulFunctions.SmoothHoming(NPC, target.Center, 0.2f, 20, bufferZone: false);
@@ -557,7 +559,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (!clearedTrails)
             {
                 fireRotationRotation = 0;
-                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>());
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<HomingStar>());
 
                 clearedTrails = true;
             }
@@ -583,7 +585,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 5);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, Vector2.Zero, ModContent.ProjectileType<CataluminanceTrail>(), TrailDamage, 0, Main.myPlayer, 5);
                 }
             }
 
@@ -616,7 +618,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 10);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 10);
                     }
                 }
                 if (finalStandTimer % 20 == 0)
@@ -626,7 +628,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         for (int i = 0; i < 4; i++)
                         {
                             Vector2 firingVector = new Vector2(6, 0).RotatedBy(fireRotation + (MathHelper.PiOver2 * i));
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 6);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 6);
                         }
                     }
                     baseFade = 0f;
@@ -639,7 +641,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         for (int i = 0; i < 4; i++)
                         {
                             Vector2 firingVector = new Vector2(6, 0).RotatedBy(-fireRotation + (MathHelper.PiOver2 * i));
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 7);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 7);
                         }
                     }
                     baseFade = 0f;
@@ -654,16 +656,16 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 firingVector = new Vector2(6, 0).RotatedBy(MathHelper.PiOver2 * Math.Sin(fireRotation));
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 8);
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 9);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 8);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 9);
                         firingVector.X *= -1;
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 8);
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 9);
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, -firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 8);
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, -firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 9);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 8);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 9);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, -firingVector, ModContent.ProjectileType<HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 8);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, -firingVector, ModContent.ProjectileType<HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 9);
                         firingVector.Y *= -1;
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 8);
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 9);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 8);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), crystalPoint, firingVector, ModContent.ProjectileType<HomingStar>(), FinalStandStarDamage, 0, Main.myPlayer, 9);
                     }
                     baseFade = 0f;
                     fireRotation += 0.5f;
@@ -710,8 +712,8 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(NPC.Hitbox), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.HotPink));
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(NPC.Hitbox), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(NPC.Hitbox), Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.HotPink));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(NPC.Hitbox), Vector2.Zero, ModContent.ProjectileType<LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Cyan));
                 }
                 lightCooldown = lightTimer;
             }
@@ -723,10 +725,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     Filters.Scene["tsorcRevamp:CatShockwave"].Deactivate();
                 }
-                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.LightRay>());
+                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<LightRay>());
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.HotPink));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.HotPink));
                 }
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 

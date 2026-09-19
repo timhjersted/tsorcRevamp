@@ -12,6 +12,8 @@ using tsorcRevamp.Content.Items.Armor.Magic;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.SpawnHelper;
 
@@ -239,11 +241,11 @@ namespace tsorcRevamp.NPCs.Enemies
                             {
                                 if (!grounded)
                                 {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -60), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -60), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                                 }
                                 else
                                 {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -20), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                                 }
                             }
 
@@ -251,11 +253,11 @@ namespace tsorcRevamp.NPCs.Enemies
                             {
                                 if (!grounded)
                                 {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -60), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -60), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                                 }
                                 else
                                 {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -20), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                                 }
                             }
                         } 
@@ -332,7 +334,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     // Red telegraph flash on commit (the wind-up-hit below is hyper-armored, so only a stagger stops it).
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
                     }
                 }
 
@@ -383,12 +385,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (NPC.direction == 1)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowGreaterSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), hollowGreaterSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
 
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowGreaterSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<MediumWeaponSlash>(), hollowGreaterSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                         }                         
                     }

@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Potions;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Content.Projectiles;
 
 namespace tsorcRevamp.Content.Items.Weapons.Classless
 {

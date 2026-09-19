@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -157,7 +158,7 @@ namespace tsorcRevamp.NPCs.Enemies
                                 {
                                     Vector2 breathVel = UsefulFunctions.Aim(mouthPos, player.Center, 8f);
                                     breathVel += Main.rand.NextVector2Circular(-1.2f, 1.2f);
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), mouthPos.X, mouthPos.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), 25, 0f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), mouthPos.X, mouthPos.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<FireBreath>(), 25, 0f, Main.myPlayer);
                                 }
                                 SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center);
                             }
@@ -179,32 +180,32 @@ namespace tsorcRevamp.NPCs.Enemies
                                     float offsetX = Main.rand.Next(-180, 181);
                                     Vector2 spawnPos = new Vector2(player.Center.X + offsetX, player.Center.Y - 600f);
                                     Vector2 velocity = new Vector2(Main.rand.NextFloat(-1.5f, 1.5f), 9f);
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos.X, spawnPos.Y, velocity.X, velocity.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlazeBall>(), 45, 0f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos.X, spawnPos.Y, velocity.X, velocity.Y, ModContent.ProjectileType<EnemySpellBlazeBall>(), 45, 0f, Main.myPlayer);
                                 }
                                 SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.6f }, NPC.Center);
                             }
                             else if (attackState == 3) // Great Fireball
                             {
                                 Vector2 velocity = UsefulFunctions.Aim(mouthPos, player.Center, 5.5f);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), mouthPos.X, mouthPos.Y, velocity.X, velocity.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), 55, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), mouthPos.X, mouthPos.Y, velocity.X, velocity.Y, ModContent.ProjectileType<EnemySpellGreatFireballBall>(), 55, 0f, Main.myPlayer);
                                 SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, Pitch = -0.3f }, NPC.Center);
                             }
                             else if (attackState == 4) // Lightning Storm
                             {
                                 Vector2 velocity = UsefulFunctions.Aim(mouthPos, player.Center, 11f);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), mouthPos.X, mouthPos.Y, velocity.X, velocity.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), 60, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), mouthPos.X, mouthPos.Y, velocity.X, velocity.Y, ModContent.ProjectileType<EnemySpellLightning3Ball>(), 60, 0f, Main.myPlayer);
                                 SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.8f }, NPC.Center);
                             }
                             else if (attackState == 5) // Sudden Death Ball
                             {
                                 Vector2 velocity = UsefulFunctions.Aim(mouthPos, player.Center, 7.5f);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), mouthPos.X, mouthPos.Y, velocity.X, velocity.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), 75, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), mouthPos.X, mouthPos.Y, velocity.X, velocity.Y, ModContent.ProjectileType<EnemySpellSuddenDeathBall>(), 75, 0f, Main.myPlayer);
                                 SoundEngine.PlaySound(SoundID.NPCDeath9 with { Volume = 0.8f }, NPC.Center);
                             }
                             else if (attackState == 6) // Toxic Gas Nova (Poison cloud)
                             {
                                 Vector2 velocity = UsefulFunctions.Aim(mouthPos, player.Center, 7f);
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), mouthPos.X, mouthPos.Y, velocity.X, velocity.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 40, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), mouthPos.X, mouthPos.Y, velocity.X, velocity.Y, ModContent.ProjectileType<EnemySpellPoisonStormBall>(), 40, 0f, Main.myPlayer);
                                 SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.8f }, NPC.Center);
                             }
                         }

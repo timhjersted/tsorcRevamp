@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Weapons.Throwing;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
@@ -56,7 +57,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
             // "Ephemeral Axe Throw" — commitFraction 0.5: first half of the tell is stagger-cancellable (by magic, per
             // the ghost poise), second half is committed/hyperarmor.
-            int axeProjectileType = ModContent.ProjectileType<Projectiles.Enemy.EnemyEphemeralThrowingAxeProj>();
+            int axeProjectileType = ModContent.ProjectileType<EnemyEphemeralThrowingAxeProj>();
             UsefulFunctions.AddAttack(NPC, 300, axeProjectileType, warriorDamage, 8, SoundID.Item17,
                 telegraphColor: Color.Orange, stopBeforeFiring: false, needsLineOfSight: true,
                 telegraphTime: 45, commitFraction: 0.5f, lockAimAtTelegraph: true);

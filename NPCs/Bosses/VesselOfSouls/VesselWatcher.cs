@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls;
 
 namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 {
@@ -22,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
     ///</summary>
     class VesselWatcher : ModNPC
     {
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/VesselOfSouls/StrangeEye";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(StrangeEye));
 
         // If the gaze looks the wrong way, bump this (the sprite's frame-0 facing may differ).
         const int GazeFrameOffset = 0;
@@ -200,7 +201,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         {
             Vector2 vel = (player.Center - NPC.Center).SafeNormalize(Vector2.UnitY) * speed;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
-                ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.PurpleSkull>(), SkullDamage, 1f, Main.myPlayer, 0f);
+                ModContent.ProjectileType<PurpleSkull>(), SkullDamage, 1f, Main.myPlayer, 0f);
             NPC.netUpdate = true;
         }
 
@@ -400,7 +401,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.VesselSoulRuptureVFX>(),
+                    ModContent.ProjectileType<VesselSoulRuptureVFX>(),
                     0, 0f, Main.myPlayer, 105f, 1f, 20f);
                 int ringCount = 12;
                 for (int i = 0; i < ringCount; i++)
@@ -408,7 +409,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     // Timed-out Watcher death burst: 25% slower than before (6-8.5 -> 4.5-6.375).
                     Vector2 vel = (MathHelper.TwoPi * i / ringCount).ToRotationVector2() * Main.rand.NextFloat(4.5f, 6.375f);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
-                        ModContent.ProjectileType<Projectiles.Enemy.VesselOfSouls.PurpleSkull>(), 15, 2f, Main.myPlayer, 0f);
+                        ModContent.ProjectileType<PurpleSkull>(), 15, 2f, Main.myPlayer, 0f);
                 }
             }
             NPC.active = false;
@@ -467,7 +468,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 ? Main.player[NPC.target]
                 : Main.LocalPlayer;
             Vector2 aim = target != null && target.active ? target.Center : NPC.Center + Vector2.UnitY * 80f;
-            Projectiles.Enemy.VesselOfSouls.VesselVFX.DrawWatcherGaze(
+            VesselVFX.DrawWatcherGaze(
                 NPC.Center, aim, chargeProgress, detonating);
 
             Texture2D tex = TextureAssets.Npc[NPC.type].Value;

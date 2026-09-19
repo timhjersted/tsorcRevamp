@@ -166,4 +166,27 @@ namespace tsorcRevamp.NPCs.Puppets
             puppet.DrawWeaponToLayer(ref drawInfo);
         }
     }
+
+    /// <summary>Dual-wield back-hand weapon. Vanilla draws the back composite arm inside the Skin layer and the
+    /// torso after it, so sitting right after Skin puts the weapon over the back hand but behind the body.</summary>
+    [Autoload(Side = ModSide.Client)]
+    public class PuppetBackWeaponDrawLayer : PlayerDrawLayer
+    {
+        public override Position GetDefaultPosition()
+            => new AfterParent(PlayerDrawLayers.Skin);
+
+        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+            => PuppetNPC.DrawingPuppetFor != null;
+
+        protected override void Draw(ref PlayerDrawSet drawInfo)
+        {
+            PuppetNPC puppet = PuppetNPC.DrawingPuppetFor;
+            if (puppet == null)
+            {
+                return;
+            }
+
+            puppet.DrawBackHandWeaponToLayer(ref drawInfo);
+        }
+    }
 }

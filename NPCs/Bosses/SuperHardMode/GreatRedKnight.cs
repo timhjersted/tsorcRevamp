@@ -11,6 +11,8 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -60,7 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         /// <summary>Ticks from lethal damage to the knight's ACTUAL death — which is the tick the
         /// nova fires, not the end of its fade.</summary>
         public const int DominionDeathSequenceTicks = DominionDeathReplantTicks
-            + Projectiles.Enemy.Weapons.CrimsonDominionController.SealFillTicks;
+            + CrimsonDominionController.SealFillTicks;
 
         public bool InDominionDeathSequence => dominionDeathTimer >= 0;
 
@@ -372,7 +374,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_Death(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.CrimsonDominionController>(),
+                    ModContent.ProjectileType<CrimsonDominionController>(),
                     redKnightsGreatDamage, 0f, Main.myPlayer,
                     2f, Main.rand.NextFloat(MathHelper.Pi / 12f), NPC.whoAmI);
                 Terraria.Audio.SoundEngine.PlaySound(
@@ -503,18 +505,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         // The Royal Standard's planted black-and-red fire sits behind the boss while
                         // the three Furnace Herald rings build and release.
-                        Projectiles.Enemy.RedKnightVFX.DrawStandardCharge(
+                        RedKnightVFX.DrawStandardCharge(
                             NPC.Bottom - new Vector2(0f, NPC.gfxOffY),
                             specialAttacks.TelegraphProgress,
-                            Projectiles.Enemy.Weapons.KnightStandardMode.GreatCenter);
+                            KnightStandardMode.GreatCenter);
                     }
-                    Projectiles.Enemy.RedKnightVFX.DrawHerald(NPC.Center,
+                    RedKnightVFX.DrawHerald(NPC.Center,
                         specialAttacks.TelegraphProgress,
                         specialAttacks.Attack == KnightSpecialAttack.StormHerald);
                 }
                 else if (specialAttacks.IsSpectralHandBarrage)
                 {
-                    Projectiles.Enemy.RedKnightVFX.DrawUltrakillSeal(NPC.Center,
+                    RedKnightVFX.DrawUltrakillSeal(NPC.Center,
                         specialAttacks.SpectralGatherProgress);
                 }
                 else if (DominionEngulfOpacity > 0f)
@@ -528,7 +530,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     // Gating on the opacity rather than on DominionEngaged also matters for the
                     // branch BELOW: an engaged-based gate swallowed the Ultrakill seal for the
                     // entire second half of the fight, because this else-if always won.
-                    Projectiles.Enemy.RedKnightVFX.DrawDominionEngulf(
+                    RedKnightVFX.DrawDominionEngulf(
                         NPC.Bottom - new Vector2(0f, NPC.gfxOffY), NPC.scale,
                         DominionEngulfOpacity * 0.95f, front: false);
                 }
@@ -693,12 +695,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (spearTexture == null)
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyAncientBloodLanceProj");
+                spearTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyAncientBloodLanceProj)),
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
             if (bombTexture == null)
             {
-                bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyFirebomb");
+                bombTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyFirebomb)),
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
             if (armOverlayTexture == null)
@@ -714,7 +718,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if (DominionEngulfOpacity > 0f)
                 {
-                    Projectiles.Enemy.RedKnightVFX.DrawDominionEngulf(
+                    RedKnightVFX.DrawDominionEngulf(
                         NPC.Bottom - new Vector2(0f, NPC.gfxOffY), NPC.scale,
                         DominionEngulfOpacity * 0.42f, front: true);
                 }
@@ -777,7 +781,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     // Was RedKnightVFX.DrawSpearWake (the crimson filament wake) — retired in favour
                     // of the generic grey displaced-air wake the Black Knights already use. The old
                     // `empowered: true` is folded in as a larger, slightly stronger quad.
-                    Projectiles.Enemy.EnemyVFX.DrawBlackKnightSpearWake(
+                    EnemyVFX.DrawBlackKnightSpearWake(
                         handWorld + forward * (gripSlide * 0.5f), forward.ToRotation(),
                         new Vector2(86f, 20f), 0.66f);
                 }
@@ -791,7 +795,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Vector2 handWorld = CurrentHandWorld(specialAttacks.Direction);
                 float rotation = new Vector2(specialAttacks.Direction, 0f).ToRotation() + MathHelper.PiOver2;
                 Vector2 fusePoint = handWorld + new Vector2(0f, -15f).RotatedBy(rotation);
-                Projectiles.Enemy.RedKnightVFX.DrawBombFuse(fusePoint,
+                RedKnightVFX.DrawBombFuse(fusePoint,
                     specialAttacks.TelegraphProgress, planted: false);
                 spriteBatch.Draw(bombTexture, handWorld - Main.screenPosition, null, drawColor,
                     rotation, BombGripOrigin, 1f, SpriteEffects.None, 0f);
@@ -804,12 +808,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Vector2 magicBallWorld = CurrentMagicBallWorld();
                 if (specialAttacks.Attack == KnightSpecialAttack.CinderRain)
                 {
-                    Projectiles.Enemy.RedKnightVFX.DrawCinderMotes(magicBallWorld,
+                    RedKnightVFX.DrawCinderMotes(magicBallWorld,
                         specialAttacks.TelegraphProgress, 20f);
                 }
                 else
                 {
-                    Projectiles.Enemy.RedKnightVFX.DrawToxicMotes(magicBallWorld, 3,
+                    RedKnightVFX.DrawToxicMotes(magicBallWorld, 3,
                         specialAttacks.TelegraphProgress, 20f);
                 }
                 DrawArmOverlay(spriteBatch, drawColor, specialAttacks.Direction);

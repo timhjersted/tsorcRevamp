@@ -1,7 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Ranged.Ammo;
+using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Items.Ammo
 {

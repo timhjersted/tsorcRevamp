@@ -11,7 +11,7 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Utilities;

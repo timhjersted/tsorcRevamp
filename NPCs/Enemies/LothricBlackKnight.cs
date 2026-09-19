@@ -12,6 +12,8 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -164,13 +166,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30, false);
             }
 
-            var projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>();
-            var projStab = ModContent.ProjectileType<Projectiles.Enemy.Spearhead>();
+            var projSlash = ModContent.ProjectileType<MediumWeaponSlash>();
+            var projStab = ModContent.ProjectileType<Spearhead>();
 
             if (NPC.life < NPC.lifeMax / 2)
             {
-                projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlashCrimson>();
-                projStab = ModContent.ProjectileType<Projectiles.Enemy.SpearheadCrimson>();
+                projSlash = ModContent.ProjectileType<MediumWeaponSlashCrimson>();
+                projStab = ModContent.ProjectileType<SpearheadCrimson>();
                 if (!hasEnraged) enrage = true;
             }
 
@@ -321,7 +323,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     jumpSlashing = true;
                     shielding = false;
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Red));
                 }
 
                 if (jumpSlashing)
@@ -390,7 +392,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     stabbing = true;
                     shielding = false;
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Yellow));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Yellow));
                 }
 
                 if (stabbing)

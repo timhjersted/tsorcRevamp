@@ -379,6 +379,7 @@ Mods: {
 				     until you're bald.
 				'''
 			WallDeathReason: " was consumed by The Wall of Flesh"
+			MadnessDeathReason: "{0} succumbed to madness"
 			BotC1: Bearer of the Curse mode can be disabled at any time...
 			BotC2: Bearer of the Curse mode is intended for experienced players
 			BotC3: Try reading the Darksign's description
@@ -9088,6 +9089,31 @@ Mods: {
 				Tooltip: ""
 				DisplayName: Purple Gem Staff
 			}
+
+			OolacileCultistStaff: {
+				Tooltip: ""
+				DisplayName: Oolacile Cultist Staff
+			}
+
+			EnemyBeastClaw: {
+				Tooltip: ""
+				DisplayName: Beast Claw
+			}
+
+			EnemyOccultistStaff: {
+				Tooltip: ""
+				DisplayName: Grand Oolacile Staff
+			}
+
+			EnemyOccultistAxe: {
+				Tooltip: ""
+				DisplayName: Grand Oolacile Axe
+			}
+
+			EnemyDestinedDeathFlask: {
+				DisplayName: Enemy Destined Death Flask
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -9208,6 +9234,20 @@ Mods: {
 			CurseBuildup: {
 				DisplayName: Curse Buildup
 				Description: "{$Buffs.Curse.Buildup}"
+			}
+
+			MadnessBuildup: {
+				DisplayName: Madness Buildup
+				Description: At {0} buildup, take 200 damage and become staggered. Current buildup: {1}
+			}
+
+			Madness: {
+				DisplayName: Madness
+				Description:
+					'''
+					Your perception fractures into lingering afterimages
+					25% increased melee attack speed and 10x mana regeneration
+					'''
 			}
 
 			DarkInferno: {
@@ -11169,6 +11209,8 @@ Mods: {
 			OccultistDarkOrb.DisplayName: Occultist Dark Orb
 			OccultistStar.DisplayName: Occultist Star
 			OccultistStarBig.DisplayName: Occultist Star Big
+			OccultistAbyssRing.DisplayName: Abyss Ring
+			OccultistMagicRing.DisplayName: Occultist Magic Ring
 			AbyssTeleportBlast.DisplayName: Abyss Teleport Blast
 			AbyssTeleportMistLinger.DisplayName: Abyss Teleport Mist Linger
 			AbyssSlash.DisplayName: Abyss Slash
@@ -11259,6 +11301,8 @@ Mods: {
 			FirstRunePrison.DisplayName: First Rune Prison
 			CinderRainDrop.DisplayName: Cinder Rain Drop
 			KahlrunFarronDart.DisplayName: Kahlrun Farron Dart
+			OolacileFireBolt.DisplayName: Oolacile Fire Bolt
+			OolacileFirePatch.DisplayName: Oolacile Fire Patch
 			RedCourtLancePortal.DisplayName: Red Court Lance Portal
 			RedKnightAdderSpear.DisplayName: Red Knight's Adder Spear
 			RedKnightPoisonCurtainController.DisplayName: Red Knight's Poison Curtain
@@ -11294,6 +11338,17 @@ Mods: {
 			GwynEmbraceOrb.DisplayName: Gwyn Embrace Orb
 			CinderWispTelegraph.DisplayName: Cinder Wisp Telegraph
 			InvisibleNothingProj.DisplayName: Invisible Nothing Proj
+			OccultistAxeImpactField.DisplayName: Occultist Axe Impact Field
+			OccultistDestinedDeathField.DisplayName: Occultist Destined Death Field
+			OccultistDestinedDeathFlameColumn.DisplayName: Occultist Destined Death Flame Column
+			OccultistDestinedDeathFlask.DisplayName: Occultist Destined Death Flask
+			OccultistThrownAxe.DisplayName: Occultist Thrown Axe
+			OmnirsEnemySpellFire3Flame1.DisplayName: Omnirs Enemy Spell Fire3 Flame1
+			OmnirsEnemySpellFire3Flame2.DisplayName: Omnirs Enemy Spell Fire3 Flame2
+			OmnirsEnemySpellTsunami.DisplayName: Omnirs Enemy Spell Tsunami
+			OmnirsEnemySpellTsunamiReverse.DisplayName: Omnirs Enemy Spell Tsunami Reverse
+			FireFlaskProj.DisplayName: Fire Flask Proj
+			OolacileCultistDeathExplosion.DisplayName: Oolacile Cultist Death Explosion
 		}
 
 		NPCs: {
@@ -11822,6 +11877,7 @@ Mods: {
 			FallenNecromancer.DisplayName: Fallen Necromancer
 			ObsidianJellyfish.DisplayName: Obsidian Jellyfish
 			Parasprite.DisplayName: Parasprite
+			Locust.DisplayName: Locust
 			PrimeLaserProbe.DisplayName: Laser Probe
 			QuaraHydromancer.DisplayName: Quara Hydromancer
 			RedCloudHunter.DisplayName: Red Cloud Hunter
@@ -12938,6 +12994,7 @@ Mods: {
 			HomingMissile.DisplayName: Homing Missile
 			Byakhee.DisplayName: Byakhee
 			ClericOfSorrow.DisplayName: Cleric of Sorrow
+			OolacileCultist.DisplayName: Oolacile Cultist
 			Willowisp.DisplayName: Willowisp
 			GreatRedThresher.DisplayName: Great Red Thresher
 			LeonhardPhase2.DisplayName: Leonhard Phase2
@@ -12963,7 +13020,7 @@ Mods: {
 			LeonhardRemix.DisplayName: Leonhard
 			TrueDeath.DisplayName: Absolute Death
 			DarkCloudShadow.DisplayName: Dark Cloud Shadow
-			AbyssalNinjaInvader.DisplayName: Abyssal Ninja Invader
+			AbyssalNinja.DisplayName: Abyssal Ninja
 			StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
 			Blaidd.DisplayName: Blaidd
 			ShadowNinja.DisplayName: Shadow Ninja
@@ -13060,9 +13117,10 @@ Mods: {
 			LothricSpearKnightOriginal.DisplayName: Old Lothric Spear Knight
 			LothricBlackKnightOriginal.DisplayName: Old Lothric Black Knight
 			RingedKnightOriginal.DisplayName: Old Ringed Knight
-			CursedDragonInvader.DisplayName: Cursed Dragon
+			CursedDragon.DisplayName: Cursed Dragon
 			AbysmalOolacileSorcererTEST.DisplayName: Abysmal Oolacile Sorcerer T E S T
-			OwlFatherInvader.DisplayName: Owl Father Invader
+			AbysmalOolacileSorcererOriginal.DisplayName: Old Grand Occultist of Oolacile
+			OwlFather.DisplayName: Owl Father
 			SpiritOfKhaios.DisplayName: Spirit Of Khaios
 			KhaiosTransitionOrb.DisplayName: Khaios Transition Orb
 			Khaios.DisplayName: Khaios

@@ -5,7 +5,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy.Marilith;
+using tsorcRevamp.Content.Projectiles.Enemy.Marilith;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {

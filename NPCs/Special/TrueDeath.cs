@@ -6,7 +6,6 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy.Death;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
@@ -17,6 +16,7 @@ using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Content.Projectiles.Enemy.Death;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Special

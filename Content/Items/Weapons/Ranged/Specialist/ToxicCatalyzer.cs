@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Ranged;
+using tsorcRevamp.Content.Projectiles.Ranged;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
 {

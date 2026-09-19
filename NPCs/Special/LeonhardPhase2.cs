@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Special
 {
@@ -392,23 +393,23 @@ namespace tsorcRevamp.NPCs.Special
                         {
                             if (Math.Abs(NPC.velocity.X) < 4.5f) //If not moving at extreme speed, use this proj
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 18, 0f, Main.myPlayer, 10, NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<GreySlash>(), 18, 0f, Main.myPlayer, 10, NPC.whoAmI);
 
                             }
                             else if (Math.Abs(NPC.velocity.X) >= 4.5f) //If dashing, use this proj
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 22, 0f, Main.myPlayer, 10, NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<GreySlash>(), 22, 0f, Main.myPlayer, 10, NPC.whoAmI);
                             }
                         }
                         else
                         {
                             if (Math.Abs(NPC.velocity.X) < 4.5f) //If not moving at extreme speed, use this proj
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 14, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<GreySlash>(), 14, 0f, Main.myPlayer, 0, NPC.whoAmI);
                             }
                             else if (Math.Abs(NPC.velocity.X) >= 4.5f) //If dashing, use this proj
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 18, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<GreySlash>(), 18, 0f, Main.myPlayer, 0, NPC.whoAmI);
                             }
                         }
                     }
@@ -508,7 +509,7 @@ namespace tsorcRevamp.NPCs.Special
                             Vector2 velocity = new Vector2(0.1f, 0).RotatedBy(difference.ToRotation()); //Give it velocity so it can face the right direction
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, new Vector2(8f, 0).RotatedBy(difference.ToRotation()), ModContent.ProjectileType<Projectiles.Enemy.LeonhardCMSCrescent>(), 22, 0f, Main.myPlayer, 10, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, new Vector2(8f, 0).RotatedBy(difference.ToRotation()), ModContent.ProjectileType<LeonhardCMSCrescent>(), 22, 0f, Main.myPlayer, 10, 0);
                             }
 
                             NPC.ai[1] = 0;
@@ -694,7 +695,7 @@ namespace tsorcRevamp.NPCs.Special
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 25, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), velocity, ModContent.ProjectileType<EnemyFirebomb>(), 25, 0f, Main.myPlayer);
                             }
                         }
 

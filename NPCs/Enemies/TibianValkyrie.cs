@@ -9,6 +9,7 @@ using tsorcRevamp.Content.Items.Armor.Magic;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Content.Items.Weapons.Throwing;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -61,7 +62,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             // "Throwing Spear" - calm aimed spear toss.
-            int spearProjectileType = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();
+            int spearProjectileType = ModContent.ProjectileType<BlackKnightSpear>();
             UsefulFunctions.AddAttack(NPC, 190, spearProjectileType, spearDamage, 8, shootSound: SoundID.Item17, telegraphColor: Color.Orange, needsLineOfSight: true, telegraphTime: 30, commitFraction: 0f);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -236,7 +237,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            if (globalNPC.ProjectileTimer >= 140 || globalNPC.CombatMeleeActive)
+            // The combo scheduler parks ProjectileTimer at the next attack's telegraph boundary during recovery,
+            // so a raw timer threshold makes the thrown spear immediately reappear in her hand. Follow the
+            // authored attack phases instead: visible while winding up/committing a throw or performing melee,
+            // hidden from the release frame through the full mobile recovery.
+            bool telegraphingSpearThrow = globalNPC.AttackTelegraphing || globalNPC.AttackCommitted;
+            if (telegraphingSpearThrow || globalNPC.CombatMeleeActive)
             {
                 Texture2D spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/TibianValkyrie_Spear");
                 int facingDirection = globalNPC.CombatMeleeActive ? globalNPC.ActiveCombatMeleeDirection : NPC.spriteDirection;

@@ -14,7 +14,7 @@ using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Melee;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
-using tsorcRevamp.Projectiles.Enemy.Marilith;
+using tsorcRevamp.Content.Projectiles.Enemy.Marilith;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends

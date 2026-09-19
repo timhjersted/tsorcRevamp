@@ -12,6 +12,7 @@ using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -75,12 +76,12 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             // AddAttack calls placed after hardmode blocks so lostSoulDamage and NPC.damage are final values.
-            UsefulFunctions.AddAttack(NPC, 6 * 60, ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>(), lostSoulDamage, 2.1f, SoundID.Item20 with { Volume = 0.35f, Pitch = -0.2f }, 0, -1, -ReleasedFlameOrbTime, telegraphColor: Color.Orange, telegraphTime: 25);
+            UsefulFunctions.AddAttack(NPC, 6 * 60, ModContent.ProjectileType<FireLurkerFlameOrb>(), lostSoulDamage, 2.1f, SoundID.Item20 with { Volume = 0.35f, Pitch = -0.2f }, 0, -1, -ReleasedFlameOrbTime, telegraphColor: Color.Orange, telegraphTime: 25);
 
             // Close-range melee fire burst: only fires when the player is within ~6 tiles.
             int npcIndex = NPC.whoAmI;
             UsefulFunctions.AddAttack(NPC, 5 * 60,
-                ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFireBurst>(),
+                ModContent.ProjectileType<FireLurkerFireBurst>(),
                 NPC.damage, 0f,
                 ai0: npcIndex,
                 stopBeforeFiring: true,
@@ -159,14 +160,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top + new Vector2(0, -56), Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>(), lostSoulDamage, 0, Main.myPlayer, NPC.whoAmI, slot);
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top + new Vector2(0, -56), Vector2.Zero, ModContent.ProjectileType<FireLurkerFlameOrb>(), lostSoulDamage, 0, Main.myPlayer, NPC.whoAmI, slot);
         }
 
         int GetOpenFlameOrbSlot()
         {
             bool[] occupiedSlots = new bool[MaxFlameOrbs];
             int activeOrbs = 0;
-            int orbType = ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>();
+            int orbType = ModContent.ProjectileType<FireLurkerFlameOrb>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile projectile = Main.projectile[i];
@@ -219,7 +220,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             Vector2 flameTrapPosition = target.Center - new Vector2(target.direction * 62f, 0);
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), flameTrapPosition, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.FireLurkerMeteor>(), NPC.damage / 2, 0, Main.myPlayer, lostSoulDamage);
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), flameTrapPosition, Vector2.Zero, ModContent.ProjectileType<FireLurkerMeteor>(), NPC.damage / 2, 0, Main.myPlayer, lostSoulDamage);
         }
 
         void ReleaseFlameOrbs()
@@ -231,7 +232,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            int orbType = ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>();
+            int orbType = ModContent.ProjectileType<FireLurkerFlameOrb>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile projectile = Main.projectile[i];
@@ -298,7 +299,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            int flameOrbType = ModContent.ProjectileType<Projectiles.Enemy.FireLurkerFlameOrb>();
+            int flameOrbType = ModContent.ProjectileType<FireLurkerFlameOrb>();
             if (globalNPC.AttackList.Count == 0 || globalNPC.CurrentAttack.type != flameOrbType || globalNPC.ProjectileTimer < globalNPC.ProjectileTimerCap - HeldFlameOrbLeadTime)
             {
                 return;

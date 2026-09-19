@@ -1,7 +1,7 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Summon;
-using tsorcRevamp.Projectiles.Summon.NullSprite;
+using tsorcRevamp.Content.Projectiles.Summon.NullSprite;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {

@@ -1,0 +1,67 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.VFX;
+
+namespace tsorcRevamp.Content.Projectiles.Enemy.Triad
+{
+    class IchorFragment : DynamicTrail
+    {
+
+        public override void SetStaticDefaults()
+        {
+            // DisplayName.SetDefault("Ichor Fragment");
+        }
+        public override void SetDefaults()
+        {
+            Projectile.width = 20;
+            Projectile.height = 20;
+            Projectile.scale = 1.1f;
+            Projectile.timeLeft = 240;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.friendly = false;
+
+            trailWidth = 20;
+            trailPointLimit = 50;
+            trailCollision = true;
+            NPCSource = false;
+            trailYOffset = 50;
+            trailMaxLength = 200;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+        }
+        public override void AI()
+        {
+            if (Projectile.timeLeft < 60) 
+            {
+                Projectile.hostile = false;
+                Projectile.damage = 0;
+                Projectile.width = 0;
+                Projectile.height = 0;
+            }
+            base.AI();
+        }
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(HomingStarStar));
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(BuffID.Ichor, 300);
+        }
+
+        public override void SetEffectParameters(Effect effect)
+        {
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseSplotchy);
+            effect.Parameters["fadeOut"].SetValue(fadeOut);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            effect.Parameters["shaderColor"].SetValue(Color.Gold.ToVector4());
+            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.5f }, Projectile.Center);
+        }
+    }
+}

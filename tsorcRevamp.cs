@@ -52,19 +52,6 @@ using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss;
 using tsorcRevamp.NPCs.Special;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Summon;
-using tsorcRevamp.Projectiles.Summon.Archer;
-using tsorcRevamp.Projectiles.Summon.NullSprite;
-using tsorcRevamp.Projectiles.Summon.Phoenix;
-using tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles;
-using tsorcRevamp.Projectiles.Summon.SamuraiBeetle;
-using tsorcRevamp.Projectiles.Summon.SunsetQuasar;
-using tsorcRevamp.Projectiles.Summon.Tetsujin;
-using tsorcRevamp.Projectiles.Summon.EtherianWyvern;
-using tsorcRevamp.Projectiles.Summon.PhotonicDownpour;
-using tsorcRevamp.Projectiles.Summon.ShatteredReflection;
-using tsorcRevamp.Projectiles.Summon.TripleThreat;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.Tiles.BuffStations;
 using tsorcRevamp.Tiles.Relics;
@@ -102,17 +89,30 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
-using tsorcRevamp.NPCs.Runeterra;
-using tsorcRevamp.Projectiles.Enemy;
-using tsorcRevamp.Projectiles.Enemy.DarkCloud;
-using tsorcRevamp.Projectiles.Enemy.Gwyn;
-using tsorcRevamp.Projectiles.Enemy.Okiku;
-using tsorcRevamp.Projectiles.Enemy.WyvernMage;
-using tsorcRevamp.Projectiles.Magic;
-using tsorcRevamp.Projectiles.Melee.Boomerangs;
-using tsorcRevamp.Projectiles.Ranged;
-using tsorcRevamp.Projectiles.Ranged.Ammo;
-using tsorcRevamp.Projectiles.Throwing;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.DarkCloud;
+using tsorcRevamp.Content.Projectiles.Enemy.Gwyn;
+using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.Enemy.WyvernMage;
+using tsorcRevamp.Content.Projectiles.Magic;
+using tsorcRevamp.Content.Projectiles.Melee.Boomerangs;
+using tsorcRevamp.Content.Projectiles.Ranged;
+using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
+using tsorcRevamp.Content.Projectiles.Summon;
+using tsorcRevamp.Content.Projectiles.Summon.Archer;
+using tsorcRevamp.Content.Projectiles.Summon.EtherianWyvern;
+using tsorcRevamp.Content.Projectiles.Summon.NullSprite;
+using tsorcRevamp.Content.Projectiles.Summon.Phoenix;
+using tsorcRevamp.Content.Projectiles.Summon.PhotonicDownpour;
+using tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles;
+using tsorcRevamp.Content.Projectiles.Summon.SamuraiBeetle;
+using tsorcRevamp.Content.Projectiles.Summon.ShatteredReflection;
+using tsorcRevamp.Content.Projectiles.Summon.SunsetQuasar;
+using tsorcRevamp.Content.Projectiles.Summon.Tetsujin;
+using tsorcRevamp.Content.Projectiles.Summon.TripleThreat;
+using tsorcRevamp.Content.Projectiles.Throwing;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Textures;
@@ -1113,8 +1113,7 @@ namespace tsorcRevamp
             {   
                 #region Vanilla
                 {   ItemID.KingSlimeBossBag         , BossExtras.StaminaVessel      },
-                {   ItemID.EyeOfCthulhuBossBag      , BossExtras.StaminaVessel
-                                                    | BossExtras.SublimeBoneDust    },
+                {   ItemID.EyeOfCthulhuBossBag      , BossExtras.DarkSoulsOnly      },
                 {   ItemID.EaterOfWorldsBossBag     , BossExtras.EstusFlaskShard    },
                 {   ItemID.BrainOfCthulhuBossBag    , BossExtras.StaminaVessel      },
                 {   ItemID.QueenBeeBossBag          , BossExtras.DarkSoulsOnly      },
@@ -1137,6 +1136,8 @@ namespace tsorcRevamp
                 #region tsorc
                 {   ModContent.ItemType<PinwheelBag>()              , BossExtras.EstusFlaskShard
                                                                     | BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<VesselOfSoulsBag>()         , BossExtras.StaminaVessel
+                                                                    | BossExtras.SublimeBoneDust    },
                 {   ModContent.ItemType<OolacileDemonBag>()         , BossExtras.SublimeBoneDust    },
                 {   ModContent.ItemType<SlograBag>()                , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<GaibonBag>()                , BossExtras.StaminaVessel      },
@@ -1219,6 +1220,7 @@ namespace tsorcRevamp
                 //--------
                 #region tsorc
                 {   ModContent.ItemType<PinwheelBag>()              , ModContent.NPCType<Pinwheel>()                                                    },
+                {   ModContent.ItemType<VesselOfSoulsBag>()         , ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>()                    },
                 {   ModContent.ItemType<OolacileDemonBag>()         , ModContent.NPCType<AncientOolacileDemon>()                                        },
                 {   ModContent.ItemType<SlograBag>()                , ModContent.NPCType<Slogra>()                                                      },
                 {   ModContent.ItemType<GaibonBag>()                , ModContent.NPCType<Gaibon>()                                                      },
@@ -1302,10 +1304,11 @@ namespace tsorcRevamp
                                                         }                                                          },
                 {   ItemID.EyeOfCthulhuBossBag      ,   new List<IItemDropRule>()
                                                         {
-                                                            ItemDropRule.Common(ItemID.HermesBoots),
-                                                            ItemDropRule.Common(ItemID.HerosHat),
-                                                            ItemDropRule.Common(ItemID.HerosPants),
-                                                            ItemDropRule.Common(ItemID.HerosShirt)
+                                                            // Vessel of Souls now owns the Eye's early-game kit.
+                                                            // ItemDropRule.Common(ItemID.HermesBoots),
+                                                            // ItemDropRule.Common(ItemID.HerosHat),
+                                                            // ItemDropRule.Common(ItemID.HerosPants),
+                                                            // ItemDropRule.Common(ItemID.HerosShirt)
                                                         }                                                                                },
                 {   ItemID.EaterOfWorldsBossBag     ,   new List<IItemDropRule>()
                                                         {
@@ -2652,7 +2655,7 @@ namespace tsorcRevamp
                             bool mythrilReflection = perfectParry
                                 && shieldPlayer.activeShieldType == ModContent.ItemType<MythrilBulwark>()
                                 && attackingProjectile.type !=
-                                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.HumanoidMeleeHitbox>();
+                                    ModContent.ProjectileType<HumanoidMeleeHitbox>();
                             if (mythrilReflection)
                             {
                                 attackingProjectile.hostile = false;
@@ -2734,6 +2737,36 @@ namespace tsorcRevamp
                         if (validTarget && Main.npc[npcIndex].ModNPC is NPCs.Puppets.PuppetNPC puppet)
                         {
                             puppet.ReportAttackHit();
+                        }
+                        break;
+                    }
+                case tsorcPacketID.ReportMadnessBuildup:
+                    {
+                        int buildup = reader.ReadByte();
+                        int durationTicks = reader.ReadInt16();
+
+                        if (Main.netMode == NetmodeID.Server
+                            && whoAmI >= 0 && whoAmI < Main.maxPlayers
+                            && Main.player[whoAmI].active && !Main.player[whoAmI].dead)
+                        {
+                            buildup = Math.Clamp(buildup, 1, Buffs.Debuffs.MadnessBuildup.MaximumBuildup);
+                            durationTicks = Math.Clamp(durationTicks, 1, 60 * 60);
+                            Main.player[whoAmI].GetModPlayer<MadnessPlayer>()
+                                .ApplyBuildupAuthoritative(buildup, durationTicks);
+                        }
+                        break;
+                    }
+                case tsorcPacketID.SyncMadnessState:
+                    {
+                        int playerIndex = reader.ReadByte();
+                        int buildup = reader.ReadByte();
+                        bool playTriggerEffects = reader.ReadBoolean();
+
+                        if (Main.netMode == NetmodeID.MultiplayerClient
+                            && playerIndex >= 0 && playerIndex < Main.maxPlayers)
+                        {
+                            Main.player[playerIndex].GetModPlayer<MadnessPlayer>()
+                                .ReceiveState(buildup, playTriggerEffects);
                         }
                         break;
                     }
@@ -2974,7 +3007,7 @@ namespace tsorcRevamp
                     ModContent.BuffType<ArcherSpiritBuff>(),
                     new Dictionary<string, object>()
                     {
-                        ["ProjID"] = ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherSpirit>(),
+                        ["ProjID"] = ModContent.ProjectileType<ArcherSpirit>(),
                         ["Slot"] = 2f,
                     }
                     );
@@ -5011,6 +5044,10 @@ namespace tsorcRevamp
         public const byte ReportParryPoise = 27;
         /// <summary>Client → server: a puppet's hostile projectile hit a player (credits the attack for server decisions).</summary>
         public const byte ReportPuppetAttackHit = 28;
+        /// <summary>Victim client → server: a hit applied bounded Madness buildup.</summary>
+        public const byte ReportMadnessBuildup = 29;
+        /// <summary>Server → clients: authoritative Madness meter value and one-shot trigger visuals.</summary>
+        public const byte SyncMadnessState = 30;
     }
 
     //config moved to separate file

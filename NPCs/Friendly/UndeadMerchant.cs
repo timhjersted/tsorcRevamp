@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.ItemCrates;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Classless;
+using tsorcRevamp.Content.Projectiles;
 using GreenBlossom = tsorcRevamp.Content.Items.Potions.GreenBlossom;
 
 namespace tsorcRevamp.NPCs.Friendly
@@ -254,7 +255,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
         {
-            projType = ModContent.ProjectileType<Projectiles.FirebombProj>();
+            projType = ModContent.ProjectileType<FirebombProj>();
             attackDelay = 5;
         }
 

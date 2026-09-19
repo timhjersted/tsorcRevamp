@@ -7,8 +7,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.UI.BigProgressBar;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy.Okiku;
-using tsorcRevamp.Projectiles.VFX;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 {

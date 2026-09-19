@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.Dworc
 {
@@ -33,15 +34,15 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             BannerItem = ModContent.ItemType<Banners.DworcVoodooShamanBanner>();
             AnimationType = NPCID.Skeleton;
             // "Poison Strike" — fast aimed poison bolt
-            int poisonStrikeType = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>();
+            int poisonStrikeType = ModContent.ProjectileType<EnemySpellGreatPoisonStrikeBall>();
             UsefulFunctions.AddAttack(NPC, 150, poisonStrikeType, 18, 8, SoundID.Item20, 0);
             // "Poison Storm" — heavy lobbed ball that bursts into a poison storm (no LOS needed). The shrinking-ring
             // telegraph runs 90t (see AI()), so telegraphTime: 90 makes the poise telegraph/commit window match the
             // visible ring; commitFraction: 0.5f = first half of the shrink is cancellable, second half committed.
-            int poisonStormType = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>();
+            int poisonStormType = ModContent.ProjectileType<EnemySpellPoisonStormBall>();
             UsefulFunctions.AddAttack(NPC, 480, poisonStormType, 25, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.2f, telegraphTime: 90, commitFraction: 0.5f, endsCombo: true);
             // "Demon Spirit" — summons a homing spirit (rare; no LOS needed)
-            int demonSpiritType = ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>();
+            int demonSpiritType = ModContent.ProjectileType<Content.Projectiles.Enemy.DemonSpirit>();
             UsefulFunctions.AddAttack(NPC, 200, demonSpiritType, 20, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.05f, endsCombo: true);
 
             // Step 6 caster lever: remember last-known position before patrolling.
@@ -141,7 +142,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
 
             //Big poison storm telegraph
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            bool telegraphingPoisonStorm = globalNPC.CurrentAttack.type == ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>();
+            bool telegraphingPoisonStorm = globalNPC.CurrentAttack.type == ModContent.ProjectileType<EnemySpellPoisonStormBall>();
             float stormTelegraphStart = globalNPC.CurrentAttack.timerCap - 90f;
             if (telegraphingPoisonStorm && globalNPC.ProjectileTimer >= stormTelegraphStart)
             {

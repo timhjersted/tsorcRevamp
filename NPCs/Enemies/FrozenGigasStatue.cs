@@ -5,7 +5,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.IceGigas;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

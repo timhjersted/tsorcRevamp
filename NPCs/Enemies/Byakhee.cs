@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -359,12 +360,12 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (NPC.Distance(player.Center) <= 200 && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5, 0.035f);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVector.X, projectileVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreathCollides>(), 20, 0f, Main.myPlayer, 1, NPC.target);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVector.X, projectileVector.Y, ModContent.ProjectileType<EnemyCursedBreathCollides>(), 20, 0f, Main.myPlayer, 1, NPC.target);
                     }
                     if (NPC.Distance(player.Center) > 200 && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 9, 0.035f);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVector.X, projectileVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreathCollides>(), 20, 0f, Main.myPlayer, 1, NPC.target);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVector.X, projectileVector.Y, ModContent.ProjectileType<EnemyCursedBreathCollides>(), 20, 0f, Main.myPlayer, 1, NPC.target);
                     }
 
 

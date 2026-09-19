@@ -4,6 +4,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Prime;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
@@ -90,7 +92,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
                 }
                 NPC.active = false;
                 return;
@@ -124,7 +126,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         counterClockwise = true;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Content.Projectiles.Enemy.Prime.PrimeBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
                         }
                     }
 
@@ -150,7 +152,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         rotationTarget = (NPC.Center - Target.Center).ToRotation() + Main.rand.NextFloat(-0.25f, 0.25f) + MathHelper.PiOver2;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, (NPC.rotation + MathHelper.PiOver2).ToRotationVector2(), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai0: 1, ai1: NPC.whoAmI);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, (NPC.rotation + MathHelper.PiOver2).ToRotationVector2(), ModContent.ProjectileType<PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai0: 1, ai1: NPC.whoAmI);
                         }
                     }
                 }
@@ -169,7 +171,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, (NPC.rotation + MathHelper.PiOver2).ToRotationVector2(), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, (NPC.rotation + MathHelper.PiOver2).ToRotationVector2(), ModContent.ProjectileType<PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
                         }
                     }
                 }
@@ -183,7 +185,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
                         }
                     }
                 }
@@ -200,8 +202,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
                 }
                 UsefulFunctions.SimpleGore(NPC, "Beam_Damaged_1");
                 UsefulFunctions.SimpleGore(NPC, "Beam_Damaged_2");
@@ -248,7 +250,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
             Main.EntitySpriteDraw(glowmask, NPC.Center - Main.screenPosition, sourceRectangle, Color.White, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
 
-            if (UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>()) || UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeBeam>()))
+            if (UsefulFunctions.AnyProjectile(ModContent.ProjectileType<PrimeRapidBeam>()) || UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Content.Projectiles.Enemy.Prime.PrimeBeam>()))
             {
                 firingChargeup += 1 / 30f;
             }

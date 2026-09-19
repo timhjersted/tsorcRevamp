@@ -25,7 +25,7 @@ namespace tsorcRevamp.Buffs
             Lighting.AddLight(player.Center, .400f, .400f, .700f);
             if (Main.myPlayer == player.whoAmI)
             {
-                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.GreatMagicShield>(), 0, 0f, player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, player.velocity, ModContent.ProjectileType<Content.Projectiles.GreatMagicShield>(), 0, 0f, player.whoAmI);
             }
         }
     }

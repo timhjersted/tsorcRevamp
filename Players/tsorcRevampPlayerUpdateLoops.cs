@@ -29,18 +29,23 @@ using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Accessories;
+using tsorcRevamp.Content.Projectiles.Pets;
+using tsorcRevamp.Content.Projectiles.Summon.Archer;
+using tsorcRevamp.Content.Projectiles.Summon.SunsetQuasar;
+using tsorcRevamp.Content.Projectiles.Summon.YoungHunter;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
-using tsorcRevamp.Projectiles.Summon.YoungHunter;
-using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Systems.LethalTempo;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
+using Shockwave = tsorcRevamp.Content.Projectiles.Shockwave;
 
 namespace tsorcRevamp
 {
@@ -1097,26 +1102,26 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.WitheredArmor, 5 * 60);
             }
 
-            if (Player.HasBuff(ModContent.BuffType<NondescriptOwlBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>()] == 0)
+            if (Player.HasBuff(ModContent.BuffType<NondescriptOwlBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<NondescriptOwlProjectile>()] == 0)
             {
                 Item staff = new();
                 staff.SetDefaults(ModContent.ItemType<PeculiarSphere>());
                 int damage = staff.damage;
                 if (Main.myPlayer == Player.whoAmI)
                 {
-                    int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>(), damage, 0, Player.whoAmI);
+                    int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<NondescriptOwlProjectile>(), damage, 0, Player.whoAmI);
                     Main.projectile[p].originalDamage = damage;
                 }
             }
 
-            if (Player.HasBuff(ModContent.BuffType<SunsetQuasarBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>()] == 0)
+            if (Player.HasBuff(ModContent.BuffType<SunsetQuasarBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarMinion>()] == 0)
             {
                 Item staff = new();
                 staff.SetDefaults(ModContent.ItemType<SunsetQuasar>());
                 int damage = staff.damage;
                 if (Main.myPlayer == Player.whoAmI)
                 {
-                    int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>(), damage, 0, Player.whoAmI);
+                    int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<SunsetQuasarMinion>(), damage, 0, Player.whoAmI);
                     Main.projectile[p].originalDamage = damage;
                 }
             }
@@ -1702,7 +1707,7 @@ namespace tsorcRevamp
                             { //19 projectiles
                                 Vector2 shotDirection = new Vector2(0f, -16f);
                                 float damageMultiplier = tsorcRevampWorld.SuperHardMode ? 12.0f : (Main.hardMode ? 6.0f : 3.0f);
-                                Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, shotDirection.RotatedBy(MathHelper.ToRadians(0 - (10f * i))), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * damageMultiplier), 12, Player.whoAmI, 15f);
+                                Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, shotDirection.RotatedBy(MathHelper.ToRadians(0 - (10f * i))), ModContent.ProjectileType<Shockwave>(), (int)(FallDist * damageMultiplier), 12, Player.whoAmI, 15f);
                             }
                         }
                     }
@@ -2689,7 +2694,7 @@ namespace tsorcRevamp
 
                     if (soulCount > 0)
                     {
-                        Projectile.NewProjectileDirect(Player.GetSource_Death(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.SoulDrop>(), 0, 0, Player.whoAmI, soulCount, Player.whoAmI);
+                        Projectile.NewProjectileDirect(Player.GetSource_Death(), Player.Center, Vector2.Zero, ModContent.ProjectileType<SoulDrop>(), 0, 0, Player.whoAmI, soulCount, Player.whoAmI);
                     }
                 }
 
@@ -2781,6 +2786,15 @@ namespace tsorcRevamp
             {
                 Player.AddBuff(BuffID.WaterCandle, 4*60);
                 Player.AddBuff(BuffID.MoonLeech, 4*60);
+            }
+
+            // ZoneLihzhardTemple is true only while the player occupies the unsafe Lihzahrd
+            // Brick wall used by the Forbidden dungeon, so nearby Jungle terrain is unaffected.
+            // This is shared by the original and Remix Adventure maps.
+            if (Player.ZoneLihzhardTemple && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                Player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
+                Player.AddBuff(ModContent.BuffType<Suppressed>(), 1 * 60, false);
             }
 
             if (tsorcRevampWorld.RemixMap)
@@ -3231,7 +3245,7 @@ namespace tsorcRevamp
                     Player.GetSource_Misc("SporePowder"),
                     center,
                     Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Accessories.SporePowderProjectile>(),
+                    ModContent.ProjectileType<SporePowderProjectile>(),
                     finalDamage,
                     0.5f,
                     Player.whoAmI
@@ -3257,7 +3271,7 @@ namespace tsorcRevamp
                     Player.GetSource_Misc("VenomPowder"),
                     center,
                     Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Accessories.VenomPowderProjectile>(),
+                    ModContent.ProjectileType<VenomPowderProjectile>(),
                     finalDamage,
                     0.8f,
                     Player.whoAmI

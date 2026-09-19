@@ -5,6 +5,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Enemies{
     // Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
@@ -129,12 +131,12 @@ namespace tsorcRevamp.NPCs.Enemies{
             // projectiles) so every player sees/feels it, not just whoever's client happens to run
             // this. Must run before the server-only early return below, which exists only to skip
             // the purely-local dust that follows on a dedicated server.
-            Projectiles.Enemy.EnemyShaderBurst.Spawn(NPC.GetSource_FromThis(), position,
-                Projectiles.Enemy.EnemyVFXBurstKind.EvilEyeTeleportBurst);
+            EnemyShaderBurst.Spawn(NPC.GetSource_FromThis(), position,
+                EnemyVFXBurstKind.EvilEyeTeleportBurst);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.Enemy.EvilEyeTeleportBlast>(),
+                    ModContent.ProjectileType<EvilEyeTeleportBlast>(),
                     TeleportBlastDamage, 0f, Main.myPlayer);
             }
 
@@ -166,7 +168,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             velocity.Normalize();
             velocity *= FlameSpeed;
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.6f, Pitch = 0.3f }, NPC.Center);
-            int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EvilEyeFlame>(), (int)FlameDamage, 1f, Main.myPlayer);
+            int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<EvilEyeFlame>(), (int)FlameDamage, 1f, Main.myPlayer);
             if (seeking && Main.projectile[proj].active)
             {
                 Main.projectile[proj].ai[0] = 1f;
@@ -197,7 +199,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                 return;
             }
             groundBlastCooldown = GroundBlastCooldownTicks;
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.EvilEyeGroundBlast>(), GroundBlastDamage, 4f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<EvilEyeGroundBlast>(), GroundBlastDamage, 4f, Main.myPlayer);
         }
 
         void CheckEnrage()
@@ -318,7 +320,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                     TeleportEffect(NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 90, 18);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 90, 18);
                     }
                     NPC.Center = destination;
                     NPC.velocity = Vector2.Zero;
@@ -326,7 +328,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                     TeleportEffect(NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 90, 18);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 90, 18);
                     }
                 }
             }
@@ -390,7 +392,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             {
                 float angle = MathHelper.TwoPi * i / NovaShotCount;
                 Vector2 velocity = angle.ToRotationVector2() * FlameSpeed;
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.EvilEyeFlame>(), (int)FlameDamage, 1f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<EvilEyeFlame>(), (int)FlameDamage, 1f, Main.myPlayer);
             }
         }
 
@@ -589,8 +591,8 @@ namespace tsorcRevamp.NPCs.Enemies{
             // here (the player is being displaced, not attacked, unlike TeleportEffect's combat
             // teleport, so no damage hitbox). Networked spawn, so runs unconditionally rather than
             // inside the client-only dust blocks below.
-            Projectiles.Enemy.EnemyShaderBurst.Spawn(NPC.GetSource_FromThis(), target.Center,
-                Projectiles.Enemy.EnemyVFXBurstKind.EvilEyeTeleportBurst);
+            EnemyShaderBurst.Spawn(NPC.GetSource_FromThis(), target.Center,
+                EnemyVFXBurstKind.EvilEyeTeleportBurst);
 
             if (Main.netMode != NetmodeID.Server)
             {
@@ -609,8 +611,8 @@ namespace tsorcRevamp.NPCs.Enemies{
 
             target.SafeTeleport(new Vector2(6982f * 16f, 531f * 16f));
 
-            Projectiles.Enemy.EnemyShaderBurst.Spawn(NPC.GetSource_FromThis(), target.Center,
-                Projectiles.Enemy.EnemyVFXBurstKind.EvilEyeTeleportBurst);
+            EnemyShaderBurst.Spawn(NPC.GetSource_FromThis(), target.Center,
+                EnemyVFXBurstKind.EvilEyeTeleportBurst);
 
             if (Main.netMode != NetmodeID.Server)
             {
@@ -632,8 +634,8 @@ namespace tsorcRevamp.NPCs.Enemies{
         {
             // Same "3 Cloud Gore" pattern as the old OnKill() (this path bypasses OnKill entirely -
             // see the comment above the call site) - replaced with the same ghostly wisp burst.
-            Projectiles.Enemy.EnemyShaderBurst.Spawn(NPC.GetSource_Death(), NPC.Center,
-                Projectiles.Enemy.EnemyVFXBurstKind.EvilEyeGhostBurst);
+            EnemyShaderBurst.Spawn(NPC.GetSource_Death(), NPC.Center,
+                EnemyVFXBurstKind.EvilEyeGhostBurst);
 
             if (Main.netMode != NetmodeID.Server)
             {
@@ -656,8 +658,8 @@ namespace tsorcRevamp.NPCs.Enemies{
             // netmode-gated (authoritative spawn on server/singleplayer, synced to clients from
             // there), so this must run before the server-only early return below, which exists
             // purely to skip the local-only dust/gore that follows on a dedicated server.
-            Projectiles.Enemy.EnemyShaderBurst.Spawn(NPC.GetSource_Death(), NPC.Center,
-                Projectiles.Enemy.EnemyVFXBurstKind.EvilEyeGhostBurst);
+            EnemyShaderBurst.Spawn(NPC.GetSource_Death(), NPC.Center,
+                EnemyVFXBurstKind.EvilEyeGhostBurst);
 
             if (Main.netMode == NetmodeID.Server)
             {
@@ -723,7 +725,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             if (state == State.NovaRing && NPC.ai[1] <= NovaTelegraphTicks + 5f)
             {
                 float novaProgress = MathHelper.Clamp(NPC.ai[1] / NovaTelegraphTicks, 0f, 1f);
-                Projectiles.Enemy.EnemyVFX.DrawEvilEyeNova(NPC.Center, novaProgress, enrageHaloTimer > 0);
+                EnemyVFX.DrawEvilEyeNova(NPC.Center, novaProgress, enrageHaloTimer > 0);
             }
 
             if (state == State.ChargeTelegraph || state == State.ChargeDash)
@@ -739,7 +741,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                 Vector2 chargeAim = activeCharge
                     ? dashDirection
                     : Main.player[NPC.target].Center - irisWorld;
-                Projectiles.Enemy.EnemyVFX.DrawEvilEyeCharge(irisWorld, chargeAim,
+                EnemyVFX.DrawEvilEyeCharge(irisWorld, chargeAim,
                     chargeProgress, activeCharge, enraged);
             }
 

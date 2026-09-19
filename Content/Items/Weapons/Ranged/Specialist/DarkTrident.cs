@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Melee.Spears;
+using tsorcRevamp.Content.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
 {

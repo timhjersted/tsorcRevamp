@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Summon.TripleThreat;
+using tsorcRevamp.Content.Projectiles.Summon.TripleThreat;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon
 {

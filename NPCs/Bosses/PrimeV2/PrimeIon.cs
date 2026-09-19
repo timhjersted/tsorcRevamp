@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Prime;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
@@ -88,7 +90,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
                 }
                 NPC.active = false;
                 return;
@@ -118,9 +120,9 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1); //An ai1 of 1 means a wider random spread
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 2); //An ai1 of 2 means teleport right on the player
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1); //An ai1 of 1 means a wider random spread
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 2); //An ai1 of 2 means teleport right on the player
                         }
                         auraBonus = 0.2f;
                     }
@@ -132,7 +134,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
                         }
                         auraBonus = 0.2f;
                     }
@@ -147,8 +149,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 2);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 2);
                         }
                         auraBonus = 0.2f;
                     }
@@ -160,7 +162,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
                         }
                         auraBonus = 0.2f;
                     }
@@ -179,8 +181,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
                 }
                 UsefulFunctions.SimpleGore(NPC, "Ion_Damaged_1");
                 UsefulFunctions.SimpleGore(NPC, "Ion_Damaged_1");

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria.ModLoader;
 using Terraria;
-using tsorcRevamp.Projectiles.Summon.NecromanticSerpent;
 using Terraria.Localization;
 using tsorcRevamp.Utilities;
 

@@ -20,17 +20,10 @@ using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.Projectiles.Ranged;
-using tsorcRevamp.Projectiles.Summon;
-using tsorcRevamp.Projectiles.Summon.Archer;
-using tsorcRevamp.Projectiles.Summon.SamuraiBeetle;
-using tsorcRevamp.Projectiles.Summon.Whips;
-using tsorcRevamp.Projectiles.Summon.Whips.Dominatrix;
-using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
-using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 using tsorcRevamp;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs
 {
@@ -220,7 +213,7 @@ namespace tsorcRevamp.NPCs
                             {
                                 spawnPosition.X += npc.width;
                             }
-                            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, npc.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(telegraphColor.Value));
+                            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, npc.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(telegraphColor.Value));
                         }
                     }
 
@@ -1093,7 +1086,7 @@ namespace tsorcRevamp.NPCs
                 return;
             }
             Vector2 spawnPosition = position ?? npc.Center;
-            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(color));
+            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(color));
         }
 
         private static void SpawnHighArcPounceTelegraph(NPC npc, tsorcRevampGlobalNPC globalNPC)
@@ -1119,7 +1112,7 @@ namespace tsorcRevamp.NPCs
             spawnPosition.Y += npc.height;
             spawnPosition.X += Main.rand.NextFloat(npc.width);
             Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, new Vector2(0, 2),
-                ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer,
+                ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer,
                 UsefulFunctions.ColorToFloat(color));
         }
 
@@ -1255,7 +1248,7 @@ namespace tsorcRevamp.NPCs
                 float direction = side == 0 ? -1f : 1f;
                 Projectile.NewProjectile(npc.GetSource_FromThis(),
                     npc.Bottom + new Vector2(direction * 10f, -4f), new Vector2(direction * 7.2f, 0f),
-                    ModContent.ProjectileType<Projectiles.Enemy.HeavyPounceShockwave>(),
+                    ModContent.ProjectileType<HeavyPounceShockwave>(),
                     damage, 6f, Main.myPlayer, direction, side);
             }
             npc.netUpdate = true;
@@ -1264,7 +1257,7 @@ namespace tsorcRevamp.NPCs
         private static void SpawnDirectPounceAfterimage(NPC npc)
         {
             float encodedFrame = npc.spriteDirection < 0 ? -(npc.frame.Y + 1) : npc.frame.Y + 1;
-            Projectile afterimage = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.NPCAfterimage>(), 0, 0, Main.myPlayer, npc.type, encodedFrame);
+            Projectile afterimage = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<NPCAfterimage>(), 0, 0, Main.myPlayer, npc.type, encodedFrame);
             afterimage.Center = npc.Center;
             afterimage.netUpdate = true;
         }
@@ -1737,7 +1730,7 @@ namespace tsorcRevamp.NPCs
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, npc.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(globalNPC.CurrentAttack.color.Value));
+                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, npc.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(globalNPC.CurrentAttack.color.Value));
                     }
                 }
             }
@@ -2318,8 +2311,8 @@ namespace tsorcRevamp.NPCs
                             var visualStyle = npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportVisualStyle;
                             if (visualStyle == TeleportVisualStyle.Default)
                             {
-                                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, npc.whoAmI, TeleportTelegraphTime);
-                                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: TeleportTelegraphTime);
+                                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0, Main.myPlayer, npc.whoAmI, TeleportTelegraphTime);
+                                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: TeleportTelegraphTime);
                             }
                             else
                             {
@@ -2346,26 +2339,26 @@ namespace tsorcRevamp.NPCs
                                     // Departure cloud carries the curse for the full duration now (ai0=1)
                                     // instead of only appearing for the last stretch — thematically the
                                     // ground stays contaminated the whole time the knight is phasing out.
-                                    var srcCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 1f, PlagueTeleportCloud.MaxCloudRadius);
+                                    var srcCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 1f, PlagueTeleportCloud.MaxCloudRadius);
                                     srcCloud.timeLeft = plagueTelegraphLife;
-                                    var dstCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 0f, PlagueTeleportCloud.MaxCloudRadius);
+                                    var dstCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 0f, PlagueTeleportCloud.MaxCloudRadius);
                                     dstCloud.timeLeft = plagueTelegraphLife;
                                 }
                                 else
                                 {
                                     float mistStyle = visualStyle == TeleportVisualStyle.Fire ? 1f : 0f;
                                     float radius = Math.Max(npc.width, npc.height) * 0.5f * TeleportMistVisualScale;
-                                    var srcMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
+                                    var srcMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
                                     srcMist.timeLeft = TeleportTelegraphTime;
-                                    var dstMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
+                                    var dstMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
                                     dstMist.timeLeft = TeleportTelegraphTime;
 
                                     if (visualStyle == TeleportVisualStyle.Fire)
                                     {
                                         Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
-                                            ModContent.ProjectileType<Projectiles.VFX.FireTeleportBlast>(), 0, 0, Main.myPlayer);
+                                            ModContent.ProjectileType<FireTeleportBlast>(), 0, 0, Main.myPlayer);
                                         Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero,
-                                            ModContent.ProjectileType<Projectiles.VFX.FireTeleportBlast>(), 0, 0, Main.myPlayer);
+                                            ModContent.ProjectileType<FireTeleportBlast>(), 0, 0, Main.myPlayer);
                                     }
                                 }
                             }
@@ -2405,7 +2398,7 @@ namespace tsorcRevamp.NPCs
             {
                 Vector2 velocity = (rotationOffset + MathHelper.TwoPi * i / FireTeleportFlameCount).ToRotationVector2() * FireTeleportFlameSpeed;
                 Projectile flame = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), position, velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), damage, 5f, Main.myPlayer);
+                    ModContent.ProjectileType<FireBreath>(), damage, 5f, Main.myPlayer);
                 flame.timeLeft = flameLifetime;
             }
 
@@ -2427,7 +2420,7 @@ namespace tsorcRevamp.NPCs
                 Vector2 outward = (decorativeOffset + MathHelper.TwoPi * i / decorativeFlameCount).ToRotationVector2();
                 Projectile flame = Projectile.NewProjectileDirect(npc.GetSource_FromThis(),
                     position + outward * 14f, outward * (FireTeleportFlameSpeed * 0.55f),
-                    ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), 1, 0f, Main.myPlayer, 0f, 1f);
+                    ModContent.ProjectileType<FireBreath>(), 1, 0f, Main.myPlayer, 0f, 1f);
                 flame.timeLeft = flameLifetime + 16;
                 flame.hostile = false;
                 flame.friendly = false;
@@ -2504,8 +2497,8 @@ namespace tsorcRevamp.NPCs
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
-                    Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                    Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                    Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
                 }
 
                 npc.Center = globalNPC.TeleportTelegraph;
@@ -2531,11 +2524,11 @@ namespace tsorcRevamp.NPCs
                     {
                         // Both clouds start simultaneously. NPC moves halfway through the 1s cloud.
                         var exitMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
+                            ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
                         exitMist.timeLeft = SmokeFireTeleportCloudTicks;
 
                         var entryMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero,
-                            ModContent.ProjectileType<Projectiles.VFX.TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
+                            ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, style, radius);
                         entryMist.timeLeft = SmokeFireTeleportCloudTicks;
 
                         if (isFireTeleport)
@@ -3239,7 +3232,7 @@ namespace tsorcRevamp.NPCs
         private static void SpawnEvasiveTelegraph(NPC npc)
         {
             Vector2 spawnPosition = npc.Center + new Vector2(Main.rand.NextFloat(-npc.width / 2f, npc.width / 2f), Main.rand.NextFloat(-npc.height / 2f, npc.height / 2f));
-            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer);
+            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer);
         }
 
         /// <summary>

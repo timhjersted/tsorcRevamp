@@ -10,16 +10,17 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.ConsumableSoul;
-using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
+using EnemyFireFlask = tsorcRevamp.Content.Items.Weapons.Enemy.EnemyFireFlask;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
     [AutoloadBossHead]
-    public class StuddedLeatherWarrior : PuppetNPC, Projectiles.Enemy.Weapons.IPuppetSnareSource
+    public class StuddedLeatherWarrior : PuppetNPC, IPuppetSnareSource
     {
         public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/StuddedLeatherWarrior_Head_Boss";
 
@@ -418,7 +419,7 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override float SlashVFXScale => 0.55f;
 
         protected override int ThrownComboWeaponProjectileType =>
-            ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetThrownDualBladedAxe>();
+            ModContent.ProjectileType<PuppetThrownDualBladedAxe>();
 
         protected override int SpawnThrownComboWeapon()
         {
@@ -457,7 +458,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int waveType = ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetGroundDustWave>();
+                    int waveType = ModContent.ProjectileType<PuppetGroundDustWave>();
                     for (int direction = -1; direction <= 1; direction += 2)
                     {
                         Projectile.NewProjectile(
@@ -823,7 +824,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         NPC.GetSource_FromThis(),
                         muzzle,
                         velocity * 0.90f,
-                        ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetSnareBolt>(),
+                        ModContent.ProjectileType<PuppetSnareBolt>(),
                         SecondaryRangedDamage,
                         3f,
                         Main.myPlayer,
@@ -838,7 +839,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     NPC.GetSource_FromThis(),
                     muzzle,
                     velocity,
-                    ModContent.ProjectileType<Projectiles.Enemy.Weapons.PuppetCrossbowBolt>(),
+                    ModContent.ProjectileType<PuppetCrossbowBolt>(),
                     SecondaryRangedDamage,
                     4f,
                     Main.myPlayer);
@@ -855,7 +856,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.GetSource_FromThis(),
                 flaskMuzzle,
                 flaskVelocity,
-                ModContent.ProjectileType<Projectiles.Enemy.Weapons.EnemyFireFlask>(),
+                ModContent.ProjectileType<Content.Projectiles.Enemy.Weapons.EnemyFireFlask>(),
                 RangedDamage,
                 3f,
                 Main.myPlayer);

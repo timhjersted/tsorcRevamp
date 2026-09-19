@@ -1,0 +1,138 @@
+using Microsoft.Xna.Framework;
+using ReLogic.Utilities;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
+
+namespace tsorcRevamp.Content.Projectiles.Melee.Runeterra
+{
+    public class NightbringerFirewall : ModProjectile
+    {
+        public bool AppliedOnSpawn = false;
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 8;
+        }
+        public override void SetDefaults()
+        {
+            Projectile.width = 50;
+            Projectile.height = 250;
+            Projectile.aiStyle = -1;
+            Projectile.friendly = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = Nightbringer.WindwallDuration * 60;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
+        }
+        SlotId SoundSlotID;
+        bool soundPaused;
+        bool playedSound = false;
+        ActiveSound FirewallSound;
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
+            Vector2 unitVectorTowardsMouse = player.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * player.direction);
+            player.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallCast") with { Volume = 1f });
+            Projectile.CritChance = player.GetWeaponCrit(player.HeldItem);
+        }
+        public override void AI()
+        {
+            Player player = Main.player[Projectile.owner];
+
+            if (!AppliedOnSpawn)
+            {
+                Projectile.scale = player.GetAdjustedItemScale(player.HeldItem);
+                Projectile.Resize((int)(Projectile.width / Nightbringer.BaseScale * Projectile.scale), (int)(Projectile.height / Nightbringer.BaseScale * Projectile.scale));
+                AppliedOnSpawn = true;
+            }
+            
+            if (!playedSound)
+            {
+                playedSound = true;
+                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallAmbient") with { Volume = 1f }); //can give funny pitch hehe
+            }
+            if (playedSound)
+            {
+                if (FirewallSound == null)
+                {
+                    SoundEngine.TryGetActiveSound(SoundSlotID, out FirewallSound);
+                }
+                else
+                {
+                    if (SoundEngine.AreSoundsPaused && !soundPaused)
+                    {
+                        FirewallSound.Pause();
+                        soundPaused = true;
+                    }
+                    else if (!SoundEngine.AreSoundsPaused && soundPaused)
+                    {
+                        FirewallSound.Resume();
+                        soundPaused = false;
+                    }
+                    FirewallSound.Position = Projectile.Center;
+                }
+            }
+            if (Projectile.timeLeft == Nightbringer.WindwallDuration * 60 - 15)
+            {
+                Projectile.velocity = Vector2.Zero;
+            }
+
+            foreach (var other in Main.ActiveProjectiles)
+            {
+                if (Main.myPlayer == Projectile.owner && other.whoAmI != Projectile.whoAmI
+                    && Projectile.Colliding(Projectile.Hitbox, other.Hitbox) 
+                    && UsefulFunctions.IsProjectileSafeToFuckWith(other.whoAmI))
+                {
+                    Dust.NewDust(other.position, other.width * 2, other.height * 2, DustID.Torch);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallHit") with { Volume = 1f }, Projectile.position);
+                    
+                    other.Kill();
+                    NetMessage.SendData(MessageID.KillProjectile, number: other.whoAmI);
+                    NetMessage.SendData(MessageID.SyncProjectile, number: other.whoAmI);
+                    
+                }
+            }
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile other = Main.projectile[i];
+
+            }
+            float frameSpeed = 5f;
+
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                {
+                    Projectile.frame = 0;
+                }
+            }
+            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 5f);
+        }
+        public override void OnKill(int timeLeft)
+        {
+            if (FirewallSound == null)
+            {
+                SoundEngine.TryGetActiveSound(SoundSlotID, out FirewallSound);
+                if (FirewallSound != null)
+                {
+                    FirewallSound.Stop();
+                }
+            }
+            else
+            {
+                FirewallSound.Stop();
+            }
+        }
+    }
+}

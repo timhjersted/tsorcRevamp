@@ -68,9 +68,22 @@ namespace tsorcRevamp.NPCs.Puppets
         Any
     }
 
+    /// <summary>Which hand swings a combo step on a dual-wielding puppet (one with a back-hand weapon
+    /// equipped). Front is the default, so every existing combo table is unchanged. The other hand eases
+    /// to its carry pose while it isn't swinging; Both sweeps the two weapons through the same arc.</summary>
+    public enum ComboHand : byte
+    {
+        Front,
+        Back,
+        Both,
+    }
+
     public struct MeleeComboStep
     {
         public ComboMotion Motion;
+        /// <summary>Dual-wield only: the hand(s) this step swings with. Ignored without a back-hand weapon.
+        /// Legacy MeleeCombo steps only — a RuntimeV2Clip combo always swings the front hand.</summary>
+        public ComboHand Hand;
         public int   TelegraphTicks;   // only step 0's telegraph is "real"; later steps use PostStepPause as their telegraph
         public int   AttackTicks;
         public int   PostStepPause;    // pause AFTER this step before the next step's attack

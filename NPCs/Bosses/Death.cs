@@ -14,6 +14,7 @@ using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -97,7 +98,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 float speed = 0.5f;
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                int type = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();
+                int type = ModContent.ProjectileType<ShadowShot>();
                 float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

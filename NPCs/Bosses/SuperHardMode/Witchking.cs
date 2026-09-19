@@ -18,7 +18,8 @@ using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
-using tsorcRevamp.Projectiles.Melee.Shortswords;
+using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -68,8 +69,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // Allows the witchking to properly spawn in the arena
             NPC.lavaImmune = true;
 
-            UsefulFunctions.AddAttack(NPC, TIME_BEFORE_FIREBALL, ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 75, 8, SoundID.Item20);
-            UsefulFunctions.AddAttack(NPC, TIME_BEFORE_STORMBALL, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 95, 0, SoundID.Item100, needsLineOfSight: false);
+            UsefulFunctions.AddAttack(NPC, TIME_BEFORE_FIREBALL, ModContent.ProjectileType<PoisonFlames>(), 75, 8, SoundID.Item20);
+            UsefulFunctions.AddAttack(NPC, TIME_BEFORE_STORMBALL, ModContent.ProjectileType<EnemySpellPoisonStormBall>(), 95, 0, SoundID.Item100, needsLineOfSight: false);
         }
 
         // Witchking drops the Covenant of Artorias, so it's fitting he's the one who curses you with the Abyss
@@ -194,7 +195,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.GetSource_FromThis(),
                     NPC.Center,
                     Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(),
+                    ModContent.ProjectileType<ExplosionFlash>(),
                     0,
                     0,
                     Main.myPlayer,
@@ -205,7 +206,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.GetSource_FromThis(),
                     NPC.Center,
                     Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(),
+                    ModContent.ProjectileType<ShockwaveEffect>(),
                     0,
                     0,
                     Main.myPlayer,

@@ -9,7 +9,7 @@ using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Projectiles.Summon;
+using tsorcRevamp.Content.Projectiles.Summon;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon
 {
