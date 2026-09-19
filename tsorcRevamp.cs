@@ -2696,7 +2696,8 @@ namespace tsorcRevamp
                         // A new stagger or evasion is short-lived; their netUpdate alone waits on the netSpam throttle.
                         if (needsImmediateSync)
                         {
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, report.NPCIndex);
+                            hitNPC.netUpdate = true;
+                            hitNPC.netSpam = 0;
                         }
                         break;
                     }
@@ -2724,7 +2725,8 @@ namespace tsorcRevamp
                         bool newlyStaggered = staggerBefore <= 0 && parriedGlobalNPC.StaggerTimer > 0;
                         if (newlyStaggered)
                         {
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npcIndex);
+                            parriedNPC.netUpdate = true;
+                            parriedNPC.netSpam = 0;
                         }
                         break;
                     }

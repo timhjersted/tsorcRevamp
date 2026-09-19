@@ -416,7 +416,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         private void DrawTongue(Vector2 start, Vector2 end)
         {
-            Texture2D segmentTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/BasiliskTonque").Value;
+            Texture2D segmentTexture = ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/BasiliskTonque").Value;
             Vector2 direction = end - start;
             Vector2 normal = direction.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2);
 

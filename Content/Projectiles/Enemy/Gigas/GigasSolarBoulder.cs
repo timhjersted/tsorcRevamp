@@ -26,7 +26,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gigas
             boulderEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/GigasSolarBoulder", AssetRequestMode.ImmediateLoad);
             macroNoise ??= ModContent.Request<Texture2D>(TextureRoot + "SmoothNoise", AssetRequestMode.ImmediateLoad);
             detailNoise ??= ModContent.Request<Texture2D>(TextureRoot + "Turbulence_06-512x512", AssetRequestMode.ImmediateLoad);
-            meteorTexture ??= ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/SolarMeteor", AssetRequestMode.ImmediateLoad);
+            meteorTexture ??= ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/SolarMeteor", AssetRequestMode.ImmediateLoad);
         }
 
         public override void SetDefaults()

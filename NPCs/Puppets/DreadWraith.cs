@@ -644,14 +644,14 @@ namespace tsorcRevamp.NPCs.Puppets
         // ── Weapon draw ───────────────────────────────────────────────────────────
         // Custom glaive art (138x144): blade tip at UPPER-LEFT, hilt butt at LOWER-RIGHT, so the shaft
         // runs along the top-left -> bottom-right diagonal.
-        protected override string SpearDrawTexturePath => "tsorcRevamp/Projectiles/Enemy/Weapons/DreadWraithGlaive";
+        protected override string SpearDrawTexturePath => "tsorcRevamp/Content/Projectiles/Enemy/Weapons/DreadWraithGlaive";
 
         // Swings use the normal melee draw branch (see DrawWeaponAsSpear below), which previously had no
         // texture override hook and fell through to the small vanilla item icon. Point it at the same
         // glaive art as the thrust — but only while a spear-named combo is actually active, so a mace
         // combo (icon hidden anyway, see HideHeldMeleeSprite) never picks this up.
         protected override string MeleeDrawTexturePath =>
-            ActiveComboIsSpear ? "tsorcRevamp/Projectiles/Enemy/Weapons/DreadWraithGlaive" : null;
+            ActiveComboIsSpear ? "tsorcRevamp/Content/Projectiles/Enemy/Weapons/DreadWraithGlaive" : null;
 
         // CRITICAL: spear-style drawing is for the THRUST ONLY. The spear path slides the grip up and down
         // the shaft, which is right for a poke but completely wrong for a swing — it was the reason the

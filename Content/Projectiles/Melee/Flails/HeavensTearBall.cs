@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -14,8 +14,8 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
     public class HeavensTearBall : ModProjectile
     {
 
-        private const string ChainTexturePath = "tsorcRevamp/Projectiles/Melee/Flails/HeavensTearChain"; // The folder path to the flail chain sprite
-        private const string ChainTextureExtraPath = "tsorcRevamp/Projectiles/Melee/Flails/HeavensTearChain2";  // This texture and related code is optional and used for a unique effect
+        private const string ChainTexturePath = "tsorcRevamp/Content/Projectiles/Melee/Flails/HeavensTearChain"; // The folder path to the flail chain sprite
+        private const string ChainTextureExtraPath = "tsorcRevamp/Content/Projectiles/Melee/Flails/HeavensTearChain2";  // This texture and related code is optional and used for a unique effect
 
         private enum AIState
         {

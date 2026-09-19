@@ -155,7 +155,7 @@ namespace tsorcRevamp.NPCs.Special
 
                 //data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
 
-                //data.UseImage("tsorcRevamp/Projectiles/Enemy/Marilith/CataclysmicFirestorm");
+                //data.UseImage("tsorcRevamp/Content/Projectiles/Enemy/Marilith/CataclysmicFirestorm");
                 //data.UseColor();
                 //data.UseSaturation(progress);
 

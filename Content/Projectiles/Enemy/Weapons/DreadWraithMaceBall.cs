@@ -12,7 +12,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// </summary>
     public class DreadWraithMaceBall : EnemyFlailProjectileBase
     {
-        protected override string ChainTexturePath => "tsorcRevamp/Projectiles/Enemy/Weapons/DreadWraithMaceChain";
+        protected override string ChainTexturePath => "tsorcRevamp/Content/Projectiles/Enemy/Weapons/DreadWraithMaceChain";
 
         // Spin telegraph at 5 tiles, then a fast lash out to as far as 20 tiles. The out/return are kept
         // short and constant so a long lash is visibly faster than a short one — distance reads as danger.

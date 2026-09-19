@@ -166,19 +166,19 @@ namespace tsorcRevamp.Content.Projectiles
             //Load all the textures if any are not loaded
             if (BoltStart == null || BoltStart.IsDisposed)
             {
-                BoltStart = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltBounceStart", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                BoltStart = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/BoltBounceStart", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
             if (BoltMiddle1 == null || BoltMiddle1.IsDisposed)
             {
-                BoltMiddle1 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltMiddle1", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                BoltMiddle1 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/BoltMiddle1", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
             if (BoltMiddle2 == null || BoltMiddle2.IsDisposed)
             {
-                BoltMiddle2 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltMiddle2", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                BoltMiddle2 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/BoltMiddle2", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
             if (BoltEnd == null || BoltEnd.IsDisposed)
             {
-                BoltEnd = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltEnd", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                BoltEnd = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/BoltEnd", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
 
             minX = 0;

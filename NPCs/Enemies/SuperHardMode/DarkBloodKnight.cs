@@ -101,10 +101,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Broadsword;
         protected override string MeleeDrawTexturePath => _activeComboUsesWhip
             ? null
-            : "tsorcRevamp/Projectiles/Enemy/Weapons/BloodSword";
+            : "tsorcRevamp/Content/Projectiles/Enemy/Weapons/BloodSword";
         protected override string GetHeldRangedDrawTexturePath(int itemType)
             => itemType == ItemID.TendonBow
-                ? "tsorcRevamp/Projectiles/Enemy/Weapons/BloodBow"
+                ? "tsorcRevamp/Content/Projectiles/Enemy/Weapons/BloodBow"
                 : base.GetHeldRangedDrawTexturePath(itemType);
         protected override Vector2 GetHeldRangedGripNorm(int itemType)
             => itemType == ItemID.TendonBow

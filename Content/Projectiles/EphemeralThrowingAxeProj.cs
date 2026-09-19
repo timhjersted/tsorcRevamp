@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
@@ -62,7 +62,7 @@ namespace tsorcRevamp.Content.Projectiles
 
         public override void PostDraw(Color lightColor)
         {
-            Texture2D glowTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/EphemeralThrowingAxeProj_Glowmask").Value;
+            Texture2D glowTexture = ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/EphemeralThrowingAxeProj_Glowmask").Value;
             Vector2 origin = new Vector2(glowTexture.Width / 2f, glowTexture.Height / 2f);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 

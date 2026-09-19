@@ -63,9 +63,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
             textures ??= new[]
             {
-                ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/BlightCloud1"),
-                ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/BlightCloud2"),
-                ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/BlightCloud3"),
+                ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/BlightCloud1"),
+                ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/BlightCloud2"),
+                ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/BlightCloud3"),
             };
 
             puffs = new Puff[PuffCount];

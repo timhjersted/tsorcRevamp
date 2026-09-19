@@ -261,7 +261,7 @@ namespace tsorcRevamp.NPCs.Puppets
         // ── Spear draw: grip slides along the shaft so the spear extends/retracts like the player's ──
         protected override bool DrawWeaponAsSpear => true;
         // Use the holdout-projectile sprite (full shaft + head) instead of the small item icon.
-        protected override string SpearDrawTexturePath => "tsorcRevamp/Projectiles/Melee/Spears/PilgrimSpontoonProj";
+        protected override string SpearDrawTexturePath => "tsorcRevamp/Content/Projectiles/Melee/Spears/PilgrimSpontoonProj";
         // Measured directly from the PilgrimSpontoonProj.png pixels (110x110): the ornate head/tip
         // sits at the top-left corner and the shaft runs straight to the bottom-right corner — a
         // NW-SE diagonal, not the NE-SW diagonal the broadsword convention assumes.

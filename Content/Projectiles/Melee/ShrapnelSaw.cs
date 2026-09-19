@@ -98,7 +98,7 @@ namespace tsorcRevamp.Content.Projectiles.Melee
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             UsefulFunctions.EnsureLoaded(ref sawTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeSawBlade");
-            UsefulFunctions.EnsureLoaded(ref holderTexture, "tsorcRevamp/Projectiles/Melee/ShrapnelSaw");
+            UsefulFunctions.EnsureLoaded(ref holderTexture, "tsorcRevamp/Content/Projectiles/Melee/ShrapnelSaw");
 
             Projectile.frameCounter++;
             if (Projectile.frameCounter == 2)

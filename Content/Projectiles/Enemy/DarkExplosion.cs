@@ -86,7 +86,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             if (texture == null || texture.IsDisposed)
             {
-                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/DarkExplosion");
+                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/DarkExplosion");
             }
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (Projectile.spriteDirection == -1)

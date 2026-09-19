@@ -83,7 +83,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         {
             // Deliberately NO ground-level slabs here. The previous version drew stretched quads anchored
             // at Bottom, which rendered as solid bars sinking into the tiles. Everything now travels UP.
-            Texture2D flameTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/AbyssFlames").Value;
+            Texture2D flameTexture = ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/AbyssFlames").Value;
             Vector2 origin = flameTexture.Size() * 0.5f;
             float lifeFraction = Projectile.timeLeft / (float)LifetimeTicks;
 

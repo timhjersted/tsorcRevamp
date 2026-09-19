@@ -11,7 +11,7 @@ namespace tsorcRevamp.Content.Projectiles
     class PhantomSpiral : ModProjectile
     {
 
-        private const string TexturePath = "tsorcRevamp/Projectiles/Comet";
+        private const string TexturePath = "tsorcRevamp/Content/Projectiles/Comet";
 
         public override void SetDefaults()
         {

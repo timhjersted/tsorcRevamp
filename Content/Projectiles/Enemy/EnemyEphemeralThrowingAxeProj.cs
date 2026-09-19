@@ -50,7 +50,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void PostDraw(Color lightColor)
         {
-            Texture2D glowTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyEphemeralThrowingAxeProj_Glowmask").Value;
+            Texture2D glowTexture = ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/EnemyEphemeralThrowingAxeProj_Glowmask").Value;
             Vector2 origin = glowTexture.Size() / 2f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 

@@ -1,4 +1,4 @@
-ï»¿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 warriorDamage = 50; // didn't have scaling damage before
             }
 
-            // "Ephemeral Axe Throw" â€” commitFraction 0.5: first half of the tell is stagger-cancellable (by magic, per
+            // "Ephemeral Axe Throw" — commitFraction 0.5: first half of the tell is stagger-cancellable (by magic, per
             // the ghost poise), second half is committed/hyperarmor.
             int axeProjectileType = ModContent.ProjectileType<EnemyEphemeralThrowingAxeProj>();
             UsefulFunctions.AddAttack(NPC, 300, axeProjectileType, warriorDamage, 8, SoundID.Item17,
@@ -138,7 +138,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            // Cancel the axe charge-up when we lose line of sight â€” don't telegraph or fire blind.
+            // Cancel the axe charge-up when we lose line of sight — don't telegraph or fire blind.
             // Only reset when the timer is non-zero to avoid a pointless netUpdate every single tick.
             bool hasLos = Collision.CanHit(NPC.position, NPC.width, NPC.height,
                                             Main.player[NPC.target].position,
@@ -150,7 +150,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 NPC.netUpdate = true;
             }
 
-            // Being hit while winding up also cancels the shot (25% chance â€” not trivially interrupted,
+            // Being hit while winding up also cancels the shot (25% chance — not trivially interrupted,
             // but a solid hit should reset the charge).
             if (NPC.justHit && globalNPC.ProjectileTimer < globalNPC.ProjectileTelegraphStart && Main.rand.NextBool(4))
             {
@@ -261,7 +261,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         {
             if (axeTexture == null || axeTexture.IsDisposed)
             {
-                axeTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyEphemeralThrowingAxeProj", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                axeTexture = ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/EnemyEphemeralThrowingAxeProj", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
             if (handTexture == null || handTexture.IsDisposed)
             {

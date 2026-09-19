@@ -2297,6 +2297,7 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write(CastingSpeed);
             binaryWriter.Write(Strength);
             binaryWriter.Write(Agility);
+            binaryWriter.Write(Initialized);
 
             // FSM state — divergence here causes lasting behavioral differences on clients
             binaryWriter.Write((byte)PursuitState);
@@ -2408,6 +2409,7 @@ namespace tsorcRevamp.NPCs
             CastingSpeed = binaryReader.ReadSingle();
             Strength = binaryReader.ReadSingle();
             Agility = binaryReader.ReadSingle();
+            Initialized = binaryReader.ReadBoolean();
 
             PursuitState = (PursuitState)binaryReader.ReadByte();
             DisengageTimer = binaryReader.ReadInt32();
@@ -3035,7 +3037,7 @@ namespace tsorcRevamp.NPCs
             {
                 modifiers.FinalDamage *= 0.65f; 
             }
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
+            if (Main.netMode != NetmodeID.Server && Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
             {
                 float debuffCounter = 0;
                 foreach (int buffType in npc.buffType)

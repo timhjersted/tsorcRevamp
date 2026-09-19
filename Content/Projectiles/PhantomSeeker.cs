@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -10,7 +10,7 @@ namespace tsorcRevamp.Content.Projectiles
     class PhantomSeeker : ModProjectile
     {
 
-        private const string TexturePath = "tsorcRevamp/Projectiles/Comet";
+        private const string TexturePath = "tsorcRevamp/Content/Projectiles/Comet";
 
         public override void SetDefaults()
         {

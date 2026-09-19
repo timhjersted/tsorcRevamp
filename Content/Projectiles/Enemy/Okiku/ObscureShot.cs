@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Okiku
         {
             if (texture == null || texture.IsDisposed)
             {
-                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureShot");
+                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/Okiku/ObscureShot");
             }
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (Projectile.spriteDirection == -1)
