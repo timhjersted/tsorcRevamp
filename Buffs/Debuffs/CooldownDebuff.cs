@@ -12,72 +12,68 @@ namespace tsorcRevamp.Buffs.Debuffs
         ///Useful for signaling a cooldown wearing off.
         ///Make sure to assign a valid string to LastTickSoundPath in CustomSetStaticDefaults. 
         ///Adjust the volume by changing LastTickSoundVolume in CustomSetStaticDefaults.
-        ///Set PlaysVanillaSound to true if you're using a sound from Vanilla and assign it'S ID to VanillaSoundID.
+        ///Set PlaysVanillaSound to true if you're using a sound from Vanilla and assign it's ID to VanillaSoundID.
         ///</summary>
         public abstract bool PlaysSoundOnLastTick { get; }
-        ///<summary> 
-        ///Assign the path to the Sound played on the last tick to this.
-        ///Already includes "tsorcRevamp/Sounds/"
-        ///</summary>
+
+        /// <summary>
+        /// Set this in an override of LastTickSoundSettings
+        /// </summary>
         public string LastTickSoundPath;
+        /// <summary>
+        /// Set this in an override of LastTickSoundSettings
+        /// </summary>
         public bool PlaysVanillaSound = false;
+        /// <summary>
+        /// Set this in an override of LastTickSoundSettings if you enabled PlaysVanillaSound
+        /// </summary>
         public SoundStyle VanillaSoundID;
-        public float LastTickSoundVolume = 1f;
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
             BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
-            CustomSetStaticDefaults();
         }
-        ///<summary> 
-        ///Use this to do anything you'd usually do in SetStaticDefaults, as to not overwrite the standard SetStaticDefaults function.
-        ///</summary>
-        public virtual void CustomSetStaticDefaults()
-        { }
+        /// <summary>
+        /// Override this to set Sound type and Volume just before the sound is played
+        /// </summary>
+        public virtual void LastTickSoundsSettings(out float soundVolume)
+        {
+            soundVolume = 1f;
+        }
         public override void Update(Player player, ref int buffIndex)
         {
             if (player.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
+                LastTickSoundsSettings(out float soundVolume);
+                if (!LastTickSoundPath.StartsWith("tsorcRevamp/"))
+                {
+                    LastTickSoundPath = "tsorcRevamp/" + LastTickSoundPath;
+                }
                 if (!PlaysVanillaSound)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/" + LastTickSoundPath) with { Volume = LastTickSoundVolume });
+                    SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume });
                 }
                 else
                 {
-                    SoundEngine.PlaySound(VanillaSoundID with { Volume = LastTickSoundVolume });
+                    SoundEngine.PlaySound(VanillaSoundID with { Volume = soundVolume });
                 }
             }
-            PlayerCustomUpdate(player, ref buffIndex);
         }
         public override void Update(NPC npc, ref int buffIndex)
         {
             if (npc.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
+                LastTickSoundsSettings(out float soundVolume);
                 if (!PlaysVanillaSound)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/" + LastTickSoundPath) with { Volume = LastTickSoundVolume }, npc.Center);
+                    SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume }, npc.Center);
                 }
                 else
                 {
-                    SoundEngine.PlaySound(VanillaSoundID with { Volume = LastTickSoundVolume }, npc.Center);
+                    SoundEngine.PlaySound(VanillaSoundID with { Volume = soundVolume }, npc.Center);
                 }
             }
-            NPCCustomUpdate(npc, ref buffIndex);
         }
-        ///<summary> 
-        ///Use this to do anything you'd usually do in Update, as to not overwrite the standard update function.
-        ///</summary>         
-        ///<param name="player">The player to update this buff on.</param>
-        ///<param name="buffIndex">The index in player.buffType of this buff. For use with Player.DelBuff(int).</param>
-        public virtual void PlayerCustomUpdate(Player player, ref int buffIndex)
-        { }
-        ///<summary> 
-        ///Use this to do anything you'd usually do in Update, as to not overwrite the standard update function.
-        ///</summary>         
-        ///<param name="npc">The npc to update this buff on.</param>
-        ///<param name="buffIndex">The index in npc.buffType of this buff. For use with NPC.DelBuff(int).</param>
-        public virtual void NPCCustomUpdate(NPC npc, ref int buffIndex)
-        { }
     }
 }

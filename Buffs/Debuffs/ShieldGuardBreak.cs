@@ -17,8 +17,9 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override bool PlaysSoundOnLastTick => false;
 
-        public override void PlayerCustomUpdate(Player player, ref int buffIndex)
+        public override void Update(Player player, ref int buffIndex)
         {
+            base.Update(player, ref buffIndex);
             // noItems blocks weapons and ordinary healing-item activation. The custom Souls quick-use paths
             // also check these debuffs explicitly because they begin flask animations without ItemCheck.
             player.noItems = true;

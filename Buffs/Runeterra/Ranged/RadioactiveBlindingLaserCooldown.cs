@@ -9,10 +9,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
     public class RadioactiveBlindingLaserCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Ranged/OmegaSquadRifle/BlindingLaserReady";
-            LastTickSoundVolume = 1f;
+            LastTickSoundPath = "Sounds/Runeterra/Ranged/OmegaSquadRifle/BlindingLaserReady";
+            soundVolume = 1f;
         }
     }
 }

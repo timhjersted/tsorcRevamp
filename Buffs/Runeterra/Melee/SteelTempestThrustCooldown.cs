@@ -9,10 +9,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
     public class SteelTempestThrustCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Melee/SteelTempest/ThrustReady";
-            LastTickSoundVolume = 0.5f;
+            LastTickSoundPath = "Sounds/Runeterra/Melee/SteelTempest/ThrustReady";
+            soundVolume = 0.5f;
         }
     }
 }

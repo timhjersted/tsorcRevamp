@@ -10,10 +10,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
     public class OrbOfFlameFireballCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Magic/OrbOfFlame/CharmReady";
-            LastTickSoundVolume = OrbOfDeception.OrbSoundVolume * 2;
+            LastTickSoundPath = "Sounds/Runeterra/Magic/OrbOfFlame/CharmReady";
+            soundVolume = OrbOfDeception.OrbSoundVolume * 2;
         }
     }
 }

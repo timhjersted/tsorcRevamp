@@ -10,11 +10,11 @@ namespace tsorcRevamp.Buffs.Weapons.Melee
     {
         public override bool PlaysSoundOnLastTick => true;
 
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
             PlaysVanillaSound = true;
             VanillaSoundID = SoundID.Item4;
-            LastTickSoundVolume = 2f;
+            soundVolume = 2f;
         }
     }
 }

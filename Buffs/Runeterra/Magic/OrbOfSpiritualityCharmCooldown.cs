@@ -10,10 +10,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
     public class OrbOfSpiritualityCharmCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Magic/OrbOfSpirituality/CharmReady";
-            LastTickSoundVolume = OrbOfDeception.OrbSoundVolume * 2;
+            LastTickSoundPath = "Sounds/Runeterra/Magic/OrbOfSpirituality/CharmReady";
+            soundVolume = OrbOfDeception.OrbSoundVolume * 2;
         }
     }
 }

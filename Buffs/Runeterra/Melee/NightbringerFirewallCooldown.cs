@@ -9,10 +9,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
     public class NightbringerFirewallCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Melee/Nightbringer/FirewallReady";
-            LastTickSoundVolume = 1f;
+            LastTickSoundPath = "Sounds/Runeterra/Melee/Nightbringer/FirewallReady";
+            soundVolume = 1f;
         }
     }
 }

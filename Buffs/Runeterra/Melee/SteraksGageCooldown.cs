@@ -9,10 +9,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
     public class SteraksGageCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Melee/SteraksGageReady";
-            LastTickSoundVolume = 1.2f;
+            LastTickSoundPath = "Sounds/Runeterra/Melee/SteraksGageReady";
+            soundVolume = 1.2f;
         }
     }
 }

@@ -1,21 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Systems.Electrocute
 {
     class ElectrocuteProjectile : ModProjectile
     {
-
+        public const int Frames = 7;
+        public const int Lifespan = 60;
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Projectile.type] = 4;
+            Main.projFrames[Projectile.type] = Frames;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 60;
-            Projectile.height = 110;
+            Projectile.width = 40;
+            Projectile.height = 80;
             Projectile.penetrate = -1;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
@@ -23,38 +26,33 @@ namespace tsorcRevamp.Systems.Electrocute
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
             Projectile.DamageType = DamageClass.Ranged;
-        }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
+            Projectile.timeLeft = Lifespan;
         }
 
         public bool AppliedOnSpawn = false;
         public override void AI()
         {
-            //keep a portion of the projectile's velocity when spawned, so we canmake sure it has the right knockback
             if (!AppliedOnSpawn)
             {
-                Projectile.velocity.X *= 0.001f;
-                Projectile.velocity.Y *= 0.001f;
                 Projectile.CritChance = (int)Projectile.ai[0];
-            }
-            Projectile.frameCounter++;
-            Projectile.frame = (int)Math.Floor((double)Projectile.frameCounter / 4);
-
-            if (Projectile.frame >= 4)
-            {
-                Projectile.frame = 2;
-            }
-            if (Projectile.frameCounter > 17)
-            { // (projFrames * 4.5) - 1
-                Projectile.alpha += 15;
+                int soundRoll = Main.rand.Next(3) + 1;
+                SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(Electrocute)) + "_Proc" + soundRoll)
+                    with
+                    {
+                        Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.5f
+                    }, 
+                    Projectile.Center);
+                AppliedOnSpawn = true;
             }
 
-            if (Projectile.alpha >= 255)
-            {
-                Projectile.Kill();
-            }
+            float frameDivisor = (float)Lifespan / Frames;
+            Projectile.frame = Frames - (int)(Projectile.timeLeft / (float)frameDivisor);
+        }
 
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers,
+            List<int> overWiresUI)
+        {
+            overWiresUI.Add(index);
         }
     }
 }

@@ -9,10 +9,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
     public class NuclearMushroomCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Ranged/OmegaSquadRifle/ShroomReady";
-            LastTickSoundVolume = 1f;
+            LastTickSoundPath = "Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomReady";
+            soundVolume = 1f;
         }
     }
 }

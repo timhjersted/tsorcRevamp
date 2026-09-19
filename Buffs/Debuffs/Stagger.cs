@@ -37,8 +37,9 @@ namespace tsorcRevamp.Buffs.Debuffs
             }
         }
 
-        public override void PlayerCustomUpdate(Player player, ref int buffIndex)
+        public override void Update(Player player, ref int buffIndex)
         {
+            base.Update(player, ref buffIndex);
             player.noItems = true;
             player.wingTime = 0f;
             player.canRocket = false;

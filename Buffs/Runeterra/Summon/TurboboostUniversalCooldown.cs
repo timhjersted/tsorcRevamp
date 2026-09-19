@@ -6,10 +6,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
     public class TurboboostUniversalCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Summon/CenterOfTheUniverse/BoostActivation";
-            LastTickSoundVolume = CenterOfTheUniverse.SoundVolume * 2f;
+            LastTickSoundPath = "Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation";
+            soundVolume = CenterOfTheUniverse.SoundVolume * 2f;
         }
     }
 }

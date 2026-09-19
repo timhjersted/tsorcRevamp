@@ -9,10 +9,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
     public class PlasmaWhirlwindDashCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Melee/PlasmaWhirlwind/DashReady";
-            LastTickSoundVolume = 2.4f;
+            LastTickSoundPath = "Sounds/Runeterra/Melee/PlasmaWhirlwind/DashReady";
+            soundVolume = 2.4f;
         }
     }
 }

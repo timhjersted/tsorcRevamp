@@ -9,10 +9,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
     public class NightbringerDashCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Melee/Nightbringer/DashReady";
-            LastTickSoundVolume = 2f;
+            LastTickSoundPath = "Sounds/Runeterra/Melee/Nightbringer/DashReady";
+            soundVolume = 2f;
         }
     }
 }

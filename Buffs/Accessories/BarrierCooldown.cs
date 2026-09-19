@@ -9,14 +9,15 @@ namespace tsorcRevamp.Buffs.Accessories
     public class BarrierCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
             PlaysVanillaSound = true;
             VanillaSoundID = SoundID.Item4;
-            LastTickSoundVolume = 2f;
+            soundVolume = 2f;
         }
-        public override void PlayerCustomUpdate(Player player, ref int buffIndex)
+        public override void Update(Player player, ref int buffIndex)
         {
+            base.Update(player, ref buffIndex);
             player.buffTime[buffIndex]++;
         }
     }

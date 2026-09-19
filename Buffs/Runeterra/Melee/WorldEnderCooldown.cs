@@ -11,10 +11,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
     public class WorldEnderCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Melee/WorldEnder/Ready";
-            LastTickSoundVolume = WorldEnderItem.SoundVolume;
+            LastTickSoundPath = "Sounds/Runeterra/Melee/WorldEnder/Ready";
+            soundVolume = WorldEnderItem.SoundVolume;
         }
     }
 }

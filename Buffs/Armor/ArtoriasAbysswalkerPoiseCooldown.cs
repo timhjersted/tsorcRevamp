@@ -8,11 +8,11 @@ namespace tsorcRevamp.Buffs.Armor
     {
         public override bool PlaysSoundOnLastTick => true;
 
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
             PlaysVanillaSound = true;
             VanillaSoundID = SoundID.Item8;
-            LastTickSoundVolume = 0.7f;
+            soundVolume = 0.7f;
         }
     }
 }

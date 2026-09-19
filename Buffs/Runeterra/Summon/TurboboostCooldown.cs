@@ -6,10 +6,10 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
     public class TurboboostCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Summon/InterstellarVessel/BoostActivation";
-            LastTickSoundVolume = InterstellarVesselGauntlet.SoundVolume * 2f;
+            LastTickSoundPath = "Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation";
+            soundVolume = InterstellarVesselGauntlet.SoundVolume * 2f;
         }
     }
 }

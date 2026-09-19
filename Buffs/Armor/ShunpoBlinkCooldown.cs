@@ -8,10 +8,10 @@ namespace tsorcRevamp.Buffs.Armor
     public class ShunpoBlinkCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/ShunpoReady";
-            LastTickSoundVolume = 2f;
+            LastTickSoundPath = "Sounds/Runeterra/ShunpoReady";
+            soundVolume = 2f;
         }
     }
 }

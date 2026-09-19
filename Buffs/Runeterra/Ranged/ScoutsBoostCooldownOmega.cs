@@ -9,13 +9,15 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
     public class ScoutsBoostCooldownOmega : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => true;
-        public override void CustomSetStaticDefaults()
+        public override void LastTickSoundsSettings(out float soundVolume)
         {
-            LastTickSoundPath = "Runeterra/Ranged/OmegaSquadRifle/BuffRegained";
-            LastTickSoundVolume = 1f;
+            LastTickSoundPath = "Sounds/Runeterra/Ranged/OmegaSquadRifle/BuffRegained";
+            soundVolume = 1f;
         }
-        public override void PlayerCustomUpdate(Player player, ref int buffIndex)
+
+        public override void Update(Player player, ref int buffIndex)
         {
+            base.Update(player, ref buffIndex);
             if (player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
             {
                 player.DelBuff(buffIndex);
