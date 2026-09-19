@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Damage
 {
@@ -71,7 +72,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             recipe.AddIngredient(ModContent.ItemType<MoltenRing>());
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>());
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 6);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 95000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 95000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

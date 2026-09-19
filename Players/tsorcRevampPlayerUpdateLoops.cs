@@ -24,6 +24,7 @@ using tsorcRevamp.Content.Items.Accessories.Mobility.Wings;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Content.Items.Weapons.Magic;
@@ -67,12 +68,7 @@ namespace tsorcRevamp
         public int townWarpWorld;
         public bool townWarpSet;
 
-        public int RuneMageChatTimer = 0;
-
         public bool BeastMode1 = false;
-        public bool SilverSerpentRing = false;
-        public bool SoulSerpentRing = false;
-        public int SoulReaper = 5;
         public bool TornWings = false;
         public bool Crippled = false;
         public bool WitchkingsGrasp = false;
@@ -91,7 +87,6 @@ namespace tsorcRevamp
         public bool UndeadTalisman = false;
         public bool WolfRing = false;
         public bool BarrierRing;
-        public bool Trinity = false;
 
         public bool DragoonBoots = false;
         public bool DragoonBootsEnable = false;
@@ -103,7 +98,6 @@ namespace tsorcRevamp
         public bool NecromanticScroll = false;
         public bool PapyrusScarab = false;
 
-        public float WhipTipHitBonusDamage = 35f;
         public bool FinishedChargingWhip = false;
 
         public int CurseLevel = 1;
@@ -117,8 +111,6 @@ namespace tsorcRevamp
 
         public bool BrokenSpirit;
 
-        public bool HasSporePowder;
-        public bool HasVenomPowder;
         public bool HasYoungHunterAccessory;
         public bool HasLoveRing;
         private int loveHealCooldown = 0;
@@ -128,10 +120,6 @@ namespace tsorcRevamp
         public bool SteraksGage = false;
         public bool InfinityEdge = false;
         public bool LudensTempest = false;
-        public bool Goredrinker = false;
-        public bool GoredrinkerReady = false;
-        public bool GoredrinkerSwung = false;
-        public int GoredrinkerHits = 0;
 
         public int WorldEnderSwing = 1;
 
@@ -193,7 +181,6 @@ namespace tsorcRevamp
 
         public bool MythrilOrichalcumCritDamage = false;
         public bool PilgrimSpontoonBuff = false;
-        public float WhipTipHitboxSize = 1f;
 
         public int SteelTempestStacks = 0;
         public int SweepingBladeTimer = 0;
@@ -241,8 +228,6 @@ namespace tsorcRevamp
         public bool BoneRevenge = false;
         public bool SoulSiphon = false;
         public float SoulSiphonScaling = 1;
-        public int ConsSoulChanceMult;
-        public bool SoulSickle = false;
 
         public bool BurningAura = false;
         public bool BurningStone = false;
@@ -336,7 +321,6 @@ namespace tsorcRevamp
         public bool GreatMagicWeapon;
         public bool CrystalMagicWeapon;
         public bool ReboundProjectile;
-        public bool ShadowmoonCloak;
 
         //increased grab range immediately after killing a boss
         public int bossMagnetTimer;
@@ -537,9 +521,6 @@ namespace tsorcRevamp
                 DestinedDeathCurrentHPLoss = 0f;
             }
             BeastMode1 = false;
-            SilverSerpentRing = false;
-            SoulSerpentRing = false;
-            SoulReaper = 5;
 
             DragoonBoots = false;
             //player.eocDash = 0;
@@ -549,7 +530,6 @@ namespace tsorcRevamp
             SteraksGage = false;
             InfinityEdge = false;
             LudensTempest = false;
-            Goredrinker = false;
 
             JaggedFlatCritDmgBonus = 0;
             RashBadLifeRegen = 0;
@@ -572,17 +552,13 @@ namespace tsorcRevamp
 
             MythrilOrichalcumCritDamage = false;
             PilgrimSpontoonBuff = false;
-            WhipTipHitboxSize = 1;
 
             PhoenixSkull = false;
-            Trinity = false;
 
             SummonTagStrength = 1f;
             SummonTagDuration = 1f;
             CrystallineShard = false;
 
-            HasSporePowder = false;
-            HasVenomPowder = false;
             HasYoungHunterAccessory = false;
             HasLoveRing = false;
             MaxMinionTurretMultiplier = 1;
@@ -645,14 +621,11 @@ namespace tsorcRevamp
             CrystalMagicWeapon = false;
             ReboundProjectile = false;
 
-            ShadowmoonCloak = false;
             manaShield = 0;
             staminaShield = 0;
 
             ConditionOverload = false;
             supersonicLevel = 0;
-            ConsSoulChanceMult = 0;
-            SoulSickle = false;
             TornWings = false;
             WitchkingsGrasp = false;
             MorgulWhipEffect = false;
@@ -782,7 +755,7 @@ namespace tsorcRevamp
             Player.fullRotationOrigin = new Vector2(11, 22);
             SetDirection(true);
 
-            darkSoulQuantity = Player.CountItem(ModContent.ItemType<DarkSoul>(), 999999);
+            darkSoulQuantity = Player.CountItem(ModContent.ItemType<DarkSoulItem>(), 999999);
 
             //the item in the soul slot will only ever be souls, so we dont need to check type
             if (SoulSlot.Item.stack > 0) { darkSoulQuantity += SoulSlot.Item.stack; }
@@ -1652,10 +1625,10 @@ namespace tsorcRevamp
             {
                 //block souls from going in normal inventory slots
                 tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
-                if (Player.inventory[i].type == ModContent.ItemType<DarkSoul>())
+                if (Player.inventory[i].type == ModContent.ItemType<DarkSoulItem>())
                 {
                     //if the player's soul slot is empty
-                    if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>())
+                    if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoulItem>())
                     {
                         modPlayer.SoulSlot.Item = Player.inventory[i].Clone();
                     }
@@ -2669,7 +2642,7 @@ namespace tsorcRevamp
             {
                 if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath)
                 {
-                    if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>() && Main.mouseItem.stack > 0)
+                    if (Main.mouseItem.type == ModContent.ItemType<DarkSoulItem>() && Main.mouseItem.stack > 0)
                     {
                         SoulSlot.Item.stack += Main.mouseItem.stack;
                         Player.inventory[58].TurnToAir();
@@ -2679,7 +2652,7 @@ namespace tsorcRevamp
                     foreach (Item item in Player.inventory)
                     {
                         //leaving this in case someone decides to move souls to their normal inventory to stop them from being dropped on death :)
-                        if (item.type == ModContent.ItemType<DarkSoul>())
+                        if (item.type == ModContent.ItemType<DarkSoulItem>())
                         {
                             soulCount += item.stack;
                             item.stack = 0;
@@ -3218,66 +3191,7 @@ namespace tsorcRevamp
             }
         }
 
-        public void ActivateSporePowderEffect()
-        {
-            if (!HasSporePowder)
-                return;
 
-            Vector2 center = Player.Center;
-            float radius = 120f;
-
-            for (int i = 0; i < 190; i++)
-            {
-                Vector2 offset = Main.rand.NextVector2Circular(radius, radius);
-                int dust = Dust.NewDust(center + offset, 1, 1, 44, 0f, 0f, 75, default, 1.4f);
-                Main.dust[dust].velocity = offset.SafeNormalize(Vector2.Zero) * 1f;
-                Main.dust[dust].noGravity = false;
-            }
-
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.85f }, Player.Center);
-
-            if (Main.myPlayer == Player.whoAmI)
-            {
-                int baseDamage = (int)Player.GetTotalDamage(DamageClass.Generic).ApplyTo(13);
-                int finalDamage = Main.DamageVar(baseDamage);
-
-                Projectile.NewProjectile(
-                    Player.GetSource_Misc("SporePowder"),
-                    center,
-                    Vector2.Zero,
-                    ModContent.ProjectileType<SporePowderProjectile>(),
-                    finalDamage,
-                    0.5f,
-                    Player.whoAmI
-                );
-            }
-        }
-
-        public void ActivateVenomPowderEffect()
-        {
-            if (!HasVenomPowder)
-                return;
-
-            Vector2 center = Player.Center;
-
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17 with { Volume = 0.95f }, Player.Center);
-
-            if (Main.myPlayer == Player.whoAmI)
-            {
-                int baseDamage = (int)Player.GetTotalDamage(DamageClass.Generic).ApplyTo(35);
-                int finalDamage = Main.DamageVar(baseDamage);
-
-                Projectile.NewProjectile(
-                    Player.GetSource_Misc("VenomPowder"),
-                    center,
-                    Vector2.Zero,
-                    ModContent.ProjectileType<VenomPowderProjectile>(),
-                    finalDamage,
-                    0.8f,
-                    Player.whoAmI
-                );
-            }
-        }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame)
         {

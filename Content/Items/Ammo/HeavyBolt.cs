@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Items.Ammo
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Content.Items.Ammo
             Recipe recipe = CreateRecipe(80);
             recipe.AddIngredient(ModContent.ItemType<Bolt>(), 80);
             recipe.AddIngredient(ItemID.Bone, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 25);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

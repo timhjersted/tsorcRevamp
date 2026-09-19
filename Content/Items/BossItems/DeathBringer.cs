@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.BossItems
 {
@@ -42,7 +43,7 @@ namespace tsorcRevamp.Content.Items.BossItems
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofNight, 1);
             recipe.AddIngredient(ItemID.Bone, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1000);
             recipe.AddTile(TileID.LunarCraftingStation);
             recipe.AddCondition(tsorcRevampWorld.AdventureModeEnabled);
             recipe.Register();
@@ -50,7 +51,7 @@ namespace tsorcRevamp.Content.Items.BossItems
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.SoulofNight, 1);
             recipe2.AddIngredient(ItemID.Bone, 1);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
             recipe2.Register();

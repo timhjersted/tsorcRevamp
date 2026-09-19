@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor
 {
@@ -73,7 +74,7 @@ namespace tsorcRevamp.Content.Items.Armor
             recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(ItemID.SoulofSight, 10);
             recipe.AddIngredient(ItemID.SoulofFright, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 26000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 26000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

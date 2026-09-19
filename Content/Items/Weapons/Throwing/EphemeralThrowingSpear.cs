@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Throwing
 {
@@ -37,7 +38,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Throwing
             Recipe recipe = CreateRecipe(200);
             recipe.AddIngredient(ModContent.ItemType<RoyalThrowingSpear>(), 200);
             recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 90);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
@@ -191,7 +192,7 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<YellowTail>(), 6));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<TaintedBow>(), 8));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 900, 1400));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoulItem>(), 1, 900, 1400));
         }
 
         public override void OnKill()

@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Projectiles.Melee.Shortswords;
 
@@ -63,7 +64,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Shortswords
             recipe.AddIngredient(ModContent.ItemType<Laevateinn>());
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 6);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 75000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

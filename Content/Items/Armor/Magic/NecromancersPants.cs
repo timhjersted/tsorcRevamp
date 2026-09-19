@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.Content.Items.Armor.Magic
@@ -37,7 +38,7 @@ namespace tsorcRevamp.Content.Items.Armor.Magic
             recipe.AddIngredient(ItemID.SpectrePants);
             recipe.AddIngredient(ModContent.ItemType<LichBone>());
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

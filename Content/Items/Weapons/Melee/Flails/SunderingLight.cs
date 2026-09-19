@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Projectiles.Melee.Flails;
 
@@ -48,7 +49,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 10);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>());
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 120000);
 
             recipe.AddTile(TileID.DemonAltar);
 

@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Damage
 {
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             recipe.AddIngredient(ItemID.CursedFlame, 8);
             recipe.AddIngredient(ItemID.Ichor, 8);
             recipe.AddIngredient(ItemID.Stinger, 8);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 12000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

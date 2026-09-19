@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Items.Ammo
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Content.Items.Ammo
             recipe.AddIngredient(ModContent.ItemType<Bolt>(), 200);
             recipe.AddIngredient(ItemID.MythrilBar, 1);
             recipe.AddIngredient(ItemID.SoulofFlight, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 50);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

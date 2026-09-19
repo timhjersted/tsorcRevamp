@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Projectiles.Melee.Spears;
 
@@ -49,7 +50,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Spears
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 12);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>());
             recipe.AddIngredient(ItemID.FragmentStardust, 8);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 140000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 140000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

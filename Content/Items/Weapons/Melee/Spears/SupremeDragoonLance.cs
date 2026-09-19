@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Spears
@@ -28,7 +29,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Spears
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 8);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 8);
             recipe.AddIngredient(ModContent.ItemType<SoulOfOccultist>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 120000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

@@ -1372,15 +1372,15 @@ Mods: {
 				Night: Вы переводите время вперед, и начинается новая ночь...
 			}
 
-			ShadowmoonCloak: {
-				DisplayName: Плащ призрачной Луны
-				Tooltip:
+			ShadowmoonCloakItem: {
+				// DisplayName: Shadowmoon Cloak
+				/* Tooltip:
 					'''
-					Наследует эффект Звездных плащей и дарует {$CommonItemTooltip.PercentIncreasedDamageCritChance}
-					Магические способности больше не требуют перезарядки.
-					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.Magic.ManaRegen@2} и дополнительно даёт
+					Inherits the Star Cloaks effect and grants {$CommonItemTooltip.PercentIncreasedDamageCritChance}
+					Magic Imbues no longer need to go on cooldown
+					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.Magic.ManaRegen@2} and grants an additional
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
-					'''
+					''' */
 			}
 
 			AncientDemonShield: {
@@ -1694,29 +1694,29 @@ Mods: {
 					'''
 			}
 
-			CovetousSilverSerpentRing: {
-				DisplayName: Серебрянное кольцо алчной змеи
-				Tooltip:
+			SilverSerpentRingItem: {
+				// DisplayName: Covetous Silver Serpent Ring
+				/* Tooltip:
 					'''
-					Древняя реликвия, выкованная и утерянная много веков назад
-					Говорят, что один из 4 королей Аррадиуса носил это кольцо
+					An ancient relic forged and lost many centuries ago
+					One of the 4 Kings of Arradius was said to wear this ring
 					[c/ffbf00:{$CommonItemTooltip.SoulDrops}]
 					[c/ffbf00:{$CommonItemTooltip.BadDefense@1}]
-					Кольцо светится ярким белым светом
-					'''
+					The ring glows with a bright white light
+					''' */
 			}
 
-			CovetousSoulSerpentRing: {
-				DisplayName: Кольцо Змеи Алчной души
-				Tooltip:
+			SoulSerpentRingItem: {
+				// DisplayName: Covetous Soul Serpent Ring
+				/* Tooltip:
 					'''
-					Древняя реликвия, выкованная и утерянная много веков назад
+					An ancient relic reforged to its maximum greed
 					[c/ffbf00:{$CommonItemTooltip.SoulDrops}]
 					[c/ffbf00:{$CommonItemTooltip.BadDefense@1}]
 					[c/ffbf00:{$CommonItemTooltip.ConsumableSoulDrops@2}]
-					Все души притягиваются к владельцу с большого расстояния
-					Кольцо светится ярким белым светом
-					'''
+					All souls are drawn to the wearer from a large distance
+					The ring glows with a bright white light
+					''' */
 			}
 
 			CrackedDragonStone: {
@@ -2130,15 +2130,15 @@ Mods: {
 					'''
 			}
 
-			SoulReaper2: {
-				DisplayName: Жнец душ II
-				Tooltip:
+			SoulReaper2Item: {
+				// DisplayName: Soul Reaper II
+				/* Tooltip:
 					'''
-					Значительно{$CommonItemTooltip.DSPickUpRange}
+					Greatly{$CommonItemTooltip.DSPickUpRange}
 					{$CommonItemTooltip.ConsumableSoulDrops}
-					В ответ наносит удар серпом
-					От него исходит жуткая аура
-					'''
+					Lashes out with a sickle in retaliation
+					Gives off an eerie aura
+					''' */
 			}
 
 			ChallengersGlove: {
@@ -4459,13 +4459,13 @@ Mods: {
 					''' */
 			}
 
-			DarkSoul: {
-				DisplayName: Тёмная душа
-				Tooltip:
+			DarkSoulItem: {
+				// DisplayName: Dark Soul
+				/* Tooltip:
 					'''
-					Душа падшего существа.
-					Может быть использована на алтарях демонов для создания нового оружия, предметов и доспехов.
-					'''
+					Soul of a fallen creature.
+					Can be used at Demon Altars to forge new weapons, items, and armors.
+					''' */
 			}
 
 			DeadChicken: {
@@ -6052,14 +6052,14 @@ Mods: {
 					'''
 			}
 
-			GreatSoulArrowStaff: {
-				DisplayName: Стрела Великой души
-				Tooltip:
+			GreatSoulArrowStaffItem: {
+				// DisplayName: Great Soul Arrow
+				/* Tooltip:
 					'''
-					Выпускает стрелу великой души с лёгким наведением
-					может поражать души врагов
-					Враги, поражённые душой, теряют на 10% больше душ
-					'''
+					Shoots a lightly homing great soul arrow
+					which can leave enemies Soulstruck
+					Soulstruck enemies drop {0}% more souls
+					''' */
 			}
 
 			Ice1Tome: {
@@ -7578,9 +7578,9 @@ Mods: {
 					''' */
 			}
 
-			SporePowder: {
-				DisplayName: Порошок из спор
-				Tooltip: ""
+			SporePowderItem: {
+				// DisplayName: Bloom Powder
+				// Tooltip: Consuming a healing potion/Estus flask or taking damage creates an explosion of poison spores around you
 			}
 
 			WhiteTitanite: {
@@ -8073,17 +8073,17 @@ Mods: {
 					'''
 			}
 
-			Goredrinker: {
-				DisplayName: Кровопийца
-				Tooltip:
+			GoredrinkerItem: {
+				// DisplayName: Goredrinker
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
-					[c/dc143c:Время от времени усиливает удары хлыстом({$CommonItemTooltip.Cooldown@2})]
-					[c/dc143c:Удары хлыстом с усилением наносят дополнительный урон, увеличивают дальность действия, гарантированно наносят критический удар и исцеляют вас при попадании]
-					Исцеление зависит от урона хлыста и недостающего здоровья
-					Время восстановления уменьшается при каждом обычном ударе хлыстом
-					'''
+					[c/dc143c:Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@2})]
+					[c/dc143c:Empowered whip swings gain extra damage, range, count as tip hits and heal you on-hit]
+					Heal scales with whip damage and missing life
+					Cooldown is reduced on every normal whip hit
+					''' */
 			}
 
 			DamageDebugTome: {
@@ -8688,15 +8688,15 @@ Mods: {
 					'''
 			}
 
-			Trinity: {
-				DisplayName: Троица
-				Tooltip:
+			TrinityItem: {
+				// DisplayName: Trinity
+				/* Tooltip:
 					'''
-					[c/ffbf00:Вы чувствуете силу трёх Крыльев и элементов внутри себя]
-					Накладывает кислотный яд, даёт шанс заморозить ближайших врагов, а также дарует быстрое исцеление на короткое время после получения урона
-					Когда у владельца остаётся менее 50% здоровья, активируется его природная защита и он получает дополнительный эффект
-					[c/00ffd4:Эффект даёт +4 к регенерации жизни, +12 ед. к защите, +15% урона и +20% скорости передвижения]
-					'''
+					[c/ffbf00:You feel the power of the 3 Wings and the elements within you]
+					Inflicts acid venom, has a chance to freeze nearby enemies, and gains rapid healing for a small duration upon taking damage
+					When the wearer is below 50% life, activates his natural defenses and gains a buff
+					[c/00ffd4:The buff grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed]
+					''' */
 			}
 
 			DiamondCrusher: {
@@ -8844,7 +8844,7 @@ Mods: {
 					''' */
 			}
 
-			VenomPowder: {
+			VenomPowderItem: {
 				// DisplayName: Venom Powder
 				// Tooltip: Consuming a healing potion/Estus flask or taking damage creates an large explosion of acid venom around you
 			}

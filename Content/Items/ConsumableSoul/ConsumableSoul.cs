@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.ConsumableSoul
 {
@@ -44,7 +45,7 @@ namespace tsorcRevamp.Content.Items.ConsumableSoul
         }
         public override void GrabRange(Player player, ref int grabRange)
         {
-            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
+            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<DarkSoulPlayer>().SoulPickupRange);
         }
 
         public override bool? UseItem(Player player) // Won't consume item without this

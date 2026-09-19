@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Runeterra;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra
@@ -36,7 +37,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra
 
             recipe.AddIngredient(ModContent.ItemType<PlasmaWhirlwind>());
             recipe.AddIngredient(ItemID.LunarBar, 12);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 100000);
 
             recipe.AddTile(TileID.DemonAltar);
 

@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor.Ranged
 {
@@ -45,7 +46,7 @@ namespace tsorcRevamp.Content.Items.Armor.Ranged
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MythrilChainmail);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

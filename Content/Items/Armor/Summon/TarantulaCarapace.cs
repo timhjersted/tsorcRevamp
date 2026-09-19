@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor.Summon
 {
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Content.Items.Armor.Summon
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpiderBreastplate);
             recipe.AddIngredient(ItemID.MythrilBar);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8800);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 8800);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

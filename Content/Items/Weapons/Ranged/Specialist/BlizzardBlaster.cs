@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
@@ -43,7 +44,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 15000);
             recipe.AddIngredient(ItemID.CobaltBar, 12);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -32,6 +32,7 @@ using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.ItemCrates;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Content.Items.Weapons.Classless;
@@ -41,6 +42,7 @@ using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Ranged;
 using tsorcRevamp.Content.Projectiles.Summon;
@@ -144,10 +146,6 @@ namespace tsorcRevamp.NPCs
         // (the multiply yields 0). So the ghost's magic flinch is applied as a direct velocity impulse instead. Tune here.
         private const float GhostMagicFlinchVelocity = 2.5f;
 
-        float enemyValue;
-        float multiplier = 1f;
-        float divisorMultiplier = 1f;
-        int DarkSoulQuantity;
         /// <summary>Opt-out for staged encounter actors whose intermediate death must produce no global drops.</summary>
         public bool SuppressGlobalOnKillDrops;
         /// <summary>True for a temporary combat duplicate left behind by a MagicIllusion teleport.</summary>
@@ -240,7 +238,6 @@ namespace tsorcRevamp.NPCs
         public bool ElectrocutedEffect3;
         public bool PolarisElectrocutedEffect;
         public bool CrescentMoonlight;
-        public bool Soulstruck;
         public bool PhazonCorruption;
         public bool PlaguesmithBuff;
         // Set true each tick by SorrowfulCurseBuff (the Cleric of Sorrow's Last Rites dying curse). While active,
@@ -1668,7 +1665,6 @@ namespace tsorcRevamp.NPCs
             ElectrocutedEffect3 = false;
             PolarisElectrocutedEffect = false;
             CrescentMoonlight = false;
-            Soulstruck = false;
             PhazonCorruption = false;
             PlaguesmithBuff = false;
             SorrowfulCurse = false;
@@ -2954,159 +2950,6 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            #region Dark Souls & Consumable Souls Drops
-
-            if (Soulstruck)
-            {
-                divisorMultiplier = 0.9f; //10% increase
-            }
-
-            if (npc.lifeMax > 5 && npc.value >= 10f || npc.boss)
-            { //stop zero-value souls from dropping (the 'or boss' is for expert mode support)
-                if (Main.masterMode)
-                {
-                    enemyValue = (int)npc.value / (divisorMultiplier * 20);
-                }
-                else
-                if (Main.expertMode)
-                { //npc.value is the amount of coins they drop
-                    enemyValue = (int)npc.value / (divisorMultiplier * 25); //all enemies drop more money in expert mode, so the divisor is larger to compensate
-                }
-                else
-                {
-                    enemyValue = (int)npc.value / (divisorMultiplier * 15);
-                }
-
-
-                multiplier = tsorcRevampPlayer.CheckSoulsMultiplier(Main.LocalPlayer);
-
-                DarkSoulQuantity = (int)(multiplier * enemyValue);
-
-                #region Bosses drop souls once
-                if (npc.boss)
-                {
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(npc.type)))
-                    {
-                        DarkSoulQuantity = 0;
-                    }
-                    else
-                    {
-                        // check whether the SHM boss was killed
-                        if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>()
-                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
-                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>()
-                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
-                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
-                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) /*|| npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) gwyn CLOSES the abyss portal!*/
-                        {
-                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SHM.BossDeath"), Color.Orange); 
-                        }
-
-                        if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>())
-                        {
-                            tsorcRevampWorld.isHellkiteDragonDead = true;
-                        }
-
-                        if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>())
-                        {
-                            tsorcRevampWorld.isOolacileSerpentDead = true;
-                        }
-
-                        if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
-                        {
-                            Main.StartInvasion();
-                        }
-
-                        if ((npc.type == ModContent.NPCType<NPCs.Bosses.TheSorrow>()) && Main.invasionType == 0)
-                        {
-                            Main.StartInvasion(3);
-                        }
-
-                        tsorcRevampWorld.PopulatePairedBosses();
-                        //Paired bosses have to have their slain entries work different
-                        if (tsorcRevampWorld.PairedBosses.Contains(npc.type))
-                        {
-                            for (int i = 0; i < tsorcRevampWorld.PairedBosses.Count; i++)
-                            {
-                                if (tsorcRevampWorld.PairedBosses[i] == npc.type)
-                                {
-                                    int pairedNPCOffset = -1;
-                                    if (i % 2 == 0)
-                                    {
-                                        pairedNPCOffset = 1;
-                                    }
-
-                                    //If the other boss is not alive, then add them both. If not, don't.
-                                    if (!NPC.AnyNPCs(tsorcRevampWorld.PairedBosses[i + pairedNPCOffset]))
-                                    {
-                                        tsorcRevampWorld.NewSlain.Add(new NPCDefinition(npc.type), 1);
-                                        tsorcRevampWorld.NewSlain.Add(new NPCDefinition(tsorcRevampWorld.PairedBosses[i + pairedNPCOffset]), 1);
-                                    }
-
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            tsorcRevampWorld.NewSlain.Add(new NPCDefinition(npc.type), 1);
-                        }
-
-                        if (Main.netMode == NetmodeID.Server)
-                        {
-                            NetMessage.SendData(MessageID.WorldData); //Slain only exists on the server. This tells the server to run NetSend(), which syncs this data with clients
-                        }
-                    }
-                }
-                #endregion
-
-                #region EoW drops souls in a unique way
-                if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)))
-                {
-
-                    DarkSoulQuantity = 24; //*72 for soul drops per eater, 1728 souls per one whole eater
-
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
-                }
-                #endregion
-
-                if (DarkSoulQuantity > 0)
-                {
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
-                }
-
-
-                // Consumable Soul drops ahead - Current numbers give aprox. +20% souls
-
-                float chance = 0.01f + (0.0005f * Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult);
-                //Main.NewText(chance);
-
-                if (!(npc.type == NPCID.EaterofWorldsBody || npc.type == NPCID.EaterofWorldsTail || npc.type == NPCID.EaterofWorldsHead || npc.type == NPCID.Creeper))
-                {
-
-                    if ((enemyValue >= 1) && (enemyValue <= 200) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 1 and 200 dropping FadingSoul aka 1/75
-                    {
-                        Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<FadingSoul>(), 1); // Zombies and eyes are 6 and 7 enemyValue, so will only drop FadingSoul
-                    }
-
-                    if ((enemyValue >= 15) && (enemyValue <= 2000) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 10 and 2000 dropping LostUndeadSoul aka 1/75
-                    {
-                        Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<LostUndeadSoul>(), 1); // Most pre-HM enemies fall into this category
-                    }
-
-                    if ((enemyValue >= 55) && (enemyValue <= 10000) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 50 and 10000 dropping NamelessSoldierSoul aka 1/75
-                    {
-                        Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<NamelessSoldierSoul>(), 1); // Most HM enemies fall into this category
-                    }
-
-                    if ((enemyValue >= 150) && (enemyValue <= 10000) && (Main.rand.NextFloat() < chance) && Main.hardMode) // 1% chance of all enemies between enemyValue 150 and 10000 dropping ProudKnightSoul aka 1/75
-                    {
-                        Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<ProudKnightSoul>(), 1);
-                    }
-                }
-                //End consumable souls drops
-            }
-            #endregion
 
 
             #region Event saving and custom drops code
@@ -3651,7 +3494,8 @@ namespace tsorcRevamp.NPCs
             RestoreMagicGhostKnockback(npc);
 
             Player player = Main.player[projectile.owner];
-            var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            var whipTipHitPlayer = player.GetModPlayer<WhipTipHit>();
             if (projectile.IsMinionOrSentryRelated)
             {
                 modPlayer.CustomCombatText(npc.Hitbox, damageDone, CritColorTier, hit.Crit);
@@ -3668,7 +3512,7 @@ namespace tsorcRevamp.NPCs
             if (markedByDragoonLash && projectile.type == ModContent.ProjectileType<DragoonLashProjectile>()) //has to be outside of the main if since this is supposed to also be procced on whip-hit
             {
                 int WhipDamage = hit.SourceDamage;
-                if (modPlayer.WhipTipHit(projectile, projectile.WhipPointsForCollision, npc.Hitbox))
+                if (whipTipHitPlayer.Check(projectile, projectile.WhipPointsForCollision, npc.Hitbox))
                 {                    
                     Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, (npc.Center - player.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer, 1);
                 }
@@ -3688,7 +3532,7 @@ namespace tsorcRevamp.NPCs
             if (markedBySupremeDragoonLash && projectile.type == ModContent.ProjectileType<SupremeDragoonLashProjectile>()) //has to be outside of the main if since this is supposed to also be procced on whip-hit
             {
                 int WhipDamage = hit.SourceDamage;
-                if (modPlayer.WhipTipHit(projectile, projectile.WhipPointsForCollision, npc.Hitbox))
+                if (whipTipHitPlayer.Check(projectile, projectile.WhipPointsForCollision, npc.Hitbox))
                 {                    
                     Projectile RgbFireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, (npc.Center - player.Center) * 0.1f, ProjectileID.RainbowRodBullet, WhipDamage, 1f, Main.myPlayer, 1);
                 }
@@ -5163,19 +5007,6 @@ namespace tsorcRevamp.NPCs
                 Main.dust[dust].velocity *= 0f;
                 Main.dust[dust].noGravity = false;
                 Main.dust[dust].velocity += npc.velocity;
-            }
-
-            if (Soulstruck)
-            {
-                Lighting.AddLight(npc.Center, .4f, .4f, .850f);
-
-                if (Main.rand.NextBool(6))
-                {
-                    int dust = Dust.NewDust(npc.position, npc.width, npc.height, 68, 0, 0, 30, default(Color), 1.25f);
-                    Main.dust[dust].velocity *= 0f;
-                    Main.dust[dust].noGravity = true;
-                    Main.dust[dust].velocity += npc.velocity;
-                }
             }
         }
 

@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
 {
@@ -48,7 +49,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
             recipe.AddIngredient(ItemID.CrystalShard, 12);
             //recipe.AddIngredient(ItemID.SandBlock, 150);
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 12);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 120000);
             recipe.AddTile(TileID.DemonAltar);
 
             //recipe.Register();

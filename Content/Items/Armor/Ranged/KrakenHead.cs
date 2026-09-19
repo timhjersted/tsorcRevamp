@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.Content.Items.Armor.Ranged
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Content.Items.Armor.Ranged
             recipe.AddIngredient(ItemID.ShroomiteHelmet);
             recipe.AddIngredient(ModContent.ItemType<KrakenFlesh>());
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -44,7 +45,7 @@ namespace tsorcRevamp.Content.Items.Armor.Ranged
             recipe2.AddIngredient(ItemID.ShroomiteHeadgear);
             recipe2.AddIngredient(ModContent.ItemType<KrakenFlesh>());
             recipe2.AddIngredient(ModContent.ItemType<BlueTitanite>(), 3);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), SoulCost);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();
@@ -53,7 +54,7 @@ namespace tsorcRevamp.Content.Items.Armor.Ranged
             recipe3.AddIngredient(ItemID.ShroomiteMask);
             recipe3.AddIngredient(ModContent.ItemType<KrakenFlesh>());
             recipe3.AddIngredient(ModContent.ItemType<BlueTitanite>(), 3);
-            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoulItem>(), SoulCost);
             recipe3.AddTile(TileID.DemonAltar);
 
             recipe3.Register();

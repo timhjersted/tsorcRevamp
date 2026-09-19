@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Hammers;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Hammers
@@ -45,7 +46,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Hammers
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Pwnhammer);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 16000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 16000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

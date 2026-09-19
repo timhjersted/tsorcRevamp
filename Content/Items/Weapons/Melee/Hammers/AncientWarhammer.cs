@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Hammers
 {
@@ -48,7 +49,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Hammers
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TheBreaker);
             recipe.AddIngredient(ItemID.PlatinumBar, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

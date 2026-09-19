@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
@@ -51,7 +52,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
             recipe.AddIngredient(ItemID.DemonBow);
             recipe.AddIngredient(ItemID.RottenChunk, 5);
             recipe.AddIngredient(ItemID.VilePowder, 15);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 4000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

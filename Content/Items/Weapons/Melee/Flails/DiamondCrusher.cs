@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Flails;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails
@@ -41,7 +42,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.FlamingMace, 1);
             recipe2.AddIngredient(ItemID.Diamond, 8);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1300);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1300);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();
@@ -49,7 +50,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Mace, 1);
             recipe.AddIngredient(ItemID.Diamond, 8);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1500);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

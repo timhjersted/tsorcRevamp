@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
@@ -205,7 +206,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBagByCondition(new WyvernDiscipleDropCondition(), ModContent.ItemType<WyvernMageBag>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 900, 900));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoulItem>(), 1, 900, 900));
         }
     }
 

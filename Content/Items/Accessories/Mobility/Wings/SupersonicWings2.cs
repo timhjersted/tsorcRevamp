@@ -6,6 +6,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
 {
@@ -32,14 +33,14 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
             recipe2.AddIngredient(ModContent.ItemType<SupersonicWings>());
             recipe2.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
             recipe2.AddIngredient(ItemID.EmpressFlightBooster);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 50000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();
 
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<SupersonicWings>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

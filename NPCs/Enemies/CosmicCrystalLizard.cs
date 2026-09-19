@@ -10,6 +10,7 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -1054,7 +1055,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 500, 1000));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoulItem>(), 1, 500, 1000));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EternalCrystal>()));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<SoulSiphonPotion>(), 5, 1, 2, 4));
             npcLoot.Add(new CommonDrop(ItemID.EndurancePotion, 5, 1, 1, 4));

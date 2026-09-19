@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -105,7 +106,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 2000);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoulItem>(), 2000);
         }
 
         public override void SendExtraAI(BinaryWriter writer)

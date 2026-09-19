@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
 
 namespace tsorcRevamp.Content.Projectiles.Summon.Whips.SearingLash
 {

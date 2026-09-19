@@ -3,14 +3,11 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
-using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Content.Items.Accessories.Summon;
 using tsorcRevamp.Content.Items.Armor.Ranged;
 using tsorcRevamp.Content.Projectiles.Ranged;
 using MiakodaCrescent = tsorcRevamp.Content.Projectiles.Pets.MiakodaCrescent;
@@ -61,11 +58,7 @@ namespace tsorcRevamp.Content.Projectiles
             base.OnSpawn(projectile, source);
         }*/
         public override bool InstancePerEntity => true;
-        public static float WhipVolume = 0.4f;
-        public static float WhipPitch = 0.3f;
         public bool AppliedConqueror = false;
-        public bool ModdedWhip = false;
-        public bool ChargedWhip = false;
         public bool ModdedFlail = false;
         public bool KrakenEmpowered = false;
         public bool Initialized;
@@ -263,12 +256,6 @@ namespace tsorcRevamp.Content.Projectiles
                 if (projectile.type == ProjectileID.CrystalDart)
                 {
                     projectile.damage = 1 + player.GetWeaponDamage(player.HeldItem);
-                }
-                if (player.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady
-                    && ProjectileID.Sets.IsAWhip[projectile.type] && !ModdedWhip) //Modded whips have this in their code itself because some of them can be charged
-                {
-                    player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = .3f }, player.Center);
                 }
             }
             if (projectile.type == ProjectileID.Fireball && NPC.AnyNPCs(NPCID.Golem))
@@ -760,18 +747,6 @@ namespace tsorcRevamp.Content.Projectiles
                     Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity - Vel, ProjectileID.GreekFire2, projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
                     Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity - Vel, ProjectileID.GreekFire3, projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
                 }
-            }
-            if (projectile.friendly && !projectile.hostile)
-            {
-                Player owner = Main.player[projectile.owner];
-                var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
-                if (modPlayer.Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[projectile.type] && modPlayer.GoredrinkerSwung)
-                {
-                    owner.AddBuff(ModContent.BuffType<GoredrinkerCooldown>(), Goredrinker.Cooldown * 60);
-                    modPlayer.GoredrinkerReady = false;
-                    modPlayer.GoredrinkerSwung = false;
-                }
-
             }
 
             if (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] != 0)

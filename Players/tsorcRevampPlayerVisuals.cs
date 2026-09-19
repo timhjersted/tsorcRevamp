@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Armor.Summon;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
@@ -89,7 +90,7 @@ namespace tsorcRevamp
         public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
         {
             //This is going here, because unlike most hooks this one keeps running even when the game is paused via AutoPause
-            if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>())
+            if (Main.mouseItem.type == ModContent.ItemType<DarkSoulItem>())
             {
                 Player.chest = -1;
             }

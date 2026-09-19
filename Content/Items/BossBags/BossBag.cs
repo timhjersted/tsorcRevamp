@@ -15,6 +15,8 @@ using tsorcRevamp.Content.Items.Accessories.Magic.Bands;
 using tsorcRevamp.Content.Items.Accessories.Melee;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Accessories.Mobility.Wings;
+using tsorcRevamp.Content.Items.Accessories.Other;
+using tsorcRevamp.Content.Items.Accessories.Other.SilverSerpentRing;
 using tsorcRevamp.Content.Items.Accessories.Ranged;
 using tsorcRevamp.Content.Items.Accessories.Summon;
 using tsorcRevamp.Content.Items.Armor;
@@ -22,12 +24,14 @@ using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.Lore;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Vanity;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
+using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
@@ -220,7 +224,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PermanentSoulSiphonPotion>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrackedDragonStone>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.EyeOfTheGods>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EyeOfTheGods>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BarrierRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 1, 2, 4));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 1, 2, 4));
@@ -240,7 +244,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CovetousSilverSerpentRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SilverSerpentRingItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 100, 150));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ammo.ArrowOfBard>(), 1, 15, 30));
             itemLoot.Add(ItemDropRule.Common(ItemID.WolfMountItem));
@@ -661,8 +665,8 @@ namespace tsorcRevamp.Content.Items.BossBags
             {
                 bossValue *= 1.2f;
             }
-            float multiplier = tsorcRevampPlayer.CheckSoulsMultiplier(player);
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoul>(), (int)(multiplier * bossValue));
+            float multiplier = DarkSoulPlayer.SoulsMultiplier(player);
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoulItem>(), (int)(multiplier * bossValue));
             modPlayer.bagsOpened.Add(bossBagID);
         }
 

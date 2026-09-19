@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
 {
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 8000);
             recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 1);
             recipe.AddTile(TileID.DemonAltar);
             //recipe.AddCondition(tsorcRevampWorld.SHM1Downed);

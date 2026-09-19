@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.Content.Items.Accessories.Melee
@@ -96,7 +97,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CobaltBar, 10);
             //recipe.AddIngredient(ItemID.SoulofLight, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -132,7 +133,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<GazingShield>(), 1);
             recipe.AddIngredient(ItemID.SoulofMight, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 30000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -170,7 +171,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             recipe.AddIngredient(ModContent.ItemType<BeholderShield>(), 1);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 8);
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 65000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 65000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -208,7 +209,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BeholderShield2>(), 1);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 2);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 120000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

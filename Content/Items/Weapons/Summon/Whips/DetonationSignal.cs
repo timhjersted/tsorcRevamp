@@ -5,6 +5,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
 using tsorcRevamp.Content.Projectiles.Summon;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
@@ -50,7 +52,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FireWhip);
             recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 135000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 135000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

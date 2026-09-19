@@ -10,9 +10,12 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
+using tsorcRevamp.Content.Items.Accessories.Other.SporePowder;
+using tsorcRevamp.Content.Items.Accessories.Other.VenomPowder;
 using tsorcRevamp.Content.Items.Debug;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
@@ -178,7 +181,7 @@ namespace tsorcRevamp.Content.Items
         {
             if (hasSoulRecipe.Contains(item.type))
             {
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoul>()}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.RecipeTooltip")));
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoulItem>()}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.RecipeTooltip")));
             }
 
             // Life Crystal: replace the vanilla "...by 20" line with the actual party-scaled gain
@@ -335,7 +338,7 @@ namespace tsorcRevamp.Content.Items
 
         public override void GrabRange(Item item, Player player, ref int grabRange)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet && item.type != ModContent.ItemType<DarkSoul>())
+            if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet && item.type != ModContent.ItemType<DarkSoulItem>())
             { //bossMagnet is set on every player when a boss is killed, in NPCLoot
                 grabRange *= 20;
             }
@@ -875,8 +878,8 @@ namespace tsorcRevamp.Content.Items
 
             if (item.healLife > 0)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().ActivateSporePowderEffect();
-                player.GetModPlayer<tsorcRevampPlayer>().ActivateVenomPowderEffect();
+                player.GetModPlayer<SporePowderPlayer>().ActivateSporePowderEffect();
+                player.GetModPlayer<VenomPowderPlayer>().ActivateVenomPowderEffect();
             }
         }
 
@@ -886,7 +889,7 @@ namespace tsorcRevamp.Content.Items
 
             for (int i = 0; i < Recipe.numRecipes; i++)
             {
-                if (Main.recipe[i].HasIngredient<DarkSoul>())
+                if (Main.recipe[i].HasIngredient<DarkSoulItem>())
                 {
                     for (int j = 1; j < ItemLoader.ItemCount; j++)
                     {
@@ -913,11 +916,11 @@ namespace tsorcRevamp.Content.Items
                 player.QuickSpawnItem(item.GetSource_Misc("meep"), ItemID.MagicLantern);
                 if (Main.masterMode)
                 {
-                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoul>(), (int)(1500 * 1.2f * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
+                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoulItem>(), (int)(1500 * 1.2f * DarkSoulPlayer.SoulsMultiplier(player)));
                 }
                 else
                 {
-                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoul>(), (int)(1500 * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
+                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoulItem>(), (int)(1500 * DarkSoulPlayer.SoulsMultiplier(player)));
                 }
                 return true;
             }

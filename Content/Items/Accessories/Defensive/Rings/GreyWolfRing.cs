@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
@@ -36,7 +37,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
             recipe.AddIngredient(ModContent.ItemType<RingOfClarity>());
             recipe.AddIngredient(ModContent.ItemType<ZirconRing>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

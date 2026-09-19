@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic
 {
@@ -39,7 +40,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.MythrilBar, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 18000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 18000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

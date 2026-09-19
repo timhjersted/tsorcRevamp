@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<SilverRing>(), 1);
             recipe.AddIngredient(ModContent.ItemType<BloodredMossClump>(), 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

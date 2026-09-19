@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Summon.ForgottenImp;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon
@@ -33,7 +34,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
 
             recipe.AddIngredient(ItemID.ImpStaff);
             recipe.AddIngredient(ModContent.ItemType<ImpHead>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2000);
 
             recipe.AddTile(TileID.DemonAltar);
 

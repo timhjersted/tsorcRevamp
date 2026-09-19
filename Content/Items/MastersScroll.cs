@@ -8,9 +8,8 @@ namespace tsorcRevamp.Content.Items
 {
     public class MastersScroll : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-        }
+        public const float SoulsAmp = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulsAmp);
 
         public override void SetDefaults()
         {
@@ -30,15 +29,15 @@ namespace tsorcRevamp.Content.Items
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (Main.GameMode == 1)
+                if (Main.GameMode == GameModeID.Expert)
                 {
-                    Main.GameMode = 2;
+                    Main.GameMode = GameModeID.Master;
                     Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.MastersScroll.Enabled"), Color.DarkRed);
                     return true;
                 }
                 else
                 {
-                    Main.GameMode = 1;
+                    Main.GameMode = GameModeID.Expert;
                     Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.MastersScroll.Disabled"), Color.DarkRed);
                     return true;
                 }

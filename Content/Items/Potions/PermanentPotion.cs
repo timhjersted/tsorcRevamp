@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.Potions
@@ -1076,10 +1077,11 @@ namespace tsorcRevamp.Content.Items.Potions
         public override void PotionEffect(Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            var darkSoulPlayer = player.GetModPlayer<DarkSoulPlayer>();
             modPlayer.SoulSiphon = true;
             modPlayer.SoulSiphonScaling = ApplyScaling(1f);
-            modPlayer.SoulReaper += 5; //scaling the range would probably just feel bad
-            modPlayer.ConsSoulChanceMult += (int)ApplyScaling(SoulSiphonPotion.ConsSoulChanceAmplifier / 5);
+            darkSoulPlayer.SoulPickupRange += 5; //scaling the range would probably just feel bad
+            darkSoulPlayer.ConsSoulChanceMult += (int)ApplyScaling(SoulSiphonPotion.ConsSoulChanceAmplifier / 5);
         }
     }
     public class PermanentWellFed : PermanentPotion

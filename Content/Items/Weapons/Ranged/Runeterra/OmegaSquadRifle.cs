@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
@@ -40,7 +41,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
 
             recipe.AddIngredient(ModContent.ItemType<AlienGun>());
             recipe.AddIngredient(ItemID.LunarBar, 12);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

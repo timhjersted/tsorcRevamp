@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
 {
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
             recipe.AddIngredient(ItemID.CobaltBar, 3);
             recipe.AddIngredient(ItemID.SoulofNight, 6);
             recipe.AddIngredient(ItemID.LifeCrystal, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 9000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

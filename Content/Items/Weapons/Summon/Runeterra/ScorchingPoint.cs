@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles;
 using tsorcRevamp.Content.Projectiles.Summon.Runeterra.Dragons;
 
@@ -67,7 +68,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra
 
             recipe.AddIngredient(ItemID.FeralClaws);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000); // not 20000 dark souls for consistency for other runeterra weapons, and the weapon is already nerfed/harder to get now
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 10000); // not 20000 dark souls for consistency for other runeterra weapons, and the weapon is already nerfed/harder to get now
 
             recipe.AddTile(TileID.DemonAltar);
 

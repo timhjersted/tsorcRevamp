@@ -29,6 +29,8 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
+using tsorcRevamp.Content.Items.Accessories.Other;
+using tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker;
 using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Armor.Melee;
@@ -37,11 +39,13 @@ using tsorcRevamp.Content.Items.Armor.Summon;
 using tsorcRevamp.Content.Items.Lore;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
@@ -63,6 +67,7 @@ using tsorcRevamp.Content.Projectiles.Ranged;
 using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.Systems;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 using static Humanizer.In;
@@ -841,7 +846,7 @@ namespace tsorcRevamp
             {
                 for (int i = 0; i < 400; i++)
                 {
-                    if (Main.item[i].type == ModContent.ItemType<DarkSoul>())
+                    if (Main.item[i].type == ModContent.ItemType<DarkSoulItem>())
                     {
                         Main.item[i].active = false;
                     }
@@ -1330,14 +1335,6 @@ namespace tsorcRevamp
             {
                 target.AddBuff(ModContent.BuffType<MorgulPoisoning>(), 240);
             }
-            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !Player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung && ProjectileID.Sets.IsAWhip[proj.type])
-            {
-                modifiers.SourceDamage += Content.Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f / 3f;
-            }
-            if (ProjectileID.Sets.IsAWhip[proj.type] && WhipTipHit(proj, proj.WhipPointsForCollision, target.Hitbox))
-            {
-                modifiers.SourceDamage += WhipTipHitBonusDamage / 100f;
-            }
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<HomingFireball>())
             {
                 modifiers.TargetDamageMultiplier *= 1f + Content.Items.Accessories.Damage.BurningStone.DamageIncrease / 100f;
@@ -1358,21 +1355,6 @@ namespace tsorcRevamp
             {
                 scale += Player.GetModPlayer<tsorcRevampPlayer>().TitanSizeScaling * TitanMeleeSize / 100f;
             }
-        }
-        public bool WhipTipHit(in Projectile projectile, in List<Vector2> points, in Rectangle targetHitbox)
-        {
-            Player player = Main.player[projectile.owner];
-            if (Goredrinker && !Player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung)
-            {
-                return true;
-            }
-            Vector2 TipBase = tsorcRevamp.WhipTipBases[projectile.type];
-            if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], TipBase * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipTipHitboxSize).Intersects(targetHitbox) || 
-                Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], TipBase * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipTipHitboxSize).Intersects(targetHitbox))
-            {
-                return true;
-            }
-            return false;
         }
         public void OverCrit(in int CritChance, DamageClass damageType, ref NPC.HitModifiers modifiers, out int critColorTier)
         {
@@ -1613,11 +1595,12 @@ namespace tsorcRevamp
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
         {
             Player owner = Main.player[proj.owner];
+            var whipTipHitPlayer = owner.GetModPlayer<WhipTipHit>();
             if (ProjectileID.Sets.IsAWhip[proj.type])
             {
-                CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit, WhipTipHit(proj, proj.WhipPointsForCollision, target.Hitbox));
+                CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit, whipTipHitPlayer.Check(proj, proj.WhipPointsForCollision, target.Hitbox));
                 
-                if (DemonPower && WhipTipHit(proj, proj.WhipPointsForCollision, target.Hitbox) && Main.myPlayer == Player.whoAmI)
+                if (DemonPower && whipTipHitPlayer.Check(proj, proj.WhipPointsForCollision, target.Hitbox) && Main.myPlayer == Player.whoAmI)
                 {
                     Projectile WhipTipBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Bottom, 
                         Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, 
@@ -1649,29 +1632,6 @@ namespace tsorcRevamp
             else if (LudensTempest && hit.DamageType == DamageClass.Magic && owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && proj.type != ModContent.ProjectileType<LudensTempestFire>() && proj.type != ModContent.ProjectileType<LudensTempestFirelet>())
             {
                 UsefulFunctions.AddPlayerBuffDuration(owner, ModContent.BuffType<LudensTempestCooldown>(), -20);
-            }
-            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung)
-            {
-                Player.statLife += (int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Content.Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1);
-                Player.HealEffect((int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Content.Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1));
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerHit") with { Volume = 0.25f }, target.Center);
-                GoredrinkerHits++;
-            }
-            else if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()))
-            {
-                int buffIndex = 0;
-                foreach (int buffType in owner.buffType)
-                {
-                    if (buffType == ModContent.BuffType<GoredrinkerCooldown>())
-                    {
-                        if (Player.buffTime[buffIndex] < 15)
-                        {
-                            GoredrinkerHits = 0;
-                        }
-                        Player.buffTime[buffIndex] -= 15;
-                    }
-                    buffIndex++;
-                }
             }
 
             if (CelestialCloak && proj.DamageType == DamageClass.Magic)
@@ -1739,17 +1699,6 @@ namespace tsorcRevamp
                 }
             }
 
-            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulSickle && Main.myPlayer == Player.whoAmI)
-            {
-                if (!Main.hardMode)
-                {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<SoulSickle>(), hurtInfo.SourceDamage * 2, 7f, Player.whoAmI);
-                }
-                else
-                {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<SoulSickle>(), hurtInfo.SourceDamage * 4, 9f, Player.whoAmI);
-                }
-            }
             if (npc.type == NPCID.SkeletronPrime && Main.rand.NextBool(2))
             {
                 Player.AddBuff(BuffID.Bleeding, 1800);
@@ -1772,17 +1721,6 @@ namespace tsorcRevamp
                 }
             }
 
-            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulSickle && Main.myPlayer == Player.whoAmI)
-            {
-                if (!Main.hardMode)
-                {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<SoulSickle>(), hurtInfo.SourceDamage * 2, 6f, Player.whoAmI);
-                }
-                else
-                {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<SoulSickle>(), hurtInfo.SourceDamage * 4, 8f, Player.whoAmI);
-                }
-            }
             if (proj.type == ProjectileID.DeathLaser && Main.rand.NextBool(2))
             {
                 Player.AddBuff(BuffID.BrokenArmor, 180);
@@ -2226,33 +2164,6 @@ namespace tsorcRevamp
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= DragonCrestShield.staminaCost;
                     //return;
                 }
-            }
-            //Trinity Accessory
-            if (Trinity)
-            {
-                Player.AddBuff(BuffID.RapidHealing, 120);
-                foreach (NPC npc in Main.npc)
-                {
-                    if (npc.active && !npc.friendly && npc.Distance(Player.Center) <= 320f) 
-                    {
-                        npc.AddBuff(BuffID.Venom, 240);
-
-                        if (Main.rand.NextFloat() < 0.33f)
-                        {
-                            npc.AddBuff(BuffID.Frozen, 90);
-                        }
-                    }
-                }
-            }
-
-            if (HasSporePowder)
-            {
-                ActivateSporePowderEffect();
-            }
-
-            if (HasVenomPowder)
-            {
-                ActivateVenomPowderEffect();
             }
         }
 
@@ -2725,36 +2636,6 @@ namespace tsorcRevamp
                 }
             }
             return 0;
-        }
-
-        public static float CheckSoulsMultiplier(Player player)
-        {
-            float multiplier = 1f;
-            if (player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing)
-            {
-                multiplier += CovetousSilverSerpentRing.SoulAmplifier / 100f;
-            }
-            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSerpentRing)
-            {
-                multiplier += CovetousSoulSerpentRing.SoulAmplifier / 100f;
-            }
-            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
-            {
-                multiplier += SoulSiphonPotion.SoulAmplifier / 100f * player.GetModPlayer<tsorcRevampPlayer>().SoulSiphonScaling;
-            }
-            if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain)
-            {
-                multiplier += SymbolOfAvarice.SoulAmplifier / 100f;
-            }
-            if (player.GetModPlayer<tsorcRevampPlayer>().VOEGDrain)
-            {
-                multiplier += VaultOfEndlessGreed.SoulAmplifier / 100f;
-            }
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                multiplier += Darksign.BotCSoulDropAmplifier / 100f;
-            }
-            return multiplier;
         }
 
         public void DoPortableChest<T>(ref int whoAmI, ref bool toggle) where T : BonfireProjectiles, new()

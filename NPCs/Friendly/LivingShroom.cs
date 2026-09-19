@@ -6,6 +6,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -276,7 +277,7 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(new CommonDrop(ItemID.Mushroom, 1));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<DarkSoul>(), 1));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<DarkSoulItem>(), 1));
         }
     }
 }

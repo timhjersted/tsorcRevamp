@@ -11,6 +11,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameInput;
 using tsorcRevamp.Content.Items.Debug;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.UI
 {
@@ -672,7 +673,7 @@ namespace tsorcRevamp.UI
             {
                 killDivisor = 25f;
             }
-            float ringMultiplier = tsorcRevampPlayer.CheckSoulsMultiplier(Main.LocalPlayer);
+            float ringMultiplier = DarkSoulPlayer.SoulsMultiplier(Main.LocalPlayer);
             int actualDrop = (int)(ringMultiplier * (npcValue / killDivisor));
 
             string modeName = "Normal";

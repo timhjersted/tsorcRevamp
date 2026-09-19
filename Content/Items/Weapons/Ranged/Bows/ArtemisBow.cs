@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Ranged;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
@@ -54,7 +55,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
             recipe.AddIngredient(ItemID.MoltenFury, 1);
             recipe.AddIngredient(ItemID.MythrilBar, 5);
             recipe.AddIngredient(ItemID.SoulofLight, 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

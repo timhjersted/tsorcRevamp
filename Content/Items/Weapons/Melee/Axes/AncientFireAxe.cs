@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Axes;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Axes
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Axes
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.GoldAxe);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2000);
 
             recipe.AddTile(TileID.DemonAltar);
 

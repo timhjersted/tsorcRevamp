@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Tiles;
 
 namespace tsorcRevamp.Content.Items.Placeable
@@ -41,7 +42,7 @@ namespace tsorcRevamp.Content.Items.Placeable
         {
             var recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Campfire);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), FlatDarkSoulCost);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), FlatDarkSoulCost);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
             recipe.Register();

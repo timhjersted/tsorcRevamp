@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Sentry
 {
@@ -58,7 +59,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Sentry
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBow);
             recipe.AddIngredient(ModContent.ItemType<Bolt>(), 250);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2450);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2450);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

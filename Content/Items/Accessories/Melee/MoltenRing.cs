@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Melee
 {
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MagmaStone);
             recipe.AddIngredient(ItemID.HellstoneBar, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

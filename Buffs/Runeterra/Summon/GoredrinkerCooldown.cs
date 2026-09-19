@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker;
 
 namespace tsorcRevamp.Buffs.Runeterra.Summon
 {
@@ -17,7 +18,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
         }
         public override void PlayerCustomUpdate(Player player, ref int buffIndex)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerHits = 0;
+            player.GetModPlayer<GoredrinkerPlayer>().Hits = 0;
         }
     }
 }

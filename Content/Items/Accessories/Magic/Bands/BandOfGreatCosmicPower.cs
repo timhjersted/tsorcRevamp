@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Magic.Bands
 {
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Magic.Bands
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BandOfCosmicPower>());
             recipe.AddIngredient(ItemID.ShadowScale, 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -42,7 +43,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Magic.Bands
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ModContent.ItemType<BandOfCosmicPower>());
             recipe2.AddIngredient(ItemID.TissueSample, 4);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 5000);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();

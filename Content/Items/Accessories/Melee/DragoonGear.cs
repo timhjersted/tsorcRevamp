@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.Accessories.Melee
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
 
             recipe.AddIngredient(ModContent.ItemType<DragoonBoots>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DragoonHorn>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 45000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 45000);
 
             recipe.AddTile(TileID.DemonAltar);
 

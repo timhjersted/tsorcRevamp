@@ -10,6 +10,7 @@ using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Items.Accessories.Other.Trinity;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Materials;
@@ -235,10 +236,10 @@ namespace tsorcRevamp.NPCs.Friendly
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<FlameOfTheAbyss>(), 5);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeforcePotion, 2);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LuckPotionGreater, 2);
-                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Trinity>());
-                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Trinity>());
-                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Trinity>());
-                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<Trinity>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<TrinityItem>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<TrinityItem>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<TrinityItem>());
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<TrinityItem>());
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<HeroSoul>(), 1); 
                     break;
 

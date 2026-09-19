@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Spears
@@ -104,7 +105,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Spears
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<AncientDragonLance>());
             recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 15);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4500);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 4500);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

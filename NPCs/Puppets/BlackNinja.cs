@@ -8,6 +8,7 @@ using tsorcRevamp.NPCs.AI;
 using System;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Flails;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
@@ -179,7 +180,7 @@ namespace tsorcRevamp.NPCs.Puppets
             npcLoot.Add(ItemDropRule.Common(ItemID.NinjaPants));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DiamondCrusher>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Throwing.Caltrop>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 300, 500));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoulItem>(), 1, 300, 500));
         }
 
         public override void OnKill()

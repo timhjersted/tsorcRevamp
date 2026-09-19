@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Runeterra;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra
@@ -36,7 +37,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra
 
             recipe.AddIngredient(ItemID.Katana);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 10000);
 
             recipe.AddTile(TileID.DemonAltar);
 

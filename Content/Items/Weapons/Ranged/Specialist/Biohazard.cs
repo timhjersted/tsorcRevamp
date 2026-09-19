@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Ranged;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
@@ -117,7 +118,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<VirulentCatalyzer>());
             recipe.AddIngredient(ItemID.ShroomiteBar, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 150000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

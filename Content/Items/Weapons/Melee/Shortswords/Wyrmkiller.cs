@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Shortswords;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Shortswords
@@ -44,7 +45,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Shortswords
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CobaltNaginata, 1);
             recipe.AddIngredient(ItemID.SoulofFlight, 9);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

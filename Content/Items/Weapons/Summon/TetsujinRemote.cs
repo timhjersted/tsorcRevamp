@@ -9,6 +9,7 @@ using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Summon.Tetsujin;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon
@@ -71,7 +72,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
             recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 2);
             recipe.AddIngredient(ModContent.ItemType<TeslaBolt>(), 100);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 75000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -7,6 +7,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive
 {
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
             recipe.AddIngredient(ModContent.ItemType<EssenceOfMana>(), 1);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 30);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 200000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

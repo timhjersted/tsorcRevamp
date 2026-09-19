@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows
@@ -40,7 +41,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<HeavyCrossbow>());
             recipe.AddIngredient(ItemID.CobaltBar, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 9000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

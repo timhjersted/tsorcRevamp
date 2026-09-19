@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
@@ -41,7 +42,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
             recipe.AddIngredient(ModContent.ItemType<FreezeBolt2>(), 1);
             //recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>(), 1);
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 90000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

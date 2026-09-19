@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Potions
 {
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Content.Items.Potions
             Recipe recipe = CreateRecipe(2);
             recipe.AddIngredient(ItemID.SuperManaPotion, 2);
             recipe.AddIngredient(ItemID.ChlorophyteOre, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 650);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 650);
             recipe.AddTile(TileID.Bottles);
 
             recipe.Register();

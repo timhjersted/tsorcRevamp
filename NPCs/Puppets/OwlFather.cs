@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
@@ -654,7 +655,7 @@ namespace tsorcRevamp.NPCs.Puppets
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherArmor>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherGreaves>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncientFireAxe>(), 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 500, 750));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoulItem>(), 1, 500, 750));
         }
 
         protected override void DoMeleeAttack()

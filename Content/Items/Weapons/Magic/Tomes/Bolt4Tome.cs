@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
 {
@@ -61,7 +62,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Bolt3Tome>());
             recipe.AddIngredient(ItemID.SoulofMight, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

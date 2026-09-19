@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.Content.Items.BossItems
@@ -47,7 +48,7 @@ namespace tsorcRevamp.Content.Items.BossItems
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BrokenDarkMagicRing>(), 1);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
 

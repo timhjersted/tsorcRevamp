@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Potions
 {
@@ -159,7 +160,7 @@ namespace tsorcRevamp.Content.Items.Potions
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.LesserManaPotion, 50);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
             recipe.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe.AddTile(TileID.Bottles);
 
@@ -167,7 +168,7 @@ namespace tsorcRevamp.Content.Items.Potions
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.ManaPotion, 40);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
             recipe2.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe2.AddTile(TileID.Bottles);
 
@@ -175,7 +176,7 @@ namespace tsorcRevamp.Content.Items.Potions
 
             Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ItemID.GreaterManaPotion, 30);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
             recipe3.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe3.AddTile(TileID.Bottles);
 
@@ -183,7 +184,7 @@ namespace tsorcRevamp.Content.Items.Potions
 
             Recipe recipe4 = CreateRecipe();
             recipe4.AddIngredient(ItemID.SuperManaPotion, 24);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
             recipe4.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe4.AddTile(TileID.Bottles);
 
@@ -191,7 +192,7 @@ namespace tsorcRevamp.Content.Items.Potions
 
             Recipe recipe5 = CreateRecipe();
             recipe5.AddIngredient(ModContent.ItemType<SupremeManaPotion>(), 7);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
             recipe5.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe5.AddTile(TileID.Bottles);
 
@@ -199,7 +200,7 @@ namespace tsorcRevamp.Content.Items.Potions
 
             Recipe recipe6 = CreateRecipe();
             recipe6.AddIngredient(ItemID.ManaCrystal, 2);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
             recipe6.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe6.AddTile(TileID.Bottles);
 

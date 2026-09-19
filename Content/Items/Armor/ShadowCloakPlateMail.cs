@@ -5,6 +5,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor
 {
@@ -61,14 +62,14 @@ namespace tsorcRevamp.Content.Items.Armor
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ShadowScalemail);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.AncientShadowScalemail);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2000);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();

@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Ranged;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
@@ -117,7 +118,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
             recipe.AddIngredient(ModContent.ItemType<ToxicCatalyzer>());
             recipe.AddIngredient(ItemID.SpiderFang, 9);
             recipe.AddIngredient(ItemID.HallowedBar, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

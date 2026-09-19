@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
 {
@@ -72,7 +73,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DamagedLaser>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 25000);
             recipe.AddIngredient(ItemID.SoulofSight, 5);
 
             recipe.AddTile(TileID.DemonAltar);

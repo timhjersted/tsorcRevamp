@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Flails;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails
@@ -48,7 +49,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails
             recipe.AddIngredient(ModContent.ItemType<BerserkerNightmare>(), 1);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
             //recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 90000);
 
             recipe.AddTile(TileID.DemonAltar);
 

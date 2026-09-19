@@ -5,6 +5,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
 {
@@ -50,7 +51,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
             recipe.AddIngredient(ItemID.ShadowScale, 3);
             recipe.AddIngredient(ItemID.CrimtaneBar, 3);
             recipe.AddIngredient(ItemID.TissueSample, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddCondition(tsorcRevampWorld.AdventureModeEnabled);
             recipe.Register();
@@ -58,7 +59,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.CrimtaneBar, 3);
             recipe2.AddIngredient(ItemID.TissueSample, 6);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 5000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
             recipe2.Register();
@@ -66,7 +67,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
             Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ItemID.DemoniteBar, 3);
             recipe3.AddIngredient(ItemID.ShadowScale, 6);
-            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 5000);
             recipe3.AddTile(TileID.DemonAltar);
             recipe3.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
             recipe3.Register();

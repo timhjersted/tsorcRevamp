@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Projectiles
 {
@@ -37,7 +38,7 @@ namespace tsorcRevamp.Content.Projectiles
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Item.NewItem(Projectile.GetSource_FromThis(), Main.player[Projectile.owner].Top, ModContent.ItemType<DarkSoul>(), (int)Projectile.ai[0]);
+                Item.NewItem(Projectile.GetSource_FromThis(), Main.player[Projectile.owner].Top, ModContent.ItemType<DarkSoulItem>(), (int)Projectile.ai[0]);
             }
         }
     }

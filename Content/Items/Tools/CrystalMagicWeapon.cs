@@ -3,8 +3,10 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Accessories.Damage.ShadowmoonCloak;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Tools
 {
@@ -37,7 +39,7 @@ namespace tsorcRevamp.Content.Items.Tools
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<GreatMagicWeapon>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 50000);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>()); //lol idek how early you can get these but will do for now
             recipe.AddTile(TileID.DemonAltar);
 
@@ -46,7 +48,7 @@ namespace tsorcRevamp.Content.Items.Tools
 
         public override bool? UseItem(Player player)
         {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            var modPlayer = player.GetModPlayer<ShadowmoonCloakPlayer>();
 
             player.AddBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>(), Duration * 60);
 

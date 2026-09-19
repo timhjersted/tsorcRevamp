@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 
 namespace tsorcRevamp.Buffs
@@ -15,8 +16,8 @@ namespace tsorcRevamp.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon = true;
-            player.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 5;
-            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += SoulSiphonPotion.ConsSoulChanceAmplifier / 5;
+            player.GetModPlayer<DarkSoulPlayer>().SoulPickupRange += 5;
+            player.GetModPlayer<DarkSoulPlayer>().ConsSoulChanceMult += SoulSiphonPotion.ConsSoulChanceAmplifier / 5;
         }
     }
 }

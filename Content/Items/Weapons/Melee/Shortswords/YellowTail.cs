@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Shortswords;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Shortswords
@@ -47,7 +48,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Shortswords
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldShortsword);
             recipe.AddIngredient(ItemID.TissueSample, 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3300);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 3300);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Projectiles.Ranged;
 
@@ -52,7 +53,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Guns
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 8);
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 75000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

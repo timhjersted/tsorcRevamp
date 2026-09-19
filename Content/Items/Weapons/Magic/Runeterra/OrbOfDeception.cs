@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ShadowOrb);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

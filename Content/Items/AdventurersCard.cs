@@ -5,6 +5,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items
@@ -69,7 +71,7 @@ namespace tsorcRevamp.Content.Items
                     {
                         tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "SummonStats", LangUtils.GetTextValue("Items.AdventurersCard.Summon",
                             (int)(player.GetTotalDamage(DamageClass.Summon).ApplyTo(100)), (int)player.GetTotalCritChance(DamageClass.Summon), (int)(player.GetTotalAttackSpeed(DamageClass.Summon) * 100), player.GetTotalArmorPenetration(DamageClass.Summon),
-                            (int)(player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(100)), player.maxMinions, player.maxTurrets, (int)(player.whipRangeMultiplier * 100f), player.GetModPlayer<tsorcRevampPlayer>().WhipTipHitBonusDamage)));
+                            (int)(player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(100)), player.maxMinions, player.maxTurrets, (int)(player.whipRangeMultiplier * 100f), player.GetModPlayer<WhipTipHit>().WhipTipHitBonusDamage)));
                         break;
                     }
             }
@@ -77,7 +79,7 @@ namespace tsorcRevamp.Content.Items
         public override void AddRecipes()
         {
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 25);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 25);
             recipe2.AddIngredient(ItemID.SpellTome, 1);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();

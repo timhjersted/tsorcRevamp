@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items
 {
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Content.Items
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.StoneBlock, 1);
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2500);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

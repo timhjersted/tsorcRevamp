@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
@@ -42,7 +43,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<FireSpiritTome2>(), 1);
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 9);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 75000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 75000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -51,7 +52,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
             recipe2.AddIngredient(ModContent.ItemType<FireSpiritTome2>(), 1);
             recipe2.AddIngredient(ItemID.FragmentSolar, 10);
             recipe2.AddIngredient(ModContent.ItemType<RedTitanite>(), 6);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 55000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 55000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();
         }

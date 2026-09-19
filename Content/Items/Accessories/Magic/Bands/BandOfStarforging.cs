@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.Content.Items.Accessories.Magic.Bands
@@ -36,7 +37,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Magic.Bands
             recipe.AddIngredient(ModContent.ItemType<EssenceOfMana>());
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 85000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 85000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

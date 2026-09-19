@@ -78,6 +78,7 @@ using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.Lore;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Pets;
 using tsorcRevamp.Content.Items.Potions;
@@ -1313,7 +1314,7 @@ namespace tsorcRevamp
                                                         }                                                                                },
                 {   ItemID.EaterOfWorldsBossBag     ,   new List<IItemDropRule>()
                                                         {
-                                                            ItemDropRule.ByCondition(tsorcItemDropRuleConditions.FirstBagRule, ModContent.ItemType<DarkSoul>(), 1, 5000, 5000),
+                                                            ItemDropRule.ByCondition(tsorcItemDropRuleConditions.FirstBagRule, ModContent.ItemType<DarkSoulItem>(), 1, 5000, 5000),
                                                             ItemDropRule.Common(ItemID.GoldCoin, 1, 5, 7),
                                                          }                                                        },
                 {   ItemID.BrainOfCthulhuBossBag    ,   new List<IItemDropRule>()                                                        },
@@ -1420,31 +1421,31 @@ namespace tsorcRevamp
                 #region Robes
                 { ItemID.AmethystRobe,  new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<DarkSoul>(), 550)
+                                            (ModContent.ItemType<DarkSoulItem>(), 550)
                                         }                                                   },
                 { ItemID.TopazRobe,     new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<DarkSoul>(), 600)
+                                            (ModContent.ItemType<DarkSoulItem>(), 600)
                                         }                                                   },
                 { ItemID.SapphireRobe,  new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<DarkSoul>(), 650)
+                                            (ModContent.ItemType<DarkSoulItem>(), 650)
                                         }                                                   },
                 { ItemID.EmeraldRobe,   new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<DarkSoul>(), 700)
+                                            (ModContent.ItemType<DarkSoulItem>(), 700)
                                         }                                                   },
                 { ItemID.RubyRobe,      new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<DarkSoul>(), 750)
+                                            (ModContent.ItemType<DarkSoulItem>(), 750)
                                         }                                                   },
                 { ItemID.DiamondRobe,   new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<DarkSoul>(), 800)
+                                            (ModContent.ItemType<DarkSoulItem>(), 800)
                                         }                                                   },
                 { ItemID.AmberRobe,   new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<DarkSoul>(), 200)
+                                            (ModContent.ItemType<DarkSoulItem>(), 200)
                                         }                                                   },
                 #endregion
 
@@ -1480,14 +1481,14 @@ namespace tsorcRevamp
                 { ItemID.Zenith,   new List<(int ItemID, int Count)>()
                                         {
                                             (ModContent.ItemType<SoulOfChaos>(), 1),
-                                            (ModContent.ItemType<DarkSoul>(), 150000)
+                                            (ModContent.ItemType<DarkSoulItem>(), 150000)
                                         }                                                   },
                 #endregion
 
                 { ItemID.PapyrusScarab,   new List<(int ItemID, int Count)>()
                                         {
                                             (ItemID.PygmyNecklace, 1),
-                                            (ModContent.ItemType<DarkSoul>(), 20000)
+                                            (ModContent.ItemType<DarkSoulItem>(), 20000)
                                         }                                                   },
             };
             #endregion
@@ -2237,7 +2238,7 @@ namespace tsorcRevamp
                 Recipe.Create(thorium.Find<ModItem>("BloodAltar").Type)
                     .AddIngredient(thorium.Find<ModItem>("aDarksteelAlloy").Type, 10)
                     .AddIngredient(thorium.Find<ModItem>("Blood").Type, 5)
-                    .AddIngredient(ModContent.ItemType<DarkSoul>(), 1000)
+                    .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1000)
                     .AddTile(TileID.Anvils)
                     .Register();
 
@@ -2246,7 +2247,7 @@ namespace tsorcRevamp
                     .AddIngredient(ItemID.SoulofSight, 1)
                     .AddIngredient(ItemID.SoulofMight, 1)
                     .AddIngredient(ItemID.SoulofFright, 1)
-                    .AddIngredient(ModContent.ItemType<DarkSoul>(), 8000)
+                    .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 8000)
                     .AddTile(TileID.Anvils)
                     .Register();
             }
@@ -2395,11 +2396,11 @@ namespace tsorcRevamp
                             while (count > 32000)
                             {
                                 //UsefulFunctions.ServerText("Dropping " + 32000 + "souls");
-                                Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<DarkSoul>(), 32000);
+                                Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<DarkSoulItem>(), 32000);
                                 count -= 32000;
                             }
 
-                            Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position, ModContent.ItemType<DarkSoul>(), count);
+                            Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position, ModContent.ItemType<DarkSoulItem>(), count);
                             //UsefulFunctions.NewItemInstanced(position, new Vector2(1, 1), ModContent.ItemType<Items.DarkSoul>(), count);
                         }
                         break;

@@ -6,6 +6,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Mobility
 {
@@ -30,20 +31,20 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpectreBoots, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 7000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.LightningBoots, 1);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 4000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();
 
             Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ItemID.FrostsparkBoots, 1);
-            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2000);
             recipe3.AddTile(TileID.DemonAltar);
             recipe3.Register();
         }

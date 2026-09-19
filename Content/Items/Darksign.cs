@@ -7,6 +7,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
@@ -60,7 +61,7 @@ namespace tsorcRevamp.Content.Items
         }
         public override void GrabRange(Player player, ref int grabRange)
         {
-            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
+            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<DarkSoulPlayer>().SoulPickupRange);
         }
         public override bool CanUseItem(Player player)
         {

@@ -5,6 +5,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Accessories.Other.SporePowder;
+using tsorcRevamp.Content.Items.Accessories.Other.VenomPowder;
 
 namespace tsorcRevamp
 {
@@ -226,8 +228,8 @@ namespace tsorcRevamp
                 // would leave a topped-off summoner unable to repair a battered army.
                 Systems.SummonerRework.SpiritAshesMinions.HealOwnedMinions(Player, EstusHealthGain + EstusHealthGainBonus);
 
-                Player.GetModPlayer<tsorcRevampPlayer>().ActivateSporePowderEffect();
-                Player.GetModPlayer<tsorcRevampPlayer>().ActivateVenomPowderEffect();
+                Player.GetModPlayer<SporePowderPlayer>().ActivateSporePowderEffect();
+                Player.GetModPlayer<VenomPowderPlayer>().ActivateVenomPowderEffect();
                 IsEstusHealing = true; //Commence healing process
                                        //kplayer.eocDash = 0;
             }

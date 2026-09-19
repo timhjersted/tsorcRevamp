@@ -5,6 +5,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
 {
@@ -50,7 +51,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CrystalShard, 8);
             recipe.AddIngredient(ItemID.SoulofLight, 6);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 11000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 11000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive
 {
@@ -206,7 +207,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
             recipe.AddIngredient(ItemID.MythrilBar, 3);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 50000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

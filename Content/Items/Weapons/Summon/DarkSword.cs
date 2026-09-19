@@ -9,6 +9,7 @@ using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Summon;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon
@@ -148,7 +149,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 5); 
             recipe.AddIngredient(ModContent.ItemType<LivingLog>(), 1);
             recipe.AddIngredient(ItemID.ShadowScale, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

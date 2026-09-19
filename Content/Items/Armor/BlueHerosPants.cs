@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor
 {
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Content.Items.Armor
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HerosPants, 1);
             recipe.AddIngredient(ItemID.MythrilBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

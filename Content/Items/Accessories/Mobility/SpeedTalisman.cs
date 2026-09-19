@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Mobility
 {
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility
             recipe.AddIngredient(ItemID.Aglet, 1);
             recipe.AddIngredient(ItemID.AnkletoftheWind, 1);
             recipe.AddIngredient(ItemID.FeralClaws, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

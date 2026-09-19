@@ -6,9 +6,12 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.Accessories.Damage;
+using tsorcRevamp.Content.Items.Accessories.Damage.ShadowmoonCloak;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Other;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor
 {
@@ -38,17 +41,17 @@ namespace tsorcRevamp.Content.Items.Armor
             player.GetAttackSpeed(DamageClass.Melee) += MeleeSpeed / 100f;
             player.starCloakItem = new Item(ItemID.StarCloak);
             player.lifeRegen += (int)(LightCloak.LifeRegen1 * DragoonCloakEfficiency / 100f);
-            player.GetCritChance(DamageClass.Generic) += ShadowmoonCloak.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f;
-            player.GetDamage(DamageClass.Generic) += ShadowmoonCloak.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f / 100f;
+            player.GetCritChance(DamageClass.Generic) += ShadowmoonCloakItem.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f;
+            player.GetDamage(DamageClass.Generic) += ShadowmoonCloakItem.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f / 100f;
 
-            player.GetModPlayer<tsorcRevampPlayer>().ShadowmoonCloak = true;
+            player.GetModPlayer<ShadowmoonCloakPlayer>().ShadowmoonCloak = true;
             if (player.statLife <= (player.statLifeMax2 * DragoonCloak.LifeThreshold / 100f))
             {
                 player.lifeRegen += (int)(LightCloak.LifeRegen2 * DragoonCloakEfficiency / 100f);
                 player.statDefense += (int)(DarkCloak.Defense2 * DragoonCloakEfficiency / 100f);
-                player.manaRegenBonus += (int)(ShadowmoonCloak.ManaRegenBonus * DragoonCloakEfficiency / 100f);
-                player.GetCritChance(DamageClass.Generic) += ShadowmoonCloak.DamageAndCritIncrease2 * DragoonCloakEfficiency / 100f;
-                player.GetDamage(DamageClass.Generic) += ShadowmoonCloak.DamageAndCritIncrease2 * DragoonCloakEfficiency / 100f / 100f;
+                player.manaRegenBonus += (int)(ShadowmoonCloakItem.ManaRegenBonus * DragoonCloakEfficiency / 100f);
+                player.GetCritChance(DamageClass.Generic) += ShadowmoonCloakItem.DamageAndCritIncrease2 * DragoonCloakEfficiency / 100f;
+                player.GetDamage(DamageClass.Generic) += ShadowmoonCloakItem.DamageAndCritIncrease2 * DragoonCloakEfficiency / 100f / 100f;
                 int dust = Dust.NewDust(new Vector2(player.position.X, player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 150, Color.White, 0.5f);
                 Main.dust[dust].noGravity = true;
             }
@@ -82,7 +85,7 @@ namespace tsorcRevamp.Content.Items.Armor
             recipe.AddIngredient(ModContent.ItemType<DragoonCloak>());
             //recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 1);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

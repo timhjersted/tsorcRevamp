@@ -6,6 +6,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Summon.Whips.TerraFall;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
@@ -77,7 +78,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
             recipe.AddIngredient(ItemID.SwordWhip);
             recipe.AddIngredient(ItemID.RainbowWhip);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 115000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 115000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

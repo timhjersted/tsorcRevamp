@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using TerraUI.Objects;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
@@ -22,7 +23,7 @@ namespace tsorcRevamp
         }
         internal static bool SoulSlotCondition(Item item)
         {
-            if (item.type != ModContent.ItemType<DarkSoul>())
+            if (item.type != ModContent.ItemType<DarkSoulItem>())
             {
                 return false;
             }

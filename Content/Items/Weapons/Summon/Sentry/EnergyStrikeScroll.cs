@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Magic.Scrolls;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Sentry
@@ -41,7 +42,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Sentry
             Recipe recipe = CreateRecipe();
             // Player should have access to this after defeating destroyer, magnet sphere from corruption temple and might from the boss
             recipe.AddIngredient(ItemID.MagnetSphere);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 30000);
             recipe.AddIngredient(ItemID.SoulofMight, 5);
 
             recipe.AddTile(TileID.DemonAltar);

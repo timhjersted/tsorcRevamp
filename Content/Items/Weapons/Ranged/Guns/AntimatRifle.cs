@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Ranged;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Guns
@@ -52,7 +53,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Guns
             recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>());
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 10);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 25);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 100000);
 
             recipe.AddTile(TileID.DemonAltar);
 

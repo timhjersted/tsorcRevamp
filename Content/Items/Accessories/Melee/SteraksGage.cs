@@ -6,6 +6,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Weapons.Melee.Hammers;
 using tsorcRevamp.Utilities;
 
@@ -41,7 +42,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             recipe.AddIngredient(ModContent.ItemType<AncientWarhammer>());
             recipe.AddIngredient(ItemID.LifeCrystal, 2);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3200);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 3200);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 
 namespace tsorcRevamp.Content.Items
@@ -86,14 +87,14 @@ namespace tsorcRevamp.Content.Items
 
             #region special perma recipes
             Recipe recipe = Recipe.Create(ModContent.ItemType<PermanentGravitationPotion>(), 1)
-            .AddIngredient(ModContent.ItemType<DarkSoul>(), 31000)
+            .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 31000)
             .AddIngredient(ItemID.GravitationPotion)
             .AddIngredient(ItemID.SoulofFlight)
             .AddIngredient(ModContent.ItemType<EternalCrystal>(), 4)
             .AddTile(TileID.DemonAltar);
             recipe.Register();
             Recipe recipe2 = Recipe.Create(ModContent.ItemType<PermanentLuckPotion>(), 1)
-            .AddIngredient(ModContent.ItemType<DarkSoul>(), 4444)
+            .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 4444)
             .AddIngredient(ItemID.Waterleaf, 4)
             .AddIngredient(ItemID.LuckPotionLesser, 4)
             .AddIngredient(ItemID.LuckPotion, 4)
@@ -119,7 +120,7 @@ namespace tsorcRevamp.Content.Items
             .AddTile(TileID.DemonAltar)
             .AddOnCraftCallback(delegate
             { //refund the player's souls when they revert to a base mirror
-                Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), Main.LocalPlayer.getRect(), ModContent.ItemType<DarkSoul>(), 100);
+                Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), Main.LocalPlayer.getRect(), ModContent.ItemType<DarkSoulItem>(), 100);
             }
             );
             recipe.Register();
@@ -134,7 +135,7 @@ namespace tsorcRevamp.Content.Items
         public static void PermaPotionRecipeS(Mod mod, int IngredientPotion, int ResultPotion)
         {
             Recipe recipe = Recipe.Create(ResultPotion, 1)
-            .AddIngredient(ModContent.ItemType<DarkSoul>(), 31000)
+            .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 31000)
             .AddIngredient(IngredientPotion)
             .AddIngredient(ModContent.ItemType<EternalCrystal>(), 4)
             .AddTile(TileID.DemonAltar);
@@ -143,7 +144,7 @@ namespace tsorcRevamp.Content.Items
         public static void PermaPotionRecipeA(Mod mod, int IngredientPotion, int ResultPotion)
         {
             Recipe recipe = Recipe.Create(ResultPotion, 1)
-            .AddIngredient(ModContent.ItemType<DarkSoul>(), 16000)
+            .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 16000)
             .AddIngredient(IngredientPotion)
             .AddIngredient(ModContent.ItemType<EternalCrystal>(), 3)
             .AddTile(TileID.DemonAltar);
@@ -152,7 +153,7 @@ namespace tsorcRevamp.Content.Items
         public static void PermaPotionRecipeB(Mod mod, int IngredientPotion, int ResultPotion)
         {
             Recipe recipe = Recipe.Create(ResultPotion, 1)
-            .AddIngredient(ModContent.ItemType<DarkSoul>(), 9000)
+            .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 9000)
             .AddIngredient(IngredientPotion)
             .AddIngredient(ModContent.ItemType<EternalCrystal>(), 2)
             .AddTile(TileID.DemonAltar);
@@ -161,7 +162,7 @@ namespace tsorcRevamp.Content.Items
         public static void PermaPotionRecipeC(Mod mod, int IngredientPotion, int ResultPotion)
         {
             Recipe recipe = Recipe.Create(ResultPotion, 1)
-            .AddIngredient(ModContent.ItemType<DarkSoul>(), 5000)
+            .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 5000)
             .AddIngredient(IngredientPotion)
             .AddIngredient(ModContent.ItemType<EternalCrystal>())
             .AddTile(TileID.DemonAltar);

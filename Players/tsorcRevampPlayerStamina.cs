@@ -11,6 +11,7 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
@@ -719,7 +720,7 @@ namespace tsorcRevamp
                         }
                     }
 
-                    if (Main.projectile[p].active && Main.projectile[p].type > 0 && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip && !Player.GetModPlayer<tsorcRevampPlayer>().FinishedChargingWhip)
+                    if (Main.projectile[p].active && Main.projectile[p].type > 0 && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].GetGlobalProjectile<ModdedWhipGlobalProjectile>().CanBeCharged && !Player.GetModPlayer<tsorcRevampPlayer>().FinishedChargingWhip)
                     {
                         staminaResourceCurrent -= ChargedWhipDrainPerFrame * mult;
                         staminaResourceRegenRate *= 0f;
@@ -922,7 +923,7 @@ namespace tsorcRevamp
                         drainPerFrame = FlailDrainPerFrame;
                         preventsRegen = true;
                     }
-                    if (shot.GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip)
+                    if (shot.GetGlobalProjectile<ModdedWhipGlobalProjectile>().CanBeCharged)
                     {
                         drainPerFrame = ChargedWhipDrainPerFrame;
                         preventsRegen = true;

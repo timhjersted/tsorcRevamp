@@ -7,6 +7,7 @@ using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Content.Items.Armor.SetBonuses;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor.Summon
 {
@@ -51,7 +52,7 @@ namespace tsorcRevamp.Content.Items.Armor.Summon
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TikiShirt);
             recipe.AddIngredient(ItemID.AdamantiteBar);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9800);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 9800);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

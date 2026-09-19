@@ -22,6 +22,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.VanillaItems;
@@ -2578,7 +2579,7 @@ namespace tsorcRevamp
                 tsorcRevampPlayer modPlayer = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>();
                 foreach (Item ingredient in r.requiredItem)
                 {
-                    if (ingredient.type == ModContent.ItemType<DarkSoul>())
+                    if (ingredient.type == ModContent.ItemType<DarkSoulItem>())
                     {
 
                         //a recipe with souls will only be craftable if you have enough souls, even if theyre in soul slot

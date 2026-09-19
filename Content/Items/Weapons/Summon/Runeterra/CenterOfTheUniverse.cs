@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles;
 using tsorcRevamp.Content.Projectiles.Summon.Runeterra.Dragons;
 
@@ -93,7 +94,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra
 
             recipe.AddIngredient(ModContent.ItemType<InterstellarVesselGauntlet>());
             recipe.AddIngredient(ItemID.LunarBar, 12);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 100000);
 
             recipe.AddTile(TileID.DemonAltar);
 

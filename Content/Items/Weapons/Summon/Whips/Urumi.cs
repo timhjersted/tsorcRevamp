@@ -5,6 +5,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
 {
@@ -45,21 +46,21 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ChainKnife);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.Chain, 5);
             recipe2.AddIngredient(ItemID.Hook);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 800);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 800);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();
 
             Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ItemID.Chain, 5);
             recipe3.AddIngredient(ItemID.ThrowingKnife, 5);
-            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 1200);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1200);
             recipe3.AddTile(TileID.DemonAltar);
             recipe3.Register();
         }

@@ -6,17 +6,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic
 {
     class SoulArrowStaff : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Soul Arrow");
-            /* Tooltip.SetDefault("Shoots a lightly homing soul arrow" +
-                                "\nCan be upgraded"); */ // with 3000 Dark Souls and a Soul Siphon potion
-        }
         public override void SetDefaults()
         {
             Item.autoReuse = true;
@@ -85,7 +81,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<WoodenWand>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 300);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 300);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

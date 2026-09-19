@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.BossItems
 {
@@ -45,7 +46,7 @@ namespace tsorcRevamp.Content.Items.BossItems
                 Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ItemID.SpellTome, 1);
                 recipe.AddIngredient(ItemID.MeteoriteBar, 3);
-                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+                recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1000);
                 recipe.AddTile(TileID.DemonAltar);
                 recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
 

@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
 {
@@ -55,7 +56,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 10);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<SoulOfOccultist>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 150000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

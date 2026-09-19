@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Melee
 {
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
             recipe.AddIngredient(ItemID.WarriorEmblem);
             recipe.AddIngredient(ItemID.EyeoftheGolem);
             recipe.AddIngredient(ItemID.HallowedBar, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8500);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 8500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

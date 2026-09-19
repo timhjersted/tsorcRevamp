@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Melee;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
@@ -123,7 +124,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoulItem>()));
             npcLoot.Add(ItemDropRule.Common(ItemID.Wood));
             npcLoot.Add(ItemDropRule.Common(ItemID.Wood, 3));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GreenBlossom>(), 8));

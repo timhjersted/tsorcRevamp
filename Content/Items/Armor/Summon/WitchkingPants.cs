@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.Content.Items.Armor.Summon
@@ -43,7 +44,7 @@ namespace tsorcRevamp.Content.Items.Armor.Summon
             recipe.AddIngredient(ItemID.SpookyLeggings);
             recipe.AddIngredient(ModContent.ItemType<BewitchedTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

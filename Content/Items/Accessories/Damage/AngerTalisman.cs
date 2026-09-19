@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Damage
 {
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             recipe.AddIngredient(ItemID.WarriorEmblem, 1);
             recipe.AddIngredient(ItemID.SummonerEmblem, 1);
             recipe.AddIngredient(ItemID.ChlorophyteBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 30000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

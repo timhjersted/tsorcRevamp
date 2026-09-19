@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
@@ -424,7 +425,7 @@ namespace tsorcRevamp.NPCs.Puppets
             npcLoot.Add(ItemDropRule.Common(ItemID.WillsLeggings));
             npcLoot.Add(ItemDropRule.Common(ItemID.MysteriousCape));
             npcLoot.Add(ItemDropRule.Common(ItemID.WallOfFleshGoatMountItem)); // Goat Skull — the mount it rode
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 300, 500));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoulItem>(), 1, 300, 500));
         }
 
         public override void OnKill()

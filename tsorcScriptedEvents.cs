@@ -14,9 +14,11 @@ using Terraria.ModLoader.IO;
 using tsorcRevamp;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Items.Accessories.Other.Trinity;
 using tsorcRevamp.Content.Items.Debug;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
@@ -370,19 +372,19 @@ namespace tsorcRevamp
 
             //DEFILED DEMON (FORGOTTEN CITY, CLOSE TO FIRE TEMPLE)
             ScriptedEvent AncientDemon = new ScriptedEvent(new Vector2(5317, 1800), 25, ModContent.NPCType<NPCs.Bosses.AncientDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.AncientDemon"), Color.MediumPurple, false);
-            AncientDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 5000 });
+            AncientDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoulItem>() }, new List<int>() { 1, 5000 });
 
             //ANCIENT OOLACILE DEMON (EARLY-GAME)
             ScriptedEvent AODE = new ScriptedEvent(new Vector2(5652, 971), 27, ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.AncientOolacileDemon"), Color.MediumPurple, false);
-            AODE.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
+            AODE.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoulItem>() }, new List<int>() { 1, 1500 });
 
             //GOBLIN SUMMONER IN WMF
             ScriptedEvent GoblinWizardWMF = new ScriptedEvent(new Vector2(7153, 411), 20, NPCID.GoblinSummoner, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.GoblinSummoner1"), Color.MediumPurple, false);
-            GoblinWizardWMF.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
+            GoblinWizardWMF.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoulItem>() }, new List<int>() { 1, 1500 });
 
             //GOBLIN SUMMONER IN THE CLOUDS (WMF)
             ScriptedEvent GoblinWizardClouds = new ScriptedEvent(new Vector2(7822, 118), 40, NPCID.GoblinSummoner, DustID.MagicMirror, true, false, false, LangUtils.GetTextValue("Events.GoblinSummoner2"), Color.MediumPurple, false);
-            GoblinWizardClouds.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
+            GoblinWizardClouds.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoulItem>() }, new List<int>() { 1, 1500 });
 
             //ICE GOLEM WYVERN COMBO
             List<int> Golem2EnemyTypeList = new List<int>() { NPCID.WyvernHead, NPCID.IceGolem };
@@ -718,7 +720,7 @@ namespace tsorcRevamp
             List<int> WingTrioEventEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.TheRage>(), ModContent.NPCType<NPCs.Bosses.TheSorrow>(), ModContent.NPCType<NPCs.Bosses.TheHunter>() };
             List<Vector2> WingTrioEventEnemyLocations = new List<Vector2>() { new Vector2(3838, 1425), new Vector2(3879, 1425), new Vector2(3858, 1410) };
             ScriptedEvent WingTrioEvent = new ScriptedEvent(new Vector2(3858, 1420), 40, WingTrioEventEnemyTypeList, WingTrioEventEnemyLocations, 292, true, true, true, LangUtils.GetTextValue("Events.WingTrio"), Color.Yellow, false, RemixMapCondition);
-            WingTrioEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<EternalCrystal>(), ModContent.ItemType<Trinity>(), ModContent.ItemType<Trinity>(), ModContent.ItemType<Trinity>(), ModContent.ItemType<Trinity>()}, new List<int>() { 3, 1, 1, 1, 1 });
+            WingTrioEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<EternalCrystal>(), ModContent.ItemType<TrinityItem>(), ModContent.ItemType<TrinityItem>(), ModContent.ItemType<TrinityItem>(), ModContent.ItemType<TrinityItem>()}, new List<int>() { 3, 1, 1, 1, 1 });
             WingTrioEvent.SetCustomStats(null, null, null, 40000);
 
             ScriptedEvent SkeletronPrimeEvent = new ScriptedEvent(new Vector2(1765, 1479), 30, NPCID.SkeletronPrime, DustID.Flare, true, true, false, LangUtils.GetTextValue("Events.SkeletronPrimeRemix"), Color.Red, false, RemixMapCondition, SetNightCustomAction);

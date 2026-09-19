@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
 {
@@ -53,7 +54,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

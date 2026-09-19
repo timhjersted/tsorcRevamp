@@ -5,6 +5,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor.Summon
 {
@@ -69,7 +70,7 @@ namespace tsorcRevamp.Content.Items.Armor.Summon
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedHood, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -77,7 +78,7 @@ namespace tsorcRevamp.Content.Items.Armor.Summon
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.AncientHallowedHood, 1);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 20000);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();

@@ -7,6 +7,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Content.Projectiles.Summon.Whips
 {
@@ -33,8 +35,8 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Whips
         {
             modifiers.ArmorPenetration += Urumi.WhipArmorPen;
             Player player = Main.player[Projectile.owner];
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.WhipTipHit(Projectile, Projectile.WhipPointsForCollision, target.Hitbox))
+            var modPlayer = player.GetModPlayer<WhipTipHit>();
+            if (modPlayer.Check(Projectile, Projectile.WhipPointsForCollision, target.Hitbox))
             {
                 modifiers.SourceDamage += Urumi.TipDamage / 100;
             }

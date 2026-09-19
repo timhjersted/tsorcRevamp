@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Items.Accessories.Other;
 using tsorcRevamp.Content.Projectiles;
 
 namespace tsorcRevamp.NPCs.Friendly

@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.BossItems
@@ -56,7 +57,7 @@ namespace tsorcRevamp.Content.Items.BossItems
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1);
             recipe.AddIngredient(ItemID.SoulofFright, 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

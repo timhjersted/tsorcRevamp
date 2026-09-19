@@ -8,6 +8,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
@@ -70,7 +71,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
 
             recipe.AddIngredient(ItemID.Blowpipe);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

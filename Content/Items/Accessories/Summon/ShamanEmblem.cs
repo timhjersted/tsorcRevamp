@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Summon
 {
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon
             recipe.AddIngredient(ItemID.SummonerEmblem);
             recipe.AddIngredient(ItemID.ApprenticeScarf);
             recipe.AddIngredient(ItemID.HallowedBar, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8500);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 8500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -41,7 +42,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon
             recipe1.AddIngredient(ItemID.SummonerEmblem);
             recipe1.AddIngredient(ItemID.HuntressBuckler);
             recipe1.AddIngredient(ItemID.HallowedBar, 3);
-            recipe1.AddIngredient(ModContent.ItemType<DarkSoul>(), 8500);
+            recipe1.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 8500);
             recipe1.AddTile(TileID.DemonAltar);
 
             recipe1.Register();
@@ -50,7 +51,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon
             recipe2.AddIngredient(ItemID.SummonerEmblem);
             recipe2.AddIngredient(ItemID.SquireShield);
             recipe2.AddIngredient(ItemID.HallowedBar, 3);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 8500);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 8500);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();
@@ -59,7 +60,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon
             recipe3.AddIngredient(ItemID.SummonerEmblem);
             recipe3.AddIngredient(ItemID.MonkBelt);
             recipe3.AddIngredient(ItemID.HallowedBar, 3);
-            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 8500);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 8500);
             recipe3.AddTile(TileID.DemonAltar);
 
             recipe3.Register();

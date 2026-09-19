@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Guns
 {
@@ -57,7 +58,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Guns
             recipe.AddIngredient(ItemID.CrystalStorm);
             recipe.AddIngredient(ItemID.CrystalShard, 50);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddCondition(tsorcRevampWorld.SHM3Downed);
 

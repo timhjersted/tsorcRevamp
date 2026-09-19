@@ -1,6 +1,8 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Items.Weapons.Magic.GreatSoulArrowStaff;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Systems;
 
@@ -20,7 +22,7 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(NPC npc, ref int buffIndex)
         {
-            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Soulstruck = true;
+            npc.GetGlobalNPC<GreatSoulArrowStaffNPC>().IsSoulstruck = true;
         }
     }
 }

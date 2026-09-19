@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Items
@@ -61,7 +62,7 @@ namespace tsorcRevamp.Content.Items
 
         public override void GrabRange(Player player, ref int grabRange)
         {
-            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper / 2);
+            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<DarkSoulPlayer>().SoulPickupRange / 2);
         }
 
         public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> list)
@@ -95,16 +96,16 @@ namespace tsorcRevamp.Content.Items
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 5);
 
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe(10);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 50);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 50);
             recipe2.Register();
 
             Recipe recipe3 = CreateRecipe(100);
-            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 500);
             recipe3.Register();
         }
 

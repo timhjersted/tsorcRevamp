@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Summon.PhotonicDownpour;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon
@@ -94,7 +95,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DamagedMechanicalScrap>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 15000);
             recipe.AddIngredient(ItemID.SoulofFright, 15);
 
             recipe.AddTile(TileID.DemonAltar);

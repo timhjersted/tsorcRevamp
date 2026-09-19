@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
 
 namespace tsorcRevamp.Content.Projectiles.Summon.Whips.PolarisLeash
 {

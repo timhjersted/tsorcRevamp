@@ -7,6 +7,7 @@ using Terraria.GameContent.Achievements;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories;
+using tsorcRevamp.Content.Items.Accessories.Other;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.NPCs.Special;

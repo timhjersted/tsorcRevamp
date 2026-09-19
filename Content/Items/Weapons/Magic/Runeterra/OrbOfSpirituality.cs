@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<OrbOfFlame>());
             recipe.AddIngredient(ItemID.LunarBar, 12);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

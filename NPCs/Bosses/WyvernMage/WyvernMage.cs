@@ -13,6 +13,7 @@ using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Projectiles;
@@ -685,7 +686,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             {
                 if (!(tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WyvernMage>()))))
                 { //If the boss has not yet been killed
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 15000); //Then drop the souls
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoulItem>(), 15000); //Then drop the souls
                 }
             }
         }

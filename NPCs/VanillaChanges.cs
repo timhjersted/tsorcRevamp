@@ -16,6 +16,7 @@ using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Lore;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Pets;
 using tsorcRevamp.Content.Items.Placeable.Relics;
 using tsorcRevamp.Content.Items.Placeable.Trophies;
@@ -23,6 +24,7 @@ using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Vanity;
 using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
@@ -6421,7 +6423,7 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.KingSlime)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 500);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoulItem>(), 500);
                 if (!Main.expertMode)
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.SlimySaddle, 1);
@@ -6454,17 +6456,17 @@ namespace tsorcRevamp.NPCs
             if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode)
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfSky>(), 3);
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 1000);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoulItem>(), 1000);
             }
 
             if (npc.netID == NPCID.GreenSlime)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>());
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoulItem>());
             }
 
             if (npc.netID == NPCID.RedSlime)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 2);
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoulItem>(), 2);
             }
 
             if (npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow)

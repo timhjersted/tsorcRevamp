@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Projectiles.Melee.Runeterra.WorldEnder;
 using tsorcRevamp.Utilities;
@@ -180,7 +181,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 10);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 25);
             recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 120000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

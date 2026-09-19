@@ -1,0 +1,87 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Accessories.Other.SilverSerpentRing;
+using tsorcRevamp.Content.Items.Accessories.Other.SoulReaper;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+
+namespace tsorcRevamp.Content.Items.Accessories.Other.SoulSerpentRing
+{
+    public class SoulSerpentRingItem : ModItem
+    {
+        public static float SoulAmplifier = 30f;
+        public static int DefenseDecrease = 15;
+        public static int ConsSoulChanceAmplifier = 100;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulAmplifier, DefenseDecrease, ConsSoulChanceAmplifier);
+        public override void SetStaticDefaults()
+        {
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 24;
+            Item.height = 22;
+            Item.accessory = true;
+            Item.defense = -DefenseDecrease;
+            Item.value = PriceByRarity.Pink_5;
+            Item.expert = true;
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<SilverSerpentRingItem>(), 1); 
+            recipe.AddIngredient(ModContent.ItemType<SoulReaper2Item>(), 1);
+            recipe.AddIngredient(ItemID.SoulofFright, 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 20000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            var darkSoulPlayer = player.GetModPlayer<DarkSoulPlayer>();
+            player.GetModPlayer<SoulSerpentRingPlayer>().SoulSerpentRing = true;
+            player.GetModPlayer<SoulReaperPlayer>().EquippedN2 = true;
+            darkSoulPlayer.SoulPickupRange += 13;
+            darkSoulPlayer.ConsSoulChanceMult += ConsSoulChanceAmplifier / 5;
+            int posX = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
+            int posY = (int)(player.position.Y + 2f) / 16;
+            Lighting.AddLight(posX, posY, 0.9f, 0.8f, 0.7f);
+        }
+
+        float rotation = 0;
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                rotation += 0.01f;
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i + rotation) * 2;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Green * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+
+                offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i - rotation) * 2;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Green * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+            }
+            return true;
+        }
+
+        public override bool CanEquipAccessory(Player player, int slot, bool modded)
+        {
+            foreach (Item i in player.armor)
+            {
+                if (i.ModItem is SoulSerpentRingItem)
+                {
+                    return false;
+                }
+            }
+
+            return base.CanEquipAccessory(player, slot, modded);
+        }
+
+    }
+}

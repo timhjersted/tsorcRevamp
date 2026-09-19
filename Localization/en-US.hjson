@@ -1405,7 +1405,7 @@ Mods: {
 				Night: You shift time forward and a new night begins...
 			}
 
-			ShadowmoonCloak: {
+			ShadowmoonCloakItem: {
 				DisplayName: Shadowmoon Cloak
 				Tooltip:
 					'''
@@ -1725,7 +1725,7 @@ Mods: {
 					'''
 			}
 
-			CovetousSilverSerpentRing: {
+			SilverSerpentRingItem: {
 				DisplayName: Covetous Silver Serpent Ring
 				Tooltip:
 					'''
@@ -1737,7 +1737,7 @@ Mods: {
 					'''
 			}
 
-			CovetousSoulSerpentRing: {
+			SoulSerpentRingItem: {
 				DisplayName: Covetous Soul Serpent Ring
 				Tooltip:
 					'''
@@ -2163,7 +2163,7 @@ Mods: {
 					'''
 			}
 
-			SoulReaper2: {
+			SoulReaper2Item: {
 				DisplayName: Soul Reaper II
 				Tooltip:
 					'''
@@ -4497,7 +4497,7 @@ Mods: {
 					'''
 			}
 
-			DarkSoul: {
+			DarkSoulItem: {
 				DisplayName: Dark Soul
 				Tooltip:
 					'''
@@ -4998,7 +4998,7 @@ Mods: {
 				Tooltip:
 					'''
 					Turns on Master Mode or turns it off
-					Receive 20% more souls in master mode
+					Receive {0}% more souls in master mode
 					'''
 				Enabled: Master Mode has been enabled, enjoy your extra accessory slot!
 				Disabled:
@@ -6085,13 +6085,13 @@ Mods: {
 					'''
 			}
 
-			GreatSoulArrowStaff: {
+			GreatSoulArrowStaffItem: {
 				DisplayName: Great Soul Arrow
 				Tooltip:
 					'''
 					Shoots a lightly homing great soul arrow
 					which can leave enemies Soulstruck
-					Soulstruck enemies drop 10% more souls
+					Soulstruck enemies drop {0}% more souls
 					'''
 			}
 
@@ -7601,7 +7601,7 @@ Mods: {
 					'''
 			}
 
-			SporePowder: {
+			SporePowderItem: {
 				DisplayName: Bloom Powder
 				Tooltip: Consuming a healing potion/Estus flask or taking damage creates an explosion of poison spores around you
 			}
@@ -8099,7 +8099,7 @@ Mods: {
 					'''
 			}
 
-			Goredrinker: {
+			GoredrinkerItem: {
 				DisplayName: Goredrinker
 				Tooltip:
 					'''
@@ -8732,7 +8732,7 @@ Mods: {
 					'''
 			}
 
-			Trinity: {
+			TrinityItem: {
 				DisplayName: Trinity
 				Tooltip:
 					'''
@@ -8887,7 +8887,7 @@ Mods: {
 					'''
 			}
 
-			VenomPowder: {
+			VenomPowderItem: {
 				DisplayName: Venom Powder
 				Tooltip: Consuming a healing potion/Estus flask or taking damage creates an large explosion of acid venom around you
 			}

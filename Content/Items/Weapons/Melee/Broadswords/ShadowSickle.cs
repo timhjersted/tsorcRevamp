@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Melee;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
@@ -46,7 +47,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.DemoniteBar, 8);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

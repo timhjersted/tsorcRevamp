@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic
@@ -87,7 +88,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DamagedMechanicalScrap>());
             recipe.AddIngredient(ItemID.SoulofFright, 15);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

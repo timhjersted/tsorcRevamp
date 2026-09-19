@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons
 {
@@ -36,7 +37,7 @@ namespace tsorcRevamp.Content.Items.Weapons
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ManaCrystal, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 250);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 250);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

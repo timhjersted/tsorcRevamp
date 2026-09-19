@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.VanillaItems
@@ -195,28 +196,28 @@ namespace tsorcRevamp.Content.Items.VanillaItems
             Recipe VitalCrystal = Recipe.Create(ItemID.AegisCrystal)
                 .AddCondition(tsorcRevampWorld.AdventureModeEnabled)
                 .AddIngredient(ItemID.LifeCrystal, 3)
-                .AddIngredient(ModContent.ItemType<DarkSoul>(), 3000) // Was 6000, this was way too much for a weak permanent upgrade that can be dropped early in the game (it's only a 20% natural regen boost)
+                .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 3000) // Was 6000, this was way too much for a weak permanent upgrade that can be dropped early in the game (it's only a 20% natural regen boost)
                 .AddTile(TileID.DemonAltar);
             VitalCrystal.Register();
 
             Recipe AegisFruit = Recipe.Create(ItemID.AegisFruit)
                 .AddCondition(tsorcRevampWorld.AdventureModeEnabled)
                 .AddIngredient(ItemID.LifeFruit, 3)
-                .AddIngredient(ModContent.ItemType<DarkSoul>(), 5000)
+                .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 5000)
                 .AddTile(TileID.DemonAltar);
             AegisFruit.Register();
 
             Recipe ArcaneCrystal = Recipe.Create(ItemID.ArcaneCrystal)
                 .AddCondition(tsorcRevampWorld.AdventureModeEnabled)
                 .AddIngredient(ItemID.ManaCrystal, 3)
-                .AddIngredient(ModContent.ItemType<DarkSoul>(), 2000)
+                .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2000)
                 .AddTile(TileID.DemonAltar);
             ArcaneCrystal.Register();
 
             Recipe ShimmerArrow = Recipe.Create(ItemID.ShimmerArrow, 5)
                 .AddCondition(tsorcRevampWorld.AdventureModeEnabled)
                 .AddIngredient(ItemID.WoodenArrow, 5)
-                .AddIngredient(ModContent.ItemType<DarkSoul>(), 1)
+                .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1)
                 .AddTile(TileID.DemonAltar);
             ShimmerArrow.Register();
 

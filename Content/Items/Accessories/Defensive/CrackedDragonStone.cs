@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive
 {
@@ -41,7 +42,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CobaltBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 9000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 9000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
