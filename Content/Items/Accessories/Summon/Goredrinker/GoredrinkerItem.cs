@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Hammers;
 
 namespace tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker
 {
+    [LegacyName("Goredrinker")]
     public class GoredrinkerItem : ModItem
     {
         public const float SummonDamage = 10f;

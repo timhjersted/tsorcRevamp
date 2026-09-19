@@ -9,6 +9,7 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.GreatSoulArrowStaff
 {
+    [LegacyName("GreatSoulArrowStaff")]
     class GreatSoulArrowStaffItem : ModItem
     {
         public const float SoulAmplifier = 10f;

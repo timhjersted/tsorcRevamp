@@ -5,6 +5,7 @@ using tsorcRevamp.Content.Items.Accessories.Other.SoulSerpentRing;
 
 namespace tsorcRevamp.Content.Items.Accessories.Other.SilverSerpentRing
 {
+    [LegacyName("CovetousSilverSerpentRing")]
     public class SilverSerpentRingItem : ModItem
     {
         public static float SoulAmplifier = 20f;

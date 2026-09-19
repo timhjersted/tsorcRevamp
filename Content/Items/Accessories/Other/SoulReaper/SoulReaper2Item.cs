@@ -7,6 +7,7 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Other.SoulReaper
 {
+    [LegacyName("SoulReaper2")]
     public class SoulReaper2Item : ModItem
     {
         public static int ConsSoulChanceAmp = 50;

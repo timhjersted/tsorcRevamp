@@ -5,6 +5,7 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Other.SporePowder
 {
+    [LegacyName("SporePowder")]
     class SporePowderItem : ModItem
     {
         public override void SetDefaults()
