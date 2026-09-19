@@ -281,6 +281,52 @@ namespace tsorcRevamp
     public static class UsefulFunctions
     {
         /// <summary>
+        /// Simply renders a transparent projectile texture for you in PreDraw
+        /// </summary>
+        /// <param name="proj">The projectile</param>
+        /// <param name="spriteType">The texture type in the TransparentTextureHandler</param>
+        /// <param name="lightColor">The lightcolor given in PreDraw</param>
+        /// <param name="stopPreDraw">Whether the game should draw the projectile twice, usually it shouldn't</param>
+        public static bool RenderTransparentTexture(Projectile proj, TransparentTextureHandler.TransparentTextureType spriteType, Color lightColor, bool stopPreDraw = false)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (proj.spriteDirection == -1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+            //Get the premultiplied, properly transparent texture
+            Texture2D texture = TransparentTextureHandler.TransparentTextures[spriteType];
+            int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[proj.type]).Height / Main.projFrames[proj.type];
+            int startY = frameHeight * proj.frame;
+            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+            Color drawColor = proj.GetAlpha(lightColor);
+            Main.EntitySpriteDraw(texture,
+                proj.Center - Main.screenPosition + new Vector2(0f, proj.gfxOffY),
+                sourceRectangle, drawColor, proj.rotation, origin, proj.scale, spriteEffects, 0);
+            return stopPreDraw;
+        }
+        /// <summary>
+        /// Basic animation loop for a projectile. Use this in Projectile AI. Don't forget to set Main.projFrames first!
+        /// </summary>
+        /// <param name="projectile">The Projectile</param>
+        /// <param name="frameDuration">The duration of each frame, higher means slower animation, lower means the animation plays faster</param>
+        public static void BasicAnimationLoop(Projectile projectile, int frameDuration)
+        {
+            projectile.frameCounter++;
+
+            if (projectile.frameCounter >= frameDuration)
+            {
+                projectile.frameCounter = 0;
+                projectile.frame++;
+
+                if (projectile.frame >= Main.projFrames[projectile.type])
+                {
+                    projectile.frame = 0;
+                }
+            }
+        }
+        /// <summary>
         /// Returns a string for usage of any vanilla texture
         /// </summary>
         /// <param name="iD">The ID of the object</param>
@@ -294,12 +340,13 @@ namespace tsorcRevamp
         /// Returns a string that will adhere to automatic code refactoring when files are moved
         /// </summary>
         /// <param name="className">The original class that uses the texture</param>
+        /// <param name="directorySeperator">The symbol you need for separation of directories, Terraria usually looks for a "/" inbetween directories</param>
         /// <returns></returns>
-        public static string RefactorableFilepath(Type className)
+        public static string RefactorableFilepath(Type className, string directorySeperator = "/")
         {
             if (className != null)
             {
-                return className.Namespace.Replace(".", "/") + "/" + className.Name;
+                return className.Namespace.Replace(".", directorySeperator) + directorySeperator + className.Name;
             }
             return "null";
         }

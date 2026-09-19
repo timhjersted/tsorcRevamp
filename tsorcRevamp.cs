@@ -52,6 +52,7 @@ using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss;
 using tsorcRevamp.NPCs.Special;
+using tsorcRevamp.NPCs.Runeterra;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.Tiles.BuffStations;
 using tsorcRevamp.Tiles.Relics;
@@ -5462,6 +5463,7 @@ namespace tsorcRevamp
             Pinwheel,
             PinwheelFireglow,
             ConsecratedLightTransparent,
+            RunePrison,
         }
 
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -5523,6 +5525,7 @@ namespace tsorcRevamp
                 {TransparentTextureType.SeveringDuskGlowmask, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(SeveringDusk)) + "Glowmask", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.Pinwheel, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Pinwheel)), AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.PinwheelFireglow, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Pinwheel)) + "_Fireglow", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.RunePrison, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(RunePrison)), AssetRequestMode.ImmediateLoad)},
 
             };
 

@@ -10,6 +10,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Runeterra;
@@ -18,6 +19,7 @@ class RuneMage : ModNPC
 {
     public override string LocalizationCategory => "NPCs.Runeterra";
     public const int Frames = 28;
+    public const int ScrollFrames = 7;
     private NPCDespawnHandler despawnHandler;
     public override void SetStaticDefaults()
     {
@@ -39,9 +41,9 @@ class RuneMage : ModNPC
         NPC.knockBackResist = 0f;
         NPC.noGravity = false;
         NPC.noTileCollide = false;
-        NPC.width = 60;
-        NPC.height = 104;
-        NPC.scale = 0.6f;
+        NPC.width = 50;
+        NPC.height = 58;
+        NPC.scale = 1f;
         NPC.damage = ContactDmg;
         NPC.defense = Defense;
         HealthScale = Main.masterMode ? 1.5f : 1f;
@@ -63,11 +65,12 @@ class RuneMage : ModNPC
     public ref float AiTimer2 => ref NPC.ai[2];
     public ref float AiTimer3 => ref NPC.ai[3];
     
-    public Vector2 WorldRunePosition = new Vector2(63600, 19400);
-    public Vector2 WarningPosition = new Vector2(63240, 19400);
+    public Vector2 WorldRunePosition;
+    public Vector2 WarningPosition;
     public Vector2 SpawnPosition;
-    public bool AppliedOnSpawn = false;
+    public bool AppliedOnSpawn;
     public bool ShouldDrawWorldRune = true;
+    public bool ShouldDrawScrollAnimation;
     public override void AI()
     {
         NPC.TargetClosest(false);
@@ -77,11 +80,11 @@ class RuneMage : ModNPC
         if (!AppliedOnSpawn)
         {
             SpawnPosition = NPC.position;
+            WorldRunePosition = SpawnPosition + new Vector2(1266, -20);//new Vector2(63600, 19400);
+            WarningPosition = WorldRunePosition + new Vector2(-360, 0);
             AppliedOnSpawn = true;
         }
-        //Main.NewText(NPC.position.Distance(WorldRunePosition));
-        //WorldRunePosition = new Vector2(63600, 19400);
-        //WarningPosition = new Vector2(63240, 19400);
+        WorldRunePosition = SpawnPosition + new Vector2(1266, -20);//new Vector2(63600, 19400);
         
         
         switch (AiState)
@@ -144,21 +147,43 @@ class RuneMage : ModNPC
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
-        if (ShouldDrawWorldRune)
+        if (ShouldDrawScrollAnimation && Main.netMode != NetmodeID.Server)
+        {
+            DrawScrollAnimation(spriteBatch, screenPos, drawColor);
+        }
+        if (ShouldDrawWorldRune && Main.netMode != NetmodeID.Server)
         {
             DrawWorldRune(spriteBatch, screenPos, drawColor);
         }
-        return base.PreDraw(spriteBatch, screenPos, drawColor);
+        return !ShouldDrawScrollAnimation;
     }
 
     Texture2D WorldRuneSprite;
     public void DrawWorldRune(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
-        WorldRuneSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Materials/WorldRune"); 
+        WorldRuneSprite = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(WorldRune))); 
         Rectangle WorldRuneSourceRectangle = new Rectangle(0, 0, WorldRuneSprite.Width, WorldRuneSprite.Height); 
         Main.EntitySpriteDraw(WorldRuneSprite, WorldRunePosition - screenPos, WorldRuneSourceRectangle,
             Color.White, 0, WorldRuneSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
         Lighting.AddLight(WorldRunePosition, Color.DarkRed.ToVector3() * 1f);
+    }
+    Texture2D ScrollAnimation;
+    public void DrawScrollAnimation(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+    {
+        ScrollAnimation = (Texture2D)ModContent.Request<Texture2D>(Texture + "_ScrollAnimation");
+        int frameDuration = PickupDuration / ScrollFrames;
+        int currentFrame = (int)AiTimer2 / frameDuration;
+        if (currentFrame >= 4 + 1)
+        {
+            ShouldDrawWorldRune = false;
+        }
+        Main.NewText(currentFrame);
+        Rectangle scrollAnimSourceRect = ScrollAnimation.Frame(1, ScrollFrames, 0, currentFrame);
+        Vector2 spritePosition = NPC.Center - screenPos + new Vector2(24, currentFrame * ScrollAnimation.Height / ScrollFrames);
+        Main.NewText(spritePosition);
+        Main.EntitySpriteDraw(ScrollAnimation, spritePosition, scrollAnimSourceRect,
+            Color.White, 0, scrollAnimSourceRect.Center.ToVector2(), NPC.scale, SpriteEffects.None, 0);
+        Lighting.AddLight(spritePosition, Color.DarkRed.ToVector3() * 1f);
     }
 
     public override void OnSpawn(IEntitySource source)
@@ -532,7 +557,7 @@ class RuneMage : ModNPC
     public void IsWarning(Player target)
     {
         NPC.chaseable = false;
-        if (NPC.position.Distance(WarningPosition) > 19.1f)
+        if (NPC.Center.Distance(WarningPosition) > 19.1f)
         {
             HurryingWalkSpeed = 3.25f;
             NPC.velocity.X = NPC.DirectionTo(WarningPosition).X * HurryingWalkSpeed;
@@ -551,7 +576,7 @@ class RuneMage : ModNPC
             NPC.TargetClosest();
         }
 
-        if (target.position.Distance(WarningPosition) > 470)
+        if (target.Center.Distance(WarningPosition) > 470)
         {
             AiTimer1++;
         }
@@ -573,7 +598,7 @@ class RuneMage : ModNPC
         {
             foreach (Player player in Main.ActivePlayers)
             {
-                if (player.position.X > WarningPosition.X + 40 & Collision.CanHitLine(NPC.Center, 2, 2, player.Center, 2, 2))
+                if (player.Center.X > WarningPosition.X + 40 & Collision.CanHitLine(NPC.Center, 2, 2, player.Center, 2, 2))
                 {
                     AiState = (float)ActionState.StartingFight;
                     AiTimer1 = 0;
@@ -597,7 +622,7 @@ class RuneMage : ModNPC
 
     private int FirstRunePrisonCastTime = 60;
     private int TotalRunePrisonFrames = 4;
-    private int PickupDuration = 60;
+    private const int PickupDuration = 120;
     /// <summary>
     /// Starts the fight by trapping the player in an undodgeable Rune Prison and then picking up the World Rune.
     /// Then the player is let go and it goes into normal first phase AI.
@@ -611,7 +636,6 @@ class RuneMage : ModNPC
             {
                 NPC.velocity = Vector2.Zero;
                 NPC.TargetClosest();
-                Main.NewText("ye");
                 break;
             }
             case 61:
@@ -620,18 +644,17 @@ class RuneMage : ModNPC
                 {
                     foreach (Player player in Main.ActivePlayers)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), player.Center + new Vector2(0, -10), Vector2.Zero,
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), player.Center - new Vector2(player.width / 2, 5), Vector2.Zero,
                             ModContent.ProjectileType<FirstRunePrison>(), 0, 0, player.whoAmI, NPC.whoAmI);
                     }
                 }
                 NPC.velocity = Vector2.Zero;
                 NPC.TargetClosest();
-                Main.NewText("stuck");
                 break;
             }
             case float three when AiTimer1 > FirstRunePrisonCastTime + 1:
             {
-                if (NPC.position.Distance(WorldRunePosition) > 40f)
+                if (NPC.Center.Distance(WorldRunePosition) > 50f)
                 {
                     HurryingWalkSpeed = 3.25f;
                     NPC.velocity.X = NPC.DirectionTo(WorldRunePosition).X * HurryingWalkSpeed;
@@ -649,15 +672,18 @@ class RuneMage : ModNPC
                     NPC.velocity = Vector2.Zero;
                     NPC.TargetClosest(false);
                     AiTimer2++;
+                    ShouldDrawScrollAnimation = true;
                 }
 
                 break;
             }
         }
         AiTimer1++;
-        if (AiTimer2 > 60)
+        if (AiTimer2 > PickupDuration)
         {
-            Main.NewText("Done");
+            //Main.NewText("Done");
+            ShouldDrawScrollAnimation = false;
+            ShouldDrawWorldRune = false;
         }
     }
 
