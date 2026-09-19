@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -12,12 +13,18 @@ namespace tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 public class DarkSoulNPC : GlobalNPC
 {
+    public override bool InstancePerEntity => true;
+    /// <summary>
+    /// Whoever killed this npc
+    /// </summary>
+    public Player Killer = Main.player.Last();
+
     public override void OnKill(NPC npc)
     {
             if (npc.lifeMax > 5 && npc.value >= 10f || npc.boss)
             { //stop zero-value souls from dropping (the 'or boss' is for expert mode support)
                 
-                float multiplier = DarkSoulPlayer.SoulsMultiplier(Main.LocalPlayer) *
+                float multiplier = DarkSoulPlayer.SoulsMultiplier(Killer) *
                              npc.GetGlobalNPC<GreatSoulArrowStaffNPC>().CheckSoulstruckAmplifier();
 
                 int darkSoulQuantity = (int)(multiplier * npc.value);
