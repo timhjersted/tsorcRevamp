@@ -910,17 +910,18 @@ namespace tsorcRevamp.Content.Items
         }
         public override bool? UseItem(Item item, Player player)
         {
+            var darkSoulPlayer = player.GetModPlayer<DarkSoulPlayer>();
             if (item.type == ItemID.TorchGodsFavor)
             {
                 player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<WorldRune>());
                 player.QuickSpawnItem(item.GetSource_Misc("meep"), ItemID.MagicLantern);
                 if (Main.masterMode)
                 {
-                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoulItem>(), (int)(1500 * 1.2f * DarkSoulPlayer.SoulsMultiplier(player)));
+                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoulItem>(), (int)(1500 * 1.2f * darkSoulPlayer.SoulsMultiplier()));
                 }
                 else
                 {
-                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoulItem>(), (int)(1500 * DarkSoulPlayer.SoulsMultiplier(player)));
+                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoulItem>(), (int)(1500 * darkSoulPlayer.SoulsMultiplier()));
                 }
                 return true;
             }

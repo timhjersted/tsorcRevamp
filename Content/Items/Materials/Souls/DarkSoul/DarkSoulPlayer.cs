@@ -17,31 +17,31 @@ public class DarkSoulPlayer : ModPlayer
         SoulPickupRange = 5;
         ConsSoulChanceMult = 0;
     }
-    public static float SoulsMultiplier(Player player)
+    public float SoulsMultiplier()
     {
         float multiplier = 1f;
         float defaultDifficultyMod = 0.04f;
-        if (player.GetModPlayer<SilverSerpentRingPlayer>().SilverSerpentRing)
+        if (Player.GetModPlayer<SilverSerpentRingPlayer>().SilverSerpentRing)
         {
             multiplier += SilverSerpentRingItem.SoulAmplifier / 100f;
         }
-        if (player.GetModPlayer<SoulSerpentRingPlayer>().SoulSerpentRing)
+        if (Player.GetModPlayer<SoulSerpentRingPlayer>().SoulSerpentRing)
         {
             multiplier += SoulSerpentRingItem.SoulAmplifier / 100f;
         }
-        if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
+        if (Player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
         {
-            multiplier += SoulSiphonPotion.SoulAmplifier / 100f * player.GetModPlayer<tsorcRevampPlayer>().SoulSiphonScaling;
+            multiplier += SoulSiphonPotion.SoulAmplifier / 100f * Player.GetModPlayer<tsorcRevampPlayer>().SoulSiphonScaling;
         }
-        if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain)
+        if (Player.GetModPlayer<tsorcRevampPlayer>().SOADrain)
         {
             multiplier += SymbolOfAvarice.SoulAmplifier / 100f;
         }
-        if (player.GetModPlayer<tsorcRevampPlayer>().VOEGDrain)
+        if (Player.GetModPlayer<tsorcRevampPlayer>().VOEGDrain)
         {
             multiplier += VaultOfEndlessGreed.SoulAmplifier / 100f;
         }
-        if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+        if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
         {
             multiplier += Darksign.BotCSoulDropAmplifier / 100f;
         }

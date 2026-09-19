@@ -21,10 +21,11 @@ public class DarkSoulNPC : GlobalNPC
 
     public override void OnKill(NPC npc)
     {
+        var modPlayer = Killer.GetModPlayer<DarkSoulPlayer>();
             if (npc.lifeMax > 5 && npc.value >= 10f || npc.boss)
             { //stop zero-value souls from dropping (the 'or boss' is for expert mode support)
                 
-                float multiplier = DarkSoulPlayer.SoulsMultiplier(Killer) *
+                float multiplier = modPlayer.SoulsMultiplier() *
                              npc.GetGlobalNPC<GreatSoulArrowStaffNPC>().CheckSoulstruckAmplifier();
 
                 int darkSoulQuantity = (int)(multiplier * npc.value);

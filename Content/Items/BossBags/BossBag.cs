@@ -665,7 +665,7 @@ namespace tsorcRevamp.Content.Items.BossBags
             {
                 bossValue *= 1.2f;
             }
-            float multiplier = DarkSoulPlayer.SoulsMultiplier(player);
+            float multiplier = player.GetModPlayer<DarkSoulPlayer>().SoulsMultiplier();
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoulItem>(), (int)(multiplier * bossValue));
             modPlayer.bagsOpened.Add(bossBagID);
         }

@@ -673,7 +673,7 @@ namespace tsorcRevamp.UI
             {
                 killDivisor = 25f;
             }
-            float ringMultiplier = DarkSoulPlayer.SoulsMultiplier(Main.LocalPlayer);
+            float ringMultiplier = Main.LocalPlayer.GetModPlayer<DarkSoulPlayer>().SoulsMultiplier();
             int actualDrop = (int)(ringMultiplier * (npcValue / killDivisor));
 
             string modeName = "Normal";
