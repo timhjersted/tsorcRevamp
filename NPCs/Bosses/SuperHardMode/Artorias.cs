@@ -59,10 +59,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int MeleeRecoveryTicks => 30;
         protected override int MeleeComboInterStepLingerTicks => 15;
         protected override int MeleeRecoveryLingerTicks => 30;
-        // Hyper armor on every attack state, tells included (the base commits only post-flash strikes). Combo pauses are
-        // covered in CustomizeMeleeCombo; Artorias.AI adds his bespoke states and then carves the one exception back
-        // out: an attack's opening tell from neutral, up to the flash. Recoveries stay staggerable as punish windows.
-        protected override bool HyperArmorDuringTelegraph => true;
         // Ground Pound resolves on real ground contact instead of a tick countdown: this enables the
         // predictive downswing (UpdateLeapSlamPose projects the landing a few frames ahead so the
         // blade arrives flat as the feet touch) and the OnLeapSlamLanded hook below.
@@ -129,9 +125,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             int heavyRecoveryTicks = (int)Math.Round(36f / ComboTempoMult);
             int lightRecoveryTicks = (int)Math.Round(30f / ComboTempoMult);
             int pauseFloorTicks = (int)Math.Round(30f / ComboTempoMult);
-
-            // Hyper armor holds through the inter-step pauses too, so a multi-step combo can't be staggered between cuts.
-            combo.HyperArmor = true;
 
             combo.RecoveryTicks = lightRecoveryTicks;
             if (combo.HeavyCommit)
@@ -751,12 +744,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.netUpdate = true;
         }
 
-        // Hyper-armor bookkeeping (end of AI): the phase seen last tick, and whether the current state is the opening tell
-        // of an attack started from neutral. The lead mirrors PuppetNPC.CheckAndFireFlash's 30-tick flash lead.
-        const int OpeningTellFlashLeadTicks = 30;
-        AttackPhase _lastTickPhase = AttackPhase.Idle;
-        bool _inOpeningTell;
-
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
@@ -801,55 +788,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             TickAbyssSurges();
             TickSpectralPhantom();
             TickAerialTriggers();
-
-            // ── Hyper armor ──────────────────────────────────────────────────────────────────────
-            // Every attack state is armoured EXCEPT the opening tell of an attack started from neutral, up to its flash.
-            // Runs after base.AI() (which already published this tick's flags) and TickAerialTriggers, so this tick's
-            // phase changes are visible; hits between ticks read the result.
-
-            // Opening tell = the first state entered straight from Idle / CasualStroll / ClosingDistance. Any other
-            // transition (a combo pause, the step after a dodgeback, a dodge-punish or aerial chain) ends it.
-            if (Phase != _lastTickPhase)
-            {
-                bool cameFromNeutral = _lastTickPhase == AttackPhase.Idle || _lastTickPhase == AttackPhase.CasualStroll
-                    || _lastTickPhase == AttackPhase.ClosingDistance;
-                _inOpeningTell = cameFromNeutral;
-                _lastTickPhase = Phase;
-            }
-
-            // Armour the attack states PuppetNPC's commit lists don't cover: the i-framed dodgebacks, the sword-launch
-            // hop (armoured even as an opener) and every aerial stage but the landing beat.
-            tsorcRevampGlobalNPC attackFlags = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            bool aerialAttacking = Phase == AttackPhase.Custom && _aerialStage != AerialStage.None
-                && _aerialStage != AerialStage.Landing;
-            bool attackReposition = Phase == AttackPhase.JumpSlashDodgeback || Phase == AttackPhase.HomingVolleyDodgeback
-                || Phase == AttackPhase.SwordLaunchReposition;
-            if (aerialAttacking || attackReposition)
-            {
-                attackFlags.AttackCommitted = true;
-                attackFlags.AttackTelegraphing = false;
-            }
-
-            // Pre-flash window. The base flash fires once 30 ticks of a telegraph remain (CheckAndFireFlash), or on the
-            // first tick of a shorter one, so a tell of 30t or less is armoured throughout. Artorias's bespoke tells have
-            // no flash and use the same 30t lead; so does Skyward Lunge's aim. The uppercut's run has no fixed end, so
-            // all of it counts. Telegraphs that only ever follow another state (JumpSlashRise, TendrilReach, ...) are
-            // not listed: they can never be an opening tell.
-            bool openingTelegraph = Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.StabTelegraph
-                || Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.PierceTelegraph
-                || Phase == AttackPhase.AbyssSlashTelegraph || Phase == AttackPhase.TendrilTelegraph
-                || Phase == AttackPhase.AbyssShardTelegraph || Phase == AttackPhase.BoomerangSwingTelegraph
-                || Phase == AttackPhase.SpiralFanSwingTelegraph;
-            bool telegraphPreFlash = openingTelegraph && PhaseTimer > OpeningTellFlashLeadTicks;
-            int aimTicksLeft = SkywardAimTicks - _aerialStageTicks;
-            bool aimPreFlash = _aerialStage == AerialStage.SkywardAim && aimTicksLeft > OpeningTellFlashLeadTicks;
-            bool uppercutRunTell = _aerialStage == AerialStage.UppercutRun;
-            bool aerialTellPreFlash = Phase == AttackPhase.Custom && (aimPreFlash || uppercutRunTell);
-            if (_inOpeningTell && (telegraphPreFlash || aerialTellPreFlash))
-            {
-                attackFlags.AttackCommitted = false;
-                attackFlags.AttackTelegraphing = true;
-            }
 
             // Pierce cripple: every machine runs the pierce phases, so the local player applies the debuff to
             // themselves (player buffs are client-owned) and every client spawns the light purple motes.
@@ -1969,9 +1907,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //           (~39°/t); else overhand -1.48 -> 2.29, in 8 / out 22, k 6.5 (~36°/t). Cut starts from the carried pose.
         // Open:     50t planted landing.
         // Counter:  air-roll through the 8.8t uppercut, or across the drawn dash line as it launches (it covers 100+px
-        //           inside the 22t roll); landing before 30t airborne never arms either move. Hyper-armoured until the
-        //           landing beat (Artorias.AI), except as an opener from neutral: the uppercut's whole run and the
-        //           lunge aim's first 15t are staggerable. As a follow-up chain, no part of the tell is.
+        //           inside the 22t roll); landing before 30t airborne never arms either move. None of it is
+        //           hyper-armoured: Custom is not a committed phase, so poise can stagger him out of any stage.
         enum AerialStage { None, UppercutRun, UppercutRise, SkywardAim, SkywardDash, SkywardFall, SkywardArc, Strike, Falling, Landing }
 
         const int AerialTargetAirborneTicks = 30;
