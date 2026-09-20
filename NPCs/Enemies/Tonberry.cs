@@ -128,7 +128,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spearTexture == null || spearTexture.IsDisposed)
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyThrowingKnifeSmall");
+                spearTexture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(EnemyThrowingKnifeSmall)));
             }
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimerCap * 2f / 3f)
             {

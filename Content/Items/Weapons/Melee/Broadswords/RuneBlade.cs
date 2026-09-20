@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -21,8 +21,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 
         public override void SetDefaults()
         {
-            Item.height = 44;
-            Item.width = 44;
+            Item.height = 56;
+            Item.width = 56;
             Item.rare = ItemRarityID.Green;
             Item.damage = 18;
             Item.knockBack = 5;

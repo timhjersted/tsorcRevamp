@@ -679,7 +679,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (spearTexture == null || spearTexture.IsDisposed)
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightGhostSpear");
+                spearTexture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(BlackKnightGhostSpear)));
             }
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTelegraphStart)
             {
