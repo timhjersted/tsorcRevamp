@@ -5,7 +5,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs;
+using tsorcRevamp.Content.Items.Accessories.Other.SilverSerpentRing;
+using tsorcRevamp.Content.Items.Accessories.Other.SoulSerpentRing;
+using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.ConsumableSoul;
+using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Magic.GreatSoulArrowStaff;
 using tsorcRevamp.Utilities;
 
@@ -17,16 +21,16 @@ public class DarkSoulNPC : GlobalNPC
     /// <summary>
     /// Whoever killed this npc
     /// </summary>
-    public Player Killer = Main.player.Last();
+
+    public float SoulMult = 1f;
+
 
     public override void OnKill(NPC npc)
     {
-        var modPlayer = Killer.GetModPlayer<DarkSoulPlayer>();
+        Player lasthit = Main.player[npc.lastInteraction];
             if (npc.lifeMax > 5 && npc.value >= 10f || npc.boss)
             { //stop zero-value souls from dropping (the 'or boss' is for expert mode support)
-                
-                float multiplier = modPlayer.SoulsMultiplier() *
-                             npc.GetGlobalNPC<GreatSoulArrowStaffNPC>().CheckSoulstruckAmplifier();
+                float multiplier = lasthit.GetModPlayer<DarkSoulPlayer>().SoulsMultiplier() * npc.GetGlobalNPC<GreatSoulArrowStaffNPC>().CheckSoulstruckAmplifier();
 
                 int darkSoulQuantity = (int)(multiplier * npc.value);
 

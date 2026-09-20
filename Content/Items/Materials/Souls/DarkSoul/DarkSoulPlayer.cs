@@ -16,7 +16,7 @@ public class DarkSoulPlayer : ModPlayer
     {
         SoulPickupRange = 5;
         ConsSoulChanceMult = 0;
-    }
+    }    
     public float SoulsMultiplier()
     {
         float multiplier = 1f;
@@ -64,10 +64,5 @@ public class DarkSoulPlayer : ModPlayer
             }
         }
         return multiplier;
-    }
-
-    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-    {
-        target.GetGlobalNPC<DarkSoulNPC>().Killer = Player;
     }
 }
