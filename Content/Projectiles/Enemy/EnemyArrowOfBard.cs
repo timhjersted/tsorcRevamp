@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Ammo;
+using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
 {
@@ -11,7 +11,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         // Use the PROJECTILE sprite (oriented for aiStyle-1 velocity rotation), same as the friendly
         // ArrowOfBardProjectile. The old item sprite (Items/Ammo/ArrowOfBard) is drawn diagonally, so under the
         // arrow's velocity-rotation it rendered pointing backwards.
-        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(tsorcRevamp.Content.Projectiles.Ranged.Ammo.ArrowOfBardProjectile));
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(ArrowOfBardProjectile));
 
         public override void SetStaticDefaults()
         {
