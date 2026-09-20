@@ -19,6 +19,7 @@ namespace tsorcRevamp.Systems.LethalTempo
         {
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
+            Main.buffNoSave[Type] = true;
             BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
             if (Main.netMode != NetmodeID.Server)
             {
@@ -29,24 +30,27 @@ namespace tsorcRevamp.Systems.LethalTempo
 
         public override void Update(Player player, ref int buffIndex)
         {
-            var modPlayer = player.GetModPlayer<LethalTempoPlayer>();
-            Main.buffNoTimeDisplay[Type] = false;
-            if (player.buffTime[buffIndex] == 0)
+            if (player.whoAmI == Main.myPlayer)
             {
-                if (modPlayer.Stacks > 0)
+                var modPlayer = player.GetModPlayer<LethalTempoPlayer>();
+                Main.buffNoTimeDisplay[Type] = false;
+                if (player.buffTime[buffIndex] == 0)
                 {
-                    modPlayer.Stacks--;
-                    player.buffTime[buffIndex] = (int)(((float)LethalTempoPlayer.Duration / 6f) * 60f);
+                    if (modPlayer.Stacks > 0)
+                    {
+                        modPlayer.Stacks--;
+                        player.buffTime[buffIndex] = (int)(((float)LethalTempoPlayer.Duration / 6f) * 60f);
+                    }
                 }
-            }
-            if (modPlayer.Stacks == 0 && modPlayer.LethalTempo)
-            {
-                Main.buffNoTimeDisplay[Type] = true;
-                BuffID.Sets.TimeLeftDoesNotDecrease[Type] = true;
-            }
-            else
-            {
-                BuffID.Sets.TimeLeftDoesNotDecrease[Type] = false;
+                if (modPlayer.Stacks == 0 && modPlayer.LethalTempo)
+                {
+                    Main.buffNoTimeDisplay[Type] = true;
+                    BuffID.Sets.TimeLeftDoesNotDecrease[Type] = true;
+                }
+                else
+                {
+                    BuffID.Sets.TimeLeftDoesNotDecrease[Type] = false;
+                }
             }
         }
 

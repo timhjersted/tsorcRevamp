@@ -17,10 +17,6 @@ public class LethalTempoPlayer : ModPlayer
     public int Stacks = 0;
     public bool AppliedLethalTempo;
 
-    public List<int> ItemTypeExceptions = new List<int>()
-    {
-    };
-
     public override void ResetEffects()
     {
         LethalTempo = false;
@@ -32,10 +28,9 @@ public class LethalTempoPlayer : ModPlayer
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if (Player.HeldItem.DamageType == DamageClass.Melee || Player.HeldItem.DamageType == DamageClass.MeleeNoSpeed)
+                if (Player.HeldItem.DamageType == DamageClass.Melee ||
+                    Player.HeldItem.DamageType == DamageClass.MeleeNoSpeed)
                 {
-                    Player.GetAttackSpeed(DamageClass.Melee) *= BaseAttackSpeedMult + 
-                                                                (Stacks * BonusAttackSpeedPerStack);
                     if (!Player.HasBuff(ModContent.BuffType<LethalTempo>()))
                     {
                         Player.AddBuff(ModContent.BuffType<LethalTempo>(), 2);
@@ -46,6 +41,8 @@ public class LethalTempoPlayer : ModPlayer
                     {
                         AppliedLethalTempo = false; 
                     }
+                    Player.GetAttackSpeed(DamageClass.Melee) *= BaseAttackSpeedMult + 
+                                                                (Stacks * BonusAttackSpeedPerStack);
                 }
             }
 

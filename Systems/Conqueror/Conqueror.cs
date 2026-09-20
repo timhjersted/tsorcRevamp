@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs;
 using tsorcRevamp.Systems.LethalTempo;
 
 namespace tsorcRevamp.Systems.Conqueror
@@ -21,6 +22,7 @@ namespace tsorcRevamp.Systems.Conqueror
         {
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
+            Main.buffNoSave[Type] = true;
             BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
             if (Main.netMode != NetmodeID.Server)
             {
@@ -30,24 +32,27 @@ namespace tsorcRevamp.Systems.Conqueror
         }
         public override void Update(Player player, ref int buffIndex)
         {
-            var modPlayer = player.GetModPlayer<ConquerorPlayer>();
-            Main.buffNoTimeDisplay[Type] = false;
-            if (player.buffTime[buffIndex] == 0)
+            if (player.whoAmI == Main.myPlayer)
             {
-                if (modPlayer.Stacks > 0)
+                var modPlayer = player.GetModPlayer<ConquerorPlayer>();
+                Main.buffNoTimeDisplay[Type] = false;
+                if (player.buffTime[buffIndex] == 0)
                 {
-                    modPlayer.Stacks--;
-                    player.buffTime[buffIndex] = (int)(((float)ConquerorPlayer.Duration / 6f) * 60f);
+                    if (modPlayer.Stacks > 0)
+                    {
+                        modPlayer.Stacks--;
+                        player.buffTime[buffIndex] = (int)(((float)ConquerorPlayer.Duration / 6f) * 60f);
+                    }
                 }
-            }
-            if (modPlayer.Stacks == 0 && modPlayer.Conqueror)
-            {
-                Main.buffNoTimeDisplay[Type] = true;
-                BuffID.Sets.TimeLeftDoesNotDecrease[Type] = true;
-            }
-            else
-            {
-                BuffID.Sets.TimeLeftDoesNotDecrease[Type] = false;
+                if (modPlayer.Stacks == 0 && modPlayer.Conqueror)
+                {
+                    Main.buffNoTimeDisplay[Type] = true;
+                    BuffID.Sets.TimeLeftDoesNotDecrease[Type] = true;
+                }
+                else
+                {
+                    BuffID.Sets.TimeLeftDoesNotDecrease[Type] = false;
+                }
             }
             /* for when the stacks fall off
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFallOff") with 

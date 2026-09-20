@@ -40,7 +40,7 @@ public class ArcaneSorceryPlayer : ModPlayer
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if (Player.HeldItem.DamageType == DamageClass.Magic)
+                if (Player.HeldItem.DamageType == DamageClass.Magic || Player.HeldItem.DamageType == DamageClass.MagicSummonHybrid)
                 {
                     Player.AddBuff(ModContent.BuffType<ArcaneSorcery>(), 3); //buff is only added when player holds magic weapon and used as a condition for exactly that
                 }
