@@ -13,8 +13,8 @@ namespace tsorcRevamp.Systems.ArcaneSorcery;
 
 public class ArcaneSorceryItems : GlobalItem
 {
-    public const float ManaRestorationCuffsPercentage = 120;
-    public const float ManaStarMaxManaPercentage = 5;
+    public const float ManaRestorationCuffsPercentage = 120f;
+    public const float ManaStarMaxManaPercentage = 1.5f;
     public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
     {
         Player player = Main.LocalPlayer;
