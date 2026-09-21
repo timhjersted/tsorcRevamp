@@ -3123,8 +3123,7 @@ namespace tsorcRevamp
 
         private static bool HasGuardActionLock(Player player)
         {
-            return player.HasBuff(ModContent.BuffType<ShieldGuardBreak>())
-                || player.HasBuff(ModContent.BuffType<Stagger>());
+            return player.HasBuff(ModContent.BuffType<ShieldGuardBreak>());
         }
 
         public static void TryUseQuickMana(Player player)

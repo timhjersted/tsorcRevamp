@@ -391,6 +391,20 @@ namespace tsorcRevamp
             staminaDebt = 0f; // dying clears the slate — respawning already full but still in debt would be absurd
         }
 
+        public override void ModifyHurt(ref Player.HurtModifiers modifiers)
+        {
+            if (staminaResourceCurrent < 0f || staminaDebt > 0f
+                || Player.HasBuff(ModContent.BuffType<Stagger>())
+                || Player.HasBuff(ModContent.BuffType<ShieldGuardBreak>()))
+            {
+                Player.noKnockback = false;
+                if (modifiers.Knockback.Base < 0.5f)
+                {
+                    modifiers.Knockback.Base = 0.5f;
+                }
+            }
+        }
+
         public override void OnHurt(Player.HurtInfo info)
         {
             // Current stamina is normally converted into the positive debt field at the end of UpdateResource.
@@ -398,6 +412,32 @@ namespace tsorcRevamp
             if (info.Damage > 0 && (staminaResourceCurrent < 0f || staminaDebt > 0f))
             {
                 Buffs.Debuffs.Stagger.Apply(Player);
+                PauseStaminaRegen(SpendRegenDelay);
+
+                /*
+                // Ensure the player is visibly and physically bumped on the initial debt hit, even if the attack had 0 knockback
+                int hitDir = info.HitDirection != 0 ? info.HitDirection : -Player.direction;
+                float bumpSpeedX = hitDir * 5.5f;
+                float bumpSpeedY = -3.5f;
+                if (hitDir > 0 ? Player.velocity.X < bumpSpeedX : Player.velocity.X > bumpSpeedX)
+                {
+                    Player.velocity.X = bumpSpeedX;
+                }
+                if (Player.velocity.Y > bumpSpeedY)
+                {
+                    Player.velocity.Y = bumpSpeedY;
+                }
+                */
+            }
+        }
+
+        public override void PostUpdateEquips()
+        {
+            if (staminaResourceCurrent < 0f || staminaDebt > 0f
+                || Player.HasBuff(ModContent.BuffType<Stagger>())
+                || Player.HasBuff(ModContent.BuffType<ShieldGuardBreak>()))
+            {
+                Player.noKnockback = false;
             }
         }
 
@@ -478,7 +518,7 @@ namespace tsorcRevamp
         ///     because dead time is worth more to whoever recovers fastest.
         /// </summary>
         internal const int StaminaRegenDelayTicks = 60;
-        internal const int StaminaRegenDelayTicksBotC = 40;
+        internal const int StaminaRegenDelayTicksBotC = 60;
 
         /// <summary>
         /// Regen pause applied when a hit is absorbed by a raised shield — 1.5x the ordinary spend delay.
@@ -498,7 +538,7 @@ namespace tsorcRevamp
         /// block, with no regen while the guard is up, would decide a fight on its own.
         /// </summary>
         internal const int BlockStaminaRegenDelayTicks = 90;
-        internal const int BlockStaminaRegenDelayTicksBotC = 60;
+        internal const int BlockStaminaRegenDelayTicksBotC = 90;
 
         internal int staminaRegenDelayTimer;
         private float _staminaLastFrame;
@@ -782,8 +822,11 @@ namespace tsorcRevamp
             // A simple timer that goes up to 3, increases the exampleResourceCurrent by 1 and then resets back to 0.
             if (Player.whoAmI == Main.myPlayer && staminaRegenDelayTimer <= 0)
             {
-                //no stamina regen during a roll/swordspin/using an item, for balance? Yes
-                if (!Player.GetModPlayer<tsorcRevampPlayer>().isDodging && !Player.GetModPlayer<tsorcRevampPlayer>().isSwordflipping)
+                bool isDrinkingFlask = Player.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking
+                    || Player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking;
+
+                //no stamina regen during a roll/swordspin/using an item/drinking a flask, for balance? Yes
+                if (!Player.GetModPlayer<tsorcRevampPlayer>().isDodging && !Player.GetModPlayer<tsorcRevampPlayer>().isSwordflipping && !isDrinkingFlask)
                 {
                     if (!Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                     {

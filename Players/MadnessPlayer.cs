@@ -85,6 +85,7 @@ namespace tsorcRevamp
 
             Player.AddBuff(ModContent.BuffType<Madness>(), Madness.DurationTicks);
             Stagger.Apply(Player, Stagger.DebtHitDurationTicks);
+            Player.AddBuff(BuffID.Ichor, Stagger.DebtHitDurationTicks);
 
             Player.statLife -= FlatTriggerDamage;
             if (Player.statLife <= 0)

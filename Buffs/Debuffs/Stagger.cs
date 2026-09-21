@@ -11,8 +11,7 @@ namespace tsorcRevamp.Buffs.Debuffs
     /// </summary>
     public class Stagger : CooldownDebuff
     {
-        public const int DebtHitDurationTicks = 2 * 60;
-        public const float StaminaRegenMultiplier = 0.2f;
+        public const int DebtHitDurationTicks = 1 * 60;
         public const float MovementSpeedMultiplier = 0.75f;
         public const float ScreenShakeStrength = 1.25f;
         public const int ScreenShakeFrames = 6;
@@ -22,14 +21,11 @@ namespace tsorcRevamp.Buffs.Debuffs
         public static void Apply(Player player) => Apply(player, DebtHitDurationTicks);
 
         /// <summary>
-        /// Same stagger with an explicit duration, for sources that want a shorter lockout than the
-        /// stamina-debt hit — e.g. a HeavyPounce slam, which applies 1s rather than the default 2s
-        /// because it can catch you through no fault of your own positioning.
+        /// Same stagger with an explicit duration, for sources that want a custom lockout duration.
         /// </summary>
         public static void Apply(Player player, int durationTicks)
         {
             player.AddBuff(ModContent.BuffType<Stagger>(), durationTicks);
-            player.AddBuff(BuffID.Ichor, durationTicks);
             if (player.whoAmI == Main.myPlayer && Main.netMode != NetmodeID.Server)
             {
                 UsefulFunctions.ScreenShake(player.Center, ScreenShakeStrength, ScreenShakeFrames,
@@ -40,11 +36,11 @@ namespace tsorcRevamp.Buffs.Debuffs
         public override void Update(Player player, ref int buffIndex)
         {
             base.Update(player, ref buffIndex);
-            player.noItems = true;
+            // player.noItems = true;
+            player.noKnockback = false;
             player.wingTime = 0f;
             player.canRocket = false;
             player.rocketTime = 0;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= StaminaRegenMultiplier;
             player.moveSpeed *= MovementSpeedMultiplier;
             player.maxRunSpeed *= MovementSpeedMultiplier;
             player.runAcceleration *= MovementSpeedMultiplier;
