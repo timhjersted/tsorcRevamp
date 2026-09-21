@@ -615,7 +615,8 @@ namespace tsorcRevamp
 
             if (rc.ModItem != null)
             {
-                rc.ModItem.UpdateEquip(Player);            // mod shields: utility immunities (DR/penalties gated off in active mode)
+                rc.ModItem.UpdateAccessory(Player, false); // mod shields: passive resistance + utility immunities
+                rc.ModItem.UpdateEquip(Player);
                 Player.statDefense += data.ActiveDefense;  // small active-mode defense (no auto-defense for a non-accessory slot)
             }
             else

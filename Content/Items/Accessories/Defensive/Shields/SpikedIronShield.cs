@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -39,11 +39,12 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            // Under Active Shields Revamp the passive thorns + % DR become an on-block reflect instead.
+            player.endurance += DR / 100f;
+
+            // Passive thorns is classic-only; active mode replaces it with on-parry reflect.
             if (!tsorcRevampActiveShieldPlayer.ActiveFor(player))
             {
                 player.thorns += Thorns / 100f;
-                player.endurance += DR / 100f;
             }
         }
         public override void AddRecipes()

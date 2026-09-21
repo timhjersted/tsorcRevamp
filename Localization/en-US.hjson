@@ -29,6 +29,7 @@ Mods: {
 			WardPulse: Lowering the ward releases a 360° knockback pulse, stronger the longer held
 			WardPulseBolts: Lowering the ward releases a knockback pulse; held 2s+ also looses 3 homing bolts (50 mana)
 			DashEffect: Double-tap a direction to dash
+			EmergencyBarrier: Increases Resistance by {0}% when mana is below 33%
 		}
 
 		LethalTempoExplanation:

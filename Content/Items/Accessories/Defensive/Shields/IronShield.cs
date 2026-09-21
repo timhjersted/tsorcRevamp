@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -41,11 +41,11 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            // Under Active Shields Revamp the % damage reduction (and its paired move-speed penalty)
-            // is replaced by on-demand active blocking; only the flat Item.defense stays passive.
+            player.endurance += DR / 100f;
+
+            // Move-speed penalty applies only in classic mode (active mode slows only while raised).
             if (!tsorcRevampActiveShieldPlayer.ActiveFor(player))
             {
-                player.endurance += DR / 100f;
                 player.moveSpeed *= 1f - BadMoveSpeedMult / 100f;
             }
         }

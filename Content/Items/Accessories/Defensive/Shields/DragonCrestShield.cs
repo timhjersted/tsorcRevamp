@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -39,14 +39,15 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            base.UpdateEquip(player);
+            base.UpdateAccessory(player, hideVisual);
 
             if (tsorcRevampActiveShieldPlayer.ActiveFor(player))
             {
                 // Active Shields Revamp replaces this shield's passive stamina-block with on-demand active
-                // blocking; keep only the passive utility (fire + knockback immunity).
+                // blocking; keep the passive utility (fire + knockback immunity) and grant flat 6% resistance.
                 player.buffImmune[BuffID.OnFire] = true;
                 player.noKnockback = true;
+                player.endurance += 0.06f;
                 return;
             }
 

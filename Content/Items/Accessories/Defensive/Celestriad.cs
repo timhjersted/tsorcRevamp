@@ -56,9 +56,14 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
             player.statManaMax2 += MaxManaFlatIncrease;
 
             // Under Active Shields Revamp this ward blocks on demand (held, via FreeDodge, 360°, mana + a stamina
-            // sip) — no passive mana-tank, no DR, and the damage penalty is dropped so other classes can use it.
+            // sip) and grants an emergency 16% resistance barrier when mana drops under 33%.
+            // Unblocked hits do not drain mana or freeze mana regen, and damage penalties are dropped.
             if (tsorcRevampActiveShieldPlayer.ActiveFor(player))
             {
+                if ((float)player.statMana < player.statManaMax2 * 0.33f)
+                {
+                    player.endurance += 0.16f;
+                }
                 return;
             }
 

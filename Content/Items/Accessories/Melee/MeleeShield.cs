@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -36,16 +36,17 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
         }
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            // Utility immunities stay passive in both modes (and in either slot).
+            // Utility immunities and passive resistance stay active in both modes (and in either slot).
             player.buffImmune[BuffID.Burning] = true;
             player.noKnockback = true;
             player.fireWalk = true;
-            // Under Active Shields Revamp the % DR, the move-speed penalty, AND the melee-only damage penalties
+            player.endurance += DamageReduction / 100f;
+
+            // Under Active Shields Revamp the move-speed penalty AND the melee-only damage penalties
             // are all dropped (active blocking replaces them, and dropping the penalty lets other classes use it).
             if (!tsorcRevampActiveShieldPlayer.ActiveFor(player))
             {
                 player.moveSpeed *= 1f - BadMoveSpeedMult / 100f;
-                player.endurance += DamageReduction / 100f;
                 player.GetDamage(DamageClass.Magic) -= NonMeleeBadDmgMult / 100;
                 player.GetDamage(DamageClass.Ranged) -= NonMeleeBadDmgMult / 100;
                 player.GetDamage(DamageClass.Summon) -= NonMeleeBadDmgMult / 100;
@@ -86,7 +87,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            base.UpdateEquip(player);
+            base.UpdateAccessory(player, hideVisual);
             // "Watchful" — the gazing eye reveals nearby enemies (Hunter effect). Passive whenever equipped,
             // in either mode and either slot — not tied to raising the shield.
             player.detectCreature = true;
@@ -125,7 +126,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            base.UpdateEquip(player);
+            base.UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()
@@ -161,7 +162,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            base.UpdateEquip(player);
+            base.UpdateAccessory(player, hideVisual);
             player.buffImmune[BuffID.OnFire] = true;
         }
 
@@ -198,7 +199,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Melee
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            base.UpdateEquip(player);
+            base.UpdateAccessory(player, hideVisual);
             player.buffImmune[BuffID.OnFire] = true;
             player.buffImmune[BuffID.CursedInferno] = true;
             player.buffImmune[BuffID.Ichor] = true;

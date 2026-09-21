@@ -5,16 +5,11 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Accessories.Defensive;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
 {
-    /// <summary>
-    /// Phase 7: when the Active Shields Revamp is live (config on + local player in SoulsMode), describe a
-    /// registered shield's active-blocking behavior on its tooltip, and surgically remove the passive
-    /// damage-reduction / move-speed / thorns lines that no longer apply in active mode. When the toggle is
-    /// off or the player isn't in SoulsMode, the shield's normal (passive) tooltip is left untouched.
     /// Strings live in Localization (Mods.tsorcRevamp.ActiveShield.*).
-    /// </summary>
     public class ActiveShieldGlobalItem : GlobalItem
     {
         private const string Key = "Mods.tsorcRevamp.ActiveShield.";
@@ -91,11 +86,11 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
                 return;
             }
 
-            // Surgically drop the now-inaccurate passive description lines (% DR, move-speed penalty, passive
+            // Surgically drop the now-inaccurate passive description lines (stale % DR, move-speed penalty, passive
             // thorns, the dropped non-melee damage penalty, and the "melee only" flavor). These are shared
             // CommonItemTooltip tokens, so we match by their localized prefix and work across languages. Vanilla
             // shields' text doesn't contain these phrases, so it's left intact.
-            RemoveStalePassiveLines(tooltips);
+            RemoveStalePassiveLines(item, tooltips);
 
             // When this shield grants its own active-mode defense, drop vanilla's auto-generated "N defense" line —
             // it shows the item's old (larger) Item.defense, which we've already swapped for ActiveDefense, so it
@@ -112,24 +107,29 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             Color highlightColor = new Color(255, 223, 80);
             Color hintColor = new Color(140, 160, 175);
 
-            // Passive defense goes UP with the item's own passive lines rather than under the [Active Shield]
-            // header: it applies whenever the shield is equipped, not only while the guard is raised, and sitting
-            // under the active header it read as active-only. Inserted after the last of the item's description
-            // lines (Tooltip0..N). Only mod shields reach this — vanilla shields (ActiveDefense 0) keep their own
-            // native defense line, which is already in the right place.
+            // Passive defense and active-mode passive resistance lines go UP with the item's own passive
+            // lines rather than under the [Active Shield] header: they apply whenever the shield is equipped,
+            // not only while the guard is raised. Inserted after the last of the item's description lines (Tooltip0..N).
+            if (item.type == ModContent.ItemType<DragonCrestShield>())
+            {
+                TooltipLine drLine = new TooltipLine(Mod, "ActiveShieldDR", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.DRStat", 6)) { OverrideColor = bodyColor };
+                InsertPassiveLine(tooltips, drLine);
+            }
+            else if (item.type == ModContent.ItemType<ManaShield>())
+            {
+                TooltipLine drLine = new TooltipLine(Mod, "ActiveShieldDR", Language.GetTextValue(Key + "EmergencyBarrier", 8)) { OverrideColor = bodyColor };
+                InsertPassiveLine(tooltips, drLine);
+            }
+            else if (item.type == ModContent.ItemType<Celestriad>())
+            {
+                TooltipLine drLine = new TooltipLine(Mod, "ActiveShieldDR", Language.GetTextValue(Key + "EmergencyBarrier", 16)) { OverrideColor = bodyColor };
+                InsertPassiveLine(tooltips, drLine);
+            }
+
             if (data.ActiveDefense > 0)
             {
                 TooltipLine defenseLine = new TooltipLine(Mod, "ActiveShieldDefense", Language.GetTextValue(Key + "Defense", data.ActiveDefense)) { OverrideColor = bodyColor };
-                int lastPassiveLine = tooltips.FindLastIndex(line => line.Name != null && line.Name.StartsWith("Tooltip"));
-
-                if (lastPassiveLine != -1)
-                {
-                    tooltips.Insert(lastPassiveLine + 1, defenseLine);
-                }
-                else
-                {
-                    tooltips.Add(defenseLine);
-                }
+                InsertPassiveLine(tooltips, defenseLine);
             }
 
             // --- [Active Shield] section ---------------------------------------------------------------------
@@ -228,11 +228,23 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             return null;
         }
 
-        private static void RemoveStalePassiveLines(List<TooltipLine> tooltips)
+        private static void InsertPassiveLine(List<TooltipLine> tooltips, TooltipLine newLine)
         {
-            string[] needles =
+            int lastPassiveLine = tooltips.FindLastIndex(line => line.Name != null && line.Name.StartsWith("Tooltip"));
+            if (lastPassiveLine != -1)
             {
-                CommonTooltipPrefix("DRStat"),
+                tooltips.Insert(lastPassiveLine + 1, newLine);
+            }
+            else
+            {
+                tooltips.Add(newLine);
+            }
+        }
+
+        private static void RemoveStalePassiveLines(Item item, List<TooltipLine> tooltips)
+        {
+            List<string> needles = new List<string>
+            {
                 CommonTooltipPrefix("BadMoveSpeedMult"),
                 CommonTooltipPrefix("Thorns"),
                 CommonTooltipPrefix("NonMeleeBadDmg"),   // melee shields' dropped non-melee damage penalty
@@ -244,16 +256,26 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
                 "Inhibits both natural and artificial mana regen",
             };
 
+            // For Dragon Crest Shield, Mana Shield, and Celestriad, their classic DR description lines are
+            // tied to old mechanics (complex stamina/mana drains) and are replaced by clean active-mode lines.
+            // All other shields keep their simple CommonItemTooltip.DRStat lines ("Increases Resistance by X%").
+            if (item.type == ModContent.ItemType<DragonCrestShield>()
+                || item.type == ModContent.ItemType<ManaShield>()
+                || item.type == ModContent.ItemType<Celestriad>())
+            {
+                needles.Add(CommonTooltipPrefix("DRStat"));
+            }
+
             tooltips.RemoveAll(line =>
                 line.Name != null && line.Name.StartsWith("Tooltip")
-                && Array.Exists(needles, n => !string.IsNullOrEmpty(n) && line.Text != null && line.Text.Contains(n)));
+                && needles.Exists(n => !string.IsNullOrEmpty(n) && line.Text != null && line.Text.Contains(n)));
         }
 
         /// <summary>Returns the localized text of a CommonItemTooltip token up to its first format placeholder,
         /// e.g. "Increases Resistance by" — a language-correct needle for matching rendered tooltip lines.</summary>
         private static string CommonTooltipPrefix(string token)
         {
-            const string sentinel = "￿";
+            const string sentinel = "\uFFFD";
             string rendered = Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip." + token, sentinel);
             int idx = rendered.IndexOf(sentinel, StringComparison.Ordinal);
             return (idx > 0 ? rendered.Substring(0, idx) : rendered).Trim();

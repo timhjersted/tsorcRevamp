@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -39,13 +39,14 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            // Knockback immunity and fire-walking are utility effects that stay passive.
+            // Knockback immunity, fire-walking, and passive resistance stay active in both modes.
             player.noKnockback = true;
             player.fireWalk = true;
-            // Under Active Shields Revamp the % DR + passive thorns become an on-block reflect instead.
+            player.endurance += DamageReduction / 100f;
+
+            // Passive thorns is classic-only; active mode replaces it with on-parry reflect.
             if (!tsorcRevampActiveShieldPlayer.ActiveFor(player))
             {
-                player.endurance += DamageReduction / 100f;
                 player.thorns += Thorns;
             }
         }
