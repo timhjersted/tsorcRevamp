@@ -40,6 +40,24 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         int FireOffset => (int)NPC.ai[3];
         Vector2 Anchor => new Vector2(NPC.ai[0], NPC.ai[1]);
 
+        // Dust the eye ejects toward its target while charging a shot. Vanilla dust has no lifespan and decays differently
+        // per type, so each one is tracked here and its position, size and fade are driven for exactly GazeDustLifetime.
+        const int GazeDustLifetime = 15;
+        const int GazeDustPerTick = 3;
+        const float GazeDustReach = 80f;      // ~5 tiles: how far a dust travels before it is gone
+
+        sealed class GazeDustTrack
+        {
+            public Dust Dust;
+            public Vector2 Start;
+            public Vector2 Direction;
+            public float Reach;
+            public float StartScale;
+            public int Age;
+        }
+
+        readonly System.Collections.Generic.List<GazeDustTrack> _gazeDust = new();
+
         int fireTimer;   // sentinels
         int age;
         float orbitPhase;
@@ -87,6 +105,12 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         public override void AI()
         {
             age++;
+
+            if (!Main.dedServ)
+            {
+                UpdateGazeDust();
+            }
+
             bool bossAlive = NPC.AnyNPCs(ModContent.NPCType<VesselOfSouls>());
             int despawnAge = Mode == 1 ? 360 : 1200;
             // boss gone → quiet disperse (no blast)
@@ -175,6 +199,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             if (canFire && windowPos >= ServantFire - 18 && !Main.dedServ)
             {
                 TelegraphTick();
+                EjectGazeDust(player);
             }
             if (canFire && windowPos == ServantFire - 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -189,6 +214,12 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             if (fireTimer == SentinelFire - 18 && los && !Main.dedServ)
             {
                 TelegraphTick();
+            }
+
+            // The ejected dust runs for the whole 18-tick charge, not just its first tick.
+            if (fireTimer >= SentinelFire - 18 && los && !Main.dedServ)
+            {
+                EjectGazeDust(player);
             }
             if (fireTimer >= SentinelFire && los && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -324,6 +355,76 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 Main.dust[dustIndex].fadeIn = 0.4f;
             }
             Lighting.AddLight(NPC.Center, 0.7f, 0.15f, 0.9f);
+        }
+
+        // Dark-purple dust flung out of the eye toward the target, 3 a tick for the length of the charge. Each one is
+        // tracked (see GazeDustTrack) so UpdateGazeDust can make it live exactly 15 ticks.
+        void EjectGazeDust(Player player)
+        {
+            Vector2 aimDirection = (player.Center - NPC.Center).SafeNormalize(Vector2.UnitY);
+
+            for (int i = 0; i < GazeDustPerTick; i++)
+            {
+                // A narrow fan around the aim line so it reads as a spray, not a beam.
+                Vector2 direction = aimDirection.RotatedBy(Main.rand.NextFloat(-0.22f, 0.22f));
+                Vector2 start = NPC.Center + direction * 14f;   // just outside the eye sprite
+                int dustType = DustID.PurpleTorch;
+
+                if (Main.rand.NextBool(3))
+                {
+                    dustType = DustID.Shadowflame;
+                }
+
+                float startScale = Main.rand.NextFloat(1.2f, 1.7f);
+                Dust dust = Dust.NewDustPerfect(start, dustType, Vector2.Zero, 60, default, startScale);
+                dust.noGravity = true;
+
+                GazeDustTrack track = new GazeDustTrack
+                {
+                    Dust = dust,
+                    Start = start,
+                    Direction = direction,
+                    Reach = GazeDustReach * Main.rand.NextFloat(0.75f, 1.15f),
+                    StartScale = startScale,
+                };
+
+                // Tag the dust so a recycled slot (NewDust clears customData) is never mistaken for ours.
+                dust.customData = track;
+                _gazeDust.Add(track);
+            }
+        }
+
+        // Advances every tracked dust one tick: ease-out travel along its line, shrinking and fading, gone at 15 ticks.
+        // Velocity is zeroed and the position set outright each tick, so vanilla's per-type dust decay can't change
+        // how far or how long it lives.
+        void UpdateGazeDust()
+        {
+            for (int i = _gazeDust.Count - 1; i >= 0; i--)
+            {
+                GazeDustTrack track = _gazeDust[i];
+                Dust dust = track.Dust;
+                bool stillOurs = dust.active && ReferenceEquals(dust.customData, track);
+                track.Age++;
+
+                if (!stillOurs || track.Age >= GazeDustLifetime)
+                {
+                    if (stillOurs)
+                    {
+                        dust.active = false;
+                    }
+
+                    _gazeDust.RemoveAt(i);
+                    continue;
+                }
+
+                float progress = track.Age / (float)GazeDustLifetime;
+                float easedTravel = 1f - (1f - progress) * (1f - progress);
+
+                dust.velocity = Vector2.Zero;
+                dust.position = track.Start + track.Direction * track.Reach * easedTravel;
+                dust.scale = track.StartScale * (1f - 0.65f * progress);
+                dust.alpha = (int)MathHelper.Lerp(60f, 255f, progress * progress);
+            }
         }
 
         // Boss gone: a quiet ethereal disperse (no blast).
@@ -464,12 +565,9 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     chargeProgress = MathHelper.Clamp((windowPos - (ServantFire - 18)) / 18f, 0f, 1f);
             }
 
-            Player target = NPC.target >= 0 && NPC.target < Main.maxPlayers
-                ? Main.player[NPC.target]
-                : Main.LocalPlayer;
-            Vector2 aim = target != null && target.active ? target.Center : NPC.Center + Vector2.UnitY * 80f;
+            // Per-eye phase so a group of watchers never shows the same stamped nebula.
             VesselVFX.DrawWatcherGaze(
-                NPC.Center, aim, chargeProgress, detonating);
+                NPC.Center, chargeProgress, detonating, NPC.whoAmI * 1.37f);
 
             Texture2D tex = TextureAssets.Npc[NPC.type].Value;
             Vector2 origin = NPC.frame.Size() / 2f;

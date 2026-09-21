@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
@@ -45,10 +45,9 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
 
         public override bool ImmuneTo(PlayerDeathReason damageSource, int cooldownCounter, bool dodgeable)
         {
-            
-                if (DragonStoneImmunity && damageSource.SourcePlayerIndex > -1)
-                {
-                    int NT = Main.npc[damageSource.SourceNPCIndex].type;
+            if (DragonStoneImmunity && damageSource.SourceNPCIndex >= 0 && damageSource.SourceNPCIndex < Main.maxNPCs && Main.npc[damageSource.SourceNPCIndex].active)
+            {
+                int NT = Main.npc[damageSource.SourceNPCIndex].type;
                     if (NT == NPCID.DemonEye
                         || NT == NPCID.DemonEye2
                         || NT == NPCID.EaterofSouls

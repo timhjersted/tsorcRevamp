@@ -339,6 +339,142 @@ namespace ShaderPreview
                 GwynVortex("GwynVortex100Cave", 1f, CaveDark),
                 GwynVortex("GwynVortex050Cave", 0.5f, CaveDark),
                 GwynVortex("GwynVortex030Cave", 0.3f, CaveDark),
+
+                // Vessel watcher eye telegraph (VesselVFX.DrawWatcherGaze). Progress = charge 0..1.
+                WatcherIris("WatcherIrisChargeSky", false, SkyBlue),
+                WatcherIris("WatcherIrisChargeCave", false, CaveDark),
+                WatcherIris("WatcherIrisDetonateSky", true, SkyBlue),
+                WatcherIris("WatcherIrisDetonateCave", true, CaveDark),
+
+                // Vessel Soul Nova (VesselVFX.DrawNova) at the old (480px) and new (960px) reach. Progress carries the
+                // shader's quad-edge fade sharpness (see VesselSoulNova.fx); "Old" reproduces the fixed-fraction 11.
+                VesselNova("VesselNova480Old", 480f, false, CaveDark),
+                VesselNova("VesselNova960Old", 960f, false, CaveDark),
+                VesselNova("VesselNova960New", 960f, true, CaveDark),
+                VesselNova("VesselNova960NewSky", 960f, true, SkyBlue),
+
+                // The swallow's gravity well (VesselVFX.DrawMaw, radius 1000 -> 2000px quad): the alpha-blended body and
+                // the additive threads on top. Progress = the well's age 0..1; it counts as "committed" from 0.5.
+                VesselMaw("VesselMawBody", false, 4f),
+                VesselMaw("VesselMawGlow", true, 4f),
+                VesselMaw("VesselMawGlowSmooth", true, 0.5f),   // sub-pixel blocks = effectively no filter, for comparison
+            };
+        }
+
+        /// <summary>
+        /// Mirrors VesselVFX.DrawMaw for the swallow well (radius 1000): T_VFX_Spiral07 + Turbulence_06, one draw per pass.
+        /// Sets the finished per-frame uniforms (MawA / MawHot) the way the C# helper does; a shader build that doesn't
+        /// declare them simply ignores them. `pixelBlock` mirrors the PixelGrid the C# helper sends.
+        /// </summary>
+        private static Recipe VesselMaw(string name, bool additive, float pixelBlock)
+        {
+            const float radius = 1000f;
+            const float deadzone = 70f;
+
+            return new Recipe
+            {
+                Name = name,
+                Effect = "VesselSoulMaw",
+                Technique = "VesselSoulMaw",
+                Primary = "T_VFX_Spiral07",
+                Detail = "Turbulence_06-512x512",
+                DrawSize = Vector2.One * radius * 2f,
+                Dark = new Color(6, 2, 10),
+                Mid = additive ? new Color(170, 38, 132) : new Color(94, 18, 57),
+                Core = additive ? new Color(255, 66, 174) : new Color(170, 38, 132),
+                Direction = deadzone / radius,
+                Blend = additive ? BlendState.Additive : BlendState.AlphaBlend,
+                FullTexture = true,
+                PixelBlockSize = pixelBlock,
+                Clear = CaveDark,
+                Configure = (effect, progress, scale) =>
+                {
+                    const float time = 12.5f;
+                    float committed = progress >= 0.5f ? 1f : 0f;
+                    effect.Parameters["Active"]?.SetValue(committed);
+                    effect.Parameters["Opacity"]?.SetValue(additive ? (committed > 0f ? 0.80f : 0.56f) : (committed > 0f ? 0.78f : 0.58f));
+                    effect.Parameters["MawA"]?.SetValue(new Vector4(
+                        0.30f + progress * 0.45f,
+                        time * 0.22f,
+                        0.5f + 0.22f * time * (0.25f + progress * 0.50f),
+                        0.45f + progress * 0.55f));
+                    effect.Parameters["MawHot"]?.SetValue(0.5f + committed * 0.9f);
+                },
+            };
+        }
+
+        /// <summary>
+        /// Mirrors VesselVFX.DrawNova: T_texr41 + T_VFX_exp_dissapear, additive, ring half-thickness 22px, opacity 0.94.
+        /// `fixedFade` false = the original shader's constant edge mask; true = the pixel-based fade the fix passes in.
+        /// Sizes/params come from the same formulas as the C# helper.
+        /// </summary>
+        private static Recipe VesselNova(string name, float radius, bool fixedFade, Color clear)
+        {
+            const float halfWidth = 22f;
+            const float fadeZonePixels = 24f;
+            float padding = halfWidth * 2.3f + (fixedFade ? fadeZonePixels + 8f : 0f);
+            float quad = (radius + padding) * 2f;
+
+            return new Recipe
+            {
+                Name = name,
+                Effect = "VesselSoulNova",
+                Technique = "VesselSoulNova",
+                Primary = "T_texr41",
+                Detail = "T_VFX_exp_dissapear",
+                DrawSize = Vector2.One * quad,
+                Dark = new Color(6, 2, 10),
+                Mid = new Color(170, 38, 132),
+                Core = new Color(214, 196, 232),
+                Opacity = 0.94f,
+                Active = radius / (radius + padding),
+                Direction = halfWidth / quad,
+                Blend = BlendState.Additive,
+                FullTexture = true,
+                Clear = clear,
+                Configure = (effect, progress, scale) =>
+                {
+                    effect.Parameters["Progress"]?.SetValue(quad / fadeZonePixels);
+                },
+            };
+        }
+
+        /// <summary>
+        /// Mirrors VesselVFX.DrawWatcherGaze's iris draw: SwirlyNoise + T_VFX_Noise_44xainv, 96px * 0.8
+        /// (150 * 0.8 while detonating - the END-state size and palette; in game both glide there), 2px filter, premultiplied AlphaBlend. Nebula and Scroll are the
+        /// same finished numbers the C# helper computes (phaseSeed 0 here).
+        /// </summary>
+        private static Recipe WatcherIris(string name, bool detonating, Color clear)
+        {
+            return new Recipe
+            {
+                Name = name,
+                Effect = "VesselWatcherGaze",
+                Technique = "VesselWatcherIris",
+                Primary = "SwirlyNoise",
+                Detail = "T_VFX_Noise_44xainv",
+                DrawSize = Vector2.One * (detonating ? 150f : 96f) * 0.8f,
+                Dark = new Color(6, 2, 10),
+                Mid = detonating ? new Color(158, 26, 88) : new Color(118, 34, 178),
+                Core = detonating ? new Color(255, 98, 150) : new Color(236, 112, 226),
+                Active = detonating ? 1f : 0f,
+                Blend = BlendState.AlphaBlend,
+                FullTexture = true,
+                PixelBlockSize = 2f,
+                Clear = clear,
+                Configure = (effect, progress, scale) =>
+                {
+                    const float time = 12.5f;
+                    const float phase = 0f;
+                    effect.Parameters["Opacity"]?.SetValue(detonating ? MathHelper.Lerp(0.55f, 1f, progress) : MathHelper.Lerp(0.55f, 0.95f, progress));
+                    effect.Parameters["Nebula"]?.SetValue(new Vector3(
+                        0.9f + progress * 1.4f + 0.35f * (float)System.Math.Sin(time * 0.9f + phase),
+                        MathHelper.Lerp(0.80f, 0.56f, progress),
+                        progress * 0.5f + (detonating ? progress * 0.25f : 0f)));
+                    effect.Parameters["Scroll"]?.SetValue(new Vector4(
+                        phase - time * 0.040f + 0.5f, time * 0.028f + 0.5f,
+                        time * 0.060f + 0.5f, -phase - time * 0.045f + 0.5f));
+                },
             };
         }
 

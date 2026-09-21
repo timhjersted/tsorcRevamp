@@ -3,9 +3,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Armor;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
-using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Damage
 {
@@ -32,15 +29,11 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
             dragonPlayer.CursedDragonSet = true;
             dragonPlayer.CursedDragonVisuals = true;
             player.AddBuff(ModContent.BuffType<DragonForm>(), 30);
-        }
 
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DragonStone>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 20000);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.Register();
+            if (!hideVisual)
+            {
+                dragonPlayer.FireBreathEnabled = true;
+            }
         }
     }
 }

@@ -9005,7 +9005,7 @@ Mods: {
 					Transforms you into a Cursed Dragon
 					Grants Master Ninja Gear abilities, fire immunity, improved jumping, and Tattered Dragon Wings if no wings are equipped
 					Increases stamina regeneration by {0}%
-					Hold right click to breathe fire, draining {1} mana per flame burst
+					Hold right click to breathe fire, draining {1} mana per flame burst (can be disabled by hiding the accessory)
 					Fire breath deals {2} magic damage
 					''' */
 			}
@@ -13039,7 +13039,12 @@ Mods: {
 			// EvilEye.DisplayName: Evil Eye
 			// Gigas.DisplayName: Holy Gigas
 			// GravelordNito.DisplayName: Gravelord Nito
-			// VesselOfSouls.DisplayName: Vessel of Souls
+
+			VesselOfSouls: {
+				// DisplayName: Vessel of Souls
+				// Coward: The Vessel devours those who flee: Return to the fight, or be swallowed!
+			}
+
 			// VesselWatcher.DisplayName: Strange Eye
 			// Hydra.DisplayName: Hydra
 			// IceGigas.DisplayName: Ice Gigas

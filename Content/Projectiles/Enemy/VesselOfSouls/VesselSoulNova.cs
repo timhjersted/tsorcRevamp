@@ -17,8 +17,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls
         const float ExpandSpeed = 8.5f;
         const float RingHalfThickness = 22f;
 
-        float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 480f;
+        float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 960f;
         float Radius => Projectile.localAI[0];
+
+        public override void SetStaticDefaults()
+        {
+            // The game only draws a projectile while its hitbox (1000px square here, centred on the boss) is near the screen.
+            // The ring now reaches 960px, so an arc can be on screen while that square isn't; never cull it.
+            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 1500;
+        }
 
         public override void SetDefaults()
         {

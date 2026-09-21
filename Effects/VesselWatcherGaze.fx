@@ -11,51 +11,60 @@ float Active;
 float Direction;
 float2 DrawSize;
 float2 PrimaryTextureSize;
+float4 PixelGrid; // xy = 2px block count across the final quad, zw = reciprocal (divided in C#)
+float3 Nebula;    // x = spiral-warp gain, y = shell radius (0..1 of the half quad), z = heat (palette shift toward CoreColor)
+float4 Scroll;    // xy = layer-1 UV offset, zw = layer-2 UV offset (both include the +0.5 recentre)
 
-// The sentinel eye's iris ring. THE CONCEPT IS DELIBERATELY UNCHANGED — the owner likes it: a ring
-// that contracts as the eye charges and turns pink at detonation (the pink comes from CoreColor on
-// the C# side). What changed is quality:
-//   - the band's thickness is modulated by ring-space noise, so it breathes instead of being a
-//     constant-width stroke
-//   - a caustic pattern rotates inside the band
-//   - a soft outer halo spills past the ring rather than the ring stopping dead
-//   - a noise-independent cutoff makes clipping at the quad edge impossible
-// Progress = charge (contracts the radius), Active = charge/detonation intensity.
+// The sentinel eye's charge / detonation telegraph: a contracting shell of swirling nebula.
+//   - the shell is torn, not stroked: its radius is displaced by the macro cloud noise and its density
+//     comes from that cloud, so dark dust lanes cut through it
+//   - two noise layers move independently: each scrolls on its own heading, and they sit behind
+//     opposite-signed spiral warps so they shear against each other. The warp gain is animated in C#
+//     (Nebula.x), so the arms wind and unwind instead of sitting frozen
+//   - thin bright filaments (the inverted dark veins of the detail texture) ride the cloud
+//   - pixelated to the same 2px blocks Nito's shockwave uses
+// Premultiplied over AlphaBlend, NOT additive: additive cannot make a saturated purple over a daytime
+// sky (it clips to white, which is what the old ring looked like). The body occludes and the filaments
+// carry the light; the palette slides from MidColor to CoreColor as `heat` rises, so the colour still
+// changes as the charge builds.
+//
+// Every per-frame quantity (gain, radius, heat, scroll offsets) is computed in C# and passed in: a raw
+// ps_2_0 entry point has no preshader, so uniform-only maths would be re-evaluated for every pixel.
+// This is the difference between 56 and 75+ arithmetic slots.
+//
+// Progress is unused here (its effect arrives through Nebula); Opacity carries the idle..charge..detonate
+// intensity.
 float4 IrisPixel(float4 sampleColor : COLOR0, float2 c : TEXCOORD0) : COLOR0
 {
+    c = (floor(c * PixelGrid.xy) + 0.5) * PixelGrid.zw;
     float2 p = c - 0.5;
-    float len = length(p);
-    float r = len * 2.0;                 // 0 at the pupil, 1.0 at the quad edge
-    float2 dir = p / max(len, 0.0005);
-    float2 perp = float2(-dir.y, dir.x);
+    float r = length(p) * 2.0;           // 0 at the pupil, 1.0 at the quad edge
 
-    // Caustic rotating inside the band: sliding along the ring's tangent is a rotation in texture
-    // space and costs a fraction of a real sin/cos rotation.
-    float spin = Time * (0.10 + Active * 0.22);
-    float n1 = tex2D(PrimarySampler, dir * 0.34 + perp * spin + 0.5).r;
-    float n2 = tex2D(DetailSampler, dir * 0.21 - perp * spin * 1.7 + 0.5).r;
-    float grain = saturate(n1 * 0.85 + n2 * 0.65 - 0.26);
+    // Radius-dependent perpendicular slide = cheap spiral arms with no sin/cos: stronger toward the
+    // centre, opposite senses for the two layers.
+    float arm = (1.15 - r) * Nebula.x;
+    float2 tangent = float2(-p.y, p.x);
+    float n1 = tex2D(PrimarySampler, (p + tangent * arm) * 1.10 + Scroll.xy).r;
+    float n2 = tex2D(DetailSampler, (p - tangent * arm * 0.8) * 2.30 + Scroll.zw).r;
 
-    // Contracting band. Thickness is noise-driven, so the edge is organic on both sides.
-    float radius = lerp(0.80, 0.46, Progress);
-    float band = saturate(1.0 - abs(r - radius) / (0.10 + grain * 0.16));
-    // Halo spilling outward past the band so the ring does not end abruptly.
-    float halo = saturate(1.0 - abs(r - radius) * 1.6) * (0.12 + grain * 0.22);
-    // Dark pupil the ring encircles.
-    float pupil = saturate((radius * 0.55 - r) * 5.0);
+    float cloud = saturate(n1 * 1.20 - 0.30);              // broad marbled body
+    float thread = saturate((1.0 - n2) * 4.2 - 0.30);      // dark veins of the detail texture -> bright filaments
 
-    // Noise-independent cutoff.
-    float edge = saturate((1.0 - r) * 2.4);
-    edge *= edge;
-    band *= edge;
-    halo *= edge;
+    // Shell radius, torn by the cloud noise. `ring` is the dense shell, `wide` the haze the wisps trail into.
+    float d = abs(r - Nebula.y + (n1 - 0.5) * 0.32);
+    float ring = saturate(1.0 - d * 3.0);
+    float wide = saturate(1.0 - d * 1.5);
 
-    float3 color = lerp(DarkColor, MidColor, saturate(halo * 2.2 + band * 0.6));
-    color = lerp(color, CoreColor, saturate(band * band * 1.45 + Active * band * 0.6));
-    color *= 1.0 - pupil;
+    float body = ring * (0.35 + cloud * 1.10);
+    float wisp = wide * wide * cloud * thread * 1.3;
 
-    float alpha = saturate(band * 0.95 + halo * 0.85 + pupil * 0.5) * Opacity;
-    return float4(color * (band * 1.35 + halo * 0.6), alpha);
+    // Noise-independent cutoff: zero at the quad edge whatever the noise does.
+    float edge = saturate((1.0 - r) * 4.5);
+    float fade = edge * edge * Opacity;
+
+    float alpha = saturate(body * 1.30 + wisp * 0.7) * fade;
+    float3 rgb = lerp(MidColor, CoreColor, Nebula.z + wisp) * (body * 0.8 + wisp) * fade;
+    return float4(rgb, alpha);
 }
 
 // The gaze thread. The old version sampled T_trail12-style streak art down a 620px lane; this is

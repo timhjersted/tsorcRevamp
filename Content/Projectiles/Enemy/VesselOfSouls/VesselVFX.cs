@@ -70,24 +70,53 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls
         {
             LoadAssets();
             float normalizedDeadzone = radius > 0f ? MathHelper.Clamp(innerDeadzone / radius, 0.02f, 0.42f) : 0.1f;
+            // The shader's per-frame numbers, finished here (see the note in VesselSoulMaw.fx): ps_2_0 has no preshader, so
+            // maths on Progress / Active / Time inside the shader is redone for every pixel, and there was no slot budget
+            // left for the pixel filter until it moved out. Same formulas the shader used to evaluate itself.
+            float time = Main.GlobalTimeWrappedHourly;
+            Vector4 mawA = new Vector4(
+                0.30f + progress * 0.45f,                                // swirl gain
+                time * 0.22f,                                            // swirl phase
+                0.5f + 0.22f * time * (0.25f + progress * 0.50f),        // inward-scroll offset
+                0.45f + progress * 0.55f);                               // pull gain
+            float mawHot = 0.5f + (committed ? 0.9f : 0f);
+
+            // Pixel filter: 4px blocks on the big swallow well (a 2000px quad), 2px on the small wells. Without it the
+            // 2000px field is sampled smoothly and its rays turn into a mass of hair-thin streaks that read as grain.
+            float blockSize = radius >= 900f ? 4f : 2f;
+            Vector2 blocks = Vector2.Max(Vector2.One * radius * 2f, Vector2.One) / blockSize;
+            Vector4 pixelGrid = new Vector4(blocks.X, blocks.Y, 1f / blocks.X, 1f / blocks.Y);
+
+            System.Action<Effect> configureMaw = effect =>
+            {
+                effect.Parameters["PixelGrid"]?.SetValue(pixelGrid);
+                effect.Parameters["MawA"]?.SetValue(mawA);
+                effect.Parameters["MawHot"]?.SetValue(mawHot);
+            };
+
             // Two passes as before: an alpha-blended body that darkens the world (the vessel is
             // pulling light in) and an additive pass for the hot streamlines on top. Opacity raised
             // on both — this is the fight's read-at-a-glance tell and it was nearly invisible.
             Draw(mawEffect, "VesselSoulMaw", spiral, flow, center, Vector2.One * radius * 2f, 0f,
                 HollowBlack, WineRed, SoulMagenta, committed ? 0.78f : 0.58f,
-                progress, committed ? 1f : 0f, normalizedDeadzone, BlendState.AlphaBlend);
+                progress, committed ? 1f : 0f, normalizedDeadzone, BlendState.AlphaBlend, configureMaw);
             Draw(mawEffect, "VesselSoulMaw", spiral, flow, center, Vector2.One * radius * 2f, 0f,
                 HollowBlack, SoulMagenta, committed ? CommitmentPink : SoulPale,
-                committed ? 0.80f : 0.56f, progress, committed ? 1f : 0f, normalizedDeadzone, BlendState.Additive);
+                committed ? 0.80f : 0.56f, progress, committed ? 1f : 0f, normalizedDeadzone, BlendState.Additive, configureMaw);
         }
 
         internal static void DrawNova(Vector2 center, float radius, float halfWidth, float opacity)
         {
             LoadAssets();
-            float padding = halfWidth * 2.3f;
+            // The front reaches ~2.4 half-widths (~53px) past the ring radius. The shader fades the quad edge over a FIXED
+            // fadeZone of pixels (its Progress uniform is the resulting sharpness), and the padding has to hold the front's
+            // reach plus that whole zone (+8px slack) or the outer part of the ring is dimmed. The old shader faded over 9%
+            // of the quad instead, which at a 960px radius was ~180px — wider than the padding — and erased the ring.
+            const float fadeZone = 24f;
+            float padding = halfWidth * 2.3f + fadeZone + 8f;
             Vector2 size = Vector2.One * (radius + padding) * 2f;
             Draw(novaEffect, "VesselSoulNova", burst, dissipate, center, size, 0f,
-                HollowBlack, SoulMagenta, SoulPale, opacity, 0f,
+                HollowBlack, SoulMagenta, SoulPale, opacity, size.X / fadeZone,
                 radius / (radius + padding), halfWidth / size.X, BlendState.Additive);
         }
 
@@ -138,29 +167,67 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls
                 projectile.ai[0] > 0f ? 1f : 0f, instancePhase, BlendState.Additive);
         }
 
-        internal static void DrawWatcherGaze(Vector2 center, Vector2 target, float chargeProgress, bool detonating)
+        // Nebula palettes for the watcher's charge shell. Deliberately NOT SoulPale: a near-white core is what
+        // made the old ring read as a plain white hoop. The colour still slides mid -> core as the charge builds.
+        static readonly Color IrisVioletMid = new(118, 34, 178);
+        static readonly Color IrisOrchidCore = new(236, 112, 226);
+        static readonly Color IrisCrimsonMid = new(158, 26, 88);
+        static readonly Color IrisRoseCore = new(255, 98, 150);
+
+        ///<summary>The eye's telegraph: a contracting shell of swirling nebula (VesselWatcherIris). The dust ejected
+        ///toward the target while charging a shot is real dust, spawned by VesselWatcher. phaseSeed decorrelates a group of eyes.</summary>
+        internal static void DrawWatcherGaze(Vector2 center, float chargeProgress, bool detonating,
+            float phaseSeed = 0f)
         {
             LoadAssets();
             float active = detonating ? 1f : chargeProgress;
-            Color mid = detonating ? WineRed : SoulMagenta;
-            Color core = detonating ? CommitmentPink : SoulPale;
-            // Ring shader 20% smaller (0.8x scale)
-            Draw(gazeEffect, "VesselWatcherIris", compound, crackle, center,
-                Vector2.One * (detonating ? 150f : 96f) * 0.8f, 0f,
-                HollowBlack, mid, core, detonating ? 0.90f : 0.70f,
-                chargeProgress, active, 1f, BlendState.Additive);
+            float time = Main.GlobalTimeWrappedHourly;
 
-            if (!detonating && chargeProgress > 0.05f)
+            // While detonating, chargeProgress is the 0..1 progress of the whole detonation windup. Every visual
+            // that used to switch on the `detonating` flag now follows this instead, so nothing pops when the
+            // countdown begins: size, palette and opacity all glide from the resting look to the final one.
+            float detonation = detonating ? chargeProgress : 0f;
+            float sizeGrowth = detonation * detonation;                       // ease-in: slow start, swelling near the end
+            float colorBlend = MathHelper.SmoothStep(0f, 1f, detonation);
+
+            Color mid = Color.Lerp(IrisVioletMid, IrisCrimsonMid, colorBlend);
+            Color core = Color.Lerp(IrisOrchidCore, IrisRoseCore, colorBlend);
+
+            // Quiet swirl at rest, building through a shot's charge, climbing to full strength across the detonation.
+            float irisOpacity = MathHelper.Lerp(0.55f, 0.95f, chargeProgress);
+            if (detonating)
             {
-                Vector2 delta = target - center;
-                // Line 80% shorter (0.2x length) and 20% more transparent (0.8x opacity)
-                float length = MathHelper.Min(delta.Length(), 620f) * 0.2f;
-                Vector2 direction = delta.SafeNormalize(Vector2.UnitY);
-                Draw(gazeEffect, "VesselWatcherLine", filament, crackle,
-                    center + direction * length * 0.5f, new Vector2(length, 16f), direction.ToRotation(),
-                    HollowBlack, WineRed, SoulPale, (0.22f + chargeProgress * 0.38f) * 0.8f,
-                    chargeProgress, chargeProgress, 1f, BlendState.Additive);
+                irisOpacity = MathHelper.Lerp(0.55f, 1f, detonation);
             }
+
+            // Diameter: a resting size, a slow 6px breath (0 -> 6px -> 0 every 2s, phase-offset per eye), and on top of
+            // that the detonation growth. The old code jumped 77 -> 120px the instant detonating flipped on.
+            // Ring shader 20% smaller (0.8x scale) is baked into both end sizes.
+            const float RestDiameter = 96f * 0.8f;
+            const float DetonationDiameter = 150f * 0.8f;
+            const float PulseDiameter = 6f;
+            const float PulsePeriodSeconds = 2f;
+            float pulse = 0.5f - 0.5f * (float)System.Math.Cos(time * MathHelper.TwoPi / PulsePeriodSeconds + phaseSeed);
+            float diameter = MathHelper.Lerp(RestDiameter, DetonationDiameter, sizeGrowth) + PulseDiameter * pulse;
+
+            // Everything time- or charge-dependent is worked out here and handed over as finished numbers
+            // (see the note in VesselWatcherGaze.fx): swirl gain, shell radius, palette heat, scroll offsets.
+            float swirlGain = 0.9f + chargeProgress * 1.4f + 0.35f * (float)System.Math.Sin(time * 0.9f + phaseSeed);
+            float shellRadius = MathHelper.Lerp(0.80f, 0.56f, chargeProgress);
+            float heat = chargeProgress * 0.5f + detonation * 0.25f;
+            Vector4 scroll = new Vector4(
+                phaseSeed - time * 0.040f + 0.5f, time * 0.028f + 0.5f,
+                time * 0.060f + 0.5f, -phaseSeed - time * 0.045f + 0.5f);
+
+            Draw(gazeEffect, "VesselWatcherIris", swirl, filament, center,
+                Vector2.One * diameter, 0f,
+                HollowBlack, mid, core, irisOpacity,
+                chargeProgress, active, 0f, BlendState.AlphaBlend,
+                effect =>
+                {
+                    effect.Parameters["Nebula"]?.SetValue(new Vector3(swirlGain, shellRadius, heat));
+                    effect.Parameters["Scroll"]?.SetValue(scroll);
+                });
         }
 
         internal static void DrawRammingWake(Vector2 center, Vector2 velocity, Vector2 hitboxSize, bool plunge)
@@ -230,7 +297,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls
             Asset<Texture2D> primaryAsset, Asset<Texture2D> detailAsset,
             Vector2 worldCenter, Vector2 drawSize, float rotation,
             Color darkColor, Color midColor, Color coreColor,
-            float opacity, float progress, float active, float direction, BlendState blendState)
+            float opacity, float progress, float active, float direction, BlendState blendState,
+            System.Action<Effect> configure = null)
         {
             Texture2D primary = primaryAsset.Value;
             Texture2D detail = detailAsset.Value;
@@ -257,6 +325,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls
                 effect.CurrentTechnique = effect.Techniques[techniqueName];
                 SetParameters(effect, darkColor, midColor, coreColor, opacity, progress, active, direction,
                     actualSize, primary.Size());
+
+                // 2px pixel filter for shaders that opt in by declaring PixelGrid: xy = block count across the
+                // on-screen quad, zw = its reciprocal, divided here because ps_2_0 has no preshader.
+                Vector2 pixelBlocks = Vector2.Max(drawSize, Vector2.One) * 0.5f;
+                effect.Parameters["PixelGrid"]?.SetValue(
+                    new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
+
+                configure?.Invoke(effect);
                 effect.CurrentTechnique.Passes[0].Apply();
                 Main.EntitySpriteDraw(primary, worldCenter - Main.screenPosition, null, Color.White,
                     rotation, actualSize * 0.5f, scale, SpriteEffects.None, 0f);

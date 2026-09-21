@@ -2425,8 +2425,8 @@ namespace tsorcRevamp
         }
         // Class starting stamina. Stamina needs no crystal-style bookkeeping — staminaResourceMax is written
         // straight to our own tag data and never passes through vanilla's save path — but it follows the same
-        // shape: every class converges on StaminaVessel.PermanentStaminaCap (200), and the starting value only
-        // decides how many vessels it takes to get there (Melee 14, Ranged 15, Summoner 16, Magic 17).
+        // shape: every class converges on StaminaVessel.PermanentStaminaCap (250), and the starting value only
+        // decides how many vessels it takes to get there (Melee 24, Ranged 25, Summoner 26, Magic 27).
         internal float GetStartingClassBaseStamina() => GetBaseStaminaForClass(GetResolvedStartingClass());
 
         internal int GetStartingClassBaseLife() => GetBaseLifeForClass(GetResolvedStartingClass());

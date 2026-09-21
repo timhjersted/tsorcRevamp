@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -66,11 +67,13 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         const int WellRecoveryTicks = 50;
         // Swallow set-piece timeline (RunSwallow)
         const int SwallowCapture = 240;     // 2s weak pull + 2s accelerating pull, then capture
-        const int SwallowFadeDone = 420;    // 3s (180t) of fading to black after capture
-        const int SwallowUnfadeDone = 453;  // quick unfade into the void
-        const int SwallowEnd = 465;         // → phase 2
+        const int SwallowSuckDone = 300;    // 1s (60t) visible glide into the mouth, then the player is swallowed
+        const int SwallowFadeDone = 480;    // 3s (180t) of fading to black after the swallow
+        const int SwallowUnfadeDone = 513;  // quick unfade into the void
+        const int SwallowEnd = 525;         // → phase 2
         const int WallTelegraphTicks = 40;
         const int NovaTelegraphTicks = 35;
+        const float NovaMaxRadius = 960f;    // Soul Nova ring reach (px); it expands at a fixed speed, so twice the radius = twice the lifetime (~113t)
         const int PlungeRiseTicks = 40;
         const int DeathDurationTicks = 420;  // ~7s survive-only spectacle
 
@@ -114,6 +117,73 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         bool VoidWasOn;
         int VoidRefresh;
 
+        // Arena: a fixed oval, ~103.6 tiles wide by 78 tall, anchored on the spot the boss first spawned (captured in OnSpawn
+        // on the server, then synced). It does NOT restrict the boss, which pursues anyone. In phase 2 a Firefly dust
+        // ring marks the edge, players inside it get sucked into the void, and one who fought inside and then stays
+        // who fought inside and then stays outside it gets a fuse: 4s of pull toward the boss, cancelled by returning inside, and after that a fatal drag into its mouth.
+        public const float ArenaHalfWidth = 51.796875f * 16f;   // ellipse semi-axes, pixels: 828.75px = the previous 1105px x 0.75
+        public const float ArenaHalfHeight = 39f * 16f;         // 624px = the previous 520px x 1.2
+
+        // The oval's centre sits this far ABOVE the spawn point (-104px), so making the arena 20% taller extends only its
+        // top: the bottom of the ring stays exactly where it was (spawn.Y + 520).
+        const float ArenaCenterShiftY = 32.5f * 16f - ArenaHalfHeight;
+        public Vector2 ArenaCenter;
+
+        // True while the phase-2 void should be showing. Recomputed every tick on every machine (AI runs everywhere),
+        // so the void buff and the boundary can read it without a packet of their own.
+        public bool VoidActive { get; private set; }
+
+        // Fleeing-the-arena bookkeeping for THIS machine's local player only (a player's own velocity, position and death
+        // are owner-authoritative, so the server and other clients never touch it). Committed = was inside the arena while
+        // the void was up. The sequence: cross the edge and stay out for FleeGraceTicks -> message, and a fuse starts, with a
+        // steady weak pull toward the mouth. Getting back INSIDE cancels it (fuse and grace both reset), but once the 4s fuse
+        // reaches FleeFuseTicks it is locked in: the boss drags you into its mouth (the swallow's glide) and you die, wherever
+        // you are by then — being pulled back inside no longer saves you.
+        const int FleeGraceTicks = 90;
+        const int FleeFuseTicks = 240;                 // 4s to the point of no return
+        const float FleePullPerTick = 0.06f;           // the swallow's opening pull (0.035 -> 0.08), held steady
+        const float FleePullSpeedCap = 2.5f;           // and its opening speed cap (2 -> 3)
+        bool _fleeCommitted;
+        int _fleeGraceTimer = FleeGraceTicks;
+        int _fleeFuseTimer;                            // 0 = no fuse; counts up from 1 while outside, back to 0 on re-entry
+        bool _fleeAnnounced;
+        int _fleeGlideTimer;
+        int _fleeGlideTicks;                           // > 0 while being dragged into the mouth
+        int _fleeBlackHoldTimer;                       // counts down after the kill while the screen stays fully black
+        int _fleeFadeInTimer;                          // then counts down while it fades back in
+        const int FleeFadeTicks = 30;                  // fade to black over the last 30 ticks of the drag, and back in over 30
+        const int FleeBlackHoldTicks = 30;             // ...with 30 ticks of full black between the two (90 in all)
+        Vector2 _fleeGlideStart;
+
+        ///<summary>The live Vessel, if one exists and has a known arena. Valid on any machine — the NPC and its synced fields
+        ///exist everywhere, unlike the boss's own AI bookkeeping.</summary>
+        public static bool TryGetActiveVessel(out VesselOfSouls vessel)
+        {
+            vessel = null;
+            int npcIndex = NPC.FindFirstNPC(ModContent.NPCType<VesselOfSouls>());
+
+            if (npcIndex < 0)
+            {
+                return false;
+            }
+
+            vessel = Main.npc[npcIndex].ModNPC as VesselOfSouls;
+
+            // Zero = the arena centre hasn't arrived from the server yet.
+            return vessel != null && vessel.ArenaCenter != Vector2.Zero;
+        }
+
+        ///<summary>Point-in-ellipse test against an arena centred on <paramref name="arenaCenter"/>. Margin grows both
+        ///semi-axes outward (pixels); negative shrinks them.</summary>
+        public static bool IsInsideArena(Vector2 arenaCenter, Vector2 point, float margin = 0f)
+        {
+            Vector2 offset = point - arenaCenter;
+            float normalizedX = offset.X / (ArenaHalfWidth + margin);
+            float normalizedY = offset.Y / (ArenaHalfHeight + margin);
+
+            return normalizedX * normalizedX + normalizedY * normalizedY <= 1f;
+        }
+
         // Death spectacle
         bool _deathSpectacleDone;
         bool _hideBody;             // reforming from dust: draw dust only
@@ -125,8 +195,11 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         // so every stage fires on the first tick at OR PAST its threshold and latches instead.
         bool _swallowOpened;
         bool _swallowCaptured;
+        bool _swallowArrived;       // the glide into the mouth has finished: the player is hidden and the flash has fired
+        Vector2 _swallowSuckStart;  // where the local player was when the glide began (client-local; not synced)
         bool _swallowRevealed;
         bool _swallowReformed;
+        bool _swallowLocalHeld;     // this machine's local player was inside the arena at capture, so it gets frozen + faded
 
         NPCDespawnHandler despawnHandler;
 
@@ -201,6 +274,8 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             writer.Write(Phase2);
             writer.Write(SHM);
             writer.Write(_hideBody);
+            writer.Write(ArenaCenter.X);
+            writer.Write(ArenaCenter.Y);
         }
         public override void ReceiveExtraAI(BinaryReader reader)
         {
@@ -223,6 +298,20 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             Phase2 = reader.ReadBoolean();
             SHM = reader.ReadBoolean();
             _hideBody = reader.ReadBoolean();
+            ArenaCenter.X = reader.ReadSingle();
+            ArenaCenter.Y = reader.ReadSingle();
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            // Server/single-player only: clients take the centre from the sync, so a client-side spawn can't seed it wrong.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            ArenaCenter = NPC.Center + new Vector2(0f, ArenaCenterShiftY);
+            NPC.netUpdate = true;
         }
 
         // ── Poise / stagger ──
@@ -255,7 +344,13 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         public override void AI()
         {
             InitializeStats();
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+
+            // Once the killing blow has landed the death spectacle owns the fight. A player dying (or an
+            // already-armed countdown) would otherwise delete the boss after 240t, before the 420t final blast.
+            if (State != VesselState.Dying)
+            {
+                despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            }
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             Player player = Main.player[NPC.target];
@@ -281,11 +376,40 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             // Void render is on for phase 2 — but NOT during the pre-reveal swallow (world still visible
             // while you're seized/fading), and NOT during the final stand/death spectacle.
             bool preReveal = State == VesselState.PhaseTransition && AttackTimer < SwallowFadeDone;
-            bool voidShouldBeOn = Phase2 && !preReveal && State != VesselState.Dying;
+            // Also off once the despawn countdown is armed (everyone has died): otherwise the boss re-applies the
+            // void to the respawned player for the rest of the countdown, then vanishes without ever clearing it.
+            bool voidShouldBeOn = Phase2 && !preReveal && State != VesselState.Dying && !despawnHandler.IsDespawning;
+            VoidActive = voidShouldBeOn;
             TickVoid(voidShouldBeOn);
-            if (voidShouldBeOn && !Main.dedServ)
+            if (!Main.dedServ)
             {
-                SpawnVoidFog(player);
+                if (voidShouldBeOn)
+                {
+                    // Fog, the boundary ring and the coward check are all about whoever is looking: the local player,
+                    // not the boss's target.
+                    SpawnVoidFog(Main.LocalPlayer);
+                    // DISABLED for now (kept for reuse): the Firefly ring that marked the arena edge.
+                    // SpawnBoundaryRingDust();
+                    TickFleeBoundary(Main.LocalPlayer);
+                }
+                else
+                {
+                    // Phase 1, the swallow, the death spectacle or a despawn: nobody is committed to the boundary.
+                    if (_fleeGlideTicks > 0)
+                    {
+                        Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().ImpaleFreezeTimer = 0;   // never leave anyone pinned
+                    }
+
+                    ResetFleeState();
+                    _fleeBlackHoldTimer = 0;
+                    _fleeFadeInTimer = 0;
+                }
+
+                // DISABLED (kept for reuse, see the block comment near SpawnBoundaryRingDust): the pink cloud's per-tick update.
+                // UpdateRingDust(voidShouldBeOn);
+
+                // Flow of dust from a condemned player into the mouth (runs every tick so the last dust finish after a reset).
+                UpdateSuckDust();
             }
 
             if (globalNPC.StaggerTimer > 0 && State != VesselState.PhaseTransition && State != VesselState.Dying)
@@ -332,6 +456,501 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             UpdateRotation(player);
             UpdateAura();
             ClampToWorld();
+        }
+
+        /* ── DISABLED, KEPT FOR REUSE: the dark-pink "tracked cloud" ring dust ─────────────────────────────────────────
+           Replaced by Gwyn's plain Firefly ring below. To bring it back: uncomment this block, call SpawnPinkCloudRingDust()
+           from the ring block in AI() where SpawnBoundaryRingDust() is called, and uncomment the UpdateRingDust(...) call there.
+           The cloud dust are driven per tick (RingDustTrack) because the game shrinks/slows every noGravity dust type except
+           Firefly; see the comment inside. ─────────────────────────────────────────────────────────────────────────────────
+        // Gwyn's coward-ring dust idea (TickCowardRing), run around the arena oval in pink. Gwyn's ring is a few sparks plus
+        // a huge loose cloud of Firefly dust (100 a tick). The cloud is what makes it diffuse, and it can't be copied by
+        // just swapping the dust ID: the game shrinks and slows EVERY noGravity dust type except Firefly (velocity x0.92,
+        // scale -0.04 a tick), so any other type dies in ~22 ticks after drifting a few pixels — a thin dotted line. And
+        // Firefly itself is hard-coded to draw white, so it can't be tinted. So the cloud dust here (PinkFairy / CrimsonTorch)
+        // are DRIVEN by RingDustTrack: each one drifts slowly around the ring for its whole life, wobbling in and out of
+        // it, fading in and out, which is what Firefly's own update does. Visual only: every machine draws its own.
+        const int RingCloudPerTick = 10;
+        const int RingCloudMinLife = 90;
+        const int RingCloudMaxLife = 130;
+        const float RingCloudMaxViewDistance = 1500f;   // only seed cloud within this of the local player; the rest is off-screen
+
+        sealed class RingDustTrack
+        {
+            public Dust Dust;
+            public float Angle;            // position on the ellipse, radians
+            public float AngularSpeed;     // radians per tick (sign = direction of travel)
+            public float RadialOffset;     // fixed offset off the ring line, pixels (+ = outward)
+            public float WobblePhase;
+            public float Scale;
+            public int Age;
+            public int Life;
+        }
+
+        readonly System.Collections.Generic.List<RingDustTrack> _ringDust = new();
+
+        void SpawnPinkCloudRingDust()
+        {
+            if (ArenaCenter == Vector2.Zero)
+            {
+                return;
+            }
+
+            // Gwyn's sparks, kept sparse: they are the only part that sits exactly on the line.
+            SpawnRingDustLayer(DustID.PinkTorch, 1, 1f);
+            SpawnRingDustLayer(DustID.CrimsonTorch, 2, 2f);
+
+            // The cloud. Angles are random on the ellipse like Gwyn's DustRing; ones that would be off-screen are skipped.
+            for (int i = 0; i < RingCloudPerTick; i++)
+            {
+                float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                Vector2 seedPoint = ArenaCenter + new Vector2(ArenaHalfWidth * MathF.Cos(angle), ArenaHalfHeight * MathF.Sin(angle));
+
+                if (Vector2.Distance(seedPoint, Main.LocalPlayer.Center) > RingCloudMaxViewDistance)
+                {
+                    continue;
+                }
+
+                // Half glowing pink fairy, half darker crimson, so the cloud has depth instead of one flat colour.
+                int dustType = DustID.PinkFairy;
+
+                if (Main.rand.NextBool())
+                {
+                    dustType = DustID.CrimsonTorch;
+                }
+
+                float scale = Main.rand.NextFloat(1.1f, 1.7f);
+                Dust cloudDust = Dust.NewDustPerfect(seedPoint, dustType, Vector2.Zero, 255, default, scale);
+                cloudDust.noGravity = true;
+                cloudDust.noLightEmittence = true;
+
+                // Mean radius ~625px, so 2-3.5 px/tick of travel is this many radians a tick. Counter-clockwise like
+                // Gwyn's -3 layer for half of them and clockwise for the rest keeps the cloud from streaming one way.
+                float speed = Main.rand.NextFloat(2f, 3.5f) / 625f;
+
+                if (Main.rand.NextBool())
+                {
+                    speed = -speed;
+                }
+
+                RingDustTrack track = new RingDustTrack
+                {
+                    Dust = cloudDust,
+                    Angle = angle,
+                    AngularSpeed = speed,
+                    RadialOffset = Main.rand.NextFloat(-22f, 22f),
+                    WobblePhase = Main.rand.NextFloat(MathHelper.TwoPi),
+                    Scale = scale,
+                    Life = Main.rand.Next(RingCloudMinLife, RingCloudMaxLife),
+                };
+
+                // Tag the dust so a recycled slot (NewDust clears customData) is never mistaken for ours.
+                cloudDust.customData = track;
+                _ringDust.Add(track);
+            }
+        }
+
+        // Advances every tracked cloud dust one tick, or removes them all when the ring is off (phase 1, the swallow,
+        // the death spectacle, a despawn). Velocity is zeroed and position/scale/alpha are set outright every tick, so
+        // vanilla's per-type dust decay can't shrink or slow them.
+        void UpdateRingDust(bool ringActive)
+        {
+            for (int i = _ringDust.Count - 1; i >= 0; i--)
+            {
+                RingDustTrack track = _ringDust[i];
+                Dust dust = track.Dust;
+                bool stillOurs = dust.active && ReferenceEquals(dust.customData, track);
+                track.Age++;
+
+                if (!stillOurs || !ringActive || track.Age >= track.Life)
+                {
+                    if (stillOurs)
+                    {
+                        dust.active = false;
+                    }
+
+                    _ringDust.RemoveAt(i);
+                    continue;
+                }
+
+                track.Angle += track.AngularSpeed;
+                float cosine = MathF.Cos(track.Angle);
+                float sine = MathF.Sin(track.Angle);
+
+                // Outward normal of the ellipse (proportional to (b cos t, a sin t)); the wobble breathes in and out of
+                // the ring line and bobs a little vertically, like a firefly.
+                Vector2 outward = new Vector2(ArenaHalfHeight * cosine, ArenaHalfWidth * sine).SafeNormalize(Vector2.UnitX);
+                float wobble = MathF.Sin(track.Age * 0.07f + track.WobblePhase) * 9f;
+                Vector2 ringPoint = ArenaCenter + new Vector2(ArenaHalfWidth * cosine, ArenaHalfHeight * sine);
+
+                dust.velocity = Vector2.Zero;
+                dust.position = ringPoint + outward * (track.RadialOffset + wobble)
+                    + new Vector2(0f, MathF.Sin(track.Age * 0.11f + track.WobblePhase) * 3f);
+                dust.scale = track.Scale;
+
+                // Fade in over the first 12 ticks, hold soft (alpha 90), fade out over the last 30. Alpha 255 = invisible.
+                float alpha = 90f;
+
+                if (track.Age < 12)
+                {
+                    alpha = MathHelper.Lerp(255f, 90f, track.Age / 12f);
+                }
+                else if (track.Age > track.Life - 30)
+                {
+                    alpha = MathHelper.Lerp(90f, 255f, (track.Age - (track.Life - 30)) / 30f);
+                }
+
+                dust.alpha = (int)alpha;
+            }
+        }
+        */
+
+        // DISABLED (the call in AI is commented out; kept for reuse). The arena boundary: Gwyn's coward ring (TickCowardRing) around the oval — his Firefly layer, and only that. Firefly
+        // is the one dust type the game does NOT shrink or slow when noGravity is set, so each mote drifts along the ring at
+        // its tangent speed for ~140 ticks, bobbing and glowing, and thousands of them make the loose diffuse band. It draws
+        // white/pale whatever its colour. Gwyn spawns 100 a tick on a 2000px circle (12,566px round); this oval is ~4,590px
+        // round, so the count is scaled by that ratio (x0.365) to keep the same density per pixel. Visual only: every machine
+        // draws its own.
+        const int BoundaryFireflyPerTick = 37;
+
+        void SpawnBoundaryRingDust()
+        {
+            if (ArenaCenter == Vector2.Zero)
+            {
+                return;
+            }
+
+            SpawnRingDustLayer(DustID.Firefly, BoundaryFireflyPerTick, -3f);
+
+            // Cap the ring at ~70% opacity. Firefly runs its own alpha (dust alpha 0 = fully opaque): it takes 20 off every
+            // tick until the mote has grown, THEN adds 6 a tick to fade out. Left alone that peaks at 100%. Our AI runs before
+            // the game's dust update, so raising anything below 97 back to 97 leaves it at 77 after that update's -20, i.e.
+            // (255 - 77) / 255 = 70% opaque, through the whole fade-in and hold. The fade-out (alpha rising past 97) is untouched.
+            for (int i = 0; i < Main.dust.Length; i++)
+            {
+                Dust dust = Main.dust[i];
+
+                if (dust.active && ReferenceEquals(dust.customData, RingDustTag) && dust.alpha < RingDustAlphaFloor)
+                {
+                    dust.alpha = RingDustAlphaFloor;
+                }
+            }
+        }
+
+        // Marks ring dust so the opacity pass above can find it (NewDust clears customData when a slot is reused, so a stale
+        // slot is never mistaken for ours). One shared tag is enough: nothing else needs to tell individual dust apart.
+        static readonly object RingDustTag = new object();
+        const int RingDustAlphaFloor = 97;
+
+        // Scatters `count` dust at random angles on the arena ellipse, each moving along the tangent at `tangentSpeed`
+        // (negative = the other way round). Same as UsefulFunctions.DustRing, which only does circles — plus a cull: Firefly
+        // lives ~140 ticks, and seeding the whole 5,270px ring every tick would put the game near its 6,000-dust cap, so
+        // points farther than 1,500px from the local player (off-screen anyway) are skipped.
+        void SpawnRingDustLayer(int dustType, int count, float tangentSpeed)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                float cosine = MathF.Cos(angle);
+                float sine = MathF.Sin(angle);
+
+                Vector2 position = ArenaCenter + new Vector2(ArenaHalfWidth * cosine, ArenaHalfHeight * sine);
+
+                if (Vector2.Distance(position, Main.LocalPlayer.Center) > 1500f)
+                {
+                    continue;
+                }
+
+                // Derivative of (a cos t, b sin t) is (-a sin t, b cos t): the direction of travel along the oval.
+                Vector2 tangent = new Vector2(-ArenaHalfWidth * sine, ArenaHalfHeight * cosine).SafeNormalize(Vector2.UnitX);
+
+                Dust ringDust = Dust.NewDustPerfect(position, dustType, tangent * tangentSpeed, RingDustAlphaFloor);
+                ringDust.noGravity = true;
+                ringDust.customData = RingDustTag;
+            }
+        }
+
+        // The nearest spot to `preferredCenter` where a box of `size` fits without touching any solid tile (8px margin), found
+        // by checking growing squares of candidates 32px apart, out to ~960px. `minCenterY` refuses candidates above that
+        // world Y (smaller Y = higher), so the boss can't be placed too high; pass float.NegativeInfinity for no limit. Falls
+        // back to the preferred point if nothing is open, so a caller never gets a nonsense position. Used for both the
+        // boss's reform point and the player's drop point after the swallow.
+        Vector2 FindOpenCenter(Vector2 preferredCenter, Vector2 size, float minCenterY)
+        {
+            const float step = 32f;
+            const int maxRings = 30;
+
+            for (int ring = 0; ring <= maxRings; ring++)
+            {
+                for (int offsetX = -ring; offsetX <= ring; offsetX++)
+                {
+                    for (int offsetY = -ring; offsetY <= ring; offsetY++)
+                    {
+                        // Only the outline of this ring's square: the inside was checked on earlier passes.
+                        if (Math.Max(Math.Abs(offsetX), Math.Abs(offsetY)) != ring)
+                        {
+                            continue;
+                        }
+
+                        Vector2 candidate = preferredCenter + new Vector2(offsetX, offsetY) * step;
+
+                        if (candidate.Y < minCenterY)
+                        {
+                            continue;
+                        }
+
+                        Vector2 topLeft = candidate - size * 0.5f - new Vector2(8f);
+
+                        if (!Collision.SolidCollision(topLeft, (int)size.X + 16, (int)size.Y + 16))
+                        {
+                            return candidate;
+                        }
+                    }
+                }
+            }
+
+            return preferredCenter;
+        }
+
+        // The local player only. See the sequence described at the _flee fields. Someone who never came inside (an onlooker
+        // walking past) is left alone. Death and the pull both act on the player's own client, which owns them, so no packet
+        // is needed and each client handles only itself.
+        void TickFleeBoundary(Player player)
+        {
+            // The black hold and then the fade back in after the kill. This has to run before the dead check below: the player
+            // IS dead for the whole of it. Setting the alpha outright each tick also overrides the boss's generic 0.05-a-tick
+            // fade decay that runs earlier in AI, which would otherwise shorten the fade to 20 ticks.
+            if (_fleeBlackHoldTimer > 0)
+            {
+                VesselOfSoulsFadeSystem.FadeAlpha = 1f;
+                _fleeBlackHoldTimer--;
+            }
+            else if (_fleeFadeInTimer > 0)
+            {
+                VesselOfSoulsFadeSystem.FadeAlpha = _fleeFadeInTimer / (float)FleeFadeTicks;
+                _fleeFadeInTimer--;
+            }
+
+            if (player.dead || !player.active)
+            {
+                ResetFleeState();
+                return;
+            }
+
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+            // Point of no return passed: the drag into the mouth, then death. Nothing cancels this any more, including
+            // being back inside the arena (so this check comes BEFORE the inside check below).
+            if (_fleeGlideTicks > 0)
+            {
+                _fleeGlideTimer++;
+
+                float glideProgress = MathHelper.Clamp(_fleeGlideTimer / (float)_fleeGlideTicks, 0f, 1f);
+                float easedGlide = SuckEase(glideProgress);
+                modPlayer.ImpaleFreezeTimer = 4;
+                modPlayer.ImpaleWorldPosition = Vector2.Lerp(_fleeGlideStart, Mouth(), easedGlide);
+                player.velocity = Vector2.Zero;
+
+                // Full stream of purple dust from the player into the boss for the whole drag.
+                SpawnSuckDust(player, 5);
+
+                // Fade to black over the last FleeFadeTicks of the drag, so it is fully black on arrival — which is when the
+                // player dies and the phase-2 void (a buff, cleared by death) and its background switch off at once. Doing that
+                // in the open is what read as a glitchy cut; behind a black screen it is invisible.
+                int glideTicksLeft = _fleeGlideTicks - _fleeGlideTimer;
+
+                if (glideTicksLeft < FleeFadeTicks)
+                {
+                    VesselOfSoulsFadeSystem.FadeAlpha = 1f - glideTicksLeft / (float)FleeFadeTicks;
+                }
+
+                if (_fleeGlideTimer >= _fleeGlideTicks)
+                {
+                    // Arrival: the same flash and shake as the phase-2 swallow, then the kill.
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Mouth(), Vector2.Zero,
+                        ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.MediumPurple));
+                    UsefulFunctions.ScreenShake(NPC.Center, 6f, 16);
+                    SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 1f, Pitch = -0.3f }, Mouth());
+
+                    modPlayer.ImpaleFreezeTimer = 0;
+                    ResetFleeState();
+
+                    // Fully black now: it holds there for FleeBlackHoldTicks, then fades back in, all through the death screen.
+                    VesselOfSoulsFadeSystem.FadeAlpha = 1f;
+                    _fleeBlackHoldTimer = FleeBlackHoldTicks;
+                    _fleeFadeInTimer = FleeFadeTicks;
+                    player.KillMe(PlayerDeathReason.ByNPC(NPC.whoAmI), 9999.0, 0);
+                }
+
+                return;
+            }
+
+            if (!IsOutsideArena(player))
+            {
+                // Inside (or back inside before the fuse ran out): everything is forgiven and starts over.
+                _fleeCommitted = true;
+                _fleeGraceTimer = FleeGraceTicks;
+                _fleeFuseTimer = 0;
+                _fleeAnnounced = false;
+                return;
+            }
+
+            if (!_fleeCommitted)
+            {
+                return;
+            }
+
+            if (_fleeFuseTimer == 0)
+            {
+                _fleeGraceTimer--;
+
+                if (_fleeGraceTimer > 0)
+                {
+                    return;
+                }
+
+                // Grace is over: the fuse starts.
+                _fleeFuseTimer = 1;
+
+                if (!_fleeAnnounced)
+                {
+                    _fleeAnnounced = true;
+                    Main.NewText(LangUtils.GetTextValue("NPCs.VesselOfSouls.Coward"), 200, 60, 150);
+                    SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.8f, Pitch = -0.7f }, player.Center);
+                }
+            }
+            else
+            {
+                _fleeFuseTimer++;
+            }
+
+            // A steady, weak pull toward the mouth: the swallow's opening strength, held. Resistible (the fuse, not the pull,
+            // is the threat), and it is what drags a fleeing player back toward the boss.
+            Vector2 toMouth = Mouth() - player.Center;
+            float mouthDistance = toMouth.Length();
+            Vector2 pullDirection = toMouth.SafeNormalize(Vector2.UnitY);
+            float towardSpeed = Vector2.Dot(player.velocity, pullDirection);
+
+            if (towardSpeed < FleePullSpeedCap)
+            {
+                player.velocity += pullDirection * FleePullPerTick;
+            }
+
+            // Purple dust off the player that streams all the way into the boss, thickening as the fuse runs down: 2 a tick
+            // at the start, 5 a tick just before the point of no return.
+            int suckDustCount = 2 + (int)(3f * _fleeFuseTimer / (float)FleeFuseTicks);
+            SpawnSuckDust(player, suckDustCount);
+
+            if (_fleeFuseTimer >= FleeFuseTicks)
+            {
+                // Point of no return. The drag takes longer the farther away you are (60 to 120 ticks), so it always reads
+                // as being pulled in rather than a teleport.
+                _fleeGlideStart = player.Center;
+                _fleeGlideTimer = 0;
+                _fleeGlideTicks = (int)MathHelper.Clamp(mouthDistance / 14f, 60f, 120f);
+                SoundEngine.PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
+            }
+        }
+
+        // The swallow's glide curve, shared by the phase-2 swallow and the flee kill: progress 0..1 in, distance fraction out.
+        // Starts slow (0.2x speed) and accelerates hard (2.6x at the end; last quarter covers ~51% of the distance, where the
+        // old curve, 0.25t + 0.75t^2, covered ~39%), so the last ticks into the mouth read as a real gulp.
+        static float SuckEase(float progress)
+        {
+            return 0.2f * progress + 0.8f * progress * progress * progress;
+        }
+
+        // One flow of dust from a doomed player into the boss. Each dust is DRIVEN for its whole short life (position set
+        // every tick along the line from where it spawned to the boss's mouth, accelerating), because vanilla dust decays
+        // in ~22 ticks after drifting a few pixels and would never get there. Same tracking pattern as the watcher's dust.
+        sealed class SuckDustTrack
+        {
+            public Dust Dust;
+            public Vector2 Start;
+            public float StartScale;
+            public int Age;
+            public int Life;
+        }
+
+        readonly System.Collections.Generic.List<SuckDustTrack> _suckDust = new();
+
+        void SpawnSuckDust(Player player, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 start = player.position + new Vector2(Main.rand.NextFloat(player.width), Main.rand.NextFloat(player.height));
+                int dustType = DustID.PurpleTorch;
+
+                if (Main.rand.NextBool(3))
+                {
+                    dustType = DustID.Shadowflame;
+                }
+
+                float startScale = Main.rand.NextFloat(1.2f, 1.7f);
+                Dust dust = Dust.NewDustPerfect(start, dustType, Vector2.Zero, 60, default, startScale);
+                dust.noGravity = true;
+                dust.noLightEmittence = true;
+
+                SuckDustTrack track = new SuckDustTrack
+                {
+                    Dust = dust,
+                    Start = start,
+                    StartScale = startScale,
+                    Life = Main.rand.Next(24, 36),
+                };
+
+                // Tag the dust so a recycled slot (NewDust clears customData) is never mistaken for ours.
+                dust.customData = track;
+                _suckDust.Add(track);
+            }
+        }
+
+        // Advances every tracked suck-dust one tick; the target is the boss's mouth as it is NOW, so the stream follows it.
+        void UpdateSuckDust()
+        {
+            for (int i = _suckDust.Count - 1; i >= 0; i--)
+            {
+                SuckDustTrack track = _suckDust[i];
+                Dust dust = track.Dust;
+                bool stillOurs = dust.active && ReferenceEquals(dust.customData, track);
+                track.Age++;
+
+                if (!stillOurs || track.Age >= track.Life)
+                {
+                    if (stillOurs)
+                    {
+                        dust.active = false;
+                    }
+
+                    _suckDust.RemoveAt(i);
+                    continue;
+                }
+
+                float progress = track.Age / (float)track.Life;
+                float acceleratingTravel = progress * progress;   // slow off the player, fast into the mouth
+
+                dust.velocity = Vector2.Zero;
+                dust.position = Vector2.Lerp(track.Start, Mouth(), acceleratingTravel);
+                dust.scale = track.StartScale * (1f - 0.5f * progress);
+                dust.alpha = (int)MathHelper.Lerp(60f, 255f, progress * progress * progress);
+            }
+        }
+
+        void ResetFleeState()
+        {
+            _fleeCommitted = false;
+            _fleeGraceTimer = FleeGraceTicks;
+            _fleeFuseTimer = 0;
+            _fleeAnnounced = false;
+            _fleeGlideTimer = 0;
+            _fleeGlideTicks = 0;
+        }
+
+        // True when a player is known to be outside the arena. False while the arena centre is still unset (a client
+        // that hasn't received its first sync), so an unsynced boss never treats everyone as out of bounds.
+        bool IsOutsideArena(Player candidate)
+        {
+            return ArenaCenter != Vector2.Zero && !IsInsideArena(ArenaCenter, candidate.Center);
         }
 
         void InitializeStats()
@@ -929,7 +1548,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                        ModContent.ProjectileType<VesselSoulNova>(), NovaDamage, 4f, Main.myPlayer, 480f);
+                        ModContent.ProjectileType<VesselSoulNova>(), NovaDamage, 4f, Main.myPlayer, NovaMaxRadius);
                     for (int i = 0; i < 12; i++)
                     {
                         Vector2 vel = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 7f;
@@ -1020,6 +1639,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             // which holds because the swallow runs exactly once per fight.
             _swallowOpened = false;
             _swallowCaptured = false;
+            _swallowArrived = false;
             _swallowRevealed = false;
             _swallowReformed = false;
             KillOwnedWells();
@@ -1029,10 +1649,12 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         // The cinematic swallow. Timeline (AttackTimer):
         //   1-120    weak, resistible pull: the mouth opens and appears punishable
         //   121-240  pull ramps sharply until the player is swallowed
-        //   240      capture: freeze players, flash, and begin fading to black
-        //   420      full black → void ON, boss warps to arena center, players released
-        //   420-453  unfade, revealing the void
-        //   465      done → phase 2 Idle
+        //   240      capture: the well's pull ends and the player is taken over
+        //   240-300  the player is dragged, visibly, the rest of the way into the mouth on an accelerating curve
+        //   300      swallowed: hidden, flash + implosion, and the fade to black begins
+        //   480      full black → void ON, boss warps to arena center, players released
+        //   480-513  unfade, revealing the void
+        //   525      done → phase 2 Idle
         void RunSwallow(Player player)
         {
             AttackTimer++; // this state isn't dispatched through RunAttack, so advance its own timeline
@@ -1064,21 +1686,69 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 }
             }
 
-            // Capture: remember where to drop the player later; implode into the mouth. On an overshoot the player
-            // is already part-way down the well's pull, so the remembered spot is a little closer to the mouth
-            // than intended — still far better than not remembering one and leaving them inside.
+            // Capture: the well has just ended, so take the player over. Remember where they are (it doubles as the spot
+            // they are dropped back at later) and where the glide into the mouth starts. On an overshoot the player is
+            // already part-way down the well's pull, so both spots are a little closer to the mouth than intended.
             if (AttackTimer >= SwallowCapture && !_swallowCaptured)
             {
                 _swallowCaptured = true;
-                if (local != null && local.active && !local.dead)
+
+                // Only a player standing inside the arena at this moment is swallowed; anyone outside keeps playing
+                // in the normal world (no freeze, no black fade).
+                _swallowLocalHeld = local != null && local.active && !local.dead && !IsOutsideArena(local);
+
+                if (_swallowLocalHeld)
                 {
                     _swallowReturnPos = local.Center;
+                    _swallowSuckStart = local.Center;
                 }
                 if (!Main.dedServ)
                 {
                     SoundEngine.PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
+                }
+            }
+
+            // The glide: for one second the player is dragged the rest of the way to the mouth, visibly, instead of
+            // popping in. ImpaleFreezeTimer pins Player.Center to ImpaleWorldPosition every tick, so moving that point
+            // along the path moves the player. SuckEase starts gently and ends fast, so it reads as a gulp (see its comment); the
+            // mouth is re-read each tick because the boss is still drifting.
+            if (AttackTimer >= SwallowCapture && AttackTimer < SwallowSuckDone)
+            {
+                if (_swallowLocalHeld && local.active && !local.dead)
+                {
+                    float suckProgress = (AttackTimer - SwallowCapture) / (float)(SwallowSuckDone - SwallowCapture);
+                    float eased = SuckEase(suckProgress);
+
+                    localMp.ImpaleFreezeTimer = 4;
+                    localMp.ImpaleWorldPosition = Vector2.Lerp(_swallowSuckStart, Mouth(), eased);
+                    local.velocity = Vector2.Zero;
+
+                    // A streak of soul dust peeling off the player and streaming into the mouth.
+                    if (!Main.dedServ)
+                    {
+                        Vector2 toMouth = (Mouth() - local.Center).SafeNormalize(Vector2.UnitY);
+                        int dustType = Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame;
+                        int suckDust = Dust.NewDust(local.position, local.width, local.height, dustType, 0f, 0f, 100, default, 1.3f);
+                        Main.dust[suckDust].noGravity = true;
+                        Main.dust[suckDust].velocity = toMouth * Main.rand.NextFloat(5f, 9f);
+                    }
+                }
+
+                SpawnInhaleMote();
+                SpawnInhaleMote();
+            }
+
+            // Swallowed: the glide is over. The flash and implosion now land WITH the disappearance (they used to fire at
+            // capture, which is why the player seemed to vanish before reaching the mouth).
+            if (AttackTimer >= SwallowSuckDone && !_swallowArrived)
+            {
+                _swallowArrived = true;
+
+                if (!Main.dedServ)
+                {
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Mouth(), Vector2.Zero,
                         ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.MediumPurple));
+                    UsefulFunctions.ScreenShake(NPC.Center, 6f, 16);
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1089,9 +1759,9 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             }
 
             // Held inside: pin the local player to the mouth — hidden + can't move — and fade to black over 3s.
-            if (AttackTimer >= SwallowCapture && AttackTimer < SwallowFadeDone)
+            if (AttackTimer >= SwallowSuckDone && AttackTimer < SwallowFadeDone)
             {
-                if (localMp != null && local.active && !local.dead)
+                if (_swallowLocalHeld && local.active && !local.dead)
                 {
                     localMp.SwallowHidden = true;
                     localMp.ImpaleFreezeTimer = 4;
@@ -1100,26 +1770,50 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 }
                 SpawnInhaleMote();
                 SpawnInhaleMote();
-                VesselOfSoulsFadeSystem.FadeAlpha = (AttackTimer - SwallowCapture) / (float)(SwallowFadeDone - SwallowCapture);
+
+                if (_swallowLocalHeld)
+                {
+                    VesselOfSoulsFadeSystem.FadeAlpha = (AttackTimer - SwallowSuckDone) / (float)(SwallowFadeDone - SwallowSuckDone);
+                }
             }
 
             // Full black → reveal: drop the player back on solid ground, warp + reform the boss, void ON.
             if (AttackTimer >= SwallowFadeDone && !_swallowRevealed)
             {
                 _swallowRevealed = true;
-                VesselOfSoulsFadeSystem.FadeAlpha = 1f;
-                if (localMp != null && local.active && !local.dead)
+
+                if (_swallowLocalHeld)
+                {
+                    VesselOfSoulsFadeSystem.FadeAlpha = 1f;
+                }
+
+                if (_swallowLocalHeld && local.active && !local.dead)
                 {
                     localMp.SwallowHidden = false;
+
+                    // Let go of the pin FIRST. The held stage sets ImpaleFreezeTimer to 4 every tick with the position at
+                    // the boss's mouth; left running, it kept dragging the player back to the mouth for 4 more ticks
+                    // after this teleport, and released them there — which can be inside terrain, since the boss flies
+                    // through tiles. That was the "spat out inside solid blocks and stuck" bug.
+                    localMp.ImpaleFreezeTimer = 0;
+
                     if (_swallowReturnPos != Vector2.Zero)
                     {
-                        local.Center = _swallowReturnPos;
+                        // The remembered spot was valid when captured, but check it anyway (the world can change).
+                        local.Center = FindOpenCenter(_swallowReturnPos, local.Size, float.NegativeInfinity);
                         local.velocity = Vector2.Zero;
+
+                        // The teleport must not read as a fall from wherever the glide left them.
+                        local.fallStart = (int)(local.position.Y / 16f);
+                        local.fallStart2 = local.fallStart;
                     }
                 }
                 if (player.active && !player.dead)
                 {
-                    NPC.Center = player.Center + new Vector2(0f, -360f);
+                    // Reform above the player, but only in open air, and not more than 260px above them: the old fixed
+                    // -360px offset could land inside the ceiling or somewhere far too high.
+                    Vector2 preferredCenter = player.Center + new Vector2(0f, -260f);
+                    NPC.Center = FindOpenCenter(preferredCenter, NPC.Size, player.Center.Y - 260f);
                 }
                 NPC.velocity = Vector2.Zero;
                 _hideBody = true; // vanished — reforms from dust below
@@ -1127,7 +1821,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             }
 
             // Quick unfade into the void.
-            if (AttackTimer > SwallowFadeDone && AttackTimer < SwallowUnfadeDone)
+            if (_swallowLocalHeld && AttackTimer > SwallowFadeDone && AttackTimer < SwallowUnfadeDone)
                 VesselOfSoulsFadeSystem.FadeAlpha = 1f - (AttackTimer - SwallowFadeDone) / (float)(SwallowUnfadeDone - SwallowFadeDone);
 
             // Reform from a purple/black dust cloud. Normally the tick after the reveal; on a big overshoot both
@@ -1250,9 +1944,11 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
                         ModContent.ProjectileType<VesselSoulRuptureVFX>(),
                         0, 0f, Main.myPlayer, 430f, 1f, 38f);
+                    // Leave life at 1: StrikeNPC returns early when life <= 0, and vanilla UpdateNPC silently
+                    // deactivates a life-0 NPC next tick (no CheckDead/OnKill/loot, scripted event reads it as a despawn).
+                    // StrikeInstantKill takes the remaining 1 HP itself and reaches CheckDead, which now returns true.
                     _deathSpectacleDone = true;
                     NPC.dontTakeDamage = false;
-                    NPC.life = 0;
                     NPC.StrikeInstantKill();
                 }
             }
@@ -1310,7 +2006,8 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         // Slow, large red/black motes drifting across the arena view during phase 2.
         void SpawnVoidFog(Player player)
         {
-            if (!player.active || !Main.rand.NextBool(8))
+            // Fog follows the void: anyone who has it (even after leaving the arena) gets it, nobody else does.
+            if (!player.active || !player.HasBuff(ModContent.BuffType<VesselVoid>()) || !Main.rand.NextBool(8))
             {
                 return;
             }
@@ -1357,9 +2054,18 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     if (VoidRefresh <= 0)
                     {
                         VoidRefresh = 40;
+
+                        // Only players standing inside the arena get the void. Once held, VesselVoid keeps ITSELF alive for
+                        // its owner until the void ends (or they die), so leaving the arena doesn't drop it.
                         for (int i = 0; i < Main.maxPlayers; i++)
-                            if (Main.player[i].active && !Main.player[i].dead)
-                                Main.player[i].AddBuff(ModContent.BuffType<VesselVoid>(), 80);
+                        {
+                            Player voidCandidate = Main.player[i];
+
+                            if (voidCandidate.active && !voidCandidate.dead && !IsOutsideArena(voidCandidate))
+                            {
+                                voidCandidate.AddBuff(ModContent.BuffType<VesselVoid>(), 80);
+                            }
+                        }
                     }
                 }
             }

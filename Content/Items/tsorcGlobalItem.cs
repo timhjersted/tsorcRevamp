@@ -222,6 +222,34 @@ namespace tsorcRevamp.Content.Items
         public static int[] badPrefixes = { 7, 8, 9, 10, 11, 13, 14, 22, 23, 24, 29, 30, 31, 39, 40, 41, 47, 48, 49, 50, 56 };
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            if (item.ModItem != null && item.ModItem.Mod == Mod)
+            {
+                try
+                {
+                    string formatted = item.ModItem.Tooltip.Value;
+                    if (!string.IsNullOrEmpty(formatted))
+                    {
+                        string[] formattedLines = formatted.Replace("\r", "").Split('\n');
+                        int tooltipIndex = 0;
+                        for (int i = 0; i < tooltips.Count; i++)
+                        {
+                            if (tooltips[i].Mod == "Terraria" && tooltips[i].Name.StartsWith("Tooltip") && int.TryParse(tooltips[i].Name.Substring(7), out _))
+                            {
+                                if (tooltipIndex < formattedLines.Length)
+                                {
+                                    tooltips[i].Text = formattedLines[tooltipIndex];
+                                }
+                                tooltipIndex++;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // Fall back to unformatted tooltips if an item has invalid format arguments
+                }
+            }
+
             if (hasSoulRecipe.Contains(item.type))
             {
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoulItem>()}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.RecipeTooltip")));

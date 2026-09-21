@@ -17,12 +17,14 @@ namespace tsorcRevamp
 
         public bool CursedDragonSet;
         public bool CursedDragonVisuals;
+        public bool FireBreathEnabled;
         private int breathTimer;
 
         public override void ResetEffects()
         {
             CursedDragonSet = false;
             CursedDragonVisuals = false;
+            FireBreathEnabled = false;
         }
 
         public override void FrameEffects()
@@ -152,6 +154,10 @@ namespace tsorcRevamp
 
         private bool CanBreatheFire()
         {
+            if (!FireBreathEnabled)
+            {
+                return false;
+            }
             if (Main.playerInventory || Player.dead || Player.CCed || Player.noItems || Player.mouseInterface)
             {
                 return false;

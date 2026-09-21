@@ -186,6 +186,10 @@ namespace tsorcRevamp.NPCs
                     {
                         UsefulFunctions.DespawnFlash(Main.npc[npcID].Center);
                     }
+
+                    // Tell PostAI's dynamic-event revive this removal is intentional. Without it the NPC comes straight
+                    // back with despawnTime still 0, and this whole branch (60 dust + flash) fires again every tick.
+                    Main.npc[npcID].GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnedByHandler = true;
                     Main.npc[npcID].active = false;
                 }
                 else

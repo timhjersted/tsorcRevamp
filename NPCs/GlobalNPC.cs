@@ -213,6 +213,11 @@ namespace tsorcRevamp.NPCs
         // encounter. Opt specific pursuit encounters into normal distance/timeLeft despawning.
         public bool AllowDynamicEventNaturalDespawn;
 
+        // Set by NPCDespawnHandler on the tick it deliberately removes a boss (everyone died, or out of range).
+        // PostAI's anti-despawn revive must not undo that: it exists for ACCIDENTAL self-despawns, and reviving a
+        // handler despawn makes the handler re-run its burst + flash every tick, forever.
+        public bool DespawnedByHandler;
+
         //Stores which NPC in that event this is
         public int ScriptedEventIndex;
 
@@ -1957,7 +1962,7 @@ namespace tsorcRevamp.NPCs
             // EXCLUDED: SelfDeactivatingNPCs (Marilith/Prime intros, Gwyn vision, portals, etc.) deliberately set
             // active=false mid-AI to transform into the real boss or vanish — reviving them here would fight that
             // and break the whole encounter (this broke TheMachine/Marilith when the blanket revival first shipped).
-            if (!AllowDynamicEventNaturalDespawn
+            if (!AllowDynamicEventNaturalDespawn && !DespawnedByHandler
                 && ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID) && !npc.active && npc.life > 0
                 && !tsorcRevamp.SelfDeactivatingNPCs.Contains(npc.type))
             {

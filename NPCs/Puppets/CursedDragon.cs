@@ -5,6 +5,8 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Damage;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
@@ -827,9 +829,8 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PilgrimSpontoon>(), 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 4, 7));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonCharm>()));
+            npcLoot.Add(ItemDropRule.ByCondition(new FirstBossKillRule(), ModContent.ItemType<StaminaVessel>()));
         }
     }
 }

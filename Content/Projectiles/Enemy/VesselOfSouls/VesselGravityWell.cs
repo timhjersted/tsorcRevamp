@@ -42,7 +42,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls
                     return MathHelper.Lerp(0.035f, 0.08f, AgeProgress * 2f);
 
                 float ramp = MathHelper.SmoothStep(0f, 1f, (AgeProgress - 0.5f) * 2f);
-                return MathHelper.Lerp(0.08f, 0.62f, ramp);
+                return MathHelper.Lerp(0.08f, 0.42f, ramp);   // was 0.62: the last second was a yank, not a pull
             }
         }
 
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls
                     return MathHelper.Lerp(2f, 3f, AgeProgress * 2f);
 
                 float ramp = MathHelper.SmoothStep(0f, 1f, (AgeProgress - 0.5f) * 2f);
-                return MathHelper.Lerp(3f, 9f, ramp);
+                return MathHelper.Lerp(3f, 6f, ramp);            // was 9: a player near the mouth crossed it in a couple of ticks
             }
         }
 

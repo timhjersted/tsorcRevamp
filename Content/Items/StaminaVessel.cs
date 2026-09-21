@@ -11,7 +11,7 @@ namespace tsorcRevamp.Content.Items
 {
     class StaminaVessel : ModItem
     {
-        public const float PermanentStaminaCap = 200f;
+        public const float PermanentStaminaCap = 250f;
         public const float StaminaPerVessel = 5f;
 
         public override void SetStaticDefaults()
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Content.Items
 
             // Everything here counts from the player's own class starting stamina rather than the generic
             // default. Every class converges on the same PermanentStaminaCap, so the number of vessels it takes
-            // to get there differs: Melee starts at 130 and needs 14, Magic starts at 115 and needs 17. Measuring
+            // to get there differs: Melee starts at 130 and needs 24, Magic starts at 115 and needs 27. Measuring
             // against DefaultStaminaResourceMax reported vessels the player hadn't eaten (and, for Magic, a
             // negative count), and the "maxes out after" figure was a flat 15 baked into the localization.
             float baseStamina = player.GetModPlayer<tsorcRevampPlayer>().GetStartingClassBaseStamina();

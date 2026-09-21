@@ -31,6 +31,13 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
         public override void PostUpdateEverything()
         {
+            // The boss eases FadeAlpha back to 0 from its own AI. If it despawns mid-swallow nothing else would,
+            // leaving the screen stuck black, so fade out here whenever no Vessel exists.
+            if (FadeAlpha > 0f && !NPC.AnyNPCs(ModContent.NPCType<VesselOfSouls>()))
+            {
+                FadeAlpha = MathHelper.Max(0f, FadeAlpha - 0.05f);
+            }
+
             WorldHidden = !Main.dedServ && !Main.gameMenu && Main.LocalPlayer != null
                 && Main.LocalPlayer.active && Main.LocalPlayer.HasBuff(ModContent.BuffType<VesselVoid>());
 

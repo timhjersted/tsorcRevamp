@@ -41,9 +41,12 @@ float4 SoulNovaPixel(float4 sampleColor : COLOR0, float2 c : TEXCOORD0) : COLOR0
     // at the front and further in, so it needs no separate clamp.
     float veil = saturate(-t * 0.1667) * saturate(1.0 + t * 0.1667) * (0.35 + grain * 0.8);
 
-    // Noise-independent cutoff — the caller's padding only just clears the front's reach, so this
-    // is what actually guarantees nothing survives to be clipped by the quad.
-    float edge = saturate((0.5 - r) * 11.0);
+    // Noise-independent cutoff, so nothing survives to be clipped by the quad. Progress carries the fade
+    // SHARPNESS (quad size / fade-zone pixels), worked out in C#, so the fade is a fixed ~24px band at the
+    // quad edge whatever the ring size. It used to be a constant (0.5 - r) * 11, i.e. a band that was 9% of
+    // the quad: harmless at 480px reach, but at 960 the band grew to ~180px and swallowed the ring itself
+    // (which sits ~50px inside the edge), so the shockwave faded to nothing as it grew.
+    float edge = saturate((0.5 - r) * Progress);
     edge *= edge;
     front *= edge;
     veil *= edge;
