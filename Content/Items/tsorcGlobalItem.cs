@@ -10,6 +10,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
+using tsorcRevamp.Content.Items.Accessories.Mobility.Wings;
 using tsorcRevamp.Content.Items.Accessories.Other.SporePowder;
 using tsorcRevamp.Content.Items.Accessories.Other.VenomPowder;
 using tsorcRevamp.Content.Items.Debug;
@@ -158,8 +159,26 @@ namespace tsorcRevamp.Content.Items
         }
 
 
+        public override void UpdateInventory(Item item, Player player)
+        {
+            if (item.type == ModContent.ItemType<SupersonicWings>() || item.type == ModContent.ItemType<SupersonicWings2>())
+            {
+                if (item.wingSlot <= 0)
+                {
+                    item.wingSlot = EquipLoader.GetEquipSlot(ModContent.GetInstance<tsorcRevamp>(), item.ModItem.Name, EquipType.Wings);
+                }
+            }
+        }
+
         public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
         {
+            if (item.type == ModContent.ItemType<SupersonicWings>() || item.type == ModContent.ItemType<SupersonicWings2>())
+            {
+                if (item.wingSlot <= 0)
+                {
+                    item.wingSlot = EquipLoader.GetEquipSlot(ModContent.GetInstance<tsorcRevamp>(), item.ModItem.Name, EquipType.Wings);
+                }
+            }
 
             // Cannot equip wings until the hunter has been defeated unless you're in debug mode.
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<DebugTome>()) && !ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
@@ -174,6 +193,30 @@ namespace tsorcRevamp.Content.Items
                 }
             }
             return base.CanEquipAccessory(item, player, slot, modded);
+        }
+
+        public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
+        {
+            if (SoulsModeMobility.Enabled(player))
+            {
+                int s1 = ModContent.ItemType<SupersonicWings>();
+                int s2 = ModContent.ItemType<SupersonicWings2>();
+                bool equippedIsHarness = equippedItem.type == s1 || equippedItem.type == s2;
+                bool incomingIsHarness = incomingItem.type == s1 || incomingItem.type == s2;
+
+                if (equippedIsHarness && incomingIsHarness)
+                {
+                    return false;
+                }
+
+                bool equippedIsWing = equippedItem.wingSlot > 0 || equippedIsHarness;
+                bool incomingIsWing = incomingItem.wingSlot > 0 || incomingIsHarness;
+                if ((equippedIsHarness && incomingIsWing) || (incomingIsHarness && equippedIsWing))
+                {
+                    return true;
+                }
+            }
+            return base.CanAccessoryBeEquippedWith(equippedItem, incomingItem, player);
         }
 
         public static int[] badPrefixes = { 7, 8, 9, 10, 11, 13, 14, 22, 23, 24, 29, 30, 31, 39, 40, 41, 47, 48, 49, 50, 56 };

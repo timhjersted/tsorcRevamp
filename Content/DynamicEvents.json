@@ -360,33 +360,6 @@
     ]
   },
   {
-    "EventID": "7ddc4a28-2f4b-4fa1-96d7-1dc923613e07",
-    "CenterX": 4979.0,
-    "CenterY": 1398.0,
-    "Radius": 1048576.0,
-    "Square": false,
-    "TriggerDust": 63,
-    "VisibleRing": true,
-    "SaveOnCompletion": true,
-    "TextToDisplay": "default",
-    "TextColorHex": "FFFFFFFF",
-    "WorldCondition": null,
-    "MapCondition": "OldManSpawnCondition",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcName": "OldMan",
-        "SpawnX": 4979.0,
-        "SpawnY": 1398.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      }
-    ]
-  },
-  {
     "EventID": "2a569e76-bd97-4138-863a-12195a309c3d",
     "CenterX": 5563.0,
     "CenterY": 1676.0,
@@ -859,7 +832,7 @@
     "TriggerDust": 15,
     "VisibleRing": true,
     "SaveOnCompletion": true,
-    "TextToDisplay": "King Slime appears!",
+    "TextToDisplay": "Eland lurks in the darkness...",
     "TextColorHex": "0000FFFF",
     "WorldCondition": null,
     "MapCondition": "DefaultCondition",
@@ -867,13 +840,13 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "KingSlime",
-        "SpawnX": 5995.0,
-        "SpawnY": 1117.0,
+        "NpcName": "tsorcRevamp/Eland",
+        "SpawnX": 5950.0,
+        "SpawnY": 1127.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,
-        "CustomSouls": null
+        "CustomSouls": 25000
       }
     ]
   },
@@ -1674,7 +1647,7 @@
     "EventID": "1fb604c1-a98a-4dc4-95f8-99f1f1fdcc41",
     "CenterX": 4508.0,
     "CenterY": 1745.0,
-    "Radius": 102400.0,
+    "Radius": 409600.0,
     "Square": false,
     "TriggerDust": 173,
     "VisibleRing": true,
@@ -4660,6 +4633,105 @@
         "NpcName": "tsorcRevamp/StuddedLeatherWarrior",
         "SpawnX": 3633.0,
         "SpawnY": 794.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "4d2413dc-88d3-4b63-b2bf-c30434ef69f6",
+    "CenterX": 4979.0,
+    "CenterY": 1397.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 6,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "NightCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "SkeletronHead",
+        "SpawnX": 4979.0,
+        "SpawnY": 1390.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "e8cbafc5-b267-4d8f-8bce-83b9b6a857d7",
+    "CenterX": 4767.0,
+    "CenterY": 1471.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheForgottenKnight",
+        "SpawnX": 4709.0,
+        "SpawnY": 1480.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheForgottenKnight",
+        "SpawnX": 4819.0,
+        "SpawnY": 1472.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "3db2a6d9-1f4d-4fe0-ab34-9d6c54c004b1",
+    "CenterX": 4701.0,
+    "CenterY": 1749.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheForgottenWarrior",
+        "SpawnX": 4645.0,
+        "SpawnY": 1756.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheForgottenWarrior",
+        "SpawnX": 4716.0,
+        "SpawnY": 1709.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

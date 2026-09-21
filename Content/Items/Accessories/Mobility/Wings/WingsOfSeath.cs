@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -32,13 +32,22 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
         public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
                     ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)
         {
-            ascentWhenFalling = 1.1f;
-            ascentWhenRising = 0.35f;
-            maxCanAscendMultiplier = 1.3f;
-            maxAscentMultiplier = 3.6f;
-            constantAscend = 0.2f;
-
-
+            if (SoulsModeMobility.Enabled(player))
+            {
+                ascentWhenFalling = 0.95f;
+                ascentWhenRising = 0.20f;
+                maxCanAscendMultiplier = 1.0f;
+                maxAscentMultiplier = SoulsModeMobility.WingsOfSeathAscentMultiplier;
+                constantAscend = 0.15f;
+            }
+            else
+            {
+                ascentWhenFalling = 1.1f;
+                ascentWhenRising = 0.35f;
+                maxCanAscendMultiplier = 1.3f;
+                maxAscentMultiplier = 3.6f;
+                constantAscend = 0.2f;
+            }
 
             if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)
             {
@@ -83,10 +92,15 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
             }
             if (SoulsModeMobility.Enabled(Main.LocalPlayer))
             {
+                tooltips.RemoveAll(t => t.Name == "Tooltip4" || t.Name == "Tooltip5");
+
+                tooltips.Add(new TooltipLine(Mod, "FrostburnFireBlocksImmunity", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.FrostburnAndFireBlocksImmunity")));
+
                 int flightTime = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().Suppressed
                     ? SoulsModeMobility.WingsOfSeathSuppressedFlightTime
                     : SoulsModeMobility.WingsOfSeathFlightTime;
-                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitWingsOfSeath", SoulsModeMobility.WingsOfSeathRunSpeed, SoulsModeMobility.WingsOfSeathFlightSpeed, SoulsModeMobility.WingsOfSeathHoverFlightSpeed, flightTime / 60)));
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityWingsOfSeath", flightTime / 60, SoulsModeMobility.WingsOfSeathAscentMultiplier.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture))));
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimitRun", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitRunOnly", (int)(SoulsModeMobility.WingsOfSeathBoostPercent * 100))));
             }
         }
 
@@ -114,7 +128,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
 
             if (!restricted)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.SupersonicWingsLevel;
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.WingsOfSeathLevel;
 
                 // Fall faster if player holds down
                 if (player.TryingToHoverDown && !player.controlJump &&
@@ -160,31 +174,30 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
                 {
                     player.wingTime = SoulsModeMobility.WingsOfSeathFlightTime;
                 }
-                player.rocketTimeMax = SoulsModeMobility.WingsOfSeathFlightTime;
-                if (player.rocketTime > SoulsModeMobility.WingsOfSeathFlightTime)
-                {
-                    player.rocketTime = SoulsModeMobility.WingsOfSeathFlightTime;
-                }
             }
             else
             {
                 player.wingTime = 999999999;
             }
-            //player.GetWingStats(22);
-            player.jumpBoost = true;
-            player.jumpSpeedBoost = 1.4f;
-            player.lavaImmune = true;
+
+            if (!SoulsModeMobility.Enabled(player))
+            {
+                player.jumpBoost = true;
+                player.lavaImmune = true;
+                player.noKnockback = true;
+                player.buffImmune[BuffID.Darkness] = true;
+                player.buffImmune[BuffID.CursedInferno] = true;
+                player.buffImmune[BuffID.Burning] = true;
+                player.buffImmune[BuffID.Ichor] = true;
+                player.buffImmune[BuffID.ShadowFlame] = true;
+                player.nightVision = true;
+                player.AddBuff(BuffID.Hunter, 1);
+            }
+
             player.fireWalk = true;
-            player.noKnockback = true;
-            player.buffImmune[BuffID.Darkness] = true;
+            player.jumpSpeedBoost = 1.4f;
             player.buffImmune[BuffID.OnFire] = true;
-            player.buffImmune[BuffID.CursedInferno] = true;
             player.buffImmune[BuffID.Frostburn] = true;
-            player.buffImmune[BuffID.Burning] = true;
-            player.buffImmune[BuffID.Ichor] = true;
-            player.buffImmune[BuffID.ShadowFlame] = true;
-            player.nightVision = true;
-            player.AddBuff(BuffID.Hunter, 1);
 
             if (Main.netMode != NetmodeID.MultiplayerClient && player.whoAmI == Main.myPlayer)
             {

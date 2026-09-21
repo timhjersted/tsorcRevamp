@@ -9,6 +9,7 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using Terraria.ModLoader.Default;
 using TerraUI.Objects;
 using tsorcRevamp;
 using tsorcRevamp.Achievements;
@@ -243,6 +244,12 @@ namespace tsorcRevamp
         public bool VOEGDrain = false;
 
         public int supersonicLevel = 0;
+        public bool hasSupersonicHarness = false;
+        public bool hasSlottedWing = false;
+        public bool supersonicHarnessHideVisual = false;
+        public int slottedWingSlot = 0;
+        public int slottedWingVanitySlot = 0;
+        public bool slottedWingHideVisual = false;
 
         public int darkSoulQuantity;
         private int lastDarkSoulQuantityForGainText;
@@ -626,6 +633,38 @@ namespace tsorcRevamp
 
             ConditionOverload = false;
             supersonicLevel = 0;
+            hasSupersonicHarness = false;
+            hasSlottedWing = false;
+            supersonicHarnessHideVisual = false;
+            slottedWingSlot = 0;
+            slottedWingVanitySlot = 0;
+            slottedWingHideVisual = false;
+
+            if (!Main.gameMenu)
+            {
+                for (int i = 0; i < Player.armor.Length; i++)
+                {
+                    Item item = Player.armor[i];
+                    if (item != null && !item.IsAir && (item.type == ModContent.ItemType<SupersonicWings>() || item.type == ModContent.ItemType<SupersonicWings2>()))
+                    {
+                        if (item.wingSlot <= 0)
+                        {
+                            item.wingSlot = EquipLoader.GetEquipSlot(Mod, item.ModItem.Name, EquipType.Wings);
+                        }
+                    }
+                }
+                for (int i = 0; i < Player.inventory.Length; i++)
+                {
+                    Item item = Player.inventory[i];
+                    if (item != null && !item.IsAir && (item.type == ModContent.ItemType<SupersonicWings>() || item.type == ModContent.ItemType<SupersonicWings2>()))
+                    {
+                        if (item.wingSlot <= 0)
+                        {
+                            item.wingSlot = EquipLoader.GetEquipSlot(Mod, item.ModItem.Name, EquipType.Wings);
+                        }
+                    }
+                }
+            }
             TornWings = false;
             WitchkingsGrasp = false;
             MorgulWhipEffect = false;
@@ -1392,6 +1431,40 @@ namespace tsorcRevamp
         }
         public override void PostUpdateEquips()
         {
+            if (!Main.gameMenu && Player.whoAmI == Main.myPlayer && (!hasSupersonicHarness || !SoulsModeMobility.Enabled(Player)))
+            {
+                try
+                {
+                    var slotInstance = ModContent.GetInstance<SupersonicWingSlot>();
+                    if (slotInstance != null)
+                    {
+                        var slot = LoaderManager.Get<AccessorySlotLoader>().Get(slotInstance.Type, Player);
+                        if (slot != null)
+                        {
+                            if (slot.FunctionalItem != null && !slot.FunctionalItem.IsAir)
+                            {
+                                Player.QuickSpawnItem(Player.GetSource_Accessory(slot.FunctionalItem), slot.FunctionalItem, slot.FunctionalItem.stack);
+                                slot.FunctionalItem = new Item();
+                            }
+                            if (slot.VanityItem != null && !slot.VanityItem.IsAir)
+                            {
+                                Player.QuickSpawnItem(Player.GetSource_Accessory(slot.VanityItem), slot.VanityItem, slot.VanityItem.stack);
+                                slot.VanityItem = new Item();
+                            }
+                            if (slot.DyeItem != null && !slot.DyeItem.IsAir)
+                            {
+                                Player.QuickSpawnItem(Player.GetSource_Accessory(slot.DyeItem), slot.DyeItem, slot.DyeItem.stack);
+                                slot.DyeItem = new Item();
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // Ignore slot access if not initialized
+                }
+            }
+
             if (WolfRing && EnterTheAbyss)
             {
                 Player.statDefense += Content.Items.Accessories.Defensive.Rings.WolfRing.AbyssDef;
@@ -2057,51 +2130,80 @@ namespace tsorcRevamp
                 float moveSpeedPercentBoost = 1;
                 float baseSpeed = 1;
 
-                //SupersonicBoots
-                if (supersonicLevel == SoulsModeMobility.SupersonicBootsLevel)
+                if (SoulsModeMobility.Enabled(Player))
                 {
-                    //moveSpeedPercentBoost is what percent of a player's moveSpeed bonus should be applied to their max running speed
-                    //For vanilla hermes boots and their upgrades, this is 0
-                    moveSpeedPercentBoost = 0.35f;
-                    //6f is hermes boots speed.
-                    baseSpeed = 6f;
-                    Player.moveSpeed += 0.2f;
+                    // Souls Mode Mobility Limit: Smooth scaling without hard caps
+                    if (supersonicLevel == SoulsModeMobility.SupersonicBootsLevel)
+                    {
+                        moveSpeedPercentBoost = SoulsModeMobility.SupersonicBootsBoostPercent;
+                        baseSpeed = SoulsModeMobility.SupersonicBootsBaseSpeed;
+                        Player.moveSpeed += SoulsModeMobility.SupersonicBootsMoveSpeedBonus;
+                    }
+                    else if (supersonicLevel == SoulsModeMobility.SupersonicWingsLevel)
+                    {
+                        moveSpeedPercentBoost = SoulsModeMobility.SupersonicWingsBoostPercent;
+                        baseSpeed = SoulsModeMobility.SupersonicWingsBaseSpeed;
+                        Player.moveSpeed += SoulsModeMobility.SupersonicWingsMoveSpeedBonus;
+                    }
+                    else if (supersonicLevel == SoulsModeMobility.SupersonicWings2Level)
+                    {
+                        moveSpeedPercentBoost = SoulsModeMobility.SupersonicWings2BoostPercent;
+                        baseSpeed = SoulsModeMobility.SupersonicWings2BaseSpeed;
+                        Player.moveSpeed += SoulsModeMobility.SupersonicWings2MoveSpeedBonus;
+                    }
+                    else if (supersonicLevel == SoulsModeMobility.WingsOfSeathLevel)
+                    {
+                        moveSpeedPercentBoost = SoulsModeMobility.WingsOfSeathBoostPercent;
+                        baseSpeed = SoulsModeMobility.WingsOfSeathBaseSpeed;
+                        Player.moveSpeed += SoulsModeMobility.WingsOfSeathMoveSpeedBonus;
+                    }
                 }
-                //SupersonicWings
-                if (supersonicLevel == SoulsModeMobility.SupersonicWingsLevel || supersonicLevel == SoulsModeMobility.SupersonicWings2Level)
+                else
                 {
-                    moveSpeedPercentBoost = 0.5f;
-                    baseSpeed = 6.8f;
-                    Player.moveSpeed += 0.3f;
+                    // Classic Mode: Legacy behavior preserved
+                    //SupersonicBoots
+                    if (supersonicLevel == SoulsModeMobility.SupersonicBootsLevel)
+                    {
+                        moveSpeedPercentBoost = 0.35f;
+                        baseSpeed = 6f;
+                        Player.moveSpeed += 0.2f;
+                    }
+                    //SupersonicWings
+                    if (supersonicLevel == SoulsModeMobility.SupersonicWingsLevel || supersonicLevel == SoulsModeMobility.SupersonicWings2Level)
+                    {
+                        moveSpeedPercentBoost = 0.5f;
+                        baseSpeed = 6.8f;
+                        Player.moveSpeed += 0.3f;
+                    }
+                    //Wings of Seath
+                    if (supersonicLevel == SoulsModeMobility.WingsOfSeathLevel)
+                    {
+                        moveSpeedPercentBoost = 1f;
+                        baseSpeed = 7.5f;
+                        Player.moveSpeed += 0.6f;
+                    }
                 }
-                //Wings of Seath
-                if (supersonicLevel == SoulsModeMobility.WingsOfSeathLevel)
-                {
-                    moveSpeedPercentBoost = 1f;
-                    baseSpeed = 7.5f;
-                    Player.moveSpeed += 0.6f;
-                }
-
 
                 //((player.moveSpeed * 0.5f) + 0.5) means 50% of the player's moveSpeed bonus will be applied
                 //The general form is ((player.moveSpeed * %theyshouldget) + (1 - %theyshouldget))
                 Player.accRunSpeed = baseSpeed * ((Player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
                 Player.maxRunSpeed = baseSpeed * ((Player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
 
-                if (SoulsModeMobility.Enabled(Player))
-                {
-                    float cappedSpeed = supersonicLevel switch
-                    {
-                        SoulsModeMobility.SupersonicBootsLevel => SoulsModeMobility.SupersonicBootsRunSpeed,
-                        SoulsModeMobility.SupersonicWingsLevel => SoulsModeMobility.SupersonicWingsRunSpeed,
-                        SoulsModeMobility.SupersonicWings2Level => SoulsModeMobility.SupersonicWings2RunSpeed,
-                        SoulsModeMobility.WingsOfSeathLevel => SoulsModeMobility.WingsOfSeathRunSpeed,
-                        _ => Player.maxRunSpeed
-                    };
-
-                    Player.accRunSpeed = Math.Min(cappedSpeed, SoulsModeMobility.GlobalRunSpeedCap);
-                    Player.maxRunSpeed = Math.Min(cappedSpeed, SoulsModeMobility.GlobalRunSpeedCap);
-                }
+                // Hard speed cap commented out in favor of smooth scaling (can be re-enabled if needed):
+                // if (SoulsModeMobility.Enabled(Player))
+                // {
+                //     float cappedSpeed = supersonicLevel switch
+                //     {
+                //         SoulsModeMobility.SupersonicBootsLevel => SoulsModeMobility.SupersonicBootsRunSpeed,
+                //         SoulsModeMobility.SupersonicWingsLevel => SoulsModeMobility.SupersonicWingsRunSpeed,
+                //         SoulsModeMobility.SupersonicWings2Level => SoulsModeMobility.SupersonicWings2RunSpeed,
+                //         SoulsModeMobility.WingsOfSeathLevel => SoulsModeMobility.WingsOfSeathRunSpeed,
+                //         _ => Player.maxRunSpeed
+                //     };
+                //
+                //     Player.accRunSpeed = Math.Min(cappedSpeed, SoulsModeMobility.GlobalRunSpeedCap);
+                //     Player.maxRunSpeed = Math.Min(cappedSpeed, SoulsModeMobility.GlobalRunSpeedCap);
+                // }
 
                 if (FastFallTimer > 0)
                 {
@@ -2137,11 +2239,12 @@ namespace tsorcRevamp
                 }
             }
 
-            if (SoulsModeMobility.Enabled(Player))
-            {
-                Player.accRunSpeed = Math.Min(Player.accRunSpeed, SoulsModeMobility.GlobalRunSpeedCap);
-                Player.maxRunSpeed = Math.Min(Player.maxRunSpeed, SoulsModeMobility.GlobalRunSpeedCap);
-            }
+            // Global run speed cap commented out per design (can be re-enabled if needed):
+            // if (SoulsModeMobility.Enabled(Player))
+            // {
+            //     Player.accRunSpeed = Math.Min(Player.accRunSpeed, SoulsModeMobility.GlobalRunSpeedCap);
+            //     Player.maxRunSpeed = Math.Min(Player.maxRunSpeed, SoulsModeMobility.GlobalRunSpeedCap);
+            // }
 
             if (Player.HasBuff<MarilithHold>() || Player.HasBuff<MarilithWind>())
             {
@@ -2530,17 +2633,47 @@ namespace tsorcRevamp
 
             return LangUtils.GetTextValue("DeathText.Tip") + text;
         }
+        public static bool HasFunctionalWings(Player player)
+        {
+            if (player == null) return false;
+            return player.equippedWings != null
+                || player.wingsLogic > 0
+                || player.GetModPlayer<tsorcRevampPlayer>().hasSupersonicHarness
+                || player.GetModPlayer<tsorcRevampPlayer>().hasSlottedWing;
+        }
+
         internal static bool IsSeathWingFallImmune(Player player)
         {
-            return player.controlDown
-                && player.equippedWings != null
-                && player.equippedWings.type == ModContent.ItemType<WingsOfSeath>();
+            if (!player.controlDown) return false;
+            if (player.equippedWings != null && player.equippedWings.type == ModContent.ItemType<WingsOfSeath>())
+            {
+                return true;
+            }
+            if (!Main.gameMenu)
+            {
+                try
+                {
+                    var slotInstance = ModContent.GetInstance<Content.Items.Accessories.Mobility.Wings.SupersonicWingSlot>();
+                    if (slotInstance != null)
+                    {
+                        var slot = LoaderManager.Get<AccessorySlotLoader>().Get(slotInstance.Type, player);
+                        if (slot?.FunctionalItem != null && slot.FunctionalItem.type == ModContent.ItemType<WingsOfSeath>())
+                        {
+                            return true;
+                        }
+                    }
+                }
+                catch
+                {
+                }
+            }
+            return false;
         }
 
         internal static bool IsWingFallProtected(Player player)
         {
             bool activelyGliding = player.controlJump
-                && player.velocity.Y > 0f
+                && player.velocity.Y * player.gravDir > 0f
                 && player.wingsLogic > 0;
             bool activelyHovering = player.controlJump
                 && player.TryingToHoverDown
@@ -2564,7 +2697,7 @@ namespace tsorcRevamp
             int safeFallDistance = 25 + player.extraFall;
             int fallDistance = ((int)(player.position.Y / 16f) - player.fallStart) * (int)player.gravDir;
             int rawDamage = Math.Max(0, fallDistance - safeFallDistance) * 10;
-            return player.equippedWings != null ? rawDamage / 2 : rawDamage;
+            return HasFunctionalWings(player) ? rawDamage / 2 : rawDamage;
         }
 
         public Vector2 SavedVelocity;
@@ -2583,7 +2716,7 @@ namespace tsorcRevamp
 
             // Winged players can fall 15 additional tiles before the intentional wing fall-damage
             // penalty begins. This stacks with vanilla accessory bonuses such as Frog Leg.
-            if (Player.equippedWings != null)
+            if (HasFunctionalWings(Player))
             {
                 Player.extraFall += 15;
 

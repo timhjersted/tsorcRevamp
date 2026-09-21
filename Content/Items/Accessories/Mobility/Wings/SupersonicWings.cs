@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -68,12 +68,34 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
         }
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.hasSupersonicHarness = true;
+            modPlayer.supersonicHarnessHideVisual = hideVisual;
+
+            if (Item.wingSlot <= 0)
+            {
+                Item.wingSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Wings);
+            }
+
+            player.rocketBoots = 2;
             player.fireWalk = true;
-            player.noKnockback = true;
-            player.canRocket = true;
             player.iceSkate = true;
-            player.wingTimeMax = 180;
-            player.jumpSpeedBoost += 0.8f;
+
+            if (!SoulsModeMobility.Enabled(player))
+            {
+                player.noKnockback = true;
+                player.wingTimeMax = 180;
+                player.jumpSpeedBoost += 0.8f;
+            }
+            else
+            {
+                player.jumpSpeedBoost += 0.4f;
+                // Fallback flight time if no other wing is slotted
+                if (!modPlayer.hasSlottedWing)
+                {
+                    player.wingTimeMax = SoulsModeMobility.HarnessFallbackFlightTimeTier1;
+                }
+            }
 
             bool restricted = false;
             if (player.mount.Active || player.vortexStealthActive)
@@ -137,7 +159,25 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
         {
             if (SoulsModeMobility.Enabled(Main.LocalPlayer))
             {
-                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitWing", SoulsModeMobility.SupersonicWingsRunSpeed, SoulsModeMobility.SupersonicWingsFlightSpeed)));
+                var line0 = tooltips.Find(t => t.Name == "Tooltip0");
+                if (line0 != null)
+                {
+                    line0.Text = Language.GetTextValue("Mods.tsorcRevamp.Items.SupersonicWings.SoulsTooltip0");
+                }
+
+                int disableIndex = tooltips.FindIndex(t => t.Name == "Tooltip3");
+                var fireBlockLine = new TooltipLine(Mod, "FireBlocksImmunity", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.FireBlocksImmunity"));
+                if (disableIndex >= 0)
+                {
+                    tooltips.Insert(disableIndex, fireBlockLine);
+                }
+                else
+                {
+                    tooltips.Add(fireBlockLine);
+                }
+
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityHarness", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityHarness")));
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitRunOnly", (int)(SoulsModeMobility.SupersonicWingsBoostPercent * 100))));
             }
         }
 

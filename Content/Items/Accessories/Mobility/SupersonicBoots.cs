@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -51,8 +51,15 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.noKnockback = true;
-            player.moveSpeed += 0.2f; //???? higher tiers ain't got any movement speed
+            if (!SoulsModeMobility.Enabled(player))
+            {
+                player.noKnockback = true;
+                player.moveSpeed += 0.2f;
+            }
+            else
+            {
+                player.moveSpeed += SoulsModeMobility.SupersonicBootsMoveSpeedBonus;
+            }
             player.rocketBoots = 2;
 
             bool restricted = false;
@@ -108,7 +115,12 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility
         {
             if (SoulsModeMobility.Enabled(Main.LocalPlayer))
             {
-                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitRunOnly", SoulsModeMobility.SupersonicBootsRunSpeed)));
+                var line0 = tooltips.Find(t => t.Name == "Tooltip0");
+                if (line0 != null)
+                {
+                    line0.Text = Language.GetTextValue("Mods.tsorcRevamp.Items.SupersonicBoots.SoulsTooltip0");
+                }
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitRunOnly", (int)(SoulsModeMobility.SupersonicBootsBoostPercent * 100))));
             }
         }
 

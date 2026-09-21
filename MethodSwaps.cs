@@ -103,6 +103,7 @@ namespace tsorcRevamp
             Terraria.On_Player.QuickMount_GetItemToUse += Player_QuickMount_GetItemToUse; ;
 
             Terraria.UI.On_ChestUI.LootAll += PotionBagLootAllPatch;
+            Terraria.UI.On_ItemSlot.AccCheck_ForPlayer += AccCheck_ForPlayer_Patch;
 
             // Storage: while the Storage pop-up is open, show the vanilla "send to container" cursor icon
             // (chest + red arrow) when shift-hovering a depositable inventory item. Hooked via reflection so we
@@ -2912,6 +2913,60 @@ namespace tsorcRevamp
             }
         }
 
+
+        private static bool AccCheck_ForPlayer_Patch(Terraria.UI.On_ItemSlot.orig_AccCheck_ForPlayer orig, Player player, Item[] items, Item item, int slot)
+        {
+            if (player == null || !SoulsModeMobility.Enabled(player))
+            {
+                return orig(player, items, item, slot);
+            }
+
+            int supersonic1 = ModContent.ItemType<Content.Items.Accessories.Mobility.Wings.SupersonicWings>();
+            int supersonic2 = ModContent.ItemType<Content.Items.Accessories.Mobility.Wings.SupersonicWings2>();
+
+            int origIncomingWingSlot = item?.wingSlot ?? 0;
+            bool incomingIsHarness = item != null && (item.type == supersonic1 || item.type == supersonic2);
+
+            List<(Item item, int savedWingSlot)> modifiedEquips = null;
+
+            if (items != null)
+            {
+                for (int i = 0; i < items.Length; i++)
+                {
+                    Item eq = items[i];
+                    if (eq != null && !eq.IsAir && (eq.type == supersonic1 || eq.type == supersonic2) && eq.wingSlot > 0)
+                    {
+                        modifiedEquips ??= new List<(Item, int)>();
+                        modifiedEquips.Add((eq, eq.wingSlot));
+                        eq.wingSlot = 0;
+                    }
+                }
+            }
+
+            if (incomingIsHarness && item.wingSlot > 0)
+            {
+                item.wingSlot = 0;
+            }
+
+            try
+            {
+                return orig(player, items, item, slot);
+            }
+            finally
+            {
+                if (incomingIsHarness && item != null)
+                {
+                    item.wingSlot = origIncomingWingSlot;
+                }
+                if (modifiedEquips != null)
+                {
+                    foreach (var (modItem, savedSlot) in modifiedEquips)
+                    {
+                        modItem.wingSlot = savedSlot;
+                    }
+                }
+            }
+        }
 
         private static void PotionBagLootAllPatch(Terraria.UI.On_ChestUI.orig_LootAll orig)
         {

@@ -112,15 +112,107 @@ namespace tsorcRevamp
             }
         }
 
-        public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
+        public override void UpdateVisibleAccessories()
         {
+            if (SoulsModeMobility.Enabled(Player) && hasSlottedWing)
+            {
+                int resolvedWing = 0;
+                int resolvedDye = 0;
 
+                if (slottedWingVanitySlot > 0)
+                {
+                    resolvedWing = slottedWingVanitySlot;
+                }
+                else if (!slottedWingHideVisual && slottedWingSlot > 0)
+                {
+                    resolvedWing = slottedWingSlot;
+                }
+
+                try
+                {
+                    var slotInstance = ModContent.GetInstance<Content.Items.Accessories.Mobility.Wings.SupersonicWingSlot>();
+                    if (slotInstance != null)
+                    {
+                        var slot = LoaderManager.Get<AccessorySlotLoader>().Get(slotInstance.Type, Player);
+                        if (slot?.DyeItem != null && !slot.DyeItem.IsAir)
+                        {
+                            resolvedDye = slot.DyeItem.dye;
+                        }
+                    }
+                }
+                catch
+                {
+                }
+
+                Player.wings = resolvedWing;
+                if (resolvedDye > 0)
+                {
+                    Player.cWings = resolvedDye;
+                }
+            }
         }
+
         public override void FrameEffects()
         {
+            if (SoulsModeMobility.Enabled(Player) && hasSlottedWing)
+            {
+                if (slottedWingVanitySlot > 0)
+                {
+                    Player.wings = slottedWingVanitySlot;
+                }
+                else if (slottedWingHideVisual)
+                {
+                    Player.wings = 0;
+                }
+                else if (slottedWingSlot > 0)
+                {
+                    Player.wings = slottedWingSlot;
+                }
+            }
+
             if (MiakodaNewBoost)
             {
                 Player.armorEffectDrawShadow = true;
+            }
+        }
+
+        public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
+        {
+            if (SoulsModeMobility.Enabled(Player) && hasSlottedWing)
+            {
+                int resolvedWing = 0;
+                int resolvedDye = 0;
+
+                if (slottedWingVanitySlot > 0)
+                {
+                    resolvedWing = slottedWingVanitySlot;
+                }
+                else if (!slottedWingHideVisual && slottedWingSlot > 0)
+                {
+                    resolvedWing = slottedWingSlot;
+                }
+
+                try
+                {
+                    var slotInstance = ModContent.GetInstance<Content.Items.Accessories.Mobility.Wings.SupersonicWingSlot>();
+                    if (slotInstance != null)
+                    {
+                        var slot = LoaderManager.Get<AccessorySlotLoader>().Get(slotInstance.Type, Player);
+                        if (slot?.DyeItem != null && !slot.DyeItem.IsAir)
+                        {
+                            resolvedDye = slot.DyeItem.dye;
+                        }
+                    }
+                }
+                catch
+                {
+                }
+
+                drawInfo.drawPlayer.wings = resolvedWing;
+                if (resolvedDye > 0)
+                {
+                    drawInfo.cWings = resolvedDye;
+                }
             }
         }
 

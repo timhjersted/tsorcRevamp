@@ -184,10 +184,13 @@ Mods: {
 			UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
 			LifeCrystalSoulsMode: Permanently increases maximum life by {0}
 			ManaCrystalSoulsMode: Permanently increases maximum mana by {0}
-			SoulsModeMobilityLimitRunOnly: Souls Mode mobility limit: ground speed capped at {0}.
-			SoulsModeMobilityLimitWing: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}.
-			SoulsModeMobilityLimitWingTimed: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}; flight time limited to {2} seconds.
-			SoulsModeMobilityLimitWingsOfSeath: Souls Mode mobility limit: ground speed capped at {0}; flight speed capped at {1}, or {2} while hovering; flight time limited to {3} seconds.
+			SoulsModeMobilityLimitRunOnly: Souls Mode mobility: sprint speed scales with {0}% of movement speed bonuses.
+			SoulsModeMobilityHarness: Souls Mode mobility harness: grants a dedicated Wing Slot for any wings you find. Provides fallback flight when empty.
+			SoulsModeMobilityWingsOfSeath: Souls Mode mobility: flight time is {0} seconds; vertical climb rate is {1}x.
+			FireBlocksImmunity: Grants immunity to fire blocks.
+			FrostburnAndFireBlocksImmunity: Grants immunity to frostburn and fire blocks
+			SupersonicWingSlotHover: Wing Harness Slot (Wings Only)
+			SupersonicWingSlotVanityHover: Social Wings
 			DSPickUpRange: " increases Dark Soul pick-up range"
 			VanityFunction: Also works in vanity slots
 			DragoonGearCompatible: Compatible with Dragoon Boots and Dragoon Gear.
@@ -2064,6 +2067,7 @@ Mods: {
 					Speed boost is multiplied by movement speed boosts.
 					{$CommonItemTooltip.BootsDisableThis}
 					'''
+				SoulsTooltip0: Supersonic movement speed, rocket boots effect, and water-walking if moving fast enough.
 			}
 
 			SupersonicWings: {
@@ -2075,6 +2079,7 @@ Mods: {
 					{$CommonItemTooltip.DragoonGearCompatible}
 					{$CommonItemTooltip.BootsDisableThis}
 					'''
+				SoulsTooltip0: Awesome supersonic movement speed, flight,
 			}
 
 			SupersonicWings2: {
@@ -2086,6 +2091,7 @@ Mods: {
 					{$CommonItemTooltip.DragoonGearCompatible}
 					{$CommonItemTooltip.BootsDisableThis}
 					'''
+				SoulsTooltip0: Superior supersonic movement speed and improved agility,
 			}
 
 			MonocleOfPrecision: {
@@ -13306,17 +13312,27 @@ Mods: {
 				}
 
 				SoulsModeMobilityLimit: {
-					Label: Souls Mode Mobility Limit
-					Tooltip: Limits extreme running and flight speed while Unkindled or Bearer of the Curse. Classic mode is unaffected. Defaults to On.
+					Label: Souls Mode Mobility
+					Tooltip:
+						'''
+						Retunes the mobility power curve while Unkindled or Bearer of the Curse.
+						Affects Supersonic Boots, Supersonic Wings I & II, and Wings of Seath.
+						Supersonic Wings grant a wing accessory slot that inherits the slotted wing's attributes.
+						Defaults to On.
+						'''
 				}
 
 				ActiveShieldsRevamp: {
 					Label: Active Shields Revamp
 					Tooltip:
 						'''
-						Reworks shields into Dark Souls-style active blocking: hold Right Click (with a shield equipped and a weapon that has no right-click function) to raise it and fully block frontal hits at the cost of stamina (or mana, for magic wards).
-						Optionally bind Raise Shield in the mod keybinds for a dedicated block key that also works with right-click weapons.
-						Only functions while Unkindled or Bearer of the Curse. Turn off to keep the classic passive shield behavior. Defaults to On.
+						Reworks shields into Dark Souls-style active blocking: hold Right Click
+						(with a shield equipped and a weapon that has no right-click function)
+						to raise it and fully block frontal hits at the cost of stamina (or mana, for magic wards).
+						Optionally bind Raise Shield in the mod keybinds for a dedicated block key
+						that also works with right-click weapons.
+						Only functions while Unkindled or Bearer of the Curse.
+						Turn off to keep the classic passive shield behavior. Defaults to On.
 						'''
 				}
 
