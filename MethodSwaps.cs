@@ -3123,7 +3123,10 @@ namespace tsorcRevamp
 
         private static bool HasGuardActionLock(Player player)
         {
-            return player.HasBuff(ModContent.BuffType<ShieldGuardBreak>());
+            // Flask animations bypass ItemCheck, so they need to explicitly respect both the
+            // forced guard-break lockout and a shield that is currently raised.
+            return player.HasBuff(ModContent.BuffType<ShieldGuardBreak>())
+                || player.GetModPlayer<tsorcRevampActiveShieldPlayer>().IsBlockingOrRaisingShield;
         }
 
         public static void TryUseQuickMana(Player player)

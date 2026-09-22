@@ -1089,6 +1089,7 @@ namespace SwingPreview
                 FlailTargetX = flail.TargetX,
                 FlailTargetY = flail.TargetY,
                 FlailTargetLabel = flail.TargetLabel,
+                OwnerOffsetX = flail.OwnerOffsetX,
             });
         }
 

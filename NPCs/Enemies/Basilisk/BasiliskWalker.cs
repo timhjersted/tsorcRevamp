@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         bool chargeDamageFlag = false;
         int hypnoticDisruptorDamage = 15;
         int bioSpitDamage = 10;
-        int leechTongueDamage = 5;
+        int leechTongueDamage = 10;
         int leechTongueTimer;
         private const int PostAttackDowntime = 60;
         public override void SetStaticDefaults()
@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 NPC.damage = 33;
                 hypnoticDisruptorDamage = 23;
                 bioSpitDamage = 18;
-                leechTongueDamage = 5;
+                leechTongueDamage = 10;
             }
 
             Banner = NPC.type;

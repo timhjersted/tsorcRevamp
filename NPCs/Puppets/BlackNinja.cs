@@ -72,9 +72,9 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Flail;
 
-        // Reverse Halo and Ankle Reaper live in the reusable optional mace table. Black Ninja opts
-        // into them explicitly; bespoke flail users such as Dread Wraith keep their current pool until
-        // they choose to add the same entries and selection rules.
+        // Reverse Halo, Ankle Reaper, and Chain Cross live in reusable optional mace tables. Black
+        // Ninja opts in explicitly; bespoke flail users such as Dread Wraith keep their current pool
+        // until they choose the same entries and selection rules.
         private static readonly MeleeCombo[] BlackNinjaMaceCombos = BuildBlackNinjaMaceComboPool();
         protected override MeleeCombo[] MeleeComboPoolOverride => BlackNinjaMaceCombos;
 
@@ -89,11 +89,13 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             MeleeCombo[] core = WeaponArchetypeTables.Flail;
             MeleeCombo[] levelLashes = WeaponArchetypeTables.FlailLevelLashes;
+            MeleeCombo[] crosses = WeaponArchetypeTables.FlailCrosses;
             MeleeCombo[] reactive = WeaponArchetypeTables.FlailReactiveFollowups;
-            MeleeCombo[] combined = new MeleeCombo[core.Length + levelLashes.Length + reactive.Length];
+            MeleeCombo[] combined = new MeleeCombo[core.Length + levelLashes.Length + crosses.Length + reactive.Length];
             Array.Copy(core, 0, combined, 0, core.Length);
             Array.Copy(levelLashes, 0, combined, core.Length, levelLashes.Length);
-            Array.Copy(reactive, 0, combined, core.Length + levelLashes.Length, reactive.Length);
+            Array.Copy(crosses, 0, combined, core.Length + levelLashes.Length, crosses.Length);
+            Array.Copy(reactive, 0, combined, core.Length + levelLashes.Length + crosses.Length, reactive.Length);
             return combined;
         }
 
@@ -402,6 +404,12 @@ namespace tsorcRevamp.NPCs.Puppets
 
             if (combo.Name == EnemyFlailAttackPatterns.BacklashName)
                 return BacklashFollowupStillValid();
+
+            if (combo.Name == EnemyFlailAttackPatterns.ChainCrossName)
+            {
+                return NPC.HasValidTarget && EnemyFlailAttackPatterns.IsChainCrossTargetValid(
+                    NPC, Main.player[NPC.target], NPC.direction == 0 ? 1 : NPC.direction);
+            }
 
             if (!EnemyFlailAttackPatterns.RequiresLevelTarget(combo.Name))
                 return true;

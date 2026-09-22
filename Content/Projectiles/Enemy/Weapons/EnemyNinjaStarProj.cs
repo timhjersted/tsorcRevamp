@@ -1,8 +1,10 @@
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -22,7 +24,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         private const int StuckDurationTicks = 180; // 3 s
         private const float ExplodeAoeRadius = 44f;
-        private const float FlightSpinRadiansPerTick = 0.42f; // ~24°: clearly readable at the star's small scale
+        // The texture has four-way rotational symmetry. A very fast spin aliases into a stationary
+        // wobble at gameplay scale, so keep the angular step small and reinforce it with two faint
+        // rotation-aware echoes in PreDraw.
+        private const float FlightSpinRadiansPerTick = 0.16f; // ~9.2°/tick, about 1.5 revolutions/second
+
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.TrailCacheLength[Type] = 3;
+            ProjectileID.Sets.TrailingMode[Type] = 2;
+        }
 
         public override void SetDefaults()
         {
@@ -70,6 +81,47 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     Projectile.velocity.X * 0.1f, Projectile.velocity.Y * 0.1f, 150, Color.LightGray, 0.9f);
                 Main.dust[d].noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Vector2 origin = texture.Size() * 0.5f;
+
+            if (!Stuck)
+            {
+                for (int i = Projectile.oldPos.Length - 1; i >= 1; i--)
+                {
+                    if (Projectile.oldPos[i] == Vector2.Zero)
+                    {
+                        continue;
+                    }
+
+                    float opacity = 0.18f * (1f - i / (float)Projectile.oldPos.Length);
+                    Main.EntitySpriteDraw(
+                        texture,
+                        Projectile.oldPos[i] + Projectile.Size * 0.5f - Main.screenPosition,
+                        null,
+                        lightColor * opacity,
+                        Projectile.oldRot[i],
+                        origin,
+                        Projectile.scale,
+                        SpriteEffects.None,
+                        0);
+                }
+            }
+
+            Main.EntitySpriteDraw(
+                texture,
+                Projectile.Center - Main.screenPosition,
+                null,
+                lightColor,
+                Projectile.rotation,
+                origin,
+                Projectile.scale,
+                SpriteEffects.None,
+                0);
+            return false;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

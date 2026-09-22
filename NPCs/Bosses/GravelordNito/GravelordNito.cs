@@ -9,6 +9,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy.GravelordNito;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 {
@@ -44,6 +45,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             FollowUpSlash,
             PhaseTransition,
             ComboRecovery,
+            // Appended (not inserted) so the byte values of everything above stay stable.
+            ReaperWeave,       // chained underhand/overhand swings in a random pole-to-pole order
+            ReapersPendulum,   // fast strict back-and-forth chain: side / backhand / side ...
+            SwordLineDance,    // rows of sky spikes walking in from the outside edge toward Nito
         }
 
         enum AttackFamily : byte
@@ -73,7 +78,52 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         const int LongChannelTicks = 120;
         const int LongChannelStaggerTicks = 80;
         const float ImpalingThrustMinRange = 410f; // old 110 + requested 300px separation
-        const float ImpalingThrustMaxRange = 650f;
+        const float ImpalingThrustMaxRange = 810f; // was 650: +160px (10 tiles); RunImpalingThrust now really closes that gap
+
+        // The dash's tell: a 34-tick coil, and the sword flashes white ThrustFlashLeadTicks before the
+        // launch for ThrustFlashTicks (sharp rise, fast fade), so the cue lands well before the commit.
+        const int ThrustTelegraphTicks = 34;
+        const int ThrustFlashLeadTicks = 30;
+        const int ThrustFlashTicks = 15;
+
+        const float DeathNovaRadius = 600f;         // was 300: twice the ring. Duration follows: radius / 8px-per-tick expand
+        const float BoneVolleyMaxRange = 800f;      // 50 tiles: the furthest the shard ballistics are asked to reach
+        const float RangedRainMinDistance = 400f;   // horizontal gap that counts as "at range" for the independent SwordRain trigger
+        const int RangedRainChargeTicks = 480;      // 8s spent at range (in any state) earns a guaranteed SwordRain
+        const float PhaseOneApproachScale = 1.5f;   // phase-1 melee gap-closing speed multiplier (see AdvanceTowardPlayer)
+        const float PhaseTwoApproachScale = 1.9f;   // phase 2 closes harder still (idle walk speed is NOT scaled)
+        const float SwipePushScale = 1.35f;         // multiplier on the forward step every sword swipe releases with
+        const int MaxComboSteps = 6;                // ComboKinds packs 3 bits per step into an int
+        const float ComboContinueRange = 420f;      // a chain stops early once the player is further than this
+        const float ComboContinueHeight = 190f;
+
+        // Timing variants for the single swipes (SideSweep / BackhandSweep / OverheadCleave): the same
+        // three moves at different rhythms, rolled per attack so the player can't metronome them.
+        const int VariantStandard = 0;
+        const int VariantQuick = 1;    // short tell, fast slash
+        const int VariantDelayed = 2;  // long eased-in tell + a held beat, then a fast slash
+
+        float ApproachScale => PhaseTwo ? PhaseTwoApproachScale : PhaseOneApproachScale;
+
+        // AttackTimer tick the dash's white flash starts on: ThrustFlashLeadTicks before the launch tick
+        // (telegraph + 1), never before tick 1 (a halved telegraph gets a shorter lead, not a negative one).
+        int ThrustFlashStartTick => Math.Max(1, Telegraph(ThrustTelegraphTicks) + 1 - ThrustFlashLeadTicks);
+
+        // White copy of the sword sprite for the dash flash; built on first use, disposed in Unload.
+        static Texture2D swordSilhouette;
+
+        public override void Unload()
+        {
+            Texture2D textureToDispose = swordSilhouette;
+            swordSilhouette = null;
+
+            // Mod content unloads on a worker thread, but FNA GPU resources may only be disposed on the
+            // main thread (same pattern as the hurt-vignette texture in tsorcRevampSystems).
+            if (textureToDispose != null && !textureToDispose.IsDisposed)
+            {
+                Main.QueueMainThreadAction(textureToDispose.Dispose);
+            }
+        }
 
         AttackState State = AttackState.None;
 
@@ -97,6 +147,11 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         // a row, instead of leaving kind 4 to only ever appear as a reactive vertical-read substitute.
         bool NextOverheadIsRising;
         bool DragRunLeapLaunched; // one-shot: has DraggingAdvance's rising-uppercut leap fired yet this attack?
+        // How many ticks ImpalingThrust dashes before the release, solved from the gap at dash start.
+        // Synced: it decides WHEN the slash releases, so every machine must agree on it.
+        int ThrustDashTicks;
+        // Ticks spent at range; only the server reads it (idle-branch attack pick), so it isn't synced.
+        int RangedRainCharge;
         // CemeteryMarch's procession line, locked once at cast so the player can't drag it around.
         float MarchOriginX;
         float MarchGroundY;
@@ -123,8 +178,37 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         int SlashActiveKind = -1; // kind of the most recently released slash this state; -1 = none fired yet
         int SlashActiveStartTick; // AttackTimer at that release
         int SlashActiveDirection = 1; // facing locked at release; shared by sword, body, hitbox and shader
-        const int SlashActiveTicks = 18; // must match NitoSwordSlash.timeLeft so the visible arc matches the hitbox
-        const int SlashReturnTicks = 14;
+        int SlashActiveStyle;     // timing style (Style* below) of that slash; sword, hitbox and shader all read it
+        // True when the armed windup starts from the PREVIOUS swing's end pose instead of the idle rest.
+        // That is what lets a chained combo hold and re-cock the blade in place instead of dropping it.
+        bool SlashWindupChained;
+        int TimingVariant;        // Variant* of the current single swipe; rolled server-side, synced
+        int ComboLength;          // steps PLANNED for the current chain (decides which step is the heavy finisher)
+        int ComboEndStep;         // index of the last step actually performed; the server cuts it short if the player leaves
+        int ComboKinds;           // slash kind per step, 3 bits each (step 0 in the low bits)
+
+        // Legacy = the original linear 18-tick swing (thrust, leaps and Quietus still use it).
+        // The eased styles are SwingEase.ApplyWeighted curves (same maths as Gwyn / Owl Father): a cubic
+        // ease-in, then an exponential decay tail. The blade is only a hitbox while its speed is >= 30%
+        // of peak (WeightedSwing.LiveTicks); the rest of the tail is the recovery, not dead time.
+        public const int StyleLegacy = 0;
+        public const int StyleFast = 1;   // in 7 / out 24 / k7: light flick, ~11 live ticks
+        public const int StyleFlow = 2;   // in 9 / out 24 / k6.5: the combo cut, ~13 live ticks
+        public const int StyleHeavy = 3;  // in 12 / out 32 / k6.5: finisher, ~18 live ticks
+        const int SlashActiveTicks = 18;  // Legacy total; the projectile's timeLeft uses SlashStyleTicks
+        const int SlashReturnTicks = 12;  // blade eases back to the idle rest after the last swing
+        // Eased styles end past the nominal end pose (progress 1.12 = ~20 degrees further) so the ~85% of
+        // the arc that is still live after the ease-out is still a full-size sweep. Follow-through ends low.
+        const float EasedOvershoot = 1.12f;
+        static readonly WeightedSwing[] SlashStyles =
+        {
+            default,
+            new WeightedSwing(7, 24, 7f),
+            new WeightedSwing(9, 24, 6.5f),
+            new WeightedSwing(12, 32, 6.5f),
+        };
+
+        int SlashActiveLength => SlashStyleTicks(SlashActiveStyle);
         // Sword rig around NPC.Center: the HAND the blade pivots from, its idle reach, and the shared
         // vertical correction used by the body, loose sword, slash shader and collision arc.
         //
@@ -171,7 +255,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             || State == AttackState.OverheadCleave || State == AttackState.ImpalingThrust
             || State == AttackState.TripleReaperCombo || State == AttackState.DraggingAdvance
             || State == AttackState.LeapingCleave || State == AttackState.QuietusCombo
-            || State == AttackState.GravelordJudgment || State == AttackState.FollowUpSlash;
+            || State == AttackState.GravelordJudgment || State == AttackState.FollowUpSlash
+            || State == AttackState.ReaperWeave || State == AttackState.ReapersPendulum;
 
         public override void SetStaticDefaults()
         {
@@ -252,6 +337,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             writer.Write((sbyte)SlashActiveKind);
             writer.Write(SlashActiveStartTick);
             writer.Write((sbyte)SlashActiveDirection);
+            writer.Write((short)ThrustDashTicks);
+            writer.Write((byte)SlashActiveStyle);
+            writer.Write(SlashWindupChained);
+            writer.Write((byte)TimingVariant);
+            writer.Write((byte)ComboLength);
+            writer.Write((byte)ComboEndStep);
+            writer.Write(ComboKinds);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -279,6 +371,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             SlashActiveKind = reader.ReadSByte();
             SlashActiveStartTick = reader.ReadInt32();
             SlashActiveDirection = reader.ReadSByte();
+            ThrustDashTicks = reader.ReadInt16();
+            SlashActiveStyle = reader.ReadByte();
+            SlashWindupChained = reader.ReadBoolean();
+            TimingVariant = reader.ReadByte();
+            ComboLength = reader.ReadByte();
+            ComboEndStep = reader.ReadByte();
+            ComboKinds = reader.ReadInt32();
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -344,6 +443,22 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             globalNPC.AttackTelegraphing = false;
             globalNPC.AttackCommitted = false;
 
+            // Independent SwordRain pressure: time spent at range banks up in EVERY state (a long channel
+            // still counts) and drains slowly once the player closes in. It is only consumed by the
+            // idle pick below, which bypasses the weighted pool and its no-immediate-repeat rule.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                float horizontalGap = Math.Abs(player.Center.X - NPC.Center.X);
+                if (horizontalGap >= RangedRainMinDistance)
+                {
+                    RangedRainCharge++;
+                }
+                else
+                {
+                    RangedRainCharge = Math.Max(0, RangedRainCharge - 2);
+                }
+            }
+
             if (!PhaseTwo && Main.netMode != NetmodeID.MultiplayerClient && NPC.life <= NPC.lifeMax / 2)
             {
                 PhaseTwo = true;
@@ -382,7 +497,19 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 {
                     if (!TryStartQueuedAttack(player))
                     {
-                        PickAttack(player);
+                        if (RangedRainCharge >= RangedRainChargeTicks)
+                        {
+                            // Alternate the two sky attacks so the range pressure isn't one repeating move.
+                            // StartAttack zeroes the charge for either, however it was chosen.
+                            AttackState skyAttack = LastAttack == AttackState.SwordRain
+                                ? AttackState.SwordLineDance
+                                : AttackState.SwordRain;
+                            StartAttack(skyAttack, player);
+                        }
+                        else
+                        {
+                            PickAttack(player);
+                        }
                     }
                 }
             }
@@ -413,16 +540,23 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 ProximityWeight(dist, 210f, 250f, 6f));
             AddAttackOption(pool, AttackState.ImpalingThrust,
                 horizontal >= ImpalingThrustMinRange && horizontal <= ImpalingThrustMaxRange && sameLevel,
-                ProximityWeight(dist, 520f, 210f, 7f));
+                ProximityWeight(dist, 610f, 340f, 8f)); // the gap-closer: peak across its whole 410-810 band
             AddAttackOption(pool, AttackState.TripleReaperCombo, PhaseTwo && horizontal <= 370f && sameLevel,
                 ProximityWeight(dist, 220f, 240f, 11f));
+            // The chained combos exist in both phases (short in phase 1) and weigh more in phase 2.
+            AddAttackOption(pool, AttackState.ReaperWeave, horizontal <= 330f && sameLevel,
+                ProximityWeight(dist, 200f, 260f, PhaseTwo ? 11f : 8f));
+            AddAttackOption(pool, AttackState.ReapersPendulum, horizontal <= 300f && sameLevel,
+                ProximityWeight(dist, 170f, 230f, PhaseTwo ? 10f : 7f));
             AddAttackOption(pool, AttackState.DraggingAdvance, horizontal >= 180f && horizontal <= 700f && sameLevel,
                 ProximityWeight(dist, 390f, 330f, 8f));
             AddAttackOption(pool, AttackState.LeapingCleave, vertical > 80f || horizontal >= 380f,
                 ProximityWeight(dist, 520f, 480f, 7f));
             AddAttackOption(pool, AttackState.SwordRain, vertical > 90f || horizontal >= 260f,
                 ProximityWeight(dist, 520f, 460f, 7f));
-            AddAttackOption(pool, AttackState.BoneVolley, horizontal >= 220f,
+            AddAttackOption(pool, AttackState.SwordLineDance, horizontal >= 400f && horizontal <= 900f,
+                ProximityWeight(dist, 560f, 400f, PhaseTwo ? 9f : 7f));
+            AddAttackOption(pool, AttackState.BoneVolley, horizontal >= 220f && dist <= BoneVolleyMaxRange,
                 ProximityWeight(dist, 480f, 420f, 6f));
             AddAttackOption(pool, AttackState.GravelordSpikes, horizontal >= 100f,
                 ProximityWeight(dist, 310f, 420f, 7f));
@@ -507,6 +641,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 // their projectile-owned hazards continue, breaking up the old cast/cast cadence.
                 weight *= PhaseTwo ? 2.55f : 2.25f;
             }
+            if (family == AttackFamily.SwordSequence && PhaseTwo)
+            {
+                weight *= 1.5f; // phase 2 throws combos noticeably more often
+            }
             if (family != AttackFamily.None && family == FamilyOf(LastAttack))
             {
                 weight *= 0.32f;
@@ -523,9 +661,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             AttackState.SideSweep or AttackState.BackhandSweep or AttackState.OverheadCleave
                 or AttackState.ImpalingThrust => AttackFamily.SwordSingle,
             AttackState.TripleReaperCombo or AttackState.QuietusCombo or AttackState.FollowUpSlash
-                => AttackFamily.SwordSequence,
+                or AttackState.ReaperWeave or AttackState.ReapersPendulum => AttackFamily.SwordSequence,
             AttackState.DraggingAdvance or AttackState.LeapingCleave => AttackFamily.GapCloser,
-            AttackState.SwordRain or AttackState.GravelordJudgment => AttackFamily.OverheadRain,
+            AttackState.SwordRain or AttackState.GravelordJudgment or AttackState.SwordLineDance
+                => AttackFamily.OverheadRain,
             AttackState.GravelordSpikes or AttackState.GravelordDance or AttackState.BonePillarCage
                 or AttackState.GraveHands or AttackState.CemeteryMarch => AttackFamily.TargetedGround,
             AttackState.BoneVolley or AttackState.HollowCommand => AttackFamily.ProjectileVolley,
@@ -652,6 +791,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                     && horizontal <= ImpalingThrustMaxRange + 30f && sameLevel,
                 AttackState.DraggingAdvance => horizontal >= 160f && horizontal <= 740f && sameLevel,
                 AttackState.OverheadCleave => horizontal <= 330f && vertical < 190f,
+                AttackState.ReaperWeave or AttackState.ReapersPendulum => horizontal <= 340f && sameLevel,
                 AttackState.QuietusCombo => PhaseTwo && horizontal <= 410f && sameLevel,
                 AttackState.BonePillarCage => PhaseTwo && horizontal >= 120f && horizontal <= 650f,
                 AttackState.GravelordJudgment => PhaseTwo && (vertical > 90f || horizontal >= 260f),
@@ -667,23 +807,29 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             switch (State)
             {
                 case AttackState.SideSweep:
-                    RunSwordAttack(globalNPC, player, lockedKind, Telegraph(30), 44, 84, SlashDamage);
+                    RunSwordAttack(globalNPC, player, lockedKind, 30, 44, StyleFlow, SlashDamage);
                     break;
 
                 case AttackState.BackhandSweep:
-                    RunSwordAttack(globalNPC, player, lockedKind, Telegraph(26), 38, 78, SlashDamage);
+                    RunSwordAttack(globalNPC, player, lockedKind, 26, 38, StyleFlow, SlashDamage);
                     break;
 
                 case AttackState.OverheadCleave:
-                    RunSwordAttack(globalNPC, player, lockedKind, Telegraph(HeavyTelegraph), 64, 116, HeavySlashDamage);
+                    RunSwordAttack(globalNPC, player, lockedKind, HeavyTelegraph, 64, StyleHeavy, HeavySlashDamage);
                     break;
 
                 case AttackState.ImpalingThrust:
-                    RunImpalingThrust(globalNPC, player);
+                    RunImpalingThrust(globalNPC, player, ThrustTelegraphTicks, true);
                     break;
 
                 case AttackState.TripleReaperCombo:
-                    RunTripleCombo(globalNPC, player);
+                case AttackState.ReaperWeave:
+                case AttackState.ReapersPendulum:
+                    RunSwordChain(globalNPC, player);
+                    break;
+
+                case AttackState.SwordLineDance:
+                    RunSwordLineDance(globalNPC, player);
                     break;
 
                 case AttackState.DraggingAdvance:
@@ -743,10 +889,15 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                     break;
 
                 case AttackState.FollowUpSlash:
-                    int followUpTelegraph = lockedKind == 2 ? 26 : 22;
-                    int followUpRelease = lockedKind == 2 ? 34 : 30;
-                    RunSwordAttack(globalNPC, player, lockedKind, followUpTelegraph,
-                        followUpRelease, followUpRelease + 38, SlashDamage, canQueueFollowUp: false);
+                    if (lockedKind == 2)
+                    {
+                        // A follow-up thrust is the same lunge as ImpalingThrust (it can start 400+ px
+                        // away), so it uses the same distance-solved dash AND the same 34-tick tell with
+                        // the white flash (it was 26, too short for the flash's 30-tick lead).
+                        RunImpalingThrust(globalNPC, player, ThrustTelegraphTicks, false);
+                        break;
+                    }
+                    RunSwordAttack(globalNPC, player, lockedKind, 22, 30, StyleFlow, SlashDamage, canQueueFollowUp: false);
                     break;
 
                 case AttackState.PhaseTransition:
@@ -760,9 +911,65 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             }
         }
 
-        void RunSwordAttack(tsorcRevampGlobalNPC globalNPC, Player player, int slashKind, int telegraphTicks,
-            int releaseTick, int endTick, int damage, bool canQueueFollowUp = true)
+        // Approach speed while cocking a swing, and the forward step a swing releases with (before the
+        // phase/SwipePush multipliers). Shared by the single swipes and the chain engine.
+        static float SwipeApproachSpeed(int kind)
         {
+            if (kind == 1)
+            {
+                return 1.9f;
+            }
+            if (kind == 3)
+            {
+                return 2.15f;
+            }
+            return 2.4f;
+        }
+
+        static float SwipePush(int kind)
+        {
+            if (kind == 1)
+            {
+                return 2.8f;
+            }
+            if (kind == 3)
+            {
+                return 3.25f;
+            }
+            return 3.8f;
+        }
+
+        ///<summary>One committed swipe (side / backhand / overhead / follow-up) with a rolled timing
+        ///variant so the same three moves don't have one rhythm. Timeline (ticks from AttackTimer 1):
+        ///  Standard: the authored telegraph, release gap and style (overhead is Heavy, the rest Flow).
+        ///  Quick:    20t tell, released 8t later, Fast style: a snappy flick.
+        ///  Delayed:  authored tell + 14t, then a 22t held beat before a Fast slash. The windup eases in
+        ///            (long settle into the cock pose) and the blade then waits: the bait.
+        ///The recovery is the eased tail of the swing itself plus a short blade-return to idle, not a
+        ///separate dead beat.</summary>
+        void RunSwordAttack(tsorcRevampGlobalNPC globalNPC, Player player, int slashKind, int standardTelegraph,
+            int standardRelease, int standardStyle, int damage, bool canQueueFollowUp = true)
+        {
+            int releaseGap = standardRelease - standardTelegraph;
+            int telegraphTicks = Telegraph(standardTelegraph);
+            int style = standardStyle;
+
+            if (TimingVariant == VariantQuick)
+            {
+                telegraphTicks = Telegraph(20);
+                releaseGap = 8;
+                style = StyleFast;
+            }
+            else if (TimingVariant == VariantDelayed)
+            {
+                telegraphTicks = Telegraph(standardTelegraph + 14);
+                releaseGap = 22;
+                style = StyleFast;
+            }
+
+            int releaseTick = telegraphTicks + releaseGap;
+            int endTick = releaseTick + SlashStyleTicks(style) + SlashReturnTicks;
+
             if (AttackTimer <= releaseTick)
             {
                 globalNPC.AttackCommitted = true;
@@ -777,13 +984,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 // He is still slow, but a sword windup is now an advancing threat instead of a planted
                 // animation. Facing remains live during this readable approach, then locks for the final
                 // release gap so a last-moment cross-up can evade rather than rotating the hitbox unfairly.
-                float approachSpeed = slashKind == 1 ? 1.9f : slashKind == 3 ? 2.15f : 2.4f;
-                AdvanceTowardPlayer(player, approachSpeed, 0.16f, updateFacing: true);
+                AdvanceTowardPlayer(player, SwipeApproachSpeed(slashKind), 0.16f, updateFacing: true);
                 SwordTelegraphDust(slashKind);
-                if (State == AttackState.FollowUpSlash && slashKind == 2 && AttackTimer % 5 == 0)
-                {
-                    tsorcRevampAIs.SpawnLeapTelegraph(NPC, new Color(18, 2, 7));
-                }
             }
             else if (AttackTimer < releaseTick)
             {
@@ -794,11 +996,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 // The active arc rides this whole-body step because NitoSwordSlash reads owner.Center
                 // every tick. The blade and hit geometry therefore stay together without inventing an
                 // articulated body pose the fixed sheet cannot make.
-                float strikeStep = State == AttackState.FollowUpSlash && slashKind == 2
-                    ? 7.1f
-                    : slashKind == 1 ? 2.8f : slashKind == 3 ? 3.25f : 3.8f;
-                NPC.velocity.X = lockedDir * strikeStep;
-                SpawnSlash(slashKind, damage);
+                NPC.velocity.X = lockedDir * SwipePush(slashKind) * SwipePushScale;
+                SpawnSlash(slashKind, damage, style);
                 NPC.netUpdate = true;
             }
             else if (AttackTimer > releaseTick)
@@ -811,7 +1010,143 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 {
                     TryQueueMeleeFollowUp(player, slashKind);
                 }
-                EndAttack(60);
+                EndAttack(46);
+            }
+        }
+
+        ///<summary>The combo engine: a chain of 1-6 swipes with ONE telegraph up front, a short held beat
+        ///between cuts, and no separate recovery per cut: the ease-out tail of each swing IS its
+        ///recovery. Used by ReaperWeave (random pole-to-pole chain), ReapersPendulum (strict back and
+        ///forth) and TripleReaperCombo (fixed 0-3-1).
+        ///
+        ///WHY THEY CHAIN: every swipe is an arc between two poles. Kinds 0 and 1 start at the UP-BACK
+        ///pole (phi about -2.2) and end DOWN-FORWARD (about +0.65); kinds 3 and 4 do the reverse. So
+        ///any cut that ends at one pole can be followed by ANY cut that starts there: the blade never
+        ///snaps between cuts, it just rests a beat at the pole (the held windup) and swings back.
+        ///
+        ///TIMELINE (ticks): tell = Telegraph(base); cut n releases at cursor; its tail ends
+        ///cursor + style ticks; the next cut releases `hold` ticks later (chained windup from the
+        ///end pose). Flow cut 33t + hold 10 = 43t period; Fast cut 31t + hold 8 = 39t; the finisher is
+        ///Heavy (44t tail). Fairness (attack-timing-design 2): live windows are ~11-18t (< the 22t
+        ///roll); the next cut's blade doesn't reach the player until 6-12t after its release, i.e.
+        ///more than 30t after the previous live window closed, so a late roller has their next roll.
+        ///The hold re-faces the player, so rolling through him costs exactly the current cut.
+        ///
+        ///The server may cut the chain short (ComboEndStep) when the player leaves ComboContinueRange;
+        ///clients follow the synced value. ComboLength stays the planned length so the cut-short last cut
+        ///keeps the style it was thrown with.</summary>
+        void RunSwordChain(tsorcRevampGlobalNPC globalNPC, Player player)
+        {
+            int baseTelegraph = 28;
+            int hold = 10;
+
+            if (State == AttackState.ReaperWeave)
+            {
+                baseTelegraph = 30;
+            }
+            else if (State == AttackState.ReapersPendulum)
+            {
+                baseTelegraph = 26;
+                hold = 8;
+            }
+
+            int telegraphTicks = Telegraph(baseTelegraph);
+            int plannedLength = Math.Clamp(ComboLength, 1, MaxComboSteps);
+            int stepCount = Math.Clamp(ComboEndStep + 1, 1, plannedLength);
+            bool fastChain = State == AttackState.ReapersPendulum;
+            int firstKind = ComboKinds & 7;
+
+            if (AttackTimer == 1)
+            {
+                TelegraphCue(new Color(180, 180, 210));
+                ArmSlashWindup(firstKind, 1, telegraphTicks);
+            }
+            if (AttackTimer <= telegraphTicks)
+            {
+                // Same readable advancing tell as a single swipe. Facing stays live until 8 ticks before
+                // the release, then locks so a last-moment roll-through can't spin the first cut around.
+                AdvanceTowardPlayer(player, SwipeApproachSpeed(firstKind), 0.16f,
+                    updateFacing: AttackTimer <= telegraphTicks - 8);
+                SwordTelegraphDust(firstKind);
+            }
+
+            // Walk the timeline. Every value is derived from AttackTimer + the synced script, so a
+            // client needs no extra state to follow it.
+            int cursor = telegraphTicks;
+            int lastTailEnd = 0;
+            for (int step = 0; step < stepCount; step++)
+            {
+                // lastStep = the last cut actually thrown (the server may cut the chain short);
+                // plannedFinisher = the cut the script made the heavy one. They only differ after a cut-short.
+                bool lastStep = step == stepCount - 1;
+                bool plannedFinisher = step == plannedLength - 1;
+                int kind = (ComboKinds >> (3 * step)) & 7;
+                int style = StyleFlow;
+
+                if (fastChain && !plannedFinisher)
+                {
+                    style = StyleFast;
+                }
+                else if (plannedFinisher && !fastChain)
+                {
+                    style = StyleHeavy;
+                }
+
+                int tailEnd = cursor + SlashStyleTicks(style);
+                int nextRelease = tailEnd + hold;
+
+                if (AttackTimer == cursor)
+                {
+                    int damage = lastStep ? HeavySlashDamage : SlashDamage;
+                    NPC.velocity.X = lockedDir * SwipePush(kind) * SwipePushScale;
+                    SpawnSlash(kind, damage, style);
+                    NPC.netUpdate = true;
+                }
+                else if (AttackTimer > cursor && AttackTimer < tailEnd)
+                {
+                    NPC.velocity.X *= 0.9f; // the release step bleeds off through the follow-through
+                }
+
+                if (!lastStep && AttackTimer == tailEnd)
+                {
+                    // Between cuts. Only the server decides to stop early (clients follow ComboLength).
+                    float horizontal = Math.Abs(player.Center.X - NPC.Center.X);
+                    float vertical = Math.Abs(player.Center.Y - NPC.Center.Y);
+                    bool inRange = horizontal <= ComboContinueRange && vertical < ComboContinueHeight;
+
+                    if (!inRange && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        ComboEndStep = step;
+                        NPC.netUpdate = true;
+                    }
+                    else
+                    {
+                        int nextKind = (ComboKinds >> (3 * (step + 1))) & 7;
+                        FacePlayer(player);
+                        ArmSlashWindup(nextKind, tailEnd, nextRelease, chained: true);
+                    }
+                }
+                else if (!lastStep && AttackTimer > tailEnd && AttackTimer < nextRelease)
+                {
+                    // The held beat: keep closing (this is where phase 2's harder approach scale
+                    // matters), with dust on the blade so the next cut is telegraphed. He re-faces
+                    // during the first half of the hold only, then the aim is locked for the release.
+                    int nextKind = (ComboKinds >> (3 * (step + 1))) & 7;
+                    AdvanceTowardPlayer(player, SwipeApproachSpeed(nextKind), 0.16f,
+                        updateFacing: AttackTimer <= tailEnd + hold / 2);
+                    SwordTelegraphDust(nextKind);
+                }
+
+                lastTailEnd = tailEnd;
+                cursor = nextRelease;
+            }
+
+            globalNPC.AttackCommitted = AttackTimer <= lastTailEnd - 8;
+
+            int endTick = lastTailEnd + SlashReturnTicks;
+            if (AttackTimer >= endTick)
+            {
+                EndAttack(42);
             }
         }
 
@@ -821,23 +1156,77 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         ///owner.Center every frame, so physically dashing Nito carries the whole thrust arc with him;
         ///no hitbox-side change needed. Kept as its own method (not RunSwordAttack) because it needs to
         ///drive velocity itself instead of just braking.</summary>
-        void RunImpalingThrust(tsorcRevampGlobalNPC globalNPC, Player player)
+        void RunImpalingThrust(tsorcRevampGlobalNPC globalNPC, Player player, int baseTelegraph, bool canQueueFollowUp)
         {
-            const int release = 44;
-            const int end = 82;
-            const float LungeSpeed = 7.8f;
-            int telegraphTicks = Telegraph(34);
-            int aimLockTick = Math.Max(16, telegraphTicks - 11);
+            // The lunge used to be a fixed 7.8 px/tick spring that bled off at 0.94/tick: ~120px of
+            // travel, on an attack that starts 410-810px away. It now solves its own distance: cruise
+            // at DashSpeed until the blade is in reach, release the slash there, then let the same
+            // 0.94 decay carry him the last stretch into the player.
+            //
+            // Reach: the hitbox line runs 60px behind to 170px ahead of the blade centre, which sits
+            // SlashReach (60 -> 180) past the hand, 56px in front of NPC.Center. So the tip is 286px out
+            // at release and 406px out 18 ticks later; stopping the dash 210px short puts a player who
+            // stayed put inside the blade's length from the first live tick.
+            // Counter: live window is 18 ticks (< the 22-tick roll), so rolling through him is clean.
+            // Backing away is NOT a counter at 11 px/tick. (The blade line sits ~54px above the floor, a
+            // 34px band, so a jump only clears it at the very top of the arc: the roll is the answer.)
+            const float DashSpeed = 11f;        // px/tick cruise; the player's roll is 8 px/tick
+            const float DashAccel = 0.35f;      // lerp toward DashSpeed; reads as a spring, not a teleport
+            const int DashRampTicks = 2;        // the lerp ramp costs ~20px of travel = ~2 cruise ticks
+            const int MaxDashTicks = 75;        // 75 * 11 = 825px: covers ImpalingThrustMaxRange from a standing start
+            const int FollowThroughTicks = 38;  // release -> end (was 44 -> 82)
+            const float ThrustStandOff = 210f;  // dash stops this far short of the target's predicted X
+            const float CleaveStandOff = 140f;  // vertical read can turn this into a cleave (kind 1/4): shorter reach
+            const float TargetLeadTicks = 18f;  // lead the player's velocity, same as LeapingCleave
 
-            if (AttackTimer <= release)
+            int telegraphTicks = Telegraph(baseTelegraph);
+            int aimLockTick = Math.Max(16, telegraphTicks - 11);
+            int dashStartTick = telegraphTicks + 1;
+
+            if (AttackTimer == dashStartTick)
+            {
+                // Solved once, on every machine (the server's value wins on the next sync). Distance is
+                // measured forward along the locked facing, so a player who slipped behind him during
+                // the locked telegraph gives a negative gap -> 0 travel -> he swings at once, in place.
+                float standOff = lockedKind == 2 ? ThrustStandOff : CleaveStandOff;
+                float targetX = player.Center.X + player.velocity.X * TargetLeadTicks;
+                float forwardGap = (targetX - NPC.Center.X) * lockedDir;
+                float travel = Math.Max(0f, forwardGap - standOff);
+                int cruiseTicks = (int)Math.Ceiling(travel / DashSpeed);
+
+                ThrustDashTicks = Math.Clamp(cruiseTicks + DashRampTicks, DashRampTicks, MaxDashTicks);
+                NPC.netUpdate = true;
+            }
+
+            int releaseTick = dashStartTick + ThrustDashTicks;
+            int endTick = releaseTick + FollowThroughTicks;
+
+            if (AttackTimer <= releaseTick)
             {
                 globalNPC.AttackCommitted = true;
             }
             if (AttackTimer == 1)
             {
                 TelegraphCue(Color.LightGray);
-                ArmSlashWindup(lockedKind, 1, release);
+                ArmSlashWindup(lockedKind, 1, telegraphTicks + 10);
             }
+            if (AttackTimer == ThrustFlashStartTick)
+            {
+                // The sword flashes white (drawn in PreDraw from the same tick math). Add a sharp cue and a
+                // burst of white sparks along the blade so the flash is heard as well as seen.
+                SoundEngine.PlaySound(SoundID.Item60 with { Volume = 0.7f, Pitch = 0.25f }, NPC.Center);
+
+                Vector2 flashHilt = NPC.Center + new Vector2(lockedDir * SwordPivotX, SwordPivotY + GroundSinkPixels);
+                for (int i = 0; i < 10; i++)
+                {
+                    Vector2 sparkPosition = flashHilt + new Vector2(lockedDir * Main.rand.NextFloat(20f, 200f), Main.rand.NextFloat(-6f, 6f));
+                    Dust spark = Dust.NewDustPerfect(sparkPosition, DustID.WhiteTorch,
+                        new Vector2(lockedDir * Main.rand.NextFloat(0.5f, 2.2f), Main.rand.NextFloat(-1.4f, 0.2f)),
+                        60, default, Main.rand.NextFloat(1f, 1.4f));
+                    spark.noGravity = true;
+                }
+            }
+
             if (AttackTimer <= aimLockTick)
             {
                 // Walk the coil into useful thrust range. The final eleven ticks are locked and still,
@@ -850,95 +1239,40 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 NPC.velocity.X *= 0.8f;
                 SwordTelegraphDust(lockedKind);
             }
-            else if (AttackTimer == telegraphTicks + 1)
+            else if (AttackTimer <= releaseTick)
             {
-                NPC.velocity.X = lockedDir * LungeSpeed; // the spring
-                NPC.netUpdate = true;
+                // The dash: cruise toward the locked side with the blade dust still on the sword and a
+                // kicked-up flash at his feet every 4 ticks, so the charge reads as one committed move.
+                NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, lockedDir * DashSpeed, DashAccel);
+                SwordTelegraphDust(lockedKind);
+                FootstepEffects();
+                if (AttackTimer % 4 == 0)
+                {
+                    tsorcRevampAIs.SpawnLeapTelegraph(NPC, new Color(18, 2, 7));
+                }
             }
-            else if (AttackTimer <= end)
+            else
             {
-                // Momentum carries him through and past the strike, bleeding off gradually instead of
-                // snapping to a stop — reads as a real lunge, not a teleport-in poke.
+                // Momentum carries him through the strike, bleeding off gradually instead of snapping
+                // to a stop: he finishes the lunge next to the target, not a screen away from it.
                 NPC.velocity.X *= 0.94f;
             }
-            if (AttackTimer == release)
+
+            if (AttackTimer == releaseTick)
             {
                 SpawnSlash(lockedKind, SlashDamage);
             }
-            if (AttackTimer >= end)
+            if (AttackTimer >= endTick)
             {
-                TryQueueMeleeFollowUp(player, lockedKind);
+                // The dash only exists to close distance; the chained swipes are the payoff, thrown once
+                // he is in range. Phase 2 always follows up, phase 1 usually does. The chain itself checks
+                // range (IsQueuedAttackEligible), so a dodged dash that ends far away queues nothing.
+                if (canQueueFollowUp && Main.netMode != NetmodeID.MultiplayerClient
+                    && (PhaseTwo || Main.rand.NextFloat() < 0.6f))
+                {
+                    QueueFollowUp(AttackState.ReaperWeave, player);
+                }
                 EndAttack(70);
-            }
-        }
-
-        void RunTripleCombo(tsorcRevampGlobalNPC globalNPC, Player player)
-        {
-            globalNPC.AttackCommitted = AttackTimer <= 110;
-            if (AttackTimer == 1)
-            {
-                TelegraphCue(new Color(180, 180, 210));
-                ArmSlashWindup(0, 1, 30);
-            }
-            if (AttackTimer < 23)
-            {
-                AdvanceTowardPlayer(player, 2.4f, 0.17f, updateFacing: true);
-                SwordTelegraphDust(0);
-            }
-            if (AttackTimer == 30)
-            {
-                NPC.velocity.X = lockedDir * 3.8f;
-                SpawnSlash(0, SlashDamage);
-            }
-            if (AttackTimer == 34)
-            {
-                FacePlayer(player);
-                ArmSlashWindup(3, 34, 58);
-                NPC.netUpdate = true;
-            }
-            if (AttackTimer >= 34 && AttackTimer <= 47)
-            {
-                AdvanceTowardPlayer(player, 2.25f, 0.18f, updateFacing: true);
-                SwordTelegraphDust(3);
-            }
-            else if (AttackTimer > 47 && AttackTimer < 58)
-            {
-                NPC.velocity.X *= 0.9f;
-            }
-            if (AttackTimer == 58)
-            {
-                NPC.velocity.X = lockedDir * 3.3f;
-                SpawnSlash(3, SlashDamage);
-            }
-            if (AttackTimer == 63)
-            {
-                FacePlayer(player);
-                ArmSlashWindup(1, 63, 92);
-                NPC.netUpdate = true;
-            }
-            if (AttackTimer >= 63 && AttackTimer <= 78)
-            {
-                AdvanceTowardPlayer(player, 2.1f, 0.16f, updateFacing: true);
-                SwordTelegraphDust(1);
-            }
-            else if (AttackTimer > 78 && AttackTimer < 92)
-            {
-                NPC.velocity.X *= 0.9f;
-            }
-            if (AttackTimer == 92)
-            {
-                NPC.velocity.X = lockedDir * 3f;
-                SpawnSlash(1, HeavySlashDamage);
-            }
-            if (AttackTimer > 92)
-            {
-                NPC.velocity.X *= 0.91f;
-            }
-            if (AttackTimer >= 132)
-            {
-                RecordCompletedAttack(AttackState.TripleReaperCombo);
-                ComboRecoveryTicks = 30;
-                StartAttack(AttackState.ComboRecovery, player);
             }
         }
 
@@ -977,7 +1311,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                     ArmSlashWindup(4, 1, RunWindupTicks); // eases to kind 4's down-forward start pose, then holds
                 }
                 FacePlayer(player); // re-face every tick — he's actively chasing, not committed to a fixed line
-                NPC.velocity.X = MathHelper.Clamp(MathHelper.Lerp(NPC.velocity.X, lockedDir * RunSpeed, RunAccel), -RunSpeed, RunSpeed);
+                float runSpeed = RunSpeed * ApproachScale; // same per-phase boost as AdvanceTowardPlayer
+                NPC.velocity.X = MathHelper.Clamp(MathHelper.Lerp(NPC.velocity.X, lockedDir * runSpeed, RunAccel), -runSpeed, runSpeed);
                 DragDust();
 
                 bool inRange = NPC.Distance(player.Center) <= UppercutRange;
@@ -997,7 +1332,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             }
             // Preserve the complete 18-tick slash before entering recovery. This keeps the loose sword,
             // shader and hit line together even if the ballistic arc lands unusually early.
-            else if (AttackTimer > SlashActiveStartTick + SlashActiveTicks && NPC.collideY)
+            else if (AttackTimer > SlashActiveStartTick + SlashActiveLength && NPC.collideY)
             {
                 // Landed — the invisible hitbox already rode NPC.Center through the whole flight, and
                 // the blade eases back to idle on its own via PreDraw's SlashReturnTicks window.
@@ -1046,7 +1381,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 SpawnSlash(1, HeavySlashDamage);
             }
-            if (AttackTimer > SlashActiveStartTick + SlashActiveTicks && NPC.collideY)
+            if (AttackTimer > SlashActiveStartTick + SlashActiveLength && NPC.collideY)
             {
                 UsefulFunctions.ScreenShake(NPC.Bottom, 5f, 12, 6f, 500f);
                 SpawnGroundSpike(NPC.Bottom + new Vector2(lockedDir * 72f, 0f), 12, 1.2f);
@@ -1086,6 +1421,112 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, velocity, ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer, 14f);
             }
             if (AttackTimer >= cast + RainTicks + 8)
+            {
+                QueueMeleePressure(player);
+                EndAttack(80);
+            }
+        }
+
+        ///<summary>SWORD LINE DANCE: Sword Rain's sky spikes, laid out as a wall that WALKS IN from the far
+        ///side of the player toward Nito. Purpose: punish standing off at range by herding the target
+        ///toward him (the follow-up is always melee pressure).
+        ///
+        ///Spec card: rows 2 (phase 1) / 3 (phase 2), 60t apart. Each row = 6 columns, 72px apart, first
+        ///column 300px BEHIND the player (the outside edge), marching inward toward Nito, so the row
+        ///covers +300 -> -60px around the player's position at the row's spawn. Each column = 2 spikes
+        ///at +-18px (a ~50px block with ~22px gaps: too tight to stand in). Column n lands 24 + 9n ticks
+        ///after its row spawns, so the wave front travels 72/9 = 8 px/tick: about a player's run speed,
+        ///i.e. you can stay ahead of it by walking toward Nito but not by standing still. Every spike
+        ///owns its portal telegraph (NitoCeilingSpike delay, 24t minimum) directly above where it falls,
+        ///so the tell is exactly the danger column. Each row is re-anchored on the player's NEW position
+        ///and away-from-Nito side, so row 2 pushes again from wherever they retreated to. Per-player: the
+        ///whole layout repeats for every living player within 1600px. Spikes start straight above the
+        ///landing point (330px up, less under a low ceiling; a column under a wall is skipped).</summary>
+        void RunSwordLineDance(tsorcRevampGlobalNPC globalNPC, Player player)
+        {
+            const int ColumnsPerRow = 6;
+            const float ColumnSpacing = 72f;
+            const float OutsideMargin = 300f;
+            const float SpikeSpread = 18f;
+            const int ColumnStagger = 9;
+            const int ColumnPortalTicks = 24;
+            const int RowGap = 60;
+            const float SpawnHeight = 330f;
+            const float MinSpawnHeight = 60f;
+
+            int cast = Telegraph(34);
+            int rows = PhaseTwo ? 3 : 2;
+            int lastRowTick = cast + RowGap * (rows - 1);
+            globalNPC.AttackCommitted = AttackTimer <= lastRowTick;
+
+            if (AttackTimer == 1)
+            {
+                TelegraphCue(new Color(160, 160, 210));
+            }
+            if (AttackTimer < cast)
+            {
+                FacePlayer(player);
+                NPC.velocity.X *= 0.8f;
+
+                // Forecast the first row: bone dust in the sky along the line the columns will fill.
+                float forecastAway = player.Center.X >= NPC.Center.X ? 1f : -1f;
+                float forecastX = player.Center.X + forecastAway * OutsideMargin
+                    - forecastAway * ColumnSpacing * Main.rand.Next(ColumnsPerRow);
+                Dust dust = Dust.NewDustPerfect(new Vector2(forecastX, player.Center.Y - SpawnHeight + Main.rand.NextFloat(-14f, 14f)),
+                    DustID.BoneTorch, new Vector2(0f, Main.rand.NextFloat(0.4f, 1.4f)), 90, default, 1.1f);
+                dust.noGravity = true;
+            }
+
+            int ticksSinceCast = AttackTimer - cast;
+            if (Main.netMode != NetmodeID.MultiplayerClient && ticksSinceCast >= 0
+                && AttackTimer <= lastRowTick && ticksSinceCast % RowGap == 0)
+            {
+                for (int playerIndex = 0; playerIndex < Main.maxPlayers; playerIndex++)
+                {
+                    Player target = Main.player[playerIndex];
+                    if (!target.active || target.dead || NPC.Distance(target.Center) > 1600f)
+                    {
+                        continue;
+                    }
+
+                    float awayFromBoss = target.Center.X >= NPC.Center.X ? 1f : -1f;
+                    float anchorX = target.Center.X + awayFromBoss * OutsideMargin;
+
+                    for (int column = 0; column < ColumnsPerRow; column++)
+                    {
+                        float columnX = anchorX - awayFromBoss * ColumnSpacing * column;
+                        int delay = ColumnPortalTicks + column * ColumnStagger;
+
+                        // Stop 32px short of any ceiling so a spike never starts inside stone. A column
+                        // under a wall or a very low ceiling would start buried, so it is skipped.
+                        float spawnHeight = SpawnHeight;
+                        for (float probeHeight = 48f; probeHeight <= SpawnHeight; probeHeight += 16f)
+                        {
+                            Vector2 probe = new Vector2(columnX - 7f, target.Center.Y - probeHeight);
+                            if (Collision.SolidCollision(probe, 14, 14))
+                            {
+                                spawnHeight = probeHeight - 32f;
+                                break;
+                            }
+                        }
+                        if (spawnHeight < MinSpawnHeight)
+                        {
+                            continue;
+                        }
+
+                        for (int side = -1; side <= 1; side += 2)
+                        {
+                            Vector2 spawnPosition = new Vector2(columnX + side * SpikeSpread, target.Center.Y - spawnHeight);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, new Vector2(0f, 6f),
+                                ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer, delay);
+                        }
+                    }
+                }
+            }
+
+            // The spikes own their portal, fall and death; once the last row is out he can start a melee
+            // answer while it resolves (the point of the attack is to leave the player near him).
+            if (AttackTimer >= lastRowTick + 10)
             {
                 QueueMeleePressure(player);
                 EndAttack(80);
@@ -1244,7 +1685,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             }
             if (AttackTimer == LongChannelTicks && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<NitoDeathNova>(), DeathDamage, 5f, Main.myPlayer, 300f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<NitoDeathNova>(), DeathDamage, 5f, Main.myPlayer, DeathNovaRadius);
                 UsefulFunctions.ScreenShake(NPC.Center, 8f, 18);
             }
             if (AttackTimer >= LongChannelTicks + 48)
@@ -1419,7 +1860,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             }
             if (AttackTimer == 68)
             {
-                NPC.velocity.X = lockedDir * 3.2f;
+                NPC.velocity.X = lockedDir * 3.2f * SwipePushScale;
                 SpawnSlash(1, HeavySlashDamage);
             }
             if (AttackTimer > 68)
@@ -1558,7 +1999,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             }
             if (AttackTimer == cast + CleaveOffset)
             {
-                NPC.velocity.X = lockedDir * 3.2f;
+                NPC.velocity.X = lockedDir * 3.2f * SwipePushScale;
                 SpawnSlash(1, HeavySlashDamage);
                 NPC.netUpdate = true;
             }
@@ -1653,6 +2094,101 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             SlashWindupActive = false;
             SlashActiveKind = -1;
             DragRunLeapLaunched = false;
+            ThrustDashTicks = 0;
+            if (state == AttackState.SwordRain || state == AttackState.SwordLineDance)
+            {
+                RangedRainCharge = 0;
+            }
+
+            // Everything below rolls Main.rand, so it is server-only; clients receive the results in the
+            // netUpdate this method sets. (Only ComboRecovery ever reaches here on a client.)
+            TimingVariant = VariantStandard;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                NPC.netUpdate = true;
+                return;
+            }
+
+            if (state == AttackState.SideSweep || state == AttackState.BackhandSweep
+                || state == AttackState.OverheadCleave)
+            {
+                // Phase 2 leans on the odd rhythms: 25/40/35 Standard/Quick/Delayed vs 45/35/20 in phase 1.
+                float variantRoll = Main.rand.NextFloat();
+                float quickShare = PhaseTwo ? 0.40f : 0.35f;
+                float delayedShare = PhaseTwo ? 0.35f : 0.20f;
+
+                if (variantRoll < quickShare)
+                {
+                    TimingVariant = VariantQuick;
+                }
+                else if (variantRoll < quickShare + delayedShare)
+                {
+                    TimingVariant = VariantDelayed;
+                }
+            }
+
+            if (state == AttackState.TripleReaperCombo)
+            {
+                ComboLength = 3;
+                ComboEndStep = 2;
+                ComboKinds = 0 | (3 << 3) | (1 << 6); // side, backhand, overhead: the original triple
+            }
+            else if (state == AttackState.ReapersPendulum)
+            {
+                // Strict alternation of the two poles' side cuts: 0,3,0,3... or 3,0,3,0... Phase 2 runs
+                // 4-6 cuts, phase 1 runs 3.
+                ComboLength = PhaseTwo ? Main.rand.Next(4, MaxComboSteps + 1) : 3;
+                ComboEndStep = ComboLength - 1;
+                int firstPendulumKind = Main.rand.NextBool() ? 0 : 3;
+                ComboKinds = 0;
+
+                for (int step = 0; step < ComboLength; step++)
+                {
+                    int pendulumKind = step % 2 == 0 ? firstPendulumKind : 3 - firstPendulumKind;
+                    ComboKinds |= pendulumKind << (3 * step);
+                }
+            }
+            else if (state == AttackState.ReaperWeave)
+            {
+                // A random chain that alternates poles. From the UP-BACK pole the next cut may be a side
+                // sweep (0) or an overhead cleave (1); from the DOWN-FORWARD pole it may be a backhand (3)
+                // or a rising cut (4). Any of those starts exactly where the last one ended, so the blade
+                // never snaps. Phase 1 runs 2-3 cuts, phase 2 runs 4-5 (the finisher is always the heavy).
+                ComboLength = PhaseTwo ? Main.rand.Next(4, 6) : Main.rand.Next(2, 4);
+                ComboEndStep = ComboLength - 1;
+                bool atUpBackPole = Main.rand.NextBool();
+                ComboKinds = 0;
+
+                for (int step = 0; step < ComboLength; step++)
+                {
+                    bool finisher = step == ComboLength - 1;
+                    bool pickHeavierCut = finisher || Main.rand.NextBool(); // overhead / rising vs side / backhand
+                    int weaveKind;
+
+                    if (atUpBackPole)
+                    {
+                        weaveKind = 0;
+
+                        if (pickHeavierCut)
+                        {
+                            weaveKind = 1;
+                        }
+                    }
+                    else
+                    {
+                        weaveKind = 3;
+
+                        if (pickHeavierCut)
+                        {
+                            weaveKind = 4;
+                        }
+                    }
+
+                    ComboKinds |= weaveKind << (3 * step);
+                    atUpBackPole = !atUpBackPole;
+                }
+            }
+
             NPC.netUpdate = true;
         }
 
@@ -1787,7 +2323,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             float horizontal = Math.Abs(player.Center.X - NPC.Center.X);
             float vertical = Math.Abs(player.Center.Y - NPC.Center.Y);
             AttackState followUp;
-            if (vertical > 135f || horizontal > 700f)
+            if (vertical > 135f || horizontal > ImpalingThrustMaxRange)
             {
                 followUp = AttackState.LeapingCleave;
             }
@@ -1795,13 +2331,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 followUp = AttackState.ImpalingThrust;
             }
-            else if (horizontal > 330f)
+            else if (horizontal > 200f)
             {
-                followUp = AttackState.DraggingAdvance;
+                followUp = AttackState.DraggingAdvance; // just under the dash's 410px floor: run in, then leap
             }
             else
             {
-                followUp = AttackState.OverheadCleave;
+                followUp = AttackState.ReaperWeave; // already in range: straight into a chained combo
             }
             QueueFollowUp(followUp, player);
         }
@@ -1846,20 +2382,27 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         ///<summary>Grounded, whole-body attack movement for Nito's fixed sprite rig. This is deliberately
         ///faster than his 0.62 idle walk but remains a heavy advance rather than a player-speed chase.
         ///Call with updateFacing only during the readable approach portion; callers stop re-facing at
-        ///their decision-lock tick so the final strike cannot rotate through a successful dodge.</summary>
+        ///their decision-lock tick so the final strike cannot rotate through a successful dodge.
+        ///Both the speed and the acceleration are multiplied by ApproachScale (1.5x in phase one, 1.9x in
+        ///phase two) so his melee actually closes the gap. This is attack movement only: the idle walk
+        ///(FighterAI 0.62) is not scaled.</summary>
         void AdvanceTowardPlayer(Player player, float topSpeed, float acceleration, bool updateFacing)
         {
             if (updateFacing)
             {
                 FacePlayer(player);
             }
-            float desiredVelocity = lockedDir * topSpeed;
+            float approachScale = ApproachScale;
+            float scaledTopSpeed = topSpeed * approachScale;
+            float scaledAcceleration = Math.Min(1f, acceleration * approachScale);
+
+            float desiredVelocity = lockedDir * scaledTopSpeed;
             NPC.velocity.X = MathHelper.Clamp(
-                MathHelper.Lerp(NPC.velocity.X, desiredVelocity, acceleration), -topSpeed, topSpeed);
+                MathHelper.Lerp(NPC.velocity.X, desiredVelocity, scaledAcceleration), -scaledTopSpeed, scaledTopSpeed);
             FootstepEffects();
         }
 
-        void SpawnSlash(int kind, int damage)
+        void SpawnSlash(int kind, int damage, int style = StyleLegacy)
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = kind == 1 ? -0.25f : 0.05f }, NPC.Center);
             // The loose sword layer now plays the visible swing itself (see PreDraw's active-window);
@@ -1868,6 +2411,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             SlashActiveKind = kind;
             SlashActiveStartTick = AttackTimer;
             SlashActiveDirection = lockedDir;
+            SlashActiveStyle = style;
             int finalDamage = damage;
             if (PhaseTwo)
             {
@@ -1883,9 +2427,11 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 return;
             }
             NPC.netUpdate = true;
+            // ai[1] packs the swing kind (0-4) with its timing style (kind + style * 8) so the hitbox
+            // can rebuild the exact same eased arc.
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
                 ModContent.ProjectileType<NitoSwordSlash>(), finalDamage, 5f, Main.myPlayer,
-                NPC.whoAmI, kind, SlashActiveDirection);
+                NPC.whoAmI, kind + style * 8, SlashActiveDirection);
         }
 
         void KillOwnedSwordSlashes()
@@ -1904,12 +2450,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         ///<summary>Arms the loose sword's windup: it lerps from the idle pose toward this kind's
         ///swing-start pose over [windupStartTick, releaseTick]. Call once per slash, at (or just
         ///before) the tick the windup should visibly begin.</summary>
-        void ArmSlashWindup(int kind, int windupStartTick, int releaseTick)
+        void ArmSlashWindup(int kind, int windupStartTick, int releaseTick, bool chained = false)
         {
             SlashWindupKind = kind;
             SlashWindupStartTick = windupStartTick;
             SlashWindupEndTick = Math.Max(windupStartTick + 1, releaseTick);
             SlashWindupActive = true;
+            SlashWindupChained = chained;
         }
 
         // ── Shared swing geometry (used by BOTH the boss draw and the NitoSwordSlash hitbox) ─────
@@ -1927,6 +2474,32 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         };
 
         public static float SlashReach(int kind, float progress) => kind == 2 ? 60f + progress * 120f : 82f;
+
+        ///<summary>Total ticks the visible swing (and its hitbox projectile) lasts for a style.</summary>
+        public static int SlashStyleTicks(int style) =>
+            style == StyleLegacy ? SlashActiveTicks : SlashStyles[style].TotalTicks;
+
+        ///<summary>Ticks from release the blade is still a hitbox (speed >= 30% of peak). Legacy is live throughout.</summary>
+        public static float SlashArmedTicks(int style) =>
+            style == StyleLegacy ? SlashActiveTicks : SlashStyles[style].LiveTicks;
+
+        ///<summary>Swing progress the blade finishes at: 1 for Legacy, EasedOvershoot for the eased styles.</summary>
+        public static float SlashEndProgress(int style) => style == StyleLegacy ? 1f : EasedOvershoot;
+
+        ///<summary>Swing progress (0 to SlashEndProgress) after the given ticks since release. The boss
+        ///draw and the NitoSwordSlash hitbox BOTH read this, so the visible blade and the hit line can't
+        ///drift apart. Feed the result to SlashPhi / SlashReach / SlashOffset.</summary>
+        public static float SlashEasedProgress(int style, float elapsedTicks)
+        {
+            if (style == StyleLegacy)
+            {
+                return MathHelper.Clamp(elapsedTicks / SlashActiveTicks, 0f, 1f);
+            }
+
+            WeightedSwing curve = SlashStyles[style];
+            return SwingEase.ApplyWeighted(0f, EasedOvershoot, elapsedTicks, curve.TotalTicks,
+                curve.EaseInTicks, curve.EaseOutTicks, curve.EaseOutDecay);
+        }
 
         ///<summary>World-space angle the blade points at, for a given facing (dir) and swing progress.</summary>
         public static float SlashWorldAngle(int kind, int dir, float progress)
@@ -2239,7 +2812,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             // spriteDirection < 0 — the exact opposite — while the sword layer below correctly flipped
             // on >= 0, so body and blade mirrored OPPOSITELY: Nito's body always turned AWAY from the
             // player while his sword pointed at them. That is the "still facing wrong direction" bug.
-            int activeEndTick = SlashActiveStartTick + SlashActiveTicks;
+            int activeEndTick = SlashActiveStartTick + SlashActiveLength;
             bool activeSlashPose = State != AttackState.None && SlashActiveKind >= 0
                 && AttackTimer >= SlashActiveStartTick && AttackTimer <= activeEndTick;
             // The active projectile stores the same release direction in ai[2]. Even if a combo has
@@ -2260,11 +2833,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             float reach = SwordIdleReach;
             if (State != AttackState.None)
             {
-                int activeEnd = SlashActiveStartTick + SlashActiveTicks;
+                int activeEnd = SlashActiveStartTick + SlashActiveLength;
+                float endProgress = SlashEndProgress(SlashActiveStyle);
                 if (SlashActiveKind >= 0 && AttackTimer >= SlashActiveStartTick && AttackTimer <= activeEnd)
                 {
-                    // The visible swing itself (mirrors the invisible NitoSwordSlash hitbox arc).
-                    float progress = MathHelper.Clamp((AttackTimer - SlashActiveStartTick) / (float)SlashActiveTicks, 0f, 1f);
+                    // The visible swing itself (mirrors the invisible NitoSwordSlash hitbox arc). Both read
+                    // the same eased progress, so the blade and the hit line stay together through the tail.
+                    float progress = SlashEasedProgress(SlashActiveStyle, AttackTimer - SlashActiveStartTick);
                     phi = SlashPhi(SlashActiveKind, progress);
                     reach = SlashReach(SlashActiveKind, progress);
                 }
@@ -2272,17 +2847,31 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 {
                     // Ease back to idle after the swing (unless a combo's next windup already armed).
                     float progress = MathHelper.Clamp((AttackTimer - activeEnd) / (float)SlashReturnTicks, 0f, 1f);
-                    phi = MathHelper.Lerp(SlashPhi(SlashActiveKind, 1f), idlePhi, progress);
-                    reach = MathHelper.Lerp(SlashReach(SlashActiveKind, 1f), SwordIdleReach, progress);
+                    float returnEase = 1f - (float)Math.Pow(1f - progress, 2f);
+                    phi = MathHelper.Lerp(SlashPhi(SlashActiveKind, endProgress), idlePhi, returnEase);
+                    reach = MathHelper.Lerp(SlashReach(SlashActiveKind, endProgress), SwordIdleReach, returnEase);
                 }
                 else if (SlashWindupActive)
                 {
-                    // Wind up from idle toward the swing's start pose.
+                    // Wind up toward the swing's start pose. Ease-OUT (1-(1-t)^2.6): the blade reaches most
+                    // of the cocked pose early and then creeps the last part, so the tell ends on a long
+                    // settle instead of a linear stop. A chained windup starts from the previous swing's
+                    // end pose (the hold between two cuts) rather than from the idle rest.
                     float windupProgress = SlashWindupEndTick > SlashWindupStartTick
                         ? MathHelper.Clamp((AttackTimer - SlashWindupStartTick) / (float)(SlashWindupEndTick - SlashWindupStartTick), 0f, 1f)
                         : 1f;
-                    phi = MathHelper.Lerp(idlePhi, SlashPhi(SlashWindupKind, 0f), windupProgress);
-                    reach = MathHelper.Lerp(SwordIdleReach, SlashReach(SlashWindupKind, 0f), windupProgress);
+                    float windupEase = 1f - (float)Math.Pow(1f - windupProgress, 2.6f);
+                    float fromPhi = idlePhi;
+                    float fromReach = SwordIdleReach;
+
+                    if (SlashWindupChained && SlashActiveKind >= 0)
+                    {
+                        fromPhi = SlashPhi(SlashActiveKind, endProgress);
+                        fromReach = SlashReach(SlashActiveKind, endProgress);
+                    }
+
+                    phi = MathHelper.Lerp(fromPhi, SlashPhi(SlashWindupKind, 0f), windupEase);
+                    reach = MathHelper.Lerp(fromReach, SlashReach(SlashWindupKind, 0f), windupEase);
                 }
                 // else: a non-sword cast (bones/nova/etc.) — the blade simply rests at idle.
             }
@@ -2343,6 +2932,44 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 }
             }
             spriteBatch.Draw(sword, swordDrawPosition, null, drawColor, swordRotation, swordOrigin, swordScale, swordEffects, 0f);
+
+            // Dash tell: the sword flashes pure white for ThrustFlashTicks starting ThrustFlashLeadTicks
+            // before the launch. Snaps on over 2 ticks, then fades as (1-t)^2 so it reads as a flash, not
+            // a glow. Derived from AttackTimer, so clients draw the same flash with no extra sync.
+            bool dashTell = State == AttackState.ImpalingThrust || (State == AttackState.FollowUpSlash && lockedKind == 2);
+            int flashTick = AttackTimer - ThrustFlashStartTick;
+            if (dashTell && flashTick >= 0 && flashTick < ThrustFlashTicks)
+            {
+                float flashFade = 1f - flashTick / (float)ThrustFlashTicks;
+                float flashRamp = Math.Min(1f, (flashTick + 1) / 2f);
+                float flashIntensity = flashRamp * flashFade * flashFade;
+
+                // A drawn sprite is tinted by its own pixels, so a dark blade can't be flashed white by
+                // colour alone. Build a premultiplied-white copy of the sword (same alpha) once.
+                if (swordSilhouette == null || swordSilhouette.IsDisposed)
+                {
+                    Color[] silhouettePixels = new Color[sword.Width * sword.Height];
+                    sword.GetData(silhouettePixels);
+
+                    for (int i = 0; i < silhouettePixels.Length; i++)
+                    {
+                        int alpha = silhouettePixels[i].A;
+                        silhouettePixels[i] = new Color(alpha, alpha, alpha, alpha);
+                    }
+
+                    swordSilhouette = new Texture2D(Main.graphics.GraphicsDevice, sword.Width, sword.Height);
+                    swordSilhouette.SetData(silhouettePixels);
+                }
+
+                // Alpha 0 = additive under Terraria's premultiplied blend (the phase-2 glow above uses
+                // the same trick). Second, wider pass at lower strength is the halo around the blade.
+                Color flashColor = new Color(255, 255, 255, 0) * flashIntensity;
+                Color haloColor = new Color(255, 255, 255, 0) * (flashIntensity * 0.4f);
+                Vector2 haloScale = new Vector2(swordScale.X * 1.04f, swordScale.Y * 1.7f);
+                spriteBatch.Draw(swordSilhouette, swordDrawPosition, null, haloColor, swordRotation, swordOrigin, haloScale, swordEffects, 0f);
+                spriteBatch.Draw(swordSilhouette, swordDrawPosition, null, flashColor, swordRotation, swordOrigin, swordScale, swordEffects, 0f);
+            }
+
             float bodyOriginX = faceRight ? BodyWidth - BodyDrawCenterX : BodyDrawCenterX;
             spriteBatch.Draw(body, drawBottom - screenPos, frame, drawColor, NPC.rotation, new Vector2(bodyOriginX, FrameHeight), NPC.scale, effects, 0f);
             return false;

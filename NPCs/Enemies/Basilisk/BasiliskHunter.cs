@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         int disruptDamage = 43;
         int bioSpitDamage = 45;
         int bioSpitfinalDamage = 50;
-        int leechTongueDamage = 20;
+        int leechTongueDamage = 30;
         int leechTongueTimer;
         public override void SetStaticDefaults()
         {

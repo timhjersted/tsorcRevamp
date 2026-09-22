@@ -39,6 +39,9 @@ namespace SwingPreview
         public float FlailTargetX;
         public float FlailTargetY;
         public string FlailTargetLabel;
+        /// <summary>Horizontal world movement from the first frame. Used by moving projectile demos
+        /// so the puppet, hand and chain translate together while a fixed target remains fixed.</summary>
+        public float OwnerOffsetX;
     }
 
     /// <summary>Which sprite sheets to composite, and the handful of numbers the pose maths needs.</summary>
@@ -187,11 +190,11 @@ namespace SwingPreview
                 float maxFlailY = 0f;
                 foreach (PoseFrame pose in allFrames)
                 {
-                    maxFlailX = Math.Max(maxFlailX, Math.Abs(pose.FlailOffsetX));
+                    maxFlailX = Math.Max(maxFlailX, Math.Abs(pose.OwnerOffsetX + pose.FlailOffsetX));
                     maxFlailY = Math.Max(maxFlailY, Math.Abs(pose.FlailOffsetY));
                     if (pose.FlailHasTarget)
                     {
-                        maxFlailX = Math.Max(maxFlailX, Math.Abs(pose.FlailTargetX));
+                        maxFlailX = Math.Max(maxFlailX, Math.Abs(pose.OwnerOffsetX + pose.FlailTargetX));
                         maxFlailY = Math.Max(maxFlailY, Math.Abs(pose.FlailTargetY));
                     }
                 }
@@ -212,7 +215,7 @@ namespace SwingPreview
             g.SmoothingMode = SmoothingMode.None;
 
             g.ScaleTransform(zoom, zoom);
-            g.TranslateTransform(PadX, PadY);
+            g.TranslateTransform(PadX + frame.OwnerOffsetX, PadY);
 
             // Facing left is drawn as the exact mirror of the right-facing pose, about the body cell's
             // centre - which is what the game produces (vanilla flips every layer with the sprite,

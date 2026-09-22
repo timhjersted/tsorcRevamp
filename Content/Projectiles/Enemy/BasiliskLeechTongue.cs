@@ -12,13 +12,24 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 {
     internal class BasiliskLeechTongue : ModProjectile
     {
-        public const float Gravity = 0.16f;
+        public const float Gravity = 0.5f;
 
         private const int StateFlying = 0;
         private const int StateAttached = 1;
         private const int StateRetracting = 2;
-        private const float MaxLength = 620f;
-        private const int MaxFlightTicks = 105;
+        // The tongue detaches at 35 tiles, while a fired tongue can reach 45 tiles before its
+        // 7.5-tile follow-through retracts. This keeps escape from an attachment achievable.
+        public const float MaxAttachedLength = 35f * 16f;
+        public const float MaxLaunchRange = 45f * 16f;
+        public const float LaunchOvershoot = 7.5f * 16f;
+        private const float MaxFlightLength = MaxLaunchRange + LaunchOvershoot;
+        private const float LongRangePullDestination = 10f * 16f;
+        private const float LongRangePullMaxSpeed = 22f;
+        private const float AttachedPullMaxSpeed = 8f;
+        private const int AttachedPullTicks = 18;
+        private const int LongRangePullMaxTicks = 90;
+        private const float TetherBreakDamageFraction = 0.5f;
+        private const int MaxFlightTicks = 120;
         private const int DrainInterval = 30;
         private const int HurtSoundInterval = 300;
         private const float HeadAttachOffset = 10f;
@@ -32,6 +43,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         private int hurtSoundTimer;
         private int ownerDamageTakenWhileAttached;
         private int pendingOwnerHeal;
+        private int longRangePullTimer;
+        private int attachedPullTimer;
+        private bool longRangePull;
+        private bool tetherBreakBloodPending;
 
 
         public override void SetStaticDefaults()
@@ -117,7 +132,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 dust.noGravity = true;
             }
 
-            if (launchTimer > MaxFlightTicks || Projectile.Distance(GetMouthPosition(owner)) > MaxLength)
+            if (launchTimer > MaxFlightTicks || Projectile.Distance(GetMouthPosition(owner)) > MaxFlightLength)
             {
                 StartRetract();
             }
@@ -138,9 +153,23 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
+            float tetherDistance = Projectile.Distance(GetMouthPosition(owner));
+            if (!longRangePull && Main.netMode != NetmodeID.MultiplayerClient && tetherDistance > MaxAttachedLength)
+            {
+                BreakTether(owner, player);
+                return;
+            }
+
+            UpdateAttachmentPull(owner, player);
+            if (!longRangePull && Main.netMode != NetmodeID.MultiplayerClient && tetherDistance > MaxAttachedLength)
+            {
+                BreakTether(owner, player);
+                return;
+            }
+
             Projectile.Center = GetPlayerHeadAnchor(player);
             Projectile.velocity = Vector2.Zero;
-            player.AddBuff(BuffID.Confused, 60, false);
+            player.AddBuff(BuffID.Blackout, 60, false);
 
             hurtSoundTimer++;
             if (hurtSoundTimer >= HurtSoundInterval)
@@ -166,6 +195,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         private void RetractAI(NPC owner)
         {
+            SpawnTetherBreakBlood();
             Projectile.hostile = false;
             Projectile.tileCollide = false;
 
@@ -183,6 +213,22 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
 
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, toMouth.SafeNormalize(Vector2.Zero) * 18f, 0.28f);
+        }
+
+        private void SpawnTetherBreakBlood()
+        {
+            if (!tetherBreakBloodPending || Main.dedServ)
+            {
+                return;
+            }
+
+            tetherBreakBloodPending = false;
+            for (int i = 0; i < 200; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(10f, 10f);
+                Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(12f, 18f), DustID.Blood, velocity, 80, Color.DarkRed, Main.rand.NextFloat(1.1f, 2f));
+                dust.noGravity = false;
+            }
         }
 
         private void DrainPlayer(NPC owner, Player player)
@@ -248,8 +294,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
 
             float collisionPoint = 0f;
+            float grabWidth = Projectile.width + GrabPadding * 2f;
             Vector2 previousCenter = Projectile.Center - Projectile.velocity;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), previousCenter, Projectile.Center, Projectile.width + GrabPadding * 2f, ref collisionPoint);
+            Vector2 nextCenter = Projectile.Center + Projectile.velocity;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), previousCenter, Projectile.Center, grabWidth, ref collisionPoint)
+                || Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, nextCenter, grabWidth, ref collisionPoint);
         }
 
         private bool CanGrabPlayer => (int)Projectile.ai[1] == StateFlying;
@@ -264,7 +313,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player player = Main.player[i];
-                if (player.active && !player.dead && Colliding(Projectile.Hitbox, player.Hitbox) == true)
+                if (player.active && !player.dead && (TipSpriteTouchesPlayer(player) || Colliding(Projectile.Hitbox, player.Hitbox) == true))
                 {
                     AttachToPlayer(player);
                     return true;
@@ -272,6 +321,26 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
 
             return false;
+        }
+
+        private bool TipSpriteTouchesPlayer(Player player)
+        {
+            // The 22x22 projectile hitbox matches each frame of BasiliskLeechTongue.png. Build a
+            // swept rectangle across the previous, current, and next centres so any visible-frame
+            // overlap during this update attaches instead of slipping between collision checks.
+            Vector2 previousCenter = Projectile.Center - Projectile.velocity;
+            Vector2 nextCenter = Projectile.Center + Projectile.velocity;
+            Rectangle sweptTip = Rectangle.Union(GetTipSpriteHitbox(previousCenter), GetTipSpriteHitbox(Projectile.Center));
+            sweptTip = Rectangle.Union(sweptTip, GetTipSpriteHitbox(nextCenter));
+            sweptTip.Inflate(1, 1); // Integer position rounding must not create a one-pixel whiff.
+            return sweptTip.Intersects(player.Hitbox);
+        }
+
+        private Rectangle GetTipSpriteHitbox(Vector2 center)
+        {
+            int width = (int)System.Math.Ceiling(Projectile.width * Projectile.scale);
+            int height = (int)System.Math.Ceiling(Projectile.height * Projectile.scale);
+            return new Rectangle((int)System.Math.Floor(center.X - width * 0.5f), (int)System.Math.Floor(center.Y - height * 0.5f), width, height);
         }
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
@@ -289,22 +358,93 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         private void AttachToPlayer(Player target)
         {
             targetWho = target.whoAmI;
+            longRangePull = false;
             if (TryGetOwner(out NPC owner))
             {
                 attachLife = owner.life;
+                longRangePull = Vector2.Distance(GetMouthPosition(owner), GetPlayerHeadAnchor(target)) > MaxAttachedLength;
             }
 
             Projectile.ai[1] = StateAttached;
             Projectile.hostile = false;
             Projectile.tileCollide = false;
             Projectile.velocity = Vector2.Zero;
+            Projectile.scale = 1f;
             Projectile.Center = GetPlayerHeadAnchor(target);
             drainTimer = 0;
             hurtSoundTimer = HurtSoundInterval - 1;
             ownerDamageTakenWhileAttached = 0;
             pendingOwnerHeal = 0;
+            longRangePullTimer = 0;
+            attachedPullTimer = 0;
             Projectile.netUpdate = true;
             SoundEngine.PlaySound(SoundID.NPCHit13 with { Volume = 0.55f, Pitch = 0.25f }, Projectile.Center);
+        }
+
+        private void UpdateAttachmentPull(NPC owner, Player player)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Vector2 mouth = GetMouthPosition(owner);
+            float distanceToMouth = Vector2.Distance(player.Center, mouth);
+            attachedPullTimer++;
+            if (longRangePull && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                longRangePullTimer++;
+                if (distanceToMouth <= LongRangePullDestination || longRangePullTimer >= LongRangePullMaxTicks)
+                {
+                    longRangePull = false;
+                    Projectile.netUpdate = true;
+                }
+            }
+
+            if (distanceToMouth <= LongRangePullDestination || (!longRangePull && attachedPullTimer > AttachedPullTicks))
+            {
+                return;
+            }
+
+            // Every attachment opens with an 18-tick tug. Long-range captures pull harder until
+            // they reach the 10-tile stand-off; velocity preserves collision with solid terrain.
+            float maxSpeed = longRangePull ? LongRangePullMaxSpeed : AttachedPullMaxSpeed;
+            float pullStrength = longRangePull ? 0.25f : 0.05f;
+            float response = longRangePull ? 0.5f : 0.22f;
+            float pullSpeed = MathHelper.Clamp((distanceToMouth - LongRangePullDestination) * pullStrength, 2f, maxSpeed);
+            Vector2 desiredVelocity = (mouth - player.Center).SafeNormalize(Vector2.Zero) * pullSpeed;
+            player.velocity = Vector2.Lerp(player.velocity, desiredVelocity, response);
+
+            if (Main.netMode == NetmodeID.Server && Projectile.timeLeft % 3 == 0)
+            {
+                NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI);
+            }
+        }
+
+        private void BreakTether(NPC owner, Player player)
+        {
+            int damage = System.Math.Max(1, (int)System.Math.Ceiling(player.statLifeMax2 * TetherBreakDamageFraction));
+            PlayerDeathReason deathReason = PlayerDeathReason.ByProjectile(-1, Projectile.whoAmI);
+            player.statLife -= damage;
+            Projectile.Center = GetPlayerHeadAnchor(player);
+            tetherBreakBloodPending = true;
+
+            if (Main.netMode != NetmodeID.Server)
+            {
+                CombatText.NewText(player.Hitbox, CombatText.DamagedFriendly, damage);
+            }
+
+            if (player.statLife <= 0)
+            {
+                player.KillMe(deathReason, damage, player.Center.X < owner.Center.X ? -1 : 1, false);
+            }
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI);
+            }
+
+            StartRetract();
         }
 
         public static void NotifyOwnerHit(NPC owner, int damageDone)
@@ -484,6 +624,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             writer.Write(hurtSoundTimer);
             writer.Write(ownerDamageTakenWhileAttached);
             writer.Write(pendingOwnerHeal);
+            writer.Write(longRangePullTimer);
+            writer.Write(attachedPullTimer);
+            writer.Write(longRangePull);
+            writer.Write(tetherBreakBloodPending);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -495,6 +639,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             hurtSoundTimer = reader.ReadInt32();
             ownerDamageTakenWhileAttached = reader.ReadInt32();
             pendingOwnerHeal = reader.ReadInt32();
+            longRangePullTimer = reader.ReadInt32();
+            attachedPullTimer = reader.ReadInt32();
+            longRangePull = reader.ReadBoolean();
+            tetherBreakBloodPending = reader.ReadBoolean();
         }
     }
 }

@@ -81,6 +81,11 @@ namespace tsorcRevamp
         /// Shields read this to decide whether to apply their classic passive bonuses or defer to active blocking.</summary>
         public static bool ActiveFor(Player player) => RevampActive && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode;
 
+        /// <summary>True for a raised shield or, on the owning client, an eligible shield input that has not yet
+        /// reached <see cref="ProcessTriggers"/> this frame. Item and quick-use hooks can precede that update.</summary>
+        public bool IsBlockingOrRaisingShield => isBlocking
+            || (Player.whoAmI == Main.myPlayer && ComputeBlocking());
+
         public override void PreUpdate()
         {
             if (blockLockTimer > 0)
@@ -1433,8 +1438,10 @@ namespace tsorcRevamp
 
         public override bool CanUseItem(Item item)
         {
-            // Can't attack while a shield is raised.
-            if (isBlocking && item.damage > 0 && item.useStyle != ItemUseStyleID.None)
+            // Can't attack or use an instant healing item while a shield is raised. Quick Heal and
+            // Quick Mana bypass ItemCheck, so MethodSwaps applies this same guard to those paths.
+            if (IsBlockingOrRaisingShield && ((item.damage > 0 && item.useStyle != ItemUseStyleID.None)
+                || item.healLife > 0))
             {
                 return false;
             }

@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         int cursedBreathDamage = 13;
         int hypnoticDisruptorDamage = 18;
         int bioSpitDamage = 18;
-        int leechTongueDamage = 10;
+        int leechTongueDamage = 20;
         int leechTongueTimer;
 
 

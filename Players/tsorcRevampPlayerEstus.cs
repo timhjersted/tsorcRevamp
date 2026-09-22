@@ -177,6 +177,16 @@ namespace tsorcRevamp
                 return;
             }
 
+            // Quick Heal normally refuses while guarding, but its input hook can run before the
+            // shield update. Keep the actual flask state machine authoritative: a raised shield
+            // can never advance an Estus drink or consume a charge.
+            if (Player.GetModPlayer<tsorcRevampActiveShieldPlayer>().IsBlockingOrRaisingShield)
+            {
+                IsDrinking = false;
+                EstusDrinkTimer = 0f;
+                return;
+            }
+
             //Slow player for whole duration of action
             Player.velocity.X *= 0.9f;
             Player.eocHit = 0;

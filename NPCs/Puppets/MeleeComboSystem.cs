@@ -781,6 +781,27 @@ namespace tsorcRevamp.NPCs.Puppets
             },
         };
 
+        /// <summary>Optional aimed two-hit chains. The projectile owns both strikes and captures
+        /// each target point server-side; owners must provide the front-lane selection gate.</summary>
+        public static readonly MeleeCombo[] FlailCrosses = new[]
+        {
+            // Chain Cross spec card:
+            // Tell 40t: harmless counter-clockwise 1.25-turn 60px orbit, full chain-aligned arm.
+            // Lash 1: 16t weighted arc to a server-locked front target; frames 3-16 live (14t).
+            // Carry: 30t harmless far-side reacquire. Lash 2: another 16t 14-frame window only if
+            // the player remains in front at the second server lock. The live starts are 46t apart,
+            // so both hits clear 40t post-hit immunity and a late roller has its 30t re-roll back.
+            // Tail: 18t retract, then 90t recovery. Counter: roll either lash or cross behind during
+            // the carry to cancel the second branch. Visual reach is capped at 200px (12.5 tiles).
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.ChainCrossName, BaseWeight = 45,
+                Preferred = ComboRangeBand.Mid, InitialFlashColor = Color.Cyan,
+                CooldownAfterUse = 300, RecoveryTicks = 90, MoveBrake = 0.10f,
+                Steps = new[] { S(ComboMotion.FlailBrace, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.ChainCrossAttackTicks, 0, 1.05f, 1f) }
+            },
+        };
+
         /// <summary>Optional mace reactions that require an owning NPC to establish their live
         /// branch condition. These must never enter an ordinary weighted pool without that gate.</summary>
         public static readonly MeleeCombo[] FlailReactiveFollowups = new[]

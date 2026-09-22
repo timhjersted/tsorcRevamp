@@ -141,6 +141,15 @@ namespace tsorcRevamp.Systems
             {
                 return;
             }
+
+            // Mirror Estus: even if a quick-use input beats the shield hook for one frame, a
+            // raised shield cannot advance a Cerulean drink or consume a charge.
+            if (Player.GetModPlayer<tsorcRevampActiveShieldPlayer>().IsBlockingOrRaisingShield)
+            {
+                IsDrinking = false;
+                CeruleanDrinkTimer = 0f;
+                return;
+            }
             
             if (arcaneSorceryPlayer.ArcaneSorcerer)
             {

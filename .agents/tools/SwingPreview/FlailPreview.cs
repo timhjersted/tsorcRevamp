@@ -32,10 +32,14 @@ namespace SwingPreview
         public readonly float TargetX;
         public readonly float TargetY;
         public readonly string TargetLabel;
+        /// <summary>Horizontal world travel of the owner from its pose at tick zero. Most flails
+        /// leave this at zero; Chainstorm uses it so the body, chain and fixed target read together.</summary>
+        public readonly float OwnerOffsetX;
 
         public FlailPreviewSample(float x, float y, float rotation, bool damageActive, string stage,
             float armRotation, bool visible = true,
-            bool hasTarget = false, float targetX = 0f, float targetY = 0f, string targetLabel = null)
+            bool hasTarget = false, float targetX = 0f, float targetY = 0f, string targetLabel = null,
+            float ownerOffsetX = 0f)
         {
             Visible = visible;
             X = x;
@@ -49,6 +53,7 @@ namespace SwingPreview
             TargetX = targetX;
             TargetY = targetY;
             TargetLabel = targetLabel;
+            OwnerOffsetX = ownerOffsetX;
         }
     }
 
@@ -89,6 +94,39 @@ namespace SwingPreview
          */
         private static readonly FlailPreviewDefinition[] Definitions =
         {
+            new FlailPreviewDefinition
+            {
+                Name = "Chainfall Overhead",
+                TelegraphTicks = StandardTell,
+                AttackTicks = 18 + 18,
+                RecoveryTicks = 60,
+                TimingSummary = "One 60px harmless orbit; 18t Smoother expanding 90-degree overhead arc (60->240px) live; 18t retract; filtered chain-following arm",
+                TelegraphSample = StandardOrbitTell,
+                AttackSample = Chainfall,
+                RecoverySample = RecoveryPose,
+            },
+            new FlailPreviewDefinition
+            {
+                Name = "Chainrise Underhand",
+                TelegraphTicks = StandardTell,
+                AttackTicks = 18 + 18,
+                RecoveryTicks = 60,
+                TimingSummary = "One 60px harmless orbit; 18t Smoother expanding 90-degree underhand arc (60->240px) live; 18t retract; filtered chain-following arm",
+                TelegraphSample = StandardOrbitTell,
+                AttackSample = Chainrise,
+                RecoverySample = RecoveryPose,
+            },
+            new FlailPreviewDefinition
+            {
+                Name = "Advancing Chainstorm",
+                TelegraphTicks = StandardTell,
+                AttackTicks = 36 * 4 + 18,
+                RecoveryTicks = 120,
+                TimingSummary = "One 60px harmless orbit; 36t Smoother expansion to 240px, then three 36t live rotations; owner advances 1.596px/t while live; 18t retract; filtered chain-following arm",
+                TelegraphSample = StandardOrbitTell,
+                AttackSample = Chainstorm,
+                RecoverySample = RecoveryPose,
+            },
             new FlailPreviewDefinition
             {
                 Name = "Chain Cross",
@@ -135,7 +173,7 @@ namespace SwingPreview
             },
         };
 
-        internal const string Known = "Chain Cross, Reverse Halo, Ankle Reaper, Backlash Reversal";
+        internal const string Known = "Chainfall Overhead, Chainrise Underhand, Advancing Chainstorm, Chain Cross, Reverse Halo, Ankle Reaper, Backlash Reversal";
 
         internal static IReadOnlyList<FlailPreviewDefinition> Resolve(string query)
         {
@@ -168,6 +206,139 @@ namespace SwingPreview
                 return definition.RecoverySample(recoveryTick);
             }
             return default;
+        }
+
+        // Matches the common authored-pattern tell in EnemyFlailProjectileBase: facing right begins
+        // at 9 o'clock, makes one full clockwise screen-space turn, and returns to the release side.
+        private static FlailPreviewSample StandardOrbitTell(int tick)
+        {
+            float progress = tick / (float)StandardTell;
+            float angle = MathF.PI + MathF.Tau * progress;
+            return Polar(CloseRadius, angle, tick * 0.25f, false, "harmless 60px orbit",
+                GenericArmAfterTellTick(tick));
+        }
+
+        private static FlailPreviewSample Chainfall(int tick) => DirectionalChainSwing(tick, overhead: true);
+
+        private static FlailPreviewSample Chainrise(int tick) => DirectionalChainSwing(tick, overhead: false);
+
+        private static FlailPreviewSample DirectionalChainSwing(int tick, bool overhead)
+        {
+            const int swingTicks = 18;
+            const int retractTicks = 18;
+            float direction = overhead ? 1f : -1f;
+
+            if (tick < swingTicks)
+            {
+                float progress = (tick + 1f) / swingTicks;
+                float eased = Smoother(progress);
+                float angle = MathF.PI + direction * MathF.PI * 0.5f * eased;
+                float radius = Lerp(CloseRadius, 240f, eased);
+                return Polar(radius, angle, tick * direction * 0.35f, true,
+                    overhead ? "overhead expansion live" : "underhand expansion live",
+                    GenericArmAfterDirectionalTick(tick, overhead));
+            }
+
+            float retract = Smoother((tick - swingTicks + 1f) / retractTicks);
+            float finalAngle = MathF.PI + direction * MathF.PI * 0.5f;
+            float finalRadius = Lerp(240f, 0f, retract);
+            return Polar(finalRadius, finalAngle, tick * direction * 0.28f, false, "retract",
+                GenericArmAfterDirectionalTick(tick, overhead));
+        }
+
+        private static FlailPreviewSample Chainstorm(int tick)
+        {
+            const int rotationTicks = 36;
+            const int liveTicks = rotationTicks * 4;
+            const int retractTicks = 18;
+            const float advancePerTick = 2.85f * 0.56f; // Black Ninja's actual TopSpeed * ForwardPushMult.
+            const float targetWorldX = 330f;
+
+            if (tick < liveTicks)
+            {
+                float completedRotations = (tick + 1f) / rotationTicks;
+                float angle = MathF.PI + MathF.Tau * completedRotations;
+                float expansion = Math.Clamp((tick + 1f) / (float)rotationTicks, 0f, 1f);
+                float radius = Lerp(CloseRadius, 240f, Smoother(expansion));
+                float ownerOffset = (tick + 1f) * advancePerTick;
+                return Polar(radius, angle, tick * 0.40f, true,
+                    tick < rotationTicks ? "expanding rotation live / advance" : "max-length rotation live / advance",
+                    GenericArmAfterChainstormTick(tick), hasTarget: true,
+                    targetX: targetWorldX - ownerOffset, targetY: 0f, targetLabel: "fixed player lane",
+                    ownerOffsetX: ownerOffset);
+            }
+
+            float retract = Smoother((tick - liveTicks + 1f) / retractTicks);
+            float retractAngle = MathF.PI + MathF.Tau * (4f + (tick - liveTicks + 1f) / rotationTicks);
+            // ForwardPushMult is held for the combo's full active phase in PuppetNPC, so the owner
+            // carries forward through the harmless retract before its 120t recovery begins.
+            float ownerOffsetDuringRetract = (tick + 1f) * advancePerTick;
+            return Polar(Lerp(240f, 0f, retract), retractAngle, tick * 0.35f, false,
+                "retract / carried advance", GenericArmAfterChainstormTick(tick),
+                hasTarget: true, targetX: targetWorldX - ownerOffsetDuringRetract, targetY: 0f,
+                targetLabel: "fixed player lane", ownerOffsetX: ownerOffsetDuringRetract);
+        }
+
+        // The three original patterns rely on PuppetNPC.UpdateFlailProjectileArmPose rather than
+        // an authored direct arm angle. Replaying its 0.28 wrapped follow here lets their previews
+        // show the same restrained, natural shoulder response as runtime instead of a stiff arm.
+        private static float GenericArmAfterTellTick(int tick)
+        {
+            float arm = CarryArm;
+            for (int current = 0; current <= tick; current++)
+            {
+                float angle = MathF.PI + MathF.Tau * current / StandardTell;
+                arm = FollowGenericArm(arm, angle);
+            }
+            return arm;
+        }
+
+        private static float GenericArmAfterDirectionalTick(int tick, bool overhead)
+        {
+            float arm = GenericArmAfterTellTick(StandardTell - 1);
+            float direction = overhead ? 1f : -1f;
+            for (int current = 0; current <= tick; current++)
+            {
+                float angle;
+                if (current < 18)
+                {
+                    float progress = Smoother((current + 1f) / 18f);
+                    angle = MathF.PI + direction * MathF.PI * 0.5f * progress;
+                }
+                else
+                {
+                    angle = MathF.PI + direction * MathF.PI * 0.5f;
+                }
+                arm = FollowGenericArm(arm, angle);
+            }
+            return arm;
+        }
+
+        private static float GenericArmAfterChainstormTick(int tick)
+        {
+            const int liveTicks = 36 * 4;
+            float arm = GenericArmAfterTellTick(StandardTell - 1);
+            for (int current = 0; current <= tick; current++)
+            {
+                float angle = current < liveTicks
+                    ? MathF.PI + MathF.Tau * (current + 1f) / 36f
+                    : MathF.PI + MathF.Tau * (4f + (current - liveTicks + 1f) / 36f);
+                arm = FollowGenericArm(arm, angle);
+            }
+            return arm;
+        }
+
+        private static float FollowGenericArm(float current, float flailAngle)
+        {
+            float desired = OrbitArm(flailAngle);
+            return WrapRadians(current + WrapRadians(desired - current) * 0.28f);
+        }
+
+        private static float WrapRadians(float value)
+        {
+            while (value > MathF.PI) value -= MathF.Tau;
+            while (value < -MathF.PI) value += MathF.Tau;
+            return value;
         }
 
         private static FlailPreviewSample ChainCrossTell(int tick)
@@ -356,10 +527,12 @@ namespace SwingPreview
 
         private static FlailPreviewSample Polar(float radius, float angle, float rotation,
             bool damageActive, string stage, float armRotation,
-            bool hasTarget = false, float targetX = 0f, float targetY = 0f, string targetLabel = null)
+            bool hasTarget = false, float targetX = 0f, float targetY = 0f, string targetLabel = null,
+            float ownerOffsetX = 0f)
             => new FlailPreviewSample(MathF.Cos(angle) * radius, MathF.Sin(angle) * radius,
                 rotation, damageActive, stage, armRotation,
-                hasTarget: hasTarget, targetX: targetX, targetY: targetY, targetLabel: targetLabel);
+                hasTarget: hasTarget, targetX: targetX, targetY: targetY, targetLabel: targetLabel,
+                ownerOffsetX: ownerOffsetX);
 
         /// <summary>The wrist owns the circle; the shoulder pumps high/low with it instead of trying
         /// to rotate through 360 degrees. This keeps a continuous human arm pose around the orbit.</summary>

@@ -33,7 +33,7 @@ default, not written in the file · `.` off by default, never considered
 | DarkBloodKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | DarkKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
 | AbyssalNinja | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| BlackNinja | Flail | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| BlackNinja | Flail | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | Y | . |
 | Blaidd | Greatsword | . | . | Y | . | . | Y | . | Y | . | . | . | . | . | . | . | Y | . |
 | ClericOfSorrow | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | CursedDragon | Halberd | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |

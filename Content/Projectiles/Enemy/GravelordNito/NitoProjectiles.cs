@@ -16,10 +16,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         int OwnerIndex => (int)Projectile.ai[0];
-        int Kind => (int)Projectile.ai[1];
+        // ai[1] = swing kind + timing style * 8 (see GravelordNito.SpawnSlash).
+        int Kind => (int)Projectile.ai[1] % 8;
+        int Style => (int)Projectile.ai[1] / 8;
         int Dir => Projectile.ai[2] >= 0f ? 1 : -1;
         int Timer => (int)Projectile.localAI[0];
-        const int SwingTicks = 18;
+        int SwingTicks => global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashStyleTicks(Style);
 
         public override void SetDefaults()
         {
@@ -29,9 +31,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = SwingTicks;
+            Projectile.timeLeft = 18; // real length is set from the style in OnSpawn
             Projectile.aiStyle = 0;
         }
+
+        public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+        {
+            Projectile.timeLeft = SwingTicks;
+        }
+
+        // Only a hitbox while the blade is still moving fast (speed >= 30% of peak); after that the eased
+        // tail is pure follow-through/recovery and must not hurt. Legacy swings stay live throughout.
+        public override bool? CanDamage() =>
+            Timer <= global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashArmedTicks(Style) ? null : false;
 
         public override void AI()
         {
@@ -46,13 +58,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             bool phaseTwo = owner.ModNPC is global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito nito
                 && nito.IsPhaseTwo;
 
-            float progress = MathHelper.Clamp(Timer / (float)SwingTicks, 0f, 1f);
+            // Eased pose progress (0 to ~1.12), the same value the boss uses to draw the visible blade.
+            float progress = global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashEasedProgress(Style, Timer);
             // Use the boss rig's shared vertical correction so collision and the shader remain on the
             // visible blade if its ground anchoring is tuned again.
             Projectile.Center = owner.Center
                 + new Vector2(0f, global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.GroundSinkPixels)
                 + global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashOffset(Kind, Dir, progress);
             Projectile.rotation = global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashWorldAngle(Kind, Dir, progress);
+
+            if (Timer > global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashArmedTicks(Style))
+            {
+                return; // eased tail: the boss still draws the blade, but no dust advertises a dead hitbox
+            }
 
             // The shader carries the blade silhouette. In phase two, blood droplets and wraith wisps
             // rise directly from the same hilt-to-tip line used for collision, so the empowered sword
@@ -94,7 +112,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float progress = MathHelper.Clamp(Timer / (float)SwingTicks, 0f, 1f);
+            // The crescent follows the eased blade (normalised 0-1 over the arc), so it decelerates with
+            // the sword instead of racing ahead of it on a linear clock. Legacy: identical to before.
+            float easedProgress = global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashEasedProgress(Style, Timer);
+            float progress = MathHelper.Clamp(
+                easedProgress / global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.SlashEndProgress(Style), 0f, 1f);
             Vector2 blade = Projectile.rotation.ToRotationVector2();
             Vector2 center = Projectile.Center + blade * 50f;
             NPC owner = OwnerIndex >= 0 && OwnerIndex < Main.maxNPCs ? Main.npc[OwnerIndex] : null;
@@ -118,6 +140,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         float FanOffset => Projectile.ai[2];
         int Timer => (int)Projectile.localAI[0];
         float LaunchSpeed => Projectile.localAI[1];
+
+        const float ShardGravity = 0.08f;   // px/tick^2 added to velocity.Y every tick after launch
+        const float MinFlightTicks = 12f;   // point-blank shots still get a readable arc
+        const float MaxFlightTicks = 190f;  // stays inside the shard's 210-tick timeLeft
         // ChargeTicks > 0 guard matters: CanDamage/ShouldUpdatePosition can be queried BEFORE the first
         // AI() tick, when Timer is still 0 — without it a zero-charge shard (Hollow Command's radial
         // burst) would read as "charging" and spend its first frame frozen and harmless.
@@ -178,7 +204,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                 LaunchAtTarget();
             }
             Projectile.rotation += Projectile.velocity.X * 0.04f;
-            Projectile.velocity.Y += 0.08f;
+            Projectile.velocity.Y += ShardGravity;
             Lighting.AddLight(Projectile.Center, 0.16f, 0.16f, 0.22f);
             if (Main.rand.NextBool(2))
             {
@@ -188,7 +214,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         }
 
         ///<summary>Aims at release rather than at spawn: a full second of lead time locked in at spawn
-        ///would make every volley trivially walk-away-able. The telegraph warns; the shot still tracks.</summary>
+        ///would make every volley trivially walk-away-able. The telegraph warns; the shot still tracks.
+        ///
+        ///The aim is BALLISTIC: the old straight-line aim ignored the 0.08 gravity, so a shard dropped
+        ///~41px by 15 tiles and fell hopelessly short by 50. Flight time is distance / nominal speed,
+        ///then the launch velocity is solved so the centre shard passes through the target's current
+        ///position after exactly that many ticks. Launch speed therefore grows with range (7.5 up close,
+        ///~8.6 at 50 tiles). The fan offset is applied afterwards, so only the middle shard is exact.</summary>
         void LaunchAtTarget()
         {
             float speed = LaunchSpeed > 0.1f ? LaunchSpeed : 7.5f;
@@ -201,7 +233,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                     Player target = Main.player[owner.target];
                     if (target.active && !target.dead)
                     {
-                        aim = UsefulFunctions.Aim(Projectile.Center, target.Center, speed);
+                        Vector2 toTarget = target.Center - Projectile.Center;
+                        float flightTicks = MathHelper.Clamp(toTarget.Length() / speed, MinFlightTicks, MaxFlightTicks);
+
+                        // AI() runs BEFORE the position update, and this same AI call adds gravity once
+                        // more after the launch, so after N ticks the shard has dropped g*N*(N+1)/2 px
+                        // (not g*N^2/2). Cancel that drop with extra upward launch velocity.
+                        float gravityDrop = ShardGravity * flightTicks * (flightTicks + 1f) * 0.5f;
+                        aim = new Vector2(toTarget.X / flightTicks, (toTarget.Y - gravityDrop) / flightTicks);
                     }
                 }
             }
@@ -230,7 +269,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         const float ExpandSpeed = 8f;
-        const float RingHalfThickness = 24f;
+        internal const float RingHalfThickness = 24f; // also read by NitoGraveHand to size its blast dust
         float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 260f;
         // ai[1] is deliberately opt-in: Quietus and the other existing nova users retain their
         // current debuffs/dust, while a grave-hand detonation gets the Destined Death treatment.
@@ -261,7 +300,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             {
                 // The hand variant replaces the old orange/purple ring dust with a restrained
                 // black-wraith and blood wake. Its shader remains the source of the readable hit ring.
-                int dustCount = GraveHandDetonation ? 10 : 34;
+                // The plain nova keeps 34 dust/tick up to a 300px radius (its old density), then adds
+                // more as the ring grows so a 600px Death Nova ring isn't a sparse dotted circle.
+                int dustCount = GraveHandDetonation ? 10 : System.Math.Clamp((int)(Radius * 0.11f), 34, 66);
                 for (int i = 0; i < dustCount; i++)
                 {
                     float angle = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -480,17 +521,37 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
         const int GrabTicks = 16;    // the initial damaging emergence
         const int PauseTicks = 60;   // the 1-second beat before they start closing
-        const float ConvergeSpeed = 3.1f;
-        const float OutwardSpeed = 5f;
+        const float ConvergeSpeed = 3.8f;  // was 3.1 (+~22%): the close is 150px -> ~39 ticks, still rollable
+        const float OutwardSpeed = 6f;     // was 5; OutwardTravelDistance / OutwardSpeed drives the timeLeft, so it self-adjusts
         internal const float InitialHandOffset = 150f;
         const float OutwardTravelDistance = 300f;
         const int MaxConvergeTicks = 150; // failsafe so a hand can never chase forever
         const float BlastRadius = 125f;   // ~250px across
 
+        // Cached motion trail: oldPos samples (one per tick) drawn as fading ghost hands behind the
+        // real one while it is travelling. Stride 4 x 20 samples = ghosts 4/8/12/16 ticks back, i.e.
+        // ~15px apart at converge speed and ~24px apart on the outward retreat.
+        const int TrailLength = 20;
+        const int TrailStride = 4;
+        const float TrailOpacity = 0.55f;
+
+        // Blast dust reach. The damaging ring's outer edge is the nova radius plus its half thickness;
+        // the dust is meant to fly 25% past that. Reach layers are noGravity and vanilla dust only
+        // damps X by 0.99/tick, so speed = distance / DustFlightTicks is close to what actually flies.
+        const float DamageRingOuterRadius = BlastRadius + NitoDeathNova.RingHalfThickness; // 149
+        const float DustReachRadius = DamageRingOuterRadius * 1.25f;                       // ~186
+        const float DustFlightTicks = 16f;
+
         int EmergeTick => TelegraphTicks;
         int ConvergeStartTick => TelegraphTicks + GrabTicks + PauseTicks;
         bool Converging => !OutwardDetonation && Timer > ConvergeStartTick;
         internal bool HasStartedMoving => OutwardDetonation || Converging;
+
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = TrailLength;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+        }
 
         public override void SetDefaults()
         {
@@ -708,7 +769,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
             // INTERIOR BODY: densely fills most of the true 125px detonation radius. Blood falls;
             // some wraith matter also takes gravity so the blast collapses into a deathly rain.
-            for (int i = 0; i < 72; i++)
+            for (int i = 0; i < 160; i++)
             {
                 bool blood = i % 3 == 0 || Main.rand.NextBool(5);
                 Vector2 direction = Main.rand.NextVector2Unit();
@@ -728,26 +789,48 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                 }
             }
 
-            // OUTWARD FRONT: starts around the damage boundary and races beyond it. These are soft,
-            // decorative particles; the shader ring remains the authoritative damaging radius.
-            for (int i = 0; i < 44; i++)
+            // SHOCK SPRAY: dust thrown out from inside the blast, each speed solved so it ends up at
+            // 80-100% of DustReachRadius (25% past the damaging ring) after DustFlightTicks. Radial only
+            // and noGravity, so the reach is predictable instead of being bent into a fall by gravity.
+            // These are soft, decorative particles; the shader ring stays the authoritative hit radius.
+            for (int i = 0; i < 130; i++)
             {
                 Vector2 direction = Main.rand.NextVector2Unit();
                 bool blood = i % 2 == 0;
-                Vector2 spawn = center + direction * Main.rand.NextFloat(BlastRadius * 0.68f, BlastRadius * 1.18f);
-                Dust d = Dust.NewDustPerfect(spawn, blood ? DustID.Blood : DustID.Wraith,
-                    direction * Main.rand.NextFloat(6.2f, 11.5f)
-                        + new Vector2(0f, Main.rand.NextFloat(-2.2f, 0.4f)),
+                float spawnRadius = Main.rand.NextFloat(BlastRadius * 0.15f, BlastRadius * 0.95f);
+                float flySpeed = (DustReachRadius - spawnRadius) / DustFlightTicks * Main.rand.NextFloat(0.8f, 1f);
+                Dust d = Dust.NewDustPerfect(center + direction * spawnRadius, blood ? DustID.Blood : DustID.Wraith,
+                    direction * flySpeed,
                     blood ? 35 : 105,
                     blood ? new Color(175, 20, 34) : new Color(18, 2, 26),
-                    Main.rand.NextFloat(0.45f, 0.86f));
-                d.noGravity = !blood && Main.rand.NextBool(2);
+                    Main.rand.NextFloat(1f, 1.4f));
+                d.noGravity = true;
+                d.noLight = !blood;
+            }
+
+            // REACH RING: an even circle of dust starting ON the damaging ring's outer edge and pushed
+            // out to DustReachRadius, so the blast visibly overshoots its hit area by 25% in every
+            // direction. Angle is evenly spaced (not random) so the ring has no gaps.
+            const int ReachRingCount = 84;
+            float reachRingSpeed = (DustReachRadius - DamageRingOuterRadius) / DustFlightTicks;
+            float reachRingStartAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+            for (int i = 0; i < ReachRingCount; i++)
+            {
+                float angle = reachRingStartAngle + MathHelper.TwoPi * i / ReachRingCount;
+                Vector2 direction = angle.ToRotationVector2();
+                bool blood = i % 2 == 0;
+                Dust d = Dust.NewDustPerfect(center + direction * DamageRingOuterRadius, blood ? DustID.Blood : DustID.Wraith,
+                    direction * reachRingSpeed,
+                    blood ? 35 : 105,
+                    blood ? new Color(175, 20, 34) : new Color(18, 2, 26),
+                    Main.rand.NextFloat(1f, 1.3f));
+                d.noGravity = true;
                 d.noLight = !blood;
             }
 
             // FALLING AFTERBODY: a broad, slower fill both inside and just outside the nova. Every
             // mote takes gravity, giving blood and wraith fragments a visible descending aftermath.
-            for (int i = 0; i < 28; i++)
+            for (int i = 0; i < 64; i++)
             {
                 Vector2 direction = Main.rand.NextVector2Unit();
                 bool blood = Main.rand.NextBool(3);
@@ -778,8 +861,33 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                 NitoVFX.DrawGroundRift(Projectile.Bottom - new Vector2(0f, 7f),
                     new Vector2(Projectile.width * 1.35f, 48f), telegraphProgress, 0.8f * fade);
             }
-            NitoVFX.DrawGraveHand(Projectile.Center, new Vector2(Projectile.width * 1.15f, Projectile.height * 1.35f),
-                activeProgress, 0.82f * fade);
+
+            Vector2 handSize = new Vector2(Projectile.width * 1.15f, Projectile.height * 1.35f);
+
+            // Cached trail: only while travelling (the held beat is stationary, so every sample would
+            // stack on the hand). Drawn BEFORE the real hand so the newest, brightest copy is on top.
+            if (Converging || OutwardDetonation)
+            {
+                for (int ghost = TrailStride; ghost < Projectile.oldPos.Length; ghost += TrailStride)
+                {
+                    Vector2 ghostPosition = Projectile.oldPos[ghost];
+                    if (ghostPosition == Vector2.Zero)
+                    {
+                        continue; // sample not written yet
+                    }
+
+                    Vector2 ghostCenter = ghostPosition + Projectile.Size * 0.5f;
+                    if (Vector2.DistanceSquared(ghostCenter, Projectile.Center) < 36f)
+                    {
+                        continue; // hasn't moved 6px yet: an exact overlap would just brighten the hand
+                    }
+
+                    float ghostFade = 1f - ghost / (float)Projectile.oldPos.Length;
+                    NitoVFX.DrawGraveHand(ghostCenter, handSize, activeProgress, 0.82f * fade * ghostFade * TrailOpacity);
+                }
+            }
+
+            NitoVFX.DrawGraveHand(Projectile.Center, handSize, activeProgress, 0.82f * fade);
             return true;
         }
     }

@@ -15,8 +15,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         // fill that same footprint rather than remaining concentrated at the impact point.
         private const int CloudRadius = 250;
         private const int CloudDuration = 120;
-        private const int CloudParticlesPerTick = 2;
-        private const int DarknessDuration = 3 * 60;
+        // Four times the old sustained and burst counts (2 -> 8, 85 -> 340). Raising count rather
+        // than scale makes the large cloud denser without turning individual smoke motes blocky.
+        private const int CloudParticlesPerTick = 8;
+        private const int CloudBurstParticleCount = 340;
+        private const int BlackoutDuration = 3 * 60;
 
         private bool Exploded => Projectile.ai[0] == 1f;
 
@@ -130,7 +133,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             StopFuse(); // cut the 3 s fuse clip the instant it detonates
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.75f, PitchVariance = 0.25f }, Projectile.Center);
 
-            for (int i = 0; i < 85; i++)
+            for (int i = 0; i < CloudBurstParticleCount; i++)
             {
                 Vector2 velocity = Main.rand.NextVector2Circular(5.5f, 5.5f);
                 Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(CloudRadius, CloudRadius), DustID.Smoke, velocity, 120, Color.Gray, Main.rand.NextFloat(1.5f, 3.1f));
@@ -152,7 +155,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             target.AddBuff(ModContent.BuffType<Crippled>(), 6 * 60);
             target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 30 * 60);
             target.AddBuff(BuffID.Slow, 3 * 60);
-            target.AddBuff(BuffID.Darkness, DarknessDuration);
+            target.AddBuff(BuffID.Blackout, BlackoutDuration);
         }
     }
 }

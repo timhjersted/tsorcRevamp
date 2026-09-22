@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -21,12 +22,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         ReverseHalo = 6,
         AnkleReaper = 7,
         BacklashReversal = 8,
+        ChainCross = 9,
     }
 
     /// <summary>Shared names and timing for PuppetNPC mace attacks. The projectile owns the whole
     /// sequence, so a follow-up changes the motion of one head instead of spawning another head.</summary>
     /// <remarks>
-    /// Attack spec — Chainfall / Chainrise / Advancing Chainstorm / Reverse Halo / Ankle Reaper:
+    /// Attack spec — Chainfall / Chainrise / Advancing Chainstorm / Reverse Halo / Ankle Reaper / Chain Cross:
     /// Weapon: the owner's existing flail head+chain subclass, anchored through IFlailAnchor and visible
     /// for the entire 40t tell. Tell: one harmless mirrored revolution at 60px; the head itself predicts
     /// direction and reach, so no aim line or extra spawn prop is used. Birth: at the starting orbit
@@ -40,6 +42,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// Backlash Reversal is a reactive follow-up rather than a free-standing pick: after an authored mace
     /// move, it requires the target to remain behind the attacker's committed facing. It uses a 40t load,
     /// 6t planted reversal, 18t eased rear whip to 192px, 15 live whip frames, 18t retract, and 60t recovery.
+    /// Chain Cross locks one front target at release, lashes to it in 16t, then carries the same harmless
+    /// head around the far side for 30t before checking the front lane again. A valid second target gets a
+    /// second 16t lash; crossing behind during the carry cancels that branch into retract. Both lock points
+    /// are server-authored and synchronized, while the arm follows the chain's unwrapped radial direction.
     /// Death: 18t visible retract to the hand, then deliberate removal; no timeout disappearance or child.
     /// Reach: 60px close / 208px level lash / 240px maximum, all position-driven and exact.
     /// Terrain: the swept chain deliberately keeps the existing flail behavior of passing through tiles;
@@ -60,12 +66,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         public const string ReverseHaloName = "Reverse Halo";
         public const string AnkleReaperName = "Ankle Reaper";
         public const string BacklashName = "Backlash Reversal";
+        public const string ChainCrossName = "Chain Cross";
 
         public const int TelegraphTicks = 40;
         public const int ArcSwingTicks = 18;
         public const int LevelLashTicks = 16;
         public const int BacklashLoadTicks = 6;
         public const int BacklashWhipTicks = 18;
+        public const int ChainCrossLashTicks = 16;
+        public const int ChainCrossReacquireTicks = 30;
         public const int RetractTicks = 18;
         public const int RotationTicks = 36;
         public const int MaximumRadiusRotations = 3;
@@ -76,11 +85,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         public const float LevelLashCarryArm = -1.87f;
         public const float BacklashReach = 12f * 16f;
         public const float BacklashTargetVerticalTolerance = 64f;
+        public const float ChainCrossReach = 200f;
+        public const float ChainCrossMinimumReach = 72f;
+        public const float ChainCrossTargetVerticalTolerance = 112f;
         public const float MaximumReach = 15f * 16f;
 
         public const int ArcAttackTicks = ArcSwingTicks + RetractTicks;
         public const int LevelLashAttackTicks = LevelLashTicks + RetractTicks;
         public const int BacklashAttackTicks = BacklashLoadTicks + BacklashWhipTicks + RetractTicks;
+        public const int ChainCrossAttackTicks = ChainCrossLashTicks + ChainCrossReacquireTicks
+            + ChainCrossLashTicks + RetractTicks;
         public const int CycloneLiveTicks = RotationTicks * (1 + MaximumRadiusRotations);
         public const int CycloneAttackTicks = CycloneLiveTicks + RetractTicks;
         public const int MaximumLifetime = TelegraphTicks + CycloneAttackTicks + 30;
@@ -95,6 +109,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 ReverseHaloName => EnemyFlailAttackPattern.ReverseHalo,
                 AnkleReaperName => EnemyFlailAttackPattern.AnkleReaper,
                 BacklashName => EnemyFlailAttackPattern.BacklashReversal,
+                ChainCrossName => EnemyFlailAttackPattern.ChainCross,
                 _ => EnemyFlailAttackPattern.None,
             };
             return pattern != EnemyFlailAttackPattern.None;
@@ -106,13 +121,27 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     ? LevelLashReach
                     : pattern == EnemyFlailAttackPattern.BacklashReversal
                         ? BacklashReach
+                    : pattern == EnemyFlailAttackPattern.ChainCross
+                        ? ChainCrossReach
                     : MaximumReach;
 
         public static bool RequiresLevelTarget(string comboName)
             => comboName == ReverseHaloName || comboName == AnkleReaperName;
 
         public static bool LocksFacingDuringTell(string comboName)
-            => RequiresLevelTarget(comboName) || comboName == BacklashName;
+            => RequiresLevelTarget(comboName) || comboName == BacklashName || comboName == ChainCrossName;
+
+        /// <summary>Both Chain Cross locks must stay in the committed front lane. This deliberately
+        /// makes a roll through the owner beat the second lash instead of letting it whip backward.</summary>
+        public static bool IsChainCrossTargetValid(NPC owner, Player target, int facing)
+        {
+            if (owner == null || !owner.active || target == null || !target.active || target.dead || facing == 0)
+                return false;
+
+            return (target.Center.X - owner.Center.X) * facing > 24f
+                && System.Math.Abs(target.Center.Y - owner.Center.Y) <= ChainCrossTargetVerticalTolerance
+                && Vector2.Distance(target.Center, owner.Center) <= ChainCrossReach + 48f;
+        }
     }
 
     /// <summary>
@@ -142,7 +171,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         protected EnemyFlailAttackPattern AuthoredPattern =>
             Projectile.ai[1] >= (float)EnemyFlailAttackPattern.OverheadChain
-                && Projectile.ai[1] <= (float)EnemyFlailAttackPattern.BacklashReversal
+                && Projectile.ai[1] <= (float)EnemyFlailAttackPattern.ChainCross
                 ? (EnemyFlailAttackPattern)(int)Projectile.ai[1]
                 : EnemyFlailAttackPattern.None;
 
@@ -159,6 +188,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private bool _patternDamageActive;
         private bool _useAuthoredArmPose;
         private float _authoredArmFacingRight;
+        // Chain Cross has two server-captured aim points. These are local to the committed facing,
+        // not world positions, so the hand may follow the owner naturally without client re-aiming.
+        private bool _chainCrossFirstResolved;
+        private bool _chainCrossFirstActive;
+        private Vector2 _chainCrossFirstTarget;
+        private bool _chainCrossSecondResolved;
+        private bool _chainCrossSecondActive;
+        private Vector2 _chainCrossSecondTarget;
 
         /// <summary>Ticks the head flies outward before reeling back. Reach = this * launch speed.</summary>
         protected virtual float OutwardTicks => 18f;
@@ -223,9 +260,39 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return;
             }
 
+            if (AuthoredPattern == EnemyFlailAttackPattern.ChainCross
+                && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                NPC owner = Owner;
+                if (owner != null && owner.active)
+                    ResolveChainCrossFirstTarget(owner, GetHandAnchor(owner));
+            }
+
             Projectile.ai[2] = -System.Math.Max(1f, Projectile.ai[2]);
             Projectile.localAI[1] = 0f;
             Projectile.netUpdate = true;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(_chainCrossFirstResolved);
+            writer.Write(_chainCrossFirstActive);
+            writer.Write(_chainCrossFirstTarget.X);
+            writer.Write(_chainCrossFirstTarget.Y);
+            writer.Write(_chainCrossSecondResolved);
+            writer.Write(_chainCrossSecondActive);
+            writer.Write(_chainCrossSecondTarget.X);
+            writer.Write(_chainCrossSecondTarget.Y);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            _chainCrossFirstResolved = reader.ReadBoolean();
+            _chainCrossFirstActive = reader.ReadBoolean();
+            _chainCrossFirstTarget = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            _chainCrossSecondResolved = reader.ReadBoolean();
+            _chainCrossSecondActive = reader.ReadBoolean();
+            _chainCrossSecondTarget = new Vector2(reader.ReadSingle(), reader.ReadSingle());
         }
 
         public override bool? CanDamage()
@@ -429,6 +496,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     return;
                 }
 
+                if (AuthoredPattern == EnemyFlailAttackPattern.ChainCross)
+                {
+                    TickChainCrossTell(hand);
+                    return;
+                }
+
                 // Exactly one mirrored revolution over the 40-tick tell. Facing left turns
                 // counter-clockwise on screen and finishes at 3 o'clock; facing right mirrors it.
                 float tellProgress = (Projectile.localAI[0] % EnemyFlailAttackPatterns.TelegraphTicks)
@@ -444,12 +517,23 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
             if (attackTick == 1)
             {
+                if (AuthoredPattern == EnemyFlailAttackPattern.ChainCross
+                    && Main.netMode != NetmodeID.MultiplayerClient
+                    && !_chainCrossFirstResolved)
+                {
+                    ResolveChainCrossFirstTarget(owner, hand);
+                    Projectile.netUpdate = true;
+                }
+
                 if (!Main.dedServ)
                     SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.12f }, Projectile.Center);
                 int launchFacing = AuthoredPattern == EnemyFlailAttackPattern.BacklashReversal
                     ? -_patternFacing
                     : _patternFacing;
-                OnLaunch(owner, new Vector2(launchFacing * reach, 0f));
+                Vector2 launch = AuthoredPattern == EnemyFlailAttackPattern.ChainCross && _chainCrossFirstActive
+                    ? LocalFacingVector(_chainCrossFirstTarget)
+                    : new Vector2(launchFacing * reach, 0f);
+                OnLaunch(owner, launch);
             }
 
             if (AuthoredPattern == EnemyFlailAttackPattern.AdvancingCyclone)
@@ -467,6 +551,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             else if (AuthoredPattern == EnemyFlailAttackPattern.BacklashReversal)
             {
                 TickBacklashReversal(hand, reach, attackTick);
+            }
+            else if (AuthoredPattern == EnemyFlailAttackPattern.ChainCross)
+            {
+                TickChainCross(owner, hand, attackTick);
             }
             else
             {
@@ -514,6 +602,135 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             float y = MathHelper.Lerp(0f, 42f, progress);
             Projectile.Center = hand + FacingOffset(x, y);
             SetAuthoredArm(MathHelper.Lerp(-1.30f, -0.62f, progress));
+            _patternDamageActive = false;
+        }
+
+        private void TickChainCrossTell(Vector2 hand)
+        {
+            // 3 o'clock -> 12 o'clock through a counter-clockwise 1.25-turn orbit. The direct,
+            // unwrapped arm angle is intentionally large: the shoulder follows the actual chain
+            // rather than making the restrained generic pumping pose.
+            float progress = Smoother(MathHelper.Clamp(
+                Projectile.localAI[0] / EnemyFlailAttackPatterns.TelegraphTicks, 0f, 1f));
+            float angleFacingRight = -MathHelper.TwoPi * progress - MathHelper.PiOver2 * progress;
+            Projectile.Center = hand + new Vector2(EnemyFlailAttackPatterns.TelegraphRadius, 0f)
+                .RotatedBy(MirrorFlailAngle(angleFacingRight));
+            SetAuthoredArm(angleFacingRight - MathHelper.PiOver2);
+            _patternDamageActive = false;
+        }
+
+        private void TickChainCross(NPC owner, Vector2 hand, int attackTick)
+        {
+            int patternTick = attackTick - 1;
+            int firstLashEnd = EnemyFlailAttackPatterns.ChainCrossLashTicks;
+            int secondLashStart = firstLashEnd + EnemyFlailAttackPatterns.ChainCrossReacquireTicks;
+            int retractStart = secondLashStart + EnemyFlailAttackPatterns.ChainCrossLashTicks;
+
+            if (!_chainCrossFirstResolved)
+            {
+                // The client waits for the server's release lock instead of consulting its own
+                // target position. This normally lasts zero or one network tick.
+                Projectile.Center = hand + LocalFacingVector(new Vector2(0f, -EnemyFlailAttackPatterns.TelegraphRadius));
+                SetAuthoredArm(ChainAlignedArm(0f, -EnemyFlailAttackPatterns.TelegraphRadius, -MathHelper.TwoPi));
+                _patternDamageActive = false;
+                return;
+            }
+
+            if (!_chainCrossFirstActive)
+            {
+                TickChainCrossRetract(hand, new Vector2(0f, -EnemyFlailAttackPatterns.TelegraphRadius), patternTick);
+                return;
+            }
+
+            if (patternTick < firstLashEnd)
+            {
+                float progress = SwingEase.ApplyWeighted(0f, 1f, patternTick,
+                    EnemyFlailAttackPatterns.ChainCrossLashTicks, 6, 10, 6f);
+                (float x, float y) = QuadraticBezier(
+                    0f, -EnemyFlailAttackPatterns.TelegraphRadius,
+                    _chainCrossFirstTarget.X * 0.59f, -68f + _chainCrossFirstTarget.Y * 0.25f,
+                    _chainCrossFirstTarget.X, _chainCrossFirstTarget.Y,
+                    progress);
+                Projectile.Center = hand + LocalFacingVector(new Vector2(x, y));
+                SetAuthoredArm(ChainAlignedArm(x, y, -MathHelper.TwoPi));
+                _patternDamageActive = patternTick >= 2;
+                return;
+            }
+
+            if (patternTick < secondLashStart)
+            {
+                // Harmless carry around the far side. Its full 30t duration separates the live
+                // windows by 46t, giving a late roller a buffered re-roll before lash two.
+                float progress = Smoother((patternTick - firstLashEnd + 1f)
+                    / EnemyFlailAttackPatterns.ChainCrossReacquireTicks);
+                (float x, float y) = CubicBezier(
+                    _chainCrossFirstTarget.X, _chainCrossFirstTarget.Y,
+                    _chainCrossFirstTarget.X * 0.725f, 78f,
+                    38f, 94f,
+                    0f, EnemyFlailAttackPatterns.TelegraphRadius,
+                    progress);
+                Projectile.Center = hand + LocalFacingVector(new Vector2(x, y));
+                SetAuthoredArm(ChainAlignedArm(x, y, -MathHelper.TwoPi));
+                _patternDamageActive = false;
+                return;
+            }
+
+            if (!_chainCrossSecondResolved && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                ResolveChainCrossSecondTarget(owner, hand);
+                Projectile.netUpdate = true;
+            }
+
+            if (!_chainCrossSecondResolved)
+            {
+                Projectile.Center = hand + LocalFacingVector(new Vector2(0f, EnemyFlailAttackPatterns.TelegraphRadius));
+                SetAuthoredArm(ChainAlignedArm(0f, EnemyFlailAttackPatterns.TelegraphRadius, -MathHelper.TwoPi));
+                _patternDamageActive = false;
+                return;
+            }
+
+            if (!_chainCrossSecondActive)
+            {
+                TickChainCrossRetract(hand, new Vector2(0f, EnemyFlailAttackPatterns.TelegraphRadius),
+                    patternTick - secondLashStart);
+                return;
+            }
+
+            if (patternTick < retractStart)
+            {
+                int secondTick = patternTick - secondLashStart;
+                float progress = SwingEase.ApplyWeighted(0f, 1f, secondTick,
+                    EnemyFlailAttackPatterns.ChainCrossLashTicks, 6, 10, 6f);
+                (float x, float y) = QuadraticBezier(
+                    0f, EnemyFlailAttackPatterns.TelegraphRadius,
+                    _chainCrossSecondTarget.X * 0.59f, 74f + _chainCrossSecondTarget.Y * 0.25f,
+                    _chainCrossSecondTarget.X, _chainCrossSecondTarget.Y,
+                    progress);
+                Projectile.Center = hand + LocalFacingVector(new Vector2(x, y));
+                SetAuthoredArm(ChainAlignedArm(x, y, -MathHelper.TwoPi));
+                _patternDamageActive = secondTick >= 2;
+                return;
+            }
+
+            TickChainCrossRetract(hand, _chainCrossSecondTarget, patternTick - retractStart);
+        }
+
+        private void TickChainCrossRetract(Vector2 hand, Vector2 startLocal, int retractTick)
+        {
+            float progress = Smoother((retractTick + 1f) / EnemyFlailAttackPatterns.RetractTicks);
+            if (progress >= 1f)
+            {
+                Projectile.Center = hand;
+                _patternDamageActive = false;
+                Projectile.Kill();
+                return;
+            }
+
+            Vector2 position = Vector2.Lerp(startLocal, Vector2.Zero, progress);
+            Projectile.Center = hand + LocalFacingVector(position);
+            float startArm = ChainAlignedArm(startLocal.X, startLocal.Y, -MathHelper.TwoPi);
+            SetAuthoredArm(MathHelper.Lerp(startArm,
+                EnemyFlailAttackPatterns.LevelLashCarryArm - MathHelper.TwoPi, progress));
             _patternDamageActive = false;
         }
 
@@ -622,6 +839,42 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private Vector2 FacingOffset(float xFacingRight, float y)
             => new Vector2(xFacingRight * _patternFacing, y);
 
+        private Vector2 LocalFacingVector(Vector2 localFacingRight)
+            => new Vector2(localFacingRight.X * _patternFacing, localFacingRight.Y);
+
+        private void ResolveChainCrossFirstTarget(NPC owner, Vector2 hand)
+        {
+            _chainCrossFirstResolved = true;
+            _chainCrossFirstActive = TryCaptureChainCrossTarget(owner, hand, out _chainCrossFirstTarget);
+        }
+
+        private void ResolveChainCrossSecondTarget(NPC owner, Vector2 hand)
+        {
+            _chainCrossSecondResolved = true;
+            _chainCrossSecondActive = TryCaptureChainCrossTarget(owner, hand, out _chainCrossSecondTarget);
+        }
+
+        private bool TryCaptureChainCrossTarget(NPC owner, Vector2 hand, out Vector2 localTarget)
+        {
+            localTarget = Vector2.Zero;
+            if (owner == null || !owner.HasValidTarget)
+                return false;
+
+            int facing = _patternFacing == 0 ? (owner.direction == 0 ? 1 : owner.direction) : _patternFacing;
+            Player target = Main.player[owner.target];
+            if (!EnemyFlailAttackPatterns.IsChainCrossTargetValid(owner, target, facing))
+                return false;
+
+            localTarget = new Vector2(
+                MathHelper.Clamp((target.Center.X - hand.X) * facing,
+                    EnemyFlailAttackPatterns.ChainCrossMinimumReach,
+                    EnemyFlailAttackPatterns.ChainCrossReach),
+                MathHelper.Clamp(target.Center.Y - hand.Y,
+                    -EnemyFlailAttackPatterns.ChainCrossTargetVerticalTolerance,
+                    EnemyFlailAttackPatterns.ChainCrossTargetVerticalTolerance));
+            return true;
+        }
+
         private void SetFullOrbitArm(float angleFacingRight)
         {
             SetAuthoredArm(angleFacingRight - MathHelper.PiOver2);
@@ -672,6 +925,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     + 3f * inverse * progressSquared * y2
                     + progressSquared * progress * y3);
         }
+
+        private static (float x, float y) QuadraticBezier(
+            float x0, float y0, float x1, float y1,
+            float x2, float y2, float progress)
+        {
+            progress = MathHelper.Clamp(progress, 0f, 1f);
+            float inverse = 1f - progress;
+            return (
+                inverse * inverse * x0 + 2f * inverse * progress * x1 + progress * progress * x2,
+                inverse * inverse * y0 + 2f * inverse * progress * y1 + progress * progress * y2);
+        }
+
+        private static float ChainAlignedArm(float x, float y, float revolutionOffset)
+            => (float)System.Math.Atan2(y, x) - MathHelper.PiOver2 + revolutionOffset;
 
         private void TickDirectionalChainSwing(Vector2 hand, float releaseStartAngle, float reach, int attackTick)
         {

@@ -11,7 +11,9 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
     {
         private const int TelegraphTicks = 45;
         private const float MinRange = 120f;
-        private const float MaxRange = 560f;
+        private const float MaxRange = BasiliskLeechTongue.MaxLaunchRange;
+        private const float MinLureRiseSpeed = 10f;
+        private const float MaxLureRiseSpeed = 14f;
 
         public static bool Update(NPC npc, ref int timer, int cooldown, int damage, bool canStart = true)
         {
@@ -57,6 +59,11 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             HoldBody(npc, globalNPC, committed: timer >= cooldown + TelegraphTicks / 2);
             Telegraph(npc);
 
+            if (timer == cooldown)
+            {
+                SpawnTelegraphTip(npc);
+            }
+
             if (timer >= cooldown + TelegraphTicks)
             {
                 Fire(npc, player, damage);
@@ -83,11 +90,26 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         private static void Telegraph(NPC npc)
         {
             Lighting.AddLight(npc.Center, Color.DeepPink.ToVector3() * 0.7f);
-            if (Main.rand.NextBool(2))
+            if (!Main.dedServ)
             {
                 Vector2 mouth = BasiliskLeechTongue.GetMouthPosition(npc);
-                Dust dust = Dust.NewDustPerfect(mouth + Main.rand.NextVector2Circular(10f, 8f), DustID.PinkTorch, Main.rand.NextVector2Circular(1.5f, 1.5f), 80, Color.HotPink, 1.2f);
-                dust.noGravity = true;
+                for (int i = 0; i < 2; i++)
+                {
+                    if (Main.rand.NextBool(2))
+                    {
+                        Dust dust = Dust.NewDustPerfect(mouth + Main.rand.NextVector2Circular(10f, 8f), DustID.PinkTorch, Main.rand.NextVector2Circular(1.5f, 1.5f), 80, Color.HotPink, 1.2f);
+                        dust.noGravity = true;
+                    }
+                }
+            }
+        }
+
+        private static void SpawnTelegraphTip(NPC npc)
+        {
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(npc.GetSource_FromThis(), BasiliskLeechTongue.GetMouthPosition(npc), Vector2.Zero,
+                    ModContent.ProjectileType<BasiliskLeechTongueTelegraph>(), 0, 0f, Main.myPlayer, npc.whoAmI);
             }
         }
 
@@ -99,10 +121,34 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             }
 
             Vector2 mouth = BasiliskLeechTongue.GetMouthPosition(npc);
-            Vector2 target = player.Center + new Vector2(0f, -120f);
-            Vector2 velocity = UsefulFunctions.BallisticTrajectory(mouth, target, 8.5f, BasiliskLeechTongue.Gravity, true, true);
+            Vector2 playerOffset = player.Center - mouth;
+            Vector2 target = player.Center + playerOffset.SafeNormalize(new Vector2(npc.direction, 0f)) * BasiliskLeechTongue.LaunchOvershoot;
+            float distanceFactor = MathHelper.Clamp(playerOffset.Length() / MaxRange, 0f, 1f);
+            Vector2 velocity = CalculateLureVelocity(mouth, target, distanceFactor);
             Projectile.NewProjectile(npc.GetSource_FromThis(), mouth, velocity, ModContent.ProjectileType<BasiliskLeechTongue>(), damage, 0f, Main.myPlayer, npc.whoAmI);
             SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.45f, Pitch = 0.35f }, npc.Center);
+        }
+
+        private static Vector2 CalculateLureVelocity(Vector2 mouth, Vector2 target, float distanceFactor)
+        {
+            float initialYVelocity = -MathHelper.Lerp(MinLureRiseSpeed, MaxLureRiseSpeed, distanceFactor);
+            float verticalDistance = target.Y - mouth.Y;
+            float b = initialYVelocity + BasiliskLeechTongue.Gravity * 0.5f;
+            float discriminant = b * b + 2f * BasiliskLeechTongue.Gravity * verticalDistance;
+            if (discriminant <= 0f)
+            {
+                return UsefulFunctions.Aim(mouth, target, MathHelper.Lerp(20f, 30f, distanceFactor));
+            }
+
+            // Use the later root: the tongue rises above its target, then falls onto the 7.5-tile
+            // overshoot point like a fishing lure rather than taking a straight shot.
+            float flightTicks = (-b + (float)System.Math.Sqrt(discriminant)) / BasiliskLeechTongue.Gravity;
+            if (flightTicks <= 1f)
+            {
+                return UsefulFunctions.Aim(mouth, target, MathHelper.Lerp(20f, 30f, distanceFactor));
+            }
+
+            return new Vector2((target.X - mouth.X) / flightTicks, initialYVelocity);
         }
 
         private static bool HasActiveTongue(NPC npc)

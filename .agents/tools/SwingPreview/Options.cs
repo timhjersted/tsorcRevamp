@@ -102,8 +102,9 @@ SwingPreview - run the mod's real swing maths headless and emit telemetry JSONL.
   --profile                       print every phase's speed profile: sweep, peak deg/tick, the first-
                                   frame jump into it, armed ticks, and the deg/tick of every frame
   --motion <ComboMotion>          prototype a single motion instead of a table combo
-  --flail-demo <name|all>         preview-only projectile tracks: Chain Cross, Reverse Halo, Ankle Reaper,
-                                  Backlash Reversal; draws the real head and chain with --body
+  --flail-demo <name|all>         preview-only projectile tracks: Chainfall Overhead, Chainrise Underhand,
+                                  Advancing Chainstorm, Chain Cross, Reverse Halo, Ankle Reaper, Backlash Reversal;
+                                  draws the real head and chain with --body
   --ease <Linear|Smooth|Snap|Whip|Trapezoidal|Weighted>   override every step's authored Ease
   --ease-in / --ease-out <ticks>  override Weighted easing's acceleration / deceleration ticks
   --ease-decay <float>            override Weighted easing's exponential settle rate
