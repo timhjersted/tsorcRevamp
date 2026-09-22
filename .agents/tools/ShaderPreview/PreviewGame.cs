@@ -142,6 +142,16 @@ namespace ShaderPreview
                     : Vector2.Zero;
                 Vector2 drawPosition = new Vector2(_size / 2f, _size / 2f) - frameOffset * scale;
 
+                if (recipe.DrawPrimaryUnderlay)
+                {
+                    var underlayBatch = new SpriteBatch(GraphicsDevice);
+                    underlayBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                        recipe.PrimarySampler, DepthStencilState.None, RasterizerState.CullNone);
+                    underlayBatch.Draw(primary, drawPosition, source, Color.White,
+                        recipe.Rotation, actualSize * 0.5f, scale, SpriteEffects.None, 0f);
+                    underlayBatch.End();
+                }
+
                 GraphicsDevice.Textures[1] = detail;
                 GraphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
 

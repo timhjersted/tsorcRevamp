@@ -33,8 +33,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// for the entire 40t tell. Tell: one harmless mirrored revolution at 60px; the head itself predicts
     /// direction and reach, so no aim line or extra spawn prop is used. Birth: at the starting orbit
     /// point with the chain already connected, rather than a second prop appearing at release.
-    /// Life: directional attacks expand through a 90-degree arc to 240px in 18t; Chainstorm expands over
-    /// one 36t revolution, holds 240px for three more 36t revolutions, and advances its committed owner.
+    /// Life: Chainfall and Chainrise snapshot the target bearing at release, then expand to 240px while
+    /// continuing in their committed overhand/underhand direction until that bearing (at most one full
+    /// revolution) in 18t; this is a lock, not live homing. Chainstorm expands over one 36t revolution,
+    /// holds 240px for three more 36t revolutions, and advances its committed owner.
     /// Reverse Halo and Ankle Reaper instead grow 60->96px through their 40t tell, lash level to 208px
     /// in 16t, and are only selectable when the target is within +/-48px vertically. Reverse Halo uses
     /// a bounded shoulder; Ankle Reaper uses its authored full 360-degree arm turn and flows directly
@@ -196,6 +198,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private bool _chainCrossSecondResolved;
         private bool _chainCrossSecondActive;
         private Vector2 _chainCrossSecondTarget;
+        // Directional chains use one server-captured bearing rather than continuously reading the
+        // target. The unwrapped angle lets Chainfall/Chainrise finish their chosen rotation naturally.
+        private bool _directionalTargetResolved;
+        private float _directionalTargetAngleFacingRight;
 
         /// <summary>Ticks the head flies outward before reeling back. Reach = this * launch speed.</summary>
         protected virtual float OutwardTicks => 18f;
@@ -260,12 +266,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return;
             }
 
-            if (AuthoredPattern == EnemyFlailAttackPattern.ChainCross
-                && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 NPC owner = Owner;
                 if (owner != null && owner.active)
-                    ResolveChainCrossFirstTarget(owner, GetHandAnchor(owner));
+                {
+                    Vector2 hand = GetHandAnchor(owner);
+                    if (AuthoredPattern == EnemyFlailAttackPattern.ChainCross)
+                        ResolveChainCrossFirstTarget(owner, hand);
+                    else if (IsDirectionalChainPattern)
+                        ResolveDirectionalTarget(owner, hand);
+                }
             }
 
             Projectile.ai[2] = -System.Math.Max(1f, Projectile.ai[2]);
@@ -283,6 +294,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             writer.Write(_chainCrossSecondActive);
             writer.Write(_chainCrossSecondTarget.X);
             writer.Write(_chainCrossSecondTarget.Y);
+            writer.Write(_directionalTargetResolved);
+            writer.Write(_directionalTargetAngleFacingRight);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -293,6 +306,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             _chainCrossSecondResolved = reader.ReadBoolean();
             _chainCrossSecondActive = reader.ReadBoolean();
             _chainCrossSecondTarget = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            _directionalTargetResolved = reader.ReadBoolean();
+            _directionalTargetAngleFacingRight = reader.ReadSingle();
         }
 
         public override bool? CanDamage()
@@ -525,6 +540,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     Projectile.netUpdate = true;
                 }
 
+                if (IsDirectionalChainPattern
+                    && Main.netMode != NetmodeID.MultiplayerClient
+                    && !_directionalTargetResolved)
+                {
+                    ResolveDirectionalTarget(owner, hand);
+                    Projectile.netUpdate = true;
+                }
+
                 if (!Main.dedServ)
                     SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.12f }, Projectile.Center);
                 int launchFacing = AuthoredPattern == EnemyFlailAttackPattern.BacklashReversal
@@ -532,7 +555,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     : _patternFacing;
                 Vector2 launch = AuthoredPattern == EnemyFlailAttackPattern.ChainCross && _chainCrossFirstActive
                     ? LocalFacingVector(_chainCrossFirstTarget)
-                    : new Vector2(launchFacing * reach, 0f);
+                    : IsDirectionalChainPattern
+                        ? new Vector2(reach, 0f).RotatedBy(MirrorFlailAngle(GetDirectionalTargetAngleFacingRight()))
+                        : new Vector2(launchFacing * reach, 0f);
                 OnLaunch(owner, launch);
             }
 
@@ -558,7 +583,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             }
             else
             {
-                TickDirectionalChainSwing(hand, releaseStartAngle, reach, attackTick);
+                TickDirectionalChainSwing(hand, reach, attackTick);
             }
         }
 
@@ -842,6 +867,58 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private Vector2 LocalFacingVector(Vector2 localFacingRight)
             => new Vector2(localFacingRight.X * _patternFacing, localFacingRight.Y);
 
+        private bool IsDirectionalChainPattern
+            => AuthoredPattern == EnemyFlailAttackPattern.OverheadChain
+                || AuthoredPattern == EnemyFlailAttackPattern.UnderhandChain;
+
+        /// <summary>Captures the player's bearing in the owner's facing-right local space. It is
+        /// deliberately called only by the authority at release: clients replay the synchronized
+        /// angle and a roll after that instant cannot turn this into a homing hitbox.</summary>
+        private void ResolveDirectionalTarget(NPC owner, Vector2 hand)
+        {
+            _directionalTargetResolved = true;
+            _directionalTargetAngleFacingRight = DefaultDirectionalTargetAngleFacingRight();
+
+            if (owner == null || !owner.HasValidTarget)
+                return;
+
+            Player target = Main.player[owner.target];
+            if (target == null || !target.active || target.dead)
+                return;
+
+            Vector2 localTarget = new Vector2(
+                (target.Center.X - hand.X) * _patternFacing,
+                target.Center.Y - hand.Y);
+            if (localTarget.LengthSquared() > 1f)
+                _directionalTargetAngleFacingRight = localTarget.ToRotation();
+        }
+
+        private float GetDirectionalTargetAngleFacingRight()
+        {
+            float targetAngle = _directionalTargetResolved
+                ? _directionalTargetAngleFacingRight
+                : DefaultDirectionalTargetAngleFacingRight();
+            float startAngle = MathHelper.Pi;
+
+            // Chainfall travels through the overhead direction; Chainrise travels through the
+            // underhand direction. Unwrapping rather than taking the shortest path preserves that
+            // identity and permits a complete rotation when the locked bearing calls for it.
+            return AuthoredPattern == EnemyFlailAttackPattern.OverheadChain
+                ? startAngle + PositiveAngle(targetAngle - startAngle)
+                : startAngle - PositiveAngle(startAngle - targetAngle);
+        }
+
+        private float DefaultDirectionalTargetAngleFacingRight()
+            => AuthoredPattern == EnemyFlailAttackPattern.OverheadChain
+                ? MathHelper.Pi + MathHelper.PiOver2
+                : MathHelper.PiOver2;
+
+        private static float PositiveAngle(float angle)
+        {
+            angle %= MathHelper.TwoPi;
+            return angle < 0f ? angle + MathHelper.TwoPi : angle;
+        }
+
         private void ResolveChainCrossFirstTarget(NPC owner, Vector2 hand)
         {
             _chainCrossFirstResolved = true;
@@ -940,16 +1017,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private static float ChainAlignedArm(float x, float y, float revolutionOffset)
             => (float)System.Math.Atan2(y, x) - MathHelper.PiOver2 + revolutionOffset;
 
-        private void TickDirectionalChainSwing(Vector2 hand, float releaseStartAngle, float reach, int attackTick)
+        private void TickDirectionalChainSwing(Vector2 hand, float reach, int attackTick)
         {
+            float startAngleFacingRight = MathHelper.Pi;
+            float targetAngleFacingRight = GetDirectionalTargetAngleFacingRight();
             if (attackTick <= EnemyFlailAttackPatterns.ArcSwingTicks)
             {
                 float progress = attackTick / (float)EnemyFlailAttackPatterns.ArcSwingTicks;
                 float eased = progress * progress * (3f - 2f * progress);
-                float direction = AuthoredPattern == EnemyFlailAttackPattern.OverheadChain
-                    ? _patternFacing
-                    : -_patternFacing;
-                float angle = releaseStartAngle + direction * MathHelper.PiOver2 * eased;
+                float angle = MirrorFlailAngle(MathHelper.Lerp(startAngleFacingRight,
+                    targetAngleFacingRight, eased));
                 float radius = MathHelper.Lerp(EnemyFlailAttackPatterns.TelegraphRadius, reach, eased);
                 Projectile.Center = hand + new Vector2(radius, 0f).RotatedBy(angle);
                 _patternDamageActive = true;
@@ -966,10 +1043,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return;
             }
 
-            float finalDirection = AuthoredPattern == EnemyFlailAttackPattern.OverheadChain
-                ? _patternFacing
-                : -_patternFacing;
-            float finalAngle = releaseStartAngle + finalDirection * MathHelper.PiOver2;
+            float finalAngle = MirrorFlailAngle(targetAngleFacingRight);
             float retractRadius = MathHelper.Lerp(reach, 0f, retractProgress);
             Projectile.Center = hand + new Vector2(retractRadius, 0f).RotatedBy(finalAngle);
             _patternDamageActive = false;
@@ -1008,6 +1082,24 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             _patternDamageActive = false;
         }
 
+        /// <summary>True when a player-composited puppet owns this flail. Its final body pass can
+        /// then draw the complete chain above the arm, instead of the projectile pass being hidden
+        /// behind the puppet's composite armor.</summary>
+        internal bool IsOwnedByPuppet(NPC puppet)
+            => Owner == puppet && puppet?.ModNPC is PuppetNPC;
+
+        /// <summary>Called from <see cref="PuppetNPC.PostDraw(SpriteBatch, Vector2, Color)"/>, after
+        /// the player body, front arm and shoulder cap. The complete ball-and-chain stays together
+        /// in this final pass, so neither prop can disappear through the owner.</summary>
+        internal void DrawAbovePuppet(Color lightColor)
+        {
+            NPC owner = Owner;
+            if (owner == null || !owner.active)
+                return;
+
+            DrawFlail(owner, lightColor);
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
             NPC owner = Owner;
@@ -1016,6 +1108,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return true;
             }
 
+            // PuppetNPC finishes its composed player sprite after the ordinary projectile pass.
+            // Let that final pass own both pieces of the flail so the chain remains visible over
+            // body armor and the animated front arm, with no duplicate draw behind it.
+            if (owner.ModNPC is PuppetNPC)
+                return false;
+
+            DrawFlail(owner, lightColor);
+            return false;
+        }
+
+        private void DrawFlail(NPC owner, Color lightColor)
+        {
             Texture2D chainTexture = ModContent.Request<Texture2D>(ChainTexturePath).Value;
             Vector2 mountedCenter = GetHandAnchor(owner);
             Vector2 center = Projectile.Center;
@@ -1054,8 +1158,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 Projectile.scale * 0.97f,
                 SpriteEffects.None,
                 0);
-
-            return false;
         }
     }
 }

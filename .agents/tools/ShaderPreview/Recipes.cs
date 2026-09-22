@@ -44,6 +44,9 @@ namespace ShaderPreview
         // s0 sampler. ArtoriasVFX.Draw uses LinearWrap; DrawBoomerang takes one per call (e.g. PointClamp
         // for sprite-sheet frames, where wrapping would pull the opposite edge of the sheet into the quad).
         public SamplerState PrimarySampler = SamplerState.LinearWrap;
+        // Some effects are extra material passes over an already-visible sprite rather than a
+        // replacement draw. Render that solid sprite first so the preview matches the live stack.
+        public bool DrawPrimaryUnderlay;
         public System.Action<Effect, float, float> Configure;
     }
 
@@ -77,6 +80,11 @@ namespace ShaderPreview
         {
             return new[]
             {
+                OwlFatherSolarArmor("OwlSolarArmorSky", SkyBlue),
+                OwlFatherSolarArmor("OwlSolarArmorCave", CaveDark),
+                OwlFatherSolarAxe("OwlSolarAxeSky", SkyBlue),
+                OwlFatherSolarAxe("OwlSolarAxeCave", CaveDark),
+
                 // DrawSwordSwipe(center, rotation, size, progress, opacity)
                 // 94x110 is the real size AbyssSlash.cs passes, and the aspect matters a lot here:
                 // the arc is an SDF over p = uv*2-1, so a landscape quad bends it into a different
@@ -623,6 +631,66 @@ namespace ShaderPreview
 
         private static readonly Color SkyBlue = new Color(132, 176, 226);
         private static readonly Color CaveDark = new Color(20, 16, 22);
+
+        /// <summary>Real phase-two torso cell through the same compiled armor-mask effect and
+        /// parameters registered by OwlFatherSolarArmorShaderSystem.</summary>
+        private static Recipe OwlFatherSolarArmor(string name, Color clear)
+        {
+            var source = new Rectangle(0, 0, 80, 112);
+            return new Recipe
+            {
+                Name = name,
+                Effect = "OwlFatherSolarArmorMask",
+                Technique = "OwlFatherSolarArmorMask",
+                Primary = "Content/Items/Armor/OwlFatherArmor_Body_X2",
+                Detail = "Turbulence_06-512x512",
+                DrawSize = new Vector2(80f, 112f),
+                SourceOverride = source,
+                Clear = clear,
+                Blend = BlendState.AlphaBlend,
+                PrimarySampler = SamplerState.PointClamp,
+                DrawPrimaryUnderlay = true,
+                Configure = (effect, progress, scale) =>
+                {
+                    effect.Parameters["uColor"].SetValue(new Color(255, 170, 25).ToVector3());
+                    effect.Parameters["uSecondaryColor"].SetValue(new Color(255, 235, 110).ToVector3());
+                    effect.Parameters["uOpacity"].SetValue(0.82f);
+                    effect.Parameters["uTime"].SetValue(12.5f + progress * 3f);
+                    effect.Parameters["uSourceRect"].SetValue(new Vector4(
+                        source.X, source.Y, source.Width, source.Height));
+                    effect.Parameters["uImageSize0"].SetValue(new Vector2(80f, 2240f));
+                },
+            };
+        }
+
+        private static Recipe OwlFatherSolarAxe(string name, Color clear)
+        {
+            var source = new Rectangle(0, 0, 72, 64);
+            return new Recipe
+            {
+                Name = name,
+                Effect = "OwlFatherSolarArmorMask",
+                Technique = "OwlFatherSolarArmorMask",
+                Primary = "Content/Items/Weapons/Melee/Axes/GreatFireAxe",
+                Detail = "Turbulence_06-512x512",
+                // Owl's ordinary 0.85 weapon scale is doubled by the phase-two composite transform.
+                DrawSize = new Vector2(72f, 64f) * 1.7f,
+                SourceOverride = source,
+                Clear = clear,
+                Blend = BlendState.AlphaBlend,
+                PrimarySampler = SamplerState.PointClamp,
+                DrawPrimaryUnderlay = true,
+                Configure = (effect, progress, scale) =>
+                {
+                    effect.Parameters["uColor"].SetValue(new Color(255, 170, 25).ToVector3());
+                    effect.Parameters["uSecondaryColor"].SetValue(new Color(255, 235, 110).ToVector3());
+                    effect.Parameters["uOpacity"].SetValue(0.82f);
+                    effect.Parameters["uTime"].SetValue(12.5f + progress * 3f);
+                    effect.Parameters["uSourceRect"].SetValue(new Vector4(0f, 0f, 72f, 64f));
+                    effect.Parameters["uImageSize0"].SetValue(new Vector2(72f, 64f));
+                },
+            };
+        }
 
         /// <summary>
         /// Mirrors VanillaSwordArc.DrawCinderOverlay with Gwyn.SpawnGwynSwordArc's settings: 170px frames

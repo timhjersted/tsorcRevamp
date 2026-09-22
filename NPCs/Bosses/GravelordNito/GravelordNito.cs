@@ -49,6 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             ReaperWeave,       // chained underhand/overhand swings in a random pole-to-pole order
             ReapersPendulum,   // fast strict back-and-forth chain: side / backhand / side ...
             SwordLineDance,    // rows of sky spikes walking in from the outside edge toward Nito
+            MiasmaHem,         // two fixed poison-fog walls bookending the arena at the spawn point
         }
 
         enum AttackFamily : byte
@@ -62,6 +63,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             ProjectileVolley,
             AreaBurst,
             Miasma,
+            AreaDenial,
         }
 
         const int FrameCount = 23;
@@ -85,6 +87,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         const int ThrustTelegraphTicks = 34;
         const int ThrustFlashLeadTicks = 30;
         const int ThrustFlashTicks = 15;
+
+        const float MiasmaHemOffsetTiles = 25f; // each wall's distance from ArenaSpawnBottom, either side
 
         const float DeathNovaRadius = 600f;         // was 300: twice the ring. Duration follows: radius / 8px-per-tick expand
         const float BoneVolleyMaxRange = 800f;      // 50 tiles: the furthest the shard ballistics are asked to reach
@@ -162,6 +166,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         AttackState QueuedAttack = AttackState.None;
         int QueuedSlashKind = -1;
         Vector2 MiasmaAimDirection = Vector2.UnitX;
+        // Where the encounter began (NPC.Bottom at OnSpawn), NOT wherever Nito currently stands — the
+        // Miasma Hem walls anchor here so the "safe" band is a fixed, learnable place (attack-quality-pass
+        // §10: arena effects anchor to the spawn point, not the boss's live position).
+        Vector2 ArenaSpawnBottom;
 
         // ── Loose-sword swing animation ─────────────────────────────────────────
         // The body sheet is ALWAYS the no-sword art (GravelordNitoAttacking.png — despite the name,
@@ -344,6 +352,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             writer.Write((byte)ComboLength);
             writer.Write((byte)ComboEndStep);
             writer.Write(ComboKinds);
+            writer.Write(ArenaSpawnBottom.X);
+            writer.Write(ArenaSpawnBottom.Y);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -378,6 +388,20 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             ComboLength = reader.ReadByte();
             ComboEndStep = reader.ReadByte();
             ComboKinds = reader.ReadInt32();
+            ArenaSpawnBottom = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+        }
+
+        ///<summary>Captures the encounter's fixed reference point once, server/singleplayer-side (a
+        ///client takes it from ReceiveExtraAI instead, so a client-side spawn can never seed it wrong —
+        ///same guard as VesselOfSouls.ArenaCenter).</summary>
+        public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            ArenaSpawnBottom = NPC.Bottom;
+            NPC.netUpdate = true;
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -527,6 +551,9 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             float horizontal = Math.Abs(player.Center.X - NPC.Center.X);
             float vertical = Math.Abs(player.Center.Y - NPC.Center.Y);
             bool sameLevel = vertical < 125f;
+            // How far the player has drifted from where the fight started, regardless of where Nito
+            // himself currently stands — this is what Miasma Hem actually punishes.
+            float driftFromSpawn = Math.Abs(player.Center.X - ArenaSpawnBottom.X);
             List<(AttackState state, float weight)> pool = new();
 
             // Invalid attacks are excluded rather than left in the bag at a token weight. This is the
@@ -556,6 +583,11 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 ProximityWeight(dist, 520f, 460f, 7f));
             AddAttackOption(pool, AttackState.SwordLineDance, horizontal >= 400f && horizontal <= 900f,
                 ProximityWeight(dist, 560f, 400f, PhaseTwo ? 9f : 7f));
+            // Weighted toward the moment it matters most: the player already drifting near where a wall
+            // will land (MiasmaHemOffsetTiles out). Never gated off — it's about arena position, not
+            // distance from Nito — so it can also fire pre-emptively.
+            AddAttackOption(pool, AttackState.MiasmaHem, true,
+                ProximityWeight(driftFromSpawn, MiasmaHemOffsetTiles * 16f * 0.85f, 350f, PhaseTwo ? 8f : 6f));
             AddAttackOption(pool, AttackState.BoneVolley, horizontal >= 220f && dist <= BoneVolleyMaxRange,
                 ProximityWeight(dist, 480f, 420f, 6f));
             AddAttackOption(pool, AttackState.GravelordSpikes, horizontal >= 100f,
@@ -670,6 +702,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             AttackState.BoneVolley or AttackState.HollowCommand => AttackFamily.ProjectileVolley,
             AttackState.DeathNova => AttackFamily.AreaBurst,
             AttackState.MiasmaBreath => AttackFamily.Miasma,
+            AttackState.MiasmaHem => AttackFamily.AreaDenial,
             _ => AttackFamily.None,
         };
 
@@ -862,6 +895,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
                 case AttackState.MiasmaBreath:
                     RunMiasmaBreath(globalNPC, player);
+                    break;
+
+                case AttackState.MiasmaHem:
+                    RunMiasmaHem(globalNPC, player);
                     break;
 
                 case AttackState.BonePillarCage:
@@ -1755,6 +1792,84 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 QueueMeleePressure(player);
                 EndAttack(70);
+            }
+        }
+
+        ///<summary>MIASMA HEM: two fixed poison-fog walls bookending the arena, anchored to
+        ///ArenaSpawnBottom rather than to Nito's own position or the player's (attack-quality-pass §10)
+        ///— the point is a fixed, learnable "don't retreat past here" line, not a moving one. Nito's own
+        ///cast is a short tell at his own location; the walls' own 60-tick fade-in is the tell at the
+        ///location that actually matters, since 25 tiles away is usually off-screen at cast time.</summary>
+        void RunMiasmaHem(tsorcRevampGlobalNPC globalNPC, Player player)
+        {
+            int cast = Telegraph(34);
+            globalNPC.AttackCommitted = AttackTimer <= cast;
+
+            if (AttackTimer == 1)
+            {
+                TelegraphCue(new Color(90, 130, 80));
+            }
+            if (AttackTimer < cast)
+            {
+                FacePlayer(player);
+                NPC.velocity.X *= 0.8f;
+                if (Main.rand.NextBool(3))
+                {
+                    Dust dust = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(50f, 70f),
+                        DustID.Poisoned, new Vector2(0f, Main.rand.NextFloat(-1.2f, -0.3f)), 100, default, 1f);
+                    dust.noGravity = true;
+                }
+            }
+            if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer == cast)
+            {
+                SpawnMiasmaHem();
+            }
+            // The walls own their whole fade-in/hold/fade-out life independently of Nito's own state.
+            if (AttackTimer >= cast + 8)
+            {
+                QueueMeleePressure(player);
+                EndAttack(90);
+            }
+        }
+
+        void SpawnMiasmaHem()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            // Replant rather than stack: re-selecting this attack refreshes both walls at the same
+            // fixed spots instead of leaving old ones to pile up underneath the new pair.
+            KillOwnedMiasmaWalls();
+
+            for (int side = -1; side <= 1; side += 2)
+            {
+                float wallX = ArenaSpawnBottom.X + side * MiasmaHemOffsetTiles * 16f;
+                Vector2 probeOrigin = new Vector2(wallX, ArenaSpawnBottom.Y);
+
+                // Probe for the real floor at this column (the arena may not be perfectly flat 25 tiles
+                // out); fall back to the spawn point's own height if no floor is found in range.
+                Vector2 wallBottom = FindGroundSurface(probeOrigin, out Vector2 surface) ? surface : probeOrigin;
+                Vector2 wallCenter = wallBottom - new Vector2(0f, NitoMiasmaWall.HeightPixels * 0.5f);
+
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), wallCenter, Vector2.Zero,
+                    ModContent.ProjectileType<NitoMiasmaWall>(), DeathDamage / 2, 0f, Main.myPlayer);
+            }
+        }
+
+        // No per-NPC ownership check (unlike KillOwnedSwordSlashes) — Nito only ever exists as a single
+        // instance in an encounter, so matching by type alone is sufficient here.
+        static void KillOwnedMiasmaWalls()
+        {
+            int wallType = ModContent.ProjectileType<NitoMiasmaWall>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile wall = Main.projectile[i];
+                if (wall.active && wall.type == wallType)
+                {
+                    wall.Kill();
+                }
             }
         }
 

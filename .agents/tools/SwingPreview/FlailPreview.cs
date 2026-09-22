@@ -63,6 +63,10 @@ namespace SwingPreview
         private const float CloseRadius = 60f;
         private const float CarryArm = -1.87f;
         private const float FrontTargetX = 200f;
+        // An intentionally oblique release-time player position. Chainfall and Chainrise end on
+        // this bearing rather than assuming that the player is directly above or below the puppet.
+        private const float DirectionalTargetX = 192f;
+        private const float DirectionalTargetY = -72f;
 
         /* Preview spec cards
          *
@@ -100,7 +104,7 @@ namespace SwingPreview
                 TelegraphTicks = StandardTell,
                 AttackTicks = 18 + 18,
                 RecoveryTicks = 60,
-                TimingSummary = "One 60px harmless orbit; 18t Smoother expanding 90-degree overhead arc (60->240px) live; 18t retract; filtered chain-following arm",
+                TimingSummary = "One 60px harmless orbit; 18t Smoother expansion (60->240px) through overhead direction to the player's release-locked bearing (up to 360 degrees) live; 18t retract; filtered chain-following arm",
                 TelegraphSample = StandardOrbitTell,
                 AttackSample = Chainfall,
                 RecoverySample = RecoveryPose,
@@ -111,7 +115,7 @@ namespace SwingPreview
                 TelegraphTicks = StandardTell,
                 AttackTicks = 18 + 18,
                 RecoveryTicks = 60,
-                TimingSummary = "One 60px harmless orbit; 18t Smoother expanding 90-degree underhand arc (60->240px) live; 18t retract; filtered chain-following arm",
+                TimingSummary = "One 60px harmless orbit; 18t Smoother expansion (60->240px) through underhand direction to the player's release-locked bearing (up to 360 degrees) live; 18t retract; filtered chain-following arm",
                 TelegraphSample = StandardOrbitTell,
                 AttackSample = Chainrise,
                 RecoverySample = RecoveryPose,
@@ -226,24 +230,25 @@ namespace SwingPreview
         {
             const int swingTicks = 18;
             const int retractTicks = 18;
-            float direction = overhead ? 1f : -1f;
+            float targetAngle = DirectionalTargetAngle(overhead);
 
             if (tick < swingTicks)
             {
                 float progress = (tick + 1f) / swingTicks;
                 float eased = Smoother(progress);
-                float angle = MathF.PI + direction * MathF.PI * 0.5f * eased;
+                float angle = Lerp(MathF.PI, targetAngle, eased);
                 float radius = Lerp(CloseRadius, 240f, eased);
-                return Polar(radius, angle, tick * direction * 0.35f, true,
-                    overhead ? "overhead expansion live" : "underhand expansion live",
-                    GenericArmAfterDirectionalTick(tick, overhead));
+                return Polar(radius, angle, tick * (overhead ? 1f : -1f) * 0.35f, true,
+                    overhead ? "overhead expansion to release lock live" : "underhand expansion to release lock live",
+                    GenericArmAfterDirectionalTick(tick, overhead), hasTarget: true,
+                    targetX: DirectionalTargetX, targetY: DirectionalTargetY, targetLabel: "release lock");
             }
 
             float retract = Smoother((tick - swingTicks + 1f) / retractTicks);
-            float finalAngle = MathF.PI + direction * MathF.PI * 0.5f;
             float finalRadius = Lerp(240f, 0f, retract);
-            return Polar(finalRadius, finalAngle, tick * direction * 0.28f, false, "retract",
-                GenericArmAfterDirectionalTick(tick, overhead));
+            return Polar(finalRadius, targetAngle, tick * (overhead ? 1f : -1f) * 0.28f, false, "retract",
+                GenericArmAfterDirectionalTick(tick, overhead), hasTarget: true,
+                targetX: DirectionalTargetX, targetY: DirectionalTargetY, targetLabel: "release lock");
         }
 
         private static FlailPreviewSample Chainstorm(int tick)
@@ -296,22 +301,37 @@ namespace SwingPreview
         private static float GenericArmAfterDirectionalTick(int tick, bool overhead)
         {
             float arm = GenericArmAfterTellTick(StandardTell - 1);
-            float direction = overhead ? 1f : -1f;
+            float targetAngle = DirectionalTargetAngle(overhead);
             for (int current = 0; current <= tick; current++)
             {
                 float angle;
                 if (current < 18)
                 {
                     float progress = Smoother((current + 1f) / 18f);
-                    angle = MathF.PI + direction * MathF.PI * 0.5f * progress;
+                    angle = Lerp(MathF.PI, targetAngle, progress);
                 }
                 else
                 {
-                    angle = MathF.PI + direction * MathF.PI * 0.5f;
+                    angle = targetAngle;
                 }
                 arm = FollowGenericArm(arm, angle);
             }
             return arm;
+        }
+
+        private static float DirectionalTargetAngle(bool overhead)
+        {
+            float startAngle = MathF.PI;
+            float targetAngle = MathF.Atan2(DirectionalTargetY, DirectionalTargetX);
+            return overhead
+                ? startAngle + PositiveAngle(targetAngle - startAngle)
+                : startAngle - PositiveAngle(startAngle - targetAngle);
+        }
+
+        private static float PositiveAngle(float angle)
+        {
+            angle %= MathF.Tau;
+            return angle < 0f ? angle + MathF.Tau : angle;
         }
 
         private static float GenericArmAfterChainstormTick(int tick)

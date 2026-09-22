@@ -20,6 +20,12 @@ namespace tsorcRevamp.Content.Items.Armor
             Item.defense = 10;
         }
 
+        public override void SetStaticDefaults()
+        {
+            int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head);
+            ArmorIDs.Head.Sets.DrawHead[equipSlot] = false;
+        }
+
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += MoveSpeed / 100f;

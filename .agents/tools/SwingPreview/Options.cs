@@ -74,6 +74,9 @@ namespace SwingPreview
         public string Clock;
         public float SwingMult = -1f;
         public float Overshoot = float.NaN;
+        /// <summary>Health fraction (0-1) passed to CustomizeMeleeCombo instead of the hardcoded 1f -
+        /// so an HP-gated escalation (extra reps, tightened pauses, etc.) can actually be previewed.</summary>
+        public float Health = 1f;
         public bool List;
         public bool CompareEases;
         public bool PerStep;
@@ -184,6 +187,7 @@ Examples:
                     case "--roll-through": options.RollThrough = int.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--swingmult": options.SwingMult = float.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--overshoot": options.Overshoot = float.Parse(Next(), CultureInfo.InvariantCulture); break;
+                    case "--health": options.Health = float.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "-h":
                     case "--help": return null;
                     default:
@@ -339,7 +343,7 @@ Examples:
                     continue;
                 }
 
-                MeleeCombo combo = profile.Customize(authored);
+                MeleeCombo combo = profile.Customize(authored, Health);
 
                 if (!PerStep || combo.RuntimeV2Clip != null || combo.Steps.Length == 1)
                 {

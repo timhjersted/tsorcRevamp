@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -14,6 +15,7 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Puppets
@@ -33,6 +35,7 @@ namespace tsorcRevamp.NPCs.Puppets
     {
         private const string HighLeapingSlamName = "High Leaping Slam";
         private const string HighLeapFollowUpName = "High Leaping Slam - Rising Follow-Up";
+        private const string GreatfirePursuitSlamName = "Greatfire Pursuit Slam";
         private const string GreatfireBreakerName = "Greatfire Breaker";
         private const string GreatfireCrescentName = "Greatfire Crescent";
         private const string BackstepReentryName = "Backstep Re-entry Chop";
@@ -50,8 +53,8 @@ namespace tsorcRevamp.NPCs.Puppets
 
         // ── Companion owl + spectral form ────────────────────────────────────────
         // The owl is killed outright (StrikeInstantKill) the instant Owl Father's health crosses
-        // 50%, which replaces the small puppet with a 2x shield-glow form for the rest of the
-        // fight. Sync the latched state so joining clients also see it after Owl heals above 50%.
+        // 50%, which replaces the small puppet with the authored 2x armor-template form for the
+        // rest of the fight. Sync the latched state so joining clients also see it after Owl heals above 50%.
         private const float SpectralFormHealthThreshold = 0.5f;
         private const float SpectralReachMultiplier = 2f;
         private const int SpectralHitboxWidth = 40;
@@ -65,10 +68,21 @@ namespace tsorcRevamp.NPCs.Puppets
         private int _fireOwlBombardmentTarget = -1;
         private bool _fireOwlBombardmentActive;
         private Vector2 _fireOwlBombardmentAnchor;
+        // Landing-timed LeapSlam has no real blade pose until impact. This latch defers its
+        // cosmetic crescent until TryGetMeleeSlashTrailPose can track the actual downswing.
+        private bool _landingAxeCrescentSpawned;
+        // Phase one's ranged-start attacks are dealt without replacement. The old weighted picker
+        // could alternate the two high-leap variants and make the opening half of the fight look
+        // like one attack on repeat even though each individual combo was on cooldown.
+        private readonly List<int> _phaseOneRangedComboBag = new List<int>();
+        private int _lastPhaseOneRangedComboIndex = -1;
 
         public override void OnSpawn(IEntitySource source)
         {
             base.OnSpawn(source);
+
+            _phaseOneRangedComboBag.Clear();
+            _lastPhaseOneRangedComboIndex = -1;
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -83,6 +97,7 @@ namespace tsorcRevamp.NPCs.Puppets
             CheckSpectralFormTrigger();
             base.AI();
             TickFireOwlBombardment();
+            EmitSpectralSolarWisps();
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -180,23 +195,101 @@ namespace tsorcRevamp.NPCs.Puppets
             Lighting.AddLight(NPC.Center, new Vector3(1f, 0.72f, 0.12f) * 2.2f);
         }
 
+        /// <summary>
+        /// Decorative phase-two solar flame that is intentionally not clipped by an armor or axe
+        /// alpha mask. The masked shader provides animated material inside the sprites; these short
+        /// turbulent ribbons start on the body/head/axe and travel beyond their silhouettes.
+        /// Cosmetic randomness is client-local and never changes combat state or collision.
+        /// </summary>
+        private void EmitSpectralSolarWisps()
+        {
+            if (!_spectralFormActive || Main.dedServ || Main.gamePaused)
+                return;
+
+            Lighting.AddLight(NPC.Center, new Vector3(1f, 0.48f, 0.06f) * 0.72f);
+
+            // The dedicated flame sprites overlap for continuity, but remain sparse enough for the
+            // armor and weapon to stay legible. Offset by whoAmI so instances do not pulse together.
+            if ((Main.GameUpdateCount + (ulong)(NPC.whoAmI * 3)) % 6UL != 0UL)
+                return;
+
+            float side = Main.rand.NextBool() ? -1f : 1f;
+            Vector2 bodyOrigin = NPC.Center + new Vector2(
+                side * Main.rand.NextFloat(NPC.width * 0.18f, NPC.width * 0.55f),
+                Main.rand.NextFloat(-NPC.height * 0.38f, NPC.height * 0.32f));
+            EmitSolarWisp(bodyOrigin,
+                new Vector2(side * Main.rand.NextFloat(9f, 20f), -Main.rand.NextFloat(34f, 56f)),
+                Main.rand.NextFloat(8f, 13f), Main.rand.Next(22, 34));
+
+            // A less frequent crown strand keeps the head alive without turning every frame into a
+            // symmetric torch. It begins inside the helmet and clears its upper edge as it rises.
+            if (Main.rand.NextBool(2))
+            {
+                Vector2 crownOrigin = NPC.Top + new Vector2(Main.rand.NextFloat(-13f, 13f), 13f);
+                EmitSolarWisp(crownOrigin,
+                    new Vector2(Main.rand.NextFloat(-13f, 13f), -Main.rand.NextFloat(42f, 64f)),
+                    Main.rand.NextFloat(7f, 11f), Main.rand.Next(24, 38));
+            }
+
+            // The weapon's own mask now has the same moving solar material. Give its axe head a
+            // separate escaping strand so the flame continues outside the rectangular item quad.
+            if (Phase != AttackPhase.Healing && Phase != AttackPhase.FleeToHeal)
+            {
+                Vector2 weaponDirection = PuppetWeaponDirection.SafeNormalize(
+                    new Vector2(NPC.direction, 0f));
+                Vector2 bladeNormal = new Vector2(-weaponDirection.Y, weaponDirection.X);
+                float axeReach = Math.Max(54f, PuppetActiveBladeReach * 0.82f);
+                Vector2 axeHead = PuppetHandPosition + weaponDirection * axeReach
+                    + bladeNormal * Main.rand.NextFloat(-7f, 7f);
+                EmitSolarWisp(axeHead,
+                    -Vector2.UnitY * Main.rand.NextFloat(28f, 46f)
+                        + weaponDirection * Main.rand.NextFloat(5f, 16f),
+                    Main.rand.NextFloat(7f, 12f), Main.rand.Next(18, 30));
+            }
+        }
+
+        private static void EmitSolarWisp(Vector2 origin, Vector2 travel, float width, int lifetime)
+        {
+            Vector2 direction = travel.SafeNormalize(-Vector2.UnitY);
+            float travelLength = Math.Max(18f, travel.Length());
+            Vector2 startSize = new Vector2(width * Main.rand.NextFloat(1.65f, 2.15f),
+                travelLength * Main.rand.NextFloat(0.52f, 0.72f));
+            Vector2 endSize = new Vector2(width * Main.rand.NextFloat(2.2f, 3.15f),
+                travelLength * Main.rand.NextFloat(0.82f, 1.12f));
+
+            OwlFatherSolarWispSystem.Spawn(
+                origin + direction * startSize.Y * 0.12f,
+                travel / Math.Max(1f, lifetime * 0.82f),
+                startSize,
+                endSize,
+                direction.ToRotation() + MathHelper.PiOver2,
+                Main.rand.NextFloat(-0.012f, 0.012f),
+                lifetime,
+                Main.rand.Next(3));
+        }
+
         protected override bool HasSpectralOverlay => _spectralFormActive;
-        protected override float SpectralOverlayScale => 2f;
+        // The X2 equip sheets provide the physical enlargement. Keep the spectral post-process at
+        // 1x so its tint, halo and trails survive without enlarging that authored template again.
+        protected override float SpectralOverlayScale => 1f;
         protected override int PuppetVisualWidth => 20;
         protected override int PuppetVisualHeight => 42;
-        // Keep the gold armor recognizable. A tight upper halo adds warmth without stacking a
-        // second silhouette under the feet or burying the original armor in displaced pixel blocks.
+        // The X2 template is the solid foreground body. The spectral pass is deliberately an
+        // independent, behind-armor glow/trail so phase two keeps its ephemeral presence without
+        // fading the authored armor back into a ghostly duplicate.
         protected override Color SpectralOverlayColor => new Color(255, 218, 70);
-        protected override float SpectralCoreTintStrength => 0.14f;
-        protected override float SpectralCoreOpacity => 0.5f;
+        protected override float SpectralCoreTintStrength => 0.08f;
+        protected override float SpectralCoreOpacity => 1f;
         protected override Color SpectralHaloColor => new Color(255, 196, 42);
-        protected override int SpectralHaloCopyCount => 8;
-        protected override float SpectralHaloRadius => 5f;
-        protected override float SpectralHaloOpacity => 0.26f;
-        protected override float SpectralHaloScale => 1f;
+        protected override int SpectralHaloCopyCount => 10;
+        protected override float SpectralHaloRadius => 9f;
+        protected override float SpectralHaloOpacity => 0.19f;
+        protected override float SpectralHaloScale => 1.025f;
         protected override bool SpectralHaloFollowsCoreOpacity => false;
-        protected override float SpectralTrailOpacity => 0.12f;
+        protected override float SpectralTrailOpacity => 0.2f;
         protected override bool SpectralExcludeDownwardCopies => true;
+        protected override int LargeArmorMaskShaderId => OwlFatherSolarArmorShaderSystem.ShaderId;
+        protected override bool IncludeMeleeWeaponInLargeArmorMask => true;
 
         private void ApplySpectralBodyHitbox()
         {
@@ -228,6 +321,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int HeadArmorItemType => ModContent.ItemType<OwlFatherMask>();
         protected override int BodyArmorItemType => ModContent.ItemType<OwlFatherArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<OwlFatherGreaves>();
+        protected override int ArmorTemplateScale => _spectralFormActive ? 2 : 1;
+        protected override string LargeHeadArmorTemplateTexture => "tsorcRevamp/Content/Items/Armor/OwlFatherMask_Head_X2";
+        protected override string LargeBodyArmorTemplateTexture => "tsorcRevamp/Content/Items/Armor/OwlFatherArmor_Body_X2";
+        protected override string LargeLegsArmorTemplateTexture => "tsorcRevamp/Content/Items/Armor/OwlFatherGreaves_Legs_X2";
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyGreatFireAxe>();
         // The companion handles the molten-orb volley; Owl Father has no held ranged weapon.
@@ -251,6 +348,7 @@ namespace tsorcRevamp.NPCs.Puppets
             float reachMult = 1.15f,
             float leapHeightMult = 1f,
             float leapForwardSpeedMult = 1f,
+            float leapStrikeRange = 0f,
             SwingEaseStyle ease = SwingEaseStyle.Smooth)
             => new MeleeComboStep
             {
@@ -265,6 +363,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 Ease = ease,
                 LeapHeightMult = leapHeightMult,
                 LeapForwardSpeedMult = leapForwardSpeedMult,
+                LeapStrikeRange = leapStrikeRange,
             };
 
         // The two V2 fundamentals are copied as definitions rather than shared by reference with
@@ -384,10 +483,10 @@ namespace tsorcRevamp.NPCs.Puppets
             new MeleeCombo
             {
                 Name = HighLeapingSlamName,
-                BaseWeight = 65,
+                BaseWeight = 24,
                 Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.OrangeRed,
-                CooldownAfterUse = 220,
+                CooldownAfterUse = 360,
                 HeavyCommit = true,
                 HyperArmor = true,
                 RangedStartOnly = true,
@@ -396,6 +495,36 @@ namespace tsorcRevamp.NPCs.Puppets
                     damageMult: 1.55f, reachMult: 1.28f,
                     leapHeightMult: 1.18f, leapForwardSpeedMult: 1.05f,
                     ease: SwingEaseStyle.Trapezoidal) },
+            },
+            // Attack spec / timing sheet — Greatfire Pursuit Slam
+            // Weapon: EnemyGreatFireAxe, carried from -117 degrees to a +63 degree landing pose;
+            // the 43t on-screen tell (36 authored * 1.20) has orange/gold blade embers.
+            // Move/reach: 5.89px/t upward launch (0.62 height), ~39.3t flat-ground airtime,
+            // 9.24px/t horizontal cap (1.70 forward), ~363px body travel plus 79px blade reach.
+            // ReliableJumpStartRange subtracts the 24px landing standoff and 24px terrain margin,
+            // so phase-one selection stops at ~394px instead of asking the leap to land short.
+            // Live/counter: within 120px after the apex, the last <=10t downswing becomes live;
+            // one well-timed 22t roll beats it, with 22t recovery (including a 6t planted hold).
+            // Selection: one entry in the phase-one ranged bag, 150t personal cooldown; no fire
+            // columns, projectile, copies, debuff, or player displacement. Damage is 1.25x (37).
+            // Multiplayer: the shared combo picker/launch is server-authoritative; only cosmetic
+            // dust, light, sound, and screen shake run client-side.
+            new MeleeCombo
+            {
+                Name = GreatfirePursuitSlamName,
+                BaseWeight = 90,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.DarkOrange,
+                CooldownAfterUse = 150,
+                HeavyCommit = true,
+                HyperArmor = true,
+                RangedStartOnly = true,
+                MoveBrake = 0.06f,
+                Steps = new[] { AxeSwing(ComboMotion.LeapSlam, 36, 82,
+                    damageMult: 1.25f, reachMult: 1.25f,
+                    leapHeightMult: 0.62f, leapForwardSpeedMult: 1.70f,
+                    leapStrikeRange: 120f,
+                    ease: SwingEaseStyle.Whip) },
             },
             new MeleeCombo
             {
@@ -526,11 +655,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int MeleeComboInterStepLingerTicks => 3;
         protected override int MeleeRecoveryLingerTicks => 6;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
-        // Shader-lit fire slash quad (see PuppetNPC.HasFireSlashVFX) instead of the flat Slash.png
-        // sprite strip every other axe puppet still uses — Gwyn's procedural greatsword slash,
-        // recolored to a molten red-orange-yellow ramp matching AncientFireAxe's own fire theme
-        // (and the OnFire debuff OnBladeHit applies below). Armed every combo-attack tick in
-        // OnMeleeComboAttackTick below, same pattern as Gwyn.
+        // The animated procedural fire material (see PuppetNPC.HasFireSlashVFX) remains a free
+        // layer above the swing rather than being clipped into a crescent mask. Each axe swing also
+        // spawns a separate VanillaSwordArc sprite below, tracked from this puppet's live hand and
+        // blade direction. Keeping them independent means the readable crescent stays exactly on
+        // the weapon while the fire is free to curl, flow and fade on its own.
         protected override bool HasFireSlashVFX => true;
         protected override Color FireSlashCinderColor => new Color(40, 6, 2);
         protected override Color FireSlashFlameColor => new Color(226, 90, 20);
@@ -680,6 +809,11 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
+            // Save the more elaborate second high-leap conversion for the giant spectral phase.
+            // Phase one gets one occasional high signature slam plus the low pursuit leap below.
+            if (combo.Name == HighLeapFollowUpName && !_spectralFormActive)
+                return false;
+
             if ((combo.Name == GreatfireBreakerName || combo.Name == BackstepReentryName)
                 && healthFraction > 0.66f)
                 return false;
@@ -697,9 +831,80 @@ namespace tsorcRevamp.NPCs.Puppets
             return true;
         }
 
+        protected override int ReactiveComboIndex(float distance, ComboRangeBand band, int[] ready)
+        {
+            if (_spectralFormActive)
+                return base.ReactiveComboIndex(distance, band, ready);
+
+            bool choosingRangedStart = false;
+            for (int i = 0; i < OwlFatherAxeCombos.Length && i < ready.Length; i++)
+            {
+                if (ready[i] > 0 && OwlFatherAxeCombos[i].RangedStartOnly)
+                {
+                    choosingRangedStart = true;
+                    break;
+                }
+            }
+
+            if (!choosingRangedStart)
+                return base.ReactiveComboIndex(distance, band, ready);
+
+            // Cooldowns and health/range gates narrow the current bag. Invalid entries are dropped;
+            // once empty, refill from every currently-ready phase-one ranged opener and shuffle.
+            for (int i = _phaseOneRangedComboBag.Count - 1; i >= 0; i--)
+            {
+                int comboIndex = _phaseOneRangedComboBag[i];
+                if (comboIndex < 0 || comboIndex >= ready.Length || ready[comboIndex] <= 0
+                    || !OwlFatherAxeCombos[comboIndex].RangedStartOnly)
+                    _phaseOneRangedComboBag.RemoveAt(i);
+            }
+
+            if (_phaseOneRangedComboBag.Count == 0)
+            {
+                for (int i = 0; i < OwlFatherAxeCombos.Length && i < ready.Length; i++)
+                {
+                    if (ready[i] > 0 && OwlFatherAxeCombos[i].RangedStartOnly)
+                        _phaseOneRangedComboBag.Add(i);
+                }
+
+                for (int i = _phaseOneRangedComboBag.Count - 1; i > 0; i--)
+                {
+                    int swapIndex = Main.rand.Next(i + 1);
+                    int held = _phaseOneRangedComboBag[i];
+                    _phaseOneRangedComboBag[i] = _phaseOneRangedComboBag[swapIndex];
+                    _phaseOneRangedComboBag[swapIndex] = held;
+                }
+            }
+
+            if (_phaseOneRangedComboBag.Count == 0)
+                return base.ReactiveComboIndex(distance, band, ready);
+
+            int drawPosition = _phaseOneRangedComboBag.Count - 1;
+            if (_phaseOneRangedComboBag.Count > 1
+                && _phaseOneRangedComboBag[drawPosition] == _lastPhaseOneRangedComboIndex)
+            {
+                for (int i = 0; i < drawPosition; i++)
+                {
+                    if (_phaseOneRangedComboBag[i] == _lastPhaseOneRangedComboIndex)
+                        continue;
+
+                    int held = _phaseOneRangedComboBag[drawPosition];
+                    _phaseOneRangedComboBag[drawPosition] = _phaseOneRangedComboBag[i];
+                    _phaseOneRangedComboBag[i] = held;
+                    break;
+                }
+            }
+
+            int chosen = _phaseOneRangedComboBag[drawPosition];
+            _phaseOneRangedComboBag.RemoveAt(drawPosition);
+            _lastPhaseOneRangedComboIndex = chosen;
+            return chosen;
+        }
+
         private bool IsJumpGapCloser(MeleeCombo combo)
             => combo.Name == HighLeapingSlamName
                 || combo.Name == HighLeapFollowUpName
+                || combo.Name == GreatfirePursuitSlamName
                 || combo.Name == ApexDiveName;
 
         private float ReliableJumpStartRange(MeleeComboStep step)
@@ -720,10 +925,37 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             EmitFireColumnBladeCharge(combo, step, elapsed);
 
+            if (combo.Name == GreatfirePursuitSlamName)
+                EmitPursuitSlamTelegraph(step, elapsed, total);
+
             if (combo.Name == FirefallArrayName && elapsed == 10)
                 SpawnFirefallArray();
             else if (combo.Name == FireOwlBombardmentName && elapsed == 12)
                 StartFireOwlBombardment();
+        }
+
+        private void EmitPursuitSlamTelegraph(MeleeComboStep step, int elapsed, int total)
+        {
+            if (Main.dedServ || elapsed % 2 != 0)
+                return;
+
+            float progress = (elapsed + 1f) / Math.Max(1, total);
+            Vector2 weaponDirection = PuppetWeaponDirection.SafeNormalize(
+                new Vector2(NPC.direction, 0f));
+            Vector2 bladeNormal = new Vector2(-weaponDirection.Y, weaponDirection.X);
+            float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+            Vector2 axeHead = PuppetHandPosition + weaponDirection * bladeReach * 0.86f;
+            Dust ember = Dust.NewDustPerfect(
+                axeHead + bladeNormal * Main.rand.NextFloat(-5f, 5f),
+                Main.rand.NextBool(3) ? DustID.GoldFlame : DustID.OrangeTorch,
+                new Vector2(-NPC.direction * Main.rand.NextFloat(0.8f, 2.2f),
+                    Main.rand.NextFloat(-0.9f, 0.2f)),
+                55,
+                new Color(255, 150, 35),
+                MathHelper.Lerp(0.65f, 1.25f, progress));
+            ember.noGravity = true;
+            ember.fadeIn = 0.8f + progress * 0.5f;
+            Lighting.AddLight(axeHead, new Vector3(1f, 0.28f, 0.03f) * (0.2f + progress * 0.45f));
         }
 
         /// <summary>
@@ -813,11 +1045,80 @@ namespace tsorcRevamp.NPCs.Puppets
             float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
             ArmFireSlashVFX(bladeReach, elapsed / (float)Math.Max(1, total - 1));
 
+            // Spawn once per actual axe step; VanillaSwordArc then samples TryGetMeleeSlashTrailPose
+            // every draw tick, so its pivot, rotation, scale and sheet frame all follow the same
+            // composite-arm pose as the weapon. Do not enable its CinderOverlay: that pass masks
+            // the shader to the crescent sprite, whereas Owl's independent procedural fire quad
+            // intentionally remains visible and animated around it.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (step.Motion == ComboMotion.LeapSlam)
+                {
+                    // A landing-timed leap remains in a carried pose in the first part of this
+                    // phase. Do not let VanillaSwordArc fall back to NPC.Center during that flight;
+                    // start it only on the landing tick that exposes the live blade pose.
+                    if (!_landingAxeCrescentSpawned
+                        && TryGetMeleeSlashTrailPose(out _, out _, out _, out _, out _, out _, out _, out _))
+                    {
+                        _landingAxeCrescentSpawned = true;
+                        SpawnAxeSwingCrescent(step, Math.Max(5, total - elapsed), bladeReach);
+                    }
+                }
+                else if (elapsed == 0)
+                {
+                    SpawnAxeSwingCrescent(step, total, bladeReach);
+                }
+            }
+
             if (elapsed != total / 2)
                 return;
 
             if (combo.Name == GreatfireCrescentName)
                 SpawnGreatfireCrescent();
+        }
+
+        private void SpawnAxeSwingCrescent(MeleeComboStep step, int duration, float bladeReach)
+        {
+            bool reverse = step.Motion == ComboMotion.UnderhandArc
+                || step.Motion == ComboMotion.RisingUppercutLeap;
+            float sweep = (reverse ? -1f : 1f) * NPC.direction * MathHelper.Pi;
+            VanillaSwordArcSettings settings = new VanillaSwordArcSettings
+            {
+                Texture = VanillaSwordArcTexture.NightsEdge,
+                Easing = VanillaSwordArcEasing.Linear,
+                Duration = Math.Max(1, duration),
+                StartAngle = PuppetWeaponDirection.ToRotation(),
+                SweepAngle = sweep,
+                Radius = Math.Max(56f, bladeReach * 1.04f),
+                Opacity = 0.58f,
+                FadeInFraction = Math.Min(0.14f, 2f / Math.Max(1, duration)),
+                FadeOutFraction = 0.24f,
+                AfterimageLag = MathHelper.PiOver4,
+                AfterimageOpacity = 0.46f,
+                BodyOpacity = 0.74f,
+                CoreOpacity = 0.22f,
+                DrawTipSparkle = false,
+                TintWithWorldLighting = true,
+                DarkColor = new Color(74, 13, 2),
+                BodyColor = new Color(232, 79, 11),
+                CoreColor = new Color(255, 194, 56),
+                // This is deliberately a plain, readable sprite pass. Owl's existing FireSlashArc
+                // shader continues separately in PostDraw, without the sprite acting as its mask.
+                DrawCinderOverlay = false,
+                DustType = -1,
+                DustCount = 0,
+                TrackPuppetBlade = true,
+                EnableCollision = false,
+            };
+
+            VanillaSwordArc.SpawnForNPC(NPC.GetSource_FromAI(), NPC, 0, 0f, Main.myPlayer,
+                settings, Vector2.Zero, hostile: false);
+        }
+
+        protected override void OnMeleeComboStarted(MeleeCombo combo)
+        {
+            base.OnMeleeComboStarted(combo);
+            _landingAxeCrescentSpawned = false;
         }
 
         private void EmitFireColumnBladeCharge(
@@ -976,10 +1277,42 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected override void OnLeapSlamLanded(MeleeComboStep step)
         {
-            // Owl Father's only LeapSlam motions are the two High Leaping Slam variants. This hook
-            // is tied to the physics landing itself, so hit/miss results and combo recovery cannot
-            // suppress the six-column eruption.
-            SpawnHighLeapFireColumns();
+            if (ActiveMeleeComboName == GreatfirePursuitSlamName)
+            {
+                SpawnPursuitSlamImpact();
+                return;
+            }
+
+            // Only the signature high variants earn the six-column eruption. The low pursuit slam
+            // is a mobility tool and deliberately keeps its landing readable and compact.
+            if (ActiveMeleeComboName == HighLeapingSlamName
+                || ActiveMeleeComboName == HighLeapFollowUpName)
+                SpawnHighLeapFireColumns();
+        }
+
+        private void SpawnPursuitSlamImpact()
+        {
+            if (Main.dedServ)
+                return;
+
+            Vector2 impact = NPC.Bottom - Vector2.UnitY * 4f;
+            for (int i = 0; i < 34; i++)
+            {
+                float outward = Main.rand.NextFloat(-4.8f, 4.8f);
+                Dust dust = Dust.NewDustPerfect(
+                    impact + new Vector2(Main.rand.NextFloat(-14f, 14f), Main.rand.NextFloat(-5f, 2f)),
+                    Main.rand.NextBool(4) ? DustID.GoldFlame : DustID.OrangeTorch,
+                    new Vector2(outward, Main.rand.NextFloat(-4.5f, -1.2f)),
+                    45,
+                    new Color(255, 136, 28),
+                    Main.rand.NextFloat(0.85f, 1.55f));
+                dust.noGravity = true;
+                dust.fadeIn = Main.rand.NextFloat(0.8f, 1.25f);
+            }
+
+            Lighting.AddLight(impact, new Vector3(1f, 0.32f, 0.04f) * 1.15f);
+            UsefulFunctions.ScreenShake(impact, 2.5f, 10, distanceFalloff: 500f);
+            SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.42f, Pitch = -0.18f }, impact);
         }
 
         private void SpawnFirefallArray()

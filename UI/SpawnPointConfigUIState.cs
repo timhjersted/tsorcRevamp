@@ -572,10 +572,9 @@ namespace tsorcRevamp.UI
             soulsInput.Top.Set(hidden, 0);
             panel.Append(soulsInput);
 
-            // Live "≈ N souls/kill" readout — the raw value in the field above is NOT the drop amount (it's
-            // multiplied ×10/×25 into npc.value on spawn, then divided back down by a game-mode-specific divisor on
-            // kill; the two only cancel to ~1:1 in Expert mode). This shows the actual number for your current
-            // difficulty + equipped soul rings so you don't have to do the math by hand.
+            // Live "≈ N souls/kill" readout. Custom values are multiplied ×10/×25 into npc.value on spawn;
+            // Terraria then applies its difficulty money scaling, and DarkSoulNPC applies the killer's soul
+            // multiplier on death. This shows that resulting payout without requiring manual conversion.
             soulsPreview = new UIText("", 0.7f);
             soulsPreview.Left.Set(10, 0);
             soulsPreview.Top.Set(hidden, 0);
@@ -643,10 +642,10 @@ namespace tsorcRevamp.UI
             panel.Append(saveStatsButton);
         }
 
-        // Recomputes soulsPreview's text from the currently-typed/committed value + the LIVE player's game mode and
-        // equipped soul-ring bonuses (via CheckSoulsMultiplier), so it always reflects what would actually drop right
-        // now. Custom values mirror tsorcScriptedEvents' spawn-time conversion; an empty field uses SetDefaults'
-        // already difficulty-scaled npc.value directly, just like the spawned NPC does.
+        // Recomputes soulsPreview from the currently-typed/committed value and the local player's soul multiplier.
+        // Custom values mirror tsorcScriptedEvents' spawn-time conversion; an empty field uses SetDefaults'
+        // already difficulty-scaled npc.value directly, just like the spawned NPC does. SoulsMultiplier already
+        // includes the difficulty factor, so npc.value must not be divided a second time here.
         private void RefreshSoulsPreview()
         {
             if (soulsPreview == null || editingNpc == null)
@@ -663,18 +662,8 @@ namespace tsorcRevamp.UI
             int npcValue = soulsInput.Value.HasValue
                 ? soulsInput.Value.Value * customValueMultiplier
                 : (int)temp.value;
-            float killDivisor = 15f;
-
-            if (master)
-            {
-                killDivisor = 20f;
-            }
-            else if (expert)
-            {
-                killDivisor = 25f;
-            }
-            float ringMultiplier = Main.LocalPlayer.GetModPlayer<DarkSoulPlayer>().SoulsMultiplier();
-            int actualDrop = (int)(ringMultiplier * (npcValue / killDivisor));
+            float soulMultiplier = Main.LocalPlayer.GetModPlayer<DarkSoulPlayer>().SoulsMultiplier();
+            int actualDrop = (int)(soulMultiplier * npcValue);
 
             string modeName = "Normal";
 
@@ -686,7 +675,7 @@ namespace tsorcRevamp.UI
             {
                 modeName = "Expert";
             }
-            soulsPreview.SetText($"~ {actualDrop} souls/kill ({modeName}{(ringMultiplier != 1f ? $", rings x{ringMultiplier:0.##}" : "")})");
+            soulsPreview.SetText($"~ {actualDrop} souls/kill ({modeName}, multiplier x{soulMultiplier:0.##})");
         }
 
         private static int GetCustomSoulValueMultiplier()

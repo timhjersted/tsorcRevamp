@@ -54,6 +54,9 @@ namespace SwingPreview
         public string WeaponSprite;
         public float WeaponRotationOffset;   // MeleeWeaponRotationOffset
         public float DrawScale = 1f;
+        /// <summary>Armor cell multiplier for authored oversized templates. A value of 2 means
+        /// 80x112 cells, 720x448 body art, and 80x2240 legacy head/leg strips.</summary>
+        public int ArmorTemplateScale = 1;
 
         /// <summary>The live puppet hides a held weapon because a projectile owns the complete prop
         /// (for example, a flail head and chain). The sprite path is still used to size the canvas.</summary>
@@ -97,13 +100,16 @@ namespace SwingPreview
     /// </summary>
     internal static class BodyRenderer
     {
-        private const int CellW = 40;
-        private const int CellH = 56;
+        private const int BaseCellW = 40;
+        private const int BaseCellH = 56;
+        private static int _armorTemplateScale = 1;
+        private static int CellW => BaseCellW * _armorTemplateScale;
+        private static int CellH => BaseCellH * _armorTemplateScale;
 
         // Cell-space rotation pivots. Vanilla flips the offset sign with the sprite so the SAME art
         // texel stays the pivot in both facings, which is why these are facing-independent here.
-        private static readonly PointF FrontArmPivot = new PointF(15f, 28f);
-        private static readonly PointF BackArmPivot = new PointF(26f, 30f);
+        private static PointF FrontArmPivot => ScaleCellPoint(15f, 28f);
+        private static PointF BackArmPivot => ScaleCellPoint(26f, 30f);
 
         // Composite sheet columns.
         private const int ColTorso = 0;
@@ -120,6 +126,7 @@ namespace SwingPreview
         internal static void Render(PuppetArt art, List<PoseFrame> frames, string outDir, string label, int zoom)
         {
             Directory.CreateDirectory(outDir);
+            _armorTemplateScale = Math.Max(1, art.ArmorTemplateScale);
 
             using Bitmap body = Load(art.BodySheet);
             using Bitmap legs = Load(art.LegsSheet);
@@ -283,10 +290,6 @@ namespace SwingPreview
             {
                 DrawTargetMarker(g, flailTarget, frame.FlailTargetLabel);
             }
-            if (frame.FlailVisible && flailChain != null)
-            {
-                DrawFlailChain(g, flailChain, flailHand, flailCenter);
-            }
             DrawStatic(g, legs, legFrame, flip);
             DrawRotated(g, body, backArmCell, BackArmPivot, backArmRotation, flip);
             if (dualWield)
@@ -315,6 +318,12 @@ namespace SwingPreview
                 DrawStatic(g, body, frontShoulderCell, flip);
             }
 
+            // Runtime's PuppetNPC.PostDraw deliberately puts the complete ball-and-chain above
+            // every composed armor layer, including the animated front arm and shoulder cap.
+            if (frame.FlailVisible && flailChain != null)
+            {
+                DrawFlailChain(g, flailChain, flailHand, flailCenter);
+            }
             if (frame.FlailVisible && flailBall != null)
             {
                 DrawFlailBall(g, flailBall, flailCenter, frame.FlailRotation, frame.FlailDamageActive);
@@ -495,7 +504,7 @@ namespace SwingPreview
             };
             float x = (float)Math.Cos(angle) * radiusX + 6f;
             float y = (float)Math.Sin(angle) * radiusY - 2f;
-            return new PointF(20f + x, 28f + y);
+            return ScaleCellPoint(20f + x, 28f + y);
         }
 
         /// <summary>Vanilla Player.GetFrontHandPosition, expressed in cell space rather than world
@@ -517,8 +526,11 @@ namespace SwingPreview
             x += -(3f * sign) * (float)Math.Sin(num);
             y += (3f * sign) * (float)Math.Cos(num);
 
-            return new PointF(20f + x, 28f + y);
+            return ScaleCellPoint(20f + x, 28f + y);
         }
+
+        private static PointF ScaleCellPoint(float x, float y)
+            => new PointF(x * _armorTemplateScale, y * _armorTemplateScale);
 
         private static void DrawLabel(Bitmap canvas, PoseFrame frame)
         {

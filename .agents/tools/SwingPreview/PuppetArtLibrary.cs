@@ -12,7 +12,7 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, DreadWraith";
+        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, DreadWraith";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
@@ -93,6 +93,26 @@ namespace SwingPreview
                     HeadSheet = P("Content", "Items", "Armor", "Melee", "DarkKnightHelmet_Head.png"),
                     WeaponSprite = P("Projectiles", "Enemy", "Weapons", "BloodSword.png"),
                     WeaponRotationOffset = 0f,
+                    DrawScale = 1f,
+                };
+            }
+
+            if (puppet.Equals("OwlFather", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "OwlFather",
+                    BodySheet = P("Content", "Items", "Armor", "OwlFatherArmor_Body_X2.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "OwlFatherGreaves_Legs_X2.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "OwlFatherMask_Head_X2.png"),
+                    WeaponSprite = P("Content", "Items", "Weapons", "Melee", "Axes", "GreatFireAxe.png"),
+                    WeaponRotationOffset = 1f,
+                    // Phase two doubles the complete final player cache, including the ordinary
+                    // 72x64 axe. The authored armor cells are already 2x and therefore draw at 1x.
+                    WeaponScale = 1.70f,
+                    HandleNormX = 0.17f,
+                    HandleNormY = 0.80f,
+                    ArmorTemplateScale = 2,
                     DrawScale = 1f,
                 };
             }

@@ -11351,6 +11351,8 @@ Mods: {
 			// FireFlaskProj.DisplayName: Fire Flask Proj
 			// OolacileCultistDeathExplosion.DisplayName: Oolacile Cultist Death Explosion
 			// BasiliskLeechTongueTelegraph.DisplayName: Basilisk Leech Tongue Telegraph
+			// CursedDragonPoisonCloud.DisplayName: Cursed Dragon Poison Cloud
+			// NitoMiasmaWall.DisplayName: Nito Miasma Wall
 		}
 
 		NPCs: {

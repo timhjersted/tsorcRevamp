@@ -263,7 +263,7 @@ namespace SwingPreview
             for (int i = 0; i < spec.Steps.Length; i++)
             {
                 MeleeComboStep step = spec.Steps[i];
-                bool authoredClock = profile.AuthoredClock && IsArcSwingMotion(step.Motion);
+                bool authoredClock = profile.AuthoredClock && IsArcSwingMotion(step.Motion, profile.AuthoredClockCoversJoustDash);
                 int attackTicks = AttackPhaseTicks(profile, step, spec.WeaponUseAnimation);
                 int sweepTicks = attackTicks;
                 if (!authoredClock)
@@ -405,7 +405,7 @@ namespace SwingPreview
                     ticks = Math.Min(ticks, profile.LeapAirtimeTicks);
                 }
                 weaponAnimMax = spec.WeaponUseAnimation;
-                if (profile.AuthoredClock && IsArcSwingMotion(step.Motion))
+                if (profile.AuthoredClock && IsArcSwingMotion(step.Motion, profile.AuthoredClockCoversJoustDash))
                 {
                     weaponAnimMax = ticks;
                 }
@@ -598,6 +598,11 @@ namespace SwingPreview
                 if (hasNext)
                 {
                     float target = StepStartRotation(spec, next, notes);
+                    // Port of the same fix in PuppetNPC.cs: a motion whose rotation accumulates past
+                    // a single turn (Spin) can leave `rotation` many radians from `target` in raw
+                    // value space even though the short way around is small. Re-express it as the
+                    // equivalent angle nearest `target` first, or SmoothStep sweeps most of a circle.
+                    rotation = target + MathHelper.WrapAngle(rotation - target);
                     int transitionTicks = Math.Max(1, pauseTotal - lingerTicks);
                     float transition = MathHelper.Clamp((elapsedPause - lingerTicks + 1f) / transitionTicks, 0f, 1f);
                     return MathHelper.SmoothStep(rotation, target, transition);
@@ -606,6 +611,7 @@ namespace SwingPreview
             else if (inPause && profile.AimSwingActive && hasNext)
             {
                 float target = StepStartRotation(spec, next, notes);
+                rotation = target + MathHelper.WrapAngle(rotation - target);
                 return MathHelper.Lerp(rotation, target, 0.22f);
             }
 
@@ -678,8 +684,27 @@ namespace SwingPreview
                     return ApplySwingEase(profile, a0, a1, t, step);
                 case ComboMotion.Spin:
                 {
-                    // Fixed rate in EVERY phase, telegraph and pause included.
-                    float spun = rotation + 0.28f;
+                    // Port of PuppetNPC's Spin case. UseEasedSpin ramps 0->full across the telegraph
+                    // (comboTelegraphT) and back down over the step's own EaseOutTicks at the end of
+                    // the attack - constant rate through the middle. Off: fixed rate in every phase.
+                    const float peakSpinSpeed = 0.28f;
+                    float spinSpeedMult = 1f;
+                    if (profile.UseEasedSpin)
+                    {
+                        if (inTel)
+                        {
+                            spinSpeedMult = MathHelper.SmoothStep(0f, 1f, telegraphT);
+                        }
+                        else
+                        {
+                            int easeOutTicks = Math.Max(1, step.EaseOutTicks > 0 ? step.EaseOutTicks : 10);
+                            if (phaseTimer < easeOutTicks)
+                            {
+                                spinSpeedMult = MathHelper.SmoothStep(0f, 1f, phaseTimer / (float)easeOutTicks);
+                            }
+                        }
+                    }
+                    float spun = rotation + peakSpinSpeed * spinSpeedMult;
                     if (spun > MathHelper.TwoPi)
                     {
                         spun -= MathHelper.TwoPi;
@@ -851,8 +876,8 @@ namespace SwingPreview
         }
 
         /// <summary>Port of PuppetNPC.ComboStepStartRotation - deliberately a different table from
-        /// SwingArcEndpoints (see the note on that method). JoustDash and Spin have no entry, so a
-        /// handoff INTO them eases toward HoldRotation.</summary>
+        /// SwingArcEndpoints (see the note on that method). Spin still has no entry (Spin is never a
+        /// combo's non-first step today), so a handoff INTO it eases toward HoldRotation.</summary>
         private static float StepStartRotation(SwingSpec spec, MeleeComboStep step, SortedSet<string> notes)
         {
             PuppetProfile profile = spec.Profile;
@@ -879,6 +904,9 @@ namespace SwingPreview
                 case ComboMotion.DoubleSpinSlam: a0 = -1.3f - overshoot; a1 = 1.4f; break;
                 case ComboMotion.LeapSlam: a0 = -1.45f - overshoot; a1 = 1.4f; break;
                 case ComboMotion.LeapThrust: a0 = MathHelper.PiOver2 * 0.8f; a1 = MathHelper.PiOver4; break;
+                // Matches the entry added to PuppetNPC.ComboStepStartRotation — Cursed Dragon's
+                // Skewer String is the first combo to chain two JoustDash steps.
+                case ComboMotion.JoustDash: a0 = MathHelper.PiOver2; a1 = MathHelper.PiOver4; break;
                 case ComboMotion.LowAxeRun: a0 = 1.9f; a1 = 1.9f; break;
                 case ComboMotion.RisingUppercutLeap: a0 = 1.9f; a1 = -1.0f; break;
                 case ComboMotion.BackstepRaise: a0 = 1.0f; a1 = -1.3f; break;
@@ -912,7 +940,7 @@ namespace SwingPreview
         /// AttackTicks unchanged when positive, else the weapon's useAnimation.</summary>
         private static int AttackPhaseTicks(PuppetProfile profile, MeleeComboStep step, int weaponUseAnimation)
         {
-            if (profile.AuthoredClock && IsArcSwingMotion(step.Motion))
+            if (profile.AuthoredClock && IsArcSwingMotion(step.Motion, profile.AuthoredClockCoversJoustDash))
             {
                 float mult = step.SwingSpeedMult > 0f ? step.SwingSpeedMult : 1f;
                 return Math.Max(6, (int)Math.Round(step.AttackTicks / mult));
@@ -925,12 +953,13 @@ namespace SwingPreview
         }
 
         /// <summary>PuppetNPC.IsArcSwingMotion - the motions the authored clock resizes.</summary>
-        private static bool IsArcSwingMotion(ComboMotion motion)
+        private static bool IsArcSwingMotion(ComboMotion motion, bool authoredClockCoversJoustDash = false)
         {
             return motion == ComboMotion.OverheadArc || motion == ComboMotion.UnderhandArc
                 || motion == ComboMotion.HorizontalSweep || motion == ComboMotion.VerticalChop
                 || motion == ComboMotion.GroundSlam || motion == ComboMotion.IaidoDraw
-                || motion == ComboMotion.DoubleSpinSlam;
+                || motion == ComboMotion.DoubleSpinSlam
+                || (authoredClockCoversJoustDash && motion == ComboMotion.JoustDash);
         }
 
         /// <summary>BeginComboStepAttack's DoComboMeleeHit exclusions: these either hit later (leaps,

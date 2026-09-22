@@ -7,10 +7,19 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
+    /// <summary>Runs after Terraria and the puppet's custom weapon layers have assembled the full
+    /// player draw cache. Oversized armor replacement and spectral echoes must happen here: doing
+    /// it from ModPlayer.TransformDrawData misses later modded layers such as the held axe.</summary>
     [Autoload(Side = ModSide.Client)]
-    public sealed class PuppetSpectralDrawPlayer : ModPlayer
+    public sealed class PuppetFinalCompositeTransformLayer : PlayerDrawLayer
     {
-        public override void TransformDrawData(ref PlayerDrawSet drawInfo)
+        public override Position GetDefaultPosition()
+            => new AfterParent(PlayerDrawLayers.FrontAccFront);
+
+        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+            => PuppetNPC.DrawingPuppetFor != null;
+
+        protected override void Draw(ref PlayerDrawSet drawInfo)
         {
             PuppetNPC.DrawingPuppetFor?.TransformSpectralDrawData(ref drawInfo);
         }

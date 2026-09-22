@@ -20,6 +20,13 @@ namespace tsorcRevamp.Content.Items.Armor
             Item.defense = 21;
         }
 
+        public override void SetStaticDefaults()
+        {
+            int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Legs);
+            ArmorIDs.Legs.Sets.HidesTopSkin[equipSlot] = true;
+            ArmorIDs.Legs.Sets.HidesBottomSkin[equipSlot] = true;
+        }
+
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;

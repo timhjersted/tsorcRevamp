@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -15,16 +16,20 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>
-    /// Winged spear-and-spellcaster invader built on the Cursed Dragon armor set.  Fights on the
-    /// ground with PilgrimSpontoon halberd combos, kites with three ranged weapons (arcane ball =
-    /// primary, an enemy Venom Staff = secondary with burst patterns + a 5-meteor pentagram finisher,
-    /// a MeteorStorm = magic with a rare 7-second meteor rain), and breathes red Ancient-Demon fire.
-    /// Breath, hyper-armor, sustained magic, and the cross-weapon finisher all run through the shared
-    /// <see cref="PuppetNPC"/> state machine.
+    /// Winged spear-and-spellcaster invader built on the Cursed Dragon armor set. Aggressively
+    /// pursues (composite-arm swings, a distance-solved leaping thrust, and a fast pursuit/closing
+    /// speed) with a bespoke PilgrimSpontoon halberd combo pool - thrusts, a rising-into-overhead
+    /// cut, and a spinning windmill that chases while active and can chain into a leaping slam
+    /// finisher if the player is still far when it ends. Also kites with three ranged weapons
+    /// (arcane ball = primary, an enemy Venom Staff = secondary with burst patterns + a 5-meteor
+    /// pentagram finisher, a MeteorStorm = magic with a rare 7-second meteor rain), and breathes red
+    /// Ancient-Demon fire. Breath, hyper-armor, sustained magic, and the cross-weapon finisher all
+    /// run through the shared <see cref="PuppetNPC"/> state machine.
     /// </summary>
     [AutoloadBossHead]
     public class CursedDragon : PuppetNPC
@@ -80,17 +85,19 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int BodyArmorItemType => ModContent.ItemType<CursedDragonArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<CursedDragonGreaves>();
 
-        // Spear drives melee combos (Halberd archetype) AND the spear poke; its sprite is also shown
-        // while casting the arcane ball (primary ranged), since the spear is the arcane ball's caster.
+        // Spear drives melee combos (Halberd archetype); its sprite is also shown while casting the
+        // arcane ball (primary ranged), since the spear is the arcane ball's caster. The standalone
+        // spear-poke phase (SpearWeaponItemType >= 0) is retired: Pike Thrust / Skewer String /
+        // Leaping Pike in the combo pool below fully replace it with proper easing and reach.
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyPilgrimSpontoon>();
-        protected override int SpearWeaponItemType => ModContent.ItemType<EnemyPilgrimSpontoon>();
+        protected override int SpearWeaponItemType => -1;
         protected override int RangedWeaponItemType => ModContent.ItemType<EnemyPilgrimSpontoon>();
         protected override int SecondaryRangedWeaponItemType => ModContent.ItemType<EnemyVenomStaff>();
         protected override int MagicWeaponItemType => ModContent.ItemType<EnemyMeteorStorm>();
 
         // ── Damage (late hardmode: post-mech, ~Golem/Plantera tier; no SHM scaling) ──
         protected override int MeleeDamage => 60;   // spear combos
-        protected override int SpearDamage => 55;   // spear poke / dive thrust
+        protected override int SpearDamage => 55;   // aerial dive thrust only (standalone poke retired)
         protected override int RangedDamage => 45;  // arcane ball
         protected override int SecondaryRangedDamage => 40; // venom fang (multi-projectile)
         protected override int MagicDamage => 50;   // meteor
@@ -98,49 +105,375 @@ namespace tsorcRevamp.NPCs.Puppets
         // ── Melee ───────────────────────────────────────────────────────────────────
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Halberd;
         protected override int MeleeComboChance => 60;
-        protected override float ComboMaxStartRange => 260f;
+        // 520, not the old 260: puts the Leaping Pike gap-closer (RangedStartOnly) in reach of a
+        // kiting player instead of only ever firing at near-point-blank range.
+        protected override float ComboMaxStartRange => 520f;
         protected override float MeleeRange => 88f;
         protected override float StabRange => 170f;
-        protected override float SpearRange => 245f;
-        protected override int SpearTelegraphTicks => 42;
-        protected override int SpearAttackTicks => 14;
-        protected override int SpearRecoveryTicks => 34;
-        protected override int SpearCooldownAfterUse => 80;
-        protected override float SpearPushSpeedMult => 0.75f;
+        // The standalone spear poke is retired (SpearWeaponItemType => -1 above) so its old timing
+        // knobs (SpearRange/SpearTelegraphTicks/etc.) are gone too. SpearDamage survives - the aerial
+        // dive thrust still reads it directly.
 
-        // ── Movement ──────────────────────────────────────────────────────────────
-        protected override float TopSpeed => 3.0f;
-        protected override float Acceleration => 0.10f;
-        protected override int CasualStrollChance => 10;
+        // ── Swing quality (composite arm + authored easing, see attack-timing-design / puppet-swing-tuning) ──
+        protected override bool UseCompositeArmSwing => true;
+        protected override bool MirrorMeleeSwingRotationByFacing => true;
+        protected override bool UseLogicalMeleeTelegraphs => true; // wind to the opposite end, then strike
+        protected override bool UseSwingEasing => true;
+        protected override bool UseAimAdaptiveArc => true;        // arc centres on the player, not a fixed angle
+        protected override bool UseAuthoredComboSwingClock => true;
+        // JoustDash-motion thrusts (Pike Thrust, Skewer String, Leaping Pike) are authored with a
+        // short AttackTicks (~17) well under the spear item's useAnimation (27) - without this, the
+        // swing clock sweeps over useAnimation instead and the thrust is cut off mid-arc.
+        protected override bool AuthoredClockCoversJoustDash => true;
+        // Ties the spear's extend/retract grip pulse to the SAME eased clock as the blade rotation,
+        // instead of its own separate PhaseTimer-based hump - the two used to drift apart.
+        protected override bool UseAuthoredSpearGrip => true;
+        // Spinning Windmill: ease only at the start (wind-up) and end (settle) of the spin, constant
+        // speed through the middle - see the combo pool below and PuppetNPC's ComboMotion.Spin case.
+        protected override bool UseEasedSpin => true;
+        protected override int MeleeComboInterStepLingerTicks => 3;  // hold through inter-step pauses
+        protected override int MeleeRecoveryLingerTicks => 10;       // park the finished pose before easing to carry
+        protected override bool UseLandingTimedLeapSlam => true;     // Spinning Windmill's leap-slam finisher
+
+        // Trimmed to the drawn spear's actual reach (~140px full extension, ~122px mid-shaft swing
+        // grip) instead of the old 230, which hit up to 2.3x past the visible tip. Per-step ReachMult
+        // in the combo pool below tunes each motion's grip length the rest of the way.
+        protected override float ComboReachBase => 190f;
+        // = the longest authored hit reach (Pike Thrust's 133px) plus a small buffer, not the old 200:
+        // starting a standing thrust any further out would whiff before the puppet's own approach.
+        protected override float MeleeEngageRange => 160f;
+        // Keep pursuing through the wind-up so the player can't just step out of range.
+        protected override bool SlowDownBeforeMelee => false;
+
+        // A halberd's own reach means it doesn't need the full ~220deg envelope policy default to
+        // read as committed; extend the FINISH of each arc (not the start) for a fuller, still
+        // deliberately compact cut, and share Reaping Arc's two-step endpoint so there's no snap
+        // between the rising cut and the overhead follow-up (attack-timing-design §3/§4).
+        protected override void ModifyMeleeArcEndpoints(ComboMotion motion, ref float a0, ref float a1)
+        {
+            switch (motion)
+            {
+                case ComboMotion.UnderhandArc:
+                    a1 = -1.3f; // ends exactly where OverheadArc's cocked start sits
+                    break;
+                case ComboMotion.OverheadArc:
+                    a1 = 1.6f; // was 1.0
+                    break;
+            }
+        }
+
+        protected override MeleeCombo[] MeleeComboPoolOverride => CursedDragonCombos;
+
+        protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
+        {
+            if (combo.Name == LeapingPikeName)
+            {
+                // Anything closer is already covered by an ordinary ClosingDistance sprint.
+                return distance >= LeapingPikeMinRange;
+            }
+            if (combo.Name == ChargedDescentName)
+            {
+                return healthFraction <= 0.70f; // unlocks alongside the venom staff / cursed knives
+            }
+            return true;
+        }
+
+        protected override bool ShouldContinueMeleeCombo(
+            string comboName, int nextStepIndex, Player target, bool previousStepHit)
+        {
+            if (comboName == SpinningWindmillName && nextStepIndex == 1)
+            {
+                // Below 40% HP the finisher always follows - "queue next attack" applies to the
+                // signature move too. Otherwise: the spin already chases (ForwardPushMult on the Spin
+                // step below); only bolt on the leaping-slam finisher when that pursuit wasn't enough
+                // to close the gap by the time the spin ends.
+                if ((float)NPC.life / NPC.lifeMax <= 0.40f)
+                {
+                    return true;
+                }
+                return NPC.Distance(target.Center) > SpinningWindmillFinisherRange;
+            }
+            return base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
+        }
+
+        // ── HP-scaled combo escalation ───────────────────────────────────────────────
+        // "Reduced recovery from the start, longer combos as HP drops" - modeled directly on Gwyn's
+        // HalfHealthMovesUnlocked mechanism (NPCs/Bosses/SuperHardMode/Gwyn.cs), generalized to two HP
+        // tiers instead of one cliff. Every appended rep's PostStepPause still respects the same
+        // MinTicksBetweenLiveWindows floor as the roll-cooldown fairness rule (attack-timing-design
+        // §2 rule 3) - "longer" never means "less rollable," only "less dead time between hits."
+        // Matches Gwyn's own constant name/value; kept local rather than shared since every puppet
+        // that uses it derives it from its own combo's HitWindowEnd/AttackTicks.
+        private const int MinTicksBetweenLiveWindows = 30;
+        private const int PauseSafetyBuffer = 3; // small cushion above the bare mathematical floor
+
+        /// <summary>Extra repetitions of a combo's last step to append, by HP tier: 0 above 70%
+        /// (unchanged), +1 from 40-70% (matches the venom staff / cursed knives unlock), +2 below 40%.</summary>
+        private static int ExtraRepsForHealth(float healthFraction)
+        {
+            if (healthFraction <= 0.40f)
+            {
+                return 2;
+            }
+            if (healthFraction <= 0.70f)
+            {
+                return 1;
+            }
+            return 0;
+        }
+
+        /// <summary>The safe PostStepPause floor for a step: the smallest gap that still keeps the
+        /// NEXT live window starting >= MinTicksBetweenLiveWindows after this one's live window ends,
+        /// plus a small buffer. Only valid for Weighted-eased steps (their HitWindowEnd/AttackTicks
+        /// define a real tail); a step without a hit window is armed for the whole phase (tail = 0).</summary>
+        private static int SafeFollowUpPause(MeleeComboStep step)
+        {
+            int liveTicks = (int)Math.Ceiling(step.HitWindowEnd * step.AttackTicks);
+            int tailTicks = Math.Max(0, step.AttackTicks - liveTicks);
+            return Math.Max(1, MinTicksBetweenLiveWindows - tailTicks) + PauseSafetyBuffer;
+        }
+
+        protected override void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction)
+        {
+            base.CustomizeMeleeCombo(ref combo, healthFraction);
+
+            if (combo.Steps == null || combo.Steps.Length == 0)
+            {
+                return;
+            }
+
+            // Baseline, every HP tier: Reaping Arc's long tail (armed only ~33% of the attack phase)
+            // leaves plenty of room under the fairness rule - the authored 10t pause was more
+            // conservative than it needed to be. Tightened here rather than in the table so the
+            // math stays next to the rule it depends on.
+            if (combo.Name == ReapingArcName)
+            {
+                MeleeComboStep first = combo.Steps[0];
+                first.PostStepPause = SafeFollowUpPause(first);
+                combo.Steps[0] = first;
+            }
+
+            // Longer combos at low HP: only the jab family chains further - the wide-arc and heavy
+            // combos stay single, deliberate commits regardless of HP.
+            int extraReps = ExtraRepsForHealth(healthFraction);
+            if (extraReps <= 0 || (combo.Name != PikeThrustName && combo.Name != SkewerStringName))
+            {
+                return;
+            }
+
+            MeleeComboStep repTemplate = combo.Steps[combo.Steps.Length - 1];
+            int repPause = SafeFollowUpPause(repTemplate);
+
+            MeleeComboStep[] extended = new MeleeComboStep[combo.Steps.Length + extraReps];
+            Array.Copy(combo.Steps, extended, combo.Steps.Length);
+            // The step that WAS last now has a follow-up, so it needs a real pause instead of going
+            // straight to the combo's recovery.
+            extended[combo.Steps.Length - 1].PostStepPause = repPause;
+            for (int i = 0; i < extraReps; i++)
+            {
+                MeleeComboStep rep = repTemplate;
+                rep.TelegraphTicks = 0; // only step 0 telegraphs; later steps read their own PostStepPause as the tell
+                rep.PostStepPause = (i == extraReps - 1) ? 0 : repPause; // only the truly-last rep goes straight to recovery
+                extended[combo.Steps.Length + i] = rep;
+            }
+            combo.Steps = extended;
+        }
+
+        // ── Combo pool (see attack-timing-design for the timing-sheet fields below) ─────────────────
+        // Names, gates and cross-referenced constants used above and by the combo table below.
+        private const string PikeThrustName = "Pike Thrust";
+        private const string SkewerStringName = "Skewer String";
+        private const string ReapingArcName = "Reaping Arc";
+        private const string LeapingPikeName = "Leaping Pike";
+        private const string ChargedDescentName = "Charged Descent";
+        private const string SpinningWindmillName = "Spinning Windmill";
+        private const float LeapingPikeMinRange = 260f;
+        private const float SpinningWindmillFinisherRange = 150f;
+
+        // Local step-authoring helpers, kept per-file like Gwyn's GS()/WeightedSwordSwing —
+        // MeleeComboSystem's own private S() can't be reused outside that file.
+        private static MeleeComboStep GS(ComboMotion m, int tel, int atk, int pause,
+            float dmg = 1f, float reach = 1f, float push = 0f, SwingEaseStyle ease = SwingEaseStyle.Smooth)
+            => new MeleeComboStep
+            {
+                Motion = m, TelegraphTicks = tel, AttackTicks = atk, PostStepPause = pause,
+                DamageMult = dmg, ReachMult = reach, ForwardPushMult = push, Ease = ease
+            };
+
+        // Share of peak speed the blade stays armed at — same convention as Gwyn's Wrath Flurry
+        // (attack-timing-design §3): a Weighted swing keeps hitting while speed >= 30% of its peak.
+        private const float ArmedSpeedShare = 0.30f;
+
+        /// <summary>Authored Weighted swing: cubic ease-in, exponential settle, and a hit window that
+        /// closes once blade speed drops under <see cref="ArmedSpeedShare"/> of peak. Same maths as
+        /// Gwyn.WeightedSwordSwing (attack-timing-design §3).</summary>
+        private static MeleeComboStep WeightedSwing(ComboMotion motion, int telegraph,
+            int easeInTicks, int easeOutTicks, float decay, int pause, float damage, float reach, float push = 0f)
+        {
+            int attackTicks = easeInTicks + easeOutTicks;
+            MeleeComboStep step = GS(motion, telegraph, attackTicks, pause, damage, reach, push, SwingEaseStyle.Weighted);
+            step.EaseInTicks = easeInTicks;
+            step.EaseOutTicks = easeOutTicks;
+            step.EaseOutDecay = decay;
+            float armedSettleTicks = easeOutTicks * (float)Math.Log(1f / ArmedSpeedShare) / decay;
+            step.HitWindowEnd = (easeInTicks + armedSettleTicks) / attackTicks;
+            return step;
+        }
+
+        /// <summary>Spinning Windmill's spin step. <see cref="PuppetNPC.UseEasedSpin"/> ramps its
+        /// angular speed up across the telegraph and back down over <paramref name="easeOutTicks"/> —
+        /// constant speed through the rest, per the "ease only at the beginning and end" brief.</summary>
+        private static MeleeComboStep SpinStep(int telegraph, int attackTicks,
+            float damage, float reach, float push, int easeOutTicks, int pause)
+        {
+            MeleeComboStep step = GS(ComboMotion.Spin, telegraph, attackTicks, pause, damage, reach, push);
+            step.EaseOutTicks = easeOutTicks;
+            return step;
+        }
+
+        /*
+         * Timing sheet (attack-timing-design §3), envelope = live sweep / 0.8.
+         *
+         * Pike Thrust:      tel 24t | strike 5/12 k6, atk 17t, live ~7.4t (HitWindowEnd 0.44) | pause n/a (single step)
+         * Skewer String:    tel 26t | strike 5/12 k6 x2, atk 17t each, live ~7.4t each | pause 24t between —
+         *                   next live starts ~33.6t after the first live window ends (>= 30, unconditional-safe)
+         * Reaping Arc:      tel 30t | Underhand 8/34 k7 -> Overhead 8/34 k7, atk 42t each, live ~13.9t each,
+         *                   shared endpoint (-1.3) between steps | pause 10t — next live ~38t after the first ends
+         * Leaping Pike:     RangedStartOnly, 260-520px | tel 24t | distance-solved leap, thrust on landing
+         * Charged Descent:  <=70% HP | tel 52t | strike 10/45 k7, atk 55t, live ~17.7t (HitWindowEnd 0.32,
+         *                   matches Gwyn's Wrath Flurry value) | RecoveryTicks 40 (heavy punish window)
+         * Spinning Windmill: tel 36t (ramps 0->full speed) | spin cruises atk 40t, eases down over the last 10t,
+         *                   chases at ForwardPushMult 0.9 while spinning | pause 20t (only if it continues) ->
+         *                   conditional LeapSlam finisher (ShouldContinueMeleeCombo above) if still >150px away
+         *
+         * Every live window here is well under the 22-tick roll i-frame window, so every step is fully
+         * rollable, and every multi-step follow-up goes live >= 30t after the previous live window ends
+         * (attack-timing-design §2 rules 1 and 3) — no follow-up can catch a late roller in the post-roll gap.
+         */
+        private static readonly MeleeCombo[] CursedDragonCombos = new[]
+        {
+            new MeleeCombo
+            {
+                Name = PikeThrustName, BaseWeight = 90, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.White, CooldownAfterUse = 50, RecoveryTicks = 18,
+                Steps = new[] { WeightedSwing(ComboMotion.JoustDash, 24, 5, 12, 6f, 0, 1.1f, 1.0f) }
+            },
+            new MeleeCombo
+            {
+                Name = SkewerStringName, BaseWeight = 70, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.White, CooldownAfterUse = 110, RecoveryTicks = 24,
+                Steps = new[]
+                {
+                    WeightedSwing(ComboMotion.JoustDash, 26, 5, 12, 6f, 24, 1.0f, 1.0f),
+                    WeightedSwing(ComboMotion.JoustDash,  0, 5, 12, 6f,  0, 1.0f, 1.0f),
+                }
+            },
+            new MeleeCombo
+            {
+                Name = ReapingArcName, BaseWeight = 60, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 150, RecoveryTicks = 14,
+                Steps = new[]
+                {
+                    WeightedSwing(ComboMotion.UnderhandArc, 30, 8, 34, 7f, 10, 0.9f, 0.9f),
+                    WeightedSwing(ComboMotion.OverheadArc,   0, 8, 34, 7f,  0, 1.1f, 0.9f),
+                }
+            },
+            new MeleeCombo
+            {
+                Name = LeapingPikeName, BaseWeight = 90, Preferred = ComboRangeBand.Far,
+                RangedStartOnly = true, InitialFlashColor = Color.Yellow, CooldownAfterUse = 200,
+                HeavyCommit = true, HyperArmor = true, RecoveryTicks = 30,
+                Steps = new[] { GS(ComboMotion.LeapThrust, 24, 90, 0, 1.2f, 1.0f) }
+            },
+            new MeleeCombo
+            {
+                Name = ChargedDescentName, BaseWeight = 30, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 300, HeavyCommit = true, RecoveryTicks = 40,
+                Steps = new[] { WeightedSwing(ComboMotion.OverheadArc, 52, 10, 45, 7f, 0, 1.5f, 1.0f) }
+            },
+            new MeleeCombo
+            {
+                Name = SpinningWindmillName, BaseWeight = 40, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 220, RecoveryTicks = 30,
+                Steps = new[]
+                {
+                    SpinStep(telegraph: 36, attackTicks: 40, damage: 1.4f, reach: 1.0f, push: 0.9f,
+                        easeOutTicks: 10, pause: 20),
+                    GS(ComboMotion.LeapSlam, 0, 90, 0, 1.3f, 0.9f),
+                }
+            },
+        };
+
+        // ── Movement / pursuit ───────────────────────────────────────────────────────
+        // Calibrated against Souls Mode ground speed with Supersonic Boots or Supersonic Wings I
+        // (6.0-7.25 px/t) - the gear tier for this fight (post-Hunter, pre-Attraidies, pre-SHM).
+        // Wings II / Wings of Seath (7.5-8.25) are a later-game problem.
+        protected override float TopSpeed => 3.5f;
+        protected override float Acceleration => 0.16f;
+        protected override int CasualStrollChance => 0; // no slow-walk window; always closing or attacking
+        protected override float RunDistance => 320f;
+        protected override float RunSpeedMult => 1.5f;         // 5.25 px/t beyond RunDistance
+        protected override float ClosingDistanceSpeedMult => 2.0f; // 7.0 px/t - matches player ground speed
+        protected override int ClosingDistanceMaxTicks => 150;     // room for a full 520px sprint at 7 px/t
+        protected override float ComboTelegraphAdvanceSpeedMult => 0.85f; // chase a player backing out of a windup
+        protected override int RangedStartMeleeComboChance => 55; // keep a real share of ticks for ranged
         protected override float PuppetJumpPower => 10f;
         protected override float PuppetJumpBoost => 7f;
         protected override bool PuppetCanDoubleJump => true;
         protected override float PuppetDoubleJumpPower => 7f;
 
+        protected override void RunMovementAI(float speedMult)
+        {
+            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            g.NavSearchRadius = 80;
+            g.RemembersLastKnownPos = true;
+
+            // Accelerate harder while sprinting to close a melee gap - a kiting player should feel
+            // the dragon actually gaining on them, not creeping up at its ordinary walking accel.
+            float acceleration = Acceleration * (Phase == AttackPhase.ClosingDistance ? 1.4f : 1f);
+
+            // attackRange is SF4's aggro radius, not a preferred fighting distance - the inherited
+            // default (RangedRange, 560) let a kiting player drift out of the pursuit FSM's
+            // engagement band entirely.
+            SmartFighter4AI.Run(NPC,
+                topSpeed: TopSpeed * speedMult,
+                acceleration: acceleration,
+                doorBreakingDamage: 5,
+                attackRange: 850f);
+        }
+
         // ── Primary ranged: arcane ball (also the aerial hover shot) ────────────────
         protected override RangedStyle RangedAnimStyle => RangedStyle.Throw;
         protected override float RangedRange => 560f;
-        protected override float MinRangedRange => 150f;
+        // 200, not 150: at the ball's 10.5 px/t, distance/speed must clear ~20 ticks of reaction time
+        // (attack-timing-design §2) or a shot fired from point-blank is unreadable.
+        protected override float MinRangedRange => 200f;
         protected override int RangedTelegraphTicks => 40;
         protected override int RangedCooldownAfterUse => 180;
         protected override int MaxRangedBurst => 1;
-        protected override int StandingRangedChance => 45;
+        // Down from 45: ranged should mostly fire while still advancing, not become a standing stance.
+        protected override int StandingRangedChance => 15;
         protected override int RangedComboChance => 0; // no ranged combos from the spear archetype
+        // Full burst patterns (fan/rolling orbs/chain/circle) fire while hovering too, not just a
+        // single standing potshot - the base default forces the simplified single shot airborne.
+        protected override bool AllowRangedPatternsAirborne => true;
 
-        // Arcane ball ground volleys.  Pattern 3's final "shot" is a 12-ball circle burst.
+        // Arcane ball volleys (grounded or airborne). Pattern 0's single "shot" is a 5-ball fan;
+        // pattern 3's final shot is a 12-ball circle burst.
+        private const int ArcaneFanPattern = 0;
         private const int ArcaneCirclePattern = 3;
         protected override int[][] PrimaryRangedBurstPatterns => new int[][]
         {
-            new int[] { 30 },                                       // 0: 2 shots, 30 apart
-            new int[] { 30, 30 },                                   // 1: 3 shots, 30 apart
+            new int[] { },                                          // 0: 1 "shot" = a 5-ball fan
+            new int[] { 12, 12, 12, 12, 12 },                        // 1: Rolling Orbs — 6 shots, 12 apart, each re-aimed at the player's CURRENT position
             new int[] { 60, 20, 20, 20, 20, 20, 20, 20 },           // 2: 9 shots (2@60, then 7@20)
             new int[] { 10, 60 },                                   // 3: 2 shots (10 apart), 60, then a 12-ball circle
         };
-        protected override int[] PrimaryRangedBurstChances => new int[] { 35, 30, 20, 15 };
-        protected override int[] PrimaryRangedBurstTelegraphExtras => new int[] { 0, 0, 10, 12 };
+        protected override int[] PrimaryRangedBurstChances => new int[] { 30, 30, 20, 20 };
+        protected override int[] PrimaryRangedBurstTelegraphExtras => new int[] { 6, 0, 10, 12 };
         protected override Color[] PrimaryRangedBurstFlashColors => new Color[]
         {
-            new Color(120, 180, 255),
+            new Color(150, 200, 255), // fan
             new Color(120, 180, 255),
             new Color(150, 160, 255),
             new Color(180, 120, 255), // circle-burst finisher — brighter
@@ -153,7 +486,7 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int SecondaryRangedTelegraphTicks => 36;
         protected override int SecondaryRangedCooldownAfterUse => 160;
         protected override int SecondaryRangedChance => 50;
-        protected override int SecondaryStandingRangedChance => 70;
+        protected override int SecondaryStandingRangedChance => 30; // was 70 - fire while advancing, not planted
         protected override Color SecondaryRangedFlashColor => new Color(180, 90, 255);
 
         // Player got in close → hop back and fire a single venom blast to reset spacing.
@@ -214,12 +547,16 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override bool BreathAllowedAirborne => true;
         protected override float BreathRange => 520f;
         protected override float MinBreathRange => 60f;
-        protected override int BreathTelegraphTicks => 110;
+        // 64, not 110: a 1.8s wind-up gave the player time to simply walk away before it even started.
+        protected override int BreathTelegraphTicks => 64;
         protected override int BreathDurationTicks => 70;
         protected override int BreathRecoveryTicks => 45;
         protected override int BreathCooldownAfterUse => 360;
         protected override int BreathChance => 4;
         protected override Color BreathTelegraphFlashColor => Color.OrangeRed;
+        // Walk forward through the stream on the ground too (already sweeps via a strafe while
+        // airborne) - the breath doubles as advancing pressure instead of a planted hose.
+        protected override bool AdvanceDuringGroundedBreath => true;
 
         // ── HP gating for the venom staff / cursed knives unlock ────────────────────
         private bool BelowEnrageHpThreshold => NPC.life <= NPC.lifeMax * 0.70f;
@@ -254,7 +591,6 @@ namespace tsorcRevamp.NPCs.Puppets
 
         // ── Telegraph flash colors / weapon draw tuning ─────────────────────────────
         protected override Color MeleeTelegraphFlashColor => new Color(255, 230, 180);
-        protected override Color SpearTelegraphFlashColor => new Color(140, 210, 255);
         protected override Color RangedTelegraphFlashColor => new Color(120, 180, 255);
         protected override Color MagicTelegraphFlashColor => new Color(255, 80, 60);
         protected override Vector2 MeleeHandleNorm => new Vector2(0.18f, 0.78f);
@@ -275,13 +611,13 @@ namespace tsorcRevamp.NPCs.Puppets
         // existing rotation target (thrust, telegraph, overhead/underhand arcs, ranged throw, etc.)
         // reads correctly without further per-phase tuning.
         protected override float SpearDrawRotationOffset => MathHelper.PiOver2;
-        // Combo hitboxes reach out to roughly the spear's length so swings/thrusts connect at their visual reach.
-        protected override float ComboReachBase => 230f;
-        protected override float MeleeEngageRange => 200f; // start spear combos from spear distance, not point-blank
-        // Keep pursuing through the wind-up so the player can't just step out of range.
-        protected override bool SlowDownBeforeMelee => false;
+        // ComboReachBase / MeleeEngageRange / SlowDownBeforeMelee are set in the swing-quality block above.
         // Meteor staff is gripped low on the shaft during the cast (≈30% from the bottom).
         protected override Vector2 MagicGripNorm => new Vector2(0.5f, 0.72f);
+
+        // 30, not the base default of 140 - matches Black Ninja's tuning. Used by both the generic
+        // aggressive teleport (SetDefaults above) and the Poison Cloud flee-counter's directed one.
+        protected override int TeleportTelegraphTicks => 30;
 
         private Vector2 MouthPosition => NPC.Center + new Vector2(NPC.spriteDirection * 16f, -16f);
 
@@ -319,22 +655,12 @@ namespace tsorcRevamp.NPCs.Puppets
             globalNPC.CanTeleport = true;
             globalNPC.TeleportStyle = TeleportStyle.Aggressive;
             globalNPC.TeleportVisualStyle = TeleportVisualStyle.Plague;
+            // TeleportTelegraphTicks override below (30, matching Black Ninja) applies to this AND
+            // the Poison Cloud flee-counter's own directed teleport.
 
             // Aggressive spacing reactions: punish ranged kiting with a LeapForward, charge back in with
             // a hyper-armored RunningDash, RetreatDash to reset, plus an i-frame QuickStep dodge.
             EvasiveProfile.CursedDragon(globalNPC);
-        }
-
-        protected override void RunMovementAI(float speedMult)
-        {
-            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            g.NavSearchRadius = 80;
-            g.RemembersLastKnownPos = true;
-            SmartFighter4AI.Run(NPC,
-                topSpeed: TopSpeed * speedMult,
-                acceleration: Acceleration,
-                doorBreakingDamage: 5,
-                attackRange: RangedRange);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -364,11 +690,8 @@ namespace tsorcRevamp.NPCs.Puppets
             TryMeleeHit(reach: StabRange * 0.65f);
         }
 
-        protected override void DoSpearAttack()
-        {
-            SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.75f, PitchVariance = 0.12f }, NPC.Center);
-            TryMeleeHit(reach: SpearRange * 0.85f); // reach matches the trigger range so the poke connects
-        }
+        // DoSpearAttack override removed: the standalone spear-poke phase is retired
+        // (SpearWeaponItemType => -1 above), so the base never calls it.
 
         // ── Ranged: arcane ball (primary) + venom staff (secondary) ─────────────────
         protected override void DoRangedAttack()
@@ -394,15 +717,40 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
             }
 
-            // Primary: arcane ball.  Pattern 3's final shot is a 12-ball circle burst.
-            // (The aerial hover shot uses shotsOverride:1 — no pattern — so it stays a single ball.)
-            if (ActiveBurstPatternIndex == ArcaneCirclePattern && IsFinalBurstShot)
+            // Primary: arcane ball. Pattern 0's single shot is a 5-ball fan; pattern 3's final shot
+            // is a 12-ball circle burst. Both fire while hovering too (AllowRangedPatternsAirborne).
+            if (ActiveBurstPatternIndex == ArcaneFanPattern)
+            {
+                FireArcaneFan(target);
+            }
+            else if (ActiveBurstPatternIndex == ArcaneCirclePattern && IsFinalBurstShot)
             {
                 FireArcaneCircle(target);
             }
             else
             {
                 FireArcaneBall(target);
+            }
+        }
+
+        private void FireArcaneFan(Player target)
+        {
+            SoundEngine.PlaySound(SoundID.Item25 with { Volume = 0.7f, PitchVariance = 0.1f }, NPC.Center);
+            Vector2 muzzle = NPC.Center + new Vector2(NPC.direction * 18f, -8f);
+            Vector2 aimAt = target.Center + target.velocity * 8f;
+            Vector2 baseAim = (aimAt - muzzle).SafeNormalize(new Vector2(NPC.direction, 0f));
+            // 5 balls across a 40 degree fan - tight enough to still threaten a standing target,
+            // wide enough that a straight sidestep alone doesn't clear all five.
+            const int count = 5;
+            const float totalSpreadDeg = 40f;
+            for (int i = 0; i < count; i++)
+            {
+                float angleDeg = -totalSpreadDeg / 2f + totalSpreadDeg * i / (count - 1);
+                Vector2 vel = baseAim.RotatedBy(MathHelper.ToRadians(angleDeg)) * 10.5f;
+                Projectile.NewProjectile(
+                    NPC.GetSource_FromThis(), muzzle, vel,
+                    ModContent.ProjectileType<EnemyPilgrimArcaneBall>(),
+                    RangedDamage, 2f, Main.myPlayer);
             }
         }
 
@@ -436,15 +784,18 @@ namespace tsorcRevamp.NPCs.Puppets
                 RangedDamage, 2f, Main.myPlayer);
         }
 
+        // Fixed fan instead of a random shotgun spread - random angles let a player dodge the WHOLE
+        // blast with one sidestep; fixed angles guarantee a spread that has to actually be moved through.
+        private static readonly float[] VenomFangAnglesDeg = { -16f, -8f, 0f, 8f, 16f };
+
         private void FireVenomBlast(Player target)
         {
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.65f, PitchVariance = 0.15f }, NPC.Center);
             Vector2 muzzle = NPC.Center + new Vector2(NPC.direction * 18f, -6f);
             Vector2 baseAim = (target.Center + target.velocity * 6f - muzzle).SafeNormalize(new Vector2(NPC.direction, 0f));
-            for (int i = 0; i < 4; i++) // shotgun spread of purple fangs
+            foreach (float angleDeg in VenomFangAnglesDeg)
             {
-                float spread = MathHelper.ToRadians(Main.rand.NextFloat(-11f, 11f));
-                Vector2 vel = baseAim.RotatedBy(spread) * Main.rand.NextFloat(9.5f, 12f);
+                Vector2 vel = baseAim.RotatedBy(MathHelper.ToRadians(angleDeg)) * 10.5f;
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), muzzle, vel,
                     ModContent.ProjectileType<EnemyVenomStaffProj>(),
@@ -464,12 +815,30 @@ namespace tsorcRevamp.NPCs.Puppets
                 // 144° steps trace a 5-point star (pentagram); start at the top tip.
                 float ang = MathHelper.ToRadians(-90f + i * 144f);
                 Vector2 spawn = center + new Vector2((float)Math.Cos(ang), (float)Math.Sin(ang)) * radius;
-                Vector2 vel = (aimAt - spawn).SafeNormalize(Vector2.UnitY) * 3.9f; // ~70% slower than before
-                Projectile.NewProjectile(
-                    NPC.GetSource_FromThis(), spawn, vel,
-                    ModContent.ProjectileType<EnemyMeteorStormMeteor>(),
-                    MagicDamage, 2f, Main.myPlayer);
+                Vector2 vel = (aimAt - spawn).SafeNormalize(Vector2.UnitY) * 3.9f;
+                SpawnMarkedMeteor(spawn, vel, aimAt);
             }
+        }
+
+        /// <summary>Spawns an EnemyMeteorStormMeteor and stamps the ground-warning-mark position
+        /// (ai[0]/ai[1] — see the projectile's own AI()) onto it. Every meteor spawn in this file goes
+        /// through here so none of them draws its mark at the (0,0) default.</summary>
+        private void SpawnMarkedMeteor(Vector2 spawn, Vector2 velocity, Vector2 markAt)
+        {
+            int index = Projectile.NewProjectile(
+                NPC.GetSource_FromThis(), spawn, velocity,
+                ModContent.ProjectileType<EnemyMeteorStormMeteor>(),
+                MagicDamage, 2f, Main.myPlayer);
+
+            if (index < 0 || index >= Main.maxProjectiles)
+            {
+                return;
+            }
+
+            Projectile meteor = Main.projectile[index];
+            meteor.ai[0] = markAt.X;
+            meteor.ai[1] = markAt.Y;
+            meteor.netUpdate = true;
         }
 
         // ── Magic: meteor triad burst (HP-scaled blast count/spacing/spread) + rare sustained rain ──
@@ -579,14 +948,21 @@ namespace tsorcRevamp.NPCs.Puppets
         private void SpawnSkyMeteor(Player target, float xOffset, float jitter, float leadMult)
         {
             Vector2 targetPos = target.Center + target.velocity * leadMult;
-            Vector2 spawn = new Vector2(
+            // The landing point carries xOffset/jitter; the OLD code applied the offset only to the
+            // spawn X and then aimed at the un-offset targetPos, so every "flank" meteor actually
+            // curved back and converged on the same central point as the "center" one — the spread
+            // this comment (and DoMagicAttack's HP-scaled _meteorBurstSpread) describes never really
+            // happened. Falling straight down onto its own landAt also puts it directly over its
+            // ground-warning mark (EnemyMeteorStormMeteor's own AI(), stamped via SpawnMarkedMeteor
+            // below), which is the clearest read for where to move.
+            Vector2 landAt = new Vector2(
                 targetPos.X + xOffset + Main.rand.NextFloat(-jitter, jitter),
-                NPC.Center.Y - Main.rand.NextFloat(520f, 680f));
-            Vector2 vel = (targetPos - spawn).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(3.5f, 4.4f); // ~70% slower than before
-            Projectile.NewProjectile(
-                NPC.GetSource_FromThis(), spawn, vel,
-                ModContent.ProjectileType<EnemyMeteorStormMeteor>(),
-                MagicDamage, 2f, Main.myPlayer);
+                targetPos.Y);
+            Vector2 spawn = new Vector2(landAt.X, NPC.Center.Y - Main.rand.NextFloat(520f, 680f));
+            // Speed restored partway from the earlier "70% slower" nerf, now that the ground-warning
+            // mark gives a real read on where it lands for the whole flight.
+            Vector2 vel = (landAt - spawn).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(7f, 9f);
+            SpawnMarkedMeteor(spawn, vel, landAt);
         }
 
         // ── Fire breath (red Ancient-Demon flame) ───────────────────────────────────
@@ -626,7 +1002,14 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             Player target = Main.player[NPC.target];
             Vector2 mouth = MouthPosition;
-            Vector2 vel = UsefulFunctions.Aim(mouth, target.Center, 9f) + Main.rand.NextVector2Circular(1.5f, 1.5f);
+            // Waver the aim across a +-20 degree band around the player instead of a perfectly
+            // locked-on beam - the old version re-aimed exactly at the player every puff, so simply
+            // standing a step away between puffs was always safe. The waver means "near the player"
+            // isn't automatically clear, without fighting the base's own per-tick re-facing.
+            float progress = 1f - ticksRemaining / (float)BreathDurationTicks;
+            float waverDeg = 20f * (float)Math.Sin(progress * MathHelper.TwoPi * 1.5f);
+            Vector2 aimDir = (target.Center - mouth).SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.ToRadians(waverDeg));
+            Vector2 vel = aimDir * 9f + Main.rand.NextVector2Circular(1.5f, 1.5f);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), mouth, vel,
                 ModContent.ProjectileType<CursedDragonInvaderBreath>(), BreathDamage, 0f, Main.myPlayer);
         }
@@ -642,10 +1025,10 @@ namespace tsorcRevamp.NPCs.Puppets
             Player target = Main.player[NPC.target];
             Vector2 muzzle = NPC.Center + new Vector2(NPC.direction * 14f, -10f);
             Vector2 baseAim = (target.Center - muzzle).SafeNormalize(new Vector2(NPC.direction, 0f));
-            // 3 knives across a 45° total spread.
-            for (int i = -1; i <= 1; i++)
+            // 5 knives across a 60° total spread (was 3 across 45°).
+            for (int i = -2; i <= 2; i++)
             {
-                Vector2 vel = baseAim.RotatedBy(MathHelper.ToRadians(22.5f) * i) * 11f;
+                Vector2 vel = baseAim.RotatedBy(MathHelper.ToRadians(15f) * i) * 11f;
                 Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), muzzle, vel,
                     ModContent.ProjectileType<CursedDragonKnife>(),
@@ -653,18 +1036,53 @@ namespace tsorcRevamp.NPCs.Puppets
             }
         }
 
-        // ── Aerial dive becomes a spear thrust ──────────────────────────────────────
+        // ── Aerial dive: pierce-through thrust (default), or a ground-slam variant ──
+        // Roughly 1 dive in 3 redirects at a ground point near the player and ends in a single big
+        // AoE impact instead of the continuous pierce-through thrust - the "swoop down and slam"
+        // attack. Rolled once per dive request in ModifyAerialDiveWaypoint (the base's own dive
+        // trigger calls it right before RequestDive), read by the telegraph/hit overrides below, and
+        // resolved on impact via PostAI (which sees the dive controller return to Hover).
+        private bool _aerialSlamActive;
+        private bool _wasDiving;
+        private const int AerialSlamChance = 3; // 1-in-N dives are the slam variant
+
+        protected override Vector2 ModifyAerialDiveWaypoint(Vector2 defaultWaypoint)
+        {
+            _aerialSlamActive = Main.rand.Next(AerialSlamChance) == 0;
+            if (!_aerialSlamActive)
+            {
+                return defaultWaypoint;
+            }
+            // Aim well below the player - ordinary tile collision stops the dive at the ground near
+            // them; over a pit it just flies further before the flight controller's own timeout ends it.
+            Player target = Main.player[NPC.target];
+            return new Vector2(target.Center.X, target.Center.Y + 260f);
+        }
+
         protected override void DoAerialDiveTelegraph()
         {
             base.DoAerialDiveTelegraph(); // shows the spear + orange flash
-            if (!Main.dedServ)
+            if (Main.dedServ)
             {
-                SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.5f, PitchVariance = 0.12f }, NPC.Center);
+                return;
+            }
+            SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.5f, PitchVariance = 0.12f }, NPC.Center);
+            if (_aerialSlamActive)
+            {
+                // A second, deeper flash on top of the base's orange one - lets a watching player tell
+                // "this one ends in a ground slam" apart from the plain pierce-through.
+                SpawnTelegraphFlash(new Color(120, 0, 0));
             }
         }
 
         protected override void DoAerialDiveHit()
         {
+            if (_aerialSlamActive)
+            {
+                // No continuous thrust during a slam dive - the payoff is the single impact on
+                // landing (TriggerAerialSlamImpact, called from PostAI when the dive ends).
+                return;
+            }
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
@@ -676,6 +1094,171 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.GetSource_FromThis(), center, Vector2.Zero,
                 ModContent.ProjectileType<PuppetMeleeHitbox>(),
                 (int)(SpearDamage * 1.25f), 4f, Main.myPlayer, boxW, boxH);
+        }
+
+        private void TriggerAerialSlamImpact()
+        {
+            if (!Main.dedServ)
+            {
+                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.8f, Pitch = -0.15f }, NPC.Center);
+                UsefulFunctions.ScreenShake(NPC.Center, 6f, 12, 6f, 500f);
+                for (int i = 0; i < 40; i++)
+                {
+                    Dust d = Dust.NewDustPerfect(NPC.Bottom, DustID.RedTorch,
+                        Main.rand.NextVector2Circular(6f, 3f) + new Vector2(0f, -2f), 0, default,
+                        Main.rand.NextFloat(1.2f, 2.2f));
+                    d.noGravity = true;
+                }
+            }
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            int boxW = 220, boxH = 160;
+            Projectile.NewProjectile(
+                NPC.GetSource_FromThis(), NPC.Bottom, Vector2.Zero,
+                ModContent.ProjectileType<PuppetMeleeHitbox>(),
+                (int)(SpearDamage * 1.6f), 6f, Main.myPlayer, boxW, boxH);
+        }
+
+        // ── Poison Cloud flee-counter (debug label: "Poison Cloud") ─────────────────
+        // If the player runs more than 60 tiles away: teleport (30t telegraph - see
+        // TeleportTelegraphTicks above, matching Black Ninja), landing ~10 tiles in front of their
+        // run direction (or on the far side of them from the dragon's current position if they're
+        // not actually moving) to cut off the escape route, raise the spear overhead, then throw a
+        // large stationary toxic gas cloud (CursedDragonPoisonCloud) that punishes lingering with
+        // poison and escalating curse buildup rather than dealing direct damage itself. Built on the
+        // generic Custom set-piece phase (StartCustomAttack/DoCustomAttack/DoCustomTick) since it is
+        // not a melee/ranged/magic attack shape.
+        private const float PoisonCloudTriggerRange = 60f * 16f; // 60 tiles
+        private const int PoisonCloudTeleportTicks = 30;         // = TeleportTelegraphTicks above
+        private const int PoisonCloudSettleTicks = 6;            // beat after the reveal before raising the arm
+        private const int PoisonCloudArmRaiseTicks = 20;
+        private const int PoisonCloudRecoveryTicks = 24;
+        // Every stage length above is a compile-time constant, so every peer (server and client)
+        // computes the SAME total independently - nothing here needs network syncing.
+        private const int PoisonCloudTotalTicks =
+            PoisonCloudTeleportTicks + PoisonCloudSettleTicks + PoisonCloudArmRaiseTicks + PoisonCloudRecoveryTicks;
+        private const int PoisonCloudCooldownTicks = 1800; // 30s - a rare punish, not a repeatable spam
+        private const float PoisonCloudLandingOffsetTiles = 10f;
+
+        private int _poisonCloudCooldown;
+        private Vector2 _poisonCloudDestination; // server-only: read once by DoCustomAttack, never needs syncing
+
+        /// <summary>Finds a landing spot ~10 tiles ahead of the player's run direction (or on the far
+        /// side of them from the dragon's current position if they're not actually moving), scanning
+        /// down for solid ground with clearance for the puppet's own hitbox. Tries a few nearby
+        /// columns if the first choice is blocked; returns false if none work.</summary>
+        private bool TryFindPoisonCloudLandingSpot(Player target, out Vector2 destinationCenter)
+        {
+            destinationCenter = Vector2.Zero;
+
+            float desiredX;
+            if (Math.Abs(target.velocity.X) > 1f)
+            {
+                desiredX = target.Center.X + Math.Sign(target.velocity.X) * PoisonCloudLandingOffsetTiles * 16f;
+            }
+            else
+            {
+                int oppositeSide = target.Center.X < NPC.Center.X ? -1 : 1; // away from the dragon's current side
+                desiredX = target.Center.X + oppositeSide * PoisonCloudLandingOffsetTiles * 16f;
+            }
+
+            int centerTileX = (int)(desiredX / 16f);
+            int startTileY = (int)(target.Center.Y / 16f) - 6; // a few tiles above the player's own footing
+
+            for (int columnTry = 0; columnTry < 5; columnTry++)
+            {
+                int columnOffset = columnTry == 0 ? 0
+                    : (columnTry % 2 == 1 ? (columnTry / 2 + 1) : -(columnTry / 2 + 1));
+                int scanX = centerTileX + columnOffset;
+
+                for (int y = startTileY; y < startTileY + 24; y++)
+                {
+                    if (!UsefulFunctions.IsTileReallySolid(scanX, y))
+                    {
+                        continue;
+                    }
+
+                    float destLeft = scanX * 16f - NPC.width / 2f;
+                    float destTop = y * 16f - NPC.height;
+                    int clearanceLeft = (int)Math.Floor(destLeft / 16f);
+                    int clearanceRight = (int)Math.Floor((destLeft + NPC.width - 0.01f) / 16f);
+                    int clearanceTop = (int)Math.Floor(destTop / 16f);
+                    int clearanceBottom = (int)Math.Floor((destTop + NPC.height - 0.01f) / 16f);
+                    if (Collision.SolidTiles(clearanceLeft, clearanceRight, clearanceTop, clearanceBottom))
+                    {
+                        continue; // no headroom above this tile - keep scanning down this column
+                    }
+
+                    destinationCenter = new Vector2(destLeft + NPC.width / 2f, destTop + NPC.height / 2f);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        protected override void DoCustomAttack()
+        {
+            DebugAttackLabel = "Poison Cloud";
+            tsorcRevampAIs.QueueTeleportToDestination(NPC, _poisonCloudDestination, PoisonCloudTeleportTicks);
+        }
+
+        protected override void DoCustomTick(int ticksRemaining)
+        {
+            int elapsed = PoisonCloudTotalTicks - ticksRemaining;
+            int releaseTick = PoisonCloudTeleportTicks + PoisonCloudSettleTicks + PoisonCloudArmRaiseTicks;
+            if (elapsed == releaseTick && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                ThrowPoisonCloud();
+            }
+        }
+
+        /// <summary>Drives the arm through the sequence's three visible beats: held at carry through
+        /// the teleport + settle, raised overhead through the wind-up, thrown, then eased back down.</summary>
+        protected override float? CustomWeaponRotation
+        {
+            get
+            {
+                if (Phase != AttackPhase.Custom)
+                {
+                    return null;
+                }
+
+                const float carryPose = -0.30f;
+                const float raisedPose = -1.55f;
+                int elapsed = PoisonCloudTotalTicks - PhaseTimer;
+
+                int armRaiseStart = PoisonCloudTeleportTicks + PoisonCloudSettleTicks;
+                if (elapsed < armRaiseStart)
+                {
+                    return carryPose;
+                }
+
+                int releaseTick = armRaiseStart + PoisonCloudArmRaiseTicks;
+                if (elapsed < releaseTick)
+                {
+                    float raiseProgress = (elapsed - armRaiseStart) / (float)PoisonCloudArmRaiseTicks;
+                    return MathHelper.Lerp(carryPose, raisedPose, MathHelper.SmoothStep(0f, 1f, raiseProgress));
+                }
+
+                int recoveryElapsed = elapsed - releaseTick;
+                if (recoveryElapsed < PoisonCloudRecoveryTicks)
+                {
+                    float recoveryProgress = recoveryElapsed / (float)PoisonCloudRecoveryTicks;
+                    return MathHelper.Lerp(raisedPose, carryPose, MathHelper.SmoothStep(0f, 1f, recoveryProgress));
+                }
+                return carryPose;
+            }
+        }
+
+        private void ThrowPoisonCloud()
+        {
+            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, Pitch = -0.3f }, NPC.Center);
+            Player target = Main.player[NPC.target];
+            Projectile.NewProjectile(
+                NPC.GetSource_FromThis(), target.Center, Vector2.Zero,
+                ModContent.ProjectileType<CursedDragonPoisonCloud>(), 0, 0f, Main.myPlayer);
         }
 
         // ── Visual: white dust + light building at the spear tip through the whole ranged
@@ -791,6 +1374,37 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.netUpdate = true;
             }
 
+            // Aerial slam: fires once, the exact tick the dive controller returns from DiveAttack to
+            // Hover - checked here (runs every tick regardless of Phase) rather than inside the base's
+            // shared airborne ladder, so nothing there needs editing for a single subclass's variant.
+            bool nowDiving = Flight != null && Flight.IsDiving;
+            if (_wasDiving && !nowDiving && _aerialSlamActive)
+            {
+                TriggerAerialSlamImpact();
+                _aerialSlamActive = false;
+            }
+            _wasDiving = nowDiving;
+
+            if (_poisonCloudCooldown > 0)
+            {
+                _poisonCloudCooldown--;
+            }
+            if (Phase == AttackPhase.Idle && _poisonCloudCooldown <= 0
+                && Main.netMode != NetmodeID.MultiplayerClient
+                && NPC.HasValidTarget
+                && (Flight == null || !Flight.IsAirborne))
+            {
+                Player fleeingTarget = Main.player[NPC.target];
+                if (NPC.Distance(fleeingTarget.Center) > PoisonCloudTriggerRange
+                    && TryFindPoisonCloudLandingSpot(fleeingTarget, out Vector2 landingSpot))
+                {
+                    _poisonCloudDestination = landingSpot;
+                    _poisonCloudCooldown = PoisonCloudCooldownTicks;
+                    StartCustomAttack(PoisonCloudTotalTicks, MeleeWeaponItemType, swingPose: false);
+                    NPC.netUpdate = true;
+                }
+            }
+
             if (Phase != AttackPhase.RangedTelegraph || IsSecondaryRangedActive || Main.dedServ)
                 return;
 
@@ -825,6 +1439,24 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             Lighting.AddLight(spearTip, MathHelper.Lerp(0.5f, 1.4f, t), MathHelper.Lerp(0.5f, 1.4f, t), MathHelper.Lerp(0.6f, 1.5f, t));
+        }
+
+        // ── Multiplayer: Twin Storm chain state ─────────────────────────────────────
+        // _twinStormCastsLeft is rolled server-only (PostAI above), but it's also READ every tick by
+        // every peer: MagicTelegraphTicks/MagicRecoveryTicks size the phase a client is predicting,
+        // and DoMagicTelegraphVFX decides whether to draw the gathering swirl at all. Unsynced, a
+        // non-host client always sees TwinStormQueued as false — no swirl, and the wrong (60t instead
+        // of 90t) telegraph length predicted before the server's snapshot corrects it.
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write((byte)Math.Clamp(_twinStormCastsLeft, 0, byte.MaxValue));
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            _twinStormCastsLeft = reader.ReadByte();
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

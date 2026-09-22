@@ -2285,6 +2285,106 @@ namespace tsorcRevamp.NPCs
             return true;
         }
 
+        /// <summary>Arms a teleport at an EXACT, already-chosen destination (an NPC.Center-style world
+        /// point) instead of searching for one nearby the player - for an attack that needs to land
+        /// somewhere specific, such as a flee-counter cutting off the player's escape route. Rejects
+        /// the destination if it's solid-blocked; does no ground-scan of its own, so pass an
+        /// already-validated landing point. Returns whether the teleport was armed.</summary>
+        public static bool QueueTeleportToDestination(NPC npc, Vector2 destinationCenter, int telegraphTime)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return false;
+            }
+
+            float destinationLeft = destinationCenter.X - npc.width / 2f;
+            float destinationTop = destinationCenter.Y - npc.height / 2f;
+            int clearanceLeft = (int)Math.Floor(destinationLeft / 16f);
+            int clearanceRight = (int)Math.Floor((destinationLeft + npc.width - 0.01f) / 16f);
+            int clearanceTop = (int)Math.Floor(destinationTop / 16f);
+            int clearanceBottom = (int)Math.Floor((destinationTop + npc.height - 0.01f) / 16f);
+            if (Collision.SolidTiles(clearanceLeft, clearanceRight, clearanceTop, clearanceBottom))
+            {
+                return false;
+            }
+
+            ArmTeleportTelegraph(npc, destinationCenter, telegraphTime);
+            return true;
+        }
+
+        /// <summary>Arms the shared teleport telegraph (countdown, departure sound, network snapshot,
+        /// and the style-specific vanish/reveal VFX pair) for an ALREADY-CHOSEN destination. Extracted
+        /// from <see cref="QueueTeleport"/> so a caller with its own directed destination search (e.g.
+        /// a flee-counter that teleports specifically in front of the player, not just nearby) can
+        /// reuse the exact same visuals/timing instead of duplicating them.</summary>
+        private static void ArmTeleportTelegraph(NPC npc, Vector2 destination, int telegraphTime)
+        {
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown = telegraphTime;
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportTelegraph = destination;
+            SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.6f, PitchVariance = 0.1f }, npc.Center); // exit/departure cue
+            // One send for every caller (reacquire, lava escape, the bosses' own blinks). The countdown IS
+            // the telegraph — the knights use 30 ticks, shorter than vanilla's 30-tick throttle for a
+            // non-boss — so without this a client could miss the hide window entirely and see a raw snap.
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            var visualStyle = npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportVisualStyle;
+            if (visualStyle == TeleportVisualStyle.Default)
+            {
+                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0, Main.myPlayer, npc.whoAmI, telegraphTime);
+                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), destination, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: telegraphTime);
+            }
+            else if (visualStyle == TeleportVisualStyle.Plague)
+            {
+                // ONE pair of clouds for the WHOLE sequence — countdown AND the
+                // appearance/reveal phase after it — not two. This used to spawn a
+                // telegraph pair here, let them die right as the countdown hit zero,
+                // and immediately spawn an near-identical SECOND pair in
+                // ExecuteQueuedTeleport for the reveal phase, which read exactly like
+                // the whole teleport firing twice in a row. Life now covers
+                // TeleportTelegraphTime + the reveal snap delay,
+                // capped at the projectile's own max duration.
+                //
+                // The clouds are now deliberately DECOUPLED from the hidden window and
+                // always run their full lifetime. Tying them to the telegraph plus
+                // reveal delay meant the reveal
+                // landed exactly as the clouds expired, so the visible effect finished
+                // and then a knight faded in next to the empty space where it had been.
+                // Running long instead lets him step OUT of a cloud that is still
+                // billowing — shorten TeleportTelegraphTime (the knights use 30) to
+                // control how early he emerges, without shortening the effect itself.
+                int plagueTelegraphLife = PlagueTeleportCloud.LifetimeTicks;
+                // Departure cloud carries the curse for the full duration now (ai0=1)
+                // instead of only appearing for the last stretch — thematically the
+                // ground stays contaminated the whole time the knight is phasing out.
+                var srcCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 1f, PlagueTeleportCloud.MaxCloudRadius);
+                srcCloud.timeLeft = plagueTelegraphLife;
+                var dstCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), destination, Vector2.Zero, ModContent.ProjectileType<PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 0f, PlagueTeleportCloud.MaxCloudRadius);
+                dstCloud.timeLeft = plagueTelegraphLife;
+            }
+            else
+            {
+                float mistStyle = visualStyle == TeleportVisualStyle.Fire ? 1f : 0f;
+                float radius = Math.Max(npc.width, npc.height) * 0.5f * TeleportMistVisualScale;
+                var srcMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
+                srcMist.timeLeft = telegraphTime;
+                var dstMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), destination, Vector2.Zero, ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
+                dstMist.timeLeft = telegraphTime;
+
+                if (visualStyle == TeleportVisualStyle.Fire)
+                {
+                    Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                        ModContent.ProjectileType<FireTeleportBlast>(), 0, 0, Main.myPlayer);
+                    Projectile.NewProjectileDirect(npc.GetSource_FromThis(), destination, Vector2.Zero,
+                        ModContent.ProjectileType<FireTeleportBlast>(), 0, 0, Main.myPlayer);
+                }
+            }
+        }
+
         public static void QueueTeleport(NPC npc, int range, bool requireLineofSight = true, int TeleportTelegraphTime = 140, bool preferHighGround = false, int minRange = 11)
         {
             Vector2? potentialNewPos;
@@ -2296,72 +2396,7 @@ namespace tsorcRevamp.NPCs
                     potentialNewPos = GenerateTeleportPosition(npc, range, requireLineofSight, preferHighGround, minRange);
                     if (potentialNewPos.HasValue && (!requireLineofSight || (Collision.CanHit(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1))))
                     {
-                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown = TeleportTelegraphTime;
-                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportTelegraph = potentialNewPos.Value;
-                        SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.6f, PitchVariance = 0.1f }, npc.Center); // exit/departure cue
-                        // One send for every caller (reacquire, lava escape, the bosses' own blinks). The countdown IS
-                        // the telegraph — the knights use 30 ticks, shorter than vanilla's 30-tick throttle for a
-                        // non-boss — so without this a client could miss the hide window entirely and see a raw snap.
-                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
-
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            var visualStyle = npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportVisualStyle;
-                            if (visualStyle == TeleportVisualStyle.Default)
-                            {
-                                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0, Main.myPlayer, npc.whoAmI, TeleportTelegraphTime);
-                                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: TeleportTelegraphTime);
-                            }
-                            else
-                            {
-                                if (visualStyle == TeleportVisualStyle.Plague)
-                                {
-                                    // ONE pair of clouds for the WHOLE sequence — countdown AND the
-                                    // appearance/reveal phase after it — not two. This used to spawn a
-                                    // telegraph pair here, let them die right as the countdown hit zero,
-                                    // and immediately spawn an near-identical SECOND pair in
-                                    // ExecuteQueuedTeleport for the reveal phase, which read exactly like
-                                    // the whole teleport firing twice in a row. Life now covers
-                                    // TeleportTelegraphTime + the reveal snap delay,
-                                    // capped at the projectile's own max duration.
-                                    //
-                                    // The clouds are now deliberately DECOUPLED from the hidden window and
-                                    // always run their full lifetime. Tying them to the telegraph plus
-                                    // reveal delay meant the reveal
-                                    // landed exactly as the clouds expired, so the visible effect finished
-                                    // and then a knight faded in next to the empty space where it had been.
-                                    // Running long instead lets him step OUT of a cloud that is still
-                                    // billowing — shorten TeleportTelegraphTime (the knights use 30) to
-                                    // control how early he emerges, without shortening the effect itself.
-                                    int plagueTelegraphLife = PlagueTeleportCloud.LifetimeTicks;
-                                    // Departure cloud carries the curse for the full duration now (ai0=1)
-                                    // instead of only appearing for the last stretch — thematically the
-                                    // ground stays contaminated the whole time the knight is phasing out.
-                                    var srcCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 1f, PlagueTeleportCloud.MaxCloudRadius);
-                                    srcCloud.timeLeft = plagueTelegraphLife;
-                                    var dstCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 0f, PlagueTeleportCloud.MaxCloudRadius);
-                                    dstCloud.timeLeft = plagueTelegraphLife;
-                                }
-                                else
-                                {
-                                    float mistStyle = visualStyle == TeleportVisualStyle.Fire ? 1f : 0f;
-                                    float radius = Math.Max(npc.width, npc.height) * 0.5f * TeleportMistVisualScale;
-                                    var srcMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
-                                    srcMist.timeLeft = TeleportTelegraphTime;
-                                    var dstMist = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, mistStyle, radius);
-                                    dstMist.timeLeft = TeleportTelegraphTime;
-
-                                    if (visualStyle == TeleportVisualStyle.Fire)
-                                    {
-                                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
-                                            ModContent.ProjectileType<FireTeleportBlast>(), 0, 0, Main.myPlayer);
-                                        Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero,
-                                            ModContent.ProjectileType<FireTeleportBlast>(), 0, 0, Main.myPlayer);
-                                    }
-                                }
-                            }
-                        }
-
+                        ArmTeleportTelegraph(npc, potentialNewPos.Value, TeleportTelegraphTime);
                         break;
                     }
                 }

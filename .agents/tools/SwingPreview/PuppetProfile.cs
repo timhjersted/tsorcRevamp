@@ -25,10 +25,17 @@ namespace SwingPreview
         // Gate 1: UseAuthoredComboSwingClock. Off -> every step uses UseSwingEasing (Smooth/Linear)
         // and ignores its authored Ease. Also sizes arc steps to AttackTicks/SwingSpeedMult.
         public bool AuthoredClock;
+        /// <summary>PuppetNPC.AuthoredClockCoversJoustDash - when true, JoustDash also gets the
+        /// authored clock resize (see IsArcSwingMotion below) instead of sweeping over the weapon's
+        /// useAnimation. Deliberately excludes LeapThrust - see the base virtual's doc comment.</summary>
+        public bool AuthoredClockCoversJoustDash;
         public bool UseSwingEasing;
         public bool AimSwingActive;
         public bool LogicalTelegraphs;
         public bool LandingTimedLeapSlam;
+        /// <summary>PuppetNPC.UseEasedSpin - ramps ComboMotion.Spin's angular speed up across the
+        /// telegraph and back down over the step's own EaseOutTicks, instead of a fixed rate throughout.</summary>
+        public bool UseEasedSpin;
 
         public float OverheadWindupOvershoot;
         public float ComboTelegraphMultiplier = 1.35f;
@@ -92,8 +99,10 @@ namespace SwingPreview
             profile.UseSwingEasing = profile.Read("UseSwingEasing", false);
             profile.AimSwingActive = profile.Read("AimSwingActive", false);
             profile.AuthoredClock = profile.Read("UseAuthoredComboSwingClock", profile.AimSwingActive);
+            profile.AuthoredClockCoversJoustDash = profile.Read("AuthoredClockCoversJoustDash", false);
             profile.LogicalTelegraphs = profile.Read("UseLogicalMeleeTelegraphs", false);
             profile.LandingTimedLeapSlam = profile.Read("UseLandingTimedLeapSlam", false);
+            profile.UseEasedSpin = profile.Read("UseEasedSpin", false);
             profile.OverheadWindupOvershoot = profile.Read("OverheadWindupOvershoot", 0f);
             profile.ComboTelegraphMultiplier = profile.Read("ComboTelegraphMultiplier", 1.35f);
             profile.MinComboTelegraphTicks = profile.Read("MinComboTelegraphTicks", 30);
@@ -265,9 +274,11 @@ namespace SwingPreview
             }
         }
 
-        /// <summary>The isolated copy the game runs: Steps cloned, then CustomizeMeleeCombo at full
-        /// health (Artorias raises every PostStepPause to 30 and retargets Ground Pound here).</summary>
-        public MeleeCombo Customize(MeleeCombo combo)
+        /// <summary>The isolated copy the game runs: Steps cloned, then CustomizeMeleeCombo at the
+        /// given health fraction (default 1f = full health; Artorias raises every PostStepPause to 30
+        /// and retargets Ground Pound here; a puppet with an HP-gated escalation shows it at a lower
+        /// fraction via --health).</summary>
+        public MeleeCombo Customize(MeleeCombo combo, float healthFraction = 1f)
         {
             if (combo.Steps != null)
             {
@@ -279,7 +290,7 @@ namespace SwingPreview
                 return combo;
             }
 
-            object[] args = { combo, 1f };
+            object[] args = { combo, healthFraction };
             try
             {
                 _customizeCombo.Invoke(_instance, args);

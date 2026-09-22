@@ -222,6 +222,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected abstract int HeadArmorItemType  { get; }
         protected abstract int BodyArmorItemType  { get; }
         protected abstract int LegsArmorItemType  { get; }
+        /// <summary>Source-cell multiplier used by an alternate armor template. Terraria's player
+        /// pipeline is hard-coded around 40x56 cells, so large templates are expanded only after it
+        /// has built its draw data. The source sheets must use this exact multiple on every cell.</summary>
+        protected virtual int ArmorTemplateScale => 1;
         /// <summary>Vanilla dye items applied to the puppet's visible armor slots.  Zero leaves the slot undyed.</summary>
         protected virtual int HeadArmorDyeItemType => 0;
         protected virtual int BodyArmorDyeItemType => 0;
@@ -309,6 +313,13 @@ namespace tsorcRevamp.NPCs.Puppets
         /// wind-up, fast strike, slight settle) instead of a constant-speed linear lerp. Purely
         /// reshapes the timing of the (already tracked) blade capsule — no reach/damage change.</summary>
         protected virtual bool UseSwingEasing => false;
+
+        /// <summary>When true, <see cref="ComboMotion.Spin"/> ramps its angular speed up across the
+        /// telegraph and back down over its own <c>EaseOutTicks</c> (reused as "ticks to ease down"),
+        /// instead of spinning at one constant rate through wind-up, strike and stop alike. Default
+        /// false preserves every existing Spin user (it never reads <see cref="MeleeComboStep.Ease"/>
+        /// at all) exactly as authored.</summary>
+        protected virtual bool UseEasedSpin => false;
 
         /// <summary>Flip which direction a combo's arc runs on alternating swings (same arc shape,
         /// mirrored start/end) so the same combo doesn't read identically every single time.</summary>
@@ -598,6 +609,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>When true the puppet may begin a breath while airborne (and will strafe across to
         /// sweep the stream).  When false breath is grounded-only.</summary>
         protected virtual bool  BreathAllowedAirborne => false;
+        /// <summary>When true, grounded Breathing walks forward at half TopSpeed instead of bleeding
+        /// off momentum to a standstill - the stream then doubles as advancing pressure. Default false
+        /// preserves every existing breather's planted-hose behavior.</summary>
+        protected virtual bool  AdvanceDuringGroundedBreath => false;
 
         /// <summary>True for the full duration of the entire telegraph+attack window (not just the
         /// post-flash commit).  Set true to give this puppet hyper-armor — zero knockback, no poise
@@ -1579,6 +1594,11 @@ namespace tsorcRevamp.NPCs.Puppets
         /// shot of the active burst pattern — lets a subclass fire a cross-weapon "finisher" projectile
         /// on the final shot of a pattern.</summary>
         protected bool IsFinalBurstShot => _interShotPauses != null && _interShotPauseIndex >= _interShotPauses.Length;
+
+        /// <summary>0-based index of the shot currently being fired within the active burst pattern
+        /// (0 for the first shot), or 0 when not using a pattern. Lets a subclass vary a shot's aim,
+        /// spread or speed progressively across a multi-shot pattern.</summary>
+        protected int CurrentBurstShotIndex => _interShotPauseIndex;
 
         // ── Healing state ─────────────────────────────────────────────────────────
         // -1 = uninitialized (set to EstusChargesMax on first AI tick)
@@ -2564,6 +2584,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float AerialDiveLeadTicks => 10f;
         protected virtual float AerialMeleeRange => 620f;
         protected virtual float AerialRangedVerticalBand => 96f;
+        /// <summary>When true, the airborne ranged trigger rolls a full burst pattern (fan/twin-ring/
+        /// accelerating chain/etc., whatever PrimaryRangedBurstPatterns or SecondaryRangedBurstPatterns
+        /// define) the same way the grounded trigger does, instead of forcing a single standing shot.
+        /// Default false preserves every existing winged puppet's aerial potshot exactly.</summary>
+        protected virtual bool AllowRangedPatternsAirborne => false;
 
         private EnemyFlightController _flight;
         /// <summary>Subclass access to the flight controller (created lazily on the first tick
@@ -4099,7 +4124,10 @@ namespace tsorcRevamp.NPCs.Puppets
                                 {
                                     bool useSecondary = secondaryAerialRanged
                                         && (!primaryAerialRanged || Main.rand.Next(100) < SecondaryRangedChance);
-                                    SetupRangedBurst(useSecondary, shotsOverride: 1, forceStanding: true);
+                                    // -1 (roll a pattern) instead of the forced single shot when the
+                                    // puppet opts in - see AllowRangedPatternsAirborne's doc comment.
+                                    int aerialShots = AllowRangedPatternsAirborne ? -1 : 1;
+                                    SetupRangedBurst(useSecondary, shotsOverride: aerialShots, forceStanding: true);
                                     EnterPhase(AttackPhase.RangedTelegraph, _activeRangedTelegraphTicks);
                                 }
                             }
@@ -4109,6 +4137,9 @@ namespace tsorcRevamp.NPCs.Puppets
                                 && Main.rand.Next(70) == 0)
                             {
                                 Vector2 leadTarget = target.Center + target.velocity * AerialDiveLeadTicks;
+                                // Lets a subclass redirect the dive at a ground point instead (a
+                                // slam variant) rather than the default lead-through-the-player thrust.
+                                leadTarget = ModifyAerialDiveWaypoint(leadTarget);
                                 if (_flight.RequestDive(leadTarget))
                                 {
                                     _aerialDiveCooldown = AerialDiveCooldownTicks;
@@ -4766,8 +4797,17 @@ namespace tsorcRevamp.NPCs.Puppets
                     bool airborneBreath = _flight != null && _flight.IsAirborne;
                     if (!airborneBreath)
                     {
-                        NPC.velocity.X *= 0.85f;
                         int faceB = target.Center.X < NPC.Center.X ? -1 : 1;
+                        if (AdvanceDuringGroundedBreath)
+                        {
+                            // Walk forward through the stream instead of bleeding to a standstill -
+                            // the breath then doubles as advancing pressure, not a planted hose.
+                            NPC.velocity.X = faceB * TopSpeed * 0.5f;
+                        }
+                        else
+                        {
+                            NPC.velocity.X *= 0.85f;
+                        }
                         NPC.direction = faceB;
                         NPC.spriteDirection = faceB;
                     }
@@ -7279,6 +7319,12 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         // ── Aerial actions (default implementations) ──────────────────────────────
+        /// <summary>Lets a subclass redirect where an aerial dive is aimed - e.g. a ground point near
+        /// the player instead of the default lead-through-the-player waypoint, for a dive-slam variant
+        /// distinct from the default pierce-through thrust. Called once, right before RequestDive.
+        /// Default returns the waypoint unchanged.</summary>
+        protected virtual Vector2 ModifyAerialDiveWaypoint(Vector2 defaultWaypoint) => defaultWaypoint;
+
         /// <summary>Fire a telegraph flash + dust burst when a dive begins.  Subclass override
         /// for thematic dive markers.  Also equips the melee weapon for the dive visual.</summary>
         protected virtual void DoAerialDiveTelegraph()
@@ -7870,7 +7916,10 @@ namespace tsorcRevamp.NPCs.Puppets
             _flashFired = true;
         }
 
-        private void SpawnTelegraphFlash(Color color)
+        /// <summary>One-shot colored flash + dust burst, usable by a subclass for its own extra
+        /// telegraph beats (e.g. a second flash marking a dive variant) beyond the standard per-phase
+        /// CheckAndFireFlash cadence.</summary>
+        protected void SpawnTelegraphFlash(Color color)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
@@ -8445,6 +8494,12 @@ namespace tsorcRevamp.NPCs.Puppets
                     else if (_meleeComboStepIndex + 1 < _activeMeleeCombo.Steps.Length)
                     {
                         float target = ComboStepStartRotation(_activeMeleeCombo.Steps[_meleeComboStepIndex + 1]);
+                        // A step whose rotation accumulates past a single turn (Spin) can leave
+                        // _weaponRotation many radians from `target` in raw value space even though
+                        // the SHORT way around is small. Re-express it as the equivalent angle nearest
+                        // `target` first, or the handoff below sweeps most of a full circle instead of
+                        // the true gap (this is what previously made Spin's own recovery rewind).
+                        _weaponRotation = target + MathHelper.WrapAngle(_weaponRotation - target);
                         int transitionTicks = Math.Max(1, pauseTotal - lingerTicks);
                         float transition = MathHelper.Clamp(
                             (elapsedPause - lingerTicks + 1f) / transitionTicks, 0f, 1f);
@@ -8456,6 +8511,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     && _meleeComboStepIndex + 1 < _activeMeleeCombo.Steps.Length)
                 {
                     float target = ComboStepStartRotation(_activeMeleeCombo.Steps[_meleeComboStepIndex + 1]);
+                    _weaponRotation = target + MathHelper.WrapAngle(_weaponRotation - target);
                     _weaponRotation = MathHelper.Lerp(_weaponRotation, target, 0.22f);
                     handoffEased = true;
                 }
@@ -8585,13 +8641,40 @@ namespace tsorcRevamp.NPCs.Puppets
                         break;
                     }
                     case ComboMotion.Spin:
-                        // Continuous rotation; 1 full revolution per held item useAnimation-ish window
-                        _weaponRotation += 0.28f;
+                    {
+                        // Continuous rotation; 1 full revolution per held item useAnimation-ish window.
+                        const float peakSpinSpeed = 0.28f;
+                        float spinSpeedMult = 1f;
+
+                        if (UseEasedSpin)
+                        {
+                            if (inTel)
+                            {
+                                // Wind-up: ramp 0 -> full speed across the telegraph, so the windmill
+                                // visibly spins UP into the strike instead of already spinning at full
+                                // speed on the very first telegraph frame.
+                                spinSpeedMult = MathHelper.SmoothStep(0f, 1f, comboTelegraphT);
+                            }
+                            else
+                            {
+                                // Attack: hold full speed, then ease DOWN over the step's own
+                                // EaseOutTicks (reused here as "ticks to ramp down") so the strike
+                                // visibly slows into its recovery instead of snapping to a dead stop.
+                                int easeOutTicks = Math.Max(1, step.EaseOutTicks > 0 ? step.EaseOutTicks : 10);
+                                if (PhaseTimer < easeOutTicks)
+                                {
+                                    spinSpeedMult = MathHelper.SmoothStep(0f, 1f, PhaseTimer / (float)easeOutTicks);
+                                }
+                            }
+                        }
+
+                        _weaponRotation += peakSpinSpeed * spinSpeedMult;
                         if (_weaponRotation > MathHelper.TwoPi)
                         {
                             _weaponRotation -= MathHelper.TwoPi;
                         }
                         break;
+                    }
                     case ComboMotion.FlailBrace:
                         // The hand is the chain anchor. Ease it forward during the tell, then hold it
                         // still while the ball-and-chain projectile owns every visible orbit and lash.
@@ -8823,7 +8906,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (UseCompositeArmForAdditionalPhase)
                 ModifyAdditionalPhaseWeaponRotation(ref _weaponRotation);
 
-            UpdateSpearGrip();
+            UpdateSpearGrip(t);
             SpawnSwingVFX(_weaponRotation - _prevWeaponRotation);
             _prevWeaponRotation = _weaponRotation;
             TickHandPoses();
@@ -8832,10 +8915,15 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>
         /// Slides the spear grip along the shaft so the weapon extends/retracts like the player's spear.
         /// _spearGrip 0 = gripped at the head (compact), 1 = gripped at the base (head thrust far forward).
-        /// A poke pulses to the base and back (extend → retract); spins/swings hold it out for more reach.
-        /// No-op unless <see cref="DrawWeaponAsSpear"/>.
+        /// A poke pulses to the base and back (extend → retract); spins/swings hold a FIXED grip instead —
+        /// a real polearm doesn't telescope mid-arc, so a moving grip during a swing read as the head
+        /// sliding in and out rather than one rigid shaft turning. No-op unless <see cref="DrawWeaponAsSpear"/>.
+        /// <paramref name="swingClockT"/> is TickWeaponAnim's own 0→1 swing progress (only meaningful
+        /// during MeleeComboAttack); used instead of a separate PhaseTimer-based hump when
+        /// <see cref="UseAuthoredSpearGrip"/> opts in, so the visible extension settles on the same
+        /// clock as the eased rotation instead of drifting out of sync with it.
         /// </summary>
-        private void UpdateSpearGrip()
+        private void UpdateSpearGrip(float swingClockT)
         {
             if (!DrawWeaponAsSpear)
             {
@@ -8882,9 +8970,11 @@ namespace tsorcRevamp.NPCs.Puppets
                 case AttackPhase.MeleeComboAttack:
                 {
                     ComboMotion motion = _activeMeleeCombo.Steps[_meleeComboStepIndex].Motion;
-                    float p = _weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f;
                     if (motion == ComboMotion.Thrust || motion == ComboMotion.JoustDash || motion == ComboMotion.LeapThrust)
                     {
+                        float p = UseAuthoredSpearGrip
+                            ? MathHelper.Clamp(swingClockT, 0f, 1f)
+                            : (_weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f);
                         target = MathHelper.Lerp(0.45f, 0.97f, (float)Math.Sin(p * Math.PI)); // poke extend/retract
                         ease = 0.55f;
                     }
@@ -8895,8 +8985,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                     else
                     {
-                        // Overhead / sweep / chop: extend through the swing, peaking at the apex.
-                        target = MathHelper.Lerp(0.6f, 0.85f, (float)Math.Sin(p * Math.PI));
+                        // Overhead / sweep / chop: hold a FIXED grip near the base for the whole arc.
+                        // A real pole doesn't telescope mid-swing — sliding 0.6->0.85 through the arc
+                        // (the old behavior) read as the head extending and retracting mid-cut.
+                        target = 0.85f;
                         ease = 0.3f;
                     }
                     break;
@@ -9014,7 +9106,11 @@ namespace tsorcRevamp.NPCs.Puppets
         private Vector2 GetHandPosition()
         {
             Vector2 hand = GetUnscaledHandPosition();
-            return HasSpectralOverlay ? NPC.Bottom + (hand - NPC.Bottom) * SpectralOverlayScale : hand;
+            float visualScale = Math.Max(1, ArmorTemplateScale)
+                * (HasSpectralOverlay ? SpectralOverlayScale : 1f);
+            return visualScale != 1f
+                ? NPC.Bottom + (hand - NPC.Bottom) * visualScale
+                : hand;
         }
 
         private Vector2 GetUnscaledHandPosition()
@@ -9074,7 +9170,11 @@ namespace tsorcRevamp.NPCs.Puppets
         private Vector2 GetBackHandPosition()
         {
             Vector2 hand = GetUnscaledBackHandPosition();
-            return HasSpectralOverlay ? NPC.Bottom + (hand - NPC.Bottom) * SpectralOverlayScale : hand;
+            float visualScale = Math.Max(1, ArmorTemplateScale)
+                * (HasSpectralOverlay ? SpectralOverlayScale : 1f);
+            return visualScale != 1f
+                ? NPC.Bottom + (hand - NPC.Bottom) * visualScale
+                : hand;
         }
 
         // Vanilla's back composite hand for the back arm's pose. Falls back to just behind the front hand if the
@@ -9307,15 +9407,16 @@ namespace tsorcRevamp.NPCs.Puppets
             _puppet.armor[2] = new Item();
             _puppet.armor[2].SetDefaults(LegsArmorItemType);
 
+            // These equip-slot indices are what Terraria's player renderer reads. Phase-specific
+            // oversized art is substituted only after this normal composite has been assembled.
+            _puppet.head = _puppet.armor[0].headSlot;
+            _puppet.body = _puppet.armor[1].bodySlot;
+            _puppet.legs = _puppet.armor[2].legSlot;
+
             SetPuppetDye(0, HeadArmorDyeItemType);
             SetPuppetDye(1, BodyArmorDyeItemType);
             SetPuppetDye(2, LegsArmorDyeItemType);
             SetPuppetDye(3, HasWings ? WingsDyeItemType : 0);
-
-            // These equip-slot indices are what the renderer reads to pick armor textures
-            _puppet.head = _puppet.armor[0].headSlot;
-            _puppet.body = _puppet.armor[1].bodySlot;
-            _puppet.legs = _puppet.armor[2].legSlot;
 
             // Robe bodies (cultist robes, mage robes...) get their floor-length skirt from an implied leg slot
             // that vanilla's PlayerFrame assigns through Player.SetMatch — which puppets never run. Apply it only
@@ -10309,6 +10410,25 @@ namespace tsorcRevamp.NPCs.Puppets
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             DrawFireSlashVFX();
+            DrawFlailsAbovePuppet(drawColor);
+        }
+
+        /// <summary>Finishes a puppet-owned ball-and-chain after the complete player composite.
+        /// Projectile PreDraw is earlier than a PuppetNPC's player renderer, which previously let
+        /// torso, armor and the front arm cover the chain. This final pass deliberately puts the
+        /// full prop over the puppet; the hand anchor still makes it visibly originate from the hand.</summary>
+        private void DrawFlailsAbovePuppet(Color drawColor)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (projectile.active
+                    && projectile.ModProjectile is EnemyFlailProjectileBase flail
+                    && flail.IsOwnedByPuppet(NPC))
+                {
+                    flail.DrawAbovePuppet(drawColor);
+                }
+            }
         }
 
         // A composed puppet cannot use DrawUnblockableWeaponAura directly because its body is many
@@ -10375,6 +10495,23 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Suppress halo and motion-history copies below the puppet's current feet.</summary>
         protected virtual bool SpectralExcludeDownwardCopies => false;
 
+        // Optional shader drawn as an extra copy of the oversized armor pieces. A subclass may opt
+        // its melee weapon into the same mask; every solid sprite and all existing VFX remain intact.
+        protected virtual int LargeArmorMaskShaderId => 0;
+        protected virtual bool IncludeMeleeWeaponInLargeArmorMask => false;
+
+        // Optional raw equip-sheet replacements for an oversized puppet template. The normal
+        // player compositor still supplies its familiar 40x56 frame coordinates; the transform
+        // below swaps only the matching armor layer, then expands those coordinates into the
+        // authored sheet's larger cells. This deliberately does not depend on a synthetic
+        // EquipLoader slot, so a phase may change template after the player draw cache exists.
+        protected virtual string LargeHeadArmorTemplateTexture => null;
+        protected virtual string LargeBodyArmorTemplateTexture => null;
+        protected virtual string LargeLegsArmorTemplateTexture => null;
+        private Texture2D _largeHeadArmorTemplateTexture;
+        private Texture2D _largeBodyArmorTemplateTexture;
+        private Texture2D _largeLegsArmorTemplateTexture;
+
         private Vector2[] _spectralOldPositions;
         private readonly List<DrawData> _spectralDrawCache = new List<DrawData>();
 
@@ -10398,6 +10535,8 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             if (drawInfo.drawPlayer != _puppet)
                 return;
+
+            TransformLargeArmorTemplate(ref drawInfo);
 
             if (HasUnblockableBodyAura)
             {
@@ -10464,6 +10603,136 @@ namespace tsorcRevamp.NPCs.Puppets
                 }
             }
             drawInfo.DrawDataCache.AddRange(_spectralDrawCache);
+            AddLargeArmorMaskOverlay(ref drawInfo);
+        }
+
+        /// <summary>Adds a final shader copy of the authored large armor cells and, when requested,
+        /// the currently held melee weapon. Because the shader samples the same texture/source
+        /// rectangle as each solid sprite, alpha is an exact mask; skin, halo, trails and attack VFX
+        /// are never included.</summary>
+        private void AddLargeArmorMaskOverlay(ref PlayerDrawSet drawInfo)
+        {
+            int shaderId = LargeArmorMaskShaderId;
+            if (shaderId <= 0)
+                return;
+
+            Texture2D meleeWeaponTexture = null;
+            if (IncludeMeleeWeaponInLargeArmorMask && MeleeWeaponItemType > 0)
+            {
+                if (!string.IsNullOrEmpty(MeleeDrawTexturePath)
+                    && (MeleeDrawTexturePath.StartsWith("Terraria/")
+                        || ModContent.HasAsset(MeleeDrawTexturePath)))
+                {
+                    meleeWeaponTexture = ModContent.Request<Texture2D>(MeleeDrawTexturePath,
+                        ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                }
+                else
+                {
+                    Main.instance.LoadItem(MeleeWeaponItemType);
+                    meleeWeaponTexture = TextureAssets.Item[MeleeWeaponItemType]?.Value;
+                }
+            }
+
+            foreach (DrawData core in _spectralDrawCache)
+            {
+                bool isLargeArmor = core.texture == _largeHeadArmorTemplateTexture
+                    || core.texture == _largeBodyArmorTemplateTexture
+                    || core.texture == _largeLegsArmorTemplateTexture;
+                bool isMeleeWeapon = meleeWeaponTexture != null && core.texture == meleeWeaponTexture;
+                if (!isLargeArmor && !isMeleeWeapon)
+                    continue;
+
+                DrawData solarOverlay = core;
+                solarOverlay.color = Color.White;
+                solarOverlay.shader = shaderId;
+                drawInfo.DrawDataCache.Add(solarOverlay);
+            }
+        }
+
+        /// <summary>Adapts an oversized armor template to Terraria's fixed 40x56 player-frame
+        /// pipeline. Vanilla first composes the usual small frames; this substitutes the matching
+        /// larger source rectangles while applying the same feet-anchored geometry transform to the
+        /// rest of the rig. Weapon, arm anchors, VFX, and animation therefore stay aligned without
+        /// teaching every vanilla PlayerDrawLayer about a new cell size.</summary>
+        private void TransformLargeArmorTemplate(ref PlayerDrawSet drawInfo)
+        {
+            int templateScale = Math.Max(1, ArmorTemplateScale);
+            if (templateScale == 1 || Main.dedServ || _puppet == null)
+            {
+                return;
+            }
+
+            Texture2D headTexture = _puppet.head > 0 && _puppet.head < TextureAssets.ArmorHead.Length
+                ? TextureAssets.ArmorHead[_puppet.head]?.Value
+                : null;
+            Texture2D bodyTexture = _puppet.body > 0 && _puppet.body < TextureAssets.ArmorBody.Length
+                ? TextureAssets.ArmorBody[_puppet.body]?.Value
+                : null;
+            Texture2D bodyCompositeTexture = _puppet.body > 0
+                && _puppet.body < TextureAssets.ArmorBodyComposite.Length
+                ? TextureAssets.ArmorBodyComposite[_puppet.body]?.Value
+                : null;
+            Texture2D armTexture = _puppet.body > 0 && _puppet.body < TextureAssets.ArmorArm.Length
+                ? TextureAssets.ArmorArm[_puppet.body]?.Value
+                : null;
+            Texture2D legsTexture = _puppet.legs > 0 && _puppet.legs < TextureAssets.ArmorLeg.Length
+                ? TextureAssets.ArmorLeg[_puppet.legs]?.Value
+                : null;
+
+            if (headTexture == null && bodyTexture == null && bodyCompositeTexture == null
+                && armTexture == null && legsTexture == null)
+            {
+                return;
+            }
+
+            _largeHeadArmorTemplateTexture ??= RequestLargeArmorTemplateTexture(LargeHeadArmorTemplateTexture);
+            _largeBodyArmorTemplateTexture ??= RequestLargeArmorTemplateTexture(LargeBodyArmorTemplateTexture);
+            _largeLegsArmorTemplateTexture ??= RequestLargeArmorTemplateTexture(LargeLegsArmorTemplateTexture);
+
+            Vector2 feet = NPC.Bottom - Main.screenPosition;
+            for (int i = 0; i < drawInfo.DrawDataCache.Count; i++)
+            {
+                DrawData data = drawInfo.DrawDataCache[i];
+                Texture2D replacementTexture = headTexture != null && data.texture == headTexture
+                    ? _largeHeadArmorTemplateTexture
+                    : (bodyTexture != null && data.texture == bodyTexture)
+                        || (bodyCompositeTexture != null && data.texture == bodyCompositeTexture)
+                        || (armTexture != null && data.texture == armTexture)
+                            ? _largeBodyArmorTemplateTexture
+                            : legsTexture != null && data.texture == legsTexture
+                                ? _largeLegsArmorTemplateTexture
+                                : null;
+                bool isLargeArmorPiece = replacementTexture != null;
+
+                data.position = feet + (data.position - feet) * templateScale;
+
+                if (isLargeArmorPiece && data.sourceRect.HasValue)
+                {
+                    data.texture = replacementTexture;
+                    Rectangle source = data.sourceRect.Value;
+                    data.sourceRect = new Rectangle(
+                        source.X * templateScale,
+                        source.Y * templateScale,
+                        source.Width * templateScale,
+                        source.Height * templateScale);
+                    data.origin *= templateScale;
+                }
+                else
+                {
+                    // Weapons and any puppet-owned draw data have ordinary-size source art, so
+                    // retain the same visual proportion to the new body by scaling their DrawData.
+                    data.scale *= templateScale;
+                }
+
+                drawInfo.DrawDataCache[i] = data;
+            }
+        }
+
+        private static Texture2D RequestLargeArmorTemplateTexture(string path)
+        {
+            return string.IsNullOrEmpty(path) || !ModContent.HasAsset(path)
+                ? null
+                : ModContent.Request<Texture2D>(path, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         /// <summary>
@@ -11065,6 +11334,13 @@ namespace tsorcRevamp.NPCs.Puppets
         /// (which read <see cref="MeleeWeaponRotationOffset"/> via <see cref="BodyRowFromWeaponRotation"/>).
         /// Direction-neutral — SpriteBatch FlipHorizontally already handles left/right facing.</summary>
         protected virtual float SpearDrawRotationOffset => 0f;
+        /// <summary>When true, a spear's thrust extend/retract (<see cref="_spearGrip"/>) is timed off
+        /// the SAME 0→1 swing clock that drives <c>_weaponRotation</c> for the step (see
+        /// <see cref="UpdateSpearGrip"/>), instead of its own separate PhaseTimer-based hump. Default
+        /// false preserves every existing <see cref="DrawWeaponAsSpear"/> puppet's grip timing exactly.
+        /// Needed for a puppet whose thrust steps run on <see cref="AuthoredClockCoversJoustDash"/>,
+        /// so the visible extension and the eased rotation settle together instead of drifting apart.</summary>
+        protected virtual bool UseAuthoredSpearGrip => false;
 
         /// <summary>Normalized grip point for a held MAGIC staff (where the hand holds it).  Default centred;
         /// override lower (larger Y) so a tall staff is gripped near its base.</summary>
@@ -11203,14 +11479,27 @@ namespace tsorcRevamp.NPCs.Puppets
         /// far more, since it snaps extremes to Use1 — a fuller aim range is safe once composite is off.)</summary>
         private const float MaxAimPitch = 0.6f;
 
+        /// <summary>When true, <see cref="ComboMotion.JoustDash"/> also gets the authored 0→1 swing
+        /// clock (<c>AttackTicks / SwingSpeedMult</c>) instead of sweeping over the held weapon's
+        /// <c>useAnimation</c>. Default false preserves every existing JoustDash tuning exactly (Gwyn's
+        /// Wrath Flurry, Artorias, Dread Wraith's Rotted Fork charge). A puppet whose combo AttackTicks
+        /// is SHORTER than its weapon's useAnimation — a fast thrust authored tighter than the item's
+        /// swing time — should opt in, or the step is cut off mid-arc (see puppet-swing-tuning's
+        /// "reaches t=X before step ends" trap). Deliberately excludes LeapThrust: that motion's
+        /// AttackTicks is usually much LONGER than useAnimation on purpose (extend quickly, then hold
+        /// the pose through the rest of the airborne travel) — resizing its clock to the full
+        /// AttackTicks stretches the extension across the whole leap instead, reading as far slower.</summary>
+        protected virtual bool AuthoredClockCoversJoustDash => false;
+
         /// <summary>Motions whose visual is a continuous a0→a1 sweep driven by <see cref="SwingEase"/>
         /// over the swing window (so per-step swing-speed / easing applies). Hold/charge/leap motions
         /// are excluded — their pose is a fixed lerp, not a timed sweep.</summary>
-        private static bool IsArcSwingMotion(ComboMotion m) =>
+        private bool IsArcSwingMotion(ComboMotion m) =>
             m == ComboMotion.OverheadArc || m == ComboMotion.UnderhandArc ||
             m == ComboMotion.HorizontalSweep || m == ComboMotion.VerticalChop ||
             m == ComboMotion.GroundSlam || m == ComboMotion.IaidoDraw ||
-            m == ComboMotion.DoubleSpinSlam;
+            m == ComboMotion.DoubleSpinSlam ||
+            (AuthoredClockCoversJoustDash && m == ComboMotion.JoustDash);
 
         /// <summary>Enters a combo step's attack: for aim-swing pilots, arc motions play over
         /// <c>AttackTicks / SwingSpeedMult</c> (decoupled from the weapon's useAnimation, so swings
@@ -11298,6 +11587,11 @@ namespace tsorcRevamp.NPCs.Puppets
                 ComboMotion.ThrownWeaponRetrieve => (HoldRotation, HoldRotation),
                 ComboMotion.LeapSlam        => (-1.45f - OverheadWindupOvershoot, 1.4f),
                 ComboMotion.LeapThrust      => (MathHelper.PiOver2 * 0.8f, MathHelper.PiOver4),
+                // Missing until Cursed Dragon's Skewer String became the first combo to chain two
+                // JoustDash steps: without an entry here, the fallback (HoldRotation) sent the
+                // inter-step pause easing toward the wrong angle, then the next thrust's real start
+                // (PiOver2) opened with a ~107 degree snap. Matches WeaponArchetypeTables.SwingArcEndpoints.
+                ComboMotion.JoustDash       => (MathHelper.PiOver2, MathHelper.PiOver4),
                 ComboMotion.LowAxeRun       => (1.9f, 1.9f),
                 ComboMotion.RisingUppercutLeap => (1.9f, -1.0f),
                 ComboMotion.BackstepRaise   => (1.0f, -1.3f),
