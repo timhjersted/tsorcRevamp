@@ -11,10 +11,6 @@ namespace tsorcRevamp.Content.Projectiles.Melee
     {
         public static int MaxTicksBeforeSpeedIncrease => 10;
         public int ticksBeforeSpeedIncrease;
-        public override void SetStaticDefaults()
-        {
-
-        }
         public override void SetDefaults()
         {
             Projectile.width = 30;
@@ -53,13 +49,6 @@ namespace tsorcRevamp.Content.Projectiles.Melee
             }
 
             return false;
-        }
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            Projectile.DamageType = MoonlightGreatsword.GetDamageType(Main.player[Projectile.owner]);
-
-            if (!Main.dayTime)
-                modifiers.SourceDamage.Base *= 1f + (MoonlightGreatsword.NightDamageIncrease / 100f);
         }
 
         public override void OnKill(int timeLeft)

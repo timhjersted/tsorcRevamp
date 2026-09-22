@@ -11,15 +11,11 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 {
     class MoonlightGreatsword : ModItem
     {
-        public static int NightDamageIncrease => 20;
-
-        public override void SetStaticDefaults()
-        {
-        }
+        public const float NightDamageIncrease = 20f;
         public override void SetDefaults()
         {
             Item.rare = ModContent.RarityType<OrangeRed>();
-            Item.damage = 550;
+            Item.damage = 500;
             Item.height = 88;
             Item.width = 88;
             Item.knockBack = 10f;
@@ -37,31 +33,17 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Teal;
         }
 
-        public static DamageClass GetDamageType(Player player)
-        {
-            DamageClass dmgClass;
-
-            if (player.GetTotalDamage(DamageClass.Magic).ApplyTo(100) < player.GetTotalDamage(DamageClass.Melee).ApplyTo(100))
-            {
-                dmgClass = DamageClass.Melee;
-            }
-            else
-            {
-                dmgClass =  DamageClass.Magic;
-            }
-
-            return dmgClass;
-        }
-
-        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
-        {
-            Item.DamageType = GetDamageType(player);
-        }
-
-        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             if (!Main.dayTime)
-                modifiers.SourceDamage.Base *= 1f + (NightDamageIncrease / 100f);
+            {
+                damage += NightDamageIncrease / 100f;
+            }
+
+            float bonusMagicDmg = player.GetTotalDamage(DamageClass.Magic).Additive -
+                                  player.GetTotalDamage(DamageClass.Generic).Additive;
+            damage += (bonusMagicDmg > 0f ? bonusMagicDmg : 0f); //so it can't lose dmg if magic dmg is negative
+            base.ModifyWeaponDamage(player, ref damage);
         }
 
         Texture2D glowTexture;
@@ -107,27 +89,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         {
             int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 89, player.velocity.X, player.velocity.Y, 100, default, .8f);
             Main.dust[dust].noGravity = true;
-        }
-
-        // Show the proper damage in the tooltip
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            Item.DamageType = GetDamageType(Main.LocalPlayer);
-
-            if (!Main.dayTime)
-            {
-                foreach (TooltipLine line in tooltips)
-                {
-                    if (line.Name == "Damage")
-                    {
-                        Player player = Main.LocalPlayer;
-
-                        string nightDamage = ((int)(player.GetWeaponDamage(Item) * (1f + NightDamageIncrease / 100f))).ToString();
-                        string typeOfDamage = Item.DamageType == DamageClass.Magic ? Language.GetTextValue("LegacyTooltip.4") : Language.GetTextValue("LegacyTooltip.2");
-                        line.Text = nightDamage + typeOfDamage;
-                    }
-                }
-            }
         }
     }
 }

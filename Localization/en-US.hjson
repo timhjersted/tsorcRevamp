@@ -6612,7 +6612,7 @@ Mods: {
 					'''
 					[c/ffbf00:The Moonlight Greatsword, the sword of legend...]
 					Glows and becomes stronger at night
-					Scales with your magic or melee stats, whichever is higher
+					Scales with total melee damage + bonus magic damage
 					Launches glimmering waves of moonlight
 					'''
 			}
