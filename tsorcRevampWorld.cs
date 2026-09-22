@@ -2908,16 +2908,17 @@ namespace tsorcRevamp
                             BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
                         }
                     }
-                }
 
-                // Expanded Adventure (2400-tall) offset. These are legacy 2000-space TILE coords (consumers *16
-                // them). On the expanded world, RemixMap is false so only the adventure dicts were merged above;
-                // shift them all to the current world's space. Identity on legacy/remix (transform inactive), so
-                // remix teleport targets are untouched. Rebuilt per world load (Internal is nulled in OnWorldLoad).
-                if (ExpandedWorldTransform.Active)
-                {
-                    foreach (int key in new List<int>(BossIDsAndCoordinatesInternal.Keys))
-                        BossIDsAndCoordinatesInternal[key] = ExpandedWorldTransform.MapTile(BossIDsAndCoordinatesInternal[key]);
+                    // Expanded Adventure (2400-tall) offset. These are legacy 2000-space TILE coords (consumers *16
+                    // them). On the expanded world, RemixMap is false so only the adventure dicts were merged above;
+                    // shift them all to the current world's space. Identity on legacy/remix (transform inactive), so
+                    // remix teleport targets are untouched. Rebuilt per world load (Internal is nulled in OnWorldLoad).
+                    // Moved in here: MapTile is additive, so in the getter this ran on every read.
+                    if (ExpandedWorldTransform.Active)
+                    {
+                        foreach (int key in new List<int>(BossIDsAndCoordinatesInternal.Keys))
+                            BossIDsAndCoordinatesInternal[key] = ExpandedWorldTransform.MapTile(BossIDsAndCoordinatesInternal[key]);
+                    }
                 }
 
                 return BossIDsAndCoordinatesInternal;

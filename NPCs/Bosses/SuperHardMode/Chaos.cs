@@ -27,7 +27,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int xOffset = 0;
         int yOffset = 0;
         int telegraphTimer = 0;
-        Vector2 anchoredPosition;
+        //Origin recorded when the grid telegraph is drawn; the bolts fire from here too, so the lines don't lie.
+        Vector2 laserGridOrigin;
+        //Y both the vertical warning lines and the vertical bolts start at.
+        const float LaserGridStartY = -1000f;
 
         float angle = 0;
         public override void SetStaticDefaults()
@@ -209,6 +212,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
+            //Party-wipe despawn (the handler existed but was never ticked).
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+
             for (int i = oldPositions.Length - 1; i > 0; i--)
             {
                 oldPositions[i] = oldPositions[i - 1];
@@ -446,18 +452,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         xOffset = Main.rand.Next(-2100, -1400);
                         yOffset = Main.rand.Next(700, 1400);
-                        anchoredPosition = target.Center;
+                        laserGridOrigin = target.Center;
+                        telegraphTimer = 60;
 
                         for (int i = 0; i < 20; i++)
                         {
-                            Vector2 startPosition = target.Center + new Vector2(xOffset + (i * 200), -1000);
+                            Vector2 startPosition = laserGridOrigin + new Vector2(xOffset + (i * 200), LaserGridStartY);
                             Dust.QuickDustLine(startPosition, startPosition + new Vector2(0, 3000), (startPosition + new Vector2(0, 3000)).Length() / 400, Color.Purple);
-                            telegraphTimer = 60;
                         }
 
                         for (int i = 0; i < 20; i++)
                         {
-                            Vector2 startPosition = target.Center + new Vector2(1400, yOffset - (i * 200));
+                            Vector2 startPosition = laserGridOrigin + new Vector2(1400, yOffset - (i * 200));
                             Dust.QuickDustLine(startPosition, startPosition + new Vector2(-3000, 0), (startPosition + new Vector2(0, 3000)).Length() / 400, Color.Purple);
                         }
                     }
@@ -466,13 +472,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         for (int i = 0; i < 20; i++)
                         {
-                            Vector2 startPosition = anchoredPosition + new Vector2(xOffset + i * 200, -900);
+                            Vector2 startPosition = laserGridOrigin + new Vector2(xOffset + i * 200, LaserGridStartY);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), startPosition, new Vector2(0, 17), ModContent.ProjectileType<ChaosDemonBolt>(), NPC.damage / 6, 1);
                         }
 
                         for (int i = 0; i < 20; i++)
                         {
-                            Vector2 startPosition = target.Center + new Vector2(1400, yOffset - (i * 200));
+                            Vector2 startPosition = laserGridOrigin + new Vector2(1400, yOffset - (i * 200));
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), startPosition, new Vector2(-17, 0), ModContent.ProjectileType<ChaosDemonBolt>(), NPC.damage / 6, 1);
                         }
                     }

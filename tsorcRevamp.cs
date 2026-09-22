@@ -1771,7 +1771,8 @@ namespace tsorcRevamp
                 ModContent.NPCType<LeonhardPhase1>(),
                 ModContent.NPCType<NamelessKing>(),
                 ModContent.NPCType<Faraam>(),
-                ModContent.NPCType<AttraidiesFragment>()
+                ModContent.NPCType<AttraidiesFragment>(),
+                ModContent.NPCType<AttraidiesApparition>() // Spawns The Sorrow, then deactivates itself
             };
             #endregion
 

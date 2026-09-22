@@ -128,8 +128,11 @@ namespace tsorcRevamp.NPCs.Special
                 Main.dust[dust].noGravity = true;
             }
 
-            if (lifetime > 450)
+            if (lifetime > 450 && NPC.ai[3] == 0f)
             {
+                //One-shot: only spawn The Sorrow once, even if this intro gets revived (ai[3] is unused here).
+                NPC.ai[3] = 1f;
+
                 for (int i = 0; i < 50; i++)
                 {
                     Color color = new Color();
