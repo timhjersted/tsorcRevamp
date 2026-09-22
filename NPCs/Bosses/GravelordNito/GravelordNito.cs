@@ -49,7 +49,6 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             ReaperWeave,       // chained underhand/overhand swings in a random pole-to-pole order
             ReapersPendulum,   // fast strict back-and-forth chain: side / backhand / side ...
             SwordLineDance,    // rows of sky spikes walking in from the outside edge toward Nito
-            MiasmaHem,         // two fixed poison-fog walls bookending the arena at the spawn point
         }
 
         enum AttackFamily : byte
@@ -63,7 +62,6 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             ProjectileVolley,
             AreaBurst,
             Miasma,
-            AreaDenial,
         }
 
         const int FrameCount = 23;
@@ -88,7 +86,20 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         const int ThrustFlashLeadTicks = 30;
         const int ThrustFlashTicks = 15;
 
-        const float MiasmaHemOffsetTiles = 25f; // each wall's distance from ArenaSpawnBottom, either side
+        // Miasma Hem: a pair of poison-fog clouds that trail Nito's own position for the whole fight
+        // (spawned at OnSpawn, never expire — no attack state, no selection roll) instead of sitting at
+        // a fixed arena point. Punishes drifting toward the edges by keeping a slow "don't go past here"
+        // presence on both sides of him at all times.
+        const float MiasmaHemOffsetPixels = 25f * 16f; // 400px = 25 tiles either side of Nito's live position
+        // Deliberately far below any of Nito's own movement speeds (0.62 idle up to ~11 mid-dash) so a
+        // sudden reposition visibly outruns the clouds; they take real time to catch back up.
+        const float MiasmaHemChaseSpeed = 0.55f;
+        const int MiasmaHemFadeInTicks = 60; // the one-time "don't pop in" fade right as the fight starts
+        const float MiasmaHemWidthPixels = 144f;  // 9 tiles — unchanged
+        const float MiasmaHemHeightPixels = 96f;  // 6 tiles — was 3; doubled puffs need the extra room
+        const int MiasmaHemPuffCount = 20;        // was 25
+        const int MiasmaHemGridColumns = 5;
+        const int MiasmaHemGridRows = 4;          // GridColumns * GridRows must equal MiasmaHemPuffCount
 
         const float DeathNovaRadius = 600f;         // was 300: twice the ring. Duration follows: radius / 8px-per-tick expand
         const float BoneVolleyMaxRange = 800f;      // 50 tiles: the furthest the shard ballistics are asked to reach
@@ -166,10 +177,14 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         AttackState QueuedAttack = AttackState.None;
         int QueuedSlashKind = -1;
         Vector2 MiasmaAimDirection = Vector2.UnitX;
-        // Where the encounter began (NPC.Bottom at OnSpawn), NOT wherever Nito currently stands — the
-        // Miasma Hem walls anchor here so the "safe" band is a fixed, learnable place (attack-quality-pass
-        // §10: arena effects anchor to the spawn point, not the boss's live position).
-        Vector2 ArenaSpawnBottom;
+        // Live-tracked cloud X positions (see MiasmaHemChaseSpeed) and the one-time fade-in counter.
+        // None of these are synced: each machine chases its own already-synced view of NPC.Center
+        // independently, and only the server's own copy ever feeds an actual debuff decision (see
+        // UpdateMiasmaHem), so a few pixels/ticks of cross-machine difference here is inconsequential —
+        // purely cosmetic, same category as the DragRunLeapLaunched precedent elsewhere in this file.
+        float MiasmaHemLeftX;
+        float MiasmaHemRightX;
+        int MiasmaHemAge;
 
         // ── Loose-sword swing animation ─────────────────────────────────────────
         // The body sheet is ALWAYS the no-sword art (GravelordNitoAttacking.png — despite the name,
@@ -190,6 +205,14 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         // True when the armed windup starts from the PREVIOUS swing's end pose instead of the idle rest.
         // That is what lets a chained combo hold and re-cock the blade in place instead of dropping it.
         bool SlashWindupChained;
+        // Where the blade actually was when the attack stopped, and the tick it has to be home by.
+        // Some states EndAttack the instant their swing's active window closes (LeapingCleave and
+        // DraggingAdvance both end on the landing frame) and a stagger can cut one off mid-pose;
+        // without this snapshot the sword teleported to the idle rest in a single frame — a 115 degree
+        // jump after a rising cut. Draw-only and derived from Main.GameUpdateCount, so nothing syncs it.
+        float SettleFromPhi;
+        float SettleFromReach;
+        long SettleEndGameTick;
         int TimingVariant;        // Variant* of the current single swipe; rolled server-side, synced
         int ComboLength;          // steps PLANNED for the current chain (decides which step is the heavy finisher)
         int ComboEndStep;         // index of the last step actually performed; the server cuts it short if the player leaves
@@ -204,7 +227,21 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         public const int StyleFlow = 2;   // in 9 / out 24 / k6.5: the combo cut, ~13 live ticks
         public const int StyleHeavy = 3;  // in 12 / out 32 / k6.5: finisher, ~18 live ticks
         const int SlashActiveTicks = 18;  // Legacy total; the projectile's timeLeft uses SlashStyleTicks
-        const int SlashReturnTicks = 12;  // blade eases back to the idle rest after the last swing
+        // After a swing the blade does NOT cut straight back to the idle rest. It first coasts on past
+        // its end pose, shedding whatever speed the swing left it with (SlashFollowThroughTicks, an
+        // exponential drift), then eases home on a smoothstep that starts AND ends at zero angular
+        // speed (SlashSettleTicks). SlashReturnTicks is their total; every sword state's endTick
+        // budgets for it, so this whole tail is the attack's recovery/punish window, not dead time.
+        const int SlashFollowThroughTicks = 5;
+        const int SlashSettleTicks = 14;
+        const int SlashReturnTicks = SlashFollowThroughTicks + SlashSettleTicks;
+        // Time constant of the coast, in ticks. The blade leaves the swing at EXACTLY the speed the
+        // swing's own last tick had (measured, not authored — see ResolveSwordPose) and decays as
+        // e^-t/3, so the hand-off is velocity-continuous whatever the style. That self-scales: a
+        // Legacy swing is linear and arrives at full speed (3 rad over 18 ticks = 0.167 rad/tick) so it
+        // coasts a real 23 degrees, while an eased swing has decayed to ~0.09 deg/tick by its end pose
+        // and so coasts essentially nowhere — its ease-out already WAS the follow-through.
+        const float FollowThroughDecayTicks = 3f;
         // Eased styles end past the nominal end pose (progress 1.12 = ~20 degrees further) so the ~85% of
         // the arc that is still live after the ease-out is still a full-size sweep. Follow-through ends low.
         const float EasedOvershoot = 1.12f;
@@ -352,8 +389,6 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             writer.Write((byte)ComboLength);
             writer.Write((byte)ComboEndStep);
             writer.Write(ComboKinds);
-            writer.Write(ArenaSpawnBottom.X);
-            writer.Write(ArenaSpawnBottom.Y);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -388,20 +423,15 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             ComboLength = reader.ReadByte();
             ComboEndStep = reader.ReadByte();
             ComboKinds = reader.ReadInt32();
-            ArenaSpawnBottom = new Vector2(reader.ReadSingle(), reader.ReadSingle());
         }
 
-        ///<summary>Captures the encounter's fixed reference point once, server/singleplayer-side (a
-        ///client takes it from ReceiveExtraAI instead, so a client-side spawn can never seed it wrong —
-        ///same guard as VesselOfSouls.ArenaCenter).</summary>
+        ///<summary>Seeds both Miasma Hem clouds on their own side of Nito's spawn point. Runs on every
+        ///machine (unlike a synced field, this needs no cross-machine agreement — see the field comment
+        ///above), each reading its own already-known NPC.Center at the moment the NPC becomes active.</summary>
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-            ArenaSpawnBottom = NPC.Bottom;
-            NPC.netUpdate = true;
+            MiasmaHemLeftX = NPC.Center.X - MiasmaHemOffsetPixels;
+            MiasmaHemRightX = NPC.Center.X + MiasmaHemOffsetPixels;
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -432,6 +462,9 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 }
             }
 
+            // A stagger can interrupt any pose, including mid-swing, so let the blade drop from
+            // wherever it was rather than snapping to the rest pose as he reels.
+            BeginSwordSettle();
             State = AttackState.None;
             AttackTimer = 0;
             HalfTelegraph = false;
@@ -457,6 +490,11 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 }
                 return;
             }
+
+            // Always on, regardless of State — including staggers and phase transitions — so there is
+            // never a gap in the fight where the fog isn't present.
+            UpdateMiasmaHem();
+
             if (NPC.target < 0 || NPC.target >= Main.maxPlayers || !Main.player[NPC.target].active || Main.player[NPC.target].dead)
             {
                 NPC.TargetClosest(false);
@@ -551,9 +589,6 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             float horizontal = Math.Abs(player.Center.X - NPC.Center.X);
             float vertical = Math.Abs(player.Center.Y - NPC.Center.Y);
             bool sameLevel = vertical < 125f;
-            // How far the player has drifted from where the fight started, regardless of where Nito
-            // himself currently stands — this is what Miasma Hem actually punishes.
-            float driftFromSpawn = Math.Abs(player.Center.X - ArenaSpawnBottom.X);
             List<(AttackState state, float weight)> pool = new();
 
             // Invalid attacks are excluded rather than left in the bag at a token weight. This is the
@@ -583,11 +618,6 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 ProximityWeight(dist, 520f, 460f, 7f));
             AddAttackOption(pool, AttackState.SwordLineDance, horizontal >= 400f && horizontal <= 900f,
                 ProximityWeight(dist, 560f, 400f, PhaseTwo ? 9f : 7f));
-            // Weighted toward the moment it matters most: the player already drifting near where a wall
-            // will land (MiasmaHemOffsetTiles out). Never gated off — it's about arena position, not
-            // distance from Nito — so it can also fire pre-emptively.
-            AddAttackOption(pool, AttackState.MiasmaHem, true,
-                ProximityWeight(driftFromSpawn, MiasmaHemOffsetTiles * 16f * 0.85f, 350f, PhaseTwo ? 8f : 6f));
             AddAttackOption(pool, AttackState.BoneVolley, horizontal >= 220f && dist <= BoneVolleyMaxRange,
                 ProximityWeight(dist, 480f, 420f, 6f));
             AddAttackOption(pool, AttackState.GravelordSpikes, horizontal >= 100f,
@@ -702,7 +732,6 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             AttackState.BoneVolley or AttackState.HollowCommand => AttackFamily.ProjectileVolley,
             AttackState.DeathNova => AttackFamily.AreaBurst,
             AttackState.MiasmaBreath => AttackFamily.Miasma,
-            AttackState.MiasmaHem => AttackFamily.AreaDenial,
             _ => AttackFamily.None,
         };
 
@@ -895,10 +924,6 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
                 case AttackState.MiasmaBreath:
                     RunMiasmaBreath(globalNPC, player);
-                    break;
-
-                case AttackState.MiasmaHem:
-                    RunMiasmaHem(globalNPC, player);
                     break;
 
                 case AttackState.BonePillarCage:
@@ -1795,82 +1820,119 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             }
         }
 
-        ///<summary>MIASMA HEM: two fixed poison-fog walls bookending the arena, anchored to
-        ///ArenaSpawnBottom rather than to Nito's own position or the player's (attack-quality-pass §10)
-        ///— the point is a fixed, learnable "don't retreat past here" line, not a moving one. Nito's own
-        ///cast is a short tell at his own location; the walls' own 60-tick fade-in is the tell at the
-        ///location that actually matters, since 25 tiles away is usually off-screen at cast time.</summary>
-        void RunMiasmaHem(tsorcRevampGlobalNPC globalNPC, Player player)
+        ///<summary>MIASMA HEM: two poison-fog clouds that trail Nito's own X position (not a fixed arena
+        ///point, and not the player's) for the entire fight, from OnSpawn until he dies — always on,
+        ///never picked or telegraphed as a separate attack. Runs every tick regardless of State,
+        ///including staggers and phase transitions, so there's never a gap in the pressure.
+        ///
+        ///No contact HIT by design: this deliberately bypasses the normal hostile-projectile/Player.Hurt
+        ///pipeline (a 0-damage hit through that path would still grant the vanilla post-hit immunity
+        ///window — Player.Hurt sets `immune = true` and applies knockback unconditionally, neither gated
+        ///on Damage > 0 — which would let a player farm free i-frames, and takes knockback, just by
+        ///standing in the fog). Instead this scans players and calls AddBuff directly, matching the
+        ///existing VesselOfSouls.TickVoid pattern in this codebase: decided only where
+        ///Main.netMode != MultiplayerClient (the "one authority" rule), so only the server/singleplayer
+        ///copy of the cloud position ever feeds a real decision.
+        ///
+        ///Poisoned's own damage is still fine here: confirmed in decompiled Player.cs (~17694) that the
+        ///Poisoned debuff drains life through the lifeRegen system every frame, not through Player.Hurt —
+        ///no Hurt call means no immune-window grant and no knockback either way. So Poisoned gives real
+        ///damage with none of the contact-hit's side effects, which is exactly what was asked for.</summary>
+        void UpdateMiasmaHem()
         {
-            int cast = Telegraph(34);
-            globalNPC.AttackCommitted = AttackTimer <= cast;
+            MiasmaHemAge = Math.Min(MiasmaHemAge + 1, MiasmaHemFadeInTicks);
 
-            if (AttackTimer == 1)
-            {
-                TelegraphCue(new Color(90, 130, 80));
-            }
-            if (AttackTimer < cast)
-            {
-                FacePlayer(player);
-                NPC.velocity.X *= 0.8f;
-                if (Main.rand.NextBool(3))
-                {
-                    Dust dust = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(50f, 70f),
-                        DustID.Poisoned, new Vector2(0f, Main.rand.NextFloat(-1.2f, -0.3f)), 100, default, 1f);
-                    dust.noGravity = true;
-                }
-            }
-            if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer == cast)
-            {
-                SpawnMiasmaHem();
-            }
-            // The walls own their whole fade-in/hold/fade-out life independently of Nito's own state.
-            if (AttackTimer >= cast + 8)
-            {
-                QueueMeleePressure(player);
-                EndAttack(90);
-            }
-        }
+            // Chase the live boss position at a capped speed on every machine (see the field comment —
+            // this needs no sync). A sudden reposition (a dash, a leap) outruns the clouds; they take
+            // real time to catch back up rather than snapping to the new spot.
+            float targetLeft = NPC.Center.X - MiasmaHemOffsetPixels;
+            float targetRight = NPC.Center.X + MiasmaHemOffsetPixels;
+            MiasmaHemLeftX += Math.Clamp(targetLeft - MiasmaHemLeftX, -MiasmaHemChaseSpeed, MiasmaHemChaseSpeed);
+            MiasmaHemRightX += Math.Clamp(targetRight - MiasmaHemRightX, -MiasmaHemChaseSpeed, MiasmaHemChaseSpeed);
 
-        void SpawnMiasmaHem()
-        {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
 
-            // Replant rather than stack: re-selecting this attack refreshes both walls at the same
-            // fixed spots instead of leaving old ones to pile up underneath the new pair.
-            KillOwnedMiasmaWalls();
+            Vector2 leftCenter = new Vector2(MiasmaHemLeftX, NPC.Center.Y);
+            Vector2 rightCenter = new Vector2(MiasmaHemRightX, NPC.Center.Y);
+            int crippledType = ModContent.BuffType<Buffs.Debuffs.Crippled>();
 
-            for (int side = -1; side <= 1; side += 2)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
-                float wallX = ArenaSpawnBottom.X + side * MiasmaHemOffsetTiles * 16f;
-                Vector2 probeOrigin = new Vector2(wallX, ArenaSpawnBottom.Y);
-
-                // Probe for the real floor at this column (the arena may not be perfectly flat 25 tiles
-                // out); fall back to the spawn point's own height if no floor is found in range.
-                Vector2 wallBottom = FindGroundSurface(probeOrigin, out Vector2 surface) ? surface : probeOrigin;
-                Vector2 wallCenter = wallBottom - new Vector2(0f, NitoMiasmaWall.HeightPixels * 0.5f);
-
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), wallCenter, Vector2.Zero,
-                    ModContent.ProjectileType<NitoMiasmaWall>(), DeathDamage / 2, 0f, Main.myPlayer);
+                Player target = Main.player[i];
+                if (!target.active || target.dead)
+                {
+                    continue;
+                }
+                if (MiasmaHemOverlaps(target.Center, leftCenter) || MiasmaHemOverlaps(target.Center, rightCenter))
+                {
+                    // Poisoned deals real damage (via lifeRegen, not a Hurt call — see the summary above),
+                    // Darkness is vision-only, Crippled is movement-only. All three simply refresh every
+                    // tick spent inside the fog; none of them can knock the player back.
+                    target.AddBuff(BuffID.Poisoned, 4 * 60);
+                    target.AddBuff(BuffID.Darkness, 3 * 60);
+                    target.AddBuff(crippledType, 3 * 60);
+                }
             }
         }
 
-        // No per-NPC ownership check (unlike KillOwnedSwordSlashes) — Nito only ever exists as a single
-        // instance in an encounter, so matching by type alone is sufficient here.
-        static void KillOwnedMiasmaWalls()
+        static bool MiasmaHemOverlaps(Vector2 playerCenter, Vector2 cloudCenter) =>
+            Math.Abs(playerCenter.X - cloudCenter.X) < MiasmaHemWidthPixels * 0.5f
+            && Math.Abs(playerCenter.Y - cloudCenter.Y) < MiasmaHemHeightPixels * 0.5f;
+
+        ///<summary>Draws one Miasma Hem cloud as MiasmaHemPuffCount overlapping copies of the same
+        ///shader NitoMiasmaCloud/NitoVFX.DrawMiasma uses, all in this one call. Each puff's grid slot,
+        ///jitter, drift and fade phase are derived purely from its own index via a cheap sine hash — no
+        ///per-puff state to store. indexOffset keeps the left and right clouds' hashes from lining up.</summary>
+        static void DrawMiasmaHemCloud(Vector2 cloudCenter, float envelope, int indexOffset)
         {
-            int wallType = ModContent.ProjectileType<NitoMiasmaWall>();
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            float time = Main.GlobalTimeWrappedHourly;
+
+            for (int i = 0; i < MiasmaHemPuffCount; i++)
             {
-                Projectile wall = Main.projectile[i];
-                if (wall.active && wall.type == wallType)
-                {
-                    wall.Kill();
-                }
+                int puffIndex = i + indexOffset;
+                int column = i % MiasmaHemGridColumns;
+                int row = i / MiasmaHemGridColumns;
+                float hash = HashToUnit(puffIndex);
+
+                // A loose grid spanning the cloud, each puff nudged off-grid so it doesn't read as a
+                // rigid lattice, with enough overscan (0.42/0.4 not 0.5) that edge puffs still overlap
+                // their neighbours instead of clipping the cloud's own boundary.
+                float baseX = MathHelper.Lerp(-MiasmaHemWidthPixels * 0.42f, MiasmaHemWidthPixels * 0.42f,
+                    column / (float)(MiasmaHemGridColumns - 1)) + (hash - 0.5f) * 22f;
+                float baseY = MathHelper.Lerp(-MiasmaHemHeightPixels * 0.4f, MiasmaHemHeightPixels * 0.4f,
+                    row / (float)(MiasmaHemGridRows - 1)) + (HashToUnit(puffIndex + 97) - 0.5f) * 14f;
+
+                // Drift: each puff wanders left/right over roughly 1.5-4 tiles on its own period, so the
+                // cloud never pulses as one rigid block. Vertical bob is smaller — a hem, not a storm.
+                float driftPeriod = 4.5f + hash * 3f;       // 4.5-7.5s per puff
+                float driftAmplitude = 24f + hash * 40f;    // 1.5-4 tiles
+                float drift = (float)Math.Sin(time / driftPeriod * MathHelper.TwoPi + puffIndex) * driftAmplitude;
+                float bob = (float)Math.Sin(time / (driftPeriod * 0.6f) + puffIndex * 1.7f) * 8f;
+
+                // Each puff fades in and out on its own cycle instead of all breathing in unison.
+                float fadePeriod = 2.2f + hash * 2.2f;
+                float puffFade = 0.35f + 0.55f * (0.5f + 0.5f * (float)Math.Sin(time / fadePeriod * MathHelper.TwoPi + puffIndex * 2.3f));
+
+                float shaderProgress = (time * 0.12f + hash) % 1f;
+                float puffScale = 0.55f + hash * 0.25f;
+                Vector2 puffCenter = cloudCenter + new Vector2(baseX + drift, baseY + bob);
+                float puffRotation = (float)Math.Sin(time * 0.3f + puffIndex) * 0.15f;
+
+                // 100x92 base size — twice the original 50x46 puffs.
+                NitoVFX.DrawMiasma(puffCenter, new Vector2(100f, 92f) * puffScale, puffRotation,
+                    shaderProgress, puffFade * envelope, puffIndex * 0.41f);
             }
+        }
+
+        // Cheap deterministic 0..1 hash (GLSL-style sine hash) so every puff gets its own stable
+        // period/amplitude/scale from nothing but its index — no arrays to allocate or sync.
+        static float HashToUnit(int index)
+        {
+            float value = (float)(Math.Sin(index * 12.9898) * 43758.5453);
+            return value - (float)Math.Floor(value);
         }
 
         void RunBonePillarCage(tsorcRevampGlobalNPC globalNPC, Player player)
@@ -2313,6 +2375,14 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 RecordCompletedAttack(State);
             }
+            // Snapshot the blade BEFORE the state clears: LeapingCleave and DraggingAdvance both end
+            // on the frame their swing's active window closes, so without this the sword would be mid
+            // follow-through one tick and at the idle rest the next. Retiring the slash marker as well
+            // matters because AttackTimer restarts at 0: a stale kind whose old activeEnd happens to
+            // fall inside the NEXT state's timeline would otherwise replay that swing's follow-through
+            // partway through an unrelated attack.
+            BeginSwordSettle();
+            SlashActiveKind = -1;
             State = AttackState.None;
             AttackTimer = 0;
             HalfTelegraph = false;
@@ -2572,6 +2642,117 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             SlashWindupEndTick = Math.Max(windupStartTick + 1, releaseTick);
             SlashWindupActive = true;
             SlashWindupChained = chained;
+        }
+
+        ///<summary>The loose sword's forward-relative pose (phi) and reach for the current tick: the
+        ///windup toward a cocked pose, the swing itself, its follow-through and settle, or the idle
+        ///rest. PreDraw draws from this and EndAttack snapshots it, so an attack that stops mid-pose
+        ///resumes easing from exactly where the blade was rather than jumping.</summary>
+        void ResolveSwordPose(out float phi, out float reach)
+        {
+            int activeEnd = SlashActiveStartTick + SlashActiveLength;
+            float endProgress = SlashEndProgress(SlashActiveStyle);
+            bool swordState = State != AttackState.None;
+
+            if (swordState && SlashActiveKind >= 0 && AttackTimer >= SlashActiveStartTick && AttackTimer <= activeEnd)
+            {
+                // The visible swing itself (mirrors the invisible NitoSwordSlash hitbox arc). Both read
+                // the same eased progress, so the blade and the hit line stay together through the tail.
+                float progress = SlashEasedProgress(SlashActiveStyle, AttackTimer - SlashActiveStartTick);
+                phi = SlashPhi(SlashActiveKind, progress);
+                reach = SlashReach(SlashActiveKind, progress);
+                return;
+            }
+
+            if (swordState && SlashActiveKind >= 0 && !SlashWindupActive
+                && AttackTimer > activeEnd && AttackTimer <= activeEnd + SlashReturnTicks)
+            {
+                float endPhi = SlashPhi(SlashActiveKind, endProgress);
+                float endReach = SlashReach(SlashActiveKind, endProgress);
+                int elapsed = AttackTimer - activeEnd;
+
+                // Beat one: coast. The blade keeps turning the way it was swung and decays to a stop
+                // instead of arriving at the end pose and being yanked the other way on the next tick.
+                // Its exit speed is measured as the swing's own final tick of travel, so the hand-off
+                // is velocity-continuous for every style; an exponential from that speed drifts
+                // speed * FollowThroughDecayTicks radians in total. The thrust (kind 2) never rotates,
+                // so it coasts nowhere and simply holds the lunge extended for these ticks — which is
+                // the overextension its punish window already advertises.
+                float lastSwingTickProgress = SlashEasedProgress(SlashActiveStyle, SlashActiveLength - 1);
+                float exitSpeed = endPhi - SlashPhi(SlashActiveKind, lastSwingTickProgress);
+                float coastTicks = Math.Min(elapsed, SlashFollowThroughTicks);
+                float coastedPhi = endPhi + exitSpeed * FollowThroughDecayTicks
+                    * (1f - (float)Math.Exp(-coastTicks / FollowThroughDecayTicks));
+
+                phi = coastedPhi;
+                reach = endReach;
+
+                // Beat two: settle. Smoothstep has zero slope at both ends, so it picks the blade up
+                // from the (near-stopped) coast and sets it down on the idle rest without a corner at
+                // either join. The old 1-(1-t)^2 started at ~16% of the travel in its first tick — that
+                // front-loaded kick right after a decayed swing tail is what read as the abrupt stop.
+                if (elapsed > SlashFollowThroughTicks)
+                {
+                    float progress = (elapsed - SlashFollowThroughTicks) / (float)SlashSettleTicks;
+                    float settle = progress * progress * (3f - 2f * progress);
+                    phi = MathHelper.Lerp(coastedPhi, IdlePhi, settle);
+                    reach = MathHelper.Lerp(endReach, SwordIdleReach, settle);
+                }
+                return;
+            }
+
+            if (swordState && SlashWindupActive)
+            {
+                // Wind up toward the swing's start pose. A chained windup starts from the previous
+                // swing's end pose (the hold between two cuts) rather than from the idle rest.
+                float windupProgress = SlashWindupEndTick > SlashWindupStartTick
+                    ? MathHelper.Clamp((AttackTimer - SlashWindupStartTick) / (float)(SlashWindupEndTick - SlashWindupStartTick), 0f, 1f)
+                    : 1f;
+
+                // Smoothstep first so the blade leaves the rest pose from a standstill — the bare
+                // 1-(1-t)^2.6 covered ~8.5% of the re-cock on its first tick, which on a combo's
+                // 190 degree re-cock is a 16 degree jump out of a blade that was sitting still. The
+                // 2.6 power then still puts it most of the way into the cocked pose early and lets it
+                // creep the last stretch, so the tell keeps its long settle and loses only the kick.
+                float smoothed = windupProgress * windupProgress * (3f - 2f * windupProgress);
+                float windupEase = 1f - (float)Math.Pow(1f - smoothed, 2.6f);
+                float fromPhi = IdlePhi;
+                float fromReach = SwordIdleReach;
+
+                if (SlashWindupChained && SlashActiveKind >= 0)
+                {
+                    fromPhi = SlashPhi(SlashActiveKind, endProgress);
+                    fromReach = SlashReach(SlashActiveKind, endProgress);
+                }
+
+                phi = MathHelper.Lerp(fromPhi, SlashPhi(SlashWindupKind, 0f), windupEase);
+                reach = MathHelper.Lerp(fromReach, SlashReach(SlashWindupKind, 0f), windupEase);
+                return;
+            }
+
+            // Nothing is posing the blade: a non-sword cast (bones/nova/etc.), or the attack is over.
+            // Either way, finish any settle BeginSwordSettle snapshotted before resting at idle.
+            phi = IdlePhi;
+            reach = SwordIdleReach;
+            long ticksLeft = SettleEndGameTick - (long)Main.GameUpdateCount;
+
+            if (ticksLeft > 0 && ticksLeft <= SlashSettleTicks)
+            {
+                float progress = 1f - ticksLeft / (float)SlashSettleTicks;
+                float settle = progress * progress * (3f - 2f * progress);
+                phi = MathHelper.Lerp(SettleFromPhi, IdlePhi, settle);
+                reach = MathHelper.Lerp(SettleFromReach, SwordIdleReach, settle);
+            }
+        }
+
+        ///<summary>Freezes wherever the blade currently is and gives it SlashSettleTicks to reach the
+        ///idle rest. Called before an attack clears its state, so ending one mid-pose (a landing cleave,
+        ///a stagger) lowers the sword instead of teleporting it. Cosmetic and derived from
+        ///Main.GameUpdateCount, so no machine needs to sync it.</summary>
+        void BeginSwordSettle()
+        {
+            ResolveSwordPose(out SettleFromPhi, out SettleFromReach);
+            SettleEndGameTick = (long)Main.GameUpdateCount + SlashSettleTicks;
         }
 
         // ── Shared swing geometry (used by BOTH the boss draw and the NitoSwordSlash hitbox) ─────
@@ -2896,6 +3077,14 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             NitoVFX.DrawAura(NPC.Center + new Vector2(0f, -30f), new Vector2(250f, 320f),
                 auraOpacity, PhaseTwo, auraPulse, soulFlowDirection);
 
+            if (MiasmaHemAge > 0)
+            {
+                float miasmaHemFadeIn = MiasmaHemAge / (float)MiasmaHemFadeInTicks;
+                // indexOffset keeps the left/right clouds' per-puff hashes from lining up identically.
+                DrawMiasmaHemCloud(new Vector2(MiasmaHemLeftX, NPC.Center.Y), miasmaHemFadeIn, 0);
+                DrawMiasmaHemCloud(new Vector2(MiasmaHemRightX, NPC.Center.Y), miasmaHemFadeIn, 1000);
+            }
+
             if ((State == AttackState.SwordRain || State == AttackState.GravelordJudgment)
                 && NPC.target >= 0 && NPC.target < Main.maxPlayers && Main.player[NPC.target].active)
             {
@@ -2941,55 +3130,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             Vector2 drawBottom = NPC.Bottom + new Vector2(0f, 7f + NPC.gfxOffY + GroundSinkPixels);
             Vector2 swordAnchor = NPC.Center + new Vector2(0f, NPC.gfxOffY + GroundSinkPixels);
 
-            // Resolve the loose sword's forward-relative pose (phi) + reach for this frame.
+            // The loose sword's forward-relative pose (phi) + reach for this frame: windup, swing,
+            // follow-through, settle or idle rest. Shared with EndAttack's snapshot (ResolveSwordPose).
             int dir = renderDirection;
-            const float idlePhi = IdlePhi; // blade forward and level — matches the baked-in art
-            float phi = idlePhi;
-            float reach = SwordIdleReach;
-            if (State != AttackState.None)
-            {
-                int activeEnd = SlashActiveStartTick + SlashActiveLength;
-                float endProgress = SlashEndProgress(SlashActiveStyle);
-                if (SlashActiveKind >= 0 && AttackTimer >= SlashActiveStartTick && AttackTimer <= activeEnd)
-                {
-                    // The visible swing itself (mirrors the invisible NitoSwordSlash hitbox arc). Both read
-                    // the same eased progress, so the blade and the hit line stay together through the tail.
-                    float progress = SlashEasedProgress(SlashActiveStyle, AttackTimer - SlashActiveStartTick);
-                    phi = SlashPhi(SlashActiveKind, progress);
-                    reach = SlashReach(SlashActiveKind, progress);
-                }
-                else if (SlashActiveKind >= 0 && !SlashWindupActive && AttackTimer > activeEnd && AttackTimer <= activeEnd + SlashReturnTicks)
-                {
-                    // Ease back to idle after the swing (unless a combo's next windup already armed).
-                    float progress = MathHelper.Clamp((AttackTimer - activeEnd) / (float)SlashReturnTicks, 0f, 1f);
-                    float returnEase = 1f - (float)Math.Pow(1f - progress, 2f);
-                    phi = MathHelper.Lerp(SlashPhi(SlashActiveKind, endProgress), idlePhi, returnEase);
-                    reach = MathHelper.Lerp(SlashReach(SlashActiveKind, endProgress), SwordIdleReach, returnEase);
-                }
-                else if (SlashWindupActive)
-                {
-                    // Wind up toward the swing's start pose. Ease-OUT (1-(1-t)^2.6): the blade reaches most
-                    // of the cocked pose early and then creeps the last part, so the tell ends on a long
-                    // settle instead of a linear stop. A chained windup starts from the previous swing's
-                    // end pose (the hold between two cuts) rather than from the idle rest.
-                    float windupProgress = SlashWindupEndTick > SlashWindupStartTick
-                        ? MathHelper.Clamp((AttackTimer - SlashWindupStartTick) / (float)(SlashWindupEndTick - SlashWindupStartTick), 0f, 1f)
-                        : 1f;
-                    float windupEase = 1f - (float)Math.Pow(1f - windupProgress, 2.6f);
-                    float fromPhi = idlePhi;
-                    float fromReach = SwordIdleReach;
-
-                    if (SlashWindupChained && SlashActiveKind >= 0)
-                    {
-                        fromPhi = SlashPhi(SlashActiveKind, endProgress);
-                        fromReach = SlashReach(SlashActiveKind, endProgress);
-                    }
-
-                    phi = MathHelper.Lerp(fromPhi, SlashPhi(SlashWindupKind, 0f), windupEase);
-                    reach = MathHelper.Lerp(fromReach, SlashReach(SlashWindupKind, 0f), windupEase);
-                }
-                // else: a non-sword cast (bones/nova/etc.) — the blade simply rests at idle.
-            }
+            ResolveSwordPose(out float phi, out float reach);
 
             if (State == AttackState.FollowUpSlash && lockedKind == 2 && SlashWindupActive)
             {
@@ -3004,7 +3148,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             // — the old translate-by-reach approach is what visibly detached the sword from Nito's
             // hand. `liftFactor` peaks when phi points straight up (a real swordsman's shoulder rises
             // for an overhead swing) and is 0 at both the forward pose and the horizontal idle rest
-            // (idlePhi = -Pi), so the hand only ever drifts a little — it has to stay concealed behind
+            // (IdlePhi = 0), so the hand only ever drifts a little — it has to stay concealed behind
             // the body silhouette at every frame, per the reference screenshot markup.
             float theta = dir >= 0 ? phi : MathHelper.Pi - phi;
             float liftFactor = MathHelper.Clamp((float)Math.Sin(-phi), 0f, 1f);

@@ -11144,6 +11144,11 @@ Mods: {
 			SoulCoinProj.DisplayName: Soul Coin Proj
 			ChaosBlackFire.DisplayName: Chaos Black Fire
 			ChaosBlackFirelet.DisplayName: Chaos Black Firelet
+			ChaosFireball.DisplayName: Chaos Fireball
+			ChaosDemonSickle.DisplayName: Chaos Demon Sickle
+			ChaosShockwave.DisplayName: Chaos Shockwave
+			ChaosSingularity.DisplayName: Void Singularity
+			ChaosGaleRing.DisplayName: Gale Ring
 			ShadowSparkle.DisplayName: Shadow Sparkle
 			ShadowsparkBulletProjectile.DisplayName: Shadowspark Bullet Projectile
 			Ichorstorm.DisplayName: Ichorstorm
@@ -11605,6 +11610,10 @@ Mods: {
 				OutOfRange: Blight encloses itself in impenetrable light -- you're too far away!
 				CataclysmWarning: Blight's instability begins tearing the barrier between the world and the Abyss
 				Cataclysm: The barrier is shattered!! Nothing but darkness remains...
+			}
+
+			ChaosBroodSigil: {
+				DisplayName: Fiend's Brood
 			}
 
 			Chaos: {

@@ -1,38 +1,33 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Chaos;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
+    ///<summary>
+    ///Chaos: the Fiend of Chaos, SuperHardMode boss at tier 20.92.
+    ///
+    ///Structured as one state machine: every attack runs for a fixed number of ticks, stops spawning, then
+    ///hands off to a shared Recovery window that glides Chaos into the player's reach and announces the next
+    ///attack. Attacks are dealt from a shuffled per-phase bag, so the order is unpredictable but every card
+    ///still comes up — which is why each one has to telegraph itself (see PlayTell).
+    ///
+    ///The sprite is an 8-frame wing-flap loop and nothing else: no arm, claw or crouch poses exist. Every
+    ///tell and every hazard is therefore built from dust, shader projectiles, flap SPEED and draw tint.
+    ///</summary>
     [AutoloadBossHead]
-    class Chaos : ModNPC
+    class Chaos : ModNPC, IStaggerable
     {
-        int teleportTimer = 0;
-        Vector2 teleportPosition;
-
-        int xOffset = 0;
-        int yOffset = 0;
-        int telegraphTimer = 0;
-        //Origin recorded when the grid telegraph is drawn; the bolts fire from here too, so the lines don't lie.
-        Vector2 laserGridOrigin;
-        //Y both the vertical warning lines and the vertical bolts start at.
-        const float LaserGridStartY = -1000f;
-
-        float angle = 0;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 8;
@@ -44,6 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.ShadowFlame] = true;
         }
+
         public override void SetDefaults()
         {
             NPC.width = 130;
@@ -51,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.npcSlots = 100;
-            NPC.aiStyle = -1;//22;
+            NPC.aiStyle = -1;
             AnimationType = -1;
             NPC.lavaImmune = true;
             NPC.boss = true;
@@ -67,111 +63,369 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.rarity = 42;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Chaos.DespawnHandler"), Color.Yellow, DustID.GoldFlame);
         }
+
         NPCDespawnHandler despawnHandler;
-        private enum EyeFrame
+
+        #region State machine
+
+        public enum AttackState : byte
         {
-            Idle1,
-            Idle2,
-            Idle3,
-            Idle4,
-            Idle5,
-            Idle6,
-            Idle7,
-            Idle8,
+            Recovery = 0,
+            PhaseTransition,
+            FireballFan,
+            ScytheLunge,
+            CarpetBomb,
+            FlameHover,
+            RocketDash,
+            FireballStorm,
+            CataclysmDive,
+            ShadowflameTeleport,
+            LaserGrid,
+            OrbitalSickle,
+            WingGale,
+            VoidSingularity,
+            FiendsBrood
         }
 
+        AttackState State = AttackState.Recovery;
+        AttackState NextAttack = AttackState.FireballFan;
+        // Seeded to the opening attack too, so the first bag draw won't immediately repeat it.
+        AttackState LastAttack = AttackState.FireballFan;
+
+        int AttackTimer;
+        int recoveryLength = OpeningRecoveryTicks;
+        int phase = 1;
+
+        // True for the tick a state change happened, so the new state's tick 0 actually executes instead of
+        // being skipped by the end-of-AI increment.
+        bool stateJustChanged;
+
+        // Per-attack working state. All of it is cleared by StartAttack: under the bag any attack can follow
+        // any other, and the old fixed 1->2->3 order was the only thing keeping these from leaking between runs.
+        int flyPosition;
+        sbyte sweepDirection = 1;
+        float orbitAngle;
+        float orbitStartRadius;
+        int dashTimer;
+        // Which side of the player Chaos positions on during an ATTACK. 0 = not yet chosen; see ApproachSide.
+        sbyte approachSide;
+
+        // Recovery rest spot. restOffset is rolled per attack cycle; restPoint is the world-space snapshot Chaos
+        // actually drifts to, and driftReleased marks the point where it stops caring about that spot at all.
+        Vector2 restOffset = new Vector2(300f, -60f);
+        Vector2 restPoint;
+        bool driftReleased;
+        float driftAngle;
+        // Deliberately NOT cleared by StartAttack: the recovery's tell locks the opening dash heading, and the
+        // attack that follows has to read the same value the lane line was drawn from.
+        Vector2 lockedAim;
+        Vector2 teleportPosition;
+        Vector2 gridAnchor;
+        short gridXOffset;
+        short gridYOffset;
+        float lockedX;
+        float floorY;
+        float diveApexY;
+        byte divePhase;
+        byte diveSlamsDone;
+
+        // The bag lives only where attacks are chosen (never on a remote client), which reads the synced
+        // NextAttack instead. eligibleIndices is reused per draw to keep the draw allocation-free.
+        readonly List<AttackState> attackBag = new List<AttackState>();
+        readonly List<int> eligibleIndices = new List<int>();
+
+        #endregion
+
+        #region Tuning
+
+        // Shared pacing
+        const int TellTicks = 28;                  // tail of a recovery spent announcing the next attack
+        const int OpeningRecoveryTicks = 90;
+        const int PhaseTransitionTicks = 90;
+        const int PhaseOpenerRecoveryTicks = 70;
+        const int StaggerRecoveryTicks = 90;
+        const float ApproachSpeed = 15f;           // unhurried drift in; attacks have their own speeds
+        const float RecoveryEaseDistance = 220f;   // inside this, target speed ramps down linearly to 0
+        const float RecoveryVelocitySmoothing = 0.06f; // per-tick lerp toward the target velocity
+        const float ArrivalRadius = 70f;           // close enough — release the tether here
+        // The rest spot is rolled inside this band each cycle, both sides, so Chaos doesn't favour one flank.
+        const float RestDistanceMin = 230f;
+        const float RestDistanceMax = 430f;
+        const float RestHeightMin = -170f;
+        const float RestHeightMax = 20f;
+        // Free-hover drift once released: slow, gradually curving, going nowhere in particular.
+        const float DriftSpeed = 1.6f;
+        const float DriftTurnRate = 0.018f;        // radians/tick
+        const float DriftSmoothing = 0.05f;
+        const float ReleaseLeashDistance = 950f;   // only re-aims if the player has run right away
+
+        // Fireball Fan
+        const int FanFireTicks = 360;
+        const int FanVolleyInterval = 45;          // 8 volleys, last one 45t before the fire window ends
+        const int FanSettleTicks = 30;
+        const int FanRecoveryTicks = 90;
+        const float FanStandoffX = 360f;
+        const float FanStandoffY = -220f;
+
+        // Scythe Lunge (5 dashes instead of 4 once it carries over into phase 2+)
+        const int LungeDashInterval = 75;
+        const int LungeEvolvedDashInterval = 65;
+        const int LungeTellTicks = 25;
+        const int LungeAimLockTicks = 10;
+        const float LungeSpeed = 35f;
+        const int LungeRecoveryTicks = 80;
+        // Below this, skip the dash and just throw the ring: a lurch of a few pixels reads as a glitch rather
+        // than a charge. Fairness comes from the 25t tell, not from this distance, so it sits under the 260px
+        // recovery anchor — at 300f the opening dash of every lunge was suppressed.
+        const float LungeMinDashDistance = 150f;
+
+        // Carpet Bomb
+        const int CarpetFireTicks = 300;
+        const int CarpetBombInterval = 12;         // 25 bombs (was 60 every 10t)
+        const int CarpetLastBombTick = 288;
+        const int CarpetFirstLegTicks = 40;        // first leg is half a leg, so the sweep centres on the player
+        const int CarpetLegTicks = 80;
+        const int CarpetSweepSpeed = 25;
+        const float CarpetHeight = 500f;
+        const int CarpetSettleTicks = 120;         // bombs launched upward need ~120t to fall back down
+        const int CarpetRecoveryTicks = 100;
+
+        // Flame Hover
+        const int FlameFireTicks = 300;
+        const int FlameInterval = 5;
+        const int FlameFanInterval = 60;
+        const int FlameRecoveryTicks = 75;
+
+        // Rocket Dash
+        const int RocketFireTicks = 300;
+        const int RocketDashInterval = 60;         // was 40, which left no room for a tell
+        const int RocketTrailTicks = 30;
+        const int RocketTrailInterval = 10;
+        const float RocketDashSpeed = 35f;
+        const int RocketSettleTicks = 120;
+        const int RocketRecoveryTicks = 80;
+
+        // Fireball Storm — the fight's one interruptible channel
+        const int StormChannelTicks = 100;
+        const int StormInterruptibleTicks = 66;    // poise can cancel the cast up to here; then it commits
+        const int StormFireTicks = 240;
+        const int StormBigRingInterval = 50;
+        const int StormSmallRingInterval = 20;
+        const int StormSettleTicks = 30;
+        const int StormRecoveryTicks = 120;
+
+        // Cataclysm Dive
+        const int DiveClimbTicks = 50;
+        const int DiveHoldTicks = 40;
+        const int DiveEvolvedHoldTicks = 25;
+        const int DiveLockLeadTicks = 20;          // X locks this long before the plunge, so a sidestep still works
+        const float DiveApexHeight = 720f;
+        const float DiveMinRunUp = 400f;           // less run-up than this reads badly — fizzle instead
+        const float DiveCeilingPad = 80f;
+        const float DiveClimbSpeed = 26f;
+        const float DiveClimbInertia = 10f;
+        const float DivePlungeSpeed = 38f;
+        const int DivePlungeTimeoutTicks = 45;     // fell into a pit — detonate where we are
+        const int DiveGroundedTicks = 100;
+        const int DiveRiseTicks = 30;
+        const float DiveRiseSpeed = 14f;
+        const int DiveRecoveryTicks = 30;
+        const int DiveFizzleRecoveryTicks = 40;
+        const int DiveEvolvedSlams = 2;
+        const float DiveImpactRadius = 160f;
+        const int ShockwaveArmTicks = 8;
+        const float SlamCrippleRange = 800f;       // 50 tiles — the concussion reaches well past the waves
+        const int SlamCrippleTicks = 180;          // 3 seconds
+
+        // Shadowflame Teleport
+        const int TeleportFireTicks = 360;
+        const int TeleportFlameInterval = 5;
+        const float TeleportFlameSpread = 30f;
+        const int TeleportCycleTicks = 120;
+        const int TeleportTelegraphTicks = 80;
+        const int TeleportLastArrival = 320;       // 3 arrivals: 80, 200, 320
+
+        const int TeleportRecoveryTicks = 75;
+
+        // Laser Grid
+        const int GridRoundTicks = 280;
+        const int GridFireTicks = 520;             // 2 rounds; round 2's trailing vent pause becomes the recovery
+        const int GridSecondVolleyTick = 50;
+        const int GridTelegraphStartTick = 90;     // 40t vent pause sits between the flames and the telegraph
+        const int GridBeamTick = 150;
+        const int GridBeamsPerAxis = 20;
+        const int GridBeamSpacing = 200;
+        const float GridBeamStartY = -1000f;       // the vertical tell and bolt entry share one line
+        const float GridStandoffX = 350f;          // was 600, which parked Chaos outside melee reach
+        const int GridRecoveryTicks = 130;
+
+        // Orbital Sickle
+        const int OrbitFireTicks = 270;            // 3 laps at 4 degrees/tick (90t per lap)
+        const int OrbitSickleInterval = 15;
+        const int OrbitNovaInterval = 90;
+        const int OrbitNovaOffset = 45;            // novas at t = 45, 135, 225
+        const float OrbitDegreesPerTick = 4f;
+        const float OrbitRadius = 700f;            // the (1,1) basis makes the real radius ~990px
+        const int OrbitEaseTicks = 30;
+        const int OrbitSettleTicks = 70;           // breaks orbit and heads in before the window opens
+        const int OrbitRecoveryTicks = 80;
+
+        // Wing Buffet Gale — three flaps that shove the player outward into a ring boundary
+        const int GaleWindupTicks = 45;            // ring fades in during this, before any push
+        const int GaleFlapInterval = 55;
+        const int GaleFlaps = 3;
+        const int GalePushTicks = 26;              // how long each flap actually pushes
+        const int GaleFireTicks = GaleWindupTicks + GaleFlaps * GaleFlapInterval;
+        const int GaleRecoveryTicks = 85;
+        const float GaleRingRadius = 700f;
+        const int GaleRingHold = 180;
+        const float GalePushSpeed = 7.5f;          // capped, and beatable by moving inward
+        const float GalePushRange = 620f;
+
+        // Void Singularity — a short cast; the tear itself outlives the attack (see ChaosSingularity)
+        const int SingularityTelegraphTicks = 40;
+        const int SingularityCastTicks = 70;
+        const int SingularityRecoveryTicks = 70;
+        const float SingularityPlacementRange = 450f;
+
+        // Fiend's Brood — a short cast that leaves three destructible sigils behind
+        const int BroodTelegraphTicks = 45;
+        const int BroodCastTicks = 80;
+        const int BroodRecoveryTicks = 75;
+        const int BroodSigilCount = 3;
+        const float BroodSigilRadius = 520f;       // how far out the ring of sigils is planted
+        // Read by ChaosBroodSigil. Hostile projectiles deal double on hit, so 16 lands at ~32 — deliberately
+        // level with Chaos's own shots (damage 100 / 6), not worse than the boss itself.
+        public const int BroodBoltDamage = 16;
+
+        #endregion
+
+        #region Netcode
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write((byte)State);
+            writer.Write((byte)NextAttack);
+            writer.Write((byte)LastAttack);
+            writer.Write((byte)phase);
+            writer.Write((short)AttackTimer);
+            writer.Write((short)recoveryLength);
+            writer.Write((short)flyPosition);
+            writer.Write(sweepDirection);
+            writer.Write(approachSide);
+            writer.Write(restOffset.X);
+            writer.Write(restOffset.Y);
+            writer.Write(restPoint.X);
+            writer.Write(restPoint.Y);
+            writer.Write(driftReleased);
+            writer.Write(driftAngle);
+            writer.Write(orbitAngle);
+            writer.Write(orbitStartRadius);
+            writer.Write((short)dashTimer);
+            writer.Write(lockedAim.X);
+            writer.Write(lockedAim.Y);
+            writer.Write(teleportPosition.X);
+            writer.Write(teleportPosition.Y);
+            writer.Write(gridAnchor.X);
+            writer.Write(gridAnchor.Y);
+            writer.Write(gridXOffset);
+            writer.Write(gridYOffset);
+            writer.Write(lockedX);
+            writer.Write(floorY);
+            writer.Write(diveApexY);
+            writer.Write(divePhase);
+            writer.Write(diveSlamsDone);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            State = (AttackState)reader.ReadByte();
+            NextAttack = (AttackState)reader.ReadByte();
+            LastAttack = (AttackState)reader.ReadByte();
+            phase = reader.ReadByte();
+            AttackTimer = reader.ReadInt16();
+            recoveryLength = reader.ReadInt16();
+            flyPosition = reader.ReadInt16();
+            sweepDirection = reader.ReadSByte();
+            approachSide = reader.ReadSByte();
+            restOffset = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            restPoint = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            driftReleased = reader.ReadBoolean();
+            driftAngle = reader.ReadSingle();
+            orbitAngle = reader.ReadSingle();
+            orbitStartRadius = reader.ReadSingle();
+            dashTimer = reader.ReadInt16();
+            lockedAim = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            teleportPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            gridAnchor = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            gridXOffset = reader.ReadInt16();
+            gridYOffset = reader.ReadInt16();
+            lockedX = reader.ReadSingle();
+            floorY = reader.ReadSingle();
+            diveApexY = reader.ReadSingle();
+            divePhase = reader.ReadByte();
+            diveSlamsDone = reader.ReadByte();
+        }
+
+        #endregion
+
+        #region Drawing
+
+        private Vector2[] oldPositions = new Vector2[5];
 
         public override void FindFrame(int frameHeight)
         {
+            // The 8-frame wing loop is Chaos's only animation, so its SPEED is the body language: agitated
+            // through a telegraph, labouring through recovery, near-still while grounded after a dive.
+            int ticksPerFrame = 4;
+
+            if (State == AttackState.Recovery)
+            {
+                ticksPerFrame = 8;
+            }
+            else if (State == AttackState.CataclysmDive && divePhase == DivePhaseGrounded)
+            {
+                ticksPerFrame = 10;
+            }
+            else if (IsTelegraphing())
+            {
+                ticksPerFrame = 2;
+            }
+
             NPC.frameCounter += 1.0;
-            switch (NPC.frameCounter)
+
+            // Reset before dividing, so the frame index can never run off the end of the sheet when
+            // ticksPerFrame drops mid-loop.
+            int loopTicks = ticksPerFrame * Main.npcFrameCount[NPC.type];
+            if (NPC.frameCounter >= loopTicks)
             {
-                case 4 * 1:
-                    NPC.frame.Y = (int)EyeFrame.Idle1 * frameHeight;
-                    break;
-                case 4 * 2:
-                    NPC.frame.Y = (int)EyeFrame.Idle2 * frameHeight;
-                    break;
-                case 4 * 3:
-                    NPC.frame.Y = (int)EyeFrame.Idle3 * frameHeight;
-                    break;
-                case 4 * 4:
-                    NPC.frame.Y = (int)EyeFrame.Idle4 * frameHeight;
-                    break;
-                case 4 * 5:
-                    NPC.frame.Y = (int)EyeFrame.Idle5 * frameHeight;
-                    break;
-                case 4 * 6:
-                    NPC.frame.Y = (int)EyeFrame.Idle6 * frameHeight;
-                    break;
-                case 4 * 7:
-                    NPC.frame.Y = (int)EyeFrame.Idle7 * frameHeight;
-                    break;
-                case 4 * 8:
-                    NPC.frame.Y = (int)EyeFrame.Idle8 * frameHeight;
-                    NPC.frameCounter = 0;
-                    break;
+                NPC.frameCounter = 0;
             }
+
+            NPC.frame.Y = (int)(NPC.frameCounter / ticksPerFrame) * frameHeight;
         }
 
-        private void ShootProjectile(NPC NPC, Player target, int speed, int type, bool hasTileCollide, int count, float startAngle, float angleDecrement, Vector2 startPosition, float radius)
-        {
-            Vector2 distance = target.Center - startPosition;
-            Vector2 distanceNormalized = distance.SafeNormalize(Vector2.UnitX);
-            float angle = startAngle;
-            for (int i = 0; i < count; i++)
-            {
-                int projectile = Projectile.NewProjectile(NPC.GetSource_FromThis(), startPosition, (distanceNormalized.RotatedBy(MathHelper.ToRadians(angle)) * speed).RotatedByRandom(MathHelper.ToRadians(radius)), type, NPC.damage / 6, 1);
-
-                Main.projectile[projectile].tileCollide = hasTileCollide;
-                Main.projectile[projectile].friendly = false;
-                Main.projectile[projectile].hostile = true;
-                angle -= angleDecrement;
-            }
-        }
-
-        private void FloatAbovePlayer(Player target, float offset, int floatDirection, NPC NPC, float speed, float inertia, float yOffset, Vector2 destination)
-        {
-            Vector2 toPlayer = target.Center - NPC.Center;
-
-            float offsetX = 7.5f;
-
-            Vector2 abovePlayer = target.Top + new Vector2(NPC.direction * offsetX, -NPC.height + offset);
-
-            if (floatDirection == 2)
-            {
-                abovePlayer = target.Center + new Vector2((NPC.direction + offset) * offsetX, yOffset);
-            }
-
-            if (destination != Vector2.Zero)
-            {
-                abovePlayer = destination;
-            }
-
-
-            Vector2 toAbovePlayer = abovePlayer - NPC.Center;
-            Vector2 toAbovePlayerNormalized = toAbovePlayer.SafeNormalize(Vector2.UnitY);
-
-            // The NPC tries to go towards the offsetX position, but most likely it will never get there exactly, or close to if the player is moving
-            // This checks if the npc is "70% there", and then changes direction
-
-            // If the boss is somehow below the player, move faster to catch up
-
-            Vector2 moveTo = toAbovePlayerNormalized * speed;
-            NPC.velocity = (NPC.velocity * (inertia - 1) + moveTo) / inertia;
-        }
-
-        int attackTimer = 600;
-        int attackTracker = 1;
-        int phase = 1;
-        private Vector2[] oldPositions = new Vector2[5];
-        int flyParity = -25;
-        int flyPosition = 0;
-        int dashTimer = 0;
-        public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            Color RealDrawColor = new Color(100 + drawColor.R / 2, 100 + drawColor.G / 2, 100 + drawColor.B / 2);
+            // Recovery dims the body and a telegraph brightens it — the cheapest possible "spent" vs
+            // "winding up" read on a sprite that has no poses.
+            float brightness = 1f;
+
+            if (State == AttackState.Recovery)
+            {
+                brightness = 0.6f;
+            }
+            else if (IsTelegraphing())
+            {
+                brightness = 1.25f;
+            }
+
+            // Clamped by hand: Color * float casts straight to byte, so a brightness above 1 on an already-bright
+            // channel (this base tops out at 227) wraps around and flickers the sprite dark.
+            int red = Math.Min((int)((100 + drawColor.R / 2) * brightness), 255);
+            int green = Math.Min((int)((100 + drawColor.G / 2) * brightness), 255);
+            int blue = Math.Min((int)((100 + drawColor.B / 2) * brightness), 255);
+            Color RealDrawColor = new Color(red, green, blue);
             Texture2D texture = Terraria.GameContent.TextureAssets.Npc[NPC.type].Value;
             Rectangle sourceRect = NPC.frame;
 
@@ -181,7 +435,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 int WhichOne = i * (-1) + oldPositions.Length;
                 float alpha = 1f * (1f + i / (float)oldPositions.Length);
-                float scale = 1f * (1f - i / (float)oldPositions.Length);
                 Vector2 drawPos = oldPositions[WhichOne] - screenPos;
                 spriteBatch.Draw(
                     texture,
@@ -195,6 +448,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     0f
                 );
             }
+
             spriteBatch.Draw(
                 texture,
                 NPC.Center - screenPos,
@@ -210,308 +464,1793 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return false;
         }
 
+        ///<summary>Whether Chaos is currently winding something up. Drives flap tempo, draw brightness and
+        ///nothing else — the poise telegraph flag is set separately in AI().</summary>
+        bool IsTelegraphing()
+        {
+            if (State == AttackState.FireballStorm && AttackTimer < StormChannelTicks)
+            {
+                return true;
+            }
+
+            if (State == AttackState.CataclysmDive && (divePhase == DivePhaseClimb || divePhase == DivePhaseHold))
+            {
+                return true;
+            }
+
+            if (State == AttackState.Recovery && AttackTimer >= recoveryLength - TellTicks)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion
+
         public override void AI()
         {
-            //Party-wipe despawn (the handler existed but was never ticked).
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
-
             for (int i = oldPositions.Length - 1; i > 0; i--)
             {
                 oldPositions[i] = oldPositions[i - 1];
             }
             oldPositions[1] = NPC.Center;
-            if (NPC.direction == 1)
-            {
-                NPC.spriteDirection = 1;
-            }
-            if (NPC.direction == -1)
-            {
-                NPC.spriteDirection = -1;
-            }
-            NPC.rotation = NPC.velocity.X * 0.04f;
 
-            Player target = Main.player[NPC.target];
-            if (NPC.target < 0 || NPC.target == 255 || Main.player[NPC.target].dead || !Main.player[NPC.target].active)
+            // Targeting and despawning both live in the handler. The old code read Main.player[NPC.target]
+            // BEFORE targeting and never refreshed it, so Chaos fled on a dead player while others lived.
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+
+            if (despawnHandler.IsDespawning)
             {
-                NPC.TargetClosest();
-            }
-            if (target.dead)
-            {
-                NPC.velocity.Y -= 3f;
-                NPC.EncourageDespawn(10);
+                NPC.velocity.Y -= 0.35f;
                 return;
             }
 
-            attackTimer--;
-            dashTimer--;
-            teleportTimer--;
-            telegraphTimer--;
+            Player target = Main.player[NPC.target];
 
-
-            if (phase == 1 && NPC.life <= NPC.lifeMax * 0.66f)
+            if (!target.active || target.dead)
             {
-                phase = 2;
-                SoundEngine.PlaySound(SoundID.Roar);
-                attackTimer = 600;
-                attackTracker = 1;
+                NPC.velocity.Y -= 0.35f;
+                return;
             }
 
-            if (phase == 2 && NPC.life <= NPC.lifeMax * 0.33f)
+            NPC.direction = 1;
+            if (target.Center.X < NPC.Center.X)
             {
-                phase = 3;
-                SoundEngine.PlaySound(SoundID.ForceRoarPitched);
-                attackTimer = 600;
-                attackTracker = 1;
+                NPC.direction = -1;
             }
+            NPC.spriteDirection = NPC.direction;
+
+            // Banking angle follows horizontal speed, but EASED into rather than snapped to: the raw value made
+            // every small velocity change a visible twitch, and the afterimage trail multiplied it by five.
+            float targetRotation = MathHelper.Clamp(NPC.velocity.X * 0.04f, -0.9f, 0.9f);
+            NPC.rotation = MathHelper.Lerp(NPC.rotation, targetRotation, 0.12f);
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.AttackTelegraphing = false;
+            globalNPC.AttackCommitted = false;
+
+            if (globalNPC.StaggerTimer > 0)
+            {
+                // OnStagger already dropped the attack; just sag and leak embers until it wears off.
+                NPC.velocity *= 0.9f;
+                NPC.rotation = NPC.direction * 0.35f;
+
+                if (!Main.dedServ && Main.rand.NextBool(2))
+                {
+                    Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(60f, 70f), DustID.Shadowflame, Vector2.UnitY * 1.5f, 120, default, 1.3f);
+                }
+
+                return;
+            }
+
+            // Phase thresholds interrupt whatever is running. `phase` is raised HERE, as the transition
+            // starts, so a burst that crosses a threshold twice in one tick can't trigger it twice.
+            if (Main.netMode != NetmodeID.MultiplayerClient && State != AttackState.PhaseTransition)
+            {
+                if (phase == 1 && NPC.life <= NPC.lifeMax * 0.66f)
+                {
+                    phase = 2;
+                    StartAttack(AttackState.PhaseTransition);
+                }
+                else if (phase == 2 && NPC.life <= NPC.lifeMax * 0.33f)
+                {
+                    phase = 3;
+                    StartAttack(AttackState.PhaseTransition);
+                }
+            }
+
+            // Poise contract: an attack in progress is hyper-armored, Recovery is the deliberate punish
+            // window, and the two interruptible spots are the Storm channel and the post-dive ground rest.
+            if (State != AttackState.Recovery)
+            {
+                globalNPC.AttackCommitted = true;
+            }
+
+            if (State == AttackState.FireballStorm && AttackTimer < StormInterruptibleTicks)
+            {
+                globalNPC.AttackCommitted = false;
+                globalNPC.AttackTelegraphing = true;
+            }
+
+            if (State == AttackState.CataclysmDive && divePhase == DivePhaseGrounded)
+            {
+                globalNPC.AttackCommitted = false;
+            }
+
+            stateJustChanged = false;
+
+            switch (State)
+            {
+                case AttackState.Recovery:
+                    RunRecovery(target);
+                    break;
+                case AttackState.PhaseTransition:
+                    RunPhaseTransition();
+                    break;
+                case AttackState.FireballFan:
+                    RunFireballFan(target);
+                    break;
+                case AttackState.ScytheLunge:
+                    RunScytheLunge(target);
+                    break;
+                case AttackState.CarpetBomb:
+                    RunCarpetBomb(target);
+                    break;
+                case AttackState.FlameHover:
+                    RunFlameHover(target);
+                    break;
+                case AttackState.RocketDash:
+                    RunRocketDash(target);
+                    break;
+                case AttackState.FireballStorm:
+                    RunFireballStorm(target);
+                    break;
+                case AttackState.CataclysmDive:
+                    RunCataclysmDive(target);
+                    break;
+                case AttackState.ShadowflameTeleport:
+                    RunShadowflameTeleport(target);
+                    break;
+                case AttackState.LaserGrid:
+                    RunLaserGrid(target);
+                    break;
+                case AttackState.OrbitalSickle:
+                    RunOrbitalSickle(target);
+                    break;
+                case AttackState.WingGale:
+                    RunWingGale(target);
+                    break;
+                case AttackState.VoidSingularity:
+                    RunVoidSingularity(target);
+                    break;
+                case AttackState.FiendsBrood:
+                    RunFiendsBrood(target);
+                    break;
+            }
+
+            // Incremented last so an attack's first executed tick is t = 0, and so a state change made
+            // during this tick doesn't immediately skip the new state's tick 0.
+            if (!stateJustChanged)
+            {
+                AttackTimer++;
+            }
+        }
+
+        #region State transitions and attack selection
+
+        ///<summary>Enters a state and clears every per-attack field. Called for attacks, Recovery and the
+        ///phase transition alike, so there is exactly one place that can leave stale state behind.</summary>
+        void StartAttack(AttackState next)
+        {
+            State = next;
+            AttackTimer = 0;
+            stateJustChanged = true;
+
+            flyPosition = 0;
+            dashTimer = 0;
+            orbitAngle = 0f;
+            orbitStartRadius = 0f;
+            teleportPosition = Vector2.Zero;
+            gridAnchor = Vector2.Zero;
+            gridXOffset = 0;
+            gridYOffset = 0;
+            lockedX = 0f;
+            floorY = 0f;
+            diveApexY = 0f;
+            divePhase = DivePhaseClimb;
+            diveSlamsDone = 0;
+
+            // Cleared per ATTACK, not per recovery: an attack's settle tail and the recovery that follows it are
+            // one continuous glide, so they have to agree on where they are heading.
+            if (next != AttackState.Recovery)
+            {
+                approachSide = 0;
+                restPoint = Vector2.Zero;
+                driftReleased = false;
+
+                // Rolled fresh each cycle, both sides. Deriving the rest side from Chaos's current position was
+                // self-reinforcing — park on the right, so the next attack starts on the right, so it parks right
+                // again — which is why it looked biased toward the player's right flank.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float restSide = 1f;
+                    if (Main.rand.NextBool())
+                    {
+                        restSide = -1f;
+                    }
+
+                    float restX = restSide * Main.rand.NextFloat(RestDistanceMin, RestDistanceMax);
+                    restOffset = new Vector2(restX, Main.rand.NextFloat(RestHeightMin, RestHeightMax));
+                }
+            }
+
+            // Rolled up front and synced, so the sweep never runs in opposite directions on two machines.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                sweepDirection = (sbyte)(Main.rand.NextBool() ? 1 : -1);
+            }
+
+            NPC.netUpdate = true;
+        }
+
+        ///<summary>Ends the current attack and opens the punish window. The next card is drawn HERE so the
+        ///tail of the recovery can announce it — the bag took away the memorisable 1->2->3 order.</summary>
+        void BeginRecovery(int ticks)
+        {
+            // Set before the draw: DrawNextAttack reads LastAttack to avoid an immediate repeat.
+            LastAttack = State;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                NextAttack = DrawNextAttack();
+            }
+
+            StartAttack(AttackState.Recovery);
+            recoveryLength = ticks;
+        }
+
+        ///<summary>Shuffled grab bag, following ChooseFromBag in RedKnightAttackController: draw without
+        ///replacement, refill when empty, and never repeat the last card while another one is available.</summary>
+        AttackState DrawNextAttack()
+        {
+            if (attackBag.Count == 0)
+            {
+                RefillAttackBag();
+            }
+
+            // Pass 1: cards that pass their gate and aren't an immediate repeat.
+            eligibleIndices.Clear();
+            for (int i = 0; i < attackBag.Count; i++)
+            {
+                if (attackBag[i] == LastAttack)
+                {
+                    continue;
+                }
+
+                if (IsAttackEligible(attackBag[i]))
+                {
+                    eligibleIndices.Add(i);
+                }
+            }
+
+            // Pass 2: allow the repeat rather than stall (one card left, or everything else gated out).
+            if (eligibleIndices.Count == 0)
+            {
+                CollectEligible();
+            }
+
+            // Pass 3: the bag had nothing usable in it at all — refill and look again.
+            if (eligibleIndices.Count == 0)
+            {
+                RefillAttackBag();
+                CollectEligible();
+            }
+
+            // Nothing's gate can be satisfied right now (no floor anywhere, say) — fall back to the opener.
+            if (eligibleIndices.Count == 0)
+            {
+                return PhaseOpener();
+            }
+
+            int chosenIndex = eligibleIndices[Main.rand.Next(eligibleIndices.Count)];
+            AttackState chosen = attackBag[chosenIndex];
+            attackBag.RemoveAt(chosenIndex);
+            return chosen;
+        }
+
+        ///<summary>Fills eligibleIndices with every gate-passing card, repeat included.</summary>
+        void CollectEligible()
+        {
+            eligibleIndices.Clear();
+            for (int i = 0; i < attackBag.Count; i++)
+            {
+                if (IsAttackEligible(attackBag[i]))
+                {
+                    eligibleIndices.Add(i);
+                }
+            }
+        }
+
+        void RefillAttackBag()
+        {
+            attackBag.Clear();
 
             if (phase == 1)
             {
-                if (attackTracker == 1)
+                attackBag.Add(AttackState.FireballFan);
+                attackBag.Add(AttackState.ScytheLunge);
+                attackBag.Add(AttackState.CarpetBomb);
+                attackBag.Add(AttackState.WingGale);
+                return;
+            }
+
+            if (phase == 2)
+            {
+                attackBag.Add(AttackState.FlameHover);
+                attackBag.Add(AttackState.RocketDash);
+                attackBag.Add(AttackState.FireballStorm);
+                attackBag.Add(AttackState.CataclysmDive);
+                // Carry-over card: a 3-card bag in an HP-gated phase can repeat only once or twice, so each
+                // later phase keeps one evolved earlier attack (this one gains a 5th dash).
+                attackBag.Add(AttackState.ScytheLunge);
+                return;
+            }
+
+            attackBag.Add(AttackState.ShadowflameTeleport);
+            attackBag.Add(AttackState.LaserGrid);
+            attackBag.Add(AttackState.OrbitalSickle);
+            attackBag.Add(AttackState.CataclysmDive);
+            attackBag.Add(AttackState.VoidSingularity);
+            attackBag.Add(AttackState.FiendsBrood);
+        }
+
+        ///<summary>Gates narrow the bag; they never empty it. Only the dive has one: it needs a flat floor to
+        ///slam into and to crawl its shockwaves along.</summary>
+        bool IsAttackEligible(AttackState candidate)
+        {
+            if (candidate != AttackState.CataclysmDive)
+            {
+                return true;
+            }
+
+            Player target = Main.player[NPC.target];
+            return FindFloorY((int)(target.Center.X / 16f), (int)(target.Bottom.Y / 16f)) > 0f;
+        }
+
+        ///<summary>The attack each phase deliberately opens on, so the player gets an early read of its pacing.</summary>
+        AttackState PhaseOpener()
+        {
+            if (phase == 1)
+            {
+                return AttackState.FireballFan;
+            }
+
+            if (phase == 2)
+            {
+                return AttackState.FlameHover;
+            }
+
+            return AttackState.ShadowflameTeleport;
+        }
+
+        #endregion
+
+        #region Recovery, tells and phase transition
+
+        void RunRecovery(Player target)
+        {
+            DriftTowardRestPoint(target);
+
+            // Venting embers = "I'm spent, hit me". There is deliberately no hyper-armor here.
+            if (!Main.dedServ && Main.rand.NextBool(2))
+            {
+                Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(55f, 65f), DustID.Torch, new Vector2(0f, 0.6f), 140, default, 1.15f);
+            }
+
+            int tellStart = recoveryLength - TellTicks;
+            if (AttackTimer >= tellStart)
+            {
+                int tellTick = AttackTimer - tellStart;
+
+                // The opening dash direction is locked HERE, not inside PlayTell: PlayTell is visuals-only and
+                // returns early on a dedicated server, which would leave the server dashing on a different
+                // heading than the clients that drew the lane for it.
+                bool dashOpener = NextAttack == AttackState.ScytheLunge || NextAttack == AttackState.RocketDash;
+                if (dashOpener && tellTick == TellTicks - LungeAimLockTicks)
                 {
-                    FloatAbovePlayer(target, 0, 0, NPC, 30, 100, 0, target.Center);
-                    if (attackTimer % 45 == 0)
-                    {
-                        ShootProjectile(NPC, target, 15, ProjectileID.Fireball, false, 5, 45, 22.5f, NPC.Center - new Vector2(0, 40), 0);
-                    }
-
-
-                    if (attackTimer == 0)
-                    {
-                        attackTimer = 400;
-                        attackTracker++;
-                    }
+                    lockedAim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
                 }
 
-                else if (attackTracker == 2)
+                PlayTell(NextAttack, tellTick, target);
+            }
+
+            if (AttackTimer >= recoveryLength)
+            {
+                StartAttack(NextAttack);
+            }
+        }
+
+        ///<summary>Recovery movement: pick a spot near the player ONCE, drift to it unhurriedly, then let go of it
+        ///entirely and hover. Also used by the settle tails, so a long-range attack is already heading in when the
+        ///punish window opens — Carpet Bomb, Laser Grid and Orbital all end 500-990px away.
+        ///
+        ///Deliberately NOT a tether. Re-deriving the destination from the player's live position every tick made
+        ///Chaos shadow them in lockstep, which read as being rubber-banded to a fixed leash. restPoint is a
+        ///world-space snapshot instead: once Chaos arrives it stops tracking the player at all and free-drifts.
+        ///The only leash left is a far-distance one, so it can't strand itself across the arena.</summary>
+        void DriftTowardRestPoint(Player target)
+        {
+            if (restPoint == Vector2.Zero)
+            {
+                restPoint = ClearOfTiles(target.Center + restOffset, target);
+            }
+
+            float distanceToPlayer = NPC.Distance(target.Center);
+
+            if (driftReleased && distanceToPlayer < ReleaseLeashDistance)
+            {
+                // Released: a slowly curving hover that isn't aimed at anything. The flattened Y keeps it from
+                // wandering into the floor or the ceiling.
+                driftAngle += DriftTurnRate;
+                Vector2 driftVelocity = new Vector2((float)Math.Cos(driftAngle), (float)Math.Sin(driftAngle) * 0.5f) * DriftSpeed;
+                NPC.velocity = Vector2.Lerp(NPC.velocity, driftVelocity, DriftSmoothing);
+                return;
+            }
+
+            // The player has run a long way off — re-aim once rather than hover on the far side of the arena.
+            if (distanceToPlayer >= ReleaseLeashDistance)
+            {
+                restPoint = ClearOfTiles(target.Center + restOffset, target);
+                driftReleased = false;
+            }
+
+            Vector2 toRestPoint = restPoint - NPC.Center;
+            float distance = toRestPoint.Length();
+
+            if (distance <= ArrivalRadius)
+            {
+                if (!driftReleased)
                 {
-                    if (attackTimer % 75 == 0)
+                    driftReleased = true;
+                    driftAngle = NPC.velocity.ToRotation();
+                    NPC.netUpdate = true;
+                }
+
+                return;
+            }
+
+            // Ramp the target speed down over the last stretch so Chaos settles instead of overshooting and
+            // being yanked back.
+            float targetSpeed = ApproachSpeed;
+            if (distance < RecoveryEaseDistance)
+            {
+                targetSpeed = ApproachSpeed * (distance / RecoveryEaseDistance);
+            }
+
+            Vector2 desiredVelocity = toRestPoint / distance * targetSpeed;
+            NPC.velocity = Vector2.Lerp(NPC.velocity, desiredVelocity, RecoveryVelocitySmoothing);
+        }
+
+        ///<summary>The last ~28 ticks of every recovery announce the next attack, using only what the sprite
+        ///allows: colour-matched dust, a lane line, and the flap/tint changes driven by IsTelegraphing.</summary>
+        void PlayTell(AttackState upcoming, int tellTick, Player target)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            switch (upcoming)
+            {
+                case AttackState.FireballFan:
+                    SpawnConvergingDust(DustID.Torch, 120f, 3, 1.4f);
+                    SpawnConvergingDust(DustID.GoldFlame, 140f, 2, 1.1f);
+                    break;
+
+                case AttackState.ScytheLunge:
+                case AttackState.RocketDash:
+                    SpawnConvergingDust(DustID.Shadowflame, 110f, 3, 1.3f);
+
+                    // The lane the opening dash will take, once RunRecovery has locked it.
+                    if (lockedAim != Vector2.Zero)
                     {
-                        Vector2 direction = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
-                        NPC.velocity = new Vector2(35f, 35f) * direction;
-                        ShootProjectile(NPC, target, 15, ProjectileID.DemonSickle, false, 20, 0, 18, NPC.Center - new Vector2(0, 40), 0);
+                        Dust.QuickDustLine(NPC.Center, NPC.Center + lockedAim * 500f, 20f, Color.MediumPurple);
+                    }
+                    break;
+
+                case AttackState.CarpetBomb:
+                    // Embers streaming UP off the wingspan: the hazard is about to come from above.
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 wingSpot = NPC.Center + new Vector2(Main.rand.NextFloat(-90f, 90f), Main.rand.NextFloat(-40f, 20f));
+                        Dust.NewDustPerfect(wingSpot, DustID.Shadowflame, new Vector2(0f, -2.5f), 110, default, 1.35f).noGravity = true;
+                    }
+                    break;
+
+                case AttackState.FlameHover:
+                    SpawnConvergingDust(DustID.Torch, 90f, 4, 1.5f);
+                    break;
+
+                case AttackState.FireballStorm:
+                    // Half-density preview; the storm's own 100t channel is the real telegraph.
+                    SpawnConvergingDust(DustID.GoldFlame, 130f, 2, 1.2f);
+                    break;
+
+                case AttackState.CataclysmDive:
+                    // A column dropping to the floor under Chaos: "the ground is where this lands".
+                    Dust.QuickDustLine(NPC.Center, new Vector2(NPC.Center.X, NPC.Center.Y + 400f), 12f, Color.MediumPurple);
+                    break;
+
+                case AttackState.ShadowflameTeleport:
+                    SpawnConvergingDust(DustID.Shadowflame, 130f, 3, 1.3f);
+                    break;
+
+                case AttackState.LaserGrid:
+                    // Motes gathering into vertical streaks, matching the beams' purple.
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 streak = NPC.Center + new Vector2(Main.rand.NextFloat(-120f, 120f), Main.rand.NextFloat(-120f, 120f));
+                        Dust.NewDustPerfect(streak, DustID.DemonTorch, new Vector2(0f, -3f), 100, default, 1.3f).noGravity = true;
+                    }
+                    break;
+
+                case AttackState.WingGale:
+                    // Dust thrown outward off the wingspan — the direction the shove will go.
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 outward = Main.rand.NextVector2CircularEdge(1f, 1f);
+                        Dust.NewDustPerfect(NPC.Center + outward * 50f, DustID.Smoke, outward * 4f, 120, default, 1.6f).noGravity = true;
+                    }
+                    break;
+
+                case AttackState.VoidSingularity:
+                    // Motes falling INWARD, the inverse of every other tell Chaos has.
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 offset = Main.rand.NextVector2CircularEdge(160f, 160f);
+                        Dust.NewDustPerfect(NPC.Center + offset, DustID.Shadowflame, -offset / 10f, 80, default, 1.5f).noGravity = true;
+                    }
+                    break;
+
+                case AttackState.FiendsBrood:
+                    // Three sparks orbiting the chest: one per sigil about to be planted.
+                    for (int i = 0; i < BroodSigilCount; i++)
+                    {
+                        Vector2 spark = new Vector2(85f, 0f).RotatedBy(tellTick * 0.12f + i * MathHelper.TwoPi / BroodSigilCount);
+                        Dust.NewDustPerfect(NPC.Center + spark, DustID.DemonTorch, spark.RotatedBy(MathHelper.PiOver2) * 0.02f, 90, default, 1.6f).noGravity = true;
+                    }
+                    break;
+
+                case AttackState.OrbitalSickle:
+                    // Spinning ring at the chest — the shape the orbit is about to trace.
+                    float ringAngle = tellTick * 0.5f;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 ringOffset = new Vector2(70f, 0f).RotatedBy(ringAngle + i * MathHelper.TwoPi / 3f);
+                        Dust.NewDustPerfect(NPC.Center + ringOffset, DustID.Shadowflame, ringOffset.RotatedBy(MathHelper.PiOver2) * 0.03f, 100, default, 1.3f).noGravity = true;
+                    }
+                    break;
+            }
+        }
+
+        void RunPhaseTransition()
+        {
+            NPC.velocity *= 0.9f;
+
+            if (AttackTimer == 0)
+            {
+                if (!Main.dedServ)
+                {
+                    if (phase == 2)
+                    {
+                        SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+                        UsefulFunctions.ScreenShake(NPC.Center, 6f, 30);
                     }
                     else
                     {
-                        NPC.velocity *= 0.97f;
-                    }
-
-
-                    if (attackTimer == 0)
-                    {
-                        attackTimer = 600;
-                        attackTracker++;
-                        flyPosition = 0;
+                        SoundEngine.PlaySound(SoundID.ForceRoarPitched, NPC.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/ChaosLaugh"), NPC.Center);
+                        UsefulFunctions.ScreenShake(NPC.Center, 10f, 40);
                     }
                 }
-                else if (attackTracker == 3)
+
+                // New phase, new deck.
+                attackBag.Clear();
+            }
+
+            if (!Main.dedServ)
+            {
+                for (int i = 0; i < 3; i++)
                 {
-                    flyPosition += flyParity;
-                    FloatAbovePlayer(target, 0, 0, NPC, 30, 10, 0, new Vector2(target.Center.X + flyPosition, target.Center.Y - 500));
+                    Vector2 burst = Main.rand.NextVector2Circular(6f, 6f);
+                    Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(70f, 80f), DustID.Shadowflame, burst, 90, default, 1.6f).noGravity = true;
+                }
+            }
 
-                    if (attackTimer % 80 == 0)
+            // Nothing is spawned during the transition; hazards already in the air are left to resolve,
+            // because they were telegraphed and killing a ChaosBlackFire spawns 3-7 firelets in PreKill.
+            if (AttackTimer >= PhaseTransitionTicks)
+            {
+                LastAttack = AttackState.PhaseTransition;
+                NextAttack = PhaseOpener();
+                StartAttack(AttackState.Recovery);
+                recoveryLength = PhaseOpenerRecoveryTicks;
+            }
+        }
+
+        #endregion
+
+        #region Phase 1 attacks
+
+        void RunFireballFan(Player target)
+        {
+            // Stand off rather than homing onto the player: the old destination was target.Center, which put
+            // the fan's spawn point inside them. 420px at 15px/tick is ~28 ticks of reaction time.
+            Vector2 hover = target.Center + new Vector2(ApproachSide(target) * FanStandoffX, FanStandoffY);
+            MoveToward(ClearOfTiles(hover, target), 30f, 100f);
+
+            if (AttackTimer < FanFireTicks && AttackTimer % FanVolleyInterval == 0)
+            {
+                ShootProjectile(target, 15, ModContent.ProjectileType<ChaosFireball>(), 5, 45f, 22.5f, NPC.Center - new Vector2(0, 40), 0f);
+            }
+
+            if (AttackTimer >= FanFireTicks)
+            {
+                DriftTowardRestPoint(target);
+            }
+
+            if (AttackTimer >= FanFireTicks + FanSettleTicks)
+            {
+                BeginRecovery(FanRecoveryTicks);
+            }
+        }
+
+        void RunScytheLunge(Player target)
+        {
+            // Phase 2 carries this card over with an extra, slightly faster dash.
+            int dashCount = 4;
+            int dashInterval = LungeDashInterval;
+
+            if (phase >= 2)
+            {
+                dashCount = 5;
+                dashInterval = LungeEvolvedDashInterval;
+            }
+
+            int fireTicks = dashCount * dashInterval;
+            int tickInDash = AttackTimer % dashInterval;
+
+            if (AttackTimer < fireTicks && tickInDash == 0)
+            {
+                Vector2 aim = lockedAim;
+                if (aim == Vector2.Zero)
+                {
+                    aim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
+                }
+
+                // Too close to react to — hold position this beat instead of dashing point-blank.
+                if (NPC.Distance(target.Center) >= LungeMinDashDistance)
+                {
+                    NPC.velocity = aim * LungeSpeed;
+
+                    if (!Main.dedServ)
                     {
-                        flyParity *= -1;
+                        SoundEngine.PlaySound(SoundID.Item72 with { Pitch = -0.3f }, NPC.Center);
+                    }
+                }
+
+                ShootProjectile(target, 15, ModContent.ProjectileType<ChaosDemonSickle>(), 20, 0f, 18f, NPC.Center - new Vector2(0, 40), 0f);
+            }
+            else
+            {
+                NPC.velocity *= 0.97f;
+            }
+
+            // Tell for the NEXT dash: 25 ticks of converging dust, direction locked 10 ticks out so the drawn
+            // lane is honest and a late sidestep still beats it.
+            int nextDashIndex = (AttackTimer / dashInterval) + 1;
+            bool anotherDashComing = nextDashIndex < dashCount;
+
+            if (anotherDashComing && tickInDash >= dashInterval - LungeTellTicks)
+            {
+                if (!Main.dedServ)
+                {
+                    SpawnConvergingDust(DustID.Shadowflame, 90f, 3, 1.3f);
+                }
+
+                if (tickInDash == dashInterval - LungeAimLockTicks)
+                {
+                    lockedAim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
+                    NPC.netUpdate = true;
+                }
+
+                if (!Main.dedServ && tickInDash >= dashInterval - LungeAimLockTicks && lockedAim != Vector2.Zero)
+                {
+                    Dust.QuickDustLine(NPC.Center, NPC.Center + lockedAim * 500f, 20f, Color.MediumPurple);
+                }
+            }
+
+            if (AttackTimer >= fireTicks)
+            {
+                BeginRecovery(LungeRecoveryTicks);
+            }
+        }
+
+        void RunCarpetBomb(Player target)
+        {
+            if (AttackTimer < CarpetFireTicks)
+            {
+                // Sweep above the player, reversing at the ends. flyPosition is zeroed by StartAttack; it used
+                // to be reset in exactly one handoff, so under the bag a run could start 1000px off-centre.
+                flyPosition += sweepDirection * CarpetSweepSpeed;
+
+                bool atLegEnd = AttackTimer == CarpetFirstLegTicks;
+                if (AttackTimer > CarpetFirstLegTicks && (AttackTimer - CarpetFirstLegTicks) % CarpetLegTicks == 0)
+                {
+                    atLegEnd = true;
+                }
+
+                if (atLegEnd)
+                {
+                    sweepDirection = (sbyte)(-sweepDirection);
+                }
+
+                Vector2 sweepTo = new Vector2(target.Center.X + flyPosition, target.Center.Y - CarpetHeight);
+                MoveToward(ClearOfTiles(sweepTo, target), 30f, 10f);
+
+                if (AttackTimer <= CarpetLastBombTick && AttackTimer % CarpetBombInterval == 0 && Main.netMode != NetmodeID.MultiplayerClient && !MuzzleBlocked(NPC.Center))
+                {
+                    // ai[0] is the player index ChaosBlackFire steers by. It was never set, so every bomb
+                    // read Main.player[0] regardless of who Chaos was actually fighting.
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(0, -10), ModContent.ProjectileType<ChaosBlackFire>(), NPC.damage / 6, 1, ai0: NPC.target);
+                }
+            }
+            else
+            {
+                // Settle: stop bombing and drop toward the punish anchor while the last bombs finish falling.
+                DriftTowardRestPoint(target);
+            }
+
+            if (AttackTimer >= CarpetFireTicks + CarpetSettleTicks)
+            {
+                BeginRecovery(CarpetRecoveryTicks);
+            }
+        }
+
+        #endregion
+
+        #region Phase 2 attacks
+
+        void RunFlameHover(Player target)
+        {
+            // Rides directly on the player, as it always did: the flamethrower is short-range and its density
+            // at point-blank is the whole read. A stand-off was tried here and made the attack illegible.
+            MoveToward(target.Center, 5f, 10f);
+
+            if (AttackTimer < FlameFireTicks)
+            {
+                if (AttackTimer % FlameInterval == 0)
+                {
+                    ShootProjectile(target, 10, ProjectileID.Flames, 1, 0f, 0f, NPC.Center - new Vector2(0, 40), 0f, hostileVanillaFlame: true);
+                }
+
+                if (AttackTimer % FlameFanInterval == 0)
+                {
+                    ShootProjectile(target, 15, ModContent.ProjectileType<ChaosFireball>(), 5, 45f, 22.5f, NPC.Center - new Vector2(0, 40), 0f);
+                }
+            }
+
+            if (AttackTimer >= FlameFireTicks)
+            {
+                BeginRecovery(FlameRecoveryTicks);
+            }
+        }
+
+        void RunRocketDash(Player target)
+        {
+            if (AttackTimer < RocketFireTicks && AttackTimer % RocketDashInterval == 0)
+            {
+                Vector2 aim = lockedAim;
+                if (aim == Vector2.Zero)
+                {
+                    aim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
+                }
+
+                NPC.velocity = aim * RocketDashSpeed;
+                dashTimer = RocketTrailTicks;
+
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item72 with { Pitch = -0.2f }, NPC.Center);
+                }
+            }
+            else if (AttackTimer < RocketFireTicks)
+            {
+                NPC.velocity *= 0.97f;
+            }
+
+            if (dashTimer > 0)
+            {
+                dashTimer--;
+
+                if (AttackTimer % RocketTrailInterval == 0 && Main.netMode != NetmodeID.MultiplayerClient && !MuzzleBlocked(NPC.Center))
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(0, -10), ModContent.ProjectileType<ChaosBlackFire>(), NPC.damage / 6, 1, ai0: NPC.target);
+                }
+            }
+
+            int tickInDash = AttackTimer % RocketDashInterval;
+            int nextDashIndex = (AttackTimer / RocketDashInterval) + 1;
+            bool anotherDashComing = nextDashIndex < RocketFireTicks / RocketDashInterval;
+
+            if (anotherDashComing && tickInDash >= RocketDashInterval - LungeTellTicks)
+            {
+                if (!Main.dedServ)
+                {
+                    SpawnConvergingDust(DustID.DemonTorch, 100f, 3, 1.3f);
+                }
+
+                if (tickInDash == RocketDashInterval - LungeAimLockTicks)
+                {
+                    lockedAim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
+                    NPC.netUpdate = true;
+                }
+
+                if (!Main.dedServ && tickInDash >= RocketDashInterval - LungeAimLockTicks && lockedAim != Vector2.Zero)
+                {
+                    Dust.QuickDustLine(NPC.Center, NPC.Center + lockedAim * 500f, 20f, Color.MediumPurple);
+                }
+            }
+
+            if (AttackTimer >= RocketFireTicks)
+            {
+                DriftTowardRestPoint(target);
+            }
+
+            if (AttackTimer >= RocketFireTicks + RocketSettleTicks)
+            {
+                BeginRecovery(RocketRecoveryTicks);
+            }
+        }
+
+        void RunFireballStorm(Player target)
+        {
+            NPC.velocity *= 0.97f;
+
+            if (AttackTimer < StormChannelTicks)
+            {
+                // Fire and gold converging on the chest is the mod's shared "big cast incoming" read. The
+                // first two thirds are poise-interruptible; a chime and a flash mark the commit.
+                if (!Main.dedServ)
+                {
+                    SpawnConvergingDust(DustID.Torch, 130f, 3, 1.5f);
+                    SpawnConvergingDust(DustID.GoldFlame, 150f, 2, 1.2f);
+                }
+
+                if (AttackTimer == StormInterruptibleTicks && !Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item29 with { Pitch = 0.6f }, NPC.Center);
+
+                    for (int i = 0; i < 40; i++)
+                    {
+                        Vector2 flash = Main.rand.NextVector2CircularEdge(7f, 7f);
+                        Dust.NewDustPerfect(NPC.Center, DustID.GoldFlame, flash, 0, default, 2f).noGravity = true;
+                    }
+                }
+
+                return;
+            }
+
+            int fireTick = AttackTimer - StormChannelTicks;
+
+            if (fireTick < StormFireTicks)
+            {
+                // Ring angles are rolled here rather than at the call site so clients never roll their own.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    if (fireTick % StormBigRingInterval == 0)
+                    {
+                        ShootProjectile(target, 15, ModContent.ProjectileType<ChaosFireball>(), 20, Main.rand.Next(-360, 361), 18f, NPC.Center - new Vector2(0, 40), 0f);
                     }
 
-                    if (attackTimer % 10 == 0)
+                    if (fireTick % StormSmallRingInterval == 0)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(0, -10), ModContent.ProjectileType<ChaosBlackFire>(), NPC.damage / 6, 1);
-                    }
-
-                    if (attackTimer == 0)
-                    {
-                        attackTimer = 600;
-                        attackTracker = 1;
+                        ShootProjectile(target, 15, ModContent.ProjectileType<ChaosFireball>(), 10, Main.rand.Next(-360, 361), 36f, NPC.Center - new Vector2(0, 40), 0f);
                     }
                 }
             }
-            else if (phase == 2)
+            else
             {
-                if (attackTracker == 1)
+                DriftTowardRestPoint(target);
+            }
+
+            if (fireTick >= StormFireTicks + StormSettleTicks)
+            {
+                BeginRecovery(StormRecoveryTicks);
+            }
+        }
+
+        #endregion
+
+        #region Cataclysm Dive
+
+        const byte DivePhaseClimb = 0;
+        const byte DivePhaseHold = 1;
+        const byte DivePhasePlunge = 2;
+        const byte DivePhaseGrounded = 3;
+        const byte DivePhaseRise = 4;
+
+        ///<summary>The one physical card: Chaos climbs, locks onto a spot on the floor, and body-slams it,
+        ///throwing a ground wave each way. Built from motion + dust only, so it needs no new frames. Phase 3
+        ///slams twice before resting. Every geometry failure fizzles rather than diving into nothing.</summary>
+        void RunCataclysmDive(Player target)
+        {
+            if (divePhase == DivePhaseClimb)
+            {
+                if (AttackTimer == 0)
                 {
-                    FloatAbovePlayer(target, 0, 0, NPC, 5, 10, 0, target.Center);
-                    if (attackTimer % 5 == 0)
+                    floorY = FindFloorY((int)(target.Center.X / 16f), (int)(target.Bottom.Y / 16f));
+
+                    if (floorY <= 0f)
                     {
-                        ShootProjectile(NPC, target, 10, ProjectileID.Flames, false, 1, 0, 0, NPC.Center - new Vector2(0, 40), 0);
+                        FizzleDive();
+                        return;
                     }
 
-                    if (attackTimer % 60 == 0)
+                    diveApexY = floorY - DiveApexHeight;
+
+                    // Cap the apex under any ceiling above the player, so the climb can't clip the arena roof.
+                    int ceilingTileY = -1;
+                    int startTileY = (int)(target.Bottom.Y / 16f);
+                    for (int offset = 1; offset <= 60; offset++)
                     {
-                        ShootProjectile(NPC, target, 15, ProjectileID.Fireball, false, 5, 45, 22.5f, NPC.Center - new Vector2(0, 40), 0);
+                        int checkY = startTileY - offset;
+                        if (checkY < 5)
+                        {
+                            break;
+                        }
+
+                        if (IsSolidTile((int)(target.Center.X / 16f), checkY))
+                        {
+                            ceilingTileY = checkY;
+                            break;
+                        }
                     }
 
-                    if (attackTimer == 0)
+                    if (ceilingTileY > 0 && diveApexY < ceilingTileY * 16f + DiveCeilingPad)
                     {
-                        attackTimer = 600;
-                        attackTracker++;
+                        diveApexY = ceilingTileY * 16f + DiveCeilingPad;
+                    }
+
+                    // Not enough run-up left to read or to build speed.
+                    if (floorY - diveApexY < DiveMinRunUp)
+                    {
+                        FizzleDive();
+                        return;
+                    }
+
+                    NPC.netUpdate = true;
+                }
+
+                MoveToward(new Vector2(target.Center.X, diveApexY), DiveClimbSpeed, DiveClimbInertia);
+
+                if (AttackTimer >= DiveClimbTicks)
+                {
+                    BeginDivePhase(DivePhaseHold);
+                }
+
+                return;
+            }
+
+            if (divePhase == DivePhaseHold)
+            {
+                NPC.velocity *= 0.85f;
+
+                int holdTicks = DiveHoldTicks;
+                if (diveSlamsDone > 0)
+                {
+                    holdTicks = DiveEvolvedHoldTicks;
+                }
+
+                int lockTick = holdTicks - DiveLockLeadTicks;
+
+                if (AttackTimer == lockTick)
+                {
+                    lockedX = target.Center.X;
+                    NPC.netUpdate = true;
+                }
+
+                // The dust column IS the telegraph: it tracks the player until the lock, then freezes on the
+                // committed spot for the last 20 ticks.
+                float columnX = lockedX;
+                if (AttackTimer < lockTick)
+                {
+                    columnX = target.Center.X;
+                }
+
+                if (!Main.dedServ)
+                {
+                    Dust.QuickDustLine(new Vector2(columnX, NPC.Center.Y), new Vector2(columnX, floorY), 14f, Color.MediumPurple);
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 ringSpot = new Vector2(columnX + Main.rand.NextFloat(-DiveImpactRadius, DiveImpactRadius), floorY - 8f);
+                        Dust.NewDustPerfect(ringSpot, DustID.Shadowflame, new Vector2(0f, -1.5f), 100, default, 1.4f).noGravity = true;
                     }
                 }
-                else if (attackTracker == 2)
+
+                if (AttackTimer >= holdTicks)
                 {
-                    if (attackTimer % 40 == 0)
+                    BeginDivePhase(DivePhasePlunge);
+                }
+
+                return;
+            }
+
+            if (divePhase == DivePhasePlunge)
+            {
+                if (AttackTimer == 0)
+                {
+                    NPC.Center = new Vector2(lockedX, NPC.Center.Y);
+
+                    if (!Main.dedServ)
                     {
-                        Vector2 direction = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
-                        NPC.velocity = new Vector2(35f, 35f) * direction;
-                        dashTimer = 30;
+                        SoundEngine.PlaySound(SoundID.Item72 with { Pitch = -0.7f }, NPC.Center);
+                    }
+                }
+
+                // Re-set every tick so nothing else can slow the plunge.
+                NPC.velocity = new Vector2(0f, DivePlungeSpeed);
+
+                bool hitFloor = NPC.Bottom.Y >= floorY;
+                bool plungeTimedOut = AttackTimer >= DivePlungeTimeoutTicks;
+
+                if (hitFloor || plungeTimedOut)
+                {
+                    NPC.velocity = Vector2.Zero;
+
+                    if (hitFloor)
+                    {
+                        NPC.position.Y = floorY - NPC.height;
+                    }
+
+                    if (!Main.dedServ)
+                    {
+                        UsefulFunctions.ScreenShake(NPC.Center, 10f, 20);
+                        SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
+
+                        // Dirt kicked straight up off the floor — gravity on, so it arcs and falls back.
+                        for (int i = 0; i < 90; i++)
+                        {
+                            Vector2 kickUp = new Vector2(Main.rand.NextFloat(-5f, 5f), Main.rand.NextFloat(-13f, -4f));
+                            Dust.NewDustPerfect(NPC.Bottom + new Vector2(Main.rand.NextFloat(-95f, 95f), 0f), DustID.Dirt, kickUp, 0, default, Main.rand.NextFloat(1.4f, 2.3f));
+                        }
+
+                        // Dark fire boiling up out of the impact itself.
+                        for (int i = 0; i < 50; i++)
+                        {
+                            Vector2 burst = new Vector2(Main.rand.NextFloat(-9f, 9f), Main.rand.NextFloat(-7f, 1f));
+                            Dust.NewDustPerfect(NPC.Bottom + new Vector2(Main.rand.NextFloat(-60f, 60f), 0f), DustID.Shadowflame, burst, 90, default, 1.8f).noGravity = true;
+                        }
+
+                        // The damage wake: purple racing outward along the floor, drawn to the full reach the
+                        // shockwaves cover so the dust never promises less than the hitbox delivers.
+                        for (int i = 0; i < 70; i++)
+                        {
+                            float wakeDirection = 1f;
+                            if (Main.rand.NextBool())
+                            {
+                                wakeDirection = -1f;
+                            }
+
+                            Vector2 wakeVelocity = new Vector2(wakeDirection * Main.rand.NextFloat(9f, 19f), Main.rand.NextFloat(-3.5f, 0.5f));
+                            Dust wake = Dust.NewDustPerfect(NPC.Bottom + new Vector2(Main.rand.NextFloat(-40f, 40f), Main.rand.NextFloat(-14f, 0f)), DustID.DemonTorch, wakeVelocity, 60, default, Main.rand.NextFloat(1.6f, 2.4f));
+                            wake.noGravity = true;
+                            wake.fadeIn = 1.3f;
+                        }
+                    }
+
+                    // Concussion: within 50 tiles you are crippled briefly, whether or not the ground waves
+                    // reach you. Applied by each machine to its OWN player, the same way a hostile projectile's
+                    // OnHitPlayer does: Player.AddBuff only networks itself when called from a client, so a
+                    // server-side loop over Main.player would land on nobody in multiplayer.
+                    if (!Main.dedServ)
+                    {
+                        Player localPlayer = Main.LocalPlayer;
+
+                        if (localPlayer.active && !localPlayer.dead && localPlayer.Distance(NPC.Bottom) <= SlamCrippleRange)
+                        {
+                            localPlayer.AddBuff(ModContent.BuffType<Buffs.Debuffs.Crippled>(), SlamCrippleTicks);
+                        }
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 wavePosition = new Vector2(NPC.Center.X, floorY - 20f);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), wavePosition, Vector2.Zero, ModContent.ProjectileType<ChaosShockwave>(), NPC.damage / 6, 1, ai0: 1f, ai1: ShockwaveArmTicks);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), wavePosition, Vector2.Zero, ModContent.ProjectileType<ChaosShockwave>(), NPC.damage / 6, 1, ai0: -1f, ai1: ShockwaveArmTicks);
+                    }
+
+                    diveSlamsDone++;
+
+                    if (phase >= 3 && diveSlamsDone < DiveEvolvedSlams)
+                    {
+                        BeginDivePhase(DivePhaseRise);
                     }
                     else
                     {
-                        NPC.velocity *= 0.97f;
-                    }
-                    float currentSpeed = (NPC.velocity.Y + NPC.velocity.X) / 2;
-                    if (dashTimer > 0)
-                    {
-                        if (attackTimer % 10 == 0)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(0, -10), ModContent.ProjectileType<ChaosBlackFire>(), NPC.damage / 6, 1);
-                        }
-                    }
-
-                    if (attackTimer == 0)
-                    {
-                        attackTimer = 600;
-                        attackTracker++;
+                        BeginDivePhase(DivePhaseGrounded);
                     }
                 }
-                else if (attackTracker == 3)
-                {
-                    NPC.velocity *= 0.97f;
-                    if (Main.rand.NextBool(2))
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Torch, Scale: 2f);
-                    }
-                    if (attackTimer <= 525)
-                    {
-                        if (attackTimer % 50 == 0)
-                        {
-                            ShootProjectile(NPC, target, 15, ProjectileID.Fireball, false, 20, Main.rand.Next(-360, 361), 18, NPC.Center - new Vector2(0, 40), 0);
-                        }
 
-                        if (attackTimer % 20 == 0)
-                        {
-                            ShootProjectile(NPC, target, 15, ProjectileID.Fireball, false, 10, Main.rand.Next(-360, 361), 36, NPC.Center - new Vector2(0, 40), 0);
-                        }
-                    }
-
-                    if (attackTimer == 0)
-                    {
-                        attackTimer = 600;
-                        attackTracker = 1;
-                    }
-                }
+                return;
             }
 
-            else if (phase == 3)
+            if (divePhase == DivePhaseGrounded)
             {
-                if (attackTracker == 1)
+                // The best melee window in the fight: Chaos is sitting on the floor with no hyper-armor.
+                NPC.velocity = Vector2.Zero;
+
+                if (!Main.dedServ && Main.rand.NextBool(2))
                 {
-                    //shadow flame teleports
-                    FloatAbovePlayer(target, 0, 0, NPC, 10, 20, 0, target.Center);
-                    if (attackTimer % 5 == 0)
-                    {
-                        ShootProjectile(NPC, target, 10, ProjectileID.ShadowFlame, false, 1, 0, 0, NPC.Center - new Vector2(0, 40), 30);
-                    }
+                    Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(60f, 70f), DustID.Torch, new Vector2(0f, 0.8f), 140, default, 1.2f);
+                }
 
-                    if (attackTimer % 120 == 0)
-                    {
-                        teleportTimer = 80;
-                        teleportPosition = new Vector2(target.Center.X + Main.rand.Next(-300, 300), target.Center.Y + Main.rand.Next(-300, 300));
-                    }
+                if (AttackTimer >= DiveGroundedTicks)
+                {
+                    BeginRecovery(DiveRecoveryTicks);
+                }
 
-                    if (teleportTimer > 0)
-                    {
-                        for (int i = 0; i < 10; i++)
-                        {
-                            Dust.NewDust(teleportPosition, 130, 140, DustID.Shadowflame);
-                        }
-                    }
+                return;
+            }
 
-                    if (teleportTimer == 0)
-                    {
-                        NPC.Center = teleportPosition;
-                    }
+            // DivePhaseRise: shove off the floor and re-lock for the second slam.
+            NPC.velocity = new Vector2(0f, -DiveRiseSpeed);
 
-                    if (attackTimer == 0)
+            if (AttackTimer >= DiveRiseTicks)
+            {
+                BeginDivePhase(DivePhaseHold);
+            }
+        }
+
+        ///<summary>Moves to a dive sub-phase, restarting the tick count so each sub-phase's own tick 0 runs.</summary>
+        void BeginDivePhase(byte next)
+        {
+            divePhase = next;
+            AttackTimer = 0;
+            stateJustChanged = true;
+            NPC.netUpdate = true;
+        }
+
+        ///<summary>No usable floor, or no room to climb: puff out and take a short recovery rather than dive
+        ///into geometry that can't carry the attack.</summary>
+        void FizzleDive()
+        {
+            if (!Main.dedServ)
+            {
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(60f, 60f), DustID.Smoke, Main.rand.NextVector2Circular(2f, 2f), 150, default, 1.5f).noGravity = true;
+                }
+            }
+
+            BeginRecovery(DiveFizzleRecoveryTicks);
+        }
+
+        ///<summary>World (pixel) Y of the floor surface under a tile column, or -1 when there is no floor flat
+        ///enough within 60 tiles. Flatness = solid ground within 2 tiles of that height across 6 columns each
+        ///side, which is what ChaosShockwave needs to crawl. Callers: the dive's bag gate, the dive's own
+        ///geometry resolve, and the teleport arrival clamp.</summary>
+        float FindFloorY(int tileX, int startTileY)
+        {
+            if (tileX < 10 || tileX > Main.maxTilesX - 10)
+            {
+                return -1f;
+            }
+
+            int floorTileY = -1;
+            for (int offset = 0; offset <= 60; offset++)
+            {
+                int checkY = startTileY + offset;
+                if (checkY < 5 || checkY > Main.maxTilesY - 10)
+                {
+                    break;
+                }
+
+                if (IsSolidTile(tileX, checkY))
+                {
+                    floorTileY = checkY;
+                    break;
+                }
+            }
+
+            if (floorTileY < 0)
+            {
+                return -1f;
+            }
+
+            for (int column = -6; column <= 6; column++)
+            {
+                int neighbourX = tileX + column;
+                if (neighbourX < 10 || neighbourX > Main.maxTilesX - 10)
+                {
+                    return -1f;
+                }
+
+                bool matched = false;
+                for (int offset = -2; offset <= 2; offset++)
+                {
+                    if (IsSolidTile(neighbourX, floorTileY + offset))
                     {
-                        attackTimer = 600;
-                        attackTracker++;
+                        matched = true;
+                        break;
                     }
                 }
 
-                if (attackTracker == 2)
+                if (!matched)
                 {
-                    //laser grid
-                    FloatAbovePlayer(target, 0, 0, NPC, 10, 20, 0, target.Center + new Vector2(600, 0));
+                    return -1f;
+                }
+            }
 
-                    if (attackTimer % 80 == 0)
+            return floorTileY * 16f;
+        }
+
+        static bool IsSolidTile(int x, int y)
+        {
+            if (x < 0 || x >= Main.maxTilesX || y < 0 || y >= Main.maxTilesY)
+            {
+                return false;
+            }
+
+            Tile tile = Main.tile[x, y];
+            return tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType];
+        }
+
+        #endregion
+
+        #region Phase 3 attacks
+
+        void RunShadowflameTeleport(Player target)
+        {
+            MoveToward(target.Center, 10f, 20f);
+
+            if (AttackTimer < TeleportFireTicks && AttackTimer % TeleportFlameInterval == 0)
+            {
+                ShootProjectile(target, 10, ProjectileID.ShadowFlame, 1, 0f, 0f, NPC.Center - new Vector2(0, 40), TeleportFlameSpread, hostileVanillaFlame: true);
+            }
+
+            // Roll the destination, then show it for 80 ticks before actually moving.
+            if (AttackTimer < TeleportFireTicks && AttackTimer % TeleportCycleTicks == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                float destinationX = target.Center.X + Main.rand.Next(-300, 301);
+                float destinationY = target.Center.Y + Main.rand.Next(-300, 301);
+
+                // Never blink into rock. The roll is unconstrained in both axes, so on its own it happily lands
+                // inside the floor or a wall; ClearOfTiles walks it back toward the player until it is in air.
+                teleportPosition = ClearOfTiles(new Vector2(destinationX, destinationY), target);
+                NPC.netUpdate = true;
+            }
+
+            int tickInCycle = AttackTimer % TeleportCycleTicks;
+
+            if (!Main.dedServ && teleportPosition != Vector2.Zero && tickInCycle < TeleportTelegraphTicks)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    Dust.NewDust(teleportPosition - new Vector2(NPC.width / 2f, NPC.height / 2f), NPC.width, NPC.height, DustID.Shadowflame);
+                }
+            }
+
+            if (tickInCycle == TeleportTelegraphTicks && AttackTimer <= TeleportLastArrival && teleportPosition != Vector2.Zero)
+            {
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+
+                    for (int i = 0; i < 25; i++)
                     {
-                        ShootProjectile(NPC, target, 7, ProjectileID.Fireball, true, 3, 22.5f, 22.5f, NPC.Center - new Vector2(0, 40), 0);
-                    }
-
-                    if (attackTimer % 120 == 0 && attackTimer != 0)
-                    {
-                        xOffset = Main.rand.Next(-2100, -1400);
-                        yOffset = Main.rand.Next(700, 1400);
-                        laserGridOrigin = target.Center;
-                        telegraphTimer = 60;
-
-                        for (int i = 0; i < 20; i++)
-                        {
-                            Vector2 startPosition = laserGridOrigin + new Vector2(xOffset + (i * 200), LaserGridStartY);
-                            Dust.QuickDustLine(startPosition, startPosition + new Vector2(0, 3000), (startPosition + new Vector2(0, 3000)).Length() / 400, Color.Purple);
-                        }
-
-                        for (int i = 0; i < 20; i++)
-                        {
-                            Vector2 startPosition = laserGridOrigin + new Vector2(1400, yOffset - (i * 200));
-                            Dust.QuickDustLine(startPosition, startPosition + new Vector2(-3000, 0), (startPosition + new Vector2(0, 3000)).Length() / 400, Color.Purple);
-                        }
-                    }
-
-                    if (telegraphTimer == 0)
-                    {
-                        for (int i = 0; i < 20; i++)
-                        {
-                            Vector2 startPosition = laserGridOrigin + new Vector2(xOffset + i * 200, LaserGridStartY);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), startPosition, new Vector2(0, 17), ModContent.ProjectileType<ChaosDemonBolt>(), NPC.damage / 6, 1);
-                        }
-
-                        for (int i = 0; i < 20; i++)
-                        {
-                            Vector2 startPosition = laserGridOrigin + new Vector2(1400, yOffset - (i * 200));
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), startPosition, new Vector2(-17, 0), ModContent.ProjectileType<ChaosDemonBolt>(), NPC.damage / 6, 1);
-                        }
-                    }
-
-                    if (attackTimer == 0)
-                    {
-                        attackTimer = 600;
-                        attackTracker++;
+                        Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(60f, 70f), DustID.Shadowflame, Main.rand.NextVector2Circular(5f, 5f), 90, default, 1.5f).noGravity = true;
                     }
                 }
-                else if (attackTracker == 3)
+
+                NPC.Center = teleportPosition;
+                NPC.velocity = Vector2.Zero;
+                NPC.netUpdate = true;
+
+                if (!Main.dedServ)
                 {
-                    //circle attack
-                    angle += 4f;
-                    FloatAbovePlayer(target, 0, 0, NPC, 50, 5, 0, target.Center + new Vector2(1, 1).RotatedBy(MathHelper.ToRadians(angle)) * 700);
-
-                    if (attackTimer % 15 == 0)
+                    for (int i = 0; i < 25; i++)
                     {
-                        ShootProjectile(NPC, target, 4, ProjectileID.DemonSickle, false, 1, 0, 0, NPC.Center - new Vector2(0, 40), 0);
-                    }
-
-                    if (attackTimer % 120 == 0)
-                    {
-                        ShootProjectile(NPC, target, 7, ProjectileID.Fireball, false, 20, Main.rand.Next(-360, 361), 20, NPC.Center - new Vector2(0, 40), 0);
-                    }
-
-                    if (attackTimer == 0)
-                    {
-                        attackTimer = 600;
-                        attackTracker = 1;
+                        Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(60f, 70f), DustID.Shadowflame, Main.rand.NextVector2Circular(5f, 5f), 90, default, 1.5f).noGravity = true;
                     }
                 }
             }
+
+            if (AttackTimer >= TeleportFireTicks)
+            {
+                BeginRecovery(TeleportRecoveryTicks);
+            }
+        }
+
+        void RunLaserGrid(Player target)
+        {
+            MoveToward(ClearOfTiles(target.Center + new Vector2(ApproachSide(target) * GridStandoffX, 0f), target), 10f, 20f);
+
+            int tickInRound = AttackTimer % GridRoundTicks;
+
+            if (AttackTimer < GridFireTicks)
+            {
+                // The flame fan is kept, but it now lives in its own window: flames and beams are never in
+                // flight together, and each round has two vent pauses the player can push damage into.
+                // Vanilla Fireball is used here because this shot WANTS tile collision, which is its default.
+                if (tickInRound == 0 || tickInRound == GridSecondVolleyTick)
+                {
+                    ShootProjectile(target, 7, ProjectileID.Fireball, 3, 22.5f, 22.5f, NPC.Center - new Vector2(0, 40), 0f);
+                }
+
+                // Capture the anchor ONCE and use it for both axes. The old code anchored the vertical beams
+                // but re-read the live player position for the horizontal ones, so the horizontals missed
+                // their own drawn telegraph lines whenever the player moved during it.
+                if (tickInRound == GridTelegraphStartTick && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    gridAnchor = target.Center;
+                    gridXOffset = (short)Main.rand.Next(-2100, -1400);
+                    gridYOffset = (short)Main.rand.Next(700, 1400);
+                    NPC.netUpdate = true;
+                }
+
+                // The original one-shot dust lines, unchanged: same colour, same -1000 start, same split count
+                // (a world-coordinate length over 400, so ~100 dusts per line — that density IS the telegraph).
+                // The only fix is the anchor: both axes now read gridAnchor, where the horizontals used to
+                // re-read the live player position and so missed the lines that had been drawn for them.
+                if (tickInRound == GridTelegraphStartTick && gridAnchor != Vector2.Zero && !Main.dedServ)
+                {
+                    for (int i = 0; i < GridBeamsPerAxis; i++)
+                    {
+                        Vector2 lineStart = gridAnchor + new Vector2(gridXOffset + i * GridBeamSpacing, GridBeamStartY);
+                        Vector2 lineEnd = lineStart + new Vector2(0f, 3000f);
+                        Dust.QuickDustLine(lineStart, lineEnd, lineEnd.Length() / 400f, Color.Purple);
+                    }
+
+                    for (int i = 0; i < GridBeamsPerAxis; i++)
+                    {
+                        Vector2 lineStart = gridAnchor + new Vector2(1400f, gridYOffset - i * GridBeamSpacing);
+                        Vector2 lineEnd = lineStart + new Vector2(-3000f, 0f);
+                        Dust.QuickDustLine(lineStart, lineEnd, (lineStart + new Vector2(0f, 3000f)).Length() / 400f, Color.Purple);
+                    }
+                }
+
+                if (tickInRound == GridBeamTick && gridAnchor != Vector2.Zero && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int boltType = ModContent.ProjectileType<ChaosDemonBolt>();
+
+                    for (int i = 0; i < GridBeamsPerAxis; i++)
+                    {
+                        Vector2 spawn = gridAnchor + new Vector2(gridXOffset + i * GridBeamSpacing, GridBeamStartY);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, new Vector2(0, 17), boltType, NPC.damage / 6, 1);
+                    }
+
+                    for (int i = 0; i < GridBeamsPerAxis; i++)
+                    {
+                        Vector2 spawn = gridAnchor + new Vector2(1400f, gridYOffset - i * GridBeamSpacing);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, new Vector2(-17, 0), boltType, NPC.damage / 6, 1);
+                    }
+                }
+            }
+
+            if (AttackTimer >= GridFireTicks)
+            {
+                BeginRecovery(GridRecoveryTicks);
+            }
+        }
+
+        void RunOrbitalSickle(Player target)
+        {
+            if (AttackTimer == 0)
+            {
+                // Start the orbit from wherever Chaos already is and ease the radius outward, so it doesn't
+                // slide across the arena on the first tick. The -45 degrees compensates the (1,1) basis below.
+                Vector2 fromPlayer = NPC.Center - target.Center;
+                orbitAngle = MathHelper.ToDegrees(fromPlayer.ToRotation()) - 45f;
+                orbitStartRadius = fromPlayer.Length() / 1.41421f;
+
+                if (orbitStartRadius < 120f)
+                {
+                    orbitStartRadius = 120f;
+                }
+
+                NPC.netUpdate = true;
+            }
+
+            if (AttackTimer < OrbitFireTicks)
+            {
+                orbitAngle += OrbitDegreesPerTick;
+
+                float easeProgress = MathHelper.Clamp(AttackTimer / (float)OrbitEaseTicks, 0f, 1f);
+                float radius = MathHelper.Lerp(orbitStartRadius, OrbitRadius, easeProgress);
+
+                Vector2 orbitTo = target.Center + new Vector2(1f, 1f).RotatedBy(MathHelper.ToRadians(orbitAngle)) * radius;
+                MoveToward(ClearOfTiles(orbitTo, target), 50f, 5f);
+            }
+            else
+            {
+                // Break orbit and start heading in. This attack ends ~990px out, which at the recovery drift
+                // speed is more than its whole punish window, so the travel is paid for here instead.
+                DriftTowardRestPoint(target);
+            }
+
+            if (AttackTimer < OrbitFireTicks)
+            {
+                if (AttackTimer % OrbitSickleInterval == 0)
+                {
+                    ShootProjectile(target, 4, ModContent.ProjectileType<ChaosDemonSickle>(), 1, 0f, 0f, NPC.Center - new Vector2(0, 40), 0f);
+                }
+
+                if (AttackTimer % OrbitNovaInterval == OrbitNovaOffset && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    ShootProjectile(target, 7, ModContent.ProjectileType<ChaosFireball>(), 20, Main.rand.Next(-360, 361), 20f, NPC.Center - new Vector2(0, 40), 0f);
+                }
+            }
+
+            if (AttackTimer >= OrbitFireTicks + OrbitSettleTicks)
+            {
+                BeginRecovery(OrbitRecoveryTicks);
+            }
+        }
+
+        #endregion
+
+        #region Gale, Singularity and Brood
+
+        ///<summary>Wing Buffet Gale: a ring boundary fades in around Chaos, then three heavy flaps shove the
+        ///player outward toward it. The push is capped and beatable by moving inward, so the ring only catches
+        ///someone who stopped resisting — that is the whole test.</summary>
+        void RunWingGale(Player target)
+        {
+            NPC.velocity *= 0.93f;
+
+            if (AttackTimer == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                // Anchored here and left: a boundary that followed Chaos would be unlearnable.
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<ChaosGaleRing>(), NPC.damage / 6, 1f,
+                    ai0: GaleRingRadius, ai1: GaleRingHold);
+            }
+
+            // Wind-up runs as long as the ring's fade-in, so nothing pushes before the boundary is readable.
+            if (AttackTimer < GaleWindupTicks)
+            {
+                if (!Main.dedServ)
+                {
+                    SpawnConvergingDust(DustID.DemonTorch, 150f, 3, 1.4f);
+                }
+
+                return;
+            }
+
+            int tickInFlap = (AttackTimer - GaleWindupTicks) % GaleFlapInterval;
+            int flapIndex = (AttackTimer - GaleWindupTicks) / GaleFlapInterval;
+
+            if (tickInFlap == 0 && flapIndex < GaleFlaps && !Main.dedServ)
+            {
+                SoundEngine.PlaySound(SoundID.Item32 with { Pitch = -0.4f }, NPC.Center);
+                UsefulFunctions.ScreenShake(NPC.Center, 4f, 12);
+
+                // A burst of dust thrown outward along the gust, so the shove is visible before it lands.
+                for (int i = 0; i < 60; i++)
+                {
+                    Vector2 outward = Main.rand.NextVector2CircularEdge(1f, 1f);
+                    Dust gust = Dust.NewDustPerfect(NPC.Center + outward * 60f, DustID.Smoke, outward * Main.rand.NextFloat(9f, 17f), 130, default, 2f);
+                    gust.noGravity = true;
+                }
+            }
+
+            // The push itself. Applied per machine to its own player, matching the projectile force-zone rule:
+            // each client is authoritative for its own player, so this must not be server-gated.
+            if (tickInFlap < GalePushTicks && flapIndex < GaleFlaps && !Main.dedServ)
+            {
+                Player localPlayer = Main.LocalPlayer;
+
+                if (localPlayer.active && !localPlayer.dead)
+                {
+                    Vector2 outward = localPlayer.Center - NPC.Center;
+                    float distance = outward.Length();
+
+                    if (distance > 1f && distance < GalePushRange)
+                    {
+                        float falloff = 1f - distance / GalePushRange;
+                        localPlayer.velocity += outward / distance * GalePushSpeed * falloff * 0.18f;
+                    }
+                }
+            }
+
+            if (AttackTimer >= GaleFireTicks)
+            {
+                BeginRecovery(GaleRecoveryTicks);
+            }
+        }
+
+        ///<summary>Void Singularity: a short cast that tears open a hole in the arena, then Chaos goes back to
+        ///fighting. The tear lives six seconds on its own (ChaosSingularity), which is the point — it overlaps
+        ///whatever comes next instead of being a thing you wait out.</summary>
+        void RunVoidSingularity(Player target)
+        {
+            NPC.velocity *= 0.95f;
+
+            // Telegraph at the spot it will open, not on Chaos: the player needs to know where to avoid.
+            Vector2 tearPoint = target.Center + (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX) * SingularityPlacementRange;
+            tearPoint = ClearOfTiles(tearPoint, target);
+
+            if (AttackTimer < SingularityTelegraphTicks)
+            {
+                if (!Main.dedServ)
+                {
+                    SpawnConvergingDust(DustID.Shadowflame, 120f, 3, 1.5f);
+
+                    // Motes falling inward at the destination, pre-selling the pull.
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 offset = Main.rand.NextVector2CircularEdge(190f, 190f);
+                        Dust mote = Dust.NewDustPerfect(tearPoint + offset, DustID.DemonTorch, -offset / 15f, 80, default, 1.5f);
+                        mote.noGravity = true;
+                    }
+                }
+
+                return;
+            }
+
+            if (AttackTimer == SingularityTelegraphTicks)
+            {
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item122 with { Pitch = -0.6f }, tearPoint);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), tearPoint, Vector2.Zero,
+                        ModContent.ProjectileType<ChaosSingularity>(), NPC.damage / 6, 1f);
+                }
+            }
+
+            if (AttackTimer >= SingularityCastTicks)
+            {
+                BeginRecovery(SingularityRecoveryTicks);
+            }
+        }
+
+        ///<summary>Fiend's Brood: plants three destructible sigils in a ring around the player, then Chaos
+        ///resumes. They snipe until killed, so for once the player is choosing between two targets rather than
+        ///just dodging.</summary>
+        void RunFiendsBrood(Player target)
+        {
+            NPC.velocity *= 0.95f;
+
+            if (AttackTimer < BroodTelegraphTicks)
+            {
+                if (!Main.dedServ)
+                {
+                    SpawnConvergingDust(DustID.DemonTorch, 140f, 4, 1.5f);
+                }
+
+                return;
+            }
+
+            if (AttackTimer == BroodTelegraphTicks && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                // Evenly spaced around the player and rolled off a random bearing, so the brood never lands in
+                // the same arrangement twice.
+                float baseAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+
+                for (int i = 0; i < BroodSigilCount; i++)
+                {
+                    float angle = baseAngle + MathHelper.TwoPi * i / BroodSigilCount;
+                    Vector2 spot = target.Center + angle.ToRotationVector2() * BroodSigilRadius;
+                    spot = ClearOfTiles(spot, target);
+
+                    int sigil = NPC.NewNPC(NPC.GetSource_FromThis(), (int)spot.X, (int)spot.Y,
+                        ModContent.NPCType<ChaosBroodSigil>(), 0, NPC.whoAmI, 0f, i * (ChaosBroodSigil.BoltInterval / BroodSigilCount));
+
+                    if (sigil < Main.maxNPCs && Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.SyncNPC, number: sigil);
+                    }
+                }
+            }
+
+            if (AttackTimer >= BroodCastTicks)
+            {
+                BeginRecovery(BroodRecoveryTicks);
+            }
+        }
+
+        #endregion
+
+        #region Shared primitives
+
+        ///<summary>Which side of the player Chaos positions on for this attack: +1 right, -1 left. Latched on
+        ///first use and held until the next attack starts (see StartAttack).
+        ///
+        ///Every caller used to recompute this from Chaos's current position each tick, which meant that any
+        ///drift across the player's X flipped it — jumping the destination by twice the stand-off distance and
+        ///reversing Chaos mid-flight. That oscillation is what read as a jittery wobble.</summary>
+        int ApproachSide(Player target)
+        {
+            if (approachSide == 0)
+            {
+                approachSide = 1;
+                if (NPC.Center.X < target.Center.X)
+                {
+                    approachSide = -1;
+                }
+
+                NPC.netUpdate = true;
+            }
+
+            return approachSide;
+        }
+
+        ///<summary>Whether Chaos's body would be buried at this centre. Samples a 3x3 grid across the sprite box
+        ///rather than a single point — Chaos is 130x160, so a centre-only test happily parks it with most of its
+        ///body inside a wall.</summary>
+        bool IsBlockedAt(Vector2 center)
+        {
+            for (int sampleX = -1; sampleX <= 1; sampleX++)
+            {
+                for (int sampleY = -1; sampleY <= 1; sampleY++)
+                {
+                    Vector2 sample = center + new Vector2(sampleX * NPC.width * 0.4f, sampleY * NPC.height * 0.4f);
+
+                    if (IsSolidTile((int)(sample.X / 16f), (int)(sample.Y / 16f)))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        ///<summary>The nearest open spot to `destination`, searched back along the line toward the player.
+        ///
+        ///Chaos has noTileCollide, so left alone its orbit, sweep and teleport destinations end up inside rock,
+        ///where it is invisible and firing out of solid ground. The player always stands in open air, so walking
+        ///the line toward them is guaranteed to escape; the player's own position is the worst case.</summary>
+        Vector2 ClearOfTiles(Vector2 destination, Player target)
+        {
+            if (!IsBlockedAt(destination))
+            {
+                return destination;
+            }
+
+            Vector2 toPlayer = target.Center - destination;
+            float distance = toPlayer.Length();
+
+            if (distance < 1f)
+            {
+                return target.Center;
+            }
+
+            Vector2 step = toPlayer / distance * 48f;
+            Vector2 probe = destination;
+
+            for (int i = 0; i < 24; i++)
+            {
+                probe += step;
+
+                if (!IsBlockedAt(probe))
+                {
+                    return probe;
+                }
+            }
+
+            return target.Center;
+        }
+
+        ///<summary>Whether a projectile spawn point sits inside solid rock.</summary>
+        bool MuzzleBlocked(Vector2 muzzle)
+        {
+            return IsSolidTile((int)(muzzle.X / 16f), (int)(muzzle.Y / 16f));
+        }
+
+        ///<summary>Eases Chaos toward a destination. Higher inertia = lazier turn. This is the only movement
+        ///primitive the attacks use, so a hover, a sweep and an orbit differ only in destination and speed.</summary>
+        void MoveToward(Vector2 destination, float speed, float inertia)
+        {
+            Vector2 toDestination = destination - NPC.Center;
+            Vector2 direction = toDestination.SafeNormalize(Vector2.UnitY);
+            Vector2 moveTo = direction * speed;
+            NPC.velocity = (NPC.velocity * (inertia - 1f) + moveTo) / inertia;
+        }
+
+        ///<summary>Fires `count` projectiles fanned around the aim from startPosition to the target. Angles are
+        ///degrees; spreadDegrees jitters each shot. This is the single choke point for every fan, ring and
+        ///stream Chaos fires, hence the one server guard.
+        ///
+        ///`hostileVanillaFlame` is for Flames and ShadowFlame only. Both are alpha-255 sprites drawn by bespoke
+        ///vanilla routines keyed on their literal type, so they cannot be wrapped in a ModProjectile (CloneDefaults
+        ///+ AIType aliases the AI but never the draw, which renders them invisible). Instead they are spawned as
+        ///the real vanilla type carrying tsorcGlobalProjectile.HostileVanillaMarker in ai[2] — a synced slot
+        ///neither aiStyle uses — and every peer re-derives the hostile flags from it. Every other type Chaos
+        ///fires is already hostile from its own SetDefaults.</summary>
+        void ShootProjectile(Player target, int speed, int type, int count, float startAngle, float angleDecrement, Vector2 startPosition, float spreadDegrees, bool hostileVanillaFlame = false)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            // Never fire from inside rock. The destination clamps keep Chaos in open air, but it has
+            // noTileCollide and can still be carried into a wall mid-attack.
+            if (MuzzleBlocked(startPosition))
+            {
+                return;
+            }
+
+            float hostileMarker = 0f;
+            if (hostileVanillaFlame)
+            {
+                hostileMarker = Content.Projectiles.tsorcGlobalProjectile.HostileVanillaMarker;
+            }
+
+            Vector2 toTarget = target.Center - startPosition;
+            Vector2 aim = toTarget.SafeNormalize(Vector2.UnitX);
+            float angle = startAngle;
+
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 velocity = (aim.RotatedBy(MathHelper.ToRadians(angle)) * speed).RotatedByRandom(MathHelper.ToRadians(spreadDegrees));
+                int spawned = Projectile.NewProjectile(NPC.GetSource_FromThis(), startPosition, velocity, type, NPC.damage / 6, 1, ai2: hostileMarker);
+
+                if (hostileVanillaFlame)
+                {
+                    // Flip locally too, so the spawn tick is already correct here; the marker is what makes
+                    // every other machine agree from its own PreAI.
+                    Main.projectile[spawned].hostile = true;
+                    Main.projectile[spawned].friendly = false;
+                    Main.projectile[spawned].tileCollide = false;
+                }
+
+                angle -= angleDecrement;
+            }
+        }
+
+        ///<summary>Dust spawned on a ring and given velocity toward Chaos's chest — the mod's shared "big cast
+        ///incoming" read. Radius is where the motes appear; they reach the body in roughly 12 ticks.</summary>
+        void SpawnConvergingDust(int dustType, float radius, int count, float scale)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 offset = Main.rand.NextVector2CircularEdge(radius, radius);
+                Vector2 inward = -offset / 12f;
+                Dust.NewDustPerfect(NPC.Center + offset, dustType, inward, 100, default, scale).noGravity = true;
+            }
+        }
+
+        #endregion
+
+        public void OnStagger(NPC npc)
+        {
+            if (!Main.dedServ)
+            {
+                SoundEngine.PlaySound(SoundID.Item27 with { Pitch = -0.4f }, NPC.Center);
+
+                for (int i = 0; i < 30; i++)
+                {
+                    Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(70f, 90f), DustID.Shadowflame, Main.rand.NextVector2Circular(4f, 4f), 90, default, 1.4f).noGravity = true;
+                }
+            }
+
+            // A phase transition isn't an attack and the new phase's deck depends on it finishing, so don't
+            // let a stagger cut it short.
+            if (State == AttackState.PhaseTransition)
+            {
+                return;
+            }
+
+            BeginRecovery(StaggerRecoveryTicks);
         }
 
         public override void OnKill() //special death animation

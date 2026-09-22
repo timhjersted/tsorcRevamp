@@ -311,8 +311,27 @@ namespace tsorcRevamp.Content.Projectiles
                 projectile.ArmorPenetration = 30;
             }
         }
+        /// <summary>
+        /// Stamped into ai[2] by an enemy that fires a vanilla projectile which is `friendly` by default.
+        ///
+        /// `hostile`/`friendly`/`tileCollide` are NOT part of the projectile sync packet, so flipping them after
+        /// NewProjectile only ever reaches the machine that spawned it — every remote client rebuilds the
+        /// projectile from vanilla's own defaults and gets a harmless friendly one back. ai[2] IS synced, so a
+        /// marker there lets every peer re-derive the flags identically in PreAI below.
+        /// </summary>
+        public const float HostileVanillaMarker = 74211f;
+
         public override bool PreAI(Projectile projectile)
         {
+            // Re-derived every tick rather than on spawn: a client creates the projectile from the packet, so
+            // this is the only place the flags can be corrected on that machine.
+            if (projectile.ai[2] == HostileVanillaMarker)
+            {
+                projectile.hostile = true;
+                projectile.friendly = false;
+                projectile.tileCollide = false;
+            }
+
             if (projectile.owner < Main.maxPlayers && Main.player[projectile.owner].active)
             {
                 Player player = Main.player[projectile.owner];
