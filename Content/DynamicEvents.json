@@ -269,8 +269,8 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "A Hemogoblin Shark is thirsty for blood!",
     "TextColorHex": "FF0000FF",
-    "WorldCondition": null,
-    "MapCondition": "OnlyAdventureMapCondition",
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
     "CustomAction": "SetNightCustomAction",
     "SingleNpcMarker": false,
     "Npcs": [

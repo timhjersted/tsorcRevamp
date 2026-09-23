@@ -523,7 +523,12 @@ namespace tsorcRevamp
             dodgeDirectionVisual = (sbyte)Player.direction;
             dodgeDirection = wantedDodgerollDir != 0 ? wantedDodgerollDir : (sbyte)Player.direction;
             dodgeCooldown = DodgeDefaultCooldown;
-            beforeRollSpeed = Math.Abs(Player.velocity.X);
+
+            // Capped at the game's own run-speed ceiling: this carries the player's current speed INTO the
+            // roll (see UpdateDodging), and without a cap any external velocity spike — a boss push, a
+            // knockback, anything that sets velocity.X directly rather than through normal acceleration —
+            // becomes the roll's new base speed and then gets the 1.4x ground multiplier on top of it.
+            beforeRollSpeed = Math.Min(Math.Abs(Player.velocity.X), SoulsModeMobility.GlobalRunSpeedCap);
 
 
             if (!Player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging)

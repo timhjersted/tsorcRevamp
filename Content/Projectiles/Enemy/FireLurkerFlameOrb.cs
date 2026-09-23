@@ -8,6 +8,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     class FireLurkerFlameOrb : ModProjectile
     {
         const int ReleasedTime = 3 * 60;
+        const float CombatRange = 50 * 16f;
 
         public override void SetStaticDefaults()
         {
@@ -90,11 +91,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
-            Player target = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
-            if (target.active && !target.dead)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Vector2 targetVelocity = Projectile.DirectionTo(target.Center) * 2.1f;
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, targetVelocity, 0.035f);
+                Player target = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
+                if (target.active && !target.dead && Projectile.Distance(target.Center) <= CombatRange)
+                {
+                    Vector2 targetVelocity = Projectile.DirectionTo(target.Center) * 2.1f;
+                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, targetVelocity, 0.035f);
+                }
+                if (Projectile.timeLeft % 10 == 0)
+                {
+                    Projectile.netUpdate = true;
+                }
             }
 
             FaceVelocity();

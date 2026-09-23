@@ -104,6 +104,11 @@ namespace tsorcRevamp
                 }
             }
 
+            // Hemoglobin Shark (vanilla NPCID.GoblinShark) - rare, tough Blood Moon ocean miniboss.
+            // The only vanilla-NPC entry here, so it's assigned directly rather than via Register(),
+            // which looks NPCs up by name in this mod's own ModNPC registry.
+            Assignments[NPCID.GoblinShark] = new TrackAssignment(Path("Invader"), Path("Invader"), MusicID.Boss1, SceneEffectPriority.BossLow);
+
             Register("Pinwheel", "Boss18", "Boss18", MusicID.Boss2);
             Register("TheMachine", "Boss11", "Boss11", MusicID.Boss2);
             // tsorcMusic assigns this exact track to vanilla Skeletron (NPCID.SkeletronHead).

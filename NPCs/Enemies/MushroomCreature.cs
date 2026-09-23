@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -50,13 +51,18 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            if (!tsorcRevamp.isAdventureMap || tsorcRevampWorld.RemixMap)
+            if (!tsorcRevampWorld.OnlyAdventureMap || tsorcRevampWorld.RemixMap)
             {
                 return 0f;
             }
 
-            bool insideSpawnArea = spawnInfo.SpawnTileX >= 2550 && spawnInfo.SpawnTileX <= 2850
-                && spawnInfo.SpawnTileY >= 1300 && spawnInfo.SpawnTileY <= 1650;
+            //Legacy-space spawn box; ExpandedWorldTransform shifts it to match the current world (identity
+            //on the non-expanded adventure map, +200 Y on the expanded one - both coords are above the fold).
+            Point spawnAreaMin = ExpandedWorldTransform.MapTile(2550, 1300);
+            Point spawnAreaMax = ExpandedWorldTransform.MapTile(2850, 1650);
+
+            bool insideSpawnArea = spawnInfo.SpawnTileX >= spawnAreaMin.X && spawnInfo.SpawnTileX <= spawnAreaMax.X
+                && spawnInfo.SpawnTileY >= spawnAreaMin.Y && spawnInfo.SpawnTileY <= spawnAreaMax.Y;
 
             return insideSpawnArea ? 0.5f : 0f;
         }

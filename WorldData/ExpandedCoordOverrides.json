@@ -19,6 +19,22 @@
       "newY": 2178,
       "type": "fix",
       "note": "\"Three stone pillars... enchanted with magic and impervious...\" soapstone. Sits at old-Y 1778 (below the 1791 fold) but was dragged with the underworld, so it got +400 not +200. The single verified exception to the formula across all 482 signs."
+    },
+    {
+      "legacyX": 5338,
+      "legacyY": 867,
+      "newX": 5338,
+      "newY": 1051,
+      "type": "move",
+      "note": "\"To the EAST--> The Rainforest of the Orid Tribe...\" soapstone. Formula alone would put it at 5338,1067; relocated on the expanded map only. Legacy adventure + remix keep it at its own 5338,867."
+    },
+    {
+      "legacyX": 5257,
+      "legacyY": 865,
+      "newX": 5257,
+      "newY": 1049,
+      "type": "move",
+      "note": "\"Unadin Inn\" soapstone. Formula alone would put it at 5257,1065; relocated on the expanded map only. Legacy adventure + remix keep it at its own 5257,865."
     }
   ]
 }

@@ -27,6 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public const int LifeTicks = 1200;          // ~20 seconds if nobody kills it
 
         const float BoltSpeed = 13f;
+        const float BoltRange = 900f;   // how far the telegraph line is drawn; the bolt itself flies further
         const float SigilRadius = 41f;              // half the 82px sprite
 
         int Age => (int)NPC.ai[1];
@@ -122,16 +123,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             int tickInCycle = (Age - FadeInTicks + BoltOffset) % BoltInterval;
 
-            // Telegraph: a dust line along the exact path the bolt will take, drawn for 30 ticks first.
-            if (tickInCycle >= BoltInterval - BoltTelegraphTicks && !Main.dedServ)
+            // Lock the heading when the telegraph starts and draw the line ONCE. Redrawing it every tick fanned
+            // one lane into thirty as the player moved, and recomputing the aim at fire time meant the bolt did
+            // not go where the line promised. ai[3] carries the locked angle so both agree.
+            if (tickInCycle == BoltInterval - BoltTelegraphTicks)
             {
                 Vector2 aim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
-                Dust.QuickDustLine(NPC.Center, NPC.Center + aim * 900f, 26f, Color.MediumPurple);
+                NPC.ai[3] = aim.ToRotation();
+                NPC.netUpdate = true;
+
+                if (!Main.dedServ)
+                {
+                    // A single thread rather than the usual three: a sigil bolt is a thin shot, and three sigils
+                    // telegraphing at once was a lot of line on screen.
+                    Chaos.DrawTelegraphLine(NPC.Center, NPC.Center + aim * BoltRange, Color.MediumPurple, strands: 1);
+                }
             }
 
-            if (tickInCycle == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            // Skipped on the very first cycle of the offset-0 sigil, whose tickInCycle starts AT 0 and so would
+            // otherwise fire before it had ever telegraphed.
+            if (tickInCycle == 0 && Age > FadeInTicks + BoltTelegraphTicks && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Vector2 aim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
+                Vector2 aim = NPC.ai[3].ToRotationVector2();
 
                 // Flat damage: the sigil's own contact damage is 0, so there is nothing to scale off.
                 Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, aim * BoltSpeed,
@@ -139,7 +152,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 if (!Main.dedServ)
                 {
-                    SoundEngine.PlaySound(SoundID.Item72 with { Pitch = 0.4f }, NPC.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/HollowKnight/mage_lord_projectile_impact") with { Volume = 0.5f, PitchVariance = 0.1f }, NPC.Center);
                 }
             }
 

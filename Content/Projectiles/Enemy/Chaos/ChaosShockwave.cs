@@ -18,6 +18,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
 
         const float WaveSpeed = 7f;
         const int WaveTravelTicks = 60; //~26 tiles of travel after arming — the arena is wide
+        const int CloudInterval = 6;    //~10 trailing cloud gores per wave over those 60 ticks
 
         int Direction => (int)Projectile.ai[0] >= 0 ? 1 : -1;
         int ArmDelay => (int)Projectile.ai[1];
@@ -82,6 +83,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
             {
                 int ember = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.DemonTorch, 0f, -2f, 0, default, 1f);
                 Main.dust[ember].noGravity = true;
+            }
+
+            //A cloud every few ticks as the wave crawls, so roughly ten per side trail the dust rather than all
+            //appearing at the impact point. Client-side only — gores are pure decoration and never sync.
+            if (!Main.dedServ && Projectile.localAI[0] % CloudInterval == 0)
+            {
+                int variant = Main.rand.Next(1, 4);
+                Vector2 cloudVelocity = new Vector2(Direction * Main.rand.NextFloat(0.5f, 2f), Main.rand.NextFloat(-3f, -1f));
+
+                Gore.NewGore(Projectile.GetSource_FromThis(), Projectile.Center + new Vector2(0f, -6f), cloudVelocity,
+                    ModContent.Find<ModGore>($"tsorcRevamp/ChaosImpactCloud{variant}").Type, Main.rand.NextFloat(0.7f, 1.1f));
             }
 
             Lighting.AddLight(Projectile.Center, 0.5f, 0.15f, 0.7f);

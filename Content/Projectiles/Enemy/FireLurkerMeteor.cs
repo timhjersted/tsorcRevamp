@@ -13,6 +13,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         const int OrbDelay = 2 * 60;
         const int PreExplosionDustTime = 2 * 60;
         const int ExplosionHitboxSize = 120;
+        const float CombatRange = 50 * 16f;
         bool expandedForExplosion;
         bool meteorRevealed;
 
@@ -153,7 +154,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
 
             Player target = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
-            if (!target.active || target.dead)
+            if (!target.active || target.dead || Projectile.Distance(target.Center) > CombatRange)
             {
                 return;
             }

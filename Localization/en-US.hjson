@@ -11145,7 +11145,8 @@ Mods: {
 			ChaosBlackFire.DisplayName: Chaos Black Fire
 			ChaosBlackFirelet.DisplayName: Chaos Black Firelet
 			ChaosFireball.DisplayName: Chaos Fireball
-			ChaosDemonSickle.DisplayName: Chaos Demon Sickle
+			ChaosCosmicOrb.DisplayName: Cosmic Orb
+			WeightedShadowBlast.DisplayName: Weighted Shadow Blast
 			ChaosShockwave.DisplayName: Chaos Shockwave
 			ChaosSingularity.DisplayName: Void Singularity
 			ChaosGaleRing.DisplayName: Gale Ring
@@ -11612,9 +11613,7 @@ Mods: {
 				Cataclysm: The barrier is shattered!! Nothing but darkness remains...
 			}
 
-			ChaosBroodSigil: {
-				DisplayName: Fiend's Brood
-			}
+			ChaosBroodSigil.DisplayName: Fiend's Brood
 
 			Chaos: {
 				DisplayName: Chaos

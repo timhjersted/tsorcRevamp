@@ -13,12 +13,13 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
-    class AbyssLurker : ModNPC
+    class AbyssLurker : ModNPC, IHitReactor
     {
         const int MaxFlameOrbs = 3;
         const int FlameOrbSpawnRate = 3 * 60;
         const int FlameTrapRate = 10 * 60;
         const int ReleasedFlameOrbTime = 3 * 60;
+        const float CombatRange = 50 * 16f;
 
         public int lostSoulDamage = 40;
         int flameOrbTimer;
@@ -52,7 +53,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             globalNPC.KiteRangeMin = 10f;
             globalNPC.KiteRangeMax = 25f;
             globalNPC.KiteLooseness = 0.5f;
-            UsefulFunctions.AddAttack(NPC, 4 * 60, ModContent.ProjectileType<AbyssLurkerFlameOrb>(), lostSoulDamage, 2.4f, SoundID.Item20 with { Volume = 0.35f, Pitch = -0.2f }, 0, -1, -ReleasedFlameOrbTime, telegraphColor: Color.Purple, telegraphTime: 22);
+            globalNPC.TeleportReacquireMaxRange = CombatRange;
+            UsefulFunctions.AddAttack(NPC, 4 * 60, ModContent.ProjectileType<AbyssLurkerFlameOrb>(), lostSoulDamage, 2.4f, SoundID.Item20 with { Volume = 0.35f, Pitch = -0.2f }, 0, -1, -ReleasedFlameOrbTime, telegraphColor: Color.Purple, telegraphTime: 22, condition: HasCombatTarget, fireCondition: HasCombatTarget);
         }
 
 
@@ -89,6 +91,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void AI()
         {
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int previousTarget = NPC.target;
+                NPC.TargetClosest(true);
+                if (NPC.target != previousTarget)
+                {
+                    NPC.netUpdate = true;
+                }
+            }
             tsorcRevampAIs.FighterAI(NPC, 1.9f, 0.08f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 900, enragePercent: 0.4f, enrageTopSpeed: 4f, lavaJumping: true); //sound type was 26
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -96,8 +107,26 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return;
             }
 
+            if (!HasCombatTarget(NPC))
+            {
+                flameOrbTimer = 0;
+                flameTrapTimer = 0;
+                return;
+            }
+
             SpawnFlameOrbs();
             SpawnFlameTrap();
+        }
+
+        static bool HasCombatTarget(NPC npc)
+        {
+            if (npc.target < 0 || npc.target >= Main.maxPlayers)
+            {
+                return false;
+            }
+
+            Player target = Main.player[npc.target];
+            return target.active && !target.dead && npc.Distance(target.Center) <= CombatRange;
         }
 
         void SpawnFlameOrbs()
@@ -167,26 +196,30 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
             flameTrapTimer = 0;
 
-            NPC.TargetClosest(true);
-            Player target = Main.player[NPC.target];
-            if (!target.active || target.dead)
+            if (!HasCombatTarget(NPC))
             {
                 return;
             }
 
+            Player target = Main.player[NPC.target];
             Vector2 flameTrapPosition = target.Center - new Vector2(target.direction * 62f, 0);
             Projectile.NewProjectile(NPC.GetSource_FromAI(), flameTrapPosition, Vector2.Zero, ModContent.ProjectileType<AbyssLurkerMeteor>(), NPC.damage / 2, 0, Main.myPlayer, lostSoulDamage);
         }
 
         void ReleaseFlameOrbs()
         {
-            NPC.TargetClosest(true);
-            Player target = Main.player[NPC.target];
-            if (!target.active || target.dead)
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
 
+            NPC.TargetClosest(true);
+            if (!HasCombatTarget(NPC))
+            {
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
             int orbType = ModContent.ProjectileType<AbyssLurkerFlameOrb>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
@@ -266,13 +299,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            ReleaseFlameOrbs();
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, true);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            ReleaseFlameOrbs();
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, projectile.DamageType == DamageClass.Melee);
         }
+
+        void IHitReactor.OnServerHit(NPC npc, bool melee) => ReleaseFlameOrbs();
         #endregion
 
         public override void OnKill()

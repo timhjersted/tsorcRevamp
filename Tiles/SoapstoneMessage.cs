@@ -81,5 +81,9 @@ namespace tsorcRevamp.Tiles
         // expanded 2400-tall one. The two maps share this JSON, so a plain deletion would remove the sign
         // from both; this drops it from the expanded map only. Coords stay legacy-space either way.
         public bool skipOnExpanded { get; set; }
+        // Optional. True -> the opposite of skipOnExpanded: this sign exists ONLY on the expanded 2400-tall
+        // map (skipped on legacy adventure and remix). tileX/tileY are native expanded-space coords and are
+        // placed as-is, bypassing the legacy->expanded MapTile transform entirely.
+        public bool expandedOnly { get; set; }
     }
 }

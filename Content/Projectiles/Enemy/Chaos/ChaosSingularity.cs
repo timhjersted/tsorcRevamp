@@ -13,11 +13,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
     ///
     ///Deliberately outlives the attack that spawned it — Chaos casts it in ~70 ticks and then goes back to
     ///fighting, so this is a hazard the player navigates around while dodging everything else. Only the core
-    ///hurts; the pull itself never deals damage and is capped below player run speed, so walking away always
-    ///works and the only way to be caught is to ignore it.
+    ///hurts; the pull itself never deals damage.
     ///
-    ///Sprite is a 7-frame GROWTH strip (94x94 each, vertical), not a loop: frames run forward to open, hold on
-    ///the last frame, then run backward to close. That is where the fade in/out comes from.
+    ///The grip tightens as you close: out at the rim the inward cap is a fraction of run speed and you simply
+    ///walk out, but near the core it exceeds a walk, so the last stretch has to be beaten with a dash, a mount
+    ///or wings rather than by holding a direction. That near field is deliberately a commitment.
+    ///
+    ///Chaos's own cast telegraphs the spot before this ever spawns, so there is no separate warning phase here
+    ///— it phases in on its first tick with a dust burst. The sprite is a 7-frame GROWTH strip (94x94 each,
+    ///vertical), not a loop, so frames run forward to open, hold on the last, then run backward to close.
+    ///That is where the fade in and out comes from.
     ///</summary>
     class ChaosSingularity : ModProjectile
     {
@@ -28,9 +33,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
         public const int HoldTicks = 276;                          // total life = 360 ticks = 6 seconds
         public const int TotalTicks = OpenTicks + HoldTicks + CloseTicks;
 
-        const float PullRadius = 600f;      // matches the inward dust, so the field is never bigger than it looks
-        const float MaxPullSpeed = 5f;      // under player run speed on purpose — holding away always escapes
+        const float PullRadius = 1900f;     // the reach of the pull itself
+        //Infalling dust is drawn from HALF the pull radius: a tight vortex reads better than a field of motes
+        //at extreme range. The pull therefore starts slightly outside the visible spiral — deliberate, and
+        //harmless, because out at that range it is a fraction of a pixel per tick.
+        const float DustRadius = PullRadius * 0.5f;
+        //Baseline pull strength. The SPEED CAP scales with proximity off this (see AI), which is what makes the
+        //tear grip harder the closer you get: a flat cap meant the drag felt identical at 100px and 900px,
+        //because the acceleration curve hit the ceiling almost immediately either way.
+        const float MaxPullSpeed = 5.85f;
+        const float NearPullCapMult = 1.25f;  // ceiling right at the core
+        const float FarPullCapMult = 0.35f;   // ceiling out at the rim
         const float CoreRadius = 47f;       // half the 94px frame: the only part that can actually hit
+        const int ShadowWeightTicks = 360;  // 6 seconds, applied when the core actually catches someone
 
         public override void SetStaticDefaults()
         {
@@ -59,8 +74,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
         bool Opening => Age < OpenTicks;
         bool Closing => Age >= OpenTicks + HoldTicks;
 
-        ///<summary>0 while opening or closed, 1 at full size. Scales the pull and the core hitbox so a portal
-        ///that is still forming cannot grab or kill anyone.</summary>
+        ///<summary>0 while opening or closed, 1 at full size. Scales the pull, the core hitbox and the dust, so
+        ///a tear that is still forming cannot grab or kill anyone.</summary>
         float Openness
         {
             get
@@ -106,23 +121,32 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
                 {
                     Vector2 inward = toCore / distance;
 
-                    //Strongest at the rim of the core, tapering to nothing at the edge of the field.
+                    //Strongest at the core, tapering to nothing at the edge of the field.
                     float falloff = 1f - distance / PullRadius;
                     float pullSpeed = MaxPullSpeed * falloff * falloff * openness;
                     player.velocity += inward * pullSpeed * 0.12f;
 
-                    //Clamp the INWARD component only, so ticks can't stack into a speed the player cannot
-                    //out-walk. Movement across or away from the tear is left completely untouched.
+                    //Clamp the INWARD component only; movement across or away from the tear is untouched.
+                    //The ceiling itself rides proximity, so the far field is a nuisance you walk out of and
+                    //the near field genuinely drags — out at the rim it is well under run speed, at the core
+                    //it is a little over it.
+                    float speedCap = MaxPullSpeed * MathHelper.Lerp(FarPullCapMult, NearPullCapMult, falloff) * openness;
                     float inwardSpeed = Vector2.Dot(player.velocity, inward);
-                    if (inwardSpeed > MaxPullSpeed)
+
+                    if (inwardSpeed > speedCap)
                     {
-                        player.velocity -= inward * (inwardSpeed - MaxPullSpeed);
+                        player.velocity -= inward * (inwardSpeed - speedCap);
                     }
                 }
             }
 
             if (!Main.dedServ)
             {
+                if (Age == 0)
+                {
+                    PlayPhaseIn();
+                }
+
                 SpawnInfallingDust(openness);
             }
 
@@ -146,17 +170,38 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
             Projectile.frame = (int)MathHelper.Clamp(frame, 0, FrameCount - 1);
         }
 
-        ///<summary>Dust born at the edge of the pull field and drawn inward, so the radius the player can see is
-        ///exactly the radius that pulls. Without this the field is invisible and feels arbitrary.</summary>
+        ///<summary>The moment the tear starts existing: a hard purple burst so it never simply appears.</summary>
+        void PlayPhaseIn()
+        {
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item122 with { Pitch = -0.5f }, Projectile.Center);
+
+            for (int i = 0; i < 90; i++)
+            {
+                Vector2 outward = Main.rand.NextVector2CircularEdge(1f, 1f);
+                float speed = Main.rand.NextFloat(3f, 11f);
+
+                int dustType = DustID.Shadowflame;
+                if (Main.rand.NextBool(2))
+                {
+                    dustType = DustID.DemonTorch;
+                }
+
+                Dust mote = Dust.NewDustPerfect(Projectile.Center + outward * 30f, dustType, outward * speed, 60, default, Main.rand.NextFloat(1.5f, 2.6f));
+                mote.noGravity = true;
+            }
+        }
+
+        ///<summary>Motes born inside half the pull radius and drawn inward on a spiral, so the tear reads as
+        ///something actively swallowing matter rather than a static sprite.</summary>
         void SpawnInfallingDust(float openness)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 9; i++)
             {
                 float angle = Main.rand.NextFloat(MathHelper.TwoPi);
-                float distance = Main.rand.NextFloat(PullRadius * 0.45f, PullRadius);
+                float distance = Main.rand.NextFloat(DustRadius * 0.35f, DustRadius);
                 Vector2 spawn = Projectile.Center + angle.ToRotationVector2() * distance;
 
-                //Spiral rather than fall straight in: tangential component makes it read as orbiting matter.
+                //Spiral rather than fall straight in: the tangential component makes it read as orbiting matter.
                 Vector2 inward = (Projectile.Center - spawn).SafeNormalize(Vector2.Zero);
                 Vector2 tangent = new Vector2(-inward.Y, inward.X);
                 Vector2 velocity = (inward * 5.5f + tangent * 2.6f) * openness;
@@ -175,11 +220,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<DarkInferno>(), 240);
+            //Dragged into the tear and it stays on you: heavy, barely able to climb out of where it dropped you.
+            target.AddBuff(ModContent.BuffType<WeightOfShadow>(), ShadowWeightTicks);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            //Only the black core, not the 600px pull field the broadphase would otherwise imply.
+            //Only the black core, not the pull field the broadphase would otherwise imply.
             Vector2 closest = new Vector2(
                 MathHelper.Clamp(Projectile.Center.X, targetHitbox.Left, targetHitbox.Right),
                 MathHelper.Clamp(Projectile.Center.Y, targetHitbox.Top, targetHitbox.Bottom));

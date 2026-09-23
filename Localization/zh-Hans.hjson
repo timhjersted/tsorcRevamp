@@ -11139,8 +11139,11 @@ Mods: {
 			// ChaosBlackFire.DisplayName: Chaos Black Fire
 			// ChaosBlackFirelet.DisplayName: Chaos Black Firelet
 			// ChaosFireball.DisplayName: Chaos Fireball
-			// ChaosDemonSickle.DisplayName: Chaos Demon Sickle
+			// ChaosCosmicOrb.DisplayName: Cosmic Orb
+			// WeightedShadowBlast.DisplayName: Weighted Shadow Blast
 			// ChaosShockwave.DisplayName: Chaos Shockwave
+			// ChaosSingularity.DisplayName: Void Singularity
+			// ChaosGaleRing.DisplayName: Gale Ring
 			// ShadowSparkle.DisplayName: Shadow Sparkle
 			// ShadowsparkBulletProjectile.DisplayName: Shadowspark Bullet Projectile
 			// Ichorstorm.DisplayName: Ichorstorm
@@ -11603,6 +11606,8 @@ Mods: {
 				CataclysmWarning: 枯萎开始撕裂世界和深渊之间的屏障
 				Cataclysm: 障碍被打破了！！除了黑暗什么都没有留下...
 			}
+
+			// ChaosBroodSigil.DisplayName: Fiend's Brood
 
 			Chaos: {
 				DisplayName: 混沌

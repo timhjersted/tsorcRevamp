@@ -1794,8 +1794,9 @@ namespace tsorcRevamp.NPCs
             if (globalNPC.ProjectileTimer >= globalNPC.CurrentAttack.timerCap)
             {
                 ProjectileData completedAttack = globalNPC.CurrentAttack;
+                bool shotAllowed = completedAttack.fireCondition == null || completedAttack.fireCondition(npc);
                 globalNPC.ProjectileTimer = 0;
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (shotAllowed && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     if (globalNPC.CurrentAttack.overshoot == null)
                     {
@@ -1806,14 +1807,14 @@ namespace tsorcRevamp.NPCs
                         : Main.player[npc.target].Center + globalNPC.CurrentAttack.overshoot.Value;
                     Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, targetPosition, globalNPC.CurrentAttack.velocity, globalNPC.CurrentAttack.gravity);
                     Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, globalNPC.CurrentAttack.type, globalNPC.CurrentAttack.damage, 0f, Main.myPlayer, globalNPC.CurrentAttack.ai0, globalNPC.CurrentAttack.ai1);
-                    globalNPC.LockedShotTargetPosition = Vector2.Zero;
                 }
-                if (globalNPC.CurrentAttack.sound != null)
+                globalNPC.LockedShotTargetPosition = Vector2.Zero;
+                if (shotAllowed && globalNPC.CurrentAttack.sound != null)
                 {
                     SoundEngine.PlaySound(globalNPC.CurrentAttack.sound.Value, npc.Center);
                 }
 
-                globalNPC.AttackSucceeded = globalNPC.AttackIndex;
+                globalNPC.AttackSucceeded = shotAllowed ? globalNPC.AttackIndex : -1;
                 // Server-only: picking the next attack is a Main.rand roll, and the client reads CurrentAttack for the
                 // telegraph colour, its length, the aim lock and the commit window. A client that rolled its own pick
                 // would telegraph one attack while the server fired another — the tell would lie about what to dodge.
@@ -1822,7 +1823,10 @@ namespace tsorcRevamp.NPCs
                 // the final else, which just clears the telegraph flags.
                 if (globalNPC.CombatTempo == null && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    RegisterFighterAttack(npc);
+                    if (shotAllowed)
+                    {
+                        RegisterFighterAttack(npc);
+                    }
                     int completedGuardPressureStacks = globalNPC.CompleteGuardPressureSequence(npc);
                     globalNPC.AttackIndex = globalNPC.NextAttackIndex;
                     globalNPC.NextAttackIndex = WeightedRandomAttackSelection(globalNPC);
@@ -2028,6 +2032,7 @@ namespace tsorcRevamp.NPCs
             public bool needsLineOfSight;
             public float weight;
             public Func<NPC, bool> condition;
+            public Func<NPC, bool> fireCondition;
             public float stopBeforeChance;
             public int telegraphTime;
             public bool lockAimAtTelegraph;
@@ -2038,7 +2043,7 @@ namespace tsorcRevamp.NPCs
             public float commitFraction;
             public bool endsCombo;
 
-            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = false, float weight = 1, Func<NPC, bool> condition = null, float stopBeforeChance = 0.1f, int? telegraphTime = null, float commitFraction = 0f, bool lockAimAtTelegraph = false, bool endsCombo = false)
+            public ProjectileData(int projectileType, int timerCap, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = false, float weight = 1, Func<NPC, bool> condition = null, float stopBeforeChance = 0.1f, int? telegraphTime = null, float commitFraction = 0f, bool lockAimAtTelegraph = false, bool endsCombo = false, Func<NPC, bool> fireCondition = null)
             {
                 type = projectileType;
                 this.timerCap = timerCap;
@@ -2054,6 +2059,7 @@ namespace tsorcRevamp.NPCs
                 this.needsLineOfSight = needsLineOfSight;
                 this.weight = weight;
                 this.condition = condition;
+                this.fireCondition = fireCondition;
                 this.stopBeforeChance = stopBeforeChance;
                 this.telegraphTime = telegraphTime ?? ProjectileTelegraphTime;
                 this.commitFraction = commitFraction;
@@ -2215,6 +2221,22 @@ namespace tsorcRevamp.NPCs
             ExecuteQueuedTeleport(npc);
         }
 
+        private static bool HasTeleportReacquireTarget(NPC npc, tsorcRevampGlobalNPC globalNPC)
+        {
+            if (float.IsPositiveInfinity(globalNPC.TeleportReacquireMaxRange))
+            {
+                return true;
+            }
+            if (npc.target < 0 || npc.target >= Main.maxPlayers)
+            {
+                return false;
+            }
+
+            Player target = Main.player[npc.target];
+            return target.active && !target.dead
+                && npc.Distance(target.Center) <= globalNPC.TeleportReacquireMaxRange;
+        }
+
         /// <summary>
         /// Unified-teleport disengage resolver (4b): try to blink to a spot with LOS to the player to
         /// re-acquire the chase. Reuses <see cref="QueueTeleport"/> for the smoke telegraph + warp. On a
@@ -2223,9 +2245,9 @@ namespace tsorcRevamp.NPCs
         /// </summary>
         public static bool TryTeleportReacquire(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
-            if (globalNPC.TeleportCountdown != 0)
+            if (globalNPC.TeleportCountdown != 0 || !HasTeleportReacquireTarget(npc, globalNPC))
             {
-                return false; // already mid-blink
+                return false;
             }
 
             // minRange: 5 tiles so the blink can land inside small rooms (default 11 is too large for tight spaces).
@@ -2263,9 +2285,9 @@ namespace tsorcRevamp.NPCs
         /// </summary>
         public static bool TryTeleportOutOfLava(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
-            if (globalNPC.TeleportCountdown != 0)
+            if (globalNPC.TeleportCountdown != 0 || !HasTeleportReacquireTarget(npc, globalNPC))
             {
-                return false; // already mid-blink
+                return false;
             }
 
             QueueTeleport(npc, 50, requireLineofSight: false, globalNPC.TeleportTelegraphTime, globalNPC.PrefersHighGround, minRange: 5);

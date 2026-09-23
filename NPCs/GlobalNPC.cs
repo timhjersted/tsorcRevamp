@@ -209,9 +209,13 @@ namespace tsorcRevamp.NPCs
         //Stores the event this NPC belongs to
         public ScriptedEvent ScriptedEventOwner;
 
-        // Dynamic-event NPCs are normally pinned alive so an offscreen spawn cannot tear down its
-        // encounter. Opt specific pursuit encounters into normal distance/timeLeft despawning.
+        // Opt specific pursuit bosses into natural distance/timeLeft despawning.
         public bool AllowDynamicEventNaturalDespawn;
+
+        // Scripted enemies may start just beyond the trigger's screen. Protect that initial spawn briefly,
+        // then let ordinary enemies use vanilla distance and timeLeft despawning.
+        public const int ScriptedEventEnemySpawnGraceTicks = 3 * 60;
+        public int ScriptedEventEnemySpawnGrace;
 
         // Set by NPCDespawnHandler on the tick it deliberately removes a boss (everyone died, or out of range).
         // PostAI's anti-despawn revive must not undo that: it exists for ACCIDENTAL self-despawns, and reviving a
@@ -1515,6 +1519,8 @@ namespace tsorcRevamp.NPCs
         // Merges the legacy `canTeleport` AI param and the WeakTeleport system into one re-acquire-on-give-up
         // blink (reusing TeleportCountdown / QueueTeleport / ExecuteQueuedTeleport for the actual smoke + warp).
         public bool CanTeleport = false;
+        // Optional pursuit leash for normal enemies that should not blink after a fleeing player.
+        public float TeleportReacquireMaxRange = float.PositiveInfinity;
         public bool CanDodgeroll = false; // mirrors the FighterAI canDodgeroll param; read by the wall-pin escape
         public TeleportStyle TeleportStyle = TeleportStyle.Normal;
         // -1 = unlimited (legacy canTeleport). A positive value = limited charges that DO NOT recharge
@@ -1722,12 +1728,17 @@ namespace tsorcRevamp.NPCs
                 npc.netUpdate = true;
             }
 
-            // Keep dynamic-event NPCs from despawning on their own. CheckActive blocks the distance despawn, but
-            // many enemies (e.g. dungeon skeletons placed outside the dungeon) call EncourageDespawn every tick,
-            // which caps timeLeft back down — so a one-time set isn't enough. Re-pin it each tick. Without this,
-            // one self-despawning NPC fails the event's all-or-nothing alive check and tears the whole event down.
-            if (!AllowDynamicEventNaturalDespawn
-                && ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID))
+            if (ScriptedEventEnemySpawnGrace > 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                ScriptedEventEnemySpawnGrace--;
+                if (ScriptedEventEnemySpawnGrace == 0)
+                {
+                    // The grace period pinned timeLeft; restore a normal lifetime before releasing it.
+                    npc.timeLeft = Math.Min(npc.timeLeft, 750);
+                }
+            }
+
+            if (PinsScriptedEventNPC(npc))
             {
                 npc.timeLeft = int.MaxValue;
             }
@@ -1737,17 +1748,18 @@ namespace tsorcRevamp.NPCs
 
         public override bool CheckActive(NPC npc)
         {
-            // NPCs spawned by a player-placed dynamic event are positioned deliberately in the editor; don't let
-            // them despawn the vanilla "no players nearby / off-screen" way. Otherwise a freshly-spawned event NPC
-            // that lands just off-screen vanishes a tick after spawning, which fails the event's all-or-nothing
-            // despawn check and tears the whole event down (seen as warning dust but no NPCs, esp. multi-NPC events).
-            // Scoped to dynamic (editor) events so existing hardcoded encounters keep their original despawn behavior.
-            if (!AllowDynamicEventNaturalDespawn
-                && ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID))
+            if (PinsScriptedEventNPC(npc))
             {
                 return false;
             }
             return base.CheckActive(npc);
+        }
+
+        private bool PinsScriptedEventNPC(NPC npc)
+        {
+            return !AllowDynamicEventNaturalDespawn && ScriptedEventOwner != null
+                && (ScriptedEventEnemySpawnGrace > 0
+                    || (npc.boss && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID)));
         }
 
         private void UpdateInvisibility(NPC npc)
@@ -1963,8 +1975,7 @@ namespace tsorcRevamp.NPCs
             // EXCLUDED: SelfDeactivatingNPCs (Marilith/Prime intros, Gwyn vision, portals, etc.) deliberately set
             // active=false mid-AI to transform into the real boss or vanish — reviving them here would fight that
             // and break the whole encounter (this broke TheMachine/Marilith when the blanket revival first shipped).
-            if (!AllowDynamicEventNaturalDespawn && !DespawnedByHandler
-                && ScriptedEventOwner != null && !string.IsNullOrEmpty(ScriptedEventOwner.DynamicEventID) && !npc.active && npc.life > 0
+            if (!DespawnedByHandler && PinsScriptedEventNPC(npc) && !npc.active && npc.life > 0
                 && !tsorcRevamp.SelfDeactivatingNPCs.Contains(npc.type))
             {
                 npc.active = true;

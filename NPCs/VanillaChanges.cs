@@ -3759,6 +3759,9 @@ namespace tsorcRevamp.NPCs
                     // Town slimes and their bound (rescuable) forms. Same reasoning as the Bound NPCs
                     // above: they are a light-hearted 1.4.4 town-pet system that does not fit the mod's
                     // tone, and the bound variants occupy world-spawn slots waiting to be rescued.
+                    // MethodSwaps.DisableTownSlimeSpawn already stops new town slimes from being chosen
+                    // to spawn at all (no housing reservation, no "X has arrived!"); this is the backstop
+                    // for one that's already active - a leftover from an older save, or another spawn path.
                     || npc.type == NPCID.BoundTownSlimeOld
                     || npc.type == NPCID.BoundTownSlimePurple
                     || npc.type == NPCID.BoundTownSlimeYellow

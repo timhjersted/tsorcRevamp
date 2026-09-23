@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     ///tell and every hazard is therefore built from dust, shader projectiles, flap SPEED and draw tint.
     ///</summary>
     [AutoloadBossHead]
-    class Chaos : ModNPC, IStaggerable
+    class Chaos : ModNPC, IStaggerable, IDebugAttackLabel
     {
         public override void SetStaticDefaults()
         {
@@ -81,7 +81,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             CataclysmDive,
             ShadowflameTeleport,
             LaserGrid,
-            OrbitalSickle,
+            OrbitalCosmos,
             WingGale,
             VoidSingularity,
             FiendsBrood
@@ -91,6 +91,59 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         AttackState NextAttack = AttackState.FireballFan;
         // Seeded to the opening attack too, so the first bag draw won't immediately repeat it.
         AttackState LastAttack = AttackState.FireballFan;
+
+        /// <summary>DebugMode above-head readout (see IDebugAttackLabel). Names the phase alongside the move,
+        /// and during Recovery names the card the bag has ALREADY drawn: with a shuffled order that upcoming
+        /// pick is the most useful thing on screen while testing, and it is what the tell is announcing.</summary>
+        public string DebugAttackLabel
+        {
+            get
+            {
+                if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0)
+                {
+                    return "Staggered";
+                }
+
+                if (State == AttackState.PhaseTransition)
+                {
+                    return "Phase " + phase + " Transition";
+                }
+
+                string label = "P" + phase + " " + DebugLabels.Humanize(State.ToString());
+
+                if (State == AttackState.Recovery)
+                {
+                    return label + " -> " + DebugLabels.Humanize(NextAttack.ToString());
+                }
+
+                // The dive is a five-part sub-machine, so the state name alone doesn't say where it is.
+                if (State == AttackState.CataclysmDive)
+                {
+                    string subPhase = "Climb";
+
+                    if (divePhase == DivePhaseHold)
+                    {
+                        subPhase = "Hold";
+                    }
+                    else if (divePhase == DivePhasePlunge)
+                    {
+                        subPhase = "Plunge";
+                    }
+                    else if (divePhase == DivePhaseGrounded)
+                    {
+                        subPhase = "Grounded";
+                    }
+                    else if (divePhase == DivePhaseRise)
+                    {
+                        subPhase = "Rise";
+                    }
+
+                    return label + " (" + subPhase + ")";
+                }
+
+                return label;
+            }
+        }
 
         int AttackTimer;
         int recoveryLength = OpeningRecoveryTicks;
@@ -109,6 +162,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int dashTimer;
         // Which side of the player Chaos positions on during an ATTACK. 0 = not yet chosen; see ApproachSide.
         sbyte approachSide;
+        // True once Wing Gale has closed inside GaleApproachRange and committed to the windup/flap timeline.
+        bool galeInPosition;
 
         // Recovery rest spot. restOffset is rolled per attack cycle; restPoint is the world-space snapshot Chaos
         // actually drifts to, and driftReleased marks the point where it stops caring about that spot at all.
@@ -193,7 +248,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Flame Hover
         const int FlameFireTicks = 300;
         const int FlameInterval = 5;
-        const int FlameFanInterval = 60;
         const int FlameRecoveryTicks = 75;
 
         // Rocket Dash
@@ -234,8 +288,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int DiveEvolvedSlams = 2;
         const float DiveImpactRadius = 160f;
         const int ShockwaveArmTicks = 8;
-        const float SlamCrippleRange = 800f;       // 50 tiles — the concussion reaches well past the waves
-        const int SlamCrippleTicks = 180;          // 3 seconds
+        const int BuriedSampleThreshold = 3;       // of 9 body samples, before a position counts as buried
+        const float SlamCrippleRange = 500f;       // ~31 tiles: close enough that staying wide is a real choice
+        const int SlamCrippleTicks = 60;           // 1 second fully pinned...
+        const int SlamTornWingsTicks = 600;        // ...then 10 seconds grounded but otherwise mobile
 
         // Shadowflame Teleport
         const int TeleportFireTicks = 360;
@@ -244,6 +300,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int TeleportCycleTicks = 120;
         const int TeleportTelegraphTicks = 80;
         const int TeleportLastArrival = 320;       // 3 arrivals: 80, 200, 320
+        const float TeleportHoverDistance = 340f;  // never rides the player; stream still has travel time
+        // The drawn frame, NOT the hitbox: PreDraw centres a 294x226 frame on NPC.Center while the hitbox is
+        // only 130x160, so any dust meant to sit "on the body" has to use these.
+        const int SpriteFrameWidth = 294;
+        const int SpriteFrameHeight = 226;
+        const float TeleportMinDistance = 300f;
+        const float TeleportMaxDistance = 460f;
 
         const int TeleportRecoveryTicks = 75;
 
@@ -259,32 +322,56 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float GridStandoffX = 350f;          // was 600, which parked Chaos outside melee reach
         const int GridRecoveryTicks = 130;
 
-        // Orbital Sickle
-        const int OrbitFireTicks = 270;            // 3 laps at 4 degrees/tick (90t per lap)
-        const int OrbitSickleInterval = 15;
+        // Orbital Cosmos
+        const int OrbitFireTicks = 270;            // ~2.25 laps at 3 degrees/tick (120t per lap)
+        const int OrbitOrbInterval = 15;
         const int OrbitNovaInterval = 90;
         const int OrbitNovaOffset = 45;            // novas at t = 45, 135, 225
-        const float OrbitDegreesPerTick = 4f;
+        // Dropped from 4: at 4 the orbit point swept ~69px/tick around the ~990px circle, well past Chaos own
+        // top speed, so he permanently trailed it and cut chords across the middle instead of tracing the arc.
+        const float OrbitDegreesPerTick = 3f;
+        const float OrbitSpeed = 37f;              // 25% slower than the old 50
+        const float OrbitInertia = 7f;             // was 5 — less snap, less jitter
+        const float OrbitMinDistance = 300f;       // personal space; he circles, he does not sit on you
         const float OrbitRadius = 700f;            // the (1,1) basis makes the real radius ~990px
         const int OrbitEaseTicks = 30;
         const int OrbitSettleTicks = 70;           // breaks orbit and heads in before the window opens
         const int OrbitRecoveryTicks = 80;
 
         // Wing Buffet Gale — three flaps that shove the player outward into a ring boundary
+        // Closed to first: the push cuts off past GalePushRange and the ring sits on the player, so an attack
+        // that started with Chaos still across the arena would fade in a boundary and then never reach it.
+        const float GaleApproachRange = 350f;      // inside the 300-400px band; close enough that the first
+                                                    // flap's push can already reach across GalePushRange
+        const float GaleApproachSpeed = 12f;
+        const float GaleApproachInertia = 20f;
         const int GaleWindupTicks = 45;            // ring fades in during this, before any push
         const int GaleFlapInterval = 55;
         const int GaleFlaps = 3;
-        const int GalePushTicks = 26;              // how long each flap actually pushes
+        const int GalePushTicks = 34;              // length of each gust; the whole window is eased, not flat
         const int GaleFireTicks = GaleWindupTicks + GaleFlaps * GaleFlapInterval;
         const int GaleRecoveryTicks = 85;
-        const float GaleRingRadius = 700f;
+        const float GaleRingRadius = 810f;   // 30% wider; each player gets one centred on themselves
+        const float GaleRingSpawnRange = 2600f;    // nobody outside the fight gets a ring
         const int GaleRingHold = 180;
-        const float GalePushSpeed = 7.5f;          // capped, and beatable by moving inward
-        const float GalePushRange = 620f;
+        const float GaleGustAccel = 0.9f;          // peak per-tick acceleration, at the middle of a gust — was
+                                                    // 1.45 uncapped (never actually reachable before the approach
+                                                    // fix), cut to 0.75, nudged back up now that the dodge roll
+                                                    // can no longer inherit and amplify a push-spiked velocity
+        // How much of full strength the gust still carries at its very start and end. A pure sine envelope
+        // bottomed out at zero, so each flap did nothing for its first and last several ticks and all the work
+        // landed in one spike. Flattening it keeps the same total shove but delivers it as steady wind.
+        const float GaleGustFloor = 0.45f;
+        // The gust gets STRONGER with distance, not weaker. It has to carry you the whole way out to an 810px
+        // ring, and a push that tapered off meant the second flap barely moved anyone the first had already
+        // blown clear.
+        const float GaleNearMult = 0.9f;
+        const float GaleFarMult = 1.45f;
+        const float GalePushRange = 800f;
 
         // Void Singularity — a short cast; the tear itself outlives the attack (see ChaosSingularity)
-        const int SingularityTelegraphTicks = 40;
-        const int SingularityCastTicks = 70;
+        const int SingularityTelegraphTicks = 90;
+        const int SingularityCastTicks = 120;       // 30t after the tear spawns, same gap the old 40/70 pair had
         const int SingularityRecoveryTicks = 70;
         const float SingularityPlacementRange = 450f;
 
@@ -335,6 +422,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write(diveApexY);
             writer.Write(divePhase);
             writer.Write(diveSlamsDone);
+            writer.Write(galeInPosition);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -365,6 +453,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             diveApexY = reader.ReadSingle();
             divePhase = reader.ReadByte();
             diveSlamsDone = reader.ReadByte();
+            galeInPosition = reader.ReadBoolean();
         }
 
         #endregion
@@ -615,8 +704,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 case AttackState.LaserGrid:
                     RunLaserGrid(target);
                     break;
-                case AttackState.OrbitalSickle:
-                    RunOrbitalSickle(target);
+                case AttackState.OrbitalCosmos:
+                    RunOrbitalCosmos(target);
                     break;
                 case AttackState.WingGale:
                     RunWingGale(target);
@@ -660,6 +749,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             diveApexY = 0f;
             divePhase = DivePhaseClimb;
             diveSlamsDone = 0;
+            galeInPosition = false;
 
             // Cleared per ATTACK, not per recovery: an attack's settle tail and the recovery that follows it are
             // one continuous glide, so they have to agree on where they are heading.
@@ -698,6 +788,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         ///tail of the recovery can announce it — the bag took away the memorisable 1->2->3 order.</summary>
         void BeginRecovery(int ticks)
         {
+            // Wipe the previous dash heading. It is deliberately NOT cleared by StartAttack (the attack has to
+            // read what the tell locked), but leaving it set through the START of a recovery let PlayTell draw
+            // a lane line pointing where the LAST dash went, until this tell overwrote it 18 ticks later.
+            // That is a telegraph that lies, so the line stays hidden until RunRecovery locks a fresh heading.
+            lockedAim = Vector2.Zero;
+
             // Set before the draw: DrawNextAttack reads LastAttack to avoid an immediate repeat.
             LastAttack = State;
 
@@ -799,7 +895,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             attackBag.Add(AttackState.ShadowflameTeleport);
             attackBag.Add(AttackState.LaserGrid);
-            attackBag.Add(AttackState.OrbitalSickle);
+            attackBag.Add(AttackState.OrbitalCosmos);
             attackBag.Add(AttackState.CataclysmDive);
             attackBag.Add(AttackState.VoidSingularity);
             attackBag.Add(AttackState.FiendsBrood);
@@ -952,10 +1048,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 case AttackState.RocketDash:
                     SpawnConvergingDust(DustID.Shadowflame, 110f, 3, 1.3f);
 
-                    // The lane the opening dash will take, once RunRecovery has locked it.
-                    if (lockedAim != Vector2.Zero)
+                    // The lane the opening dash will take. Drawn once, on the tick RunRecovery locks the
+                    // heading — not every tell tick, which laid down a fresh line each frame as Chaos drifted.
+                    if (tellTick == TellTicks - LungeAimLockTicks && lockedAim != Vector2.Zero)
                     {
-                        Dust.QuickDustLine(NPC.Center, NPC.Center + lockedAim * 500f, 20f, Color.MediumPurple);
+                        DrawTelegraphLine(NPC.Center, NPC.Center + lockedAim * 500f, Color.MediumPurple);
                     }
                     break;
 
@@ -978,8 +1075,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     break;
 
                 case AttackState.CataclysmDive:
-                    // A column dropping to the floor under Chaos: "the ground is where this lands".
-                    Dust.QuickDustLine(NPC.Center, new Vector2(NPC.Center.X, NPC.Center.Y + 400f), 12f, Color.MediumPurple);
+                    // One column under Chaos: "the ground is where this lands". Once only — a fresh line every
+                    // tell tick turned this into a picket fence as Chaos drifted.
+                    if (tellTick == 6)
+                    {
+                        DrawTelegraphLine(NPC.Center, new Vector2(NPC.Center.X, NPC.Center.Y + 400f), Color.MediumPurple);
+                    }
                     break;
 
                 case AttackState.ShadowflameTeleport:
@@ -1022,7 +1123,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     break;
 
-                case AttackState.OrbitalSickle:
+                case AttackState.OrbitalCosmos:
                     // Spinning ring at the chest — the shape the orbit is about to trace.
                     float ringAngle = tellTick * 0.5f;
                     for (int i = 0; i < 3; i++)
@@ -1042,15 +1143,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if (!Main.dedServ)
                 {
+                    // Chaos's own roar marks every phase break, not just the last one.
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/ChaosLaugh"), NPC.Center);
+
                     if (phase == 2)
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
                         UsefulFunctions.ScreenShake(NPC.Center, 6f, 30);
                     }
                     else
                     {
                         SoundEngine.PlaySound(SoundID.ForceRoarPitched, NPC.Center);
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/ChaosLaugh"), NPC.Center);
                         UsefulFunctions.ScreenShake(NPC.Center, 10f, 40);
                     }
                 }
@@ -1136,11 +1238,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (!Main.dedServ)
                     {
-                        SoundEngine.PlaySound(SoundID.Item72 with { Pitch = -0.3f }, NPC.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/HollowKnight/mantis_lord_horizontal_dash") with { Volume = 1.0f, PitchVariance = 0.1f }, NPC.Center);
                     }
                 }
 
-                ShootProjectile(target, 15, ModContent.ProjectileType<ChaosDemonSickle>(), 20, 0f, 18f, NPC.Center - new Vector2(0, 40), 0f);
+                // Half speed: at 15 the ring crossed the screen before it registered as anything.
+                ShootProjectile(target, 7.5f, ModContent.ProjectileType<WeightedShadowBlast>(), 20, 0f, 18f, NPC.Center - new Vector2(0, 40), 0f);
             }
             else
             {
@@ -1163,11 +1266,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     lockedAim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
                     NPC.netUpdate = true;
-                }
 
-                if (!Main.dedServ && tickInDash >= dashInterval - LungeAimLockTicks && lockedAim != Vector2.Zero)
-                {
-                    Dust.QuickDustLine(NPC.Center, NPC.Center + lockedAim * 500f, 20f, Color.MediumPurple);
+                    // Drawn once, on the tick the heading locks. Redrawing it every tick while Chaos drifted
+                    // smeared one lane into a fan of them.
+                    if (!Main.dedServ)
+                    {
+                        DrawTelegraphLine(NPC.Center, NPC.Center + lockedAim * 500f, Color.MediumPurple);
+                    }
                 }
             }
 
@@ -1228,17 +1333,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // at point-blank is the whole read. A stand-off was tried here and made the attack illegible.
             MoveToward(target.Center, 5f, 10f);
 
-            if (AttackTimer < FlameFireTicks)
+            // The flamethrower stream is the whole attack. It used to also throw a 5-fireball fan every 60
+            // ticks, which just cluttered a move whose read is the wall of flame in front of you.
+            if (AttackTimer < FlameFireTicks && AttackTimer % FlameInterval == 0)
             {
-                if (AttackTimer % FlameInterval == 0)
-                {
-                    ShootProjectile(target, 10, ProjectileID.Flames, 1, 0f, 0f, NPC.Center - new Vector2(0, 40), 0f, hostileVanillaFlame: true);
-                }
-
-                if (AttackTimer % FlameFanInterval == 0)
-                {
-                    ShootProjectile(target, 15, ModContent.ProjectileType<ChaosFireball>(), 5, 45f, 22.5f, NPC.Center - new Vector2(0, 40), 0f);
-                }
+                ShootProjectile(target, 10, ProjectileID.Flames, 1, 0f, 0f, NPC.Center - new Vector2(0, 40), 0f, hostileVanillaFlame: true);
             }
 
             if (AttackTimer >= FlameFireTicks)
@@ -1262,7 +1361,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 if (!Main.dedServ)
                 {
-                    SoundEngine.PlaySound(SoundID.Item72 with { Pitch = -0.2f }, NPC.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/HollowKnight/mantis_lord_horizontal_dash") with { Volume = 1.0f, PitchVariance = 0.1f }, NPC.Center);
                 }
             }
             else if (AttackTimer < RocketFireTicks)
@@ -1295,11 +1394,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     lockedAim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX);
                     NPC.netUpdate = true;
-                }
 
-                if (!Main.dedServ && tickInDash >= RocketDashInterval - LungeAimLockTicks && lockedAim != Vector2.Zero)
-                {
-                    Dust.QuickDustLine(NPC.Center, NPC.Center + lockedAim * 500f, 20f, Color.MediumPurple);
+                    // Drawn once, on the tick the heading locks — see RunScytheLunge.
+                    if (!Main.dedServ)
+                    {
+                        DrawTelegraphLine(NPC.Center, NPC.Center + lockedAim * 500f, Color.MediumPurple);
+                    }
                 }
             }
 
@@ -1459,23 +1559,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     lockedX = target.Center.X;
                     NPC.netUpdate = true;
+
+                    // The committed column, drawn ONCE at the instant it commits. This used to redraw a full
+                    // column every tick while the X still tracked the player, which left a row of vertical
+                    // lines strung across the arena instead of one telegraph.
+                    if (!Main.dedServ)
+                    {
+                        DrawTelegraphLine(new Vector2(lockedX, NPC.Center.Y), new Vector2(lockedX, floorY), Color.MediumPurple);
+                    }
                 }
 
-                // The dust column IS the telegraph: it tracks the player until the lock, then freezes on the
-                // committed spot for the last 20 ticks.
-                float columnX = lockedX;
+                // Before the lock only the ground ring tracks the player — it is a patch of dust, so it can
+                // follow every tick without smearing the way a line does.
+                float ringX = lockedX;
                 if (AttackTimer < lockTick)
                 {
-                    columnX = target.Center.X;
+                    ringX = target.Center.X;
                 }
 
                 if (!Main.dedServ)
                 {
-                    Dust.QuickDustLine(new Vector2(columnX, NPC.Center.Y), new Vector2(columnX, floorY), 14f, Color.MediumPurple);
-
                     for (int i = 0; i < 3; i++)
                     {
-                        Vector2 ringSpot = new Vector2(columnX + Main.rand.NextFloat(-DiveImpactRadius, DiveImpactRadius), floorY - 8f);
+                        Vector2 ringSpot = new Vector2(ringX + Main.rand.NextFloat(-DiveImpactRadius, DiveImpactRadius), floorY - 8f);
                         Dust.NewDustPerfect(ringSpot, DustID.Shadowflame, new Vector2(0f, -1.5f), 100, default, 1.4f).noGravity = true;
                     }
                 }
@@ -1518,7 +1624,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (!Main.dedServ)
                     {
                         UsefulFunctions.ScreenShake(NPC.Center, 10f, 20);
-                        SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/HollowKnight/false_knight_strike_ground") with { PitchVariance = 0.1f }, NPC.Center);
 
                         // Dirt kicked straight up off the floor — gravity on, so it arcs and falls back.
                         for (int i = 0; i < 90; i++)
@@ -1532,6 +1638,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {
                             Vector2 burst = new Vector2(Main.rand.NextFloat(-9f, 9f), Main.rand.NextFloat(-7f, 1f));
                             Dust.NewDustPerfect(NPC.Bottom + new Vector2(Main.rand.NextFloat(-60f, 60f), 0f), DustID.Shadowflame, burst, 90, default, 1.8f).noGravity = true;
+                        }
+
+                        // Three clouds kicked off the impact point itself. The rest of the brood trails the
+                        // shockwaves as they crawl (ChaosShockwave), so the dust follows the danger.
+                        for (int i = 1; i <= 3; i++)
+                        {
+                            Vector2 cloudVelocity = new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), Main.rand.NextFloat(-4.5f, -1.5f));
+                            Gore.NewGore(NPC.GetSource_FromThis(), NPC.Bottom + new Vector2(Main.rand.NextFloat(-50f, 50f), -10f),
+                                cloudVelocity, ModContent.Find<ModGore>($"tsorcRevamp/ChaosImpactCloud{i}").Type, Main.rand.NextFloat(0.9f, 1.3f));
                         }
 
                         // The damage wake: purple racing outward along the floor, drawn to the full reach the
@@ -1551,8 +1666,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
                     }
 
-                    // Concussion: within 50 tiles you are crippled briefly, whether or not the ground waves
-                    // reach you. Applied by each machine to its OWN player, the same way a hostile projectile's
+                    // Concussion, in two stages: 3s of Crippled (everything locked) inside a 10s Torn Wings
+                    // (flight only), so mobility comes back in steps instead of all at once. Applied by each
+                    // machine to its OWN player, the same way a hostile projectile's
                     // OnHitPlayer does: Player.AddBuff only networks itself when called from a client, so a
                     // server-side loop over Main.player would land on nobody in multiplayer.
                     if (!Main.dedServ)
@@ -1562,6 +1678,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         if (localPlayer.active && !localPlayer.dead && localPlayer.Distance(NPC.Bottom) <= SlamCrippleRange)
                         {
                             localPlayer.AddBuff(ModContent.BuffType<Buffs.Debuffs.Crippled>(), SlamCrippleTicks);
+                            localPlayer.AddBuff(ModContent.BuffType<Buffs.Debuffs.TornWings>(), SlamTornWingsTicks);
                         }
                     }
 
@@ -1714,7 +1831,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void RunShadowflameTeleport(Player target)
         {
-            MoveToward(target.Center, 10f, 20f);
+            // Hover NEAR the player, never on top of them. Sitting inside the player sprite gave the stream no
+            // travel time, buried the boss, and made the shots appear to radiate out of the player instead of
+            // at them. This keeps whatever bearing Chaos already has and corrects only the DISTANCE, so it
+            // trails loosely rather than being welded to the player position.
+            Vector2 fromPlayer = NPC.Center - target.Center;
+            Vector2 bearing = fromPlayer.SafeNormalize(-Vector2.UnitY);
+            Vector2 hover = target.Center + bearing * TeleportHoverDistance;
+            MoveToward(hover, 7f, 34f);
 
             if (AttackTimer < TeleportFireTicks && AttackTimer % TeleportFlameInterval == 0)
             {
@@ -1724,12 +1848,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // Roll the destination, then show it for 80 ticks before actually moving.
             if (AttackTimer < TeleportFireTicks && AttackTimer % TeleportCycleTicks == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                float destinationX = target.Center.X + Main.rand.Next(-300, 301);
-                float destinationY = target.Center.Y + Main.rand.Next(-300, 301);
+                // Rolled as a bearing plus a distance, NOT as independent X/Y offsets: those could each come up
+                // near zero and drop Chaos straight onto the player. A 300px floor also gives the stream ~30
+                // ticks of travel at speed 10, which is above the reaction floor.
+                float arrivalBearing = Main.rand.NextFloat(MathHelper.TwoPi);
+                float arrivalRange = Main.rand.NextFloat(TeleportMinDistance, TeleportMaxDistance);
+                Vector2 destination = target.Center + arrivalBearing.ToRotationVector2() * arrivalRange;
 
-                // Never blink into rock. The roll is unconstrained in both axes, so on its own it happily lands
-                // inside the floor or a wall; ClearOfTiles walks it back toward the player until it is in air.
-                teleportPosition = ClearOfTiles(new Vector2(destinationX, destinationY), target);
+                // Never blink into rock. ClearOfTiles walks the spot back toward the player until it is in air,
+                // which can undercut the 300px floor — being visible beats being buried.
+                teleportPosition = ClearOfTiles(destination, target);
                 NPC.netUpdate = true;
             }
 
@@ -1737,9 +1865,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (!Main.dedServ && teleportPosition != Vector2.Zero && tickInCycle < TeleportTelegraphTicks)
             {
+                // Both clouds are sized to the SPRITE frame, not the hitbox. The 130x160 hitbox is well under
+                // half the 294x226 body, so a hitbox-sized cloud sat in the middle of Chaos reading as though
+                // it belonged to something else entirely.
+                Vector2 bodySize = new Vector2(SpriteFrameWidth, SpriteFrameHeight);
+
+                // Arrival marker: where the body is going.
                 for (int i = 0; i < 10; i++)
                 {
-                    Dust.NewDust(teleportPosition - new Vector2(NPC.width / 2f, NPC.height / 2f), NPC.width, NPC.height, DustID.Shadowflame);
+                    Dust.NewDust(teleportPosition - bodySize / 2f, SpriteFrameWidth, SpriteFrameHeight, DustID.Shadowflame);
+                }
+
+                // Departure shimmer ON the body, so Chaos visibly comes apart where it stands instead of every
+                // teleport dust being several hundred pixels away at the destination.
+                for (int i = 0; i < 4; i++)
+                {
+                    Dust.NewDust(NPC.Center - bodySize / 2f, SpriteFrameWidth, SpriteFrameHeight, DustID.Shadowflame, 0f, 0f, 100, default, 1.2f);
                 }
             }
 
@@ -1751,7 +1892,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     for (int i = 0; i < 25; i++)
                     {
-                        Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(60f, 70f), DustID.Shadowflame, Main.rand.NextVector2Circular(5f, 5f), 90, default, 1.5f).noGravity = true;
+                        Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(SpriteFrameWidth / 2f, SpriteFrameHeight / 2f), DustID.Shadowflame, Main.rand.NextVector2Circular(5f, 5f), 90, default, 1.5f).noGravity = true;
                     }
                 }
 
@@ -1763,7 +1904,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     for (int i = 0; i < 25; i++)
                     {
-                        Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(60f, 70f), DustID.Shadowflame, Main.rand.NextVector2Circular(5f, 5f), 90, default, 1.5f).noGravity = true;
+                        Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(SpriteFrameWidth / 2f, SpriteFrameHeight / 2f), DustID.Shadowflame, Main.rand.NextVector2Circular(5f, 5f), 90, default, 1.5f).noGravity = true;
                     }
                 }
             }
@@ -1846,7 +1987,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        void RunOrbitalSickle(Player target)
+        void RunOrbitalCosmos(Player target)
         {
             if (AttackTimer == 0)
             {
@@ -1871,8 +2012,32 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 float easeProgress = MathHelper.Clamp(AttackTimer / (float)OrbitEaseTicks, 0f, 1f);
                 float radius = MathHelper.Lerp(orbitStartRadius, OrbitRadius, easeProgress);
 
-                Vector2 orbitTo = target.Center + new Vector2(1f, 1f).RotatedBy(MathHelper.ToRadians(orbitAngle)) * radius;
-                MoveToward(ClearOfTiles(orbitTo, target), 50f, 5f);
+                Vector2 orbitTo = ClearOfTiles(target.Center + new Vector2(1f, 1f).RotatedBy(MathHelper.ToRadians(orbitAngle)) * radius, target);
+
+                // ClearOfTiles walks a blocked destination back along the line TOWARD the player, and most of a
+                // ~990px circle is inside rock in a cave — so the orbit point kept collapsing onto the player and
+                // Chaos rushed in, then juddered as the destination flickered between open air and the collapse.
+                // Never let the destination inside the personal-space ring.
+                Vector2 playerToDestination = orbitTo - target.Center;
+                float destinationDistance = playerToDestination.Length();
+
+                if (destinationDistance < OrbitMinDistance)
+                {
+                    Vector2 destinationBearing = playerToDestination.SafeNormalize(-Vector2.UnitY);
+                    orbitTo = target.Center + destinationBearing * OrbitMinDistance;
+                }
+
+                // Chaos also cannot match its own orbit point — the point sweeps faster than his top speed — so
+                // he trails it and MoveToward cuts the CHORD rather than following the arc. A deep enough chord
+                // passes straight through the player. If he is already inside the ring, climb out before
+                // resuming the circle.
+                if (NPC.Distance(target.Center) < OrbitMinDistance)
+                {
+                    Vector2 outward = (NPC.Center - target.Center).SafeNormalize(-Vector2.UnitY);
+                    orbitTo = target.Center + outward * OrbitMinDistance;
+                }
+
+                MoveToward(orbitTo, OrbitSpeed, OrbitInertia);
             }
             else
             {
@@ -1883,9 +2048,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (AttackTimer < OrbitFireTicks)
             {
-                if (AttackTimer % OrbitSickleInterval == 0)
+                if (AttackTimer % OrbitOrbInterval == 0)
                 {
-                    ShootProjectile(target, 4, ModContent.ProjectileType<ChaosDemonSickle>(), 1, 0f, 0f, NPC.Center - new Vector2(0, 40), 0f);
+                    // 60% slower: these are the slow drifting hazard the orbit leaves behind, not a snap shot.
+                    ShootProjectile(target, 1.6f, ModContent.ProjectileType<ChaosCosmicOrb>(), 1, 0f, 0f, NPC.Center - new Vector2(0, 40), 0f);
                 }
 
                 if (AttackTimer % OrbitNovaInterval == OrbitNovaOffset && Main.netMode != NetmodeID.MultiplayerClient)
@@ -1904,19 +2070,55 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         #region Gale, Singularity and Brood
 
-        ///<summary>Wing Buffet Gale: a ring boundary fades in around Chaos, then three heavy flaps shove the
-        ///player outward toward it. The push is capped and beatable by moving inward, so the ring only catches
-        ///someone who stopped resisting — that is the whole test.</summary>
+        ///<summary>Wing Buffet Gale: closes to within GaleApproachRange first, then a ring boundary fades in
+        ///and three heavy flaps shove the player outward toward it. The push is capped and beatable by moving
+        ///inward, so the ring only catches someone who stopped resisting — that is the whole test.</summary>
         void RunWingGale(Player target)
         {
             NPC.velocity *= 0.93f;
 
+            if (!galeInPosition)
+            {
+                // The push cuts off past GalePushRange and the ring sits on the player, so an attack that
+                // started with Chaos still across the arena would fade in a boundary and then never reach it.
+                if (NPC.Distance(target.Center) > GaleApproachRange)
+                {
+                    MoveToward(ClearOfTiles(target.Center, target), GaleApproachSpeed, GaleApproachInertia);
+                    return;
+                }
+
+                // Close enough — commit. Restart the tick count so the windup's own tick 0 runs this frame,
+                // same trick BeginDivePhase uses to hand off between sub-phases.
+                galeInPosition = true;
+                AttackTimer = 0;
+                stateJustChanged = true;
+                NPC.netUpdate = true;
+            }
+
             if (AttackTimer == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                // Anchored here and left: a boundary that followed Chaos would be unlearnable.
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<ChaosGaleRing>(), NPC.damage / 6, 1f,
-                    ai0: GaleRingRadius, ai1: GaleRingHold);
+                // One ring per player, each centred on that player and visible only to them (see ChaosGaleRing).
+                // A single shared ring could not work: centred on Chaos your position inside it was luck, and
+                // centred on NPC.target it was meaningless to everyone else in the fight.
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player ringOwner = Main.player[i];
+
+                    if (!ringOwner.active || ringOwner.dead)
+                    {
+                        continue;
+                    }
+
+                    // Skip anyone not actually in the fight, rather than littering the world with rings.
+                    if (ringOwner.Distance(NPC.Center) > GaleRingSpawnRange)
+                    {
+                        continue;
+                    }
+
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), ringOwner.Center, Vector2.Zero,
+                        ModContent.ProjectileType<ChaosGaleRing>(), NPC.damage / 6, 1f,
+                        ai0: GaleRingRadius, ai1: GaleRingHold, ai2: i);
+                }
             }
 
             // Wind-up runs as long as the ring's fade-in, so nothing pushes before the boundary is readable.
@@ -1960,8 +2162,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (distance > 1f && distance < GalePushRange)
                     {
-                        float falloff = 1f - distance / GalePushRange;
-                        localPlayer.velocity += outward / distance * GalePushSpeed * falloff * 0.18f;
+                        // Eased in and out across the flap rather than one hard shove followed by a dead stop,
+                        // but riding on a floor rather than bottoming out: the wind ramps up and releases
+                        // without the gust being dead for the ticks at either end.
+                        float shape = (float)Math.Sin(MathHelper.Pi * tickInFlap / GalePushTicks);
+                        float envelope = MathHelper.Lerp(GaleGustFloor, 1f, shape);
+                        float distanceMult = MathHelper.Lerp(GaleNearMult, GaleFarMult, distance / GalePushRange);
+
+                        localPlayer.velocity += outward / distance * GaleGustAccel * envelope * distanceMult;
                     }
                 }
             }
@@ -1989,7 +2197,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     SpawnConvergingDust(DustID.Shadowflame, 120f, 3, 1.5f);
 
-                    // Motes falling inward at the destination, pre-selling the pull.
+                    // Motes falling inward at the destination, pre-selling both the location and the pull.
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 offset = Main.rand.NextVector2CircularEdge(190f, 190f);
@@ -2003,11 +2211,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (AttackTimer == SingularityTelegraphTicks)
             {
-                if (!Main.dedServ)
-                {
-                    SoundEngine.PlaySound(SoundID.Item122 with { Pitch = -0.6f }, tearPoint);
-                }
-
+                // No sound here: the tear plays its own as it phases in on its first tick.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), tearPoint, Vector2.Zero,
@@ -2092,25 +2296,47 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return approachSide;
         }
 
-        ///<summary>Whether Chaos's body would be buried at this centre. Samples a 3x3 grid across the sprite box
-        ///rather than a single point — Chaos is 130x160, so a centre-only test happily parks it with most of its
-        ///body inside a wall.</summary>
+        ///<summary>Whether Chaos's body would be BURIED at this centre — inside terrain, as opposed to merely
+        ///clipping something. Samples a 3x3 grid across the sprite box rather than a single point, because at
+        ///130x160 a centre-only test happily parks him with most of his body in a wall.
+        ///
+        ///Needs SEVERAL solid samples, not one. Chaos has noTileCollide and is bigger than three tiles, so
+        ///overlapping a single block is not being stuck — and treating it as stuck made ClearOfTiles haul his
+        ///destination toward the player over any stray block, which is exactly what made the orbit rush in.</summary>
         bool IsBlockedAt(Vector2 center)
         {
+            int solidSamples = 0;
+
             for (int sampleX = -1; sampleX <= 1; sampleX++)
             {
                 for (int sampleY = -1; sampleY <= 1; sampleY++)
                 {
                     Vector2 sample = center + new Vector2(sampleX * NPC.width * 0.4f, sampleY * NPC.height * 0.4f);
 
-                    if (IsSolidTile((int)(sample.X / 16f), (int)(sample.Y / 16f)))
+                    if (IsTerrainWall((int)(sample.X / 16f), (int)(sample.Y / 16f)))
                     {
-                        return true;
+                        solidSamples++;
                     }
                 }
             }
 
-            return false;
+            return solidSamples >= BuriedSampleThreshold;
+        }
+
+        ///<summary>A solid tile that counts as WALL for a flying boss: terrain, not scenery.
+        ///
+        ///Excludes tileFrameImportant, which is how Terraria marks furniture and decoration. The arena is
+        ///dotted with FlameJet tiles and those set Main.tileSolid true, so without this every jet read as a
+        ///wall — dragging orbit and rest destinations around, and silently cancelling volleys through
+        ///MuzzleBlocked — even though Chaos passes through them freely.</summary>
+        static bool IsTerrainWall(int x, int y)
+        {
+            if (!IsSolidTile(x, y))
+            {
+                return false;
+            }
+
+            return !Main.tileFrameImportant[Main.tile[x, y].TileType];
         }
 
         ///<summary>The nearest open spot to `destination`, searched back along the line toward the player.
@@ -2149,10 +2375,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return target.Center;
         }
 
-        ///<summary>Whether a projectile spawn point sits inside solid rock.</summary>
+        ///<summary>Whether a projectile spawn point sits inside solid rock. Scenery does not count — a volley
+        ///silently cancelled because the muzzle clipped a decorative block is worse than one fired through it.</summary>
         bool MuzzleBlocked(Vector2 muzzle)
         {
-            return IsSolidTile((int)(muzzle.X / 16f), (int)(muzzle.Y / 16f));
+            return IsTerrainWall((int)(muzzle.X / 16f), (int)(muzzle.Y / 16f));
         }
 
         ///<summary>Eases Chaos toward a destination. Higher inertia = lazier turn. This is the only movement
@@ -2175,7 +2402,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         ///the real vanilla type carrying tsorcGlobalProjectile.HostileVanillaMarker in ai[2] — a synced slot
         ///neither aiStyle uses — and every peer re-derives the hostile flags from it. Every other type Chaos
         ///fires is already hostile from its own SetDefaults.</summary>
-        void ShootProjectile(Player target, int speed, int type, int count, float startAngle, float angleDecrement, Vector2 startPosition, float spreadDegrees, bool hostileVanillaFlame = false)
+        void ShootProjectile(Player target, float speed, int type, int count, float startAngle, float angleDecrement, Vector2 startPosition, float spreadDegrees, bool hostileVanillaFlame = false)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
@@ -2214,6 +2441,34 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 angle -= angleDecrement;
+            }
+        }
+
+        ///<summary>ONE telegraph line, `strands` dust threads 5px apart — 3 reads as a thick line, 1 as a thin one.
+        ///
+        ///Call this on the single tick the direction commits — never every tick. QuickDustLine lays its dust
+        ///wherever the endpoints are at that instant, so repeating it while either end is still moving paints a
+        ///fresh line every frame: twenty ticks of a column that tracks the player becomes a picket fence across
+        ///the arena rather than a telegraph. Spacing is per-pixel so long and short lines read equally solid.</summary>
+        public static void DrawTelegraphLine(Vector2 start, Vector2 end, Color color, int strands = 3)
+        {
+            Vector2 along = end - start;
+            float length = along.Length();
+
+            if (length < 1f)
+            {
+                return;
+            }
+
+            Vector2 perpendicular = (along / length).RotatedBy(MathHelper.PiOver2);
+            float splits = length / 14f;
+
+            int reach = strands / 2;
+
+            for (int strand = -reach; strand <= reach; strand++)
+            {
+                Vector2 shift = perpendicular * strand * 5f;
+                Dust.QuickDustLine(start + shift, end + shift, splits, color);
             }
         }
 

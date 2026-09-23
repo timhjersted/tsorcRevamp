@@ -3058,13 +3058,20 @@ namespace tsorcRevamp
 
                 SpawnMaterializationDust(thisNPC);
 
-                thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventOwner = this;
-                thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventIndex = i;
+                NPCs.tsorcRevampGlobalNPC eventGlobalNPC = thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>();
+                eventGlobalNPC.ScriptedEventOwner = this;
+                eventGlobalNPC.ScriptedEventIndex = i;
 
-                // Keep event NPCs from despawning on their own (e.g. dungeon/surface enemies fleeing at dawn via
-                // timeLeft). CheckActive blocks the distance-based despawn, but not timeLeft. If even one event NPC
-                // despawns, the all-or-nothing alive check tears the whole (multi-NPC) event down — so pin them.
-                thisNPC.timeLeft = int.MaxValue;
+                if (thisNPC.boss && !eventGlobalNPC.AllowDynamicEventNaturalDespawn)
+                {
+                    thisNPC.timeLeft = int.MaxValue;
+                }
+                else if (!thisNPC.boss)
+                {
+                    // Off-screen authored spawns need a moment to enter the encounter. After this,
+                    // CheckActive and timeLeft return to vanilla behavior; a despawn fails the event.
+                    eventGlobalNPC.ScriptedEventEnemySpawnGrace = NPCs.tsorcRevampGlobalNPC.ScriptedEventEnemySpawnGraceTicks;
+                }
 
                 if (eventNPCs[i].customHealth != null)
                 {

@@ -87,7 +87,10 @@ namespace tsorcRevamp
             Terraria.On_Main.StartInvasion += BlockInvasions;
 
             //Terraria.On_Main.UpdateTime_StartNight += DisableEyeSpawn;
-            
+
+            Terraria.On_Main.UpdateTime_StartDay += DisableTownSlimeSpawn;
+
+
             On_NPC.SpawnOnPlayer += DisableBossSpawn;
 
             Terraria.On_NPC.AI_037_Destroyer += DestroyerAIRevamp;
@@ -153,6 +156,7 @@ namespace tsorcRevamp
             {
                 MonoModHooks.Add(drawMap, (Action<Action<Main, GameTime>, Main, GameTime>)DrawMap_WithInventoryVisibilityConfig);
             }
+            SurfaceMusicOverrides.RegisterHook();
 
             // Hide ONLY the vanilla life & mana bars when custom resource bars are enabled. The life/mana bars
             // are drawn by the active resource-display set's Draw(); there's one concrete set per HUD style, so
@@ -4200,6 +4204,38 @@ namespace tsorcRevamp
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 WorldGen.spawnEye = false;
+            }
+        }
+
+        // Town slimes are unwanted (see the AI blocklist in VanillaChanges.cs), but that force-deletes
+        // them every tick AFTER vanilla's once-a-day housing check already reserved a room and printed
+        // "X has arrived!". This runs right after that check (Main.UpdateTime_StartDay computes eligibility
+        // and picks WorldGen.prioritizedTownNPCType for the day) and clears both, so a town slime is never
+        // chosen to spawn in the first place - no housing reservation, no arrival message, no ghost NPC.
+        private static readonly int[] SuppressedTownSlimeTypes =
+        {
+            NPCID.TownSlimeBlue,
+            NPCID.TownSlimeCopper,
+            NPCID.TownSlimeGreen,
+            NPCID.TownSlimeOld,
+            NPCID.TownSlimePurple,
+            NPCID.TownSlimeRainbow,
+            NPCID.TownSlimeRed,
+            NPCID.TownSlimeYellow,
+        };
+
+        internal static void DisableTownSlimeSpawn(Terraria.On_Main.orig_UpdateTime_StartDay orig, ref bool stopEvents)
+        {
+            orig(ref stopEvents);
+
+            foreach (int slimeType in SuppressedTownSlimeTypes)
+            {
+                Main.townNPCCanSpawn[slimeType] = false;
+            }
+
+            if (Array.IndexOf(SuppressedTownSlimeTypes, WorldGen.prioritizedTownNPCType) >= 0)
+            {
+                WorldGen.prioritizedTownNPCType = 0;
             }
         }
 

@@ -1273,11 +1273,29 @@ namespace tsorcRevamp
                         continue;
                     }
 
+                    //Opposite of skipOnExpanded: sign only exists on the expanded map, skip it on legacy/remix.
+                    if (sign.expandedOnly && !ExpandedWorldTransform.Active)
+                    {
+                        continue;
+                    }
+
                     //Soapstone JSON coords are legacy (2000-space). On the expanded world, route them through the
                     //transform (+200/+400) so they land at the shifted sign positions; identity on legacy/remix.
-                    Microsoft.Xna.Framework.Point mapped = ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
-                    int locX = mapped.X;
-                    int locY = mapped.Y;
+                    //expandedOnly signs are authored natively in expanded-space, so they bypass the transform.
+                    int locX;
+                    int locY;
+
+                    if (sign.expandedOnly)
+                    {
+                        locX = sign.tileX;
+                        locY = sign.tileY;
+                    }
+                    else
+                    {
+                        Microsoft.Xna.Framework.Point mapped = ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
+                        locX = mapped.X;
+                        locY = mapped.Y;
+                    }
                     //Dust.QuickBox(new Vector2(locX, locY) * 16, new Vector2(locX + 1, locY + 1) * 16, 2, Color.YellowGreen, null);
 
 
@@ -1343,10 +1361,28 @@ namespace tsorcRevamp
                         continue;
                     }
 
+                    //Opposite of skipOnExpanded: sign only exists on the expanded map, skip it on legacy/remix.
+                    if (sign.expandedOnly && !ExpandedWorldTransform.Active)
+                    {
+                        continue;
+                    }
+
                     //Legacy (2000-space) JSON coords -> current-world coords (+200/+400 on expanded, identity else).
-                    Microsoft.Xna.Framework.Point mapped = ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
-                    int locX = mapped.X;
-                    int locY = mapped.Y;
+                    //expandedOnly signs are authored natively in expanded-space, so they bypass the transform.
+                    int locX;
+                    int locY;
+
+                    if (sign.expandedOnly)
+                    {
+                        locX = sign.tileX;
+                        locY = sign.tileY;
+                    }
+                    else
+                    {
+                        Microsoft.Xna.Framework.Point mapped = ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
+                        locX = mapped.X;
+                        locY = mapped.Y;
+                    }
 
                     if (existing.TryGetValue((locX, locY), out SoapstoneTileEntity entity))
                     {

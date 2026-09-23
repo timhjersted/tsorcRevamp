@@ -2611,3 +2611,13 @@
   "style": 1,
   "category": "story"
 }
+{
+  "text": "- You've discovered the Shadewood Garden -",
+  "tileX": 3840,
+  "tileY": 999,
+  "textWidth": 320,
+  "style": 1,
+  "category": "location",
+  "locationName": "SHADEWOOD GARDEN",
+  "expandedOnly": true
+}
