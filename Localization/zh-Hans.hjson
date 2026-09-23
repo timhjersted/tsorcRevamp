@@ -1505,7 +1505,6 @@ Mods: {
 					这种珍贵的宝石不可思议的具备察觉正在迫近的死亡的能力
 					{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1}
 					{$CommonItemTooltip.DRStat@2}
-					{$CommonItemTooltip.Melee.BadDmg@3}
 					'''
 			}
 
@@ -5126,8 +5125,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesDefenseBy}
 					{$CommonItemTooltip.DRStat@1}
-					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
-					{$CommonItemTooltip.BadDmg@3}
+					{$CommonItemTooltip.BadDmgMult@2}
 					不与恶魔药水、力量药水或前线药水叠加
 					'''
 			}
