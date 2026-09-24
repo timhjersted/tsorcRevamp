@@ -11,9 +11,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// (rise direction/speed) is set by whoever spawns it; this projectile manages the transitions.
     ///
     /// Phase + phase-elapsed-ticks live in Projectile.ai[0]/ai[1], while ai[2] stores the spawning
-    /// NPC index + 1. The homing direction is captured directly into
-    /// Projectile.velocity at the pause->home transition and re-normalized each tick while only its
-    /// magnitude ramps up — so no additional stored state is needed for that either.
+    /// NPC index + 1. The homing direction is only SEEDED at the pause->home transition (so the
+    /// initial commit still reads as a deliberate dive); every tick afterward it steers toward the
+    /// target's live position at HomingTurnRate while only its magnitude ramps up separately.
     /// </summary>
     public class EnemyGreatFireAxeFireball : ModProjectile
     {
@@ -24,6 +24,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         public float HomingStartSpeed = 2f;
         public float HomingAcceleration = 0.15f;
         public float HomingMaxSpeed = 9f;
+        // Medium homing: steers toward the target's CURRENT position every tick instead of committing
+        // to wherever they stood the instant the pause ended, which is what made these orbs fly a
+        // straight line to a stale spot and land behind a moving player.
+        public float HomingTurnRate = 0.05f;
 
         public int OwnerNpcIndex => (int)Projectile.ai[2] - 1;
 
@@ -69,7 +73,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             Projectile.penetrate = 1;
             Projectile.timeLeft = 600;
             Projectile.light = 0.8f;
-            Projectile.alpha = 100;
+            Projectile.alpha = 20;
             Projectile.DamageType = DamageClass.Melee;
         }
 
@@ -103,11 +107,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     }
                     break;
 
-                case 2: // Homing — direction was locked the instant the pause ended; only speed ramps.
+                case 2: // Homing — steers toward the target's live position each tick; speed also ramps.
                     if (Projectile.velocity != Vector2.Zero)
                     {
                         float speed = System.Math.Min(Projectile.velocity.Length() + HomingAcceleration, HomingMaxSpeed);
-                        Projectile.velocity = Vector2.Normalize(Projectile.velocity) * speed;
+                        float heading = Projectile.velocity.ToRotation();
+                        if (target != null)
+                        {
+                            float desiredHeading = (target.Center - Projectile.Center).ToRotation();
+                            heading = heading.AngleTowards(desiredHeading, HomingTurnRate);
+                        }
+                        Projectile.velocity = heading.ToRotationVector2() * speed;
                     }
                     break;
 
@@ -159,11 +169,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             target.AddBuff(BuffID.OnFire, 6 * 60);
         }
 
+        // Covers every death cause (timeout, OnTileCollide's Projectile.Kill(), and the penetrate=1
+        // depletion after OnHitPlayer) — one burst point for all three.
         public override void OnKill(int timeLeft)
         {
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 48; i++)
             {
-                Vector2 velocity = Main.rand.NextVector2Circular(3f, 3f);
+                Vector2 velocity = Main.rand.NextVector2Circular(6f, 6f);
                 Dust.NewDustPerfect(Projectile.Center, DustID.Torch, velocity, 100, default, Main.rand.NextFloat(1.2f, 2f)).noGravity = true;
             }
         }

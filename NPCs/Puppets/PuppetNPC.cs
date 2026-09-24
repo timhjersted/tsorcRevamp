@@ -365,6 +365,14 @@ namespace tsorcRevamp.NPCs.Puppets
         /// landing, and the landing does not hit a second time.</summary>
         private bool _leapStrikeStarted;
 
+        /// <summary>A LeapSlam step whose LeapApexRetargetStrength &gt; 0 has already re-aimed its
+        /// descent this flight. Fires once, on the exact tick the apex is reached.</summary>
+        private bool _leapApexRetargeted;
+        /// <summary>Ticks spent rising during the current LeapSlam/LeapThrust flight (frozen once the
+        /// apex is reached). Used to size the boosted-gravity descent's remaining airtime at apex
+        /// retarget — see <see cref="RetargetLeapAtApex"/>.</summary>
+        private int _comboLeapAscentTicks;
+
         // Logical arm angles that put the blade above the head, then down-forward at impact.
         // Ground-directed slams deliberately exclude player-height aim bias. Virtual so a combo can
         // carry the blade in its own cocked pose (Gwyn's Wrath Flurry holds its raised swipe pose).
@@ -2597,6 +2605,12 @@ namespace tsorcRevamp.NPCs.Puppets
         protected EnemyFlightController Flight => _flight;
         private Item _wingsItemCache;
         private int  _cachedWingsType = -1;
+        /// <summary>Hot-swap support: (re)applies armor/dye whenever a subclass's
+        /// Head/Body/LegsArmorItemType changes (e.g. a health-phase-driven set swap), the same idea
+        /// as the wings cache above but for the three base equip slots. -1 forces the first apply.</summary>
+        private int  _cachedHeadArmorItemType = -1;
+        private int  _cachedBodyArmorItemType = -1;
+        private int  _cachedLegsArmorItemType = -1;
         /// <summary>Cooldown between consecutive aerial-dive hits.  Ticks down each AI frame.</summary>
         private int  _aerialHitCooldown;
         private int  _aerialDiveCooldown;
@@ -3551,6 +3565,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     state.Write(step.HitWindowEnd);
                     state.Write(step.LeapHeightMult);
                     state.Write(step.LeapForwardSpeedMult);
+                    state.Write(step.LeapDescentGravityMult);
+                    state.Write(step.LeapApexRetargetStrength);
                 }
             }
 
@@ -3567,6 +3583,8 @@ namespace tsorcRevamp.NPCs.Puppets
             state.Write(_comboSwingFlipped);
             state.Write(_apexDiveStrikeStarted);
             state.Write(_leapStrikeStarted);
+            state.Write(_leapApexRetargeted);
+            state.Write((short)_comboLeapAscentTicks);
 
             // Bespoke attack phases: the directions, targets and counters their entry code rolled or aimed.
             int pierceTargetIndex = -1;
@@ -3849,6 +3867,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     step.HitWindowEnd = state.ReadSingle();
                     step.LeapHeightMult = state.ReadSingle();
                     step.LeapForwardSpeedMult = state.ReadSingle();
+                    step.LeapDescentGravityMult = state.ReadSingle();
+                    step.LeapApexRetargetStrength = state.ReadSingle();
                     receivedSteps[i] = step;
                 }
             }
@@ -3918,6 +3938,8 @@ namespace tsorcRevamp.NPCs.Puppets
             _comboSwingFlipped = state.ReadBoolean();
             _apexDiveStrikeStarted = state.ReadBoolean();
             _leapStrikeStarted = state.ReadBoolean();
+            _leapApexRetargeted = state.ReadBoolean();
+            _comboLeapAscentTicks = state.ReadInt16();
 
             _pierceIsStab = state.ReadBoolean();
             _pierceHitConnected = state.ReadBoolean();
@@ -4409,11 +4431,16 @@ namespace tsorcRevamp.NPCs.Puppets
                     // Spear poke: medium-to-long melee reach, grounded, no lunge required.
                     bool wantSpear  = SpearWeaponItemType >= 0 && dist <= SpearRange
                                       && _spearCooldown <= 0 && heightDiff < 48f && NPC.velocity.Y == 0f;
+                    // LOS-gated: without this a puppet on uneven terrain picks a ranged attack whose
+                    // straight-line shot immediately clips the ground/a ledge between it and the
+                    // player. Skipping the pick (rather than firing blind) leaves the puppet in its
+                    // normal pursuit movement, which naturally closes into a clear sightline.
                     bool wantPrimary   = RangedWeaponItemType >= 0 && dist <= RangedRange
-                                         && dist >= MinRangedRange && _rangedCooldown <= 0;
+                                         && dist >= MinRangedRange && _rangedCooldown <= 0 && hasLOS;
                     bool wantSecondary = SecondaryRangedWeaponItemType >= 0 && SecondaryRangedAvailable
                                          && dist <= SecondaryRangedRange
-                                         && dist >= SecondaryRangedMinRange && _secondaryRangedCooldown <= 0;
+                                         && dist >= SecondaryRangedMinRange && _secondaryRangedCooldown <= 0
+                                         && hasLOS;
                     // Magic: fires from any elevation (no velocity.Y check), blocked at very close range.
                     bool wantMagic     = MagicWeaponItemType >= 0 && dist <= MagicRange
                                          && dist >= MinMagicRange && _magicCooldown <= 0;
@@ -5869,8 +5896,11 @@ namespace tsorcRevamp.NPCs.Puppets
                         // steer X). Optional correction is limited to ascent; gravity and the locked
                         // descent preserve a committed, dodgeable landing line.
                         if (_comboLeapLaunched && NPC.velocity.Y < 0f)
+                        {
                             UpdateLeapAscentTracking(target, step, 0f,
                                 LeapAttackAscentTrackingStrength);
+                            _comboLeapAscentTicks++;
+                        }
                         NPC.velocity.X = _comboLeapVx;
                         // velocity.Y only returns to exactly 0 via a vertical collision (landing).
                         // Require a few ticks of airtime first so a launch that can't clear a low
@@ -5886,6 +5916,23 @@ namespace tsorcRevamp.NPCs.Puppets
                         // In-range strike (opt-in via LeapStrikeRange): once past the apex with the
                         // target close, swing now rather than on the landing, and arm the swept blade.
                         bool pastApex = _comboLeapLaunched && NPC.velocity.Y >= 0f && !landed;
+
+                        // Apex retarget (opt-in via LeapApexRetargetStrength): the instant the arc
+                        // tips from rising to falling, re-aim the locked descent velocity at the
+                        // target's position right now instead of the launch-time lead-predicted spot,
+                        // so a long telegraph doesn't guarantee a walked-out-of-the-way whiff. Fires once.
+                        if (pastApex && !_leapApexRetargeted && step.LeapApexRetargetStrength > 0f)
+                        {
+                            _leapApexRetargeted = true;
+                            RetargetLeapAtApex(target, step);
+                        }
+
+                        // Descent gravity boost (opt-in via LeapDescentGravityMult): speeds up only
+                        // the fall from apex to landing, so a high telegraphing jump still slams down
+                        // fast rather than hanging in the air for the player to simply walk away from.
+                        if (pastApex && step.LeapDescentGravityMult > 0f && step.LeapDescentGravityMult != 1f)
+                            NPC.velocity.Y += 0.3f * (step.LeapDescentGravityMult - 1f);
+
                         bool canStrikeInAir = landingTimedSlam && step.LeapStrikeRange > 0f
                             && !_leapStrikeStarted && _leapSlamSwingProgress <= 0f && pastApex;
                         if (canStrikeInAir && NPC.Distance(target.Center) <= step.LeapStrikeRange)
@@ -6779,10 +6826,46 @@ namespace tsorcRevamp.NPCs.Puppets
             }
         }
 
+        /// <summary>LeapSlam apex retarget (opt-in via <see cref="MeleeComboStep.LeapApexRetargetStrength"/>):
+        /// re-aims the locked horizontal velocity at the target's position AT THE APEX, using the
+        /// descent's actual remaining airtime (shorter than the ascent whenever LeapDescentGravityMult
+        /// speeds the fall up), instead of the launch-time lead-predicted aim. Called once, the tick
+        /// the arc crosses from rising to falling.</summary>
+        private void RetargetLeapAtApex(Player target, MeleeComboStep step)
+        {
+            float forwardMult = step.LeapForwardSpeedMult > 0f ? step.LeapForwardSpeedMult : 1f;
+            float gravityMult = step.LeapDescentGravityMult > 0f ? step.LeapDescentGravityMult : 1f;
+            // Ascent and (boosted-gravity) descent both start/end at zero vertical speed, so their
+            // durations relate by sqrt(gravityMult) — see BeginLeapAttack's airtime derivation.
+            float remainingAirTicks = Math.Max(6f,
+                _comboLeapAscentTicks / (float)Math.Sqrt(gravityMult));
+
+            float signedGap = target.Center.X - NPC.Center.X;
+            int trackingDirection = signedGap < 0f ? -1 : 1;
+            float travelDistance = Math.Max(0f, Math.Abs(signedGap) - LeapLandingStandoff);
+            float maxForward = LeapAttackForwardSpeed * forwardMult;
+            float desiredSpeed = MathHelper.Clamp(
+                travelDistance / remainingAirTicks,
+                0f,
+                maxForward);
+            float desiredVelocity = trackingDirection * desiredSpeed;
+
+            _comboLeapVx = MathHelper.Lerp(_comboLeapVx, desiredVelocity,
+                MathHelper.Clamp(step.LeapApexRetargetStrength, 0f, 1f));
+            if (Math.Abs(signedGap) > 24f)
+            {
+                _comboLockedDir = trackingDirection;
+                NPC.direction = trackingDirection;
+                NPC.spriteDirection = trackingDirection;
+            }
+        }
+
         private void BeginLeapAttack(MeleeComboStep step)
         {
             _leapSlamSwingProgress = 0f;
             _leapStrikeStarted = false;
+            _leapApexRetargeted = false;
+            _comboLeapAscentTicks = 0;
             Player target = Main.player[NPC.target];
             float targetX = PredictedLeapTargetX(target);
             int dir = targetX < NPC.Center.X ? -1 : 1;
@@ -7938,6 +8021,16 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected void SetDisplayWeapon(int itemType, bool swing)
         {
+            // A hard swap to a DIFFERENT weapon without starting a new swing (e.g. a ranged burst
+            // handing back to the melee weapon for recovery) must not carry over the old weapon's
+            // leftover countdown: _weaponAnimMax below is recomputed for the new item, but _weaponAnim
+            // itself was left counting down against the OLD item's timing. For a few ticks the new
+            // weapon then renders mid-pose using a swing-progress fraction that belongs to a
+            // differently-timed animation - a visible flash of a wrong-looking pose/sprite right at the
+            // handoff. Same weapon re-asserting its own display (itemType unchanged) is unaffected.
+            if (!swing && itemType != _heldItemType)
+                _weaponAnim = 0;
+
             _heldItemType = itemType;
             _weaponAnimMax = GetWeaponUseAnimation(itemType);
             if (swing)
@@ -8061,8 +8154,11 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             else if (Phase == AttackPhase.CrossbowBurstPause)
             {
-                // Hold horizontal aim between shots — same target angle as Crossbow telegraph.
-                _weaponRotation = MathHelper.Lerp(_weaponRotation, 0.05f, 0.22f);
+                // Hold aim between shots at the same target angle each style's own telegraph uses
+                // (was hardcoded to Crossbow's regardless of style, so a Bow burst pattern held the
+                // Crossbow angle between shots instead of its own).
+                float burstPauseTarget = _activeRangedStyle == RangedStyle.Bow ? 0.0f : 0.05f;
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, burstPauseTarget, 0.22f);
             }
             else if (Phase == AttackPhase.SpearTelegraph)
             {
@@ -9230,6 +9326,16 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 return GetDiagonalSpriteWorldDirection(_weaponRotation + SpearDrawRotationOffset, BladeFlipActive);
             }
+            // A bow's rotation is a plain aim angle (see heldBowLike in DrawWeaponToLayer, which draws
+            // it at _weaponRotation * NPC.direction with no diagonal blade-tip offset) — falling through
+            // to the melee branch below would run it through the broadsword ±45° convention instead,
+            // producing a direction unrelated to how the bow is actually drawn. Matters for
+            // ResolveTwoHandedBackArmPose, which aims the rear-hand IK target off this vector.
+            if (_heldItemType == _activeRangedItemType && _activeRangedStyle == RangedStyle.Bow)
+            {
+                float bowRotation = _weaponRotation * NPC.direction;
+                return new Vector2((float)Math.Cos(bowRotation), (float)Math.Sin(bowRotation));
+            }
             return GetMeleeWorldDirection(FrontHandPoseRotation, FrontHandWeapon);
         }
 
@@ -9400,46 +9506,8 @@ namespace tsorcRevamp.NPCs.Puppets
             _puppet.eyeColor = PuppetEyeColor;
             _puppet.skinVariant = PuppetSkinVariant;
 
-            _puppet.armor[0] = new Item();
-            _puppet.armor[0].SetDefaults(HeadArmorItemType);
-            _puppet.armor[1] = new Item();
-            _puppet.armor[1].SetDefaults(BodyArmorItemType);
-            _puppet.armor[2] = new Item();
-            _puppet.armor[2].SetDefaults(LegsArmorItemType);
-
-            // These equip-slot indices are what Terraria's player renderer reads. Phase-specific
-            // oversized art is substituted only after this normal composite has been assembled.
-            _puppet.head = _puppet.armor[0].headSlot;
-            _puppet.body = _puppet.armor[1].bodySlot;
-            _puppet.legs = _puppet.armor[2].legSlot;
-
-            SetPuppetDye(0, HeadArmorDyeItemType);
-            SetPuppetDye(1, BodyArmorDyeItemType);
-            SetPuppetDye(2, LegsArmorDyeItemType);
+            ApplyPuppetArmor();
             SetPuppetDye(3, HasWings ? WingsDyeItemType : 0);
-
-            // Robe bodies (cultist robes, mage robes...) get their floor-length skirt from an implied leg slot
-            // that vanilla's PlayerFrame assigns through Player.SetMatch — which puppets never run. Apply it only
-            // when no leg armor is set, so a puppet that picked explicit legs keeps them. SetMatch returns -1 for
-            // bodies with no implied legs; wearsRobe switches the draw to the Robe layer instead of Leggings.
-            if (_puppet.legs <= 0)
-            {
-                bool wearsRobe = false;
-                Player.SetMatchRequest robeRequest = new Player.SetMatchRequest
-                {
-                    Head = _puppet.head,
-                    Body = _puppet.body,
-                    Legs = _puppet.legs,
-                    Male = _puppet.Male,
-                    ArmorSlotRequested = 1,
-                };
-                int impliedLegs = Player.SetMatch(robeRequest, ref wearsRobe);
-                if (impliedLegs != -1)
-                {
-                    _puppet.legs = impliedLegs;
-                }
-                _puppet.wearsRobe = wearsRobe;
-            }
 
             // Wings — populated only when HasWings, so wing layer renders behind the body
             if (HasWings && WingsAccessoryItemType > 0)
@@ -9465,15 +9533,69 @@ namespace tsorcRevamp.NPCs.Puppets
                 ApplyAccessoryDye(accessory, _puppet.dye[slot].dye);
             }
 
+            // Resolve the wings dye item into the shader ID DrawPlayer reads (head/body/legs are
+            // resolved inside ApplyPuppetArmor itself, since that also runs standalone later).
+            _puppet.cWings = _puppet.dye[3].dye;
+
+            // Pre-set default weapon so it shows from the first frame
+            _heldItemType = MeleeWeaponItemType >= 0 ? MeleeWeaponItemType : RangedWeaponItemType;
+        }
+
+        /// <summary>Equips Head/Body/LegsArmorItemType (+ their dyes) onto the puppet and resolves
+        /// the implied-robe-legs case. Called once from InitPuppet, and again from SyncPuppet
+        /// whenever a subclass's item types change mid-fight (e.g. Owl Father's health-phase armor
+        /// swap) — see the _cachedHeadArmorItemType family below.</summary>
+        private void ApplyPuppetArmor()
+        {
+            _puppet.armor[0] = new Item();
+            _puppet.armor[0].SetDefaults(HeadArmorItemType);
+            _puppet.armor[1] = new Item();
+            _puppet.armor[1].SetDefaults(BodyArmorItemType);
+            _puppet.armor[2] = new Item();
+            _puppet.armor[2].SetDefaults(LegsArmorItemType);
+
+            // These equip-slot indices are what Terraria's player renderer reads. Phase-specific
+            // oversized art is substituted only after this normal composite has been assembled.
+            _puppet.head = _puppet.armor[0].headSlot;
+            _puppet.body = _puppet.armor[1].bodySlot;
+            _puppet.legs = _puppet.armor[2].legSlot;
+
+            SetPuppetDye(0, HeadArmorDyeItemType);
+            SetPuppetDye(1, BodyArmorDyeItemType);
+            SetPuppetDye(2, LegsArmorDyeItemType);
+
+            // Robe bodies (cultist robes, mage robes...) get their floor-length skirt from an implied leg slot
+            // that vanilla's PlayerFrame assigns through Player.SetMatch — which puppets never run. Apply it only
+            // when no leg armor is set, so a puppet that picked explicit legs keeps them. SetMatch returns -1 for
+            // bodies with no implied legs; wearsRobe switches the draw to the Robe layer instead of Leggings.
+            if (_puppet.legs <= 0)
+            {
+                bool wearsRobe = false;
+                Player.SetMatchRequest robeRequest = new Player.SetMatchRequest
+                {
+                    Head = _puppet.head,
+                    Body = _puppet.body,
+                    Legs = _puppet.legs,
+                    Male = _puppet.Male,
+                    ArmorSlotRequested = 1,
+                };
+                int impliedLegs = Player.SetMatch(robeRequest, ref wearsRobe);
+                if (impliedLegs != -1)
+                {
+                    _puppet.legs = impliedLegs;
+                }
+                _puppet.wearsRobe = wearsRobe;
+            }
+
             // Resolve the vanilla dye items into the shader IDs consumed by DrawPlayer. Doing this
             // directly avoids running accessory/mod-player update hooks on the synthetic puppet.
             _puppet.cHead = _puppet.dye[0].dye;
             _puppet.cBody = _puppet.dye[1].dye;
             _puppet.cLegs = _puppet.dye[2].dye;
-            _puppet.cWings = _puppet.dye[3].dye;
 
-            // Pre-set default weapon so it shows from the first frame
-            _heldItemType = MeleeWeaponItemType >= 0 ? MeleeWeaponItemType : RangedWeaponItemType;
+            _cachedHeadArmorItemType = HeadArmorItemType;
+            _cachedBodyArmorItemType = BodyArmorItemType;
+            _cachedLegsArmorItemType = LegsArmorItemType;
         }
 
         private void SetPuppetDye(int slot, int dyeItemType)
@@ -9514,6 +9636,17 @@ namespace tsorcRevamp.NPCs.Puppets
             _puppet.width     = PuppetVisualWidth;
             _puppet.height    = PuppetVisualHeight;
             _puppet.gravDir   = 1f;
+
+            // Hot-swap support: InitPuppet only ever runs once (the first PreDraw, long before any
+            // health-phase flag flips), so a subclass whose Head/Body/LegsArmorItemType depends on
+            // mutable state (Owl Father's phase-two Ancient-set swap) would otherwise stay equipped
+            // in whatever it wore at spawn forever. Re-apply whenever any of the three actually change.
+            if (HeadArmorItemType != _cachedHeadArmorItemType
+                || BodyArmorItemType != _cachedBodyArmorItemType
+                || LegsArmorItemType != _cachedLegsArmorItemType)
+            {
+                ApplyPuppetArmor();
+            }
 
             // Mount visual is DERIVED from the gameplay flag every frame rather than driven by mount/dismount
             // events. A client that learns about the dismount via synced state (not by running CheckDead
@@ -10193,8 +10326,21 @@ namespace tsorcRevamp.NPCs.Puppets
                 && _activeMeleeCombo.Steps != null && _meleeComboStepIndex >= 0
                 && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length)
                 reach = ComboReachBase * 0.7f * _activeMeleeCombo.Steps[_meleeComboStepIndex].ReachMult;
+            // Landing-timed leap slams: Phase can already advance to MeleeComboPause/Recovery in the
+            // same Update tick that _leapSlamSwingProgress reaches 1 (both happen once landing is
+            // detected), so gate on the motion + progress directly instead of Phase == MeleeComboAttack.
+            // Without this, anything sampling this pose (the crescent sprite, the fire-slash shader)
+            // never observes progress hit 1 - it freezes one tick early on whatever partial arc it had.
+            bool leapSlamPoseLive = UseLandingTimedLeapSlam
+                && ActiveMeleeComboMotion == ComboMotion.LeapSlam
+                && _leapSlamSwingProgress > 0f;
+
             progress = PuppetWeaponAnimationProgress;
-            if (Phase == AttackPhase.MeleeComboAttack)
+            if (leapSlamPoseLive)
+            {
+                progress = MathHelper.Clamp(_leapSlamSwingProgress, 0f, 1f);
+            }
+            else if (Phase == AttackPhase.MeleeComboAttack)
             {
                 if (UseLandingTimedLeapSlam && ActiveMeleeComboMotion == ComboMotion.LeapSlam)
                 {
@@ -10248,7 +10394,7 @@ namespace tsorcRevamp.NPCs.Puppets
             darkColor = SlashTrailDarkColor;
             centerColor = SlashTrailCenterColor;
             edgeColor = SlashTrailEdgeColor;
-            return IsMeleeSlashActive && !IsLeapSlamCarry;
+            return (IsMeleeSlashActive || leapSlamPoseLive) && !IsLeapSlamCarry;
         }
 
         private bool IsLeapSlamCarry => UseLandingTimedLeapSlam
@@ -10633,11 +10779,37 @@ namespace tsorcRevamp.NPCs.Puppets
                 }
             }
 
+            // Matches either an oversized template texture (ArmorTemplateScale > 1, substituted in
+            // TransformLargeArmorTemplate) or the puppet's own normal-size equipped textures
+            // (ArmorTemplateScale == 1, enlarged instead via SpectralOverlayScale) — a puppet's
+            // current phase determines which of these is actually what's sitting in the draw cache.
+            Texture2D headTexture = _puppet.head > 0 && _puppet.head < TextureAssets.ArmorHead.Length
+                ? TextureAssets.ArmorHead[_puppet.head]?.Value
+                : null;
+            Texture2D bodyTexture = _puppet.body > 0 && _puppet.body < TextureAssets.ArmorBody.Length
+                ? TextureAssets.ArmorBody[_puppet.body]?.Value
+                : null;
+            Texture2D bodyCompositeTexture = _puppet.body > 0
+                && _puppet.body < TextureAssets.ArmorBodyComposite.Length
+                ? TextureAssets.ArmorBodyComposite[_puppet.body]?.Value
+                : null;
+            Texture2D armTexture = _puppet.body > 0 && _puppet.body < TextureAssets.ArmorArm.Length
+                ? TextureAssets.ArmorArm[_puppet.body]?.Value
+                : null;
+            Texture2D legsTexture = _puppet.legs > 0 && _puppet.legs < TextureAssets.ArmorLeg.Length
+                ? TextureAssets.ArmorLeg[_puppet.legs]?.Value
+                : null;
+
             foreach (DrawData core in _spectralDrawCache)
             {
                 bool isLargeArmor = core.texture == _largeHeadArmorTemplateTexture
                     || core.texture == _largeBodyArmorTemplateTexture
-                    || core.texture == _largeLegsArmorTemplateTexture;
+                    || core.texture == _largeLegsArmorTemplateTexture
+                    || core.texture == headTexture
+                    || core.texture == bodyTexture
+                    || core.texture == bodyCompositeTexture
+                    || core.texture == armTexture
+                    || core.texture == legsTexture;
                 bool isMeleeWeapon = meleeWeaponTexture != null && core.texture == meleeWeaponTexture;
                 if (!isLargeArmor && !isMeleeWeapon)
                     continue;
@@ -11030,6 +11202,14 @@ namespace tsorcRevamp.NPCs.Puppets
                     drawPos += new Vector2(holdoutOffset.Value.X * NPC.direction, holdoutOffset.Value.Y) * NPC.scale;
                 }
             }
+            if (heldRangedLike)
+            {
+                Vector2 rangedOffset = GetHeldRangedDrawOffset(_heldItemType);
+                if (rangedOffset != Vector2.Zero)
+                {
+                    drawPos += new Vector2(rangedOffset.X * NPC.direction, rangedOffset.Y) * NPC.scale;
+                }
+            }
 
             // ── Origin: anchor the HANDLE (not centre) at the animated hand position ──
             //
@@ -11117,7 +11297,13 @@ namespace tsorcRevamp.NPCs.Puppets
             // Per-weapon angular correction for melee sprites whose blade/head diagonal doesn't
             // match the broadsword convention (handle lower-left → blade upper-right).  Applied to
             // the drawn sprite only — the arm pose and swing arc still run off raw _weaponRotation.
-            float drawRotation = _weaponRotation;
+            //
+            // heldBowLike gets the same *NPC.direction mirror GetMeleeDrawRotation() applies for
+            // melee: SpriteBatch's rotation parameter is a plain angle that does NOT auto-flip with
+            // SpriteEffects.FlipHorizontally, so a bow's un-mirrored _weaponRotation was tilting the
+            // same physical direction whether the sprite itself was flipped or not, reading as a
+            // small held-close/twisted pose on the flipped (left-facing) side only.
+            float drawRotation = heldBowLike ? _weaponRotation * NPC.direction : _weaponRotation;
             // Spears use their own SpearDrawRotationOffset to correct for the sprite's natural
             // orientation — MeleeWeaponRotationOffset is a sword-only fine-tune and would double
             // up with (and fight) that correction, so it's excluded here.
@@ -11358,6 +11544,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float GetHeldRangedDrawScale(int itemType) => 1f;
         /// <summary>Normalized grip pixel for a held bow sprite before horizontal mirroring.</summary>
         protected virtual Vector2 GetHeldRangedGripNorm(int itemType) => new Vector2(0.25f, 0.5f);
+        /// <summary>Extra world-space nudge for a held ranged sprite, same idea as the crossbow's
+        /// item-level HoldoutOffset but puppet-controlled. X is mirrored by facing (positive = away
+        /// from the body); Y is not. Default none.</summary>
+        protected virtual Vector2 GetHeldRangedDrawOffset(int itemType) => Vector2.Zero;
         /// <summary>Whether this ranged sprite needs a horizontal flip for its current facing.
         /// Override for custom art authored facing left instead of the usual right.</summary>
         protected virtual bool ShouldFlipHeldRangedSpriteHorizontally(int itemType) => NPC.direction == -1;

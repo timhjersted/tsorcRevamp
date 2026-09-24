@@ -72,6 +72,17 @@ namespace tsorcRevamp
                 MonoModHooks.Add(gotoSavedModMenu, (Action<Action>)ForceRedCloudMenuDefault);
             }
 
+            // Activated atmosphere props (vanilla Fog Machine, Chimney) hide their source behind Echo Paint
+            // in Adventure/Remix maps. Echo Goggles and the Echo Monolith are meant to reveal every other
+            // echo-painted secret, so these two specifically need to opt out of that reveal - TileDrawing.
+            // IsVisible has no HookGen wrapper, so it's hooked manually via reflection, same pattern as
+            // GotoSavedModMenu above.
+            MethodInfo tileDrawingIsVisible = typeof(Terraria.GameContent.Drawing.TileDrawing).GetMethod("IsVisible", BindingFlags.Public | BindingFlags.Static);
+            if (tileDrawingIsVisible != null)
+            {
+                MonoModHooks.Add(tileDrawingIsVisible, (Func<Func<Tile, bool>, Tile, bool>)AdventureProp_AlwaysInvisibleWhenEchoPainted);
+            }
+
             Terraria.On_Player.Spawn += SpawnPatch;
 
             Terraria.On_WorldGen.TriggerLunarApocalypse += StopLunarApocalypse;
@@ -1620,6 +1631,33 @@ namespace tsorcRevamp
             {
                 // Non-fatal - worst case we force the default theme again on the next launch too.
             }
+        }
+
+        // Fog machines toggle their 2x2 frame between an off block (frameX 0/18) and an on block
+        // (frameX 36/54) when wired - any subtile reading frameX >= 36 means the machine is on.
+        // Chimneys toggle a 3x3 frame the same way but on frameY instead, resting at frameY 0 when off;
+        // wiring it on jumps the whole block to frameY 54 (vanilla's own smoke-particle check,
+        // TileDrawing.cs, keys off exactly this frameY == 54 on the top-left subtile), then a brief
+        // wind-down animation climbs frameY through 108+ before it settles back to 0 - so frameY >= 54
+        // on any subtile covers "on or still winding down" without needing to find the corner tile.
+        // Only the activated state should defeat Echo Goggles/Monolith; an inert prop reveals like any
+        // other echo-painted tile.
+        private static bool AdventureProp_AlwaysInvisibleWhenEchoPainted(Func<Tile, bool> orig, Tile tile)
+        {
+            if (!tile.IsTileInvisible || !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                return orig(tile);
+            }
+
+            bool isActivatedFogMachine = tile.TileType == TileID.FogMachine && tile.TileFrameX >= 36;
+            bool isActivatedChimney = tile.TileType == TileID.Chimney && tile.TileFrameY >= 54;
+
+            if (isActivatedFogMachine || isActivatedChimney)
+            {
+                return false;
+            }
+
+            return orig(tile);
         }
 
         // Vanilla's Player.KillMe unconditionally drops every Large Gem (Amethyst/Topaz/Sapphire/Emerald/

@@ -118,6 +118,15 @@ namespace tsorcRevamp.NPCs.Puppets
         /// 1 so existing combo tables retain their current movement without migration.</summary>
         public float LeapHeightMult;
         public float LeapForwardSpeedMult;
+        /// <summary>LeapSlam only: once past the apex, gravity is scaled by this factor for the rest
+        /// of the descent (the rise to the apex is unaffected, so jump height/telegraph stay as
+        /// authored — only the drop speeds up). At or below 0, or 1, is vanilla gravity (unchanged).</summary>
+        public float LeapDescentGravityMult;
+        /// <summary>LeapSlam only: the tick the apex is reached, re-aim the locked horizontal launch
+        /// velocity at the target's position AT THAT MOMENT (not the lead-predicted launch-time
+        /// position), blended in by this fraction (0-1). 0 (the default) keeps the committed
+        /// launch-time aim for the whole descent, same as every other leap attack.</summary>
+        public float LeapApexRetargetStrength;
     }
 
     public struct MeleeCombo

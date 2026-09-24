@@ -249,6 +249,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int FlameFireTicks = 300;
         const int FlameInterval = 5;
         const int FlameRecoveryTicks = 75;
+        const float FlameHoverBaseSpeed = 5f;
+        const float FlameHoverSpeedRamp = 1f;      // gradually accelerates by this much over the attack's duration
 
         // Rocket Dash
         const int RocketFireTicks = 300;
@@ -343,8 +345,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // that started with Chaos still across the arena would fade in a boundary and then never reach it.
         const float GaleApproachRange = 350f;      // inside the 300-400px band; close enough that the first
                                                     // flap's push can already reach across GalePushRange
-        const float GaleApproachSpeed = 12f;
-        const float GaleApproachInertia = 20f;
+        const float GaleApproachSpeed = 28f;       // was 12/20 — an "unhurried drift" pace, slower than even
+        const float GaleApproachInertia = 8f;      // ApproachSpeed's own recovery drift; a kiting player could
+                                                    // outrun it and stall the attack forever. Matched to
+                                                    // DiveClimbSpeed/Inertia, a comparable "close in fast" move.
         const int GaleWindupTicks = 45;            // ring fades in during this, before any push
         const int GaleFlapInterval = 55;
         const int GaleFlaps = 3;
@@ -354,10 +358,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float GaleRingRadius = 810f;   // 30% wider; each player gets one centred on themselves
         const float GaleRingSpawnRange = 2600f;    // nobody outside the fight gets a ring
         const int GaleRingHold = 180;
-        const float GaleGustAccel = 0.9f;          // peak per-tick acceleration, at the middle of a gust — was
+        const float GaleGustAccel = 0.99f;         // peak per-tick acceleration, at the middle of a gust — was
                                                     // 1.45 uncapped (never actually reachable before the approach
-                                                    // fix), cut to 0.75, nudged back up now that the dodge roll
-                                                    // can no longer inherit and amplify a push-spiked velocity
+                                                    // fix), cut to 0.75, nudged to 0.9 once the dodge roll could
+                                                    // no longer amplify a push-spiked velocity, +10% again here
         // How much of full strength the gust still carries at its very start and end. A pure sine envelope
         // bottomed out at zero, so each flap did nothing for its first and last several ticks and all the work
         // landed in one spike. Flattening it keeps the same total shove but delivers it as steady wind.
@@ -878,6 +882,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 attackBag.Add(AttackState.ScytheLunge);
                 attackBag.Add(AttackState.CarpetBomb);
                 attackBag.Add(AttackState.WingGale);
+                attackBag.Add(AttackState.CataclysmDive);
                 return;
             }
 
@@ -1072,15 +1077,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 case AttackState.FireballStorm:
                     // Half-density preview; the storm's own 100t channel is the real telegraph.
                     SpawnConvergingDust(DustID.GoldFlame, 130f, 2, 1.2f);
-                    break;
-
-                case AttackState.CataclysmDive:
-                    // One column under Chaos: "the ground is where this lands". Once only — a fresh line every
-                    // tell tick turned this into a picket fence as Chaos drifted.
-                    if (tellTick == 6)
-                    {
-                        DrawTelegraphLine(NPC.Center, new Vector2(NPC.Center.X, NPC.Center.Y + 400f), Color.MediumPurple);
-                    }
                     break;
 
                 case AttackState.ShadowflameTeleport:
@@ -1331,7 +1327,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             // Rides directly on the player, as it always did: the flamethrower is short-range and its density
             // at point-blank is the whole read. A stand-off was tried here and made the attack illegible.
-            MoveToward(target.Center, 5f, 10f);
+            // Top speed creeps up over the attack's duration, so a player circle-strafing the stream feels it
+            // getting harder to shake the longer they let it run.
+            float hoverProgress = MathHelper.Clamp(AttackTimer / (float)FlameFireTicks, 0f, 1f);
+            float hoverSpeed = FlameHoverBaseSpeed + FlameHoverSpeedRamp * hoverProgress;
+            MoveToward(target.Center, hoverSpeed, 10f);
 
             // The flamethrower stream is the whole attack. It used to also throw a 5-fireball fan every 60
             // ticks, which just cluttered a move whose read is the wall of flame in front of you.

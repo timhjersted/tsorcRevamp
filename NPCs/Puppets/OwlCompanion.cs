@@ -35,6 +35,7 @@ namespace tsorcRevamp.NPCs.Puppets
             FlyingToPerch,
             PerchLanding,
             EyeBeamTelegraph,
+            EyeBeamVolley,
             EyeBeamRecovery,
             MoltenOrbTelegraph,
             MoltenOrbVolley,
@@ -68,6 +69,11 @@ namespace tsorcRevamp.NPCs.Puppets
         private const int EyeBeamRecoveryTicks = 30;
         private const float EyeBeamSpeed = 9f;
         private const float EyeBeamSeparation = 6f; // twin shots, one per eye
+        // The perch telegraph's single payoff is now a real volley, not one twin-shot: 3-6 discrete
+        // twin-beam pulses with spacing between them before the owl leaves the tree.
+        private const int EyeBeamVolleyShotInterval = 20;
+        private const int EyeBeamVolleyMinShots = 3;
+        private const int EyeBeamVolleyMaxShots = 6;
         private const int MoltenOrbTelegraphTicks = 45;
         private const int MoltenOrbShotInterval = 30;
         private const int MoltenOrbVolleyTicks = 2 * MoltenOrbShotInterval + 1;
@@ -88,10 +94,12 @@ namespace tsorcRevamp.NPCs.Puppets
         private Vector2 _perchPoint;
         private Point _perchTile;
         private int _eyeBeamLookFrame = FramePerchForward;
+        private int _eyeBeamVolleyShotCount;
         private int _syncTimer;
 
         private bool IsPerched => _state == OwlState.PerchLanding
-            || _state == OwlState.EyeBeamTelegraph || _state == OwlState.EyeBeamRecovery;
+            || _state == OwlState.EyeBeamTelegraph || _state == OwlState.EyeBeamVolley
+            || _state == OwlState.EyeBeamRecovery;
 
         /// <summary>Owl Father's NPC index, set at spawn (ai[0]). Used only to notice if he despawns
         /// by some OTHER means (e.g. the whole encounter resetting) — the normal 50%-health kill is
@@ -163,6 +171,7 @@ namespace tsorcRevamp.NPCs.Puppets
             writer.Write(_perchTile.X);
             writer.Write(_perchTile.Y);
             writer.Write(_eyeBeamLookFrame);
+            writer.Write(_eyeBeamVolleyShotCount);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -180,6 +189,7 @@ namespace tsorcRevamp.NPCs.Puppets
             _perchPoint = reader.ReadVector2();
             _perchTile = new Point(reader.ReadInt32(), reader.ReadInt32());
             _eyeBeamLookFrame = reader.ReadInt32();
+            _eyeBeamVolleyShotCount = reader.ReadInt32();
         }
 
         public override void AI()
@@ -258,6 +268,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
                 case OwlState.EyeBeamTelegraph:
                     TickEyeBeamTelegraph(target);
+                    break;
+                case OwlState.EyeBeamVolley:
+                    TickEyeBeamVolley(target);
                     break;
                 case OwlState.EyeBeamRecovery:
                     TickEyeBeamRecovery();
@@ -653,33 +666,63 @@ namespace tsorcRevamp.NPCs.Puppets
         private void TickEyeBeamTelegraph(Player target)
         {
             NPC.velocity = Vector2.Zero;
-
-            if (target != null)
-            {
-                Vector2 aim = target.Center - NPC.Center;
-                NPC.direction = aim.X < 0f ? -1 : 1;
-
-                // Only two turned-head frames exist (screen-left / screen-right); a mostly-vertical
-                // aim (target well above or below) has no dedicated art, so it just holds the
-                // symmetric forward-facing pose per the authored sheet.
-                if (System.Math.Abs(aim.X) < System.Math.Abs(aim.Y) * 0.5f)
-                {
-                    _eyeBeamLookFrame = FramePerchForward;
-                }
-                else
-                {
-                    _eyeBeamLookFrame = aim.X > 0f ? FrameLookRight : FrameLookLeft;
-                }
-            }
-
+            UpdateEyeBeamAim(target);
             SpawnEyeBeamTelegraphDust();
 
             if (--_stateTimer > 0)
                 return;
 
-            if (target != null && Collision.CanHitLine(EyePosition, 1, 1, target.Center, 1, 1))
+            // Roll the volley length once, server-side, and sync it — a client independently
+            // rolling its own count would fire the right projectiles (server-authoritative) but
+            // could show a different number of telegraph beats than actually happened.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                _eyeBeamVolleyShotCount = Main.rand.Next(EyeBeamVolleyMinShots, EyeBeamVolleyMaxShots + 1);
+                NPC.netUpdate = true;
+            }
+            ChangeState(OwlState.EyeBeamVolley, _eyeBeamVolleyShotCount * EyeBeamVolleyShotInterval);
+        }
+
+        // Only two turned-head frames exist (screen-left / screen-right); a mostly-vertical aim
+        // (target well above or below) has no dedicated art, so it just holds the symmetric
+        // forward-facing pose per the authored sheet.
+        private void UpdateEyeBeamAim(Player target)
+        {
+            if (target == null)
+                return;
+
+            Vector2 aim = target.Center - NPC.Center;
+            NPC.direction = aim.X < 0f ? -1 : 1;
+
+            if (System.Math.Abs(aim.X) < System.Math.Abs(aim.Y) * 0.5f)
+                _eyeBeamLookFrame = FramePerchForward;
+            else
+                _eyeBeamLookFrame = aim.X > 0f ? FrameLookRight : FrameLookLeft;
+        }
+
+        // 3-6 discrete twin-beam pulses (see EyeBeamVolleyMinShots/MaxShots), spaced
+        // EyeBeamVolleyShotInterval ticks apart, re-aiming between each in case the player moved.
+        // Same elapsed-tick shot-cadence pattern as TickMoltenOrbAttack.
+        private void TickEyeBeamVolley(Player target)
+        {
+            NPC.velocity = Vector2.Zero;
+            UpdateEyeBeamAim(target);
+
+            if (target == null)
+            {
+                BeginIdleFlight();
+                return;
+            }
+
+            int elapsed = _eyeBeamVolleyShotCount * EyeBeamVolleyShotInterval - _stateTimer;
+            if (elapsed % EyeBeamVolleyShotInterval == 0
+                && Collision.CanHitLine(EyePosition, 1, 1, target.Center, 1, 1))
+            {
                 FireEyeBeams(target);
-            ChangeState(OwlState.EyeBeamRecovery, EyeBeamRecoveryTicks);
+            }
+
+            if (--_stateTimer <= 0)
+                ChangeState(OwlState.EyeBeamRecovery, EyeBeamRecoveryTicks);
         }
 
         private void SpawnEyeBeamTelegraphDust()
@@ -799,7 +842,8 @@ namespace tsorcRevamp.NPCs.Puppets
             // This sheet faces right; vanilla flips NPC sprites when spriteDirection == 1.
             NPC.spriteDirection = -NPC.direction;
 
-            if (_state == OwlState.EyeBeamTelegraph || _state == OwlState.EyeBeamRecovery)
+            if (_state == OwlState.EyeBeamTelegraph || _state == OwlState.EyeBeamVolley
+                || _state == OwlState.EyeBeamRecovery)
             {
                 // The turned-head frames are pre-authored per screen direction, not a symmetric pose
                 // meant to be mirrored — force no-flip so FrameLookRight/FrameLookLeft draw as-is.

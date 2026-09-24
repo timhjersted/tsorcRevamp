@@ -134,7 +134,7 @@ namespace tsorcRevamp.NPCs
     public partial class tsorcRevampGlobalNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;
-        private static readonly SoundStyle DefeatBannerSound = new SoundStyle("tsorcRevamp/Sounds/DarkSouls/boss-defeated") with { Volume = 1f };
+        private static readonly SoundStyle DefeatBannerSound = new SoundStyle("tsorcRevamp/Sounds/DarkSouls/boss-defeated") with { Volume = 0.7f };
         private const int GhostWallTeleportSmokeTicks = 30;
         private const int GhostWallTeleportSnapTicks = 15;
         private const int GhostWallMaxThicknessTiles = 4;

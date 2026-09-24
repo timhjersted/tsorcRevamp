@@ -3705,7 +3705,14 @@ namespace tsorcRevamp.NPCs
                 }
 
                 if (npc.type == NPCID.BigRainZombie
+                    || npc.type == NPCID.ArmedZombie
+                    || npc.type == NPCID.ArmedZombiePincussion
+                    || npc.type == NPCID.ArmedZombieSwamp
+                    || npc.type == NPCID.ArmedZombieTwiggy
+                    || npc.type == NPCID.ArmedZombieCenx
+                    || npc.type == NPCID.BigBaldZombie
                     || npc.type == NPCID.BigZombie
+                    || npc.type == NPCID.SmallBaldZombie
                     || npc.type == NPCID.SmallZombie
                     || npc.type == NPCID.Zombie //zombies are lame and old at this point and take up spawn slots too often, experience will be fresher without them
                     || npc.type == NPCID.FemaleZombie
@@ -3714,6 +3721,7 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.SmallRainZombie
                     || npc.type == NPCID.ZombieRaincoat
                     || npc.type == NPCID.DoctorBones
+                    || npc.type == NPCID.BaldZombie
                     || npc.type == NPCID.UmbrellaSlime
                     || npc.type == NPCID.BigHeadacheSkeleton
                     || npc.type == NPCID.SmallHeadacheSkeleton

@@ -30,9 +30,9 @@ namespace tsorcRevamp.NPCs.Puppets
             GameShaders.Armor.BindShader(registryKey,
                 new ArmorShaderData(effect, "OwlFatherSolarArmorMaskPass")
                     .UseImage(noise)
-                    .UseColor(new Color(205, 58, 7))
-                    .UseSecondaryColor(new Color(255, 186, 24))
-                    .UseOpacity(0.9f));
+                    .UseColor(new Color(255, 200, 40))
+                    .UseSecondaryColor(new Color(255, 250, 210))
+                    .UseOpacity(1f));
             ShaderId = GameShaders.Armor.GetShaderIdFromItemId(registryKey);
         }
 

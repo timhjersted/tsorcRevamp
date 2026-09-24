@@ -11,6 +11,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Axes
 {
     public class AncientFireAxe : ModItem
     {
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(GreatFireAxe));
+
         public override void SetStaticDefaults()
         {
         }
@@ -19,8 +21,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Axes
         {
             Item.rare = ItemRarityID.Green;
             Item.damage = 22;
-            Item.width = 50;
-            Item.height = 42;
+            Item.width = 72;
+            Item.height = 64;
             Item.knockBack = 10f;
             Item.DamageType = DamageClass.Melee;
             Item.axe = 15; // Same as axe of the night
