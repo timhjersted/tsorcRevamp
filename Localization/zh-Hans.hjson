@@ -1897,6 +1897,17 @@ Mods: {
 					'''
 			}
 
+			OwlRing: {
+				// DisplayName: Owl Ring
+				/* Tooltip:
+					'''
+					Casts darkness on wearer.
+					Weapons with a swing time of {0} or more deal {1}% increased damage, {2}% increased crit chance, and {3}% increased poise damage
+					While swinging one of these weapons, you cannot be staggered
+					[c/6cac6c:+{4} minion slot]
+					''' */
+			}
+
 			WingsOfSeath: {
 				DisplayName: 希斯之翼
 				Tooltip:

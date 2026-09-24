@@ -152,6 +152,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Only eligible outside normal melee engagement range. Used for committed
         /// gap-closing or physical thrown-weapon openers that begin at range.</summary>
         public bool           RangedStartOnly;
+        /// <summary>Only eligible while in wing flight, and ground combos are never eligible there.
+        /// Replaces the flight controller's generic dive: a LeapSlam step started airborne dives
+        /// straight at the target (see PuppetNPC.BeginLeapAttack) instead of jumping.</summary>
+        public bool           AirborneStartOnly;
         /// <summary>Per-tick horizontal velocity brake while this combo winds up / swings, for
         /// aim-swing pilot puppets only. 0 = keep full momentum (no slowdown), 0.4 = plant the feet
         /// for a heavy commit. Replaces the old blanket SlowDown() so light attacks stay mobile.</summary>

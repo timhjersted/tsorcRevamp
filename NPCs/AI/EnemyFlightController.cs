@@ -97,6 +97,15 @@ namespace tsorcRevamp.NPCs.AI
             return true;
         }
 
+        /// <summary>Drop out of flight this tick, no landing glide — the owner takes over velocity with
+        /// gravity (e.g. a leap slam launched from the air). Starts the normal takeoff cooldown.</summary>
+        public void EndFlightNow()
+        {
+            if (Mode == FlightMode.Grounded) return;
+            CooldownRemaining = Config.CooldownTicks;
+            EnterMode(FlightMode.Grounded, 0);
+        }
+
         /// <summary>Begin landing sequence.</summary>
         public void RequestLand()
         {

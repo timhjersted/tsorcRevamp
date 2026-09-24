@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Accessories.Damage;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
@@ -17,6 +18,7 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Puppets
@@ -43,6 +45,7 @@ namespace tsorcRevamp.NPCs.Puppets
         private const string BackstepReentryName = "Backstep Re-entry Chop";
         private const string FirefallArrayName = "Firefall Array";
         private const string ClosingLeapName = "Closing Leap";
+        private const string GreatfireDiveName = "Greatfire Dive";
         private const string FireOwlBombardmentName = "Greatfire Owl Bombardment";
         private const int FireOwlSummonIntervalTicks = 27;
         private const float FireOwlMinimumHeightAbovePlayer = 250f;
@@ -126,6 +129,8 @@ namespace tsorcRevamp.NPCs.Puppets
             writer.Write(_fireOwlBombardmentTarget);
             writer.WriteVector2(_fireOwlBombardmentAnchor);
             writer.Write(_fireOwlBombardmentCooldown);
+            writer.Write((byte)_rangedMoveStyle);
+            writer.Write(_rangedJumpVx);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -140,6 +145,8 @@ namespace tsorcRevamp.NPCs.Puppets
             _fireOwlBombardmentTarget = reader.ReadInt32();
             _fireOwlBombardmentAnchor = reader.ReadVector2();
             _fireOwlBombardmentCooldown = reader.ReadInt32();
+            _rangedMoveStyle = (RangedMoveStyle)reader.ReadByte();
+            _rangedJumpVx = reader.ReadSingle();
             if (_spectralFormActive)
             {
                 ApplySpectralBodyHitbox();
@@ -313,6 +320,18 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override bool SpectralExcludeDownwardCopies => true;
         protected override int LargeArmorMaskShaderId => OwlFatherSolarArmorShaderSystem.ShaderId;
         protected override bool IncludeMeleeWeaponInLargeArmorMask => true;
+        // The enlarged phase-two body (above) stays on permanently; the busier halo ring + motion
+        // trail are reserved for the leap attacks (ground jump combos and the airborne dive-slam)
+        // so they read as a distinct "committing to a big jump" cue instead of a constant hum.
+        protected override bool ShowSpectralGhostCopies =>
+            IsJumpGapCloserName(ActiveMeleeComboName) || GreatfireDiveActive;
+
+        // ActiveMeleeComboName is never cleared, so the dive check is scoped to the combo phases.
+        private bool GreatfireDiveActive =>
+            ActiveMeleeComboName == GreatfireDiveName
+            && (Phase == AttackPhase.MeleeComboTelegraph
+                || Phase == AttackPhase.MeleeComboAttack
+                || Phase == AttackPhase.MeleeComboPause);
 
         private void ApplySpectralBodyHitbox()
         {
@@ -329,6 +348,15 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected override void RunMovementAI(float speedMult)
         {
+            // Walk-style bow shot (see PickRangedMoveStyle below) wants a visibly slower advance
+            // than a normal chase. Run uses the default pace; Jump owns velocity outright via
+            // TickRangedJumpOverride and is deliberately excluded from this tweak.
+            bool isRangedMovePhase = Phase == AttackPhase.RangedTelegraph
+                || Phase == AttackPhase.RangedAttack
+                || Phase == AttackPhase.CrossbowBurstPause;
+            if (isRangedMovePhase && _rangedMoveStyle == RangedMoveStyle.Walk)
+                speedMult *= 0.5f;
+
             var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.NavSearchRadius = 70;
             globalNPC.RemembersLastKnownPos = true;
@@ -340,6 +368,42 @@ namespace tsorcRevamp.NPCs.Puppets
                 // This is SF4's re-aggro radius, not Owl Father's preferred attack distance.
                 attackRange: 700f);
         }
+
+        // ── Flight (phase two only) ─────────────────────────────────────────────────
+        // HasWings flips on the same trigger as the giant spectral form. EnemyFlightController is
+        // created lazily the first tick HasWings reads true (see PuppetNPC's flight-tick block), and
+        // the wing item cache hot-swaps the same way Owl Father's phase-two armor already does — no
+        // separate InitPuppet-only pitfall to work around here.
+        protected override bool HasWings => _spectralFormActive;
+        // Golden angelic wings match the solar/gold palette already established by the spectral
+        // shader, halo and dust (SpectralOverlayColor, SpectralHaloColor, GoldFlame embers).
+        protected override int WingsAccessoryItemType => ItemID.WingsSolar;
+        protected override EnemyFlightConfig FlightConfig => new EnemyFlightConfig
+        {
+            HoverAltitude = 210f,
+            HoverSideOffset = 140f,
+            HoverTopSpeed = 3.6f,
+            TakeOffSpeed = 6f,
+            DiveAcceleration = 0.45f,
+            DiveTopSpeed = 10.5f,
+            LandSpeed = 5.5f,
+            MaxFlightTicks = 600,
+            CooldownTicks = 180,
+            TakeOffTicks = 34,
+            HoverDwellTicks = 110,
+            StrafeTicks = 55,
+            DiveAttackTicks = 42,
+            LandTicks = 80,
+            WingFlapSpeed = 0.065f,
+        };
+        protected override int RandomTakeoffChance => 15;
+        // The bow's burst-pattern wiring already reads distance/cooldown the same way whether
+        // grounded or airborne (see PrimaryRangedBurstPatterns above) - this just lets the generic
+        // aerial-ranged trigger in PuppetNPC actually pick it while hovering.
+        protected override bool AllowRangedPatternsAirborne => true;
+        // Gates how often the aerial slam (Greatfire Dive, below) can start — it replaces the flight
+        // controller's generic dive, so PuppetNPC applies this cooldown when the combo starts.
+        protected override int AerialDiveCooldownTicks => 300; // matches the ground leap combos' pace
 
         // Worn in both phases. Phase two additionally draws it at 2x via SpectralOverlayScale above,
         // instead of the bespoke X2 sprite sheets below — flip UseVanillaAncientArmor off to go
@@ -356,12 +420,25 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int LegsArmorItemType => UseVanillaAncientArmor
             ? ItemID.AncientArmorPants
             : ModContent.ItemType<OwlFatherGreaves>();
-        protected override int HeadArmorDyeItemType =>
-            UseVanillaAncientArmor ? ItemID.BrownAndBlackDye : 0;
-        protected override int BodyArmorDyeItemType =>
-            UseVanillaAncientArmor ? ItemID.BrownAndBlackDye : 0;
-        protected override int LegsArmorDyeItemType =>
-            UseVanillaAncientArmor ? ItemID.BrownAndBlackDye : 0;
+        // Phase two: Burning Hades on all three pieces and the wings (PuppetNPC hot-swaps dyes on the
+        // phase change). Phase one keeps the Brown-and-Black Ancient look.
+        private int OwlArmorDyeItemType
+        {
+            get
+            {
+                if (_spectralFormActive)
+                {
+                    return ItemID.BurningHadesDye;
+                }
+
+                return UseVanillaAncientArmor ? ItemID.BrownAndBlackDye : 0;
+            }
+        }
+        protected override int HeadArmorDyeItemType => OwlArmorDyeItemType;
+        protected override int BodyArmorDyeItemType => OwlArmorDyeItemType;
+        protected override int LegsArmorDyeItemType => OwlArmorDyeItemType;
+        // Wings only exist in phase two (HasWings), so this is phase-two only by construction.
+        protected override int WingsDyeItemType => ItemID.BurningHadesDye;
         protected override int ArmorTemplateScale =>
             !UseVanillaAncientArmor && _spectralFormActive ? 2 : 1;
         protected override string LargeHeadArmorTemplateTexture => "tsorcRevamp/Content/Items/Armor/OwlFatherMask_Head_X2";
@@ -381,43 +458,153 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int RangedTelegraphTicks => 42; // bow draw
         protected override int RangedRecoveryTicks => 36;
         protected override Color RangedTelegraphFlashColor => new Color(255, 150, 40);
-        // A multi-arrow volley reads as a deliberate, planted "notch and loose" cadence, not
-        // something Owl drifts through — root him for the whole burst instead of the 33% default.
-        protected override int StandingRangedChance => 100;
-        // Shot 0 (fired straight from the telegraph) aims at the player's exact position; every
-        // shot after that (fired from the CrossbowBurstPause chain below) leads based on their
-        // current velocity — see DoRangedAttack. Phase one is a fixed 1-direct + 2-leading volley
+        // Deterministic Stand/not-Stand switch driven by the movement style PickRangedMoveStyle
+        // already rolled for this burst (see ModifyRangedBurst, which runs immediately before this
+        // is read inside the shared SetupRangedBurst) — not an independent coin flip. Walk/Run get
+        // their own forward pace from RunMovementAI below; Jump takes over entirely via
+        // HasRangedJumpOverride/TickRangedJumpOverride.
+        protected override int StandingRangedChance =>
+            _rangedMoveStyle == RangedMoveStyle.Stand ? 100 : 0;
+        // Every shot leads the player on an intercept solved against the arrow's own gravity — see
+        // DoRangedAttack. Phase one is a fixed 3-arrow volley
         // at a slow 45t cadence; phase two can roll either a 3- or 6-arrow volley at a faster 30t
         // notching cadence. (Array length = shots AFTER the first, so {30,30} is 3 total shots.)
-        protected override int[][] PrimaryRangedBurstPatterns => _spectralFormActive
-            ? new[] { new[] { 30, 30 }, new[] { 30, 30, 30, 30, 30 } }
-            : new[] { new[] { 45, 45 } };
+        // A jumping bow shot (see RangedMoveStyle below) is always exactly one arrow — null here
+        // routes SetupRangedBurst to the classic single-shot path via SingleRangedBurstChance
+        // instead of chaining into a multi-arrow volley mid-air.
+        protected override int[][] PrimaryRangedBurstPatterns
+        {
+            get
+            {
+                if (_rangedMoveStyle == RangedMoveStyle.Jump)
+                    return null;
+                return _spectralFormActive
+                    ? new[] { new[] { 30, 30 }, new[] { 30, 30, 30, 30, 30 } }
+                    : new[] { new[] { 45, 45 } };
+            }
+        }
         protected override int[] PrimaryRangedBurstChances => _spectralFormActive
             ? new[] { 50, 50 }
             : null;
-        // BowOfEarendil is drawn tall/vertical, not the horizontal shape the base (0.25, 0.5) grip
-        // guess fits — that mismatch is what made the puppet's hand pivot sit off toward one edge
-        // instead of the bow's actual center. Center grip (the riser/"white part") plus a slightly
-        // smaller sprite so a puppet arm can plausibly reach it, pushed back out ~24px away from the
-        // body (positive X here is mirrored by facing, so it always reads as "outward").
-        protected override Vector2 GetHeldRangedGripNorm(int itemType) => new Vector2(0.5f, 0.5f);
+        protected override int SingleRangedBurstChance =>
+            _rangedMoveStyle == RangedMoveStyle.Jump ? 100 : 0;
+        // BowOfEarendil (20x58, facing right) is drawn tall/vertical. Grip = the white riser at
+        // texel (15.5, 29); the string is the 2px column at x 0-1, rows 6-51, between the limb tips.
+        protected override Vector2 GetHeldRangedGripNorm(int itemType) => new Vector2(0.78f, 0.5f);
         protected override float GetHeldRangedDrawScale(int itemType) => 0.9f;
-        protected override Vector2 GetHeldRangedDrawOffset(int itemType) => new Vector2(24f, 0f);
-        // Back arm reaches for a second grip point near the front hand — the existing two-handed-
-        // weapon composite-arm IK (built for a great-weapon's second hilt point, unused by any
-        // puppet until now) fits a bow held with both hands equally well. Scoped to exactly the
-        // phases the bow is actually the held item, so the melee axe swing is untouched.
+        // Archer pose: back arm holds the bow out by its riser, front arm reaches for the string,
+        // draws it to the cheek over the telegraph / inter-shot pause and releases on each shot.
+        // Scoped to exactly the phases the bow is the held item, so the melee axe swing is untouched.
         private bool IsRangedBowPosePhase =>
             Phase == AttackPhase.RangedTelegraph
             || Phase == AttackPhase.RangedAttack
             || Phase == AttackPhase.CrossbowBurstPause;
         protected override bool UseCompositeArmForAdditionalPhase => IsRangedBowPosePhase;
-        protected override bool UseTwoHandedCompositeSwing => IsRangedBowPosePhase;
-        // The melee default (4px) target a hilt only a hand-width from the front grip — for a bow
-        // the front hand is already dead-center (GetHeldRangedGripNorm above), so a 4px target gave
-        // the IK solver nothing to reach for and it just settled on a relaxed, barely-visible pose.
-        // A real separation forces it to pick a genuinely extended stretch frame instead.
-        protected override float TwoHandedBackGripOffset => 18f;
+        protected override bool UseBowStringDrawPose => true;
+
+        protected override Rectangle GetBowStringTexels(int itemType)
+        {
+            if (itemType != ModContent.ItemType<BowOfEarendil>())
+            {
+                return Rectangle.Empty;
+            }
+
+            return new Rectangle(0, 6, 2, 46);
+        }
+
+        // ── Bow movement variety (stand / walk / run / jump) ────────────────────────
+        // Rolled once per burst in ModifyRangedBurst below and read from three places: the
+        // deterministic StandingRangedChance above, the walk-pace tweak in RunMovementAI, and the
+        // jump-arc override at the bottom of this section.
+        private enum RangedMoveStyle { Stand, Walk, Run, Jump }
+        private RangedMoveStyle _rangedMoveStyle;
+        // Server-only history so a jump is never immediately followed by another jump. Not synced —
+        // only the server ever makes this pick (ModifyRangedBurst runs from the server-only ranged
+        // selection branch), so a client has no need for it.
+        private bool _lastRangedMoveWasJump;
+        // Locked at launch (ModifyRangedBurst) so the arc's horizontal speed doesn't drift if the
+        // player moves during the jump - synced, since TickRangedJumpOverride reads it on every peer.
+        private float _rangedJumpVx;
+
+        private RangedMoveStyle PickRangedMoveStyle()
+        {
+            const int standWeight = 35;
+            const int walkWeight = 30;
+            const int runWeight = 20;
+            // "Shouldn't jump and shoot back to back" - excluded outright rather than just
+            // down-weighted, so it is never two in a row.
+            int jumpWeight = _lastRangedMoveWasJump ? 0 : 15;
+
+            int roll = Main.rand.Next(standWeight + walkWeight + runWeight + jumpWeight);
+            if (roll < standWeight)
+                return RangedMoveStyle.Stand;
+            roll -= standWeight;
+            if (roll < walkWeight)
+                return RangedMoveStyle.Walk;
+            roll -= walkWeight;
+            if (roll < runWeight)
+                return RangedMoveStyle.Run;
+            return RangedMoveStyle.Jump;
+        }
+
+        protected override void ModifyRangedBurst(
+            bool secondary, ref int itemType, ref RangedStyle style, ref Color flashColor,
+            ref int telegraphTicks, ref int attackTicks, ref int recoveryTicks)
+        {
+            // An aerial burst (hovering in phase two) already has the flight controller owning
+            // velocity — the ground stand/walk/run/jump variety below is for the grounded trigger
+            // only, so it never fights Flight.Tick() for control of NPC.velocity.
+            bool grounded = Flight == null || !Flight.IsAirborne;
+            _rangedMoveStyle = grounded ? PickRangedMoveStyle() : RangedMoveStyle.Stand;
+            _lastRangedMoveWasJump = _rangedMoveStyle == RangedMoveStyle.Jump;
+            NPC.netUpdate = true;
+
+            if (_rangedMoveStyle != RangedMoveStyle.Jump || NPC.target < 0)
+                return;
+
+            // Jumping Bow Shot: a real hop toward the player, timed so the arrow fires right at the
+            // arc's apex (telegraph length == time-to-apex) and the fall (attack phase, symmetric
+            // time back down) closes the rest of the distance by landing.
+            Player target = Main.player[NPC.target];
+            int jumpDir = target.Center.X < NPC.Center.X ? -1 : 1;
+            _rangedJumpVx = jumpDir * TopSpeed * RangedJumpForwardSpeedMult;
+            telegraphTicks = RangedJumpTicksToApex;
+            attackTicks = RangedJumpTicksToApex * 2;
+        }
+
+        private const float RangedJumpUpSpeed = 8.5f;
+        private const float RangedJumpGravity = 0.3f; // matches the leap-slam gravity used elsewhere
+        private const float RangedJumpForwardSpeedMult = 1.6f;
+        // Pure function of the two constants above, so every peer computes the identical value with
+        // nothing to sync - deriving it instead of caching it at launch avoids a third synced field.
+        private int RangedJumpTicksToApex =>
+            Math.Max(1, (int)Math.Round(RangedJumpUpSpeed / RangedJumpGravity));
+
+        protected override bool HasRangedJumpOverride => _rangedMoveStyle == RangedMoveStyle.Jump;
+
+        protected override void TickRangedJumpOverride()
+        {
+            bool inTelegraph = Phase == AttackPhase.RangedTelegraph;
+            int ticksToApex = RangedJumpTicksToApex;
+            // PhaseTimer hasn't decremented yet this tick, so on each phase's first tick this is 0.
+            int elapsed = inTelegraph
+                ? ticksToApex - PhaseTimer
+                : ticksToApex * 2 - PhaseTimer;
+
+            // Landed early relative to the attack phase's generous (symmetric) window - settle
+            // instead of continuing to drive the analytic fall velocity into the floor. elapsed > 2
+            // skips the false read right at apex, where the fall formula itself is still near zero.
+            if (!inTelegraph && elapsed > 2 && NPC.velocity.Y == 0f)
+            {
+                NPC.velocity.X *= 0.7f;
+                return;
+            }
+
+            NPC.velocity.X = _rangedJumpVx;
+            NPC.velocity.Y = inTelegraph
+                ? -RangedJumpUpSpeed + RangedJumpGravity * elapsed
+                : RangedJumpGravity * elapsed;
+        }
 
         protected override int MeleeDamage => 30;
 
@@ -747,6 +934,36 @@ namespace tsorcRevamp.NPCs.Puppets
                     leapHeightMult: 0.55f, leapForwardSpeedMult: 1.85f,
                     ease: SwingEaseStyle.Whip) },
             },
+            // Attack spec / timing sheet — Greatfire Dive (phase two, wing flight only)
+            // Replaces the generic flight dive. Same LeapSlam step as the ground leaps, but started
+            // airborne: PuppetNPC.BeginLeapAttack ends the flight and launches a ballistic dive at the
+            // player (any direction) instead of a jump.
+            // Tell: 36 authored * 1.20 = 43t on screen, hovering, axe wound up overhead + flash.
+            // Move: ~9px/t dive, airtime clamped 16-40t (typical 250px hover gap ~28t), lands a 24px
+            // standoff short of the player. Axe carried overhead, arc rotated to aim at the player.
+            // Live: downswing starts once within 200px (giant-form blade reach is 90*2*0.7*1.28 =
+            // ~161px; ~9px/t closes the rest by mid-swing), then a 10t swept downswing (< 22t, one
+            // roll beats it). No strike in range -> the landing slam hits instead, never both.
+            // Open: landing + 22t recovery on the ground; six fire columns on landing (as High Leap).
+            // Selection: AirborneStartOnly, only while hovering with LOS, gated by
+            // AerialDiveCooldownTicks (300t) plus its own 300t cooldown.
+            // Multiplayer: server picks and starts the combo; launch state is in the combo snapshot.
+            new MeleeCombo
+            {
+                Name = GreatfireDiveName,
+                BaseWeight = 100,
+                Preferred = ComboRangeBand.Any,
+                InitialFlashColor = Color.OrangeRed,
+                CooldownAfterUse = 300,
+                HeavyCommit = true,
+                HyperArmor = true,
+                AirborneStartOnly = true,
+                MoveBrake = 0f,
+                // No ease: LeapSlam never reads it (landing-timed 10t SmoothStep downswing).
+                Steps = new[] { AxeSwing(ComboMotion.LeapSlam, 36, 90,
+                    damageMult: 1.30f, reachMult: 1.28f,
+                    leapStrikeRange: 200f) },
+            },
         };
 
         protected override MeleeCombo[] MeleeComboPoolOverride => OwlFatherAxeCombos;
@@ -879,7 +1096,7 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.aiStyle = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
-            NPC.value = 14000f;
+            NPC.value = 35000f;
             NPC.boss = true;
             NPC.npcSlots = 5f;
 
@@ -892,12 +1109,12 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherMask>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherArmor>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherGreaves>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncientFireAxe>(), 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoulItem>(), 1, 500, 750));
-        }
+            // npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherMask>()));
+            // npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherArmor>()));
+            // npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherGreaves>()));
+            	npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncientFireAxe>()));
+		npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlRing>()));
+         }
 
         protected override void DoMeleeAttack()
         {
@@ -906,10 +1123,17 @@ namespace tsorcRevamp.NPCs.Puppets
             TryMeleeHit();
         }
 
-        // How far ahead of the player's current position a leading shot (every arrow after the
-        // first) aims, scaled by their live velocity. Flat px/tick speed the arrow itself travels at.
-        private const float FlamingArrowLeadTicks = 12f;
+        // Arrow flight model for the intercept aim. EnemyFlamingArrow runs vanilla arrow AI: straight
+        // at launch speed for 15 ticks, then +0.1 px/t² gravity. The old aim ignored that drop (~50px
+        // at 600px) and led only 12 of the ~45 ticks of flight, so arrows landed short and behind.
         private const float FlamingArrowSpeed = 13f;
+        private const float ArrowGravityDelayTicks = 15f;
+        private const float ArrowGravity = 0.1f;
+        // A player's vertical velocity is mostly a jump arc that gravity bends back down within the
+        // flight time, so leading all of it overshoots upward; lead half.
+        private const float ArrowVerticalLeadFraction = 0.5f;
+        // Flight time depends on the aim point and vice versa; 4 passes converge to well under a pixel.
+        private const int ArrowInterceptIterations = 4;
 
         protected override void DoRangedAttack()
         {
@@ -917,15 +1141,24 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
 
             Player target = Main.player[NPC.target];
-            Vector2 origin = PuppetHandPosition;
+            // The bow's riser in the outstretched back hand — the front hand is back at the cheek.
+            Vector2 origin = PuppetBowGripPosition;
 
-            // Shot 0 fires straight from the telegraph and aims at the player's exact position;
-            // every later shot (fired from the CrossbowBurstPause chain, see PrimaryRangedBurstPatterns
-            // above) leads based on their current velocity instead, so a volley already under way
-            // can't be walked out from under entirely.
-            Vector2 aimAt = CurrentBurstShotIndex == 0
-                ? target.Center
-                : target.Center + target.velocity * FlamingArrowLeadTicks;
+            // Intercept: aim where the player will be when the arrow gets there, raised by the
+            // arrow's own gravity drop over that flight. Holding a straight line gets hit; changing
+            // direction or rolling between shots is the counter.
+            Vector2 aimAt = target.Center;
+
+            for (int i = 0; i < ArrowInterceptIterations; i++)
+            {
+                float flightTicks = Vector2.Distance(origin, aimAt) / FlamingArrowSpeed;
+                Vector2 lead = new Vector2(target.velocity.X, target.velocity.Y * ArrowVerticalLeadFraction)
+                    * flightTicks;
+                // Discrete fall after the straight phase: sum of 0.1*k for k = 1..n.
+                float fallingTicks = Math.Max(0f, flightTicks - ArrowGravityDelayTicks);
+                float gravityDrop = ArrowGravity * fallingTicks * (fallingTicks + 1f) * 0.5f;
+                aimAt = target.Center + lead - new Vector2(0f, gravityDrop);
+            }
 
             Vector2 aimDirection = (aimAt - origin).SafeNormalize(new Vector2(NPC.direction, 0f));
 
@@ -1058,11 +1291,13 @@ namespace tsorcRevamp.NPCs.Puppets
             return chosen;
         }
 
-        private bool IsJumpGapCloser(MeleeCombo combo)
-            => combo.Name == HighLeapingSlamName
-                || combo.Name == HighLeapFollowUpName
-                || combo.Name == GreatfirePursuitSlamName
-                || combo.Name == ClosingLeapName;
+        private static bool IsJumpGapCloserName(string comboName)
+            => comboName == HighLeapingSlamName
+                || comboName == HighLeapFollowUpName
+                || comboName == GreatfirePursuitSlamName
+                || comboName == ClosingLeapName;
+
+        private bool IsJumpGapCloser(MeleeCombo combo) => IsJumpGapCloserName(combo.Name);
 
         private float ReliableJumpStartRange(MeleeComboStep step)
         {
@@ -1462,7 +1697,8 @@ namespace tsorcRevamp.NPCs.Puppets
             // Only the signature high variants earn the six-column eruption. The low pursuit slam
             // is a mobility tool and deliberately keeps its landing readable and compact.
             if (ActiveMeleeComboName == HighLeapingSlamName
-                || ActiveMeleeComboName == HighLeapFollowUpName)
+                || ActiveMeleeComboName == HighLeapFollowUpName
+                || ActiveMeleeComboName == GreatfireDiveName)
                 SpawnHighLeapFireColumns();
         }
 

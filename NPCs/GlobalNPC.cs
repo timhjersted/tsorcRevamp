@@ -3375,11 +3375,25 @@ namespace tsorcRevamp.NPCs
                 modifiers.FinalDamage *= 2;
             }
         }
+        // Owl Ring's poise bonus only applies to slow, heavy swings (item.useAnimation), matching the same
+        // gate it uses for its damage/crit bonuses. Shared by ModifyHitByItem and OnHitByItem below, which
+        // must compute the same poise value for a given hit.
+        private static float ApplyOwlRingPoiseBonus(float poiseKnockback, Player player, Item item)
+        {
+            if (item.useAnimation >= OwlRing.MinSwingTimeForBonus && player.GetModPlayer<tsorcRevampPlayer>().OwlRingEquipped)
+            {
+                poiseKnockback *= 1f + OwlRing.PoiseDamageBonus / 100f;
+            }
+
+            return poiseKnockback;
+        }
+
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             // Poise damage scales with the weapon's knockback stat × its per-weapon WeaponPoiseMultiplier lever
             // (see project_poise_stagger_system).
             float poiseKnockback = item.knockBack * item.GetGlobalItem<tsorcInstancedGlobalItem>().WeaponPoiseMultiplier;
+            poiseKnockback = ApplyOwlRingPoiseBonus(poiseKnockback, player, item);
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
             if (magicGhostHit)
             {
@@ -3455,6 +3469,7 @@ namespace tsorcRevamp.NPCs
         {
             // Must match the poise damage computed in ModifyHitByItem above.
             float poiseKnockback = item.knockBack * item.GetGlobalItem<tsorcInstancedGlobalItem>().WeaponPoiseMultiplier;
+            poiseKnockback = ApplyOwlRingPoiseBonus(poiseKnockback, player, item);
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
             if (magicGhostHit)
             {

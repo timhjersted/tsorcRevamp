@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Accessories.Damage;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
@@ -25,6 +26,17 @@ namespace tsorcRevamp.Buffs.Debuffs
         /// </summary>
         public static void Apply(Player player, int durationTicks)
         {
+            // Owl Ring hyper armor: mid-swing on a slow/heavy weapon (its own damage/crit/poise gate) shrugs
+            // off stagger entirely, same as every other source (stamina debt, madness, boss shockwaves).
+            bool owlRingHyperArmor = player.GetModPlayer<tsorcRevampPlayer>().OwlRingEquipped
+                && player.itemAnimation > 0
+                && player.HeldItem.useAnimation >= OwlRing.MinSwingTimeForBonus;
+
+            if (owlRingHyperArmor)
+            {
+                return;
+            }
+
             player.AddBuff(ModContent.BuffType<Stagger>(), durationTicks);
             if (player.whoAmI == Main.myPlayer && Main.netMode != NetmodeID.Server)
             {

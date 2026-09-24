@@ -217,6 +217,14 @@ namespace tsorcRevamp.NPCs.Puppets
         private Vector2 _twoHandedBackHandWorld;
         private Vector2 _twoHandedBackGripTargetWorld;
         private float _twoHandedBackGripError;
+        // Bow string-draw pose (UseBowStringDrawPose). Visual only: re-derived every frame from the
+        // synced Phase/PhaseTimer in TickBowStringDrawPose, so none of it goes over the network.
+        private AttackPhase _bowPoseTrackedPhase;
+        private int _bowPoseLastTimer;
+        private int _bowPosePhaseTicks = 1;
+        private Player.CompositeArmStretchAmount _bowStringHandStretch = Player.CompositeArmStretchAmount.Full;
+        private float _bowStringHandRotation;
+        private bool _bowStringHeld;
 
         // ── Loadout ───────────────────────────────────────────────────────────────
         protected abstract int HeadArmorItemType  { get; }
@@ -365,6 +373,16 @@ namespace tsorcRevamp.NPCs.Puppets
         /// landing, and the landing does not hit a second time.</summary>
         private bool _leapStrikeStarted;
 
+        /// <summary>This LeapSlam/LeapThrust started in wing flight: BeginLeapAttack ended the flight and
+        /// launched a ballistic dive straight at the target instead of a jump. The in-range strike may then
+        /// fire before the apex, because a dive at a raised target is still rising when it arrives.</summary>
+        private bool _leapLaunchedFromAir;
+
+        /// <summary>Swing-space offset added to the landing-timed leap-slam pose so an aerial dive's
+        /// overhead carry and downswing point at the target in any direction. Tracks the target during
+        /// the carry and freezes when the strike starts. Always 0 for a ground leap.</summary>
+        private float _leapSlamAimOffset;
+
         /// <summary>A LeapSlam step whose LeapApexRetargetStrength &gt; 0 has already re-aimed its
         /// descent this flight. Fires once, on the exact tick the apex is reached.</summary>
         private bool _leapApexRetargeted;
@@ -409,8 +427,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     position += permitted;
                 }
             }
-            _weaponRotation = MathHelper.SmoothStep(LeapSlamCarryRotation, LeapSlamImpactRotation,
+            // _leapSlamAimOffset is 0 for ground leaps; an aerial dive rotates the whole arc at the target.
+            float slamPose = MathHelper.SmoothStep(LeapSlamCarryRotation, LeapSlamImpactRotation,
                 _leapSlamSwingProgress);
+            _weaponRotation = slamPose + _leapSlamAimOffset;
         }
 
         /// <summary>Lets a puppet widen the authored start/end rotations of ordinary combo arcs
@@ -2317,6 +2337,15 @@ namespace tsorcRevamp.NPCs.Puppets
             ref int attackTicks,
             ref int recoveryTicks) { }
 
+        /// <summary>True while a subclass wants to fully own NPC.velocity for a ranged telegraph/
+        /// attack tick instead of the shared standing-shot brake / momentum drift — e.g. a scripted
+        /// jump arc timed to fire at its apex. Checked ahead of the normal damping in both phases.</summary>
+        protected virtual bool HasRangedJumpOverride => false;
+
+        /// <summary>Called once per tick, in place of the normal ranged-phase velocity damping,
+        /// while <see cref="HasRangedJumpOverride"/> is true. Default no-op.</summary>
+        protected virtual void TickRangedJumpOverride() { }
+
         /// <summary>Reactive combo selection hook.  Called after the range/HP/cooldown weights are
         /// built but before the weighted roll; return a ready combo index chosen from LIVE player
         /// state (mid-dodgeroll direction, launched, flanking) to react to what the player is doing
@@ -3585,6 +3614,8 @@ namespace tsorcRevamp.NPCs.Puppets
             state.Write(_leapStrikeStarted);
             state.Write(_leapApexRetargeted);
             state.Write((short)_comboLeapAscentTicks);
+            state.Write(_leapLaunchedFromAir);
+            state.Write(_leapSlamAimOffset);
 
             // Bespoke attack phases: the directions, targets and counters their entry code rolled or aimed.
             int pierceTargetIndex = -1;
@@ -3940,6 +3971,8 @@ namespace tsorcRevamp.NPCs.Puppets
             _leapStrikeStarted = state.ReadBoolean();
             _leapApexRetargeted = state.ReadBoolean();
             _comboLeapAscentTicks = state.ReadInt16();
+            _leapLaunchedFromAir = state.ReadBoolean();
+            _leapSlamAimOffset = state.ReadSingle();
 
             _pierceIsStab = state.ReadBoolean();
             _pierceHitConnected = state.ReadBoolean();
@@ -4158,14 +4191,42 @@ namespace tsorcRevamp.NPCs.Puppets
                                 && _aerialDiveCooldown <= 0 && aerialDistance <= AerialMeleeRange
                                 && Main.rand.Next(70) == 0)
                             {
-                                Vector2 leadTarget = target.Center + target.velocity * AerialDiveLeadTicks;
-                                // Lets a subclass redirect the dive at a ground point instead (a
-                                // slam variant) rather than the default lead-through-the-player thrust.
-                                leadTarget = ModifyAerialDiveWaypoint(leadTarget);
-                                if (_flight.RequestDive(leadTarget))
+                                // A puppet with AirborneStartOnly combos uses those instead of the
+                                // flight controller's generic dive: a real telegraphed combo whose
+                                // LeapSlam dives at the target and swings on arrival (BeginLeapAttack).
+                                EnsureMeleeComboPool();
+                                bool hasAirborneCombos = false;
+
+                                if (_meleeComboPool != null)
                                 {
-                                    _aerialDiveCooldown = AerialDiveCooldownTicks;
-                                    DoAerialDiveTelegraph();
+                                    for (int i = 0; i < _meleeComboPool.Length; i++)
+                                    {
+                                        if (_meleeComboPool[i].AirborneStartOnly)
+                                        {
+                                            hasAirborneCombos = true;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (hasAirborneCombos)
+                                {
+                                    if (TryStartMeleeCombo(aerialDistance, airborneStart: true))
+                                    {
+                                        _aerialDiveCooldown = AerialDiveCooldownTicks;
+                                    }
+                                }
+                                else
+                                {
+                                    Vector2 leadTarget = target.Center + target.velocity * AerialDiveLeadTicks;
+                                    // Lets a subclass redirect the dive at a ground point instead (a
+                                    // slam variant) rather than the default lead-through-the-player thrust.
+                                    leadTarget = ModifyAerialDiveWaypoint(leadTarget);
+                                    if (_flight.RequestDive(leadTarget))
+                                    {
+                                        _aerialDiveCooldown = AerialDiveCooldownTicks;
+                                        DoAerialDiveTelegraph();
+                                    }
                                 }
                             }
                             else if (_flight.IsDiving && _aerialHitCooldown <= 0)
@@ -4585,8 +4646,14 @@ namespace tsorcRevamp.NPCs.Puppets
                 // clearly "prepares to throw".  Standing shots brake harder to a full
                 // stop; moving shots just slow — this still reads as deliberate aiming.
                 case AttackPhase.RangedTelegraph:
+                    if (HasRangedJumpOverride)
+                    {
+                        // A scripted jump arc (e.g. Owl Father's Jumping Bow Shot) owns velocity
+                        // outright — neither the flight controller nor the stand/drift brake apply.
+                        TickRangedJumpOverride();
+                    }
                     // Skip ground velocity damping while airborne — flight controller owns velocity.
-                    if (_flight == null || !_flight.IsAirborne)
+                    else if (_flight == null || !_flight.IsAirborne)
                     {
                         if (_standingShot)
                             NPC.velocity.X *= 0.10f; // planted shot — brake to nearly stopped
@@ -4604,7 +4671,11 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.RangedAttack:
-                    if (_flight == null || !_flight.IsAirborne)
+                    if (HasRangedJumpOverride)
+                    {
+                        TickRangedJumpOverride();
+                    }
+                    else if (_flight == null || !_flight.IsAirborne)
                     {
                         if (_standingShot)
                             NPC.velocity.X *= 0.25f; // planted shot — bleed off any residual momentum
@@ -5895,7 +5966,8 @@ namespace tsorcRevamp.NPCs.Puppets
                         // Hold the launch velocity (SF4 ran earlier this tick and would otherwise
                         // steer X). Optional correction is limited to ascent; gravity and the locked
                         // descent preserve a committed, dodgeable landing line.
-                        if (_comboLeapLaunched && NPC.velocity.Y < 0f)
+                        // An aerial dive is already solved onto the target; ascent tracking would bend it.
+                        if (_comboLeapLaunched && NPC.velocity.Y < 0f && !_leapLaunchedFromAir)
                         {
                             UpdateLeapAscentTracking(target, step, 0f,
                                 LeapAttackAscentTrackingStrength);
@@ -5921,7 +5993,11 @@ namespace tsorcRevamp.NPCs.Puppets
                         // tips from rising to falling, re-aim the locked descent velocity at the
                         // target's position right now instead of the launch-time lead-predicted spot,
                         // so a long telegraph doesn't guarantee a walked-out-of-the-way whiff. Fires once.
-                        if (pastApex && !_leapApexRetargeted && step.LeapApexRetargetStrength > 0f)
+                        // Apex retarget and descent gravity reshape a jump arc; an aerial dive was
+                        // solved as one ballistic line, so both would throw it off the target.
+                        bool jumpArc = !_leapLaunchedFromAir;
+
+                        if (jumpArc && pastApex && !_leapApexRetargeted && step.LeapApexRetargetStrength > 0f)
                         {
                             _leapApexRetargeted = true;
                             RetargetLeapAtApex(target, step);
@@ -5930,16 +6006,37 @@ namespace tsorcRevamp.NPCs.Puppets
                         // Descent gravity boost (opt-in via LeapDescentGravityMult): speeds up only
                         // the fall from apex to landing, so a high telegraphing jump still slams down
                         // fast rather than hanging in the air for the player to simply walk away from.
-                        if (pastApex && step.LeapDescentGravityMult > 0f && step.LeapDescentGravityMult != 1f)
+                        if (jumpArc && pastApex && step.LeapDescentGravityMult > 0f && step.LeapDescentGravityMult != 1f)
                             NPC.velocity.Y += 0.3f * (step.LeapDescentGravityMult - 1f);
 
+                        // A dive at a raised target is still rising when it arrives, so an aerial
+                        // launch may strike before the apex; a jump waits for the apex as before.
+                        bool strikeWindowOpen = pastApex
+                            || (_leapLaunchedFromAir && _comboLeapLaunched && !landed);
                         bool canStrikeInAir = landingTimedSlam && step.LeapStrikeRange > 0f
-                            && !_leapStrikeStarted && _leapSlamSwingProgress <= 0f && pastApex;
+                            && !_leapStrikeStarted && _leapSlamSwingProgress <= 0f && strikeWindowOpen;
                         if (canStrikeInAir && NPC.Distance(target.Center) <= step.LeapStrikeRange)
                         {
                             _leapStrikeStarted = true;
                             DoComboMeleeHit(step);
                             PlayMeleeSwingSound();
+                        }
+
+                        if (landingTimedSlam && _leapLaunchedFromAir && !_leapStrikeStarted)
+                        {
+                            // Aim the aerial slam: rotate the whole carry/downswing arc so its contact
+                            // pose points from the hand at the target. Swing-space rotation maps 1:1 onto
+                            // facing-space angle (both facings), so the angle gap IS the offset. Eased
+                            // 0.25/tick during the carry; frozen once the strike starts (calibrated swing).
+                            float contactPose = MathHelper.Lerp(LeapSlamCarryRotation, LeapSlamImpactRotation,
+                                AerialSlamContactFraction);
+                            Vector2 contactDirection = GetMeleeWorldDirection(contactPose, FrontHandWeapon);
+                            float contactAngle = (float)Math.Atan2(contactDirection.Y, contactDirection.X * NPC.direction);
+                            Vector2 handToTarget = target.Center - GetHandPosition();
+                            float targetAngle = (float)Math.Atan2(handToTarget.Y, handToTarget.X * NPC.direction);
+                            float desiredOffset = MathHelper.WrapAngle(targetAngle - contactAngle);
+                            desiredOffset = MathHelper.Clamp(desiredOffset, -AerialSlamMaxAimRaise, AerialSlamMaxAimDrop);
+                            _leapSlamAimOffset = MathHelper.Lerp(_leapSlamAimOffset, desiredOffset, 0.25f);
                         }
 
                         if (landingTimedSlam)
@@ -6416,11 +6513,19 @@ namespace tsorcRevamp.NPCs.Puppets
         /// range-aware (close/mid/far bands) and HP-aware (heavy combos weighted up as HP drops).
         /// Returns true if a combo started; false if no eligible combo (cooldowns/weights).
         /// </summary>
-        protected bool TryStartMeleeCombo(float dist, bool rangedStartOnly = false)
+        protected bool TryStartMeleeCombo(float dist, bool rangedStartOnly = false, bool airborneStart = false)
         {
             // Combo selection is server-authoritative; a client adopts the chosen combo, with its customized
             // steps, from the snapshot. Returning false lets any caller fall through safely.
             if (IsMultiplayerClient)
+            {
+                return false;
+            }
+
+            // Ground combos never start from wing flight: the flight controller owns velocity and facing,
+            // so the swing plays from a hovering body with no aim. Only AirborneStartOnly combos may.
+            bool inWingFlight = _flight != null && _flight.IsAirborne;
+            if (inWingFlight && !airborneStart)
             {
                 return false;
             }
@@ -6477,6 +6582,11 @@ namespace tsorcRevamp.NPCs.Puppets
                     continue;
                 }
                 if (_meleeComboPool[i].RangedStartOnly != rangedStartOnly)
+                {
+                    effective[i] = 0;
+                    continue;
+                }
+                if (_meleeComboPool[i].AirborneStartOnly != airborneStart)
                 {
                     effective[i] = 0;
                     continue;
@@ -6774,6 +6884,19 @@ namespace tsorcRevamp.NPCs.Puppets
         /// player instead of lunging forward (avoids overshooting at close range).</summary>
         protected virtual float LeapMinLungeDistance => 80f;
 
+        /// <summary>Aerial leap (a LeapSlam started in wing flight): straight-line speed, px/tick, used to
+        /// size the dive's airtime. Clamped to AerialLeapMin/MaxDiveTicks so a short dive still reads and a
+        /// long one doesn't float.</summary>
+        protected virtual float AerialLeapDiveSpeed => 9f;
+        private const float AerialLeapMinDiveTicks = 16f;
+        private const float AerialLeapMaxDiveTicks = 40f;
+        // Aerial slam aim: this fraction of the carry→impact sweep is the "contact" pose that gets pointed
+        // at the target. Offset clamps (rad) stop the arm folding through the torso for targets far above
+        // (negative = raise the arc) or straight below (positive = drop it).
+        private const float AerialSlamContactFraction = 0.65f;
+        private const float AerialSlamMaxAimRaise = 1.0f;
+        private const float AerialSlamMaxAimDrop = 0.8f;
+
         /// <summary>Horizontal distance (px) a leap-based attack (LeapSlam, ApexDiveCleave) aims to
         /// land SHORT of the target's exact position, rather than landing squarely on top of them.
         /// 0 (default) preserves the original "land right on them" aim — the right call for a leap
@@ -6873,6 +6996,31 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.direction = dir;
             NPC.spriteDirection = dir;
             NPC.noGravity = false;
+            _leapSlamAimOffset = 0f;
+            _leapLaunchedFromAir = _flight != null && _flight.IsAirborne;
+
+            if (_leapLaunchedFromAir)
+            {
+                // Started in wing flight (an AirborneStartOnly combo): drop out of flight and dive
+                // straight at the target in any direction instead of jumping. Airtime comes from a
+                // straight-line dive speed; normal NPC gravity (0.3 px/t²) is then solved into the
+                // launch so the arc ends on the aim point, a standoff short of the target.
+                _flight.EndFlightNow();
+
+                Vector2 aimPoint = new Vector2(targetX - dir * LeapLandingStandoff, target.Center.Y);
+                Vector2 diveGap = aimPoint - NPC.Center;
+                float diveDistance = diveGap.Length();
+                float diveTicks = MathHelper.Clamp(diveDistance / AerialLeapDiveSpeed,
+                    AerialLeapMinDiveTicks, AerialLeapMaxDiveTicks);
+                float gravityDrop = 0.5f * 0.3f * diveTicks * diveTicks;
+                float diveVx = diveGap.X / diveTicks;
+                float diveVy = (diveGap.Y - gravityDrop) / diveTicks;
+
+                _comboLeapVx = diveVx;
+                NPC.velocity = new Vector2(diveVx, diveVy);
+                _comboLeapLaunched = true;
+                return;
+            }
 
             float heightMult = step.LeapHeightMult > 0f ? step.LeapHeightMult : 1f;
             float forwardMult = step.LeapForwardSpeedMult > 0f ? step.LeapForwardSpeedMult : 1f;
@@ -9263,6 +9411,36 @@ namespace tsorcRevamp.NPCs.Puppets
         protected Vector2 PuppetBackHandPosition => GetBackHandPosition();
         protected Vector2 PuppetBackWeaponDirection => GetBackWeaponWorldDirection();
 
+        /// <summary>World-space bow grip for <see cref="UseBowStringDrawPose"/>: the outstretched back hand.
+        /// Arrows should leave from here — the front hand is on the string, back near the cheek.</summary>
+        protected Vector2 PuppetBowGripPosition
+        {
+            get
+            {
+                Vector2 grip = GetUnscaledBowGripPosition();
+                float visualScale = Math.Max(1, ArmorTemplateScale)
+                    * (HasSpectralOverlay ? SpectralOverlayScale : 1f);
+
+                if (visualScale == 1f)
+                {
+                    return grip;
+                }
+
+                return NPC.Bottom + (grip - NPC.Bottom) * visualScale;
+            }
+        }
+
+        // Pure function of facing — no per-frame pose state — so the server can fire from it too.
+        private Vector2 GetUnscaledBowGripPosition()
+        {
+            if (_puppet == null)
+            {
+                return PuppetVisualCenter;
+            }
+
+            return _puppet.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, BowHoldArmRotation);
+        }
+
         private Vector2 GetBackHandPosition()
         {
             Vector2 hand = GetUnscaledBackHandPosition();
@@ -9648,6 +9826,27 @@ namespace tsorcRevamp.NPCs.Puppets
                 ApplyPuppetArmor();
             }
 
+            // Dye hot-swap, same reason as the armor above: a subclass's dyes may depend on phase (Owl
+            // Father's phase-two Burning Hades) while its armor items stay the same. Compared by item
+            // type, so an unchanged frame re-creates nothing. An empty slot's Item has type 0.
+            int wingsDyeItemType = HasWings ? WingsDyeItemType : 0;
+            bool dyesChanged = _puppet.dye[0].type != HeadArmorDyeItemType
+                || _puppet.dye[1].type != BodyArmorDyeItemType
+                || _puppet.dye[2].type != LegsArmorDyeItemType
+                || _puppet.dye[3].type != wingsDyeItemType;
+
+            if (dyesChanged)
+            {
+                SetPuppetDye(0, HeadArmorDyeItemType);
+                SetPuppetDye(1, BodyArmorDyeItemType);
+                SetPuppetDye(2, LegsArmorDyeItemType);
+                SetPuppetDye(3, wingsDyeItemType);
+                _puppet.cHead = _puppet.dye[0].dye;
+                _puppet.cBody = _puppet.dye[1].dye;
+                _puppet.cLegs = _puppet.dye[2].dye;
+                _puppet.cWings = _puppet.dye[3].dye;
+            }
+
             // Mount visual is DERIVED from the gameplay flag every frame rather than driven by mount/dismount
             // events. A client that learns about the dismount via synced state (not by running CheckDead
             // itself) still stops drawing the mount, with no event plumbing to miss.
@@ -9753,6 +9952,16 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             SyncFrames();
+
+            if (BowStringDrawPoseActive)
+            {
+                // Archer pose: back arm holds the bow out level, front arm works the string.
+                // Replaces the two-handed IK / dual-wield back arm below for the bow phases only.
+                TickBowStringDrawPose();
+                _puppet.SetCompositeArmFront(true, _bowStringHandStretch, _bowStringHandRotation);
+                _puppet.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, BowHoldArmRotation);
+                return;
+            }
 
             // Set AFTER SyncFrames so the continuously-authored arms override the matching pieces
             // of the selected body frame. The front hand remains authoritative for weapon draw and
@@ -9991,7 +10200,15 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             else if (!onGround)
             {
+                // Wing flight is a controlled hover, not a jump: arms hang at rest (Idle row) while the
+                // legs keep the airborne frame. Only a real jump or fall raises the arms.
+                bool wingFlight = _flight != null && _flight.IsAirborne;
                 bodyRow = 5; // Jump
+
+                if (wingFlight)
+                {
+                    bodyRow = 0; // Idle — arms down
+                }
             }
             else if (moving)
             {
@@ -10640,6 +10857,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float SpectralTrailOpacity => 0.45f;
         /// <summary>Suppress halo and motion-history copies below the puppet's current feet.</summary>
         protected virtual bool SpectralExcludeDownwardCopies => false;
+        /// <summary>Gate for the radial halo ring and the motion-history trail specifically — NOT
+        /// the enlarged solid body itself, which always draws while <see cref="HasSpectralOverlay"/>
+        /// is on. Lets a puppet keep its permanent size-up while reserving the busier ghost-copy
+        /// visual for a specific moment (Owl Father: leap attacks only).</summary>
+        protected virtual bool ShowSpectralGhostCopies => true;
 
         // Optional shader drawn as an extra copy of the oversized armor pieces. A subclass may opt
         // its melee weapon into the same mask; every solid sprite and all existing VFX remain intact.
@@ -10708,43 +10930,46 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             drawInfo.DrawDataCache.Clear();
 
-            Color haloColor = SpectralHaloColor * SpectralHaloOpacity;
-            for (int i = 0; i < SpectralHaloCopyCount; i++)
+            if (ShowSpectralGhostCopies)
             {
-                Vector2 offset = new Vector2(SpectralHaloRadius, 0f)
-                    .RotatedBy(MathHelper.TwoPi * i / SpectralHaloCopyCount);
-                if (SpectralExcludeDownwardCopies && offset.Y > 0.01f)
-                    continue;
-                foreach (DrawData core in _spectralDrawCache)
+                Color haloColor = SpectralHaloColor * SpectralHaloOpacity;
+                for (int i = 0; i < SpectralHaloCopyCount; i++)
                 {
-                    DrawData halo = core;
-                    halo.position = feet + (core.position - feet) * SpectralHaloScale + offset;
-                    halo.scale *= SpectralHaloScale;
-                    halo.color = SpectralHaloFollowsCoreOpacity
-                        ? haloColor * (core.color.A / 255f)
-                        : haloColor;
-                    drawInfo.DrawDataCache.Add(halo);
-                }
-            }
-            if (_spectralOldPositions != null)
-            {
-                for (int k = _spectralOldPositions.Length - 1; k >= 1; k--)
-                {
-                    Vector2 offset = _spectralOldPositions[k] - NPC.position;
-                    // Avoid stacking stationary copies or spanning an instantaneous teleport.
-                    if (offset.LengthSquared() < 1f || offset.LengthSquared() > 320f * 320f)
+                    Vector2 offset = new Vector2(SpectralHaloRadius, 0f)
+                        .RotatedBy(MathHelper.TwoPi * i / SpectralHaloCopyCount);
+                    if (SpectralExcludeDownwardCopies && offset.Y > 0.01f)
                         continue;
-                    if (SpectralExcludeDownwardCopies && offset.Y > 1f)
-                        continue;
-                    Color trailColor = SpectralHaloColor
-                        * ((_spectralOldPositions.Length - k) / (float)_spectralOldPositions.Length
-                            * SpectralTrailOpacity);
                     foreach (DrawData core in _spectralDrawCache)
                     {
-                        DrawData trail = core;
-                        trail.position += offset;
-                        trail.color = trailColor * (core.color.A / 255f);
-                        drawInfo.DrawDataCache.Add(trail);
+                        DrawData halo = core;
+                        halo.position = feet + (core.position - feet) * SpectralHaloScale + offset;
+                        halo.scale *= SpectralHaloScale;
+                        halo.color = SpectralHaloFollowsCoreOpacity
+                            ? haloColor * (core.color.A / 255f)
+                            : haloColor;
+                        drawInfo.DrawDataCache.Add(halo);
+                    }
+                }
+                if (_spectralOldPositions != null)
+                {
+                    for (int k = _spectralOldPositions.Length - 1; k >= 1; k--)
+                    {
+                        Vector2 offset = _spectralOldPositions[k] - NPC.position;
+                        // Avoid stacking stationary copies or spanning an instantaneous teleport.
+                        if (offset.LengthSquared() < 1f || offset.LengthSquared() > 320f * 320f)
+                            continue;
+                        if (SpectralExcludeDownwardCopies && offset.Y > 1f)
+                            continue;
+                        Color trailColor = SpectralHaloColor
+                            * ((_spectralOldPositions.Length - k) / (float)_spectralOldPositions.Length
+                                * SpectralTrailOpacity);
+                        foreach (DrawData core in _spectralDrawCache)
+                        {
+                            DrawData trail = core;
+                            trail.position += offset;
+                            trail.color = trailColor * (core.color.A / 255f);
+                            drawInfo.DrawDataCache.Add(trail);
+                        }
                     }
                 }
             }
@@ -11193,6 +11418,12 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             // The spectral transform scales the complete draw cache once, including this hand.
             Vector2 drawPos = GetUnscaledHandPosition() - Main.screenPosition;
+            bool bowDrawPose = heldBowLike && BowStringDrawPoseActive;
+            if (bowDrawPose)
+            {
+                // Archer pose: the bow lives in the outstretched back hand; the front hand is on the string.
+                drawPos = GetUnscaledBowGripPosition() - Main.screenPosition;
+            }
             if (heldCrossbowLike)
             {
                 Item heldItem = GetCachedWeaponItem(_heldItemType);
@@ -11224,6 +11455,13 @@ namespace tsorcRevamp.NPCs.Puppets
             //   Left  (flip)    → originX = width * (1 − handleNorm.X)  (lower-right, which
             //                     after the flip maps to the handle side)
             Vector2 origin;
+            // Only the bow draw pose crops the sprite (to remove its baked-in string); null = whole texture.
+            Rectangle? sourceRect = null;
+            Rectangle bowStringTexels = Rectangle.Empty;
+            if (bowDrawPose)
+            {
+                bowStringTexels = GetBowStringTexels(_heldItemType);
+            }
             if (heldCrossbowLike)
             {
                 float hx = flipHeldRangedHorizontally ? tex.Width * 0.78f : tex.Width * 0.22f;
@@ -11238,6 +11476,20 @@ namespace tsorcRevamp.NPCs.Puppets
                     ? tex.Width * (1f - gripNorm.X)
                     : tex.Width * gripNorm.X;
                 origin = new Vector2(hx, tex.Height * gripNorm.Y);
+
+                if (bowStringTexels != Rectangle.Empty)
+                {
+                    // Crop off the string columns (left edge) — live lines to the hand replace them.
+                    // Origin is measured inside the source rect, so the unflipped case shifts left by
+                    // the cropped width; the flipped case (width − gripX) already comes out the same.
+                    int stringWidth = bowStringTexels.Right;
+                    sourceRect = new Rectangle(stringWidth, 0, tex.Width - stringWidth, tex.Height);
+
+                    if (!flipHeldRangedHorizontally)
+                    {
+                        origin.X -= stringWidth;
+                    }
+                }
             }
             else if (heldRangedLike)
             {
@@ -11317,13 +11569,69 @@ namespace tsorcRevamp.NPCs.Puppets
             drawInfo.DrawDataCache.Add(new DrawData(
                 tex,
                 drawPos,
-                null,
+                sourceRect,
                 _layerDrawColor,
                 drawRotation,
                 origin,
                 NPC.scale * scale,
                 spriteFx,
                 0));
+
+            if (bowStringTexels != Rectangle.Empty)
+            {
+                // Live bowstring: two lines from the limb tips to the string point. Tips are texel
+                // offsets from the grip, mirrored for a flipped sprite and turned with the bow.
+                float texelScale = NPC.scale * scale;
+                Vector2 gripTexel = new Vector2(tex.Width, tex.Height) * GetHeldRangedGripNorm(_heldItemType);
+                float stringTexelX = bowStringTexels.X + bowStringTexels.Width * 0.5f;
+                Vector2 topOffset = (new Vector2(stringTexelX, bowStringTexels.Top) - gripTexel) * texelScale;
+                Vector2 bottomOffset = (new Vector2(stringTexelX, bowStringTexels.Bottom) - gripTexel) * texelScale;
+
+                if (flipHeldRangedHorizontally)
+                {
+                    topOffset.X = -topOffset.X;
+                    bottomOffset.X = -bottomOffset.X;
+                }
+
+                Vector2 topTip = drawPos + topOffset.RotatedBy(drawRotation);
+                Vector2 bottomTip = drawPos + bottomOffset.RotatedBy(drawRotation);
+                Vector2 restPoint = (topTip + bottomTip) * 0.5f;
+                Vector2 stringPoint = restPoint;
+
+                if (_bowStringHeld)
+                {
+                    stringPoint = _puppet.GetFrontHandPosition(_bowStringHandStretch, _bowStringHandRotation)
+                        - Main.screenPosition;
+
+                    // Never bow the string outward past rest — early in the pull the hand is still a
+                    // few px in front of it.
+                    float handAheadOfRest = (stringPoint.X - restPoint.X) * NPC.direction;
+                    if (handAheadOfRest > 0f)
+                    {
+                        stringPoint.X = restPoint.X;
+                    }
+                }
+
+                // Colour sampled from the sprite's own string (46, 26, 17), lit like the bow.
+                Color stringColor = new Color(46, 26, 17).MultiplyRGBA(_layerDrawColor);
+                float stringThickness = bowStringTexels.Width * texelScale;
+                Texture2D pixel = TextureAssets.MagicPixel.Value;
+
+                foreach (Vector2 tip in new[] { topTip, bottomTip })
+                {
+                    Vector2 span = stringPoint - tip;
+                    drawInfo.DrawDataCache.Add(new DrawData(
+                        pixel,
+                        tip,
+                        new Rectangle(0, 0, 1, 1),
+                        stringColor,
+                        span.ToRotation(),
+                        new Vector2(0f, 0.5f),
+                        new Vector2(span.Length(), stringThickness),
+                        SpriteEffects.None,
+                        0));
+                }
+            }
 
             // ── Debug snapshot + log (DebugMode only) ───────────────────────────────
             DebugWeaponRotationDeg = MathHelper.ToDegrees(_weaponRotation);
@@ -11895,6 +12203,17 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Pixel-equivalent hysteresis cost for changing the rear elbow stretch frame.</summary>
         protected virtual float TwoHandedBackStretchSwitchPenalty => 2f;
 
+        /// <summary>Opt-in archer pose for a <see cref="RangedStyle.Bow"/> weapon: the back arm holds the
+        /// bow out at its grip while the front arm reaches for the string, draws it to the cheek,
+        /// trembles at full draw and lets go on the shot. Needs <see cref="UseCompositeArmSwing"/> and the
+        /// bow phases in <see cref="UseCompositeArmForAdditionalPhase"/>.</summary>
+        protected virtual bool UseBowStringDrawPose => false;
+
+        /// <summary>Texel rectangle of a bow sprite's string, in the unflipped (facing-right) texture.
+        /// Must start at column 0. Cut out of the drawn sprite and replaced by two live lines to the
+        /// string hand while <see cref="UseBowStringDrawPose"/> is on. Empty = draw the sprite as-is.</summary>
+        protected virtual Rectangle GetBowStringTexels(int itemType) => Rectangle.Empty;
+
         /// <summary>Runtime master kill-switch for the composite-arm experiment.  Lets you flip the
         /// new arm path off globally (e.g. from a debug command) for instant A/B without a rebuild.</summary>
         internal static bool CompositeArmSwingMasterEnable = true;
@@ -12061,6 +12380,101 @@ namespace tsorcRevamp.NPCs.Puppets
                 bestRotation = candidateRotation;
                 bestHand = candidateHand;
             }
+        }
+
+        private bool BowStringDrawPoseActive =>
+            UseBowStringDrawPose
+            && CompositeArmActive
+            && _heldItemType == _activeRangedItemType
+            && _activeRangedStyle == RangedStyle.Bow
+            && (Phase == AttackPhase.RangedTelegraph
+                || Phase == AttackPhase.RangedAttack
+                || Phase == AttackPhase.CrossbowBurstPause);
+
+        // Bow arm straight out, level with the shoulder. Composite space: -π/2 = level forward,
+        // mirrored by facing like every other composite rotation here.
+        private float BowHoldArmRotation => -MathHelper.PiOver2 * NPC.direction;
+
+        // String-hand cycle, as fractions of each telegraph / inter-shot pause: reach out to the string
+        // until BowReachEnd, draw it back until BowPullEnd, then hold at full draw until the shot.
+        private const float BowReachEnd = 0.25f;
+        private const float BowPullEnd = 0.65f;
+        // Radians the string arm is raised from level-forward at full draw. Arcs the hand up over the
+        // shoulder to the cheek (~13px behind the resting string) instead of down through the legs.
+        private const float BowPulledAngle = 2.2f;
+        // Extra backward flick of the empty hand right after release.
+        private const float BowReleaseFlickAngle = 0.25f;
+        // Full-draw tremble amplitude. At Quarter stretch (6px arm) ±0.2 rad is a ~1px shake.
+        private const float BowTrembleAngle = 0.2f;
+
+        /// <summary>
+        /// Poses the string hand for <see cref="UseBowStringDrawPose"/>. RangedTelegraph and
+        /// CrossbowBurstPause both run reach → pull → trembling hold, so the release lands exactly on
+        /// the shot (fired when those phases end). RangedAttack is the release: string snaps home and
+        /// the empty hand flicks back, then the next pause reaches for the string again.
+        /// </summary>
+        private void TickBowStringDrawPose()
+        {
+            // Phase progress needs the phase's full length. A phase change, or the same phase
+            // re-entered with a larger timer, restarts the clock at the current PhaseTimer.
+            bool phaseRestarted = Phase != _bowPoseTrackedPhase || PhaseTimer > _bowPoseLastTimer;
+
+            if (phaseRestarted)
+            {
+                _bowPoseTrackedPhase = Phase;
+                _bowPosePhaseTicks = Math.Max(1, PhaseTimer);
+            }
+
+            _bowPoseLastTimer = PhaseTimer;
+
+            float progress = 1f - PhaseTimer / (float)_bowPosePhaseTicks;
+            progress = MathHelper.Clamp(progress, 0f, 1f);
+
+            float raisedAngle;
+
+            if (Phase == AttackPhase.RangedAttack)
+            {
+                // Release: over the first third of the phase the empty hand flicks a bit further back.
+                float flick = MathHelper.SmoothStep(0f, 1f, Math.Min(1f, progress * 3f));
+                raisedAngle = BowPulledAngle + BowReleaseFlickAngle * flick;
+                _bowStringHeld = false;
+            }
+            else if (progress < BowReachEnd)
+            {
+                // Reach: from the cheek back out to the string, as if grabbing string and arrow.
+                float reach = MathHelper.SmoothStep(0f, 1f, progress / BowReachEnd);
+                raisedAngle = MathHelper.Lerp(BowPulledAngle, 0f, reach);
+                _bowStringHeld = false;
+            }
+            else if (progress < BowPullEnd)
+            {
+                float pull = MathHelper.SmoothStep(0f, 1f, (progress - BowReachEnd) / (BowPullEnd - BowReachEnd));
+                raisedAngle = MathHelper.Lerp(0f, BowPulledAngle, pull);
+                _bowStringHeld = true;
+            }
+            else
+            {
+                // Full draw: ~3-tick sine tremble from the global clock, identical on every peer.
+                float tremble = (float)Math.Sin(Main.GameUpdateCount * 2.1f) * BowTrembleAngle;
+                raisedAngle = BowPulledAngle + tremble;
+                _bowStringHeld = true;
+            }
+
+            // Arm shortens as it comes back. Thresholds split the arc so each stretch frame covers a
+            // similar stretch of hand travel (Full at the string, Quarter at the cheek).
+            Player.CompositeArmStretchAmount stretch = Player.CompositeArmStretchAmount.Quarter;
+
+            if (raisedAngle < 0.5f)
+            {
+                stretch = Player.CompositeArmStretchAmount.Full;
+            }
+            else if (raisedAngle < 1.2f)
+            {
+                stretch = Player.CompositeArmStretchAmount.ThreeQuarters;
+            }
+
+            _bowStringHandStretch = stretch;
+            _bowStringHandRotation = (-MathHelper.PiOver2 - raisedAngle) * NPC.direction;
         }
 
         private static void GetBackArmEllipse(

@@ -121,6 +121,7 @@ namespace tsorcRevamp
         public bool SteraksGage = false;
         public bool InfinityEdge = false;
         public bool LudensTempest = false;
+        public bool OwlRingEquipped = false;
 
         public int WorldEnderSwing = 1;
 
@@ -537,6 +538,7 @@ namespace tsorcRevamp
             SteraksGage = false;
             InfinityEdge = false;
             LudensTempest = false;
+            OwlRingEquipped = false;
 
             JaggedFlatCritDmgBonus = 0;
             RashBadLifeRegen = 0;

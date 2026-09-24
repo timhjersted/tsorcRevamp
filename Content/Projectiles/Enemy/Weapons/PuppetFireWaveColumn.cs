@@ -12,8 +12,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// One rising "lick" of Greatfire Crescent's fire wave: several staggered FireBreath.png copies
     /// stacked up a vertical column, lighting up bottom-to-top as the wave climbs and fading back out
     /// the same way, each with its own slow rotation wobble so the column reads as licking flame
-    /// rather than a static stamp. Decorative alongside Crescent; the slam variant damages only
-    /// inside its visible, rising flames.
+    /// rather than a static stamp. Spawned with damage > 0 (server-side), only the large upper licks
+    /// hurt, each inside its own drawn size; the small base licks are always harmless.
     /// </summary>
     public class PuppetFireWaveColumn : ModProjectile
     {
@@ -22,8 +22,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         // ai[0] = full column height (px), ai[1] = signed horizontal fan-out at the column's top (px)
         private float ColumnHeight => Projectile.ai[0];
         private float FanSpread => Projectile.ai[1];
-        // ai[2] opts into the compact, damaging landing eruption and stores its visual delay.
-        // Crescent leaves ai[2] at zero and remains decorative.
+        // ai[2] opts into the compact landing eruption (0.8x scale, embers) and stores its delay.
+        // Whether a column hurts is decided by its damage, not its mode — see Damaging.
         public const int SlamMode = 1;
         public static float EncodeSlamDelay(int ticks) => SlamMode + System.Math.Max(0, ticks);
         private bool IsSlam => Projectile.ai[2] >= SlamMode;
@@ -38,11 +38,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         // top sprites were still partly opaque when the projectile expired and vanished abruptly.
         private const int TotalTicks = RiseTicks + LingerTicks + FadeTicks + MaxLickDelayTicks;
 
+        // Licks at or above this fraction of the column (the top 3 of 6) are the large ones — drawn
+        // 1.06-1.3x base scale — and the only ones that deal damage.
+        private const float LargeLickProgress = 0.6f;
+        // Hurtbox side as a fraction of the drawn FireBreath size (38x36 * scale); the sprite's soft,
+        // transparent edges shouldn't count as flame.
+        private const float LickHitboxFraction = 0.6f;
+        private const float LickTextureSize = 37f;
+
         private float[] _lickRotation;
         private float[] _lickRotSpeed;
         private float[] _lickPhaseOffset; // 0..1 of RiseTicks — staggers bottom-to-top ignition
         private float[] _lickXJitter;
         private float[] _lickScale;
+
+        private bool Damaging => Projectile.damage > 0;
 
         public override void SetDefaults()
         {
@@ -58,6 +68,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         public override void OnSpawn(IEntitySource source)
         {
             Projectile.timeLeft = TotalTicks + SpawnDelay;
+        }
+
+        // Lick layout, built on first use from a seed every peer shares (identity is synced).
+        // OnSpawn only runs on the spawning machine, so server-spawned columns previously reached
+        // multiplayer clients with null arrays; the random scales also feed the hurtboxes now.
+        private void EnsureLicks()
+        {
+            if (_lickScale != null)
+            {
+                return;
+            }
+
+            Terraria.Utilities.UnifiedRandom random = new Terraria.Utilities.UnifiedRandom(Projectile.identity);
             _lickRotation = new float[LickCount];
             _lickRotSpeed = new float[LickCount];
             _lickPhaseOffset = new float[LickCount];
@@ -66,18 +89,34 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
             for (int i = 0; i < LickCount; i++)
             {
-                _lickRotation[i] = Main.rand.NextFloat(MathHelper.TwoPi);
-                _lickRotSpeed[i] = Main.rand.NextFloat(-0.09f, 0.09f);
+                _lickRotation[i] = random.NextFloat(MathHelper.TwoPi);
+                _lickRotSpeed[i] = random.NextFloat(-0.09f, 0.09f);
                 _lickPhaseOffset[i] = i / (float)LickCount * 0.55f;
-                _lickXJitter[i] = Main.rand.NextFloat(-1f, 1f);
-                _lickScale[i] = Main.rand.NextFloat(0.75f, 1.15f);
+                _lickXJitter[i] = random.NextFloat(-1f, 1f);
+                _lickScale[i] = random.NextFloat(0.75f, 1.15f);
             }
+        }
+
+        // Drawn scale of one lick. Shared by PreDraw and Colliding so a hurtbox is exactly as big as
+        // the flame it belongs to.
+        private float LickDrawScale(int lickIndex, float dissipate)
+        {
+            float lickProgress = lickIndex / (float)(LickCount - 1);
+            float scale = _lickScale[lickIndex] * MathHelper.Lerp(0.7f, 1.3f, lickProgress) * (1f - dissipate * 0.3f);
+
+            if (IsSlam)
+            {
+                scale *= 0.8f;
+            }
+
+            return scale;
         }
 
         public override void AI()
         {
+            EnsureLicks();
             int elapsed = TotalTicks - Projectile.timeLeft;
-            Projectile.hostile = IsSlam && elapsed >= 0;
+            Projectile.hostile = Damaging && elapsed >= 0;
             if (elapsed < 0)
                 return;
             if (Main.dedServ)
@@ -103,25 +142,37 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         }
 
         public override bool? CanDamage()
-            => IsSlam && TotalTicks - Projectile.timeLeft >= 0 ? null : false;
+            => Damaging && TotalTicks - Projectile.timeLeft >= 0 ? null : false;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             int elapsed = TotalTicks - Projectile.timeLeft;
-            if (!IsSlam || elapsed < 0)
+            if (!Damaging || elapsed < 0)
                 return false;
 
-            // Match each flame's staggered rise; never hit the empty space above the eruption.
+            EnsureLicks();
+
+            // Only the large upper licks hurt, each inside its own drawn size and following its
+            // staggered rise (same position maths as PreDraw, minus the 3px cosmetic jitter). A lick
+            // is live from 3 ticks after it ignites until it starts to dissipate.
             for (int i = 0; i < LickCount; i++)
             {
-                float localTick = elapsed - i / (float)LickCount * 0.55f * RiseTicks;
+                float progress = i / (float)(LickCount - 1);
+                if (progress < LargeLickProgress)
+                    continue;
+
+                float localTick = elapsed - _lickPhaseOffset[i] * RiseTicks;
                 if (localTick < 3f || localTick > RiseTicks + LingerTicks)
                     continue;
 
-                float progress = i / (float)(LickCount - 1);
+                float riseFraction = MathHelper.Clamp(localTick / RiseTicks, 0f, 1f);
                 Vector2 center = Projectile.Center + new Vector2(FanSpread * progress * progress,
-                    -progress * ColumnHeight * MathHelper.Clamp(localTick / RiseTicks, 0f, 1f));
-                if (new Rectangle((int)center.X - 10, (int)center.Y - 10, 20, 20).Intersects(targetHitbox))
+                    -progress * ColumnHeight * riseFraction);
+                int hitboxSide = (int)(LickTextureSize * LickDrawScale(i, 0f) * LickHitboxFraction);
+                Rectangle lickHitbox = new Rectangle(
+                    (int)center.X - hitboxSide / 2, (int)center.Y - hitboxSide / 2, hitboxSide, hitboxSide);
+
+                if (lickHitbox.Intersects(targetHitbox))
                     return true;
             }
             return false;
@@ -129,6 +180,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override bool PreDraw(ref Color lightColor)
         {
+            EnsureLicks();
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
             int elapsed = TotalTicks - Projectile.timeLeft;
@@ -165,9 +217,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 // Base of the column reads hot yellow-orange; the licks that reach the top of the
                 // wave have cooled toward a deeper ember red.
                 Color color = Color.Lerp(new Color(255, 200, 60), new Color(200, 30, 10), lickProgress) * alpha;
-                float scale = _lickScale[i] * MathHelper.Lerp(0.7f, 1.3f, lickProgress) * (1f - dissipate * 0.3f);
-                if (IsSlam)
-                    scale *= 0.8f;
+                float scale = LickDrawScale(i, dissipate);
 
                 Main.EntitySpriteDraw(texture, drawPosition, null, color, _lickRotation[i],
                     origin, scale, SpriteEffects.None, 0);

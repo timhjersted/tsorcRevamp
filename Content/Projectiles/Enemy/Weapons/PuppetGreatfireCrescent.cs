@@ -9,13 +9,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
     /// <summary>Fire crescent used both as Owl Father's direct ranged slash and as the short ground
     /// waves released by Greatfire Breaker. ai[0]: 0 = direct, 1 = ground-following. The visible
-    /// "wave" is carried by trailing PuppetFireWaveColumn instances spawned in AI(); this projectile
-    /// is the real hitbox plus a single leading-edge ember.</summary>
+    /// "wave" is carried by trailing PuppetFireWaveColumn instances spawned in AI() with this
+    /// projectile's damage, so their large upper licks hurt too; this projectile is the leading-edge
+    /// hitbox plus a single spinning ember.</summary>
     public class PuppetGreatfireCrescent : ModProjectile
     {
         public const int DirectMode = 0;
         public const int GroundMode = 1;
-        private const float GroundTravelLimit = 10f * 16f;
+        // Was 10 tiles: at the ~9.5px/tick ground speed the wave died a third of the way to a
+        // "Far"-band target (Owl Father's own RangedSwingMaxTriggerRange selects this attack out to
+        // 460px), so most selections whiffed by design. 4x reach actually covers the band it's
+        // selected from.
+        private const float GroundTravelLimit = 40f * 16f;
 
         private bool GroundFollowing => (int)Projectile.ai[0] == GroundMode;
 
@@ -26,6 +31,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private const float DirectWaveColumnHeight = 6f * 16f;
         private const int WaveColumnSpawnInterval = 4;
         private int _waveColumnTimer;
+        // Leading flame spin, rad/tick, rolling forward in the travel direction (clockwise moving right).
+        private const float LeadingFlameSpinSpeed = 0.35f;
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(FireBreath));
 
@@ -51,7 +58,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 if (GroundFollowing)
                 {
                     Projectile.tileCollide = false;
-                    Projectile.timeLeft = 38;
+                    // Must outlast the ~67-tick trip to the new 640px GroundTravelLimit at this
+                    // velocity, or the old 38-tick lifetime kills the wave before it gets there.
+                    Projectile.timeLeft = 80;
                 }
             }
 
@@ -77,10 +86,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 Projectile.velocity *= 0.995f;
             }
 
-            Projectile.rotation = Projectile.velocity.ToRotation();
+            // Rotation is draw-only here (the hitbox is an axis-aligned rect), so it can spin freely.
+            float spinDirection = 1f;
+
+            if (Projectile.velocity.X < 0f)
+            {
+                spinDirection = -1f;
+            }
+
+            Projectile.rotation += LeadingFlameSpinSpeed * spinDirection;
             Lighting.AddLight(Projectile.Center, 0.9f, 0.35f, 0.06f);
 
-            if (!Main.dedServ)
+            // Columns now carry damage, so only the server (or single player) spawns them; they sync
+            // to clients like any projectile.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 _waveColumnTimer++;
                 if (_waveColumnTimer >= WaveColumnSpawnInterval)
@@ -139,8 +158,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
             Projectile.NewProjectile(
                 Projectile.GetSource_FromThis(), spawnPosition, Vector2.Zero,
-                ModContent.ProjectileType<PuppetFireWaveColumn>(), 0, 0f, Projectile.owner,
-                columnHeight, fanSpread);
+                ModContent.ProjectileType<PuppetFireWaveColumn>(), Projectile.damage, Projectile.knockBack,
+                Projectile.owner, columnHeight, fanSpread);
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
