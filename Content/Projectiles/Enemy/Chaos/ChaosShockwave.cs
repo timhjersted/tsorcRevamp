@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
 {
@@ -9,7 +10,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
     ///Cataclysm Dive's ground wave: dark fire that crawls along the floor away from Chaos's impact point.
     ///Invisible projectile sold entirely by dust geysers, ported from GigasShockwave with a purple palette
     ///and a longer run (the Chaos arena is wider). ai[0] = direction (-1/1), ai[1] = arming delay in ticks,
-    ///so the landing dust ring shows the radius before anything can hurt the player.
+    ///so the landing dust ring shows the radius before anything can hurt the player. The projectile's own
+    ///position IS the hitbox — it travels at the wave's leading edge, so touching it anywhere is touching
+    ///the danger.
     ///Hugs the terrain (steps up/down small ledges); dies against walls taller than 3 tiles.
     ///</summary>
     class ChaosShockwave : ModProjectile
@@ -17,8 +20,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Projectiles.InvisibleNothingProj));
 
         const float WaveSpeed = 7f;
-        const int WaveTravelTicks = 60; //~26 tiles of travel after arming — the arena is wide
-        const int CloudInterval = 6;    //~10 trailing cloud gores per wave over those 60 ticks
+        const int WaveTravelTicks = 120; //~52 tiles of travel after arming — doubled so it covers the arena
+        const int CloudInterval = 6;     //~20 trailing cloud gores per wave over those 120 ticks
+        const int ImpactDamage = 25;     //flat, not NPC.damage-scaled: this is a battlefield hazard, not a nuke
+        const int StaggerTicks = 60;     //1 second
 
         int Direction => (int)Projectile.ai[0] >= 0 ? 1 : -1;
         int ArmDelay => (int)Projectile.ai[1];
@@ -40,11 +45,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
             Projectile.timeLeft = ArmDelay + WaveTravelTicks;
+
+            // Runs after NewProjectile assigns the passed NPC.damage/6 value, so this is the last word.
+            Projectile.damage = ImpactDamage;
         }
 
         public override bool? CanDamage()
         {
             return Armed;
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            Stagger.Apply(target, StaggerTicks);
         }
 
         public override void AI()

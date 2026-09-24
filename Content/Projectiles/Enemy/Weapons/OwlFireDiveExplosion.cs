@@ -57,9 +57,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return;
 
             InitializeFlameLobes();
-            SoundEngine.PlaySound(SoundID.NPCDeath2 with
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/HollowKnight/flamebearer_shoot")
+                with
             {
-                Volume = 0.4f,
+                Volume = 0.3f,
+                Pitch = -0.2f,
                 PitchVariance = 0.06f
             }, Projectile.Center);
             SoundEngine.PlaySound(SoundID.Item34 with

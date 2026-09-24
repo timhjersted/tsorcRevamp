@@ -118,7 +118,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
             Projectile.timeLeft = 0;
             //projectile.AI(false);
 
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/HollowKnight/hero_fluke_cast") with { Volume = 0.3f, PitchVariance = 0.1f }, Projectile.Center);
 
             float len = 4f;
             int flam = ModContent.ProjectileType<ChaosBlackFirelet>();

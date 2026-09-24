@@ -11322,6 +11322,9 @@ Mods: {
 			// BasiliskLeechTongueTelegraph.DisplayName: Basilisk Leech Tongue Telegraph
 			// CursedDragonPoisonCloud.DisplayName: Cursed Dragon Poison Cloud
 			// NitoMiasmaWall.DisplayName: Nito Miasma Wall
+			// ChaosCollapseBurst.DisplayName: Chaos Collapse Burst
+			// ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
+			// EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 		}
 
 		NPCs: {

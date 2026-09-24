@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -251,6 +252,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 {
                     SpawnLegacyEruptionBurst(bottom);
                 }
+
+                // Both callers (Owl Father's Firefall Array, Dread Wraith's marching eruption) only
+                // ever played a cast sound at the moment they were summoned; each pillar bursting out
+                // of the ground here was silent. Same cue as an Owl Father fire-owl spawn.
+                SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.22f, Pitch = 0.38f }, bottom);
             }
 
             Projectile.ai[1] = 1f;

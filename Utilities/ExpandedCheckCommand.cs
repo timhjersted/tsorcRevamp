@@ -42,6 +42,9 @@ namespace tsorcRevamp.Utilities
             Line($"World title/id: {Main.worldName} / worldID={Main.worldID} (custom={VariousConstants.CUSTOM_MAP_WORLD_ID})", Color.Gray);
             Line($"GUID: {guid}", Color.Gray);
             Line($"maxTilesY={Main.maxTilesY}  maxTilesX={Main.maxTilesX}", Color.Gray);
+            Line($"worldSurface={Main.worldSurface:F1}  rockLayer={Main.rockLayer:F1}", Color.Gray);
+            float playerTileY = Main.LocalPlayer.Center.Y / 16f;
+            Line($"LocalPlayer tileY={playerTileY:F1}  (surface terrain here should sit ABOVE worldSurface, i.e. playerTileY < worldSurface, if worldSurface is correctly calibrated)", Color.Gray);
             Line($"CheckForExpandedAdventure()={tsorcRevampWorld.CheckForExpandedAdventure()}", Color.White);
             Line($"Flags: ExpandedAdventure={tsorcRevampWorld.ExpandedAdventure}  OnlyAdventureMap={tsorcRevampWorld.OnlyAdventureMap}  RemixMap={tsorcRevampWorld.RemixMap}  CustomMap={tsorcRevampWorld.CustomMap}", Color.Yellow);
             Line($"Transform.Active={ExpandedWorldTransform.Active}  fold={ExpandedWorldTransform.FoldThreshold}  above=+{ExpandedWorldTransform.AboveFoldOffset}  below=+{ExpandedWorldTransform.BelowFoldOffset}", Color.White);
