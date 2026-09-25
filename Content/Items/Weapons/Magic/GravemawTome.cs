@@ -30,8 +30,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
             Item.mana = 8;
             Item.width = 28;
             Item.height = 30;
-            Item.useTime = 20;
-            Item.useAnimation = 20;
+            Item.useTime = 27;
+            Item.useAnimation = 27;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.channel = true; // the controller watches player.channel to split tap vs hold

@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories.Damage;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Materials;
@@ -1161,7 +1162,7 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.aiStyle = -1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
-            NPC.value = 35000f;
+            NPC.value = 38000f;
             NPC.boss = true;
             NPC.npcSlots = 5f;
 
@@ -1177,9 +1178,10 @@ namespace tsorcRevamp.NPCs.Puppets
             // npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherMask>()));
             // npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherArmor>()));
             // npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherGreaves>()));
-            	npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncientFireAxe>()));
-		npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlRing>()));
-         }
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncientFireAxe>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlRing>()));
+            npcLoot.Add(ItemDropRule.ByCondition(new FirstBossKillRule(), ModContent.ItemType<SublimeBoneDust>()));
+        }
 
         protected override void DoMeleeAttack()
         {

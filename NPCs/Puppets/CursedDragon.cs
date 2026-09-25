@@ -1463,6 +1463,7 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonCharm>()));
             npcLoot.Add(ItemDropRule.ByCondition(new FirstBossKillRule(), ModContent.ItemType<StaminaVessel>()));
+            npcLoot.Add(ItemDropRule.ByCondition(new FirstBossKillRule(), ModContent.ItemType<SublimeBoneDust>()));
         }
     }
 }

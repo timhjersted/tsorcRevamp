@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Content.Items
 
         public override bool CanUseItem(Player player)
         {
-            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain < 300)
+            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain < 360)
             {
                 return true;
             }
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Content.Items
         }
         public override bool? UseItem(Player player)
         {
-            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain < 300)
+            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain < 360)
             {
                 player.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain += 30;
                 player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanManaGain += 30;
