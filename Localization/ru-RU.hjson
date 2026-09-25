@@ -1468,7 +1468,6 @@ Mods: {
 					Редкий драгоценный слёзный камень обладает сверхъестественной способностью чувствовать неминуемую смерть.
 					{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1} и
 					{$CommonItemTooltip.DRStat@2}
-					{$CommonItemTooltip.Melee.BadDmg@3}
 					'''
 			}
 
@@ -5097,8 +5096,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesDefenseBy}
 					{$CommonItemTooltip.DRStat@1}
-					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
-					{$CommonItemTooltip.BadDmg@3}
+					{$CommonItemTooltip.BadDmgMult@2}
 					Не сочетается с демоническим снадобьем, зельями силы или зельями боевого фронта.
 					'''
 			}
