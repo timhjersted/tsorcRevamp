@@ -54,6 +54,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         private bool Damaging => Projectile.damage > 0;
 
+        // Enemy columns hurt players. The player's Ancient Fire Axe subclasses this with false so the
+        // same licks hurt NPCs instead. Type-based, so every machine agrees without syncing the flags.
+        protected virtual bool HurtsPlayers => true;
+
         public override void SetDefaults()
         {
             Projectile.width = 2;
@@ -116,7 +120,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         {
             EnsureLicks();
             int elapsed = TotalTicks - Projectile.timeLeft;
-            Projectile.hostile = Damaging && elapsed >= 0;
+            bool live = Damaging && elapsed >= 0;
+
+            if (HurtsPlayers)
+            {
+                Projectile.hostile = live;
+            }
+            else
+            {
+                Projectile.friendly = live;
+            }
+
             if (elapsed < 0)
                 return;
             if (Main.dedServ)

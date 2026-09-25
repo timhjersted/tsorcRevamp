@@ -74,7 +74,8 @@ namespace tsorcRevamp.NPCs.Enemies
         float savedKnockBackResist = -1f; //restored after the surge's brief knockback immunity
 
         //Damage tiers preserved from the old SetDefaults blocks (now applied on the first AI tick —
-        //world flags aren't reliable in SetDefaults). Hostile projectiles deal 2x these on hit.
+        //world flags aren't reliable in SetDefaults). In Expert Mode, one hostile projectile hit
+        //is about 4x these raw spawn values.
         int BubbleDamage => SHM ? 55 : HM ? 45 : 33;
         int CrestDamage => SHM ? 50 : HM ? 40 : 30;
         int BurstDamage => SHM ? 55 : HM ? 45 : 35;

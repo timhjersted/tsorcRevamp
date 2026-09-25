@@ -593,7 +593,7 @@ namespace tsorcRevamp
         /// <param name="npc">The NPC this is operating on</param>
         ///<param name="timerCap">How high does the timer have to be for it to shoot</param>
         ///<param name="projectileType">The ID of the projectile you want to shoot</param>
-        ///<param name="projectileDamage">Damage of the projectile, passed straight through to Projectile.NewProjectile with no multiplier — NOT auto-scaled by difficulty (verified: neither ProjectileData nor SimpleProjectile touch it, and vanilla's own difficulty scaling only auto-multiplies NPC.damage, never Projectile.damage). If you want expert/master to hit harder, scale the value you pass in yourself.</param>
+        ///<param name="projectileDamage">Damage passed to Projectile.NewProjectile without scaling by this helper. For a declared Expert Mode pre-defense hit value, pass EnemyDamage.Projectile(value), which applies the Normal/Master ratio.</param>
         ///<param name="projectileVelocity">Speed of the projectile</param>
         ///<param name="shootSound">The sound to play when shooting</param>
         ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Leave blank for default gravity, set to 0 for projectiles with no gravity, set it custom if your projectile has custom gravity</param>

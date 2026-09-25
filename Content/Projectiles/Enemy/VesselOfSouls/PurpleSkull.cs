@@ -10,8 +10,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls
     ///<summary>
     ///The Vessel of Souls' universal hostile projectile: a spinning purple skull, spat from the mouth in
     ///fans, cones, novas, sentinel volleys and the death fountain. 4-frame animation. Optional weak homing
-    ///lets a lazy fan punish standing still. Hostile projectiles deal 2× the passed damage on hit — author
-    ///half-values in the boss.
+    ///lets a lazy fan punish standing still. In Expert Mode, one hit is about 4× the raw spawn
+    ///damage passed by the boss.
     ///  ai[0] = homing factor (0 = straight; ~0.02–0.05 = gentle curve toward the nearest player)
     ///</summary>
     class PurpleSkull : ModProjectile

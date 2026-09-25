@@ -131,7 +131,8 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int RangedWeaponItemType => -1;
         protected override int MagicWeaponItemType => _staffBurned ? -1 : ModContent.ItemType<OolacileCultistStaff>();
 
-        // Hostile hitboxes and projectiles deal 2x in game.
+        // Expert Mode hostile projectile hits are about 4x their spawn damage. Hitbox damage
+        // follows the puppet attack's own collision path.
         protected override int MeleeDamage
         {
             get

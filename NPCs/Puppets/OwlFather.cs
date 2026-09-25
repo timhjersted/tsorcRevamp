@@ -131,6 +131,7 @@ namespace tsorcRevamp.NPCs.Puppets
             writer.Write(_fireOwlBombardmentCooldown);
             writer.Write((byte)_rangedMoveStyle);
             writer.Write(_rangedJumpVx);
+            writer.Write(_rangedJumpUpSpeed);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -147,6 +148,7 @@ namespace tsorcRevamp.NPCs.Puppets
             _fireOwlBombardmentCooldown = reader.ReadInt32();
             _rangedMoveStyle = (RangedMoveStyle)reader.ReadByte();
             _rangedJumpVx = reader.ReadSingle();
+            _rangedJumpUpSpeed = reader.ReadSingle();
             if (_spectralFormActive)
             {
                 ApplySpectralBodyHitbox();
@@ -294,6 +296,8 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         protected override bool HasSpectralOverlay => _spectralFormActive;
+        // The giant form is his real body, so the phase-two Burning Hades dyes must survive the 2x copy.
+        protected override bool SpectralKeepsArmorDyes => true;
         // UseVanillaAncientArmor path: there is no oversized template, so THIS is what physically
         // enlarges phase two — a feet-anchored 2x scale of the plain small Ancient-set sprites (the
         // same Hydra-shield transform every other spectral-overlay puppet already uses), which is
@@ -318,7 +322,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override bool SpectralHaloFollowsCoreOpacity => false;
         protected override float SpectralTrailOpacity => 0.2f;
         protected override bool SpectralExcludeDownwardCopies => true;
-        protected override int LargeArmorMaskShaderId => OwlFatherSolarArmorShaderSystem.ShaderId;
+        // Solar shader overlay on the phase-two armor. Set false to judge the Burning Hades dye on
+        // its own; 0 = PuppetNPC skips the overlay pass entirely.
+        private const bool ShowSolarArmorOverlay = true;
+        protected override int LargeArmorMaskShaderId =>
+            ShowSolarArmorOverlay ? OwlFatherSolarArmorShaderSystem.ShaderId : 0;
         protected override bool IncludeMeleeWeaponInLargeArmorMask => true;
         // The enlarged phase-two body (above) stays on permanently; the busier halo ring + motion
         // trail are reserved for the leap attacks (ground jump combos and the airborne dive-slam)
@@ -450,7 +458,7 @@ namespace tsorcRevamp.NPCs.Puppets
         // ModifyNPCLoot and this puppet-hand hookup adds no drop of its own.
         protected override int RangedWeaponItemType => ModContent.ItemType<BowOfEarendil>();
         protected override RangedStyle RangedAnimStyle => RangedStyle.Bow;
-        protected override int RangedDamage => 26;
+        protected override int RangedDamage => 15;
         // Comfortably past ComboMaxStartRange's own reach (440 / 880 in phase two) so the bow is a
         // genuine long-range option instead of being pre-empted by a melee combo every time.
         protected override float RangedRange => 900f;
@@ -525,6 +533,20 @@ namespace tsorcRevamp.NPCs.Puppets
         // Locked at launch (ModifyRangedBurst) so the arc's horizontal speed doesn't drift if the
         // player moves during the jump - synced, since TickRangedJumpOverride reads it on every peer.
         private float _rangedJumpVx;
+        // Launch speed of this burst's jump, px/tick: the fixed RangedJumpUpSpeed for a random jump,
+        // or solved from the height gap for a forced one (below). Synced for the same reason as Vx —
+        // the arc and its time-to-apex are re-derived from it on every peer.
+        private float _rangedJumpUpSpeed = RangedJumpUpSpeed;
+
+        // Forced jump shot: a bow shot at a player standing above tends to clip the terrain in
+        // between, so jump to bring the bow up to them instead. Forced (no roll, ignores the
+        // no-back-to-back rule) when the player is 3+ tiles above the bow, or 1+ tile above with the
+        // straight shot line blocked. The rise is solved to lift the bow to the player's height,
+        // 3-7 tiles (the floor keeps a small gap still reading as a real jump).
+        private const float ForcedJumpHeightAbove = 3f * 16f;
+        private const float ForcedJumpBlockedHeightAbove = 1f * 16f;
+        private const float ForcedJumpMinRise = 3f * 16f;
+        private const float ForcedJumpMaxRise = 7f * 16f;
 
         private RangedMoveStyle PickRangedMoveStyle()
         {
@@ -555,7 +577,41 @@ namespace tsorcRevamp.NPCs.Puppets
             // velocity — the ground stand/walk/run/jump variety below is for the grounded trigger
             // only, so it never fights Flight.Tick() for control of NPC.velocity.
             bool grounded = Flight == null || !Flight.IsAirborne;
-            _rangedMoveStyle = grounded ? PickRangedMoveStyle() : RangedMoveStyle.Stand;
+            _rangedJumpUpSpeed = RangedJumpUpSpeed;
+            bool forcedJump = false;
+
+            if (grounded && NPC.HasValidTarget)
+            {
+                // Measured from the bow (the arrow's origin), not the body center.
+                Player shotTarget = Main.player[NPC.target];
+                Vector2 bowGrip = PuppetBowGripPosition;
+                float heightAbove = bowGrip.Y - shotTarget.Center.Y;
+                bool shotLineClear = Collision.CanHitLine(bowGrip, 1, 1, shotTarget.Center, 1, 1);
+                bool farAbove = heightAbove >= ForcedJumpHeightAbove;
+                bool aboveAndBlocked = heightAbove >= ForcedJumpBlockedHeightAbove && !shotLineClear;
+
+                if (farAbove || aboveAndBlocked)
+                {
+                    forcedJump = true;
+                    float rise = MathHelper.Clamp(heightAbove, ForcedJumpMinRise, ForcedJumpMaxRise);
+                    // Launch speed whose apex is exactly `rise` px up: v = sqrt(2·g·h).
+                    _rangedJumpUpSpeed = (float)Math.Sqrt(2f * RangedJumpGravity * rise);
+                }
+            }
+
+            if (forcedJump)
+            {
+                _rangedMoveStyle = RangedMoveStyle.Jump;
+            }
+            else if (grounded)
+            {
+                _rangedMoveStyle = PickRangedMoveStyle();
+            }
+            else
+            {
+                _rangedMoveStyle = RangedMoveStyle.Stand;
+            }
+
             _lastRangedMoveWasJump = _rangedMoveStyle == RangedMoveStyle.Jump;
             NPC.netUpdate = true;
 
@@ -572,13 +628,13 @@ namespace tsorcRevamp.NPCs.Puppets
             attackTicks = RangedJumpTicksToApex * 2;
         }
 
+        // Random jump shot's launch speed (~120px apex); forced jumps solve their own (see above).
         private const float RangedJumpUpSpeed = 8.5f;
         private const float RangedJumpGravity = 0.3f; // matches the leap-slam gravity used elsewhere
         private const float RangedJumpForwardSpeedMult = 1.6f;
-        // Pure function of the two constants above, so every peer computes the identical value with
-        // nothing to sync - deriving it instead of caching it at launch avoids a third synced field.
+        // Derived from the synced launch speed, so every peer computes the identical value.
         private int RangedJumpTicksToApex =>
-            Math.Max(1, (int)Math.Round(RangedJumpUpSpeed / RangedJumpGravity));
+            Math.Max(1, (int)Math.Round(_rangedJumpUpSpeed / RangedJumpGravity));
 
         protected override bool HasRangedJumpOverride => _rangedMoveStyle == RangedMoveStyle.Jump;
 
@@ -591,6 +647,15 @@ namespace tsorcRevamp.NPCs.Puppets
                 ? ticksToApex - PhaseTimer
                 : ticksToApex * 2 - PhaseTimer;
 
+            // EnterPhase floors every telegraph at 30 ticks, longer than a short jump's time-to-apex.
+            // Wait planted (drawing the bow) until the remaining telegraph fits the arc, so the arrow
+            // still leaves exactly at the apex instead of the extra ticks over-launching the jump.
+            if (inTelegraph && elapsed < 0)
+            {
+                NPC.velocity.X *= 0.8f;
+                return;
+            }
+
             // Landed early relative to the attack phase's generous (symmetric) window - settle
             // instead of continuing to drive the analytic fall velocity into the floor. elapsed > 2
             // skips the false read right at apex, where the fall formula itself is still near zero.
@@ -602,11 +667,11 @@ namespace tsorcRevamp.NPCs.Puppets
 
             NPC.velocity.X = _rangedJumpVx;
             NPC.velocity.Y = inTelegraph
-                ? -RangedJumpUpSpeed + RangedJumpGravity * elapsed
+                ? -_rangedJumpUpSpeed + RangedJumpGravity * elapsed
                 : RangedJumpGravity * elapsed;
         }
 
-        protected override int MeleeDamage => 30;
+        protected override int MeleeDamage => 18;
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Axe;
         // Owl Father's axe art is authored with its blade facing the ground. Keep that orientation
@@ -1089,7 +1154,7 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             NPC.width = 20;
             NPC.height = 42;
-            NPC.lifeMax = 2600;
+            NPC.lifeMax = 4000;
             NPC.defense = 16;
             NPC.damage = 0;
             NPC.knockBackResist = 0.22f;

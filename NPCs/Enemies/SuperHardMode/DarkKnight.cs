@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         // Dark Wave is cast through the blade, so the Night's Edge remains in the knight's hand.
         protected override int MagicWeaponItemType => ItemID.NightsEdge;
 
-        // Hostile projectiles are doubled by Terraria when they hit a player. Keep puppet
+        // In Expert Mode, a hostile projectile hit is about 4x its raw spawn damage. Keep puppet
         // hitboxes on the same pre-hit damage scale as Dark Wave rather than NPC contact damage.
         protected override int MeleeDamage => (int)(35f * AttackDamageIncrease * tsorcRevampWorld.SubtleSHMScale);
         protected override int RangedDamage => 0;

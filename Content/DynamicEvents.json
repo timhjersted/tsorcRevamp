@@ -2000,8 +2000,8 @@
     "SaveOnCompletion": true,
     "TextToDisplay": "Ambush!",
     "TextColorHex": "FF0000FF",
-    "WorldCondition": null,
-    "MapCondition": "OnlyAdventureMapCondition",
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
     "CustomAction": null,
     "SingleNpcMarker": false,
     "Npcs": [
@@ -4732,6 +4732,87 @@
         "NpcName": "tsorcRevamp/GhostOfTheForgottenWarrior",
         "SpawnX": 4716.0,
         "SpawnY": 1709.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "b5055b2d-2616-476e-9b57-350f2c415461",
+    "CenterX": 5210.0,
+    "CenterY": 834.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "Owl",
+        "SpawnX": 5210.0,
+        "SpawnY": 834.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "406c5cb3-a614-48b8-8918-37ae1dd2155a",
+    "CenterX": 5386.0,
+    "CenterY": 816.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "Owl",
+        "SpawnX": 5386.0,
+        "SpawnY": 816.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "8dead3a9-bfcc-4faf-81d1-41d2b8d708a4",
+    "CenterX": 5473.0,
+    "CenterY": 840.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 6,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/OwlFather",
+        "SpawnX": 5541.0,
+        "SpawnY": 832.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

@@ -1861,10 +1861,10 @@ Mods: {
 				// DisplayName: Owl Ring
 				/* Tooltip:
 					'''
-					Casts darkness on wearer.
 					Weapons with a swing time of {0} or more deal {1}% increased damage, {2}% increased crit chance, and {3}% increased poise damage
 					While swinging one of these weapons, you cannot be staggered
 					[c/6cac6c:+{4} minion slot]
+					[c/6cac6c:Grants immunity to darkness]
 					''' */
 			}
 
@@ -6436,6 +6436,19 @@ Mods: {
 					При попадании в цель образуется упругий огненный шар, который взрывается при каждом попадании по врагу и при отскоке.
 					Отбрасывает врагов с силой, которая также поджигает их, нанося урон с течением времени.
 					'''
+			}
+
+			AncientFireAxeShort: {
+				// DisplayName: Ancient Fire Axe
+				/* Tooltip:
+					'''
+					The blade hits with a powerful magic flame.
+					Spawns a bouncy fireball on-hit, which explodes for each enemy hit and when bouncing.
+					Hold attack for {0} second(s), then release to hurl the axe, dealing {1}% more damage
+					The axe bursts into a {2}-tile-wide blast of flame on the first thing it hits, setting foes ablaze for {3} seconds
+					It then sticks where it lands; walk over it to pick it back up
+					Right click to switch to the long axe
+					''' */
 			}
 
 			DunlendingAxe: {
@@ -11336,6 +11349,10 @@ Mods: {
 			// ChaosCollapseBurst.DisplayName: Chaos Collapse Burst
 			// ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			// EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
+			// AncientFireAxeThrown.DisplayName: Ancient Fire Axe Thrown
+			// AncientFireAxeFireWave.DisplayName: Ancient Fire Axe Fire Wave
+			// AncientFireAxeFireColumn.DisplayName: Ancient Fire Axe Fire Column
+			// AncientFireAxeFireBurst.DisplayName: Ancient Fire Axe Fire Burst
 		}
 
 		NPCs: {

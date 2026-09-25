@@ -27,10 +27,10 @@ float4 OwlFatherSolarArmorMaskPixel(float4 sampleColor : COLOR0, float2 coords :
 
     float2 sheetPixel = coords * uImageSize0;
     float2 frameUV = (sheetPixel - uSourceRect.xy) / max(uSourceRect.zw, float2(1.0, 1.0));
-    // Chunky 2x2 blocks (in armor-sheet pixels) instead of smooth-scrolling noise, same technique
-    // as FireSlashArc's PixelGrid - 7x7 read as too coarse/blocky at gameplay zoom, so this settles
-    // on the mod's usual fine pixel-art grain instead.
-    float2 pixelFrameUV = PixelateShaderUV(frameUV, uSourceRect.zw, 2.0);
+    // 1x1 blocks (one armor-sheet pixel) instead of smooth-scrolling noise, same technique as
+    // FireSlashArc's PixelGrid. 7x7 and then 2x2 both read as too coarse at gameplay zoom; one sheet
+    // pixel matches the armor art's own grain.
+    float2 pixelFrameUV = PixelateShaderUV(frameUV, uSourceRect.zw, 1.0);
 
     // Two vertically biased, counter-drifting samples. SmoothNoise has real long flame filaments;
     // the anisotropic frequencies make them climb rather than read as round scrolling clouds.

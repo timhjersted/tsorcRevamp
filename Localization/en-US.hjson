@@ -6456,8 +6456,27 @@ Mods: {
 				Tooltip:
 					'''
 					The blade hits with a powerful magic flame.
-					Spawns a bouncy fireball on-hit, which explodes for each enemy hit and when bouncing.
 					Knocks back foes with a force that also sets them ablaze, doing damage over time.
+					Hold attack on the ground for {0} second(s), then release for a heavy swing that sends a fire wave {4} tiles along the ground
+					Underhand held swings also lift you {6} tiles into the air
+					Hold attack in the air: an overhand swing plunges into a slam that erupts the fire wave on landing, an underhand swing carries you upward
+					Held attacks cost {1} mana and deal {2}% more damage
+					Without enough mana they still deal {3}% more damage, but release no fire wave
+					The fire wave sets foes ablaze for {5} seconds
+					Right click to switch to the short axe
+					'''
+			}
+
+			AncientFireAxeShort: {
+				DisplayName: Ancient Fire Axe
+				Tooltip:
+					'''
+					The blade hits with a powerful magic flame.
+					Spawns a bouncy fireball on-hit, which explodes for each enemy hit and when bouncing.
+					Hold attack for {0} second(s), then release to hurl the axe, dealing {1}% more damage
+					The axe bursts into a {2}-tile-wide blast of flame on the first thing it hits, setting foes ablaze for {3} seconds
+					It then sticks where it lands; walk over it to pick it back up
+					Right click to switch to the long axe
 					'''
 			}
 
@@ -11379,6 +11398,10 @@ Mods: {
 			ChaosCollapseBurst.DisplayName: Chaos Collapse Burst
 			ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
+			AncientFireAxeThrown.DisplayName: Ancient Fire Axe Thrown
+			AncientFireAxeFireWave.DisplayName: Ancient Fire Axe Fire Wave
+			AncientFireAxeFireColumn.DisplayName: Ancient Fire Axe Fire Column
+			AncientFireAxeFireBurst.DisplayName: Ancient Fire Axe Fire Burst
 		}
 
 		NPCs: {

@@ -641,6 +641,7 @@ namespace tsorcRevamp
             WeaponClassifiedTools = new HashSet<int>
             {
                 ModContent.ItemType<AncientFireAxe>(),
+                ModContent.ItemType<AncientFireAxeShort>(),
                 ModContent.ItemType<BrokenDualBladedAxe>(),
                 ModContent.ItemType<DualBladedAxe>(),
                 ModContent.ItemType<DunlendingAxe>(),

@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         const int PlungeRiseTicks = 40;
         const int DeathDurationTicks = 420;  // ~7s survive-only spectacle
 
-        // ── Projectile damage (author HALF — hostile projectiles deal 2× on hit) ──
+        // ── Raw projectile spawn damage (about 2x per hit in Normal, 4x in Expert) ──
         int SkullDamage => ScaleDamage(12);
         int ConeDamage => ScaleDamage(14);
         int BreathDamage => ScaleDamage(15);

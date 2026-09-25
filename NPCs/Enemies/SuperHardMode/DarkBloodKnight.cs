@@ -80,7 +80,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override int RangedWeaponItemType => ItemID.TendonBow;
         protected override int SecondaryRangedWeaponItemType => ItemID.TendonBow;
 
-        // Terraria doubles hostile projectile damage on player hit. These are pre-hit values;
+        // Expert Mode hostile projectile hits are about 4x these raw spawn values;
         // keeping them near Dark Knight's Dark Wave avoids treating puppet attacks like contact damage.
         protected override int MeleeDamage => (int)(34f * AttackDamageIncrease * tsorcRevampWorld.SubtleSHMScale);
         protected override int RangedDamage => (int)(23f * AttackDamageIncrease * tsorcRevampWorld.SubtleSHMScale);

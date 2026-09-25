@@ -59,9 +59,12 @@ namespace tsorcRevamp.NPCs.Puppets
         private const float DiveBombStagingHeight = 260f;
         private const float DiveBombExitHorizontal = 360f;
         private const float DiveBombExitHeight = 240f;
-        // Molten Orb was the stronger ranged attack at 20 damage. Every phase-one owl attack now
-        // uses that value, so neither the eye beam nor the committed dive is an accidental downgrade.
-        private const int OwlAttackDamage = 20;
+        // Shared by the owl's ranged attacks (eye flame, Molten Orb) so neither
+        // is an accidental outlier. Was 20 (Molten Orb's old value); lowered to 15 in a balance pass.
+        private const int OwlAttackDamage = 15;
+        // The committed dive-bomb's body contact. Deliberately much heavier than the ranged shots:
+        // it is the one big telegraphed commit in the owl's kit.
+        private const int OwlDiveContactDamage = 50;
         private const int TreeSearchRadiusTiles = 45;
         private const float PerchHeightAbovePlayer = 96f;
         private const int PerchLandingTicks = 12;
@@ -209,7 +212,7 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             NPC.noGravity = true;
-            NPC.damage = _state == OwlState.DiveBombing ? OwlAttackDamage : 0;
+            NPC.damage = _state == OwlState.DiveBombing ? OwlDiveContactDamage : 0;
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 // Decisions, navigation and projectile creation belong to the server. Clients
@@ -527,7 +530,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 - (_diveBombStartPoint + _diveBombExitPoint) * 0.5f;
             _diveBombTargetVelocity = EvaluateDiveCurve(1f / DiveBombMaxTicks) - NPC.Center;
             NPC.velocity = _diveBombTargetVelocity;
-            NPC.damage = OwlAttackDamage;
+            NPC.damage = OwlDiveContactDamage;
             // The launch frame already advances to the first curve sample.
             ChangeState(OwlState.DiveBombing, DiveBombMaxTicks - 1);
             SoundEngine.PlaySound(SoundID.Zombie112 with

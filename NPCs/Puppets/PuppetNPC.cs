@@ -4646,6 +4646,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // clearly "prepares to throw".  Standing shots brake harder to a full
                 // stop; moving shots just slow — this still reads as deliberate aiming.
                 case AttackPhase.RangedTelegraph:
+                    FaceTargetForRangedShot(target);
                     if (HasRangedJumpOverride)
                     {
                         // A scripted jump arc (e.g. Owl Father's Jumping Bow Shot) owns velocity
@@ -4671,6 +4672,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     break;
 
                 case AttackPhase.RangedAttack:
+                    FaceTargetForRangedShot(target);
                     if (HasRangedJumpOverride)
                     {
                         TickRangedJumpOverride();
@@ -4740,6 +4742,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // When the timer expires the next shot fires immediately — no re-telegraph.
                 // This gives a deliberate "controlled volley" feel without extra wind-up.
                 case AttackPhase.CrossbowBurstPause:
+                    FaceTargetForRangedShot(target);
                     if (_flight == null || !_flight.IsAirborne)
                     {
                         if (_standingShot)
@@ -6045,6 +6048,19 @@ namespace tsorcRevamp.NPCs.Puppets
                             if (_leapSlamSwingProgress > 0f)
                                 OnLandingTimedLeapSlamSwingTick(step, _leapSlamSwingProgress);
                         }
+
+                        // The predicted-landing downswing starts ~10 ticks BEFORE touchdown, so the
+                        // visible strike used to play with the blade unarmed and only one static check
+                        // ran at the final landing pose (telemetry: 0 armed ticks on every landing slam,
+                        // hits only when standing exactly where the axe ended). Arm the swept blade the
+                        // tick the downswing starts, same as an in-range air strike; the landing then
+                        // adds no second hit (the endStep check below skips once _leapStrikeStarted).
+                        if (landingTimedSlam && _leapSlamSwingProgress > 0f && !_leapStrikeStarted)
+                        {
+                            _leapStrikeStarted = true;
+                            DoComboMeleeHit(step);
+                        }
+
                         if (_leapStrikeStarted)
                             TickBladeHit();
 
@@ -6321,6 +6337,21 @@ namespace tsorcRevamp.NPCs.Puppets
         /// instead of the sprite snapping around on the very frame the last swing ends.
         /// No-op when nothing is committed (dir 0).
         /// </summary>
+        // Ranged phases always face the target. Re-asserted every tick because the mover (and its
+        // 30-tick anti-flip hold) runs first and could leave the body turned away as a shot starts.
+        // Same 8px dead zone as the neutral re-face, so an overlapping player can't flip it each tick.
+        private void FaceTargetForRangedShot(Player target)
+        {
+            float horizontalGap = target.Center.X - NPC.Center.X;
+
+            if (Math.Abs(horizontalGap) > NeutralRefaceDeadZone)
+            {
+                _attackFacingDir = Math.Sign(horizontalGap);
+            }
+
+            LockAttackFacing();
+        }
+
         private void LockAttackFacing()
         {
             if (_attackFacingDir == 0)
@@ -10844,6 +10875,9 @@ namespace tsorcRevamp.NPCs.Puppets
         // The finished player draw cache becomes the spectral body. This preserves every armor
         // layer and the hand/weapon attachment without a second solid small puppet underneath.
         protected virtual bool HasSpectralOverlay => false;
+        /// <summary>Keep armor/wing dye shaders on the enlarged spectral body (halo and trail copies stay
+        /// flat). Off by default: ghost-style overlays are meant to read as a tinted silhouette.</summary>
+        protected virtual bool SpectralKeepsArmorDyes => false;
         protected virtual float SpectralOverlayScale => 3f;
         protected virtual Color SpectralOverlayColor => new Color(100, 200, 255);
         protected virtual float SpectralCoreTintStrength => 0.75f;
@@ -10925,7 +10959,14 @@ namespace tsorcRevamp.NPCs.Puppets
                 data.color = Color.Lerp(data.color,
                     SpectralOverlayColor * (data.color.A / 255f), SpectralCoreTintStrength)
                     * SpectralCoreOpacity;
-                data.shader = 0;
+
+                // Stripped by default: a ghost-style overlay (Artorias's phantom) is a flat tinted
+                // silhouette. A giant form that is still "the real body" keeps its armor dyes.
+                if (!SpectralKeepsArmorDyes)
+                {
+                    data.shader = 0;
+                }
+
                 _spectralDrawCache.Add(data);
             }
             drawInfo.DrawDataCache.Clear();
@@ -10942,6 +10983,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     foreach (DrawData core in _spectralDrawCache)
                     {
                         DrawData halo = core;
+                        halo.shader = 0; // flat-colour copy even when the core keeps its dyes
                         halo.position = feet + (core.position - feet) * SpectralHaloScale + offset;
                         halo.scale *= SpectralHaloScale;
                         halo.color = SpectralHaloFollowsCoreOpacity
@@ -10966,6 +11008,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         foreach (DrawData core in _spectralDrawCache)
                         {
                             DrawData trail = core;
+                            trail.shader = 0; // flat-colour copy even when the core keeps its dyes
                             trail.position += offset;
                             trail.color = trailColor * (core.color.A / 255f);
                             drawInfo.DrawDataCache.Add(trail);
@@ -11556,6 +11599,11 @@ namespace tsorcRevamp.NPCs.Puppets
             // same physical direction whether the sprite itself was flipped or not, reading as a
             // small held-close/twisted pose on the flipped (left-facing) side only.
             float drawRotation = heldBowLike ? _weaponRotation * NPC.direction : _weaponRotation;
+            if (bowDrawPose)
+            {
+                // Archer pose: the bow also tilts with the ±45° aim, matching the bow arm.
+                drawRotation = (_weaponRotation + BowAimAngle) * NPC.direction;
+            }
             // Spears use their own SpearDrawRotationOffset to correct for the sprite's natural
             // orientation — MeleeWeaponRotationOffset is a sword-only fine-tune and would double
             // up with (and fight) that correction, so it's excluded here.
@@ -12391,9 +12439,28 @@ namespace tsorcRevamp.NPCs.Puppets
                 || Phase == AttackPhase.RangedAttack
                 || Phase == AttackPhase.CrossbowBurstPause);
 
-        // Bow arm straight out, level with the shoulder. Composite space: -π/2 = level forward,
-        // mirrored by facing like every other composite rotation here.
-        private float BowHoldArmRotation => -MathHelper.PiOver2 * NPC.direction;
+        // Bow aim, facing-space radians (positive = down): body → target angle, clamped to ±45°. A pure
+        // function of positions, so the server's arrow origin and every client's pose agree without sync.
+        private const float BowMaxAimAngle = MathHelper.PiOver4;
+
+        private float BowAimAngle
+        {
+            get
+            {
+                if (!NPC.HasValidTarget)
+                {
+                    return 0f;
+                }
+
+                Vector2 toTarget = Main.player[NPC.target].Center - NPC.Center;
+                float facingAngle = (float)Math.Atan2(toTarget.Y, toTarget.X * NPC.direction);
+                return MathHelper.Clamp(facingAngle, -BowMaxAimAngle, BowMaxAimAngle);
+            }
+        }
+
+        // Bow arm straight out along the aim. Composite space: -π/2 = level forward and adding the aim
+        // tilts the hand down (positive) or up; mirrored by facing like every other composite rotation.
+        private float BowHoldArmRotation => (-MathHelper.PiOver2 + BowAimAngle) * NPC.direction;
 
         // String-hand cycle, as fractions of each telegraph / inter-shot pause: reach out to the string
         // until BowReachEnd, draw it back until BowPullEnd, then hold at full draw until the shot.
@@ -12474,7 +12541,8 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             _bowStringHandStretch = stretch;
-            _bowStringHandRotation = (-MathHelper.PiOver2 - raisedAngle) * NPC.direction;
+            // The whole reach/draw arc turns with the bow, so the string hand stays on the bow's axis.
+            _bowStringHandRotation = (-MathHelper.PiOver2 - raisedAngle + BowAimAngle) * NPC.direction;
         }
 
         private static void GetBackArmEllipse(

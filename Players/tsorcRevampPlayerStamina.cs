@@ -463,23 +463,17 @@ namespace tsorcRevamp
             // every 4th tick), before gear gainMult and the stationary bonus.
             if (soulsPlayer.BearerOfTheCurse)
             {
-                // Base 2.0 against its 1.15 cost. Experimental 2.8 against 1.5 cost — a much bigger swing on both
-                // axes, leaning hard into "spends fast, recovers fast". 2.8 was originally chosen as the exact
-                // net-parity point with Unkindled's old experimental 1.0/1.5 (both landed at -16.5/sec while
-                // attacking); Unkindled's numbers below have since moved and neither tier is at parity with BotC
-                // anymore (deliberate - see the note below). Solve regenRate = (39 * costMult - 16.5) / 15 if you
-                // want to re-target a specific net rate for BotC.
-                staminaResourceRegenRate = experimentalStaminaValues ? 2.8f : 2f;
+                // "Spends fast, recovers fast": highest regen of any class, paired with the highest cost.
+                // Base 2.3 (raised from 2.0, 2026-09) against 1.15 cost; experimental 2.8 against 1.5 cost.
+                // Solve regenRate = (39 * costMult - netRate) / 15 to re-target a specific net burn rate while attacking.
+                staminaResourceRegenRate = experimentalStaminaValues ? 2.8f : 2.3f;
             }
             else if (soulsPlayer.Unkindled)
             {
-                // Base raised from 1.25 to 1.5, experimental from 1.5 to 1.8 (2025-09) - deliberately NOT
-                // paired with a BotC change, unlike the "change the two together" note above. BotC's numbers
-                // are untouched, so Unkindled now recovers net faster than BotC at BOTH tiers instead of
-                // matching it at base and hitting exact parity at experimental. The goal: waiting for
-                // stamina to refill is the part that feels bad, not spending it fast, so both of Unkindled's
-                // tiers lean toward "recovers fast" rather than "matches BotC's net burn rate".
-                staminaResourceRegenRate = experimentalStaminaValues ? 1.8f : 1.5f;
+                // Base 1.85 against 0.85 cost; experimental 2.15 against 1.0 cost. Lower raw regen than BotC, but
+                // the cheaper swings mean Unkindled recovers net faster than BotC at both tiers - on purpose:
+                // waiting for stamina to refill is the part that feels bad, so Unkindled leans "recovers fast".
+                staminaResourceRegenRate = experimentalStaminaValues ? 2.15f : 1.85f;
             }
             else
             {
@@ -500,22 +494,12 @@ namespace tsorcRevamp
         //const float BoomerangDrainPerFrame = 0.6f;
         const float HeldProjectileDrainPerFrame = 1f;
         /// <summary>
-        /// Ticks regeneration stays paused after any stamina expenditure (Souls classes only).
+        /// Ticks regeneration stays paused after any stamina expenditure (Souls classes only). Both classes
+        /// currently share 60 (1 second); BotC has its own constant so the two can be tuned apart.
         ///
-        /// Bearer of the Curse gets half the pause. The delay is a flat cost, so it eats a larger share
-        /// of the recovery for whichever class refills fastest — a shared 30 ticks quietly ate most of
-        /// BotC's 2x regen advantage. Halving it for BotC keeps its burst identity intact.
-        /// </summary>
-        /// <summary>
-        /// 60 / 40, up from 30 / 15 — half a second was barely perceptible and did almost nothing to price the
-        /// swing-pause-swing rhythm it exists to tax.
-        ///
-        /// The 2:3 split is what keeps the classes level, and two independent measures agree on it:
-        ///   • Equal stamina forgone (delay x regen): 60 x (18.75 / 30) = 37.5 ticks.
-        ///   • Equal tempo advantage — the felt quantity is time until you can act again, `delay + cost/regen`.
-        ///     Regen rates alone give BotC a 1.6x edge; at 60/40 it keeps 1.56x, at 60/45 1.49x, but at an equal
-        ///     60/60 it collapses to 1.30x. A flat delay quietly erodes the very thing that makes BotC distinct,
-        ///     because dead time is worth more to whoever recovers fastest.
+        /// Tuning note: the delay is a flat cost, so it eats a larger share of the recovery for whichever
+        /// class has the higher regen rate. Giving BotC a shorter pause is the lever if its fast-recovery
+        /// identity ever feels muted.
         /// </summary>
         internal const int StaminaRegenDelayTicks = 60;
         internal const int StaminaRegenDelayTicksBotC = 60;
@@ -528,10 +512,9 @@ namespace tsorcRevamp
         /// block-shoot loop free. A longer pause makes a sustained block loop bleed the pool instead.
         /// A perfect parry deliberately keeps the ordinary delay (see FreeDodge) — that's the timing reward.
         ///
-        /// THESE MUST STAY ABOVE StaminaRegenDelayTicks. They are separate constants rather than a multiple of
-        /// the base, so raising the base silently inverts the relationship: at base 60/40 the old 60/30 values
-        /// left BotC's *block* penalty (30) SHORTER than an ordinary swing (40), and since PauseStaminaRegen
-        /// takes the max, the block penalty would have disappeared entirely.
+        /// THESE MUST STAY ABOVE the matching StaminaRegenDelayTicks constants. They are separate constants
+        /// rather than a multiple of the base, so raising the base can silently invert the relationship — and
+        /// since PauseStaminaRegen takes the max, a block penalty shorter than a swing's disappears entirely.
         ///
         /// 1.5x rather than the original 2x because the base doubled. Straight doubling would put an ordinary
         /// block at 2 full seconds, and a greatshield (up to 1.75x on top) at 3.5 — long enough that a single
@@ -548,7 +531,7 @@ namespace tsorcRevamp
             ? StaminaRegenDelayTicksBotC
             : StaminaRegenDelayTicks;
 
-        /// <summary>Post-block regen pause for this player's class (double the ordinary one).</summary>
+        /// <summary>Post-block regen pause for this player's class (1.5x the ordinary one).</summary>
         internal int BlockRegenDelay => Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse
             ? BlockStaminaRegenDelayTicksBotC
             : BlockStaminaRegenDelayTicks;

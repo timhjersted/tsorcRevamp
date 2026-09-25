@@ -32,7 +32,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     .UseImage(noise)
                     .UseColor(new Color(255, 200, 40))
                     .UseSecondaryColor(new Color(255, 250, 210))
-                    .UseOpacity(1f));
+                    // 0.5 = 50% more transparent. The .fx scales rgb and alpha together
+                    // (premultiplied), so this halves the overlay evenly without a shader rebuild.
+                    .UseOpacity(0.5f));
             ShaderId = GameShaders.Armor.GetShaderIdFromItemId(registryKey);
         }
 

@@ -385,8 +385,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int BroodRecoveryTicks = 75;
         const int BroodSigilCount = 3;
         const float BroodSigilRadius = 520f;       // how far out the ring of sigils is planted
-        // Read by ChaosBroodSigil. Hostile projectiles deal double on hit, so 16 lands at ~32 — deliberately
-        // level with Chaos's own shots (damage 100 / 6), not worse than the boss itself.
+        // Read by ChaosBroodSigil. In Expert Mode one hostile projectile hit from 16 lands
+        // around 64 before defense and damage variation.
         public const int BroodBoltDamage = 16;
 
         #endregion

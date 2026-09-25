@@ -66,6 +66,15 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 // Without this, a rising/bottom-up sword swing leaves the descending/top-down
                 // slash trail (and vice versa).
                 flippedSwing = AttackId % 2 == 0;
+
+                // Prefer the animation's own flip flag: for ordinary swings it matches the parity above
+                // (QuickSlash sets it from AttackId before the id is incremented, hence the apparent
+                // inversion), but weapons that override the flip for one swing (e.g. the Ancient Fire
+                // Axe's always-overhead held attacks) would otherwise get a trail running the wrong way.
+                if (owner.HeldItem.TryGetGlobalItem(out QuickSlashMeleeAnimation animationInit) && animationInit.Enabled && animationInit.FlipAttackEachSwing)
+                {
+                    flippedSwing = animationInit.IsAttackFlipped;
+                }
                 trailWidth = (int)(Math.Sqrt(owner.HeldItem.height * owner.HeldItem.height + owner.HeldItem.width * owner.HeldItem.width) * owner.HeldItem.scale);
                 trailWidth = Math.Max(trailWidth, 50);
                 Projectile.timeLeft = owner.itemAnimationMax + 10;

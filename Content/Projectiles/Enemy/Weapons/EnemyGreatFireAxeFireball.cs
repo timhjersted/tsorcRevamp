@@ -28,6 +28,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         // to wherever they stood the instant the pause ended, which is what made these orbs fly a
         // straight line to a stale spot and land behind a moving player.
         public float HomingTurnRate = 0.05f;
+        // Homing switches off for good once the orb gets this close, so a late sidestep dodges it
+        // instead of the orb curling back into an endless loop around the player.
+        public float HomingReleaseDistance = 150f;
 
         public int OwnerNpcIndex => (int)Projectile.ai[2] - 1;
 
@@ -112,12 +115,32 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     {
                         float speed = System.Math.Min(Projectile.velocity.Length() + HomingAcceleration, HomingMaxSpeed);
                         float heading = Projectile.velocity.ToRotation();
-                        if (target != null)
+                        bool withinReleaseRange = target != null
+                            && Projectile.Distance(target.Center) <= HomingReleaseDistance;
+
+                        if (withinReleaseRange)
+                        {
+                            // Latch into phase 4: no more steering, even if the player later gets
+                            // farther away. ai[0] is synced, so netUpdate settles any client that
+                            // judged the distance a tick differently.
+                            Projectile.ai[0] = 4f;
+                            Projectile.netUpdate = true;
+                        }
+                        else if (target != null)
                         {
                             float desiredHeading = (target.Center - Projectile.Center).ToRotation();
                             heading = heading.AngleTowards(desiredHeading, HomingTurnRate);
                         }
                         Projectile.velocity = heading.ToRotationVector2() * speed;
+                    }
+                    break;
+
+                case 4: // Released — straight line on the last heading; speed keeps ramping so a
+                        // close-range release doesn't leave it crawling.
+                    if (Projectile.velocity != Vector2.Zero)
+                    {
+                        float releasedSpeed = System.Math.Min(Projectile.velocity.Length() + HomingAcceleration, HomingMaxSpeed);
+                        Projectile.velocity = Vector2.Normalize(Projectile.velocity) * releasedSpeed;
                     }
                     break;
 

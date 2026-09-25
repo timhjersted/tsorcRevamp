@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Enemies
         bool Submerged => NPC.wet;
         bool IsBroodfather => variant == Variant.Elite;
 
-        //Damage tiers (authored HALF; hostile projectiles deal 2x on hit). Used by the real attacks later.
+        // Damage tiers are raw spawn values; one hostile projectile hit is about 4x these in Expert Mode.
         int GlobDamage
         {
             get
