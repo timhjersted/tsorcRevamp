@@ -80,47 +80,56 @@ public class OverCritPlayer : ModPlayer
                 }
             }
         }
-    public void CustomCombatText(in Rectangle targetHitbox, in int damageDealt, in int CritColorTier, in bool isCrit, bool isWhipTipCrit = false, bool SendPacket = true)
+    public void CustomCombatText(in Rectangle targetHitbox, in int damageDealt, in int critColorTier, in bool isCrit, bool isWhipTipCrit = false, bool sendPacket = true)
     {
-        Color ColorOfCrit = Color.Orange;
-        switch (CritColorTier)
+        Color colorOfCrit = CombatText.DamagedHostile;
+
+        switch (critColorTier)
         {
             case 1:
             {
-                ColorOfCrit = Color.Blue;
+                colorOfCrit = Color.Blue;
                 break;
             }
             case 2:
             {
-                ColorOfCrit = Color.Purple;
+                colorOfCrit = Color.Purple;
                 break;
             }
             case 3:
             {
-                ColorOfCrit = Color.White;
+                colorOfCrit = Color.White;
                 break;
             }
             case 4:
             {
-                ColorOfCrit = Color.Black;
+                colorOfCrit = Color.Black;
                 break;
             }
             case 5:
             {
-                ColorOfCrit = Color.Red;
+                colorOfCrit = Color.Red;
                 break;
             }
             default:
             {
                 if (isCrit)
                 {
-                    ColorOfCrit = Color.OrangeRed;
+                    colorOfCrit = CombatText.DamagedHostileCrit;
                 }
                 break;
             }
         }
-        CombatText.NewText(targetHitbox, ColorOfCrit, damageDealt + (isWhipTipCrit ? "!" : ""), isCrit, false);
-        if (Main.netMode == NetmodeID.MultiplayerClient && SendPacket)
+        if (!sendPacket) //if it's somebody else's dmg text
+        {
+            colorOfCrit = colorOfCrit.MultiplyRGBA(new Color(0.3f, 0.3f, 0.3f, 0.15f));
+            //Main.NewText(CombatText.DamagedHostile);//r255, g160, b080, a255
+            //Main.NewText(CombatText.OthersDamagedHostile);r102, g064, b032, a102
+            //Main.NewText(CombatText.DamagedHostileCrit);//r255, g100, b30, a255
+            //Main.NewText(CombatText.OthersDamagedHostileCrit);//r102, g040, b012, a102
+        }
+        CombatText.NewText(targetHitbox, colorOfCrit, damageDealt + (isWhipTipCrit ? "!" : ""), isCrit, false);
+        if (Main.netMode == NetmodeID.MultiplayerClient && sendPacket)
         {
             ModPacket textPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
             textPacket.Write(tsorcPacketID.CustomMultiplayerCombatText);
@@ -129,7 +138,7 @@ public class OverCritPlayer : ModPlayer
             textPacket.Write(targetHitbox.Y);
             textPacket.Write(targetHitbox.Width);
             textPacket.Write(targetHitbox.Height);
-            textPacket.Write(CritColorTier);
+            textPacket.Write(critColorTier);
             textPacket.Write(damageDealt);
             textPacket.Write(isWhipTipCrit);
             textPacket.Write(isCrit);
