@@ -22,10 +22,10 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class GreatBlackKnight : ModNPC, IStaggerable, IFlailAnchor, IDebugAttackLabel, IHumanoidMeleeHitEffects, ISpearMeleeWielder
     {
-        public int redKnightsSpearDamage = 45;
-        public int redMagicDamage = 40;
-        public int redKnightsGreatDamage = 50;
-        public int redFlailDamage = 55;
+        public int redKnightsSpearDamage = 35;
+        public int redMagicDamage = 30;
+        public int redKnightsGreatDamage = 35;
+        public int redFlailDamage = 40;
         Vector2 storedPlayerPosition = Vector2.Zero;
         public int framesSinceStoredPosition = 0;
 
@@ -100,6 +100,13 @@ namespace tsorcRevamp.NPCs.Enemies
         // in RunFlailCommit, or he throws the flail at players it cannot physically reach.
         private const float FlailReach = 480f;
         private const float FlailLaunchSpeed = 16f;
+        // This throw uses the same flight and intercept model as Owl Father's bow. The spear's
+        // ai[2] mode switches it to arrow AI; the other BlackThrowingSpear users keep thrown AI.
+        private const float SpearThrowSpeed = 13f;
+        private const float SpearGravityDelayTicks = 15f;
+        private const float SpearGravity = 0.1f;
+        private const float SpearVerticalLeadFraction = 0.5f;
+        private const int SpearInterceptIterations = 4;
         private const int UltrakillChannelTicks = 35; // trailing slice of Ultrakill's commit window that actually fires
 
         // Combo/recovery tuning (see the AskUserQuestion-approved design): rolls 1-3 attacks back to back at full
@@ -128,36 +135,36 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetDefaults()
         {
-            AnimationType = 28;
+            AnimationType = -1; // FindFrame owns idle, jump, and walk frames.
             NPC.aiStyle = -1;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 100;
+            NPC.damage = 90;
             NPC.defense = 61;
             NPC.lifeMax = 30000;
             NPC.value = 5000;
 
             if (Main.hardMode)
             {
-                NPC.lifeMax = 30000;
-                NPC.damage = 100;
+                NPC.lifeMax = 20000;
+                NPC.damage = 90;
                 NPC.defense = 61;
-                NPC.value = 16000; // life / 1.25
-                redKnightsGreatDamage = 50;
-                redKnightsSpearDamage = 45;
-                redMagicDamage = 40;
-                redFlailDamage = 55;
+                NPC.value = 156000; // subtract a 0
+                redKnightsGreatDamage = 40;
+                redKnightsSpearDamage = 30;
+                redMagicDamage = 30;
+                redFlailDamage = 40;
             }
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 30000;
+                NPC.lifeMax = 50000;
                 NPC.defense = 61;
-                NPC.damage = 100;
-                NPC.value = 16000; // life / 2.5
-                redKnightsGreatDamage = 50;
-                redKnightsSpearDamage = 45;
-                redMagicDamage = 40;
-                redFlailDamage = 55;
+                NPC.damage = 90;
+                NPC.value = 157000; 
+                redKnightsGreatDamage = 40;
+                redKnightsSpearDamage = 30;
+                redMagicDamage = 30;
+                redFlailDamage = 40;
             }
 
             NPC.HitSound = SoundID.NPCHit1;
@@ -199,12 +206,14 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) return 0f;
+            if (!tsorcRevampWorld.SuperHardMode) return 0f;
             if (spawnInfo.Player.townNPCs > 1f) return 0f;
-            if (Main.hardMode && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && spawnInfo.Player.ZoneOverworldHeight && NPC.downedBoss3 && !Main.dayTime && Main.rand.NextBool(250)) return 1;
-            if (Main.hardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(100)) return 1;
-            if (Main.hardMode && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !spawnInfo.Player.ZoneBeach && !Main.dayTime && Main.rand.NextBool(250)) return 1;
-            if (Main.hardMode && spawnInfo.Player.ZoneUnderworldHeight && !Main.dayTime && Main.rand.NextBool(160)) return 1;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(100)) return 1;
+            if (!spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime && Main.rand.NextBool(650)) return 1;
+            if (spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(450)) return 1;
+            if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !spawnInfo.Player.ZoneBeach && !Main.dayTime && Main.rand.NextBool(600)) return 1;
+            if (spawnInfo.Player.ZoneUnderworldHeight && !Main.dayTime && Main.rand.NextBool(500)) return 1;
+
 
             return 0;
         }
@@ -631,7 +640,7 @@ namespace tsorcRevamp.NPCs.Enemies
             switch (kind)
             {
                 case AttackKind.Spear:
-                    RunSpearCommit(t, duration, hasPlayerLOS, distanceToPlayer);
+                    RunSpearCommit(t, duration, hasPlayerLOS);
                     break;
                 case AttackKind.Homing:
                     RunHomingCommit(t, duration, hasPlayerLOS);
@@ -670,7 +679,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return true;
         }
 
-        private void RunSpearCommit(int t, int duration, bool hasPlayerLOS, float distanceToPlayer)
+        private void RunSpearCommit(int t, int duration, bool hasPlayerLOS)
         {
             NPC.knockBackResist = 0f;
             if (t < duration - 1)
@@ -681,17 +690,27 @@ namespace tsorcRevamp.NPCs.Enemies
             if (WaitOnLos(hasPlayerLOS)) return;
 
             NPC.TargetClosest(true);
-            int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
-            Vector2 targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
-
-            bool far = distanceToPlayer > 400;
-            float speed = far ? Main.rand.NextFloat(16, 18f) : Main.rand.NextFloat(12, 14f);
-            Vector2 vel = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, speed, fallback: true) + player.velocity;
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            Player target = player;
+            int facing = target.Center.X >= NPC.Center.X ? 1 : -1;
+            Vector2 direction = new Vector2(facing, 0f);
+            Vector2 hand = CurrentSpearWorld(facing);
+            // The held spear is drawn at 0.8 scale. Its tip is 38 source pixels above the grip.
+            Vector2 origin = hand + direction * (SpearGripOrigin.Y * 0.8f * NPC.scale);
+            Vector2 aimAt = target.Center;
+            for (int i = 0; i < SpearInterceptIterations; i++)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, vel.X, vel.Y, ModContent.ProjectileType<BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                float flightTicks = Vector2.Distance(origin, aimAt) / SpearThrowSpeed;
+                Vector2 lead = new Vector2(target.velocity.X, target.velocity.Y * SpearVerticalLeadFraction) * flightTicks;
+                float fallingTicks = Math.Max(0f, flightTicks - SpearGravityDelayTicks);
+                float gravityDrop = SpearGravity * fallingTicks * (fallingTicks + 1f) * 0.5f;
+                aimAt = target.Center + lead - new Vector2(0f, gravityDrop);
             }
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
+
+            Vector2 velocity = (aimAt - origin).SafeNormalize(direction) * SpearThrowSpeed;
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
+                ModContent.ProjectileType<BlackThrowingSpear>(), redKnightsSpearDamage, 0f,
+                Main.myPlayer, ai2: BlackThrowingSpear.ArrowFlightMode);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, origin);
             EndAttack();
         }
 
@@ -1113,24 +1132,12 @@ namespace tsorcRevamp.NPCs.Enemies
         Vector2 CurrentSpearWorld() => CurrentSpearWorld(NPC.spriteDirection);
 
         /// <summary>
-        /// Selects the jump pose while airborne, which vanilla never does for this knight.
+        /// Keeps the walk cycle active whenever the knight moves horizontally, including attacks.
         /// </summary>
         /// <remarks>
-        /// Vanilla's AnimationType 28 frame logic lives ENTIRELY inside `if (velocity.Y == 0f)` — see
-        /// Terraria.NPC.FindFrame. Grounded, it shows frame 0 when velocity.X is 0 and otherwise steps the
-        /// walk cycle from frame 2 up. Airborne, it does nothing at all: whatever frame was showing at
-        /// takeoff stays frozen for the whole arc, and the jump pose at frame 1 is never selected by
-        /// anything.
-        ///
-        /// That is the "moves forward while stuck in the idle animation frame" bug. RunTelegraph fires a
-        /// pre-attack hop ~10 ticks before EVERY attack, so if velocity.X happened to be 0 on the takeoff
-        /// tick (vanilla had just picked frame 0) the knight sailed forward through the entire hop holding
-        /// the idle pose. Fixing it here covers hops from any source — the telegraph cue, the movement
-        /// flourishes, and ordinary SF4 ledge jumps — rather than patching each one.
-        ///
-        /// The airborne test matches GreatRedKnight.FindFrame rather than vanilla's exact `!= 0f`: a bare
-        /// inequality also trips on the tiny vertical velocities of walking down a slope, which would flicker
-        /// the jump pose mid-stride. Those few ticks keep vanilla's frozen-frame behaviour instead.
+        /// The former vanilla AnimationType 28 could select idle or freeze the takeoff frame while
+        /// velocity.X was still moving the knight. Use the sheet's frames 2..15 for horizontal movement so
+        /// committed attacks do not slide forward in the idle pose. Frame 1 is the stationary jump.
         /// </remarks>
         public override void FindFrame(int frameHeight)
         {
@@ -1139,12 +1146,27 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            bool airborne = NPC.velocity.Y < -0.01f || (!NPC.collideY
-                && (Math.Abs(NPC.velocity.Y) > 0.01f || Math.Abs(NPC.oldVelocity.Y) > 0.01f));
-            if (airborne)
+            if (Math.Abs(NPC.velocity.X) >= 0.1f)
             {
-                NPC.frame.Y = frameHeight; // frame 1 — the jump pose
+                int frame = NPC.frame.Y / frameHeight;
+                if (frame < 2 || frame >= Main.npcFrameCount[NPC.type])
+                    frame = 2;
+                NPC.frameCounter += Math.Abs(NPC.velocity.X);
+                if (NPC.frameCounter >= 9d)
+                {
+                    NPC.frameCounter = 0d;
+                    frame++;
+                    if (frame >= Main.npcFrameCount[NPC.type])
+                        frame = 2;
+                }
+                NPC.frame.Y = frame * frameHeight;
+            }
+            else
+            {
                 NPC.frameCounter = 0d;
+                bool airborne = NPC.velocity.Y < -0.01f || (!NPC.collideY
+                    && (Math.Abs(NPC.velocity.Y) > 0.01f || Math.Abs(NPC.oldVelocity.Y) > 0.01f));
+                NPC.frame.Y = airborne ? frameHeight : 0;
             }
 
             FaceAttackAim();
@@ -1362,18 +1384,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OilPot>(), 1, 2, 6));
-            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 1));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<ThrowingSpear>(), 100, 1, 50, 30));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<RoyalThrowingSpear>(), 100, 1, 50, 30));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BootsOfHaste>(), 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncientDragonLance>(), 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OldHalberd>(), 5));
-            npcLoot.Add(new CommonDrop(ItemID.IronskinPotion, 5, 1, 50, 2));
-            npcLoot.Add(new CommonDrop(ItemID.ArcheryPotion, 5, 1, 50, 2));
-            npcLoot.Add(new CommonDrop(ItemID.RegenerationPotion, 5, 1, 50, 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 1, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>(), 1, 0, 1));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
         }
     }
 }

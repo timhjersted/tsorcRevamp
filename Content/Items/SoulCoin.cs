@@ -32,7 +32,9 @@ namespace tsorcRevamp.Content.Items
             DarkSoulRarity = 12;
             Item.consumable = true; 
             Item.shoot = ModContent.ProjectileType<SoulCoinProj>(); 
-            Item.ammo = AmmoID.Coin; 
+            Item.ammo = AmmoID.Coin;
+            // Still usable by Coin Gun, but picked up into the main inventory for shop currency.
+            Item.notAmmo = true;
         }
 
         public override void UpdateInventory(Player player)

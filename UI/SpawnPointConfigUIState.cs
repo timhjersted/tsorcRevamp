@@ -733,11 +733,20 @@ namespace tsorcRevamp.UI
             editBackButton, saveStatsButton
         };
 
-        public void ShowEditPanel(DynamicSpawnEntry npc)
+        // Takes an INDEX, not an entry: every SaveDynamicEvents() reload replaces all entry objects, so a reference
+        // captured earlier (list row buttons, a pre-save event) is an orphan. Editing an orphan silently lost stats:
+        // IndexOf returned -1, RebindEditingNpc couldn't recover, and [Save] wrote the untouched live entry.
+        public void ShowEditPanel(int npcIndex)
         {
+            if (CurrentEvent == null || npcIndex < 0 || npcIndex >= CurrentEvent.Npcs.Count)
+            {
+                return;
+            }
+
+            DynamicSpawnEntry npc = CurrentEvent.Npcs[npcIndex];
             editingNpc = npc;
             // Remember its position so we can rebind after SaveDynamicEvents() reloads (and replaces) the list.
-            editingNpcIndex = CurrentEvent != null ? CurrentEvent.Npcs.IndexOf(npc) : -1;
+            editingNpcIndex = npcIndex;
 
             // Single-NPC events: lower sections hidden, so edit panel starts at Y=215.
             // Multi-NPC events: edit panel appears below the spawns list at Y=360.
@@ -910,9 +919,10 @@ namespace tsorcRevamp.UI
             RefreshList();
 
             // For single-NPC events, auto-open the edit panel for the one NPC.
-            if (spawnEvent != null && spawnEvent.SingleNpcMarker && spawnEvent.Npcs.Count > 0)
+            // CurrentEvent, not spawnEvent: the HideEditPanel save above may have swapped in a reloaded instance.
+            if (CurrentEvent != null && CurrentEvent.SingleNpcMarker && CurrentEvent.Npcs.Count > 0)
             {
-                ShowEditPanel(spawnEvent.Npcs[0]);
+                ShowEditPanel(0);
             }
         }
 
@@ -1000,12 +1010,15 @@ namespace tsorcRevamp.UI
                 return;
             }
 
-            foreach (var npc in CurrentEvent.Npcs)
+            for (int npcIndex = 0; npcIndex < CurrentEvent.Npcs.Count; npcIndex++)
             {
+                var npc = CurrentEvent.Npcs[npcIndex];
                 NPC temp = new NPC();
                 temp.SetDefaults(npc.NpcID);
 
-                var capturedNpc = npc;
+                // Capture the index, not the entry — any save reloads the list and orphans entry references
+                // (see ShowEditPanel). Rows are rebuilt on add/delete, so the index stays valid.
+                int capturedIndex = npcIndex;
 
                 // Row container — UIList stacks these vertically.
                 UIElement row = new UIElement();
@@ -1031,7 +1044,7 @@ namespace tsorcRevamp.UI
                 editBtn.TextColor = Color.SkyBlue;
                 editBtn.OnMouseOver += (e, el) => editBtn.TextColor = Color.White;
                 editBtn.OnMouseOut += (e, el) => editBtn.TextColor = Color.SkyBlue;
-                editBtn.OnLeftClick += (e, el) => ShowEditPanel(capturedNpc);
+                editBtn.OnLeftClick += (e, el) => ShowEditPanel(capturedIndex);
                 row.Append(editBtn);
 
                 // [Del] button
@@ -1043,11 +1056,17 @@ namespace tsorcRevamp.UI
                 delBtn.OnMouseOut += (e, el) => delBtn.TextColor = Color.Crimson;
                 delBtn.OnLeftClick += (e, el) =>
                 {
-                    if (editingNpc == capturedNpc)
+                    if (editPanelAttached && editingNpcIndex == capturedIndex)
                     {
                         HideEditPanel();
                     }
-                    CurrentEvent.Npcs.Remove(capturedNpc);
+
+                    if (capturedIndex >= CurrentEvent.Npcs.Count)
+                    {
+                        return;
+                    }
+
+                    CurrentEvent.Npcs.RemoveAt(capturedIndex);
                     tsorcScriptedEvents.SaveDynamicEvents();
                     RefreshList();
                 };

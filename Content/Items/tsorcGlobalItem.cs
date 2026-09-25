@@ -94,8 +94,6 @@ namespace tsorcRevamp.Content.Items
                 return false;
             }
 
-            tsorcRevampPlayer soulsPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
             // Carried over from the Bearer-of-the-Curse gate further below, which has always exempted
             // these three. They were never stamina-blocked, so the new universal gate must not start
             // blocking them without that being a deliberate call.
@@ -110,11 +108,10 @@ namespace tsorcRevamp.Content.Items
             //
             // Requiring the full cost up front was tried and removed: it made a weapon silently
             // unresponsive at partial stamina, and it prevented the very overdraw it was meant to price.
-            if (soulsPlayer.UsesWeaponStamina && item.damage >= 1 && !item.accessory && !exemptFromStaminaGate)
+            if (item.damage >= 1 && !item.accessory && !exemptFromStaminaGate)
             {
                 tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-                var arcanePlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
-                if (staminaPlayer.staminaResourceCurrent <= 0f && !player.HasBuff(ModContent.BuffType<ManaBurn>()))
+                if (!staminaPlayer.CanUseWeapon)
                 {
                     // No "Tired" floating text — the weapon simply not swinging, plus the empty stamina bar,
                     // already communicates this. The text fired on every attempted swing while empty, which is

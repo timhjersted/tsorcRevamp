@@ -41,9 +41,9 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int RangedWeaponItemType => -1;
         protected override int MagicWeaponItemType => ModContent.ItemType<FarronDart>();
 
-        protected override int MeleeDamage => 20;
+        protected override int MeleeDamage => 10;
         protected override int RangedDamage => 0;
-        protected override int MagicDamage => 20;
+        protected override int MagicDamage => 10;
 
         protected override int EstusChargesMax => 2;
         protected override int HealAnimationTicks => 3 * 60;

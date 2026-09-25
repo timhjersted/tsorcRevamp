@@ -10,6 +10,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 {
     class BlackThrowingSpear : ModProjectile
     {
+        // Great Black Knight's aimed throw uses Owl Father's arrow flight. Other knight
+        // throws retain the original vanilla thrown-projectile behavior.
+        public const float ArrowFlightMode = 2f;
+
         public override void SetDefaults()
         {
             Projectile.aiStyle = 2;
@@ -24,6 +28,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.width = 14;
             Projectile.alpha = 0;
             Projectile.light = 1;
+        }
+
+        public override bool PreAI()
+        {
+            if (Projectile.ai[2] == ArrowFlightMode)
+                Projectile.aiStyle = 1;
+            return true;
         }
 
         public override void AI()

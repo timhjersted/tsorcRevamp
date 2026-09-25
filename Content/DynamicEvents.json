@@ -3701,8 +3701,8 @@
     "CenterY": 1060.0,
     "Radius": 160000.0,
     "Square": false,
-    "TriggerDust": 27,
-    "VisibleRing": false,
+    "TriggerDust": 135,
+    "VisibleRing": true,
     "SaveOnCompletion": true,
     "TextToDisplay": null,
     "TextColorHex": null,
@@ -3712,17 +3712,8 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/TibianValkyrie",
-        "SpawnX": 4543.0,
-        "SpawnY": 1069.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      },
-      {
-        "NpcName": "tsorcRevamp/UndeadCaster",
-        "SpawnX": 4548.0,
+        "NpcName": "tsorcRevamp/Kahlrun",
+        "SpawnX": 4544.0,
         "SpawnY": 1069.0,
         "CustomHealth": null,
         "CustomDamage": null,
@@ -4149,7 +4140,7 @@
     "EventID": "335aa49e-771e-4755-95bc-18730cdc80da",
     "CenterX": 3677.0,
     "CenterY": 464.0,
-    "Radius": 230400.0,
+    "Radius": 774400.0,
     "Square": false,
     "TriggerDust": 27,
     "VisibleRing": false,
@@ -4162,13 +4153,22 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/Kahlrun",
-        "SpawnX": 3675.0,
+        "NpcName": "tsorcRevamp/TibianValkyrie",
+        "SpawnX": 3676.0,
         "SpawnY": 472.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,
-        "CustomSouls": 1250
+        "CustomSouls": 250
+      },
+      {
+        "NpcName": "tsorcRevamp/UndeadCaster",
+        "SpawnX": 3596.0,
+        "SpawnY": 463.0,
+        "CustomHealth": 60,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": 80
       }
     ]
   },
@@ -4813,6 +4813,33 @@
         "NpcName": "tsorcRevamp/OwlFather",
         "SpawnX": 5541.0,
         "SpawnY": 832.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "ccb85917-0663-40e4-a67e-2f16a2249ea8",
+    "CenterX": 6289.0,
+    "CenterY": 1563.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "",
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GreatBlackKnight",
+        "SpawnX": 6348.0,
+        "SpawnY": 1577.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

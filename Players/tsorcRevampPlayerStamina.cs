@@ -31,6 +31,56 @@ namespace tsorcRevamp
         // Here we include a custom resource, similar to mana or health.
         // Creating some variables to define the current value of our Stamina resource as well as the current maximum value. We also include a temporary max value, as well as some variables to handle the natural regeneration of this resource.
         public float staminaResourceCurrent;
+        // Remote players do not have the owner's Souls mode or stamina state. Sync only the
+        // resulting use gate so their ItemCheck does not replay swings rejected by the owner.
+        private bool syncedWeaponUseAllowed = true;
+        internal bool CanUseWeapon => Player.whoAmI == Main.myPlayer
+            ? !Player.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina
+                || staminaResourceCurrent > 0f
+                || Player.HasBuff(ModContent.BuffType<ManaBurn>())
+            : syncedWeaponUseAllowed;
+
+        internal void SetSyncedWeaponUse(bool allowed) => syncedWeaponUseAllowed = allowed;
+
+        private void SendWeaponUseState(int toWho = -1, int fromWho = -1)
+        {
+            ModPacket packet = Mod.GetPacket();
+            packet.Write(tsorcPacketID.SyncWeaponStaminaUse);
+            packet.Write((byte)Player.whoAmI);
+            packet.Write(syncedWeaponUseAllowed);
+            packet.Send(toWho, fromWho);
+        }
+
+        private void SyncWeaponUseStateIfChanged()
+        {
+            if (Main.netMode != NetmodeID.MultiplayerClient || Player.whoAmI != Main.myPlayer)
+            {
+                return;
+            }
+
+            bool allowed = CanUseWeapon;
+            if (allowed != syncedWeaponUseAllowed)
+            {
+                syncedWeaponUseAllowed = allowed;
+                SendWeaponUseState();
+            }
+        }
+
+        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
+        {
+            if (Main.netMode == NetmodeID.SinglePlayer
+                || (Main.netMode == NetmodeID.MultiplayerClient && Player.whoAmI != Main.myPlayer))
+            {
+                return;
+            }
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                syncedWeaponUseAllowed = CanUseWeapon;
+            }
+            SendWeaponUseState(toWho, fromWho);
+        }
+
         public const float DefaultStaminaResourceMax = 125;
         public float staminaResourceMax;
         public float staminaResourceMax2;
@@ -381,6 +431,7 @@ namespace tsorcRevamp
             staminaResourceMax = DefaultStaminaResourceMax;
             staminaResourceCurrent = staminaResourceMax;
             staminaDebt = 0f;
+            syncedWeaponUseAllowed = true;
             weaponOutputStates.Clear();
             playerDamagePerSecondEma = 0f;
         }
@@ -389,6 +440,7 @@ namespace tsorcRevamp
         {
             staminaResourceCurrent = staminaResourceMax; //
             staminaDebt = 0f; // dying clears the slate — respawning already full but still in debt would be absurd
+            SyncWeaponUseStateIfChanged();
         }
 
         public override void ModifyHurt(ref Player.HurtModifiers modifiers)
@@ -857,6 +909,7 @@ namespace tsorcRevamp
             // Baseline for next frame's "did we spend?" check. Taken after the clamp so an overdraw that
             // was clamped up to 0 doesn't read as a spend again on the following frame.
             _staminaLastFrame = staminaResourceCurrent;
+            SyncWeaponUseStateIfChanged();
         }
 
         static readonly List<int> HeldProjectileWeapons = new()

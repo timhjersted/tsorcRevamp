@@ -2579,6 +2579,27 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.SyncWeaponStaminaUse:
+                    {
+                        byte playerIndex = reader.ReadByte();
+                        bool allowed = reader.ReadBoolean();
+                        if (playerIndex >= Main.maxPlayers
+                            || (Main.netMode == NetmodeID.Server && playerIndex != whoAmI))
+                        {
+                            break;
+                        }
+
+                        Main.player[playerIndex].GetModPlayer<tsorcRevampStaminaPlayer>().SetSyncedWeaponUse(allowed);
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            ModPacket packet = GetPacket();
+                            packet.Write(tsorcPacketID.SyncWeaponStaminaUse);
+                            packet.Write(playerIndex);
+                            packet.Write(allowed);
+                            packet.Send(-1, whoAmI);
+                        }
+                        break;
+                    }
                 case tsorcPacketID.ReportBlockedAttack:
                     {
                         int npcIndex = reader.ReadInt32();
@@ -5092,8 +5113,9 @@ namespace tsorcRevamp
         public const byte ReportMadnessBuildup = 29;
         /// <summary>Server → clients: authoritative Madness meter value and one-shot trigger visuals.</summary>
         public const byte SyncMadnessState = 30;
-
         public const byte CustomMultiplayerCombatText = 31;
+        /// <summary>Owner → server → clients: whether this player's stamina permits a new weapon use.</summary>
+        public const byte SyncWeaponStaminaUse = 32;
     }
 
     //config moved to separate file

@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Reflection;
@@ -29,15 +29,15 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             Main.npcFrameCount[NPC.type] = 15;
         }
 
-        public int spearStabDamage = 12;
-        public int bubbleDamage = 10;
+        public int spearStabDamage = 8;
+        public int bubbleDamage = 6;
 
         public override void SetDefaults()
         {
             NPC.timeLeft = 60;
             NPC.knockBackResist = 0f; //Ghost
             NPC.aiStyle = -1;
-            NPC.damage = 22;
+            NPC.damage = 12;
             NPC.defense = 12;
             NPC.height = 40;
             NPC.width = 20;
@@ -50,6 +50,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 NPC.damage = 28;
                 NPC.value = 1250;
                 spearStabDamage = 24;
+                bubbleDamage = 18;
             }
             if (tsorcRevampWorld.SuperHardMode)
             {
@@ -58,6 +59,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 NPC.damage = 38;
                 NPC.value = 4000;
                 spearStabDamage = 35;
+                bubbleDamage = 26;
             }
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
@@ -604,7 +606,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                     else shootPos = new Vector2(NPC.Center.X - 54, NPC.Center.Y - 10);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile bubble = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), shootPos, new Vector2(NPC.direction * Main.rand.NextFloat(6, 12), Main.rand.NextFloat(-2f, 2f)), ProjectileID.Bubble, spearStabDamage, 5, Main.myPlayer, NPC.whoAmI)];
+                        Projectile bubble = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), shootPos, new Vector2(NPC.direction * Main.rand.NextFloat(6, 12), Main.rand.NextFloat(-2f, 2f)), ProjectileID.Bubble, bubbleDamage, 5, Main.myPlayer, NPC.whoAmI)];
                         bubble.friendly = false;
                         bubble.hostile = true;
                         bubble.tileCollide = false;

@@ -9,6 +9,13 @@ namespace tsorcRevamp.Content.Items.Debug
     {
         public static bool JustClosedUI = false;
 
+        // Set by CanUseItem when a placement click was rejected for a transient reason; HoldItem runs after vanilla's
+        // releaseUseItem = !controlUseItem, so it can re-arm the click for next frame instead of losing it.
+        private static bool RetryPlacementClick = false;
+
+        // One chat notice per press, so a held button retrying every frame doesn't spam chat.
+        private static bool PlacementBlockReported = false;
+
 
         public override void SetStaticDefaults()
         {
@@ -34,15 +41,6 @@ namespace tsorcRevamp.Content.Items.Debug
 
         public override bool CanUseItem(Player player)
         {
-            if (JustClosedUI)
-            {
-                return false;
-            }
-
-            // Prevent use if interacting with UI
-            if (player.mouseInterface)
-                return false;
-
             var configUI = ModContent.GetInstance<tsorcRevamp>().SpawnPointConfigUI;
             var enemyUI = ModContent.GetInstance<tsorcRevamp>().EnemySelectionUI;
 
@@ -53,6 +51,38 @@ namespace tsorcRevamp.Content.Items.Debug
 
             if (enemyUI.Visible && enemyUI.panel.ContainsPoint(Main.MouseScreen))
             {
+                return false;
+            }
+
+            // Vanilla item use is edge-triggered: a false here on the press frame sets releaseUseItem = false and
+            // the whole click is dead until the button is released. mouseInterface can be left over from last frame's
+            // draw pass (it's only reset in DoDraw), which silently ate placement clicks in open world. When an NPC is
+            // on the cursor, re-arm via RetryPlacementClick (applied in HoldItem) so the click lands once it clears.
+            bool placingNpc = enemyUI.SelectedNpcType != 0 && player.altFunctionUse != 2;
+            string blockReason = null;
+
+            if (JustClosedUI)
+            {
+                blockReason = "a debug menu just closed (release and click again)";
+            }
+            else if (player.mouseInterface)
+            {
+                blockReason = "the cursor was over another UI element";
+
+                if (placingNpc)
+                {
+                    RetryPlacementClick = true;
+                }
+            }
+
+            if (blockReason != null)
+            {
+                if (placingNpc && !PlacementBlockReported)
+                {
+                    Main.NewText("Placement click held: " + blockReason + ".", Color.Orange);
+                    PlacementBlockReported = true;
+                }
+
                 return false;
             }
 
@@ -356,6 +386,22 @@ namespace tsorcRevamp.Content.Items.Debug
             if (JustClosedUI && !Main.mouseLeft && !Main.mouseRight)
             {
                 JustClosedUI = false;
+            }
+
+            if (RetryPlacementClick)
+            {
+                // Only re-arm while the button is still down; a released button re-arms itself anyway.
+                if (player.controlUseItem)
+                {
+                    player.releaseUseItem = true;
+                }
+
+                RetryPlacementClick = false;
+            }
+
+            if (!Main.mouseLeft)
+            {
+                PlacementBlockReported = false;
             }
         }
     }

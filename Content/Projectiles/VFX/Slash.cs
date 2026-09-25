@@ -29,7 +29,8 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             NPCSource = false;
             trailCollision = false;
             noFadeOut = true;
-            ScreenSpace = true;
+            // Keep trail points in world space so camera movement cannot separate their pivots.
+            ScreenSpace = false;
             newPointDistance = 0.000f;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/Slash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
@@ -51,6 +52,29 @@ namespace tsorcRevamp.Content.Projectiles.VFX
 
         float rotationDirection = 0;
         bool reachedEnd = false;
+        Vector2 trailPivot;
+        bool trailPivotInitialized;
+
+        private void FollowOwnerPivot(Vector2 pivot)
+        {
+            if (trailPositions == null)
+            {
+                return;
+            }
+
+            if (trailPivotInitialized)
+            {
+                Vector2 movement = pivot - trailPivot;
+                for (int i = 0; i < trailPositions.Count; i++)
+                {
+                    trailPositions[i] += movement;
+                }
+            }
+
+            trailPivot = pivot;
+            trailPivotInitialized = true;
+        }
+
         public override void AI()
         {
             Player owner = Main.player[Projectile.owner];
@@ -93,6 +117,10 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 Initialize();
             }
 
+            // Every radial strip segment must share one pivot. Otherwise, moving the player
+            // leaves old inner vertices behind and the joins draw as thin radial wedges.
+            FollowOwnerPivot(owner.Center);
+
 
             if (owner.HeldItem.TryGetGlobalItem(out ItemMeleeAttackAiming aiming))
             {
@@ -123,7 +151,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 for (int i = 0; i < subdivisionCount; i++)
                 {
                     float interpolatedRotation = lastPercent + rotationDelta * (i / (float)subdivisionCount);
-                    trailPositions.Add(owner.Center + new Vector2(trailWidth, 0).RotatedBy(interpolatedRotation - MathHelper.PiOver2) - Main.screenPosition);
+                    trailPositions.Add(owner.Center + new Vector2(trailWidth, 0).RotatedBy(interpolatedRotation - MathHelper.PiOver2));
                     trailRotations.Add(interpolatedRotation + MathHelper.Pi);
                 }
 
@@ -216,6 +244,8 @@ namespace tsorcRevamp.Content.Projectiles.VFX
         public override bool PreDraw(ref Color lightColor)
         {
             visualizeTrail = false;
+            // The owner can move after projectile AI; anchor again immediately before rendering.
+            FollowOwnerPivot(Main.player[Projectile.owner].Center);
             base.PreDraw(ref lightColor);
             return false;
         }
