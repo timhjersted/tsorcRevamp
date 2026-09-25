@@ -3,11 +3,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Armor.Summon
+namespace tsorcRevamp.Content.Items.Armor.Summon.AncientDemon
 {
     [AutoloadEquip(EquipType.Body)]
     public class AncientDemonArmor : ModItem
@@ -49,7 +47,7 @@ namespace tsorcRevamp.Content.Items.Armor.Summon
 
             if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
             {
-                player.GetModPlayer<tsorcRevampPlayer>().DemonPower = true;
+                player.GetModPlayer<AncientDemonPlayer>().EquippedSet = true;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Green, 1.0f);
                 Main.dust[dust].noGravity = true;

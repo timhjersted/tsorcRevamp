@@ -36,6 +36,7 @@ using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Armor.Melee;
 using tsorcRevamp.Content.Items.Armor.Ranged;
 using tsorcRevamp.Content.Items.Armor.Summon;
+using tsorcRevamp.Content.Items.Armor.Summon.AncientDemon;
 using tsorcRevamp.Content.Items.Lore;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
@@ -1291,7 +1292,6 @@ namespace tsorcRevamp
             {
                 modifiers.TargetDamageMultiplier *= 1.05f;
             }
-            OverCrit(Player.GetWeaponCrit(Player.HeldItem), item.DamageType, ref modifiers, out CritColorTier);
 
             if (target.whoAmI == tsorcRevampPlayer.LastHit)
             {
@@ -1344,87 +1344,12 @@ namespace tsorcRevamp
                 float DragonStacks = Player.ownedProjectileCounts[ProjectileID.StardustDragon1] + Player.ownedProjectileCounts[ProjectileID.StardustDragon2] + Player.ownedProjectileCounts[ProjectileID.StardustDragon3] + Player.ownedProjectileCounts[ProjectileID.StardustDragon4];
                 modifiers.SourceDamage *= MathF.Max(SummonerEdits.StardustDragonBaseDmgMult - DragonStacks / 100f, 0.2f);
             }
-            if (!proj.IsMinionOrSentryRelated)
-            {
-                OverCrit(proj.CritChance, proj.DamageType, ref modifiers, out CritColorTier);
-            }
         }
         public override void ModifyItemScale(Item item, ref float scale)
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().TitanPotion && item.DamageType == DamageClass.Melee)
             {
                 scale += Player.GetModPlayer<tsorcRevampPlayer>().TitanSizeScaling * TitanMeleeSize / 100f;
-            }
-        }
-        public void OverCrit(in int CritChance, DamageClass damageType, ref NPC.HitModifiers modifiers, out int critColorTier)
-        {
-            int critLevel = (int)(Math.Floor(CritChance / 100f));
-            critColorTier = 0;
-            if (critLevel != 0 && damageType != DamageClass.Summon && damageType != DamageClass.SummonMeleeSpeed)
-            {
-                if (critLevel > 1)
-                {
-                    for (int i = 1; i < critLevel; i++)
-                    {
-                        modifiers.CritDamage += 1;
-                        modifiers.HideCombatText();
-                        critColorTier++;
-                    }
-                }
-                if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
-                {
-                    modifiers.CritDamage += 1;
-                    modifiers.HideCombatText();
-                    critColorTier++;
-                }
-            }
-            else if (critLevel != 0 && (damageType == DamageClass.Summon | damageType == DamageClass.SummonMeleeSpeed))
-            {
-                modifiers.SetCrit();
-                if (critLevel > 1)
-                {
-                    for (int i = 1; i < critLevel; i++)
-                    {
-                        modifiers.CritDamage += 1;
-                        modifiers.HideCombatText();
-                        critColorTier++;
-                    }
-                }
-                if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
-                {
-                    modifiers.CritDamage += 1;
-                    modifiers.HideCombatText();
-                    critColorTier++;
-                }
-            }
-            /*else if (IsWhip)
-            {
-                if (WhipTipCrit(projectile, projectile.WhipPointsForCollision, targetHitbox) || (Goredrinker && !Player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung))
-                {
-                    modifiers.SetCrit();
-                    if (critLevel > 0)
-                    {
-                        for (int i = 0; i < critLevel; i++)
-                        {
-                            modifiers.CritDamage += 1;
-                            modifiers.HideCombatText();
-                            critColorTier++;
-                        }
-                    }
-                    if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
-                    {
-                        modifiers.CritDamage += 1;
-                        modifiers.HideCombatText();
-                        critColorTier++;
-                    }
-                }
-            }*/
-            else
-            {
-                if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
-                {
-                    modifiers.SetCrit();
-                }
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -1505,53 +1430,8 @@ namespace tsorcRevamp
                 Player.GetAttackSpeed(DamageClass.Melee) *= 27f / 21f; //reduced the use time of pilgrim spontoon
             }
         }
-        public void CustomCombatText(in Rectangle targetHitbox, in int damageDealt, in int CritColorTier, in bool isCrit, bool isWhipTipCrit = false)
-        {
-            Color ColorOfCrit = Color.Orange;
-            switch (CritColorTier)
-            {
-                case 1:
-                    {
-                        ColorOfCrit = Color.Blue;
-                        break;
-                    }
-                case 2:
-                    {
-                        ColorOfCrit = Color.Purple;
-                        break;
-                    }
-                case 3:
-                {
-                    ColorOfCrit = Color.White;
-                        break;
-                    }
-                case 4:
-                    {
-                        ColorOfCrit = Color.Black;
-                        break;
-                    }
-                case 5:
-                {
-                    ColorOfCrit = Color.Red;
-                    break;
-                }
-                default:
-                    {
-                        if (isCrit)
-                        {
-                            ColorOfCrit = Color.OrangeRed;
-                        }
-                        break;
-                    }
-            }
-            CombatText.NewText(targetHitbox, ColorOfCrit, damageDealt + (isWhipTipCrit ? "!" : ""), isCrit, false);
-        }
         public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
         {
-            if (item.DamageType != DamageClass.Default)
-            {
-                CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit); 
-            }
             if (MeleeArmorVamp10)
             {
                 if (Main.rand.NextBool(10))
@@ -1559,14 +1439,6 @@ namespace tsorcRevamp
                     Player.HealEffect(10);
                     Player.statLife += 10;
                 }
-            }
-            if (DemonPower && hit.DamageType == DamageClass.SummonMeleeSpeed && Main.myPlayer == Player.whoAmI)
-            {
-                Projectile SummonMeleeBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Bottom, 
-                    Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, 
-                    (int)Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI, 1);
-                SummonMeleeBoom.position -= new Vector2(0, SummonMeleeBoom.height / 2f);
-                SummonMeleeBoom.netUpdate = true;
             }
             if (CelestialCloak && item.DamageType == DamageClass.Magic)
             {
@@ -1595,24 +1467,6 @@ namespace tsorcRevamp
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
         {
             Player owner = Main.player[proj.owner];
-            var whipTipHitPlayer = owner.GetModPlayer<WhipTipHit>();
-            if (ProjectileID.Sets.IsAWhip[proj.type])
-            {
-                CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit, whipTipHitPlayer.Check(proj, proj.WhipPointsForCollision, target.Hitbox));
-                
-                if (DemonPower && whipTipHitPlayer.Check(proj, proj.WhipPointsForCollision, target.Hitbox) && Main.myPlayer == Player.whoAmI)
-                {
-                    Projectile WhipTipBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Bottom, 
-                        Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, 
-                        (int)Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI, 1);
-                    WhipTipBoom.position -= new Vector2(0, WhipTipBoom.height / 2f);
-                    WhipTipBoom.netUpdate = true;
-                }
-            }
-            else if (!proj.IsMinionOrSentryRelated && proj.DamageType != DamageClass.Default)
-            {
-                CustomCombatText(target.Hitbox, damageDone, CritColorTier, hit.Crit);
-            }
             if (LudensTempest && hit.DamageType == DamageClass.Magic && !owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && !owner.DeadOrGhost)
             {
                 int? closest = UsefulFunctions.GetClosestEnemyNPC(target.Center);

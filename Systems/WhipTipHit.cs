@@ -5,6 +5,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker;
+using tsorcRevamp.Content.Items.Armor.Summon;
+using tsorcRevamp.Content.Items.Armor.Summon.AncientDemon;
 
 namespace tsorcRevamp.Systems;
 

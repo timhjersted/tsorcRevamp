@@ -117,6 +117,7 @@ using tsorcRevamp.Content.Projectiles.Summon.TripleThreat;
 using tsorcRevamp.Content.Projectiles.Throwing;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.OverCrit;
 using tsorcRevamp.Textures;
 using DemonSpirit = tsorcRevamp.NPCs.Enemies.DemonSpirit;
 
@@ -2855,6 +2856,43 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.CustomMultiplayerCombatText:
+                {
+                    byte player = reader.ReadByte();
+                    var modPlayer = Main.player[player].GetModPlayer<OverCritPlayer>();
+                    Rectangle targetHitbox;
+                    targetHitbox.X = reader.ReadInt32();
+                    targetHitbox.Y = reader.ReadInt32();
+                    targetHitbox.Width = reader.ReadInt32();
+                    targetHitbox.Height = reader.ReadInt32();
+                    int critColorTier = reader.ReadInt32();
+                    int damageDealt = reader.ReadInt32();
+                    bool isWhipTipCrit = reader.ReadBoolean();
+                    bool isCrit = reader.ReadBoolean();
+                    if (player != Main.myPlayer && Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        modPlayer.CustomCombatText(targetHitbox, damageDealt, critColorTier, isCrit, isWhipTipCrit, false); //still need to alter color to be weaker since it's from another players hit
+                    }
+                    
+                    //If the server recieved this from a client, then forward it to all the other clients
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        ModPacket textPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                        textPacket.Write(tsorcPacketID.CustomMultiplayerCombatText);
+                        textPacket.Write(player);
+                        textPacket.Write(targetHitbox.X);
+                        textPacket.Write(targetHitbox.Y);
+                        textPacket.Write(targetHitbox.Width);
+                        textPacket.Write(targetHitbox.Height);
+                        textPacket.Write(critColorTier);
+                        textPacket.Write(damageDealt);
+                        textPacket.Write(isWhipTipCrit);
+                        textPacket.Write(isCrit);
+            
+                        textPacket.Send();
+                    }
+                    break;
+                }
 
                 default:
                     {
@@ -5054,6 +5092,8 @@ namespace tsorcRevamp
         public const byte ReportMadnessBuildup = 29;
         /// <summary>Server → clients: authoritative Madness meter value and one-shot trigger visuals.</summary>
         public const byte SyncMadnessState = 30;
+
+        public const byte CustomMultiplayerCombatText = 31;
     }
 
     //config moved to separate file

@@ -145,7 +145,6 @@ namespace tsorcRevamp
 
         public bool ZirconRing = false;
 
-        public int CritColorTier = 0;
 
         public int MagicPlatingStacks;
 
@@ -218,7 +217,6 @@ namespace tsorcRevamp
         public bool IceboundMythrilAegis = false;
 
         public bool WaspPower = false;
-        public bool DemonPower = false;
         public bool HollowSoldierAgility = false;
         public bool SmoughShieldSkills = false;
         public bool BurdenOfSmough = false;
@@ -592,7 +590,6 @@ namespace tsorcRevamp
             PortlyPlateArmor = false;
 
             WaspPower = false;
-            DemonPower = false;
 
             HollowSoldierAgility = false;
             SmoughShieldSkills = false;

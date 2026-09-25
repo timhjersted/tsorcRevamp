@@ -52,6 +52,7 @@ using tsorcRevamp.Content.Projectiles.Summon.Whips.EnchantedWhip;
 using tsorcRevamp.Content.Projectiles.Summon.Whips.PolarisLeash;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.OverCrit;
 
 namespace tsorcRevamp.NPCs
 {
@@ -3313,7 +3314,7 @@ namespace tsorcRevamp.NPCs
                 modifiers.ArmorPenetration += SummonTagArmorPenetration * modPlayerProjectileOwner.SummonTagStrength;
                 FinalSummonCriticalStrikeChance = projectile.CritChance + (SummonTagCriticalStrikeChance * modPlayerProjectileOwner.SummonTagStrength);
 
-                modPlayerProjectileOwner.OverCrit((int)FinalSummonCriticalStrikeChance, projectile.DamageType, ref modifiers, out CritColorTier);
+                projectileOwner.GetModPlayer<OverCritPlayer>().OverCrit((int)FinalSummonCriticalStrikeChance, projectile.DamageType, ref modifiers, out CritColorTier);
 
             }
             #endregion
@@ -3538,7 +3539,7 @@ namespace tsorcRevamp.NPCs
             var whipTipHitPlayer = player.GetModPlayer<WhipTipHit>();
             if (projectile.IsMinionOrSentryRelated)
             {
-                modPlayer.CustomCombatText(npc.Hitbox, damageDone, CritColorTier, hit.Crit);
+                player.GetModPlayer<OverCritPlayer>().CustomCombatText(npc.Hitbox, damageDone, CritColorTier, hit.Crit);
             }
             
             if (markedByDragoonLash && projectile.IsMinionOrSentryRelated)
