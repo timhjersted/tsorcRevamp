@@ -3989,6 +3989,7 @@ Mods: {
 
 			GravemawTome: {
 				// DisplayName: Gravemaw Tome
+				// TapSpeedTooltip: Tap cooldown: {0} ticks ({1:F2} seconds)
 				/* Tooltip:
 					'''
 					Four spells bound in one tome

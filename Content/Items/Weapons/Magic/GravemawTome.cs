@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
@@ -49,6 +51,15 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
             player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Magic.Gravemaw.GravemawController>()] == 0;
 
         public override bool AltFunctionUse(Player player) => FourAttackWeaponControls.UsesAltFunction;
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            int useTicks = CombinedHooks.TotalUseTime(Item.useTime, Main.LocalPlayer, Item);
+            TooltipLine tapSpeed = new TooltipLine(Mod, "TapSpeed", Language.GetTextValue(
+                "Mods.tsorcRevamp.Items.GravemawTome.TapSpeedTooltip", useTicks, useTicks / 60f));
+            int speedIndex = tooltips.FindIndex(line => line.Mod == "Terraria" && line.Name == "Speed");
+            tooltips.Insert(speedIndex >= 0 ? speedIndex + 1 : tooltips.Count, tapSpeed);
+        }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
