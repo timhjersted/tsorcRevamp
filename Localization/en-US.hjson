@@ -1646,7 +1646,7 @@ Mods: {
 				Keybind2: " to massively increase life regen and damage taken temporarily"
 			}
 
-			ZirconRing: {
+			ZirconRingItem: {
 				DisplayName: Zircon Ring
 				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeByPercent}"
 			}
@@ -9150,6 +9150,11 @@ Mods: {
 			EnemyDestinedDeathFlask: {
 				DisplayName: Enemy Destined Death Flask
 				Tooltip: ""
+			}
+
+			RubyCrystalItem: {
+				DisplayName: Ruby Crystal
+				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeBy}"
 			}
 		}
 

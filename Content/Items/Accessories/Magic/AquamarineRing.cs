@@ -10,7 +10,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Magic
 {
     public class AquamarineRing : ModItem
     {
-        public static int MagicArmorPen = 7;
+        public static int MagicArmorPen = 8;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MagicArmorPen);
         public override void SetStaticDefaults()
         {
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1800);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 900);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -1615,9 +1615,9 @@ Mods: {
 				Keybind2: " для значительного увеличения регенерации жизни и временного уменьшения получаемого урона"
 			}
 
-			ZirconRing: {
-				DisplayName: Кольцо с цирконом
-				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeByPercent}"
+			ZirconRingItem: {
+				// DisplayName: Zircon Ring
+				// Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeByPercent}"
 			}
 
 			DragoonCloak: {
@@ -9098,6 +9098,11 @@ Mods: {
 
 			EnemyDestinedDeathFlask: {
 				// DisplayName: Enemy Destined Death Flask
+				// Tooltip: ""
+			}
+
+			RubyCrystalItem: {
+				// DisplayName: Ruby Crystal Item
 				// Tooltip: ""
 			}
 		}

@@ -1652,9 +1652,9 @@ Mods: {
 				Keybind2: " 键以短暂提高生命恢复和受到的伤害"
 			}
 
-			ZirconRing: {
-				DisplayName: 锆石戒指
-				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeByPercent}"
+			ZirconRingItem: {
+				// DisplayName: Zircon Ring
+				// Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeByPercent}"
 			}
 
 			DragoonCloak: {
@@ -9135,6 +9135,11 @@ Mods: {
 
 			EnemyDestinedDeathFlask: {
 				// DisplayName: Enemy Destined Death Flask
+				// Tooltip: ""
+			}
+
+			RubyCrystalItem: {
+				// DisplayName: Ruby Crystal Item
 				// Tooltip: ""
 			}
 		}
