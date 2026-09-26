@@ -30,6 +30,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
         int UseTicks => Math.Max(1, (int)EffectiveUseTime);
         int ScaledChargeTicks => ScaleInterval(ChargeTicks);
         bool castFinished;
+        bool novaRepeating;
 
         int ScaleInterval(int ticks) => Math.Max(1, (int)(ticks * EffectiveUseTime / GravemawTome.BaseUseTime));
 
@@ -37,12 +38,14 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
         {
             writer.Write(Timer);
             writer.Write(castFinished);
+            writer.Write(novaRepeating);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             Projectile.localAI[0] = reader.ReadSingle();
             castFinished = reader.ReadBoolean();
+            novaRepeating = reader.ReadBoolean();
         }
 
         public override void SetDefaults()
@@ -97,7 +100,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
             }
 
             // Tap window: releasing casts the tap spell.
-            if (Timer <= TapWindow)
+            if (!novaRepeating && Timer <= TapWindow)
             {
                 if (!channeling)
                 {
@@ -161,7 +164,8 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
         // Cursor high hold — charge, then release the expanding Reliquary Nova.
         void RunNovaCharge(Player player, bool channeling)
         {
-            float charge = Timer - TapWindow;
+            // A continuous hold has already passed input detection; subsequent charges start immediately.
+            float charge = Timer - (novaRepeating ? 0 : TapWindow);
             if (!channeling && charge < ScaledChargeTicks)
             {
                 for (int i = 0; i < 8; i++)
@@ -187,12 +191,23 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 
             if (charge >= ScaledChargeTicks)
             {
-                if (Main.myPlayer == Projectile.owner && player.CheckMana(NovaManaCost, true))
+                if (Main.myPlayer != Projectile.owner) return;
+                if (player.CheckMana(NovaManaCost, true))
                 {
                     SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.9f, Pitch = 0.1f }, player.Center);
                     int dmg = (int)(Projectile.damage * LeftHoldDmgMod);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
                         ModContent.ProjectileType<GravemawNova>(), dmg, Projectile.knockBack, Projectile.owner, 360f);
+
+                    // Each repeated cast also pays the item-use mana normally charged when spawning a controller.
+                    if (channeling && player.HeldItem.type == ModContent.ItemType<GravemawTome>()
+                        && player.CheckMana(player.HeldItem, pay: true))
+                    {
+                        novaRepeating = true;
+                        Projectile.localAI[0] = 0f;
+                        Projectile.netUpdate = true;
+                        return;
+                    }
                 }
                 FinishCast(player, channeling);
             }

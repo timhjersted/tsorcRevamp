@@ -399,11 +399,9 @@ namespace tsorcRevamp.UI
             }
             else if (newItem != null && !newItem.IsAir)
             {
-                // Manual deposit: clone (the slot reuses its scratch item) and stamp a fresh sequence.
-                Item clone = newItem.Clone();
-                clone.favorited = false;
-                mp.StorageItems.Add(clone);
-                mp.StorageSeq.Add(mp.NextSeq());
+                // Merge matching stacks before adding entries; leave any overflow on the scratch item
+                // so StorageItemSlot can return it to the cursor when storage reaches its cap.
+                mp.DepositToStorage(newItem);
             }
 
             MarkDirty();

@@ -203,6 +203,12 @@ Mods: {
 			Banner: 旗帜
 			Limited: 快速治疗快捷键不会误用此药水，因为它们很稀有
 			NoFallDmg: 对坠落伤害免疫
+			/* WingFallProtection:
+				'''
+				Increases safe fall distance by {0} tiles, but does not grant complete fall damage immunity.
+				Red afterimage trails warn of expected fall damage.
+				Fly, glide, or use an extra jump before landing to break your fall.
+				''' */
 			HolyDodge: 赋予神圣闪避效果，当神圣闪避激活时，此盔甲套装提供的属性加倍
 			TitaniumBonus: 造成伤害会生成一个全职业伤害的钛金防御碎片
 			// UpKeybind: Double tap UP

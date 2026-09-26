@@ -39,7 +39,7 @@ namespace tsorcRevamp.UI
 
             // index < 0 marks the header deposit slot: it never binds to the view, so it stays permanently
             // empty and anything dropped on it falls through to the manual-deposit path below (source -1,
-            // which makes WriteBack append a clone to StorageItems).
+            // which makes WriteBack deposit through the shared stacking/cap logic).
             bool isDepositSlot = index < 0;
             int viewIdx = isDepositSlot ? -1 : StorageUIState.ScrollOffset * StorageUIState.COLUMNS + index;
             bool hasItem = viewIdx >= 0 && viewIdx < ui.CurrentView.Count;
@@ -97,10 +97,22 @@ namespace tsorcRevamp.UI
                     {
                         ui.WriteBack(source, working);
 
-                        // For a manual deposit into an empty slot, WriteBack cloned the item into storage — clear
-                        // the scratch item so it isn't counted again next frame.
+                        // Return any amount that did not fit to the cursor before clearing the scratch item.
+                        // ItemSlot.Handle moved it from the cursor into this empty slot, so any cursor
+                        // remainder belongs to the same original stack and restoring it cannot exceed maxStack.
                         if (source < 0)
                         {
+                            if (!working.IsAir)
+                            {
+                                if (Main.mouseItem.IsAir)
+                                {
+                                    Main.mouseItem = working.Clone();
+                                }
+                                else
+                                {
+                                    Main.mouseItem.stack += working.stack;
+                                }
+                            }
                             working.TurnToAir();
                         }
                     }

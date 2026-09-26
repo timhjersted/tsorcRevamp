@@ -23,7 +23,7 @@ namespace tsorcRevamp
         public List<int> StorageSeq = new List<int>();
         // Monotonic counter stamped on each deposit; drives the "New" tab (highest = most recent).
         public int storageSeqCounter = 0;
-        public const int STORAGE_CAP = 2000;
+        public const int STORAGE_CAP = 3000;
 
         // Saved on-screen position of the Storage pop-up (top-left, absolute pixels). (-1,-1) = never moved,
         // use the default anchored position.
@@ -70,6 +70,7 @@ namespace tsorcRevamp
                 return false;
             }
             bool changed = false;
+            CompactStorage();
 
             // 1) Merge into existing matching, non-full stacks.
             for (int i = 0; i < StorageItems.Count && incoming.stack > 0; i++)
@@ -88,9 +89,10 @@ namespace tsorcRevamp
                     continue;
                 }
 
-                int moved = Math.Min(stored.maxStack - stored.stack, incoming.stack);
-                stored.stack += moved;
-                incoming.stack -= moved;
+                if (!ItemLoader.TryStackItems(stored, incoming, out int moved) || moved <= 0)
+                {
+                    continue;
+                }
                 BumpSeq(i);
                 changed = true;
             }
