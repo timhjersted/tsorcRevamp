@@ -2786,6 +2786,9 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					{$CommonItemTooltip.StaminaRegen@1}
+					可以作为头部盔甲或饰品装备
+					一次只能装备一个三焱家族面具
+					防御力仅在作为头部盔甲装备时生效
 					'''
 			}
 
@@ -2795,6 +2798,9 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.CritDmg@1}
+					可以作为头部盔甲或饰品装备
+					一次只能装备一个三焱家族面具
+					防御力仅在作为头部盔甲装备时生效
 					'''
 			}
 
@@ -2804,6 +2810,9 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesMaxLifeBy}
 					增加 2 点生命再生
+					可以作为头部盔甲或饰品装备
+					一次只能装备一个三焱家族面具
+					防御力仅在作为头部盔甲装备时生效
 					'''
 			}
 

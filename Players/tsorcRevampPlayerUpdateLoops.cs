@@ -128,6 +128,7 @@ namespace tsorcRevamp
         public int WorldEnderSwing = 1;
 
         public bool MaskOfTheFather = false;
+        public bool equippedPinwheelMask = false;
         public bool BoneRing;
         public bool CelestialCloak;
 
@@ -535,6 +536,7 @@ namespace tsorcRevamp
             EncouragingSummonTagDmg = 0f;
 
             MaskOfTheFather = false;
+            equippedPinwheelMask = false;
             BoneRing = false;
             CursePositiveStatsMultiplier = 1f;
 
@@ -1444,6 +1446,41 @@ namespace tsorcRevamp
                 catch
                 {
                     // Ignore slot access if not initialized
+                }
+            }
+
+            // If a Pinwheel mask is equipped in the head armor slot, displace any Pinwheel mask in accessory slots
+            if (!Main.gameMenu && Player.whoAmI == Main.myPlayer && Content.Items.Armor.PinwheelMaskHelper.IsPinwheelMask(Player.armor[0]))
+            {
+                for (int i = 3; i < 10; i++)
+                {
+                    if (Content.Items.Armor.PinwheelMaskHelper.IsPinwheelMask(Player.armor[i]))
+                    {
+                        Item displaced = Player.armor[i].Clone();
+                        Player.armor[i].TurnToAir();
+                        Player.QuickSpawnItem(Player.GetSource_Accessory(displaced), displaced, displaced.stack);
+                    }
+                }
+
+                try
+                {
+                    var modSlotPlayer = Player.GetModPlayer<Terraria.ModLoader.Default.ModAccessorySlotPlayer>();
+                    if (modSlotPlayer != null && modSlotPlayer.exAccessorySlot != null)
+                    {
+                        for (int i = 0; i < modSlotPlayer.SlotCount; i++)
+                        {
+                            if (Content.Items.Armor.PinwheelMaskHelper.IsPinwheelMask(modSlotPlayer.exAccessorySlot[i]))
+                            {
+                                Item displaced = modSlotPlayer.exAccessorySlot[i].Clone();
+                                modSlotPlayer.exAccessorySlot[i].TurnToAir();
+                                Player.QuickSpawnItem(Player.GetSource_Accessory(displaced), displaced, displaced.stack);
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // Ignore modded slot access if not initialized
                 }
             }
 

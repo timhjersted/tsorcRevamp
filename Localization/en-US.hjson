@@ -2789,6 +2789,9 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					{$CommonItemTooltip.StaminaRegen@1}
+					Can be equipped as head armor or as an accessory
+					Only one Pinwheel mask can be equipped at a time
+					Defense is only active when equipped as head armor
 					'''
 			}
 
@@ -2798,6 +2801,9 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.CritDmg@1}
+					Can be equipped as head armor or as an accessory
+					Only one Pinwheel mask can be equipped at a time
+					Defense is only active when equipped as head armor
 					'''
 			}
 
@@ -2807,6 +2813,9 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesMaxLifeBy}
 					Increase life regeneration by 2
+					Can be equipped as head armor or as an accessory
+					Only one Pinwheel mask can be equipped at a time
+					Defense is only active when equipped as head armor
 					'''
 			}
 
