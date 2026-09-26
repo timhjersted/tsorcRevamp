@@ -21,6 +21,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
     ///</summary>
     class GravemawTome : ModItem
     {
+        public const int BaseUseTime = 27;
         public override string Texture => "Terraria/Images/Item_" + ItemID.WaterBolt;
 
         public override void SetDefaults()
@@ -30,8 +31,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
             Item.mana = 8;
             Item.width = 28;
             Item.height = 30;
-            Item.useTime = 27;
-            Item.useAnimation = 27;
+            Item.useTime = BaseUseTime;
+            Item.useAnimation = BaseUseTime;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.channel = true; // the controller watches player.channel to split tap vs hold
@@ -53,7 +54,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
         {
             int mode = FourAttackWeaponControls.GetAttackMode(player);
             Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback,
-                player.whoAmI, mode, player.altFunctionUse == 2 ? 1f : 0f);
+                player.whoAmI, mode, player.altFunctionUse == 2 ? 1f : 0f,
+                Item.useTime * CombinedHooks.TotalUseTimeMultiplier(player, Item));
             return false;
         }
 

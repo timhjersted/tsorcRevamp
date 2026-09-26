@@ -821,8 +821,9 @@ namespace tsorcRevamp
                 var config = ModContent.GetInstance<tsorcRevampConfig>();
                 if (!config.HideOverheadStaminaBar)
                 {
-                    float staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
-                    float staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
+                    var staminaPlayer = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>();
+                    float staminaCurrent = staminaPlayer.staminaResourceCurrent;
+                    float staminaMax = staminaPlayer.staminaResourceMax2;
                     float staminaPercentage = staminaCurrent / staminaMax;
                     float visualStamina = tsorcRevampSystems.visualStamina;
                     if (visualStamina < 0f || visualStamina < staminaCurrent)
@@ -830,7 +831,7 @@ namespace tsorcRevamp
                         visualStamina = staminaCurrent;
                     }
 
-                    if ((staminaPercentage < 1f || visualStamina > staminaCurrent) && !drawPlayer.dead)
+                    if ((staminaPercentage < 1f || visualStamina > staminaCurrent || staminaPlayer.IsManaBurnActive) && !drawPlayer.dead)
                     {
                         float abovePlayer = 45f; //how far above the player should the bar be?
                         Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
@@ -887,7 +888,7 @@ namespace tsorcRevamp
                         {
                             Main.spriteBatch.Draw(barFill, debtDestination, new Color(190, 35, 45));
                         }
-                        Main.spriteBatch.Draw(barFill, fillDestination, new Color(40, 190, 80));
+                        Main.spriteBatch.Draw(barFill, fillDestination, staminaPlayer.StaminaBarFillColor);
                         Main.spriteBatch.Draw(barFill, minRollStamDestination, Color.White);
                     }
                 }

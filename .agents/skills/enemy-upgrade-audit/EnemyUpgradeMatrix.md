@@ -23,25 +23,24 @@ default, not written in the file · `.` off by default, never considered
 
 | Enemy | archetype | arm | 2hnd | ease | clock | tele | mirr | aimC | aimA | flip | arcs | over | link | foll | land | fslm | pool | clip |
 |---|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| Program | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | Y |
-| PuppetProfile | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | HeroofLumelia | Broadsword | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | AbysmalOolacileSorcerer | — | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | Artorias | Greatsword | Y | . | Y | Y | Y | Y | . | . | . | Y | Y | Y | Y | Y | Y | . | . |
 | Gwyn | Greatsword | Y | Y | Y | Y | Y | Y | . | Y | n | Y | Y | Y | Y | Y | . | Y | Y |
 | SoulOfCinder | Broadsword | Y | . | Y | Y | Y | Y | . | Y | Y | . | . | Y | Y | . | . | Y | . |
+| AttraidiesIllusion | — | Y | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | DarkBloodKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | DarkKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
 | AbyssalNinja | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | BlackNinja | Flail | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | Y | . |
 | Blaidd | Greatsword | . | . | Y | . | . | Y | . | Y | . | . | . | . | . | . | . | Y | . |
 | ClericOfSorrow | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| CursedDragon | Halberd | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| CursedDragon | Halberd | Y | . | Y | Y | Y | Y | . | Y | . | Y | . | Y | Y | Y | . | Y | . |
 | DreadWraith | — | Y | . | Y | . | Y | Y | . | Y | . | . | . | . | . | . | . | Y | . |
 | Kahlrun | Broadsword | Y | . | Y | . | Y | Y | . | Y | . | . | . | . | . | . | . | Y | Y |
 | Khaios | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | OolacileCultist | Dagger | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | . | Y | . | Y | . |
-| OwlFather | Axe | Y | . | Y | Y* | Y | Y | Y* | Y | n | Y | . | Y | Y | Y | . | Y | Y |
+| OwlFather | Axe | Y | . | Y | Y* | Y | Y | Y* | Y | n | Y | Y | Y | Y | Y | . | Y | Y |
 | ShadowNinja | Rapier | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | SpiritOfKhaios | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | StuddedLeatherWarrior | Axe | Y | . | . | Y* | Y | Y | Y* | . | . | . | . | Y | Y | Y | . | Y | Y |

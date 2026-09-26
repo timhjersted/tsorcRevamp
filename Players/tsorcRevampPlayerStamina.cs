@@ -31,6 +31,12 @@ namespace tsorcRevamp
         // Here we include a custom resource, similar to mana or health.
         // Creating some variables to define the current value of our Stamina resource as well as the current maximum value. We also include a temporary max value, as well as some variables to handle the natural regeneration of this resource.
         public float staminaResourceCurrent;
+        // Both stamina displays follow the buff itself, including its duration after stamina recovers.
+        public bool IsManaBurnActive => Player.HasBuff(ModContent.BuffType<ManaBurn>());
+        public Color StaminaBarFillColor => IsManaBurnActive ? new Color(160, 70, 220) : new Color(40, 190, 80);
+        public Color StaminaBarHighlightColor => IsManaBurnActive ? new Color(215, 150, 255) : new Color(120, 230, 150);
+        public Color StaminaBarShadowColor => IsManaBurnActive ? new Color(80, 30, 120) : new Color(15, 90, 40);
+        public Color StaminaBarBackgroundColor => IsManaBurnActive ? new Color(35, 10, 50, 180) : new Color(10, 40, 15, 180);
         // Remote players do not have the owner's Souls mode or stamina state. Sync only the
         // resulting use gate so their ItemCheck does not replay swings rejected by the owner.
         private bool syncedWeaponUseAllowed = true;

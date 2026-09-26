@@ -2961,7 +2961,7 @@ namespace tsorcRevamp
         {
             for (int npcType = NPCID.Count; npcType < NPCLoader.NPCCount; npcType++)
             {
-                if (NPCLoader.GetNPC(npcType) is NPCs.Puppets.PuppetNPC)
+                if (NPCLoader.GetNPC(npcType) is NPCs.Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling)
                 {
                     NPCID.Sets.NeedsExpertScaling[npcType] = true;
                 }

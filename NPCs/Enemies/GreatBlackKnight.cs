@@ -96,10 +96,12 @@ namespace tsorcRevamp.NPCs.Enemies
         // be picked from a genuine distance and close the gap itself, so the band deliberately overlaps the
         // throw's and the two compete on weight rather than on range alone.
         private const float SpearMeleeRange = 220f;
-        // 30 tiles. Must stay in step with GreatBlackKnightFlail's OutwardTicks * the launch speed
-        // in RunFlailCommit, or he throws the flail at players it cannot physically reach.
+        // 30 tiles. The head starts 60px from the hand and travels 26 ticks at 16px/tick,
+        // reaching 476px. Its hitbox covers the remaining 4px at this selection limit.
         private const float FlailReach = 480f;
         private const float FlailLaunchSpeed = 16f;
+        private const int FlailAlignmentWaitTicks = 45;
+        private int flailAlignmentWaitTimer;
         // This throw uses the same flight and intercept model as Owl Father's bow. The spear's
         // ai[2] mode switches it to arrow AI; the other BlackThrowingSpear users keep thrown AI.
         private const float SpearThrowSpeed = 13f;
@@ -107,7 +109,35 @@ namespace tsorcRevamp.NPCs.Enemies
         private const float SpearGravity = 0.1f;
         private const float SpearVerticalLeadFraction = 0.5f;
         private const int SpearInterceptIterations = 4;
+        // EnemyMoonfuryBomb flies straight for five ticks, then gains 0.2px/t of downward speed.
+        // Its old launch used BallisticTrajectory's 0.035 gravity and consistently fell short.
+        private const float BombGravity = 0.2f;
+        private const float BombGravityDelayTicks = 5f;
+        private const float BombVerticalLeadFraction = 0.5f;
+        private const int BombInterceptIterations = 4;
+        private const float BombMaxSelectionRange = 800f;
         private const int UltrakillChannelTicks = 35; // trailing slice of Ultrakill's commit window that actually fires
+
+        [Flags]
+        private enum AttackSoundCue : byte
+        {
+            None = 0,
+            Spear = 1,
+            SpearMelee = 2,
+            Bomb = 4,
+            Ultrakill = 8,
+            ShadowStorm = 16,
+        }
+
+        private ushort soundCueSequence;
+        private AttackSoundCue soundCueMask;
+        private bool soundCueQueuedThisTick;
+        private ushort lastReceivedSoundCueSequence;
+        private int localUltrakillTellTick;
+        private bool localUltrakillTellActive;
+        private ushort shadowStormTellSequence;
+        private ushort lastReceivedShadowStormTellSequence;
+        private int localShadowStormTellTick = -1;
 
         // Combo/recovery tuning (see the AskUserQuestion-approved design): rolls 1-3 attacks back to back at full
         // health; the CEILING rises smoothly to 8 as health drops, so low-health fights can chain much longer
@@ -230,11 +260,61 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             writer.Write(storedPlayerPosition.X);
             writer.Write(storedPlayerPosition.Y);
+            writer.Write(soundCueSequence);
+            writer.Write((byte)soundCueMask);
+            writer.Write(shadowStormTellSequence);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             storedPlayerPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            ushort sequence = reader.ReadUInt16();
+            AttackSoundCue cue = (AttackSoundCue)reader.ReadByte();
+            if (Main.netMode == NetmodeID.MultiplayerClient && sequence != lastReceivedSoundCueSequence)
+                PlayAttackSoundCue(cue);
+            lastReceivedSoundCueSequence = sequence;
+            ushort stormSequence = reader.ReadUInt16();
+            if (Main.netMode == NetmodeID.MultiplayerClient && stormSequence != lastReceivedShadowStormTellSequence)
+                localShadowStormTellTick = 0;
+            lastReceivedShadowStormTellSequence = stormSequence;
+        }
+
+        private void QueueAttackSoundCue(AttackSoundCue cue)
+        {
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                PlayAttackSoundCue(cue);
+                return;
+            }
+
+            if (!soundCueQueuedThisTick)
+            {
+                soundCueSequence++;
+                soundCueMask = AttackSoundCue.None;
+                soundCueQueuedThisTick = true;
+            }
+            soundCueMask |= cue;
+            NPC.netUpdate = true;
+        }
+
+        private void PlayAttackSoundCue(AttackSoundCue cue)
+        {
+            if (Main.dedServ)
+                return;
+
+            if ((cue & AttackSoundCue.Spear) != 0)
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
+            if ((cue & AttackSoundCue.SpearMelee) != 0)
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, PitchVariance = 0.1f }, NPC.Center);
+            if ((cue & AttackSoundCue.Bomb) != 0)
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
+            if ((cue & AttackSoundCue.Ultrakill) != 0)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.9f, PitchVariance = 2f }, NPC.Center);
+            }
+            if ((cue & AttackSoundCue.ShadowStorm) != 0)
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 1f, Pitch = -0.3f, PitchVariance = 0.2f }, NPC.Center);
         }
 
         #region Hit Logic
@@ -257,6 +337,10 @@ namespace tsorcRevamp.NPCs.Enemies
         // IFlailAnchor: the flail projectile's chain draws to (and its head orbits/launches from) the same
         // walk-cycle hand rig the spear/bomb overlays already use.
         public Vector2 GetFlailAnchor() => CurrentHandWorld();
+
+        public bool FlailWindupActive =>
+            ((Phase)(int)NPC.ai[0] == Phase.Telegraph || (Phase)(int)NPC.ai[0] == Phase.Committed)
+            && (AttackKind)(int)NPC.ai[2] == AttackKind.Flail;
 
         // IStaggerable: a poise break cancels whatever's telegraphing/firing and drops straight into a short
         // recovery (rather than instantly re-engaging), matching how a stagger reads for every other knight here.
@@ -295,10 +379,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
+            bool teleportHold = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0;
+            RunLocalVisualCues(phase, globalNPC.StaggerTimer <= 0 && !teleportHold);
+
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
+            soundCueQueuedThisTick = false;
 
             // STUCK-BOMB FIX. This used to be `|| Main.player[NPC.target].dead` on the return above,
             // which froze the ENTIRE state machine: ai[0]/ai[1] stopped advancing, so a knight that
@@ -337,7 +425,6 @@ namespace tsorcRevamp.NPCs.Enemies
             // (velocity.Y up to -8, a real position kick) directly overwrote the hold. Telegraph/Recovery/
             // Neutral otherwise still allow it, same as "recovery can walk and navigate" being ordinary
             // FighterAI pathing underneath.
-            bool teleportHold = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0;
             if (globalNPC.StaggerTimer <= 0 && phase != Phase.Committed && !teleportHold)
             {
                 RunMovementFlourishes();
@@ -365,13 +452,51 @@ namespace tsorcRevamp.NPCs.Enemies
             RunShadowCrystalStorm(hasPlayerLOS); // passive sub-1/3-health background attack; independent of the FSM above
         }
 
-        #region Movement flourishes (idle jump/dash flavor + ambient sound)
+        private void RunLocalVisualCues(Phase phase, bool canPlayAmbient)
+        {
+            if (Main.dedServ)
+                return;
+
+            if (canPlayAmbient && phase != Phase.Committed && Main.rand.NextBool(1500))
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ominous-creature2") with { Volume = 0.8f }, NPC.Center);
+
+            bool ultrakillTell = phase == Phase.Telegraph && (AttackKind)(int)NPC.ai[2] == AttackKind.Ultrakill;
+            if (ultrakillTell)
+            {
+                localUltrakillTellTick = localUltrakillTellActive
+                    ? Math.Max(localUltrakillTellTick + 1, (int)NPC.ai[1])
+                    : (int)NPC.ai[1];
+                int duration = TelegraphTicksByAttack[(int)AttackKind.Ultrakill];
+                float ringRadius = 240f * MathHelper.Clamp(1f - localUltrakillTellTick / (float)duration, 0f, 1f);
+                UsefulFunctions.DustRing(NPC.Center, ringRadius, DustID.BoneTorch, 48, 4);
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 5f);
+            }
+            else
+            {
+                localUltrakillTellTick = 0;
+            }
+            localUltrakillTellActive = ultrakillTell;
+
+            if (phase == Phase.Telegraph && (AttackKind)(int)NPC.ai[2] == AttackKind.Bomb
+                && NPC.ai[1] >= TelegraphTicksByAttack[(int)AttackKind.Bomb] - 2)
+                Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
+
+            // The server starts this timer 20 ticks before its volley and syncs that cue to clients.
+            if (localShadowStormTellTick >= 0 && localShadowStormTellTick < 20 && Main.rand.NextBool(2))
+            {
+                Vector2 dustOffset = Main.rand.NextVector2Circular(64f, 64f);
+                int dustIdx = Dust.NewDust(NPC.Center + dustOffset - new Vector2(4f), 8, 8,
+                    DustID.ShadowbeamStaff, -dustOffset.X * 0.1f, -dustOffset.Y * 0.1f,
+                    150, default, 1.2f);
+                Main.dust[dustIdx].noGravity = true;
+            }
+            if (localShadowStormTellTick >= 0)
+                localShadowStormTellTick = localShadowStormTellTick < 20 ? localShadowStormTellTick + 1 : -1;
+        }
+
+        #region Movement flourishes (idle jump/dash flavor)
         private void RunMovementFlourishes()
         {
-            if (Main.rand.NextBool(1500))
-            {
-                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ominous-creature2") with { Volume = 0.8f }, NPC.Center);
-            }
             // Chance to jump forward
             if (NPC.Distance(player.Center) > 250 && NPC.velocity.Y == 0f && Main.rand.NextBool(300))
             {
@@ -405,11 +530,11 @@ namespace tsorcRevamp.NPCs.Enemies
         /// <summary>
         /// True while an attack the knight ALREADY finished still has damaging geometry physically out in the
         /// world. An attack's logical duration (its Committed window) and its physical duration are not the same
-        /// thing: Flail commits for only 20 ticks and throws on the last one, but GreatBlackKnightFlail lives for
-        /// 110 — so without this gate the FSM chained straight into the next link and ran a whole Bomb or Spear
+        /// thing: the flail releases after its 40-tick orbit, then remains out for up to 110 more ticks.
+        /// Without this gate the FSM would chain straight into the next link and run a Bomb or Spear
         /// (telegraph + commit) while the ball-and-chain was still swinging. Blocking on it here keeps one attack
-        /// on screen at a time. Deliberately NOT cached per tick: RunFlailCommit spawns the flail and calls
-        /// EndAttack in the same tick, and EndAttack must observe the flail it just threw.
+        /// on screen at a time. Deliberately NOT cached per tick: EndAttack must observe the
+        /// head that RunFlailCommit has just released.
         /// </summary>
         private bool AttackGeometryStillActive => HasActiveFlail();
 
@@ -445,7 +570,8 @@ namespace tsorcRevamp.NPCs.Enemies
             // 30 tiles — the chain genuinely reaches that far now. !HasActiveFlail() enforces one
             // ball-and-chain out at a time: with 30-tile reach and a fast retract, back-to-back
             // throws otherwise read as the knight juggling two flails at once.
-            bool flailEligible = distanceToPlayer <= FlailReach && !HasActiveFlail();
+            bool flailEligible = distanceToPlayer >= GreatBlackKnightFlail.OrbitRadius + 20f
+                && distanceToPlayer <= FlailReach && !HasActiveFlail();
             bool ultrakillEligible = NPC.life <= NPC.lifeMax / 2;
             // Complements the throw rather than competing with it: the jab covers exactly the band
             // where the spear throw is ineligible, so closing the distance steers the knight into
@@ -454,7 +580,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             int[] weights = new int[BaseWeightByAttack.Length];
             weights[(int)AttackKind.Homing] = BaseWeightByAttack[(int)AttackKind.Homing];
-            weights[(int)AttackKind.Bomb] = BaseWeightByAttack[(int)AttackKind.Bomb];
+            if (distanceToPlayer <= BombMaxSelectionRange)
+                weights[(int)AttackKind.Bomb] = BaseWeightByAttack[(int)AttackKind.Bomb];
             if (spearEligible) weights[(int)AttackKind.Spear] = BaseWeightByAttack[(int)AttackKind.Spear];
             if (flailEligible) weights[(int)AttackKind.Flail] = BaseWeightByAttack[(int)AttackKind.Flail];
             if (ultrakillEligible) weights[(int)AttackKind.Ultrakill] = BaseWeightByAttack[(int)AttackKind.Ultrakill];
@@ -480,6 +607,15 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.ai[0] = (float)Phase.Telegraph;
             NPC.ai[1] = 0f;
             losStuckTimer = 0;
+            flailAlignmentWaitTimer = 0;
+            if (kind == AttackKind.Flail && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Vector2 hand = GetFlailAnchor();
+                Vector2 aim = (player.Center - hand).SafeNormalize(new Vector2(NPC.direction, 0f));
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), hand + aim * GreatBlackKnightFlail.OrbitRadius,
+                    Vector2.Zero, ModContent.ProjectileType<GreatBlackKnightFlail>(), redFlailDamage, 3f,
+                    Main.myPlayer, NPC.whoAmI, GreatBlackKnightFlail.OrbitMode, aim.ToRotation());
+            }
             NPC.netUpdate = true;
         }
 
@@ -530,6 +666,7 @@ namespace tsorcRevamp.NPCs.Enemies
         private void EndAttackCancelled()
         {
             losStuckTimer = 0;
+            flailAlignmentWaitTimer = 0;
             EnterRecovery(BaseRecoveryTicks);
         }
 
@@ -579,9 +716,6 @@ namespace tsorcRevamp.NPCs.Enemies
             if (kind == AttackKind.Ultrakill)
             {
                 NPC.knockBackResist = 0f;
-                float ringRadius = 240f * (duration - t) / duration; // shrinks to 0 right as the flash lands
-                UsefulFunctions.DustRing(NPC.Center, ringRadius, DustID.BoneTorch, 48, 4);
-                Lighting.AddLight(NPC.Center * 2, Color.WhiteSmoke.ToVector3() * 5);
                 NPC.velocity.X *= 0.85f;
             }
 
@@ -602,7 +736,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (t >= duration - 1)
             {
-                SpawnTelegraphFlash(kind);
+                // The flail keeps orbiting through Committed; its flash belongs to the actual release.
+                if (kind != AttackKind.Flail)
+                    SpawnTelegraphFlash(kind);
                 NPC.ai[0] = (float)Phase.Committed;
                 NPC.ai[1] = 0f;
                 NPC.netUpdate = true;
@@ -622,10 +758,6 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(color));
-                if (kind == AttackKind.Bomb)
-                {
-                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
-                }
             }
         }
         #endregion
@@ -635,8 +767,6 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             int t = (int)NPC.ai[1];
             int duration = CommitTicksByAttack[(int)kind];
-            float distanceToPlayer = NPC.Distance(player.Center);
-
             switch (kind)
             {
                 case AttackKind.Spear:
@@ -646,7 +776,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     RunHomingCommit(t, duration, hasPlayerLOS);
                     break;
                 case AttackKind.Bomb:
-                    RunBombCommit(t, duration, hasPlayerLOS, distanceToPlayer);
+                    RunBombCommit(t, duration, hasPlayerLOS);
                     break;
                 case AttackKind.Ultrakill:
                     RunUltrakillCommit(t, duration);
@@ -710,7 +840,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
                 ModContent.ProjectileType<BlackThrowingSpear>(), redKnightsSpearDamage, 0f,
                 Main.myPlayer, ai2: BlackThrowingSpear.ArrowFlightMode);
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, origin);
+            QueueAttackSoundCue(AttackSoundCue.Spear);
             EndAttack();
         }
 
@@ -770,7 +900,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     redKnightsGreatDamage, 4f, Main.myPlayer, SpearMeleeReach, SpearMeleeHeight);
                 tsorcGlobalProjectile.SetDefenseTraits(projectileIndex,
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ActiveAttackDefenseTraits);
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, PitchVariance = 0.1f }, NPC.Center);
+                QueueAttackSoundCue(AttackSoundCue.SpearMelee);
 
                 // Commit the body into the thrust. Without this the jab fired from a standing stop the moment
                 // FighterAI's pursuit happened to stall, which is what made it read as "he stops to attack".
@@ -869,17 +999,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.TargetClosest(true);
             float speed = 15f;
             Vector2 vel = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, speed, 2.1f, highAngle: true, fallback: true) + player.velocity;
-            if (((vel.X < 0f) && (NPC.direction < 0)) || ((vel.X > 0f) && (NPC.direction > 0)))
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, vel.X, vel.Y, ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
-                }
-            }
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, vel.X, vel.Y,
+                ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
             EndAttack();
         }
 
-        private void RunBombCommit(int t, int duration, bool hasPlayerLOS, float distanceToPlayer)
+        private void RunBombCommit(int t, int duration, bool hasPlayerLOS)
         {
             NPC.knockBackResist = 0f;
             if (t < duration - 1)
@@ -889,32 +1014,30 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (WaitOnLos(hasPlayerLOS)) return;
 
-            int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
-            Vector2 targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
-
-            bool far = distanceToPlayer > 400;
-            float speed = far ? 8f : 5f;
-            Vector2 vel = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, speed, fallback: true);
-            if (far)
+            NPC.TargetClosest(true);
+            int facing = player.Center.X >= NPC.Center.X ? 1 : -1;
+            Vector2 origin = CurrentHandWorld(facing);
+            float speed = MathHelper.Clamp(8f + Vector2.Distance(origin, player.Center) * 0.01f, 9f, 16f);
+            Vector2 aimAt = player.Center;
+            for (int i = 0; i < BombInterceptIterations; i++)
             {
-                vel += player.velocity;
+                float flightTicks = Vector2.Distance(origin, aimAt) / speed;
+                Vector2 lead = new Vector2(player.velocity.X, player.velocity.Y * BombVerticalLeadFraction) * flightTicks;
+                float fallingTicks = Math.Max(0f, flightTicks - BombGravityDelayTicks);
+                float gravityDrop = BombGravity * fallingTicks * (fallingTicks + 1f) * 0.5f;
+                aimAt = player.Center + lead - new Vector2(0f, gravityDrop);
             }
-            else
-            {
-                vel.Y += Main.rand.NextFloat(-1f, -2f);
-            }
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, vel.X, vel.Y, ModContent.ProjectileType<EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-            }
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
+            Vector2 velocity = (aimAt - origin).SafeNormalize(new Vector2(facing, 0f)) * speed;
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
+                ModContent.ProjectileType<EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+            QueueAttackSoundCue(AttackSoundCue.Bomb);
             EndAttack();
         }
 
         /// <summary>True while this knight already has a GreatBlackKnightFlail head out. Gates both
         /// selection (PickNextAttack) and the actual throw below — only one ball-and-chain at a time;
         /// the next one can't launch until this one retracts to the hand and self-destructs.</summary>
-        private bool HasActiveFlail()
+        private bool TryGetActiveFlail(out Projectile activeFlail)
         {
             int flailType = ModContent.ProjectileType<GreatBlackKnightFlail>();
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -922,16 +1045,20 @@ namespace tsorcRevamp.NPCs.Enemies
                 Projectile p = Main.projectile[i];
                 if (p.active && p.type == flailType && (int)p.ai[0] == NPC.whoAmI)
                 {
+                    activeFlail = p;
                     return true;
                 }
             }
+            activeFlail = null;
             return false;
         }
 
+        private bool HasActiveFlail() => TryGetActiveFlail(out _);
+
         /// <summary>Ball-and-chain flail (see Projectiles.Enemy.Weapons.EnemyFlailProjectileBase) — anchored to
         /// this NPC's rigged hand via IFlailAnchor, so no arm-swing animation is needed: the chain+head projectile
-        /// owns the entire visual. Aims live (no predicted position) and occasionally spins in place instead of
-        /// launching, for a little variety within a combo that rolls Flail more than once in a row.</summary>
+        /// owns the entire visual. The harmless 60px orbit begins with the telegraph. After one
+        /// revolution, the same head releases only when its chain points toward the live target.</summary>
         private void RunFlailCommit(int t, int duration, bool hasPlayerLOS)
         {
             if (t < duration - 1)
@@ -941,32 +1068,22 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (WaitOnLos(hasPlayerLOS)) return;
 
-            // Defensive: PickNextAttack already excludes Flail while one is active, so this should
-            // never actually trigger — but if it somehow does, abandon the throw rather than let two
-            // heads exist at once.
-            if (HasActiveFlail())
+            if (!TryGetActiveFlail(out Projectile activeFlail)
+                || activeFlail.ModProjectile is not GreatBlackKnightFlail flail
+                || activeFlail.ai[1] != GreatBlackKnightFlail.OrbitMode)
             {
-                EndAttack();
+                EndAttackCancelled();
                 return;
             }
 
             NPC.TargetClosest(true);
-            Vector2 anchor = CurrentHandWorld();
-            Vector2 toPlayer = player.Center - anchor;
-            if (toPlayer == Vector2.Zero)
+            if (!flail.TryReleaseToward(player.Center, FlailLaunchSpeed))
             {
-                toPlayer = new Vector2(NPC.direction, 0f);
+                if (++flailAlignmentWaitTimer > FlailAlignmentWaitTicks)
+                    EndAttackCancelled();
+                return;
             }
-            toPlayer.Normalize();
-
-            bool spin = Main.rand.NextBool(3); // occasional windmill instead of a straight throw
-            Vector2 velocity = spin ? Vector2.Zero : toPlayer * FlailLaunchSpeed;
-
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), anchor, velocity, ModContent.ProjectileType<GreatBlackKnightFlail>(), redFlailDamage, 3f, Main.myPlayer, NPC.whoAmI, spin ? 1f : 0f);
-            }
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.2f }, NPC.Center);
+            SpawnTelegraphFlash(AttackKind.Flail);
             EndAttack();
         }
 
@@ -987,7 +1104,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer);
                 }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center);
 
                 // Black Breath
                 Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 2f, fallback: true) + Main.rand.NextVector2Circular(-5, 5);
@@ -995,7 +1111,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer);
                 }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.9f, PitchVariance = 2f }, NPC.Center);
+                QueueAttackSoundCue(AttackSoundCue.Ultrakill);
                 NPC.netUpdate = true;
             }
 
@@ -1011,13 +1127,12 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Shadow Crystal Storm (passive sub-1/3-health background attack, independent of the combo FSM)
         private void RunShadowCrystalStorm(bool hasPlayerLOS)
         {
-            // Telegraph: shadow dust spirals inward for 20 frames before the burst
-            if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 420 >= 400 && Main.rand.NextBool(2))
+            if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 420 == 400)
             {
-                Vector2 dustOffset = Main.rand.NextVector2Circular(64, 64);
-                int dustIdx = Dust.NewDust(NPC.Center + dustOffset - new Vector2(4), 8, 8, DustID.ShadowbeamStaff,
-                    -dustOffset.X * 0.1f, -dustOffset.Y * 0.1f, 150, default, 1.2f);
-                Main.dust[dustIdx].noGravity = true;
+                shadowStormTellSequence++;
+                if (Main.netMode == NetmodeID.SinglePlayer)
+                    localShadowStormTellTick = 0;
+                NPC.netUpdate = true;
             }
             // Attack: 5 homing crystals in a 60° spread
             if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 420 == 0 && Main.netMode != NetmodeID.MultiplayerClient && hasPlayerLOS)
@@ -1032,7 +1147,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     speed = speed.RotatedBy(angle);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
                 }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 1f, Pitch = -0.3f, PitchVariance = 0.2f }, NPC.Center);
+                QueueAttackSoundCue(AttackSoundCue.ShadowStorm);
                 NPC.netUpdate = true;
             }
         }
@@ -1252,10 +1367,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition, progress);
                     }
                 }
-                else if (currentAttack == AttackKind.Flail)
-                {
-                    EnemyVFX.DrawGreatBlackKnightFlail(hand, Vector2.Zero, phase == Phase.Committed);
-                }
+                // The flail projectile draws the orbiting head and connected chain itself.
             }
 
             ulong stormCycle = Main.GameUpdateCount % 420;

@@ -4539,7 +4539,7 @@ Mods: {
 				/* Page1:
 					'''
 					Right-click this book to turn the page. 
-					Page 2 explains your extra inventory slots, page 3 explains the controls, and pages 4–11 explain the mod's core mechanics.
+					Page 2 explains your extra inventory slots, page 3 explains the controls, and pages 4–12 explain the mod's core mechanics.
 					''' */
 				// Heading2: Your Extra Inventory Slots
 				/* Page2:
@@ -4580,16 +4580,28 @@ Mods: {
 					Rolling in the air allows you to cross bigger gaps and reverse your momentum instantly.
 					A perfect dodge refunds half its cost and briefly boosts stamina regen and critical strike chance.
 					''' */
-				// Heading7: Estus, Cerulean and Bonfires
+				// Heading7: Regain
 				/* Page7:
+					'''
+					In Unkindled and Bearer of the Curse, landing attacks can recover health you recently lost.
+					For 5 seconds after getting hit, the recoverable portion of your health bar will turn white, then fades away.
+					Getting hit wipes any recoverable health you had and creates a new pool, capped at 25% of your maximum health.
+					Taking multiple hits within a 4 second window will reduce the portion you can win back.
+					Minions, sentries and secondary projectiles do not trigger Regain.
+					Stay close: recovery is strongest within 9 tiles and weakens with distance.
+					Slow weapons recover more per hit; fast weapons recover smaller amounts more often.
+					Regain does not apply in Classic mode and can be disabled in the mod's config.
+					''' */
+				// Heading8: Estus, Cerulean and Bonfires
+				/* Page8:
 					'''
 					The Estus Flask heals and the Cerulean Tear restores mana. Both hold limited charges.
 					Rest at a bonfire to refill every charge and set your respawn point.
 					Bonfires also let you warp to any other bonfire you already lit.
 					Estus Flask Shards add charges. Sublime Bone Dust makes each charge stronger.
 					''' */
-				// Heading8: Dark Souls
-				/* Page8:
+				// Heading9: Dark Souls
+				/* Page9:
 					'''
 					Dark Souls are your currency, gathered from everything you kill.
 					Look for items labeled as a "Dark Souls recipe material" and place in the Guide slot to see what you can make. 
@@ -4599,8 +4611,8 @@ Mods: {
 					This can be turned off in the mod's config if you would rather not lose them.
 					Dropped souls survive save & reload.
 					''' */
-				// Heading9: Finding Your Way
-				/* Page9:
+				// Heading10: Finding Your Way
+				/* Page10:
 					'''
 					The Emerald Herald will give you the Boss Hunting Tome.
 					Hovering over any undiscovered boss in its menu offers a clue for where that boss is found,
@@ -4611,8 +4623,8 @@ Mods: {
 					You can re-summon some bosses you have already beaten, but most bosses drop all their loot on the first kill.
 					You can place markers on your map — use them for gates you cannot open yet or bosses to come back to later.
 					''' */
-				// Heading10: Game Modes
-				/* Page10:
+				// Heading11: Game Modes
+				/* Page11:
 					'''
 					Unkindled: the default. Flasks, stamina on weapons, active shields and an extra accesory slot.
 					Bearer of the Curse: everything above, plus an additional combat mechanic for each weapon class,
@@ -4620,8 +4632,8 @@ Mods: {
 					Classic: vanilla healing, shields and magic, with no flask interface or stamina-based weapons.
 					Left-click the Darksign to switch, and right-click it to read your class mechanic.				
 					''' */
-				// Heading11: Shields and Blocking
-				/* Page11:
+				// Heading12: Shields and Blocking
+				/* Page12:
 					'''
 					Hold right mouse with a shield to raise it. It covers your front, above and below,
 					but not your back. Harder hits and weaker shields use more stamina.
@@ -11351,6 +11363,9 @@ Mods: {
 			// AncientFireAxeFireWave.DisplayName: Ancient Fire Axe Fire Wave
 			// AncientFireAxeFireColumn.DisplayName: Ancient Fire Axe Fire Column
 			// AncientFireAxeFireBurst.DisplayName: Ancient Fire Axe Fire Burst
+			// IllusionRuneBlade.DisplayName: Illusion Rune Blade
+			// IllusionOracle.DisplayName: Illusion Oracle
+			// IllusionCrystal.DisplayName: Illusion Crystal
 		}
 
 		NPCs: {

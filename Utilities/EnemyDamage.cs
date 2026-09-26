@@ -14,6 +14,7 @@ namespace tsorcRevamp.Utilities
         /// <summary>
         /// Use as the damage argument to Projectile.NewProjectile for one hostile projectile hit.
         /// A single hit in Expert Mode is approximately four times the spawn damage in this mod.
+        /// Projectile-based melee hitboxes use this path too; they are not NPC contact damage.
         /// Scale the requested Expert hit by the current mode's enemy-damage ratio before
         /// converting to spawn damage. Rounding can shift the resulting hit by a few points.
         /// </summary>

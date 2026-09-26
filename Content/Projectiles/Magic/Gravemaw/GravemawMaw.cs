@@ -23,6 +23,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
         const int ManaCost = 3;
 
         bool UsesRightClick => Projectile.ai[0] == 1f;
+        int AttackInterval => Projectile.ai[1] > 0f ? Math.Max(1, (int)Projectile.ai[1]) : ManaInterval;
         float HealCooldown { get => Projectile.localAI[1]; set => Projectile.localAI[1] = value; }
 
         public override void SetDefaults()
@@ -53,6 +54,8 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
             }
             Projectile.timeLeft = 6;
             Projectile.Center = player.Center;
+            // The owner supplies the snapshotted interval in synced AI; hit rate and mana rate agree.
+            Projectile.localNPCHitCooldown = AttackInterval;
 
             // Owner drives the aim; store as a unit vector in velocity so clients read it.
             if (Main.myPlayer == Projectile.owner)
@@ -66,7 +69,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                 player.itemAnimation = 2;
 
                 // Mana upkeep.
-                if (Projectile.localAI[0] % ManaInterval == 0 && !player.CheckMana(ManaCost, true))
+                if (Projectile.localAI[0] % AttackInterval == 0 && !player.CheckMana(ManaCost, true))
                 {
                     Projectile.Kill();
                     return;

@@ -5,6 +5,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Melee.Flails;
+using tsorcRevamp.NPCs.Enemies;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
@@ -20,12 +21,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// </summary>
     public class GreatBlackKnightFlail : EnemyFlailProjectileBase
     {
-        // ~30 tiles of reach: launch speed 16 (set by the knight) x 30 outward ticks = 480px.
-        // The return leg from that distance takes ~37 ticks at ReturnSpeed, so the lifetime has to
-        // cover 9 windup + 30 out + ~37 back with headroom, or the head vanishes mid-flight.
+        // Separate from the shared base's 0-9 modes: the same head owns this knight's
+        // non-damaging orbit and its outward throw. No second projectile appears at release.
+        public const float OrbitMode = 10f;
+        private const float ReleasedMode = 11f;
+        public const float OrbitRadius = 60f;
+        private const int OrbitTicks = 40;
+        private const int ThrowOutTicks = 26; // 60 + 26 * 16 = 476px from the hand.
+        private const int ReleasedLifetime = 110;
+
+        // The knight's orbit throw starts 60px from the hand, travels 26 ticks at 16px/tick,
+        // and reaches 476px before reeling back. The inherited legacy throw keeps its 30-tick leg.
         protected override float OutwardTicks => 30f;
         protected override float ReturnSpeed => 15f;
-        protected override int Lifetime => 110;
+        protected override int Lifetime => 190; // orbit plus a possible LOS pause; reset on release
 
         protected override string ChainTexturePath => UsefulFunctions.RefactorableFilepath(typeof(BerserkerNightmareBall)) + "_Chain";
 
@@ -41,6 +50,36 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private bool empowered;
         private Vector2 visualMotion;
         private bool Empowered => empowered;
+
+        public bool TryReleaseToward(Vector2 target, float speed)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || Projectile.ai[1] != OrbitMode
+                || Projectile.localAI[0] < OrbitTicks - 1 || Owner is not NPC owner || !owner.active
+                || owner.ModNPC is not GreatBlackKnight)
+                return false;
+
+            Vector2 hand = GetKnightHand(owner);
+            Vector2 radial = (Projectile.Center - hand).SafeNormalize(new Vector2(owner.direction, 0f));
+            Vector2 towardTarget = (target - hand).SafeNormalize(radial);
+            if (Vector2.Dot(radial, towardTarget) < 0.996f) // within about half an orbit step
+                return false;
+
+            // Correct the final few pixels of the orbit so the visible chain and the launch
+            // velocity share an exact bearing, even at the 480px edge of the attack's reach.
+            Projectile.Center = hand + towardTarget * OrbitRadius;
+            Projectile.ai[1] = ReleasedMode;
+            Projectile.localAI[1] = 0f;
+            Projectile.velocity = towardTarget * speed;
+            Projectile.timeLeft = ReleasedLifetime;
+            Projectile.netUpdate = true;
+            return true;
+        }
+
+        private static Vector2 GetKnightHand(NPC owner)
+            => ((GreatBlackKnight)owner.ModNPC).GetFlailAnchor();
+
+        public override bool? CanDamage()
+            => Projectile.ai[1] == OrbitMode ? false : base.CanDamage();
 
         public override void OnSpawn(IEntitySource source)
         {
@@ -58,7 +97,55 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         public override void AI()
         {
             Vector2 previousCenter = Projectile.Center;
-            base.AI();
+            if (Projectile.ai[1] == OrbitMode || Projectile.ai[1] == ReleasedMode)
+            {
+                NPC owner = Owner;
+                if (owner == null || !owner.active || owner.ModNPC is not GreatBlackKnight knight
+                    || (Main.netMode != NetmodeID.MultiplayerClient && Projectile.ai[1] == OrbitMode
+                        && !knight.FlailWindupActive))
+                {
+                    Projectile.Kill();
+                    return;
+                }
+
+                Vector2 hand = GetKnightHand(owner);
+                if (Projectile.ai[1] == OrbitMode)
+                {
+                    Projectile.localAI[0]++;
+                    float angle = Projectile.ai[2] + MathHelper.TwoPi * Projectile.localAI[0] / OrbitTicks;
+                    Projectile.Center = hand + new Vector2(OrbitRadius, 0f).RotatedBy(angle);
+                    Projectile.velocity = Vector2.Zero;
+                }
+                else
+                {
+                    int throwTick = (int)++Projectile.localAI[1];
+                    if (throwTick == 1)
+                    {
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with
+                            { Volume = 0.7f, PitchVariance = 0.2f }, Projectile.Center);
+                        OnLaunch(owner, Projectile.velocity);
+                    }
+
+                    if (throwTick > ThrowOutTicks)
+                    {
+                        Vector2 toHand = hand - Projectile.Center;
+                        if (toHand.Length() < 18f)
+                        {
+                            Projectile.Kill();
+                            return;
+                        }
+                        Projectile.velocity = Vector2.Lerp(Projectile.velocity,
+                            toHand.SafeNormalize(Vector2.Zero) * ReturnSpeed, 0.18f);
+                    }
+                    OnFlailTick(owner, hand);
+                }
+
+                Projectile.rotation += Projectile.velocity.X * 0.08f + owner.direction * 0.25f;
+            }
+            else
+            {
+                base.AI();
+            }
             visualMotion = Projectile.Center - previousCenter;
         }
 
@@ -68,13 +155,34 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             return base.PreDraw(ref lightColor);
         }
 
+        public override void OnKill(int timeLeft)
+        {
+            if (Main.dedServ)
+                return;
+
+            NPC owner = Owner;
+            bool awayFromHand = owner == null || !owner.active || owner.ModNPC is not GreatBlackKnight knight
+                || Vector2.Distance(Projectile.Center, knight.GetFlailAnchor()) > 24f;
+            if (!awayFromHand)
+                return; // normal retract ends naturally in the knight's hand
+
+            for (int i = 0; i < 20; i++)
+            {
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height,
+                    DustID.Wraith, 0f, 0f, 100, default, 0.8f);
+                dust.noGravity = true;
+            }
+        }
+
         protected override void OnFlailTick(NPC owner, Vector2 hand)
         {
             if (!Empowered || Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
-            if ((int)Projectile.localAI[0] % PulseInterval != 0)
+            int pulseTick = Projectile.ai[1] == ReleasedMode
+                ? (int)Projectile.localAI[1] : (int)Projectile.localAI[0];
+            if (pulseTick % PulseInterval != 0)
             {
                 return;
             }

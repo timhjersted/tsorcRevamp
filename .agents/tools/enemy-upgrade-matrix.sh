@@ -84,7 +84,7 @@ emit_table() {
     done
     printf '%s\n%s\n' "$header" "$sep"
 
-    for f in $(grep -rl ": PuppetNPC" --include=*.cs . | sort); do
+    for f in $(grep -rl ": PuppetNPC" --include=*.cs NPCs | sort); do
         name=$(basename "$f" .cs)
         archetype=$(grep -oE "MeleeArchetype *=> *WeaponArchetype\.[A-Za-z]+" "$f" | head -1 | sed 's/.*\.//')
         [ -z "$archetype" ] && archetype="—"
@@ -100,6 +100,7 @@ emit_table() {
 if [ "${1:-}" = "--write" ]; then
     if [ ! -f "$DOC" ]; then echo "missing $DOC" >&2; exit 1; fi
     awk -v tbl="$(emit_table)" '
+        { sub(/\r$/, "") }
         /^<!-- GENERATED:BEGIN -->$/ { print; print ""; print tbl; print ""; skip=1; next }
         /^<!-- GENERATED:END -->$/   { skip=0 }
         !skip { print }

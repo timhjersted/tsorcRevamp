@@ -24,7 +24,7 @@ namespace tsorcRevamp.Content.Items.Lore
     public class GameManual : ModItem
     {
         /// <summary>Total pages. Must match the number of Page* entries in localization.</summary>
-        public const int PageCount = 11;
+        public const int PageCount = 12;
 
         /// <summary>The one page with a left-click action (see CanUseItem / UseItem).</summary>
         private const int ControlsPage = 3;
@@ -95,7 +95,7 @@ namespace tsorcRevamp.Content.Items.Lore
                 index = tooltips.Count - 1;
             }
 
-            // "Page 3 of 11 — Controls", so flipping is predictable and the player knows it wraps.
+            // "Page 3 of 12 — Controls", so flipping is predictable and the player knows it wraps.
             string heading = LangUtils.GetTextValue("Items.GameManual.Heading" + Page);
             tooltips.Insert(++index, new TooltipLine(Mod, "ManualHeader",
                 LangUtils.GetTextValue("Items.GameManual.PageHeader", Page, PageCount, heading))

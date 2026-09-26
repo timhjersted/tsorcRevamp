@@ -41,9 +41,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int RangedWeaponItemType => -1;
         protected override int MagicWeaponItemType => ModContent.ItemType<FarronDart>();
 
-        protected override int MeleeDamage => 10;
+        // Both sword hitboxes and darts are hostile projectiles. Declare their Expert hit damage
+        // at 4x the old spawn value; the helper converts it back for projectile creation.
+        protected override int MeleeDamage => EnemyDamage.Projectile(40);
         protected override int RangedDamage => 0;
-        protected override int MagicDamage => 10;
+        protected override int MagicDamage => EnemyDamage.Projectile(40);
 
         protected override int EstusChargesMax => 2;
         protected override int HealAnimationTicks => 3 * 60;

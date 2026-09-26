@@ -2514,6 +2514,7 @@ namespace tsorcRevamp.NPCs
             illusionGlobal.SuppressGlobalOnKillDrops = true;
             illusionGlobal.CanTeleport = false;
             illusionGlobal.EvasiveTeleportAway = false;
+            ((Puppets.PuppetNPC)source.ModNPC).InitializeTeleportIllusion(illusion);
             illusion.netUpdate = true;
 
             if (Main.netMode == NetmodeID.Server)

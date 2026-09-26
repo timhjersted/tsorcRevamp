@@ -42,6 +42,8 @@ namespace SwingPreview
         /// <summary>Horizontal world movement from the first frame. Used by moving projectile demos
         /// so the puppet, hand and chain translate together while a fixed target remains fixed.</summary>
         public float OwnerOffsetX;
+        public bool RuneVisible, RuneUnderhand;
+        public float RuneAge, RuneFade = 1f;
     }
 
     /// <summary>Which sprite sheets to composite, and the handful of numbers the pose maths needs.</summary>
@@ -79,6 +81,7 @@ namespace SwingPreview
         public float OffHandWeaponScale = 1f;
         public string FlailBallSprite;
         public string FlailChainSprite;
+        public string RuneSprite, RuneSlashSprite;
     }
 
     /// <summary>
@@ -135,12 +138,14 @@ namespace SwingPreview
             using Bitmap offHandWeapon = art.OffHandWeaponSprite == null ? null : Load(art.OffHandWeaponSprite);
             using Bitmap flailBall = art.FlailBallSprite == null ? null : Load(art.FlailBallSprite);
             using Bitmap flailChain = art.FlailChainSprite == null ? null : Load(art.FlailChainSprite);
+            using Bitmap rune = art.RuneSprite == null ? null : Load(art.RuneSprite);
+            using Bitmap runeSlash = art.RuneSlashSprite == null ? null : Load(art.RuneSlashSprite);
 
             var rendered = new List<Bitmap>();
             foreach (PoseFrame frame in frames)
             {
                 rendered.Add(DrawFrame(art, frame, body, legs, head, weapon, offHandWeapon,
-                    flailBall, flailChain, frames, zoom));
+                    flailBall, flailChain, frames, zoom, rune, runeSlash));
             }
 
             string safe = Sanitize(label);
@@ -165,6 +170,41 @@ namespace SwingPreview
             Console.WriteLine($"    player  -> {htmlPath}");
         }
 
+        private static void DrawTinted(Graphics g, Bitmap bitmap, RectangleF destination, Rectangle source,
+            float opacity, float r, float green, float b)
+        {
+            using var attributes = new ImageAttributes();
+            var matrix = new ColorMatrix { Matrix00 = r, Matrix11 = green, Matrix22 = b, Matrix33 = opacity };
+            attributes.SetColorMatrix(matrix);
+            g.DrawImage(bitmap, new[] { new PointF(destination.Left, destination.Top),
+                new PointF(destination.Right, destination.Top), new PointF(destination.Left, destination.Bottom) },
+                source, GraphicsUnit.Pixel, attributes);
+        }
+        private static void DrawRune(Graphics g, PoseFrame frame, Bitmap rune, Bitmap slash)
+        {
+            var state = g.Save();
+            g.TranslateTransform(CellW / 2f + 24f, CellH / 2f + (frame.RuneUnderhand ? 30f : -30f));
+            float angle = tsorcRevamp.Utilities.RuneBladeConjuration.Sweep(frame.RuneUnderhand, frame.RuneAge);
+            g.RotateTransform(angle * 180f / (float)Math.PI);
+            if (slash != null && frame.RuneAge <= tsorcRevamp.Utilities.RuneBladeConjuration.Curve.LiveTicks + 6f)
+            {
+                float progress = Math.Clamp(frame.RuneAge / tsorcRevamp.Utilities.RuneBladeConjuration.Curve.LiveTicks, 0f, 1f);
+                float opacity = Math.Clamp(frame.RuneAge / 4f, 0f, 1f)
+                    * Math.Clamp((tsorcRevamp.Utilities.RuneBladeConjuration.Curve.LiveTicks + 6f - frame.RuneAge) / 6f, 0f, 1f) * 0.65f;
+                var slashState = g.Save();
+                if (!frame.RuneUnderhand) g.ScaleTransform(1f, -1f);
+                float scale = 128f / 30f;
+                DrawTinted(g, slash, new RectangleF(-32f * scale, -32f * scale, 64f * scale, 64f * scale),
+                    new Rectangle(0, Math.Min(2, (int)(progress * 3f)) * 64, 64, 64), opacity, 65f / 255f, 165f / 255f, 1f);
+                g.Restore(slashState);
+            }
+            g.RotateTransform(45f);
+            float swordScale = 128f / 64.35f;
+            DrawTinted(g, rune, new RectangleF(-9f * swordScale, -47f * swordScale, 56f * swordScale, 56f * swordScale),
+                new Rectangle(0, 0, 56, 56), 205f / 255f * frame.RuneFade, 1f, 1f, 1f);
+            g.Restore(state);
+        }
+
         private static Bitmap Load(string path)
         {
             if (!File.Exists(path))
@@ -178,7 +218,7 @@ namespace SwingPreview
 
         private static Bitmap DrawFrame(PuppetArt art, PoseFrame frame,
             Bitmap body, Bitmap legs, Bitmap head, Bitmap weapon, Bitmap offHandWeapon,
-            Bitmap flailBall, Bitmap flailChain, List<PoseFrame> allFrames, int zoom)
+            Bitmap flailBall, Bitmap flailChain, List<PoseFrame> allFrames, int zoom, Bitmap rune, Bitmap runeSlash)
         {
             // Canvas padding sized to the weapon: its reach from the grip to the farthest texture
             // corner, so a full-scale greatsword (Gwyn's is ~117px) never runs off the frame.
@@ -191,6 +231,7 @@ namespace SwingPreview
             int weaponReach = (int)Math.Ceiling(Math.Sqrt(farX * farX + farY * farY));
             int PadX = Math.Max(60, weaponReach + 12);
             int PadY = Math.Max(50, weaponReach + 12);
+            if (rune != null) { PadX = Math.Max(PadX, 172); PadY = Math.Max(PadY, 178); }
             if (flailBall != null && allFrames.Exists(p => p.FlailVisible))
             {
                 float maxFlailX = 0f;
@@ -329,6 +370,7 @@ namespace SwingPreview
                 DrawFlailBall(g, flailBall, flailCenter, frame.FlailRotation, frame.FlailDamageActive);
             }
 
+            if (frame.RuneVisible && rune != null) DrawRune(g, frame, rune, runeSlash);
             g.ResetTransform();
             DrawLabel(canvas, frame);
             return canvas;

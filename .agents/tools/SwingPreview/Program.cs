@@ -33,6 +33,7 @@ namespace SwingPreview
 
         private static int Main(string[] args)
         {
+            if (args.Contains("--rune-demo")) return RuneBladePreview.Run(args);
             var options = Options.Parse(args);
             if (options == null)
             {

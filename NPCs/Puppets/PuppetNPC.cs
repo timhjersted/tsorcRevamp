@@ -50,6 +50,8 @@ namespace tsorcRevamp.NPCs.Puppets
         /// via its own <see cref="ModNPC.SpawnChance"/> like any normal NPC. Default <c>true</c> (invasion encounter).
         /// </summary>
         protected virtual bool AnnounceInvasion => true;
+        // Ordinary enemies converted to puppets can retain their original zero-contact-damage scaling.
+        public virtual bool UsesPuppetDifficultyScaling => true;
 
         /// <summary>Override for phase-transition puppets which are not the end of an invasion.</summary>
         protected virtual bool AnnounceInvaderDefeat => AnnounceInvasion;
@@ -596,6 +598,7 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float MagicCastEndRotation => -1.4f;
         /// <summary>Draw-only correction for a magic weapon's natural texture angle.</summary>
         protected virtual float MagicWeaponRotationOffset => 0f;
+        protected virtual bool MirrorMagicWeaponRotationByFacing => false;
         /// <summary>Number of recovery ticks for which the magic weapon remains visibly held.</summary>
         protected virtual int MagicWeaponRecoveryHoldTicks => 0;
         protected bool IsHoldingMagicWeaponDuringRecovery =>
@@ -1751,8 +1754,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// every weapon pose (the Use1-Use4 body frames and the composite arms), so the arms fall
         /// back to the natural walk/idle draw. Default false.</summary>
         protected virtual bool WeaponSheathed => false;
+        protected virtual bool ShowWeaponDuringNeutral => false;
 
         private bool IsWeaponVisiblePhase => !WeaponSheathed && (
+            (ShowWeaponDuringNeutral && (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll)) ||
             Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack ||
             (Phase == AttackPhase.MeleeRecovery && MeleeRecoveryLingerTicks > 0) ||
             Phase == AttackPhase.StabTelegraph  || Phase == AttackPhase.StabAttack  ||
@@ -7716,6 +7721,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// MagicRecoveryTicks / MagicCooldownAfterUse; the rolled spell reaches clients in the same snapshot
         /// as the phase, so a rolled-then-read telegraph length is consistent everywhere.</summary>
         protected virtual  void OnMagicTelegraphStarting() { }
+        /// <summary>Configure an illusion created by the shared magic teleport before its first AI tick.</summary>
+        public virtual void InitializeTeleportIllusion(NPC illusion) { }
+        protected virtual float TeleportIllusionOpacity => 0.2f;
 
         /// <summary>Called every tick of the MagicAttack phase with the ticks remaining.  Default no-op;
         /// override (together with <see cref="_magicAttackTicksOverride"/>) for channeled casts such as a
@@ -10411,7 +10419,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
             // Store draw color so PuppetWeaponDrawLayer can read it during the pipeline below.
             bool teleportIllusion = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().IsTeleportIllusion;
-            _layerDrawColor = teleportIllusion ? drawColor * 0.2f : drawColor;
+            _layerDrawColor = teleportIllusion ? drawColor * TeleportIllusionOpacity : drawColor;
 
             // PuppetWeaponDrawLayer is registered at AfterParent(HeldItem) in tModLoader's pipeline.
             // By setting DrawingPuppetFor = this for exactly the duration of DrawPlayer, that layer
@@ -10450,7 +10458,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (teleportIllusion)
             {
                 _puppet.isFirstFractalAfterImage = true;
-                _puppet.firstFractalAfterImageOpacity = 0.2f;
+                _puppet.firstFractalAfterImageOpacity = TeleportIllusionOpacity;
             }
 
             Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, PuppetDrawPosition, 0f, Vector2.Zero, 0f, PuppetDrawScale);
@@ -11610,7 +11618,8 @@ namespace tsorcRevamp.NPCs.Puppets
             if (!heldRangedLike && !holdingSpearNow)
                 drawRotation = GetMeleeDrawRotation();
             if (_heldItemType == MagicWeaponItemType)
-                drawRotation += MagicWeaponRotationOffset;
+                drawRotation = (_weaponRotation + MagicWeaponRotationOffset)
+                    * (MirrorMagicWeaponRotationByFacing ? NPC.direction : 1);
             if (holdingSpearNow)
                 drawRotation += SpearDrawRotationOffset; // draw-only correction, direction-neutral (FlipH handles facing)
 

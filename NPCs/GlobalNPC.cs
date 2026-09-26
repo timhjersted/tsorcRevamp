@@ -714,6 +714,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.SuperHardMode.TaurusKnight>(0.2f, 55f);
             Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
             // Standard fighters
+            Add<Enemies.AttraidiesIllusion>(0.3f, 30f);
             Add<Enemies.MinotaurMage>(0.3f, 35f); // beefy caster; its Ring of Cinders cast is the stagger window
             Add<Enemies.SuperHardMode.DarkBloodKnight>(0.3f, 35f);
             Add<Enemies.SuperHardMode.OolacileKnight>(0.3f, 35f);
@@ -4880,7 +4881,7 @@ namespace tsorcRevamp.NPCs
             // EnablePuppetDifficultyScaling), and without the halving below vanilla's 2x expert
             // life multiplier would silently double every puppet's authored lifeMax.
             bool isModNPC = npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp");
-            bool scalesLikeBoss = npc.boss || npc.ModNPC is Puppets.PuppetNPC;
+            bool scalesLikeBoss = npc.boss || (npc.ModNPC is Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling);
 
             if (isModNPC && scalesLikeBoss)
             {

@@ -1874,9 +1874,9 @@ namespace tsorcRevamp
             // Mana (Blue)
             DrawBar(startY + barHeight + gap, (int)(manaCurrent / (1f + modPlayer.MaxManaAmplifier / 100f)), (int)(visualMana / (1f + modPlayer.MaxManaAmplifier / 100f)), (int)(manaMax / (1f + modPlayer.MaxManaAmplifier / 100f)), new Color(30, 110, 230), new Color(100, 175, 255), new Color(20, 45, 140), new Color(10, 20, 50, 180));
 
-            // Stamina (Green)
+            // Stamina (green normally, purple while Mana Burn is active).
             int stamY = startY + (barHeight + gap) * 2;
-            DrawBar(stamY, staminaCurrent, visualStamina, staminaMax, new Color(40, 190, 80), new Color(120, 230, 150), new Color(15, 90, 40), new Color(10, 40, 15, 180), staminaPlayer.staminaDebt);
+            DrawBar(stamY, staminaCurrent, visualStamina, staminaMax, staminaPlayer.StaminaBarFillColor, staminaPlayer.StaminaBarHighlightColor, staminaPlayer.StaminaBarShadowColor, staminaPlayer.StaminaBarBackgroundColor, staminaPlayer.staminaDebt);
 
             // Divider at the dodge roll's cost. This used to mark the hard minimum needed to roll at all; the roll
             // now follows the universal rule (any stamina above zero) so it instead reads as "below this line,

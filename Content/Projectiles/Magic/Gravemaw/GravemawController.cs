@@ -1,8 +1,11 @@
+using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Magic;
 
 namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 {
@@ -22,6 +25,25 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
         int Mode => (int)Projectile.ai[0];
         bool UsesRightClick => Projectile.ai[1] == 1f;
         float Timer => Projectile.localAI[0];
+        // ai[2] snapshots effective use time, including prefixes and use-speed hooks.
+        float EffectiveUseTime => Projectile.ai[2] > 0f ? Projectile.ai[2] : GravemawTome.BaseUseTime;
+        int UseTicks => Math.Max(1, (int)EffectiveUseTime);
+        int ScaledChargeTicks => ScaleInterval(ChargeTicks);
+        bool castFinished;
+
+        int ScaleInterval(int ticks) => Math.Max(1, (int)(ticks * EffectiveUseTime / GravemawTome.BaseUseTime));
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Timer);
+            writer.Write(castFinished);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Projectile.localAI[0] = reader.ReadSingle();
+            castFinished = reader.ReadBoolean();
+        }
 
         public override void SetDefaults()
         {
@@ -37,7 +59,6 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
         }
 
         public override bool? CanDamage() => false;
-        public bool AlreadyShotOnce;
         public float LeftTapDmgMod = 0.5f;
         public float LeftHoldDmgMod = 2.5f;
         public float RightTapDmgMod = 0.4f;
@@ -51,6 +72,20 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
             Projectile.timeLeft = 60;
             Projectile.localAI[0]++;
             bool channeling = UsesRightClick ? player.controlUseTile : player.channel;
+
+            // A resolved cast can only wait out its cooldown; repressing cannot turn it into a hold.
+            if (castFinished)
+            {
+                int remaining = Math.Max(channeling ? 2 : 0, UseTicks - (int)Timer);
+                if (Main.myPlayer == Projectile.owner && player.HeldItem.type == ModContent.ItemType<GravemawTome>())
+                {
+                    player.itemTime = remaining;
+                    player.itemAnimation = remaining;
+                }
+                if (Main.myPlayer == Projectile.owner && !channeling && Timer >= UseTicks)
+                    Projectile.Kill();
+                return;
+            }
 
             if (channeling)
             {
@@ -66,11 +101,10 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
             {
                 if (!channeling)
                 {
-                    if (Main.myPlayer == Projectile.owner && !AlreadyShotOnce)
+                    if (Main.myPlayer == Projectile.owner)
                     {
                         CastTap(player);
-                        AlreadyShotOnce  = true;
-                        //Projectile.Kill();
+                        FinishCast(player, channeling);
                     }
                 }
                 return;
@@ -113,22 +147,32 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 
         #region Hold casts
 
+        void FinishCast(Player player, bool channeling)
+        {
+            if (Main.myPlayer != Projectile.owner) return;
+            castFinished = true;
+            Projectile.netUpdate = true;
+            int remaining = Math.Max(channeling ? 2 : 0, UseTicks - (int)Timer);
+            player.itemTime = remaining;
+            player.itemAnimation = remaining;
+            if (!channeling && Timer >= UseTicks) Projectile.Kill();
+        }
+
         // Cursor high hold — charge, then release the expanding Reliquary Nova.
         void RunNovaCharge(Player player, bool channeling)
         {
-            AlreadyShotOnce = true;
             float charge = Timer - TapWindow;
-            if (!channeling && charge < ChargeTicks)
+            if (!channeling && charge < ScaledChargeTicks)
             {
                 for (int i = 0; i < 8; i++)
                 {
                     int d = Dust.NewDust(player.position, player.width, player.height, DustID.PurpleTorch, 0f, -1f, 130, default, 1f);
                     Main.dust[d].noGravity = true;
                 }
-                Projectile.Kill();
+                FinishCast(player, channeling);
                 return;
             }
-            float progress = MathHelper.Min(1f, charge / ChargeTicks);
+            float progress = MathHelper.Min(1f, charge / ScaledChargeTicks);
             int count = 1 + (int)(progress * 3f);
             for (int i = 0; i < count; i++)
             {
@@ -141,7 +185,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
             }
             Lighting.AddLight(player.Center, 0.4f * progress, 0.1f * progress, 0.55f * progress);
 
-            if (charge >= ChargeTicks)
+            if (charge >= ScaledChargeTicks)
             {
                 if (Main.myPlayer == Projectile.owner && player.CheckMana(NovaManaCost, true))
                 {
@@ -150,22 +194,22 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
                         ModContent.ProjectileType<GravemawNova>(), dmg, Projectile.knockBack, Projectile.owner, 360f);
                 }
-                Projectile.Kill();
+                FinishCast(player, channeling);
             }
         }
 
         // Cursor low hold — hand off to the persistent Hungering Maw channel projectile.
         void RunMawHold(Player player, bool channeling)
         {
-            AlreadyShotOnce = true;
-            if (!channeling) { Projectile.Kill(); return; }
+            if (!channeling) { FinishCast(player, channeling); return; }
             if (Main.myPlayer == Projectile.owner
                 && player.ownedProjectileCounts[ModContent.ProjectileType<GravemawMaw>()] == 0)
             {
                 int dmg = (int)(Projectile.damage * RightHoldDmgMod);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
                     ModContent.ProjectileType<GravemawMaw>(), dmg,
-                    Projectile.knockBack * 0.2f, Projectile.owner, UsesRightClick ? 1f : 0f);
+                    Projectile.knockBack * 0.2f, Projectile.owner, UsesRightClick ? 1f : 0f,
+                    ScaleInterval(12));
             }
         }
 
