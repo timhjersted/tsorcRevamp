@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.ZirconRing;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<WolfRing>());
             recipe.AddIngredient(ModContent.ItemType<RingOfClarity>());
-            recipe.AddIngredient(ModContent.ItemType<ZirconRing>());
+            recipe.AddIngredient(ModContent.ItemType<ZirconRingItem>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
@@ -47,7 +48,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.WolfRing = true;
-            modPlayer.ZirconRing = true;
+            player.GetModPlayer<ZirconRingPlayer>().Equipped  = true;
 
             //Ring of Clarity inheritance
             player.lifeRegen += (int)RingOfClarity.LifeRegen;

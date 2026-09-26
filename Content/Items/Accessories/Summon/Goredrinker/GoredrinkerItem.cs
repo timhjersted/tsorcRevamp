@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Content.Items.Accessories.Defensive.RubyCrystal;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
@@ -39,7 +40,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ChainKnife);
             recipe.AddIngredient(ModContent.ItemType<AncientWarhammer>());
-            recipe.AddIngredient(ItemID.LifeCrystal, 2);
+            recipe.AddIngredient(ModContent.ItemType<RubyCrystalItem>());
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 3200);
             recipe.AddTile(TileID.DemonAltar);

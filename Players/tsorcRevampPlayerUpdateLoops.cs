@@ -20,6 +20,9 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Items;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.ZirconRing;
+using tsorcRevamp.Content.Items.Accessories.Defensive.RubyCrystal;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Accessories.Mobility.Wings;
 using tsorcRevamp.Content.Items.Armor;
@@ -142,10 +145,7 @@ namespace tsorcRevamp
 
         public int SoulVessel = 0;
         public float MaxManaAmplifier;
-
-        public bool ZirconRing = false;
-
-
+        
         public int MagicPlatingStacks;
 
         public bool ChloranthyRing1 = false;
@@ -604,7 +604,6 @@ namespace tsorcRevamp
             SoulSiphon = false;
             SoulSiphonScaling = 1f;
 
-            ZirconRing = false;
             NecromanticSerpent = false;
 
             CrimsonDrain = false;
@@ -1956,11 +1955,8 @@ namespace tsorcRevamp
             {
                 Player.GetCritChance(DamageClass.Ranged) += Player.ChooseAmmo(Player.HeldItem).damage / 2;
             }
-
-            if (ZirconRing)
-            {
-                Player.statLifeMax2 += (int)(Player.statLifeMax2 * Content.Items.Accessories.Defensive.Rings.ZirconRing.MaxLifeIncrease / 100f);
-            }
+            Player.GetModPlayer<RubyCrystalPlayer>().Update();
+            Player.GetModPlayer<ZirconRingPlayer>().Update();
 
             if (CurseActive || powerfulCurseActive)
             {

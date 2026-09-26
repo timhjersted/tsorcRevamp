@@ -2,16 +2,15 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Accessories.Defensive.RubyCrystal;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
+namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings.ZirconRing
 {
-    public class ZirconRing : ModItem
+    public class ZirconRingItem : ModItem
     {
-        public static float MaxLifeIncrease = 20f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxLifeIncrease);
+        public static float PercentMaxLifeIncrease = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PercentMaxLifeIncrease);
         public override void SetStaticDefaults()
         {
         }
@@ -29,8 +28,8 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CobaltBar, 3);
+            recipe.AddIngredient(ModContent.ItemType<RubyCrystalItem>());
             recipe.AddIngredient(ItemID.SoulofNight, 6);
-            recipe.AddIngredient(ItemID.LifeCrystal, 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 9000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -39,7 +38,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().ZirconRing = true;
+            player.GetModPlayer<ZirconRingPlayer>().Equipped = true;
         }
     }
 }
