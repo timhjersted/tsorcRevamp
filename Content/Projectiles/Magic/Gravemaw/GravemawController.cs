@@ -37,6 +37,11 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
         }
 
         public override bool? CanDamage() => false;
+        public bool AlreadyShotOnce;
+        public float LeftTapDmgMod = 0.5f;
+        public float LeftHoldDmgMod = 2.5f;
+        public float RightTapDmgMod = 0.4f;
+        public float RightHoldDmgMod = 0.55f;
 
         public override void AI()
         {
@@ -61,8 +66,12 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
             {
                 if (!channeling)
                 {
-                    if (Main.myPlayer == Projectile.owner) CastTap(player);
-                    Projectile.Kill();
+                    if (Main.myPlayer == Projectile.owner && !AlreadyShotOnce)
+                    {
+                        CastTap(player);
+                        AlreadyShotOnce  = true;
+                        //Projectile.Kill();
+                    }
                 }
                 return;
             }
@@ -81,11 +90,12 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                 SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.7f, Pitch = 0.3f }, player.Center);
                 Vector2 origin = player.Center;
                 float baseAng = (Main.MouseWorld - origin).ToRotation();
+                int dmg = (int)(Projectile.damage * LeftTapDmgMod);
                 for (int i = -1; i <= 1; i++)
                 {
                     Vector2 vel = (baseAng + MathHelper.ToRadians(i * 11f)).ToRotationVector2() * 10f;
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), origin, vel,
-                        ModContent.ProjectileType<GravemawSoulBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0.04f);
+                        ModContent.ProjectileType<GravemawSoulBolt>(), dmg, Projectile.knockBack, Projectile.owner, 0.04f);
                 }
             }
             else
@@ -93,8 +103,9 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                 // Gravemaw Orb: lob one orb toward the cursor.
                 SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.6f, Pitch = -0.2f }, player.Center);
                 Vector2 vel = (Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX * player.direction) * 8f;
+                int dmg = (int)(Projectile.damage * RightTapDmgMod);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, vel,
-                    ModContent.ProjectileType<GravemawOrb>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    ModContent.ProjectileType<GravemawOrb>(), dmg, Projectile.knockBack, Projectile.owner);
             }
         }
 
@@ -105,6 +116,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
         // Cursor high hold — charge, then release the expanding Reliquary Nova.
         void RunNovaCharge(Player player, bool channeling)
         {
+            AlreadyShotOnce = true;
             float charge = Timer - TapWindow;
             if (!channeling && charge < ChargeTicks)
             {
@@ -134,8 +146,9 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                 if (Main.myPlayer == Projectile.owner && player.CheckMana(NovaManaCost, true))
                 {
                     SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.9f, Pitch = 0.1f }, player.Center);
+                    int dmg = (int)(Projectile.damage * LeftHoldDmgMod);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
-                        ModContent.ProjectileType<GravemawNova>(), (int)(Projectile.damage * 1.4f), Projectile.knockBack, Projectile.owner, 360f);
+                        ModContent.ProjectileType<GravemawNova>(), dmg, Projectile.knockBack, Projectile.owner, 360f);
                 }
                 Projectile.Kill();
             }
@@ -144,12 +157,14 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
         // Cursor low hold — hand off to the persistent Hungering Maw channel projectile.
         void RunMawHold(Player player, bool channeling)
         {
+            AlreadyShotOnce = true;
             if (!channeling) { Projectile.Kill(); return; }
             if (Main.myPlayer == Projectile.owner
                 && player.ownedProjectileCounts[ModContent.ProjectileType<GravemawMaw>()] == 0)
             {
+                int dmg = (int)(Projectile.damage * RightHoldDmgMod);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
-                    ModContent.ProjectileType<GravemawMaw>(), (int)(Projectile.damage * 0.4f),
+                    ModContent.ProjectileType<GravemawMaw>(), dmg,
                     Projectile.knockBack * 0.2f, Projectile.owner, UsesRightClick ? 1f : 0f);
             }
         }
