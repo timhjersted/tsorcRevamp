@@ -26,6 +26,7 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.VanillaItems;
+using tsorcRevamp.Content.Items.VanillaItems.Summoner;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee._Animations;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
@@ -2000,25 +2001,6 @@ namespace tsorcRevamp
             if (currentItem.type == ItemID.WormScarf)
             {
                 self.endurance += MinorEdits.WormScarfResistBonus / 100f;
-            }
-            if (currentItem.type == ItemID.HerculesBeetle)
-            {
-                self.GetDamage(DamageClass.Summon) -= 0.15f;
-                self.GetCritChance(DamageClass.Summon) += SummonerEdits.BeetleSummonCritChance;
-                modPlayer.HerculesBeetle = true;
-            }
-            if (currentItem.type == ItemID.NecromanticScroll)
-            {
-                self.GetDamage(DamageClass.Summon) -= 0.1f;
-                self.maxMinions -= 1;
-                self.GetCritChance(DamageClass.Summon) += SummonerEdits.ScrollSummonCritChance;
-                modPlayer.NecromanticScroll = true;
-            }
-            if (currentItem.type == ItemID.PapyrusScarab)
-            {
-                self.GetDamage(DamageClass.Summon) -= 0.15f;
-                self.GetCritChance(DamageClass.Summon) += SummonerEdits.ScarabSummonCritChance;
-                modPlayer.PapyrusScarab = true;
             }
             // Lets player walk on Lava as well.
             if (currentItem.type == ItemID.WaterWalkingBoots) 

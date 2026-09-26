@@ -34,6 +34,7 @@ using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Potions.RadiantLifegem;
 using tsorcRevamp.Content.Items.VanillaItems;
+using tsorcRevamp.Content.Items.VanillaItems.Summoner;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 using tsorcRevamp.Content.Items.Weapons.Summon;
@@ -99,10 +100,6 @@ namespace tsorcRevamp
         public bool DragoonHorn = false;
 
         public bool ConditionOverload = true;
-
-        public bool HerculesBeetle = false;
-        public bool NecromanticScroll = false;
-        public bool PapyrusScarab = false;
 
         public bool FinishedChargingWhip = false;
 
@@ -544,10 +541,6 @@ namespace tsorcRevamp
             ChloranthyRing1 = false;
             ChloranthyRing2 = false;
             BarrierRing = false;
-
-            HerculesBeetle = false;
-            NecromanticScroll = false;
-            PapyrusScarab = false;
 
             BrokenSpirit = false;
 
@@ -1503,19 +1496,6 @@ namespace tsorcRevamp
             {
                 unkindledManaDelayTimer = 0;
             }
-            if (PapyrusScarab)
-            {
-                SummonTagStrength += SummonerEdits.ScarabTagBoost / 100f * (HerculesBeetle ? 0 : 1f);
-                SummonTagDuration += SummonerEdits.ScarabTagBoost / 100f * (NecromanticScroll ? 0 : 1f);
-            }
-            if (HerculesBeetle)
-            {
-                SummonTagStrength += SummonerEdits.BeetleSummonTagStrengthBoost / 100f;
-            }
-            if (NecromanticScroll)
-            {
-                SummonTagDuration += SummonerEdits.ScrollSummonTagDurationBoost / 100f;
-            }
             if (PhoenixSkull && tsorcRevampWorld.BossAlive && !BossBlockedPhoenixRevive)
             {
                 Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Content.Items.Accessories.Defensive.PhoenixSkull.BossChargeDuration * 60);
@@ -1529,10 +1509,6 @@ namespace tsorcRevamp
             {
                 Player.autoReuseGlove = false;
             }
-            /*if (ModContent.GetInstance<tsorcRevampConfig>().DisableAutomaticQuickMana)
-            {
-                Player.manaFlower = false;
-            }*/ // needs to be set in ceruleanflask file
             if (ModContent.GetInstance<tsorcRevampConfig>().DisableRifleScopeZoom)
             {
                 Player.scope = false;

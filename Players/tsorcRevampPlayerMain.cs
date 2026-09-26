@@ -45,6 +45,7 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.VanillaItems;
+using tsorcRevamp.Content.Items.VanillaItems.Summoner;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
@@ -1343,7 +1344,7 @@ namespace tsorcRevamp
             if (proj.type == ProjectileID.StardustDragon1 || proj.type == ProjectileID.StardustDragon2 || proj.type == ProjectileID.StardustDragon3 || proj.type == ProjectileID.StardustDragon4)
             {
                 float DragonStacks = Player.ownedProjectileCounts[ProjectileID.StardustDragon1] + Player.ownedProjectileCounts[ProjectileID.StardustDragon2] + Player.ownedProjectileCounts[ProjectileID.StardustDragon3] + Player.ownedProjectileCounts[ProjectileID.StardustDragon4];
-                modifiers.SourceDamage *= MathF.Max(SummonerEdits.StardustDragonBaseDmgMult - DragonStacks / 100f, 0.2f);
+                modifiers.SourceDamage *= MathF.Max(VanillaSummonerItems.StardustDragonBaseDmgMult - DragonStacks / 100f, 0.2f);
             }
         }
         public override void ModifyItemScale(Item item, ref float scale)

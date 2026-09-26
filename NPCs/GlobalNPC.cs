@@ -38,6 +38,7 @@ using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Potions.RadiantLifegem;
 using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Items.VanillaItems;
+using tsorcRevamp.Content.Items.VanillaItems.Summoner;
 using tsorcRevamp.Content.Items.Weapons.Classless;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
@@ -3143,41 +3144,41 @@ namespace tsorcRevamp.NPCs
             #region Vanilla Whips
             if (markedByLeatherWhip)
             {
-                SummonTagFlatDamage += SummonerEdits.LeatherWhipTagDmg;
+                SummonTagFlatDamage += VanillaSummonerItems.LeatherWhipTagDmg;
             }
             if (markedBySnapthorn)
             {
-                SummonTagFlatDamage += SummonerEdits.SnapthornTagDmg;
+                SummonTagFlatDamage += VanillaSummonerItems.SnapthornTagDmg;
             }
             if (markedBySpinalTap)
             {
-                SummonTagFlatDamage += SummonerEdits.SpinalTapTagDmg;
+                SummonTagFlatDamage += VanillaSummonerItems.SpinalTapTagDmg;
             }
             if (markedByFirecracker)
             {
-                SummonTagScalingDamage += SummonerEdits.FirecrackerScalingDmg / 100f;
+                SummonTagScalingDamage += VanillaSummonerItems.FirecrackerScalingDmg / 100f;
             }
             if (markedByCoolWhip)
             {
-                SummonTagFlatDamage += SummonerEdits.CoolWhipTagDmg;
+                SummonTagFlatDamage += VanillaSummonerItems.CoolWhipTagDmg;
             }
             if (markedByDurendal)
             {
-                SummonTagFlatDamage += SummonerEdits.DurendalTagDmg;
+                SummonTagFlatDamage += VanillaSummonerItems.DurendalTagDmg;
             }
             if (markedByMorningStar)
             {
-                SummonTagFlatDamage += SummonerEdits.MorningStarTagDmg;
-                SummonTagCriticalStrikeChance += SummonerEdits.MorningStarTagCritChance;
+                SummonTagFlatDamage += VanillaSummonerItems.MorningStarTagDmg;
+                SummonTagCriticalStrikeChance += VanillaSummonerItems.MorningStarTagCritChance;
             }
             if (markedByDarkHarvest)
             {
-                SummonTagFlatDamage += SummonerEdits.DarkHarvestTagDmg;
+                SummonTagFlatDamage += VanillaSummonerItems.DarkHarvestTagDmg;
             }
             if (markedByKaleidoscope)
             {
-                SummonTagFlatDamage += SummonerEdits.KaleidoscopeTagDmg;
-                SummonTagCriticalStrikeChance += SummonerEdits.KaleidoscopeTagCritChance;
+                SummonTagFlatDamage += VanillaSummonerItems.KaleidoscopeTagDmg;
+                SummonTagCriticalStrikeChance += VanillaSummonerItems.KaleidoscopeTagCritChance;
             }
             #endregion
             #endregion

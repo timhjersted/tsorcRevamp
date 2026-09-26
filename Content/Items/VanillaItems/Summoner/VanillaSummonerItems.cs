@@ -8,9 +8,9 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Content.Items.Armor.Summon;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 
-namespace tsorcRevamp.Content.Items.VanillaItems
+namespace tsorcRevamp.Content.Items.VanillaItems.Summoner
 {
-    class SummonerEdits : GlobalItem
+    class VanillaSummonerItems : GlobalItem
     {
 
         public override void SetDefaults(Item item)
