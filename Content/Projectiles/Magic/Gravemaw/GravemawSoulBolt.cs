@@ -22,10 +22,10 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = true;
-            Projectile.penetrate = 2;
+            Projectile.penetrate = 1;
             Projectile.timeLeft = 240;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 10;
+            Projectile.localNPCHitCooldown = -1;
             Projectile.ignoreWater = true;
         }
 
