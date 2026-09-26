@@ -203,6 +203,12 @@ Mods: {
 			Banner: " Banner"
 			Limited: Your supply of these is finite, so they are never used by Quick Buff
 			NoFallDmg: Grants immunity to fall damage
+			WingFallProtection:
+				'''
+				Increases safe fall distance by {0} tiles, but does not grant complete fall damage immunity.
+				Red afterimage trails warn of expected fall damage.
+				Fly, glide, or use an extra jump before landing to break your fall.
+				'''
 			HolyDodge: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
 			TitaniumBonus: Attacking generates a defensive barrier of titanium shards, scaling with all damage types
 			UpKeybind: Double tap UP

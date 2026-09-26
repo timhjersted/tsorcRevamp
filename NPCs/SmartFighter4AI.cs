@@ -42,12 +42,9 @@ namespace tsorcRevamp.NPCs
         // no plan -> dumb-chase wedged on a ledge). Smaller per-NPC NavSearchRadius still = dumber+cheaper.
         private const int ScanRadiusX = 80;
         private const int ScanRadiusY = 48;
-        // Max tiles a single free-fall / platform-drop edge may span. Raised 10->24: a player one floor/cliff
-        // below (a house ledge is often 12-20 tiles) was unreachable when there was no intermediate landing,
-        // so the NPC just stood at the edge and refused to drop. NPCs take no fall damage and HasDropClearance
-        // still requires a clear shaft; deeper drops cost more and are penalized when the player is ABOVE, so
-        // this only enables descending toward a lower target, not suicidal pit-diving.
-        private const int MaxDropDepth = 24;
+        // Normal free-fall / platform-drop budget. Pursuit may descend farther toward the target's
+        // elevation when the full body and landing validate; patrol keeps its shallow safety budget.
+        private const int MaxDropDepth = 30;
         private const int MaxJumpRiseTiles = 30;
         private const int StepTimeoutFrames = 180;
         // No-path recovery cadence. Every NoPathRetryFrames of standing still with no plan counts one strike;
@@ -308,7 +305,9 @@ namespace tsorcRevamp.NPCs
 
             NavState nav = GetState(npc);
             bool waypointMode = movementWaypoint.HasValue;
-            if (!waypointMode && nav.WaypointActive)
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            bool navigationPatrol = globalNPC.PatrolUsesNavigation && globalNPC.PursuitState == PursuitState.Patrol;
+            if (!waypointMode && nav.WaypointActive && !navigationPatrol)
             {
                 // The authored movement has released control. Do not let its stale final leg pull normal pursuit
                 // away from the player on the next frame; preserve an airborne ballistic commitment, if any.
@@ -318,7 +317,6 @@ namespace tsorcRevamp.NPCs
                 nav.PlanIndex = 0;
                 nav.ReplanCooldown = 0;
             }
-            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             _minSurfaceWidth = globalNPC.MinSurfaceWidth; // beast flat-ground gate for IsStandableTile this frame (0 = off)
             _maxSurfaceStep = globalNPC.MaxSurfaceStep;   // tolerated footprint unevenness (Deerclops-clip failsafe)
             // Headroom: beasts (MinSurfaceWidth > 0) require their full sprite height of clearance; others keep the
@@ -347,6 +345,14 @@ namespace tsorcRevamp.NPCs
                 npc.noTileCollide = false;
             }
             bool grounded = IsGrounded(npc);
+            if (globalNPC.NavigationDropActive)
+            {
+                RunControlledDrop(nav, npc, globalNPC, topSpeed, acceleration, grounded);
+                nav.LastTelemetryPlan = DescribePlan(nav);
+                LogFrame(npc, player, nav, grounded, HasStrictLineOfSight(npc.Center, player.Center),
+                    false, nav.LastAction, nav.LastReason);
+                return;
+            }
 
             // ── Reactive evasion (armed by EvasiveOnHit; inert without an EvasiveProfile) ──────
             // Mirror FighterAI's evasion bookkeeping so SF4 enemies get the same reactive moves:
@@ -477,6 +483,14 @@ namespace tsorcRevamp.NPCs
             }
             else if (pstate == PursuitState.Patrol)
             {
+                if (globalNPC.PatrolUsesNavigation)
+                {
+                    RunNavigationPatrol(nav, npc, player, globalNPC, topSpeed, acceleration,
+                        jumpCeil, boostCeil, grounded, doorBreakingDamage, attackRange);
+                    nav.LastTelemetryPlan = DescribePlan(nav);
+                    LogFrame(npc, player, nav, grounded, los, false, nav.LastAction, nav.LastReason);
+                    return;
+                }
                 // Gave up the chase: patrol instead of pathing/standing-forever. Drop any stale plan.
                 ReleaseRopeTraversal(npc);
                 nav.Plan = null;
@@ -638,7 +652,9 @@ namespace tsorcRevamp.NPCs
                             bool playerBelow = player.Center.Y > npc.Center.Y + 24f;
                             int frontXc = GetFrontTileX(npc, dir);
                             int feetYc = GetFeetTileY(npc);
-                            bool dropLands = GetDropDepth(frontXc, feetYc, MaxDropDepth) <= MaxDropDepth;
+                            int dropDepth = GetDropDepth(frontXc, feetYc, MaxDropDepth);
+                            bool dropLands = dropDepth <= MaxDropDepth
+                                && DropBodyClear(npc, frontXc * TileF + 8f, feetYc, feetYc + dropDepth - 1);
                             // PlanGraceFrames: a plan was just torn up. Walking off the ledge toward the player
                             // right now is what undid the alignment the plan had built (the igloo-roof ping-pong),
                             // so hold the cliff-halt for ~0.5s and let the replan land first. Only the DROP is
@@ -1048,6 +1064,122 @@ namespace tsorcRevamp.NPCs
         /// can reverse or kill a committed run-through. The normal SF4 plan executor still owns doors, steps,
         /// validated jumps, drops with known landings, ropes, collision, and ballistic commitment.
         /// </summary>
+        private static void RunNavigationPatrol(NavState nav, NPC npc, Player player,
+            tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration, float jumpCeil,
+            float boostCeil, bool grounded, int doorDamage, float aggroRange)
+        {
+            globalNPC.PatrolElapsed++;
+            if (nav.PatrolRouteRetry > 0) nav.PatrolRouteRetry--;
+            // Retry the lower target at a bounded cadence, even without LOS. A complete route is
+            // required: merely seeing a shelf or getting closer to a wall cannot restart pursuit.
+            if (Main.netMode != NetmodeID.MultiplayerClient && grounded && nav.PatrolRouteRetry == 0)
+            {
+                nav.PatrolRouteRetry = 120;
+                if (player.Center.Y > npc.Center.Y + 24f && npc.Distance(player.Center) <= aggroRange)
+                {
+                    NavState probe = new NavState();
+                    foreach (var bad in nav.BadEdgeTargets) probe.BadEdgeTargets[bad.Key] = bad.Value;
+                    Replan(probe, npc, player, topSpeed);
+                    if (!probe.NoAStarPath && probe.Plan != null && probe.Plan.Count > 0)
+                    {
+                        globalNPC.PursuitState = PursuitState.Pursue;
+                        globalNPC.DisengageTimer = 0;
+                        globalNPC.UnreachableFrames = 0;
+                        globalNPC.PatrolDestinationActive = false;
+                        nav.WaypointActive = false;
+                        nav.Plan = probe.Plan;
+                        nav.PlanIndex = 0;
+                        nav.StepTimer = StepTimeoutFrames;
+                        nav.NoAStarPath = false;
+                        nav.StuckGiveUpFrames = 0;
+                        nav.PursuitStallFrames = 0;
+                        nav.PursuitBestDist = npc.Distance(player.Center);
+                        globalNPC.RequestNetworkSnapshot();
+                        nav.LastAction = "patrol-reacquire-route";
+                        nav.LastReason = probe.LastPlanResult;
+                        return;
+                    }
+                }
+            }
+
+            if (!globalNPC.PatrolDestinationActive)
+            {
+                if (grounded)
+                {
+                    nav.Plan = null;
+                    nav.PlanIndex = 0;
+                    nav.WaypointActive = false;
+                }
+                BrakeToStop(npc);
+                if (globalNPC.PatrolIdleTimer > 0) globalNPC.PatrolIdleTimer--;
+                else if (grounded && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    if (!ChoosePatrolDestination(nav, npc, globalNPC, topSpeed))
+                        globalNPC.PatrolIdleTimer = 120; // isolated peak: watch instead of shuffling two tiles
+                    globalNPC.RequestNetworkSnapshot();
+                }
+                nav.LastAction = "patrol-watch";
+                nav.LastReason = $"pause={globalNPC.PatrolIdleTimer}";
+                return;
+            }
+
+            RunWaypointMovement(nav, npc, player, globalNPC.PatrolDestination, topSpeed * 0.6f,
+                acceleration, jumpCeil, boostCeil, grounded, doorDamage, globalNPC,
+                out nav.LastAction, out nav.LastReason);
+            if (grounded && Main.netMode != NetmodeID.MultiplayerClient
+                && (nav.WaypointStatus == SmartFighter4WaypointStatus.Reached
+                    || nav.WaypointStatus == SmartFighter4WaypointStatus.Blocked))
+            {
+                globalNPC.PatrolDestinationActive = false;
+                globalNPC.PatrolIdleTimer = nav.WaypointStatus == SmartFighter4WaypointStatus.Blocked ? 120 : 60;
+                nav.Plan = null;
+                nav.WaypointActive = false;
+                globalNPC.RequestNetworkSnapshot();
+            }
+        }
+
+        private static bool ChoosePatrolDestination(NavState nav, NPC npc,
+            tsorcRevampGlobalNPC globalNPC, float topSpeed)
+        {
+            CapturePlanningPhysics(npc, topSpeed * 0.6f);
+            int cx = (int)(npc.Center.X / TileF), feetY = GetFeetTileY(npc);
+            int anchorX = (int)(globalNPC.PatrolAnchor.X / TileF);
+            int anchorFeetY = (int)((globalNPC.PatrolAnchor.Y + npc.height * 0.5f - 1f) / TileF);
+            int radius = Math.Min(globalNPC.PatrolRange, globalNPC.NavSearchRadius);
+            List<Span> spans = BuildSpans(Math.Max(cx - radius, anchorX - radius),
+                Math.Min(cx + radius, anchorX + radius), anchorFeetY - 8, anchorFeetY + 8);
+            BuildEdges(spans, feetY, nav.BadEdgeTargets, allowTargetRelativeDrops: false, normalDropDepth: 4);
+            Span start = FindContainingSpan(spans, cx, feetY);
+            if (start == null) return false;
+            HashSet<Span> reachable = CollectReachableSpans(start);
+            int desiredLeg = Main.rand.Next(Math.Max(8, globalNPC.PatrolWanderMinTiles),
+                Math.Max(9, globalNPC.PatrolWanderMaxTiles + 1));
+            int direction = Main.rand.NextBool() ? 1 : -1;
+            int desiredX = cx + direction * desiredLeg;
+            Span best = null;
+            int bestX = cx, bestScore = int.MaxValue;
+            foreach (Span span in spans) // stable order; HashSet iteration must not pick the route
+            {
+                if (!reachable.Contains(span)) continue;
+                int x = Math.Clamp(desiredX, span.LeftX, span.RightX);
+                int distance = Math.Abs(x - cx);
+                if (distance < 4 || !SafeDropBody(npc, new Vector2(x * TileF + 8f - npc.width * 0.5f,
+                    (span.Y + 1) * TileF - npc.height))) continue;
+                // Patrol must be able to return; don't turn a harmless roam into a one-way cliff descent.
+                if (!CollectReachableSpans(span).Contains(start)) continue;
+                int score = Math.Abs(x - desiredX) + Math.Abs(span.Y - feetY) * 2 + (distance < 8 ? 24 : 0);
+                if (score >= bestScore) continue;
+                best = span;
+                bestX = x;
+                bestScore = score;
+            }
+            if (best == null) return false;
+            globalNPC.PatrolDestination = new Vector2(bestX * TileF + 8f, (best.Y + 1) * TileF - npc.height * 0.5f);
+            globalNPC.PatrolDestinationActive = true;
+            globalNPC.PatrolDirection = bestX > cx ? 1 : -1;
+            return true;
+        }
+
         private static void RunWaypointMovement(NavState nav, NPC npc, Player player, Vector2 waypoint,
             float topSpeed, float acceleration, float jumpCeil, float boostCeil, bool grounded,
             int doorBreakingDamage, tsorcRevampGlobalNPC globalNPC, out string action, out string reason)
@@ -1304,6 +1436,17 @@ namespace tsorcRevamp.NPCs
         private static float _planGravity = 0.3f;
         private static float _planJumpCeil = 9f;
         private static float _planMaxLaunchVx = 6.5f;
+        private static NPC _planningNpc;
+        private static float _planWalkSpeed;
+        private static void CapturePlanningPhysics(NPC npc, float topSpeed)
+        {
+            tsorcRevampGlobalNPC pg = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            _planningNpc = npc;
+            _planWalkSpeed = Math.Max(topSpeed, 0.1f);
+            _planGravity = npc.gravity > 0f ? npc.gravity : 0.3f;
+            _planJumpCeil = Math.Max(pg.MaxJumpPower, 5f);
+            _planMaxLaunchVx = Math.Max(topSpeed, 0f) + Math.Max(pg.MaxJumpBoost, 2f);
+        }
         private static int MaxPlanRiseTiles()
         {
             float gravity = _planGravity > 0f ? _planGravity : 0.3f;
@@ -1356,9 +1499,7 @@ namespace tsorcRevamp.NPCs
             // Capture this NPC's jump physics so BuildEdges/TryFindJumpEdge only propose
             // edges this enemy can actually clear (gravity-aware, gap-width-aware).
             tsorcRevampGlobalNPC pg = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            _planGravity = npc.gravity > 0f ? npc.gravity : 0.3f;
-            _planJumpCeil = Math.Max(pg.MaxJumpPower, 5f);
-            _planMaxLaunchVx = Math.Max(topSpeed, 0f) + Math.Max(pg.MaxJumpBoost, 2f); // actual topSpeed + boost ceiling
+            CapturePlanningPhysics(npc, topSpeed);
 
             int npcFeetY = GetFeetTileY(npc);
             int npcCx = (int)(npc.Center.X / TileF);
@@ -1390,7 +1531,9 @@ namespace tsorcRevamp.NPCs
                     nav.BadEdgeTargets.Remove(k);
                 }
             }
-            BuildEdges(spans, targetFeetY, nav.BadEdgeTargets);
+            bool patrolRoute = waypointMode && pg.PatrolUsesNavigation && pg.PursuitState == PursuitState.Patrol;
+            BuildEdges(spans, targetFeetY, nav.BadEdgeTargets,
+                allowTargetRelativeDrops: !waypointMode, normalDropDepth: patrolRoute ? 4 : MaxDropDepth);
 
             nav.LastReplanTick = now;
             Span start = FindContainingSpan(spans, npcCx, npcFeetY);
@@ -1594,7 +1737,8 @@ namespace tsorcRevamp.NPCs
             return worst;
         }
 
-        private static void BuildEdges(List<Span> spans, int playerY, Dictionary<(int x, int y), int> badEdges)
+        private static void BuildEdges(List<Span> spans, int playerY, Dictionary<(int x, int y), int> badEdges,
+            bool allowTargetRelativeDrops = true, int normalDropDepth = MaxDropDepth)
         {
             Dictionary<int, List<Span>> byY = new Dictionary<int, List<Span>>();
             foreach (var span in spans)
@@ -1698,7 +1842,11 @@ namespace tsorcRevamp.NPCs
                 }
 
                 // ---- DROP edges (free-fall through holes) ----
-                for (int dy = 2; dy <= MaxDropDepth; dy++)
+                // No fixed pursuit depth cap: only consider landings down to the target's elevation
+                // plus three tiles. Patrol/waypoint routes retain their ordinary drop safety budget.
+                int dropLimit = allowTargetRelativeDrops
+                    ? Math.Max(normalDropDepth, playerY + 3 - a.Y) : normalDropDepth;
+                for (int dy = 2; dy <= dropLimit; dy++)
                 {
                     if (!byY.TryGetValue(a.Y + dy, out var bucket))
                     {
@@ -1713,7 +1861,8 @@ namespace tsorcRevamp.NPCs
                         int candidate = -1;
                         for (int x = Math.Max(a.LeftX - 1, b.LeftX); x <= Math.Min(a.RightX + 1, b.RightX); x++)
                         {
-                            if (HasDropClearance(x, a.Y, b.Y))
+                            if (HasDropClearance(x, a.Y, b.Y)
+                                && (dy <= normalDropDepth || DropBodyClear(_planningNpc, x * TileF + 8f, a.Y, b.Y, rejectPlatforms: true)))
                             {
                                 candidate = x;
                                 break;
@@ -1725,13 +1874,14 @@ namespace tsorcRevamp.NPCs
                         }
                         int dropPenalty = playerY < a.Y - 3 ? 80 : 0;
                         int badP = BadEdgePenalty(candidate, b.Y, badEdges);
-                        a.Edges.Add(new Edge(b, EdgeKind.Drop, 3 + dy + dropPenalty + badP, candidate, candidate));
+                        a.Edges.Add(new Edge(b, dy > normalDropDepth ? EdgeKind.ControlledDrop : EdgeKind.Drop,
+                            3 + dy + dropPenalty + badP, candidate, candidate));
                     }
                 }
 
                 // ---- PLATFORM DROP (per-column: any column in span A that's a platform tile
                 //      can be a drop point, not just spans that are platform-only). ----
-                for (int dy = 2; dy <= MaxDropDepth; dy++)
+                for (int dy = 2; dy <= dropLimit; dy++)
                 {
                     if (!byY.TryGetValue(a.Y + dy, out var bucket))
                     {
@@ -1748,7 +1898,8 @@ namespace tsorcRevamp.NPCs
                         int xMin = Math.Max(a.LeftX, b.LeftX), xMax = Math.Min(a.RightX, b.RightX);
                         for (int x = xMin; x <= xMax; x++)
                         {
-                            if (IsPlatformTile(x, a.Y + 1) && HasDropClearance(x, a.Y + 2, b.Y))
+                            if (IsPlatformTile(x, a.Y + 1) && HasDropClearance(x, a.Y + 2, b.Y)
+                                && (dy <= normalDropDepth || DropBodyClear(_planningNpc, x * TileF + 8f, a.Y, b.Y, rejectPlatforms: true)))
                             { candidate = x; break; }
                         }
                         if (candidate == -1)
@@ -1757,7 +1908,31 @@ namespace tsorcRevamp.NPCs
                         }
                         int dropPenalty = playerY < a.Y - 3 ? 80 : 0;
                         int badP = BadEdgePenalty(candidate, b.Y, badEdges);
-                        a.Edges.Add(new Edge(b, EdgeKind.PlatformDrop, 4 + dy + dropPenalty + badP, candidate, candidate));
+                        a.Edges.Add(new Edge(b, dy > normalDropDepth ? EdgeKind.ControlledDrop : EdgeKind.PlatformDrop,
+                            4 + dy + dropPenalty + badP, candidate, candidate));
+                    }
+                }
+
+                // A ledge may require clearing the body's whole width and drifting a few tiles onto
+                // the lower shelf. Validate that actual fall, including platforms and lava, before
+                // offering it to A*. These edges never disable tile collision.
+                if (allowTargetRelativeDrops && playerY > a.Y + 2)
+                {
+                    foreach (Span b in spans)
+                    {
+                        if (b.Y <= a.Y + 2 || b.Y > playerY + 3) continue;
+                        foreach (int direction in new[] { -1, 1 })
+                        {
+                            int edgeX = direction > 0 ? a.RightX : a.LeftX;
+                            int bodyTiles = (int)Math.Ceiling((_planningNpc.width * 0.5f + 8f) / TileF);
+                            int launchX = edgeX + direction * bodyTiles;
+                            int landX = Math.Clamp(launchX, b.LeftX, b.RightX);
+                            if ((landX - edgeX) * direction < 1 || Math.Abs(landX - launchX) > 8) continue;
+                            if (!ValidateControlledFall(_planningNpc, launchX, a.Y, landX, b.Y, _planWalkSpeed)) continue;
+                            a.Edges.Add(new Edge(b, EdgeKind.ControlledDrop,
+                                8 + b.Y - a.Y + Math.Abs(landX - launchX)
+                                + BadEdgePenalty(landX, b.Y, badEdges), launchX, landX));
+                        }
                     }
                 }
 
@@ -2940,6 +3115,9 @@ namespace tsorcRevamp.NPCs
                     case EdgeKind.Drop:
                         steps.Add(new PlanStep(StepKind.Drop, edge.LandX, to.Y, edge.LaunchX));
                         break;
+                    case EdgeKind.ControlledDrop:
+                        steps.Add(new PlanStep(StepKind.ControlledDrop, edge.LandX, to.Y, edge.LaunchX));
+                        break;
                     case EdgeKind.PlatformDrop:
                         steps.Add(new PlanStep(StepKind.PlatformDrop, edge.LandX, to.Y, edge.LaunchX));
                         break;
@@ -3052,6 +3230,23 @@ namespace tsorcRevamp.NPCs
                     return ExecJump(nav, npc, step, topSpeed, acceleration, jumpCeil, boostCeil, grounded, feetY, out action, out reason);
                 case StepKind.Drop:
                     return ExecDrop(nav, npc, step, topSpeed, acceleration, grounded, out action, out reason);
+                case StepKind.ControlledDrop:
+                    action = "drop-commit-wait";
+                    reason = $"landing=({step.TargetX},{step.TargetY})";
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        globalNPC.NavigationDropLaunch = new Vector2(step.LaunchX * TileF + 8f, npc.Bottom.Y);
+                        globalNPC.NavigationDropTarget = new Vector2(step.TargetX * TileF + 8f, (step.TargetY + 1) * TileF);
+                        globalNPC.NavigationDropTicks = 180 + (int)Math.Ceiling(
+                            (globalNPC.NavigationDropTarget.Y - npc.Bottom.Y) / 4f);
+                        globalNPC.NavigationDropActive = true;
+                        if (IsPlatformTile(step.LaunchX, feetY + 1))
+                            ExecPlatformDrop(nav, npc, step, topSpeed, acceleration, grounded, out action, out reason);
+                        globalNPC.RequestNetworkSnapshot();
+                        RunControlledDrop(nav, npc, globalNPC, topSpeed, acceleration, grounded);
+                    }
+                    else BrakeToStop(npc);
+                    return true;
                 case StepKind.PlatformDrop:
                     return ExecPlatformDrop(nav, npc, step, topSpeed, acceleration, grounded, out action, out reason);
                 case StepKind.RopeClimb:
@@ -4569,6 +4764,110 @@ namespace tsorcRevamp.NPCs
             return true;
         }
 
+        private static bool SafeDropBody(NPC npc, Vector2 position)
+        {
+            if (Collision.SolidCollision(position, npc.width, npc.height)) return false;
+            int left = (int)(position.X / TileF), right = (int)((position.X + npc.width - 1f) / TileF);
+            int top = (int)(position.Y / TileF), bottom = (int)((position.Y + npc.height - 1f) / TileF);
+            for (int x = left; x <= right; x++)
+                for (int y = top; y <= bottom; y++)
+                {
+                    if (!WorldGen.InWorld(x, y, 1)) return false;
+                    Tile tile = Main.tile[x, y];
+                    if (!npc.lavaImmune && tile.LiquidAmount > 0 && tile.LiquidType == LiquidID.Lava) return false;
+                }
+            return true;
+        }
+
+        private static bool DropBodyClear(NPC npc, float centerX, int fromFeetY, int toFeetY, bool rejectPlatforms = false)
+        {
+            for (int y = fromFeetY; y <= toFeetY; y++)
+            {
+                if (!SafeDropBody(npc, new Vector2(centerX - npc.width * 0.5f, (y + 1) * TileF - npc.height)))
+                    return false;
+                if (rejectPlatforms && y > fromFeetY + 1)
+                    for (int x = (int)((centerX - npc.width * 0.5f) / TileF);
+                        x <= (int)((centerX + npc.width * 0.5f - 1f) / TileF); x++)
+                        if (IsPlatformTile(x, y)) return false;
+            }
+            return true;
+        }
+
+        private static float DropSteeringVelocity(float vx, float centerX, float targetX, float speed)
+            => MathHelper.Lerp(vx, MathHelper.Clamp((targetX - centerX) * 0.2f, -speed, speed), 0.25f);
+
+        private static bool ValidateControlledFall(NPC npc, int launchX, int fromFeetY,
+            int landX, int landFeetY, float speed)
+        {
+            float landingFloor = (landFeetY + 1) * TileF;
+            Vector2 position = new Vector2(launchX * TileF + 8f - npc.width * 0.5f,
+                (fromFeetY + 1) * TileF - npc.height);
+            if (!SafeDropBody(npc, position)) return false;
+            Vector2 velocity = Vector2.Zero;
+            float gravity = npc.gravity > 0f ? npc.gravity : 0.3f;
+            // The iteration budget scales with the actual height, not a fixed drop-height cap.
+            int frames = 90 + (int)Math.Ceiling((landingFloor - position.Y - npc.height) / 4f);
+            for (int frame = 0; frame < frames; frame++)
+            {
+                velocity.X = DropSteeringVelocity(velocity.X, position.X + npc.width * 0.5f, landX * TileF + 8f, speed);
+                velocity.Y = Math.Min(npc.maxFallSpeed, velocity.Y + gravity);
+                Vector2 allowed = Collision.TileCollision(position, velocity, npc.width, npc.height);
+                if (Math.Abs(allowed.X - velocity.X) > 0.01f) return false;
+                Vector2 next = position + allowed;
+                if (!SafeDropBody(npc, next)) return false;
+                if (allowed.Y < velocity.Y - 0.01f)
+                {
+                    // An earlier platform/shelf is an obstruction to this particular landing.
+                    return Math.Abs(next.Y + npc.height - landingFloor) <= 2f
+                        && Math.Abs(next.X + npc.width * 0.5f - (landX * TileF + 8f)) <= 8f;
+                }
+                position = next;
+                if (position.Y + npc.height > landingFloor + 2f) return false;
+            }
+            return false;
+        }
+
+        private static void RunControlledDrop(NavState nav, NPC npc, tsorcRevampGlobalNPC globalNPC,
+            float topSpeed, float acceleration, bool grounded)
+        {
+            bool descended = npc.Bottom.Y > globalNPC.NavigationDropLaunch.Y + 4f;
+            bool finished = grounded && descended;
+            bool expired = --globalNPC.NavigationDropTicks <= 0;
+            if (finished || expired)
+            {
+                BrakeToStop(npc);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    if (expired || Math.Abs(npc.Bottom.Y - globalNPC.NavigationDropTarget.Y) > TileF * 2)
+                        nav.BadEdgeTargets[((int)(globalNPC.NavigationDropTarget.X / TileF),
+                            (int)(globalNPC.NavigationDropTarget.Y / TileF) - 1)] = (int)Main.GameUpdateCount + 480;
+                    globalNPC.NavigationDropActive = false;
+                    nav.Plan = null;
+                    nav.PlanIndex = 0;
+                    nav.ReplanCooldown = 0;
+                    globalNPC.RequestNetworkSnapshot();
+                }
+                nav.LastAction = "controlled-drop-landed";
+                nav.LastReason = expired ? "timeout" : "replan-from-landing";
+                return;
+            }
+            // Walk clear of the lip first, then brake/drift to the shelf. Tile collision stays
+            // enabled except the existing, vertical-only platform pass (managed before this call).
+            if (nav.PlatformPassActive) npc.velocity.X = 0f;
+            else if (grounded || !descended)
+            {
+                int direction = globalNPC.NavigationDropLaunch.X >= npc.Center.X ? 1 : -1;
+                ApplyChase(npc, direction, topSpeed, acceleration);
+                npc.direction = direction;
+                npc.spriteDirection = direction;
+            }
+            else
+                npc.velocity.X = DropSteeringVelocity(npc.velocity.X, npc.Center.X,
+                    globalNPC.NavigationDropTarget.X, topSpeed);
+            nav.LastAction = "controlled-drop";
+            nav.LastReason = $"landing=({globalNPC.NavigationDropTarget.X / TileF:F1},{globalNPC.NavigationDropTarget.Y / TileF:F1})";
+        }
+
         private static bool HasDropClearance(int x, int fromY, int toY)
         {
             for (int y = fromY; y <= toY; y++)
@@ -4704,7 +5003,11 @@ namespace tsorcRevamp.NPCs
                     + $" mut={globalNPC.FsmMutationBy} mutAge={mutAge}"
                     + $" gate=msw{_minSurfaceWidth}/mss{_maxSurfaceStep}/ch{_clearanceHeight}"
                     + $" unreach={globalNPC.UnreachableFrames} beast={globalNPC.BeastStale}/{globalNPC.BeastUnreachableFrames}"
-                    + $" tpApp={globalNPC.TeleportAppearanceTimer} stag={globalNPC.StaggerTimer}";
+                    + $" tpApp={globalNPC.TeleportAppearanceTimer} stag={globalNPC.StaggerTimer}"
+                    + (globalNPC.PatrolUsesNavigation
+                        ? $" patrolGoal={(globalNPC.PatrolDestinationActive ? $"{globalNPC.PatrolDestination.X / TileF:F1},{globalNPC.PatrolDestination.Y / TileF:F1}" : "watch")}" : "")
+                    + (globalNPC.NavigationDropActive
+                        ? $" dropGoal=({globalNPC.NavigationDropTarget.X / TileF:F1},{globalNPC.NavigationDropTarget.Y / TileF:F1})" : "");
             }
             catch (Exception e)
             {
@@ -4876,6 +5179,7 @@ namespace tsorcRevamp.NPCs
         {
             public string LastAction = "";
             public string LastReason = "";
+            public int PatrolRouteRetry;
             public string LastTelemetryPlan = "none";
             public List<PlanStep> Plan;
             public int PlanIndex;
@@ -4997,7 +5301,7 @@ namespace tsorcRevamp.NPCs
             public bool IsCommitted => CommitFrames > 0;
         }
 
-        private enum StepKind { Walk, JumpUp, JumpGap, Drop, PlatformDrop, RopeClimb }
+        private enum StepKind { Walk, JumpUp, JumpGap, Drop, PlatformDrop, RopeClimb, ControlledDrop }
         private struct PlanStep
         {
             public StepKind Kind;
@@ -5005,7 +5309,7 @@ namespace tsorcRevamp.NPCs
             public PlanStep(StepKind kind, int targetX, int targetY, int launchX) { Kind = kind; TargetX = targetX; TargetY = targetY; LaunchX = launchX; }
         }
 
-        private enum EdgeKind { Walk, JumpUp, JumpGap, Drop, PlatformDrop, RopeClimb }
+        private enum EdgeKind { Walk, JumpUp, JumpGap, Drop, PlatformDrop, RopeClimb, ControlledDrop }
         private class Edge
         {
             public Span To;

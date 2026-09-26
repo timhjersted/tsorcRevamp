@@ -1493,6 +1493,15 @@ namespace tsorcRevamp.NPCs
         public PatrolAnchorSource PatrolAnchorSource = PatrolAnchorSource.SpawnPoint;
         // Leash radius (tiles) for Pace/Wander around PatrolAnchor.
         public int PatrolRange = 30;
+        // Opt-in SF4 patrol: server chooses reachable destinations, clients follow the selected waypoint.
+        public bool PatrolUsesNavigation = false;
+        public bool PatrolDestinationActive;
+        public Vector2 PatrolDestination;
+        // Validated ledge descent. Kept outside SF4's local plan so it survives long falls and packets.
+        public bool NavigationDropActive;
+        public Vector2 NavigationDropLaunch;
+        public Vector2 NavigationDropTarget;
+        public int NavigationDropTicks;
         // Opt-in for animals that should use the patrol mover but still clear ordinary terrain.
         // Most passive NPCs retain the conservative walk-only patrol behaviour.
         public bool PatrolCanTerrainJump = false;
@@ -2328,6 +2337,15 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write(DisengageTimer);
             binaryWriter.Write(PursuitFallBehindTimer);
             binaryWriter.WriteVector2(LastKnownPlayerPos);
+            binaryWriter.Write(PatrolDestinationActive);
+            if (PatrolDestinationActive) binaryWriter.WriteVector2(PatrolDestination);
+            binaryWriter.Write(NavigationDropActive);
+            if (NavigationDropActive)
+            {
+                binaryWriter.WriteVector2(NavigationDropLaunch);
+                binaryWriter.WriteVector2(NavigationDropTarget);
+                binaryWriter.Write(NavigationDropTicks);
+            }
             binaryWriter.Write(FleeOriginX);
             binaryWriter.Write(FleeDirection);
             binaryWriter.Write(FleeElapsedFrames);
@@ -2439,6 +2457,16 @@ namespace tsorcRevamp.NPCs
             DisengageTimer = binaryReader.ReadInt32();
             PursuitFallBehindTimer = binaryReader.ReadInt32();
             LastKnownPlayerPos = binaryReader.ReadVector2();
+            PatrolDestinationActive = binaryReader.ReadBoolean();
+            PatrolDestination = PatrolDestinationActive ? binaryReader.ReadVector2() : Vector2.Zero;
+            NavigationDropActive = binaryReader.ReadBoolean();
+            if (NavigationDropActive)
+            {
+                NavigationDropLaunch = binaryReader.ReadVector2();
+                NavigationDropTarget = binaryReader.ReadVector2();
+                NavigationDropTicks = binaryReader.ReadInt32();
+            }
+            else NavigationDropTicks = 0;
             FleeOriginX = binaryReader.ReadSingle();
             FleeDirection = binaryReader.ReadInt32();
             FleeElapsedFrames = binaryReader.ReadInt32();

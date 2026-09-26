@@ -554,7 +554,9 @@ namespace tsorcRevamp.NPCs
                 // Progress = closing distance toward the target since last frame (tier-0 has no path to
                 // count as an in-progress "real move"; the anti-stuck detector below handles the
                 // visible-but-walled case where LOS would otherwise keep resetting the give-up clock).
-                bool fsmProgress = globalNPC.LastPursuitDist <= 0f || fsmDist < globalNPC.LastPursuitDist - 0.5f;
+                bool fsmProgress = globalNPC.LastPursuitDist <= 0f || fsmDist < globalNPC.LastPursuitDist - 0.5f
+                    || globalNPC.NavigationDropActive
+                    || (globalNPC.PursuitState == PursuitState.Pursue && SmartFighter4AI.HasActiveMovementPlan(npc));
                 globalNPC.LastPursuitDist = fsmDist;
 
                 // Large-beast stale-wander overlay: a giant that can't reach the player (BeastUnreachableFrames,
@@ -673,7 +675,8 @@ namespace tsorcRevamp.NPCs
 
                 if (fsmState == PursuitState.Patrol)
                 {
-                    if (globalNPC.NavSearchRadius > 0)
+                    if (globalNPC.NavSearchRadius > 0 && !globalNPC.PatrolUsesNavigation
+                        && !globalNPC.NavigationDropActive)
                     {
                         SmartFighter4AI.ReleaseRopeTraversal(npc);
                     }
@@ -724,7 +727,12 @@ namespace tsorcRevamp.NPCs
                         }
                         else
                         {
-                            NavBehavior.RunPatrol(npc, globalNPC, topSpeed, acceleration);
+                            if (globalNPC.PatrolUsesNavigation && globalNPC.NavSearchRadius > 0)
+                            {
+                                SmartFighter4AI.Run(npc, topSpeed, acceleration, doorBreakingDamage,
+                                    FighterAggroRange, movementOnly: true, brakingPower: brakingPower);
+                            }
+                            else NavBehavior.RunPatrol(npc, globalNPC, topSpeed, acceleration);
                             if (!npc.noTileCollide && !npc.noGravity)
                             {
                                 AutoStepUp(npc);
@@ -1690,6 +1698,23 @@ namespace tsorcRevamp.NPCs
             if (globalNPC.CurrentAttack.needsLineOfSight && !Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
             {
                 actuallyFire = false;
+                // Cover wins even after commitment. Clear the tell instead of parking a nearly completed
+                // shot behind a wall; reacquisition must play the entire tell again. Server owns cancellation.
+                if (globalNPC.ProjectileTimer > currentAuthoredNeutralTicks)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        globalNPC.ProjectileTimer = 0f;
+                        globalNPC.AttackTelegraphing = false;
+                        globalNPC.AttackCommitted = false;
+                        globalNPC.LockedShotTargetPosition = Vector2.Zero;
+                        globalNPC.StandingFireThisAttack = false;
+                        globalNPC.FighterRangedStandShotsRemaining = 0;
+                        globalNPC.ResetCombatTempoSequence(clearRecovery: true);
+                        globalNPC.RequestNetworkSnapshot();
+                    }
+                    return false;
+                }
             }
 
             //If the color was not set, use white
@@ -1794,7 +1819,9 @@ namespace tsorcRevamp.NPCs
             if (globalNPC.ProjectileTimer >= globalNPC.CurrentAttack.timerCap)
             {
                 ProjectileData completedAttack = globalNPC.CurrentAttack;
-                bool shotAllowed = completedAttack.fireCondition == null || completedAttack.fireCondition(npc);
+                bool shotAllowed = (!completedAttack.needsLineOfSight
+                    || Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
+                    && (completedAttack.fireCondition == null || completedAttack.fireCondition(npc));
                 globalNPC.ProjectileTimer = 0;
                 if (shotAllowed && Main.netMode != NetmodeID.MultiplayerClient)
                 {

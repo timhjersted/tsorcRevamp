@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             Main.npcFrameCount[NPC.type] = 15;
             // "Venom Bolt" — long-range aimed arrow (green telegraph)
             int venomBoltType = ModContent.ProjectileType<ArcherBolt>();
-            UsefulFunctions.AddAttack(NPC, 180, venomBoltType, 9, 8, SoundID.Item63, telegraphColor: Color.GreenYellow);
+            UsefulFunctions.AddAttack(NPC, 180, venomBoltType, 9, 8, SoundID.Item63, telegraphColor: Color.GreenYellow, needsLineOfSight: true);
 
             // No teleport: the sniper repositions on foot only. It keeps its distance through the evasive
             // profile below (retreat-and-shoot + quick-step), and where SF4 would have blinked to recover an
@@ -48,6 +48,11 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             sniperGlobalNPC.CanTeleport = false;
             sniperGlobalNPC.PrefersHighGround = true;
             sniperGlobalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
+            sniperGlobalNPC.PatrolUsesNavigation = true;
+            sniperGlobalNPC.PatrolAnchorSource = PatrolAnchorSource.GiveUpLocation;
+            sniperGlobalNPC.PatrolRange = 24;
+            sniperGlobalNPC.PatrolWanderMinTiles = 8;
+            sniperGlobalNPC.PatrolWanderMaxTiles = 16;
             EvasiveProfile.DworcSniper(sniperGlobalNPC); // kite when meleed, quick-step through incoming fire
             CombatTempoProfile.Standard(sniperGlobalNPC, venomBoltType);
 

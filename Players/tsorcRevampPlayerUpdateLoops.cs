@@ -2527,6 +2527,8 @@ namespace tsorcRevamp
 
             return LangUtils.GetTextValue("DeathText.Tip") + text;
         }
+        public const int WingSafeFallDistanceBonus = 20;
+
         public static bool HasFunctionalWings(Player player)
         {
             if (player == null) return false;
@@ -2608,11 +2610,11 @@ namespace tsorcRevamp
             bool gravityDirectionChanged = lastWingFallGravityDirection != Player.gravDir;
             lastWingFallGravityDirection = Player.gravDir;
 
-            // Winged players can fall 15 additional tiles before the intentional wing fall-damage
+            // Winged players can fall 20 additional tiles before the intentional wing fall-damage
             // penalty begins. This stacks with vanilla accessory bonuses such as Frog Leg.
             if (HasFunctionalWings(Player))
             {
-                Player.extraFall += 15;
+                Player.extraFall += WingSafeFallDistanceBonus;
 
                 // The wing penalty must measure only the current unsoftened descent. Vanilla wings
                 // never needed this because they always negated fall damage, but after gliding,

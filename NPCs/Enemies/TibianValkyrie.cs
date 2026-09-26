@@ -77,6 +77,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 meleeProfile.LongHop.ComboMove);
             globalNPC.MaxJumpPower   = 9f;
             globalNPC.NavSearchRadius = 80;  
+            globalNPC.PatrolUsesNavigation = true;
+            globalNPC.PatrolAnchorSource = PatrolAnchorSource.GiveUpLocation;
+            globalNPC.PatrolRange = 24;
+            globalNPC.PatrolWanderMinTiles = 8;
+            globalNPC.PatrolWanderMaxTiles = 16;
             globalNPC.CanUseRopes = true;
             globalNPC.MaxJumpBoost   = 5f;
             globalNPC.CanTeleport = false;

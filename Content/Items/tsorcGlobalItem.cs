@@ -247,6 +247,16 @@ namespace tsorcRevamp.Content.Items
                 }
             }
 
+            if (item.wingSlot > 0 || item.type == ModContent.ItemType<SupersonicWings>() || item.type == ModContent.ItemType<SupersonicWings2>())
+            {
+                // Replace standalone immunity claims with the shared rule in the current language.
+                string vanillaFallImmunity = Lang.GetTooltip(ItemID.LuckyHorseshoe).GetLine(0);
+                string modFallImmunity = Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.NoFallDmg");
+                tooltips.RemoveAll(line => line.Text == vanillaFallImmunity || line.Text == modFallImmunity);
+                tooltips.Add(new TooltipLine(Mod, "WingFallProtection",
+                    Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingFallProtection", tsorcRevampPlayer.WingSafeFallDistanceBonus)));
+            }
+
             if (hasSoulRecipe.Contains(item.type))
             {
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoulItem>()}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.RecipeTooltip")));

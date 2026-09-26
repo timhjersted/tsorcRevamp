@@ -248,6 +248,7 @@ namespace tsorcRevamp.NPCs
             // immediately, and ReturnToSpawn should start walking back to its anchor immediately.
             globalNPC.PatrolIdleTimer = globalNPC.PatrolMode == PatrolMode.Idle ? IdleStandTicks : 0;
             globalNPC.PatrolElapsed = 0;
+            globalNPC.PatrolDestinationActive = false;
             // Giving up the chase resets direction and both patrol timers at once — push the whole lot rather than
             // letting clients discover it field by field on the next throttled update.
             globalNPC.RequestNetworkSnapshot();
