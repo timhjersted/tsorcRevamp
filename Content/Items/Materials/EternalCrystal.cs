@@ -77,29 +77,29 @@ namespace tsorcRevamp.Content.Items.Materials
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CrystalShard, 60);
+            recipe.AddIngredient(ItemID.CrystalShard, 50);
             recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ItemID.LifeCrystal, 14);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 500);
+            recipe2.AddIngredient(ItemID.LifeCrystal, 9);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 500);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();
 
             Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ItemID.LifeFruit, 7);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 500);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 500);
             recipe3.AddTile(TileID.DemonAltar);
 
             recipe3.Register();
 
             Recipe recipe4 = CreateRecipe();
-            recipe4.AddIngredient(ItemID.ManaCrystal, 40);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 500);
+            recipe4.AddIngredient(ItemID.ManaCrystal, 30);
+            recipe4.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 500);
             recipe4.AddTile(TileID.DemonAltar);
 
             recipe4.Register();
