@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Projectiles.Enemy.ClericOfSorrow;
 using tsorcRevamp.Content.Projectiles.Enemy.IceGigas;
 using tsorcRevamp.Content.Projectiles.VFX;
@@ -714,7 +715,7 @@ namespace tsorcRevamp.NPCs.Puppets
             npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.SoulofNight, 2));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 7));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShardItem>(), 7));
         }
         #endregion
     }

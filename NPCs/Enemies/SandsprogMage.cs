@@ -6,6 +6,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Projectiles.Ranged;
 using static tsorcRevamp.SpawnHelper;
 
@@ -244,7 +245,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StarlightShard>(), 4, 1));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StarlightShardItem>(), 4, 1));
         }
         public override void OnKill()
         {

@@ -6,6 +6,8 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.RadiantLifegem;
+using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.Dworc
@@ -83,8 +85,8 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 3, 3, 6));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 4));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 3));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 8));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegemItem>(), 3));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShardItem>(), 8));
             npcLoot.Add(ItemDropRule.Common(ItemID.SoulofLight, 2, 1, 2));
         }
 

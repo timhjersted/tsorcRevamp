@@ -1,21 +1,22 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Content.Items.Potions;
-using tsorcRevamp.Utilities;
+using tsorcRevamp.Content.Items.Potions.RadiantLifegem;
+using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Projectiles.Enemy.Attraidies;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -839,8 +840,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AquamarineRing>(), 20));
             npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 10, 2, 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<HealingElixir>()));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 2));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 6));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegemItem>(), 2));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShardItem>(), 6));
         }
 
     }

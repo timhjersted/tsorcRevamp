@@ -11,6 +11,8 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Armor.Magic;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
+using tsorcRevamp.Content.Items.Potions.RadiantLifegem;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
@@ -869,8 +871,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 10));
             //npcLoot.Add(ItemDropRule.Common(ItemID.CobaltShield, 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<IronShield>(), 15));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Lifegem>(), 15));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RadiantLifegem>(), 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LifegemItem>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RadiantLifegemItem>(), 30));
 
             int[] armorIDs = new int[] {
                 ModContent.ItemType<RedClothHat>(),

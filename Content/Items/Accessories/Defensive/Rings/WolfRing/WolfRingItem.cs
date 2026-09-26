@@ -5,15 +5,12 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
+namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings.WolfRing
 {
-    public class WolfRing : ModItem
+    public class WolfRingItem : ModItem
     {
         public static int AbyssDef = 12;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AbyssDef);
-        public override void SetStaticDefaults()
-        {
-        }
 
         public override void SetDefaults()
         {
@@ -28,11 +25,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().WolfRing = true;
-            player.buffImmune[BuffID.Frozen] = true;
-            player.buffImmune[BuffID.Blackout] = true;
-            player.buffImmune[BuffID.Obstructed] = true;
-            player.buffImmune[BuffID.Venom] = true;
+            player.GetModPlayer<WolfRingPlayer>().Equipped = true;
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)

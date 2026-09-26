@@ -1516,7 +1516,7 @@ Mods: {
 					'''
 			}
 
-			CovenantOfArtorias: {
+			CovenantOfArtoriasItem: {
 				DisplayName: Covenant of Artorias
 				Tooltip:
 					'''
@@ -1632,7 +1632,7 @@ Mods: {
 				Tooltip: Reduces damage from undead by {0}
 			}
 
-			WolfRing: {
+			WolfRingItem: {
 				DisplayName: Wolf Ring
 				Tooltip:
 					'''
@@ -5253,7 +5253,7 @@ Mods: {
 					'''
 			}
 
-			Lifegem: {
+			LifegemItem: {
 				DisplayName: Lifegem
 				Tooltip:
 					'''
@@ -5266,7 +5266,7 @@ Mods: {
 				Sickness: Inflicts potion sickness({$CommonItemTooltip.SecondDuration})
 			}
 
-			StarlightShard: {
+			StarlightShardItem: {
 				DisplayName: Starlight Shard
 				Tooltip:
 					'''
@@ -5640,7 +5640,7 @@ Mods: {
 				BuffName: Wrath
 			}
 
-			RadiantLifegem: {
+			RadiantLifegemItem: {
 				DisplayName: Radiant Lifegem
 				Tooltip:
 					'''

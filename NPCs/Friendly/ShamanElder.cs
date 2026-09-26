@@ -9,6 +9,7 @@ using Terraria.Utilities;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Defensive.CovenantOfArtorias;
 using tsorcRevamp.Content.Items.Accessories.Other;
 using tsorcRevamp.Content.Items.Armor.Summon;
 using tsorcRevamp.Content.Items.BossItems;
@@ -290,7 +291,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedPlantera);
 
-            shop.Add(new Item(ModContent.ItemType<CovenantOfArtorias>())
+            shop.Add(new Item(ModContent.ItemType<CovenantOfArtoriasItem>())
             {
                 shopCustomPrice = 4000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId

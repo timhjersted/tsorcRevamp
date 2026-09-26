@@ -4,6 +4,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using static tsorcRevamp.oSpawnHelper;
 using static tsorcRevamp.SpawnHelper;
@@ -130,7 +131,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DunlendingAxe>(), 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoostPotion>(), 10));
             npcLoot.Add(new CommonDrop(ItemID.ShinePotion, 25, 1, 1, 3));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 5, 1, 1));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<LifegemItem>(), 5, 1, 1));
             npcLoot.Add(ItemDropRule.Common(ItemID.Torch, 50, 20, 35));
             npcLoot.Add(ItemDropRule.Common(ItemID.HealingPotion, 55));
         }

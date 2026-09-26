@@ -2,7 +2,7 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs
+namespace tsorcRevamp.Content.Items.Potions.Lifegem
 {
     public class LifegemHealing : ModBuff
     {
@@ -14,7 +14,7 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().LifegemHealing = true;
+            player.GetModPlayer<LifegemPlayer>().Healing = true;
 
             if (Main.rand.NextBool(4))
             {

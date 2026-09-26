@@ -1483,16 +1483,14 @@ Mods: {
 					'''
 			}
 
-			CovenantOfArtorias: {
-				DisplayName: Ковенант Арториаса
-				Tooltip:
+			CovenantOfArtoriasItem: {
+				// DisplayName: Covenant of Artorias
+				/* Tooltip:
 					'''
-					[c/ffbf00:Если надеть кольцо, вы сможете безопасно спуститься в Бездну. Снимите кольцо, чтобы выбраться из Бездны!]
-					[c/ffbf00:Бездна пронизывает весь мир, как зеркало нашего собственного, но опасных врагов в этом царстве гораздо больше.]
-					[c/00ffd4:Дает иммунитет к особым опасностям, исходящим от Бездны и усиленных ею врагов, таких как Покалеченные, Отравленные, Горящие и Смазанные маслом]
-					Также даёт защиту от лавы, отбрасывания, чёрного пламени и огненных блоков, но увеличивает частоту появления врагов.
-					{$CommonItemTooltip.DRStat}
-					'''
+					{$CommonItemTooltip.VanityFunction}
+					[c/ffbf00:Allows you to safely enter The Abyss when worn. Remove the ring to escape from The Abyss!]
+					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
+					''' */
 			}
 
 			DarkCloak: {
@@ -1601,18 +1599,18 @@ Mods: {
 				Tooltip: Уменьшает урон от нежити на {0}
 			}
 
-			WolfRing: {
-				DisplayName: Кольцо Волка
-				Tooltip:
+			WolfRingItem: {
+				// DisplayName: Wolf Ring
+				/* Tooltip:
 					'''
-					Одно из особых колец, дарованных четырём рыцарям Гвина.
-					Нажмите назначенную кнопку, чтобы временно усилить регенерацию здоровья и увеличить получаемый урон
-					При попадании в цель во время действия эффекта вы восстанавливаете здоровье, этот эффект имеет длительную перезарядку
-					Даёт иммунитет к черноте, затемнению, заморозке и кислотному яду
-					{$CommonItemTooltip.IncreasesDefenseBy} в бездне
-					'''
-				Keybind1: "Нажмите "
-				Keybind2: " для значительного увеличения регенерации жизни и временного уменьшения получаемого урона"
+					One of the special rings granted to the four knights of Gwyn.
+					Press Wolf Ring to massively increase life regen and damage taken temporarily
+					Removes the life regen if hit during the effect and puts it on a long cooldown
+					Immunity to Blackout, Obstructed, Freezing and Acid Venom
+					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
+					''' */
+				// Keybind1: "Press "
+				// Keybind2: " to massively increase life regen and damage taken temporarily"
 			}
 
 			ZirconRingItem: {
@@ -5214,28 +5212,28 @@ Mods: {
 					'''
 			}
 
-			Lifegem: {
-				DisplayName: Камень жизни
-				Tooltip:
+			LifegemItem: {
+				// DisplayName: Lifegem
+				/* Tooltip:
 					'''
-					Небольшой камень, состоящий из кристаллизованных душ
-					Постепенно восстанавливает небольшое количество здоровья
-					Часто встречается возле брошенных трупов,
-					как будто это то, что осталось от души
+					Small stone made up of crystallized souls
+					Gradually restores a small amount of HP
+					Often found near abandoned corpses,
+					as if it were what remains of the soul
 					{$CommonItemTooltip.RestoresLife}({$CommonItemTooltip.SecondDuration@1})
-					'''
-				Sickness: даёт зельевую болезнь({$CommonItemTooltip.SecondDuration})
+					''' */
+				// Sickness: Inflicts potion sickness({$CommonItemTooltip.SecondDuration})
 			}
 
-			StarlightShard: {
-				DisplayName: Осколок звёздного света
-				Tooltip:
+			StarlightShardItem: {
+				// DisplayName: Starlight Shard
+				/* Tooltip:
 					'''
-					Увеличивает количество дополнительной регенерации маны и штрафов за задержку восстановления маны,
-					как и Лазурная колба
-					Не вызывает мановой болезни
-					'''
-				Restoration: Восстанавливает {0}% от максимального количества маны в секунду в течение {1} секунд
+					Scales with bonus mana regen and mana regen delay penalties,
+					alike to the Cerulean Flask
+					Does not inflict Mana Sickness
+					''' */
+				// Restoration: Restores {0}% of maximum mana per second for {1} seconds
 			}
 
 			MushroomSkewer: {
@@ -5601,17 +5599,17 @@ Mods: {
 				BuffName: Гнев
 			}
 
-			RadiantLifegem: {
-				DisplayName: Сияющий камень жизни
-				Tooltip:
+			RadiantLifegemItem: {
+				// DisplayName: Radiant Lifegem
+				/* Tooltip:
 					'''
-					Камень, состоящий из кристаллизованных душ.
-					Постепенно восстанавливает здоровье.
-					Со временем тусклое мерцание этих таинственных
-					камней становится ярче
+					Stone made up of crystallized souls
+					Gradually restores HP
+					The dull glimmer of these mysterious
+					stones brightens with the passage of time
 					{$CommonItemTooltip.RestoresLife}({$CommonItemTooltip.SecondDuration@1})
-					'''
-				Sickness: Даёт зельевую болезнь({$CommonItemTooltip.SecondDuration})
+					''' */
+				// Sickness: Inflicts potion sickness({$CommonItemTooltip.SecondDuration})
 			}
 
 			ShockwavePotion: {
@@ -9115,8 +9113,8 @@ Mods: {
 			}
 
 			RubyCrystalItem: {
-				// DisplayName: Ruby Crystal Item
-				// Tooltip: ""
+				// DisplayName: Ruby Crystal
+				// Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeBy}"
 			}
 		}
 

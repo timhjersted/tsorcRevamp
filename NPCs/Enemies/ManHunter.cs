@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -88,7 +89,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new CommonDrop(ItemID.HealingPotion, 100, 1, 1, 2));
             npcLoot.Add(ItemDropRule.Common(ItemID.UnholyArrow, 4, 10, 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 2, 1, 2));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 8));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<LifegemItem>(), 8));
         }
 
 

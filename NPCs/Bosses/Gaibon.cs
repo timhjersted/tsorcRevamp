@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Projectiles.Enemy;
@@ -585,7 +586,7 @@ namespace tsorcRevamp.NPCs.Bosses
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<DarkTrident>()));
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GaibonDropCondition(), ModContent.ItemType<SunsetQuasar>()));
             npcLoot.Add(notExpertCondition);
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShardItem>()));
         }
 
         #region gore

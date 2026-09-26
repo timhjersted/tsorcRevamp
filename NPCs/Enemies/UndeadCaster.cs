@@ -8,6 +8,8 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Armor.Magic;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
+using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using static tsorcRevamp.SpawnHelper;
@@ -108,8 +110,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 1, 1, 3));
             npcLoot.Add(ItemDropRule.Common(ItemID.HealingPotion, 12, 2, 2));
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 8));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 4));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 10));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<LifegemItem>(), 4));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShardItem>(), 10));
             int[] armorIDs = new int[] {
                 ModContent.ItemType<RedClothHat>(),
                 ModContent.ItemType<RedClothTunic>(),

@@ -12,6 +12,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
@@ -2611,7 +2612,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
         {
             if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
             {
-                potionType = ModContent.ItemType<Lifegem>();
+                potionType = ModContent.ItemType<LifegemItem>();
             }
             else { potionType = ItemID.HealingPotion; }
         }

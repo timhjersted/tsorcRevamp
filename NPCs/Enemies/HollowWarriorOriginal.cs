@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
@@ -865,7 +866,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 2, 4));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 30));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Lifegem>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LifegemItem>(), 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 15));
 
         }

@@ -6,9 +6,9 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive.RubyCrystal
 {
-    public class RubyCrystalItem : ModItem //texture incoming
+    public class RubyCrystalItem : ModItem 
     {
-        public override string Texture => UsefulFunctions.VanillaTextureFilepath(ItemID.LifeCrystal);
+        public override string Texture => UsefulFunctions.VanillaTextureFilepath(ItemID.LifeCrystal);//texture incoming
         public const int MaxLifeIncrease = 40;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxLifeIncrease);
 

@@ -21,6 +21,7 @@ using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.WolfRing;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.ZirconRing;
 using tsorcRevamp.Content.Items.Accessories.Defensive.RubyCrystal;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
@@ -30,6 +31,8 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
+using tsorcRevamp.Content.Items.Potions.RadiantLifegem;
 using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
@@ -89,7 +92,6 @@ namespace tsorcRevamp
 
         public bool Celestriad = false;
         public bool UndeadTalisman = false;
-        public bool WolfRing = false;
         public bool BarrierRing;
 
         public bool DragoonBoots = false;
@@ -405,11 +407,6 @@ namespace tsorcRevamp
             if (Unkindled) return (int)(baseAmount * UnkindledHealMultiplier);
             return baseAmount;
         }
-        public bool LifegemHealing;
-        public bool RadiantLifegemHealing;
-        public bool StarlightShardRestoration;
-        int healingTimer = 0;
-        float restorationTimer = 0;
 
         public Item[] PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];
         public int potionBagCountdown = 0; //You can't move items around if an item is still 'in use'. This lets us delay opening the bag until that finishes.
@@ -494,7 +491,6 @@ namespace tsorcRevamp
         // Not reset in ResetEffects - persists across ticks so AbyssTransitionEffects() (PostUpdateMiscEffects)
         // can detect the enter/exit edge instead of re-triggering every tick EnterTheAbyss happens to be true.
         public bool WasInAbyss;
-        public bool CovenantOfArtoriasEquipped;
         public bool SlowfallWingActive;
         public bool Suppressed;
         public bool Tired;
@@ -516,7 +512,6 @@ namespace tsorcRevamp
 
             EnterTheAbyss = false;
             SwallowHidden = false;
-            CovenantOfArtoriasEquipped = false;
             SlowfallWingActive = false;
             Suppressed = false;
             Tired = false;
@@ -548,7 +543,6 @@ namespace tsorcRevamp
 
             ChloranthyRing1 = false;
             ChloranthyRing2 = false;
-            WolfRing = false;
             BarrierRing = false;
 
             HerculesBeetle = false;
@@ -682,9 +676,6 @@ namespace tsorcRevamp
             TitanSizeScaling = 1f;
 
             PhazonCorruption = false;
-            LifegemHealing = false;
-            RadiantLifegemHealing = false;
-            StarlightShardRestoration = false;
 
             PowerWithin = false;
             BurningAura = false;
@@ -1463,15 +1454,7 @@ namespace tsorcRevamp
                 }
             }
 
-            if (WolfRing && EnterTheAbyss)
-            {
-                Player.statDefense += Content.Items.Accessories.Defensive.Rings.WolfRing.AbyssDef;
-            }
 
-            if (CovenantOfArtoriasEquipped && Player.HasBuff(ModContent.BuffType<Abyss>()))
-            {
-                UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<Abyss>(), -99999999);
-            }
 
             // Tier-aware mana regen penalty.
             // Both Unkindled and BotC magic players are expected to lean on the Cerulean Flask. The pin/penalty
@@ -1519,66 +1502,6 @@ namespace tsorcRevamp
             else
             {
                 unkindledManaDelayTimer = 0;
-            }
-
-            // Lifegem / RadiantLifegem / StarlightShard heal & mana-restoration ticks.
-            // These were originally inside the BotC-gated PostUpdateEquips block, which meant Unkindled
-            // players could apply the buffs but never receive HP/mana from them. Gated on SoulsMode so
-            // both Unkindled and Bearer of the Curse get the actual healing/restoration.
-            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
-            {
-                #region Lifegem Healing and Starlight Shard Restoration
-
-
-                if (LifegemHealing)
-                {
-                    healingTimer++;
-
-                    if (healingTimer == Lifegem.HealingDivisor)
-                    {
-                        Player.statLife += 1;
-                        healingTimer = 0;
-                    }
-                }
-
-                if (RadiantLifegemHealing)
-                {
-                    healingTimer++;
-
-                    if (healingTimer == RadiantLifegem.HealingDivisor)
-                    {
-                        Player.statLife += 1;
-                        healingTimer = 0;
-                    }
-                }
-
-                if (!RadiantLifegemHealing && !LifegemHealing)
-                {
-                    healingTimer = 0;
-                }
-
-                if (StarlightShardRestoration) //Restores 1% of maximum mana over 12 seconds by default
-                {
-                    restorationTimer += (float)Player.statManaMax2 / (100f * 60f) * (1f + ((float)Player.manaRegenBonus / 10f)); //1% of maximum mana per second, since there are 60 ticks per second, manaregenbonuses are usually in the double digits so this is insane scaling
-
-                    if (restorationTimer >= 10f)
-                    {
-                        Player.statMana += 10;
-                        restorationTimer -= 10f;
-                    }
-                    if (restorationTimer >= 1f)
-                    {
-                        Player.statMana += 1;
-                        restorationTimer -= 1f;
-                    }
-                }
-
-                if (!StarlightShardRestoration)
-                {
-                    restorationTimer = 0;
-                }
-
-                #endregion
             }
             if (PapyrusScarab)
             {

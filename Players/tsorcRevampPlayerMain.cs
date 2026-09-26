@@ -28,6 +28,7 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.WolfRing;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Accessories.Other;
 using tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker;
@@ -1818,14 +1819,6 @@ namespace tsorcRevamp
                     {
                         ReflectionShiftState.Y = 1;
                     }
-                }
-            }
-            if (tsorcRevamp.WolfRing.JustReleased)
-            {
-                if (Player.GetModPlayer<tsorcRevampPlayer>().WolfRing && !Player.HasBuff(ModContent.BuffType<RejuvenationCooldown>()))
-                {
-                    Player.AddBuff(ModContent.BuffType<Rejuvenation>(), 5 * 60);
-                    Player.AddBuff(ModContent.BuffType<RejuvenationCooldown>(), 25 * 60);
                 }
             }
             if (tsorcRevamp.WitchScream.JustReleased && !Player.HasBuff(ModContent.BuffType<WitchkingScreamCooldown>()) && Witch)

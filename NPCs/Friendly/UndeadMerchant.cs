@@ -10,6 +10,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.ItemCrates;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.RadiantLifegem;
 using tsorcRevamp.Content.Items.Weapons.Classless;
 using tsorcRevamp.Content.Projectiles;
 using GreenBlossom = tsorcRevamp.Content.Items.Potions.GreenBlossom;
@@ -181,7 +182,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.Hardmode);
 
-            shop.Add(new Item(ModContent.ItemType<RadiantLifegem>())
+            shop.Add(new Item(ModContent.ItemType<RadiantLifegemItem>())
             {
                 shopCustomPrice = 60,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId

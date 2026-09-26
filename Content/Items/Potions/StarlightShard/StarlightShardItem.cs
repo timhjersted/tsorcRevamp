@@ -7,13 +7,11 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Potions
+namespace tsorcRevamp.Content.Items.Potions.StarlightShard
 {
-    class StarlightShard : ModItem
+    class StarlightShardItem : ModItem
     {
         public static float BaseDuration = 12f;
         public static float BaseRestorationPercent = 1f;
@@ -108,11 +106,11 @@ namespace tsorcRevamp.Content.Items.Potions
                 }
                 if (player.manaRegenBuff)
                 {
-                    player.AddBuff(ModContent.BuffType<Buffs.StarlightShardRestoration>(), (int)(BaseDuration * 60f * (1.5f + player.manaRegenDelayBonus)));
+                    player.AddBuff(ModContent.BuffType<StarlightShardRestoration>(), (int)(BaseDuration * 60f * (1.5f + player.manaRegenDelayBonus)));
                 }
                 else
                 {
-                    player.AddBuff(ModContent.BuffType<Buffs.StarlightShardRestoration>(), (int)(BaseDuration * 60f * (1f + player.manaRegenDelayBonus)));
+                    player.AddBuff(ModContent.BuffType<StarlightShardRestoration>(), (int)(BaseDuration * 60f * (1f + player.manaRegenDelayBonus)));
                 }
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something

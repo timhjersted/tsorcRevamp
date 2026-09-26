@@ -7,6 +7,8 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
+using tsorcRevamp.Content.Items.Potions.RadiantLifegem;
 using tsorcRevamp.Content.Items.Weapons.Throwing;
 
 
@@ -150,12 +152,12 @@ namespace tsorcRevamp.UI
             }
 
             //Excluding these specifically because for now they need to be used by hand. May change in the future.
-            if (item.type == ModContent.ItemType<Lifegem>())
+            if (item.type == ModContent.ItemType<LifegemItem>())
             {
                 valid = false;
             }
 
-            if (item.type == ModContent.ItemType<RadiantLifegem>())
+            if (item.type == ModContent.ItemType<RadiantLifegemItem>())
             {
                 valid = false;
             }

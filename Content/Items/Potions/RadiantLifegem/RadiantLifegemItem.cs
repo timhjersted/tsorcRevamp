@@ -7,13 +7,11 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Potions
+namespace tsorcRevamp.Content.Items.Potions.RadiantLifegem
 {
-    class RadiantLifegem : ModItem
+    class RadiantLifegemItem : ModItem
     {
         public static int DurationInSeconds = 14;
         public static int HealingDivisor = 6;
@@ -114,7 +112,7 @@ namespace tsorcRevamp.Content.Items.Potions
                     }
                 }
 
-                player.AddBuff(ModContent.BuffType<Buffs.RadiantLifegemHealing>(), DurationInSeconds * 60);
+                player.AddBuff(ModContent.BuffType<RadiantLifegemHealing>(), DurationInSeconds * 60);
                 player.AddBuff(BuffID.PotionSickness, player.pStone ? (SicknessBaseDuration / 4 * 3 * 60) : (SicknessBaseDuration * 60));
 
                 if (Item.stack == 1) Item.TurnToAir();

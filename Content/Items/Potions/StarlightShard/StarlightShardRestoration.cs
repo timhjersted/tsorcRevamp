@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs
+namespace tsorcRevamp.Content.Items.Potions.StarlightShard
 {
     public class StarlightShardRestoration : ModBuff
     {
@@ -15,7 +15,7 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().StarlightShardRestoration = true;
+            player.GetModPlayer<StarlightShardPlayer>().Restoration = true;
 
             if (Main.rand.NextBool(4))
             {

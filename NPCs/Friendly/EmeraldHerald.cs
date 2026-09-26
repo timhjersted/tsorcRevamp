@@ -9,6 +9,8 @@ using Terraria.Utilities;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
+using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Systems;
 
@@ -238,8 +240,8 @@ namespace tsorcRevamp.NPCs.Friendly
                     Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BotCGift");
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<MushroomSkewer>(), 10);
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<SoulCoin>(), 100);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Lifegem>(), 10);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<StarlightShard>(), 4);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<LifegemItem>(), 10);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<StarlightShardItem>(), 4);
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<AdventurersCard>());
                 }
                 else if (modPlayer.Unkindled)
@@ -247,7 +249,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.UnkindledGift");
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<MushroomSkewer>(), 10);
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<SoulCoin>(), 100);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<Lifegem>(), 5);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<LifegemItem>(), 5);
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<AdventurersCard>());
                 }
                 else

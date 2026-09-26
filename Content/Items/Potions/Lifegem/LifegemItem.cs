@@ -7,13 +7,11 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Potions
+namespace tsorcRevamp.Content.Items.Potions.Lifegem
 {
-    class Lifegem : ModItem
+    class LifegemItem : ModItem
     {
         public static int DurationInSeconds = 12;
         public static int HealingDivisor = 8;
@@ -112,7 +110,7 @@ namespace tsorcRevamp.Content.Items.Potions
                     }
                 }
 
-                player.AddBuff(ModContent.BuffType<Buffs.LifegemHealing>(), DurationInSeconds * 60);
+                player.AddBuff(ModContent.BuffType<LifegemHealing>(), DurationInSeconds * 60);
                 player.AddBuff(BuffID.PotionSickness, player.pStone ? (SicknessBaseDuration * 60 / 4 * 3) : (SicknessBaseDuration * 60));
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something

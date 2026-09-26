@@ -9,6 +9,7 @@ using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.Accessories.Other.SporePowder;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.Dworc
@@ -69,7 +70,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 7));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SporePowderItem>(), 100));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 5));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<LifegemItem>(), 5));
         }
 
         //Spawns in the Jungle, mostly Underground and in the Cavern.

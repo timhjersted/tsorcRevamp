@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.WolfRing;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.ZirconRing;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<WolfRing>());
+            recipe.AddIngredient(ModContent.ItemType<WolfRingItem>());
             recipe.AddIngredient(ModContent.ItemType<RingOfClarity>());
             recipe.AddIngredient(ModContent.ItemType<ZirconRingItem>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
@@ -47,7 +48,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.WolfRing = true;
+            player.GetModPlayer<WolfRingPlayer>().Equipped = true;
             player.GetModPlayer<ZirconRingPlayer>().Equipped  = true;
 
             //Ring of Clarity inheritance

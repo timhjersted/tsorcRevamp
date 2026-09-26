@@ -1,13 +1,12 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Accessories.Defensive
+namespace tsorcRevamp.Content.Items.Accessories.Defensive.CovenantOfArtorias
 {
-    public class CovenantOfArtorias : ModItem
+    public class CovenantOfArtoriasItem : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -36,14 +35,14 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.EnterTheAbyss = true;
-            modPlayer.CovenantOfArtoriasEquipped = true;
+            player.GetModPlayer<CovenantOfArtoriasPlayer>().Equipped = true;
         }
 
         public override void UpdateVanity(Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.EnterTheAbyss = true;
-            modPlayer.CovenantOfArtoriasEquipped = true;
+            player.GetModPlayer<CovenantOfArtoriasPlayer>().Equipped = true;
         }
     }
 }

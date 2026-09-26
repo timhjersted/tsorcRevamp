@@ -12,6 +12,7 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.StarlightShard;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -1060,7 +1061,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new CommonDrop(ModContent.ItemType<SoulSiphonPotion>(), 5, 1, 2, 4));
             npcLoot.Add(new CommonDrop(ItemID.EndurancePotion, 5, 1, 1, 4));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<EternalCrystal>(), 5, 1, 1, 3));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShardItem>()));
         }
     }
 }

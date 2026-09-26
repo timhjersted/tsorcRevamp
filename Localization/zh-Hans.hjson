@@ -1520,16 +1520,14 @@ Mods: {
 					'''
 			}
 
-			CovenantOfArtorias: {
-				DisplayName: 亚尔特留斯之约
-				Tooltip:
+			CovenantOfArtoriasItem: {
+				// DisplayName: Covenant of Artorias
+				/* Tooltip:
 					'''
-					[c/ffbf00:穿戴时允许你进入深渊。 摘下指环，离开深渊！]
-					[c/ffbf00:深渊遍布世界，如我们自身之镜，但其黑暗更加深远...]
-					[c/00ffd4:对一些深渊相关敌人造成的减益免疫，例如残废、中毒、着火以及涂油]
-					免疫击退、熔岩、火块和地狱黯炎，但是会提升敌人生成速度
-					{$CommonItemTooltip.DRStat}
-					'''
+					{$CommonItemTooltip.VanityFunction}
+					[c/ffbf00:Allows you to safely enter The Abyss when worn. Remove the ring to escape from The Abyss!]
+					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
+					''' */
 			}
 
 			DarkCloak: {
@@ -1638,18 +1636,18 @@ Mods: {
 				Tooltip: 减少 {0} 点来自不死生物的伤害
 			}
 
-			WolfRing: {
-				DisplayName: 苍狼戒指
-				Tooltip:
+			WolfRingItem: {
+				// DisplayName: Wolf Ring
+				/* Tooltip:
 					'''
-					授予葛温四位骑士的特殊戒指之一
-					按下绑定的苍狼戒指快捷键以短暂提高生命恢复和受到的伤害
-					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
-					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy} 
-					免疫黑视、遮蔽、酸性毒液与冰冻
-					'''
-				Keybind1: "按 "
-				Keybind2: " 键以短暂提高生命恢复和受到的伤害"
+					One of the special rings granted to the four knights of Gwyn.
+					Press Wolf Ring to massively increase life regen and damage taken temporarily
+					Removes the life regen if hit during the effect and puts it on a long cooldown
+					Immunity to Blackout, Obstructed, Freezing and Acid Venom
+					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
+					''' */
+				// Keybind1: "Press "
+				// Keybind2: " to massively increase life regen and damage taken temporarily"
 			}
 
 			ZirconRingItem: {
@@ -5254,28 +5252,28 @@ Mods: {
 					'''
 			}
 
-			Lifegem: {
-				DisplayName: 生命宝石
-				Tooltip:
+			LifegemItem: {
+				// DisplayName: Lifegem
+				/* Tooltip:
 					'''
-					由结晶灵魂组成的小石头
-					逐渐恢复少量生命值
-					经常在废弃尸体附近发现
-					彷佛那是灵魂残念的结晶
+					Small stone made up of crystallized souls
+					Gradually restores a small amount of HP
+					Often found near abandoned corpses,
+					as if it were what remains of the soul
 					{$CommonItemTooltip.RestoresLife}({$CommonItemTooltip.SecondDuration@1})
-					'''
-				Sickness: 造成的药水疾病({$CommonItemTooltip.SecondDuration})
+					''' */
+				// Sickness: Inflicts potion sickness({$CommonItemTooltip.SecondDuration})
 			}
 
-			StarlightShard: {
-				DisplayName: 星光碎片
-				Tooltip:
+			StarlightShardItem: {
+				// DisplayName: Starlight Shard
+				/* Tooltip:
 					'''
-					魔力回复效果受到魔力再生速度和魔力再生延迟的加成
-					就像蓝露滴圣杯瓶一样
-					使用不造成魔力病
-					'''
-				Restoration: 每秒回复 {0}% 最大魔力，持续 {1} 秒
+					Scales with bonus mana regen and mana regen delay penalties,
+					alike to the Cerulean Flask
+					Does not inflict Mana Sickness
+					''' */
+				// Restoration: Restores {0}% of maximum mana per second for {1} seconds
 			}
 
 			MushroomSkewer: {
@@ -5641,17 +5639,17 @@ Mods: {
 				BuffName: 怒气
 			}
 
-			RadiantLifegem: {
-				DisplayName: 光芒四射的生命宝石
-				Tooltip:
+			RadiantLifegemItem: {
+				// DisplayName: Radiant Lifegem
+				/* Tooltip:
 					'''
-					由结晶灵魂组成的石头
-					逐渐恢复生命值
-					这些神秘石头的暗光
-					随着时间的流逝而变得明亮
+					Stone made up of crystallized souls
+					Gradually restores HP
+					The dull glimmer of these mysterious
+					stones brightens with the passage of time
 					{$CommonItemTooltip.RestoresLife}({$CommonItemTooltip.SecondDuration@1})
-					'''
-				Sickness: 造成的药水疾病({$CommonItemTooltip.SecondDuration})
+					''' */
+				// Sickness: Inflicts potion sickness({$CommonItemTooltip.SecondDuration})
 			}
 
 			ShockwavePotion: {
@@ -9152,8 +9150,8 @@ Mods: {
 			}
 
 			RubyCrystalItem: {
-				// DisplayName: Ruby Crystal Item
-				// Tooltip: ""
+				// DisplayName: Ruby Crystal
+				// Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeBy}"
 			}
 		}
 

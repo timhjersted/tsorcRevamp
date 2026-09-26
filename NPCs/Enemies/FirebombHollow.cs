@@ -9,6 +9,7 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Armor.Magic;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Weapons.Classless;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using static tsorcRevamp.SpawnHelper;
@@ -120,7 +121,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OilPot>(), 20, 1, 3));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<LifegemItem>()));
 
             int[] armorIDs = new int[]
             {

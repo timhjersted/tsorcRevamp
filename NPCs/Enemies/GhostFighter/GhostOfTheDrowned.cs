@@ -12,6 +12,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.VFX;
@@ -866,7 +867,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 2, 4));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 10));
             npcLoot.Add(ItemDropRule.Common(ItemID.GillsPotion, 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Lifegem>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LifegemItem>(), 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 15));
             npcLoot.Add(ItemDropRule.Common(ItemID.Trident, 10));
 

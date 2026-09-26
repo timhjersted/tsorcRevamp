@@ -12,6 +12,7 @@ using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Projectiles.Enemy.WyvernMage;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
@@ -626,7 +627,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GhostWyvernMageDropCondition(), ModContent.ItemType<HolyWarElixir>()));
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new GhostWyvernMageDropCondition(), ModContent.ItemType<GhostWyvernSoul>(), 1, 3, 6));
             npcLoot.Add(notExpertCondition);
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 2, 4));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShardItem>(), 1, 2, 4));
         }
 
         public override void OnKill()

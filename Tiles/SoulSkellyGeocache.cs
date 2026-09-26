@@ -7,6 +7,7 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Potions.RadiantLifegem;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Weapons.Classless;
 using tsorcRevamp.Content.Items.Weapons.Magic;
@@ -122,7 +123,7 @@ namespace tsorcRevamp.Tiles
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4652, 899, 2, 2), ModContent.ItemType<GreenBlossom>(), 3));
 
             //Right side of Red Knight event arena on PoP
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3957, 1206, 2, 2), ModContent.ItemType<RadiantLifegem>(), 3));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3957, 1206, 2, 2), ModContent.ItemType<RadiantLifegemItem>(), 3));
 
             //Very leftmost top of tower in Forgotten City 
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4090, 1580, 2, 2), ModContent.ItemType<ProudKnightSoul>(), 1));
