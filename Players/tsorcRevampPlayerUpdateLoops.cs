@@ -1465,14 +1465,16 @@ namespace tsorcRevamp
                 try
                 {
                     var modSlotPlayer = Player.GetModPlayer<Terraria.ModLoader.Default.ModAccessorySlotPlayer>();
-                    if (modSlotPlayer != null && modSlotPlayer.exAccessorySlot != null)
+                    if (modSlotPlayer != null)
                     {
+                        var loader = LoaderManager.Get<AccessorySlotLoader>();
                         for (int i = 0; i < modSlotPlayer.SlotCount; i++)
                         {
-                            if (Content.Items.Armor.PinwheelMaskHelper.IsPinwheelMask(modSlotPlayer.exAccessorySlot[i]))
+                            var slotInstance = loader.Get(i, Player);
+                            if (slotInstance?.FunctionalItem != null && !slotInstance.FunctionalItem.IsAir && Content.Items.Armor.PinwheelMaskHelper.IsPinwheelMask(slotInstance.FunctionalItem))
                             {
-                                Item displaced = modSlotPlayer.exAccessorySlot[i].Clone();
-                                modSlotPlayer.exAccessorySlot[i].TurnToAir();
+                                Item displaced = slotInstance.FunctionalItem.Clone();
+                                slotInstance.FunctionalItem.TurnToAir();
                                 Player.QuickSpawnItem(Player.GetSource_Accessory(displaced), displaced, displaced.stack);
                             }
                         }
@@ -2565,6 +2567,8 @@ namespace tsorcRevamp
             return LangUtils.GetTextValue("DeathText.Tip") + text;
         }
         public const int WingSafeFallDistanceBonus = 20;
+        // At normal terminal speed, 250 predicted damage takes ~150 ticks instead of ~80.
+        public const float WingFallDamageMultiplier = 4f / 15f;
 
         public static bool HasFunctionalWings(Player player)
         {
@@ -2630,7 +2634,7 @@ namespace tsorcRevamp
             int safeFallDistance = 25 + player.extraFall;
             int fallDistance = ((int)(player.position.Y / 16f) - player.fallStart) * (int)player.gravDir;
             int rawDamage = Math.Max(0, fallDistance - safeFallDistance) * 10;
-            return HasFunctionalWings(player) ? rawDamage / 2 : rawDamage;
+            return HasFunctionalWings(player) ? (int)(rawDamage * WingFallDamageMultiplier) : rawDamage;
         }
 
         public Vector2 SavedVelocity;

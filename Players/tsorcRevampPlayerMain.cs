@@ -570,9 +570,9 @@ namespace tsorcRevamp
         {
             // The custom wing fall-damage rule should be less punishing than vanilla fall damage.
             // SourceOtherIndex 0 is Terraria's ordinary fall-damage source.
-            if (modifiers.DamageSource != null && modifiers.DamageSource.SourceOtherIndex == 0 && Player.equippedWings != null)
+            if (modifiers.DamageSource != null && modifiers.DamageSource.SourceOtherIndex == 0 && HasFunctionalWings(Player))
             {
-                modifiers.FinalDamage *= 0.5f;
+                modifiers.FinalDamage *= WingFallDamageMultiplier;
             }
 
             if (ModContent.GetInstance<tsorcRevampConfig>().HurtSoundMode != HurtSoundMode.Vanilla)

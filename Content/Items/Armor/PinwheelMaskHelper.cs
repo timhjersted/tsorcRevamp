@@ -55,17 +55,19 @@ namespace tsorcRevamp.Content.Items.Armor
             // Check modded functional accessory slots
             try
             {
-                var mp = player.GetModPlayer<ModAccessorySlotPlayer>();
-                if (mp != null && mp.exAccessorySlot != null)
+                var modSlotPlayer = player.GetModPlayer<ModAccessorySlotPlayer>();
+                if (modSlotPlayer != null)
                 {
-                    for (int i = 0; i < mp.SlotCount; i++)
+                    var loader = LoaderManager.Get<AccessorySlotLoader>();
+                    for (int i = 0; i < modSlotPlayer.SlotCount; i++)
                     {
                         if (modded && i == slot)
                         {
                             continue;
                         }
 
-                        if (IsPinwheelMask(mp.exAccessorySlot[i]))
+                        var slotInstance = loader.Get(i, player);
+                        if (slotInstance?.FunctionalItem != null && !slotInstance.FunctionalItem.IsAir && IsPinwheelMask(slotInstance.FunctionalItem))
                         {
                             return false;
                         }

@@ -249,7 +249,7 @@ namespace tsorcRevamp
                 return;
             }
 
-            int trailCount = Math.Min(6, 1 + predictedDamage / 50);
+            int trailCount = Math.Min(9, 1 + predictedDamage / 50);
             int cacheCount = drawInfo.DrawDataCache.Count;
             Color dangerColor = new Color(255, 95, 45);
 
