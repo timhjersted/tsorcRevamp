@@ -255,6 +255,7 @@ namespace tsorcRevamp.Content.Items
                 tooltips.RemoveAll(line => line.Text == vanillaFallImmunity || line.Text == modFallImmunity);
                 tooltips.Add(new TooltipLine(Mod, "WingFallProtection",
                     Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingFallProtection", tsorcRevampPlayer.WingSafeFallDistanceBonus)));
+                Utilities.WingTooltipStats.Add(item, tooltips, Mod);
             }
 
             if (hasSoulRecipe.Contains(item.type))

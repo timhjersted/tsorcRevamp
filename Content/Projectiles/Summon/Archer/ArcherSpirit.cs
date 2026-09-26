@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Systems.ArcaneSorcery;
 
 namespace tsorcRevamp.Content.Projectiles.Summon.Archer
 {
@@ -12,6 +13,15 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
     {
         private const int ArcherNavSearchRadius = 100;
         private const int AimWindupFrames = 12;
+
+        public static int CalculateArrowDamage(Player player)
+        {
+            // Remove only BotC's Arcane Sorcery multiplier; gear's max-mana bonuses still count.
+            float modeManaMultiplier = player.GetModPlayer<ArcaneSorceryPlayer>().ArcaneSorcerer
+                ? 1f + ArcaneSorceryPlayer.MaxManaAmplifier / 100f
+                : 1f;
+            return (int)(player.statManaMax2 / modeManaMultiplier / 4f);
+        }
 
         public int shootCooldown = 0;
         public int aimWindupTimer = 0;
@@ -363,8 +373,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                                             shootVel = UsefulFunctions.Aim(Projectile.Center, targetCenter, 13f);
                                         }
 
-                                        // Nerfed damage to max mana / 4
-                                        int damage = player.statManaMax2 / 4;
+                                        int damage = CalculateArrowDamage(player);
                                         Projectile.NewProjectile(
                                             Projectile.GetSource_FromThis(),
                                             Projectile.Center.X,

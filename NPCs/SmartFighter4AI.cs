@@ -54,6 +54,7 @@ namespace tsorcRevamp.NPCs
         // preserving the old instant-give-up for anything deliberately tuned that way.
         private const int NoPathRetryFrames = 90;
         private const int MaxNoPathRetries = 4;
+        private const int FailedEdgeCost = 9999;
         // Progress-based stall detection. Every OTHER anti-stuck guard in Run measures X displacement, which a
         // two-policy ping-pong defeats: in the igloo log the NPC covered 26 tiles of X travel in 30s (plan pulling
         // left to a jump launch column, the no-plan chase pulling right off the roof) while never closing on the
@@ -155,6 +156,64 @@ namespace tsorcRevamp.NPCs
         };
 
         private static readonly Dictionary<int, NavState> States = new Dictionary<int, NavState>();
+
+        private static float NavigationJumpSpeed(NPC npc, float topSpeed, float boost)
+        {
+            float cap = npc.GetGlobalNPC<tsorcRevampGlobalNPC>().MaxNavigationJumpSpeed;
+            return cap > 0f ? Math.Min(topSpeed + boost, cap) : topSpeed + boost;
+        }
+
+        private static void RememberFailedStep(NavState nav, NPC npc, int x, int y, int expiry)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            nav.BadEdgeTargets[(x, y)] = expiry;
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
+        }
+
+        internal static void SendRecoveryState(NPC npc, BinaryWriter writer)
+        {
+            List<(int x, int y, int remaining)> failed = new List<(int, int, int)>();
+            if (States.TryGetValue(npc.whoAmI, out NavState nav) && nav.OwnerType == npc.type)
+                foreach (var entry in nav.BadEdgeTargets)
+                {
+                    int remaining = entry.Value - (int)Main.GameUpdateCount;
+                    if (remaining > 0) failed.Add((entry.Key.x, entry.Key.y, remaining));
+                }
+            writer.Write(failed.Count);
+            foreach (var entry in failed)
+            {
+                writer.Write(entry.x);
+                writer.Write(entry.y);
+                writer.Write(entry.remaining);
+            }
+        }
+
+        internal static void ReceiveRecoveryState(NPC npc, BinaryReader reader)
+        {
+            int count = reader.ReadInt32();
+            if (count == 0)
+            {
+                if (States.TryGetValue(npc.whoAmI, out NavState existing)) existing.BadEdgeTargets.Clear();
+                return;
+            }
+            NavState nav = GetState(npc);
+            nav.BadEdgeTargets.Clear();
+            for (int i = 0; i < count; i++)
+            {
+                int x = reader.ReadInt32(), y = reader.ReadInt32(), remaining = reader.ReadInt32();
+                nav.BadEdgeTargets[(x, y)] = (int)Main.GameUpdateCount + remaining;
+            }
+            if (nav.Plan != null && nav.PlanIndex < nav.Plan.Count)
+            {
+                PlanStep step = nav.Plan[nav.PlanIndex];
+                if (BadEdgePenalty(step.TargetX, step.TargetY, nav.BadEdgeTargets) >= FailedEdgeCost)
+                {
+                    nav.Plan = null;
+                    nav.PlanIndex = 0;
+                    nav.ReplanCooldown = 0;
+                }
+            }
+        }
 
         public static bool HasActiveMovementPlan(NPC npc)
         {
@@ -775,14 +834,14 @@ namespace tsorcRevamp.NPCs
                         // Escalate rather than quit outright. The sibling StepNoMoveFrames guard only runs while a
                         // plan EXISTS, so an enemy that never gets a plan (A* connectivity failure) skipped the
                         // reroute stage entirely and hit this give-up after a single 1.5s window. Strikes 1..N-1 are
-                        // RECOVERY attempts: wipe the bad-edge memory (its 480-frame expiry far outlives this window,
-                        // so one failed step can keep the only good route banned) and force an immediate replan.
+                        // Recovery attempts retain confirmed failures for their 480-frame expiry,
+                        // forcing a replan to seek another route instead of repeating the failed step.
                         int retriesAllowed = Math.Clamp(globalNPC.NavGiveUpTicks / NoPathRetryFrames, 1, MaxNoPathRetries);
                         bool retrying = nav.NoPathStrikes < retriesAllowed;
 
                         if (retrying)
                         {
-                            nav.BadEdgeTargets.Clear();
+                            // Preserve confirmed failures until expiry; retry a different route.
                             nav.Plan = null;
                             nav.PlanIndex = 0;
                             nav.CommitFrames = 0;
@@ -844,7 +903,7 @@ namespace tsorcRevamp.NPCs
                     else if (++nav.StepNoMoveFrames > 40)
                     {
                         var blockedStep = nav.Plan[nav.PlanIndex];
-                        nav.BadEdgeTargets[(blockedStep.TargetX, blockedStep.TargetY)] = (int)Main.GameUpdateCount + 480;
+                        RememberFailedStep(nav, npc, blockedStep.TargetX, blockedStep.TargetY, (int)Main.GameUpdateCount + 480);
                         nav.Plan = null;
                         nav.PlanIndex = 0;
                         nav.CommitFrames = 0;
@@ -876,7 +935,7 @@ namespace tsorcRevamp.NPCs
                     && globalNPC.TeleportStyle == TeleportStyle.Aggressive;
                 bool shouldMonitorStuck = !canEngage || aggressiveTeleportRecovery;
                 if (pstate == PursuitState.Pursue && shouldMonitorStuck && !activeRopeRide
-                    && (nav.Plan != null || actionLabel == "blocked"))
+                    && (nav.Plan != null || actionLabel == "blocked" || globalNPC.UnreachableFrames > 0))
                 {
                     if (nav.HardStuckCheckX == float.MaxValue)
                     {
@@ -894,7 +953,7 @@ namespace tsorcRevamp.NPCs
                         }
                         nav.HardStuckCheckX = npc.Center.X; // next window measures from here
                         nav.HardStuckFrames = 0;
-                        if (nav.HardStuckStrikes >= 2) // ~4s with no net progress
+                        if (nav.HardStuckStrikes >= 2 && Main.netMode != NetmodeID.MultiplayerClient) // ~4s with no net progress
                         {
                             nav.LastPlanResult = $"hard-stuck x={nav.HardStuckCheckX / TileF:F1}";
                             nav.Plan = null;
@@ -956,7 +1015,7 @@ namespace tsorcRevamp.NPCs
                         if (nav.Plan != null && nav.PlanIndex < nav.Plan.Count)
                         {
                             PlanStep stalledStep = nav.Plan[nav.PlanIndex];
-                            nav.BadEdgeTargets[(stalledStep.TargetX, stalledStep.TargetY)] = (int)Main.GameUpdateCount + 480;
+                            RememberFailedStep(nav, npc, stalledStep.TargetX, stalledStep.TargetY, (int)Main.GameUpdateCount + 480);
                         }
 
                         nav.Plan = null;
@@ -1197,7 +1256,7 @@ namespace tsorcRevamp.NPCs
                 nav.CommitFrames = 0;
                 nav.ReplanCooldown = 0;
                 nav.NoAStarPath = false;
-                nav.BadEdgeTargets.Clear();
+                // New destinations preserve confirmed traversal failures until their expiry.
             }
 
             int waypointFeetY = (int)((waypoint.Y + npc.height * 0.5f - 1f) / TileF);
@@ -1314,9 +1373,9 @@ namespace tsorcRevamp.NPCs
 
         private static NavState GetState(NPC npc)
         {
-            if (!States.TryGetValue(npc.whoAmI, out NavState nav))
+            if (!States.TryGetValue(npc.whoAmI, out NavState nav) || nav.OwnerType != npc.type)
             {
-                nav = new NavState();
+                nav = new NavState { OwnerType = npc.type };
                 States[npc.whoAmI] = nav;
             }
             if (Main.GameUpdateCount % 3600 == 0 && States.Count > 64)
@@ -1445,7 +1504,7 @@ namespace tsorcRevamp.NPCs
             _planWalkSpeed = Math.Max(topSpeed, 0.1f);
             _planGravity = npc.gravity > 0f ? npc.gravity : 0.3f;
             _planJumpCeil = Math.Max(pg.MaxJumpPower, 5f);
-            _planMaxLaunchVx = Math.Max(topSpeed, 0f) + Math.Max(pg.MaxJumpBoost, 2f);
+            _planMaxLaunchVx = NavigationJumpSpeed(npc, Math.Max(topSpeed, 0f), Math.Max(pg.MaxJumpBoost, 2f));
         }
         private static int MaxPlanRiseTiles()
         {
@@ -1593,7 +1652,7 @@ namespace tsorcRevamp.NPCs
                     Span reachedSpan = frontier.Pop();
                     foreach (Edge edge in reachedSpan.Edges)
                     {
-                        if (reached.Add(edge.To))
+                        if (edge.Cost < FailedEdgeCost && reached.Add(edge.To))
                         {
                             frontier.Push(edge.To);
                         }
@@ -1647,7 +1706,7 @@ namespace tsorcRevamp.NPCs
                 Span span = frontier.Pop();
                 foreach (Edge edge in span.Edges)
                 {
-                    if (reached.Add(edge.To))
+                    if (edge.Cost < FailedEdgeCost && reached.Add(edge.To))
                     {
                         frontier.Push(edge.To);
                     }
@@ -1722,15 +1781,15 @@ namespace tsorcRevamp.NPCs
         private static int BadEdgePenalty(int landX, int spanY, Dictionary<(int x, int y), int> badEdges)
         {
             // If the destination of this edge corresponds to a recently-failed step
-            // target (within 2 tiles), bump the cost so A* prefers alternatives.
+            // target (within 2 tiles), exclude it until expiry instead of immediately retrying it.
             int worst = 0;
             foreach (var kv in badEdges)
             {
                 if (Math.Abs(kv.Key.x - landX) <= 2 && Math.Abs(kv.Key.y - spanY) <= 2)
                 {
-                    if (9999 > worst)
+                    if (kv.Value > (int)Main.GameUpdateCount && FailedEdgeCost > worst)
                     {
-                        worst = 9999;
+                        worst = FailedEdgeCost;
                     }
                 }
             }
@@ -2248,7 +2307,7 @@ namespace tsorcRevamp.NPCs
                 nav.RopeFallbackFails++;
                 if (nav.RopeFallbackFails >= 2)
                 {
-                    nav.BadEdgeTargets[(bestX, bestTargetY)] = now + 600; // ~10s before we'll try it again
+                    RememberFailedStep(nav, npc, bestX, bestTargetY, now + 600); // ~10s before we'll try it again
                     nav.RopeFallbackFails = 0;
                     nav.LastPlanResult = $"rope-deadend-baded x={bestX} toY={bestTargetY}";
                     return false;
@@ -3047,6 +3106,7 @@ namespace tsorcRevamp.NPCs
                 int curG = gScore[cur];
                 foreach (var edge in cur.Edges)
                 {
+                    if (edge.Cost >= FailedEdgeCost) continue;
                     int tentative = curG + edge.Cost;
                     if (!gScore.TryGetValue(edge.To, out int existing) || tentative < existing)
                     {
@@ -3088,8 +3148,8 @@ namespace tsorcRevamp.NPCs
                 {
                     if (candidate.To == to)
                     {
-                        edge = candidate;
-                        break;
+                        if (candidate.Cost < FailedEdgeCost && (edge == null || candidate.Cost < edge.Cost))
+                            edge = candidate;
                     }
                 }
 
@@ -3207,7 +3267,7 @@ namespace tsorcRevamp.NPCs
                 // Bad-edge memory: remember this failed step's target span so the
                 // next replan doesn't immediately pick the same route.
                 int expiry = (int)Main.GameUpdateCount + 480; // 8 seconds
-                nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                RememberFailedStep(nav, npc, step.TargetX, step.TargetY, expiry);
                 nav.Plan = null;
                 nav.PlanIndex = 0;
                 nav.CommitFrames = 0;
@@ -3317,7 +3377,7 @@ namespace tsorcRevamp.NPCs
                 int aFrontX = GetFrontTileX(npc, aDir);
                 int obstacleHeight = GetObstacleHeight(aFrontX, feetY);
                 if (obstacleHeight == 2 && npc.collideX && HasHeadroomForJump(npc, aDir, obstacleHeight)
-                    && ComputeJumpArc(2, obstacleHeight, npc.gravity, jumpCeil, topSpeed + boostCeil, out float hopPower, out float hopVx))
+                    && ComputeJumpArc(2, obstacleHeight, npc.gravity, jumpCeil, NavigationJumpSpeed(npc, topSpeed, boostCeil), out float hopPower, out float hopVx))
                 {
                     FireJump(nav, npc, aDir, hopPower, hopVx, 16, 12);
                     nav.AlignStallFrames = 0;
@@ -3437,7 +3497,7 @@ namespace tsorcRevamp.NPCs
                 // retry the same dead-end rope.
                 if (!descend && !reachedTarget && IsNavigationSolid(step.LaunchX, feetY - 2))
                 {
-                    nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = (int)Main.GameUpdateCount + 480;
+                    RememberFailedStep(nav, npc, step.TargetX, step.TargetY, (int)Main.GameUpdateCount + 480);
                     nav.Plan = null;
                     nav.PlanIndex = 0;
                     nav.CommitFrames = 0;
@@ -3451,7 +3511,7 @@ namespace tsorcRevamp.NPCs
                 if (forceDismount && nav.RopeJumpedThisStep)
                 {
                     int expiry = (int)Main.GameUpdateCount + 480;
-                    nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                    RememberFailedStep(nav, npc, step.TargetX, step.TargetY, expiry);
                     nav.Plan = null;
                     nav.PlanIndex = 0;
                     nav.CommitFrames = 0;
@@ -3467,7 +3527,7 @@ namespace tsorcRevamp.NPCs
                 bool solidAbove = IsNavigationSolid(step.LaunchX, feetY - 2);
                 if (!descend && (atRopeEnd || forceDismount) && rise >= 2 && !solidAbove)
                 {
-                    ComputeJumpArc(0, rise, npc.gravity, jumpCeil, topSpeed + boostCeil,
+                    ComputeJumpArc(0, rise, npc.gravity, jumpCeil, NavigationJumpSpeed(npc, topSpeed, boostCeil),
                                    out float dismountPower, out _);
                     npc.position.X = RopeSnapX(npc, step.LaunchX, ropeCenter, feetY);
                     npc.velocity.X = 0f;
@@ -3544,7 +3604,7 @@ namespace tsorcRevamp.NPCs
                     && ropeBottomY < feetY)
                 {
                     int riseToGrab = feetY - ropeBottomY;
-                    ComputeJumpArc(0, riseToGrab, npc.gravity, jumpCeil, topSpeed + boostCeil,
+                    ComputeJumpArc(0, riseToGrab, npc.gravity, jumpCeil, NavigationJumpSpeed(npc, topSpeed, boostCeil),
                         out float grabPower, out _);
                     int facing = npc.direction != 0 ? npc.direction : 1;
                     FireJump(nav, npc, facing, Math.Max(grabPower, 5f), 0f, 18, 24);
@@ -3659,7 +3719,7 @@ namespace tsorcRevamp.NPCs
                 if (npc.collideX && Math.Abs(npc.velocity.Y) < 0.5f && Math.Abs(npc.velocity.X) < 0.5f)
                 {
                     int expiry = (int)Main.GameUpdateCount + 480;
-                    nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                    RememberFailedStep(nav, npc, step.TargetX, step.TargetY, expiry);
                     nav.StepTimer = Math.Min(nav.StepTimer, 8);
                 }
                 action = "jump-air";
@@ -3673,7 +3733,7 @@ namespace tsorcRevamp.NPCs
             // the first aligned try, so this only trips on bad proposals.
             if (nav.JumpFiredThisStep)
             {
-                nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = (int)Main.GameUpdateCount + 480;
+                RememberFailedStep(nav, npc, step.TargetX, step.TargetY, (int)Main.GameUpdateCount + 480);
                 nav.StepTimer = 0; // ExecuteStep nulls the plan next frame → clean replan around the bad edge
                 npc.velocity.X *= 0.5f;
                 action = "jump-missed";
@@ -3767,7 +3827,7 @@ namespace tsorcRevamp.NPCs
                 if (solidBelow)
                 {
                     int expiry = (int)Main.GameUpdateCount + 480;
-                    nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                    RememberFailedStep(nav, npc, step.TargetX, step.TargetY, expiry);
                     nav.StepTimer = 0;
                     action = "jump-dropdown-blocked";
                     reason = "solid-below";
@@ -3790,7 +3850,7 @@ namespace tsorcRevamp.NPCs
                 return true;
             }
 
-            float maxLaunchVx = topSpeed + boostCeil;
+            float maxLaunchVx = NavigationJumpSpeed(npc, topSpeed, boostCeil);
             int launchDir = step.TargetX > step.LaunchX ? 1
                           : step.TargetX < step.LaunchX ? -1
                           : npc.direction;
@@ -3965,7 +4025,7 @@ namespace tsorcRevamp.NPCs
                 // Drop edge is invalid here (solid floor, nothing to fall through) — abort so the
                 // planner reroutes instead of shuffling in place (the oscillating "drop" from the log).
                 int expiry = (int)Main.GameUpdateCount + 480;
-                nav.BadEdgeTargets[(step.TargetX, step.TargetY)] = expiry;
+                RememberFailedStep(nav, npc, step.TargetX, step.TargetY, expiry);
                 nav.StepTimer = 0;
                 action = "drop-blocked";
                 reason = "solid-below";
@@ -4143,7 +4203,7 @@ namespace tsorcRevamp.NPCs
         {
             int frontX = GetFrontTileX(npc, direction);
             int feetY = GetFeetTileY(npc);
-            float maxLaunchVx = topSpeed + boostCeil;
+            float maxLaunchVx = NavigationJumpSpeed(npc, topSpeed, boostCeil);
             int obstacleHeight = GetObstacleHeight(frontX, feetY);
             // obstacleHeight == 1 (a single-tile step) is now handled by the smooth AutoStepUp glide during the walk,
             // so we only JUMP for obstacles 2+ tiles tall. This is why the enemy no longer mini-hops over
@@ -4159,7 +4219,8 @@ namespace tsorcRevamp.NPCs
                 {
                     if (ComputeJumpArc(2, obstacleHeight, npc.gravity, jumpCeil, maxLaunchVx, out float obstaclePower, out float obstacleVx))
                     {
-                        FireJump(nav, npc, direction, obstaclePower, obstacleVx, 26, 30);
+                        int airFrames = EstimateJumpAirFrames(obstaclePower, obstacleHeight, npc.gravity);
+                        FireJump(nav, npc, direction, obstaclePower, obstacleVx, airFrames, airFrames + 10);
                         action = "obstacle-jump";
                         reason = $"h={obstacleHeight} p{obstaclePower:F1}/vx{obstacleVx:F2}";
                         return true;
@@ -4209,7 +4270,8 @@ namespace tsorcRevamp.NPCs
                 {
                     if (ComputeJumpArc(gap, -landDrop, npc.gravity, jumpCeil, maxLaunchVx, out float gapPower, out float gapVx))
                     {
-                        FireJump(nav, npc, direction, gapPower, gapVx, 26, 30);
+                        int airFrames = EstimateJumpAirFrames(gapPower, -landDrop, npc.gravity);
+                        FireJump(nav, npc, direction, gapPower, gapVx, airFrames, airFrames + 10);
                         action = "gap-jump";
                         reason = $"gap={gap},drop={landDrop} p{gapPower:F1}/vx{gapVx:F2}";
                         return true;
@@ -4685,6 +4747,9 @@ namespace tsorcRevamp.NPCs
                 foreach (int landCol in lands)
                 {
                     int adx = Math.Abs(landCol - launchCol);
+                    // The executor drops for near-vertical descents; solid floors cannot be dropped through.
+                    if (dy < 0 && adx <= 1 && IsNavigationSolid(launchCol, a.Y + 1)
+                        && !IsPlatformTile(launchCol, a.Y + 1)) continue;
                     // SF4: propose the edge only if this NPC can physically make the arc
                     // (gravity + jump/boost limits). Replaces the static-table membership test,
                     // so flat wide gaps (no table entry) are now correctly considered.
@@ -4839,8 +4904,8 @@ namespace tsorcRevamp.NPCs
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     if (expired || Math.Abs(npc.Bottom.Y - globalNPC.NavigationDropTarget.Y) > TileF * 2)
-                        nav.BadEdgeTargets[((int)(globalNPC.NavigationDropTarget.X / TileF),
-                            (int)(globalNPC.NavigationDropTarget.Y / TileF) - 1)] = (int)Main.GameUpdateCount + 480;
+                        RememberFailedStep(nav, npc, (int)(globalNPC.NavigationDropTarget.X / TileF),
+                            (int)(globalNPC.NavigationDropTarget.Y / TileF) - 1, (int)Main.GameUpdateCount + 480);
                     globalNPC.NavigationDropActive = false;
                     nav.Plan = null;
                     nav.PlanIndex = 0;
@@ -5180,6 +5245,7 @@ namespace tsorcRevamp.NPCs
             public string LastAction = "";
             public string LastReason = "";
             public int PatrolRouteRetry;
+            public int OwnerType = -1;
             public string LastTelemetryPlan = "none";
             public List<PlanStep> Plan;
             public int PlanIndex;

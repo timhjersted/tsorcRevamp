@@ -1356,6 +1356,8 @@ namespace tsorcRevamp.NPCs
         public float MaxJumpPower = 9f;
         // Horizontal momentum added when jumping a gap
         public float MaxJumpBoost = 4f;
+        // Optional absolute horizontal navigation-jump cap; zero preserves topSpeed + boost.
+        public float MaxNavigationJumpSpeed = 0f;
         // Whether this NPC can perform a mid-air second jump
         public bool CanDoubleJump = false;
         // Tracks whether the double jump has been used this airborne phase (reset on landing)
@@ -2399,6 +2401,7 @@ namespace tsorcRevamp.NPCs
             // Low-HP flee (rolled from Cowardice in ApplyHitReport). It gates firing, the pursuit FSM and the ledge
             // halt, so a client that never learns about it keeps chasing and telegraphing shots the server won't fire.
             binaryWriter.Write(Fleeing);
+            SmartFighter4AI.SendRecoveryState(npc, binaryWriter);
 
             // Pounce / patrol / kite-band state, all server-decided. Grouped behind one presence flag because this
             // global rides EVERY NPC's sync and most NPCs in a world never pounce, patrol or kite: they pay one bool
@@ -2514,6 +2517,7 @@ namespace tsorcRevamp.NPCs
             FighterPostAttackPauseTimer = binaryReader.ReadInt16();
             StandingFireThisAttack = binaryReader.ReadBoolean();
             Fleeing = binaryReader.ReadBoolean();
+            SmartFighter4AI.ReceiveRecoveryState(npc, binaryReader);
 
             // Mirrors the movement block in SendExtraAI. When the flag is false the server holds no such state, so
             // clear ours rather than leaving stale values behind from an earlier packet.

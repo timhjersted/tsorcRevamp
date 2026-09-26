@@ -203,6 +203,18 @@ Mods: {
 			Banner: Баннер
 			Limited: Количество этого предмета ограничено, Поэтому он никогда не будет использован нажатием клавиши быстрого усиления
 			NoFallDmg: Даёт иммунитет к урону от падения
+			// WingDetailsHint: Hold Shift to reveal flight stats
+			// WingDetailsHeading: Base flight stats (current mode)
+			// WingDetailsSource: Slotted wings: {0}
+			// WingDetailsUnlimited: Unlimited
+			// WingDetailsCustomTime: Defined by custom wing behavior
+			// WingDetailsSeconds: "{0} seconds"
+			// WingDetailsFlightTime: Flight time: {0}
+			// WingDetailsHorizontalSpeed: Horizontal flight speed: {0} tiles/s
+			// WingDetailsHorizontalAcceleration: Horizontal acceleration: {0} tiles/s²
+			// WingDetailsAscentSpeed: Ascent speed: {0} tiles/s
+			// WingDetailsAscentAcceleration: Ascent acceleration: {0} tiles/s²
+			// WingDetailsRange: "{0}–{1}"
 			/* WingFallProtection:
 				'''
 				Increases safe fall distance by {0} tiles, but does not grant complete fall damage immunity.
@@ -665,7 +677,7 @@ Mods: {
 
 		BossChecklist: {
 			LeonhardDesc: Исследуйте подвесной мост между заснеженными вершинами гор.
-			// VesselOfSoulsDesc: The Vessel of Souls occupies the Eye of Cthulhu's arena.
+			VesselOfSoulsDesc: Отправляйтесь в леденящие душу глубины Храма Земли, где бьют фонтаны.
 			PinwheelDesc: Найдите Катакомбы Утопленников под входом в деревню.
 			AncientOolacileDemonDesc: В легендах упоминается лес Олачиль...
 			SlograAndGaibonName: Слогра и Гайбон
@@ -2068,12 +2080,13 @@ Mods: {
 				DisplayName: Сверхзвуковые крылья II
 				Tooltip:
 					'''
-					Потрясающая сверхзвуковая скорость передвижения, улучшенная манёвренность, практически безграничные возможности полета,
+					Потрясающая сверхзвуковая скорость передвижения, улучшенная манёвренность, полет,
 					а также все предыдущие возможности сверхзвуковых крыльев
 					{$CommonItemTooltip.DragoonGearCompatible}
 					{$CommonItemTooltip.BootsDisableThis}
 					'''
 				// SoulsTooltip0: Superior supersonic movement speed and improved agility,
+				LegacyFlightTooltip: Практически безграничные возможности полета.
 			}
 
 			MonocleOfPrecision: {
@@ -4173,9 +4186,9 @@ Mods: {
 				// Location: Where to find:
 				DeathCountText: Количество смертей:: {0}
 				// ─────────────────────────────────────────────────────────────────────────────
-				//  Clue index → boss mapping. Each clue N corresponds to the boss with NPC.rarity = N.
+				//  Clue indices default to NPC.rarity; EncounterPresentationRegistry overrides order and next clues.
 				//  Hover behavior:
-				//    Defeated boss → shows "Next Boss:" + clue (rarity + 1)
+				//    Defeated boss → shows "Next Boss:" + FollowingClueIndex (defaults to rarity + 1)
 				//    Undefeated (???) → shows "Where to find:" + this boss's own clue (rarity)
 				//  Undefeated clues are gated by era (pre-hardmode/hardmode/SHM) so end-game bosses
 				//  stay hidden until the player has progressed there.
@@ -4187,8 +4200,8 @@ Mods: {
 				//
 				//    1  [PHM] Leonhard               (Special/LeonhardPhase1)             — modded
 				//    2  [PHM] Red Knight             (Enemies/RedKnight)                  — modded
-				//    3  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded
-				//    4  [PHM] Eye of Cthulhu         (VanillaChanges.cs)                  — vanilla
+				//    3  [PHM] Vessel of Souls        (Bosses/VesselOfSouls)               — modded
+				//    4  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded, optional major
 				//    5  [PHM] Brain of Cthulhu       (VanillaChanges.cs)                  — vanilla
 				//    6  [PHM] Eater of Worlds        (VanillaChanges.cs)                  — vanilla
 				//    7  [PHM] Ancient Oolacile Demon (Bosses/AncientOolacileDemon)        — modded
@@ -4230,7 +4243,7 @@ Mods: {
 				//   43  [SHM] Dark Cloud             (Bosses/SuperHardMode/DarkCloud)     — modded
 				//   44  [SHM] Gwyn                   (Bosses/SuperHardMode/Gwyn)          — modded
 				//   45        "True ending" message — shown as the "Next Boss" hint when hovering Gwyn
-				//   48  [PHM] Vessel of Souls        (presentation-only clue index; progression order 5)
+				//   48  [PHM] Eye of Cthulhu         (blank clue; optional field, order 3, next clue 4)
 				//
 				//  To rebind a clue to a different boss, edit that boss's `NPC.rarity = N` (or the
 				//  `npc.rarity = N` line in VanillaChanges.cs for vanilla bosses). To rewrite a clue's
@@ -4240,8 +4253,8 @@ Mods: {
 				// ─────────────────────────────────────────────────────────────────────────────
 				1: "{$BossChecklist.LeonhardDesc}"
 				2: Что находится под руководством Леонарда, или в конце пути амбиций?
-				3: "{$BossChecklist.PinwheelDesc}"
-				4: Отправляйтесь в леденящие душу глубины Храма Земли, где бьют фонтаны.
+				3: "{$BossChecklist.VesselOfSoulsDesc}"
+				4: "{$BossChecklist.PinwheelDesc}"
 				5: Загляните поглубже в Храм Порчи или исследуйте слухи о багровом цвете на поверхности.
 				6: Где-то к востоку от пропасти горы Аразиум.
 				7: "{$BossChecklist.AncientOolacileDemonDesc}"
@@ -4285,7 +4298,7 @@ Mods: {
 				45: Поздравляем! Вы открыли истинную концовку игры!
 				// 46: "{$BossChecklist.OptionalMysteryDesc}"
 				// 47: "{$BossChecklist.OptionalMysteryDesc}"
-				// 48: "{$BossChecklist.VesselOfSoulsDesc}"
+				48: ""
 			}
 
 			BraveWarriorSoul: {
@@ -7393,10 +7406,13 @@ Mods: {
 
 			ArcherSpiritBell: {
 				// DisplayName: Archer Spirit Bell
+				// ArrowDamage: "{0} damage per arrow"
 				/* Tooltip:
 					'''
 					Summons an Archer Spirit to fight for you
 					Looses frostburn arrows that inflict Frostburn on hit
+					Arrow damage scales with maximum mana (1 damage per 4 mana)
+					Bearer of the Curse's mana multiplier does not increase arrow damage
 					Uses 2 summoner slots
 					The spirit targets the highest HP enemy nearby
 					''' */

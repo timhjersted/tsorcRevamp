@@ -203,6 +203,18 @@ Mods: {
 			Banner: " Banner"
 			Limited: Your supply of these is finite, so they are never used by Quick Buff
 			NoFallDmg: Grants immunity to fall damage
+			WingDetailsHint: Hold Shift to reveal flight stats
+			WingDetailsHeading: Base flight stats (current mode)
+			WingDetailsSource: Slotted wings: {0}
+			WingDetailsUnlimited: Unlimited
+			WingDetailsCustomTime: Defined by custom wing behavior
+			WingDetailsSeconds: "{0} seconds"
+			WingDetailsFlightTime: Flight time: {0}
+			WingDetailsHorizontalSpeed: Horizontal flight speed: {0} tiles/s
+			WingDetailsHorizontalAcceleration: Horizontal acceleration: {0} tiles/s²
+			WingDetailsAscentSpeed: Ascent speed: {0} tiles/s
+			WingDetailsAscentAcceleration: Ascent acceleration: {0} tiles/s²
+			WingDetailsRange: "{0}–{1}"
 			WingFallProtection:
 				'''
 				Increases safe fall distance by {0} tiles, but does not grant complete fall damage immunity.
@@ -665,7 +677,7 @@ Mods: {
 
 		BossChecklist: {
 			LeonhardDesc: Explore the suspension bridge between snow-topped mountains.
-			VesselOfSoulsDesc: The Vessel of Souls occupies the Eye of Cthulhu's arena.
+			VesselOfSoulsDesc: Seek the chilling depths of the Earth Temple, where the fountains pool their waters.
 			PinwheelDesc: Seek the Path of the Drowned under the village entrance.
 			AncientOolacileDemonDesc: Legends mention the Oolacile Forest...
 			SlograAndGaibonName: Slogra and Gaibon
@@ -2104,12 +2116,13 @@ Mods: {
 				DisplayName: Supersonic Wings II
 				Tooltip:
 					'''
-					Awesome supersonic movement speed, improved agility, virtually limitless flight,
+					Awesome supersonic movement speed, improved agility, flight,
 					plus all the previous abilities of Supersonic Wings
 					{$CommonItemTooltip.DragoonGearCompatible}
 					{$CommonItemTooltip.BootsDisableThis}
 					'''
 				SoulsTooltip0: Superior supersonic movement speed and improved agility,
+				LegacyFlightTooltip: Virtually limitless flight.
 			}
 
 			MonocleOfPrecision: {
@@ -4214,9 +4227,9 @@ Mods: {
 				Location: Where to find:
 				DeathCountText: Death Count: {0}
 				// ─────────────────────────────────────────────────────────────────────────────
-				//  Clue index → boss mapping. Each clue N corresponds to the boss with NPC.rarity = N.
+				//  Clue indices default to NPC.rarity; EncounterPresentationRegistry overrides order and next clues.
 				//  Hover behavior:
-				//    Defeated boss → shows "Next Boss:" + clue (rarity + 1)
+				//    Defeated boss → shows "Next Boss:" + FollowingClueIndex (defaults to rarity + 1)
 				//    Undefeated (???) → shows "Where to find:" + this boss's own clue (rarity)
 				//  Undefeated clues are gated by era (pre-hardmode/hardmode/SHM) so end-game bosses
 				//  stay hidden until the player has progressed there.
@@ -4228,8 +4241,8 @@ Mods: {
 				//
 				//    1  [PHM] Leonhard               (Special/LeonhardPhase1)             — modded
 				//    2  [PHM] Red Knight             (Enemies/RedKnight)                  — modded
-				//    3  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded
-				//    4  [PHM] Eye of Cthulhu         (VanillaChanges.cs)                  — vanilla
+				//    3  [PHM] Vessel of Souls        (Bosses/VesselOfSouls)               — modded
+				//    4  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded, optional major
 				//    5  [PHM] Brain of Cthulhu       (VanillaChanges.cs)                  — vanilla
 				//    6  [PHM] Eater of Worlds        (VanillaChanges.cs)                  — vanilla
 				//    7  [PHM] Ancient Oolacile Demon (Bosses/AncientOolacileDemon)        — modded
@@ -4271,7 +4284,7 @@ Mods: {
 				//   43  [SHM] Dark Cloud             (Bosses/SuperHardMode/DarkCloud)     — modded
 				//   44  [SHM] Gwyn                   (Bosses/SuperHardMode/Gwyn)          — modded
 				//   45        "True ending" message — shown as the "Next Boss" hint when hovering Gwyn
-				//   48  [PHM] Vessel of Souls        (presentation-only clue index; progression order 5)
+				//   48  [PHM] Eye of Cthulhu         (blank clue; optional field, order 3, next clue 4)
 				//
 				//  To rebind a clue to a different boss, edit that boss's `NPC.rarity = N` (or the
 				//  `npc.rarity = N` line in VanillaChanges.cs for vanilla bosses). To rewrite a clue's
@@ -4281,8 +4294,8 @@ Mods: {
 				// ─────────────────────────────────────────────────────────────────────────────
 				1: "{$BossChecklist.LeonhardDesc}"
 				2: What is under the mountain cave where Leonhard dwells, or at end of the Path of Ambition?
-				3: "{$BossChecklist.PinwheelDesc}"
-				4: Seek the chilling depths of the Earth Temple, where the fountains pool their waters.
+				3: "{$BossChecklist.VesselOfSoulsDesc}"
+				4: "{$BossChecklist.PinwheelDesc}"
 				5: Delve deep inside the Corruption Temple, or investigate rumours about crimson on the surface, to the East.
 				6: Seek the Corruption Temple, East of the Arazium Mountain Chasm.
 				7: "{$BossChecklist.AncientOolacileDemonDesc}"
@@ -4338,7 +4351,7 @@ Mods: {
 				45: Congratulations! You have unlocked the true ending of the game!
 				46: "{$BossChecklist.OptionalMysteryDesc}"
 				47: "{$BossChecklist.OptionalMysteryDesc}"
-				48: "{$BossChecklist.VesselOfSoulsDesc}"
+				48: ""
 			}
 
 			BraveWarriorSoul: {
@@ -7425,10 +7438,13 @@ Mods: {
 
 			ArcherSpiritBell: {
 				DisplayName: Archer Spirit Bell
+				ArrowDamage: "{0} damage per arrow"
 				Tooltip:
 					'''
 					Summons an Archer Spirit to fight for you
 					Looses frostburn arrows that inflict Frostburn on hit
+					Arrow damage scales with maximum mana (1 damage per 4 mana)
+					Bearer of the Curse's mana multiplier does not increase arrow damage
 					Uses 2 summoner slots
 					The spirit targets the highest HP enemy nearby
 					'''

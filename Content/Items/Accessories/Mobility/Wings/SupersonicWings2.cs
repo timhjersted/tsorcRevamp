@@ -179,6 +179,10 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
                 tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityHarness", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityHarness")));
                 tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitRunOnly", (int)(SoulsModeMobility.SupersonicWings2BoostPercent * 100))));
             }
+            else
+            {
+                tooltips.Add(new TooltipLine(Mod, "LegacyFlight", Language.GetTextValue("Mods.tsorcRevamp.Items.SupersonicWings2.LegacyFlightTooltip")));
+            }
         }
     }
 }

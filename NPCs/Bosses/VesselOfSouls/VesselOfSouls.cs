@@ -229,7 +229,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             NPC.noTileCollide = true;
             NPC.lavaImmune = true;
             NPC.boss = true;
-            NPC.rarity = 4;
+            NPC.rarity = 3;
 
             despawnHandler = new NPCDespawnHandler("The Vessel of Souls sinks back into the dark...", Color.MediumPurple, DustID.PurpleTorch);
         }

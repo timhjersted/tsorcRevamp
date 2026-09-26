@@ -31,6 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 48;
             NPC.knockBackResist = 0.6f;
             NPC.scale = 1.0f;
+            NPC.alpha = 0;
             NPC.rarity = 3;
             Banner = NPC.type;
             NPC.buffImmune[BuffID.Confused] = true;
@@ -55,8 +56,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Navigation tuning: above-average jumps and ledge routing for a mobile archer
             tsorcRevampGlobalNPC hunterGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            hunterGlobalNPC.MaxJumpPower = 12f;
-            hunterGlobalNPC.MaxJumpBoost = 5f;
+            hunterGlobalNPC.MaxJumpPower = 11f;
+            hunterGlobalNPC.MaxJumpBoost = 2f;
+            hunterGlobalNPC.MaxNavigationJumpSpeed = 3.2f;
             // CanDoubleJump remains false for RedCloudHunter
             // Step 6 archer levers: blink to elevated firing spots, and reposition toward last-known before patrolling.
             hunterGlobalNPC.PrefersHighGround = true;
@@ -66,8 +68,8 @@ namespace tsorcRevamp.NPCs.Enemies
             hunterGlobalNPC.KiteRangeMax = 40f;
             hunterGlobalNPC.KiteLooseness = 0.2f;
             hunterGlobalNPC.CanGoInvisible = true;
-            hunterGlobalNPC.InvisibleAlpha = 200;
-            EvasiveProfile.EvasiveCloak(hunterGlobalNPC, cloakChance: 0.20f, threatRange: 220);
+            hunterGlobalNPC.InvisibleAlpha = 240; // A faint silhouette (~6% opacity) makes the cloak unmistakable.
+            EvasiveProfile.EvasiveCloak(hunterGlobalNPC, cloakChance: 0.10f, threatRange: 0);
             hunterGlobalNPC.CanAdvanceAndShoot = true;
             // Uses the fixed vanilla Skeleton Archer sheet: it has aim/fire frames but no walk-while-firing frames.
             // AdvanceAndShoot may accelerate its approach between shots, but stop-to-fire must remain enabled.
@@ -94,7 +96,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.HolyArrow, 1, 30, 60));
             npcLoot.Add(ItemDropRule.Common(ItemID.UnicornHorn, 3, 1, 1));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 6, 8));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ArcherSpiritBell>(), 1));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ArcherSpiritBell>(), 10));
         }
 
         #region Spawn
@@ -122,7 +124,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
+            // tML resets this multiplier each tick. Apply it before navigation so the planner
+            // and engine use the same gravity: a slower launch with slightly more height.
+            NPC.GravityMultiplier *= 0.75f;
             tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<EnemyFrostburnArrow>(), archerBoltDamage, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
+
+            // ArcherAI's gradual braking leaves residual movement in the fixed aim/fire pose.
+            // Plant his feet for the entire pose, after navigation has applied its movement.
+            if (NPC.ai[2] > 0f && (NPC.velocity.Y == 0f || NPC.collideY))
+            {
+                NPC.velocity.X = 0f;
+            }
         }
 
         // SkeletonArcher's VanillaFindFrame gates walk frames on strict velocity.Y == 0f, so any

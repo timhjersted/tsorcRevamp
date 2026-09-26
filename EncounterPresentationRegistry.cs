@@ -151,15 +151,12 @@ namespace tsorcRevamp
                 int followingClueIndex = progressionOrder + 1;
                 BossClassification classification = ClassificationForNpc(npcType, clueIndex);
 
-                if (npcType == ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>())
+                // EoC is an optional field encounter outside the numbered progression.
+                // Its reserved location clue is blank until it has an authored location.
+                if (npcType == NPCID.EyeofCthulhu)
                 {
-                    clueIndex = 48;
-                    progressionOrder = 5;
-                    followingClueIndex = 6;
-                }
-                else if (npcType == NPCID.EyeofCthulhu)
-                {
-                    followingClueIndex = 48;
+                    progressionOrder = 3;
+                    followingClueIndex = 4; // Same next clue as Vessel of Souls.
                 }
 
                 Register(npcType, clueIndex, progressionOrder, followingClueIndex, classification, era, AlwaysRevealedClues.Contains(clueIndex));
@@ -169,16 +166,16 @@ namespace tsorcRevamp
         private static BossClassification ClassificationForNpc(int npcType, int clueIndex)
         {
             if (npcType == ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>()) return BossClassification.RequiredMajor;
+            if (npcType == ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>()) return BossClassification.OptionalMajor;
+            if (npcType == NPCID.EyeofCthulhu) return BossClassification.OptionalField;
 
-            if (npcType == NPCID.EyeofCthulhu
-                || npcType == NPCID.SkeletronHead
+            if (npcType == NPCID.SkeletronHead
                 || npcType == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()
                 || npcType == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
                 || npcType == NPCID.Plantera
                 || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()
                 || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()
-                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
-                || npcType == ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>())
+                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())
             {
                 return BossClassification.OptionalGreat;
             }

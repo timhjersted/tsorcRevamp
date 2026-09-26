@@ -17,7 +17,6 @@ namespace tsorcRevamp.Content.Items
         {
             /* Tooltip.SetDefault("A mysterious coin formed out of dark souls" +
                 "\nUsed as a currency among certain merchants"); */
-            ItemID.Sets.ItemNoGravity[Item.type] = true;
             //Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(4, 8));
 
         }
@@ -62,9 +61,16 @@ namespace tsorcRevamp.Content.Items
             return true;
         }
 
+        public override bool CanPickup(Player player)
+        {
+            // Also gate contact pickup, so a full inventory doesn't repeatedly attempt pickup.
+            // Use Terraria's capacity check to include stack room and an enabled Void Bag.
+            return player.ItemSpace(Item).CanTakeItem;
+        }
+
         public override void GrabRange(Player player, ref int grabRange)
         {
-            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<DarkSoulPlayer>().SoulPickupRange / 2);
+            grabRange *= (2 + player.GetModPlayer<DarkSoulPlayer>().SoulPickupRange / 2);
         }
 
         public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> list)
@@ -80,18 +86,7 @@ namespace tsorcRevamp.Content.Items
 
         public override bool OnPickup(Player player)
         {
-            bool openSlot = false;
-            for (int i = 0; i < /*Main.maxInventory*/ 50; i++) //Main.maxInventory == 58 would include coin and ammo slots, we don't want to take those into account in this case
-            {
-                if (player.inventory[i].IsAir || player.HasItem(ModContent.ItemType<SoulCoin>()))
-                {
-                    openSlot = true;
-                }
-            }
-            if (openSlot)
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.CoinPickup with { Volume = 0.8f }, player.Center);
-            }
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.CoinPickup with { Volume = 0.8f }, player.Center);
             return true;
         }
 

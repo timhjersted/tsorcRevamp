@@ -386,7 +386,11 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                         if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                         {
                             int clueIndex = encounterEntry?.ClueIndex ?? currentRarityList[i];
-                            mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + clueIndex);
+                            string locationClue = LangUtils.GetTextValue("Items.BossRematchTome." + clueIndex);
+                            if (!string.IsNullOrWhiteSpace(locationClue))
+                            {
+                                mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Location") + "\n" + locationClue;
+                            }
                         }
                     }
                     continue;

@@ -38,7 +38,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                     Projectile.velocity.Y * 0.2f,      
                     100,                               
                     default,                           
-                    1.1f                              
+                    1f
                 );
 
                 dust.noGravity = false;                

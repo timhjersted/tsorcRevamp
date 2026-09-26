@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Projectiles.Summon.Archer;
@@ -46,6 +48,17 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
             // Don't let the bell fire unless there are enough free minion slots for the Archer Spirit.
             // StaffMinionSlotsRequired only affects slot accounting, not usability.
             return player.maxMinions - player.slotsMinions >= SlotsRequired;
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            TooltipLine damageLine = tooltips.Find(line => line.Mod == "Terraria" && line.Name == "Damage");
+            if (damageLine != null)
+            {
+                // Shots use current maximum mana, rather than the bell's nominal item damage or summon bonuses.
+                damageLine.Text = Language.GetTextValue("Mods.tsorcRevamp.Items.ArcherSpiritBell.ArrowDamage",
+                    ArcherSpirit.CalculateArrowDamage(Main.LocalPlayer));
+            }
         }
 
         public override void UseStyle(Player player, Rectangle heldItemFrame)

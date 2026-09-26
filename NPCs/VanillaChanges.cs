@@ -2034,7 +2034,7 @@ namespace tsorcRevamp.NPCs
                         //damage changes here are for first phase
                         npc.damage = 27; //legacy: 37
                         npc.value = 33330;
-                        npc.rarity = 4;
+                        npc.rarity = 48; // Optional field boss; no location clue yet.
                         //npc.lifeMax = 4615; //Which is actually 7k hp in expert mode 
                         if (Main.expertMode)
                         {

@@ -203,6 +203,18 @@ Mods: {
 			Banner: 旗帜
 			Limited: 快速治疗快捷键不会误用此药水，因为它们很稀有
 			NoFallDmg: 对坠落伤害免疫
+			// WingDetailsHint: Hold Shift to reveal flight stats
+			// WingDetailsHeading: Base flight stats (current mode)
+			// WingDetailsSource: Slotted wings: {0}
+			// WingDetailsUnlimited: Unlimited
+			// WingDetailsCustomTime: Defined by custom wing behavior
+			// WingDetailsSeconds: "{0} seconds"
+			// WingDetailsFlightTime: Flight time: {0}
+			// WingDetailsHorizontalSpeed: Horizontal flight speed: {0} tiles/s
+			// WingDetailsHorizontalAcceleration: Horizontal acceleration: {0} tiles/s²
+			// WingDetailsAscentSpeed: Ascent speed: {0} tiles/s
+			// WingDetailsAscentAcceleration: Ascent acceleration: {0} tiles/s²
+			// WingDetailsRange: "{0}–{1}"
 			/* WingFallProtection:
 				'''
 				Increases safe fall distance by {0} tiles, but does not grant complete fall damage immunity.
@@ -665,7 +677,7 @@ Mods: {
 
 		BossChecklist: {
 			LeonhardDesc: 探索双峰之间的吊桥...
-			// VesselOfSoulsDesc: The Vessel of Souls occupies the Eye of Cthulhu's arena.
+			VesselOfSoulsDesc: 寻找大地神庙令人不寒而栗的深处，找到喷泉汇集成一汪水塘的地方...
 			PinwheelDesc: 深入村庄入口附近的溺亡者地下墓穴...
 			AncientOolacileDemonDesc: 有传言提到了失落的乌拉席露森林...
 			SlograAndGaibonName: 斯洛格拉和盖波
@@ -2108,12 +2120,13 @@ Mods: {
 				DisplayName: 超音速之翼 II
 				Tooltip:
 					'''
-					惊人的超音速运动速度，几乎无限的飞行
+					惊人的超音速运动速度，飞行能力
 					继承超音速之翼的所有能力
 					{$CommonItemTooltip.DragoonGearCompatible}
 					{$CommonItemTooltip.BootsDisableThis}
 					'''
 				// SoulsTooltip0: Superior supersonic movement speed and improved agility,
+				LegacyFlightTooltip: 几乎无限的飞行。
 			}
 
 			MonocleOfPrecision: {
@@ -4214,9 +4227,9 @@ Mods: {
 				// Location: Where to find:
 				DeathCountText: 死亡次数: {0}
 				// ─────────────────────────────────────────────────────────────────────────────
-				//  Clue index → boss mapping. Each clue N corresponds to the boss with NPC.rarity = N.
+				//  Clue indices default to NPC.rarity; EncounterPresentationRegistry overrides order and next clues.
 				//  Hover behavior:
-				//    Defeated boss → shows "Next Boss:" + clue (rarity + 1)
+				//    Defeated boss → shows "Next Boss:" + FollowingClueIndex (defaults to rarity + 1)
 				//    Undefeated (???) → shows "Where to find:" + this boss's own clue (rarity)
 				//  Undefeated clues are gated by era (pre-hardmode/hardmode/SHM) so end-game bosses
 				//  stay hidden until the player has progressed there.
@@ -4228,8 +4241,8 @@ Mods: {
 				//
 				//    1  [PHM] Leonhard               (Special/LeonhardPhase1)             — modded
 				//    2  [PHM] Red Knight             (Enemies/RedKnight)                  — modded
-				//    3  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded
-				//    4  [PHM] Eye of Cthulhu         (VanillaChanges.cs)                  — vanilla
+				//    3  [PHM] Vessel of Souls        (Bosses/VesselOfSouls)               — modded
+				//    4  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded, optional major
 				//    5  [PHM] Brain of Cthulhu       (VanillaChanges.cs)                  — vanilla
 				//    6  [PHM] Eater of Worlds        (VanillaChanges.cs)                  — vanilla
 				//    7  [PHM] Ancient Oolacile Demon (Bosses/AncientOolacileDemon)        — modded
@@ -4271,7 +4284,7 @@ Mods: {
 				//   43  [SHM] Dark Cloud             (Bosses/SuperHardMode/DarkCloud)     — modded
 				//   44  [SHM] Gwyn                   (Bosses/SuperHardMode/Gwyn)          — modded
 				//   45        "True ending" message — shown as the "Next Boss" hint when hovering Gwyn
-				//   48  [PHM] Vessel of Souls        (presentation-only clue index; progression order 5)
+				//   48  [PHM] Eye of Cthulhu         (blank clue; optional field, order 3, next clue 4)
 				//
 				//  To rebind a clue to a different boss, edit that boss's `NPC.rarity = N` (or the
 				//  `npc.rarity = N` line in VanillaChanges.cs for vanilla bosses). To rewrite a clue's
@@ -4281,8 +4294,8 @@ Mods: {
 				// ─────────────────────────────────────────────────────────────────────────────
 				1: "{$BossChecklist.LeonhardDesc}"
 				2: 李奥纳德出现之地的下方有什么，野心之路的终点又有什么？
-				3: "{$BossChecklist.PinwheelDesc}"
-				4: 寻找大地神庙令人不寒而栗的深处，找到喷泉汇集成一汪水塘的地方...
+				3: "{$BossChecklist.VesselOfSoulsDesc}"
+				4: "{$BossChecklist.PinwheelDesc}"
 				5: 探索腐化神殿，还有传言说猩红正在地表蔓延...
 				6: 阿拉齐姆双峰裂谷的东边...
 				7: "{$BossChecklist.AncientOolacileDemonDesc}"
@@ -4338,7 +4351,7 @@ Mods: {
 				45: 恭喜！你已经解锁了游戏的真实结局！
 				// 46: "{$BossChecklist.OptionalMysteryDesc}"
 				// 47: "{$BossChecklist.OptionalMysteryDesc}"
-				// 48: "{$BossChecklist.VesselOfSoulsDesc}"
+				48: ""
 			}
 
 			BraveWarriorSoul: {
@@ -7425,10 +7438,13 @@ Mods: {
 
 			ArcherSpiritBell: {
 				// DisplayName: Archer Spirit Bell
+				// ArrowDamage: "{0} damage per arrow"
 				/* Tooltip:
 					'''
 					Summons an Archer Spirit to fight for you
 					Looses frostburn arrows that inflict Frostburn on hit
+					Arrow damage scales with maximum mana (1 damage per 4 mana)
+					Bearer of the Curse's mana multiplier does not increase arrow damage
 					Uses 2 summoner slots
 					The spirit targets the highest HP enemy nearby
 					''' */
