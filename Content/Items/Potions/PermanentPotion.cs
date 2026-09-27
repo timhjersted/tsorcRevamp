@@ -121,6 +121,22 @@ namespace tsorcRevamp.Content.Items.Potions
         {
             get;
         }
+
+        public virtual bool HasFoodTexture
+        {
+            get => false;
+        }
+
+        public override void SetStaticDefaults()
+        {
+            base.SetStaticDefaults();
+            if (HasFoodTexture)
+            {
+                Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(-1, 3) { NotActuallyAnimating = true });
+                ItemID.Sets.AnimatesAsSoul[Item.type]  = true;
+            }
+        }
+
         public override void SetDefaults()
         {
             Item.width = 16;
@@ -183,16 +199,20 @@ namespace tsorcRevamp.Content.Items.Potions
             }
             return true;
         }
-
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
             if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[PermanentID])
             {
                 Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+                Rectangle sourceRect = new Rectangle();
+                if (HasFoodTexture)
+                {
+                    sourceRect = texture.Frame( verticalFrames: 3);
+                }
                 for (int i = 0; i < 4; i++)
                 {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
-                    spriteBatch.Draw(texture, position + offsetPositon, null, Main.DiscoColor, 0, origin, scale, SpriteEffects.None, 0);
+                    spriteBatch.Draw(texture, position + offsetPositon, (sourceRect == new Rectangle() ? null : sourceRect ), Main.DiscoColor, 0, origin, scale, SpriteEffects.None, 0);
                 }
             }
             return true;
@@ -464,6 +484,7 @@ namespace tsorcRevamp.Content.Items.Potions
     {
         public override string BuffName => LangUtils.GetTextValue("Items.PermanentTipsy.BuffName");
         public override string Texture => UsefulFunctions.VanillaTextureFilepath(ItemID.Ale);
+        public override bool HasFoodTexture => true;
         public override int PermanentID => 18;
         public override int BuffType => BuffID.Tipsy;
         public override bool CanScale => true;
@@ -1088,6 +1109,8 @@ namespace tsorcRevamp.Content.Items.Potions
     {
         public override string BuffName => LangUtils.GetTextValue("Items.PermanentWellFed.BuffName");
         public override string Texture => UsefulFunctions.VanillaTextureFilepath(ItemID.Teacup);
+        public override bool HasFoodTexture => true;
+
         public override int PermanentID => 53;
         public override int BuffType => BuffID.WellFed;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
@@ -1111,6 +1134,7 @@ namespace tsorcRevamp.Content.Items.Potions
     {
         public override string BuffName => LangUtils.GetTextValue("Items.PermanentPlentySatisfied.BuffName");
         public override string Texture => UsefulFunctions.VanillaTextureFilepath(ItemID.BowlofSoup);
+        public override bool HasFoodTexture => true;
         public override int PermanentID => 54;
         public override int BuffType => BuffID.WellFed2;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
@@ -1147,6 +1171,7 @@ namespace tsorcRevamp.Content.Items.Potions
     {
         public override string BuffName => LangUtils.GetTextValue("Items.PermanentExquisitelyStuffed.BuffName");
         public override string Texture => UsefulFunctions.VanillaTextureFilepath(ItemID.GoldenDelight);
+        public override bool HasFoodTexture => true;
         public override int PermanentID => 55;
         public override int BuffType => BuffID.WellFed3;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
