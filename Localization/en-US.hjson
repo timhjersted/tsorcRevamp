@@ -6493,7 +6493,7 @@ Mods: {
 			}
 
 			AncientFireAxe: {
-				DisplayName: Ancient Fire Axe
+				DisplayName: Owl's Greataxe
 				Tooltip:
 					'''
 					The blade hits with a powerful magic flame.
@@ -6509,7 +6509,7 @@ Mods: {
 			}
 
 			AncientFireAxeShort: {
-				DisplayName: Ancient Fire Axe
+				DisplayName: Owl's Greataxe
 				Tooltip:
 					'''
 					The blade hits with a powerful magic flame.
@@ -11136,11 +11136,11 @@ Mods: {
 			FlameOrbOfSpirituality.DisplayName: Orb of Spirituality
 			CharmOrbOfFlame.DisplayName: Orb of Flame
 			CharmOrbOfSpirituality.DisplayName: Orb of Spirituality
-			AncientFireAxeFireball.DisplayName: Ancient Fire Axe Fireball
+			AncientFireAxeFireball.DisplayName: Owl's Greataxe Fireball
 			ModDD2ExplosiveTrapT2Explosion.DisplayName: Mod D D2 Explosive Trap T2 Explosion
 			ForgottenImpDagger.DisplayName: Forgotten Imp Dagger
 			ForgottenImpProjectile.DisplayName: Forgotten Imp Projectile
-			AncientFireAxeFireballBurst.DisplayName: Ancient Fire Axe Fireball Burst
+			AncientFireAxeFireballBurst.DisplayName: Owl's Greataxe Fireball Burst
 			AncientFireSwordSlash.DisplayName: Ancient Fire Sword Slash
 			SupremeDragoonLanceProjectile.DisplayName: Supreme Dragoon Lance Projectile
 			MagmaToothVolcano.DisplayName: Magma Tooth Volcano
@@ -11450,10 +11450,10 @@ Mods: {
 			UlhanUnholyArrow.DisplayName: Unholy Arrow
 			UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			UlhanFireExplosion.DisplayName: Fire Explosion
-			AncientFireAxeThrown.DisplayName: Ancient Fire Axe Thrown
-			AncientFireAxeFireWave.DisplayName: Ancient Fire Axe Fire Wave
-			AncientFireAxeFireColumn.DisplayName: Ancient Fire Axe Fire Column
-			AncientFireAxeFireBurst.DisplayName: Ancient Fire Axe Fire Burst
+			AncientFireAxeThrown.DisplayName: Owl's Greataxe Thrown
+			AncientFireAxeFireWave.DisplayName: Owl's Greataxe Fire Wave
+			AncientFireAxeFireColumn.DisplayName: Owl's Greataxe Fire Column
+			AncientFireAxeFireBurst.DisplayName: Owl's Greataxe Fire Burst
 			IllusionRuneBlade.DisplayName: Illusion Rune Blade
 			IllusionOracle.DisplayName: Illusion Oracle
 			IllusionCrystal.DisplayName: Illusion Crystal

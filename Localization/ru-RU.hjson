@@ -6466,7 +6466,7 @@ Mods: {
 			}
 
 			AncientFireAxe: {
-				DisplayName: Древний огненный топор
+				DisplayName: Секира Филина
 				Tooltip:
 					'''
 					Лезвие ударяет мощным магическим пламенем.
@@ -6476,7 +6476,7 @@ Mods: {
 			}
 
 			AncientFireAxeShort: {
-				// DisplayName: Ancient Fire Axe
+				DisplayName: Секира Филина
 				/* Tooltip:
 					'''
 					The blade hits with a powerful magic flame.
@@ -11083,11 +11083,11 @@ Mods: {
 			FlameOrbOfSpirituality.DisplayName: Сфера духовности
 			CharmOrbOfFlame.DisplayName: Огненный шар
 			CharmOrbOfSpirituality.DisplayName: Сфера духовности
-			AncientFireAxeFireball.DisplayName: Огненный шар древнего пожарного топора
+			AncientFireAxeFireball.DisplayName: Огненный шар секиры Филина
 			ModDD2ExplosiveTrapT2Explosion.DisplayName: Мод D D2 Взрывоопасная ловушка T2 Взрыв
 			ForgottenImpDagger.DisplayName: Забытый кинжал беса
 			ForgottenImpProjectile.DisplayName: Забытый снаряд Беса
-			AncientFireAxeFireballBurst.DisplayName: Взрыв огненного шара от древнего пожарного топора
+			AncientFireAxeFireballBurst.DisplayName: Взрыв огненного шара секиры Филина
 			AncientFireSwordSlash.DisplayName: Удар древнего огненного меча
 			SupremeDragoonLanceProjectile.DisplayName: Метательный снаряд высшего драгунского копья
 			MagmaToothVolcano.DisplayName: Магматический зуб вулкана
@@ -11394,10 +11394,13 @@ Mods: {
 			// ChaosCollapseBurst.DisplayName: Chaos Collapse Burst
 			// ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			// EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
-			// AncientFireAxeThrown.DisplayName: Ancient Fire Axe Thrown
-			// AncientFireAxeFireWave.DisplayName: Ancient Fire Axe Fire Wave
-			// AncientFireAxeFireColumn.DisplayName: Ancient Fire Axe Fire Column
-			// AncientFireAxeFireBurst.DisplayName: Ancient Fire Axe Fire Burst
+			// UlhanUnholyArrow.DisplayName: Unholy Arrow
+			// UlhanExplosiveArrow.DisplayName: Explosive Arrow
+			// UlhanFireExplosion.DisplayName: Fire Explosion
+			// AncientFireAxeThrown.DisplayName: Owl's Greataxe Thrown
+			// AncientFireAxeFireWave.DisplayName: Owl's Greataxe Fire Wave
+			// AncientFireAxeFireColumn.DisplayName: Owl's Greataxe Fire Column
+			// AncientFireAxeFireBurst.DisplayName: Owl's Greataxe Fire Burst
 			// IllusionRuneBlade.DisplayName: Illusion Rune Blade
 			// IllusionOracle.DisplayName: Illusion Oracle
 			// IllusionCrystal.DisplayName: Illusion Crystal

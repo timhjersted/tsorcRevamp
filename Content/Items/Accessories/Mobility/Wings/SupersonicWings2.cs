@@ -32,8 +32,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ModContent.ItemType<SupersonicWings>());
             recipe2.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
-            recipe2.AddIngredient(ItemID.EmpressFlightBooster);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 50000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 70000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();
 

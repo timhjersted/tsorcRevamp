@@ -9,6 +9,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
     public class UlhanFireExplosion : ModProjectile
     {
+        public const float DamageRadius = 26f;
+
+        internal static bool IsWithinDamageRadius(Vector2 center, Rectangle targetHitbox)
+            => Vector2.DistanceSquared(center, new Vector2(
+                MathHelper.Clamp(center.X, targetHitbox.Left, targetHitbox.Right),
+                MathHelper.Clamp(center.Y, targetHitbox.Top, targetHitbox.Bottom))) <= DamageRadius * DamageRadius;
+
         // Five 52x52 frames, four ticks each. First two frames hurt; the rest decay visibly.
         public override string Texture => "tsorcRevamp/Content/Projectiles/Enemy/FireExplosion";
         public override void SetStaticDefaults() => Main.projFrames[Type] = 5;
@@ -28,9 +35,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override bool? CanDamage() => Projectile.timeLeft > 12 ? null : false;
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-            => Vector2.DistanceSquared(Projectile.Center, new Vector2(
-                MathHelper.Clamp(Projectile.Center.X, targetHitbox.Left, targetHitbox.Right),
-                MathHelper.Clamp(Projectile.Center.Y, targetHitbox.Top, targetHitbox.Bottom))) <= 26f * 26f;
+            => IsWithinDamageRadius(Projectile.Center, targetHitbox);
 
         public override void OnSpawn(IEntitySource source)
         {
