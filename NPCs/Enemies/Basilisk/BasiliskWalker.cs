@@ -248,8 +248,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             }
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead)))
             {
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false); //-20 life if counter hits 100
-                target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 5;
+                CurseBuildup.ApplyExplicit(target, 5, 300 * 60); //-20 life if counter hits 100
             }
             if (Main.rand.NextBool(10))
             {

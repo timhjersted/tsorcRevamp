@@ -104,6 +104,9 @@ namespace tsorcRevamp
         public bool FinishedChargingWhip = false;
 
         public int CurseLevel = 1;
+        // Distinguishes the first ordinary CurseBuildup application from a meter that decayed to1.
+        public bool CurseBuildupInitialized;
+        public bool SuppressDefaultCurseBuildup;
         public int PowerfulCurseLevel = 1;
         public int curseDecayTimer = 0;
         public int powerfulCurseDecayTimer = 0;
@@ -1397,6 +1400,7 @@ namespace tsorcRevamp
             if (!Player.HasBuff(ModContent.BuffType<CurseBuildup>()))
             {
                 CurseLevel = 1; //Not sure why 1 is the default
+                CurseBuildupInitialized = false;
             }
 
             if (!Player.HasBuff(ModContent.BuffType<PowerfulCurseBuildup>()))
@@ -2191,6 +2195,8 @@ namespace tsorcRevamp
                     }*/
                 }
             }
+            // Apply buildup slow after the boot/wing movement calculations above.
+            Player.GetModPlayer<FrostPlayer>().ApplyMovementSlow();
         }
         public override void UpdateLifeRegen()
         {

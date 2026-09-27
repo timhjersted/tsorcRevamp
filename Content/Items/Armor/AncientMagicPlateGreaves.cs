@@ -15,6 +15,9 @@ namespace tsorcRevamp.Content.Items.Armor
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
+            int slot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Legs);
+            ArmorIDs.Legs.Sets.HidesTopSkin[slot] = true;
+            ArmorIDs.Legs.Sets.HidesBottomSkin[slot] = true;
         }
 
         public override void SetDefaults()

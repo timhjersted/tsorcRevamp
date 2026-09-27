@@ -12,13 +12,27 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, DreadWraith";
+        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, DreadWraith";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
             if (string.IsNullOrWhiteSpace(puppet)) { return null; }
 
             string P(params string[] parts) => Path.GetFullPath(Path.Combine(repoRoot, Path.Combine(parts)));
+
+            if (puppet.Equals("CrystalKnight", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "CrystalKnight",
+                    BodySheet = P("Content", "Items", "Armor", "AncientMagicPlateArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "AncientMagicPlateGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "AncientHornedHelmet_Head.png"),
+                    // Exact installed holdout exported with ExportVanillaTexture.ps1, not proxy art.
+                    WeaponSprite = P("tsorcDocs", "SwingReports", "CrystalKnight", "NorthPole.png"),
+                    WeaponRotationOffset = (float)Math.PI / 2f,
+                };
+            }
 
             if (puppet.Equals("Gwyn", StringComparison.OrdinalIgnoreCase))
             {

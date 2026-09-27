@@ -4875,7 +4875,9 @@ namespace tsorcRevamp.NPCs
 )
                     {
                         base.SetDefaults(npc);
-                        npc.lifeMax = (int)(tsorcRevampWorld.SHMScale * npc.lifeMax);
+                        // Summoned CrystalSentry has an explicitly fixed4000 HP in every world tier.
+                        if (npc.ModNPC is not NPCs.Enemies.SuperHardMode.CrystalSentry)
+                            npc.lifeMax = (int)(tsorcRevampWorld.SHMScale * npc.lifeMax);
                         npc.defense = (int)(tsorcRevampWorld.SubtleSHMScale * npc.defense);
                         npc.damage = (int)(tsorcRevampWorld.SubtleSHMScale * npc.damage);
                     }

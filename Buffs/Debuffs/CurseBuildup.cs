@@ -8,6 +8,8 @@ namespace tsorcRevamp.Buffs.Debuffs
 {
     public class CurseBuildup : ModBuff
     {
+        public const int DefaultBuildupPerHit = 35;
+
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;
@@ -22,6 +24,14 @@ namespace tsorcRevamp.Buffs.Debuffs
         public override void Update(Player player, ref int buffIndex)
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+            if (!modPlayer.CurseBuildupInitialized)
+            {
+                modPlayer.CurseBuildupInitialized = true;
+                // AddBuff does not call ReApply on the first hit. Start generic sources at 35,
+                // while an attack that already assigned its own amount remains authoritative.
+                if (modPlayer.CurseLevel == 1) modPlayer.CurseLevel = DefaultBuildupPerHit;
+            }
 
             if (modPlayer.CurseLevel >= 100)
             {
@@ -52,7 +62,16 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override bool ReApply(Player player, int time, int buffIndex)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += Main.rand.Next(22, 36); // 22-35, aka 3-4 hits before curse proc (projectiles now also inflict a bit of buildup; +5 in the case of bio spit from basilisks)
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (!modPlayer.SuppressDefaultCurseBuildup)
+            {
+                if (!modPlayer.CurseBuildupInitialized)
+                {
+                    modPlayer.CurseBuildupInitialized = true;
+                    if (modPlayer.CurseLevel == 1) modPlayer.CurseLevel = DefaultBuildupPerHit;
+                }
+                modPlayer.CurseLevel += DefaultBuildupPerHit;
+            }
 
             for (int i = 0; i < 10; i++)
             {
@@ -61,6 +80,23 @@ namespace tsorcRevamp.Buffs.Debuffs
             }
 
             return true;
+        }
+
+        // For attacks with an authored amount. Suppress ReApply's generic 35 and assign the
+        // specific amount exactly once, including the first application of the marker buff.
+        public static void ApplyExplicit(Player player, int amount, int durationTicks)
+        {
+            int type = ModContent.BuffType<CurseBuildup>();
+            if (player == null || !player.active || player.dead || amount <= 0 || player.buffImmune[type]) return;
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            bool wasActive = player.HasBuff(type);
+            modPlayer.SuppressDefaultCurseBuildup = true;
+            try { player.AddBuff(type, durationTicks, false); }
+            finally { modPlayer.SuppressDefaultCurseBuildup = false; }
+            if (!player.HasBuff(type)) return;
+            if (!wasActive) modPlayer.CurseLevel = amount;
+            else modPlayer.CurseLevel += amount;
+            modPlayer.CurseBuildupInitialized = true;
         }
     }
 }

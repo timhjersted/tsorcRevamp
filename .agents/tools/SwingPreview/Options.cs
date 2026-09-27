@@ -71,6 +71,7 @@ namespace SwingPreview
         public int StepLinger = -1;
         public int UseAnim = -1;
         public int RollThrough;
+        public int Direction = 1;
         public string Clock;
         public float SwingMult = -1f;
         public float Overshoot = float.NaN;
@@ -122,6 +123,7 @@ SwingPreview - run the mod's real swing maths headless and emit telemetry JSONL.
   --overshoot <float>             override OverheadWindupOvershoot
   --body                          also composite the real sprite sheets -> strip + contact sheet + HTML player
   --airborne                      pose on the jump body frame (row 5), where vanilla hides the shoulder caps
+  --left                          mirror the body and weapon for left-facing inspection
   --vanilla-shoulder-order        draw the UNFIXED shoulder order (arm flips in front of the pauldron on
                                   body rows 1/2/5) instead of the order PuppetShoulderCapLayer forces
   --zoom <int>                    body render scale, default 3
@@ -185,6 +187,7 @@ Examples:
                     case "--step-linger": options.StepLinger = int.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--useanim": options.UseAnim = int.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--roll-through": options.RollThrough = int.Parse(Next(), CultureInfo.InvariantCulture); break;
+                    case "--left": options.Direction = -1; break;
                     case "--swingmult": options.SwingMult = float.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--overshoot": options.Overshoot = float.Parse(Next(), CultureInfo.InvariantCulture); break;
                     case "--health": options.Health = float.Parse(Next(), CultureInfo.InvariantCulture); break;
@@ -398,6 +401,7 @@ Examples:
                 InterStepLingerTicks = profile.InterStepLingerTicks,
                 WeaponUseAnimation = profile.WeaponUseAnimation,
                 RollThroughStep = RollThrough,
+                Direction = Direction,
                 Airborne = Airborne,
             };
 

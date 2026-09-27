@@ -64,8 +64,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             target.AddBuff(BuffID.Poisoned, 20 * 60, false);
             target.AddBuff(BuffID.Bleeding, 20 * 60, false);
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false); //reduced defense on hit
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false); //-20 HP after several hits
-            target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 30;
+            CurseBuildup.ApplyExplicit(target, 30, 300 * 60); //-20 HP after several hits
         }
 
 

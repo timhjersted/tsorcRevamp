@@ -402,6 +402,7 @@ Mods: {
 				'''
 			WallDeathReason: " was consumed by The Wall of Flesh"
 			MadnessDeathReason: "{0} succumbed to madness"
+			FrostDeathReason: "{0} shattered from frost"
 			BotC1: Bearer of the Curse mode can be disabled at any time...
 			BotC2: Bearer of the Curse mode is intended for experienced players
 			BotC3: Try reading the Darksign's description
@@ -9322,6 +9323,16 @@ Mods: {
 				Description: "{$Buffs.Curse.Buildup}"
 			}
 
+			FrostBuildup: {
+				DisplayName: Frost Buildup
+				Description: Frost buildup: {0}/100. Movement slowed by {1:0.#}%. At 100, lose 10% of maximum life, freeze for 2 seconds, and regenerate stamina 10% slower for 12 seconds. Buildup decays by 4 per second.
+			}
+
+			Frost: {
+				DisplayName: Frost
+				Description: 10% slower stamina regeneration
+			}
+
 			MadnessBuildup: {
 				DisplayName: Madness Buildup
 				Description: At {0} buildup, take 200 damage and become staggered. Current buildup: {1}
@@ -11457,6 +11468,11 @@ Mods: {
 			IllusionRuneBlade.DisplayName: Illusion Rune Blade
 			IllusionOracle.DisplayName: Illusion Oracle
 			IllusionCrystal.DisplayName: Illusion Crystal
+			CrystalKnightAnchor.DisplayName: Crystal Knight Anchor
+			CrystalKnightFloorSpike.DisplayName: Crystal Knight Floor Spike
+			CrystalKnightShard.DisplayName: Crystal Knight Shard
+			CrystalSentryBreath.DisplayName: Crystal Sentry Breath
+			CrystalSentryCrystal.DisplayName: Crystal Sentry Crystal
 		}
 
 		NPCs: {
@@ -12017,6 +12033,7 @@ Mods: {
 			CorruptedElemental.DisplayName: Abyss Elemental
 			CorruptedHornet.DisplayName: Defiled Hornet
 			CrystalKnight.DisplayName: Crystal Knight
+			CrystalSentry.DisplayName: Crystal Sentry
 			DarkBloodKnight.DisplayName: Demonic Blood Knight
 			DarkKnight.DisplayName: Dark Knight
 			DemonWheel.DisplayName: Demon Wheel

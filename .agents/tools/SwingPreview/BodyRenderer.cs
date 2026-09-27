@@ -19,6 +19,8 @@ namespace SwingPreview
         public bool Armed;
         public bool Airborne;
         public float WeaponRotation;      // radians, the mod's swing-space angle
+        public float? SpearGrip;
+        public float WeaponDrawOffset;
         public float CompositeArmRotation; // radians, vanilla composite-arm space
         public int Direction = 1;
         public int BodyRow;
@@ -42,6 +44,7 @@ namespace SwingPreview
         /// <summary>Horizontal world movement from the first frame. Used by moving projectile demos
         /// so the puppet, hand and chain translate together while a fixed target remains fixed.</summary>
         public float OwnerOffsetX;
+        public float OwnerOffsetY;
         public bool RuneVisible, RuneUnderhand;
         public float RuneAge, RuneFade = 1f;
     }
@@ -249,6 +252,14 @@ namespace SwingPreview
                 PadX = Math.Max(PadX, (int)Math.Ceiling(maxFlailX + flailBall.Width * 0.5f + 24f));
                 PadY = Math.Max(PadY, (int)Math.Ceiling(maxFlailY + flailBall.Height * 0.5f + 24f));
             }
+            // Preserve the entire translated weapon/body path, including a custom vault's height.
+            int motionX = 0, motionY = 0;
+            foreach (PoseFrame pose in allFrames)
+            {
+                motionX = Math.Max(motionX, (int)Math.Ceiling(Math.Abs(pose.OwnerOffsetX)));
+                motionY = Math.Max(motionY, (int)Math.Ceiling(Math.Abs(pose.OwnerOffsetY)));
+            }
+            PadX += motionX; PadY += motionY;
             int w = (CellW + PadX * 2) * zoom;
             int h = (CellH + PadY * 2) * zoom;
 
@@ -263,7 +274,7 @@ namespace SwingPreview
             g.SmoothingMode = SmoothingMode.None;
 
             g.ScaleTransform(zoom, zoom);
-            g.TranslateTransform(PadX + frame.OwnerOffsetX, PadY);
+            g.TranslateTransform(PadX + frame.OwnerOffsetX, PadY + frame.OwnerOffsetY);
 
             // Facing left is drawn as the exact mirror of the right-facing pose, about the body cell's
             // centre - which is what the game produces (vanilla flips every layer with the sprite,
@@ -345,7 +356,10 @@ namespace SwingPreview
             if (!weaponSpriteHidden)
             {
                 PointF frontHand = FrontHandInCell(armRotation, flip);
-                DrawWeapon(g, weapon, art, frontWeaponRotation, frontHand, flip, art.WeaponScale);
+                PointF? spearOrigin = frame.SpearGrip.HasValue
+                    ? new PointF((1f + frame.SpearGrip.Value * 114f) / 116f,
+                        (1f + frame.SpearGrip.Value * 114f) / 116f) : null;
+                DrawWeapon(g, weapon, art, frontWeaponRotation + frame.WeaponDrawOffset, frontHand, flip, art.WeaponScale, spearOrigin);
             }
 
             if (armOverShoulder)
@@ -443,7 +457,7 @@ namespace SwingPreview
         /// GetFrontHandPosition maths relative to the cell, and the sprite is pinned by its lower-left
         /// (the hilt corner for a Terraria sword), which is the convention the real draw starts from.
         /// </summary>
-        private static void DrawWeapon(Graphics g, Bitmap weapon, PuppetArt art, float weaponRotation, PointF hand, bool flip, float weaponScale)
+        private static void DrawWeapon(Graphics g, Bitmap weapon, PuppetArt art, float weaponRotation, PointF hand, bool flip, float weaponScale, PointF? grip = null)
         {
             float degrees = (float)((weaponRotation + art.WeaponRotationOffset) * 180.0 / Math.PI);
 
@@ -465,8 +479,8 @@ namespace SwingPreview
             // every puppet look like it held the very end of its sword.)
             float w = weapon.Width * weaponScale;
             float h = weapon.Height * weaponScale;
-            float originX = w * art.HandleNormX;
-            float originY = h * art.HandleNormY;
+            float originX = w * (grip?.X ?? art.HandleNormX);
+            float originY = h * (grip?.Y ?? art.HandleNormY);
             g.DrawImage(weapon, new RectangleF(-originX, -originY, w, h),
                 new RectangleF(0f, 0f, weapon.Width, weapon.Height), GraphicsUnit.Pixel);
 

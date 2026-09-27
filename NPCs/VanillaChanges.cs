@@ -3705,6 +3705,41 @@ namespace tsorcRevamp.NPCs
                 }
 
                 if (npc.type == NPCID.BigRainZombie
+                    || npc.type == NPCID.BigTwiggyZombie
+                    || npc.type == NPCID.SmallTwiggyZombie
+                    || npc.type == NPCID.BigSwampZombie
+                    || npc.type == NPCID.SmallSwampZombie
+                    || npc.type == NPCID.SmallSlimedZombie
+                    || npc.type == NPCID.BigPincushionZombie
+                    || npc.type == NPCID.SmallPincushionZombie
+                    || npc.type == NPCID.PincushionZombie
+                    || npc.type == NPCID.SwampZombie
+                    || npc.type == NPCID.TwiggyZombie
+                    || npc.type == NPCID.MaggotZombie
+                    || npc.type == NPCID.TorchZombie
+                    || npc.type == NPCID.ArmedTorchZombie
+                    || npc.type == NPCID.CataractEye
+                    || npc.type == NPCID.SleepyEye
+                    || npc.type == NPCID.DialatedEye
+                    || npc.type == NPCID.DemonEyeSpaceship
+                    || npc.type == NPCID.MisassembledSkeleton
+                    || npc.type == NPCID.PantlessSkeleton
+                    || npc.type == NPCID.BoneThrowingSkeleton
+                    || npc.type == NPCID.BoneThrowingSkeleton4
+                    || (npc.type >= NPCID.Scarecrow1 && npc.type <= NPCID.Scarecrow10)
+                    || npc.type == NPCID.ZombieElf
+                    || npc.type == NPCID.ZombieElfBeard
+                    || npc.type == NPCID.ZombieElfGirl
+                    || npc.type == NPCID.GingerbreadMan
+                    || npc.type == NPCID.ElfCopter
+                    || npc.type == NPCID.Nutcracker
+                    || npc.type == NPCID.NutcrackerSpinning
+                    || npc.type == NPCID.ElfArcher
+                    || npc.type == NPCID.Frankenstein
+                    || npc.type == NPCID.Psycho
+                    || npc.type == NPCID.Nailhead
+                    || npc.type == NPCID.EyeballFlyingFish
+                    || npc.type == NPCID.PirateGhost
                     || npc.type == NPCID.ArmedZombie
                     || npc.type == NPCID.ArmedZombiePincussion
                     || npc.type == NPCID.ArmedZombieSwamp
@@ -3825,8 +3860,6 @@ namespace tsorcRevamp.NPCs
                             || npc.type == NPCID.SpikedIceSlime
                             || npc.type == NPCID.WalkingAntlion
                             || npc.type == NPCID.FlyingAntlion
-                            || npc.type == NPCID.TorchZombie
-                            || npc.type == NPCID.ArmedTorchZombie
                             || npc.type == NPCID.GiantFlyingAntlion
                             || npc.type == NPCID.IceBat
                             || npc.type == NPCID.Antlion
@@ -3845,8 +3878,7 @@ namespace tsorcRevamp.NPCs
                         if ((npc.type >= NPCID.DemonEye2 && npc.type <= NPCID.CataractEye2) ||
                             npc.type == NPCID.DemonEye ||
                             (npc.type >= NPCID.CataractEye && npc.type <= NPCID.PurpleEye) ||
-                            npc.type == NPCID.DemonEyeOwl ||
-                            npc.type == NPCID.DemonEyeSpaceship)
+                            npc.type == NPCID.DemonEyeOwl)
                         {
                             npc.active = false;
                         }

@@ -27,6 +27,9 @@ namespace tsorcRevamp.NPCs.Puppets
         private Vector2 _shotAim = Vector2.UnitX;
         private bool _closingForExplosive;
         private int _approachTicks;
+        private bool _caltropsPending;
+        private Vector2 _caltropTarget;
+        private readonly List<(int Slot, int Identity)> _caltrops = new List<(int, int)>();
         private const float JumpGravity = 0.3f;
         private int JumpApexTicks => Math.Max(1, (int)Math.Round(_jumpUpSpeed / JumpGravity));
 
@@ -40,6 +43,18 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int SecondaryRangedWeaponItemType => RangedWeaponItemType;
         protected override int RangedDamage => EnemyDamage.Projectile(50);
         protected override int SecondaryRangedDamage => EnemyDamage.Projectile(75);
+        protected override int MagicWeaponItemType => ModContent.ItemType<Content.Items.Weapons.Enemy.EnemyCaltrop>();
+        protected override int MagicDamage => EnemyDamage.Projectile(50);
+        protected override float MinMagicRange => 80f;
+        protected override float MagicRange => _caltropsPending && NPC.HasValidTarget && NPC.velocity.Y == 0f
+            && Math.Abs(Main.player[NPC.target].Center.Y - NPC.Center.Y) <= 64f
+            && Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1) ? 240f : 0f;
+        protected override int MagicPreferenceChance => 100;
+        protected override int MagicTelegraphTicks => 60;
+        protected override int MagicAttackTicks => 15;
+        protected override int MagicRecoveryTicks => 60;
+        protected override int MagicCooldownAfterUse => 480;
+        protected override Color MagicTelegraphFlashColor => Color.White;
         protected override int EstusChargesMax => 0;
         protected override int CasualStrollChance => 0;
         protected override bool ShowWeaponDuringNeutral => true;
@@ -109,6 +124,7 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
+            ClearCaltrops();
             var definition = new Terraria.ModLoader.Config.NPCDefinition(Type);
             if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
             {
@@ -129,7 +145,9 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void AI()
         {
-            DebugAttackLabel = Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack
+            DebugAttackLabel = Phase == AttackPhase.MagicTelegraph || Phase == AttackPhase.MagicAttack
+                || Phase == AttackPhase.MagicRecovery ? "Caltrop Throw"
+                : Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack
                 || Phase == AttackPhase.CrossbowBurstPause || Phase == AttackPhase.RangedRecovery
                 ? IsSecondaryRangedActive ? "Explosive Arrow" : _movement + " Unholy Bow Shot"
                 : _closingForExplosive ? "Explosive Arrow Approach" : null;
@@ -149,9 +167,71 @@ namespace tsorcRevamp.NPCs.Puppets
                         NPC.netUpdate = true;
                 }
             }
+            AttackPhase previousPhase = Phase;
             base.AI();
+            if (Main.netMode == NetmodeID.MultiplayerClient && previousPhase == AttackPhase.MagicTelegraph
+                && Phase == AttackPhase.MagicAttack)
+                PlayThrowSound();
             if (Phase == AttackPhase.CrossbowBurstPause)
                 DoRangedTelegraphVFX(false, MathHelper.Clamp(1f - PhaseTimer / 45f, 0f, 1f));
+            if (Phase == AttackPhase.MagicTelegraph && !Main.dedServ && Main.GameUpdateCount % 4 == 0)
+            {
+                // These are the shared magic/throw body's authored Use2 and Use1 hand offsets.
+                Vector2 hand = NPC.Center + (PhaseTimer > MagicTelegraphTicks * 0.5f
+                    ? new Vector2(4f * NPC.direction, -8f) : new Vector2(-8f * NPC.direction, -9f));
+                Dust dust = Dust.NewDustPerfect(hand + Main.rand.NextVector2Circular(3f, 3f),
+                    DustID.Smoke, new Vector2(0f, -0.25f), 160, Color.LightGray, 0.55f);
+                dust.noGravity = true;
+            }
+        }
+
+        protected override void OnMagicTelegraphStarting()
+        {
+            _caltropsPending = false;
+            Player target = Main.player[NPC.target];
+            Vector2 origin = NPC.Center + new Vector2(4f * NPC.direction, 2f);
+            Vector2 offset = target.Center + target.velocity * 18f - origin;
+            if (offset.LengthSquared() > 240f * 240f)
+                offset = offset.SafeNormalize(new Vector2(NPC.direction, 0f)) * 240f;
+            _caltropTarget = origin + offset;
+            NPC.netUpdate = true;
+        }
+
+        protected override void DoMagicAttack()
+        {
+            PlayThrowSound();
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+            // Match the forward Use3 hand displayed on the release frame, on every peer.
+            Vector2 origin = NPC.Center + new Vector2(4f * NPC.direction, 2f);
+            _caltrops.RemoveAll(tracked => !Main.projectile[tracked.Slot].active
+                || Main.projectile[tracked.Slot].identity != tracked.Identity);
+            foreach (int slot in Content.Projectiles.Enemy.Weapons.EnemyCaltrop.ThrowSpread(
+                NPC.GetSource_FromThis(), origin, _caltropTarget, MagicDamage, 1.5f, Main.myPlayer))
+            {
+                if (slot >= 0 && slot < Main.maxProjectiles && Main.projectile[slot].active)
+                    _caltrops.Add((slot, Main.projectile[slot].identity));
+            }
+        }
+
+        protected override void OnPartyWipeDespawnStarted()
+        {
+            base.OnPartyWipeDespawnStarted();
+            ClearCaltrops();
+        }
+
+        private void ClearCaltrops()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+            foreach (var tracked in _caltrops)
+            {
+                Projectile projectile = Main.projectile[tracked.Slot];
+                if (projectile.active && projectile.identity == tracked.Identity
+                    && projectile.type == ModContent.ProjectileType<Content.Projectiles.Enemy.Weapons.EnemyCaltrop>())
+                    projectile.Kill();
+            }
+            _caltrops.Clear();
         }
 
         protected override void RunMovementAI(float speedMult)
@@ -276,6 +356,11 @@ namespace tsorcRevamp.NPCs.Puppets
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, _shotAim * (explosive ? 10f : 13f),
                 explosive ? ModContent.ProjectileType<UlhanExplosiveArrow>() : ModContent.ProjectileType<UlhanUnholyArrow>(),
                 explosive ? SecondaryRangedDamage : RangedDamage, 2f, Main.myPlayer);
+            if (explosive)
+            {
+                _caltropsPending = true;
+                NPC.netUpdate = true;
+            }
             if (!explosive && IsFinalBurstShot)
             {
                 _closingForExplosive = true;
@@ -316,6 +401,9 @@ namespace tsorcRevamp.NPCs.Puppets
             writer.Write(_shotAim.Y);
             writer.Write(_closingForExplosive);
             writer.Write(_approachTicks);
+            writer.Write(_caltropsPending);
+            writer.Write(_caltropTarget.X);
+            writer.Write(_caltropTarget.Y);
             base.SendExtraAI(writer);
         }
 
@@ -328,6 +416,8 @@ namespace tsorcRevamp.NPCs.Puppets
             _shotAim = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             _closingForExplosive = reader.ReadBoolean();
             _approachTicks = reader.ReadInt32();
+            _caltropsPending = reader.ReadBoolean();
+            _caltropTarget = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             base.ReceiveExtraAI(reader);
         }
     }

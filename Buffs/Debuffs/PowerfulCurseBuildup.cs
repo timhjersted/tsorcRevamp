@@ -45,7 +45,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override bool ReApply(Player player, int time, int buffIndex)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += Main.rand.Next(180, 240); // +180-240, aka 3 hits for proc
+            player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += 160;
 
             for (int i = 0; i < 8; i++)
             {

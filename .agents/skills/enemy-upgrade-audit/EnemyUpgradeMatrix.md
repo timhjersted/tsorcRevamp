@@ -29,6 +29,7 @@ default, not written in the file · `.` off by default, never considered
 | Gwyn | Greatsword | Y | Y | Y | Y | Y | Y | . | Y | n | Y | Y | Y | Y | Y | . | Y | Y |
 | SoulOfCinder | Broadsword | Y | . | Y | Y | Y | Y | . | Y | Y | . | . | Y | Y | . | . | Y | . |
 | AttraidiesIllusion | — | Y | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| CrystalKnight | Halberd | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | DarkBloodKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | DarkKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
 | AbyssalNinja | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
@@ -44,6 +45,7 @@ default, not written in the file · `.` off by default, never considered
 | ShadowNinja | Rapier | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | SpiritOfKhaios | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | StuddedLeatherWarrior | Axe | Y | . | . | Y* | Y | Y | Y* | . | . | . | . | Y | Y | Y | . | Y | Y |
+| Ulhan | — | Y | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 
 <!-- GENERATED:END -->
 

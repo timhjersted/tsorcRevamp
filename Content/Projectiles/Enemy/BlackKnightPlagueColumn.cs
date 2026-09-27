@@ -137,8 +137,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     continue;
                 }
 
-                player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += CurseBuildupPerTick;
                 int buffIndex = player.FindBuffIndex(curseBuff);
+                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                if (buffIndex == -1 && modPlayer.CurseLevel == 1) modPlayer.CurseLevel = 0;
+                modPlayer.CurseLevel += CurseBuildupPerTick;
                 if (buffIndex == -1)
                 {
                     player.AddBuff(curseBuff, BuffRefreshTicks, false);

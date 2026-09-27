@@ -514,6 +514,13 @@ namespace SwingPreview
                 // Leaps arm only on the landing tick (DoComboMeleeHit at endStep), i.e. the last
                 // attack frame here since airtime is not simulated.
                 bool frameArmed = armed;
+                if (profile.Name == "CrystalKnight" && phase == PhaseAttack)
+                {
+                    // Collision runs before PhaseTimer decrements; the rendered pose is one tick later.
+                    int collisionElapsed = activeStepTotalTicks - phaseTimer - 1;
+                    frameArmed &= collisionElapsed >= (spec.Combo.Name == "Crystal Vault" ? 21
+                        : current.Motion == ComboMotion.JoustDash ? 6 : 0);
+                }
                 bool isLeap = current.Motion == ComboMotion.LeapSlam || current.Motion == ComboMotion.LeapThrust;
                 if (phase == PhaseAttack && IsLandingTimedLeap(profile, current))
                 {
@@ -551,7 +558,8 @@ namespace SwingPreview
                 }
 
                 // Leaps pose on the jump frame while aloft; the last attack frame is the landing.
-                bool airborne = spec.Airborne || (phase == PhaseAttack && isLeap && phaseTimer > 1);
+                bool airborne = spec.Airborne || (phase == PhaseAttack && isLeap && phaseTimer > 1)
+                    || profile.Name == "CrystalKnight" && spec.Combo.Name == "Crystal Vault" && phase == PhaseAttack;
 
                 // WeaponSheathed (Gwyn: Wrath Flurry's recovery after the landing beat) hides the
                 // weapon and the arm pose. Movement during it is not simulated - the preview stands still.
@@ -563,6 +571,31 @@ namespace SwingPreview
 
                 EmitFrame(spec, run, writer, poses, tick, phase, current.Motion, stepIndex, steps.Length, rotation, frameArmed,
                     direction, airborne, weaponHidden);
+                if (profile.Name == "CrystalKnight")
+                {
+                    poses[^1].SpearGrip = phase == PhaseAttack && current.Motion == ComboMotion.JoustDash
+                        ? tsorcRevamp.NPCs.Enemies.SuperHardMode.CrystalKnight.ThrustGrip(t, current.AttackTicks)
+                        : current.Motion == ComboMotion.OverheadArc ? 0.85f : 0.45f;
+                    if (spec.Combo.Name == "Butt-End Check")
+                    {
+                        poses[^1].SpearGrip = phase == PhaseAttack
+                            ? tsorcRevamp.NPCs.Enemies.SuperHardMode.CrystalKnight.CheckGrip(t) : 0.75f;
+                        poses[^1].WeaponDrawOffset = tsorcRevamp.NPCs.Enemies.SuperHardMode.CrystalKnight.CheckTurn(phase, phaseTimer);
+                    }
+                    if (spec.Combo.Name == "Crystal Vault")
+                    {
+                        poses[^1].SpearGrip = 0.9f;
+                        var offset = tsorcRevamp.NPCs.Enemies.SuperHardMode.CrystalKnight.VaultOffset(
+                            new Vector2(direction * 208f, 0f), phase == PhaseAttack
+                                ? (activeStepTotalTicks - phaseTimer) / 32f : phase == PhaseRecovery ? 1f : 0f);
+                        poses[^1].OwnerOffsetX = offset.X;
+                        poses[^1].OwnerOffsetY = offset.Y;
+                    }
+                    if (spec.Combo.Name == "Icebound Advance")
+                        poses[^1].OwnerOffsetX = direction * 408f * (phase == PhaseAttack
+                            ? tsorcRevamp.NPCs.Enemies.SuperHardMode.CrystalKnight.DashProgress(activeStepTotalTicks - phaseTimer)
+                            : phase == PhaseRecovery ? 1f : 0f);
+                }
             }
 
             return poses;
@@ -576,6 +609,8 @@ namespace SwingPreview
         private static float ComboPose(SwingSpec spec, string phase, MeleeComboStep step, MeleeComboStep next,
             bool hasNext, float rotation, float t, int phaseTimer, int activeStepTotalTicks, SortedSet<string> notes)
         {
+            if (spec.Profile.Name == "CrystalKnight" && spec.Combo.Name == "Crystal Vault" && phase == PhaseAttack)
+                return tsorcRevamp.NPCs.Enemies.SuperHardMode.CrystalKnight.VaultWeaponRotation((32 - phaseTimer) / 32f);
             PuppetProfile profile = spec.Profile;
             bool inTel = phase == PhaseTelegraph;
             bool inPause = phase == PhasePause;

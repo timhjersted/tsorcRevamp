@@ -9,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -26,22 +27,30 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetDefaults()
         {
             NPC.lifeMax = 500;
-            NPC.damage = 60;
+            EnemyDamage.SetContact(NPC, Main.hardMode ? 60 : 40);
             NPC.defense = 6;
             NPC.knockBackResist = 0.4f;
             NPC.width = 30;
             NPC.height = 40;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.HitSound = SoundID.NPCHit1;
-            // Expert drops use value / 25 before the player's soul bonuses: 7000 -> 280 base souls.
-            NPC.value = 7000;
+            // Expert scales declared value by 2.5, then souls use value / 25: 4000 -> 400 base souls before player bonuses.
+            NPC.value = 4000;
             // No AnimationType: the sheet's layout (0=idle, 1=jump, 2..=walk) doesn't match any
             // vanilla NPC's, so framing is driven explicitly in FindFrame below.
 
             if (Main.hardMode)
             {
                 NPC.lifeMax = 1000;
-                NPC.value = 7500; // -> 300 souls in expert mode
+                NPC.value = 7500; // -> 750 base souls in Expert Mode before player bonuses
+            }
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 20000;
+                NPC.defense = 20;
+                NPC.value = 25000; // -> 2500 base souls in Expert Mode before player bonuses
+                EnemyDamage.SetContact(NPC, 100);
             }
 
             tsorcRevampGlobalNPC elandGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -55,16 +64,20 @@ namespace tsorcRevamp.NPCs.Enemies
             elandGlobalNPC.PatrolTargetDirectionBias = 0.60f;
         }
 
-        // Rare pre-hardmode, slightly more common in hardmode; jungle biome, underground (dirt or rock layer) only. //Hopefully won't spawn in anymore for now
+        // Underground jungle in both tiers; hardmode also allows surface jungle on rainy nights.
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player p = spawnInfo.Player;
-            bool undergroundJungle = p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson
-                && (p.ZoneDirtLayerHeight || p.ZoneRockLayerHeight);
-            if (!undergroundJungle)
+            if (!p.ZoneJungle || p.ZoneCorrupt || p.ZoneCrimson)
                 return 0f;
 
-            return Main.hardMode ? 0.05f : 0.02f;
+            if (p.ZoneDirtLayerHeight || p.ZoneRockLayerHeight)
+                return Main.hardMode ? 0.25f : 0.01f;
+
+            if (Main.hardMode && p.ZoneOverworldHeight && Main.raining && !Main.dayTime)
+                return 0.15f;
+
+            return 0f;
         }
 
         // Spritesheet layout: frame 0 = idle, frame 1 = jump, frames 2..(count-1) = walk cycle.
@@ -108,7 +121,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            NPC.active = false; //this deletes it instantly, comment out while working on it or once you finish it and make sure it stays out of pre-hardmode
             if (!provoked)
             {
                 UpdatePassiveWander();
@@ -181,7 +193,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 : BuildSchedule(activeSpit);
         }
 
-        // Pre-hardmode / hardmode / super-hardmode tiered value, used for every attack's damage below.
+        // Pre-hardmode / hardmode / super-hardmode Expert damage before defense and damage variation.
         static int Tiered(int preHardmode, int hardmode, int superHardmode)
         {
             if (tsorcRevampWorld.SuperHardMode) return superHardmode;
@@ -433,14 +445,13 @@ namespace tsorcRevamp.NPCs.Enemies
             chargeBurstDone = false;
             NPC.netUpdate = true;
 
-            // Damage bypasses the AddAttack/SimpleProjectile framework entirely (direct Projectile.NewProjectile
-            // calls below), so these numbers land exactly as written — tiered by difficulty ourselves.
+            // Store declared Expert damage; convert once when spawning each hostile projectile.
             switch (attack)
             {
                 case SpitAttack.StickySpit:
                     schedule = BuildSchedule(attack);
                     currentProjType = ModContent.ProjectileType<StickySpitBall>();
-                    currentDamage = Tiered(40, 60, 80); // "poison strike"
+                    currentDamage = Tiered(40, 60, 85); // "poison strike"
                     currentSpeed = 8f;
                     currentGravity = 0.3f;
                     break;
@@ -450,7 +461,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 default:
                     schedule = BuildSchedule(attack);
                     currentProjType = ModContent.ProjectileType<PoisonSpitBall>();
-                    currentDamage = Tiered(50, 70, 90); // "spit"
+                    currentDamage = Tiered(50, 70, 95); // "spit"
                     currentSpeed = 9f;
                     currentGravity = 0.25f;
                     break;
@@ -751,7 +762,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     ? ElandVenomSplash.ComboBDamageTicks
                     : 0f;
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, currentProjType,
-                    currentDamage, 0f, Main.myPlayer, currentGravity, cloudDamageTicks);
+                    EnemyDamage.Projectile(currentDamage), 0f, Main.myPlayer, currentGravity, cloudDamageTicks);
             }
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f }, NPC.Center);
         }
@@ -846,13 +857,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
 
             float dirSign = frozenTarget.X >= NPC.Center.X ? 1f : -1f;
-            int damage = Tiered(50, 70, 90); // "spit" tier
+            int damage = Tiered(50, 70, 95); // "spit" tier
             for (int i = 0; i < ChargeSuppressionDistances.Length; i++)
             {
                 Vector2 aimPoint = frozenTarget + new Vector2(dirSign * ChargeSuppressionDistances[i], (i - 2) * 10f);
                 Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, aimPoint, 9f, 0.25f);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity,
-                    ModContent.ProjectileType<PoisonSpitBall>(), damage, 0f, Main.myPlayer, 0.25f);
+                    ModContent.ProjectileType<PoisonSpitBall>(), EnemyDamage.Projectile(damage), 0f, Main.myPlayer, 0.25f);
             }
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f }, NPC.Center);
         }
@@ -881,14 +892,14 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int damage = Tiered(20, 40, 60); // "gas cloud" tier
+            int damage = Tiered(20, 40, 80); // "gas cloud" tier
             const int burstCount = 8;
             for (int i = 0; i < burstCount; i++)
             {
                 float rotation = MathHelper.TwoPi * i / burstCount;
                 Vector2 velocity = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * (0.5f + Main.rand.NextFloat(-0.15f, 0.15f));
                 Projectile.NewProjectile(NPC.GetSource_Death(), center, velocity,
-                    ModContent.ProjectileType<PoisonBurstCloud>(), damage, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<PoisonBurstCloud>(), EnemyDamage.Projectile(damage), 0f, Main.myPlayer);
             }
         }
 

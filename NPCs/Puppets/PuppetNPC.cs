@@ -1840,7 +1840,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
         /// <summary>A melee combo telegraph tracks the player until this many ticks remain, then commits its
         /// facing. Matches the telegraph flash lead (CheckAndFireFlash's default 30) so the flash IS the commit.</summary>
-        private const int TelegraphFacingCommitTicks = 30;
+        protected virtual int TelegraphFacingCommitTicks => 30;
 
         /// <summary>
         /// Facing captured when the current committed attack began, and re-applied every tick of
@@ -3331,6 +3331,7 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 Vector2 bladeOrigin = GetHandPosition();
                 Vector2 bladeTip = bladeOrigin + GetWeaponWorldDirection() * _activeBladeReach;
+                ModifyFrontBladeCapsule(ref bladeOrigin, ref bladeTip);
                 bladeOverlapsTarget = MeleeBladeCollision.SegmentIntersectsRect(
                     bladeOrigin, bladeTip, FrontHandWeapon.BladeWidth, target.getRect());
             }
@@ -6213,9 +6214,14 @@ namespace tsorcRevamp.NPCs.Puppets
                             _hasPreviousBladeSample = false;
                             _backHand.HasPreviousBladeSample = false;
                         }
-                        else
+                        else if (CanDamageWithMeleeStep(step, stepProgress))
                         {
                             TickBladeHit();
+                        }
+                        else
+                        {
+                            _hasPreviousBladeSample = false;
+                            _backHand.HasPreviousBladeSample = false;
                         }
 
                         if (step.ForwardPushMult > 0f)
@@ -8068,6 +8074,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // own width instead of whatever the puppet's default melee weapon happened to be.
                 Vector2 origin = GetHandPosition();
                 Vector2 tip = origin + GetWeaponWorldDirection() * _activeBladeReach;
+                ModifyFrontBladeCapsule(ref origin, ref tip);
                 TestBladeCapsule(origin, tip, FrontHandWeapon.BladeWidth,
                     ref _hasPreviousBladeSample, ref _previousBladeOrigin, ref _previousBladeTip);
             }
@@ -9215,6 +9222,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
             }
 
+            float? authoredGrip = OverrideSpearGrip(swingClockT);
+            if (authoredGrip.HasValue)
+            {
+                _spearGrip = MathHelper.Clamp(authoredGrip.Value, 0f, 1f);
+                return;
+            }
+
             float target = 0.5f; // idle: gripped in the middle
             float ease = 0.25f;
 
@@ -9543,6 +9557,8 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             if (DrawWeaponAsSpear)
             {
+                if (MirrorSpearRotationByFacing)
+                    return GetSpriteSpearTipOffset().SafeNormalize(new Vector2(NPC.direction, 0f));
                 return GetDiagonalSpriteWorldDirection(_weaponRotation + SpearDrawRotationOffset, BladeFlipActive);
             }
             // A bow's rotation is a plain aim angle (see heldBowLike in DrawWeaponToLayer, which draws
@@ -11623,7 +11639,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 drawRotation = (_weaponRotation + MagicWeaponRotationOffset)
                     * (MirrorMagicWeaponRotationByFacing ? NPC.direction : 1);
             if (holdingSpearNow)
-                drawRotation += SpearDrawRotationOffset; // draw-only correction, direction-neutral (FlipH handles facing)
+                drawRotation = (_weaponRotation + SpearDrawRotationOffset)
+                    * (MirrorSpearRotationByFacing ? NPC.direction : 1);
 
             drawInfo.DrawDataCache.Add(new DrawData(
                 tex,
@@ -11720,8 +11737,12 @@ namespace tsorcRevamp.NPCs.Puppets
                 float drawScale = NPC.scale * scale * (HasSpectralOverlay ? SpectralOverlayScale : 1f);
                 float visualReach = MaxCornerDistance(origin, tex.Width, tex.Height) * drawScale;
                 Vector2 visualTip = handWorld + weaponDirection * visualReach;
+                if (holdingSpearNow && MirrorSpearRotationByFacing)
+                    visualTip = PuppetSpearTipPosition;
                 float collisionReach = _bladeArmed ? _activeBladeReach : 0f;
                 Vector2 collisionTip = handWorld + weaponDirection * collisionReach;
+                if (_bladeArmed)
+                    ModifyFrontBladeCapsule(ref handWorld, ref collisionTip);
                 float armWorldDeg = float.NaN;
                 float armWeaponErrorDeg = 0f;
                 if (CompositeArmActive)
@@ -11904,6 +11925,24 @@ namespace tsorcRevamp.NPCs.Puppets
         /// Needed for a puppet whose thrust steps run on <see cref="AuthoredClockCoversJoustDash"/>,
         /// so the visible extension and the eased rotation settle together instead of drifting apart.</summary>
         protected virtual bool UseAuthoredSpearGrip => false;
+
+        // Opt-in polearm geometry; existing spear puppets retain their current draw/collision behavior.
+        protected virtual bool MirrorSpearRotationByFacing => false;
+        protected virtual Vector2 SpearTextureSize => Vector2.Zero;
+        protected virtual float? OverrideSpearGrip(float swingClockT) => null;
+        protected virtual bool CanDamageWithMeleeStep(MeleeComboStep step, float progress) => true;
+        protected virtual void ModifyFrontBladeCapsule(ref Vector2 origin, ref Vector2 tip) { }
+
+        protected Vector2 PuppetSpearTipPosition => GetHandPosition() + GetSpriteSpearTipOffset();
+
+        private Vector2 GetSpriteSpearTipOffset()
+        {
+            Vector2 grip = Vector2.Lerp(SpearHeadNorm, SpearBaseNorm, _spearGrip);
+            Vector2 offset = (SpearHeadNorm - grip) * SpearTextureSize * (NPC.scale * MeleeWeaponDrawScale);
+            offset.X *= NPC.direction;
+            return offset.RotatedBy((_weaponRotation + SpearDrawRotationOffset)
+                * (MirrorSpearRotationByFacing ? NPC.direction : 1));
+        }
 
         /// <summary>Normalized grip point for a held MAGIC staff (where the hand holds it).  Default centred;
         /// override lower (larger Y) so a tall staff is gripped near its base.</summary>

@@ -2799,6 +2799,26 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.ReportFrostBuildup:
+                    {
+                        int buildup = reader.ReadByte();
+                        if (Main.netMode == NetmodeID.Server && whoAmI >= 0 && whoAmI < Main.maxPlayers
+                            && Main.player[whoAmI].active && !Main.player[whoAmI].dead)
+                            Main.player[whoAmI].GetModPlayer<FrostPlayer>().ApplyBuildupAuthoritative(buildup);
+                        break;
+                    }
+                case tsorcPacketID.SyncFrostState:
+                    {
+                        int playerIndex = reader.ReadByte();
+                        int buildup = reader.ReadByte();
+                        int decayTimer = reader.ReadByte();
+                        int procSequence = reader.ReadInt32();
+                        int triggerDamage = reader.ReadInt32();
+                        if (Main.netMode == NetmodeID.MultiplayerClient && playerIndex >= 0 && playerIndex < Main.maxPlayers)
+                            Main.player[playerIndex].GetModPlayer<FrostPlayer>()
+                                .ReceiveState(buildup, decayTimer, procSequence, triggerDamage);
+                        break;
+                    }
                 case tsorcPacketID.TeleportAllPlayers:
                     {
                         Vector2 targetLocation = reader.ReadVector2();
@@ -5117,6 +5137,10 @@ namespace tsorcRevamp
         public const byte CustomMultiplayerCombatText = 31;
         /// <summary>Owner → server → clients: whether this player's stamina permits a new weapon use.</summary>
         public const byte SyncWeaponStaminaUse = 32;
+        /// <summary>Victim client reports a frost hit; server owns buildup and threshold resolution.</summary>
+        public const byte ReportFrostBuildup = 33;
+        /// <summary>Server snapshot, with a sequenced proc instruction applied once by the victim.</summary>
+        public const byte SyncFrostState = 34;
     }
 
     //config moved to separate file
@@ -5160,6 +5184,14 @@ namespace tsorcRevamp
 
     public class TileKillCode : GlobalTile
     {
+        private static bool IsThicknessNeighbor(int x, int y)
+        {
+            Tile tile = Main.tile[x, y];
+            // Furniture and soapstones do not make a one-tile-thick terrain wall thicker.
+            return tile.HasTile && Main.tileSolid[tile.TileType]
+                && !Main.tileSolidTop[tile.TileType] && !Main.tileFrameImportant[tile.TileType]
+                && !tsorcRevamp.IgnoredTiles.Contains(tile.TileType);
+        }
 
         public override bool CanKillTile(int x, int y, int type, ref bool blockDamaged)
         {
@@ -5168,7 +5200,12 @@ namespace tsorcRevamp
                 return true;
             }
 
-            if (Main.tile[x, y - 1].TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
+            if (!WorldGen.InWorld(x, y, 1))
+            {
+                return false;
+            }
+
+            if (Main.tile[x, y - 1].HasTile && Main.tile[x, y - 1].TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
             {
                 return false;
             }
@@ -5176,15 +5213,15 @@ namespace tsorcRevamp
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
 
-                if (Main.tile[x, y - 1].TileType == TileID.Statues)
+                if (Main.tile[x, y - 1].HasTile && Main.tile[x, y - 1].TileType == TileID.Statues)
                 {
                     return false;
                 }
 
-                bool right = !Main.tile[x + 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].TileType);
-                bool left = !Main.tile[x - 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].TileType);
-                bool below = !Main.tile[x, y - 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].TileType);
-                bool above = !Main.tile[x, y + 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].TileType);
+                bool right = !IsThicknessNeighbor(x + 1, y);
+                bool left = !IsThicknessNeighbor(x - 1, y);
+                bool above = !IsThicknessNeighbor(x, y - 1);
+                bool below = !IsThicknessNeighbor(x, y + 1);
                 if (x < 10 || x > Main.maxTilesX - 10)
                 {//sanity
                     return false;
@@ -5230,21 +5267,26 @@ namespace tsorcRevamp
         public override bool CanExplode(int x, int y, int type)
         {
 
-            if (Main.tile[x, y - 1].TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
+            if (!WorldGen.InWorld(x, y, 1))
+            {
+                return false;
+            }
+
+            if (Main.tile[x, y - 1].HasTile && Main.tile[x, y - 1].TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
             {
                 return false;
             }
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                if (Main.tile[x, y - 1].TileType == TileID.Statues)
+                if (Main.tile[x, y - 1].HasTile && Main.tile[x, y - 1].TileType == TileID.Statues)
                 {
                     return false;
                 }
-                bool right = !Main.tile[x + 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].TileType);
-                bool left = !Main.tile[x - 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].TileType);
-                bool below = !Main.tile[x, y - 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].TileType);
-                bool above = !Main.tile[x, y + 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].TileType);
+                bool right = !IsThicknessNeighbor(x + 1, y);
+                bool left = !IsThicknessNeighbor(x - 1, y);
+                bool above = !IsThicknessNeighbor(x, y - 1);
+                bool below = !IsThicknessNeighbor(x, y + 1);
                 bool CanDestroy = false;
                 if (type == TileID.Ebonsand || type == TileID.Amethyst || type == TileID.ShadowOrbs)
                 { //shadow temple / corruption chasm stuff that gets blown up

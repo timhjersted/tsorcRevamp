@@ -77,8 +77,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             if (NPC.downedBoss3)
             {
                 target.AddBuff(70, 150, false); //acid venom
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 HP after several hits
-                target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 10;
+                CurseBuildup.ApplyExplicit(target, 10, 18000); //-20 HP after several hits
             }
         }
     }

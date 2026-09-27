@@ -48,8 +48,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             if (NPC.downedBoss3)
             {
                 //target.AddBuff(30, 150, false); //bleeding
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 HP after several hits
-                target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 1;
+                CurseBuildup.ApplyExplicit(target, 1, 18000); //-20 HP after several hits
             }
         }
 

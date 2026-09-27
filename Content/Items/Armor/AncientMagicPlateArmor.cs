@@ -16,6 +16,10 @@ namespace tsorcRevamp.Content.Items.Armor
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, 1f + tsorcRevampPlayer.MeleeBonusMultiplier, MagicPlating.MagicPlatingStacksCap, MagicPlating.MagicPlatingStacksChance);
         public override void SetStaticDefaults()
         {
+            int slot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Body);
+            ArmorIDs.Body.Sets.HidesTopSkin[slot] = true;
+            ArmorIDs.Body.Sets.HidesArms[slot] = true;
+            ArmorIDs.Body.Sets.HidesHands[slot] = true;
         }
         public override void SetDefaults()
         {
