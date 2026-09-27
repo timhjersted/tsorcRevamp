@@ -10,7 +10,6 @@ using tsorcRevamp.Content.Projectiles.Summon.Whips.PolarisLeash;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
 {
-    [LegacyName("PolarisLeash")]
     public class PolarisLeashItem : ModItem
     {
         public const int BaseDamage = 66;

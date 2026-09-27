@@ -8,7 +8,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor.Melee
 {
-    [LegacyName("GreavesOfArtorias")]
     [AutoloadEquip(EquipType.Legs)]
     public class ArtoriasGreaves : ModItem
     {

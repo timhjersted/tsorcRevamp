@@ -4,7 +4,6 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Items.Accessories.Other.Trinity
 {
-    [LegacyName("Trinity")]
     public class TrinityItem : ModItem
     {
         public const float LifeThreshold = 50f;

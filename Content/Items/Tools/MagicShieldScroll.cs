@@ -9,7 +9,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Tools
 {
-    [LegacyName("FogTome")]
     public class MagicShieldScroll : ModItem
     {
         public const int DefenseIncrease = 10;

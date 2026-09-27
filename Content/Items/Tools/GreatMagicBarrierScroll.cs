@@ -9,7 +9,6 @@ using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.Content.Items.Tools
 {
-    [LegacyName("ShieldTome", "GreatMagicBarrierTome", "greatmagicbarrier")]
     public class GreatMagicBarrierScroll : ModItem
     {
         public static int Duration = 30;

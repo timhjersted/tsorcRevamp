@@ -8,7 +8,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Tools
 {
-    [LegacyName("BarrierTome", "MagicBarrier")]
     public class MagicBarrierScroll : ModItem
     {
         public static int Duration = 20;

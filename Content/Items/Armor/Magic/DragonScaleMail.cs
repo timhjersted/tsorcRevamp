@@ -9,7 +9,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor.Magic
 {
-    [LegacyName("AncientDragonScaleMail")]
     [AutoloadEquip(EquipType.Body)]
     public class DragonScaleMail : ModItem
     {

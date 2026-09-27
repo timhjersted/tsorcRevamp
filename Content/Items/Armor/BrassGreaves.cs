@@ -8,7 +8,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor
 {
-    [LegacyName("AncientBrassGreaves")]
     [AutoloadEquip(EquipType.Legs)]
     public class BrassGreaves : ModItem
     {

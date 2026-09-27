@@ -9,7 +9,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
 {
-    [LegacyName("Dominatrix")]
     public class DominatrixItem : ModItem
     {
         public const int ThornDmgScaling = 35;

@@ -539,8 +539,6 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<BarrowWightPhantom>();
     }
 
-    // Backwards compatibility with the previously inconsistently named banner.
-    [LegacyName("BasiliskHunter")]
     public class BasiliskHunterBanner : EnemyBanner
     {
         public override int PlaceStyle => 65;

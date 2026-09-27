@@ -9,7 +9,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
 {
-    [LegacyName("SearingLash")]
     public class SearingLashItem : ModItem
     {
         public const int BaseDamage = 30;

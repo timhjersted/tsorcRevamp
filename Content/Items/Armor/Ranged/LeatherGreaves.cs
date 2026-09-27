@@ -8,8 +8,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor.Ranged
 {
-    [LegacyName("OldStuddedLeatherGreaves")]
-    [LegacyName("OldLeatherGreaves")]
     [AutoloadEquip(EquipType.Legs)]
     public class LeatherGreaves : ModItem
     {

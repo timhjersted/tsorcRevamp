@@ -6,7 +6,6 @@ using tsorcRevamp.Content.Projectiles.Magic;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Wands
 {
-    [LegacyName("WoodenFlute")]
     class ApprenticesWand : ModItem
     {
         public const int BaseDmg = 12;

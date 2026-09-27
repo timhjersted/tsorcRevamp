@@ -6,7 +6,6 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Items.Accessories.Summon
 {
-    [LegacyName("Oxyale")]
     public class CrystallineShard : ModItem
     {
         public const int CrystallinePowerPerMinion = 4;

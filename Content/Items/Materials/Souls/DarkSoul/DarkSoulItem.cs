@@ -7,7 +7,6 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Items.Materials.Souls.DarkSoul
 {
-    [LegacyName("DarkSoul")]
     public class DarkSoulItem : BaseRarityItem
     {
         public override void SetStaticDefaults()

@@ -14,7 +14,6 @@ using tsorcRevamp.Content.Projectiles.Summon.Runeterra.Dragons;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra
 {
-    [LegacyName("InterstellarVesselControls")]
     public class InterstellarVesselGauntlet : RuneterraGauntlets
     {
         public const int BaseDmg = 40;

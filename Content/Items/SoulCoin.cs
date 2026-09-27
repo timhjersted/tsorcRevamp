@@ -10,7 +10,6 @@ using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Items
 {
-    [LegacyName("SoulShekel")]
     class SoulCoin : BaseRarityItem
     {
         public override void SetStaticDefaults()

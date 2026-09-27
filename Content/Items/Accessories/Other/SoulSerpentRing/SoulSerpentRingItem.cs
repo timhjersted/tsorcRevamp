@@ -10,7 +10,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Other.SoulSerpentRing
 {
-    [LegacyName("CovetousSoulSerpentRing")]
     public class SoulSerpentRingItem : ModItem
     {
         public static float SoulAmplifier = 30f;

@@ -9,7 +9,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 namespace tsorcRevamp.Content.Items.Accessories.Magic
 {
     [AutoloadEquip(EquipType.Face)]
-    [LegacyName("GrandWizardsHat")]
     public class EnchantedWizardsHat : ModItem
     {
         public const float Dmg = 14f;

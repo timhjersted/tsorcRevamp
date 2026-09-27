@@ -9,8 +9,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 namespace tsorcRevamp.Content.Items.Accessories.Magic.Bands
 {
     [AutoloadEquip(EquipType.HandsOn)]
-
-    [LegacyName("BandOfSupremeCosmicPower")]
     public class BandOfPhenomenalCosmicPower : ModItem
     {
         public const float LifeRegen = 5f;

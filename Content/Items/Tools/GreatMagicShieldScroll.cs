@@ -8,7 +8,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Tools
 {
-    [LegacyName("WallTome")]
     public class GreatMagicShieldScroll : ModItem
     {
         public static int Duration = 25;

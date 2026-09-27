@@ -8,7 +8,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor.Magic
 {
-    [LegacyName("RedMageTunic")]
     [AutoloadEquip(EquipType.Body)]
     public class RedClothTunic : ModItem
     {

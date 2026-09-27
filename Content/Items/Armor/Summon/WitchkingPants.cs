@@ -9,7 +9,6 @@ using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.Content.Items.Armor.Summon
 {
-    [LegacyName("WitchkingBottoms")]
     [AutoloadEquip(EquipType.Legs)]
     public class WitchkingPants : ModItem
     {

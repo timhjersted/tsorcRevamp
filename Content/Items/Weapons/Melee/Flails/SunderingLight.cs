@@ -9,7 +9,6 @@ using tsorcRevamp.Content.Projectiles.Melee.Flails;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails
 {
-    [LegacyName("HeavensTear2")]
     public class SunderingLight : ModItem
     {
         public override void SetStaticDefaults()

@@ -9,7 +9,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
 {
-    [LegacyName("NightsCracker")]
     public class NightsCrackerItem : ModItem
     {
         public const int BaseDamage = 74;

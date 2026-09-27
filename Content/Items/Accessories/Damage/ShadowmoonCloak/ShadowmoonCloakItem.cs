@@ -9,7 +9,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 namespace tsorcRevamp.Content.Items.Accessories.Damage.ShadowmoonCloak
 {
     [AutoloadEquip(EquipType.Back)]
-    [LegacyName("ShadowmoonCloak")]
 
     public class ShadowmoonCloakItem : ModItem
     {

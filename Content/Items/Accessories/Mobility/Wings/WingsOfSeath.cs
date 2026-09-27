@@ -10,7 +10,6 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
 {
     [AutoloadEquip(EquipType.Wings)]
-    [LegacyName("DragonWings")]
     public class WingsOfSeath : ModItem
     {
         public bool Slow = false;

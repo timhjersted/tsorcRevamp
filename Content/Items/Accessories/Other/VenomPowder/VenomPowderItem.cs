@@ -6,7 +6,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Other.VenomPowder
 {
-    [LegacyName("VenomPowder")]
     class VenomPowderItem : ModItem
     {
         public override void SetDefaults()

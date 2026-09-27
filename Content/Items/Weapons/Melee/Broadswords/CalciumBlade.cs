@@ -7,7 +7,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 {
-    [LegacyName("BoneBlade")]
     public class CalciumBlade : ModItem
     {
         public override void SetStaticDefaults()

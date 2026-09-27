@@ -11,7 +11,6 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.Armor.Summon
 {
-    [LegacyName("WitchkingTop")]
     [AutoloadEquip(EquipType.Body)]
     public class WitchkingRobe : ModItem
     {

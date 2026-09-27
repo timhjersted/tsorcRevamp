@@ -8,8 +8,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor.Melee
 {
-    [LegacyName("AncientDwarvenHelmet")]
-    [LegacyName("AncientDwarvenHelmet2")]
     [AutoloadEquip(EquipType.Head)]
     public class AncientGoldenHelmet : ModItem
     {

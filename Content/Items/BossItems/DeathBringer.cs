@@ -7,7 +7,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.BossItems
 {
-    [LegacyName("BloodySkull")]
     public class DeathBringer : ModItem
     {
 

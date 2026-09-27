@@ -7,7 +7,6 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Tools
 {
-    [LegacyName("EsunaTome")]
     class RemedyScroll : ModItem
     {
         public override void SetStaticDefaults()

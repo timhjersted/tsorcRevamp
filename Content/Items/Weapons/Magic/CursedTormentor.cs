@@ -8,7 +8,6 @@ using tsorcRevamp.Content.Projectiles.Magic;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic
 {
-    [LegacyName("CursedFlamelash")]
     class CursedTormentor : ModItem
     {
 
