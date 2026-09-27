@@ -69,6 +69,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Content.Items.Accessories.Magic.Bands;
+using tsorcRevamp.Content.Items.Accessories.Magic.LudensTempest;
 using tsorcRevamp.Content.Items.Accessories.Melee;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Armor;
@@ -2075,7 +2076,7 @@ namespace tsorcRevamp
                 {ModContent.ItemType<MimeticHat>(), MimeticHat.MaxMana},
                 {ModContent.ItemType<ArtoriasOfTheAbyssHelm>(), ArtoriasOfTheAbyssHelm.MaxMana},
                 {ModContent.ItemType<RedHerosHat>(), RedHerosHat.MaxMana},
-                {ModContent.ItemType<LudensTempest>(), LudensTempest.Mana},
+                {ModContent.ItemType<LudensTempestItem>(), LudensTempestItem.Mana},
                 {ModContent.ItemType<RedClothTunic>(), RedClothTunic.MaxMana},
                 {ModContent.ItemType<RedClothPants>(), RedClothTunic.MaxMana},
                 {ModContent.ItemType<RedClothHat>(), RedClothTunic.MaxMana},

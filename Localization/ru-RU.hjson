@@ -8132,16 +8132,16 @@ Mods: {
 					'''
 			}
 
-			LudensTempest: {
-				DisplayName: Люденский шторм
-				Tooltip:
+			LudensTempestItem: {
+				// DisplayName: Ludens Tempest
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMagicDamage}
 					{$CommonItemTooltip.Magic.ArmorPen@1}
 					{$CommonItemTooltip.IncreasesMaxManaBy@2}
-					[c/9400d3:При нанесении магического урона запускаются дополнительные разрушительные снаряды({$CommonItemTooltip.Cooldown@3})]
-					[c/9400d3:Время перезарядки уменьшается при каждом нанесении магического урона]
-					'''
+					[c/9400d3:Dealing magic damage launches extra damaging projectiles({$CommonItemTooltip.Cooldown@3})]
+					[c/9400d3:Cooldown is reduced on each magic damage hit]
+					''' */
 			}
 
 			GoredrinkerItem: {

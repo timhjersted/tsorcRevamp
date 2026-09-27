@@ -8165,16 +8165,16 @@ Mods: {
 					'''
 			}
 
-			LudensTempest: {
-				DisplayName: 卢登的激荡
-				Tooltip:
+			LudensTempestItem: {
+				// DisplayName: Ludens Tempest
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMagicDamage}
 					{$CommonItemTooltip.Magic.ArmorPen@1}
 					{$CommonItemTooltip.IncreasesMaxManaBy@2}
-					[c/9400d3:造成魔法伤害时额外产生一簇黑黯焰火（{$CommonItemTooltip.Cooldown@3}）]
-					[c/9400d3:使用魔法武器攻击会减少冷却时间]
-					'''
+					[c/9400d3:Dealing magic damage launches extra damaging projectiles({$CommonItemTooltip.Cooldown@3})]
+					[c/9400d3:Cooldown is reduced on each magic damage hit]
+					''' */
 			}
 
 			GoredrinkerItem: {

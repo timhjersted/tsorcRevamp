@@ -21,7 +21,6 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
@@ -48,6 +47,8 @@ using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Content.Items.VanillaItems.Summoner;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Buffs;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items;
 using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
@@ -1356,6 +1357,24 @@ namespace tsorcRevamp
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            if (CelestialCloak && (hit.DamageType == DamageClass.Magic || hit.DamageType == DamageClass.MagicSummonHybrid))
+            {
+                if (Main.rand.NextBool(25))
+                {
+                    Vector2 starvector1 = new Vector2(-40, -200) + target.Center;
+                    Vector2 starvector2 = new Vector2(40, -200) + target.Center;
+                    Vector2 starvector3 = new Vector2(0, -200) + target.Center;
+                    Vector2 starmove1 = new Vector2(+4, 20);
+                    Vector2 starmove2 = new Vector2(-4, 20);
+                    Vector2 starmove3 = new Vector2(0, 20);
+                    if (Main.myPlayer == Player.whoAmI)
+                    {
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                    }
+                }
+            }
             if (MagmaArmor && (target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3)))
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
@@ -1442,24 +1461,6 @@ namespace tsorcRevamp
                     Player.statLife += 10;
                 }
             }
-            if (CelestialCloak && item.DamageType == DamageClass.Magic)
-            {
-                if (Main.rand.NextBool(25))
-                {
-                    Vector2 starvector1 = new Vector2(-40, -200) + target.Center;
-                    Vector2 starvector2 = new Vector2(40, -200) + target.Center;
-                    Vector2 starvector3 = new Vector2(0, -200) + target.Center;
-                    Vector2 starmove1 = new Vector2(+4, 20);
-                    Vector2 starmove2 = new Vector2(-4, 20);
-                    Vector2 starmove3 = new Vector2(0, 20);
-                    if (Main.myPlayer == Player.whoAmI)
-                    {
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                    }
-                }
-            }
             if (Main.rand.NextBool(MagicPlating.MagicPlatingStacksChance) && Player.HasBuff(ModContent.BuffType<MagicPlating>()))
             {
                 MagicPlatingStacks = MagicPlating.ManageStacks(MagicPlatingStacks);
@@ -1469,45 +1470,6 @@ namespace tsorcRevamp
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
         {
             Player owner = Main.player[proj.owner];
-            if (LudensTempest && hit.DamageType == DamageClass.Magic && !owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && !owner.DeadOrGhost)
-            {
-                int? closest = UsefulFunctions.GetClosestEnemyNPC(target.Center);
-                if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(target.Center) < 2000))
-                {
-                    Vector2 velocity = UsefulFunctions.Aim(target.Bottom, Main.npc[closest.Value].Top, 3);
-                    if (Main.myPlayer == Player.whoAmI)
-                    {
-                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(-1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Content.Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
-                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(0, -3), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Content.Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
-                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Content.Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
-                    }
-                    Main.player[proj.owner].AddBuff(ModContent.BuffType<LudensTempestCooldown>(), Content.Items.Accessories.Magic.LudensTempest.Cooldown * 60);
-                }
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/LudensTempest") with { Volume = 0.25f }, target.Center);
-            }
-            else if (LudensTempest && hit.DamageType == DamageClass.Magic && owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && proj.type != ModContent.ProjectileType<LudensTempestFire>() && proj.type != ModContent.ProjectileType<LudensTempestFirelet>())
-            {
-                UsefulFunctions.AddPlayerBuffDuration(owner, ModContent.BuffType<LudensTempestCooldown>(), -20);
-            }
-
-            if (CelestialCloak && proj.DamageType == DamageClass.Magic)
-            {
-                if (Main.rand.NextBool(25))
-                {
-                    Vector2 starvector1 = new Vector2(-40, -200) + target.Center;
-                    Vector2 starvector2 = new Vector2(40, -200) + target.Center;
-                    Vector2 starvector3 = new Vector2(0, -200) + target.Center;
-                    Vector2 starmove1 = new Vector2(+4, 20);
-                    Vector2 starmove2 = new Vector2(-4, 20);
-                    Vector2 starmove3 = new Vector2(0, 20);
-                    if (Main.myPlayer == Player.whoAmI)
-                    {
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                    }
-                }
-            }
             if (Main.rand.NextBool(MagicPlating.MagicPlatingStacksChance) && Player.HasBuff(ModContent.BuffType<MagicPlating>()))
             {
                 if (proj.IsMinionOrSentryRelated)
@@ -1862,39 +1824,6 @@ namespace tsorcRevamp
                 }
                 #endregion
 
-                #region Spirit Rush
-                if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && player.statMana >= (player.GetManaCost(player.HeldItem) * OrbOfSpirituality.DashCostMultiplier) && !player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()))
-                {
-                    player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), OrbOfSpirituality.DashBuffDuration * 60);
-                    player.statMana -= player.GetManaCost(player.HeldItem) * OrbOfSpirituality.DashCostMultiplier;
-                }
-                if (player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && SpiritRushCooldown <= 0f && SpiritRushCharges > 0)
-                {
-                    player.immune = true;
-                    SpiritRushVelocity = player.DirectionTo(Main.MouseWorld) * 25f;
-                    SpiritRushTimer = 0.3f;
-                    SpiritRushCooldown = 1f;
-                    player.SetImmuneTimeForAllTypes(60);
-                    if (SpiritRushSoundStyle == 0)
-                    {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash1") with { Volume = RuneterraOrb.OrbSoundVolume });
-                        SpiritRushSoundStyle += 1;
-                    }
-                    else
-                    if (SpiritRushSoundStyle == 1)
-                    {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash2") with { Volume = RuneterraOrb.OrbSoundVolume });
-                        SpiritRushSoundStyle += 1;
-                    }
-                    else
-                    if (SpiritRushSoundStyle == 2)
-                    {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash3") with { Volume = RuneterraOrb.OrbSoundVolume });
-                        SpiritRushSoundStyle = 0;
-                    }
-                    SpiritRushCharges--;
-                }
-                #endregion
 
                 #region Turboboost
                 bool holdingControlsAndOrSummonWeapon = (player.HasItem(ModContent.ItemType<InterstellarVesselGauntlet>()) || player.HasItem(ModContent.ItemType<CenterOfTheUniverse>())) 

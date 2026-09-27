@@ -8168,7 +8168,7 @@ Mods: {
 					'''
 			}
 
-			LudensTempest: {
+			LudensTempestItem: {
 				DisplayName: Ludens Tempest
 				Tooltip:
 					'''

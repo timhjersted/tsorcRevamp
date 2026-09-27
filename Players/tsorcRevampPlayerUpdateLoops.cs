@@ -122,7 +122,6 @@ namespace tsorcRevamp
 
         public bool SteraksGage = false;
         public bool InfinityEdge = false;
-        public bool LudensTempest = false;
         public bool OwlRingEquipped = false;
 
         public int WorldEnderSwing = 1;
@@ -187,13 +186,6 @@ namespace tsorcRevamp
         public int SweepingBladeTimer = 0;
         public Vector2 SweepingBladeVelocity;
         public Vector2 MouseHitboxSize = new Vector2(125, 125);
-
-        public int EssenceThief = 0;
-        public int SpiritRushCharges = 3;
-        public float SpiritRushTimer = 0f;
-        public int SpiritRushSoundStyle = 0;
-        public float SpiritRushCooldown = 0f;
-        public Vector2 SpiritRushVelocity;
 
         public int RuneterraMinionHitSoundCooldown = 0;
         public bool Turboboost = false;
@@ -528,7 +520,6 @@ namespace tsorcRevamp
 
             SteraksGage = false;
             InfinityEdge = false;
-            LudensTempest = false;
             OwlRingEquipped = false;
 
             JaggedFlatCritDmgBonus = 0;
@@ -2698,11 +2689,6 @@ namespace tsorcRevamp
             {
                 Player.velocity = SweepingBladeVelocity;
                 SweepingBladeTimer--;
-                Player.RefreshMovementAbilities();
-            }
-            if (SpiritRushTimer > 0f)
-            {
-                Player.velocity = SpiritRushVelocity;
                 Player.RefreshMovementAbilities();
             }
         }

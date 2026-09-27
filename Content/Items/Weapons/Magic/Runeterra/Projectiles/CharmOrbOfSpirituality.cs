@@ -1,0 +1,72 @@
+﻿using Microsoft.Xna.Framework;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Buffs;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Sounds.OrbOfSpirituality;
+using tsorcRevamp.Content.Projectiles.Magic.Runeterra;
+
+namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
+{
+
+    public class CharmOrbOfSpirituality : CharmRuneterraOrb
+    {
+        public override int Width => 40;
+        public override int Height => 40;
+        public override float Scale => 1.2f;
+        public override int CooldownType => ModContent.BuffType<OrbOfSpiritualityCharmCooldown>();
+        public override int DebuffType => ModContent.BuffType<Charmed>();
+        public override string SoundPath => UsefulFunctions.RefactorableFilepath(typeof(OrbOfSpiritualitySound)) + "_";
+        public override Color LightColor => Color.Pink;
+        public override int dustID => DustID.VenomStaff;
+        public override void Rotation()
+        {
+            if (Projectile.velocity.X < 0)
+            {
+                Projectile.rotation -= MathHelper.Pi;
+            }
+            switch (Projectile.frame)
+            {
+                case 0:
+                    {
+                        FrameSpeed = 5;
+                        break;
+                    }
+                case 1:
+                    {
+                        FrameSpeed = 4;
+                        break;
+                    }
+                case 2:
+                    {
+                        FrameSpeed = 3;
+                        break;
+                    }
+                case 3:
+                    {
+                        FrameSpeed = 2;
+                        break;
+                    }
+                case 4:
+                    {
+                        FrameSpeed = 2;
+                        break;
+                    }
+                case 5:
+                    {
+                        FrameSpeed = 2;
+                        break;
+                    }
+                case 6:
+                    {
+                        FrameSpeed = 3;
+                        break;
+                    }
+                case 7:
+                    {
+                        FrameSpeed = 4;
+                        break;
+                    }
+            }
+        }
+    }
+}

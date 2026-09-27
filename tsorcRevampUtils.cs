@@ -281,7 +281,7 @@ namespace tsorcRevamp
     public static class UsefulFunctions
     {
         /// <summary>
-        /// Simply renders a transparent projectile texture for you in PreDraw
+        /// Simply renders a transparent projectile texture for you in PreDraw, respects Projectile frames
         /// </summary>
         /// <param name="proj">The projectile</param>
         /// <param name="spriteType">The texture type in the TransparentTextureHandler</param>

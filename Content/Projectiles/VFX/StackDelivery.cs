@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Projectiles.VFX
@@ -63,19 +64,21 @@ namespace tsorcRevamp.Content.Projectiles.VFX
         public override void OnKill(int timeLeft)
         {
             Player player = Main.player[Projectile.owner];
+            var orbPlayer = player.GetModPlayer<RuneterraOrbPlayer>();
+            //var gauntletPlayer;
             Rectangle PlayerRect = Utils.CenteredRectangle(player.Center, player.Size);
             switch (Projectile.ai[0])
             {
                 case float EssenceThief when (EssenceThief >= 0 && EssenceThief < 3):
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += (int)Projectile.ai[1];
-                        if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
+                        orbPlayer.EssenceThief += (int)Projectile.ai[1];
+                        if (orbPlayer.EssenceThief >= 9)
                         {
                             CombatText.NewText(PlayerRect, Color.Lime, LangUtils.GetTextValue("Items.OrbOfDeception.OrbFilled"));
                         }
                         else
                         {
-                            CombatText.NewText(PlayerRect, Color.Lime, LangUtils.GetTextValue("Items.OrbOfDeception.StackGained", player.GetModPlayer<tsorcRevampPlayer>().EssenceThief));
+                            CombatText.NewText(PlayerRect, Color.Lime, LangUtils.GetTextValue("Items.OrbOfDeception.StackGained", orbPlayer.EssenceThief));
                         }
                         break;
                     }
