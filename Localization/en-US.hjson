@@ -11447,6 +11447,9 @@ Mods: {
 			ChaosCollapseBurst.DisplayName: Chaos Collapse Burst
 			ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
+			UlhanUnholyArrow.DisplayName: Unholy Arrow
+			UlhanExplosiveArrow.DisplayName: Explosive Arrow
+			UlhanFireExplosion.DisplayName: Fire Explosion
 			AncientFireAxeThrown.DisplayName: Ancient Fire Axe Thrown
 			AncientFireAxeFireWave.DisplayName: Ancient Fire Axe Fire Wave
 			AncientFireAxeFireColumn.DisplayName: Ancient Fire Axe Fire Column
@@ -13233,6 +13236,7 @@ Mods: {
 			AbysmalOolacileSorcererTEST.DisplayName: Abysmal Oolacile Sorcerer T E S T
 			AbysmalOolacileSorcererOriginal.DisplayName: Old Grand Occultist of Oolacile
 			OwlFather.DisplayName: Owl Father
+			Ulhan.DisplayName: Ulhan
 			SpiritOfKhaios.DisplayName: Spirit Of Khaios
 			KhaiosTransitionOrb.DisplayName: Khaios Transition Orb
 			Khaios.DisplayName: Khaios

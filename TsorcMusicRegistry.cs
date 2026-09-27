@@ -138,9 +138,8 @@ namespace tsorcRevamp
             Register("FireFiendMarilith", "Boss16", "Boss16", MusicID.Boss2);
             Register("WaterFiendKraken", "Boss12", "Boss21", MusicID.Boss2);
             Register("Chaos", "Boss14", "Boss19", MusicID.Boss2);
-            Register("TrueDeath", null, "Boss19", MusicID.Boss2);
             Register("DarkCloud", "Boss11", "Boss20", MusicID.Boss2);
-            Register("Death", "Boss13", "Boss13", MusicID.Boss2);
+            RegisterGroup(new[] { "Death", "TrueDeath" }, "Boss13", "Boss13", MusicID.Boss2);
             RegisterGroup(new[] { "WyvernMageShadow", "GhostDragonHead", "HellkiteDragonHead" }, "God-DevouringSerpent", "God-DevouringSerpent", MusicID.Boss2);
             RegisterGroup(new[] { "SeathTheScalelessHead", "PrimordialCrystal" }, "Boss9", "Boss9", MusicID.Boss2);
             Register("AbysmalOolacileSorcerer", "Boss14", "Boss14", MusicID.Boss3);

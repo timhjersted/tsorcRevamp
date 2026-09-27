@@ -1755,6 +1755,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// back to the natural walk/idle draw. Default false.</summary>
         protected virtual bool WeaponSheathed => false;
         protected virtual bool ShowWeaponDuringNeutral => false;
+        protected virtual bool ShowRangedWeaponDuringRecovery => false;
 
         private bool IsWeaponVisiblePhase => !WeaponSheathed && (
             (ShowWeaponDuringNeutral && (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll)) ||
@@ -1763,6 +1764,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Phase == AttackPhase.StabTelegraph  || Phase == AttackPhase.StabAttack  ||
             Phase == AttackPhase.StabRecovery   ||
             Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack ||
+            (Phase == AttackPhase.RangedRecovery && ShowRangedWeaponDuringRecovery) ||
             Phase == AttackPhase.CrossbowBurstPause ||
             Phase == AttackPhase.SpearTelegraph  || Phase == AttackPhase.SpearAttack  ||
             Phase == AttackPhase.MagicTelegraph  || Phase == AttackPhase.MagicAttack  ||
@@ -6345,7 +6347,7 @@ namespace tsorcRevamp.NPCs.Puppets
         // Ranged phases always face the target. Re-asserted every tick because the mover (and its
         // 30-tick anti-flip hold) runs first and could leave the body turned away as a shot starts.
         // Same 8px dead zone as the neutral re-face, so an overlapping player can't flip it each tick.
-        private void FaceTargetForRangedShot(Player target)
+        protected virtual void FaceTargetForRangedShot(Player target)
         {
             float horizontalGap = target.Center.X - NPC.Center.X;
 
@@ -9469,15 +9471,15 @@ namespace tsorcRevamp.NPCs.Puppets
             }
         }
 
-        // Pure function of facing — no per-frame pose state — so the server can fire from it too.
+        // Same full-stretch ellipse as Player.GetBackHandPosition, evaluated from current NPC
+        // geometry. Dedicated servers never create the draw-only _puppet; a center fallback or
+        // last frame's cached puppet position would make their arrows miss the visible bow grip.
         private Vector2 GetUnscaledBowGripPosition()
         {
-            if (_puppet == null)
-            {
-                return PuppetVisualCenter;
-            }
-
-            return _puppet.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, BowHoldArmRotation);
+            float angle = BowHoldArmRotation + MathHelper.PiOver2;
+            Vector2 arm = new Vector2((float)Math.Cos(angle) * 10f, (float)Math.Sin(angle) * 12f);
+            Vector2 center = PuppetVisualPosition + new Vector2(PuppetVisualWidth * 0.5f, PuppetVisualHeight * 0.5f);
+            return center + new Vector2(6f * NPC.direction, -2f) + arm;
         }
 
         private Vector2 GetBackHandPosition()
@@ -11688,6 +11690,16 @@ namespace tsorcRevamp.NPCs.Puppets
                         SpriteEffects.None,
                         0));
                 }
+
+                if (_bowStringHeld && NockedBowArrowTexture != null)
+                {
+                    Texture2D arrow = ModContent.Request<Texture2D>(NockedBowArrowTexture).Value;
+                    // Tail at the string hand, tip pointing along the same aim as the bow.
+                    float aimRotation = BowAimAngle * NPC.direction + (NPC.direction < 0 ? MathHelper.Pi : 0f);
+                    drawInfo.DrawDataCache.Add(new DrawData(arrow, stringPoint, null, _layerDrawColor,
+                        aimRotation + MathHelper.PiOver2, new Vector2(arrow.Width * 0.5f, arrow.Height - 2f),
+                        NPC.scale * NockedBowArrowDrawScale, SpriteEffects.None, 0));
+                }
             }
 
             // ── Debug snapshot + log (DebugMode only) ───────────────────────────────
@@ -12271,6 +12283,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// string hand while <see cref="UseBowStringDrawPose"/> is on. Empty = draw the sprite as-is.</summary>
         protected virtual Rectangle GetBowStringTexels(int itemType) => Rectangle.Empty;
 
+        /// <summary>Optional upright arrow sprite (tip at top) nocked against the live bowstring.</summary>
+        protected virtual string NockedBowArrowTexture => null;
+        protected virtual float NockedBowArrowDrawScale => 0.8f;
+
         /// <summary>Runtime master kill-switch for the composite-arm experiment.  Lets you flip the
         /// new arm path off globally (e.g. from a debug command) for instant A/B without a rebuild.</summary>
         internal static bool CompositeArmSwingMasterEnable = true;
@@ -12452,7 +12468,7 @@ namespace tsorcRevamp.NPCs.Puppets
         // function of positions, so the server's arrow origin and every client's pose agree without sync.
         private const float BowMaxAimAngle = MathHelper.PiOver4;
 
-        private float BowAimAngle
+        protected virtual float BowAimAngle
         {
             get
             {

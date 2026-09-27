@@ -11,8 +11,8 @@ namespace tsorcRevamp
     // This remembers the last real track and replays it during that fallback, UNLESS the background
     // system's own neutral-ground check (already reused here, not duplicated) confirms we're
     // genuinely standing in real forest - in which case the forest track plays and becomes the new
-    // sticky baseline. Anything else vanilla picks (a boss, an event, a real biome track, a music
-    // box override applied after this hook returns) is left untouched and simply remembered.
+    // sticky baseline. Boss encounters and high-priority scenes play normally without replacing
+    // the remembered biome track. Music box overrides are applied after this hook returns.
     //
     // The tsorcMusic sub-mod's own tsorcMusicScene (a ModSceneEffect) is active for almost every
     // non-boss frame and resolves its OWN "OverworldDay"/"Night"/"HardmodeNight" tracks the same
@@ -86,6 +86,24 @@ namespace tsorcRevamp
                 return;
             }
 
+            // Encounter music is temporary. Remembering it here made Death's track (and other
+            // boss tracks) persist after the NPC died whenever forest was only a biome fallback.
+            // Keep the pre-fight biome memory, and let the normal selector own the encounter.
+            // Scene priority also covers registry minibosses/invaders without NPC.boss set.
+            if (Main.LocalPlayer.CurrentSceneEffect.music.priority >= SceneEffectPriority.BossLow)
+            {
+                return;
+            }
+
+            // Vanilla boss music does not necessarily come from a ModSceneEffect.
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].boss)
+                {
+                    return;
+                }
+            }
+
             bool isPlainForestTrack = Main.newMusic == ForestDayCloudyMusic
                 || Main.newMusic == ForestDayClearMusic
                 || Main.newMusic == ForestNightMusic
@@ -95,7 +113,7 @@ namespace tsorcRevamp
 
             if (!isPlainForestTrack)
             {
-                //A real biome, boss, or event won vanilla's (or tsorcMusic's) own decision - trust it and remember it.
+                //Remember the ambient track selected by vanilla or the optional music pack.
                 stickyMusicTrack = Main.newMusic;
                 return;
             }
