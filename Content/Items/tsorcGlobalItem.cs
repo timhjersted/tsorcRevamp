@@ -994,14 +994,7 @@ namespace tsorcRevamp.Content.Items
             {
                 player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<WorldRune>());
                 player.QuickSpawnItem(item.GetSource_Misc("meep"), ItemID.MagicLantern);
-                if (Main.masterMode)
-                {
-                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoulItem>(), (int)(1500 * 1.2f * darkSoulPlayer.SoulsMultiplier()));
-                }
-                else
-                {
-                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoulItem>(), (int)(1500 * darkSoulPlayer.SoulsMultiplier()));
-                }
+                player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoulItem>(), (int)((1500f / DarkSoulPlayer.DefaultSoulMult) * darkSoulPlayer.SoulsMultiplier()));
                 return true;
             }
 

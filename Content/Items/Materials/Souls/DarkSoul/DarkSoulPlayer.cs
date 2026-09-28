@@ -10,6 +10,7 @@ namespace tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 public class DarkSoulPlayer : ModPlayer
 {
+    public const float DefaultSoulMult = 0.04f;
     public int SoulPickupRange = 5;
     public int ConsSoulChanceMult;
     public override void ResetEffects()
@@ -20,7 +21,6 @@ public class DarkSoulPlayer : ModPlayer
     public float SoulsMultiplier()
     {
         float multiplier = 1f;
-        float defaultDifficultyMod = 0.04f;
         if (Player.GetModPlayer<SilverSerpentRingPlayer>().SilverSerpentRing)
         {
             multiplier += SilverSerpentRingItem.SoulAmplifier / 100f;
@@ -49,17 +49,17 @@ public class DarkSoulPlayer : ModPlayer
         {
             case GameModeID.Normal:
             {
-                multiplier *= defaultDifficultyMod * 0.75f;
+                multiplier *= DefaultSoulMult * 0.75f;
                 break;
             }
             case GameModeID.Expert:
             {
-                multiplier *= defaultDifficultyMod;
+                multiplier *= DefaultSoulMult;
                 break;
             }
             case GameModeID.Master:
             {
-                multiplier *= defaultDifficultyMod * (1f + (MastersScroll.SoulsAmp / 100f));
+                multiplier *= DefaultSoulMult * (1f + (MastersScroll.SoulAmplifier / 100f));
                 break;
             }
         }

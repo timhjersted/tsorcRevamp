@@ -8,8 +8,8 @@ namespace tsorcRevamp.Content.Items
 {
     public class MastersScroll : ModItem
     {
-        public const float SoulsAmp = 20f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulsAmp);
+        public const float SoulAmplifier = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulAmplifier);
 
         public override void SetDefaults()
         {
