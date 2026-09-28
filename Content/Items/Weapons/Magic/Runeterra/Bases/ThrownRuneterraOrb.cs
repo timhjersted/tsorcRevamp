@@ -6,10 +6,10 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles;
 using tsorcRevamp.Content.Projectiles.VFX;
 
-namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
+namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
 {
 
     public abstract class ThrownRuneterraOrb : ModProjectile
@@ -202,12 +202,12 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
             {
                 if (hit.Crit && !Full)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<StackDelivery>(), 0, 0, Projectile.owner, Tier - 1, 2);
+                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, Projectile.owner, Tier - 1, 2);
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "OrbCrit") with { Volume = OrbOfDeception.OrbSoundVolume });
                 }
                 else if (!Full)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<StackDelivery>(), 0, 0, Projectile.owner, Tier - 1, 1);
+                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, Projectile.owner, Tier - 1, 1);
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "OrbHit") with { Volume = OrbOfDeception.OrbSoundVolume });
                 }
                 if (Full)

@@ -4,10 +4,9 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items;
 using tsorcRevamp.NPCs;
 
-namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
+namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
 {
     public abstract class FlameRuneterraOrb : ModProjectile
     {
@@ -36,20 +35,17 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
             Projectile.friendly = true;
             Projectile.tileCollide = false;
         }
-        public int ManaCost;
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
             SoundEngine.PlaySound(new SoundStyle(SoundPath + "FireCast") with { Volume = OrbOfDeception.OrbSoundVolume });
             if (Projectile.ai[0] != 1)
             {
-                ManaCost = player.GetManaCost(player.HeldItem);
-            }
-            else
-            {
-                ManaCost = 0;
+                int manaCost = player.GetManaCost(player.HeldItem);
+                player.statMana += manaCost / 2;
             }
         }
+
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -147,8 +143,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Player player = Main.player[Projectile.owner];
-            player.statMana += ManaCost / 2;
             SoundEngine.PlaySound(new SoundStyle(SoundPath + "FireHit") with { Volume = OrbOfDeception.OrbSoundVolume });
         }
         public override void OnKill(int timeLeft)

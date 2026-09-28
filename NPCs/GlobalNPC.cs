@@ -40,7 +40,6 @@ using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Content.Items.VanillaItems.Summoner;
 using tsorcRevamp.Content.Items.Weapons.Classless;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
-using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
@@ -4944,22 +4943,6 @@ namespace tsorcRevamp.NPCs
                 EnemyImpactVFX.Spawn(npc, hit, this);
             }
 
-            Player LocalPlayer = Main.LocalPlayer;
-            if (npc.active && !npc.friendly && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)) && npc.life <= 0)
-            {
-                if (LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfDeception>())
-                {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<StackDelivery>(), 0, 0, LocalPlayer.whoAmI, 0, 1);
-                }
-                else if (LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfFlame>())
-                {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<StackDelivery>(), 0, 0, LocalPlayer.whoAmI, 1, 1);
-                }
-                else if (LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>())
-                {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<StackDelivery>(), 0, 0, LocalPlayer.whoAmI, 2, 1);
-                }
-            }
         }
 
         public override void DrawEffects(NPC npc, ref Color drawColor)

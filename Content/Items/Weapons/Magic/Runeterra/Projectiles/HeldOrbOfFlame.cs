@@ -2,7 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Sounds.OrbOfDeception;
 using tsorcRevamp.Content.Projectiles.Magic.Runeterra;
 

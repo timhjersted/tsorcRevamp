@@ -4,11 +4,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items
+namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
 {
     public abstract class RuneterraOrb : ModItem
     {
@@ -42,9 +43,9 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items
         public const int FireballCD = 4;
         public const int FireballDuration = 6;
 
-        public static int DashBuffDuration = 6;
-        public static int DashCD = 6;
-        public static int DashCostMultiplier = 2;
+        public const int DashBuffDuration = 10;
+        public const int PerDashCD = 8;
+        public const int DashCostMultiplier = 4;
         public override void SetStaticDefaults()
         {
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));
@@ -131,11 +132,11 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items
         {
             Player player = Main.LocalPlayer;
             var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
+
             string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : LangUtils.GetTextValue("Keybinds.Special Ability.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
             int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip5");
             if (ttindex1 != -1 && Tier == 3)
             {
-                tooltips.RemoveAt(ttindex1);
                 tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", LangUtils.GetTextValue(LocalizationPath + "Keybind1") + SpecialAbilityString + LangUtils.GetTextValue(LocalizationPath + "Keybind2")));
             }
             if (Main.keyState.IsKeyDown(Keys.LeftShift))
@@ -143,7 +144,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details").FormatWith(OrbDmgMod, (OrbReturnDmgMod + OrbDmgMod), EssenceThiefOnKillChance, FilledOrbDmgMod, FireballDmgMod / 100f, FireballCD, FireballHPPercentDmg, FireballHPDmgCap, MagicSunder, DashBuffDuration, DashCD, (int)(Item.mana * player.manaCost * DashCostMultiplier), FireballDuration)));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details").FormatWith(OrbDmgMod, (OrbReturnDmgMod + OrbDmgMod), EssenceThiefOnKillChance, FilledOrbDmgMod, FireballDmgMod / 100f, FireballCD, FireballHPPercentDmg, FireballHPDmgCap, MagicSunder, DashBuffDuration, PerDashCD, (int)(Item.mana * player.manaCost * DashCostMultiplier), FireballDuration)));
                 }
             }
             else

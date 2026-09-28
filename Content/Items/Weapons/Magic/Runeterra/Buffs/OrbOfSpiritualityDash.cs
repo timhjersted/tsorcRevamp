@@ -2,7 +2,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles;
 using tsorcRevamp.Content.Projectiles.Magic.Runeterra;
 
@@ -21,10 +20,10 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             var modPlayer = player.GetModPlayer<RuneterraOrbPlayer>();
-            modPlayer.SpiritRushTimer -= 0.0167f;
-            modPlayer.SpiritRushCooldown -= 0.0167f;
+            modPlayer.SpiritRushTimer--;
+            modPlayer.SpiritRushCooldown--;
 
-            if (modPlayer.SpiritRushCooldown > 0f)
+            if (modPlayer.SpiritRushCooldown > 0)
             {
                 player.immune = true;
 
@@ -36,24 +35,20 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Buffs
                 cooldownToRefund += 0.75f; // Refund part of the cooldown spent not dashing
             }
 
-            if (modPlayer.SpiritRushTimer > 0f)
+            if (modPlayer.SpiritRushTimer > 0)
             {
                 player.immune = true;
-                if (Main.GameUpdateCount % 3 == 0 && Main.myPlayer == player.whoAmI)
-                {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<FlameOrbOfSpirituality>(), player.HeldItem.damage, player.HeldItem.knockBack, player.whoAmI, 1);
-                }
             }
             if (player.ownedProjectileCounts[ModContent.ProjectileType<SpiritRushVisual>()] == 0 && Main.myPlayer == player.whoAmI)
             {
                 Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<SpiritRushVisual>(), 0, 0, player.whoAmI);
             }
 
-            if (player.buffTime[buffIndex] == 1 || (modPlayer.SpiritRushCharges == 0 && modPlayer.SpiritRushTimer <= 0f))
+            if (player.buffTime[buffIndex] == 1 || (modPlayer.SpiritRushCharges == 0 && modPlayer.SpiritRushTimer <= 0))
             {
                 // Refund dash CD for each dash cooldown the player has left
                 // Also refund the time this buff was active without a dash being used. ( a hidden tracker for the overall cooldown )
-                int dashCooldown = ((OrbOfSpirituality.DashCD * 3) - (OrbOfSpirituality.DashCD * modPlayer.SpiritRushCharges)) * 60 - (int)cooldownToRefund;
+                int dashCooldown = ((OrbOfSpirituality.PerDashCD * RuneterraOrbPlayer.MaxSpiritRushCharges) - (OrbOfSpirituality.PerDashCD * modPlayer.SpiritRushCharges)) * 60 - (int)cooldownToRefund;
                 if (dashCooldown > 0)
                     player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), dashCooldown);
 

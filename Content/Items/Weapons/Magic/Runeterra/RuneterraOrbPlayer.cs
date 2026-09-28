@@ -3,24 +3,28 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameInput;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Buffs;
-using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Sounds.OrbOfSpirituality;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
 
 public class RuneterraOrbPlayer : ModPlayer
 {
     public int EssenceThief = 0;
-    public int SpiritRushCharges = 3;
-    public float SpiritRushTimer = 0f;
-    public int SpiritRushSoundStyle = 0;
-    public float SpiritRushCooldown = 0f;
+    public const int MaxSpiritRushCharges = 3;
+    public int SpiritRushCharges = MaxSpiritRushCharges;
+    public float SpiritRushTimer;
+    public int SpiritRushSoundStyle;
+    public int SpiritRushCooldown;
+    public const int SpiritRushCooldownTime = 60;
     public Vector2 SpiritRushVelocity;
 
     public override void PreUpdateMovement()
     {
-        if (SpiritRushTimer > 0f)
+        if (SpiritRushTimer > 0)
         {
             Player.velocity = SpiritRushVelocity;
             Player.RefreshMovementAbilities();
@@ -29,19 +33,22 @@ public class RuneterraOrbPlayer : ModPlayer
 
     public override void ProcessTriggers(TriggersSet triggersSet)
     {
-        if (tsorcRevamp.specialAbility.JustReleased)
+        if (tsorcRevamp.specialAbility.JustPressed)
         {
-                if (Player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && Player.statMana >= (Player.GetManaCost(Player.HeldItem) * OrbOfSpirituality.DashCostMultiplier) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()))
+                if (Player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() 
+                    && Player.statMana >= (Player.GetManaCost(Player.HeldItem) * OrbOfSpirituality.DashCostMultiplier) 
+                    && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>())
+                    && SpiritRushCharges == MaxSpiritRushCharges)
                 {
                     Player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), OrbOfSpirituality.DashBuffDuration * 60);
                     Player.statMana -= Player.GetManaCost(Player.HeldItem) * OrbOfSpirituality.DashCostMultiplier;
                 }
-                if (Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && SpiritRushCooldown <= 0f && SpiritRushCharges > 0)
+                if (Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && SpiritRushCooldown <= 0 && SpiritRushCharges > 0)
                 {
                     Player.immune = true;
                     SpiritRushVelocity = Player.DirectionTo(Main.MouseWorld) * 25f;
-                    SpiritRushTimer = 0.3f;
-                    SpiritRushCooldown = 1f;
+                    SpiritRushTimer = (int)(60 * 0.3f);
+                    SpiritRushCooldown = SpiritRushCooldownTime;
                     Player.SetImmuneTimeForAllTypes(60);
                     if (SpiritRushSoundStyle == 0)
                     {
@@ -60,8 +67,28 @@ public class RuneterraOrbPlayer : ModPlayer
                         SoundEngine.PlaySound(new SoundStyle( UsefulFunctions.RefactorableFilepath(typeof(OrbOfSpiritualitySound)) + "_Dash3") with { Volume = RuneterraOrb.OrbSoundVolume });
                         SpiritRushSoundStyle = 0;
                     }
+                    Projectile.NewProjectile(Projectile.GetSource_None(), Player.Center, Vector2.One, ModContent.ProjectileType<FlameSpiritRush>(), Player.HeldItem.damage, Player.HeldItem.knockBack, Player.whoAmI, 1);
                     SpiritRushCharges--;
                 }
+        }
+    }
+
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+    {
+        if (target.active && !target.friendly && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)) && target.life <= 0)
+        {
+            if (Player.HeldItem.type == ModContent.ItemType<OrbOfDeception>())
+            {
+                Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, Player.whoAmI, 0, 1);
+            }
+            else if (Player.HeldItem.type == ModContent.ItemType<OrbOfFlame>())
+            {
+                Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, Player.whoAmI, 1, 1);
+            }
+            else if (Player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>())
+            {
+                Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, Player.whoAmI, 2, 1);
+            }
         }
     }
 }

@@ -48,7 +48,6 @@ using tsorcRevamp.Content.Items.VanillaItems.Summoner;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Buffs;
-using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items;
 using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;

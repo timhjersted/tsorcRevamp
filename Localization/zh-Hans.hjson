@@ -11484,6 +11484,7 @@ Mods: {
 			// ProximityMine.DisplayName: Proximity Mine
 			// ProximityMineExplosion.DisplayName: Proximity Mine Explosion
 			// ProximityMineRocket.DisplayName: Proximity Mine Rocket
+			// FlameSpiritRush.DisplayName: Flame Spirit Rush
 		}
 
 		NPCs: {

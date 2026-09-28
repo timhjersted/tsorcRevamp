@@ -8031,7 +8031,7 @@ Mods: {
 					Casts [c/87cefa:homing flames] while the [c/87cefa:Orb] is sent out when used
 					Gathers stacks of [c/87cefa:Essence Thief] on [c/87cefa:Orb] hits and kills
 					Upon reaching 9 stacks, the next [c/87cefa:Orb] cast will consume 9 stacks, [c/87cefa:heal you and deal massive damage]
-					<right> to cast a [c/ff7f50:Fireball which sunders enemies, increasing their vulnerability to magic damage]
+					Right-click to cast a [c/ff7f50:Fireball which sunders enemies, increasing their vulnerability to magic damage]
 					[c/ff7f50:'There's beauty in even the most painful memories']
 					'''
 				Details:
@@ -8056,17 +8056,16 @@ Mods: {
 					Casts [c/87cefa:homing flames] while the [c/87cefa:Orb] is sent out when used
 					Gathers stacks of [c/87cefa:Essence Thief] on [c/87cefa:Orb] hits and kills
 					Upon reaching 9 stacks, the next [c/87cefa:Orb] cast will consume 9 stacks, [c/87cefa:heal you and deal massive damage]
-					<right> to cast a [c/ff7f50:Charm which sunders enemies, increasing their vulnerability to magic damage]
-					{$Items.OrbOfSpirituality.Keybind1}Special Ability{$Items.OrbOfSpirituality.Keybind2}
+					Right-click to cast a [c/ff7f50:Charm which sunders enemies, increasing their vulnerability to magic damage]
 					[c/ff00ff:'Everything finds its way to the Spirit Realm eventually,]
 					[c/ff00ff:our opponents seem eager to get there quickly']
 					'''
 				Keybind1: "Press "
-				Keybind2: " to [c/ff00ff:dash towards the cursor], casting [c/87cefa:homing flames] along the way"
+				Keybind2: " to [c/ff00ff:dash towards the cursor], casting an [c/87cefa:empowered homing flame] along the way"
 				Details:
 					'''
 					Using [c/ff00ff:Special Ability] grants you a buff({$CommonItemTooltip.SecondDuration@9}),
-					which will allow you to [c/ff00ff:dash up to 3 times]({$CommonItemTooltip.Cooldown@10})
+					which will allow you to [c/ff00ff:dash up to 3 times]({$CommonItemTooltip.Cooldown@10} per dash)
 					[c/87cefa:Homing flames] [c/ff00ff:spawned by dashing do not restore mana, Special Ability costs {11} mana to cast]
 					[c/ff7f50:Charm] deals {4}x damage({$CommonItemTooltip.Cooldown@5}) and {6}% max health damage on-hit, up to {7}
 					[c/ff7f50:Sunder] increases magic damage taken by {8}%({$CommonItemTooltip.SecondDuration@12})
@@ -11513,6 +11512,7 @@ Mods: {
 			ProximityMine.DisplayName: Proximity Mine
 			ProximityMineExplosion.DisplayName: Proximity Mine Explosion
 			ProximityMineRocket.DisplayName: Proximity Mine Rocket
+			FlameSpiritRush.DisplayName: Flame Spirit Rush
 		}
 
 		NPCs: {

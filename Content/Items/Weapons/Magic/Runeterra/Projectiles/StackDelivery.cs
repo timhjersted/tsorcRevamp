@@ -2,12 +2,12 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.Content.Projectiles.VFX
+namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
 {
-    public class StackDelivery : ModProjectile
+    public class EssenceThiefDelivery : ModProjectile
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
         public override void SetDefaults()
@@ -46,12 +46,6 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                         Dust.NewDust(Projectile.TopLeft, Projectile.width, Projectile.height, DustID.VenomStaff, 0, 0, Alpha, default, Scale);
                         break;
                     }
-                case 3: //Center of the Universe
-                    {
-                        Lighting.AddLight(Projectile.Center, Color.Navy.ToVector3() * 2f);
-                        Dust.NewDust(Projectile.TopLeft, Projectile.width, Projectile.height, DustID.UltraBrightTorch, 0, 0, Alpha, default, Scale);
-                        break;
-                    }
             }
 
             Projectile.velocity = Projectile.Center.DirectionTo(player.Center) * projSpeed;
@@ -65,36 +59,15 @@ namespace tsorcRevamp.Content.Projectiles.VFX
         {
             Player player = Main.player[Projectile.owner];
             var orbPlayer = player.GetModPlayer<RuneterraOrbPlayer>();
-            //var gauntletPlayer;
             Rectangle PlayerRect = Utils.CenteredRectangle(player.Center, player.Size);
-            switch (Projectile.ai[0])
+            orbPlayer.EssenceThief += (int)Projectile.ai[1];
+            if (orbPlayer.EssenceThief >= 9)
             {
-                case float EssenceThief when (EssenceThief >= 0 && EssenceThief < 3):
-                    {
-                        orbPlayer.EssenceThief += (int)Projectile.ai[1];
-                        if (orbPlayer.EssenceThief >= 9)
-                        {
-                            CombatText.NewText(PlayerRect, Color.Lime, LangUtils.GetTextValue("Items.OrbOfDeception.OrbFilled"));
-                        }
-                        else
-                        {
-                            CombatText.NewText(PlayerRect, Color.Lime, LangUtils.GetTextValue("Items.OrbOfDeception.StackGained", orbPlayer.EssenceThief));
-                        }
-                        break;
-                    }
-                case 3:
-                    {
-                        player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount += (int)Projectile.ai[1];
-                        if (player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount >= 10)
-                        {
-                            CombatText.NewText(PlayerRect, Color.Navy, LangUtils.GetTextValue("Items.CenterOfTheUniverse.MeteorReady"));
-                        }
-                        else
-                        {
-                             CombatText.NewText(PlayerRect, Color.Navy, LangUtils.GetTextValue("Items.CenterOfTheUniverse.StackGained", player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount));
-                        }
-                        break;
-                    }
+                CombatText.NewText(PlayerRect, Color.Lime, LangUtils.GetTextValue("Items.OrbOfDeception.OrbFilled"));
+            }
+            else
+            {
+                CombatText.NewText(PlayerRect, Color.Lime, LangUtils.GetTextValue("Items.OrbOfDeception.StackGained", orbPlayer.EssenceThief));
             }
         }
         public override bool PreDraw(ref Color lightColor)

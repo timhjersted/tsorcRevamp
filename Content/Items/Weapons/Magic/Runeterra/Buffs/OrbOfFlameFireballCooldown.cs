@@ -1,5 +1,4 @@
 ﻿using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Items;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Sounds.OrbOfFlame;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Buffs

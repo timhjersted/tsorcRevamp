@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,9 +10,10 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
 
     public class SpiritRushVisual : ModProjectile
     {
+        public const int Frames = 24;
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Projectile.type] = 4;
+            Main.projFrames[Projectile.type] = Frames;
         }
 
         public override void SetDefaults()
@@ -21,11 +23,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
             Projectile.height = 90; // The height of your projectile
             Projectile.friendly = true; // Deals damage to enemies
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.usesLocalNPCImmunity = true; // Used for hit cooldown changes in the ai hook
-            Projectile.localNPCHitCooldown = 10; // This facilitates custom hit cooldown logic
             Projectile.tileCollide = false;
             Projectile.aiStyle = -1;
-            Projectile.extraUpdates = 5;
         }
         public override void AI()
         {
@@ -35,14 +34,21 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
             {
                 Projectile.timeLeft = 2;
             }
-            Projectile.position = player.Center - new Vector2(player.width * 2.25f, player.height);
+            Projectile.Center = player.Center;
             Lighting.AddLight(Projectile.position, Color.LightSteelBlue.ToVector3() * 2f);
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BlueFlare, 0, 0, 150, default, 2f);
-            Projectile.frame = 3 - modPlayer.SpiritRushCharges;
+            int framesPerCharge = Frames / 3;
+            float fadingFrames = MathF.Max(modPlayer.SpiritRushCooldown / (RuneterraOrbPlayer.SpiritRushCooldownTime / (float)framesPerCharge), 0);
+            Projectile.frame = Math.Min(Math.Max(Frames - (modPlayer.SpiritRushCharges * framesPerCharge) - (int)fadingFrames, 0), 23);
         }
         public override bool? CanDamage()
         {
             return false;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            return UsefulFunctions.RenderTransparentTexture(Projectile, TransparentTextureHandler.TransparentTextureType.SpiritRushVisual, lightColor);
         }
     }
 }

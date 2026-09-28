@@ -84,6 +84,7 @@ using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Pets;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles;
 using tsorcRevamp.Content.Items.Weapons.Melee;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
@@ -5599,6 +5600,7 @@ namespace tsorcRevamp
             PinwheelFireglow,
             ConsecratedLightTransparent,
             RunePrison,
+            SpiritRushVisual,
         }
 
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -5661,6 +5663,7 @@ namespace tsorcRevamp
                 {TransparentTextureType.Pinwheel, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Pinwheel)), AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.PinwheelFireglow, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Pinwheel)) + "_Fireglow", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.RunePrison, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(RunePrison)), AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.SpiritRushVisual, (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(SpiritRushVisual)), AssetRequestMode.ImmediateLoad)},
 
             };
 

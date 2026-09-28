@@ -79,7 +79,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SuperSunburnDuration = ScorchingPoint.SuperBurnDuration;
                 if (player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount < 10)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<StackDelivery>(), 0, 0, player.whoAmI, 3, 1);
+                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<StardustDelivery>(), 0, 0, player.whoAmI);
                 }
                 Dust.NewDust(Projectile.position, 20, 20, dustID, 1, 1, 0, default, 1.5f);
                 SoundEngine.PlaySound(new SoundStyle(SoundPath + "MarkDetonation") with { Volume = CenterOfTheUniverse.SoundVolume * 1.2f });
