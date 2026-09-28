@@ -44,7 +44,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             {
                 float angle = MathHelper.TwoPi * i / 24f;
                 Vector2 pos = Projectile.Center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 55f;
-                Dust d = Dust.NewDustPerfect(pos, i % 6 == 0 ? DustID.Firefly : DustID.Wraith,
+                Dust d = Dust.NewDustPerfect(pos, i % 6 == 0 ? DustID.YellowTorch : DustID.Wraith,
                     Vector2.Zero, 100, default, 1.2f);
                 d.noGravity = true;
             }

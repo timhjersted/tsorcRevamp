@@ -17,15 +17,17 @@ using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
     public class GreatBlackKnight : ModNPC, IStaggerable, IFlailAnchor, IDebugAttackLabel, IHumanoidMeleeHitEffects, ISpearMeleeWielder
     {
-        public int redKnightsSpearDamage = 35;
-        public int redMagicDamage = 30;
-        public int redKnightsGreatDamage = 35;
-        public int redFlailDamage = 40;
+        // Declared Expert Mode damage before player defense and damage variation.
+        public int redKnightsSpearDamage = 72;  // Spear throw & Moonfury bomb (real expert damage)
+        public int redMagicDamage = 72;         // Homing crystal & Shadow crystal storm (real expert damage)
+        public int redKnightsGreatDamage = 88; // Spear thrust & Ultrakill barrage (real expert damage)
+        public int redFlailDamage = 100;        // Flail head (real expert damage)
         Vector2 storedPlayerPosition = Vector2.Zero;
         public int framesSinceStoredPosition = 0;
 
@@ -169,32 +171,16 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.aiStyle = -1;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 90;
+            EnemyDamage.SetContact(NPC, 120); // 80 raw * 2 (was 90 raw, reduced by 30 to 60 raw -> 120 Expert)
             NPC.defense = 61;
-            NPC.lifeMax = 30000;
-            NPC.value = 5000;
+            NPC.lifeMax = 20000;
+            NPC.value = 156000;
 
-            if (Main.hardMode)
-            {
-                NPC.lifeMax = 20000;
-                NPC.damage = 90;
-                NPC.defense = 61;
-                NPC.value = 156000; // subtract a 0
-                redKnightsGreatDamage = 40;
-                redKnightsSpearDamage = 30;
-                redMagicDamage = 30;
-                redFlailDamage = 40;
-            }
             if (tsorcRevampWorld.SuperHardMode)
             {
                 NPC.lifeMax = 50000;
                 NPC.defense = 61;
-                NPC.damage = 90;
                 NPC.value = 157000; 
-                redKnightsGreatDamage = 40;
-                redKnightsSpearDamage = 30;
-                redMagicDamage = 30;
-                redFlailDamage = 40;
             }
 
             NPC.HitSound = SoundID.NPCHit1;
@@ -486,7 +472,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 Vector2 dustOffset = Main.rand.NextVector2Circular(64f, 64f);
                 int dustIdx = Dust.NewDust(NPC.Center + dustOffset - new Vector2(4f), 8, 8,
-                    Main.rand.NextBool(6) ? DustID.Firefly : DustID.Wraith, -dustOffset.X * 0.1f, -dustOffset.Y * 0.1f,
+                    Main.rand.NextBool(6) ? DustID.YellowTorch : DustID.Wraith, -dustOffset.X * 0.1f, -dustOffset.Y * 0.1f,
                     150, default, 1.2f);
                 Main.dust[dustIdx].noGravity = true;
             }
@@ -613,7 +599,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 hand = GetFlailAnchor();
                 Vector2 aim = (player.Center - hand).SafeNormalize(new Vector2(NPC.direction, 0f));
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), hand + aim * GreatBlackKnightFlail.OrbitRadius,
-                    Vector2.Zero, ModContent.ProjectileType<GreatBlackKnightFlail>(), redFlailDamage, 3f,
+                    Vector2.Zero, ModContent.ProjectileType<GreatBlackKnightFlail>(), EnemyDamage.Projectile(redFlailDamage), 3f,
                     Main.myPlayer, NPC.whoAmI, GreatBlackKnightFlail.OrbitMode, aim.ToRotation());
             }
             NPC.netUpdate = true;
@@ -838,7 +824,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Vector2 velocity = (aimAt - origin).SafeNormalize(direction) * SpearThrowSpeed;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
-                ModContent.ProjectileType<BlackThrowingSpear>(), redKnightsSpearDamage, 0f,
+                ModContent.ProjectileType<BlackThrowingSpear>(), EnemyDamage.Projectile(redKnightsSpearDamage), 0f,
                 Main.myPlayer, ai2: BlackThrowingSpear.ArrowFlightMode);
             QueueAttackSoundCue(AttackSoundCue.Spear);
             EndAttack();
@@ -897,7 +883,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 int projectileIndex = Projectile.NewProjectile(
                     NPC.GetSource_FromThis(), NPC.Center, new Vector2(direction, 0f),
                     ModContent.ProjectileType<GreatBlackKnightSpearHitbox>(),
-                    redKnightsGreatDamage, 4f, Main.myPlayer, SpearMeleeReach, SpearMeleeHeight);
+                    EnemyDamage.Projectile(redKnightsGreatDamage), 4f, Main.myPlayer, SpearMeleeReach, SpearMeleeHeight);
                 tsorcGlobalProjectile.SetDefenseTraits(projectileIndex,
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ActiveAttackDefenseTraits);
                 QueueAttackSoundCue(AttackSoundCue.SpearMelee);
@@ -1000,7 +986,7 @@ namespace tsorcRevamp.NPCs.Enemies
             float speed = 15f;
             Vector2 vel = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, speed, 2.1f, highAngle: true, fallback: true) + player.velocity;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, vel.X, vel.Y,
-                ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), EnemyDamage.Projectile(redMagicDamage), 0f, Main.myPlayer);
             EndAttack();
         }
 
@@ -1029,7 +1015,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             Vector2 velocity = (aimAt - origin).SafeNormalize(new Vector2(facing, 0f)) * speed;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, velocity,
-                ModContent.ProjectileType<EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                ModContent.ProjectileType<EnemyMoonfuryBomb>(), EnemyDamage.Projectile(redKnightsSpearDamage), 0f, Main.myPlayer);
             QueueAttackSoundCue(AttackSoundCue.Bomb);
             EndAttack();
         }
@@ -1102,14 +1088,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 2f, fallback: true) + Main.rand.NextVector2Circular(1, 5);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(), EnemyDamage.Projectile(redKnightsGreatDamage), 0f, Main.myPlayer);
                 }
 
                 // Black Breath
                 Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 2f, fallback: true) + Main.rand.NextVector2Circular(-5, 5);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<EnemyBlackCursedBreath>(), EnemyDamage.Projectile(redKnightsGreatDamage), 0f, Main.myPlayer);
                 }
                 QueueAttackSoundCue(AttackSoundCue.Ultrakill);
                 NPC.netUpdate = true;
@@ -1145,7 +1131,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, 10f, fallback: true);
                     speed += player.velocity / 2f;
                     speed = speed.RotatedBy(angle);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), EnemyDamage.Projectile(redMagicDamage), 0f, Main.myPlayer);
                 }
                 QueueAttackSoundCue(AttackSoundCue.ShadowStorm);
                 NPC.netUpdate = true;

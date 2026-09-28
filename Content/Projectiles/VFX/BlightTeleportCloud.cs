@@ -17,6 +17,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
 
         public override string Texture => "Terraria/Images/Projectile_0";
         private float TargetRadius => Projectile.ai[1] > 0f ? Projectile.ai[1] : MaxCloudRadius;
+        private bool IsSpearImpact => Projectile.ai[2] == 1f;
 
         public override void SetDefaults()
         {
@@ -86,7 +87,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             if (Main.rand.NextBool(4))
             {
                 Vector2 point = Projectile.Center + Main.rand.NextVector2Circular(radius, radius);
-                Dust firefly = Dust.NewDustPerfect(point, DustID.Firefly,
+                Dust firefly = Dust.NewDustPerfect(point, IsSpearImpact ? DustID.YellowTorch : DustID.Firefly,
                     Main.rand.NextVector2Circular(0.3f, 0.3f), 100,
                     new Color(255, 210, 95), Main.rand.NextFloat(0.65f, 1f) * fade);
                 firefly.noGravity = true;

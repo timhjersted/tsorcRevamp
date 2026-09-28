@@ -365,7 +365,8 @@ namespace tsorcRevamp.NPCs
             NavState nav = GetState(npc);
             bool waypointMode = movementWaypoint.HasValue;
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            bool navigationPatrol = globalNPC.PatrolUsesNavigation && globalNPC.PursuitState == PursuitState.Patrol;
+            bool navigationPatrol = globalNPC.PatrolUsesNavigation && globalNPC.NavSearchRadius > 0
+                && globalNPC.PursuitState == PursuitState.Patrol;
             if (!waypointMode && nav.WaypointActive && !navigationPatrol)
             {
                 // The authored movement has released control. Do not let its stale final leg pull normal pursuit
@@ -542,7 +543,7 @@ namespace tsorcRevamp.NPCs
             }
             else if (pstate == PursuitState.Patrol)
             {
-                if (globalNPC.PatrolUsesNavigation)
+                if (globalNPC.PatrolUsesNavigation && globalNPC.NavSearchRadius > 0)
                 {
                     RunNavigationPatrol(nav, npc, player, globalNPC, topSpeed, acceleration,
                         jumpCeil, boostCeil, grounded, doorBreakingDamage, attackRange);
@@ -556,7 +557,9 @@ namespace tsorcRevamp.NPCs
                 nav.PlanIndex = 0;
                 nav.CommitFrames = 0;
                 nav.StuckGiveUpFrames = 0;
-                NavBehavior.RunPatrol(npc, globalNPC, topSpeed, acceleration);
+                // Direct SF4 callers with NavSearchRadius == 0 still get terrain-aware recovery patrol;
+                // path-enabled SF4 callers take RunNavigationPatrol above.
+                NavBehavior.RunPatrol(npc, globalNPC, topSpeed, acceleration, allowTerrainJump: true);
                 actionHandled = true;
                 actionLabel = "patrol";
                 reasonLabel = globalNPC.PatrolMode.ToString();
@@ -4164,16 +4167,14 @@ namespace tsorcRevamp.NPCs
             bool leftWalled = IsNavigationSolid(col - 1, feetY) || IsNavigationSolid(col - 1, feetY - 1) || IsNavigationSolid(col - 1, feetY - 2);
             bool rightWalled = IsNavigationSolid(col + 1, feetY) || IsNavigationSolid(col + 1, feetY - 1) || IsNavigationSolid(col + 1, feetY - 2);
             int curUp = BodyUpClear(npc, feetY); // full body width — a wide body's EDGE under the lip blocks the rise
-            if (!leftWalled && !rightWalled && curUp >= 4)
-            {
-                return false;
-            }
-
             int driftDir = player.Center.X >= npc.Center.X ? 1 : -1;
 
             if (curUp >= 4)
             {
-                // On a launch column → rise straight up; drift toward the player's side once above the lip.
+                // A clear body-width column is already a valid launch column, even when both sides are open.
+                // The old early return handed this exact case back to target-facing chase, which walked the NPC
+                // back under the lip after shaft-align had finally reached the opening.
+                // Rise straight up; drift toward the player's side once above the lip.
                 FireJump(nav, npc, driftDir, jumpCeil, 0f, 35, 45);
                 npc.velocity.X = 0f;   // pure vertical rise; the sideways drift comes later (ShaftEscapeDir, in Run)
                 nav.AirCommitDirX = 0;   // disable the normal airborne X-lock so we don't drift early into the lip

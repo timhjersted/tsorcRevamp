@@ -58,7 +58,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 Vector2 tip = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * (Projectile.height * 0.5f);
                 bool blight = Projectile.ai[2] == ArrowFlightMode;
                 int plagueDust = blight
-                    ? Dust.NewDust(tip, 2, 2, Main.rand.NextBool(6) ? DustID.Firefly : DustID.Wraith,
+                    ? Dust.NewDust(tip, 2, 2, Main.rand.NextBool(6) ? DustID.YellowTorch : DustID.Wraith,
                         0f, 0f, 150, default, 1.1f)
                     : Main.rand.NextBool(2)
                         ? Dust.NewDust(tip, 2, 2, DustID.Smoke, 0f, 0f, 150, new Color(12, 8, 18), 1.4f)
@@ -152,7 +152,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                         float cloudRadius = VFX.PlagueTeleportCloud.MaxCloudRadius * 0.5f;
                         var cloud = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
                             blight ? ModContent.ProjectileType<VFX.BlightTeleportCloud>() : ModContent.ProjectileType<VFX.PlagueTeleportCloud>(),
-                            0, 0f, Main.myPlayer, blight ? 0f : 1f, cloudRadius);
+                            0, 0f, Main.myPlayer, blight ? 0f : 1f, cloudRadius, blight ? 1f : 0f);
                         cloud.timeLeft = blight ? VFX.BlightTeleportCloud.LifetimeTicks : VFX.PlagueTeleportCloud.LifetimeTicks;
 
                         // Six rotating, smoothly fading puffs scattered through the same radius.

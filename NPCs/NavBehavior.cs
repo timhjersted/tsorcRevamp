@@ -284,29 +284,31 @@ namespace tsorcRevamp.NPCs
         }
 
         // =====================================================================================
-        //  Patrol locomotion (shared, cliff/obstacle aware — never jumps)
+        //  Patrol locomotion (shared, cliff/obstacle aware; SF4 recovery patrols may jump)
         // =====================================================================================
 
         /// <summary>Run one tick of patrol movement for the NPC's configured PatrolMode.</summary>
-        public static void RunPatrol(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration)
+        public static void RunPatrol(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration,
+            bool allowTerrainJump = false)
         {
             globalNPC.PatrolElapsed++; // time spent patrolling this stint (Relaxed teleport waits on this)
+            bool terrainJump = allowTerrainJump || globalNPC.PatrolCanTerrainJump;
             switch (globalNPC.PatrolMode)
             {
                 case PatrolMode.Idle:
-                    RunIdle(npc, globalNPC, topSpeed, acceleration);
+                    RunIdle(npc, globalNPC, topSpeed, acceleration, terrainJump);
                     break;
 
                 case PatrolMode.Pace:
-                    RunPace(npc, globalNPC, topSpeed, acceleration);
+                    RunPace(npc, globalNPC, topSpeed, acceleration, terrainJump);
                     break;
 
                 case PatrolMode.Wander:
-                    RunWander(npc, globalNPC, topSpeed, acceleration);
+                    RunWander(npc, globalNPC, topSpeed, acceleration, terrainJump);
                     break;
 
                 case PatrolMode.ReturnToSpawn:
-                    RunReturnToSpawn(npc, globalNPC, topSpeed, acceleration);
+                    RunReturnToSpawn(npc, globalNPC, topSpeed, acceleration, terrainJump);
                     break;
             }
         }
@@ -314,18 +316,20 @@ namespace tsorcRevamp.NPCs
         // Idle: pause for one second, then ALWAYS take a short walk. The previous 50/50 roll could select
         // another 2-4 second pause indefinitely, which made a healthy patrol look frozen. When a chosen
         // direction is blocked, try the other side immediately before settling into the next short pause.
-        private static void RunIdle(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration)
+        private static void RunIdle(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration,
+            bool terrainJump)
         {
             if (globalNPC.PatrolLegRemaining > 0)
             {
                 globalNPC.PatrolLegRemaining--; // frame timer for the short walk
-                if (!StepAlong(npc, globalNPC.PatrolDirection, topSpeed, acceleration))
+                bool moved = StepAlongPatrol(npc, globalNPC, globalNPC.PatrolDirection, topSpeed, acceleration, terrainJump);
+                if (!moved)
                 {
                     globalNPC.PatrolLegRemaining = 0;
                     // Choosing the next leg is a decision (it rolls a length); a client holds still on the spot until
                     // the server's leg arrives, rather than walking a different way from everyone else.
                     if (Main.netMode != NetmodeID.MultiplayerClient
-                        && !TryStartIdleLeg(npc, globalNPC, topSpeed, acceleration, -globalNPC.PatrolDirection))
+                        && !TryStartIdleLeg(npc, globalNPC, topSpeed, acceleration, -globalNPC.PatrolDirection, terrainJump))
                     {
                         globalNPC.PatrolIdleTimer = IdleStandTicks;
                     }
@@ -343,7 +347,7 @@ namespace tsorcRevamp.NPCs
                     globalNPC.PatrolIdleTimer--;
                 }
                 else if (Main.netMode != NetmodeID.MultiplayerClient
-                    && !TryStartIdleLeg(npc, globalNPC, topSpeed, acceleration, Main.rand.NextBool() ? 1 : -1))
+                    && !TryStartIdleLeg(npc, globalNPC, topSpeed, acceleration, Main.rand.NextBool() ? 1 : -1, terrainJump))
                 {
                     // Neither side is safe (for example, a roof with deep drops on both sides). Retry after a
                     // bounded pause instead of rerolling an arbitrarily long stationary chain every frame.
@@ -353,20 +357,22 @@ namespace tsorcRevamp.NPCs
         }
 
         private static bool TryStartIdleLeg(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration,
-            int preferredDirection)
+            int preferredDirection, bool terrainJump)
         {
             int firstDirection = preferredDirection != 0 ? Math.Sign(preferredDirection) : 1;
             int secondDirection = -firstDirection;
             int walkFrames = Main.rand.Next(IdleWalkTilesMin, IdleWalkTilesMax + 1) * FramesPerTile;
 
-            if (StepAlong(npc, firstDirection, topSpeed, acceleration))
+            bool firstMoved = StepAlongPatrol(npc, globalNPC, firstDirection, topSpeed, acceleration, terrainJump);
+            if (firstMoved)
             {
                 globalNPC.PatrolDirection = firstDirection;
                 globalNPC.PatrolLegRemaining = Math.Max(0, walkFrames - 1); // StepAlong already moved this first frame.
                 globalNPC.RequestNetworkSnapshot();
                 return true;
             }
-            if (StepAlong(npc, secondDirection, topSpeed, acceleration))
+            bool secondMoved = StepAlongPatrol(npc, globalNPC, secondDirection, topSpeed, acceleration, terrainJump);
+            if (secondMoved)
             {
                 globalNPC.PatrolDirection = secondDirection;
                 globalNPC.PatrolLegRemaining = Math.Max(0, walkFrames - 1);
@@ -380,7 +386,8 @@ namespace tsorcRevamp.NPCs
         // at a gap/wall, then sweep the other side. Distance is measured from the anchor (not frame-
         // counted, which was the "2-3 tile jitter" bug), so it actually covers ground; and turning at a
         // gap makes it commit to a full sweep the OTHER way instead of re-poking the same gap.
-        private static void RunPace(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration)
+        private static void RunPace(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration,
+            bool terrainJump)
         {
             if (globalNPC.PatrolDirection == 0)
             {
@@ -389,13 +396,15 @@ namespace tsorcRevamp.NPCs
             float fromAnchorTiles = (npc.Center.X - globalNPC.PatrolAnchor.X) / TileF;
             bool atReachLimit = (globalNPC.PatrolDirection > 0 && fromAnchorTiles >= globalNPC.PatrolRange)
                              || (globalNPC.PatrolDirection < 0 && fromAnchorTiles <= -globalNPC.PatrolRange);
-            if (atReachLimit || !StepAlong(npc, globalNPC.PatrolDirection, topSpeed, acceleration))
+            bool moved = StepAlongPatrol(npc, globalNPC, globalNPC.PatrolDirection, topSpeed, acceleration, terrainJump);
+            if (atReachLimit || !moved)
                 globalNPC.PatrolDirection = -globalNPC.PatrolDirection;
         }
 
         // Wander: roam within the leash, committing to a direction for several seconds (anti-jitter),
         // turning at gaps/walls, reining back toward the anchor when it drifts past the leash.
-        private static void RunWander(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration)
+        private static void RunWander(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration,
+            bool terrainJump)
         {
             if (globalNPC.PatrolDirection == 0)
             {
@@ -419,7 +428,7 @@ namespace tsorcRevamp.NPCs
             if (globalNPC.PatrolIdleTimer <= 0)
                 globalNPC.PatrolIdleTimer = GetWanderCommitFrames(globalNPC, topSpeed);
 
-            if (globalNPC.PatrolCanTerrainJump)
+            if (terrainJump)
             {
                 RunTerrainWander(npc, globalNPC, topSpeed, acceleration, beyond);
                 return;
@@ -540,6 +549,26 @@ namespace tsorcRevamp.NPCs
             return GetWanderCommitFrames(globalNPC, topSpeed, recoveryMinimum);
         }
 
+        private static bool StepAlongPatrol(NPC npc, tsorcRevampGlobalNPC globalNPC, int direction, float topSpeed,
+            float acceleration, bool terrainJump)
+        {
+            if (!terrainJump)
+                return StepAlong(npc, direction, topSpeed, acceleration);
+
+            // A terrain jump owns the airborne leg. Keep its facing/drift, but never re-run the launch probe
+            // while gravity is carrying the NPC through the arc.
+            if (npc.velocity.Y != 0f)
+            {
+                npc.direction = direction;
+                npc.spriteDirection = direction;
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X,
+                    direction * Math.Max(topSpeed, globalNPC.MaxJumpBoost), 0.25f);
+                return true;
+            }
+
+            return StepAlongTerrain(npc, globalNPC, direction, topSpeed, acceleration);
+        }
+
         private static bool StepAlongTerrain(NPC npc, tsorcRevampGlobalNPC globalNPC, int direction, float topSpeed, float acceleration)
         {
             if (direction == 0)
@@ -631,18 +660,20 @@ namespace tsorcRevamp.NPCs
         }
 
         // ReturnToSpawn: walk to the anchor, then idle there.
-        private static void RunReturnToSpawn(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration)
+        private static void RunReturnToSpawn(NPC npc, tsorcRevampGlobalNPC globalNPC, float topSpeed, float acceleration,
+            bool terrainJump)
         {
             if (Math.Abs(npc.Center.X - globalNPC.PatrolAnchor.X) <= ReachLastKnownPx)
             {
-                RunIdle(npc, globalNPC, topSpeed, acceleration); // arrived -> idle routine
+                RunIdle(npc, globalNPC, topSpeed, acceleration, terrainJump); // arrived -> idle routine
                 return;
             }
-            StepAlong(npc, AnchorDirection(npc, globalNPC), topSpeed, acceleration);
+            int direction = AnchorDirection(npc, globalNPC);
+            StepAlongPatrol(npc, globalNPC, direction, topSpeed, acceleration, terrainJump);
         }
 
         // =====================================================================================
-        //  Locomotion + terrain helpers (walk-only by default; opt-in terrain jumps above)
+        //  Locomotion + terrain helpers (walk-only by default; SF4 recovery patrols opt in above)
         // =====================================================================================
 
         /// <summary>Walk one tick in `dir` toward `topSpeed * speedMult`. Returns false if blocked by a wall

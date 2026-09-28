@@ -1496,8 +1496,9 @@ namespace tsorcRevamp.NPCs
         public PatrolAnchorSource PatrolAnchorSource = PatrolAnchorSource.SpawnPoint;
         // Leash radius (tiles) for Pace/Wander around PatrolAnchor.
         public int PatrolRange = 30;
-        // Opt-in SF4 patrol: server chooses reachable destinations, clients follow the selected waypoint.
-        public bool PatrolUsesNavigation = false;
+        // SF4 patrol: server chooses reachable destinations when NavSearchRadius > 0, clients follow the
+        // selected waypoint. Non-pathing SF4 callers still use the terrain-aware patrol fallback.
+        public bool PatrolUsesNavigation = true;
         public bool PatrolDestinationActive;
         public Vector2 PatrolDestination;
         // Validated ledge descent. Kept outside SF4's local plan so it survives long falls and packets.

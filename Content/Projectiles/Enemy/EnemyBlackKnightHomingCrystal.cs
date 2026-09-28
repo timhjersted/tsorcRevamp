@@ -64,7 +64,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
                         for (int i = 0; i < 2; i++)
                         {
-                            int purple = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, blight && i == 0 ? DustID.Firefly : blight ? DustID.Wraith : DustID.ShadowbeamStaff, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.5f);
+                            int purple = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, blight && i == 0 ? DustID.YellowTorch : blight ? DustID.Wraith : DustID.ShadowbeamStaff, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.5f);
                             Main.dust[purple].noGravity = true;
                             int wither = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, blight ? DustID.Wraith : DustID.ShadowbeamStaff, 0f, 0f, 100, blight ? Color.Black : Color.MediumPurple, 0.5f);
                             Main.dust[wither].noGravity = true;

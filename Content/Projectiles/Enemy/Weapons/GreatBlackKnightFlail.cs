@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Melee.Flails;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
@@ -29,6 +30,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private const int OrbitTicks = 40;
         private const int ThrowOutTicks = 26; // 60 + 26 * 16 = 476px from the hand.
         private const int ReleasedLifetime = 110;
+
+        // Declared Expert Mode damage before player defense and damage variation.
+        public const int PulseDamage = 52; // Preserves raw spawn ~13 (52 Expert)
+        public const int EmberDamage = 80; // Preserves raw spawn 20 (80 Expert)
 
         // The knight's orbit throw starts 60px from the hand, travels 26 ticks at 16px/tick,
         // and reaches 476px before reeling back. The inherited legacy throw keeps its 30-tick leg.
@@ -192,7 +197,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 Projectile.Center,
                 Vector2.Zero,
                 ModContent.ProjectileType<GreatBlackKnightFlailPulse>(),
-                Projectile.damage / 3,
+                EnemyDamage.Projectile(PulseDamage),
                 0f,
                 Main.myPlayer,
                 Projectile.whoAmI);
@@ -209,7 +214,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             {
                 Vector2 spread = Main.rand.NextVector2Circular(2.5f, 2.5f);
                 Vector2 emberVelocity = launchVelocity * Main.rand.NextFloat(0.3f, 0.6f) + spread;
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, emberVelocity, ModContent.ProjectileType<GreatBlackKnightFlailEmber>(), Projectile.damage / 2, 1f, Main.myPlayer);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, emberVelocity, ModContent.ProjectileType<GreatBlackKnightFlailEmber>(), EnemyDamage.Projectile(EmberDamage), 1f, Main.myPlayer);
             }
         }
     }

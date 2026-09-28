@@ -134,6 +134,7 @@ namespace tsorcRevamp.NPCs.Puppets
             var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.PoiseMax = 35f;
             globalNPC.PoiseStaggerResetsAI = true;
+            globalNPC.NavSearchRadius = 80; // Match the other puppet SF4 movers; enables ledge/pit routing and patrol navigation.
             globalNPC.NavGiveUpTicks = 180;
             globalNPC.CanUseRopes = true;
         }

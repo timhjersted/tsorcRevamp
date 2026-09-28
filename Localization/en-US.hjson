@@ -4520,7 +4520,8 @@ Mods: {
 
 					[c/FFCC00:Unkindled] (default): Estus and Cerulean flasks bound to
 					Quick Heal and Quick Mana. Upgrades drop from bosses. 
-					Healing items work at half strength; mana regen reduced outside bonfires.
+					Healing items work at half strength; 
+					Mana regen is suppressed but the stat affects mana regain speed when using your Cerulean flask.
 					Weapons use stamina. Lost health can be briefly recovered by hiting enemies. Gain +1 accessory slot.
 
 					[c/dd3333:Bearer of the Curse]: All Unkindled features plus combat class mechanics, and {0}% more souls.
