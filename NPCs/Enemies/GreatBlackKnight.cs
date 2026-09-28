@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         // All three are indexed by AttackKind and MUST stay the same length as the enum.
-        private static readonly int[] TelegraphTicksByAttack = { 30, 30, 30, 65, 20, 40 };   // Spear, Homing, Bomb, Ultrakill, Flail, SpearMelee
+        private static readonly int[] TelegraphTicksByAttack = { 40, 40, 30, 65, 20, 40 };   // Spear, Homing, Bomb, Ultrakill, Flail, SpearMelee
         private static readonly int[] CommitTicksByAttack = { 25, 25, 25, 70, 20, 26 };
         // Flail is this knight's signature weapon and was barely showing up: it needed melee range
         // AND had to win a roll against four other attacks. Now it is the heaviest weight in the
@@ -147,7 +147,7 @@ namespace tsorcRevamp.NPCs.Enemies
         private const int MinComboCeiling = 3;
         private const int MaxComboCeiling = 8;
         private const int BaseRecoveryTicks = 60;
-        private const int RecoveryPerExtraAttack = 15;
+        private const int RecoveryPerExtraAttack = 30;
         private const int LosGiveUpTicks = 120; // ~2s waiting on a clear shot before abandoning the attack
         // Safety cap on AttackGeometryStillActive (see below). GreatBlackKnightFlail.Lifetime is 110,
         // so a healthy flail always clears well inside this; the cap only exists so a flail that somehow
@@ -354,7 +354,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // A teleport/dodge/pounce seizing the body cancels a windup (Telegraph) or an idle Recovery, but never
             // a Committed (hyper-armored) attack — mirrors the old inProtectedAttack carve-out.
-            if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0)
+            bool bodySeized = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0 || globalNPC.PursuitState == NPCs.PursuitState.Patrol || globalNPC.Fleeing || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0;
+            if (bodySeized)
             {
                 if (phase != Phase.Committed)
                 {
@@ -421,7 +422,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 switch (phase)
                 {
                     case Phase.Neutral:
-                        StartNewCombo();
+                        // While seized (teleport countdown, pounce, dodge, patrol...) the block above resets any
+                        // telegraph to Neutral every tick. Starting a combo here would re-roll a random attack
+                        // and telegraph every tick for the whole seize — the rapid telegraph flicker seen when
+                        // the knight loses LOS and FighterAI starts a teleport. Wait for the seize to end.
+                        if (!bodySeized)
+                        {
+                            StartNewCombo();
+                        }
                         break;
                     case Phase.Telegraph:
                         RunTelegraph((AttackKind)(int)NPC.ai[2]);
@@ -606,8 +614,8 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         /// <summary>Called when an attack finishes firing. Chains into the next attack if the combo isn't done yet,
-        /// otherwise drops into Recovery — base 60 ticks, +15 per additional attack thrown in the combo (a 1-hit
-        /// combo recovers in 60, an 8-hit string in 165), during which FighterAI keeps moving/pathing normally but
+        /// otherwise drops into Recovery — base 60 ticks, +30 per additional attack thrown in the combo (a 1-hit
+        /// combo recovers in 60, an 8-hit string in 270), during which FighterAI keeps moving/pathing normally but
         /// nothing here starts a new attack.</summary>
         private void EndAttack()
         {

@@ -9191,6 +9191,11 @@ Mods: {
 				// DisplayName: Crystal Knight Hammer
 				// Tooltip: ""
 			}
+
+			EnemyProximityMine: {
+				// DisplayName: Enemy Proximity Mine
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -11475,6 +11480,10 @@ Mods: {
 			// CrystalSentryCrystal.DisplayName: Crystal Sentry Crystal
 			// BlightTendrils.DisplayName: Blight Tendrils
 			// BlightTeleportCloud.DisplayName: Blight Teleport Cloud
+			// CrystalKnightFrostWave.DisplayName: Crystal Knight Frost Wave
+			// ProximityMine.DisplayName: Proximity Mine
+			// ProximityMineExplosion.DisplayName: Proximity Mine Explosion
+			// ProximityMineRocket.DisplayName: Proximity Mine Rocket
 		}
 
 		NPCs: {

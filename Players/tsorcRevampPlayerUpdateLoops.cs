@@ -2152,6 +2152,24 @@ namespace tsorcRevamp
                     Player.maxRunSpeed = Math.Min(Player.maxRunSpeed, suppressedRunSpeed);
                     Player.runAcceleration = Math.Min(Player.runAcceleration, suppressedAcceleration);
 
+                    // Vertical nerf to match the horizontal one. jumpSpeed/jumpHeight were already resolved from
+                    // jumpBoost/jumpSpeedBoost earlier this tick (UpdateJumpHeight), so clamp the final values.
+                    // Mounts own their jump stats. Wing ascent is clamped in tsorcGlobalItem.VerticalWingSpeeds.
+                    if (!Player.mount.Active)
+                    {
+                        float suppressedJumpSpeed = SoulsModeMobility.SuppressedJumpSpeed;
+                        int suppressedJumpHeight = SoulsModeMobility.SuppressedJumpHeight;
+
+                        if (isSeath)
+                        {
+                            suppressedJumpSpeed = SoulsModeMobility.SuppressedJumpSpeedSeath;
+                            suppressedJumpHeight = SoulsModeMobility.SuppressedJumpHeightSeath;
+                        }
+
+                        Player.jumpSpeed = Math.Min(Player.jumpSpeed, suppressedJumpSpeed);
+                        Player.jumpHeight = Math.Min(Player.jumpHeight, suppressedJumpHeight);
+                    }
+
                     bool hasSuppressedWings = supersonicLevel == SoulsModeMobility.SupersonicWingsLevel
                         || supersonicLevel == SoulsModeMobility.SupersonicWings2Level
                         || isSeath;
@@ -2832,6 +2850,17 @@ namespace tsorcRevamp
                 Player.AddBuff(ModContent.BuffType<Suppressed>(), 1 * 60, false);
             }
 
+            // Original Adventure map only (Remix has its own Seath ice-biome block below): the SHM ice biome tears
+            // the player's wings until Seath is slain (permanent, read from NewSlain), and is lifted while any boss is alive.
+            bool seathSlain = tsorcRevampWorld.BossDefeated(ModContent.NPCType<SeathTheScalelessHead>());
+
+            if (Player.ZoneSnow && (Player.ZoneDirtLayerHeight || Player.ZoneRockLayerHeight)
+                && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !tsorcRevampWorld.RemixMap
+                && tsorcRevampWorld.SuperHardMode && !seathSlain && !tsorcRevampWorld.BossAlive)
+            {
+                Player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
+            }
+
             if (tsorcRevampWorld.RemixMap)
             {
                 if (!Main.LocalPlayer.ZoneHallow && Main.tile[(Player.Center / 16).ToPoint()].WallType == WallID.HallowUnsafe2 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.hardMode)
@@ -3203,7 +3232,10 @@ namespace tsorcRevamp
             // Dungeon during Super Hard Mode: keep Suppressed topped up at a short fixed duration (rather than
             // silently re-adding every tick) so enemy attacks can also inflict it and have that duration matter.
             // A lit bonfire is a safe rest point and must not immediately reapply the debuff after buff updates.
+            // Not applied while any boss is alive, so boss fights in the dungeon aren't crippled by the biome debuff
+            // (already-applied stacks just expire within their 60-tick duration).
             if (Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode
+                && !tsorcRevampWorld.BossAlive
                 && !Player.HasBuff(ModContent.BuffType<Bonfire>()))
             {
                 Player.AddBuff(ModContent.BuffType<Suppressed>(), 60);
