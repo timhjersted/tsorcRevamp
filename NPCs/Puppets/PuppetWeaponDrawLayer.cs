@@ -154,6 +154,21 @@ namespace tsorcRevamp.NPCs.Puppets
     }
 
     [Autoload(Side = ModSide.Client)]
+    public class PuppetBackCarryWeaponDrawLayer : PlayerDrawLayer
+    {
+        public override Position GetDefaultPosition()
+            => new BeforeParent(PlayerDrawLayers.Skin);
+
+        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+            => PuppetNPC.DrawingPuppetFor != null;
+
+        protected override void Draw(ref PlayerDrawSet drawInfo)
+        {
+            PuppetNPC.DrawingPuppetFor?.DrawWeaponToLayer(ref drawInfo, behindBodyPass: true);
+        }
+    }
+
+    [Autoload(Side = ModSide.Client)]
     public class PuppetWeaponDrawLayer : PlayerDrawLayer
     {
         public override Position GetDefaultPosition()

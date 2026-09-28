@@ -9,7 +9,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
     /// <summary>
     /// Invisible wide-radius pulse spawned periodically by GreatBlackKnightFlail while it's out. Tracks the flail
-    /// head (ai[0] = the flail projectile's whoAmI) and applies a curse debuff in an AOE around it, with a dark
+    /// head (ai[0] = the flail projectile's whoAmI) and applies Blight in an AOE around it, with a dark
     /// dust ring for the visual read — modeled on the player Berserker's Nightmare flail's BerserkerNightmareAura.
     /// </summary>
     public class GreatBlackKnightFlailPulse : ModProjectile
@@ -40,11 +40,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             }
             Projectile.Center = Main.projectile[ballID].Center;
 
-            for (int i = 0; i < 24; i++)
+            for (int i = 0; !Main.dedServ && i < 24; i++)
             {
                 float angle = MathHelper.TwoPi * i / 24f;
                 Vector2 pos = Projectile.Center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 55f;
-                Dust d = Dust.NewDustPerfect(pos, DustID.ShadowbeamStaff, Vector2.Zero, 100, Color.DarkSlateGray, 1.2f);
+                Dust d = Dust.NewDustPerfect(pos, i % 6 == 0 ? DustID.Firefly : DustID.Wraith,
+                    Vector2.Zero, 100, default, 1.2f);
                 d.noGravity = true;
             }
         }
@@ -66,7 +67,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300, false);
+            BlightBuildup.Apply(target);
             target.AddBuff(BuffID.Frostburn, 6 * 60);
         }
     }

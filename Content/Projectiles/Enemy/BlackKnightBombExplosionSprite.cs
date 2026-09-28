@@ -11,7 +11,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     /// that plays once over the Moonfury bomb blast, LAYERED ON TOP of the existing
     /// BlackKnightMoonfuryBlast procedural shader rather than replacing it. Spawned from
     /// EnemyMoonfuryBomb.OnKill, which both Black Knight and Great Black Knight share (same bomb
-    /// projectile for both), so this covers both knights from one spawn point.
+    /// projectile for both). Great Black Knight uses a charcoal tint over his Blight shader.
     /// </summary>
     class BlackKnightBombExplosionSprite : ModProjectile
     {
@@ -73,7 +73,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 tex,
                 drawPos,
                 src,
-                Color.White * 0.9f,
+                (Projectile.ai[0] == 1f ? new Color(48, 47, 43) : Color.White) * 0.9f,
                 0f,
                 origin,
                 Projectile.scale,

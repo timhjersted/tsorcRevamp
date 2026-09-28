@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Content.Items.Armor.Ranged;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Projectiles.Ranged;
 using MiakodaCrescent = tsorcRevamp.Content.Projectiles.Pets.MiakodaCrescent;
 using MiakodaNew = tsorcRevamp.Content.Projectiles.Pets.MiakodaNew;
@@ -713,6 +714,15 @@ namespace tsorcRevamp.Content.Projectiles
                 // Directly reduce damage before resistances are applied
                 modifiers.SourceDamage.Flat -= modPlayer.magicDefense;
             }
+        }
+
+        public override void OnHitPlayer(Projectile projectile, Player target, Player.HurtInfo info)
+        {
+            // SourceNPCType is synced with each projectile (including inherited child shots).
+            // Shared projectile classes only build Blight when fired by the Blight boss.
+            if (projectile.hostile && info.Damage > 0
+                && SourceNPCType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>())
+                BlightBuildup.Apply(target);
         }
 
         public override bool PreKill(Projectile projectile, int timeLeft)

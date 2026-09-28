@@ -34,7 +34,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
 
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);
+            if (BlightBuildup.FromGreatBlackKnight(Projectile)) BlightBuildup.Apply(target);
+            else target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);
             target.AddBuff(BuffID.Weak, 180);
 
             if (Projectile.owner == Main.myPlayer && Projectile.timeLeft <= 1) //the one frame make the explosion only deal damage once.
@@ -93,16 +94,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             else
             {
                 // Smoke and fuse dust spawn.
-                if (Main.rand.NextBool(2))
+                if (!Main.dedServ && Main.rand.NextBool(2))
                 {
-                    int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.Shadowflame, 0f, 0f, 100, Color.MediumPurple, 1.1f);
+                    bool blight = BlightBuildup.FromGreatBlackKnight(Projectile);
+                    int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, blight ? DustID.Wraith : DustID.Shadowflame, 0f, 0f, 100, blight ? Color.Black : Color.MediumPurple, 1.1f);
                     Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].noGravity = true;
 
                     for (int i = 0; i < 2; i++)
                     {
-                        int purple = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.PurpleTorch, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.4f);
+                        int purple = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, blight && i == 0 ? DustID.Firefly : blight ? DustID.Wraith : DustID.PurpleTorch, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.4f);
                         Main.dust[purple].noGravity = true;
                     }
                     // Main.dust[dustIndex].position = projectile.Center + new Vector2(0f, (float)(-(float)projectile.height / 2)).RotatedBy((double)projectile.rotation, default(Vector2)) * 1.1f;
@@ -140,19 +142,24 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override bool PreDraw(ref Color lightColor)
         {
             float fuseProgress = MathHelper.Clamp(1f - Projectile.timeLeft / 240f, 0f, 1f);
-            EnemyVFX.DrawBlackKnightMoonfury(Projectile.Center, Projectile.velocity, fuseProgress, Projectile.timeLeft <= 2);
+            EnemyVFX.DrawBlackKnightMoonfury(Projectile.Center, Projectile.velocity, fuseProgress, Projectile.timeLeft <= 2,
+                BlightBuildup.FromGreatBlackKnight(Projectile));
             return true;
         }
 
         public override void OnKill(int timeLeft)
         {
-            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.BlackKnightMoonfuryBlast);
+            EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center,
+                BlightBuildup.FromGreatBlackKnight(Projectile)
+                    ? EnemyVFXBurstKind.GreatBlackKnightBlightBombBlast
+                    : EnemyVFXBurstKind.BlackKnightMoonfuryBlast);
             // Animated sprite explosion layered on top of the shader above — shared by both knights
             // since this is the one bomb projectile class both throw.
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-                    ModContent.ProjectileType<BlackKnightBombExplosionSprite>(), 0, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<BlackKnightBombExplosionSprite>(), 0, 0f, Main.myPlayer,
+                    BlightBuildup.FromGreatBlackKnight(Projectile) ? 1f : 0f);
             }
             // Play explosion sound
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath55 with { PitchVariance = 2f }, Projectile.Center);
@@ -162,9 +169,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             // only white/grey vanilla Smoke1-3, ids 61-63), so per the fallback: dispersion +30%
             // (velocity range ±6 -> ±8) to carry the purple further, and the white gore puff below
             // is scaled back so the dust reads as the dominant colour of the cloud.
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; !Main.dedServ && i < 200; i++)
             {
-                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, DustID.ShadowbeamStaff, Main.rand.Next(-8, 8), Main.rand.Next(-8, 8), 100, Color.Purple, 2.1f);
+                bool blight = BlightBuildup.FromGreatBlackKnight(Projectile);
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, blight && i % 12 == 0 ? DustID.Firefly : blight ? DustID.Wraith : DustID.ShadowbeamStaff, Main.rand.Next(-8, 8), Main.rand.Next(-8, 8), 100, blight ? Color.Black : Color.Purple, 2.1f);
                 Main.dust[dustIndex].noGravity = true;
                 Main.dust[dustIndex].velocity *= 1f;
             }

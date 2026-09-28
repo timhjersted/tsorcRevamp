@@ -40,6 +40,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            if (Main.dedServ) return;
             if (Main.rand.NextBool(3))
             {
                 int wraith = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.Wraith, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.5f);
@@ -55,9 +56,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             if (Projectile.ai[2] != 1f && Main.rand.NextBool(20))
             {
                 Vector2 tip = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * (Projectile.height * 0.5f);
-                int plagueDust = Main.rand.NextBool(2)
-                    ? Dust.NewDust(tip, 2, 2, DustID.Smoke, 0f, 0f, 150, new Color(12, 8, 18), 1.4f)
-                    : Dust.NewDust(tip, 2, 2, DustID.PurpleTorch, 0f, 0f, 150, new Color(120, 45, 170), 0.9f);
+                bool blight = Projectile.ai[2] == ArrowFlightMode;
+                int plagueDust = blight
+                    ? Dust.NewDust(tip, 2, 2, Main.rand.NextBool(6) ? DustID.Firefly : DustID.Wraith,
+                        0f, 0f, 150, default, 1.1f)
+                    : Main.rand.NextBool(2)
+                        ? Dust.NewDust(tip, 2, 2, DustID.Smoke, 0f, 0f, 150, new Color(12, 8, 18), 1.4f)
+                        : Dust.NewDust(tip, 2, 2, DustID.PurpleTorch, 0f, 0f, 150, new Color(120, 45, 170), 0.9f);
                 Main.dust[plagueDust].noGravity = true;
                 Main.dust[plagueDust].velocity = Projectile.velocity * 0.05f + Main.rand.NextVector2Circular(0.3f, 0.3f);
             }
@@ -101,7 +106,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false);
+            if (Projectile.ai[2] == ArrowFlightMode) BlightBuildup.Apply(target);
+            else target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false);
             target.AddBuff(33, 300, false); //weak          
         }
 
@@ -134,28 +140,28 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.BlackKnightSpearImpact);
 
                     // Black Knight / Great Black Knight only (this is the shared "else" branch;
-                    // RedKnight's ai[2]==1 reuse is above). Reuses the plague-teleport cloud at half
-                    // its usual radius — same dust + CurseBuildup application, just smaller. Fires on
+                    // RedKnight's ai[2]==1 reuse is above). The Great Black Knight leaves a half-radius
+                    // Blight cloud; the regular Black Knight keeps his half-radius Plague cloud. Fires on
                     // both a player hit and a tile hit, since OnKill runs for either (penetrate
                     // reaches 0 after a player hit; the default OnTileCollide kills on tile impact).
                     // Melee never runs this: the melee jab/spear-hitbox classes are separate and don't
                     // touch this file at all.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        bool blight = Projectile.ai[2] == ArrowFlightMode;
                         float cloudRadius = VFX.PlagueTeleportCloud.MaxCloudRadius * 0.5f;
                         var cloud = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-                            ModContent.ProjectileType<VFX.PlagueTeleportCloud>(), 0, 0f, Main.myPlayer,
-                            1f, cloudRadius);
-                        cloud.timeLeft = VFX.PlagueTeleportCloud.LifetimeTicks;
+                            blight ? ModContent.ProjectileType<VFX.BlightTeleportCloud>() : ModContent.ProjectileType<VFX.PlagueTeleportCloud>(),
+                            0, 0f, Main.myPlayer, blight ? 0f : 1f, cloudRadius);
+                        cloud.timeLeft = blight ? VFX.BlightTeleportCloud.LifetimeTicks : VFX.PlagueTeleportCloud.LifetimeTicks;
 
-                        // Six rotating, smoothly fading blight-cloud puffs scattered through the same
-                        // radius — purely decorative, kept off PlagueTeleportCloud itself so it
-                        // doesn't leak into this knight's (and others') teleport effects.
+                        // Six rotating, smoothly fading puffs scattered through the same radius.
+                        // The palette follows the spear's source; neither teleport effect inherits them.
                         Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-                            ModContent.ProjectileType<BlackKnightSpearBlightSwarm>(), 0, 0f, Main.myPlayer, cloudRadius);
+                            ModContent.ProjectileType<BlackKnightSpearBlightSwarm>(), 0, 0f, Main.myPlayer, cloudRadius, blight ? 1f : 0f);
                     }
                 }
-                if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), Projectile.damage, 3f, Projectile.owner);
+                if (Main.netMode != NetmodeID.MultiplayerClient) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), Projectile.damage, 3f, Main.myPlayer);
                 Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int arg_1394_1 = Projectile.width;
                 int arg_1394_2 = Projectile.height;

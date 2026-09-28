@@ -56,16 +56,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     if (Main.rand.NextBool(2))
                     {
 
-                        int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 228, 0f, 0f, 100, Color.MediumPurple, 1f);
+                        bool blight = BlightBuildup.FromGreatBlackKnight(Projectile);
+                        int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 228, 0f, 0f, 100, blight ? Color.Gold : Color.MediumPurple, 1f);
                         Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
                         Main.dust[dustIndex].fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
                         Main.dust[dustIndex].noGravity = true;
 
                         for (int i = 0; i < 2; i++)
                         {
-                            int purple = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.ShadowbeamStaff, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.5f);
+                            int purple = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, blight && i == 0 ? DustID.Firefly : blight ? DustID.Wraith : DustID.ShadowbeamStaff, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.5f);
                             Main.dust[purple].noGravity = true;
-                            int wither = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, 0f, 0f, 100, Color.MediumPurple, 0.5f);
+                            int wither = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, blight ? DustID.Wraith : DustID.ShadowbeamStaff, 0f, 0f, 100, blight ? Color.Black : Color.MediumPurple, 0.5f);
                             Main.dust[wither].noGravity = true;
                         }
 
@@ -156,8 +157,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 float velY = 1f - ((float)Main.rand.Next(20)) / 5f;
                 velX *= 2f;
                 velY *= 2f;
-                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
-                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
+                int blightDust = BlightBuildup.FromGreatBlackKnight(Projectile) ? DustID.Wraith : DustID.ShadowbeamStaff;
+                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, blightDust, velX, velY, 160, default, 1.5f);
+                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, blightDust, velX, velY, 160, default, 1.5f);
             }
 
 
@@ -185,7 +187,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);
+            if (BlightBuildup.FromGreatBlackKnight(Projectile)) BlightBuildup.Apply(target);
+            else target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);
             target.AddBuff(BuffID.Weak, 180);
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie82 with { Volume = 0.6f, Pitch = -3f, PitchVariance = 2f, MaxInstances = 5 }, Projectile.Center); //wraith
@@ -237,8 +240,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 float velY = 1f - ((float)Main.rand.Next(20)) / 5f;
                 velX *= 2f;
                 velY *= 2f;
-                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
-                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
+                int blightDust = BlightBuildup.FromGreatBlackKnight(Projectile) ? DustID.Wraith : DustID.ShadowbeamStaff;
+                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, blightDust, velX, velY, 160, default, 1.5f);
+                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, blightDust, velX, velY, 160, default, 1.5f);
             }
         }
 

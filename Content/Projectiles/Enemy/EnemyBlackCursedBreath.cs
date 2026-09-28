@@ -82,9 +82,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 // Frozen and spinning in place — the telegraph the whole rain attack was missing.
                 Projectile.velocity = Vector2.Zero;
                 Projectile.rotation += 0.35f;
-                if (Main.rand.NextBool(6))
+                if (!Main.dedServ && Main.rand.NextBool(6))
                 {
-                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.ShadowbeamStaff, 0f, 0f, 50, Color.DarkGray, 0.6f);
+                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, BlightBuildup.FromGreatBlackKnight(Projectile) ? DustID.Wraith : DustID.ShadowbeamStaff, 0f, 0f, 50, Color.DarkGray, 0.6f);
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].velocity *= 0.2f;
                 }
@@ -102,12 +102,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
             Projectile.rotation += 5f;
 
-            if (Main.rand.NextBool(3))
+            if (!Main.dedServ && Main.rand.NextBool(3))
             {
                 int pink = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Wraith, Projectile.velocity.X, Projectile.velocity.Y, Scale: 1f, Alpha: 200);
                 Main.dust[pink].noGravity = true;
 
-                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, 0, 0, 50, Color.DarkGray, 0.7f);
+                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, BlightBuildup.FromGreatBlackKnight(Projectile) ? DustID.Wraith : DustID.ShadowbeamStaff, 0, 0, 50, Color.DarkGray, 0.7f);
                 Main.dust[dust].noGravity = true;
             }
         }
@@ -131,7 +131,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             //Vanilla Debuffs cut in half to counter expert mode doubling them
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false);
+            if (BlightBuildup.FromGreatBlackKnight(Projectile)) BlightBuildup.Apply(target);
+            else target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false);
             //target.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += 10;
             target.AddBuff(33, 300, false); //weak
         }

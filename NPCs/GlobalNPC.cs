@@ -101,6 +101,7 @@ namespace tsorcRevamp.NPCs
         GreySmoke,  // heavy grey smoke cloud lingering ~1s at both exit and entry
         Fire,       // fire + dark smoke cloud lingering ~1s at both exit and entry
         Plague,     // black/purple lingering cloud; origin cloud applies controlled curse buildup
+        Blight,     // black wraith and firefly clouds; both ends apply gradual blight buildup
         MagicIllusion, // leaves a translucent, invulnerable combat duplicate at the exit for four seconds
     }
 

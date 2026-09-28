@@ -2819,6 +2819,26 @@ namespace tsorcRevamp
                                 .ReceiveState(buildup, decayTimer, procSequence, triggerDamage);
                         break;
                     }
+                case tsorcPacketID.ReportBlightBuildup:
+                    {
+                        int buildup = reader.ReadByte();
+                        if (Main.netMode == NetmodeID.Server && whoAmI >= 0 && whoAmI < Main.maxPlayers
+                            && Main.player[whoAmI].active && !Main.player[whoAmI].dead)
+                            Main.player[whoAmI].GetModPlayer<BlightPlayer>().ApplyBuildupAuthoritative(buildup);
+                        break;
+                    }
+                case tsorcPacketID.SyncBlightState:
+                    {
+                        int playerIndex = reader.ReadByte();
+                        int buildup = reader.ReadByte();
+                        int decayTimer = reader.ReadByte();
+                        int procSequence = reader.ReadInt32();
+                        int triggerDamage = reader.ReadInt32();
+                        if (Main.netMode == NetmodeID.MultiplayerClient && playerIndex >= 0 && playerIndex < Main.maxPlayers)
+                            Main.player[playerIndex].GetModPlayer<BlightPlayer>()
+                                .ReceiveState(buildup, decayTimer, procSequence, triggerDamage);
+                        break;
+                    }
                 case tsorcPacketID.TeleportAllPlayers:
                     {
                         Vector2 targetLocation = reader.ReadVector2();
@@ -5141,6 +5161,10 @@ namespace tsorcRevamp
         public const byte ReportFrostBuildup = 33;
         /// <summary>Server snapshot, with a sequenced proc instruction applied once by the victim.</summary>
         public const byte SyncFrostState = 34;
+        /// <summary>Victim client reports a Blight hit; the server owns buildup and threshold resolution.</summary>
+        public const byte ReportBlightBuildup = 35;
+        /// <summary>Server meter snapshot and sequenced 200%-max-health proc instruction.</summary>
+        public const byte SyncBlightState = 36;
     }
 
     //config moved to separate file

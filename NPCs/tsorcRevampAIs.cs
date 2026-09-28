@@ -2414,6 +2414,16 @@ namespace tsorcRevamp.NPCs
                 var dstCloud = Projectile.NewProjectileDirect(npc.GetSource_FromThis(), destination, Vector2.Zero, ModContent.ProjectileType<PlagueTeleportCloud>(), 0, 0, Main.myPlayer, 0f, PlagueTeleportCloud.MaxCloudRadius);
                 dstCloud.timeLeft = plagueTelegraphLife;
             }
+            else if (visualStyle == TeleportVisualStyle.Blight)
+            {
+                // Both clouds remain active through the reveal. Neither applies an entry burst.
+                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
+                    ModContent.ProjectileType<BlightTeleportCloud>(), 0, 0f, Main.myPlayer,
+                    0f, BlightTeleportCloud.MaxCloudRadius);
+                Projectile.NewProjectile(npc.GetSource_FromThis(), destination, Vector2.Zero,
+                    ModContent.ProjectileType<BlightTeleportCloud>(), 0, 0f, Main.myPlayer,
+                    0f, BlightTeleportCloud.MaxCloudRadius);
+            }
             else
             {
                 float mistStyle = visualStyle == TeleportVisualStyle.Fire ? 1f : 0f;
@@ -2588,7 +2598,8 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
-                if (globalNPC.TeleportVisualStyle == TeleportVisualStyle.Plague)
+                if (globalNPC.TeleportVisualStyle == TeleportVisualStyle.Plague
+                    || globalNPC.TeleportVisualStyle == TeleportVisualStyle.Blight)
                 {
                     // Deliberately spawns NOTHING here. QueueTeleport already spawned one departure +
                     // one destination cloud (see the comment there) sized to outlast this entire

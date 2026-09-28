@@ -94,7 +94,7 @@ namespace tsorcRevamp
             // below are registered afterwards and therefore replace this fallback.
             foreach (ModNPC npc in ModContent.GetContent<ModNPC>())
             {
-                if (npc is NPCs.Puppets.PuppetNPC)
+                if (npc is NPCs.Puppets.PuppetNPC && npc is not NPCs.Enemies.SuperHardMode.CrystalKnight)
                 {
                     Assignments[npc.Type] = new TrackAssignment(
                         Path("SlugBattle"),

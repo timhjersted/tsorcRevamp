@@ -403,6 +403,7 @@ Mods: {
 			WallDeathReason: 被血肉之墙吞噬
 			// MadnessDeathReason: "{0} succumbed to madness"
 			// FrostDeathReason: "{0} shattered from frost"
+			// BlightDeathReason: "{0} was consumed by blight"
 			BotC1: 被诅咒者模式可以随时关闭...
 			BotC2: 被诅咒者模式是为有通关经验的玩家设计的...
 			BotC3: 请查看暗符获取关于被诅咒者模式的详细信息
@@ -9185,6 +9186,11 @@ Mods: {
 				// DisplayName: Ruby Crystal
 				// Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeBy}"
 			}
+
+			CrystalKnightHammer: {
+				// DisplayName: Crystal Knight Hammer
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -9315,6 +9321,16 @@ Mods: {
 			Frost: {
 				// DisplayName: Frost
 				// Description: 10% slower stamina regeneration
+			}
+
+			BlightBuildup: {
+				// DisplayName: Blight Buildup
+				// Description: Blight buildup: {0}/100. Direct hits add 15; lingering blight clouds add 1 every 2 ticks. Decays by 1 per second. At 100, take damage equal to 200% of maximum life.
+			}
+
+			Blight: {
+				// DisplayName: Blight
+				// Description: The abyss has consumed you
 			}
 
 			MadnessBuildup: {
@@ -11457,6 +11473,8 @@ Mods: {
 			// CrystalKnightShard.DisplayName: Crystal Knight Shard
 			// CrystalSentryBreath.DisplayName: Crystal Sentry Breath
 			// CrystalSentryCrystal.DisplayName: Crystal Sentry Crystal
+			// BlightTendrils.DisplayName: Blight Tendrils
+			// BlightTeleportCloud.DisplayName: Blight Teleport Cloud
 		}
 
 		NPCs: {

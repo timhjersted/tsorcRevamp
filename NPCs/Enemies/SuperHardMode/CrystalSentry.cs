@@ -16,6 +16,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     public class CrystalSentry : ModNPC
     {
         private const int Warning = 0, Rise = 1, Idle = 2, Charge = 3, Fire = 4, Recover = 5, Exit = 6;
+        private const float BreathTriggerRange = 480f;
+        private const int SoloShotGapTicks = 30;
         private int State { get => (int)NPC.ai[2]; set => NPC.ai[2] = value; }
         private int Timer { get => (int)NPC.ai[3]; set => NPC.ai[3] = value; }
         private Vector2 _root, _aim = Vector2.UnitX;
@@ -55,9 +57,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     float dx = Math.Abs(candidate.X - target.Center.X);
                     if (dx < 96f || dx > 192f || Math.Sign(candidate.X - target.Center.X) != side || !SiteClear(candidate)) continue;
                     Vector2 muzzle = candidate + new Vector2(-side * 41f, -21f);
-                    if (target.Center.Y > muzzle.Y + 24f
-                        || !Collision.CanHitLine(owner.Center, 1, 1, candidate - new Vector2(0, 40), 1, 1)
-                        || !Collision.CanHitLine(muzzle, 1, 1, target.Center, 1, 1)) continue;
+                    bool belowMuzzle = target.Center.Y > muzzle.Y + 24f;
+                    if (!Collision.CanHitLine(owner.Center, 1, 1, candidate - new Vector2(0, 40), 1, 1)
+                        || !(belowMuzzle
+                            ? Collision.CanHitLine(muzzle, 1, 1, muzzle - new Vector2(0f, 128f), 1, 1)
+                            : Collision.CanHitLine(muzzle, 1, 1, target.Center, 1, 1))) continue;
                     root = candidate; return true;
                 }
             }
@@ -163,9 +167,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         Player target = Main.player[NPC.target];
                         bool ready = AimAt(target);
                         float distance = Vector2.Distance(Mouth, target.Center);
-                        bool line = Collision.CanHitLine(Mouth, 1, 1, target.Center, 1, 1);
-                        if (ready && Timer >= 30 && line && (distance <= 160f || distance >= 224f && distance <= 720f))
-                        { _attack = distance <= 160f ? 0 : 1; Enter(Charge); }
+                        bool belowMuzzle = target.Center.Y > Mouth.Y + 24f;
+                        bool line = belowMuzzle
+                            ? Collision.CanHitLine(Mouth, 1, 1, Mouth - new Vector2(0f, 128f), 1, 1)
+                            : Collision.CanHitLine(Mouth, 1, 1, target.Center, 1, 1);
+                        if (ready && Timer >= 30 && line && distance <= 720f)
+                        { _attack = !belowMuzzle && distance <= BreathTriggerRange ? 0 : 1; Enter(Charge); }
                     }
                 }
                 else if (State == Charge)
@@ -184,15 +191,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
                 else if (State == Fire)
                 {
+                    // The first core fires as Charge enters Fire (Timer = 0).
+                    if (_attack == 1 && Timer == SoloShotGapTicks) ShootCrystal();
                     if (_attack == 0 && Timer <= 42 && (Timer - 1) % 3 == 0)
                     {
                         Vector2 velocity = _aim.RotatedBy(MathHelper.ToRadians(Main.rand.NextFloat(-10, 10))) * 8f;
                         Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, velocity,
                             ModContent.ProjectileType<CrystalSentryBreath>(), 20, 1, Main.myPlayer, NPC.whoAmI, _ownerGeneration);
                     }
-                    if (Timer >= (_attack == 0 ? 42 : 6)) Enter(Recover);
+                    if (Timer >= (_attack == 0 ? 42 : SoloShotGapTicks)) Enter(Recover);
                 }
-                else if (State == Recover && Timer >= (_attack == 0 ? 90 : 60)) Enter(Idle);
+                else if (State == Recover && Timer >= (_attack == 0 ? 45 : 30)) Enter(Idle);
                 else if (State == Exit && Timer >= 64)
                 {
                     // Natural withdrawal is not destruction: no OnKill shards or loot.
@@ -217,7 +226,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
             Vector2 desired = (target.Center - Mouth).SafeNormalize(new Vector2(face, 0));
             float elevation = MathF.Atan2(-desired.Y, Math.Abs(desired.X));
-            if (elevation < -0.15f) return false;
+            bool belowMuzzle = target.Center.Y > Mouth.Y + 24f;
+            if (elevation < -0.15f && !belowMuzzle) return false;
+            if (belowMuzzle)
+            {
+                if (_angle < 4) _angle++;
+                _aim = -Vector2.UnitY;
+                NPC.netUpdate = true;
+                return _angle == 4;
+            }
             int bucket = (int)MathF.Round(MathHelper.Clamp(elevation, 0, MathHelper.PiOver2) / (MathHelper.Pi / 8f));
             if (Math.Abs(elevation - _angle * MathHelper.Pi / 8f) > MathHelper.Pi / 16f + MathHelper.ToRadians(4))
                 _angle += Math.Sign(bucket - _angle);
@@ -226,8 +243,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             // The hysteresis band is a valid aiming pose too; do not leave an idle dead zone at a boundary.
             return Math.Abs(elevation - _angle * MathHelper.Pi / 8f) <= MathHelper.Pi / 16f + MathHelper.ToRadians(4);
         }
-        private void ShootCrystal() => Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, _aim * 8f,
-            ModContent.ProjectileType<CrystalSentryCrystal>(), 28, 2, Main.myPlayer);
+        private void ShootCrystal()
+        {
+            float upwardLaunch = Main.player[NPC.target].Center.Y > Mouth.Y + 24f ? 2f : 0f;
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, _aim * 8f,
+                ModContent.ProjectileType<CrystalSentryCrystal>(), 28, 2, Main.myPlayer, upwardLaunch, 0f, NPC.target);
+        }
         private void Decorate()
         {
             if (State == Warning)
@@ -256,7 +277,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     for (int i = 1; i <= 6; i++) CrystalKnightShard.FrostDust(Mouth + _aim * (i * 12), Vector2.Zero, 0.5f);
                 if (Timer == 1) SoundEngine.PlaySound(SoundID.Item28 with { Pitch = -0.4f, Volume = 0.6f }, Mouth);
             }
-            if (State == Fire && Timer == 1) SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f }, Mouth);
+            if (State == Fire && _attack == 1 && Timer < SoloShotGapTicks)
+            {
+                CrystalKnightShard.GatherDust(Mouth, Timer / (float)SoloShotGapTicks, 18f);
+                if (Timer % 4 == 0)
+                    for (int i = 1; i <= 6; i++)
+                        CrystalKnightShard.FrostDust(Mouth + _aim * (i * 12f), Vector2.Zero, 0.5f);
+            }
+            if (State == Fire && (Timer == 1 || _attack == 1 && Timer == SoloShotGapTicks))
+                SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f }, Mouth);
             if (Main.GameUpdateCount % 8 == 0) CrystalKnightShard.FrostDust(Mouth, new Vector2(0, -0.5f), 0.6f);
             Lighting.AddLight(Mouth, new Vector3(0.1f, 0.3f, 0.4f) * Opacity);
         }
@@ -312,11 +341,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Vector2 origin = new(NPC.spriteDirection < 0 ? 52 : 42, 76);
             spriteBatch.Draw(TextureAssets.Npc[Type].Value, position, source,
                 Color.Lerp(drawColor, Color.LightCyan, 0.45f) * Opacity, 0, origin, 1, effects, 0);
-            if (State == Charge && _attack == 1)
+            if ((State == Charge || State == Fire) && _attack == 1)
             {
-                Texture2D crystal = ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/EnemyCrystalKnightBolt").Value;
-                spriteBatch.Draw(crystal, Mouth - screenPos, null, Color.LightCyan * (Timer / 40f),
-                    Timer * 0.06f, crystal.Size() / 2, MathHelper.Lerp(0.25f, 1, Timer / 40f), SpriteEffects.None, 0);
+                Texture2D crystal = ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/Crystal/CrystalCoreSmall").Value;
+                float progress = State == Charge ? Timer / 40f : Timer / (float)SoloShotGapTicks;
+                spriteBatch.Draw(crystal, Mouth - screenPos, null, Color.LightCyan * progress,
+                    Timer * 0.1f, crystal.Size() / 2f,
+                    0.45f * MathHelper.Lerp(0.25f, 1f, progress), SpriteEffects.None, 0);
             }
             return false;
         }

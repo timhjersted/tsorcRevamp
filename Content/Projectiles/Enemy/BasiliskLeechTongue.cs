@@ -100,6 +100,31 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     FlyingAI(owner);
                     break;
             }
+
+            if (Projectile.active && !Main.dedServ && Main.GameUpdateCount % 4 == 0)
+            {
+                SpawnMouthBlood(owner);
+            }
+        }
+
+        private void SpawnMouthBlood(NPC owner)
+        {
+            Vector2 mouth = GetMouthPosition(owner);
+            Vector2 toTongue = Projectile.Center - mouth;
+            if (toTongue.LengthSquared() < 12f * 12f)
+            {
+                return;
+            }
+
+            Vector2 forward = toTongue.SafeNormalize(new Vector2(owner.direction, 0f));
+            Vector2 sideways = new(-forward.Y, forward.X);
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2 velocity = forward * Main.rand.NextFloat(2.5f, 4.5f)
+                    + sideways * Main.rand.NextFloat(-0.7f, 0.7f);
+                Dust.NewDustPerfect(mouth + forward * 4f, DustID.Blood, velocity, 40, default,
+                    Main.rand.NextFloat(0.65f, 0.9f));
+            }
         }
 
         private void AnimateSucker()
@@ -345,14 +370,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
-            if ((int)Projectile.ai[1] == StateAttached)
-            {
-                overPlayers.Add(index);
-            }
-            else
-            {
-                behindNPCs.Add(index);
-            }
+            behindNPCs.Add(index);
         }
 
         private void AttachToPlayer(Player target)

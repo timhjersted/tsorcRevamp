@@ -403,6 +403,7 @@ Mods: {
 			WallDeathReason: " was consumed by The Wall of Flesh"
 			MadnessDeathReason: "{0} succumbed to madness"
 			FrostDeathReason: "{0} shattered from frost"
+			BlightDeathReason: "{0} was consumed by blight"
 			BotC1: Bearer of the Curse mode can be disabled at any time...
 			BotC2: Bearer of the Curse mode is intended for experienced players
 			BotC3: Try reading the Darksign's description
@@ -9201,6 +9202,11 @@ Mods: {
 				DisplayName: Ruby Crystal
 				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeBy}"
 			}
+
+			CrystalKnightHammer: {
+				DisplayName: Crystal Knight Hammer
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -9331,6 +9337,16 @@ Mods: {
 			Frost: {
 				DisplayName: Frost
 				Description: 10% slower stamina regeneration
+			}
+
+			BlightBuildup: {
+				DisplayName: Blight Buildup
+				Description: Blight buildup: {0}/100. Direct hits add 15; lingering blight clouds add 1 every 2 ticks. Decays by 1 per second. At 100, take damage equal to 200% of maximum life.
+			}
+
+			Blight: {
+				DisplayName: Blight
+				Description: The abyss has consumed you
 			}
 
 			MadnessBuildup: {
@@ -11473,6 +11489,8 @@ Mods: {
 			CrystalKnightShard.DisplayName: Crystal Knight Shard
 			CrystalSentryBreath.DisplayName: Crystal Sentry Breath
 			CrystalSentryCrystal.DisplayName: Crystal Sentry Crystal
+			BlightTendrils.DisplayName: Blight Tendrils
+			BlightTeleportCloud.DisplayName: Blight Teleport Cloud
 		}
 
 		NPCs: {

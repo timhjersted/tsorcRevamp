@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -84,6 +85,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.OrangeTorch,
                 -Projectile.velocity * 0.1f, 80, default, 0.7f);
             dust.noGravity = true;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            // The copied Cruel Arrow art has its lateral detail on the wrong side for this shot.
+            var texture = TextureAssets.Projectile[Type].Value;
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null,
+                lightColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale,
+                Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally);
+            return false;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

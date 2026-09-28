@@ -403,6 +403,7 @@ Mods: {
 			WallDeathReason: " был поглощён Стеной плоти"
 			// MadnessDeathReason: "{0} succumbed to madness"
 			// FrostDeathReason: "{0} shattered from frost"
+			// BlightDeathReason: "{0} was consumed by blight"
 			BotC1: Режим Носителя проклятия можно отключить в любой момент...
 			BotC2: Режим Носителя проклятия предназначен для опытных игроков.
 			BotC3: Попробуйте прочитать описание Тёмного знака
@@ -9148,6 +9149,11 @@ Mods: {
 				// DisplayName: Ruby Crystal
 				// Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeBy}"
 			}
+
+			CrystalKnightHammer: {
+				// DisplayName: Crystal Knight Hammer
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -9278,6 +9284,16 @@ Mods: {
 			Frost: {
 				// DisplayName: Frost
 				// Description: 10% slower stamina regeneration
+			}
+
+			BlightBuildup: {
+				// DisplayName: Blight Buildup
+				// Description: Blight buildup: {0}/100. Direct hits add 15; lingering blight clouds add 1 every 2 ticks. Decays by 1 per second. At 100, take damage equal to 200% of maximum life.
+			}
+
+			Blight: {
+				// DisplayName: Blight
+				// Description: The abyss has consumed you
 			}
 
 			MadnessBuildup: {
@@ -11420,6 +11436,8 @@ Mods: {
 			// CrystalKnightShard.DisplayName: Crystal Knight Shard
 			// CrystalSentryBreath.DisplayName: Crystal Sentry Breath
 			// CrystalSentryCrystal.DisplayName: Crystal Sentry Crystal
+			// BlightTendrils.DisplayName: Blight Tendrils
+			// BlightTeleportCloud.DisplayName: Blight Teleport Cloud
 		}
 
 		NPCs: {

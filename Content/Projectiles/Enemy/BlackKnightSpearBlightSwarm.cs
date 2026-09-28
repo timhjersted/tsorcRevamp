@@ -10,11 +10,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     /// <summary>
     /// Purely decorative: six blight-cloud puffs (two instances each of BlightCloud1/2/3), rotating
     /// and smoothly fading in and out at random spots within the damaging radius of a Black Knight /
-    /// Great Black Knight spear's on-hit plague cloud (PlagueTeleportCloud, spawned alongside this in
-    /// BlackThrowingSpear.OnKill). Kept as its own class rather than folded into
-    /// PlagueTeleportCloud.cs — that class is also used by every Plague-style teleport in the mod
-    /// (Artorias, this knight's own teleport, CursedDragon), and this effect should NOT show
-    /// up there.
+    /// Great Black Knight spear's impact cloud. The latter tints them charcoal to match Blight.
+    /// Kept separate from the teleport clouds so the puffs appear only on spear impact.
     /// </summary>
     public class BlackKnightSpearBlightSwarm : ModProjectile
     {
@@ -144,7 +141,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 // Color * scalar scales R,G,B,A together — this is ordinary SpriteBatch vertex-color
                 // tinting (not the premultiplied-alpha shader trap), so this is the correct way to
                 // both tint the sprite's native blue toward plague-purple AND fade it in one step.
-                Color drawColor = new Color(150, 80, 200) * alpha;
+                Color drawColor = (Projectile.ai[1] == 1f ? new Color(40, 37, 43) : new Color(150, 80, 200)) * alpha;
                 Vector2 drawPosition = Projectile.Center + puff.Offset - Main.screenPosition;
                 spriteBatch.Draw(tex, drawPosition, null, drawColor, puff.Rotation,
                     tex.Size() * 0.5f, puff.Scale, SpriteEffects.None, 0f);

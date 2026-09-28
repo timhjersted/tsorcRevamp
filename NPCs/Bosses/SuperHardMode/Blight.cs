@@ -82,6 +82,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float targetspazzlevel;
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
+            if (hurtInfo.Damage > 0) BlightBuildup.Apply(target);
             if (Main.rand.NextBool(4))
             {
                 target.AddBuff(BuffID.BrokenArmor, 3 * 60, false); //broken armor

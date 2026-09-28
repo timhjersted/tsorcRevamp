@@ -6,20 +6,19 @@ using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
 {
-    // Dust-rendered short cone:36t, drag.975, last8t harmless. No invisible long-range Gigas hitbox.
+    // Dust-rendered cone: 8px/t for 61 damaging ticks (~488px), then 8 harmless fade ticks.
     public class CrystalSentryBreath : ModProjectile
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
         public override void SetDefaults()
         {
-            Projectile.width = 20; Projectile.height = 20; Projectile.timeLeft = 36;
+            Projectile.width = 20; Projectile.height = 20; Projectile.timeLeft = 69;
             Projectile.hostile = true; Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1; Projectile.tileCollide = true; Projectile.ignoreWater = true;
         }
         public override bool? CanDamage() => Projectile.timeLeft > 8 && Projectile.ai[2] == 0;
         public override void AI()
         {
-            Projectile.velocity *= 0.975f;
             int owner = (int)Projectile.ai[0];
             if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.ai[2] == 0
                 && (owner < 0 || owner >= Main.maxNPCs || !Main.npc[owner].active

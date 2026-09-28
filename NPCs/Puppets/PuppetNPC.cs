@@ -1755,6 +1755,8 @@ namespace tsorcRevamp.NPCs.Puppets
         /// back to the natural walk/idle draw. Default false.</summary>
         protected virtual bool WeaponSheathed => false;
         protected virtual bool ShowWeaponDuringNeutral => false;
+        /// <summary>Draw a neutral carried weapon behind the puppet instead of in the attacking hand's layer.</summary>
+        protected virtual bool DrawHeldWeaponBehindBody => false;
         protected virtual bool ShowRangedWeaponDuringRecovery => false;
 
         private bool IsWeaponVisiblePhase => !WeaponSheathed && (
@@ -11386,8 +11388,11 @@ namespace tsorcRevamp.NPCs.Puppets
                 0));
         }
 
-        internal void DrawWeaponToLayer(ref PlayerDrawSet drawInfo)
+        internal void DrawWeaponToLayer(ref PlayerDrawSet drawInfo, bool behindBodyPass = false)
         {
+            if (DrawHeldWeaponBehindBody != behindBodyPass)
+                return;
+
             // Healing: draw the estus flask instead of the combat weapon.
             if (Phase == AttackPhase.Healing)
             {

@@ -39,13 +39,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
 
             //It flies through walls, so it must be LOUD: shadowflame wisp trail + purple glow
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; !Main.dedServ && i < 2; i++)
             {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Shadowflame, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1.2f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, BlightBuildup.FromGreatBlackKnight(Projectile) ? (i == 0 && Main.rand.NextBool(6) ? DustID.Firefly : DustID.Wraith) : DustID.Shadowflame, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1.2f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= 0.3f;
             }
-            Lighting.AddLight(Projectile.Center, 0.35f, 0.15f, 0.5f);
+            if (!Main.dedServ) Lighting.AddLight(Projectile.Center, 0.35f, 0.15f, 0.5f);
         }
         #endregion
 
@@ -53,7 +53,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             if (Projectile.ai[0] == 1f)
             {
-                EnemyVFX.DrawBlackKnightDeathTrail(Projectile.Center, Projectile.velocity, new Vector2(92f, 34f), 0.76f);
+                EnemyVFX.DrawBlackKnightDeathTrail(Projectile.Center, Projectile.velocity, new Vector2(92f, 34f), 0.76f,
+                    BlightBuildup.FromGreatBlackKnight(Projectile));
             }
             return true;
         }
@@ -61,17 +62,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override void OnKill(int timeLeft)
         {
             //Expiry puff so a whiffed sigil still reads as a near miss
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; !Main.dedServ && i < 10; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(2.5f, 2.5f);
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Shadowflame, vel.X, vel.Y, 80, default, 1.3f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, BlightBuildup.FromGreatBlackKnight(Projectile) ? (i % 8 == 0 ? DustID.Firefly : DustID.Wraith) : DustID.Shadowflame, vel.X, vel.Y, 80, default, 1.3f);
                 Main.dust[dust].noGravity = true;
             }
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000);
+            if (BlightBuildup.FromGreatBlackKnight(Projectile)) BlightBuildup.Apply(target);
+            else target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000);
             target.AddBuff(BuffID.Silenced, 120);
             target.AddBuff(BuffID.Weak, 600);
         }

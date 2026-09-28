@@ -18,7 +18,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         QuaraWaterBurst,
         QuaraInkBurst,
         EvilEyeGhostBurst,
-        EvilEyeTeleportBurst
+        EvilEyeTeleportBurst,
+        GreatBlackKnightBlightBombBlast
     }
 
     internal static class EnemyVFX
@@ -101,14 +102,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         static readonly Color PlagueDark = new(10, 6, 16);
         static readonly Color PlagueMid = new(86, 40, 122);
         static readonly Color PlagueCore = new(196, 182, 206);
+        static readonly Color BlightDark = new(3, 3, 5);
+        static readonly Color BlightMid = new(24, 24, 27);
+        static readonly Color BlightCore = new(199, 150, 57);
         // Hex crystal aura: rich black & gold palette (dark abyssal black -> warm ember gold -> soft bright gold core)
         static readonly Color HexGoldDark = new(8, 4, 12);
         static readonly Color HexGoldMid = new(210, 140, 25);
         static readonly Color HexGoldCore = new(255, 215, 110);
         // Great Black Knight: same family, deeper and colder so the two read as related but distinct.
-        static readonly Color GreatPlagueDark = new(7, 5, 12);
-        static readonly Color GreatPlagueMid = new(64, 30, 104);
-        static readonly Color GreatPlagueCore = new(172, 164, 186);
+        static readonly Color GreatPlagueDark = new(3, 3, 5);
+        static readonly Color GreatPlagueMid = new(22, 21, 25);
+        static readonly Color GreatPlagueCore = new(183, 136, 49);
         // Weapon motion (spear wake, flail smear): grey steel-ash with no colour of its own, so a
         // swing reads as displaced air rather than as another magic effect. Replaces the old red
         // Steel* set, which fought the plague theme.
@@ -229,16 +233,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 1f - rise, 1f, facing);
         }
 
-        internal static void DrawBlackKnightDeathSeal(Vector2 center, float progress)
+        internal static void DrawBlackKnightDeathSeal(Vector2 center, float progress, bool blight = false)
         {
             LoadAssets();
             float size = MathHelper.Lerp(500f, 96f, progress);
             Draw(blackKnightDeathVolley, "BlackKnightDeathSeal", perlinTiled, veinNoise,
-                center, Vector2.One * size, 0f, PlagueDark, PlagueMid, PlagueCore,
+                center, Vector2.One * size, 0f, blight ? BlightDark : PlagueDark,
+                blight ? BlightMid : PlagueMid, blight ? BlightCore : PlagueCore,
                 0.78f, progress, 1f, 1f);
         }
 
-        internal static void DrawBlackKnightAimThread(Vector2 start, Vector2 end, float progress)
+        internal static void DrawBlackKnightAimThread(Vector2 start, Vector2 end, float progress, bool blight = false)
         {
             Vector2 delta = end - start;
             float length = delta.Length();
@@ -251,16 +256,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             // stretched star flare; 18px gives the soft outer glow somewhere to live.
             Draw(blackKnightDeathVolley, "BlackKnightAimThread", wavyDetailNoise, turbulentNoise,
                 Vector2.Lerp(start, end, 0.5f), new Vector2(length, 18f), delta.ToRotation(),
-                PlagueDark, PlagueMid, PlagueCore, 0.62f, progress, 1f, 1f);
+                blight ? BlightDark : PlagueDark, blight ? BlightMid : PlagueMid,
+                blight ? BlightCore : PlagueCore, 0.62f, progress, 1f, 1f);
         }
 
-        internal static void DrawBlackKnightDeathTrail(Vector2 center, Vector2 velocity, Vector2 size, float opacity)
+        internal static void DrawBlackKnightDeathTrail(Vector2 center, Vector2 velocity, Vector2 size, float opacity, bool blight = false)
         {
             Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
             LoadAssets();
             Draw(blackKnightDeathVolley, "BlackKnightDeathTrail", veinNoise, cloudNoise,
                 center - direction * size.X * 0.28f, size, direction.ToRotation(),
-                PlagueDark, PlagueMid, PlagueCore, opacity, 0.5f, 1f, 1f);
+                blight ? BlightDark : PlagueDark, blight ? BlightMid : PlagueMid,
+                blight ? BlightCore : PlagueCore, opacity, 0.5f, 1f, 1f);
         }
 
         internal static void DrawBlackKnightGraveTear(Vector2 center, float progress)
@@ -307,7 +314,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Lighting.AddLight(fuseWorld, 0.75f * (0.4f + fuseProgress), 0.10f, 0.04f);
         }
 
-        internal static void DrawBlackKnightMoonfury(Vector2 center, Vector2 velocity, float progress, bool active)
+        internal static void DrawBlackKnightMoonfury(Vector2 center, Vector2 velocity, float progress, bool active, bool blight = false)
         {
             LoadAssets();
             // The thrown bomb's smoke trail was removed on request — it read as a flat purple box.
@@ -318,7 +325,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             // has to be comfortably larger than the sprite or the bloom has nowhere to spill.
             Draw(blackKnightMoonfury, "BlackKnightMoonfuryCoal", wavyDetailNoise, veinNoise,
                 center, Vector2.One * (active ? 82f : 58f), 0f,
-                PlagueDark, PlagueMid, PlagueCore, 0.88f, progress, active ? 1f : 0f, 1f);
+                blight ? BlightDark : PlagueDark, blight ? BlightMid : PlagueMid,
+                blight ? BlightCore : PlagueCore, 0.88f, progress, active ? 1f : 0f, 1f);
         }
 
         internal static void DrawBlackKnightSpearWake(Vector2 center, float rotation, Vector2 size, float opacity)
@@ -669,11 +677,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                         center, Vector2.One * 82f, 0f, HexGoldDark, HexGoldMid, HexGoldCore, opacity, progress, 1f, 1f);
                     break;
                 case EnemyVFXBurstKind.BlackKnightMoonfuryBlast:
+                case EnemyVFXBurstKind.GreatBlackKnightBlightBombBlast:
+                    bool blightBomb = kind == EnemyVFXBurstKind.GreatBlackKnightBlightBombBlast;
                     Draw(blackKnightMoonfury, "BlackKnightMoonfurySmoke", perlinTiled, cloudNoise,
-                        center, Vector2.One * 170f, 0f, PlagueDark, PlagueMid, PlagueCore,
+                        center, Vector2.One * 170f, 0f, blightBomb ? BlightDark : PlagueDark,
+                        blightBomb ? BlightMid : PlagueMid, blightBomb ? BlightCore : PlagueCore,
                         opacity * 0.45f, progress, 1f, 1f, BlendState.AlphaBlend);
                     Draw(blackKnightMoonfury, "BlackKnightMoonfuryBlast", cloudNoise, turbulentNoise,
-                        center, Vector2.One * 109f, 0f, PlagueDark, PlagueMid, PlagueCore, opacity, progress, 1f, 1f);
+                        center, Vector2.One * 109f, 0f, blightBomb ? BlightDark : PlagueDark,
+                        blightBomb ? BlightMid : PlagueMid, blightBomb ? BlightCore : PlagueCore,
+                        opacity, progress, 1f, 1f);
                     break;
                 case EnemyVFXBurstKind.BlackKnightSpearImpact:
                     Draw(blackKnightSpearWake, "BlackKnightSpearImpact", perlinTiled, cloudNoise,
@@ -820,7 +833,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             // Was 20t (~0.33s) — "like only a frame before it disappears" per playtest. +30t so the
             // fireball/cool-down curve in BlackKnightMoonfury.fx's Blast technique is actually visible.
-            EnemyVFXBurstKind.BlackKnightMoonfuryBlast => 50,
+            EnemyVFXBurstKind.BlackKnightMoonfuryBlast or EnemyVFXBurstKind.GreatBlackKnightBlightBombBlast => 50,
             EnemyVFXBurstKind.DemonSpiritSoulBurst => 18,
             // Hold long enough for the gravity-driven impact spray to visibly arc and fall.
             EnemyVFXBurstKind.QuaraWaterBurst => 48,

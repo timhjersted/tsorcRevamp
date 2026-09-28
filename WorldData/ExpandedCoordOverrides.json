@@ -5,6 +5,14 @@
   "belowFoldOffset": 400,
   "overrides": [
     {
+      "legacyX": 5317,
+      "legacyY": 1800,
+      "newX": 5317,
+      "newY": 2000,
+      "type": "fix",
+      "note": "Defiled Demon of the Forgotten City event ring and spawn. This arena moved +200 with the Forgotten City despite sitting below the usual 1791 fold; the formula places it 200 tiles too low."
+    },
+    {
       "legacyX": 5422,
       "legacyY": 925,
       "newX": 5014,

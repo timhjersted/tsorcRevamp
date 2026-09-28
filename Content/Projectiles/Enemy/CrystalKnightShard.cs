@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,17 +14,26 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     /// <summary>Conjured frost crystal: harmless gathering node -> locked flight -> shatter/fade.</summary>
     public class CrystalKnightShard : ModProjectile
     {
-        // Verified vanilla IceSpike: single 10x20 frame, sharp edge at the TOP (-pi/2).
-        public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.IceSpike;
+        // CrystalShard: five 18x42 frames, sharp edge at the TOP (-pi/2).
+        public override string Texture => "tsorcRevamp/Content/Projectiles/Enemy/Crystal/CrystalShard";
         private bool _hail;
         private int _warningTotal;
         private int FlightTicks => _hail ? 60 : 120;
 
+        public override void SetStaticDefaults() => Main.projFrames[Type] = 5;
+
         public static void Spawn(NPC owner, Vector2 position, Vector2 velocity, int damage, int warning, int sequence, bool hail)
+            => SpawnOwned(owner.GetSource_FromAI(), owner.whoAmI, position, velocity, damage, warning, sequence, hail);
+
+        public static void SpawnFromAnchor(Projectile anchor, Vector2 position, Vector2 velocity, int damage, int sequence)
+            => SpawnOwned(anchor.GetSource_FromAI(), (int)anchor.ai[0], position, velocity, damage, 0, sequence, false);
+
+        private static void SpawnOwned(IEntitySource source, int ownerIndex, Vector2 position, Vector2 velocity,
+            int damage, int warning, int sequence, bool hail)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient) return;
-            int index = Projectile.NewProjectile(owner.GetSource_FromAI(), position, velocity,
-                ModContent.ProjectileType<CrystalKnightShard>(), damage, 2f, Main.myPlayer, owner.whoAmI, warning, sequence);
+            int index = Projectile.NewProjectile(source, position, velocity,
+                ModContent.ProjectileType<CrystalKnightShard>(), damage, 2f, Main.myPlayer, ownerIndex, warning, sequence);
             if (index < Main.maxProjectiles)
             {
                 var shard = (CrystalKnightShard)Main.projectile[index].ModProjectile;
@@ -56,6 +66,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         }
         public override void AI()
         {
+            if (++Projectile.frameCounter >= 5)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Type];
+            }
             Projectile.tileCollide = Projectile.ai[1] <= 0f;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             if (_warningTotal <= 0) _warningTotal = (int)Projectile.ai[1];
@@ -105,13 +120,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override void OnKill(int timeLeft) => Shatter(Projectile.Center, Projectile.ai[1] > 0 ? 16 : 70);
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = TextureAssets.Projectile[ProjectileID.IceSpike].Value;
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Rectangle frame = new(0, Projectile.frame * 42, 18, 42);
             float warning = Projectile.ai[1] > 0 ? 1f - Projectile.ai[1] / System.Math.Max(1, _warningTotal) : 1f;
             float fade = Projectile.ai[1] <= 0 ? MathHelper.Clamp((FlightTicks + Projectile.ai[1]) / 15f, 0f, 1f) : 1f;
             float scale = Projectile.ai[1] > 0 ? MathHelper.Lerp(0.25f, 1f, warning) : 1f;
             Color color = Color.Lerp(lightColor, Color.LightCyan, 0.6f) * fade * (Projectile.ai[1] > 0 ? 0.25f + warning * 0.45f : 1f);
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, color,
-                Projectile.rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame, color,
+                Projectile.rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0);
             return false;
         }
         public override void SendExtraAI(BinaryWriter writer) { writer.Write(_hail); writer.Write((short)_warningTotal); }

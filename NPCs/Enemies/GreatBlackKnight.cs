@@ -212,9 +212,9 @@ namespace tsorcRevamp.NPCs.Enemies
             blackKnightGlobalNPC.PounceStyle = NPCs.PounceStyle.DirectPounce;
             blackKnightGlobalNPC.CanTeleport = true;
             blackKnightGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
-            blackKnightGlobalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Plague;
+            blackKnightGlobalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Blight;
             // Hidden window = this + SmokeFireTeleportSnapTicks (30), so 30 here means he is invisible for
-            // 60 ticks and then steps out of a cloud that runs for PlagueTeleportCloud.LifetimeTicks (180) —
+            // 60 ticks and then steps out of a cloud that runs for BlightTeleportCloud.LifetimeTicks (180) —
             // i.e. he reappears with ~2s of cloud still billowing around him and is immediately free to
             // attack again, instead of the old 170-tick blackout that outlasted the whole effect.
             blackKnightGlobalNPC.TeleportTelegraphTime = 30;
@@ -482,11 +482,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
 
             // The server starts this timer 20 ticks before its volley and syncs that cue to clients.
-            if (localShadowStormTellTick >= 0 && localShadowStormTellTick < 20 && Main.rand.NextBool(2))
+            if (!Main.dedServ && localShadowStormTellTick >= 0 && localShadowStormTellTick < 20 && Main.rand.NextBool(2))
             {
                 Vector2 dustOffset = Main.rand.NextVector2Circular(64f, 64f);
                 int dustIdx = Dust.NewDust(NPC.Center + dustOffset - new Vector2(4f), 8, 8,
-                    DustID.ShadowbeamStaff, -dustOffset.X * 0.1f, -dustOffset.Y * 0.1f,
+                    Main.rand.NextBool(6) ? DustID.Firefly : DustID.Wraith, -dustOffset.X * 0.1f, -dustOffset.Y * 0.1f,
                     150, default, 1.2f);
                 Main.dust[dustIdx].noGravity = true;
             }
@@ -1169,7 +1169,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 600, false);
             target.AddBuff(36, 600, false); //broken armor
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
+            BlightBuildup.Apply(target);
             target.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30 * 60, false);
         }
         #endregion
@@ -1361,10 +1361,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 else if (currentAttack == AttackKind.Ultrakill)
                 {
                     EnemyVFX.DrawBlackKnightDeathSeal(NPC.Center,
-                        phase == Phase.Telegraph ? progress : 1f);
+                        phase == Phase.Telegraph ? progress : 1f, true);
                     if (phase == Phase.Committed && storedPlayerPosition != Vector2.Zero)
                     {
-                        EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition, progress);
+                        EnemyVFX.DrawBlackKnightAimThread(NPC.Center, storedPlayerPosition, progress, true);
                     }
                 }
                 // The flail projectile draws the orbiting head and connected chain itself.
