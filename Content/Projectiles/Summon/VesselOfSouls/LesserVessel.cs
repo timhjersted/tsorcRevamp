@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls;
 
 namespace tsorcRevamp.Content.Projectiles.Summon.VesselOfSouls
@@ -242,6 +243,13 @@ namespace tsorcRevamp.Content.Projectiles.Summon.VesselOfSouls
             }
             if (owner.HasBuff(ModContent.BuffType<LesserVesselBuff>())) Projectile.timeLeft = 2;
             return true;
+        }
+
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            Player player = Main.player[Projectile.owner];
+            modifiers.FlatBonusDamage +=
+                SoulReliquaryBell.SoulDamageBonus(player.GetModPlayer<tsorcRevampPlayer>().darkSoulQuantity);
         }
 
         public override bool PreDraw(ref Color lightColor)
