@@ -68,7 +68,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
 
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
-            damage.Base += SoulDamageBonus(player.GetModPlayer<tsorcRevampPlayer>().darkSoulQuantity);
+            damage.Flat += SoulDamageBonus(player.GetModPlayer<tsorcRevampPlayer>().darkSoulQuantity);
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
@@ -99,8 +99,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
             if (Main.myPlayer == player.whoAmI)
             {
                 var proj = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-                // Minions recalculate damage from originalDamage, so include the same base bonus shown by the item.
-                proj.originalDamage = Item.damage + SoulDamageBonus(player.GetModPlayer<tsorcRevampPlayer>().darkSoulQuantity);
+                // Minions recalculate damage from originalDamage, so include the same base bonus shown by the item. //no do not let the player influence base dmg of the weapon by just having a lot of souls wth
+                proj.originalDamage = Item.damage;
             }
             return false;
         }
