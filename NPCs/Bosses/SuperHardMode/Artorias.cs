@@ -1171,7 +1171,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (AbyssSurgeActive)
             {
-                MaintainAbyssDebuff();
+                // Once a second is enough: the debuff lasts 2s, so it never lapses, and it still expires within 2s
+                // of the surge ending (kill, despawn, wipe) with no explicit clear. Re-applying every tick sent a
+                // buff packet per player per tick from the server.
+                if (Main.GameUpdateCount % 60 == 0)
+                {
+                    MaintainAbyssDebuff();
+                }
+
                 return;
             }
 

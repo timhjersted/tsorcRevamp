@@ -779,15 +779,23 @@ namespace tsorcRevamp
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
-            // Shared humanoid melee uses an invisible projectile for collision and shield traits, but the helper's
-            // internal name should never appear in death text. Preserve projectile attribution through the hit,
-            // then swap only the final death reason to the NPC that authored it.
+            // Death text names the ENEMY that killed you, not the projectile it fired. Projectile names are
+            // internal (shared hitboxes, helper shots, VFX) and rarely read as lore. Every hostile projectile that
+            // traces back to an NPC (tsorcGlobalProjectile records the source and inherits it through child shots)
+            // gets its death reason swapped to that NPC; attribution is preserved through the hit itself and only
+            // the final reason changes. Falls back to the projectile's own name if the NPC is already gone
+            // (boss died or despawned while the shot was still in flight) or the shot has no NPC source.
             int sourceProjectileIndex = damageSource.SourceProjectileLocalIndex;
             if (sourceProjectileIndex >= 0 && sourceProjectileIndex < Main.maxProjectiles)
             {
                 Projectile sourceProjectile = Main.projectile[sourceProjectileIndex];
-                if (sourceProjectile.active
-                    && sourceProjectile.type == ModContent.ProjectileType<HumanoidMeleeHitbox>()
+
+                // The type check guards against the slot having been reused by an unrelated projectile.
+                bool isKillingProjectile = sourceProjectile.active
+                    && sourceProjectile.hostile
+                    && sourceProjectile.type == damageSource.SourceProjectileType;
+
+                if (isKillingProjectile
                     && sourceProjectile.GetGlobalProjectile<tsorcGlobalProjectile>().TryGetSourceNPC(out NPC sourceNPC))
                 {
                     damageSource = PlayerDeathReason.ByNPC(sourceNPC.whoAmI);

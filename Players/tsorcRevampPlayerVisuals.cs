@@ -109,6 +109,21 @@ namespace tsorcRevamp
                     g *= 0.5176f;
                     b *= 0.3686f;
                 }
+
+                if (dodgeIsGhostStep && isDodging)
+                {
+                    // Ease into and out of the ghost state so the body doesn't pop between opaque and translucent.
+                    // Colours are premultiplied, so RGB is scaled along with alpha (same as vanilla stealth).
+                    float fadeIn = MathHelper.Clamp(dodgeTime / GhostFadeInSeconds, 0f, 1f);
+                    float fadeOut = MathHelper.Clamp((dodgeDuration - dodgeTime) / GhostFadeOutSeconds, 0f, 1f);
+                    float presence = Math.Min(fadeIn, fadeOut);
+                    float ghostScale = MathHelper.Lerp(1f, GhostBodyAlpha, presence);
+
+                    r *= ghostScale;
+                    g *= ghostScale;
+                    b *= ghostScale;
+                    a *= ghostScale;
+                }
             }
         }
 
@@ -270,6 +285,53 @@ namespace tsorcRevamp
                     DrawData data = drawInfo.DrawDataCache[drawIndex];
                     Color color = Color.Lerp(data.color, dangerColor, 0.55f) * opacity;
                     Main.EntitySpriteDraw(data.texture, data.position + offset, data.sourceRect, color,
+                        data.rotation, data.origin, data.scale, data.effect, 0);
+                }
+            }
+        }
+    }
+
+    // Ghost Step's dash leaves pale echoes of the body along the path it just took. Same cached-shadow technique as
+    // the fall-danger layer above, but self-lit (tint ignores world lighting) so the echoes glow rather than darken.
+    class tsorcRevampPlayerGhostStepDrawLayer : PlayerDrawLayer
+    {
+        public override Position GetDefaultPosition()
+        {
+            return new AfterParent(PlayerDrawLayers.FrontAccFront);
+        }
+
+        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+        {
+            Player player = drawInfo.drawPlayer;
+            return !player.dead && player.GetModPlayer<tsorcRevampPlayer>().ghostStepAfterglow > 0;
+        }
+
+        protected override void Draw(ref PlayerDrawSet drawInfo)
+        {
+            Player player = drawInfo.drawPlayer;
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+            // 1 while dashing, fading to 0 over the afterglow so the whole trail dissolves after the dash ends.
+            float afterglow = modPlayer.ghostStepAfterglow / (float)tsorcRevampPlayer.GhostAfterglowFrames;
+            int cacheCount = drawInfo.DrawDataCache.Count;
+            Color ghostTint = new Color(200, 225, 255);
+
+            for (int echo = tsorcRevampPlayer.GhostTrailEchoes; echo >= 1; echo--)
+            {
+                int shadowIndex = echo * tsorcRevampPlayer.GhostTrailSpacing;
+                if (shadowIndex > player.availableAdvancedShadowsCount)
+                {
+                    continue;
+                }
+
+                Vector2 offset = player.GetAdvancedShadow(shadowIndex).Position - player.position;
+                float ageFade = 1f - (echo - 1) / (float)tsorcRevampPlayer.GhostTrailEchoes;
+                float opacity = 0.32f * ageFade * afterglow;
+
+                for (int drawIndex = 0; drawIndex < cacheCount; drawIndex++)
+                {
+                    DrawData data = drawInfo.DrawDataCache[drawIndex];
+                    Main.EntitySpriteDraw(data.texture, data.position + offset, data.sourceRect, ghostTint * opacity,
                         data.rotation, data.origin, data.scale, data.effect, 0);
                 }
             }

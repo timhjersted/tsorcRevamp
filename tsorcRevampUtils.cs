@@ -1628,6 +1628,22 @@ namespace tsorcRevamp
         ///<param name="player">The player who owns the buff</param>
         ///<param name="buffType">The ID of the buff whose duration you want to reduce</param>
         ///<param name="duration">How many ticks to reduce it by (60 ticks = 1 second)</param>
+        /// <summary>
+        /// Death reason for projectiles that hurt the player through a hand-built Hurt call instead of vanilla's
+        /// projectile hit (so tsorcRevampPlayer.PreKill never sees a projectile source to swap). Names the NPC that
+        /// fired it when the projectile traces back to a live one; otherwise falls back to the projectile-flavoured
+        /// text the caller already built.
+        /// </summary>
+        public static Terraria.DataStructures.PlayerDeathReason EnemyProjectileDeathReason(Projectile projectile, string fallbackDeathText)
+        {
+            if (projectile.GetGlobalProjectile<tsorcGlobalProjectile>().TryGetSourceNPC(out NPC sourceNPC))
+            {
+                return Terraria.DataStructures.PlayerDeathReason.ByNPC(sourceNPC.whoAmI);
+            }
+
+            return Terraria.DataStructures.PlayerDeathReason.ByCustomReason(fallbackDeathText);
+        }
+
         public static void AddPlayerBuffDuration(in Player player, in int buffType, in int duration)
         {
             int buffIndex = 0;

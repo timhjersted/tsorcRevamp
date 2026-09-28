@@ -152,6 +152,7 @@ namespace tsorcRevamp
 
         public bool ChloranthyRing1 = false;
         public bool ChloranthyRing2 = false;
+        public bool GhostStepEquipped = false;
 
         public bool DarkInferno = false;
         public bool AbyssInferno = false;
@@ -536,6 +537,7 @@ namespace tsorcRevamp
 
             ChloranthyRing1 = false;
             ChloranthyRing2 = false;
+            GhostStepEquipped = false;
             BarrierRing = false;
 
             BrokenSpirit = false;

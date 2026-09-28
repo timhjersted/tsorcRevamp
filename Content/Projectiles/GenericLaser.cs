@@ -556,7 +556,7 @@ namespace tsorcRevamp.Content.Projectiles
             dust = Dust.NewDust(endpoint, 30, 30, LaserDust, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 20, default, 1.0f);
             Main.dust[dust].noGravity = true;
 
-            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), Projectile.damage * 4, 1);
+            target.Hurt(UsefulFunctions.EnemyProjectileDeathReason(Projectile, deathMessage), Projectile.damage * 4, 1);
             return false;
         }
 

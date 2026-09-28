@@ -5,9 +5,14 @@ using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Content.Items.BossBags;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Chaos;
 using tsorcRevamp.Utilities;
@@ -2506,6 +2511,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             BeginRecovery(StaggerRecoveryTicks);
+        }
+
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.SuperHealingPotion;
+        }
+
+        // Restored from before the "Reworked Chaos" commit (6e3324379), which deleted this method entirely and left
+        // Chaos with no loot at all: the bag and every drop below stopped coming out.
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<ChaosBag>()));
+
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ElfinBow>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulOfChaos>(), 1, 2, 4));
+            npcLoot.Add(notExpertCondition);
+
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
         }
 
         public override void OnKill() //special death animation

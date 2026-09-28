@@ -233,7 +233,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         private const int AbandonDrainInterval = 60;
         private const int AbandonDrainAmount = 5;
 
-        private const int AbyssDebuffTicks = 30 * 60 * 60;
+        // Short on purpose: AI() re-applies it once a second while the fight is live, so it never lapses in the
+        // fight, covers respawns and late joiners, and expires within 2s of the boss dying or despawning.
+        private const int AbyssDebuffTicks = 2 * 60;
 
         // ── Combo names (also the debug HUD labels) ────────────────────────────────
         private const string AbyssalSlamName = "Abyssal Slam";
@@ -854,6 +856,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 _setPiece = SetPiece.None;
                 NPC.noGravity = false;
                 return;
+            }
+
+            // Keep the Abyss curse on everyone alive for as long as the fight lasts (see AbyssDebuffTicks).
+            if (Main.netMode != NetmodeID.MultiplayerClient && Main.GameUpdateCount % 60 == 0)
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player cursedPlayer = Main.player[i];
+
+                    if (cursedPlayer.active && !cursedPlayer.dead)
+                    {
+                        cursedPlayer.AddBuff(ModContent.BuffType<Abyss>(), AbyssDebuffTicks);
+                    }
+                }
             }
 
             TickCooldowns();
@@ -3092,8 +3108,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.Defeated"), 160, 160, 160);
             SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1.1f });
 
-            // The Abyss curse was cast for this fight; killing its author lifts it. Abyss.cs otherwise only
-            // clears via the Covenant of Artorias ring, so this is new behaviour, not a preservation.
+            // The Abyss curse was cast for this fight; killing its author lifts it at once. (It would also lapse
+            // by itself within 2s, since AI() no longer refreshes it - this just makes the victory instant.)
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player player = Main.player[i];

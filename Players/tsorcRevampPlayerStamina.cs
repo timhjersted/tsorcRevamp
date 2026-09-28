@@ -653,6 +653,14 @@ namespace tsorcRevamp
             {
                 ticks = (int)Math.Round(ticks * (1f - reduction));
             }
+
+            // Ghost Step's cut is flat frames, not a percent, so it comes off after the percent reduction.
+            // Clamped at 0 so a short pause (e.g. a light block penalty) vanishes rather than going negative.
+            if (Player.GetModPlayer<tsorcRevampPlayer>().GhostStepEquipped)
+            {
+                ticks = Math.Max(0, ticks - GhostStep.RegenDelayReductionFrames);
+            }
+
             if (ticks > staminaRegenDelayTimer)
             {
                 staminaRegenDelayTimer = ticks;

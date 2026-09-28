@@ -687,7 +687,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Marilith
 
             string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, Projectile.whoAmI).GetDeathText(target.name).ToString();
             deathMessage = deathMessage.Replace("Laser", LaserName);
-            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), Projectile.damage * 4, 1);
+            target.Hurt(UsefulFunctions.EnemyProjectileDeathReason(Projectile, deathMessage), Projectile.damage * 4, 1);
 
             return false;
         }

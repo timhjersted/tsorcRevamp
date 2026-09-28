@@ -17,6 +17,7 @@ using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Textures;
 using Freezethrower = tsorcRevamp.Content.Items.Weapons.Ranged.Flamethrowers.Freezethrower;
+using GhostStepItem = tsorcRevamp.Content.Items.Accessories.Mobility.GhostStep;
 
 namespace tsorcRevamp
 {
@@ -90,7 +91,6 @@ namespace tsorcRevamp
         public static float DodgeTimeMax => 0.37f;
         public static uint DodgeDefaultCooldown => 30;
         public static int DefaultDodgeImmuneTime = 18;
-        public static int DodgeImmuneTime = 18;
 
         public Timer dodgeCooldown;
         public sbyte dodgeDirection;
@@ -116,6 +116,33 @@ namespace tsorcRevamp
         public float dodgeSpeed = 8f;
         public float beforeRollSpeed;
         public float speedMultiplier;
+
+        // ── Ghost Step (replaces the roll with a phasing dash) ──
+        /// <summary>Seconds this roll lasts. Equals DodgeTimeMax; Ghost Step adds its extra i-frames here, because the
+        /// roll's i-frames ARE its duration (isDodging gates every hit).</summary>
+        public float dodgeDuration = 0.37f;
+        /// <summary>Latched at roll start so unequipping mid-dash can't change the profile halfway through.</summary>
+        public bool dodgeIsGhostStep;
+        /// <summary>Frames of trail left to draw. Held at GhostAfterglowFrames while dashing, then counts down so the echoes fade.</summary>
+        public int ghostStepAfterglow;
+
+        public const int GhostAfterglowFrames = 12;
+        public const int GhostTrailEchoes = 6;
+        public const int GhostTrailSpacing = 2; // frames of history between echoes
+        public const float GhostBodyAlpha = 0.35f;
+        public const float GhostFadeInSeconds = 0.05f;
+        public const float GhostFadeOutSeconds = 0.08f;
+
+        // Full-speed dash covers this fraction of the duration; the rest is the stop / momentum hand-off (still invulnerable).
+        private const float GhostDashFraction = 0.8f;
+        // Per-frame velocity multiplier for the "no key held" stop. 0.3 leaves under 1px/frame after 3 frames.
+        private const float GhostStopDecay = 0.3f;
+        private const float GhostStopSnapSpeed = 0.5f;
+        // Per-frame blend toward run speed when a direction key is held through the stop phase.
+        private const float GhostMomentumBlend = 0.35f;
+        // A normal roll travels about this many frames' worth of its own top speed: 12 full-speed frames, 2 coasting,
+        // then a 0.9x/frame decay tail (~5.5). Measured from the roll profile in UpdateDodging; retune if that changes.
+        private const float GhostRollTravelSpeedTicks = 19.5f;
 
 
         public override void HideDrawLayers(PlayerDrawSet drawInfo)
@@ -484,8 +511,13 @@ namespace tsorcRevamp
 
             isDodging = true;
 
-            //play a dodge roll sound, choose between these 
-            if (isDodging == true)
+            // Ghost Step swaps the rolling thud for a soft rustle (SoundID.Grass) — a dash, not a tumble.
+            if (Player.GetModPlayer<tsorcRevampPlayer>().GhostStepEquipped)
+            {
+                SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.8f, PitchVariance = 0.2f }, Player.position);
+            }
+            //play a dodge roll sound, choose between these
+            else if (isDodging == true)
             {
 
                 int choice = Main.rand.Next(2);
@@ -515,14 +547,36 @@ namespace tsorcRevamp
             lastRollStaminaCost = rollStaminaCost;
             perfectDodgeTriggered = false;
             Player.immune = true;
-            DodgeImmuneTime = DefaultDodgeImmuneTime;
-            Player.immuneTime = DodgeImmuneTime;
+            Player.immuneTime = DefaultDodgeImmuneTime;
             dodgeStartRot = Player.GetModPlayer<tsorcRevampPlayer>().rotation;
             dodgeItemRotation = Player.itemRotation;
             dodgeTime = 0f;
             dodgeDirectionVisual = (sbyte)Player.direction;
             dodgeDirection = wantedDodgerollDir != 0 ? wantedDodgerollDir : (sbyte)Player.direction;
             dodgeCooldown = DodgeDefaultCooldown;
+
+            dodgeIsGhostStep = Player.GetModPlayer<tsorcRevampPlayer>().GhostStepEquipped;
+            dodgeDuration = DodgeTimeMax;
+
+            if (dodgeIsGhostStep)
+            {
+                dodgeDuration += GhostStepItem.ExtraImmunityFrames / 60f;
+
+                // Faint white puff at the start of the dash, drifting back the way we came. Runs on every client
+                // (remote players reach here through forceDodgeroll); a dedicated server has nothing to draw.
+                if (!Main.dedServ)
+                {
+                    for (int i = 0; i < 18; i++)
+                    {
+                        Vector2 puffPosition = Player.Center + Main.rand.NextVector2Circular(10f, 16f);
+                        Vector2 puffVelocity = Main.rand.NextVector2Circular(1.6f, 1.6f);
+                        puffVelocity.X -= dodgeDirection * Main.rand.NextFloat(0.5f, 2.5f);
+
+                        Dust puff = Dust.NewDustPerfect(puffPosition, DustID.WhiteTorch, puffVelocity, 150, Color.White, 0.9f);
+                        puff.noGravity = true;
+                    }
+                }
+            }
 
             // Capped at the game's own run-speed ceiling: this carries the player's current speed INTO the
             // roll (see UpdateDodging), and without a cap any external velocity spike — a boss push, a
@@ -558,7 +612,9 @@ namespace tsorcRevamp
             deaccelerationFactor = 3f;
             airDeaccelerationRate = deaccelerationRate + (1 - 1f / deaccelerationFactor) * (1f - deaccelerationRate);
 
-            DodgeImmuneTime = 18;
+            // Invulnerable frames for this roll, adjusted by the accessories below. The roll's i-frames are its
+            // duration (isDodging gates every hit), so the net bonus is folded into dodgeDuration at the end.
+            int immuneFrames = DefaultDodgeImmuneTime;
             dodgeCooldown = 30;
 
             bool onGround = OnGround(Player);
@@ -569,7 +625,7 @@ namespace tsorcRevamp
             // persistent "slippery ice" glide after the roll that made precise stopping impossible.
             if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
             {
-                DodgeImmuneTime += 2;
+                immuneFrames += 2;
                 dodgeCooldown = 10;
             }
             // ChloranthyRing1 cancels out completely with the IceboundMythrilAegis
@@ -578,19 +634,19 @@ namespace tsorcRevamp
                 // To make sure player does not benefit from stacking ring 1 and 2
                 if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2)
                 {
-                    DodgeImmuneTime += 6;
+                    immuneFrames += 4;
                     dodgeCooldown = 0;
                 }
                 else if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1)
                 {
-                    DodgeImmuneTime += 3;
+                    immuneFrames += 2;
                     dodgeCooldown = 10;
                 }
 
                 if (Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
                 {
                     deaccelerationRate -= 0.13f;
-                    DodgeImmuneTime -= 2;
+                    immuneFrames -= 2;
                     dodgeCooldown = 35;
                 }
             }
@@ -598,22 +654,27 @@ namespace tsorcRevamp
             if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
             {
                 deaccelerationRate -= 0.25f;
-                DodgeImmuneTime -= 4;
+                immuneFrames -= 4;
                 dodgeCooldown = dodgeCooldown.Value + 10;
             }
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierAgility)
             {
-                DodgeImmuneTime += 3;
+                immuneFrames += 2;
                 dodgeCooldown = dodgeCooldown.Value > 20 ? dodgeCooldown.Value - 20 : 0;
 
                 if (onGround)
                 {
                     deaccelerationRate += 0.05f;
-                    DodgeImmuneTime += 3;
+                    immuneFrames += 2;
                     dodgeCooldown = dodgeCooldown.Value > 2 ? dodgeCooldown.Value - 2 : 0;
                 }
             }
+
+            // Apply the accessories' net i-frame change to the roll's real length. Floored so the -6 worst case
+            // (Burden + Icebound) can't shorten the roll past its decel phase.
+            dodgeDuration += (immuneFrames - DefaultDodgeImmuneTime) / 60f;
+            dodgeDuration = Math.Max(dodgeDuration, DodgeTimeMax * 0.7f);
 
             return true;
         }
@@ -621,6 +682,16 @@ namespace tsorcRevamp
         {
 
             wantsDodgerollTimer = StepTowards(wantsDodgerollTimer, 0f, (float)1 / 60);
+
+            // Runs before every early return below so the trail keeps fading after the dash ends.
+            if (isDodging && dodgeIsGhostStep)
+            {
+                ghostStepAfterglow = GhostAfterglowFrames;
+            }
+            else if (ghostStepAfterglow > 0)
+            {
+                ghostStepAfterglow--;
+            }
 
             noDodge |= Player.mount.Active;
 
@@ -664,11 +735,19 @@ namespace tsorcRevamp
                 }
             }*/
 
-            //Apply velocity
-            if (dodgeTime < DodgeTimeMax * 0.5f)
+            // Time at which the full-speed burst ends. A normal roll bursts for half its duration then coasts and
+            // decays; the Ghost Step dash holds full speed longer and then stops or hands off to a run.
+            // Anchored to the BASE duration, not dodgeDuration: accessory i-frame bonuses lengthen the roll's tail
+            // (slow decay, little extra travel) rather than stretching the burst and the distance with it.
+            float fullSpeedEnd = DodgeTimeMax * 0.5f;
+            if (dodgeIsGhostStep)
             {
-                DodgeImmuneTime = DefaultDodgeImmuneTime;
+                fullSpeedEnd = dodgeDuration * GhostDashFraction;
+            }
 
+            //Apply velocity
+            if (dodgeTime < fullSpeedEnd)
+            {
                 dodgeSpeed = 8f;
 
                 // Increase the base roll speed if the player is moving faster than the default
@@ -708,6 +787,19 @@ namespace tsorcRevamp
                 float speedMultiplier = onGround ? 1.4f : 1.1f;
 
                 dodgeSpeed *= speedMultiplier;
+
+                if (dodgeIsGhostStep)
+                {
+                    // Aim for "the roll's distance + ExtraDistanceTiles". The roll would have covered about
+                    // dodgeSpeed * GhostRollTravelSpeedTicks; the dash covers dodgeSpeed' * (burst frames + stop tail),
+                    // where the tail is the geometric sum of the stop decay (0.3 + 0.09 + ... = 0.3 / 0.7).
+                    float rollEquivalentTravel = dodgeSpeed * GhostRollTravelSpeedTicks;
+                    float ghostTravel = rollEquivalentTravel + GhostStepItem.ExtraDistanceTiles * 16f;
+                    float burstFrames = (float)Math.Ceiling(fullSpeedEnd * 60f);
+                    float stopTailFrames = GhostStopDecay / (1f - GhostStopDecay);
+                    dodgeSpeed = ghostTravel / (burstFrames + stopTailFrames);
+                }
+
                 dodgeSpeed *= dodgeDirection;
 
                 // Bug fix: speedMultiplier was being applied twice (once into dodgeSpeed above, then
@@ -720,12 +812,18 @@ namespace tsorcRevamp
 
             //Apply rotations & direction
             forcedItemRotation = dodgeItemRotation;
-            forcedLegFrame = PlayerFrames.Jump;
             forcedDirection = dodgeDirectionVisual;
 
-            rotation = dodgeDirection == 1
-                ? Math.Min(MathHelper.Pi * 2f, MathHelper.Lerp(dodgeStartRot, MathHelper.TwoPi, dodgeTime / (DodgeTimeMax * 1f)))
-                : Math.Max(-MathHelper.Pi * 2f, MathHelper.Lerp(dodgeStartRot, -MathHelper.TwoPi, dodgeTime / (DodgeTimeMax * 1f)));
+            // Ghost Step dashes upright with the player's own run/jump frames instead of tucking into a spinning roll.
+            if (!dodgeIsGhostStep)
+            {
+                forcedLegFrame = PlayerFrames.Jump;
+
+                rotation = dodgeDirection == 1
+                    ? Math.Min(MathHelper.Pi * 2f, MathHelper.Lerp(dodgeStartRot, MathHelper.TwoPi, dodgeTime / dodgeDuration))
+                    : Math.Max(-MathHelper.Pi * 2f, MathHelper.Lerp(dodgeStartRot, -MathHelper.TwoPi, dodgeTime / dodgeDuration));
+            }
+
             //Progress the dodgeroll
             dodgeTime += 1f / 60f;
             Player.immune = true;
@@ -773,16 +871,50 @@ namespace tsorcRevamp
                     }
                 }
 
-                // If the player is actively running in the roll direction, use a softer decel so
-                // a roll that flows into movement doesn't feel like it hits a wall. When standing
-                // still (or pressing opposite), use the full deceleration for a snappy stop.
-                float groundDecel = KeyDirection(Player) == dodgeDirection
-                    ? MathHelper.Lerp(deaccelerationRate, 1f, 0.35f)
-                    : deaccelerationRate;
-                Player.velocity.X *= onGround ? groundDecel : airDeaccelerationRate;
+                if (dodgeIsGhostStep)
+                {
+                    // dodgeTime was already advanced above, so a frame is past the burst only if the PRE-increment
+                    // time had reached fullSpeedEnd; comparing the advanced time directly would decay the last burst frame.
+                    bool burstEndedThisFrame = dodgeTime - 1f / 60f >= fullSpeedEnd;
+
+                    if (burstEndedThisFrame)
+                    {
+                        bool holdingDashDirection = KeyDirection(Player) == dodgeDirection;
+
+                        if (holdingDashDirection)
+                        {
+                            // Carry momentum: ease down to run speed instead of braking. Exit speed is the player's
+                            // run speed, or their pre-dash speed if that was higher, capped at the global run cap.
+                            // From a standstill this is what turns the dash into a running start.
+                            float runSpeed = Math.Max(Player.maxRunSpeed, Player.accRunSpeed);
+                            float exitSpeed = Math.Min(Math.Max(runSpeed, beforeRollSpeed), SoulsModeMobility.GlobalRunSpeedCap);
+                            Player.velocity.X = MathHelper.Lerp(Player.velocity.X, exitSpeed * dodgeDirection, GhostMomentumBlend);
+                        }
+                        else
+                        {
+                            // Precise stop: bleed off nearly all speed in ~3 frames, then snap to zero so there's no drift.
+                            Player.velocity.X *= GhostStopDecay;
+
+                            if (Math.Abs(Player.velocity.X) < GhostStopSnapSpeed)
+                            {
+                                Player.velocity.X = 0f;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // If the player is actively running in the roll direction, use a softer decel so
+                    // a roll that flows into movement doesn't feel like it hits a wall. When standing
+                    // still (or pressing opposite), use the full deceleration for a snappy stop.
+                    float groundDecel = KeyDirection(Player) == dodgeDirection
+                        ? MathHelper.Lerp(deaccelerationRate, 1f, 0.35f)
+                        : deaccelerationRate;
+                    Player.velocity.X *= onGround ? groundDecel : airDeaccelerationRate;
+                }
             }
 
-            if (dodgeTime >= DodgeTimeMax)
+            if (dodgeTime >= dodgeDuration)
             {
                 isDodging = false;
                 //Player.eocDash = 0;

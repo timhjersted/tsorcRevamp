@@ -100,7 +100,7 @@ namespace tsorcRevamp
 
             //Terraria.On_Main.UpdateTime_StartNight += DisableEyeSpawn;
 
-            Terraria.On_Main.UpdateTime_StartDay += DisableTownSlimeSpawn;
+            Terraria.On_WorldGen.CheckSpecialTownNPCSpawningConditions += DisableTownSlimeSpawn;
 
 
             On_NPC.SpawnOnPlayer += DisableBossSpawn;
@@ -4227,11 +4227,8 @@ namespace tsorcRevamp
             }
         }
 
-        // Town slimes are unwanted (see the AI blocklist in VanillaChanges.cs), but that force-deletes
-        // them every tick AFTER vanilla's once-a-day housing check already reserved a room and printed
-        // "X has arrived!". This runs right after that check (Main.UpdateTime_StartDay computes eligibility
-        // and picks WorldGen.prioritizedTownNPCType for the day) and clears both, so a town slime is never
-        // chosen to spawn in the first place - no housing reservation, no arrival message, no ghost NPC.
+        // The town NPC spawn list is rebuilt every 7200 ticks, not at daybreak. Reject town slimes
+        // when housing checks eligibility, before SpawnTownNPC creates one and announces its arrival.
         private static readonly int[] SuppressedTownSlimeTypes =
         {
             NPCID.TownSlimeBlue,
@@ -4244,19 +4241,9 @@ namespace tsorcRevamp
             NPCID.TownSlimeYellow,
         };
 
-        internal static void DisableTownSlimeSpawn(Terraria.On_Main.orig_UpdateTime_StartDay orig, ref bool stopEvents)
+        internal static bool DisableTownSlimeSpawn(Terraria.On_WorldGen.orig_CheckSpecialTownNPCSpawningConditions orig, int type)
         {
-            orig(ref stopEvents);
-
-            foreach (int slimeType in SuppressedTownSlimeTypes)
-            {
-                Main.townNPCCanSpawn[slimeType] = false;
-            }
-
-            if (Array.IndexOf(SuppressedTownSlimeTypes, WorldGen.prioritizedTownNPCType) >= 0)
-            {
-                WorldGen.prioritizedTownNPCType = 0;
-            }
+            return Array.IndexOf(SuppressedTownSlimeTypes, type) < 0 && orig(type);
         }
 
         internal static void DisableBossSpawn(Terraria.On_NPC.orig_SpawnOnPlayer orig, int plr, int Type)

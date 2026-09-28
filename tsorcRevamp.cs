@@ -593,6 +593,7 @@ namespace tsorcRevamp
                 ModContent.ItemType<ChloranthyRing>(),
                 ModContent.ItemType<ChloranthyRing2>(),
                 ModContent.ItemType<DragoonBoots>(),
+                ModContent.ItemType<GhostStep>(),
                 ModContent.ItemType<ReflectionShift>(),
                 ModContent.ItemType<SpeedTalisman>(),
                 ModContent.ItemType<SupersonicBoots>(),
