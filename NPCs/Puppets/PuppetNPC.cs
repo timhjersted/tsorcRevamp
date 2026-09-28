@@ -2699,12 +2699,18 @@ namespace tsorcRevamp.NPCs.Puppets
                 globalNPC.TeleportCooldownTimer--;
             }
 
+            // NovaCharge/NovaBlast are a committed, scripted set-piece (see the `committed` flags in
+            // UpdateAttackCommitFlags) - queuing a new teleport mid-charge freezes the nova's PhaseTimer
+            // (TickPuppetTeleport returns early below, skipping PuppetAttackAI) while a teleport telegraph
+            // plays on top of it, leaving the player unable to tell which will resolve first.
             if (Main.netMode != NetmodeID.MultiplayerClient
                 && globalNPC.CanTeleport
                 && globalNPC.TeleportCountdown == 0
                 && globalNPC.TeleportAppearanceTimer == 0
                 && globalNPC.TeleportChargesRemaining > 0
-                && globalNPC.TeleportCooldownTimer == 0)
+                && globalNPC.TeleportCooldownTimer == 0
+                && Phase != AttackPhase.NovaCharge
+                && Phase != AttackPhase.NovaBlast)
             {
                 bool hasLineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height,
                     target.position, target.width, target.height)

@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
@@ -2620,6 +2621,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         readonly bool[] _novaStageDone = new bool[NovaStages.Length];
         int _novaStageIndex = -1;
 
+        // Space-distortion telegraph (reuses the TriadShockwave refraction shader the boss-despawn
+        // shockwave uses - see UsefulFunctions.DespawnFlash). Held at the FINAL blast radius for the
+        // whole charge instead of travelling outward, so its boundary is an honest preview of the
+        // explosion's true edge; only its opacity fades in as the charge builds.
+        const string NovaDistortionFilter = "tsorcRevamp:ArtoriasNovaDistortion";
+        // TriadShockwave.fx normalizes distance by half the screen width; 1/800 matches the same
+        // world-px-to-screen-fraction calibration DespawnFlash's ShockwaveEffect uses (radius / 800).
+        const float NovaDistortionRadiusScale = 1f / 800f;
+        const float NovaDistortionMaxOpacity = 0.55f;
+
         protected override bool CanNova => true;
         protected override int NovaChargeTicks => 4 * 60;
         protected override int NovaBlastHoldTicks => 24;
@@ -2650,6 +2661,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             float innerT = elapsed / (float)total;                     // 0 -> 1 over the full charge
             float radius = NovaStages[_novaStageIndex].radius;
 
+            if (Main.netMode != NetmodeID.Server)
+            {
+                if (!Filters.Scene[NovaDistortionFilter].IsActive())
+                {
+                    Filters.Scene.Activate(NovaDistortionFilter, NPC.Center);
+                }
+                float ringOpacity = MathHelper.Lerp(0f, NovaDistortionMaxOpacity, innerT);
+                Filters.Scene[NovaDistortionFilter].GetShader().UseTargetPosition(NPC.Center)
+                    .UseProgress(radius * NovaDistortionRadiusScale).UseOpacity(ringOpacity).UseIntensity(1f);
+            }
+
             // Sparse physical motes complement the shader without obscuring its exact disc.
             int count = elapsed % 5 == 0 ? 2 : 0;
             for (int i = 0; i < count; i++)
@@ -2671,6 +2693,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             var (_, radius, damage) = NovaStages[_novaStageIndex];
+
+            if (Main.netMode != NetmodeID.Server && Filters.Scene[NovaDistortionFilter].IsActive())
+            {
+                Filters.Scene[NovaDistortionFilter].Deactivate();
+            }
 
             SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1f, Pitch = -0.3f }, NPC.Center);
             UsefulFunctions.ScreenShake(NPC.Center, strength: 10f, frames: 20);
@@ -3320,6 +3347,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Gore
         public override void OnKill()
         {
+            // Safety net: dying mid-charge (Nova is uninterruptible by AI, but damage can still kill
+            // outright) must not leave the distortion filter permanently bound to the scene.
+            if (Main.netMode != NetmodeID.Server && Filters.Scene[NovaDistortionFilter].IsActive())
+            {
+                Filters.Scene[NovaDistortionFilter].Deactivate();
+            }
+
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Easterling Gore 1").Type, 1f);

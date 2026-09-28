@@ -281,6 +281,7 @@ namespace tsorcRevamp
         public static Effect RetShockwaveEffect;
         public static Effect SpazShockwaveEffect;
         public static Effect CatShockwaveEffect;
+        public static Effect ArtoriasNovaDistortionEffect;
         //public static Effect AttraidiesEffect;
 
         public static bool MusicNeedsUpdate = false;
@@ -458,6 +459,8 @@ namespace tsorcRevamp
             Filters.Scene["tsorcRevamp:SpazShockwave"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(SpazShockwaveEffect), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
             CatShockwaveEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["tsorcRevamp:CatShockwave"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(CatShockwaveEffect), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
+            ArtoriasNovaDistortionEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            Filters.Scene["tsorcRevamp:ArtoriasNovaDistortion"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(ArtoriasNovaDistortionEffect), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
 
             NoiseTurbulent = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/TurbulentNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             NoiseSplotchy = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/SplotchyNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);

@@ -36,7 +36,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings.WolfRing
             if (ttindex != -1)
             {
                 tooltips.RemoveAt(ttindex);
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.WolfRing.Keybind1") + WolfRingString + Language.GetTextValue("Mods.tsorcRevamp.Items.WolfRing.Keybind2")));
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.WolfRingItem.Keybind1") + WolfRingString + Language.GetTextValue("Mods.tsorcRevamp.Items.WolfRingItem.Keybind2")));
             }
         }
 
