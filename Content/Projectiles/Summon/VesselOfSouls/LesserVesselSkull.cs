@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls;
 
 namespace tsorcRevamp.Content.Projectiles.Summon.VesselOfSouls
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.VesselOfSouls
             Projectile.penetrate = 2;
             Projectile.timeLeft = 240;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 10;
+            Projectile.localNPCHitCooldown = -1;
             Projectile.ignoreWater = true;
         }
 
@@ -95,6 +96,12 @@ namespace tsorcRevamp.Content.Projectiles.Summon.VesselOfSouls
                 int d = Dust.NewDust(Projectile.Center - new Vector2(8f), 16, 16, Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.PurpleTorch, vel.X, vel.Y, 100, default, Main.rand.NextFloat(1f, 1.5f));
                 Main.dust[d].noGravity = true;
             }
+        }        
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            Player player = Main.player[Projectile.owner];
+            modifiers.FlatBonusDamage +=
+                SoulReliquaryBell.SoulDamageBonus(player.GetModPlayer<tsorcRevampPlayer>().darkSoulQuantity);
         }
 
         public override void OnKill(int timeLeft)
