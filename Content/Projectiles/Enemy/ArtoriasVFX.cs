@@ -124,11 +124,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 warning ? 1f : 0f, radius, halfWidth, BlendState.Additive);
         }
 
-        internal static void DrawDetonation(Vector2 center, float radius, float progress, float opacity, bool active)
+        internal static void DrawDetonation(Vector2 center, float radius, float progress, float opacity, bool active,
+            float rotation = 0f)
         {
             EnemyVFX.DrawVoidExplosion(center, radius, progress, opacity, active,
                 new Color(5, 1, 14), new Color(86, 20, 146),
-                new Color(226, 52, 166), new Color(246, 232, 255));
+                new Color(226, 52, 166), new Color(246, 232, 255), rotation: rotation);
         }
 
         internal static void DrawImpactBlast(Vector2 center, float radius, float progress, float opacity)

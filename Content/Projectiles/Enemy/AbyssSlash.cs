@@ -35,8 +35,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         // "Lined up" = heading within ~45° of the player (cos 0.7). Only after lining up does the player
         // dropping behind the crescent (cos < 0) count as a pass - during the U-turn they start behind it.
         const float FanLinedUpCosine = 0.7f;
-        // If the player keeps outrunning the return leg this long, stop homing and leave anyway.
-        const int FanMaxReturnTicks = 180;
+        // Homing cap: after this long on the return leg it stops steering and flies straight on, passed the player
+        // or not. 90t covers the ~45t U-turn plus ~45t of pursuit (was 180, which chased too long).
+        const int FanMaxReturnTicks = 90;
         // Off screen = outside this box around EVERY active player (1080p half-screen 960x540 + margin).
         // Measured against players rather than Main.screenPosition so the server can decide it too.
         const float FanOffscreenHalfWidth = 1050f;

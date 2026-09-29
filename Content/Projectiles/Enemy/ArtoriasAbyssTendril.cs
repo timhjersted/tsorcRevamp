@@ -151,6 +151,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
+            // No rolling out of the grab: the whip-back and flick must play out. noDodge is consumed on the grabbed
+            // player's next roll check (their own client, which runs this AI too once the grab syncs) and also cancels
+            // a roll already in progress, so a roll started just before or during the grab can't carry them free.
+            player.GetModPlayer<tsorcRevampPlayer>().noDodge = true;
+
             ApplyWhipMotion(player);
 
             // Keep the three-pronged tip visibly embedded at the target throughout the grab.

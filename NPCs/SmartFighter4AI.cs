@@ -1137,7 +1137,13 @@ namespace tsorcRevamp.NPCs
             if (Main.netMode != NetmodeID.MultiplayerClient && grounded && nav.PatrolRouteRetry == 0)
             {
                 nav.PatrolRouteRetry = 120;
-                if (player.Center.Y > npc.Center.Y + 24f && npc.Distance(player.Center) <= aggroRange)
+                float distanceToPlayer = npc.Distance(player.Center);
+                bool playerBelowInAggro = player.Center.Y > npc.Center.Y + 24f && distanceToPlayer <= aggroRange;
+                // Opt-in LOS-free re-aggro (any direction). Same complete-route requirement as the below case.
+                bool playerInRouteReaggroRange = globalNPC.RouteReaggroRange > 0f
+                    && distanceToPlayer <= globalNPC.RouteReaggroRange;
+
+                if (playerBelowInAggro || playerInRouteReaggroRange)
                 {
                     NavState probe = new NavState();
                     foreach (var bad in nav.BadEdgeTargets) probe.BadEdgeTargets[bad.Key] = bad.Value;
@@ -1176,8 +1182,25 @@ namespace tsorcRevamp.NPCs
                 if (globalNPC.PatrolIdleTimer > 0) globalNPC.PatrolIdleTimer--;
                 else if (grounded && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    if (!ChoosePatrolDestination(nav, npc, globalNPC, topSpeed))
+                    // ReturnToSpawn: path back to the anchor instead of wandering; once home, stand watch.
+                    // X-only 2-tile arrival matches NavBehavior.RunReturnToSpawn (anchor may be recorded mid-air).
+                    bool returnsToSpawn = globalNPC.PatrolMode == PatrolMode.ReturnToSpawn;
+                    bool awayFromAnchor = Math.Abs(npc.Center.X - globalNPC.PatrolAnchor.X) > 32f;
+
+                    if (returnsToSpawn && awayFromAnchor)
+                    {
+                        globalNPC.PatrolDestination = globalNPC.PatrolAnchor;
+                        globalNPC.PatrolDestinationActive = true;
+                        globalNPC.PatrolDirection = globalNPC.PatrolAnchor.X > npc.Center.X ? 1 : -1;
+                    }
+                    else if (returnsToSpawn)
+                    {
+                        globalNPC.PatrolIdleTimer = 120;
+                    }
+                    else if (!ChoosePatrolDestination(nav, npc, globalNPC, topSpeed))
+                    {
                         globalNPC.PatrolIdleTimer = 120; // isolated peak: watch instead of shuffling two tiles
+                    }
                     globalNPC.RequestNetworkSnapshot();
                 }
                 nav.LastAction = "patrol-watch";

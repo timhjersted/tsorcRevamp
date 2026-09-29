@@ -92,6 +92,15 @@ namespace tsorcRevamp.NPCs.Puppets
         /// them): they skip the party-wipe check, so they never broadcast a second despawn line.</summary>
         protected virtual bool DespawnsOnPartyWipe => true;
 
+        /// <summary>Ticks of CONTINUOUS nav Patrol (gave up the chase: idling / walking back to spawn) before the
+        /// encounter fades out through the party-wipe despawn, failing and resetting its event ring. 0 = never.
+        /// Measured on the give-up state, not distance from an arena, so a chase that drifts away never
+        /// despawns in front of the player.</summary>
+        protected virtual int AbandonedDespawnTicks => 0;
+        private int _abandonedTicks;
+        // Server decides; synced in SendExtraAI so clients run the same fade instead of popping out.
+        private bool _abandonedDespawnStarted;
+
         public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.life > 0 || Main.dedServ)
@@ -174,6 +183,34 @@ namespace tsorcRevamp.NPCs.Puppets
         private bool UpdatePartyWipeDespawn()
         {
             bool wasDespawning = PartyWipeDespawnHandler.IsDespawning;
+
+            // Abandoned-encounter despawn: count continuous Patrol ticks on the authority; any other pursuit
+            // state (Pursue/Search) resets the clock.
+            if (AbandonedDespawnTicks > 0 && !wasDespawning && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                PursuitState pursuitState = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().PursuitState;
+                if (pursuitState == PursuitState.Patrol)
+                {
+                    _abandonedTicks++;
+                }
+                else
+                {
+                    _abandonedTicks = 0;
+                }
+
+                if (_abandonedTicks >= AbandonedDespawnTicks)
+                {
+                    _abandonedDespawnStarted = true;
+                    NPC.netUpdate = true;
+                }
+            }
+
+            if (_abandonedDespawnStarted && !wasDespawning)
+            {
+                bool isAuthority = Main.netMode != NetmodeID.MultiplayerClient;
+                PartyWipeDespawnHandler.BeginDespawn(broadcastText: isAuthority);
+            }
+
             bool aboutToDespawn = PartyWipeDespawnHandler.TargetAndDespawn(NPC.whoAmI);
 
             if (!wasDespawning && PartyWipeDespawnHandler.IsDespawning)
@@ -830,6 +867,13 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float JumpSlashMaxForwardSpeed   => JumpSlashLaunchForwardSpeed;
         protected virtual float JumpSlashMaxUpSpeed        => JumpSlashLaunchUpSpeed;
         protected virtual float JumpSlashGravity           => 0.3f;
+        /// <summary>Most the launch solve may lead the target (px): it aims at where their current X velocity carries
+        /// them over the leap's airtime, capped to this so a juking player can't drag the leap across the arena.
+        /// 0 = aim at where they stand at launch.</summary>
+        protected virtual float JumpSlashMaxLead           => 0f;
+        /// <summary>How far past the (led) target the leap is solved to land, in px, so the swing carries through them
+        /// instead of dropping short. 0 = land exactly on them.</summary>
+        protected virtual float JumpSlashAimPastTarget     => 0f;
         /// <summary>Distance at which the swipe triggers mid-air, before landing.</summary>
         protected virtual float JumpSlashTriggerRange      => 90f;
         protected virtual int   JumpSlashAttackTicks       => 18;
@@ -3597,6 +3641,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // not. Only the puppet-specific guard pose/cooldown belong in this packet.
             writer.Write(_shielding);
             writer.Write(_mountSpawned);
+            writer.Write(_abandonedDespawnStarted);
             writer.Write(_attackRuntimeV2.Active);
 
             // ── Phase header (see _phaseSequence) ──
@@ -3660,6 +3705,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     state.Write(step.LeapForwardSpeedMult);
                     state.Write(step.LeapDescentGravityMult);
                     state.Write(step.LeapApexRetargetStrength);
+                    state.Write(step.StepInDistance);
                 }
             }
 
@@ -3757,6 +3803,12 @@ namespace tsorcRevamp.NPCs.Puppets
             _shieldGuardCooldown = reader.ReadInt16();
             bool shieldActive = reader.ReadBoolean();
             _mountSpawned = reader.ReadBoolean();
+            // One-way latch: a stale packet must never cancel a fade already under way.
+            bool receivedAbandonedDespawn = reader.ReadBoolean();
+            if (receivedAbandonedDespawn)
+            {
+                _abandonedDespawnStarted = true;
+            }
             bool runtimeActive = reader.ReadBoolean();
 
             int receivedSequence = reader.ReadInt32();
@@ -3964,6 +4016,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     step.LeapForwardSpeedMult = state.ReadSingle();
                     step.LeapDescentGravityMult = state.ReadSingle();
                     step.LeapApexRetargetStrength = state.ReadSingle();
+                    step.StepInDistance = state.ReadSingle();
                     receivedSteps[i] = step;
                 }
             }
@@ -5244,18 +5297,33 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (!_jumpSlashLaunched)
                     {
                         _jumpSlashLaunched = true;
-                        // Re-aim once at launch (the roll may have crossed the player), then commit.
-                        int faceJ = target.Center.X < NPC.Center.X ? -1 : 1;
+                        float baselineAirTime = 2f * JumpSlashLaunchUpSpeed / JumpSlashGravity;
+
+                        // Where to land. First airtime estimate from where the target stands, then lead their X
+                        // velocity over it (capped at JumpSlashMaxLead) and push the point JumpSlashAimPastTarget past
+                        // them, so an on-time leap carries the swing through them rather than dropping short.
+                        float standingDx = Math.Abs(target.Center.X - NPC.Center.X);
+                        float standingRangeT = JumpSlashMaxRange > 0f
+                            ? MathHelper.Clamp(standingDx / JumpSlashMaxRange, 0f, 1f)
+                            : 1f;
+                        float standingSpeed = MathHelper.Lerp(JumpSlashLaunchForwardSpeed, JumpSlashMaxForwardSpeed, standingRangeT);
+                        float standingAirTime = Math.Max(baselineAirTime, standingDx / Math.Max(1f, standingSpeed));
+                        float leadX = MathHelper.Clamp(target.velocity.X * standingAirTime, -JumpSlashMaxLead, JumpSlashMaxLead);
+                        float ledTargetX = target.Center.X + leadX;
+
+                        // Re-aim once at launch (the roll may have crossed the player), then commit. Faces the led
+                        // point, so a player running past him is chased the way they're going.
+                        int faceJ = ledTargetX < NPC.Center.X ? -1 : 1;
                         _jumpSlashDir = faceJ;
                         _attackFacingDir = faceJ;
 
-                        float dx = Math.Abs(target.Center.X - NPC.Center.X);
+                        float landingX = ledTargetX + faceJ * JumpSlashAimPastTarget;
+                        float dx = Math.Abs(landingX - NPC.Center.X);
                         float rangeT = JumpSlashMaxRange > 0f
                             ? MathHelper.Clamp(dx / JumpSlashMaxRange, 0f, 1f)
                             : 1f;
                         float preferredSpeed = MathHelper.Lerp(JumpSlashLaunchForwardSpeed,
                             JumpSlashMaxForwardSpeed, rangeT);
-                        float baselineAirTime = 2f * JumpSlashLaunchUpSpeed / JumpSlashGravity;
                         float airTime = Math.Max(baselineAirTime, dx / Math.Max(1f, preferredSpeed));
                         float verticalDelta = target.Center.Y - NPC.Center.Y;
                         float upSpeed = JumpSlashGravity * airTime * 0.5f - verticalDelta / airTime;
@@ -5286,6 +5354,12 @@ namespace tsorcRevamp.NPCs.Puppets
 
                 case AttackPhase.JumpSlashAttack:
                     LockAttackFacing();
+                    // The swipe usually starts mid-leap (JumpSlashTriggerRange out). Hold the launch speed until touchdown:
+                    // otherwise the navigator's walking chase took over X in mid-air and he dropped short of the target.
+                    if (NPC.velocity.Y != 0f)
+                    {
+                        NPC.velocity.X = _jumpSlashDir * _jumpSlashFlightSpeed;
+                    }
                     // TryMeleeHit (called from DoJumpSlashAttack on phase entry) only ARMS the
                     // tracked blade check - TickBladeHit has to run every tick of the swing to
                     // actually test it, same as MeleeAttack/StabAttack below. Without this call the
@@ -6280,7 +6354,38 @@ namespace tsorcRevamp.NPCs.Puppets
                             _backHand.HasPreviousBladeSample = false;
                         }
 
-                        if (step.ForwardPushMult > 0f)
+                        bool shapedStepIn = step.StepInDistance > 0f && step.Ease == SwingEaseStyle.Weighted
+                            && step.EaseInTicks + step.EaseOutTicks > 0;
+                        if (shapedStepIn)
+                        {
+                            // Step-in shaped like the blade, in authored curve ticks: speed ~ (t/in)^2 through the ease-in
+                            // (the cubic swing's own acceleration), peak on the strike, then e^(-k*p) through the ease-out.
+                            // That covers peak * (in/3 + out*(1-e^-k)/k) authored ticks' worth; scale converts to the
+                            // step's real length (tempo), and peak is solved so the whole step covers StepInDistance px.
+                            float easeIn = step.EaseInTicks;
+                            float easeOut = step.EaseOutTicks;
+                            float decay = step.EaseOutDecay > 0f ? step.EaseOutDecay : SwingEase.DefaultWeightedDecay;
+                            float realTicksPerCurveTick = _activeComboStepTotalTicks / (easeIn + easeOut);
+                            float curveTickIntegral = easeIn / 3f + easeOut * (1f - (float)Math.Exp(-decay)) / decay;
+                            float peakSpeed = step.StepInDistance / (realTicksPerCurveTick * curveTickIntegral);
+
+                            float elapsedRealTicks = _activeComboStepTotalTicks - PhaseTimer;
+                            float curveTick = elapsedRealTicks / realTicksPerCurveTick;
+                            float speedFraction;
+                            if (curveTick < easeIn)
+                            {
+                                float easeInProgress = curveTick / easeIn;
+                                speedFraction = easeInProgress * easeInProgress;
+                            }
+                            else
+                            {
+                                float easeOutProgress = MathHelper.Clamp((curveTick - easeIn) / Math.Max(1f, easeOut), 0f, 1f);
+                                speedFraction = (float)Math.Exp(-decay * easeOutProgress);
+                            }
+
+                            NPC.velocity.X = _comboLockedDir * peakSpeed * speedFraction;
+                        }
+                        else if (step.ForwardPushMult > 0f)
                             NPC.velocity.X = _comboLockedDir * (ComboForwardPushTopSpeed * step.ForwardPushMult);
                         else if (SlowDownBeforeMelee && AimSwingActive)
                             NPC.velocity.X *= (1f - _activeMeleeCombo.MoveBrake); // per-move brake (0 = keep drifting)

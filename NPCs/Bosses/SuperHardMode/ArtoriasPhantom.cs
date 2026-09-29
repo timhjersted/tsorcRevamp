@@ -55,8 +55,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             || _combosStarted >= PhantomComboCount;
 
         // ── Aggression ───────────────────────────────────────────────────────────
-        // Expert hit per 1.0x swing, before defense (Artorias's own is 90).
-        protected override int MeleeDamage => EnemyDamage.Projectile(100);
+        // Expert hit per 1.0x swing, before defense (Artorias's own is 120).
+        protected override int MeleeDamage => EnemyDamage.Projectile(150);
         // Runs from 140px out (base 420) and sprints harder while closing to engage range. The base combo
         // gate still refuses to swing beyond MeleeEngageRange, so it closes the gap first, jumping as needed.
         protected override float RunDistance => 140f;
