@@ -22,6 +22,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         const int MaxOutboundTicks = 360;
         const float CatchDistance = 50f;
         const float ReturnHomingRate = 0.10f;
+        // World px one 170px sprite frame is drawn at - the same size as Spiral Fan's crescent.
+        const float CrescentFrameDrawSize = 60f;
 
         float CurveDir => Projectile.ai[0];
         int OwnerIndex => (int)Projectile.ai[1];
@@ -186,13 +188,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
-            Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
-            Vector2 origin = frame.Size() * 0.5f;
+            // Same opaque, outlined pixel crescent Spiral Fan throws (AbyssSlash's fan variant). Frames 0-2 only:
+            // frame 3 of the sheet is scattered specks, which the pixel filter turns into a blinking cloud.
+            int crescentFrameIndex = Projectile.frame % 3;
+            Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, crescentFrameIndex);
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
             float curveDirection = CurveDir < 0f ? -1f : 1f;
 
-            // Low-opacity sprite ghosts make the true curved trajectory readable without implying
-            // that the projectile's old positions remain damaging.
+            // Pixelated afterimages at 87% size make the true curved trajectory readable without implying
+            // that the projectile's old positions remain damaging (matches the fan crescent's echoes).
             for (int i = Projectile.oldPos.Length - 2; i >= 3; i -= 4)
             {
                 if (Projectile.oldPos[i] == Vector2.Zero)
@@ -201,22 +205,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 }
 
                 float history = 1f - i / (float)Projectile.oldPos.Length;
-                Color ghostColor = (_returning
-                    ? new Color(188, 38, 150, 0)
-                    : new Color(92, 44, 188, 0)) * (0.16f + history * 0.16f);
                 Vector2 oldCenter = Projectile.oldPos[i] + Projectile.Size * 0.5f;
-                Main.EntitySpriteDraw(texture, oldCenter - Main.screenPosition, frame,
-                    ghostColor, Projectile.oldRot[i], origin, 0.27f + history * 0.025f,
-                    SpriteEffects.None, 0f);
+                float echoOpacity = 0.22f + history * 0.30f;
+                ArtoriasVFX.DrawFanCrescent(texture, frame, oldCenter, Projectile.oldRot[i],
+                    CrescentFrameDrawSize * 0.87f, echoOpacity);
             }
-
-            // A mostly opaque sprite body keeps the damaging crescent readable even over the
-            // darkest arena tiles. Additive shader layers below provide the animated magic.
-            Color bodyColor = _returning
-                ? new Color(198, 48, 170, 240)
-                : new Color(126, 50, 218, 238);
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame,
-                bodyColor, Projectile.rotation, origin, 0.31f, SpriteEffects.None, 0f);
 
             // T_Windstreak3 is vertical in texture space, hence the +90-degree rotation here.
             ArtoriasVFX.DrawBoomerangRibbon(Projectile.Center - direction * 47f,
@@ -224,10 +217,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 _returning, curveDirection, _returning ? 0.96f : 0.88f);
             ArtoriasVFX.DrawBoomerangOrbit(Projectile.Center, Vector2.One * (_returning ? 94f : 86f),
                 Projectile.rotation * 0.32f, _returning, curveDirection, _returning ? 0.94f : 0.86f);
-            ArtoriasVFX.DrawBoomerangCore(texture, frame, Projectile.Center, Projectile.rotation,
-                new Vector2(78f, 74f), _returning, curveDirection, 0.70f, aura: true);
-            ArtoriasVFX.DrawBoomerangCore(texture, frame, Projectile.Center, Projectile.rotation,
-                new Vector2(54f, 52f), _returning, curveDirection, 1f, aura: false);
+
+            // The crescent on top: opaque and outlined, so it carries the silhouette over the darkest tiles
+            // on its own. The return leg's magenta lives in the ribbon/orbit; the crescent stays purple.
+            ArtoriasVFX.DrawFanCrescent(texture, frame, Projectile.Center, Projectile.rotation,
+                CrescentFrameDrawSize, 1f);
 
             if (_turnFlashTimer > 0)
             {

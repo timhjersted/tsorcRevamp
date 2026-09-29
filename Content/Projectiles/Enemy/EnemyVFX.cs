@@ -637,7 +637,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         /// </summary>
         internal static void DrawVoidExplosion(Vector2 center, float radius, float progress, float opacity,
             bool active, Color darkColor, Color midColor, Color accentColor, Color coreColor,
-            float pixelBlockSize = 2f)
+            float pixelBlockSize = 2f, float rotation = 0f)
         {
             LoadAssets();
             const float visualScale = 1f / 0.9f;
@@ -657,10 +657,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             float animationScale = active ? 1f : MathHelper.Lerp(0.1f, 1f, growth);
             Vector2 drawSize = Vector2.One * radius * 2f * visualScale * animationScale;
             Vector2 frameScale = drawSize / new Vector2(frameWidth, frameHeight);
-            Vector2 adjustedCenter = center - VoidExplosionFrameCenterOffsets[frame] * frameScale;
+            // Each frame's blast sits off its cell centre; that correction turns with the quad so the blast stays
+            // centred on the caller's point at any rotation.
+            Vector2 frameCenterCorrection = (VoidExplosionFrameCenterOffsets[frame] * frameScale).RotatedBy(rotation);
+            Vector2 adjustedCenter = center - frameCenterCorrection;
 
             Draw(voidExplosion, active ? "VoidExplosionBlast" : "VoidExplosionCharge",
-                texture, voidExplosionDetail.Value, adjustedCenter, drawSize, 0f,
+                texture, voidExplosionDetail.Value, adjustedCenter, drawSize, rotation,
                 darkColor, midColor, coreColor, opacity, progress, active ? 1f : 0f,
                 1f, BlendState.AlphaBlend, sourceRectangle: source,
                 accentColor: accentColor,

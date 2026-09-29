@@ -63,6 +63,9 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected override string InvaderTitle => "Owl Father";
 
+        // Run away and stay away: after 10 s of walking home / standing at spawn, fade out and reset the event ring.
+        protected override int AbandonedDespawnTicks => 600;
+
         // ── Companion owl + spectral form ────────────────────────────────────────
         // The owl is killed outright (StrikeInstantKill) the instant Owl Father's health crosses
         // 50%, which replaces the small puppet with the authored 2x armor-template form for the
@@ -367,7 +370,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 speedMult *= 0.5f;
 
             var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.NavSearchRadius = 70;
+            globalNPC.NavSearchRadius = 80;
             globalNPC.RemembersLastKnownPos = true;
 
             SmartFighter4AI.Run(NPC,
@@ -1171,6 +1174,10 @@ namespace tsorcRevamp.NPCs.Puppets
             globalNPC.PoiseStaggerResetsAI = true;
             globalNPC.NavGiveUpTicks = 180;
             globalNPC.CanUseRopes = true;
+            // On giving up, walk back to the arena spawn (AbandonedDespawnTicks then ends the encounter), and notice
+            // a player within 60 tiles through walls — as long as a complete route to them exists.
+            globalNPC.PatrolMode = PatrolMode.ReturnToSpawn;
+            globalNPC.RouteReaggroRange = 60 * 16f;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

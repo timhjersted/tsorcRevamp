@@ -129,6 +129,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static readonly WeightedSwing RisingSlashCurve = new WeightedSwing(6, 22, 5.5f);
         static readonly WeightedSwing RunningCleaveCurve = new WeightedSwing(5, 26, 6f);
 
+        // Step-in per cut (MeleeComboStep.StepInDistance): px travelled across the step, peaking on the strike and
+        // decaying with the blade, so he drives into each cut instead of planting (the engine's 0.65x/tick brake
+        // stopped him dead within ~5t). Peak = px / (in/3 + out*(1-e^-k)/k) at 1x tempo:
+        //   Heavy Chop      56px  -> 7.8 px/t    Rising Slash  40px -> 6.7 px/t    Running Cleave cut  48px -> 8.0 px/t
+        // Most of it lands inside the live window, adding ~40-50px of reach; a roll away (~110px) still clears it.
+        const float HeavyChopStepIn = 56f;
+        const float RisingSlashStepIn = 40f;
+        const float RunningCleaveStepIn = 48f;
+
         protected override void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction)
         {
             // Artorias's committed rhythm (36t heavy / 30t light recovery, 30t inter-step pause floor),
@@ -197,14 +206,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (combo.Name == "Heavy Chop" && combo.Steps.Length > 0 && combo.Steps[0].Motion == ComboMotion.OverheadArc)
             {
                 ApplySwingCurve(ref combo.Steps[0], HeavyChopCurve);
+                combo.Steps[0].StepInDistance = HeavyChopStepIn;
             }
             else if (combo.Name == "Rising Slash" && combo.Steps.Length > 0 && combo.Steps[0].Motion == ComboMotion.UnderhandArc)
             {
                 ApplySwingCurve(ref combo.Steps[0], RisingSlashCurve);
+                combo.Steps[0].StepInDistance = RisingSlashStepIn;
             }
             else if (combo.Name == "Running Cleave" && combo.Steps.Length > 1 && combo.Steps[1].Motion == ComboMotion.OverheadArc)
             {
                 ApplySwingCurve(ref combo.Steps[1], RunningCleaveCurve);
+                combo.Steps[1].StepInDistance = RunningCleaveStepIn;
             }
         }
 
@@ -440,7 +452,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // Rising Uppercut / Skyward Lunge run on the generic Custom phase and drive the blade themselves.
             (Phase == AttackPhase.Custom && _aerialStage != AerialStage.None);
 
-        protected override int MeleeDamage => EnemyDamage.Projectile(90);
+        protected override int MeleeDamage => EnemyDamage.Projectile(120);
 
         // ── Piercing Dash ────────────────────────────────────────────────────────
         protected override bool  CanPierce            => true;
@@ -482,6 +494,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float JumpSlashMaxRange      => 50f * 16f;
         protected override float JumpSlashMaxForwardSpeed => 8.5f;
         protected override float JumpSlashMaxUpSpeed    => 18f;
+        // Leap solve: lead a running target by up to 160px (a 6px/t sprint over the ~60t airtime would be 360px, so
+        // this chases without letting a juke drag him across the arena), and land 64px past them so the 95px blade
+        // sweeps through them on the way down instead of the leap dropping short.
+        protected override float JumpSlashMaxLead       => 160f;
+        protected override float JumpSlashAimPastTarget => 64f;
         protected override int   JumpSlashChance        => 5;
         protected override int   JumpSlashCooldownAfterUse => 420;
         // Swipe: -60° cocked -> 110° (170° envelope; was 55°, widened at the END so ~142° stays live past the 30%
@@ -628,7 +645,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float TendrilSwingEndRotation  => MathHelper.ToRadians(180f - 45f);
         protected override int   TendrilRecoveryTicks     => 44;
 
-        const int TendrilGrabDamage = 85;
+        const int TendrilGrabDamage = 140;
         const float TendrilLaunchSpeed = 12f;
         const float TendrilTopSpeed = TendrilLaunchSpeed * 2f;
         internal Vector2 TendrilHandPosition => PuppetHandPosition;
@@ -675,8 +692,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // second and pushes the player inward, rather than delivering the old unavoidable instant kill.
         public const float RingRadius = 50 * 16f;      // 100-tile diameter
         const float RingBandHalfWidth = 40f;
-        // Direct Player.Hurt, not a projectile: no difficulty scaling, so 90 before defense in every mode.
-        const int RingEdgeDamage = 90;
+        // Direct Player.Hurt, not a projectile: no difficulty scaling, so 120 before defense in every mode.
+        const int RingEdgeDamage = 120;
         const float RingBossSafetyPadding = 10f;
         const float RingBossSteeringWidth = 48f;
         Vector2 _ringCenter;
@@ -948,8 +965,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 float chargeProgress = MathHelper.Clamp(1f - PhaseTimer / (float)NovaChargeTicks, 0f, 1f);
                 float radius = NovaStages[_novaStageIndex].radius;
+                float chargeOpacity = MathHelper.Lerp(0.20f, 0.62f, chargeProgress);
+                ArtoriasVFX.DrawDetonation(NPC.Center, radius, chargeProgress, chargeOpacity, active: false);
+
+                // A second, fainter copy turning the opposite way over the first, so the two swirls shear
+                // against each other. NovaCounterSpinPerSecond rad/s, wrapped so the float never grows.
+                float counterRotation = -(Main.GlobalTimeWrappedHourly * NovaCounterSpinPerSecond) % MathHelper.TwoPi;
                 ArtoriasVFX.DrawDetonation(NPC.Center, radius, chargeProgress,
-                    MathHelper.Lerp(0.20f, 0.62f, chargeProgress), active: false);
+                    chargeOpacity * NovaCounterLayerOpacity, active: false, rotation: counterRotation);
+
                 ArtoriasVFX.DrawMantle(NPC.Center + new Vector2(0f, -16f),
                     new Vector2(190f, 240f), 0.40f + chargeProgress * 0.32f,
                     0.8f + chargeProgress * 0.55f, -1f);
@@ -1725,7 +1749,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Jump Slash's ground AOE: 3x the base landing impact (86x68), damaging over exactly the eruption it draws.
         const float JumpSlashImpactWidth = 86f * 3f;
         const float JumpSlashImpactHeight = 68f * 3f;
-        const int JumpSlashImpactDamage = 100;
+        const int JumpSlashImpactDamage = 140;
         bool _jumpSlashImpactPending;
 
         // ── Forward Flip Slash hooks ─────────────────────────────────────────────
@@ -1774,7 +1798,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // there instead of at touchdown, where they used to precede the swing.
         // Lifts the release point this far above the feet: the blade tip is buried in the floor at contact.
         const float FlipSlashOrbReleaseHeight = 12f;
-        const int FlipBlastDamage = 80;
+        const int FlipBlastDamage = 110;
         const int FlipPillarDamage = 90;
         const int FlipBlazeDamage = 70;
         const float FlipBlazeSpeed = 5f;
@@ -1839,8 +1863,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //   0: one slash, then an overhead swing that fans 3 seeking orbs upper-left/up/upper-right
         //   1: three slashes, 60 ticks apart
         //   2: two slashes 30 ticks apart, then a third 60 ticks later, then two more 30 ticks apart
-        const int AbyssSlashDamage = 75;
-        const int AbyssOrbFinisherDamage = 85;
+        const int AbyssSlashDamage = 120;
+        const int AbyssOrbFinisherDamage = 130;
         const float AbyssSlashSpeed = 9f;
 
         int _abyssSlashVariant;
@@ -2007,7 +2031,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Tell:     30t paused at the jump's apex (gravity suspended): blade points at the solved intercept point,
         //           body and sword shake 1 -> 3px, void motes converge on the tip, and the last 20t draw a dust line
         //           along the dash path.
-        // Dash:     straight line, gravity off, at the target's position led by distance / 16 (<= 70t). Speed ramps
+        // Dash:     straight line, gravity off, at a point SkywardAimPastTarget px beyond the target's position (led by
+        //           distance / 16, <= 70t), so the blade passes through them and he lands past them. Speed ramps
         //           0 -> 16 px/t with the square of time over 5t. Ends on arrival + 8t overshoot, 70t max, a tile or a
         //           blade hit; the blade is live the whole dash.
         // Miss:     momentum x0.35 and a normal fall. 50% roll: double jump as the fall starts (cloud ring at the feet),
@@ -2059,6 +2084,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // path + 3.33 ramp-loss + 8 overshoot) - the old fixed 40 whiffed even a stationary max-range target.
         const int SkywardDashMaxTicks = 70;
         const int SkywardOvershootTicks = 8;
+        // Horizontal distance past the intercept point the dash aims at. Aiming AT the target's centre from the apex
+        // put his feet on the floor (collideY -> dash blocked) just before his centre arrived, stopping him short.
+        // Moving the aim point beyond them flattens the dive: at a typical 300px x 120px drop the line crosses the
+        // target ~30px above their centre (well inside the 95px blade) and meets the floor past them.
+        const float SkywardAimPastTarget = 96f;
         const float SkywardMissMomentum = 0.35f;
         const int SkywardDoubleJumpChance = 50;
         const float SkywardDoubleJumpMaxRise = 11f;
@@ -2355,7 +2385,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     float refinedLeadTicks = Math.Min(Vector2.Distance(NPC.Center, ledPosition) / SkywardDashSpeed,
                         SkywardDashMaxTicks);
                     Vector2 interceptPoint = target.Center + target.velocity * refinedLeadTicks;
-                    Vector2 aimDirection = (interceptPoint - NPC.Center).SafeNormalize(new Vector2(NPC.direction, 0f));
+
+                    // Aim past the intercept on the far side, so the dash carries through the target (see SkywardAimPastTarget).
+                    // Straight below him (no horizontal gap) keeps his facing as the "far side".
+                    int pastSide = Math.Sign(interceptPoint.X - NPC.Center.X);
+                    if (pastSide == 0)
+                    {
+                        pastSide = NPC.direction;
+                    }
+
+                    Vector2 aimPoint = interceptPoint + new Vector2(pastSide * SkywardAimPastTarget, 0f);
+                    Vector2 aimDirection = (aimPoint - NPC.Center).SafeNormalize(new Vector2(NPC.direction, 0f));
 
                     // AngleLerp takes the short way round, so the blade swings onto the aim instead of snapping.
                     float aimRotation = BladeRotationToward(aimDirection);
@@ -2371,12 +2411,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Dust mote = Dust.NewDustPerfect(moteStart, DustID.ShadowbeamStaff, moteVelocity, 100, SlashMid, 1f);
                         mote.noGravity = true;
 
-                        // The path line: 8 motes from his centre to the intercept point every 4t across the last 20t.
+                        // The path line: 8 motes from his centre to the aim point every 4t across the last 20t.
                         int aimTicksLeft = SkywardAimTicks - _aerialStageTicks;
                         bool drawPathLine = aimTicksLeft <= SkywardAimLineTicks && _aerialStageTicks % 4 == 0;
                         if (drawPathLine)
                         {
-                            float pathLength = Vector2.Distance(NPC.Center, interceptPoint);
+                            float pathLength = Vector2.Distance(NPC.Center, aimPoint);
                             for (int i = 1; i <= 8; i++)
                             {
                                 Vector2 linePoint = NPC.Center + aimDirection * (pathLength * i / 8f);
@@ -2390,8 +2430,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (_aerialStageTicks >= SkywardAimTicks)
                     {
                         // The ramp (speed grows with t² over 5t) covers a third of full-speed distance, so it adds 2/3 of
-                        // its ticks to the flight; then the 8t overshoot so an on-time dash always reaches the point.
-                        float pathTicks = Vector2.Distance(NPC.Center, interceptPoint) / SkywardDashSpeed;
+                        // its ticks to the flight; then the 8t overshoot so an on-time dash always reaches the aim point.
+                        float pathTicks = Vector2.Distance(NPC.Center, aimPoint) / SkywardDashSpeed;
                         float rampLossTicks = SkywardDashAccelTicks * 2f / 3f;
                         int flightTicks = (int)Math.Ceiling(pathTicks + rampLossTicks) + SkywardOvershootTicks;
                         _skywardDashTicks = Math.Min(flightTicks, SkywardDashMaxTicks);
@@ -2686,9 +2726,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // sizes escalate 500/600/700px in that same order (the "final AOE" is the 10% one).
         static readonly (float hpFrac, float radius, int damage)[] NovaStages =
         {
-            (0.50f, 500f, 100),
-            (0.20f, 600f, 120),
-            (0.10f, 700f, 130),
+            (0.50f, 500f, 200),
+            (0.20f, 600f, 250),
+            (0.10f, 700f, 300),
         };
         readonly bool[] _novaStageDone = new bool[NovaStages.Length];
         int _novaStageIndex = -1;
@@ -2699,10 +2739,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // there - so for the last second its boundary is an honest, stationary preview of the edge.
         const string NovaDistortionFilter = "tsorcRevamp:ArtoriasNovaDistortion";
         const int NovaDistortionFullRadiusLeadTicks = 60;
-        // TriadShockwave.fx normalizes distance by half the screen width; 1/800 matches the same
-        // world-px-to-screen-fraction calibration DespawnFlash's ShockwaveEffect uses (radius / 800).
-        const float NovaDistortionRadiusScale = 1f / 800f;
         const float NovaDistortionMaxOpacity = 0.55f;
+        // The charge fireball's counter-rotating second layer: 0.5 rad/s (~12.5s a turn), at 45% of the main
+        // layer's opacity so it reads as a sheer veil turning over it rather than a second fireball.
+        const float NovaCounterSpinPerSecond = 0.5f;
+        const float NovaCounterLayerOpacity = 0.45f;
 
         protected override bool CanNova => true;
         protected override int NovaChargeTicks => 4 * 60;
@@ -2745,8 +2786,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 float growT = MathHelper.Clamp(elapsed / (float)growTicks, 0f, 1f);
                 float ringRadius = radius * growT;
                 float ringOpacity = MathHelper.Lerp(0f, NovaDistortionMaxOpacity, growT);
+
+                // TriadShockwave.fx puts its ring at uProgress * uScreenResolution.x / 2, and ScreenShaderData passes
+                // uScreenResolution as the VISIBLE WORLD size (screen / zoom). So a ring of ringRadius world px needs
+                // uProgress = 2 * ringRadius * zoom / screenWidth. A fixed radius/800 only matched a 1600px-wide
+                // screen at zoom 1, and drew the ring 1.2x the blast at 1920 and 1.6x at 2560.
+                float zoom = Main.GameViewMatrix.Zoom.X;
+                float ringProgress = 2f * ringRadius * zoom / Main.screenWidth;
                 Filters.Scene[NovaDistortionFilter].GetShader().UseTargetPosition(NPC.Center)
-                    .UseProgress(ringRadius * NovaDistortionRadiusScale).UseOpacity(ringOpacity).UseIntensity(1f);
+                    .UseProgress(ringProgress).UseOpacity(ringOpacity).UseIntensity(1f);
             }
 
             // Sparse physical motes complement the shader without obscuring its exact disc.
@@ -2798,7 +2846,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int _abyssShardDominoDir;
         Vector2 _abyssShardAnchor;
 
-        const int AbyssShardDamage = 90;
+        const int AbyssShardDamage = 170;
         const int AbyssShardDominoGapTicks = 10;
         const int AbyssShardWaveGapTicks = 60;
         const float AbyssShardSpacing = 48f;
@@ -2894,7 +2942,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         enum HomingVolleyVariant { StaggeredFan, PincerSplit, LatticeSnap }
         HomingVolleyVariant _homingVolleyVariant;
 
-        const int HomingVolleyOrbDamage = 75;
+        const int HomingVolleyOrbDamage = 150;
         const float HomingVolleyOrbSpeed = 8.5f;
         const int HomingVolleyCurveTicks = 16;
 
@@ -3029,7 +3077,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // ── Boomerang Crescent: 2 variants, both using the shared overhead-chop launch ──────────
-        const int BoomerangDamage = 75;
+        const int BoomerangDamage = 120;
         const float BoomerangSpeed = 7f;
 
         protected override bool CanBoomerang => true;
@@ -3121,7 +3169,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float _spiralFanBaseAngle;
         float _spiralFanDir;
 
-        const int SpiralFanShotDamage = 70;
+        const int SpiralFanShotDamage = 110;
         const float SpiralFanShotSpeed = 8.5f;
         // Telegraph dust distance from Artorias's centre, doubled from the old 46px blade-hugging arc
         // (read as too small for a volley that fills the screen). Jitter doubled with it (6 -> 12).

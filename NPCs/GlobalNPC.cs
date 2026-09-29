@@ -1477,6 +1477,9 @@ namespace tsorcRevamp.NPCs
         // ~16-24 = routes around local dead ends (needs radius >= dead-end depth); 40-50 = solves mazes.
         // Smaller is both dumber and cheaper. NOTE: size != intelligence (size -> clearance, handled automatically).
         public int NavSearchRadius = 0;
+        // Patrol re-aggro radius in PIXELS that ignores LOS (a boss "hearing" a nearby player through walls). 0 = off.
+        // Still requires a complete A* route, so an unreachable player can't loop give-up -> re-aggro forever.
+        public float RouteReaggroRange = 0f;
         // May this enemy climb ropes (SF4 only)? Default OFF — opt-in per enemy. Puppets default it ON, and the
         // TibianValkyrieSmart4 rope testbed sets it. A giant beast grabbing a rope looks wrong, hence default off.
         public bool CanUseRopes = false;

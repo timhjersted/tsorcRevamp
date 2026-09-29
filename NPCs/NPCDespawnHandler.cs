@@ -79,6 +79,23 @@ namespace tsorcRevamp.NPCs
 
         public bool IsDespawning => despawnTime >= 0;
 
+        /// <summary>Start the same 240-tick fade-out a party wipe uses, for an encounter the NPC's own AI has
+        /// abandoned. TargetAndDespawn then runs the fade and the final DespawnedByHandler removal, so a dynamic
+        /// event sees it as a failed (resettable) event. Broadcast from the server/singleplayer only.</summary>
+        public void BeginDespawn(bool broadcastText)
+        {
+            if (despawnTime >= 0)
+            {
+                return;
+            }
+
+            if (broadcastText && despawnText != null)
+            {
+                UsefulFunctions.BroadcastText(despawnText, despawnTextColor);
+            }
+            despawnTime = 240;
+        }
+
         ///<summary> 
         ///Handles all targeting and despawning.
         ///</summary>         

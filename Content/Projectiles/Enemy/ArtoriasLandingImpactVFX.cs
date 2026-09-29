@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -74,7 +75,22 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void AI()
         {
-            if (Main.dedServ || !Main.rand.NextBool(2))
+            if (Main.dedServ)
+                return;
+
+            // Ground-slam thud, once per impact: the same Hollow Knight landing OwlFather's LeapSlam plays. Every
+            // Artorias slam that hits the ground (Ground Pound, Jump Slash, Flip Slash) spawns exactly one of these,
+            // and each client runs this AI, so all players hear it. localAI[0] = "already played", unsynced on purpose.
+            if (Projectile.localAI[0] == 0f)
+            {
+                Projectile.localAI[0] = 1f;
+                SoundEngine.PlaySound(
+                    new SoundStyle("tsorcRevamp/Sounds/HollowKnight/false_knight_land_1st_time")
+                        with { Volume = 0.42f, Pitch = 0.18f },
+                    Projectile.Center);
+            }
+
+            if (!Main.rand.NextBool(2))
                 return;
 
             // Motes scatter across the whole footprint, so a 3x impact still reads as one burst, not a thin puff.

@@ -92,6 +92,11 @@ namespace tsorcRevamp.NPCs.Puppets
         public float DamageMult;
         public float ReachMult;
         public float ForwardPushMult;  // 0 = stationary; >0 = hop/dash scaled by TopSpeed
+        /// <summary>Weighted swings only: px the wielder steps forward across the step, shaped like the blade -
+        /// speed ramps up through the ease-in, peaks on the strike, and decays with the follow-through - instead of
+        /// the engine's planted brake. Solved against the step's real length, so a faster tempo covers the same
+        /// ground. 0 = off (constant ForwardPushMult, or the brake). Takes precedence over ForwardPushMult.</summary>
+        public float StepInDistance;
         /// <summary>How fast the visual arc sweeps, for aim-swing pilot puppets only. >1 = faster
         /// (shorter swing window), &lt;1 = slower. The swing then plays over AttackTicks / SwingSpeedMult
         /// instead of being floored to the weapon's useAnimation. 1 = play over AttackTicks as-is.</summary>
