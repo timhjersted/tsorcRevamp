@@ -128,12 +128,12 @@ namespace tsorcRevamp.Content.Items.Potions.StarlightShard
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             Player player = Main.LocalPlayer;
-            float RestorationPercentPerSecond = BaseRestorationPercent * (1f + ((float)player.manaRegenBonus / 10f));
-            int RestorationDuration = (int)(BaseDuration * ((player.manaRegenBuff ? 1.5f : 1f) + player.manaRegenDelayBonus));
-            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
-            if (ttindex != -1)
+            float restorationPercentPerSecond = BaseRestorationPercent * (1f + ((float)player.manaRegenBonus / 10f));
+            int restorationDuration = (int)(BaseDuration * ((player.manaRegenBuff ? 1.5f : 1f) + player.manaRegenDelayBonus));
+            int ttIndex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+            if (ttIndex != -1)
             {
-                tooltips.Insert(ttindex, new TooltipLine(Mod, "Formatting", Language.GetTextValue("Mods.tsorcRevamp.Items.StarlightShard.Restoration").FormatWith(RestorationPercentPerSecond, RestorationDuration)));
+                tooltips.Insert(ttIndex, new TooltipLine(Mod, "Formatting", Language.GetTextValue(Tooltip.Key + "0").FormatWith(restorationPercentPerSecond, restorationDuration)));
             }
         }
 

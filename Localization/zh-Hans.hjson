@@ -5304,7 +5304,7 @@ Mods: {
 					as if it were what remains of the soul
 					{$CommonItemTooltip.RestoresLife}({$CommonItemTooltip.SecondDuration@1})
 					''' */
-				// Sickness: Inflicts potion sickness({$CommonItemTooltip.SecondDuration})
+				// Tooltip0: Inflicts potion sickness({$CommonItemTooltip.SecondDuration})
 			}
 
 			StarlightShardItem: {
@@ -5315,7 +5315,7 @@ Mods: {
 					alike to the Cerulean Flask
 					Does not inflict Mana Sickness
 					''' */
-				// Restoration: Restores {0}% of maximum mana per second for {1} seconds
+				// Tooltip0: Restores {0}% of maximum mana per second for {1} seconds
 			}
 
 			MushroomSkewer: {
@@ -5691,7 +5691,7 @@ Mods: {
 					stones brightens with the passage of time
 					{$CommonItemTooltip.RestoresLife}({$CommonItemTooltip.SecondDuration@1})
 					''' */
-				// Sickness: Inflicts potion sickness({$CommonItemTooltip.SecondDuration})
+				// Tooltip0: Inflicts potion sickness({$CommonItemTooltip.SecondDuration})
 			}
 
 			ShockwavePotion: {

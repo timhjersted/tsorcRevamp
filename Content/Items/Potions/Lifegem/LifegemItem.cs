@@ -8,19 +8,17 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.Potions.Lifegem
 {
     class LifegemItem : ModItem
     {
-        public static int DurationInSeconds = 12;
-        public static int HealingDivisor = 8;
-        public static int TotalHPRestoration = DurationInSeconds * 60 / HealingDivisor;
-        public static int SicknessBaseDuration = 60;
+        public const int DurationInSeconds = 12;
+        public const int HealingDivisor = 8;
+        public const int TotalHPRestoration = DurationInSeconds * 60 / HealingDivisor;
+        public const int SicknessBaseDuration = 60;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(TotalHPRestoration, DurationInSeconds);
-        public override void SetStaticDefaults()
-        {
-        }
 
         public override void SetDefaults()
         {
@@ -145,15 +143,15 @@ namespace tsorcRevamp.Content.Items.Potions.Lifegem
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            int Sickness = SicknessBaseDuration;
+            int sickness = SicknessBaseDuration;
             if (Main.LocalPlayer.pStone)
             {
-                Sickness = SicknessBaseDuration / 4 * 3;
+                sickness = SicknessBaseDuration / 4 * 3;
             }
             int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip4");
             if (ttindex != -1)
             {
-                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Formatting", Language.GetTextValue("Mods.tsorcRevamp.Items.Lifegem.Sickness").FormatWith(Sickness)));
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Formatting", Language.GetTextValue(Tooltip.Key + "0").FormatWith(sickness)));
             }
         }
         public override void AddRecipes()
