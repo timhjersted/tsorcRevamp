@@ -200,6 +200,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
                     int raisedRegenPct = (int)Math.Round(tsorcRevampActiveShieldPlayer.BlockStaminaRegenMult * 100f);
                     tooltips.Add(new TooltipLine(Mod, "ActiveShieldRegen", Language.GetTextValue(Key + "Regen", raisedRegenPct)) { OverrideColor = bodyColor });
                 }
+                tooltips.Add(new TooltipLine(Mod, "ActiveShieldOneShieldLimit", Language.GetTextValue(Key + "OneShieldLimit")) { OverrideColor = bodyColor });
             }
             else
             {

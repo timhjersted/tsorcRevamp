@@ -75,6 +75,23 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
         private static void HoldBody(NPC npc, tsorcRevampGlobalNPC globalNPC, bool committed)
         {
+            // The tongue bypasses FighterAI, which normally ticks these i-frame timers down. Cancel any evasion
+            // already in progress when the tongue takes over so the basilisk cannot flicker or stay invulnerable.
+            if (globalNPC.DodgeTimer > 0 || globalNPC.DodgeRecoveryTimer > 0
+                || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0)
+            {
+                globalNPC.DodgeTimer = 0;
+                globalNPC.DodgeRecoveryTimer = 0;
+                globalNPC.DodgeDirection = 0;
+                globalNPC.QuickStepTimer = 0;
+                globalNPC.QuickStepRecoveryTimer = 0;
+                npc.rotation = 0f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    npc.netUpdate = true;
+                }
+            }
+
             npc.velocity.X *= 0.75f;
             if (npc.velocity.Y == 0f)
             {

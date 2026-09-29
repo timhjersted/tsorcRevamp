@@ -361,6 +361,11 @@ namespace tsorcRevamp.Content.Items
             }
 
 
+            if (item.type == ItemID.SlimySaddle && !NPC.downedQueenBee)
+            {
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.QueenBeeCursed")));
+            }
+
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 if (item.type == ItemID.ObsidianSkinPotion || item.type == ItemID.WaterWalkingPotion)
@@ -398,10 +403,6 @@ namespace tsorcRevamp.Content.Items
                 if (tsorcRevamp.RestrictedHooks.Contains(item.type) && !NPC.downedBoss3)
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Cursed")));
-                }
-                if (item.type == ItemID.SlimySaddle && !NPC.downedQueenBee)
-                {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.QueenBeeCursed")));
                 }
                 if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                 {

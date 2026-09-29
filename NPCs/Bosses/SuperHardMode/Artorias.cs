@@ -79,6 +79,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // entering either FleeToHeal or Healing.
         protected override int EstusChargesMax => 0;
 
+        // He keeps pursuing through a sword wind-up instead of planting: the engine's telegraph brake (0.8x/tick) is
+        // skipped while the target is still ahead of his locked facing and more than WindupPursuitStopDistance away,
+        // so the navigator's normal chase carries on. It still brakes once the target is behind him (a roll through
+        // after the flash - no moonwalking) or already inside that gap (no walking into them). Every other melee
+        // phase keeps the brake.
+        const float WindupPursuitStopDistance = 48f;
+        protected override bool SlowDownBeforeMelee
+        {
+            get
+            {
+                bool inSwordWindup = Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeTelegraph;
+                if (!inSwordWindup || !NPC.HasValidTarget)
+                {
+                    return true;
+                }
+
+                Player target = Main.player[NPC.target];
+                float horizontalGap = target.Center.X - NPC.Center.X;
+                bool targetAhead = Math.Sign(horizontalGap) == NPC.direction;
+                bool roomToClose = Math.Abs(horizontalGap) > WindupPursuitStopDistance;
+                bool keepPursuing = targetAhead && roomToClose;
+                return !keepPursuing;
+            }
+        }
+
         /// <summary>Swing tempo for this wielder's combos (1 = Artorias). Multiplies every step's
         /// SwingSpeedMult (the authored arc clock) and divides the recovery and inter-step pause floor, so a
         /// faster wielder is faster everywhere without re-authoring the shared Greatsword table.</summary>
@@ -658,9 +683,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return Phase == AttackPhase.TendrilTelegraph || Phase == AttackPhase.TendrilReach;
         }
 
-        const int PierceContactDamage   = 120;  // plain (non-impaling) pierce dash contact
-        const int PierceStabDamage      = 120; // stab variant's initial impale hit
-        const int PierceFlickDamage     = 125; // second hit dealt as the target is flicked off the blade
+        const int PierceContactDamage   = 150;  // plain (non-impaling) pierce dash contact
+        const int PierceStabDamage      = 150; // stab variant's initial impale hit
+        const int PierceFlickDamage     = 175; // second hit dealt as the target is flicked off the blade
         const int PierceStabHealAmount  = 5000;
         const float PierceFlickDistance = 10 * 16f; // 10 tiles
         const float ImpaleSwordReach    = 70f;
@@ -1799,8 +1824,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Lifts the release point this far above the feet: the blade tip is buried in the floor at contact.
         const float FlipSlashOrbReleaseHeight = 12f;
         const int FlipBlastDamage = 110;
-        const int FlipPillarDamage = 90;
-        const int FlipBlazeDamage = 70;
+        const int FlipPillarDamage = 130;
+        const int FlipBlazeDamage = 150;
         const float FlipBlazeSpeed = 5f;
 
         protected override void OnFlipSlashStrikeContact()

@@ -108,15 +108,14 @@ namespace tsorcRevamp.NPCs
         }
 
         /// <summary>
-        /// The basilisk family (Walker / Shifter / Hunter): reptilian spitters that hop and dash. On hit they hop or
-        /// dash away, or i-frame quick-step through it. Teleporters (e.g. Walker's limited blinks) can also set
+        /// The basilisk family (Walker / Shifter / Hunter): reptilian spitters that hop and dash away on hit.
+        /// Teleporters (e.g. Walker's limited blinks) can also set
         /// <c>EvasiveTeleportAway</c> on top.
         /// </summary>
         public static void Basilisk(tsorcRevampGlobalNPC globalNPC)
         {
             globalNPC.EvasiveRetreatJump = true;
             globalNPC.EvasiveRetreatDash = true;
-            globalNPC.EvasiveQuickStep = true;
         }
 
         public static void BasiliskHunterAttackJumps(tsorcRevampGlobalNPC globalNPC)

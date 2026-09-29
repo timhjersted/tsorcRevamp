@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             // Step 6 beast levers: lurk (Wander) around where it lost the player when it gives up.
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
             globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
-            // Evasive on-hit: hop/dash away or i-frame quick-step.
+            // Evasive on-hit: hop/dash away without an i-frame dodge.
             EvasiveProfile.Basilisk(globalNPC);
             // Poise (a stagger cancels the wind-up) + knockback flinch are tuned centrally in
             // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) - not here.
@@ -176,7 +176,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 return;
             }
 
-            tsorcRevampAIs.FighterAI(NPC, 1, .03f, 0.2f, false, 10, false, SoundID.Mummy, 1000, 0.3f, 1.5f, true);
+            tsorcRevampAIs.FighterAI(NPC, 1, .03f, 0.2f, false, 10, false, SoundID.Mummy, 1000, 0.3f, 1.5f, true, canDodgeroll: false);
 
             Player player = Main.player[NPC.target];
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();

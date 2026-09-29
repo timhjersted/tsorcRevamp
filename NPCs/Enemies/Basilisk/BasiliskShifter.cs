@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             // Step 6 beast levers: lurk (Wander) around where it lost the player when it gives up.
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
             globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
-            // Evasive on-hit: hop/dash away or i-frame quick-step.
+            // Evasive on-hit: hop/dash away without an i-frame dodge.
             EvasiveProfile.Basilisk(globalNPC);
             // Re-adds the old main-attack vertical hop and low-HP rising-hover final hop.
             EvasiveProfile.BasiliskShifterAttackJumps(globalNPC);
@@ -149,7 +149,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             }
 
             Player player = Main.player[NPC.target];
-            tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: false, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.5f, enrageTopSpeed: 2);
+            tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: false, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.5f, enrageTopSpeed: 2, canDodgeroll: false);
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             bool lowHP = NPC.life < NPC.lifeMax / 2;
 

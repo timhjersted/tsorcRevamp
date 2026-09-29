@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             globalNPC.NavSearchRadius = 70; // Phase 2: SmartFighter4AI movement
             globalNPC.CanTeleport = true;        // was WeakTeleport: limited re-acquire blinks
             globalNPC.TeleportMaxCharges = 2;    // 2 non-recharging charges, Normal style
-            // Evasive on-hit: hop/dash away or i-frame quick-step; can also blink away (limited charges above).
+            // Evasive on-hit: hop/dash away or blink away (limited charges above); no i-frame dodge.
             EvasiveProfile.Basilisk(globalNPC);
             globalNPC.EvasiveTeleportAway = true;
             globalNPC.EvasiveBasiliskWalkerCloseBackhop = true;
@@ -127,7 +127,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 return;
             }
 
-            tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: false, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2);
+            tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: false, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2, canDodgeroll: false);
 
             //MAKE SOUND WHEN JUMPING/HOVERING
             if (Main.rand.NextBool(12) && NPC.velocity.Y <= -1f)
