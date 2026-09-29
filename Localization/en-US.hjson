@@ -11513,6 +11513,8 @@ Mods: {
 			ProximityMineExplosion.DisplayName: Proximity Mine Explosion
 			ProximityMineRocket.DisplayName: Proximity Mine Rocket
 			FlameSpiritRush.DisplayName: Flame Spirit Rush
+			EssenceThiefDelivery.DisplayName: Essence Thief Delivery
+			StardustDelivery.DisplayName: Stardust Delivery
 		}
 
 		NPCs: {

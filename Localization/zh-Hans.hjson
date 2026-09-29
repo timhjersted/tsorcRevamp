@@ -1752,6 +1752,18 @@ Mods: {
 					'''
 			}
 
+			GhostStep: {
+				// DisplayName: Ghost Step
+				/* Tooltip:
+					'''
+					[c/ffbf00:Your dodge roll becomes a phasing dash]
+					Grants {0} more frames of invulnerability and carries you about {1} tiles farther
+					Release the direction key to stop dead, or hold it to carry your momentum into a run
+					Stamina begins recovering {2} frames sooner after you spend it
+					Those who wear it are said to slip between one heartbeat and the next
+					''' */
+			}
+
 			SilverSerpentRingItem: {
 				// DisplayName: Covetous Silver Serpent Ring
 				/* Tooltip:
@@ -11279,9 +11291,9 @@ Mods: {
 			// YianBlaze2.DisplayName: Yian Blaze2
 			// YianBlaze.DisplayName: Yian Blaze
 			// DiamondCrusherShockwave.DisplayName: Diamond Crusher Shockwave
-			// PuppetMeleeHitbox.DisplayName: Puppet Melee Hitbox
-			// PuppetThrowingStar.DisplayName: Puppet Throwing Star
-			// PuppetCrossbowBolt.DisplayName: Puppet Crossbow Bolt
+			// PuppetMeleeHitbox.DisplayName: Melee Strike
+			// PuppetThrowingStar.DisplayName: Throwing Star
+			// PuppetCrossbowBolt.DisplayName: Crossbow Bolt
 			// PuppetThrownDualBladedAxe.DisplayName: Thrown Dual-Bladed Axe
 			// GreatMagicMirrorRangeRing.DisplayName: Great Magic Mirror Range Ring
 			// HealSpriteVFX.DisplayName: Heal Sprite V F X
@@ -11485,6 +11497,8 @@ Mods: {
 			// ProximityMineExplosion.DisplayName: Proximity Mine Explosion
 			// ProximityMineRocket.DisplayName: Proximity Mine Rocket
 			// FlameSpiritRush.DisplayName: Flame Spirit Rush
+			// EssenceThiefDelivery.DisplayName: Essence Thief Delivery
+			// StardustDelivery.DisplayName: Stardust Delivery
 		}
 
 		NPCs: {
