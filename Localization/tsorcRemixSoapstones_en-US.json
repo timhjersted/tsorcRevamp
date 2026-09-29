@@ -1082,11 +1082,9 @@
   "style": 1
 }
 {
-  "text": "\u0022Hunter potions.... hmm...\u0022",
   "tileX": 3976,
   "tileY": 896,
-  "textWidth": 320,
-  "style": 1
+  "retired": true
 }
 {
   "text": "You flip the switch and hear a faint rumble above and perhaps 500 yards to the East, near the Earth Temple entrance perhaps.",

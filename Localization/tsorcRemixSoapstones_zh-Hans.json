@@ -1056,11 +1056,9 @@
   "style": 1
 }
 {
-  "text": "\u0022嗯…狩猎药水…\u0022",
   "tileX": 3976,
   "tileY": 896,
-  "textWidth": 170,
-  "style": 1
+  "retired": true
 }
 {
   "text": "前方的道路被三块大琥珀封住，它们秘密散布在整个世界中。 --NEWLINE   --NEWLINE 每个宝石锁中都有线索：一个在最底部有火焰的魔法地下 --NEWLINE   --NEWLINE 一个在冰冷水域的深处，最后一个在贫瘠的洞穴和旁边的地下绿洲。",

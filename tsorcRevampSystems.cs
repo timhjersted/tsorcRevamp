@@ -596,6 +596,7 @@ namespace tsorcRevamp
             {
                 mod._spawnPointConfigUI?.Update(gameTime);
             }
+            EnemyDebugTome.UpdatePlacementInput();
 
             if (MapMarkersUIState.Visible)
             {

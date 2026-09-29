@@ -976,11 +976,9 @@
   "style": 1
 }
 {
-  "text": "\u0022嗯…狩猎药水…\u0022",
   "tileX": 3976,
   "tileY": 896,
-  "textWidth": 170,
-  "style": 1
+  "retired": true
 }
 {
   "text": "你拨动开关，听到上面有微弱的隆隆声。 --NEWLINE   --NEWLINE 似是从东边很远的地方传来的，大概是在大地神庙入口附近。",

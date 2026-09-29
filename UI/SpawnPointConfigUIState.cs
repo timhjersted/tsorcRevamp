@@ -24,6 +24,11 @@ namespace tsorcRevamp.UI
         private UIList npcList;
         private UIScrollbar scrollbar;
         private UIText eventDetailsText;
+        private UIText deleteButton;
+        private UIText closeButton;
+        private bool dragging;
+        private Vector2 dragOffset;
+        private bool previousLeft;
 
         private UIText saveLabel;
         private UIText saveValue;
@@ -233,7 +238,7 @@ namespace tsorcRevamp.UI
             panel.Append(eventDetailsText);
 
             // Red Delete button
-            UIText deleteButton = new UIText("[ Delete Event ]", 0.8f);
+            deleteButton = new UIText("[ Delete Event ]", 0.8f);
             deleteButton.TextColor = Color.Crimson;
             deleteButton.Left.Set(190, 0);
             deleteButton.Top.Set(10, 0);
@@ -254,7 +259,7 @@ namespace tsorcRevamp.UI
             panel.Append(deleteButton);
 
             // Close button "X"
-            UIText closeButton = new UIText("X", 0.9f);
+            closeButton = new UIText("X", 0.9f);
             closeButton.Left.Set(370, 0); // Far right of 400px panel
             closeButton.Top.Set(10, 0);
             closeButton.TextColor = Color.White;
@@ -871,6 +876,38 @@ namespace tsorcRevamp.UI
             }
         }
 
+        private void HandleHeaderDrag()
+        {
+            CalculatedStyle bounds = panel.GetDimensions();
+            Rectangle header = new Rectangle((int)bounds.X, (int)bounds.Y, (int)bounds.Width, 30);
+            Point mouse = Main.MouseScreen.ToPoint();
+            bool overButton = deleteButton.GetDimensions().ToRectangle().Contains(mouse) ||
+                closeButton.GetDimensions().ToRectangle().Contains(mouse);
+
+            if (!dragging && Main.mouseLeft && !previousLeft && header.Contains(mouse) && !overButton)
+            {
+                dragging = true;
+                dragOffset = Main.MouseScreen - new Vector2(bounds.X, bounds.Y);
+                Main.mouseLeftRelease = false;
+            }
+
+            if (!dragging) return;
+
+            Main.LocalPlayer.mouseInterface = true;
+            if (!Main.mouseLeft)
+            {
+                dragging = false;
+                return;
+            }
+
+            Vector2 position = Main.MouseScreen - dragOffset;
+            position.X = MathHelper.Clamp(position.X, 0f, Math.Max(0f, Main.screenWidth - panel.Width.Pixels));
+            position.Y = MathHelper.Clamp(position.Y, 0f, Math.Max(0f, Main.screenHeight - panel.Height.Pixels));
+            panel.Left.Set(position.X, 0f);
+            panel.Top.Set(position.Y, 0f);
+            panel.Recalculate();
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -878,6 +915,15 @@ namespace tsorcRevamp.UI
             {
                 Main.LocalPlayer.mouseInterface = true;
             }
+            if (Visible)
+            {
+                HandleHeaderDrag();
+            }
+            else
+            {
+                dragging = false;
+            }
+            previousLeft = Main.mouseLeft;
 
             if (saveStatsFlashTimer > 0)
             {
@@ -1137,6 +1183,8 @@ namespace tsorcRevamp.UI
         public void Show()
         {
             Visible = true;
+            dragging = false;
+            previousLeft = Main.mouseLeft;
             if (searchBar != null)
             {
                 searchBar.Text = "";
@@ -1147,6 +1195,7 @@ namespace tsorcRevamp.UI
         public void Hide()
         {
             Visible = false;
+            dragging = false;
 
             // Clean up edit panel state on close; HideEditPanel also restores search section.
             if (editPanelAttached)

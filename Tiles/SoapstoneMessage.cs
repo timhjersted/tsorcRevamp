@@ -85,5 +85,8 @@ namespace tsorcRevamp.Tiles
         // map (skipped on legacy adventure and remix). tileX/tileY are native expanded-space coords and are
         // placed as-is, bypassing the legacy->expanded MapTile transform entirely.
         public bool expandedOnly { get; set; }
+        // True -> do not place this sign, and remove an existing matching soapstone on world load.
+        // Keep its coordinates in JSON so existing worlds can identify the retired sign.
+        public bool retired { get; set; }
     }
 }

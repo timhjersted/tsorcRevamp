@@ -30,6 +30,10 @@ namespace tsorcRevamp.UI
         // event center and its one NPC to the new tile (rather than creating a new event).
         public DynamicSpawnEvent MovingEvent = null;
         public UIPanel panel;
+        private UIText closeButton;
+        private bool dragging;
+        private Vector2 dragOffset;
+        private bool previousLeft;
 
         // ---- Defaults applied to each newly placed quick-add event ----
         public bool DefSave = false;
@@ -71,7 +75,7 @@ namespace tsorcRevamp.UI
             subtitle.TextColor = Color.DarkGray;
             panel.Append(subtitle);
 
-            UIText closeButton = new UIText("X", 0.9f);
+            closeButton = new UIText("X", 0.9f);
             closeButton.Left.Set(290, 0);
             closeButton.Top.Set(10, 0);
             closeButton.TextColor = Color.White;
@@ -227,10 +231,50 @@ namespace tsorcRevamp.UI
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if (Visible && panel != null && panel.ContainsPoint(Main.MouseScreen))
+            if (!Visible)
+            {
+                dragging = false;
+                previousLeft = Main.mouseLeft;
+                return;
+            }
+
+            if (panel != null && panel.ContainsPoint(Main.MouseScreen))
             {
                 Main.LocalPlayer.mouseInterface = true;
             }
+
+            HandleHeaderDrag();
+            previousLeft = Main.mouseLeft;
+        }
+
+        private void HandleHeaderDrag()
+        {
+            CalculatedStyle bounds = panel.GetDimensions();
+            Rectangle header = new Rectangle((int)bounds.X, (int)bounds.Y, (int)bounds.Width, 30);
+            bool overClose = closeButton.GetDimensions().ToRectangle().Contains(Main.MouseScreen.ToPoint());
+
+            if (!dragging && Main.mouseLeft && !previousLeft && header.Contains(Main.MouseScreen.ToPoint()) && !overClose)
+            {
+                dragging = true;
+                dragOffset = Main.MouseScreen - new Vector2(bounds.X, bounds.Y);
+                Main.mouseLeftRelease = false;
+            }
+
+            if (!dragging) return;
+
+            Main.LocalPlayer.mouseInterface = true;
+            if (!Main.mouseLeft)
+            {
+                dragging = false;
+                return;
+            }
+
+            Vector2 position = Main.MouseScreen - dragOffset;
+            position.X = MathHelper.Clamp(position.X, 0f, Math.Max(0f, Main.screenWidth - panel.Width.Pixels));
+            position.Y = MathHelper.Clamp(position.Y, 0f, Math.Max(0f, Main.screenHeight - panel.Height.Pixels));
+            panel.Left.Set(position.X, 0f);
+            panel.Top.Set(position.Y, 0f);
+            panel.Recalculate();
         }
 
         // Hide entries that can't work as an event encounter: town/friendly NPCs, catchable critters
@@ -288,6 +332,8 @@ namespace tsorcRevamp.UI
         public void Show()
         {
             Visible = true;
+            dragging = false;
+            previousLeft = Main.mouseLeft;
 
             // Default world condition to whichever world the player is currently in (only the first time).
             if (!defaultsInitialized)
@@ -315,6 +361,7 @@ namespace tsorcRevamp.UI
         public void Hide()
         {
             Visible = false;
+            dragging = false;
             SelectedNpcType = 0;
             QuickAddMode = false;
             MovingEvent = null;

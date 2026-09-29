@@ -1266,6 +1266,11 @@ namespace tsorcRevamp
 
                 foreach (SignJSONSerializable sign in texts)
                 {
+                    if (sign.retired)
+                    {
+                        continue;
+                    }
+
                     //Signs retired on the expanded map only. Legacy adventure and the expanded map share this JSON,
                     //so deleting the entry would drop the sign from both; this skips placement on expanded alone.
                     if (sign.skipOnExpanded && ExpandedWorldTransform.Active)
@@ -1354,6 +1359,11 @@ namespace tsorcRevamp
                 int skippedOccupiedCount = 0;
                 foreach (SignJSONSerializable sign in texts)
                 {
+                    if (sign.retired)
+                    {
+                        continue;
+                    }
+
                     //Retired on expanded (see the fresh-place path above). Skipped before the coord mapping so a
                     //re-sync never re-places one of these on a world that already dropped them.
                     if (sign.skipOnExpanded && ExpandedWorldTransform.Active)
@@ -1423,6 +1433,28 @@ namespace tsorcRevamp
                 }
                 if (placedCount > 0 || skippedOccupiedCount > 0)
                     mod.Logger.Info($"Soapstone re-sync: placed {placedCount} new, skipped {skippedOccupiedCount} occupied.");
+
+                // Keep retired records in JSON so existing worlds can remove the old sign in every map variant.
+                // Match its position and tile-entity type; saved text may be from a different language.
+                int retiredSignCount = 0;
+                foreach (SignJSONSerializable sign in texts)
+                {
+                    if (!sign.retired)
+                    {
+                        continue;
+                    }
+
+                    Microsoft.Xna.Framework.Point retired = sign.expandedOnly
+                        ? new Microsoft.Xna.Framework.Point(sign.tileX, sign.tileY)
+                        : ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
+                    if (TileUtils.TryGetTileEntityAs(retired.X, retired.Y, out SoapstoneTileEntity _))
+                    {
+                        WorldGen.KillTile(retired.X, retired.Y, noItem: true);
+                        retiredSignCount++;
+                    }
+                }
+                if (retiredSignCount > 0)
+                    mod.Logger.Info($"Soapstone re-sync: removed {retiredSignCount} retired soapstone(s).");
 
                 // Stale-sign sweep, expanded map only. A world played BEFORE a sign was retired (skipOnExpanded)
                 // or relocated (override table) still has the old soapstone sitting there, and the loop above only
@@ -2247,6 +2279,11 @@ namespace tsorcRevamp
                 List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
                 foreach (SignJSONSerializable sign in texts)
                 {
+                    if (sign.retired)
+                    {
+                        continue;
+                    }
+
                     //Same two rules as BuildSoapstones: signs retired on the expanded map are skipped, and the
                     //legacy (2000-space) coords are transformed (+200/+400) so they land where the map shifted them.
                     //Without this the dev reload placed every sign 200 tiles too high on the expanded world.

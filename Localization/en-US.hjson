@@ -13423,7 +13423,22 @@ Mods: {
 					AdventureMode: Adventure Mode
 					GameplayChanges: Gameplay Changes
 					GameplayTweaks: Gameplay Tweaks
+					Multiplayer: Multiplayer
 					Experimental: Experimental
+				}
+
+				PerPlayerChestLootMode: {
+					Label: Per-Player Chest Loot
+					Tooltip:
+						'''
+						Every player gets their own copy of each chest's loot. A chest you have looted
+						stays looted for you, but other players still find it full until they loot it themselves.
+						Your copy is take-only. Chests you place yourself and the storage chests in the
+						Ashen Peak village are shared as normal.
+						Chests already emptied before this was turned on stay empty.
+						Auto: on for any world that has ever been hosted in multiplayer, including when
+						you later play it alone. On: every world. Off: no world. Defaults to Auto.
+						'''
 				}
 
 				SummonerRework: {
@@ -13823,6 +13838,25 @@ Mods: {
 						Custom Dark Souls hurt/death voices, escalating to more pained variants
 						as your health drops, plus a separate dedicated death voice.
 						'''
+				}
+
+				Tooltip: ""
+			}
+
+			PerPlayerChestLootMode: {
+				Auto: {
+					Label: Auto
+					Tooltip: On for any world that has ever been hosted in multiplayer, and stays on for that world.
+				}
+
+				On: {
+					Label: On
+					Tooltip: On in every world, singleplayer included.
+				}
+
+				Off: {
+					Label: Off
+					Tooltip: Chests are shared as normal in every world.
 				}
 
 				Tooltip: ""

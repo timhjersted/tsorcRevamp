@@ -2961,6 +2961,26 @@ namespace tsorcRevamp
                     break;
                 }
 
+                case tsorcPacketID.RequestChestTemplate:
+                {
+                    Systems.PerPlayerChestLootSystem.ReceiveTemplateRequest(reader, whoAmI);
+                    break;
+                }
+
+                case tsorcPacketID.ChestTemplate:
+                {
+                    Systems.PerPlayerChestLootSystem.ReceiveTemplate(reader);
+                    break;
+                }
+
+                case tsorcPacketID.SyncPlayerPlacedChest:
+                {
+                    short chestX = reader.ReadInt16();
+                    short chestY = reader.ReadInt16();
+                    Systems.PerPlayerChestLootSystem.PlayerPlacedChests.Add(new Point16(chestX, chestY));
+                    break;
+                }
+
                 default:
                     {
                         Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
@@ -5170,6 +5190,12 @@ namespace tsorcRevamp
         public const byte ReportBlightBuildup = 35;
         /// <summary>Server meter snapshot and sequenced 200%-max-health proc instruction.</summary>
         public const byte SyncBlightState = 36;
+        /// <summary>Per-Player Chest Loot, client → server: send me this chest's template (first open only).</summary>
+        public const byte RequestChestTemplate = 37;
+        /// <summary>Per-Player Chest Loot, server → requesting client: the chest's 40 template items.</summary>
+        public const byte ChestTemplate = 38;
+        /// <summary>Per-Player Chest Loot, server → clients: a player placed this chest, so it stays shared.</summary>
+        public const byte SyncPlayerPlacedChest = 39;
     }
 
     //config moved to separate file

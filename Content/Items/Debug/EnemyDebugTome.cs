@@ -9,12 +9,9 @@ namespace tsorcRevamp.Content.Items.Debug
     {
         public static bool JustClosedUI = false;
 
-        // Set by CanUseItem when a placement click was rejected for a transient reason; HoldItem runs after vanilla's
-        // releaseUseItem = !controlUseItem, so it can re-arm the click for next frame instead of losing it.
-        private static bool RetryPlacementClick = false;
-
-        // One chat notice per press, so a held button retrying every frame doesn't spam chat.
-        private static bool PlacementBlockReported = false;
+        // Track physical presses independently of vanilla item use, which can discard a click after UI hover.
+        private static bool previousLeft;
+        private static bool previousRight;
 
 
         public override void SetStaticDefaults()
@@ -44,6 +41,13 @@ namespace tsorcRevamp.Content.Items.Debug
             var configUI = ModContent.GetInstance<tsorcRevamp>().SpawnPointConfigUI;
             var enemyUI = ModContent.GetInstance<tsorcRevamp>().EnemySelectionUI;
 
+            // Selected-enemy clicks are handled in UpdatePlacementInput. Vanilla item use can reject a press
+            // before CanUseItem runs (or leave releaseUseItem false after UI interaction).
+            if (enemyUI.SelectedNpcType != 0)
+            {
+                return false;
+            }
+
             if (configUI.Visible && configUI.panel.ContainsPoint(Main.MouseScreen))
             {
                 return false;
@@ -54,49 +58,13 @@ namespace tsorcRevamp.Content.Items.Debug
                 return false;
             }
 
-            // Vanilla item use is edge-triggered: a false here on the press frame sets releaseUseItem = false and
-            // the whole click is dead until the button is released. mouseInterface can be left over from last frame's
-            // draw pass (it's only reset in DoDraw), which silently ate placement clicks in open world. When an NPC is
-            // on the cursor, re-arm via RetryPlacementClick (applied in HoldItem) so the click lands once it clears.
-            bool placingNpc = enemyUI.SelectedNpcType != 0 && player.altFunctionUse != 2;
-            string blockReason = null;
-
-            if (JustClosedUI)
+            if (JustClosedUI || player.mouseInterface)
             {
-                blockReason = "a debug menu just closed (release and click again)";
-            }
-            else if (player.mouseInterface)
-            {
-                blockReason = "the cursor was over another UI element";
-
-                if (placingNpc)
-                {
-                    RetryPlacementClick = true;
-                }
-            }
-
-            if (blockReason != null)
-            {
-                if (placingNpc && !PlacementBlockReported)
-                {
-                    Main.NewText("Placement click held: " + blockReason + ".", Color.Orange);
-                    PlacementBlockReported = true;
-                }
-
                 return false;
             }
 
             if (player.altFunctionUse == 2) // Right click
             {
-                if (enemyUI.SelectedNpcType != 0)
-                {
-                    enemyUI.SelectedNpcType = 0;
-                    enemyUI.QuickAddMode = false;
-                    enemyUI.MovingEvent = null;
-                    Main.NewText("Cancelled NPC placement.");
-                    return false;
-                }
-
                 // NOTE: right-click no longer deletes anything (removed placed NPCs / quick-add events). Deletion is
                 // intentionally button-only now (the config panel's delete button) to prevent accidental loss. If the
                 // config menu is open, swallow the right-click so it can't accidentally spawn a new event mid-edit.
@@ -165,98 +133,7 @@ namespace tsorcRevamp.Content.Items.Debug
             }
             else // Left click
             {
-                // Priority 1: If an NPC is currently selected/grabbed, place it.
-                if (enemyUI.SelectedNpcType != 0)
-                {
-                    // Relocating a single-NPC event: move both the event center and its one NPC to the new tile.
-                    if (enemyUI.MovingEvent != null)
-                    {
-                        var moveEv = enemyUI.MovingEvent;
-                        int moveType = moveEv.Npcs.Count > 0 ? moveEv.Npcs[0].NpcID : enemyUI.SelectedNpcType;
-                        tsorcRevampSystems.GetPlacementTile(moveType, out int tileX, out int tileY);
-
-                        moveEv.CenterX = tileX;
-                        moveEv.CenterY = tileY;
-                        if (moveEv.Npcs.Count > 0)
-                        {
-                            moveEv.Npcs[0].SpawnX = tileX;
-                            moveEv.Npcs[0].SpawnY = tileY;
-                        }
-                        tsorcScriptedEvents.SaveDynamicEvents();
-
-                        enemyUI.SelectedNpcType = 0;
-                        enemyUI.MovingEvent = null;
-
-                        NPC moved = new NPC();
-                        moved.SetDefaults(moveEv.Npcs.Count > 0 ? moveEv.Npcs[0].NpcID : 0);
-                        Main.NewText($"Moved {moved.TypeName} event to ({tileX}, {tileY})");
-                        return true;
-                    }
-
-                    if (enemyUI.QuickAddMode)
-                    {
-                        // Quick Add: each placement becomes its own single-NPC event using the panel defaults.
-                        tsorcRevampSystems.GetPlacementTile(enemyUI.SelectedNpcType, out int tileX, out int tileY);
-
-                        var quickEvent = new DynamicSpawnEvent();
-                        quickEvent.EventID = System.Guid.NewGuid().ToString();
-                        quickEvent.CenterX = tileX;
-                        quickEvent.CenterY = tileY;
-                        quickEvent.Radius = (float)System.Math.Pow(enemyUI.DefRadiusTiles * 16, 2);
-                        quickEvent.TriggerDust = enemyUI.DefDust;
-                        quickEvent.SaveOnCompletion = enemyUI.DefSave;
-                        quickEvent.VisibleRing = enemyUI.DefRing;
-                        quickEvent.WorldCondition = enemyUI.DefWorld ?? "";
-                        quickEvent.MapCondition = enemyUI.DefSpawn ?? "";
-                        quickEvent.SingleNpcMarker = true;
-
-                        var entry = new DynamicSpawnEntry();
-                        entry.NpcID = enemyUI.SelectedNpcType;
-                        entry.NpcName = tsorcScriptedEvents.GetNpcStableName(enemyUI.SelectedNpcType);
-                        entry.SpawnX = tileX;
-                        entry.SpawnY = tileY;
-                        quickEvent.Npcs.Add(entry);
-
-                        tsorcScriptedEvents.DynamicEvents.Add(quickEvent);
-                        tsorcScriptedEvents.SaveDynamicEvents();
-
-                        NPC temp = new NPC();
-                        temp.SetDefaults(entry.NpcID);
-                        Main.NewText($"Quick-added {temp.TypeName} event at ({tileX}, {tileY})");
-
-                        // Keep the enemy on the cursor for rapid repeated placement.
-                        return true;
-                    }
-
-                    if (configUI.Visible && configUI.CurrentEvent != null)
-                    {
-                        // Add NPC to the event
-                        var ev = configUI.CurrentEvent;
-                        var npc = new DynamicSpawnEntry();
-                        npc.NpcID = enemyUI.SelectedNpcType;
-                        npc.NpcName = tsorcScriptedEvents.GetNpcStableName(enemyUI.SelectedNpcType);
-                        tsorcRevampSystems.GetPlacementTile(enemyUI.SelectedNpcType, out int placeX, out int placeY);
-                        npc.SpawnX = placeX;
-                        npc.SpawnY = placeY;
-                        ev.Npcs.Add(npc);
-                        configUI.RefreshList();
-                        tsorcScriptedEvents.SaveDynamicEvents();
-
-                        NPC temp = new NPC();
-                        temp.SetDefaults(npc.NpcID);
-                        Main.NewText($"Placed {temp.TypeName} at ({npc.SpawnX}, {npc.SpawnY})");
-                    }
-                    else
-                    {
-                        Main.NewText("Cannot place NPC: Event settings menu is closed.");
-                    }
-
-                    // Detach from cursor
-                    enemyUI.SelectedNpcType = 0;
-                    return true;
-                }
-
-                // Priority 2: If a multi-NPC event is open, check if clicking on a placed NPC to grab it (move mode).
+                // If a multi-NPC event is open, check if clicking on a placed NPC to grab it (move mode).
                 // Quick-add events are skipped here: their NPC is the marker, so clicking it just opens the event (below).
                 if (configUI.Visible && configUI.CurrentEvent != null && !configUI.CurrentEvent.SingleNpcMarker)
                 {
@@ -380,28 +257,118 @@ namespace tsorcRevamp.Content.Items.Debug
             return true;
         }
 
-        public override void HoldItem(Player player)
+        // Called from ModSystem.UpdateUI after the editor panels update. UIElement hit tests use the current
+        // mouse position, while vanilla's mouseInterface/releaseUseItem can still describe the previous click.
+        internal static void UpdatePlacementInput()
         {
-            // Reset JustClosedUI state as soon as mouse buttons are released
-            if (JustClosedUI && !Main.mouseLeft && !Main.mouseRight)
+            bool leftPressed = Main.mouseLeft && !previousLeft;
+            bool rightPressed = Main.mouseRight && !previousRight;
+            previousLeft = Main.mouseLeft;
+            previousRight = Main.mouseRight;
+
+            Player player = Main.LocalPlayer;
+            if (player.HeldItem.type != ModContent.ItemType<EnemyDebugTome>() || Main.gameMenu || Main.mapFullscreen)
             {
-                JustClosedUI = false;
+                return;
             }
 
-            if (RetryPlacementClick)
+            var mod = ModContent.GetInstance<tsorcRevamp>();
+            var enemyUI = mod.EnemySelectionUI;
+            var configUI = mod.SpawnPointConfigUI;
+            if (enemyUI.SelectedNpcType == 0 || JustClosedUI ||
+                (enemyUI.Visible && enemyUI.panel.ContainsPoint(Main.MouseScreen)) ||
+                (configUI.Visible && configUI.panel.ContainsPoint(Main.MouseScreen)))
             {
-                // Only re-arm while the button is still down; a released button re-arms itself anyway.
-                if (player.controlUseItem)
+                return;
+            }
+
+            if (rightPressed)
+            {
+                enemyUI.SelectedNpcType = 0;
+                enemyUI.QuickAddMode = false;
+                enemyUI.MovingEvent = null;
+                JustClosedUI = true; // Prevent the same press from creating an event in CanUseItem.
+                Main.NewText("Cancelled NPC placement.");
+                return;
+            }
+
+            if (!leftPressed) return;
+
+            if (enemyUI.MovingEvent != null)
+            {
+                var moveEv = enemyUI.MovingEvent;
+                int moveType = moveEv.Npcs.Count > 0 ? moveEv.Npcs[0].NpcID : enemyUI.SelectedNpcType;
+                tsorcRevampSystems.GetPlacementTile(moveType, out int tileX, out int tileY);
+
+                moveEv.CenterX = tileX;
+                moveEv.CenterY = tileY;
+                if (moveEv.Npcs.Count > 0)
                 {
-                    player.releaseUseItem = true;
+                    moveEv.Npcs[0].SpawnX = tileX;
+                    moveEv.Npcs[0].SpawnY = tileY;
                 }
+                tsorcScriptedEvents.SaveDynamicEvents();
 
-                RetryPlacementClick = false;
+                enemyUI.SelectedNpcType = 0;
+                enemyUI.MovingEvent = null;
+                JustClosedUI = true; // Consume this press if item use runs after UpdateUI.
+
+                NPC moved = new NPC();
+                moved.SetDefaults(moveType);
+                Main.NewText($"Moved {moved.TypeName} event to ({tileX}, {tileY})");
+                return;
             }
 
-            if (!Main.mouseLeft)
+            if (enemyUI.QuickAddMode)
             {
-                PlacementBlockReported = false;
+                // Quick Add keeps the selected enemy for the next click.
+                tsorcRevampSystems.GetPlacementTile(enemyUI.SelectedNpcType, out int tileX, out int tileY);
+
+                var quickEvent = new DynamicSpawnEvent();
+                quickEvent.EventID = System.Guid.NewGuid().ToString();
+                quickEvent.CenterX = tileX;
+                quickEvent.CenterY = tileY;
+                quickEvent.Radius = (float)System.Math.Pow(enemyUI.DefRadiusTiles * 16, 2);
+                quickEvent.TriggerDust = enemyUI.DefDust;
+                quickEvent.SaveOnCompletion = enemyUI.DefSave;
+                quickEvent.VisibleRing = enemyUI.DefRing;
+                quickEvent.WorldCondition = enemyUI.DefWorld ?? "";
+                quickEvent.MapCondition = enemyUI.DefSpawn ?? "";
+                quickEvent.SingleNpcMarker = true;
+
+                var entry = new DynamicSpawnEntry();
+                entry.NpcID = enemyUI.SelectedNpcType;
+                entry.NpcName = tsorcScriptedEvents.GetNpcStableName(enemyUI.SelectedNpcType);
+                entry.SpawnX = tileX;
+                entry.SpawnY = tileY;
+                quickEvent.Npcs.Add(entry);
+
+                tsorcScriptedEvents.DynamicEvents.Add(quickEvent);
+                tsorcScriptedEvents.SaveDynamicEvents();
+
+                NPC temp = new NPC();
+                temp.SetDefaults(entry.NpcID);
+                Main.NewText($"Quick-added {temp.TypeName} event at ({tileX}, {tileY})");
+                return;
+            }
+
+            if (configUI.Visible && configUI.CurrentEvent != null)
+            {
+                var npc = new DynamicSpawnEntry();
+                npc.NpcID = enemyUI.SelectedNpcType;
+                npc.NpcName = tsorcScriptedEvents.GetNpcStableName(enemyUI.SelectedNpcType);
+                tsorcRevampSystems.GetPlacementTile(enemyUI.SelectedNpcType, out int placeX, out int placeY);
+                npc.SpawnX = placeX;
+                npc.SpawnY = placeY;
+                configUI.CurrentEvent.Npcs.Add(npc);
+                configUI.RefreshList();
+                tsorcScriptedEvents.SaveDynamicEvents();
+
+                NPC tempNpc = new NPC();
+                tempNpc.SetDefaults(npc.NpcID);
+                Main.NewText($"Placed {tempNpc.TypeName} at ({npc.SpawnX}, {npc.SpawnY})");
+                enemyUI.SelectedNpcType = 0;
+                JustClosedUI = true;
             }
         }
     }

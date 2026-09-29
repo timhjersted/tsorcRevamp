@@ -366,6 +366,10 @@ namespace tsorcRevamp
         [DefaultValue(false)]
         public bool DisableModWingsFallControlDuringFlight { get; set; }
 
+        [Header("$Mods.tsorcRevamp.Configs.tsorcRevampGameplayConfig.Headers.Multiplayer")]
+        [DefaultValue(PerPlayerChestLootMode.Auto)]
+        public PerPlayerChestLootMode PerPlayerChestLootMode { get; set; }
+
         // Experimental options go LAST in this class. A tModLoader [Header] applies to its property and
         // every property after it until the next [Header], so anything added below this line joins the
         // Experimental section whether it belongs there or not.
@@ -496,6 +500,14 @@ namespace tsorcRevamp
         Vanilla,
         LiteRealistic,
         FullRealistic
+    }
+
+    // Auto: per-player chest loot only in worlds that have ever been hosted in multiplayer (latched per world).
+    public enum PerPlayerChestLootMode
+    {
+        Auto,
+        On,
+        Off
     }
 
     [Label("$Mods.tsorcRevamp.Configs.tsorcRevampSoundConfig.DisplayName")]
