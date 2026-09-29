@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -20,5 +21,7 @@ public class ManaBurn : ModBuff
         var arcanePlayer = player.GetModPlayer<ArcaneSorceryPlayer>();
         arcanePlayer.ManaBurn = true; //adds mana cost later
         player.endurance -= ArcaneSorceryPlayer.ManaBurnBadResistance / 100f;
+        Dust.NewDust(player.position + (player.velocity * 3), player.width, player.height, DustID.FireworksRGB,
+            player.velocity.X, player.velocity.Y, 125, new Color(47, 83, 255), 1f);
     }
 }
