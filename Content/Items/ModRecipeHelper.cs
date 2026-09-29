@@ -27,7 +27,7 @@ namespace tsorcRevamp.Content.Items
             PermaPotionRecipeS(mod, ItemID.EndurancePotion, ModContent.ItemType<PermanentEndurancePotion>());
             PermaPotionRecipeS(mod, ItemID.LifeforcePotion, ModContent.ItemType<PermanentLifeforcePotion>());
             PermaPotionRecipeS(mod, ItemID.MagicPowerPotion, ModContent.ItemType<PermanentMagicPowerPotion>());
-            PermaPotionRecipeS(mod, ItemID.GoldenDelight, ModContent.ItemType<PermanentExquisitelyStuffed>());
+            //PermaPotionRecipeS(mod, ItemID.GoldenDelight, ModContent.ItemType<PermanentExquisitelyStuffed>());
             PermaPotionRecipeS(mod, ItemID.FeatherfallPotion, ModContent.ItemType<PermanentFeatherfallPotion>());
             PermaPotionRecipeS(mod, ItemID.FlaskofVenom, ModContent.ItemType<PermanentVenomImbuement>());
             PermaPotionRecipeS(mod, ItemID.FlaskofNanites, ModContent.ItemType<PermanentNanitesImbuement>());
@@ -63,7 +63,7 @@ namespace tsorcRevamp.Content.Items
             PermaPotionRecipeB(mod, ModContent.ItemType<ShockwavePotion>(), ModContent.ItemType<PermanentShockwavePotion>());
             PermaPotionRecipeB(mod, ItemID.TitanPotion, ModContent.ItemType<PermanentTitanPotion>());
             PermaPotionRecipeB(mod, ItemID.WaterWalkingPotion, ModContent.ItemType<PermanentWaterWalkingPotion>());
-            PermaPotionRecipeB(mod, ItemID.BowlofSoup, ModContent.ItemType<PermanentPlentySatisfied>());
+            //PermaPotionRecipeB(mod, ItemID.BowlofSoup, ModContent.ItemType<PermanentPlentySatisfied>());
             PermaPotionRecipeB(mod, ItemID.FlaskofFire, ModContent.ItemType<PermanentFireImbuement>());
             PermaPotionRecipeB(mod, ItemID.FlaskofParty, ModContent.ItemType<PermanentPartyImbuement>());
             PermaPotionRecipeB(mod, ItemID.FlaskofGold, ModContent.ItemType<PermanentGoldImbuement>());
@@ -111,6 +111,20 @@ namespace tsorcRevamp.Content.Items
             .AddIngredient(ItemID.Bottle, 10)
             .AddTile(TileID.Bottles);
             recipe.Register();*/
+            
+            recipe = Recipe.Create(ModContent.ItemType<PermanentPlentySatisfied>())
+                .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 8000)
+                .AddIngredient(ModContent.ItemType<PermanentWellFed>())
+                .AddIngredient(ModContent.ItemType<EternalCrystal>(), 1)
+                .AddTile(TileID.DemonAltar);
+            recipe.Register();
+            
+            recipe = Recipe.Create(ModContent.ItemType<PermanentExquisitelyStuffed>())
+                .AddIngredient(ModContent.ItemType<DarkSoulItem>(), 18000)
+                .AddIngredient(ModContent.ItemType<PermanentPlentySatisfied>())
+                .AddIngredient(ModContent.ItemType<EternalCrystal>(), 2)
+                .AddTile(TileID.DemonAltar);
+            recipe.Register();
 
 
 

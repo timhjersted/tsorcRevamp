@@ -5342,13 +5342,13 @@ Mods: {
 
 			PermanentPlentySatisfied: {
 				DisplayName: Perma-Soup
-				Tooltip: ""
+				Tooltip: "There's tea in that soup!"
 				BuffName: Plenty Satisfied
 			}
 
 			PermanentExquisitelyStuffed: {
 				DisplayName: Permanent Delight
-				Tooltip: ""
+				Tooltip: "The soup has been injected into it as a sort of juice..."
 				BuffName: Exquisitely Stuffed
 			}
 
