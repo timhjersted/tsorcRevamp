@@ -593,7 +593,7 @@ namespace tsorcRevamp
         /// <param name="npc">The NPC this is operating on</param>
         ///<param name="timerCap">How high does the timer have to be for it to shoot</param>
         ///<param name="projectileType">The ID of the projectile you want to shoot</param>
-        ///<param name="projectileDamage">Damage passed to Projectile.NewProjectile without scaling by this helper. For a declared Expert Mode pre-defense hit value, pass EnemyDamage.Projectile(value), which applies the Normal/Master ratio.</param>
+        ///<param name="projectileDamage">Damage passed to Projectile.NewProjectile without scaling by this helper. For a declared Expert Mode pre-defense hit value, pass EnemyDamage.Projectile(value); vanilla applies the Normal/Master ratio on hit.</param>
         ///<param name="projectileVelocity">Speed of the projectile</param>
         ///<param name="shootSound">The sound to play when shooting</param>
         ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Leave blank for default gravity, set to 0 for projectiles with no gravity, set it custom if your projectile has custom gravity</param>

@@ -202,6 +202,8 @@ namespace tsorcRevamp
 
             Terraria.On_Main.DrawCachedProjs += Main_DrawCachedProjs;
 
+            Terraria.On_Main.DoDraw_Tiles_Solid += Main_DoDraw_Tiles_Solid;
+
             On_Main.DrawPlayers_BehindNPCs += DrawPlayerAuras;
 
             On_Recipe.CollectItemsToCraftWithFrom += Recipe_CollectItemsToCraftWithFrom;
@@ -2097,6 +2099,62 @@ namespace tsorcRevamp
             NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
             Main.NewText(SolarPillar.position);*/
             return;
+        }
+
+        static readonly List<int> _modBehindSolidTilesProjs = new List<int>();
+        static readonly List<int> _otherBehindTilesProjs = new List<int>();
+
+        // Hunter (detectCreature) makes vanilla draw its whole behind-NPCs-and-tiles projectile pass AFTER the solid
+        // tiles (Main.DoDraw_WallsTilesNPCs), so burrowing NPCs show through walls. That also put this mod's buried
+        // hazards (Abyss Shards, floor spikes) on top of the ground they rise out of. With Hunter on, pull this mod's
+        // projectiles out of that pass and draw them here, before the solid tiles, exactly where they sit without it.
+        private static void Main_DoDraw_Tiles_Solid(Terraria.On_Main.orig_DoDraw_Tiles_Solid orig, Main self)
+        {
+            bool hunterMovesPassOverTiles = Main.player[Main.myPlayer].detectCreature;
+            if (hunterMovesPassOverTiles)
+            {
+                List<int> behindTilesCache = self.DrawCacheProjsBehindNPCsAndTiles;
+                _modBehindSolidTilesProjs.Clear();
+                _otherBehindTilesProjs.Clear();
+
+                foreach (int projIndex in behindTilesCache)
+                {
+                    ModProjectile modProjectile = Main.projectile[projIndex].ModProjectile;
+                    bool ownedByThisMod = modProjectile != null && modProjectile.Mod is tsorcRevamp;
+                    if (ownedByThisMod)
+                    {
+                        _modBehindSolidTilesProjs.Add(projIndex);
+                    }
+                    else
+                    {
+                        _otherBehindTilesProjs.Add(projIndex);
+                    }
+                }
+
+                // Vanilla's later pass now only holds the non-mod entries, so nothing is drawn twice.
+                behindTilesCache.Clear();
+                behindTilesCache.AddRange(_otherBehindTilesProjs);
+
+                if (_modBehindSolidTilesProjs.Count > 0)
+                {
+                    // The spritebatch is ended between the non-solid and solid tile passes; same state as DrawCachedProjs.
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
+                        DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
+                    try
+                    {
+                        foreach (int projIndex in _modBehindSolidTilesProjs)
+                        {
+                            self.DrawProj(projIndex);
+                        }
+                    }
+                    finally
+                    {
+                        Main.spriteBatch.End();
+                    }
+                }
+            }
+
+            orig(self);
         }
 
         public static bool fixRainbowRod = true;

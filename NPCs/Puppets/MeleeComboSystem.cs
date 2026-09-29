@@ -373,6 +373,58 @@ namespace tsorcRevamp.NPCs.Puppets
                 ForwardPushMult = push, SwingSpeedMult = swingMult, Ease = ease
             };
 
+        // Broadsword cuts use the whole authored swing clock. The blade stays live only while
+        // its weighted speed is at least 30% of peak; the long decaying tail is follow-through.
+        private static MeleeComboStep BroadswordCut(ComboMotion motion, int tell, int easeIn,
+            int easeOut, float decay, int pause, float damage = 1f, float push = 0f)
+            => new MeleeComboStep
+            {
+                Motion = motion, TelegraphTicks = tell, AttackTicks = easeIn + easeOut,
+                PostStepPause = pause, DamageMult = damage, ReachMult = 1f,
+                ForwardPushMult = push, SwingSpeedMult = 1f,
+                Ease = SwingEaseStyle.Weighted, EaseInTicks = easeIn,
+                EaseOutTicks = easeOut, EaseOutDecay = decay,
+                HitWindowEnd = (easeIn + easeOut * 1.204f / decay) / (easeIn + easeOut),
+            };
+
+        private static MeleeComboStep BroadswordPoke(int tell, int attack, float damage,
+            float reach, float push)
+        {
+            MeleeComboStep step = S(ComboMotion.JoustDash, tell, attack, 0,
+                damage, reach, push, ease: SwingEaseStyle.Whip);
+            step.HitWindowEnd = 0.75f; // An 18-tick live thrust, then a harmless extension.
+            return step;
+        }
+
+        /// <summary>Full broadsword poses for the shared pool. Kept per-combo so quick cuts,
+        /// reversals and the finisher do not all trace the same arc; bespoke Broadsword pools
+        /// continue to use their own endpoints.</summary>
+        public static void SetBroadswordComboArc(string comboName, ComboMotion motion,
+            ref float start, ref float end)
+        {
+            float high;
+            float low;
+            switch (comboName)
+            {
+                case "Quickslash":       high = -1.55f; low = 2.32f; break; // 222 degrees
+                case "Under-Over":       high = -1.50f; low = 2.28f; break; // 217 degrees
+                case "3-Hit Standard":   high = -1.55f; low = 2.36f; break; // 224 degrees
+                case "5-Hit Finisher":   high = -1.48f; low = 2.24f; break; // 213 degrees
+                default: return;
+            }
+
+            if (motion == ComboMotion.OverheadArc)
+            {
+                start = high;
+                end = low;
+            }
+            else if (motion == ComboMotion.UnderhandArc)
+            {
+                start = low;
+                end = high;
+            }
+        }
+
         private static RangedComboShot R(int pause, float spread = 0f, float speed = 1f, int count = 1)
             => new RangedComboShot { PauseBefore = pause, SpreadDegrees = spread, SpeedMult = speed, ProjectileCount = count };
 
@@ -414,53 +466,61 @@ namespace tsorcRevamp.NPCs.Puppets
         // Colors: white=quick, cyan=combo, yellow=committed, orange=dash, red=heavy
         // ─────────────────────────────────────────────────────────────────────
 
-        // Same authored-easing pass as the Greatsword table below, and the same caveats: curve only,
-        // no SwingSpeedMult, and only honored where UseAuthoredComboSwingClock is on. HeroofLumelia
-        // is this table's only shared-pool consumer today (Kahlrun overrides its pool).
+        // Shared sword kit. Artorias supplies the full-arc / weighted-curve model; Studded Leather
+        // Warrior supplies the differing combo cadence and planted pause/recovery beats. Each
+        // ordinary cut has a 213-224 degree envelope and about 170-184 live degrees. All cut live
+        // windows are under the player's 22-tick roll. The 19-30 harmless tail ticks plus the
+        // pauses put the next live cut at least 30 ticks after the previous live window ends.
+        // Joust Poke is a deliberate point-first thrust, not a cut.
         public static readonly MeleeCombo[] Broadsword = new[]
         {
             new MeleeCombo {
                 Name = "Quickslash", BaseWeight = 100, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.White, CooldownAfterUse = 40,
-                // Front-loaded to match the name - the hit lands in the first third of the arc.
-                Steps = new[] { S(ComboMotion.OverheadArc, 16, 22, 0, ease: SwingEaseStyle.Snap) }
+                InitialFlashColor = Color.White, CooldownAfterUse = 55,
+                RecoveryTicks = 20, MoveBrake = 0.08f,
+                // Poses -1.55 -> 2.32; 22t tell, 7t accelerate, 28t settle, ~12t live.
+                Steps = new[] { BroadswordCut(ComboMotion.OverheadArc, 22, 7, 28, 7f, 0) }
             },
             new MeleeCombo {
                 Name = "Under-Over", BaseWeight = 80, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.LightYellow, CooldownAfterUse = 90,
+                RecoveryTicks = 26, MoveBrake = 0.12f,
                 Steps = new[] {
-                    // Rising cut stays Smooth so the reversal reads; the overhead follow-up snaps.
-                    S(ComboMotion.UnderhandArc, 18, 18, 12),
-                    S(ComboMotion.OverheadArc,  0,  20, 0,  1.1f, ease: SwingEaseStyle.Snap),
+                    // 217-degree rising cut -> shared high endpoint -> heavier downward answer.
+                    BroadswordCut(ComboMotion.UnderhandArc, 24, 8, 30, 6f, 15, push: 0.35f),
+                    BroadswordCut(ComboMotion.OverheadArc, 0, 9, 30, 7f, 0, 1.1f, 0.45f),
                 }
             },
             new MeleeCombo {
                 Name = "Joust Poke", BaseWeight = 80, Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.Orange, CooldownAfterUse = 110,
-                Steps = new[] { S(ComboMotion.JoustDash, 22, 14, 0, 1.2f, 1.4f, 1.8f) }
+                RecoveryTicks = 30, MoveBrake = 0.06f,
+                // Aimed thrust: 28t raised tell, 24t full extension, then a punishable hold.
+                Steps = new[] { BroadswordPoke(28, 24, 1.2f, 1.4f, 1.8f) }
             },
             new MeleeCombo {
                 Name = "3-Hit Standard", BaseWeight = 60, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Cyan, CooldownAfterUse = 140,
+                RecoveryTicks = 30, MoveBrake = 0.14f,
                 Steps = new[] {
-                    // First two chain quickly, the rising finisher keeps the Smooth default so the
-                    // combo lands on a heavier-reading beat instead of three identical snaps.
-                    S(ComboMotion.OverheadArc,     14, 18, 14, 0.9f, ease: SwingEaseStyle.Snap),
-                    S(ComboMotion.HorizontalSweep,  0, 18, 14, 0.9f, ease: SwingEaseStyle.Snap),
-                    S(ComboMotion.UnderhandArc,     0, 20, 0,  1.1f),
+                    // Generic 1-2-3 figure eight. Shadow Ninja authors his separate 1,1-2 variant.
+                    BroadswordCut(ComboMotion.OverheadArc, 26, 8, 30, 7f, 17, 0.9f, 0.3f),
+                    BroadswordCut(ComboMotion.UnderhandArc, 0, 7, 30, 6.5f, 18, 0.9f, 0.35f),
+                    BroadswordCut(ComboMotion.OverheadArc, 0, 10, 32, 7f, 0, 1.1f, 0.5f),
                 }
             },
             new MeleeCombo {
                 Name = "5-Hit Finisher", BaseWeight = 30, Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true,
+                RecoveryTicks = 42, MoveBrake = 0.18f,
                 Steps = new[] {
-                    // Four 14-tick arcs: Snap on all of them, otherwise the Smooth ramp eats most of
-                    // such a short window and the flurry reads as one slow blur.
-                    S(ComboMotion.OverheadArc,     40, 14, 8,  0.7f, ease: SwingEaseStyle.Snap),
-                    S(ComboMotion.UnderhandArc,     0, 14, 8,  0.7f, ease: SwingEaseStyle.Snap),
-                    S(ComboMotion.HorizontalSweep,  0, 14, 8,  0.7f, ease: SwingEaseStyle.Snap),
-                    S(ComboMotion.OverheadArc,      0, 14, 8,  0.7f, ease: SwingEaseStyle.Snap),
-                    S(ComboMotion.JoustDash,        0, 18, 0,  1.5f, 1.2f, 1.5f),
+                    // Four full reversals. Their harmless tails and pauses give distinct dodge beats.
+                    BroadswordCut(ComboMotion.OverheadArc, 40, 8, 30, 7f, 14, 0.7f, 0.4f),
+                    BroadswordCut(ComboMotion.UnderhandArc, 0, 7, 28, 7f, 15, 0.7f, 0.4f),
+                    BroadswordCut(ComboMotion.OverheadArc, 0, 7, 28, 6.5f, 15, 0.7f, 0.45f),
+                    BroadswordCut(ComboMotion.UnderhandArc, 0, 8, 30, 7f, 25, 0.7f, 0.45f),
+                    // The longer planted beat exposes the final advancing overhead.
+                    BroadswordCut(ComboMotion.OverheadArc, 0, 10, 34, 8f, 0, 1.5f, 1.2f),
                 }
             },
         };

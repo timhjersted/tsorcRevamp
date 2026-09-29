@@ -45,8 +45,23 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int HeadArmorItemType => ModContent.ItemType<MirkwoodElvenBlondeHairStyle>();
         protected override int BodyArmorItemType => ModContent.ItemType<MirkwoodElvenLeatherArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<MirkwoodElvenLeggings>();
-        protected override int MeleeWeaponItemType => -1;
-        protected override int MeleeDamage => 0;
+        protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyOldRapier>();
+        protected override int MeleeDamage => EnemyDamage.Projectile(55);
+        protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Rapier;
+        protected override float MeleeRange => 76f;
+        protected override float MeleeEngageRange => 70f;
+        protected override float ComboMaxStartRange => 100f;
+        protected override float RangedStartComboMaxRange => 100f;
+        protected override int MeleeComboChance => 100;
+        protected override int RangedStartMeleeComboChance => 0;
+        protected override float MeleeBladeWidth => 16f;
+        protected override Vector2 MeleeHandleNorm => new Vector2(0.18f, 0.82f);
+        protected override float MeleeWeaponDrawScale => 1.1f;
+        protected override int MeleeComboInterStepLingerTicks => 4;
+        protected override bool UseSmoothRapierThrustPose => true;
+        protected override bool UseAuthoredComboSwingClock => true;
+        protected override bool AuthoredClockCoversJoustDash => true;
+        protected override int MeleeRecoveryTicks => 28;
         protected override int RangedWeaponItemType => ModContent.ItemType<EnemyTaintedBow>();
         protected override int SecondaryRangedWeaponItemType => RangedWeaponItemType;
         protected override int RangedDamage => EnemyDamage.Projectile(50);
@@ -57,10 +72,16 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override float MinMagicRange => 80f;
         protected override float MagicRange => _minesPending && NPC.HasValidTarget && NPC.velocity.Y == 0f
             && Math.Abs(Main.player[NPC.target].Center.Y - NPC.Center.Y) <= 64f
-            && Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1) ? 240f : 0f;
+            && Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1) ? 520f : 0f;
         protected override int MagicPreferenceChance => 100;
         protected override int MagicTelegraphTicks => 60;
-        protected override int MagicAttackTicks => 15;
+        // Release, recover for 6t, raise through Use2/Use1 for 24t, release again at +30t.
+        protected override int MagicAttackTicks => 42;
+        protected override int MagicAttackBodyRow => PhaseTimer > 36 || PhaseTimer <= 12 ? 3
+            : PhaseTimer > 24 ? 2 : 1;
+        protected override float MagicAttackPoseProgress => PhaseTimer > 12
+            ? 1f - (MagicAttackTicks - PhaseTimer) / 30f
+            : 1f - (12f - PhaseTimer) / 12f;
         protected override int MagicRecoveryTicks => 60;
         protected override int MagicCooldownAfterUse => 480;
         protected override Color MagicTelegraphFlashColor => new Color(255, 170, 45);
@@ -92,7 +113,7 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int SecondaryStandingRangedChance => 100;
         protected override int[][] PrimaryRangedBurstPatterns => _movement switch
         {
-            BowMovement.Jump => _jumpBackwards ? new[] { new[] { 8 } }
+            BowMovement.Jump => _jumpBackwards ? new[] { Array.Empty<int>() }
                 : new[] { new[] { 8 }, new[] { 8, 8 }, new[] { 8, 8, 8 } },
             BowMovement.ArcLeap => new[] { new[] { 12, 12 } },
             _ => new[] { new[] { 45, 45 } }
@@ -110,12 +131,26 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override float GetHeldRangedDrawScale(int itemType) => 0.9f;
         // The idle bow is slung over the back, mirrored by the base draw code's NPC.direction.
         protected override Vector2 GetHeldRangedDrawOffset(int itemType) => DrawHeldWeaponBehindBody
-            && itemType == RangedWeaponItemType ? new Vector2(-16f, -2f) : Vector2.Zero;
+            && itemType == RangedWeaponItemType ? new Vector2(-6f, -2f) : Vector2.Zero;
         protected override Rectangle GetBowStringTexels(int itemType) => new Rectangle(0, 2, 2, 42);
         protected override string NockedBowArrowTexture => IsSecondaryRangedActive
             ? "tsorcRevamp/Content/Projectiles/Enemy/Weapons/UlhanExplosiveArrow"
             : "Terraria/Images/Projectile_" + ProjectileID.UnholyArrow;
         protected override float BowAimAngle => (float)Math.Atan2(_shotAim.Y, _shotAim.X * NPC.direction);
+
+        protected override void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction)
+        {
+            // Keep all five shared rapier moves, but separate chained thrusts by a full
+            // roll cooldown. The player can dodge each jab without an unavoidable gap hit.
+            for (int i = 0; i < combo.Steps.Length - 1; i++)
+            {
+                MeleeComboStep step = combo.Steps[i];
+                step.PostStepPause = Math.Max(step.PostStepPause, 30);
+                combo.Steps[i] = step;
+            }
+            combo.RecoveryTicks = combo.Name == "Lunging Finisher" ? 44
+                : combo.Name == "Triple Flurry" ? 36 : 28;
+        }
 
         public override void SetDefaults()
         {
@@ -167,7 +202,10 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void AI()
         {
-            DebugAttackLabel = Phase == AttackPhase.MagicTelegraph || Phase == AttackPhase.MagicAttack
+            DebugAttackLabel = Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack
+                || Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery
+                ? "Rapier: " + ActiveMeleeComboName
+                : Phase == AttackPhase.MagicTelegraph || Phase == AttackPhase.MagicAttack
                 || Phase == AttackPhase.MagicRecovery ? "Proximity Mine Throw"
                 : Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack
                 || Phase == AttackPhase.CrossbowBurstPause || Phase == AttackPhase.RangedRecovery
@@ -201,8 +239,8 @@ namespace tsorcRevamp.NPCs.Puppets
             if (usedDoubleJump && !_lastUsedDoubleJump)
                 PlayDoubleJumpEffect();
             _lastUsedDoubleJump = usedDoubleJump;
-            if ((Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll)
-                && previousPhase == AttackPhase.MagicRecovery)
+            if (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll
+                || Phase == AttackPhase.RangedRecovery)
                 SetDisplayWeapon(RangedWeaponItemType, swing: false);
             if (Main.netMode == NetmodeID.MultiplayerClient && previousPhase == AttackPhase.MagicTelegraph
                 && Phase == AttackPhase.MagicAttack)
@@ -221,12 +259,16 @@ namespace tsorcRevamp.NPCs.Puppets
                 if (Main.GameUpdateCount % 12 == 0)
                 {
                     Vector2 release = NPC.Center + new Vector2(4f * NPC.direction, 2f);
-                    for (int i = 1; i <= 6; i++)
+                    for (int side = -1; side <= 1; side += 2)
                     {
-                        Vector2 point = Vector2.Lerp(release, _mineTarget, i / 6f);
-                        Dust marker = Dust.NewDustPerfect(point, DustID.OrangeTorch,
-                            Vector2.Zero, 160, default, 0.4f);
-                        marker.noGravity = true;
+                        Vector2 target = _mineTarget + new Vector2(side * NPC.direction * 90f, 0f);
+                        for (int i = 1; i <= 6; i++)
+                        {
+                            Vector2 point = Vector2.Lerp(release, target, i / 6f);
+                            Dust marker = Dust.NewDustPerfect(point, DustID.OrangeTorch,
+                                Vector2.Zero, 160, default, 0.4f);
+                            marker.noGravity = true;
+                        }
                     }
                 }
             }
@@ -234,12 +276,12 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected override void OnMagicTelegraphStarting()
         {
-            _minesPending = false;
             Player target = Main.player[NPC.target];
             Vector2 origin = NPC.Center + new Vector2(4f * NPC.direction, 2f);
-            Vector2 offset = target.Center + target.velocity * 18f - origin;
-            if (offset.LengthSquared() > 240f * 240f)
-                offset = offset.SafeNormalize(new Vector2(NPC.direction, 0f)) * 240f;
+            Vector2 offset = new Vector2(target.Center.X + target.velocity.X * 18f,
+                target.Bottom.Y) - origin;
+            if (offset.LengthSquared() > 520f * 520f)
+                offset = offset.SafeNormalize(new Vector2(NPC.direction, 0f)) * 520f;
             _mineTarget = origin + offset;
             NPC.netUpdate = true;
         }
@@ -249,12 +291,31 @@ namespace tsorcRevamp.NPCs.Puppets
             PlayThrowSound();
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
+            ThrowMines(_mineTarget - new Vector2(NPC.direction * 90f, 0f));
+        }
+
+        protected override void DoMagicTick(int ticksRemaining)
+        {
+            if (ticksRemaining != 12)
+                return;
+            PlayThrowSound();
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+            ThrowMines(_mineTarget + new Vector2(NPC.direction * 90f, 0f));
+            _minesPending = false;
+            _closingForExplosive = true;
+            _approachTicks = 600;
+            NPC.netUpdate = true;
+        }
+
+        private void ThrowMines(Vector2 target)
+        {
             // Match the forward Use3 hand displayed on the release frame, on every peer.
             Vector2 origin = NPC.Center + new Vector2(4f * NPC.direction, 2f);
             _mines.RemoveAll(tracked => !Main.projectile[tracked.Slot].active
                 || Main.projectile[tracked.Slot].identity != tracked.Identity);
             foreach (int slot in ProximityMine.ThrowSpread(
-                NPC.GetSource_FromThis(), origin, _mineTarget, MagicDamage, 1.5f,
+                NPC.GetSource_FromThis(), origin, target, MagicDamage, 1.5f,
                 Main.myPlayer, NPC.whoAmI))
             {
                 if (slot >= 0 && slot < Main.maxProjectiles && Main.projectile[slot].active)
@@ -302,7 +363,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 || Phase == AttackPhase.RangedAttack || Phase == AttackPhase.CrossbowBurstPause))
                 speedMult *= 0.45f;
             SmartFighter4AI.Run(NPC, topSpeed: TopSpeed * speedMult, acceleration: Acceleration,
-                doorBreakingDamage: 4, attackRange: _closingForExplosive ? 160f : 232f);
+                doorBreakingDamage: 4, attackRange: _closingForExplosive ? 160f
+                    : _minesPending ? 480f : 232f);
         }
 
         private BowMovement DrawMovement()
@@ -507,7 +569,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 _shotAim = SolveArcAim();
             else if (!explosive && _movement == BowMovement.Jump)
                 _shotAim = SolveShotAim(13f);
-            if (!explosive && _movement == BowMovement.Jump && _jumpBackwards && _jumpShotIndex == 1)
+            if (!explosive && _movement == BowMovement.Jump && _jumpBackwards && _jumpShotIndex == 0)
             {
                 FireUnholyArrow(_shotAim.RotatedBy(-0.16f));
                 FireUnholyArrow(_shotAim, playSound: false);
@@ -527,15 +589,9 @@ namespace tsorcRevamp.NPCs.Puppets
             _jumpShotIndex++;
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
-            if (explosive)
-            {
-                _minesPending = true;
-                NPC.netUpdate = true;
-            }
             if (!explosive && IsFinalBurstShot)
             {
-                _closingForExplosive = true;
-                _approachTicks = 600;
+                _minesPending = true;
                 NPC.netUpdate = true;
             }
         }

@@ -16,8 +16,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             Item.knockBack = 7f;
             Item.scale = 1.2f;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 30;
-            Item.useTime = 30;
+            Item.useAnimation = 32;
+            Item.useTime = 32;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Purple_11;

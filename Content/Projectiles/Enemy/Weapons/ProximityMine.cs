@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -11,23 +12,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     public class ProximityMine : ModProjectile
     {
         private const float Gravity = 0.22f;
-        private const float ThrowSpeed = 8f;
+        private const float ThrowSpeed = 12.5f;
         private const int SpreadCount = 6;
-        private const float SpreadDegrees = 26f;
+        private const float SpreadDegrees = 42f;
         private const int DormantTicks = 6 * 60;
         private const int PopTicks = 40;
-        private const int RiseTicks = 20;
-        private const float RiseHeight = 3f * 16f;
         private const float Flying = 0f;
         private const float Grounded = 1f;
         private const float Popping = 2f;
         private const float Detonating = 3f;
-
-        private bool RocketOnDetonation
-        {
-            get => Projectile.localAI[0] == 1f;
-            set => Projectile.localAI[0] = value ? 1f : 0f;
-        }
+        private const float RocketPopping = 4f;
+        private const float LaunchingRocket = 5f;
 
         public override void SetDefaults()
         {
@@ -71,7 +66,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override void AI()
         {
-            if (Projectile.ai[0] == Popping && Projectile.localAI[1] != Popping && !Main.dedServ)
+            if ((Projectile.ai[0] == Popping || Projectile.ai[0] == RocketPopping)
+                && Projectile.localAI[1] != Projectile.ai[0] && !Main.dedServ)
                 SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.55f, Pitch = 0.3f }, Projectile.Center);
             Projectile.localAI[1] = Projectile.ai[0];
             if (Projectile.ai[0] == Flying)
@@ -106,25 +102,24 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                         BeginPop(true);
                 }
                 if (!Main.dedServ && Main.GameUpdateCount % 12 == 0)
-                    Dust.NewDustPerfect(Projectile.Center, DustID.OrangeTorch,
+                    Dust.NewDustPerfect(Projectile.Center - new Vector2(0f, 7f), DustID.OrangeTorch,
                         new Vector2(0f, -0.25f), 100, default, 0.55f).noGravity = true;
                 return;
             }
 
-            if (Projectile.ai[0] == Popping)
+            if (Projectile.ai[0] == Popping || Projectile.ai[0] == RocketPopping)
             {
                 Projectile.ai[1]++;
-                if (Projectile.ai[1] <= RiseTicks)
-                    Projectile.position.Y -= RiseHeight / RiseTicks;
                 if (!Main.dedServ && Main.GameUpdateCount % 2 == 0)
                 {
-                    Dust dust = Dust.NewDustPerfect(Projectile.Bottom + Main.rand.NextVector2Circular(5f, 2f),
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center - new Vector2(0f, 7f)
+                        + Main.rand.NextVector2Circular(5f, 2f),
                         Main.rand.NextBool() ? DustID.OrangeTorch : DustID.Torch,
                         new Vector2(0f, 0.8f), 80, default, 0.7f);
                     dust.noGravity = true;
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.ai[1] >= PopTicks)
-                    Detonate(RocketOnDetonation);
+                    Detonate(Projectile.ai[0] == RocketPopping);
             }
         }
 
@@ -139,17 +134,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         private void BeginPop(bool launchRocket)
         {
-            Projectile.ai[0] = Popping;
+            Projectile.ai[0] = launchRocket ? RocketPopping : Popping;
             Projectile.ai[1] = 0f;
-            RocketOnDetonation = launchRocket;
             Projectile.timeLeft = PopTicks + 30;
             Projectile.netUpdate = true;
         }
 
         private void Detonate(bool launchRocket)
         {
-            RocketOnDetonation = launchRocket;
-            Projectile.ai[0] = Detonating;
+            Projectile.ai[0] = launchRocket ? LaunchingRocket : Detonating;
             Projectile.Kill();
         }
 
@@ -169,13 +162,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return false;
             if (oldVelocity.Y > 0f && Projectile.velocity.Y != oldVelocity.Y)
             {
+                // The collision solver places the bottom at the tile top. Sink the 24px
+                // sprite by 12px so the lower half stays buried throughout the fuse.
+                Projectile.position.Y += Projectile.height * 0.5f;
                 Projectile.velocity = Vector2.Zero;
                 Projectile.tileCollide = false;
+                Projectile.ai[0] = Grounded;
+                Projectile.ai[1] = 0f;
+                Projectile.timeLeft = DormantTicks + PopTicks + 20;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.ai[0] = Grounded;
-                    Projectile.ai[1] = 0f;
-                    Projectile.timeLeft = DormantTicks + PopTicks + 20;
                     Projectile.netUpdate = true;
                 }
                 if (!Main.dedServ)
@@ -192,28 +188,40 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override void OnKill(int timeLeft)
         {
-            if (Projectile.ai[0] == Detonating && Main.netMode != NetmodeID.MultiplayerClient)
+            if ((Projectile.ai[0] == Detonating || Projectile.ai[0] == LaunchingRocket)
+                && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-                    ModContent.ProjectileType<ProximityMineExplosion>(), Projectile.damage,
-                    Projectile.knockBack, Main.myPlayer);
-                if (RocketOnDetonation)
+                if (Projectile.ai[0] == Detonating)
+                    Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                        ModContent.ProjectileType<ProximityMineExplosion>(), Projectile.damage,
+                        Projectile.knockBack, Main.myPlayer);
+                else
                 {
                     Player target = FindNearestPlayer();
                     Vector2 heading = target == null ? -Vector2.UnitY
                         : (target.Center - Projectile.Center).SafeNormalize(-Vector2.UnitY);
-                    Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center,
+                    Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center - new Vector2(0f, 12f),
                         heading * ProximityMineRocket.Speed,
                         ModContent.ProjectileType<ProximityMineRocket>(), Projectile.damage,
-                        Projectile.knockBack, Main.myPlayer, 0f, 0f, Projectile.ai[2]);
+                        Projectile.knockBack, Main.myPlayer, 0f,
+                        target == null ? 0f : target.whoAmI + 1f, Projectile.ai[2]);
                 }
             }
-            else if (!Main.dedServ)
+            else if (Projectile.ai[0] != Detonating && Projectile.ai[0] != LaunchingRocket
+                && !Main.dedServ)
             {
                 for (int i = 0; i < 12; i++)
                     Dust.NewDustPerfect(Projectile.Center, DustID.Smoke,
                         Main.rand.NextVector2Circular(1.5f, 1.5f), 170, default, 0.65f).noGravity = true;
             }
+        }
+
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles,
+            List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers,
+            List<int> overWiresUI)
+        {
+            if (Projectile.ai[0] != Flying)
+                behindNPCsAndTiles.Add(index);
         }
 
         private Player FindNearestPlayer()

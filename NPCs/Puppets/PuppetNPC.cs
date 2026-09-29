@@ -297,7 +297,7 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float BrakingPower   => 0.22f;
         protected virtual float RunDistance    => 420f;
         protected virtual float RunSpeedMult   => 1.35f;
-        protected virtual int   TeleportTelegraphTicks => 140;
+        protected virtual int   TeleportTelegraphTicks => 90;
         protected virtual int   TeleportDustTypeId     => DustID.Smoke;
         protected virtual Color TeleportDustTint       => Color.White;
         protected virtual float TeleportDustScale      => 0.8f;
@@ -445,6 +445,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// next combo step's windup. The combo's PostStepPause must be longer than this value when
         /// a visible transition to the next start pose is desired.</summary>
         protected virtual int MeleeComboInterStepLingerTicks => 0;
+        protected virtual bool UseSmoothRapierThrustPose => false;
 
         /// <summary>How long the completed strike remains visibly planted at the start of melee
         /// recovery. This is visual-only: the blade is no longer armed during the hold.</summary>
@@ -581,6 +582,9 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float MinMagicRange       => 0f;
         protected virtual int   MagicTelegraphTicks => 50;
         protected virtual int   MagicAttackTicks    => 15;
+        protected virtual int MagicAttackBodyRow => 3;
+        protected virtual float MagicAttackPoseProgress => MagicAttackTicks > 0
+            ? 1f - (float)PhaseTimer / MagicAttackTicks : 1f;
         protected virtual int   MagicRecoveryTicks  => 70;
         protected virtual int   MagicCooldownAfterUse => 300;
         /// <summary>Chance (0–100) to choose magic over a ranged attack when BOTH are in range.  0 (default)
@@ -731,6 +735,38 @@ namespace tsorcRevamp.NPCs.Puppets
         /// default remains immediate; bosses with a lingering blast can delay the launch so its
         /// timing matches the visual.</summary>
         protected virtual int   PierceStabFlickDelayTicks  => 0;
+        /// <summary>Optional wind-back inside the flick's release delay: over this many ticks the blade eases from
+        /// the raised vertical (-PiOver4) to <see cref="PierceStabFlickWindBackRotation"/>, holds there for the rest
+        /// of the delay, then the flick snaps forward from that cocked pose. 0 = hold vertical (the old pose).</summary>
+        protected virtual int   PierceStabFlickWindBackTicks => 0;
+        /// <summary>Weapon rotation at the top of the wind-back, in the held-weapon convention (PiOver4 = forward,
+        /// -PiOver4 = straight up, more negative = cocked back behind the head).</summary>
+        protected virtual float PierceStabFlickWindBackRotation => -MathHelper.PiOver4;
+
+        /// <summary>Held-weapon rotation for the current PierceStabFlick tick. Shared by the pose and by any subclass
+        /// that anchors the impaled target to the blade tip, so the two can't drift apart.</summary>
+        protected float GetPierceStabFlickRotation()
+        {
+            // Delay window: ease vertical -> cocked over the wind-back, then hold the cocked pose until release.
+            int elapsedTicks = PierceStabFlickTicks - PhaseTimer;
+            int releaseDelay = Math.Clamp(PierceStabFlickDelayTicks, 0, Math.Max(0, PierceStabFlickTicks - 1));
+            if (elapsedTicks < releaseDelay)
+            {
+                float windBackT = 1f;
+                if (PierceStabFlickWindBackTicks > 0)
+                {
+                    windBackT = MathHelper.Clamp(elapsedTicks / (float)PierceStabFlickWindBackTicks, 0f, 1f);
+                }
+
+                float easedWindBack = MathHelper.SmoothStep(0f, 1f, windBackT);
+                return MathHelper.Lerp(-MathHelper.PiOver4, PierceStabFlickWindBackRotation, easedWindBack);
+            }
+
+            // Release: snap from the cocked pose down past horizontal (PiOver2) in sync with OnPierceFlick.
+            int animationTicks = Math.Max(1, PierceStabFlickTicks - releaseDelay);
+            float flickT = MathHelper.Clamp((elapsedTicks - releaseDelay) / (float)animationTicks, 0f, 1f);
+            return MathHelper.Lerp(PierceStabFlickWindBackRotation, MathHelper.PiOver2, flickT);
+        }
         /// <summary>Cooldown after the whole sequence (dash or stab) ends before another can begin.</summary>
         protected virtual int   PierceCooldownAfterUse     => 480;
         /// <summary>Extra dashes after one that doesn't connect (touched no one, or only a player in
@@ -2407,6 +2443,11 @@ namespace tsorcRevamp.NPCs.Puppets
         /// covers thrusts + most dash lunges.</summary>
         protected virtual float ComboMaxStartRange => StabRange + 80f;
 
+        /// <summary>How far (px) the target may be above this puppet's center and still let a melee combo start,
+        /// or a ClosingDistance run swing. At the 48px default a jumping player blocks both gates, so the puppet
+        /// waits underneath until they land; a relentless chaser can raise it and let the telegraph cover the landing.</summary>
+        protected virtual float ComboStartMaxTargetRise => 48f;
+
         /// <summary>Optional farther selection radius for committed <see cref="MeleeCombo.RangedStartOnly"/>
         /// gap-closers. If no such combo is ready beyond <see cref="ComboMaxStartRange"/>, the puppet
         /// falls through to its ranged/magic attacks instead of entering ordinary ClosingDistance.</summary>
@@ -3155,7 +3196,14 @@ namespace tsorcRevamp.NPCs.Puppets
             // Capture direction before the movement AI might change it.
             int dirBefore = NPC.direction;
 
-            RunMovementAI(speedMult);
+            // PierceStabHold/PierceStabFlick fully own NPC.velocity themselves (the switch case zeroes
+            // velocity.X every tick to keep the impaled target held in place) - letting the navigator
+            // keep planning alongside them found the held target "in the way" and fired spurious jumps.
+            bool pierceHeldPhase = Phase == AttackPhase.PierceStabHold || Phase == AttackPhase.PierceStabFlick;
+            if (!pierceHeldPhase)
+            {
+                RunMovementAI(speedMult);
+            }
 
             // Anti-bounce: if FighterAI just reversed direction but the hold timer is still
             // running (e.g. the player dodgerolled past), revert to the previous direction so
@@ -4470,7 +4518,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (MeleeArchetype != WeaponArchetype.None
                         && MeleeWeaponItemType >= 0
                         && NPC.velocity.Y == 0f
-                        && NPC.Center.Y - target.Center.Y < 48f
+                        && NPC.Center.Y - target.Center.Y < ComboStartMaxTargetRise
                         && dist <= comboInterceptRange
                         && Main.rand.Next(100) < comboStartChance)
                     {
@@ -5871,7 +5919,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         break;
                     }
                     bool inReach = dist <= MeleeEngageRange && NPC.velocity.Y == 0f
-                                   && NPC.Center.Y - target.Center.Y < 48f;
+                                   && NPC.Center.Y - target.Center.Y < ComboStartMaxTargetRise;
                     if (inReach)
                     {
                         if (!TryStartMeleeCombo(dist))
@@ -8400,9 +8448,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 }
                 else
                 {
-                    float magicT = MagicAttackTicks > 0
-                        ? 1f - (float)PhaseTimer / MagicAttackTicks
-                        : 1f;
+                    float magicT = MagicAttackPoseProgress;
                     // Thrust forward as the spell fires.
                     _weaponRotation = MathHelper.Lerp(-1.40f, 0.20f, magicT);
                 }
@@ -8464,15 +8510,7 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             else if (Phase == AttackPhase.PierceStabFlick)
             {
-                // Hold the raised pose through an optional delayed blast, then snap back down and
-                // past horizontal in sync with the actual release.
-                int elapsedTicks = PierceStabFlickTicks - PhaseTimer;
-                int releaseDelay = Math.Clamp(PierceStabFlickDelayTicks, 0,
-                    Math.Max(0, PierceStabFlickTicks - 1));
-                int animationTicks = Math.Max(1, PierceStabFlickTicks - releaseDelay);
-                float flickT = MathHelper.Clamp(
-                    (elapsedTicks - releaseDelay) / (float)animationTicks, 0f, 1f);
-                _weaponRotation = MathHelper.Lerp(-MathHelper.PiOver4, MathHelper.PiOver2, flickT);
+                _weaponRotation = GetPierceStabFlickRotation();
             }
             else if (Phase == AttackPhase.JumpSlashDodgeback)
             {
@@ -8902,7 +8940,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     case ComboMotion.Thrust:
                         if (inTel)
                         {
-                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.20f);
+                            _weaponRotation = UseSmoothRapierThrustPose
+                                ? MathHelper.SmoothStep(HoldRotation, MathHelper.PiOver2, comboTelegraphT)
+                                : MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.20f);
                         }
                         else if (inPause)
                         {
@@ -8910,7 +8950,10 @@ namespace tsorcRevamp.NPCs.Puppets
                         }
                         else
                         {
-                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.42f);
+                            _weaponRotation = UseSmoothRapierThrustPose
+                                ? MathHelper.SmoothStep(MathHelper.PiOver2, MathHelper.PiOver4,
+                                    MathHelper.Clamp(t, 0f, 1f))
+                                : MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.42f);
                         }
                         break;
                     case ComboMotion.JoustDash:
@@ -10159,7 +10202,7 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             else if (Phase == AttackPhase.MagicAttack)
             {
-                bodyRow = 3; // Use3 — arm thrusts forward as the spell fires
+                bodyRow = MagicAttackBodyRow; // Use3 by default; a multi-throw can raise the arm again.
             }
             else if (Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrowPause)
             {
@@ -11557,9 +11600,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     : tex.Width * gripNorm.X;
                 origin = new Vector2(hx, tex.Height * gripNorm.Y);
 
-                if (bowStringTexels != Rectangle.Empty)
+                if (bowStringTexels != Rectangle.Empty && bowStringTexels.X == 0)
                 {
-                    // Crop off the string columns (left edge) — live lines to the hand replace them.
+                    // Crop off left-edge string columns. Bows with an inset string use a
+                    // stringless held sprite, so their limb pixels remain intact.
                     // Origin is measured inside the source rect, so the unflipped case shifts left by
                     // the cropped width; the flipped case (width − gripX) already comes out the same.
                     int stringWidth = bowStringTexels.Right;
@@ -11699,8 +11743,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
                 }
 
-                // Colour sampled from the sprite's own string (46, 26, 17), lit like the bow.
-                Color stringColor = new Color(46, 26, 17).MultiplyRGBA(_layerDrawColor);
+                Color stringColor = BowStringColor.MultiplyRGBA(_layerDrawColor);
                 float stringThickness = bowStringTexels.Width * texelScale;
                 Texture2D pixel = TextureAssets.MagicPixel.Value;
 
@@ -12209,6 +12252,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 // inter-step pause easing toward the wrong angle, then the next thrust's real start
                 // (PiOver2) opened with a ~107 degree snap. Matches WeaponArchetypeTables.SwingArcEndpoints.
                 ComboMotion.JoustDash       => (MathHelper.PiOver2, MathHelper.PiOver4),
+                ComboMotion.Thrust when UseSmoothRapierThrustPose
+                                            => (MathHelper.PiOver2, MathHelper.PiOver4),
                 ComboMotion.LowAxeRun       => (1.9f, 1.9f),
                 ComboMotion.RisingUppercutLeap => (1.9f, -1.0f),
                 ComboMotion.BackstepRaise   => (1.0f, -1.3f),
@@ -12332,6 +12377,8 @@ namespace tsorcRevamp.NPCs.Puppets
         /// Must start at column 0. Cut out of the drawn sprite and replaced by two live lines to the
         /// string hand while <see cref="UseBowStringDrawPose"/> is on. Empty = draw the sprite as-is.</summary>
         protected virtual Rectangle GetBowStringTexels(int itemType) => Rectangle.Empty;
+
+        protected virtual Color BowStringColor => new Color(46, 26, 17);
 
         /// <summary>Optional upright arrow sprite (tip at top) nocked against the live bowstring.</summary>
         protected virtual string NockedBowArrowTexture => null;

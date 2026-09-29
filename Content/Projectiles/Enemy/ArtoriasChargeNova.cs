@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,9 +12,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     // size can't cover all three call sites.
     class ArtoriasChargeNova : ModProjectile
     {
-        const int Lifetime = 18;
+        // One explosion sheet plays in 18t, too brief to sell a blast this size. So it replays BurstCount
+        // times, a new one every BurstIntervalTicks, each overlapping the tail of the last: a ~63t rolling
+        // detonation. Only the first burst's window deals damage, so the hit timing is unchanged.
+        const int BurstTicks = 18;
+        const int BurstCount = 6;
+        const int BurstIntervalTicks = 9;
+        const int Lifetime = (BurstCount - 1) * BurstIntervalTicks + BurstTicks;
+        const int HitWindowTicks = BurstTicks;
+        // Later bursts draw dimmer so the whole thing decays instead of ending on a full-strength flash.
+        const float LastBurstOpacity = 0.55f;
 
         float Radius => Projectile.ai[0];
+
+        int AgeTicks => Lifetime - Projectile.timeLeft;
 
         public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
 
@@ -40,7 +52,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.25f);
 
-            if (!Main.dedServ && Projectile.timeLeft % 2 == 0)
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            // Each follow-up burst gets its own quieter, deeper thump (the first one's sound is the boss's DoNovaBlast).
+            int age = AgeTicks;
+            bool burstStartsNow = age > 0 && age % BurstIntervalTicks == 0 && age / BurstIntervalTicks < BurstCount;
+            if (burstStartsNow)
+            {
+                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.55f, Pitch = -0.45f }, Projectile.Center);
+            }
+
+            if (Projectile.timeLeft % 2 == 0)
             {
                 Color tint = Main.rand.NextBool(3) ? (Main.rand.NextBool() ? Color.Black : Color.White) : default;
                 Vector2 pos = Projectile.Center + Main.rand.NextVector2Circular(Radius, Radius);
@@ -51,14 +76,34 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float progress = 1f - Projectile.timeLeft / (float)Lifetime;
-            float fade = MathHelper.Clamp(Projectile.timeLeft / 5f, 0f, 1f);
-            ArtoriasVFX.DrawDetonation(Projectile.Center, Radius, progress, 0.92f * fade, active: true);
+            int age = AgeTicks;
+
+            // Up to two bursts overlap at a time (18t each, 9t apart); each runs its own 0 -> 1 sheet
+            // progress and fades over its last 5 ticks, as the single burst used to.
+            for (int burst = 0; burst < BurstCount; burst++)
+            {
+                int burstAge = age - burst * BurstIntervalTicks;
+                if (burstAge < 0 || burstAge >= BurstTicks)
+                {
+                    continue;
+                }
+
+                float progress = burstAge / (float)BurstTicks;
+                float fade = MathHelper.Clamp((BurstTicks - burstAge) / 5f, 0f, 1f);
+                float burstStrength = MathHelper.Lerp(1f, LastBurstOpacity, burst / (float)(BurstCount - 1));
+                ArtoriasVFX.DrawDetonation(Projectile.Center, Radius, progress, 0.92f * fade * burstStrength, active: true);
+            }
+
             return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            if (AgeTicks >= HitWindowTicks)
+            {
+                return false;
+            }
+
             return Vector2.Distance(Projectile.Center, targetHitbox.Center.ToVector2()) <= Radius;
         }
 

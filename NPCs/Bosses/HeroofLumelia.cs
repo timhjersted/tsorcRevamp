@@ -78,9 +78,27 @@ namespace tsorcRevamp.NPCs.Bosses
         protected override float ComboMaxStartRange => 200f;
         protected override int MeleeComboChance => 80;
         protected override int MeleeTelegraphTicks => 34;
+        protected override int MinComboTelegraphTicks => 34;
+        protected override bool UseCompositeArmSwing => true;
+        protected override bool UseAuthoredComboSwingClock => true;
+        protected override bool AuthoredClockCoversJoustDash => true;
+        protected override bool UseLogicalMeleeTelegraphs => true;
+        protected override int MeleeComboInterStepLingerTicks => 3;
+        protected override int MeleeRecoveryLingerTicks => 6;
         protected override float PuppetJumpPower => 12f;
         protected override float PuppetJumpBoost => 6f;
         protected override Color MeleeTelegraphFlashColor => Color.OrangeRed;
+
+        protected override void ModifyMeleeArcEndpoints(ComboMotion motion,
+            ref float startRotation, ref float endRotation)
+        {
+            if (Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack
+                || Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery)
+            {
+                WeaponArchetypeTables.SetBroadswordComboArc(ActiveMeleeComboName, motion,
+                    ref startRotation, ref endRotation);
+            }
+        }
 
         // Grey-smoke blink identity (kept from the legacy TeleportVisualStyle.GreySmoke).
         protected override int TeleportTelegraphTicks => 120;

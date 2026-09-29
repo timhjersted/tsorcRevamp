@@ -92,9 +92,17 @@ namespace tsorcRevamp
 
             // Every invader gets a pack-specific default automatically. Explicit entries
             // below are registered afterwards and therefore replace this fallback.
+            //
+            // ArtoriasPhantom is excluded: the NPC-encounter scan below has no priority tiebreak
+            // between two active matches — whichever active NPC it finds LAST in Main.npc[] simply
+            // overwrites cachedAssignment. The phantom is a companion spawned WHILE Artorias himself
+            // is still alive and active, so if it had its own (generic) entry here, the fight's music
+            // would flip to this default every time the phantom was out and only return to Artorias's
+            // Boss6 track (registered below) once it faded, instead of playing Boss6 the whole fight.
             foreach (ModNPC npc in ModContent.GetContent<ModNPC>())
             {
-                if (npc is NPCs.Puppets.PuppetNPC && npc is not NPCs.Enemies.SuperHardMode.CrystalKnight)
+                if (npc is NPCs.Puppets.PuppetNPC && npc is not NPCs.Enemies.SuperHardMode.CrystalKnight
+                    && npc is not NPCs.Bosses.SuperHardMode.ArtoriasPhantom)
                 {
                     Assignments[npc.Type] = new TrackAssignment(
                         Path("SlugBattle"),

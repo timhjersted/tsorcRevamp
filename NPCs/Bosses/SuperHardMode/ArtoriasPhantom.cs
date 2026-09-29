@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -54,13 +55,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             || _combosStarted >= PhantomComboCount;
 
         // ── Aggression ───────────────────────────────────────────────────────────
-        // 0.65 x Artorias's 55: the share the old Echo Step strike dealt.
-        protected override int MeleeDamage => 36;
+        // Expert hit per 1.0x swing, before defense (Artorias's own is 90).
+        protected override int MeleeDamage => EnemyDamage.Projectile(100);
         // Runs from 140px out (base 420) and sprints harder while closing to engage range. The base combo
         // gate still refuses to swing beyond MeleeEngageRange, so it closes the gap first, jumping as needed.
         protected override float RunDistance => 140f;
-        protected override float ClosingDistanceSpeedMult => 1.6f;
+        protected override float ClosingDistanceSpeedMult => 2f;
         protected override int ClosingDistanceMaxTicks => 240;
+        // Commit to a combo from anywhere on screen. At the base 240px, a player standing farther off left the
+        // phantom in neutral with nothing chosen, drifting on the navigator (it has no ranged kit to fall back on).
+        protected override float ComboMaxStartRange => 1200f;
+        // A jumping player no longer blocks the swing: the base 48px gate kept it circling underneath until they
+        // landed. 140px is about a full jump; the 20t+ telegraph covers the rest of the fall.
+        protected override float ComboStartMaxTargetRise => 140f;
+        // The combo is already chosen during the run-in, so the greatsword is out the whole way.
+        protected override bool ShowMeleeWeaponWhileClosingDistance => true;
         // Never strolls, and starts a combo on the first eligible Idle tick instead of a 65% per-tick roll.
         protected override int MeleeComboChance => 100;
         protected override int CasualStrollChance => 0;

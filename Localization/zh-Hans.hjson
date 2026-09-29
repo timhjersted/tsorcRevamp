@@ -9208,6 +9208,16 @@ Mods: {
 				// DisplayName: Enemy Proximity Mine
 				// Tooltip: ""
 			}
+
+			EnemyOldRapier: {
+				// DisplayName: Enemy Old Rapier
+				// Tooltip: ""
+			}
+
+			EnemyPoisonBow: {
+				// DisplayName: Enemy Poison Bow
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -11499,6 +11509,8 @@ Mods: {
 			// FlameSpiritRush.DisplayName: Flame Spirit Rush
 			// EssenceThiefDelivery.DisplayName: Essence Thief Delivery
 			// StardustDelivery.DisplayName: Stardust Delivery
+			// ShadowNinjaPoisonArrow.DisplayName: Shadow Ninja Poison Arrow
+			// ShadowNinjaStarProj.DisplayName: Shadow Ninja Star Proj
 		}
 
 		NPCs: {

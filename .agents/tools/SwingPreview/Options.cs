@@ -423,7 +423,7 @@ Examples:
                 if (EaseIn >= 0) { step.EaseInTicks = EaseIn; }
                 if (EaseOut >= 0) { step.EaseOutTicks = EaseOut; }
                 if (!float.IsNaN(EaseOutDecay)) { step.EaseOutDecay = EaseOutDecay; }
-                if (step.Ease == SwingEaseStyle.Weighted
+                if (step.HitWindowEnd <= 0f && step.Ease == SwingEaseStyle.Weighted
                     && step.EaseInTicks + step.EaseOutTicks > 0)
                 {
                     var weighted = new WeightedSwing(

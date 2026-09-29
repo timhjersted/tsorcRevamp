@@ -12,13 +12,57 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, DreadWraith";
+        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
             if (string.IsNullOrWhiteSpace(puppet)) { return null; }
 
             string P(params string[] parts) => Path.GetFullPath(Path.Combine(repoRoot, Path.Combine(parts)));
+
+            if (puppet.Equals("ShadowNinja", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "ShadowNinja",
+                    BodySheet = P("Content", "Items", "Armor", "Melee", "ShadowNinjaTop_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Melee", "ShadowNinjaBottoms_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Melee", "ShadowNinjaMask_Head.png"),
+                    WeaponSprite = P("Content", "Items", "Weapons", "Melee", "Broadswords", "ShadowSickle.png"),
+                    HandleNormX = 0.16f,
+                    HandleNormY = 0.84f,
+                };
+            }
+
+            if (puppet.Equals("HeroofLumelia", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "HeroofLumelia",
+                    BodySheet = P("Content", "Items", "Armor", "Ranged", "ArcherOfLumeliaShirt_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Ranged", "ArcherOfLumeliaPants_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Ranged", "ArcherOfLumeliaHairStyle_Head.png"),
+                    WeaponSprite = P("Content", "Items", "Weapons", "Melee", "Broadswords", "AncientFireSword.png"),
+                    WeaponRotationOffset = 0.9f,
+                    HandleNormX = 0.2f,
+                    HandleNormY = 0.8f,
+                };
+            }
+
+            if (puppet.Equals("Ulhan", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "Ulhan",
+                    BodySheet = P("Content", "Items", "Armor", "Ranged", "MirkwoodElvenLeatherArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Ranged", "MirkwoodElvenLeggings_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Ranged", "MirkwoodElvenBlondeHairStyle_Head.png"),
+                    WeaponSprite = P("Content", "Items", "Weapons", "Enemy", "OldRapier.png"),
+                    WeaponScale = 1.1f,
+                    HandleNormX = 0.18f,
+                    HandleNormY = 0.82f,
+                };
+            }
 
             if (puppet.Equals("CrystalKnight", StringComparison.OrdinalIgnoreCase))
             {

@@ -1566,7 +1566,7 @@
     "EventID": "96da79cb-9704-479e-a468-c988e111c64e",
     "CenterX": 5828.0,
     "CenterY": 1760.0,
-    "Radius": 230400.0,
+    "Radius": 409600.0,
     "Square": false,
     "TriggerDust": 173,
     "VisibleRing": true,
@@ -1620,15 +1620,15 @@
     "EventID": "089a14c7-be08-4987-a789-0cdfeb65888a",
     "CenterX": 5344.0,
     "CenterY": 1692.0,
-    "Radius": 57600.0,
+    "Radius": 102400.0,
     "Square": false,
-    "TriggerDust": 228,
+    "TriggerDust": 62,
     "VisibleRing": true,
     "SaveOnCompletion": true,
     "TextToDisplay": "Artorias, the Abysswalker arrives to tear you from this plane...",
     "TextColorHex": "FFD700FF",
     "WorldCondition": null,
-    "MapCondition": "SuperHardModeCustomCondition",
+    "MapCondition": "",
     "CustomAction": null,
     "SingleNpcMarker": false,
     "Npcs": [
@@ -4840,6 +4840,312 @@
         "NpcName": "tsorcRevamp/GreatBlackKnight",
         "SpawnX": 6348.0,
         "SpawnY": 1577.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "06993477-94db-4018-970a-a8a6de6497f9",
+    "CenterX": 2673.0,
+    "CenterY": 1250.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/MushroomCreature",
+        "SpawnX": 2673.0,
+        "SpawnY": 1250.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "b470236a-05a5-4f12-94bb-aec5cbd12abc",
+    "CenterX": 2670.0,
+    "CenterY": 1283.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/MushroomCreature",
+        "SpawnX": 2670.0,
+        "SpawnY": 1283.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "2feb2aa7-1d17-4b08-be63-60a64c9f6f6b",
+    "CenterX": 2678.0,
+    "CenterY": 1435.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/MushroomCreature",
+        "SpawnX": 2670.0,
+        "SpawnY": 1450.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/MushroomCreature",
+        "SpawnX": 2684.0,
+        "SpawnY": 1435.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "Firefly",
+        "SpawnX": 2672.0,
+        "SpawnY": 1438.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "Firefly",
+        "SpawnX": 2683.0,
+        "SpawnY": 1445.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "904c50b3-b4fa-4527-bae3-f9f138afbb36",
+    "CenterX": 2864.0,
+    "CenterY": 1112.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/MushroomCreature",
+        "SpawnX": 2856.0,
+        "SpawnY": 1124.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "9a171c3b-a2d1-4c75-8d4f-77f470159bb0",
+    "CenterX": 2671.0,
+    "CenterY": 1208.0,
+    "Radius": 3686400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/MushroomCreature",
+        "SpawnX": 2644.0,
+        "SpawnY": 1207.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/MushroomCreature",
+        "SpawnX": 2693.0,
+        "SpawnY": 1209.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/MushroomCreature",
+        "SpawnX": 2698.0,
+        "SpawnY": 1209.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "b4f595ce-6feb-4411-a880-b3b5e90606dc",
+    "CenterX": 5664.0,
+    "CenterY": 1320.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "You have disturbed the Queen Bee!",
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "QueenBee",
+        "SpawnX": 5570.0,
+        "SpawnY": 1318.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "6e749b43-e364-49a3-9fe1-a39185c33447",
+    "CenterX": 5828.0,
+    "CenterY": 1771.0,
+    "Radius": 640000.0,
+    "Square": false,
+    "TriggerDust": 61,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "The guardian of the pyramid has awakened!",
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "Plantera",
+        "SpawnX": 5829.0,
+        "SpawnY": 1743.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "1db0f2cb-0633-4f03-839c-020cb8799947",
+    "CenterX": 6559.0,
+    "CenterY": 915.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 6,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Ulhan",
+        "SpawnX": 6458.0,
+        "SpawnY": 925.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "2f0223b5-62f1-4731-a4c3-b9324bc85b65",
+    "CenterX": 7311.0,
+    "CenterY": 1097.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/MountedSandsprog",
+        "SpawnX": 7412.0,
+        "SpawnY": 1109.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/MountedSandsprog",
+        "SpawnX": 7374.0,
+        "SpawnY": 1109.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/MountedSandsprog",
+        "SpawnX": 7249.0,
+        "SpawnY": 1073.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

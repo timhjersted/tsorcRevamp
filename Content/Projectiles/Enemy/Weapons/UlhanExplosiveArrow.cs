@@ -10,7 +10,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     {
         public const float MaximumTravel = 15f * 16f;
         private const float EmbeddedState = 2f;
-        // PLACEHOLDER sprite: copy of Content/Items/Ammo/CruelArrow.png; 14x44, top leads.
+        // PLACEHOLDER sprite: copy of Content/Items/Ammo/CruelArrow.png; 14x44, bottom tip leads.
         public override void SetDefaults()
         {
             Projectile.width = 10;
@@ -71,7 +71,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 Projectile.ai[1] = 1f;
             }
             Projectile.ai[0] += step;
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             EmitEmbers();
         }
 

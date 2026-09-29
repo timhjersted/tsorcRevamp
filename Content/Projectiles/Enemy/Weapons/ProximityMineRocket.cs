@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -31,6 +32,22 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         // The blast is the only damage event, including on player contact.
         public override bool? CanDamage() => false;
 
+        public override void OnSpawn(IEntitySource source)
+        {
+            if (Main.dedServ)
+                return;
+            // The mine vents smoke as this rocket lifts off; there is no launch blast.
+            for (int i = 0; i < 16; i++)
+            {
+                Dust smoke = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(6f, 4f),
+                    DustID.Smoke, Main.rand.NextVector2Circular(1.8f, 1.2f), 95,
+                    new Color(175, 180, 180), Main.rand.NextFloat(0.7f, 1.1f));
+                smoke.noGravity = true;
+                smoke.noLight = true;
+                smoke.fadeIn = 1.3f;
+            }
+        }
+
         public override void AI()
         {
             Projectile.localAI[0]++;
@@ -47,20 +64,35 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     Player target = FindNearestPlayer();
                     if (target != null)
                     {
+                        if (Projectile.ai[1] != target.whoAmI + 1f)
+                        {
+                            Projectile.ai[1] = target.whoAmI + 1f;
+                            Projectile.netUpdate = true;
+                        }
                         if (Projectile.Distance(target.Center) <= ReleaseDistance)
                         {
                             Projectile.ai[0] = Committed;
                             Projectile.netUpdate = true;
                         }
-                        else
-                        {
-                            Vector2 wanted = (target.Center - Projectile.Center).SafeNormalize(Projectile.velocity);
-                            Projectile.velocity = Vector2.Lerp(
-                                Projectile.velocity.SafeNormalize(wanted), wanted, TurnStrength)
-                                .SafeNormalize(wanted) * Speed;
-                            if (Projectile.timeLeft % 6 == 0)
-                                Projectile.netUpdate = true;
-                        }
+                    }
+                }
+            }
+            // Both peers steer towards the synchronized target, so the displayed rocket stays
+            // close to the server's blast center between position updates.
+            if (Projectile.ai[0] == Seeking && Projectile.ai[1] > 0f)
+            {
+                int targetIndex = (int)Projectile.ai[1] - 1;
+                if (targetIndex >= 0 && targetIndex < Main.maxPlayers)
+                {
+                    Player target = Main.player[targetIndex];
+                    if (target.active && !target.dead && !target.ghost)
+                    {
+                        Vector2 wanted = (target.Center - Projectile.Center).SafeNormalize(Projectile.velocity);
+                        Projectile.velocity = Vector2.Lerp(
+                            Projectile.velocity.SafeNormalize(wanted), wanted, TurnStrength)
+                            .SafeNormalize(wanted) * Speed;
+                        if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft % 6 == 0)
+                            Projectile.netUpdate = true;
                     }
                 }
             }
@@ -69,16 +101,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             if (!Main.dedServ)
             {
                 Lighting.AddLight(Projectile.Center, 0.5f, 0.25f, 0.04f);
-                if (Main.GameUpdateCount % 2 == 0)
+                Vector2 backward = -Projectile.velocity.SafeNormalize(Vector2.UnitY);
+                Vector2 sideways = new Vector2(-backward.Y, backward.X);
+                Vector2 exhaust = Projectile.Center + backward * 15f;
+                for (int i = 0; i < 2; i++)
                 {
-                    Vector2 back = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitY) * 13f;
-                    Dust smoke = Dust.NewDustPerfect(back, DustID.Smoke,
-                        -Projectile.velocity * 0.12f + Main.rand.NextVector2Circular(0.4f, 0.4f),
-                        150, default, 0.8f);
+                    Dust smoke = Dust.NewDustPerfect(exhaust + backward * (i * 5f)
+                        + sideways * Main.rand.NextFloat(-2f, 2f), DustID.Smoke,
+                        backward * Main.rand.NextFloat(0.7f, 1.4f)
+                        + sideways * Main.rand.NextFloat(-0.5f, 0.5f), 105,
+                        new Color(175, 180, 180), Main.rand.NextFloat(0.8f, 1.1f));
                     smoke.noGravity = true;
-                    if (Main.rand.NextBool(3))
-                        Dust.NewDustPerfect(back, DustID.OrangeTorch, -Projectile.velocity * 0.1f,
-                            80, default, 0.6f).noGravity = true;
+                    smoke.noLight = true;
+                    smoke.fadeIn = 1.3f;
                 }
             }
         }

@@ -13,17 +13,23 @@ namespace tsorcRevamp.Utilities
     {
         /// <summary>
         /// Use as the damage argument to Projectile.NewProjectile for one hostile projectile hit.
-        /// A single hit in Expert Mode is approximately four times the spawn damage in this mod.
         /// Projectile-based melee hitboxes use this path too; they are not NPC contact damage.
-        /// Scale the requested Expert hit by the current mode's enemy-damage ratio before
-        /// converting to spawn damage. Rounding can shift the resulting hit by a few points.
+        /// The hit lands at the declared Expert value scaled by the difficulty's enemy-damage ratio:
+        /// half in Normal, 1x in Expert, 1.5x in Master, and the slider's share in Journey.
+        /// Rounding can shift the resulting hit by a few points.
+        /// Not valid for vanilla types in ProjectileID.Sets.PlayerHurtDamageIgnoresDifficultyScaling
+        /// (bombs, rockets, ...) or reflected projectiles: vanilla skips the difficulty multiplier for them.
         /// </summary>
         public static int Projectile(int expertDamageBeforeDefense)
         {
             if (expertDamageBeforeDefense < 0)
                 throw new ArgumentOutOfRangeException(nameof(expertDamageBeforeDefense));
 
-            return RoundDamage(expertDamageBeforeDefense * ExpertDamageScale / 4d);
+            // Vanilla already scales the hit by difficulty: Projectile.Damage doubles the spawn damage, and
+            // CombinedHooks.ModifyHitByProjectile multiplies it by EnemyDamageMultiplier (1 / 2 / 3, or the
+            // Journey slider). So the spawn value is the Expert hit / (2 x 2) in every mode - scaling it here
+            // too applied the ratio twice (Normal hit 1/4, Master 2.25x).
+            return RoundDamage(expertDamageBeforeDefense / 4d);
         }
 
         /// <summary>

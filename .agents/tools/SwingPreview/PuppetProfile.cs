@@ -30,6 +30,7 @@ namespace SwingPreview
         /// useAnimation. Deliberately excludes LeapThrust - see the base virtual's doc comment.</summary>
         public bool AuthoredClockCoversJoustDash;
         public bool UseSwingEasing;
+        public bool SmoothRapierThrustPose;
         public bool AimSwingActive;
         public bool LogicalTelegraphs;
         public bool LandingTimedLeapSlam;
@@ -97,6 +98,7 @@ namespace SwingPreview
             profile._instance = RuntimeHelpers.GetUninitializedObject(puppetType);
 
             profile.UseSwingEasing = profile.Read("UseSwingEasing", false);
+            profile.SmoothRapierThrustPose = profile.Read("UseSmoothRapierThrustPose", false);
             profile.AimSwingActive = profile.Read("AimSwingActive", false);
             profile.AuthoredClock = profile.Read("UseAuthoredComboSwingClock", profile.AimSwingActive);
             profile.AuthoredClockCoversJoustDash = profile.Read("AuthoredClockCoversJoustDash", false);

@@ -697,13 +697,18 @@ namespace SwingPreview
                 case ComboMotion.Thrust:
                     if (inTel)
                     {
-                        return MathHelper.Lerp(rotation, MathHelper.PiOver2, 0.20f);
+                        return profile.SmoothRapierThrustPose
+                            ? MathHelper.SmoothStep(profile.HoldRotation, MathHelper.PiOver2, telegraphT)
+                            : MathHelper.Lerp(rotation, MathHelper.PiOver2, 0.20f);
                     }
                     if (inPause)
                     {
                         return MathHelper.Lerp(rotation, MathHelper.PiOver2 * 0.8f, 0.18f);
                     }
-                    return MathHelper.Lerp(rotation, MathHelper.PiOver4, 0.42f);
+                    return profile.SmoothRapierThrustPose
+                        ? MathHelper.SmoothStep(MathHelper.PiOver2, MathHelper.PiOver4,
+                            MathHelper.Clamp(t, 0f, 1f))
+                        : MathHelper.Lerp(rotation, MathHelper.PiOver4, 0.42f);
                 case ComboMotion.JoustDash:
                     if (inTel)
                     {
@@ -943,6 +948,8 @@ namespace SwingPreview
                 // Matches the entry added to PuppetNPC.ComboStepStartRotation — Cursed Dragon's
                 // Skewer String is the first combo to chain two JoustDash steps.
                 case ComboMotion.JoustDash: a0 = MathHelper.PiOver2; a1 = MathHelper.PiOver4; break;
+                case ComboMotion.Thrust when profile.SmoothRapierThrustPose:
+                    a0 = MathHelper.PiOver2; a1 = MathHelper.PiOver4; break;
                 case ComboMotion.LowAxeRun: a0 = 1.9f; a1 = 1.9f; break;
                 case ComboMotion.RisingUppercutLeap: a0 = 1.9f; a1 = -1.0f; break;
                 case ComboMotion.BackstepRaise: a0 = 1.0f; a1 = -1.3f; break;
