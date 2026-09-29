@@ -16,6 +16,7 @@ Mods: {
 			// Greatshield: Greatshield: no damage leaks through, but it is heavy and slow to recover from
 			// RegenPenalty: Its weight reduces stamina regeneration by {0}% while equipped
 			// Regen: Stamina recovers at {0}% of its normal rate while raised, after the usual delay
+			// OneShieldLimit: Can only equip one shield at a time
 			// Stamina: stamina
 			// Mana: mana
 			// ReflectEffect: A perfect parry reflects the blocked damage back at the attacker
@@ -181,6 +182,7 @@ Mods: {
 				你可以看到一个奇怪的[c/878787:头骨]符号在它的表面发光...
 				'''
 			CorruptionCursed: 该物品已被[c/701070:腐化]力量[c/338338:诅咒]，目前无法使用
+			// QueenBeeCursed: This item has been [c/383838:cursed] by the [c/701070:jungle] and can't be used until Queen Bee is defeated
 			BotCNoHeal: 无法治愈[c/6d8827:被诅咒者]
 			// UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
 			// LifeCrystalSoulsMode: Permanently increases maximum life by {0}
