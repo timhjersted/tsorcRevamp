@@ -2804,6 +2804,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float RiposteReflectMinimumRange = 340f;
         const float RiposteProjectileThreatRange = 920f;
         const int RipostePreemptiveChance = 180;
+        const int RiposteReflectedDamage = 50;
         int _riposteCd = RiposteCooldownTicks;
         int _riposteTimer;
         bool _riposteCounterPending;
@@ -3013,7 +3014,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (TryFindRiposteVortexPosition(player, impact, out Vector2 output))
             {
-                int damage = Math.Max(1, (int)(player.statLifeMax2 * 0.20f));
+                int damage = RiposteReflectedDamage;
                 float returnSpeed = Math.Max(incoming.velocity.Length(), 14f);
                 // Preserve the player's original projectile and visuals, but make its later release
                 // hostile, wall-piercing, and owned by its obvious 60-tick output telegraph.
@@ -3024,6 +3025,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 incoming.ignoreWater = true;
                 incoming.velocity = Vector2.Zero;
                 incoming.damage = damage;
+                incoming.penetrate = 1;
+                incoming.maxPenetrate = 1;
+                var global = incoming.GetGlobalProjectile<tsorcGlobalProjectile>();
+                global.IsReflectedRiposte = true;
+                global.ReflectedDamage = damage;
                 incoming.timeLeft = Math.Max(incoming.timeLeft, 180);
                 incoming.netUpdate = true;
 

@@ -9,7 +9,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Projectiles.Enemy.Gigas;
+using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies{
 	// Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
@@ -971,7 +973,7 @@ namespace tsorcRevamp.NPCs.Enemies{
 
                 if (TryFindShieldVortexPosition(player, impact, out Vector2 output))
                 {
-                    int damage = Math.Max(1, (int)(player.statLifeMax2 * 0.20f));
+                    int damage = EnemyDamage.Projectile(150);
                     // Keep the real player projectile alive but frozen and hidden in the output
                     // vortex. At release it is converted exactly as Hydra's shield does, preserving
                     // the original projectile type/visual while making it hostile and wall-piercing.
@@ -982,6 +984,11 @@ namespace tsorcRevamp.NPCs.Enemies{
                     incoming.tileCollide = false;
                     incoming.velocity = Vector2.Zero;
                     incoming.damage = damage;
+                    incoming.penetrate = 1;
+                    incoming.maxPenetrate = 1;
+                    var global = incoming.GetGlobalProjectile<tsorcGlobalProjectile>();
+                    global.IsReflectedRiposte = true;
+                    global.ReflectedDamage = damage;
                     // The output begins 400px behind the player; retain ample post-telegraph life
                     // for even a slow reflected projectile to reach its target through terrain.
                     incoming.timeLeft = Math.Max(incoming.timeLeft, 180);

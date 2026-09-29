@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -63,6 +64,8 @@ namespace tsorcRevamp.Content.Projectiles
         public bool ModdedFlail = false;
         public bool KrakenEmpowered = false;
         public bool Initialized;
+        public bool IsReflectedRiposte = false;
+        public int ReflectedDamage = 0;
 
         public int WeaponStaminaSourceItemType = -1;
         public bool WeaponStaminaSourceIsSummon;
@@ -156,6 +159,11 @@ namespace tsorcRevamp.Content.Projectiles
                 metadataFlags |= 2;
             }
 
+            if (IsReflectedRiposte)
+            {
+                metadataFlags |= 4;
+            }
+
             binaryWriter.Write(metadataFlags);
             if ((metadataFlags & 1) != 0)
             {
@@ -165,6 +173,10 @@ namespace tsorcRevamp.Content.Projectiles
             if ((metadataFlags & 2) != 0)
             {
                 binaryWriter.Write((ushort)DefenseTraits);
+            }
+            if ((metadataFlags & 4) != 0)
+            {
+                binaryWriter.Write((short)ReflectedDamage);
             }
         }
 
@@ -185,6 +197,22 @@ namespace tsorcRevamp.Content.Projectiles
             DefenseTraits = (metadataFlags & 2) != 0
                 ? (AttackDefenseTraits)binaryReader.ReadUInt16()
                 : AttackDefenseTraits.None;
+
+            if ((metadataFlags & 4) != 0)
+            {
+                IsReflectedRiposte = true;
+                ReflectedDamage = binaryReader.ReadInt16();
+                projectile.friendly = false;
+                projectile.hostile = true;
+                projectile.damage = ReflectedDamage;
+                projectile.penetrate = 1;
+                projectile.maxPenetrate = 1;
+            }
+            else
+            {
+                IsReflectedRiposte = false;
+                ReflectedDamage = 0;
+            }
         }
 
         public override void SetDefaults(Projectile entity)
@@ -331,6 +359,13 @@ namespace tsorcRevamp.Content.Projectiles
                 projectile.hostile = true;
                 projectile.friendly = false;
                 projectile.tileCollide = false;
+            }
+
+            if (IsReflectedRiposte)
+            {
+                projectile.hostile = true;
+                projectile.friendly = false;
+                projectile.damage = ReflectedDamage;
             }
 
             if (projectile.owner < Main.maxPlayers && Main.player[projectile.owner].active)
@@ -598,6 +633,16 @@ namespace tsorcRevamp.Content.Projectiles
 
 
             return true;
+        }
+
+        public override void PostAI(Projectile projectile)
+        {
+            if (IsReflectedRiposte)
+            {
+                projectile.friendly = false;
+                projectile.hostile = true;
+                projectile.damage = ReflectedDamage;
+            }
 
 
         }
@@ -714,10 +759,30 @@ namespace tsorcRevamp.Content.Projectiles
                 // Directly reduce damage before resistances are applied
                 modifiers.SourceDamage.Flat -= modPlayer.magicDefense;
             }
+
+            if (IsReflectedRiposte)
+            {
+                projectile.damage = ReflectedDamage;
+            }
+
         }
 
         public override void OnHitPlayer(Projectile projectile, Player target, Player.HurtInfo info)
         {
+            if (IsReflectedRiposte)
+            {
+                projectile.penetrate = 1;
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    SoundEngine.PlaySound(SoundID.Item10 with { Volume = 0.8f }, projectile.Center);
+                    for (int i = 0; i < 15; i++)
+                    {
+                        Dust.NewDust(projectile.position, projectile.width, projectile.height, DustID.GoldFlame, 0f, 0f, 100, default, 1.2f);
+                    }
+                }
+                projectile.Kill();
+            }
+
             // SourceNPCType is synced with each projectile (including inherited child shots).
             // Shared projectile classes only build Blight when fired by the Blight boss.
             if (projectile.hostile && info.Damage > 0
@@ -727,6 +792,11 @@ namespace tsorcRevamp.Content.Projectiles
 
         public override bool PreKill(Projectile projectile, int timeLeft)
         {
+            if (IsReflectedRiposte)
+            {
+                return false;
+            }
+
             if (projectile.type == ProjectileID.SandBallFalling && projectile.velocity.X != 0)
             {
                 return false;

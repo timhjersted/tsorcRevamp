@@ -92,6 +92,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gigas
                             reflected.hide = false;
                             reflected.tileCollide = false;
                             reflected.ignoreWater = true;
+                            reflected.penetrate = 1;
+                            reflected.maxPenetrate = 1;
+                            var global = reflected.GetGlobalProjectile<tsorcGlobalProjectile>();
+                            if (global.IsReflectedRiposte && global.ReflectedDamage > 0)
+                            {
+                                reflected.damage = global.ReflectedDamage;
+                            }
                             reflected.velocity = (player.Center - reflected.Center).SafeNormalize(Vector2.UnitX) * speed;
                             reflected.netUpdate = true;
                         }
