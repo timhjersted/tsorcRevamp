@@ -909,7 +909,11 @@ namespace tsorcRevamp
 
                     if (drectWorld.Contains(tsorcRevampPlayer.RealMouseWorld.ToPoint()))
                     {
-                        Main.LocalPlayer.mouseInterface = true;
+                        // This button uses left-click only. Do not block a right-click on a chest behind it.
+                        if (Main.mouseLeft)
+                        {
+                            Main.LocalPlayer.mouseInterface = true;
+                        }
                         if (Main.mouseLeft && Main.mouseLeftRelease)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);

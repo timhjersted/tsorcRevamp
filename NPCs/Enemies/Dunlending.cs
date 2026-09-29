@@ -85,6 +85,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
+            if (spawnInfo.SpawnTileY < 1000) return 0f;
+
             var p = spawnInfo.Player;
 
             float chance = 0;

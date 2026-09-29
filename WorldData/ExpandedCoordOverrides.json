@@ -43,6 +43,14 @@
       "newY": 1049,
       "type": "move",
       "note": "\"Unadin Inn\" soapstone. Formula alone would put it at 5257,1065; relocated on the expanded map only. Legacy adventure + remix keep it at its own 5257,865."
+    },
+    {
+      "legacyX": 5254,
+      "legacyY": 846,
+      "newX": 5254,
+      "newY": 1053,
+      "type": "move",
+      "note": "\"The Merchant tells you a rumor...\" soapstone. Moved 7 tiles down from its expanded formula position at 5254,1046. Legacy adventure + remix remain at 5254,846."
     }
   ]
 }

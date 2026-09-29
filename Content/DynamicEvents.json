@@ -5152,5 +5152,68 @@
         "CustomSouls": null
       }
     ]
+  },
+  {
+    "EventID": "1b32b03c-658f-4a0b-a23b-29c55baa261f",
+    "CenterX": 4993.0,
+    "CenterY": 884.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "Firefly",
+        "SpawnX": 4993.0,
+        "SpawnY": 884.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "09f96fc9-dbd8-4fa5-91ad-2dfc2f7b41cd",
+    "CenterX": 5827.0,
+    "CenterY": 695.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "Harpy",
+        "SpawnX": 5747.0,
+        "SpawnY": 693.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "Harpy",
+        "SpawnX": 5918.0,
+        "SpawnY": 696.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
   }
 ]

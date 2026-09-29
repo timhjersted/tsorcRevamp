@@ -8,7 +8,6 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.UI;
-using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -55,8 +54,23 @@ namespace tsorcRevamp.Systems
         // MP client: chest whose template was requested and not yet answered. (-1, -1) = none pending.
         static Point16 pendingTemplateRequest = new Point16(-1, -1);
 
-        internal static UserInterface ChestInterface;
-        internal static PerPlayerChestUIState ChestUIState;
+        // Vanilla chest-window geometry (ChestUI): slot (column, row) sits at 73 + column*56*scale,
+        // invBottom + row*56*scale, at inventoryScale 0.755.
+        private const float ChestInventoryScale = 0.755f;
+        private const int ChestColumns = 10;
+
+        // Vanilla puts the name at invBottom and Loot All at invBottom + 40. Those spots hold the bestiary/emote
+        // buttons (y 278-308) unless a VANILLA chest is open, so ours sit below them, keeping the same 40px gap.
+        private const int NameOffsetY = 58;
+        private const int LootAllOffsetY = 98;
+
+        // Vanilla moves the trash slot beside the chest grid only when its own chest is open. Main.trashSlotOffset
+        // (read by vanilla, never written) puts it in the same spot for ours: (5, 168) is vanilla's chest-open shift.
+        private static readonly Point16 ChestOpenTrashOffset = new Point16(5, 168);
+
+        // Loot All hover animation, as in vanilla's ChestUI.ButtonScale / ButtonHovered.
+        static float lootAllScale = 0.75f;
+        static bool lootAllHovered;
 
         // Random ID for this world, keying every player's copies. Not the vanilla world GUID: every copy of the
         // adventure map shares that one. New worlds are made by copying only the .wld template, and this lives in
@@ -73,20 +87,10 @@ namespace tsorcRevamp.Systems
             On_Chest.IsPlayerInChest += SkipTemplatesDuringQuickStack;
             On_Chest.AfterPlacement_Hook += TrackChestPlacedInSingleplayer;
             On_WorldGen.PlaceChest += TrackChestPlacedOnServer;
-
-            if (!Main.dedServ)
-            {
-                ChestUIState = new PerPlayerChestUIState();
-                ChestUIState.Activate();
-                ChestInterface = new UserInterface();
-                ChestInterface.SetState(ChestUIState);
-            }
         }
 
         public override void Unload()
         {
-            ChestUIState = null;
-            ChestInterface = null;
             OpenChestItems = null;
             PlayerPlacedChests = new HashSet<Point16>();
         }
@@ -476,6 +480,7 @@ namespace tsorcRevamp.Systems
             OpenChestPosition = chestPosition;
             OpenChestItems = copy;
             OpenChestName = chestName;
+            Main.trashSlotOffset = ChestOpenTrashOffset;
 
             Main.playerInventory = true;
             SoundEngine.PlaySound(SoundID.MenuOpen);
@@ -490,6 +495,7 @@ namespace tsorcRevamp.Systems
 
             IsOpen = false;
             OpenChestItems = null;
+            Main.trashSlotOffset = Point16.Zero;
 
             if (playSound)
             {
@@ -518,14 +524,36 @@ namespace tsorcRevamp.Systems
             return movedAnything;
         }
 
+        // Close on the same things that close a vanilla chest: inventory closed, walking out of tile range (vanilla's
+        // chestX/Y +- tileRange box), another container opened, or the chest gone / no longer instanced.
         public override void UpdateUI(GameTime gameTime)
         {
-            if (IsOpen)
+            if (!IsOpen)
             {
-                ChestInterface?.Update(gameTime);
+                return;
+            }
+
+            Player player = Main.LocalPlayer;
+            Tile chestTile = Main.tile[OpenChestPosition.X, OpenChestPosition.Y];
+
+            int playerTileX = (int)(player.Center.X / 16f);
+            int playerTileY = (int)(player.Center.Y / 16f);
+            bool outOfRangeX = playerTileX < OpenChestPosition.X - Player.tileRangeX || playerTileX > OpenChestPosition.X + Player.tileRangeX + 1;
+            bool outOfRangeY = playerTileY < OpenChestPosition.Y - Player.tileRangeY || playerTileY > OpenChestPosition.Y + Player.tileRangeY + 1;
+
+            bool inventoryClosed = !Main.playerInventory;
+            bool otherContainerOpened = player.chest != -1;
+            bool playerGone = player.dead || !player.active;
+            bool chestGone = !chestTile.HasTile || !TileID.Sets.BasicChest[chestTile.TileType];
+            bool noLongerInstanced = !IsInstancedChest(OpenChestPosition.X, OpenChestPosition.Y);
+
+            if (inventoryClosed || outOfRangeX || outOfRangeY || otherContainerOpened || playerGone || chestGone || noLongerInstanced)
+            {
+                CloseChest(playSound: true);
             }
         }
 
+        // Drawn with the inventory, just before mouse text, so hover tooltips land on top like vanilla's.
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {
             int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
@@ -539,14 +567,176 @@ namespace tsorcRevamp.Systems
                 "tsorcRevamp: Per-Player Chest UI",
                 delegate
                 {
-                    if (IsOpen)
+                    if (IsOpen && Main.playerInventory)
                     {
-                        ChestInterface.Draw(Main.spriteBatch, new GameTime());
+                        DrawChestWindow(Main.spriteBatch);
                     }
                     return true;
                 },
                 InterfaceScaleType.UI)
             );
+        }
+
+        // A copy of vanilla's chest window (ChestUI.Draw), drawn and clicked in one pass the way vanilla does it.
+        // Same slot positions and art; only the take-only click rules and a single Loot All button differ.
+        // Hidden while the big recipe list is open, since that covers this area (vanilla hides its chest too).
+        private static void DrawChestWindow(SpriteBatch spriteBatch)
+        {
+            if (Main.recBigList)
+            {
+                return;
+            }
+
+            Player player = Main.LocalPlayer;
+            int invBottom = Main.instance.invBottom;
+            float previousInventoryScale = Main.inventoryScale;
+            Main.inventoryScale = ChestInventoryScale;
+
+            // Vanilla's hover box over the whole grid, so clicks between slots don't reach the world either.
+            float gridHoverWidth = 560f * ChestInventoryScale;
+            float gridHoverHeight = 224f * ChestInventoryScale;
+            bool hoveringGrid = Utils.FloatIntersect(Main.mouseX, Main.mouseY, 0f, 0f, 73f, invBottom, gridHoverWidth, gridHoverHeight);
+
+            if (hoveringGrid && !PlayerInput.IgnoreMouseInterface)
+            {
+                player.mouseInterface = true;
+            }
+
+            float slotSize = TextureAssets.InventoryBack.Width() * ChestInventoryScale;
+
+            for (int slot = 0; slot < ChestSlotCount; slot++)
+            {
+                int column = slot % ChestColumns;
+                int row = slot / ChestColumns;
+                int slotX = (int)(73f + column * 56 * ChestInventoryScale);
+                int slotY = (int)(invBottom + row * 56 * ChestInventoryScale);
+
+                bool hoveringSlot = Utils.FloatIntersect(Main.mouseX, Main.mouseY, 0f, 0f, slotX, slotY, slotSize, slotSize)
+                    && !PlayerInput.IgnoreMouseInterface;
+
+                if (hoveringSlot)
+                {
+                    player.mouseInterface = true;
+                    ItemSlot.OverrideHover(OpenChestItems, ItemSlot.Context.ChestItem, slot);
+
+                    // Take-only: left click picks the stack up (or tops up a matching cursor stack), shift-click
+                    // sends it to the inventory. Holding a different item does nothing, so nothing can go in.
+                    Item item = OpenChestItems[slot];
+                    bool leftClicked = Main.mouseLeft && Main.mouseLeftRelease;
+
+                    if (leftClicked && !item.IsAir)
+                    {
+                        bool tookSomething = false;
+
+                        if (ItemSlot.ShiftInUse)
+                        {
+                            tookSomething = TakeIntoInventory(player, slot);
+                        }
+                        else if (Main.mouseItem.IsAir)
+                        {
+                            // Empty the slot and hand the same item to the cursor in one step, so it is never in both.
+                            OpenChestItems[slot] = new Item();
+                            Main.mouseItem = item;
+                            tookSomething = true;
+                        }
+                        else if (ItemLoader.TryStackItems(Main.mouseItem, item, out int movedCount) && movedCount > 0)
+                        {
+                            if (item.stack <= 0)
+                            {
+                                OpenChestItems[slot] = new Item();
+                            }
+                            tookSomething = true;
+                        }
+
+                        if (tookSomething)
+                        {
+                            SoundEngine.PlaySound(SoundID.Grab);
+                            Recipe.FindRecipes();
+                        }
+                    }
+
+                    ItemSlot.MouseHover(OpenChestItems, ItemSlot.Context.ChestItem, slot);
+                }
+
+                ItemSlot.Draw(spriteBatch, OpenChestItems, ItemSlot.Context.ChestItem, slot, new Vector2(slotX, slotY));
+            }
+
+            // Name, in vanilla's pulsing white (brightness follows Main.mouseTextColor).
+            Color nameColor = Color.White * (1f - (255f - Main.mouseTextColor) / 255f * 0.5f);
+            nameColor.A = byte.MaxValue;
+            Vector2 namePosition = new Vector2(504f, invBottom + NameOffsetY);
+            ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, OpenChestName, namePosition,
+                nameColor, 0f, Vector2.Zero, Vector2.One, -1f, 1.5f);
+
+            // Loot All, drawn like vanilla's ChestUI.DrawButton: text centred on (x, y), 0.75 scale growing to 1 while
+            // hovered. Once hovered the hit box widens (-10 / +16 px) so the growing text can't flicker out of it.
+            string lootAllText = Lang.inter[29].Value;
+            Vector2 lootAllSize = FontAssets.MouseText.Value.MeasureString(lootAllText);
+            int lootAllX = 506 + (int)(lootAllSize.X * lootAllScale / 2f);
+            int lootAllY = invBottom + LootAllOffsetY;
+
+            float hoverBoxLeft = lootAllX - lootAllSize.X / 2f;
+            float hoverBoxWidth = lootAllSize.X;
+
+            if (lootAllHovered)
+            {
+                hoverBoxLeft -= 10f;
+                hoverBoxWidth += 16f;
+            }
+
+            bool hoveringLootAll = Utils.FloatIntersect(Main.mouseX, Main.mouseY, 0f, 0f, hoverBoxLeft, lootAllY - 12, hoverBoxWidth, 24f);
+
+            Color lootAllColor = Color.White * 0.97f * (1f - (255f - Main.mouseTextColor) / 255f * 0.5f);
+            lootAllColor.A = byte.MaxValue;
+
+            if (hoveringLootAll)
+            {
+                lootAllColor = Main.OurFavoriteColor;
+            }
+
+            ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, lootAllText, new Vector2(lootAllX, lootAllY),
+                lootAllColor, 0f, lootAllSize / 2f, new Vector2(lootAllScale), -1f, 1.5f);
+
+            if (hoveringLootAll)
+            {
+                if (!lootAllHovered)
+                {
+                    SoundEngine.PlaySound(SoundID.MenuTick);
+                }
+                lootAllHovered = true;
+                lootAllScale = System.Math.Min(lootAllScale + 0.05f, 1f);
+            }
+            else
+            {
+                lootAllHovered = false;
+                lootAllScale = System.Math.Max(lootAllScale - 0.05f, 0.75f);
+            }
+
+            if (hoveringLootAll && !PlayerInput.IgnoreMouseInterface)
+            {
+                player.mouseInterface = true;
+
+                if (Main.mouseLeft && Main.mouseLeftRelease)
+                {
+                    bool movedAnything = false;
+
+                    for (int slot = 0; slot < ChestSlotCount; slot++)
+                    {
+                        if (TakeIntoInventory(player, slot))
+                        {
+                            movedAnything = true;
+                        }
+                    }
+
+                    if (movedAnything)
+                    {
+                        SoundEngine.PlaySound(SoundID.Grab);
+                    }
+                    Recipe.FindRecipes();
+                }
+            }
+
+            Main.inventoryScale = previousInventoryScale;
         }
     }
 
@@ -620,244 +810,6 @@ namespace tsorcRevamp.Systems
                 string world = entry.GetString("World");
                 Point16 chestPosition = entry.Get<Point16>("Chest");
                 ChestCopies[(world, chestPosition)] = copy;
-            }
-        }
-    }
-
-    // The per-player chest window. Same look as the Storage window (dark panel, gold title, InventoryBack9 slots),
-    // laid out over the spot where vanilla draws an open chest: a 10x4 grid under the inventory, with the name,
-    // Loot All and close on the right. Take-only: nothing can be put into a copy.
-    internal class PerPlayerChestUIState : UIState
-    {
-        private const int Columns = 10;
-        private const int Rows = 4;
-        private const float SlotSize = 40f;
-        private const float SlotSpacing = 42f;
-        private const float GridPadding = 8f;
-        private const float SideColumnWidth = 120f;
-
-        private UIPanel panel;
-        private UIText titleText;
-
-        public override void OnInitialize()
-        {
-            float gridWidth = Columns * SlotSpacing;
-            float gridHeight = Rows * SlotSpacing;
-            float sideColumnLeft = GridPadding + gridWidth + GridPadding;
-
-            // Vanilla's chest grid starts at x 73, y Main.instance.invBottom (258): directly under the inventory.
-            panel = new UIPanel();
-            panel.SetPadding(0);
-            panel.Left.Set(67f, 0f);
-            panel.Top.Set(250f, 0f);
-            panel.Width.Set(sideColumnLeft + SideColumnWidth, 0f);
-            panel.Height.Set(GridPadding + gridHeight + GridPadding, 0f);
-            panel.BackgroundColor = new Color(30, 30, 40) * 0.95f;
-            Append(panel);
-
-            for (int i = 0; i < PerPlayerChestLootSystem.ChestSlotCount; i++)
-            {
-                int column = i % Columns;
-                int row = i / Columns;
-
-                PerPlayerChestSlot slot = new PerPlayerChestSlot(i);
-                slot.Left.Set(GridPadding + column * SlotSpacing, 0f);
-                slot.Top.Set(GridPadding + row * SlotSpacing, 0f);
-                slot.Width.Set(SlotSize, 0f);
-                slot.Height.Set(SlotSize, 0f);
-                panel.Append(slot);
-            }
-
-            titleText = new UIText("", 0.8f);
-            titleText.Left.Set(sideColumnLeft, 0f);
-            titleText.Top.Set(10f, 0f);
-            titleText.Width.Set(SideColumnWidth - 26f, 0f);
-            titleText.IsWrapped = true;
-            titleText.TextColor = new Color(255, 204, 0);
-            panel.Append(titleText);
-
-            UIText closeButton = new UIText("X", 0.9f);
-            closeButton.Left.Set(sideColumnLeft + SideColumnWidth - 22f, 0f);
-            closeButton.Top.Set(8f, 0f);
-            closeButton.OnMouseOver += (evt, element) => { closeButton.TextColor = Color.Red; };
-            closeButton.OnMouseOut += (evt, element) => { closeButton.TextColor = Color.White; };
-            closeButton.OnLeftClick += (evt, element) => { PerPlayerChestLootSystem.CloseChest(playSound: true); };
-            panel.Append(closeButton);
-
-            UIText lootAllButton = new UIText(Lang.inter[29].Value, 0.9f);
-            lootAllButton.Left.Set(sideColumnLeft, 0f);
-            lootAllButton.Top.Set(GridPadding + gridHeight - 24f, 0f);
-            lootAllButton.TextColor = Color.Gray;
-            lootAllButton.OnMouseOver += (evt, element) => { lootAllButton.TextColor = Color.White; };
-            lootAllButton.OnMouseOut += (evt, element) => { lootAllButton.TextColor = Color.Gray; };
-            lootAllButton.OnLeftClick += (evt, element) =>
-            {
-                Player player = Main.LocalPlayer;
-                bool movedAnything = false;
-
-                for (int i = 0; i < PerPlayerChestLootSystem.ChestSlotCount; i++)
-                {
-                    if (PerPlayerChestLootSystem.TakeIntoInventory(player, i))
-                    {
-                        movedAnything = true;
-                    }
-                }
-
-                if (movedAnything)
-                {
-                    SoundEngine.PlaySound(SoundID.Grab);
-                    Recipe.FindRecipes();
-                }
-            };
-            panel.Append(lootAllButton);
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            // Close on the same things that close a vanilla chest: inventory closed, walking out of tile range
-            // (vanilla's chestX/Y +- tileRange box), another container opened, or the chest gone / no longer instanced.
-            Player player = Main.LocalPlayer;
-            Point16 chestPosition = PerPlayerChestLootSystem.OpenChestPosition;
-            Tile chestTile = Main.tile[chestPosition.X, chestPosition.Y];
-
-            int playerTileX = (int)(player.Center.X / 16f);
-            int playerTileY = (int)(player.Center.Y / 16f);
-            bool outOfRangeX = playerTileX < chestPosition.X - Player.tileRangeX || playerTileX > chestPosition.X + Player.tileRangeX + 1;
-            bool outOfRangeY = playerTileY < chestPosition.Y - Player.tileRangeY || playerTileY > chestPosition.Y + Player.tileRangeY + 1;
-
-            bool inventoryClosed = !Main.playerInventory;
-            bool otherContainerOpened = player.chest != -1;
-            bool playerGone = player.dead || !player.active;
-            bool chestGone = !chestTile.HasTile || !TileID.Sets.BasicChest[chestTile.TileType];
-            bool noLongerInstanced = !PerPlayerChestLootSystem.IsInstancedChest(chestPosition.X, chestPosition.Y);
-
-            if (inventoryClosed || outOfRangeX || outOfRangeY || otherContainerOpened || playerGone || chestGone || noLongerInstanced)
-            {
-                PerPlayerChestLootSystem.CloseChest(playSound: true);
-                return;
-            }
-
-            titleText.SetText(PerPlayerChestLootSystem.OpenChestName);
-
-            if (panel.ContainsPoint(Main.MouseScreen))
-            {
-                player.mouseInterface = true;
-            }
-
-            base.Update(gameTime);
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            if (!PerPlayerChestLootSystem.IsOpen)
-            {
-                return;
-            }
-
-            base.Draw(spriteBatch);
-        }
-
-        public override bool ContainsPoint(Vector2 point)
-        {
-            return panel != null && panel.ContainsPoint(point);
-        }
-
-        // One chest slot, bound by index to the open copy. Take-only: left click picks the stack up (or tops up a
-        // matching cursor stack), shift-click sends it to the inventory. Holding a different item does nothing.
-        private class PerPlayerChestSlot : UIElement
-        {
-            private const float ItemScale = 0.77f;
-            private readonly int slotIndex;
-
-            public PerPlayerChestSlot(int slotIndex)
-            {
-                this.slotIndex = slotIndex;
-            }
-
-            protected override void DrawSelf(SpriteBatch spriteBatch)
-            {
-                Item[] copy = PerPlayerChestLootSystem.OpenChestItems;
-
-                if (copy == null)
-                {
-                    return;
-                }
-
-                Item item = copy[slotIndex];
-                Rectangle slotRectangle = GetDimensions().ToRectangle();
-                bool hovered = ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface;
-
-                if (hovered)
-                {
-                    Player player = Main.LocalPlayer;
-                    player.mouseInterface = true;
-
-                    if (!item.IsAir)
-                    {
-                        ItemSlot.MouseHover(ref item, ItemSlot.Context.ChestItem);
-                    }
-
-                    bool leftClicked = Main.mouseLeft && Main.mouseLeftRelease;
-
-                    if (leftClicked && !item.IsAir)
-                    {
-                        bool tookSomething = false;
-
-                        if (ItemSlot.ShiftInUse)
-                        {
-                            tookSomething = PerPlayerChestLootSystem.TakeIntoInventory(player, slotIndex);
-                        }
-                        else if (Main.mouseItem.IsAir)
-                        {
-                            // Empty the slot and hand the same item to the cursor in one step, so it is never in both.
-                            copy[slotIndex] = new Item();
-                            Main.mouseItem = item;
-                            tookSomething = true;
-                        }
-                        else if (ItemLoader.TryStackItems(Main.mouseItem, item, out int movedCount) && movedCount > 0)
-                        {
-                            // Tops up a matching cursor stack from the slot (still a take, never a deposit).
-                            if (item.stack <= 0)
-                            {
-                                copy[slotIndex] = new Item();
-                            }
-                            tookSomething = true;
-                        }
-
-                        if (tookSomething)
-                        {
-                            SoundEngine.PlaySound(SoundID.Grab);
-                            Recipe.FindRecipes();
-                        }
-                    }
-
-                    item = copy[slotIndex];
-                }
-
-                Texture2D backTexture = TextureAssets.InventoryBack9.Value;
-                Color backColor = Color.White * 0.85f;
-
-                if (hovered)
-                {
-                    backColor = Color.White;
-                }
-
-                spriteBatch.Draw(backTexture, slotRectangle, backColor);
-
-                if (item.IsAir)
-                {
-                    return;
-                }
-
-                Vector2 slotCenter = slotRectangle.Center.ToVector2();
-                ItemSlot.DrawItemIcon(item, ItemSlot.Context.ChestItem, spriteBatch, slotCenter, ItemScale, 32f, Color.White);
-
-                if (item.stack > 1)
-                {
-                    Vector2 stackPosition = slotRectangle.TopLeft() + new Vector2(8f, 26f) * ItemScale;
-                    ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value,
-                        item.stack.ToString(), stackPosition, Color.White, 0f, Vector2.Zero, new Vector2(ItemScale), -1f, ItemScale);
-                }
             }
         }
     }

@@ -77,6 +77,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0f;
+            if (spawnInfo.SpawnTileY < 1000) return 0f;
             if (spawnInfo.Water) return 0f;
 
             if (spawnInfo.Player.ZoneDungeon)

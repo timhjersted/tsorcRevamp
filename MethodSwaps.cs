@@ -98,7 +98,7 @@ namespace tsorcRevamp
 
             Terraria.On_Main.StartInvasion += BlockInvasions;
 
-            //Terraria.On_Main.UpdateTime_StartNight += DisableEyeSpawn;
+            Terraria.On_Main.UpdateTime_StartNight += DisableEyeSpawn;
 
             Terraria.On_WorldGen.CheckSpecialTownNPCSpawningConditions += DisableTownSlimeSpawn;
 
@@ -4306,7 +4306,8 @@ namespace tsorcRevamp
 
         internal static void DisableBossSpawn(Terraria.On_NPC.orig_SpawnOnPlayer orig, int plr, int Type)
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Type == NPCID.EyeofCthulhu || Type == NPCID.Deerclops) 
+            // Eye of Cthulhu's natural spawn is suppressed in DisableEyeSpawn; let summon items use this path.
+            if (Type == NPCID.Deerclops)
             {
                 return;
             }

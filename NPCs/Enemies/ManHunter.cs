@@ -96,6 +96,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0f;
+            if (spawnInfo.SpawnTileY < 1000) return 0f;
 
             if (!Main.hardMode && !spawnInfo.Player.ZoneMeteor && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
             {
@@ -111,6 +112,12 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FlamingArrow, 14, 11, 120, 1.3f, 0.08f, canTeleport: false);
+
+            // ArcherAI's gradual braking leaves residual movement during the aim/fire pose.
+            if (NPC.ai[2] > 0f && (NPC.velocity.Y == 0f || NPC.collideY))
+            {
+                NPC.velocity.X = 0f;
+            }
         }
 
 
