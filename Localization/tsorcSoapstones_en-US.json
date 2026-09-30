@@ -44,7 +44,8 @@
   "tileX": 284,
   "tileY": 1556,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "You hear a mushroom making sounds beyond the wall. When it has your attention, it speaks to you.  --NEWLINE  --NEWLINE \u0022After you have prepared yourself, seek the Great Pyramid...\u0022 --NEWLINE  --NEWLINE \u0022An entrance hides beneath the Dryad\u0027s home..\u0022",

@@ -5215,5 +5215,32 @@
         "CustomSouls": null
       }
     ]
+  },
+  {
+    "EventID": "e23086ea-eaaa-495d-941f-3e4a4fbf562c",
+    "CenterX": 3886.0,
+    "CenterY": 595.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 61,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "NightCustomCondition",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "EyeofCthulhu",
+        "SpawnX": 3887.0,
+        "SpawnY": 584.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
   }
 ]

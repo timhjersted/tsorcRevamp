@@ -2872,6 +2872,30 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        private static readonly (float SpawnInterval, float SpawnCap)[] SandboxHealthSpawnModifiers =
+        {
+            (1.5f, 0.7f), // 160 max life or less
+            (1.4f, 0.8f), // 161-200
+            (1.3f, 0.9f), // 201-400
+            (1.2f, 1f)   // Over 400
+        };
+
+        private static readonly (float SpawnInterval, float SpawnCap)[] RemixHealthSpawnModifiers =
+        {
+            (1.5f, 0.7f), // 160 max life or less
+            (1.4f, 0.8f), // 161-200
+            (1.3f, 0.9f), // 201-400
+            (1.2f, 1f)   // Over 400
+        };
+
+        private static readonly (float SpawnInterval, float SpawnCap)[] AdventureHealthSpawnModifiers =
+        {
+            (1.8f, 0.6f), // 160 max life or less
+            (1.7f, 0.7f), // 161-200
+            (1.6f, 0.8f), // 201-400
+            (1.5f, 0.9f) // Over 400
+        };
+
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
             // Added these intermediate variables to fix the spawn rate
@@ -2880,28 +2904,20 @@ namespace tsorcRevamp.NPCs
             float trueSpawnRate = (float)spawnRate;
             float trueMaxSpawns = (float)maxSpawns;
 
-            //reduces max spawns by 30% and rate by 50% until player exceeds 160 health
-            if (player.statLifeMax2 <= 160)
+            // The server-side Adventure Mode toggle selects sandbox behavior before map identity.
+            (float SpawnInterval, float SpawnCap)[] healthModifiers =
+                !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode ? SandboxHealthSpawnModifiers :
+                tsorcRevampWorld.RemixMap ? RemixHealthSpawnModifiers :
+                tsorcRevampWorld.OnlyAdventureMap ? AdventureHealthSpawnModifiers : null;
+
+            if (healthModifiers != null)
             {
-                trueSpawnRate = trueSpawnRate * 1.5f;
-                trueMaxSpawns = trueMaxSpawns * 0.7f;
-            }
-            //reduces max spawns by 20% and spawn rate by 40% after 160 health
-            if (player.statLifeMax2 > 160 && player.statLifeMax2 <= 200)
-            {
-                trueSpawnRate = trueSpawnRate * 1.4f;
-                trueMaxSpawns = trueMaxSpawns * 0.8f;
-            }
-            //reduces max spawns by 10% and spawn rate by 30% from 200-400 health
-            if (player.statLifeMax2 > 200 && player.statLifeMax2 <= 400)
-            {
-                trueSpawnRate = trueSpawnRate * 1.3f;
-                trueMaxSpawns = trueMaxSpawns * 0.9f;
-            }
-            //only reduces spawn rate by 20% above 400 health
-            if (player.statLifeMax2 > 400)
-            {
-                trueSpawnRate = trueSpawnRate * 1.2f;
+                int healthBracket = player.statLifeMax2 <= 160 ? 0 :
+                    player.statLifeMax2 <= 200 ? 1 :
+                    player.statLifeMax2 <= 400 ? 2 : 3;
+
+                trueSpawnRate *= healthModifiers[healthBracket].SpawnInterval;
+                trueMaxSpawns *= healthModifiers[healthBracket].SpawnCap;
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))

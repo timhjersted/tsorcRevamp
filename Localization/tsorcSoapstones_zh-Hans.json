@@ -41,7 +41,8 @@
   "tileX": 284,
   "tileY": 1556,
   "textWidth": 480,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "你听到一只成精了的蘑菇在墙外发出声音。 --NEWLINE   --NEWLINE 它引起了你的注意力，对你说：\u0022寻找石巨人金字塔…它的入口藏在树妖的家下面…\u0022",
