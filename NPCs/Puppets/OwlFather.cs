@@ -1373,18 +1373,6 @@ namespace tsorcRevamp.NPCs.Puppets
 
         private bool IsJumpGapCloser(MeleeCombo combo) => IsJumpGapCloserName(combo.Name);
 
-        private float ReliableJumpStartRange(MeleeComboStep step)
-        {
-            float heightMult = step.LeapHeightMult > 0f ? step.LeapHeightMult : 1f;
-            float forwardMult = step.LeapForwardSpeedMult > 0f ? step.LeapForwardSpeedMult : 1f;
-            float airtime = 2f * LeapAttackUpSpeed * heightMult / 0.3f;
-            float maximumTravel = airtime * LeapAttackForwardSpeed * forwardMult;
-            float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
-            // Leave a small margin for uneven ground and motion after the ascent lock. If the
-            // player is farther away, Owl Father chooses a real ranged move or pursues first.
-            return maximumTravel + bladeReach - LeapLandingStandoff - 24f;
-        }
-
         protected override void OnMeleeComboTelegraphTick(
             MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {

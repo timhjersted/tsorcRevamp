@@ -126,8 +126,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         /// <summary>Extra purple motes circling INSIDE the boomerang shader silhouette (Orbit draws
         /// out to ~92px across - this stays well within that, ~10-22px out from center), fan variant
-        /// only. Mirrors BoomerangCrescent's own SpawnOrbitingDust so the two attacks that share this
-        /// shader stack read consistently.</summary>
+        /// only.</summary>
         void SpawnOrbitingDust()
         {
             if (Main.dedServ)

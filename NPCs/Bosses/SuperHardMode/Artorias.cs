@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -49,8 +50,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int RangedWeaponItemType => -1; // melee-only
         protected override int RangedDamage => 0; // unused, no ranged weapon
 
-        protected override float TopSpeed => 2.4f;
+        protected override float TopSpeed => 2.9f;
         protected override float Acceleration => 0.12f;
+
+        // Leaps (Ground Pound, Hollow Pounce): 5.5 px/t horizontal cap, 6.1 once below half health. The base default was
+        // TopSpeed x 1.7. ReliableJumpStartRange reads this, so Hollow Pounce's selection range follows the phase.
+        const float LeapSpeedPhaseOne = 5.5f;
+        const float LeapSpeedPhaseTwo = 6.1f;
+
+        protected override float LeapAttackForwardSpeed
+        {
+            get
+            {
+                if (NPC.life <= NPC.lifeMax * 0.5f)
+                {
+                    return LeapSpeedPhaseTwo;
+                }
+
+                return LeapSpeedPhaseOne;
+            }
+        }
+
+        // Ground ballistics, the values Owl Father's leaps run on: lead the target 10t of its own velocity (capped +-96px) at
+        // launch, and keep bending the ascent toward it at 10%/tick. The descent stays locked, so the landing is still readable.
+        protected override float LeapAttackTargetLeadTicks => 10f;
+        protected override float LeapAttackAscentTrackingStrength => 0.10f;
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
 
@@ -58,8 +82,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // The shared Greatsword table's two dash combos (Spin-Dash, Running Cleave) were ordinary Mid-band picks that only
         // started inside ~105px - the one place a dash is pointless - so they almost never ran. Here they are
         // RangedStartOnly: chosen only beyond melee reach, out to RangedStartComboMaxRange, at RangedStartMeleeComboChance
-        // per idle tick, and their pushes run at DashPushTopSpeed instead of his 2.4 px/t walk (a 1.4x push was 3.4 px/t).
-        // The pool is a copy of the shared table with just that flag flipped, so other greatsword wielders are untouched.
+        // per idle tick, and their pushes run at DashPushTopSpeed instead of his 2.9 px/t walk (a 1.4x push was 4.1 px/t).
+        // The pool is a copy of the shared table with just that flag flipped, plus Artorias's own combos (ArtoriasOwnCombos
+        // below), so other greatsword wielders are untouched.
         static MeleeCombo[] _dashGapCloserPool;
 
         protected override MeleeCombo[] MeleeComboPoolOverride
@@ -69,7 +94,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (_dashGapCloserPool == null)
                 {
                     MeleeCombo[] sharedTable = WeaponArchetypeTables.GetMeleeCombos(WeaponArchetype.Greatsword);
-                    MeleeCombo[] pool = (MeleeCombo[])sharedTable.Clone();
+                    MeleeCombo[] pool = new MeleeCombo[sharedTable.Length + ArtoriasOwnCombos.Length];
+                    Array.Copy(sharedTable, pool, sharedTable.Length);
+                    Array.Copy(ArtoriasOwnCombos, 0, pool, sharedTable.Length, ArtoriasOwnCombos.Length);
                     for (int i = 0; i < pool.Length; i++)
                     {
                         bool isDashCombo = pool[i].Name == "Spin-Dash" || pool[i].Name == "Running Cleave";
@@ -87,7 +114,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         protected override float RangedStartComboMaxRange => 440f;
-        protected override int RangedStartMeleeComboChance => 85;
+        // Melee never loses a roll: the ordinary swings only start inside ComboMaxStartRange (Artorias's own override), and the
+        // dashes and leaps (RangedStartOnly) are offered all the way out to RangedStartComboMaxRange.
+        protected override int MeleeComboChance => 100;
+        protected override int RangedStartMeleeComboChance => 100;
         // JoustDash push 1.4x / 1.6x -> ~8.4 / 9.6 px/t: a ~120-150px lunge per dash step, ~340px for Spin-Dash's spin + dash.
         protected override float ComboForwardPushTopSpeed => 6f;
         protected override bool UseCompositeArmSwing => true;
@@ -100,9 +130,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // (~186°). 30t total on purpose: it must end with the greatsword's 30t useAnimation, which drives the Use frames.
         protected override WeightedSwing MeleeAttackCurve => new WeightedSwing(9, 21, 8f);
         protected override int MeleeAttackTicks => MeleeAttackCurve.TotalTicks;
-        protected override int MeleeRecoveryTicks => 30;
+        protected override int MeleeRecoveryTicks => 22;
         protected override int MeleeComboInterStepLingerTicks => 15;
-        protected override int MeleeRecoveryLingerTicks => 30;
+        // The sword holds its finished pose this long into a recovery before dropping to carry (was 30).
+        protected override int MeleeRecoveryLingerTicks => 14;
         // Hyper armor on every attack state, tells included (the base commits only post-flash strikes). Combo pauses are
         // covered in CustomizeMeleeCombo; Artorias.AI adds his bespoke states and then carves the one exception back
         // out: an attack's opening tell from neutral, up to the flash. Recoveries stay staggerable as punish windows.
@@ -162,6 +193,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 case ComboMotion.UnderhandArc:
                     startRotation = 2.05f;
                     endRotation = -1.55f;
+
+                    // Abyssal Reversal's rising cut follows an overhead that ended at 2.29, so it starts there too: the pause
+                    // hold hands straight into the cut with no first-frame snap, and the cut widens to a 220° envelope.
+                    // ActiveMeleeComboName is never cleared, so the phase check keeps it from leaking into later swings.
+                    bool inAbyssalReversal = ActiveMeleeComboName == AbyssalReversalName
+                        && (Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack
+                            || Phase == AttackPhase.MeleeComboPause);
+                    if (inAbyssalReversal)
+                    {
+                        startRotation = 2.29f;
+                    }
+
                     break;
                 case ComboMotion.HorizontalSweep:
                     startRotation = -1.08f;
@@ -184,12 +227,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //   Rising Slash     206°       6/22   5.5   34°/t   10.8t ~165°  snaps up, long soft settle
         //   Running Cleave   216°       5/26   6     36°/t   10.2t ~170°  lands straight off the dash
         //   plain overhead   216°       9/21   8     38°/t   12.2t ~186°  MeleeAttackCurve, above
+        //   Reversal opener  216°       8/24   7     35°/t   12.1t ~173°  Abyssal Reversal's first cut, lighter than a Heavy Chop
+        //   Reversal finish  216°      10/26   8     33°/t   13.9t ~173°  Rising Reversal's closing overhead
+        //   Feint re-entry   216°       9/26   8     35°/t   12.9t ~173°  Feinting Retreat's lunge cut
         // Every live window is under the 22t roll, so each swing is separately rollable, and the tail is harmless
         // (punish window = tail + recovery). The phantom's 1.4x tempo shortens each step and HitWindowEnd is a
         // fraction of it, so the whole curve compresses proportionally.
         static readonly WeightedSwing HeavyChopCurve = new WeightedSwing(13, 26, 9f);
         static readonly WeightedSwing RisingSlashCurve = new WeightedSwing(6, 22, 5.5f);
         static readonly WeightedSwing RunningCleaveCurve = new WeightedSwing(5, 26, 6f);
+        static readonly WeightedSwing ReversalOverheadCurve = new WeightedSwing(8, 24, 7f);
+        static readonly WeightedSwing ReversalFinisherCurve = new WeightedSwing(10, 26, 8f);
+        static readonly WeightedSwing FeintReentryCurve = new WeightedSwing(9, 26, 8f);
 
         // Step-in per cut (MeleeComboStep.StepInDistance): px travelled across the step, peaking on the strike and
         // decaying with the blade, so he drives into each cut instead of planting (the engine's 0.65x/tick brake
@@ -202,19 +251,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction)
         {
-            // Artorias's committed rhythm (36t heavy / 30t light recovery, 30t inter-step pause floor),
-            // divided by the tempo so a faster wielder recovers and re-engages proportionally sooner.
-            int heavyRecoveryTicks = (int)Math.Round(36f / ComboTempoMult);
-            int lightRecoveryTicks = (int)Math.Round(30f / ComboTempoMult);
-            int pauseFloorTicks = (int)Math.Round(30f / ComboTempoMult);
+            // Artorias's committed rhythm: a combo that authors its own RecoveryTicks keeps it, otherwise 28t heavy / 22t light.
+            // Inter-step pauses are whatever the combo authors (no floor). All divided by the tempo, so a faster wielder
+            // recovers and re-engages proportionally sooner.
+            int heavyRecoveryTicks = (int)Math.Round(28f / ComboTempoMult);
+            int lightRecoveryTicks = (int)Math.Round(22f / ComboTempoMult);
+            // The shared table's two dash combos were authored against the old 30t floor (their 10t pauses were always
+            // raised to it), so they keep it: their dash-into-cut timing stays exactly as it was.
+            int pinnedPauseTicks = (int)Math.Round(30f / ComboTempoMult);
+            bool pausePinned = combo.Name == "Spin-Dash" || combo.Name == "Running Cleave";
 
             // Hyper armor holds through the inter-step pauses too, so a multi-step combo can't be staggered between cuts.
             combo.HyperArmor = true;
 
-            combo.RecoveryTicks = lightRecoveryTicks;
-            if (combo.HeavyCommit)
+            if (combo.RecoveryTicks > 0)
+            {
+                combo.RecoveryTicks = (int)Math.Round(combo.RecoveryTicks / ComboTempoMult);
+            }
+            else if (combo.HeavyCommit)
             {
                 combo.RecoveryTicks = heavyRecoveryTicks;
+            }
+            else
+            {
+                combo.RecoveryTicks = lightRecoveryTicks;
             }
 
             if (combo.Steps == null)
@@ -238,7 +298,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // rest of the pause cocks the sword into the next authored starting pose instead of snapping.
                 if (i < combo.Steps.Length - 1)
                 {
-                    step.PostStepPause = Math.Max(step.PostStepPause, pauseFloorTicks);
+                    if (pausePinned)
+                    {
+                        step.PostStepPause = Math.Max(step.PostStepPause, pinnedPauseTicks);
+                    }
+                    else
+                    {
+                        step.PostStepPause = (int)Math.Round(step.PostStepPause / ComboTempoMult);
+                    }
                 }
 
                 combo.Steps[i] = step;
@@ -249,7 +316,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // its 2.0x DamageMult was landing for ~380-400 against 80 defense. Retarget it onto
             // LeapSlam (jump toward the player, overhead pose, hit fires on landing) so it actually
             // pounds the ground, and cut the damage 60% (2.0x -> 0.8x) to match.
-            if (combo.Name == "Ground Pound" && combo.Steps.Length > 0)
+            if (combo.Name == GroundPoundName && combo.Steps.Length > 0)
             {
                 MeleeComboStep slam = combo.Steps[0];
                 slam.Motion = ComboMotion.LeapSlam;
@@ -260,6 +327,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // and resolve the "pound" in mid-air. 90 matches every other authored LeapSlam in the
                 // repo and leaves headroom for the horizontal travel on top of the arc.
                 slam.AttackTicks = 90;
+                // Owl Father's leap ballistics on top of the class-wide lead and ascent tracking above: at the apex the locked
+                // horizontal velocity re-aims at where the target is NOW (a long jump no longer guarantees a walked-out-from-under
+                // whiff), and the fall runs at 2.2x gravity so the drop is quick, not a float.
+                slam.LeapApexRetargetStrength = 1f;
+                slam.LeapDescentGravityMult = 2.2f;
                 combo.Steps[0] = slam;
             }
 
@@ -294,14 +366,291 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             step.HitWindowEnd = curve.HitWindowEnd;
         }
 
-        // Ground Pound is the only LeapSlam-motion step in Artorias's moveset, so this fires exactly
-        // once per use: a shockwave-style impact under the wielder the moment the slam actually touches
-        // down. It hangs off OnLeapSlamLanded rather than DoComboMeleeHit because that hook only runs
-        // on a real landing - a leap that times out airborne (blocked, or the player ran out of
-        // reach) now ends with no ground effect instead of detonating a shockwave in open sky.
+        // ── Artorias's own combos, ported from Owl Father's kit ──────────────────────────────────────────────────
+        // Appended to the shared Greatsword table in MeleeComboPoolOverride. Ticks below are on-screen ticks (the tell is
+        // authored / 1.35 x). The phantom shares the pool at 1.4x tempo; the two health-gated combos never unlock for it.
+        //
+        // Abyssal Reversal (overhead, then a rising cut) and Rising Reversal (rising cut, then a closing overhead)
+        //   Owl: Down-Up / Up-Down Reversal. Close band, weight 70, cooldown 150.
+        // Poses:    overhead -1.48 -> 2.29 (216° envelope, ~173° live), underhand 2.05 -> -1.55 (206°, ~165° live). Each cut ends
+        //           within 14° of where the next starts, so the 14t pause is a pure hold.
+        // Tell:     28t authored = 37t on screen; cut 2 has none.
+        // Strike:   opener 8/24 k7 35°/t, live 12.1t. Rising cut 6/22 k5.5 34°/t, live 10.8t. Finisher 10/26 k8 33°/t, live 13.9t.
+        // Chain:    cut 2's live window starts 34t (overhead first) / 31t (rising first) after cut 1's ends - both >= 30t, so each
+        //           cut is separately rollable with no condition. Cut 2 still needs cut 1 to have hit, or the target to be within
+        //           its reach, so rolling away ends the combo. Peaks land 44-46t apart, past the 40t post-hit immunity: a player
+        //           who eats cut 1 can eat cut 2 as well (0.85x + 1.0x/1.15x, about one Heavy Chop in total).
+        // Counter:  roll each cut (2 rolls, 60 stamina) or space out of the reach check. Open: ~17t tail + 30t recovery.
+        //
+        // Feinting Retreat (below 66% health)    Owl: Backstep Re-entry Chop. Close band, weight 55, cooldown 230.
+        // Tell:     22t authored = 30t (the floor), then a harmless BackstepRaise hop (~3 px/t for ~32t, ~97px away, blade raised).
+        // Re-entry: overhead 9/26 k8, 35°/t, live 12.9t, 1.4x damage. Step-in is solved from the gap after the hop
+        //           (ModifyNextMeleeComboStep), 40..90px; 90px peaks at ~14 px/t.
+        // Counter:  the cut goes live ~70t after the tell starts (30 + ~32 hop + 10 pause), so a panic roll at the backstep only
+        //           costs 30 stamina; the cut itself is one rollable 12.9t window. Open: ~13t tail + 34t recovery.
+        //
+        // Cursebreaker (below 66% health)    Owl: Greatfire Breaker. Close band, weight 52, cooldown 250.
+        // Tell:     45t authored = 60t. Strike is Heavy Chop's curve (13/26 k9, 30°/t, live 16.5t), 1.6x damage, 48px step-in.
+        // Impact:   the blade meets the floor ~18t in (92% of the sweep), and two curse waves leave his feet: 7 px/t for 640px,
+        //           armed after 12t. A player who rolled through the cut meets them >= 40t after the step began, after the
+        //           earliest re-roll, so a jump (the wave is 42px tall) or a second roll answers them. Open: ~22t tail + 36t recovery.
+        //
+        // Hollow Pounce    Owl: Greatfire Pursuit Slam. RangedStartOnly gap-closer, any band, weight 80, cooldown 170.
+        // Tell:     32t authored = 43t. Low fast leap: height x0.62 (~39t airtime), forward x1.7 of LeapAttackForwardSpeed
+        //           (9.35 px/t cap, 10.4 in phase two). Selectable from 140px out to ReliableJumpStartRange (~389px, ~429px in
+        //           phase two), so it never comes down short.
+        // Strike:   inside 120px past the apex the downswing goes live in the air, otherwise the landing slam hits (never both).
+        //           One roll covers either. 26t recovery.
+        // Protected: Artorias's follow-up table (MeleeFollowUpComboName) names these too.
+        protected const string AbyssalReversalName = "Abyssal Reversal";
+        protected const string RisingReversalName = "Rising Reversal";
+        protected const string FeintingRetreatName = "Feinting Retreat";
+        protected const string CursebreakerName = "Cursebreaker";
+        protected const string HollowPounceName = "Hollow Pounce";
+        protected const string GroundPoundName = "Ground Pound";
+
+        const float EnragedMoveHealthFraction = 0.66f;
+        const float ReversalFinisherStepIn = 48f;
+        const float HollowPounceMinRange = 140f;
+
+        // Feinting Retreat's re-entry closes the gap the hop opened, aiming to end FeintReentryCloseTo px from the target.
+        const float FeintReentryMinStepIn = 40f;
+        const float FeintReentryMaxStepIn = 90f;
+        const float FeintReentryCloseTo = 60f;
+
+        // Cursebreaker: the step tick the blade meets the floor, as a fraction of the step, and the waves it throws.
+        const float CursebreakerImpactFraction = 0.46f;
+        const int CursebreakerWaveDamage = 100; // Expert hit before defense; the wave also builds curse on top
+        const float CursebreakerWaveTravelPx = 640f;
+        const int CursebreakerWaveArmDelayTicks = 12;
+
+        // Ground Pound's landing eruption (Owl's High Leaping Slam pattern): three curse clouds a side, 24/72/120px out,
+        // each 6t after the one inside it, rising out of the floor.
+        const int GroundPoundEruptionDamage = 90;
+        const int GroundPoundEruptionColumns = 3;
+        const float GroundPoundEruptionFirstOffset = 24f;
+        const float GroundPoundEruptionSpacing = 48f;
+        const int GroundPoundEruptionStaggerTicks = 6;
+        const float GroundPoundEruptionRiseSpeed = 2.6f;
+
+        static readonly MeleeComboStep AbyssalReversalCutTwo = WeightedCut(
+            ComboMotion.UnderhandArc, 0, RisingSlashCurve, 0, 1.0f, 1.1f, RisingSlashStepIn);
+        static readonly MeleeComboStep RisingReversalCutTwo = WeightedCut(
+            ComboMotion.OverheadArc, 0, ReversalFinisherCurve, 0, 1.15f, 1.2f, ReversalFinisherStepIn);
+
+        static readonly MeleeCombo[] ArtoriasOwnCombos =
+        {
+            new MeleeCombo
+            {
+                Name = AbyssalReversalName,
+                BaseWeight = 70,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = new Color(190, 100, 255),
+                CooldownAfterUse = 150,
+                RecoveryTicks = 30,
+                MoveBrake = 0.15f,
+                Steps = new[]
+                {
+                    WeightedCut(ComboMotion.OverheadArc, 28, ReversalOverheadCurve, 14, 0.85f, 1.15f, 40f),
+                    AbyssalReversalCutTwo,
+                },
+            },
+            new MeleeCombo
+            {
+                Name = RisingReversalName,
+                BaseWeight = 60,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = new Color(150, 120, 255),
+                CooldownAfterUse = 150,
+                RecoveryTicks = 30,
+                MoveBrake = 0.15f,
+                Steps = new[]
+                {
+                    WeightedCut(ComboMotion.UnderhandArc, 28, RisingSlashCurve, 14, 0.85f, 1.1f, RisingSlashStepIn),
+                    RisingReversalCutTwo,
+                },
+            },
+            new MeleeCombo
+            {
+                Name = FeintingRetreatName,
+                BaseWeight = 55,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = new Color(220, 140, 255),
+                CooldownAfterUse = 230,
+                HeavyCommit = true,
+                RecoveryTicks = 34,
+                MoveBrake = 0f,
+                Steps = new[]
+                {
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.BackstepRaise,
+                        TelegraphTicks = 22,
+                        AttackTicks = 40,
+                        PostStepPause = 10,
+                        DamageMult = 0f,
+                        ReachMult = 1f,
+                        SwingSpeedMult = 1f,
+                    },
+                    WeightedCut(ComboMotion.OverheadArc, 0, FeintReentryCurve, 0, 1.4f, 1.25f, FeintReentryMaxStepIn),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = CursebreakerName,
+                BaseWeight = 52,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = new Color(255, 70, 130),
+                CooldownAfterUse = 250,
+                HeavyCommit = true,
+                RecoveryTicks = 36,
+                MoveBrake = 0.4f,
+                Steps = new[]
+                {
+                    WeightedCut(ComboMotion.OverheadArc, 45, HeavyChopCurve, 0, 1.6f, 1.25f, 48f),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = HollowPounceName,
+                BaseWeight = 80,
+                Preferred = ComboRangeBand.Any,
+                InitialFlashColor = new Color(170, 90, 240),
+                CooldownAfterUse = 170,
+                HeavyCommit = true,
+                RangedStartOnly = true,
+                RecoveryTicks = 26,
+                MoveBrake = 0.06f,
+                Steps = new[]
+                {
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.LeapSlam,
+                        TelegraphTicks = 32,
+                        AttackTicks = 82,
+                        DamageMult = 1.25f,
+                        ReachMult = 1.25f,
+                        SwingSpeedMult = 1f,
+                        LeapHeightMult = 0.62f,
+                        LeapForwardSpeedMult = 1.7f,
+                        LeapStrikeRange = 120f,
+                    },
+                },
+            },
+        };
+
+        /// <summary>One Weighted sword cut for ArtoriasOwnCombos: the curve sets the step's length, easing and hit window.</summary>
+        static MeleeComboStep WeightedCut(ComboMotion motion, int telegraphTicks, WeightedSwing curve, int pauseAfter,
+            float damageMult, float reachMult, float stepInDistance)
+        {
+            MeleeComboStep step = new MeleeComboStep
+            {
+                Motion = motion,
+                TelegraphTicks = telegraphTicks,
+                PostStepPause = pauseAfter,
+                DamageMult = damageMult,
+                ReachMult = reachMult,
+                SwingSpeedMult = 1f,
+                StepInDistance = stepInDistance,
+            };
+
+            ApplySwingCurve(ref step, curve);
+            return step;
+        }
+
+        protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
+        {
+            bool healthGated = combo.Name == FeintingRetreatName || combo.Name == CursebreakerName;
+            if (healthGated && healthFraction > EnragedMoveHealthFraction)
+            {
+                return false;
+            }
+
+            if (combo.Name == HollowPounceName)
+            {
+                // Short gaps are the sprint-in's job; past the leap's reliable reach it would come down short.
+                bool tooClose = distance < HollowPounceMinRange;
+                bool tooFar = distance > ReliableJumpStartRange(combo.Steps[0]);
+                if (tooClose || tooFar)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        protected override bool ShouldContinueMeleeCombo(string comboName, int nextStepIndex, Player target, bool previousStepHit)
+        {
+            bool reversalCutTwo = nextStepIndex == 1 && (comboName == AbyssalReversalName || comboName == RisingReversalName);
+            if (!reversalCutTwo)
+            {
+                return base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
+            }
+
+            // A landed first cut always earns the second. A whiff only does if cut 2's own reach plus its step-in still
+            // reaches the target from here, so a roll away ends the combo instead of swinging at empty air.
+            if (previousStepHit)
+            {
+                return true;
+            }
+
+            MeleeComboStep cutTwo = AbyssalReversalCutTwo;
+            if (comboName == RisingReversalName)
+            {
+                cutTwo = RisingReversalCutTwo;
+            }
+
+            float reach = ComboReachBase * 0.7f * cutTwo.ReachMult + cutTwo.StepInDistance;
+            return NPC.Distance(target.Center) <= reach;
+        }
+
+        protected override void ModifyNextMeleeComboStep(string comboName, int nextStepIndex, Player target, ref MeleeComboStep nextStep)
+        {
+            if (comboName != FeintingRetreatName || nextStepIndex != 1)
+            {
+                base.ModifyNextMeleeComboStep(comboName, nextStepIndex, target, ref nextStep);
+                return;
+            }
+
+            // The re-entry is solved from the gap the hop actually left, not a fixed lunge: it aims to end FeintReentryCloseTo px
+            // from the target and is capped at 90px, so a target who backs off further than that is genuinely out of reach.
+            float gap = Math.Abs(target.Center.X - NPC.Center.X);
+            nextStep.StepInDistance = MathHelper.Clamp(gap - FeintReentryCloseTo, FeintReentryMinStepIn, FeintReentryMaxStepIn);
+        }
+
+        // Ground Pound and Hollow Pounce are the only LeapSlam-motion steps in Artorias's moveset, so this fires once per
+        // leap: a shockwave-style impact under the wielder the moment the slam actually touches down. It hangs off
+        // OnLeapSlamLanded rather than DoComboMeleeHit because that hook only runs on a real landing - a leap that times out
+        // airborne (blocked, or the player ran out of reach) ends with no ground effect instead of detonating one in open sky.
+        // Ground Pound alone also throws up the curse-cloud eruption.
         protected override void OnLeapSlamLanded(MeleeComboStep step)
         {
             SpawnLandingImpactVFX(NPC.Bottom, 86f, 68f);
+
+            bool groundPound = ActiveMeleeComboName == GroundPoundName;
+            if (groundPound && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    for (int column = 0; column < GroundPoundEruptionColumns; column++)
+                    {
+                        float x = NPC.Bottom.X + side * (GroundPoundEruptionFirstOffset + column * GroundPoundEruptionSpacing);
+                        if (!PuppetGroundDustWave.TryFindGroundY(x, NPC.Bottom.Y, out float groundY))
+                        {
+                            continue;
+                        }
+
+                        // ai[0] is the wait before the cloud forms: the farther columns go off later, so the eruption travels
+                        // outward from the impact instead of a whole row popping at once (+1 because 0 means "form at once").
+                        float waitTicks = 1f + column * GroundPoundEruptionStaggerTicks;
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(x, groundY - 20f), Vector2.Zero,
+                            ModContent.ProjectileType<ArtoriasCurseCloud>(), EnemyDamage.Projectile(GroundPoundEruptionDamage), 0f,
+                            Main.myPlayer, waitTicks, GroundPoundEruptionRiseSpeed);
+                    }
+                }
+            }
+
             base.OnLeapSlamLanded(step);
         }
 
@@ -449,6 +798,34 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             base.OnMeleeComboAttackTick(combo, step, elapsed, total);
 
+            // Cursebreaker: the tick the blade meets the floor (a fixed fraction of the step, so the phantom's faster tempo
+            // scales it) shakes the ground and throws a curse wave each way along it. Sound and shake run on every client;
+            // the waves, like all projectiles, are spawned by the server only.
+            bool cursebreakerImpact = combo.Name == CursebreakerName
+                && elapsed == (int)Math.Round(total * CursebreakerImpactFraction);
+            if (cursebreakerImpact)
+            {
+                SpawnLandingImpactVFX(NPC.Bottom, 96f, 78f);
+
+                if (!Main.dedServ)
+                {
+                    UsefulFunctions.ScreenShake(NPC.Center, strength: 5f, frames: 11);
+                    SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.5f, Pitch = -0.2f }, NPC.Bottom);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 wavePosition = new Vector2(NPC.Center.X, NPC.Bottom.Y - 20f);
+                    int waveDamage = EnemyDamage.Projectile(CursebreakerWaveDamage);
+                    for (int direction = -1; direction <= 1; direction += 2)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), wavePosition, Vector2.Zero,
+                            ModContent.ProjectileType<Content.Projectiles.Enemy.Chaos.ChaosShockwave>(), waveDamage, 0f, Main.myPlayer,
+                            direction, CursebreakerWaveArmDelayTicks, CursebreakerWaveTravelPx);
+                    }
+                }
+            }
+
             // One crescent per damaging sweep, on the step's first tick (elapsed reads 0 once per step).
             // Thrusts (JoustDash) keep the sheath in Artorias.DrawSwordSlashVFX, and Ground Pound's LeapSlam
             // waits for its landing downswing below, because the jump itself is a harmless carry.
@@ -520,6 +897,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // A combo that never connected chains: 75% into a second swing, then 40% into a third (never more). He sprints in
         // (ClosingDistance), then telegraphs the swing that flows out of where the last one ended - underhand into overhand
         // and back - with the usual step-in push. Only a whiff chains; a hit lets the normal recovery play.
+        //
+        // Range band: ordinary swings only start (or sprint in) from within ComboMaxStartRange, and the sprint gives up past
+        // ComboMaxStartRange + 80 or after ClosingDistanceMaxTicks, so he never crosses the room for a plain swipe. Across the
+        // room it is the dashes and leaps (RangedStartOnly, out to RangedStartComboMaxRange) that close the gap.
+        protected override float ComboMaxStartRange => 240f;
+        protected override int ClosingDistanceMaxTicks => 140;
+
         protected override int MeleeFollowUpChancePercent(int followUpsDone)
         {
             if (followUpsDone == 0)
@@ -538,28 +922,349 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override string MeleeFollowUpComboName(string finishedComboName)
         {
             // Rising Slash ends high (overhead-ish finish), Heavy Chop ends low; the dash combos end on an overhead cleave
-            // / spin, so they flow into the rising cut; the leap slam ends planted low.
+            // / spin, so they flow into the rising cut; the leap slams end planted low. Abyssal Reversal finishes on its
+            // rising cut (high) and Rising Reversal on its overhead (low), so each hands to the opposite cut.
             switch (finishedComboName)
             {
                 case "Rising Slash":
                 case "Spin-Dash":
+                case AbyssalReversalName:
                     return "Heavy Chop";
                 case "Heavy Chop":
                 case "Running Cleave":
-                case "Ground Pound":
+                case GroundPoundName:
+                case RisingReversalName:
+                case HollowPounceName:
                     return "Rising Slash";
                 default:
                     return null;
             }
         }
 
+        // ── Attack bag ───────────────────────────────────────────────────────────────────────────────────────────
+        // Neutral selection is a shuffled bag of cards - one per special plus BagMeleeComboCards "melee combo" cards - in place
+        // of nine independent per-tick rolls (which always beat melee to the punch and made the 4-5% moves rare). Each card is
+        // played once per pass, so every attack comes round and the special:combo split is fixed (9:6 = 60:40).
+        //
+        // How it drives the base class: TickAttackBag arms ONE card each neutral tick, the first in bag order whose range gate is
+        // open right now. Each special's Can* override is true only while it is armed (and every chance is 100), so the engine's
+        // own Idle checks start exactly that attack the same tick. A MeleeCombo card leaves them all off and lets the 100% melee
+        // intercept run. A card that can't fire yet (out of its band) is skipped, not dropped, so a proximity gate only defers
+        // an attack. Cooldowns are the bag's job now: arming a card zeroes its cooldown. The existing dodge-punish chain (Jump
+        // Slash <-> Abyss Slash) keeps its own cooldown rules, and still spends the chained attack's card.
+        //
+        // Never out of moves: when nothing left in the bag is eligible, the played cards are added back and the scan repeats.
+        // Abyss Slash reaches AbyssSlashFloorRange, the combo card covers 0-440px (plus the plain swing and the sprint-in), and
+        // the specials' bands overlap between, so some card is open at every distance with line of sight. A card armed for
+        // BagArmedTimeoutTicks neutral ticks without its attack starting (the engine refused it) goes to the back of the bag.
+        // Server / single-player only: clients follow the phases the server picks.
+        enum AttackBagEntry
+        {
+            Pierce, JumpSlash, FlipSlash, AbyssSlash, Tendril, AbyssShard, HomingVolley, MiasmaUpswing, SpiralFan, MeleeCombo,
+        }
+
+        const int BagMeleeComboCards = 6;
+        const int BagArmedTimeoutTicks = 45;
+        // Abyss Slash's ceiling, just past the ring's 1600px diameter: the far-range floor, so no distance is left without a card.
+        const float AbyssSlashFloorRange = 1800f;
+
+        static readonly AttackBagEntry[] AttackBagEntries = (AttackBagEntry[])Enum.GetValues(typeof(AttackBagEntry));
+
+        readonly List<AttackBagEntry> _attackBag = new List<AttackBagEntry>();
+        readonly int[] _attackPickCounts = new int[AttackBagEntries.Length]; // played cards this fight, logged on death
+        AttackBagEntry? _armedAttack;
+        AttackBagEntry? _lastPlayedAttack;
+        int _armedNeutralTicks;
+        AttackPhase _bagPreviousPhase = AttackPhase.Idle;
+
+        // TryDodgePunishChain runs at the end of these two attacks and reads Can* to see whether the other is on offer.
+        bool InDodgePunishWindow => Phase == AttackPhase.JumpSlashAttack || Phase == AttackPhase.AbyssSlashSwipe;
+
+        /// <summary>Spends the card of any attack that began since last tick, then (in neutral) arms the next card.
+        /// Runs before base.AI(), so the armed card is what the engine's Idle selection sees this tick.</summary>
+        void TickAttackBag()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            // A card is spent the tick its attack begins, from whatever phase it began in (a dodge-punish chain counts too).
+            // FlipSlashRise and SwordLaunchReposition are shared, so the armed card says which attack they belong to.
+            if (Phase != _bagPreviousPhase)
+            {
+                AttackBagEntry? started = null;
+                switch (Phase)
+                {
+                    case AttackPhase.PierceTelegraph:
+                        started = AttackBagEntry.Pierce;
+                        break;
+                    case AttackPhase.FlipSlashRise:
+                        started = AttackBagEntry.FlipSlash;
+                        if (_armedAttack == AttackBagEntry.Pierce)
+                        {
+                            started = AttackBagEntry.Pierce;
+                        }
+
+                        break;
+                    case AttackPhase.JumpSlashDodgeback:
+                        started = AttackBagEntry.JumpSlash;
+                        break;
+                    case AttackPhase.AbyssSlashTelegraph:
+                        started = AttackBagEntry.AbyssSlash;
+                        break;
+                    case AttackPhase.TendrilTelegraph:
+                        started = AttackBagEntry.Tendril;
+                        break;
+                    case AttackPhase.AbyssShardTelegraph:
+                        started = AttackBagEntry.AbyssShard;
+                        break;
+                    case AttackPhase.HomingVolleyDodgeback:
+                        started = AttackBagEntry.HomingVolley;
+                        break;
+                    case AttackPhase.BoomerangSwingTelegraph:
+                        started = AttackBagEntry.MiasmaUpswing;
+                        break;
+                    case AttackPhase.SpiralFanSwingTelegraph:
+                        started = AttackBagEntry.SpiralFan;
+                        break;
+                    case AttackPhase.SwordLaunchReposition:
+                        started = AttackBagEntry.MiasmaUpswing;
+                        if (_armedAttack == AttackBagEntry.SpiralFan)
+                        {
+                            started = AttackBagEntry.SpiralFan;
+                        }
+
+                        break;
+                    case AttackPhase.MeleeComboTelegraph:
+                    case AttackPhase.MeleeTelegraph:
+                        started = AttackBagEntry.MeleeCombo;
+                        break;
+                }
+
+                // Only a card actually in the bag counts, so the repeat phases of one attack (Pierce's re-aimed dashes) don't.
+                int spentIndex = -1;
+                if (started.HasValue)
+                {
+                    spentIndex = _attackBag.IndexOf(started.Value);
+                }
+
+                if (spentIndex >= 0)
+                {
+                    _attackBag.RemoveAt(spentIndex);
+                    _lastPlayedAttack = started;
+                    _attackPickCounts[(int)started.Value]++;
+                    if (_armedAttack == started)
+                    {
+                        _armedAttack = null;
+                        _armedNeutralTicks = 0;
+                    }
+                }
+            }
+
+            _bagPreviousPhase = Phase;
+
+            // Arming mirrors the base Idle gate: neutral, grounded, a live target with line of sight, no authored hold.
+            bool neutral = Phase == AttackPhase.Idle && !HoldAttackSelection && NPC.HasValidTarget && NPC.velocity.Y == 0f;
+            if (!neutral)
+            {
+                return;
+            }
+
+            Player target = Main.player[NPC.target];
+            if (!Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1))
+            {
+                return;
+            }
+
+            float distance = NPC.Distance(target.Center);
+            if (_armedAttack.HasValue && !AttackGateOpen(_armedAttack.Value, distance, target))
+            {
+                _armedAttack = null;
+                _armedNeutralTicks = 0;
+            }
+
+            // Attempt 0 scans the bag; if nothing in it is eligible (or it is empty) the played cards come back and attempt 1
+            // scans again. Prefer a card that isn't the attack just played, but take a repeat if it is the only one open.
+            for (int attempt = 0; attempt < 2 && !_armedAttack.HasValue; attempt++)
+            {
+                int firstOpen = -1;
+                int firstNonRepeat = -1;
+                for (int i = 0; i < _attackBag.Count; i++)
+                {
+                    if (!AttackGateOpen(_attackBag[i], distance, target))
+                    {
+                        continue;
+                    }
+
+                    if (firstOpen < 0)
+                    {
+                        firstOpen = i;
+                    }
+
+                    if (_attackBag[i] != _lastPlayedAttack)
+                    {
+                        firstNonRepeat = i;
+                        break;
+                    }
+                }
+
+                int pick = firstNonRepeat;
+                if (pick < 0)
+                {
+                    pick = firstOpen;
+                }
+
+                if (pick >= 0)
+                {
+                    _armedAttack = _attackBag[pick];
+                    _armedNeutralTicks = 0;
+                }
+                else
+                {
+                    // Add back every card the bag is missing (Shard only once unlocked, combos up to the full count), shuffled
+                    // among themselves and appended behind whatever is still waiting on its range.
+                    int firstNewCard = _attackBag.Count;
+                    int comboCards = 0;
+                    for (int i = 0; i < _attackBag.Count; i++)
+                    {
+                        if (_attackBag[i] == AttackBagEntry.MeleeCombo)
+                        {
+                            comboCards++;
+                        }
+                    }
+
+                    foreach (AttackBagEntry entry in AttackBagEntries)
+                    {
+                        bool shardLocked = entry == AttackBagEntry.AbyssShard && !_abyssShardUnlocked;
+                        if (entry == AttackBagEntry.MeleeCombo || shardLocked || _attackBag.Contains(entry))
+                        {
+                            continue;
+                        }
+
+                        _attackBag.Add(entry);
+                    }
+
+                    for (; comboCards < BagMeleeComboCards; comboCards++)
+                    {
+                        _attackBag.Add(AttackBagEntry.MeleeCombo);
+                    }
+
+                    for (int i = _attackBag.Count - 1; i > firstNewCard; i--)
+                    {
+                        int swapIndex = Main.rand.Next(firstNewCard, i + 1);
+                        AttackBagEntry held = _attackBag[i];
+                        _attackBag[i] = _attackBag[swapIndex];
+                        _attackBag[swapIndex] = held;
+                    }
+                }
+            }
+
+            if (!_armedAttack.HasValue)
+            {
+                return;
+            }
+
+            // Cooldowns no longer gate the armed special; zero its own so the engine's Idle check passes.
+            switch (_armedAttack.Value)
+            {
+                case AttackBagEntry.Pierce: _pierceCooldown = 0; break;
+                case AttackBagEntry.JumpSlash: _jumpSlashCooldown = 0; break;
+                case AttackBagEntry.FlipSlash: _flipSlashCooldown = 0; break;
+                case AttackBagEntry.AbyssSlash: _abyssSlashCooldown = 0; break;
+                case AttackBagEntry.Tendril: _tendrilCooldown = 0; break;
+                case AttackBagEntry.AbyssShard: _abyssShardCooldown = 0; break;
+                case AttackBagEntry.HomingVolley: _homingVolleyCooldown = 0; break;
+                case AttackBagEntry.MiasmaUpswing: _boomerangCooldown = 0; break;
+                case AttackBagEntry.SpiralFan: _spiralFanCooldown = 0; break;
+            }
+
+            _armedNeutralTicks++;
+            if (_armedNeutralTicks > BagArmedTimeoutTicks)
+            {
+                int armedIndex = _attackBag.IndexOf(_armedAttack.Value);
+                if (armedIndex >= 0)
+                {
+                    _attackBag.RemoveAt(armedIndex);
+                    _attackBag.Add(_armedAttack.Value);
+                }
+
+                _armedAttack = null;
+                _armedNeutralTicks = 0;
+            }
+        }
+
+        /// <summary>Whether <paramref name="entry"/>'s range band (and, for combos, height gate) is open at this distance. The
+        /// bands are the specials' own Min/Max virtuals, the same numbers the base class checks when it starts them.</summary>
+        bool AttackGateOpen(AttackBagEntry entry, float distance, Player target)
+        {
+            float minRange = 0f;
+            float maxRange = float.MaxValue;
+
+            switch (entry)
+            {
+                case AttackBagEntry.Pierce:
+                    minRange = MinPierceRange;
+                    maxRange = PierceRange;
+                    break;
+                case AttackBagEntry.JumpSlash:
+                    minRange = JumpSlashMinRange;
+                    maxRange = JumpSlashMaxRange;
+                    break;
+                case AttackBagEntry.FlipSlash:
+                    minRange = FlipSlashMinRange;
+                    maxRange = FlipSlashMaxRange;
+                    break;
+                case AttackBagEntry.AbyssSlash:
+                    minRange = AbyssSlashMinRange;
+                    maxRange = AbyssSlashMaxRange;
+                    break;
+                case AttackBagEntry.Tendril:
+                    minRange = TendrilMinRange;
+                    maxRange = TendrilMaxRange;
+                    break;
+                case AttackBagEntry.AbyssShard:
+                    if (!_abyssShardUnlocked)
+                    {
+                        return false;
+                    }
+
+                    minRange = AbyssShardMinRange;
+                    maxRange = AbyssShardMaxRange;
+                    break;
+                case AttackBagEntry.HomingVolley:
+                    minRange = HomingVolleyMinRange;
+                    maxRange = HomingVolleyMaxRange;
+                    break;
+                case AttackBagEntry.MiasmaUpswing:
+                    minRange = BoomerangMinRange;
+                    maxRange = BoomerangMaxRange;
+                    break;
+                case AttackBagEntry.SpiralFan:
+                    minRange = SpiralFanMinRange;
+                    maxRange = SpiralFanMaxRange;
+                    break;
+                case AttackBagEntry.MeleeCombo:
+                    // The base melee intercept's own gate: the target not too far above, inside the farthest start range
+                    // (the dashes and leaps reach out to RangedStartComboMaxRange, ordinary swings to ComboMaxStartRange).
+                    if (NPC.Center.Y - target.Center.Y >= ComboStartMaxTargetRise)
+                    {
+                        return false;
+                    }
+
+                    maxRange = Math.Max(ComboMaxStartRange, RangedStartComboMaxRange);
+                    break;
+            }
+
+            return distance >= minRange && distance <= maxRange;
+        }
+
         // ── Piercing Dash ────────────────────────────────────────────────────────
-        protected override bool  CanPierce            => true;
+        protected override bool  CanPierce            => _armedAttack == AttackBagEntry.Pierce;
         protected override float PierceRange          => 700f;
         protected override float MinPierceRange       => 250f;
-        // Up from 4: a little more of this in phase 1. The idle roll only runs with nothing else chosen, and the (now
-        // longer, flip-opened) sequence still has its cooldown below.
-        protected override int   PierceChance          => 7;
+        // 100 like every special: the attack bag (above) decides when each one is up, not a per-tick roll.
+        protected override int   PierceChance          => 100;
         // The dash runs 400px past the player (solved from their distance at launch, capped 90t), so a roll through leaves
         // him well behind them with time to set up the repeat. 8t ramp so a close target gets a readable launch.
         protected override float PierceOvershootPastTarget => 400f;
@@ -598,7 +1303,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   PierceRepeatTelegraphTicks => 40;
 
         // ── Jumping Downward Slash ───────────────────────────────────────────────
-        protected override bool  CanJumpSlash          => true;
+        protected override bool  CanJumpSlash          => _armedAttack == AttackBagEntry.JumpSlash || InDodgePunishWindow;
         protected override float JumpSlashMinRange      => 0f;
         protected override float JumpSlashMaxRange      => 50f * 16f;
         protected override float JumpSlashMaxForwardSpeed => 8.5f;
@@ -608,7 +1313,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // sweeps through them on the way down instead of the leap dropping short.
         protected override float JumpSlashMaxLead       => 160f;
         protected override float JumpSlashAimPastTarget => 64f;
-        protected override int   JumpSlashChance        => 5;
+        protected override int   JumpSlashChance        => 100;
         protected override int   JumpSlashCooldownAfterUse => 420;
         // Swipe: -60° cocked -> 110° (170° envelope; was 55°, widened at the END so ~142° stays live past the 30%
         // disarm and still reaches a player at his feet). in 8 / out 22, k 7 -> 29°/t, live 11.8t. The 12t longer
@@ -619,10 +1324,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   JumpSlashRecoveryTicks   => 58;
 
         // ── Forward Flip Slash ───────────────────────────────────────────────────
-        protected override bool  CanFlipSlash              => true;
+        protected override bool  CanFlipSlash              => _armedAttack == AttackBagEntry.FlipSlash || _armedAttack == AttackBagEntry.Pierce;
         protected override float FlipSlashMinRange         => 150f;
         protected override float FlipSlashMaxRange         => 450f;
-        protected override int   FlipSlashChance           => 4;
+        protected override int   FlipSlashChance           => 100;
         protected override int   FlipSlashCooldownAfterUse => 420;
 
         // Landing strike timing sheet (attack-timing-design §3):
@@ -644,10 +1349,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float FlipSlashStrikeEaseOutDecay  => 9f;
 
         // ── Abyss Slash ──────────────────────────────────────────────────────────
-        protected override bool  CanAbyssSlash              => true;
+        protected override bool  CanAbyssSlash              => _armedAttack == AttackBagEntry.AbyssSlash || InDodgePunishWindow;
         protected override float AbyssSlashMinRange         => 250f;
-        protected override float AbyssSlashMaxRange         => 900f;
-        protected override int   AbyssSlashChance           => 5;
+        protected override float AbyssSlashMaxRange         => AbyssSlashFloorRange;
+        protected override int   AbyssSlashChance           => 100;
         protected override int   AbyssSlashCooldownAfterUse => 300;
         // Release swipe: in 4 / out 18, k 6 -> 37°/t over 160°, a whip-crack off the held post (was a 16t Snap).
         // No blade hit; the crescent leaves on swipe entry, 4t before the peak. The swipe is 6t longer, so the
@@ -740,10 +1445,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // ── Abyss Tendril Grab ───────────────────────────────────────────────────
-        protected override bool  CanTendrilGrab          => true;
+        protected override bool  CanTendrilGrab          => _armedAttack == AttackBagEntry.Tendril;
         protected override float TendrilMinRange         => 150f;
         protected override float TendrilMaxRange          => 500f;
-        protected override int   TendrilChance            => NPC.life <= NPC.lifeMax * 0.50f ? 8 : 4;
+        protected override int   TendrilChance            => 100;
         protected override int   TendrilCooldownAfterUse  => 480;
         // Base 24t + 20t. Past the 30t flash lead (OpeningTellFlashLeadTicks) this also opens a 14t staggerable window at
         // the start of the tell when it is picked from neutral, like his other openers; the last 30t stay armoured.
@@ -941,6 +1646,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
+            // Arms this tick's attack card before the base Idle selection reads the specials' Can* gates.
+            TickAttackBag();
             base.AI();
             UpdateSwordSlashSequence();
             TickProjectileSwordTelegraphs();
@@ -2257,7 +2964,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //           swing's tail plus either move's own tell keeps the next hit >= 30t after its live window.
         //
         // Rising Uppercut
-        // Tell:     a sprint (TopSpeed x 2.2 = 5.3 px/t), blade dragged down-back into the ground (2.75) throwing
+        // Tell:     a sprint (TopSpeed x 2.2 = 6.4 px/t), blade dragged down-back into the ground (2.75) throwing
         //           sparks, >= 20t on screen, up to 150t.
         // Takeoff:  rise h = target height gap + 24px, clamped 48..320px (20 tiles); vy = sqrt(2 * 0.3 * h) <= 14.4 px/t,
         //           rise time T = vy / 0.3 <= 48t. He takes off once dx / T <= 9 px/t, then steers 10%/tick on the ascent.
@@ -2345,12 +3052,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static readonly WeightedSwing AirUnderhandCurve = new WeightedSwing(6, 20, 6f);
         static readonly WeightedSwing AirOverhandCurve = new WeightedSwing(8, 22, 6.5f);
 
-        // After a boomerang throw, this % of the time the recovery hands straight to an uppercut / lunge (no airborne-target
+        // After a Miasma Upswing, this % of the time the recovery hands straight to an uppercut / lunge (no airborne-target
         // wait, no aerial cooldown), out to 750px - the lunge's 70t dash covers that with room to spare.
-        const int BoomerangAerialChainChance = 50;
-        const float BoomerangChainMaxRange = 750f;
-        bool _boomerangChainRolled;
-        bool _boomerangChainActive;
+        const int MiasmaAerialChainChance = 50;
+        const float MiasmaChainMaxRange = 750f;
+        bool _miasmaChainRolled;
+        bool _miasmaChainActive;
 
         AerialStage _aerialStage;
         int _aerialStageTicks;
@@ -2445,22 +3152,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 _targetAirborneTicks++;
             }
 
-            // Boomerang follow-up: rolled ONCE per boomerang recovery (this runs every tick), and if it hits, the recovery
+            // Miasma Upswing follow-up: rolled ONCE per recovery (this runs every tick), and if it hits, the recovery
             // hands straight to an uppercut / lunge - without the usual airborne-target wait or the aerial cooldown.
             if (Phase != AttackPhase.BoomerangRecovery)
             {
-                _boomerangChainRolled = false;
-                _boomerangChainActive = false;
+                _miasmaChainRolled = false;
+                _miasmaChainActive = false;
             }
-            else if (!_boomerangChainRolled)
+            else if (!_miasmaChainRolled)
             {
-                _boomerangChainRolled = true;
-                _boomerangChainActive = Main.rand.Next(100) < BoomerangAerialChainChance;
+                _miasmaChainRolled = true;
+                _miasmaChainActive = Main.rand.Next(100) < MiasmaAerialChainChance;
             }
 
             bool normalTrigger = _aerialCooldown <= 0 && _targetAirborneTicks >= AerialTargetAirborneTicks;
             bool canStart = _aerialStage == AerialStage.None && !HoldAttackSelection
-                && NPC.velocity.Y == 0f && (normalTrigger || _boomerangChainActive);
+                && NPC.velocity.Y == 0f && (normalTrigger || _miasmaChainActive);
             if (!canStart)
             {
                 return;
@@ -2468,9 +3175,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             float distance = NPC.Distance(target.Center);
             float maxRange = AerialMaxRange;
-            if (_boomerangChainActive)
+            if (_miasmaChainActive)
             {
-                maxRange = BoomerangChainMaxRange;
+                maxRange = MiasmaChainMaxRange;
             }
 
             if (distance > maxRange)
@@ -2486,18 +3193,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             bool neutral = Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll
                 || Phase == AttackPhase.ClosingDistance;
             bool openerRoll = neutral && normalTrigger && Main.rand.Next(100) < AerialOpenerChance;
-            bool followUp = (inMeleeRecovery && normalTrigger) || _boomerangChainActive;
+            bool followUp = (inMeleeRecovery && normalTrigger) || _miasmaChainActive;
             if (!followUp && !openerRoll)
             {
                 return;
             }
 
             // Alternate the two moves, except the uppercut can't reach a target more than 20 tiles above him. After a
-            // boomerang the target is usually on the ground, where an uppercut (a jump up to meet them) is pointless:
+            // Miasma Upswing the target is usually on the ground, where an uppercut (a jump up to meet them) is pointless:
             // it needs the target at least UppercutMinRise above, else it's the lunge.
             float riseNeeded = NPC.Center.Y - target.Center.Y;
             bool uppercutReachable = riseNeeded <= UppercutMaxRise;
-            if (_boomerangChainActive)
+            if (_miasmaChainActive)
             {
                 uppercutReachable = uppercutReachable && riseNeeded >= UppercutMinRise;
             }
@@ -3164,10 +3871,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int AbyssShardWaveGapTicks = 60;
         const float AbyssShardSpacing = 48f;
 
-        protected override bool CanAbyssShard => _abyssShardUnlocked;
+        protected override bool CanAbyssShard => _abyssShardUnlocked && _armedAttack == AttackBagEntry.AbyssShard;
         protected override float AbyssShardMinRange => 80f;
         protected override float AbyssShardMaxRange => 900f;
-        protected override int AbyssShardChance => 12;
+        protected override int AbyssShardChance => 100;
         protected override int AbyssShardCooldownAfterUse => 420;
         protected override int AbyssShardTelegraphTicks => 30;
 
@@ -3259,10 +3966,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float HomingVolleyOrbSpeed = 8.5f;
         const int HomingVolleyCurveTicks = 16;
 
-        protected override bool CanHomingVolley => true;
+        protected override bool CanHomingVolley => _armedAttack == AttackBagEntry.HomingVolley;
         protected override float HomingVolleyMinRange => 280f;
         protected override float HomingVolleyMaxRange => 650f;
-        protected override int HomingVolleyChance => 10;
+        protected override int HomingVolleyChance => 100;
         protected override int HomingVolleyCooldownAfterUse => 300;
         // Volley chop: -100° -> 70°, in 11 / out 24, k 6 -> 22°/t, the heaviest-looking launch (was Smooth 30t,
         // ~8.5°/t). The orbs leave on the peak tick (11 of 35) instead of mid-arc, where a Weighted blade is already
@@ -3389,31 +4096,45 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Main.myPlayer, straightTicks, HomingVolleyCurveTicks);
         }
 
-        // ── Boomerang Crescent: 2 variants, both using the shared overhead-chop launch ──────────
-        const int BoomerangDamage = 120;
-        const float BoomerangSpeed = 7f;
+        // ── Miasma Upswing: a rising underhand cut that throws one curse wave along the floor ───────────────────
+        // Replaces the Boomerang Crescent. It runs on PuppetNPC's Boomerang phase machinery (swing telegraph, swing,
+        // recovery), which Gwyn and Soul of Cinder share, so the phase and virtual names keep "Boomerang".
+        //
+        // Poses:    2.05 -> -1.55 (206° envelope) on Rising Slash's curve, 6/22 k5.5, 34°/t. The blade itself deals no damage.
+        // Tell:     30t: blade dragged low and back, void motes converging on the tip (the shared boomerang charge VFX).
+        // Release:  tick 5.5 of 28, the peak. One curse ChaosShockwave leaves the floor 30px ahead: 7 px/t for 600px (86t).
+        // Range:    200..560px. Past ~570px the wave dies before it reaches the target, so the move is not offered there.
+        // Counter:  jump it (the wave is 42px tall, hugs the floor and climbs steps up to 3 tiles) or roll through it (it
+        //           crosses a standing player in ~7t). Open: 22t tail + 50t recovery.
+        // Chain:    unchanged - half the time the recovery hands straight to an uppercut / lunge (MiasmaAerialChainChance).
+        //           A target 200-560px out meets the wave 30-80t after release, ahead of the chain's first live hit (~80t+).
+        const int MiasmaWaveDamage = 110; // Expert hit before defense; the wave also builds curse on top
+        const float MiasmaWaveTravelPx = 600f;
+        const float MiasmaWaveSpawnAhead = 30f;
+        static readonly WeightedSwing MiasmaSwingCurve = new WeightedSwing(6, 22, 5.5f);
 
-        protected override bool CanBoomerang => true;
-        protected override float BoomerangMinRange => 60f;
-        protected override float BoomerangMaxRange => 1300f;
-        protected override int BoomerangChance => 9;
+        protected override bool CanBoomerang => _armedAttack == AttackBagEntry.MiasmaUpswing;
+        protected override float BoomerangMinRange => 200f;
+        protected override float BoomerangMaxRange => 560f;
+        protected override int BoomerangChance => 100;
         protected override int BoomerangCooldownAfterUse => 330;
-        // Chop: -100° -> 70°, in 6 / out 20, k 5 -> 28.5°/t, a quick throw (was Smooth 30t). The crescents fire on
-        // the peak tick (6 of 26; half a tick under so float rounding can't push it late). The recovery still
-        // expires 110 ticks after firing (20t settle + 90t), preserving the old budget while the independently
-        // returning projectile overlaps Artorias's next move.
-        protected override WeightedSwing BoomerangSwingCurve => new WeightedSwing(6, 20, 5f);
-        protected override int BoomerangSwingTicks => BoomerangSwingCurve.TotalTicks;
+        protected override int BoomerangSwingTelegraphTicks => 30;
+        protected override float BoomerangSwingStartRotation => AirUnderhandStartRotation;
+        protected override float BoomerangSwingEndRotation => AirUnderhandEndRotation;
+        protected override WeightedSwing BoomerangSwingCurve => MiasmaSwingCurve;
+        protected override int BoomerangSwingTicks => MiasmaSwingCurve.TotalTicks;
+        // The wave leaves on the peak tick (6 of 28; half a tick under so float rounding can't push it late).
         protected override float BoomerangFireProgress =>
-            (BoomerangSwingCurve.EaseInTicks - 0.5f) / BoomerangSwingCurve.TotalTicks;
-        // Was 90. Shorter, and half the time it never runs out: see BoomerangAerialChainChance.
+            (MiasmaSwingCurve.EaseInTicks - 0.5f) / MiasmaSwingCurve.TotalTicks;
+        // Half the time it never runs out: see MiasmaAerialChainChance.
         protected override int BoomerangRecoveryTicks => 50;
 
         protected override void DoBoomerangSwingTick(int elapsed, int total)
         {
             if (elapsed == 0)
             {
-                SpawnArtoriasSwordArc(total);
+                // Underhand, so the crescent trails the rising blade.
+                SpawnArtoriasSwordArc(total, reverse: true);
             }
 
             if (Main.dedServ)
@@ -3421,16 +4142,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            float angle = BoomerangSwingCurve.Apply(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f), elapsed);
-            Vector2 dir = new Vector2(NPC.direction, 0f).RotatedBy(angle);
-            Vector2 bladePos = NPC.Center + dir * 46f;
+            Vector2 bladePosition = PuppetWeaponTipPosition(46f);
 
             if (Main.rand.NextBool(2))
             {
                 Color tint = Main.rand.NextBool() ? new Color(190, 90, 255) : new Color(255, 140, 210);
-                Dust d = Dust.NewDustPerfect(bladePos + Main.rand.NextVector2Circular(6f, 6f), DustID.PurpleTorch,
+                Dust dust = Dust.NewDustPerfect(bladePosition + Main.rand.NextVector2Circular(6f, 6f), DustID.PurpleTorch,
                     Vector2.Zero, 100, tint, Main.rand.NextFloat(1f, 1.6f));
-                d.noGravity = true;
+                dust.noGravity = true;
             }
         }
 
@@ -3443,38 +4162,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            Player target = Main.player[NPC.target];
-            Vector2 origin = PuppetWeaponTipPosition(54f);
-            float baseAngle = (target.Center - origin).ToRotation();
-
-            if (Main.rand.NextBool())
-            {
-                // Mirrored Twin Loops: launched wide of the player on both sides, curling INWARD
-                // across each other, then both homing back to the caster - a converging double
-                // return that crosses near the player on the way back.
-                float leftAngle = baseAngle - MathHelper.ToRadians(35f);
-                float rightAngle = baseAngle + MathHelper.ToRadians(35f);
-                SpawnBoomerang(origin, leftAngle.ToRotationVector2() * BoomerangSpeed, 1f);
-                SpawnBoomerang(origin, rightAngle.ToRotationVector2() * BoomerangSpeed, -1f);
-            }
-            else
-            {
-                // Wide Solo Loop: one big crescent, curl direction random, sweeping a wide arc
-                // across and past the player before returning.
-                float sign = Main.rand.NextBool() ? 1f : -1f;
-                float launchAngle = baseAngle - sign * MathHelper.ToRadians(45f);
-                SpawnBoomerang(origin, launchAngle.ToRotationVector2() * BoomerangSpeed, sign);
-            }
-        }
-
-        void SpawnBoomerang(Vector2 position, Vector2 velocity, float curveDir)
-        {
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), position, velocity,
-                ModContent.ProjectileType<BoomerangCrescent>(), EnemyDamage.Projectile(BoomerangDamage), 0f,
-                Main.myPlayer, curveDir, NPC.whoAmI);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
-                ModContent.ProjectileType<ArtoriasFanSourceVFX>(), 0, 0f,
-                Main.myPlayer, velocity.ToRotation(), curveDir);
+            // Leaves the floor just ahead of his feet, along his locked facing. The wave snaps itself to the ground and
+            // follows it, and dies against a wall taller than 3 tiles or a drop deeper than 5.
+            Vector2 wavePosition = new Vector2(NPC.Center.X + NPC.direction * MiasmaWaveSpawnAhead, NPC.Bottom.Y - 20f);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), wavePosition, Vector2.Zero,
+                ModContent.ProjectileType<Content.Projectiles.Enemy.Chaos.ChaosShockwave>(),
+                EnemyDamage.Projectile(MiasmaWaveDamage), 0f, Main.myPlayer,
+                NPC.direction, 0f, MiasmaWaveTravelPx);
         }
 
         // ── Spiral Fan: 3 variants, a rotating-angle burst reusing the AbyssSlash crescent ───────
@@ -3490,10 +4184,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float SpiralFanTelegraphDustRadius = 92f;
         const float SpiralFanTelegraphDustJitter = 12f;
 
-        protected override bool CanSpiralFan => true;
+        protected override bool CanSpiralFan => _armedAttack == AttackBagEntry.SpiralFan;
         protected override float SpiralFanMinRange => 60f;
         protected override float SpiralFanMaxRange => 650f;
-        protected override int SpiralFanChance => 8;
+        protected override int SpiralFanChance => 100;
         protected override int SpiralFanCooldownAfterUse => 360;
         // Was the base 90: he's back on you sooner, the crescents are still out there doing the work.
         protected override int SpiralFanRecoveryTicks => 45;
@@ -3791,6 +4485,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Gore
         public override void OnKill()
         {
+            // Attack-bag tally: how often each card was played this fight, to check every attack surfaced.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                List<string> tally = new List<string>();
+                for (int i = 0; i < AttackBagEntries.Length; i++)
+                {
+                    tally.Add(AttackBagEntries[i] + "=" + _attackPickCounts[i]);
+                }
+
+                Mod.Logger.Info("Artorias attack picks: " + string.Join(", ", tally));
+            }
+
             // Safety net: dying mid-charge (Nova is uninterruptible by AI, but damage can still kill
             // outright) must not leave the distortion filter permanently bound to the scene.
             if (Main.netMode != NetmodeID.Server && Filters.Scene[NovaDistortionFilter].IsActive())

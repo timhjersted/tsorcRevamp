@@ -5,12 +5,16 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
 {
-    /// <summary>A puff of abyss cloud shed from Artorias's blade during the Piercing Dash opener's flip. It drifts up and
-    /// thins out, and is a real hitbox while it does: the flip with the sword out is an attack. Drawn with the same
-    /// mantle shader as his other abyss effects. Spawned server-side only; every machine runs its motion and draw.</summary>
+    /// <summary>A puff of abyss cloud shed from Artorias's blade during the Piercing Dash opener's flip, or thrown up out of the
+    /// floor by Ground Pound's landing eruption. It drifts up and thins out, and is a real hitbox while it does: the flip with
+    /// the sword out is an attack. Drawn with the same mantle shader as his other abyss effects. Spawned server-side only;
+    /// every machine runs its motion and draw.
+    /// ai[0] = ticks to wait, invisible and harmless and held still, before it forms (0 = form at once, moving at its spawn
+    /// velocity). ai[1] = upward speed it starts rising at when that wait ends, for a cloud spawned at rest.</summary>
     class ArtoriasCurseCloud : ModProjectile
     {
         const int Lifetime = 75;
+        const int EmergeTicks = 6;           // opacity and hitbox ramp up over the first EmergeTicks, so a cloud never pops in solid
         const int FadeTicks = 25;            // opacity and hitbox ramp down over the last FadeTicks; damage stops with it
         const float RiseDrag = 0.985f;       // per tick: the initial upward shove bleeds off into a slow drift
         const float HitRadius = 34f;         // px at full size; the drawn cloud is 2x this across
@@ -31,13 +35,37 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.timeLeft = Lifetime;
         }
 
+        bool WaitingToForm => Projectile.ai[0] > 0f;
+
         float Life01 => 1f - Projectile.timeLeft / (float)Lifetime;
 
-        // 1 while solid, 0 by the end of the fade.
-        float Solidity => MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
+        // 1 while solid, 0 at either end of the cloud's life: it emerges over EmergeTicks and thins out over FadeTicks.
+        float Solidity
+        {
+            get
+            {
+                float fadeOut = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
+                float fadeIn = MathHelper.Clamp((Lifetime - Projectile.timeLeft) / (float)EmergeTicks, 0f, 1f);
+                return MathHelper.Min(fadeIn, fadeOut);
+            }
+        }
 
         public override void AI()
         {
+            if (WaitingToForm)
+            {
+                // Hold still with a full lifetime (AI runs, then timeLeft ticks down, so +1 nets zero). The tick the wait
+                // ends the cloud starts its rise, so a row of them erupts one after another.
+                Projectile.ai[0]--;
+                Projectile.timeLeft++;
+                if (Projectile.ai[0] <= 0f)
+                {
+                    Projectile.velocity = new Vector2(0f, -Projectile.ai[1]);
+                }
+
+                return;
+            }
+
             Projectile.velocity *= RiseDrag;
 
             Lighting.AddLight(Projectile.Center, new Vector3(0.36f, 0.12f, 0.56f) * Solidity);
@@ -53,7 +81,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override bool? CanDamage()
         {
-            return Solidity > 0.05f;
+            return !WaitingToForm && Solidity > 0.05f;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -66,6 +94,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
+            if (WaitingToForm)
+            {
+                return false;
+            }
+
             float growth = MathHelper.Lerp(0.8f, 1.15f, Life01);
             float size = DrawSize * growth;
             ArtoriasVFX.DrawMantle(Projectile.Center, new Vector2(size, size), 0.62f * Solidity, 1.0f, -1f);

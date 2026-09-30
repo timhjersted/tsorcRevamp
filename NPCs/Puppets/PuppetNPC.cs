@@ -1272,6 +1272,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual WeightedSwing BoomerangSwingCurve => default;
         protected virtual float BoomerangFireProgress       => 0.5f;
         protected virtual int   BoomerangRecoveryTicks      => 110;
+        /// <summary>Swing-space rotation the chop starts at, which its telegraph also winds back to. Default is the
+        /// overhead chop shared with Homing Volley; an underhand release starts low and ends high instead.</summary>
+        protected virtual float BoomerangSwingStartRotation => MathHelper.ToRadians(-100f);
+        protected virtual float BoomerangSwingEndRotation   => MathHelper.ToRadians(70f);
 
         protected virtual void DoBoomerangSwingTick(int elapsed, int total) { }
         protected virtual void DoBoomerangFire() { }
@@ -7352,6 +7356,20 @@ namespace tsorcRevamp.NPCs.Puppets
         /// player, while staying well inside the step's own swing reach so the slam still connects.</summary>
         protected virtual float LeapLandingStandoff => 0f;
 
+        /// <summary>Farthest target (px) a LeapSlam step can land on from a standing start: the horizontal
+        /// speed cap times the flat-ground airtime, plus the blade's reach, minus the landing standoff and a
+        /// terrain margin. Past it the leap would come down short, so callers gate the step's selection on it.</summary>
+        protected float ReliableJumpStartRange(MeleeComboStep step)
+        {
+            float heightMult = step.LeapHeightMult > 0f ? step.LeapHeightMult : 1f;
+            float forwardMult = step.LeapForwardSpeedMult > 0f ? step.LeapForwardSpeedMult : 1f;
+            float airtime = 2f * LeapAttackUpSpeed * heightMult / 0.3f;
+            float maximumTravel = airtime * LeapAttackForwardSpeed * forwardMult;
+            float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+            // Leave a small margin for uneven ground and motion after the ascent lock.
+            return maximumTravel + bladeReach - LeapLandingStandoff - 24f;
+        }
+
         private float PredictedLeapTargetX(Player target)
         {
             float lead = MathHelper.Clamp(
@@ -9033,17 +9051,23 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 _weaponRotation = SpiralFanCastEndRotation;
             }
-            else if (Phase == AttackPhase.BoomerangSwingTelegraph || Phase == AttackPhase.SpiralFanSwingTelegraph)
+            else if (Phase == AttackPhase.BoomerangSwingTelegraph)
             {
-                // Same overhead cocked-back wind-up as Homing Volley - all three "sword launch"
-                // attacks share one visual identity for the raise.
+                // Winds back to the chop's start pose: overhead cocked-back by default (the same raise as Homing
+                // Volley), or wherever BoomerangSwingStartRotation puts an underhand release.
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, BoomerangSwingStartRotation, 0.25f);
+            }
+            else if (Phase == AttackPhase.SpiralFanSwingTelegraph)
+            {
+                // Same overhead cocked-back wind-up as Homing Volley - the "sword launch" attacks
+                // share one visual identity for the raise.
                 _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.ToRadians(-100f), 0.25f);
             }
             else if (Phase == AttackPhase.BoomerangSwing)
             {
-                // Same overhead chop shape (and easing) as Homing Volley - the crescent(s) fire
+                // Overhead chop shape (and easing) as Homing Volley by default - the projectile(s) fire
                 // partway through.
-                _weaponRotation = BespokeSwingRotation(MathHelper.ToRadians(-100f), MathHelper.ToRadians(70f),
+                _weaponRotation = BespokeSwingRotation(BoomerangSwingStartRotation, BoomerangSwingEndRotation,
                     BoomerangSwingTicks, BoomerangSwingCurve, SwingEaseStyle.Smooth);
             }
             else if (Phase == AttackPhase.SpiralFanSwing)

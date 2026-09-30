@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -14,8 +15,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
     ///position IS the hitbox — it travels at the wave's leading edge, so touching it anywhere is touching
     ///the danger.
     ///Hugs the terrain (steps up/down small ledges); dies against walls taller than 3 tiles.
-    ///ai[2] = 1 is the CURSE variant Artorias's Piercing Dash opener reuses: keeps the caller's spawn damage instead of the
-    ///flat hazard damage, builds Curse instead of staggering, and runs abyss-purple/grey smoke dust instead of shadowflame.
+    ///ai[2] >= 1 is the CURSE variant Artorias reuses (Piercing Dash opener, Cursebreaker, Miasma Upswing): keeps the caller's
+    ///spawn damage instead of the flat hazard damage, builds Curse instead of staggering, and runs abyss-purple/grey smoke dust
+    ///instead of shadowflame. Exactly 1 keeps the default run; a larger value is the run in px (Miasma Upswing passes 600).
     ///</summary>
     class ChaosShockwave : ModProjectile
     {
@@ -34,6 +36,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
         bool CurseVariant => Projectile.ai[2] >= 0.5f;
         bool Armed => Projectile.localAI[0] > ArmDelay;
 
+        // Ticks the wave crawls after arming. A curse wave whose ai[2] is above 1 carries its run in px, converted at WaveSpeed.
+        int TravelTicks
+        {
+            get
+            {
+                if (Projectile.ai[2] > 1.5f)
+                {
+                    return (int)Math.Ceiling(Projectile.ai[2] / WaveSpeed);
+                }
+
+                return WaveTravelTicks;
+            }
+        }
+
         public override void SetDefaults()
         {
             Projectile.hostile = true;
@@ -49,7 +65,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            Projectile.timeLeft = ArmDelay + WaveTravelTicks;
+            Projectile.timeLeft = ArmDelay + TravelTicks;
 
             // Runs after NewProjectile assigns the passed NPC.damage/6 value, so this is the last word. The curse variant's
             // caller already passed its own (difficulty-converted) damage.
