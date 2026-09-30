@@ -1361,15 +1361,8 @@ namespace tsorcRevamp
 
         public override void PostUpdateBuffs()
         {
-            // Suppressed also nullifies Gravitation: the vanilla buff loop (earlier in UpdateBuffs, before this
-            // hook runs) already set gravControl/gravControl2 true for this tick, so un-set them here to block
-            // the gravity-flip key read later in Player.Update. Doesn't touch the buff timer, just its effect.
-            if (Suppressed)
-            {
-                Player.gravControl = false;
-                Player.gravControl2 = false;
-            }
-
+            // (Suppressed's Gravitation/Featherfall removal lives in PostUpdateEquips: permanent potions re-set those
+            // flags after this hook, so cancelling them here never held.)
             foreach (Item thisItem in PotionBagItems)
             {
                 if (thisItem != null && !thisItem.IsAir)
@@ -1567,6 +1560,26 @@ namespace tsorcRevamp
             {
                 Player.manaRegenBuff = false;
             }
+            // Weight of Shadow and Suppressed both take away Featherfall and Gravitation. Two jobs, because the effects have
+            // two sources: a drunk potion is a real buff (delete it so its icon doesn't sit there inert), while a permanent
+            // potion has no buff at all - it sets slowFall/gravControl directly from UpdateInventory, which runs in this
+            // equip pass, so the flags can only be cancelled here, after it. Permanent potions come back by themselves the
+            // tick the debuff ends; a drunk one loses its remaining time. With gravControl off vanilla snaps gravDir back
+            // to normal on its own.
+            if (ShadowWeight || Suppressed)
+            {
+                Player.ClearBuff(BuffID.Featherfall);
+                Player.ClearBuff(BuffID.Gravitation);
+                Player.slowFall = false;
+                Player.gravControl = false;
+            }
+
+            // Suppressed also blocks the Gravity Globe's flip, which has no buff to delete.
+            if (Suppressed)
+            {
+                Player.gravControl2 = false;
+            }
+
             if (ShadowWeight)
             {
                 Player.GetJumpState(ExtraJump.BlizzardInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
@@ -1578,19 +1591,6 @@ namespace tsorcRevamp
                 Player.rocketTime = 0;
                 Player.jumpBoost = false;
                 Player.wingTime = 0;
-
-                // Featherfall and Gravitation go inert rather than being removed, so the potion's timer survives the debuff.
-                // They run in vanilla's buff pass before this hook; slowFall/gravControl are only read later in movement,
-                // and with gravControl off vanilla snaps gravDir back to normal on its own.
-                if (Player.HasBuff(BuffID.Featherfall))
-                {
-                    Player.slowFall = false;
-                }
-
-                if (Player.HasBuff(BuffID.Gravitation))
-                {
-                    Player.gravControl = false;
-                }
 
                 float speedCap = 12;
                 if (Player.velocity.X > speedCap)

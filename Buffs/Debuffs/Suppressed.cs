@@ -5,10 +5,10 @@ namespace tsorcRevamp.Buffs.Debuffs
 {
     // Nullifies the mobility perks of Supersonic Boots / Supersonic Wings / Supersonic Wings II (and, to a
     // lesser degree, Wings of Seath) down to roughly early-hardmode boot territory, and blocks the vanilla
-    // Gravitation buff's gravity-flip. The actual stat clamping happens in tsorcRevampPlayer.PostUpdateRunSpeeds()
+    // Gravitation and Featherfall buffs (removed, along with permanent-potion effects). The actual stat clamping happens in tsorcRevampPlayer.PostUpdateRunSpeeds()
     // (keyed off supersonicLevel, which is already set by whichever of these items is equipped) and in each
-    // item's UpdateEquip/UpdateAccessory for the noKnockback/waterWalk/iceSkate perks; the Gravitation block is
-    // in PostUpdateBuffs(). This class just flips the flag those places check.
+    // item's UpdateEquip/UpdateAccessory for the noKnockback/waterWalk/iceSkate perks; the Gravitation/Featherfall block is
+    // in PostUpdateEquips(). This class just flips the flag those places check.
     public class Suppressed : ModBuff
     {
         public override void SetStaticDefaults()
