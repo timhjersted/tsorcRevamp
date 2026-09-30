@@ -203,6 +203,13 @@ namespace tsorcRevamp.Systems.SummonerRework
                 return;
             }
 
+            // A sibling that a death's ClearBuff just despawned still runs this global AI after its own Kill();
+            // recording then would resurrect the snapshot the death cleared and read as a "dismissal" later.
+            if (!projectile.active)
+            {
+                return;
+            }
+
             // Refreshed every tick this instance is alive, so SpiritAshesRecoveryPlayer always has a
             // near-current snapshot to fall back on if this instance vanishes WITHOUT dying (buff-cancel,
             // vanilla slot enforcement) - see RecordAliveState for why that fallback exists.

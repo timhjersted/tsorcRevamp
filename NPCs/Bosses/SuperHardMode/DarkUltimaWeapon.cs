@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy.DarkCloud;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -31,7 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.dontTakeDamage = true;
             NPC.lifeMax = 500000;
             NPC.scale = 1.2f;
-            NPC.damage = DarkCloud.swordDamage;
+            EnemyDamage.SetContact(NPC, 200);
             NPC.behindTiles = false;
             AttackModeCounter = 3;
         }
@@ -76,7 +77,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         for (int i = 0; i < 5; i++)
                         {
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position, Vector2.Zero, ModContent.ProjectileType<DarkUltimaWeaponDummyProjectile>(), DarkCloud.swordDamage, 0.5f, Main.myPlayer, NPC.whoAmI, i);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position, Vector2.Zero, ModContent.ProjectileType<DarkUltimaWeaponDummyProjectile>(), DarkCloud.swordProjectileDamage, 0.5f, Main.myPlayer, NPC.whoAmI, i);
                         }
                     }
 
@@ -219,7 +220,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         for (int i = 0; i < 5; i++)
                         {
-                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position, Vector2.Zero, ModContent.ProjectileType<DarkUltimaWeaponDummyProjectile>(), DarkCloud.swordDamage, 0.5f, Main.myPlayer, NPC.whoAmI, i);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position, Vector2.Zero, ModContent.ProjectileType<DarkUltimaWeaponDummyProjectile>(), DarkCloud.swordProjectileDamage, 0.5f, Main.myPlayer, NPC.whoAmI, i);
                         }
                     }
 

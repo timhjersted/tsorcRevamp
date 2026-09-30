@@ -483,7 +483,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool  CanPierce            => true;
         protected override float PierceRange          => 700f;
         protected override float MinPierceRange       => 250f;
-        protected override int   PierceChance          => 4;
+        // Up from 4: a little more of this in phase 1. The idle roll only runs with nothing else chosen, and the (now
+        // longer, flip-opened) sequence still has its cooldown below.
+        protected override int   PierceChance          => 7;
+        // The dash runs 400px past the player (solved from their distance at launch, capped 90t), so a roll through leaves
+        // him well behind them with time to set up the repeat. 8t ramp so a close target gets a readable launch.
+        protected override float PierceOvershootPastTarget => 400f;
+        protected override int   PierceDashAccelTicks     => 8;
+        // Opens with a Forward Flip Slash whose slam cripples + spreads curse smoke, then the stab dash (see FlipSlashOpensPierce).
+        protected override bool  PierceOpensWithFlipSlash => true;
         protected override int   PierceTelegraphTicks => 60;
         protected override int   PierceDashTicks      => 40;
         protected override float PierceDashSpeed      => 16f;
@@ -506,7 +514,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float PierceStabFlickWindBackRotation => -1.6f;
         protected override int   PierceStabFlickDelayTicks => PierceFlickWindBackTicks + PierceFlickApexHoldTicks;
         protected override int   PierceStabFlickTicks => PierceStabFlickDelayTicks + PierceFlickSnapTicks;
-        protected override int   PierceCooldownAfterUse => 480;
+        protected override int   PierceCooldownAfterUse => 360;
         // A whiffed or rolled-through dash re-aims and goes again, up to twice. The repeat tell is 40t (the
         // heavy-tell floor): the next dash goes live >= 40t after the last one ended, clear of the 30t
         // post-roll gap, so every dash in the chain is separately rollable.
@@ -661,6 +669,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float TendrilMaxRange          => 500f;
         protected override int   TendrilChance            => NPC.life <= NPC.lifeMax * 0.50f ? 8 : 4;
         protected override int   TendrilCooldownAfterUse  => 480;
+        // Base 24t + 20t. Past the 30t flash lead (OpeningTellFlashLeadTicks) this also opens a 14t staggerable window at
+        // the start of the tell when it is picked from neutral, like his other openers; the last 30t stay armoured.
+        protected override int   TendrilTelegraphTicks    => 44;
         // Finishing swing: -35° post -> 135° straight down (170° envelope; 10° wider at the end, the Flip Slash
         // strike's end pose) so ~146° stays live past the 30% disarm. in 10 / out 22, k 7.5 -> 27°/t: his slowest-
         // building blade, a deliberate cut at a player just yanked in. Live 13.5t. Tail +16t comes out of the
@@ -792,6 +803,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             artoriasGlobalNPC.CanTeleport = true;
             artoriasGlobalNPC.TeleportStyle = NPCs.TeleportStyle.Aggressive;
             artoriasGlobalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Plague;
+            // Blinks are an attacker's: land on the far side of the player, 4-9 tiles out (inside his leap/dash reach),
+            // rather than a random side at 5-20+ tiles - which, with the player already on top of him, was "next to where he was".
+            artoriasGlobalNPC.TeleportFlanksTarget = true;
+            artoriasGlobalNPC.TeleportFlankMinTiles = 4;
+            artoriasGlobalNPC.TeleportFlankMaxTiles = 9;
             artoriasGlobalNPC.NavSearchRadius = 80;
 
             // On-hit dodgeroll: hop/leap/dash away, or blink away (using the same plague-style
@@ -804,6 +820,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool EvadesProjectiles => true;
 
         protected override int TeleportTelegraphTicks => 30;
+        protected override bool TeleportCancelsAttack => true;
 
         public override void OnSpawn(IEntitySource source)
         {
@@ -1836,8 +1853,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         // ── Forward Flip Slash hooks ─────────────────────────────────────────────
         // The somersault trails the same violet as the Homing Volley orbs its landing releases.
+        // Piercing Dash opener: a cloud puffs off the blade tip every CurseCloudIntervalTicks through the flip. Each shoves
+        // upward and thins out over 75t (ArtoriasCurseCloud), and hurts - the flip with the sword out is an attack.
+        const int CurseCloudIntervalTicks = 4;
+        const int CurseCloudDamage = 80; // Expert hit before defense, per cloud
+
         protected override void DoFlipSlashRiseTick()
         {
+            bool spawnCloud = FlipSlashOpensPierce && Main.netMode != NetmodeID.MultiplayerClient
+                && Main.GameUpdateCount % CurseCloudIntervalTicks == 0;
+            if (spawnCloud)
+            {
+                Vector2 bladeTip = PuppetWeaponTipPosition(ArtoriasSwordArcRadius);
+                Vector2 cloudVelocity = new Vector2(Main.rand.NextFloat(-0.6f, 0.6f), Main.rand.NextFloat(-2.2f, -1.4f));
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), bladeTip, cloudVelocity,
+                    ModContent.ProjectileType<ArtoriasCurseCloud>(), EnemyDamage.Projectile(CurseCloudDamage), 0f, Main.myPlayer);
+            }
+
             if (Main.dedServ || !Main.rand.NextBool(2))
             {
                 return;
@@ -1885,11 +1917,53 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int FlipBlazeDamage = 150;
         const float FlipBlazeSpeed = 5f;
 
+        // Piercing Dash opener slam: 600px cripple for 6 seconds, and a ChaosShockwave in its curse mode (ai[2] = 1) each way.
+        const float PierceSlamCrippleRange = 600f;
+        const int PierceSlamCrippleTicks = 6 * 60;
+        const int CurseWaveDamage = 100; // Expert hit before defense; the wave also builds curse on top
+
         protected override void OnFlipSlashStrikeContact()
         {
             SpawnLandingImpactVFX(NPC.Bottom, 96f, 78f);
             UsefulFunctions.ScreenShake(NPC.Center, strength: 5f, frames: 11);
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.65f, Pitch = -0.1f }, NPC.Center);
+
+            if (FlipSlashOpensPierce)
+            {
+                // Piercing Dash opener: instead of the abyss blast / pillar / orbs, the slam cripples everyone within
+                // PierceSlamCrippleRange and kicks a curse-smoke wave out along the floor each way (see CurseWave below).
+                // Applied by each machine to its OWN player, like a hostile projectile's OnHitPlayer: Player.AddBuff only
+                // networks itself when a client calls it, so a server-side loop would land on nobody in multiplayer.
+                if (!Main.dedServ)
+                {
+                    Player localPlayer = Main.LocalPlayer;
+                    bool inCrippleRange = localPlayer.active && !localPlayer.dead
+                        && localPlayer.Distance(NPC.Bottom) <= PierceSlamCrippleRange;
+                    if (inCrippleRange)
+                    {
+                        localPlayer.AddBuff(ModContent.BuffType<Crippled>(), PierceSlamCrippleTicks);
+                    }
+
+                    for (int i = 1; i <= 3; i++)
+                    {
+                        Vector2 cloudVelocity = new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), Main.rand.NextFloat(-4.5f, -1.5f));
+                        Gore.NewGore(NPC.GetSource_FromThis(), NPC.Bottom + new Vector2(Main.rand.NextFloat(-50f, 50f), -10f),
+                            cloudVelocity, ModContent.Find<ModGore>($"tsorcRevamp/ChaosImpactCloud{i}").Type, Main.rand.NextFloat(0.9f, 1.3f));
+                    }
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 wavePosition = new Vector2(NPC.Center.X, NPC.Bottom.Y - 20f);
+                    int waveDamage = EnemyDamage.Projectile(CurseWaveDamage);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), wavePosition, Vector2.Zero,
+                        ModContent.ProjectileType<Content.Projectiles.Enemy.Chaos.ChaosShockwave>(), waveDamage, 0f, Main.myPlayer, 1f, 8f, 1f);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), wavePosition, Vector2.Zero,
+                        ModContent.ProjectileType<Content.Projectiles.Enemy.Chaos.ChaosShockwave>(), waveDamage, 0f, Main.myPlayer, -1f, 8f, 1f);
+                }
+
+                return;
+            }
 
             if (Main.netMode == NetmodeID.MultiplayerClient || !NPC.HasValidTarget)
             {
@@ -1943,8 +2017,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // ── Abyss Slash hooks ─────────────────────────────────────────────────────
         // Three swipe-count/timing variants, rolled once at the very first swipe:
         //   0: one slash, then an overhead swing that fans 3 seeking orbs upper-left/up/upper-right
-        //   1: three slashes, 60 ticks apart
-        //   2: two slashes 30 ticks apart, then a third 60 ticks later, then two more 30 ticks apart
+        //   1: five slashes: the first two 76 ticks apart (the old cadence), then three more at double speed (38 apart)
+        //   2: six slashes: the first two 46 ticks apart (the old cadence), then four more at 38 apart
+        // 38 is the floor: it is the 22t swipe plus a 16t pause, which the blade needs to swing back up to its post
+        // between swipes. Half of variant 2's 46 would leave a 1t pause and snap the arm.
         const int AbyssSlashDamage = 120;
         const int AbyssOrbFinisherDamage = 130;
         const float AbyssSlashSpeed = 9f;
@@ -1954,9 +2030,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             // Gaps count from the END of a swipe. The labelled 40/60/30 are the spacing after the old 16t swipe;
             // every value is 6t under its label because the Weighted swipe is 22t, keeping the release spacing.
-            new int[] { 34 },              // variant 0: swipe0 -> 40 ticks -> orb finisher (swipe1)
-            new int[] { 54, 54 },          // variant 1: swipe0 -> 60 -> swipe1 -> 60 -> swipe2
-            new int[] { 24, 54, 24, 24 },  // variant 2: swipe0 ->30-> swipe1 ->60-> swipe2 ->30-> swipe3 ->30-> swipe4
+            new int[] { 34 },                      // variant 0: swipe0 -> 40 ticks -> orb finisher (swipe1)
+            new int[] { 54, 16, 16, 16 },          // variant 1: swipe0 ->76 apart-> swipe1, then swipes 2-4 each 38 apart
+            new int[] { 24, 16, 16, 16, 16 },      // variant 2: swipe0 ->46 apart-> swipe1, then swipes 2-5 each 38 apart
         };
 
         protected override int NextAbyssSlashDelay(int completedSwipeIndex)
@@ -2188,6 +2264,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float AirUnderhandEndRotation = -1.55f;
         const float AirOverhandStartRotation = -1.48f;
         const float AirOverhandEndRotation = 2.29f;
+        const float AirCutPoseTolerance = 0.35f;
+        const int AirCutPoseMaxWaitTicks = 10;
         static readonly WeightedSwing AirUnderhandCurve = new WeightedSwing(6, 20, 6f);
         static readonly WeightedSwing AirOverhandCurve = new WeightedSwing(8, 22, 6.5f);
 
@@ -2203,6 +2281,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool _aerialBladeHit;
         bool _lastAerialWasLunge;
         bool _aerialDoubleJumpPending;
+        bool _airCutUnderhand; // latched: the Skyward Lunge follow-up cut is the rising underhand, not the overhand
         Vector2 _skywardDirection;
         int _skywardDashTicks;
         float _strikeStartRotation;
@@ -2573,6 +2652,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             bool missed = !_aerialBladeHit;
                             _aerialDoubleJumpPending = missed && Main.rand.Next(100) < SkywardDoubleJumpChance;
                         }
+                        // Which cut the follow-up will be, so the blade starts winding toward its start pose during the fall.
+                        _airCutUnderhand = target.Center.Y < NPC.Center.Y;
                         EnterAerialStage(AerialStage.SkywardFall);
                     }
                     break;
@@ -2581,7 +2662,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 case AerialStage.SkywardFall:
                 {
                     // A normal fall from wherever the dash ended. A passed double-jump roll fires as the fall begins.
-                    _aerialRotation = MathHelper.Lerp(_aerialRotation, AirOverhandStartRotation, 0.12f);
+                    float fallCarryPose = AirOverhandStartRotation;
+                    if (_airCutUnderhand)
+                    {
+                        fallCarryPose = AirUnderhandStartRotation;
+                    }
+
+                    _aerialRotation = MathHelper.Lerp(_aerialRotation, fallCarryPose, 0.15f);
                     bool falling = NPC.velocity.Y > 0f;
 
                     if (grounded && _aerialStageTicks > 1)
@@ -2600,6 +2687,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         NPC.velocity = new Vector2(arcVelocityX, -arcLaunchSpeed);
                         NPC.netUpdate = true;
                         _aerialDoubleJumpPending = false;
+
+                        // Latch the cut for the whole arc, from the height he is launching at. Re-deciding every tick
+                        // flipped it once he rose past the target's height, swinging the carry pose back and forth.
+                        _airCutUnderhand = target.Center.Y < NPC.Center.Y;
                         EnterAerialStage(AerialStage.SkywardArc);
                         PlayAerialStageStartCue(AerialStage.SkywardArc);
                     }
@@ -2608,24 +2699,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 case AerialStage.SkywardArc:
                 {
-                    // Carry the pose of the swing the target's height currently calls for, so the cut starts from where
-                    // the blade already is: above his centre -> low underhand wind-up, level or below -> raised overhand.
+                    // Carry the pose of the latched cut (set at the arc's launch: target above -> low underhand wind-up,
+                    // level or below -> raised overhand), so the cut starts from where the blade already is.
                     FaceTarget(target);
-                    bool targetAbove = target.Center.Y < NPC.Center.Y;
                     float carryPose = AirOverhandStartRotation;
                     float strikeEnd = AirOverhandEndRotation;
                     WeightedSwing strikeCurve = AirOverhandCurve;
-                    if (targetAbove)
+                    if (_airCutUnderhand)
                     {
                         carryPose = AirUnderhandStartRotation;
                         strikeEnd = AirUnderhandEndRotation;
                         strikeCurve = AirUnderhandCurve;
                     }
 
-                    _aerialRotation = MathHelper.Lerp(_aerialRotation, carryPose, 0.2f);
+                    _aerialRotation = MathHelper.Lerp(_aerialRotation, carryPose, 0.3f);
 
+                    // Hold the swing until the blade is within ~20 degrees of its start pose (or 10t have passed): striking from
+                    // a half-wound pose cut a shorter arc that began with a visible jump instead of the full ~200 degree sweep.
+                    bool poseReady = Math.Abs(_aerialRotation - carryPose) < AirCutPoseTolerance || _aerialStageTicks > AirCutPoseMaxWaitTicks;
                     float targetDistance = NPC.Distance(target.Center);
-                    if (targetDistance <= AerialStrikeRange)
+                    if (targetDistance <= AerialStrikeRange && poseReady)
                     {
                         BeginAerialStrike(strikeEnd, strikeCurve);
                     }
@@ -3436,6 +3529,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write((byte)Math.Clamp(_skywardDashTicks, 0, byte.MaxValue));
             writer.Write(_strikeStartRotation);
             writer.Write(_strikeEndRotation);
+            writer.Write(_airCutUnderhand);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -3471,6 +3565,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             int skywardDashTicks = reader.ReadByte();
             float strikeStartRotation = reader.ReadSingle();
             float strikeEndRotation = reader.ReadSingle();
+            bool airCutUnderhand = reader.ReadBoolean();
 
             // Skip a snapshot older than a stage change this client already made on its own, unless this client has dropped
             // out of the attack while the server is still in it.
@@ -3499,6 +3594,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _skywardDashTicks = skywardDashTicks;
             _strikeStartRotation = strikeStartRotation;
             _strikeEndRotation = strikeEndRotation;
+            _airCutUnderhand = airCutUnderhand;
 
             // The strike curve is one of three table constants, identified by the end pose BeginAerialStrike was given.
             _strikeCurve = AirOverhandCurve;

@@ -14,6 +14,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
     ///position IS the hitbox — it travels at the wave's leading edge, so touching it anywhere is touching
     ///the danger.
     ///Hugs the terrain (steps up/down small ledges); dies against walls taller than 3 tiles.
+    ///ai[2] = 1 is the CURSE variant Artorias's Piercing Dash opener reuses: keeps the caller's spawn damage instead of the
+    ///flat hazard damage, builds Curse instead of staggering, and runs abyss-purple/grey smoke dust instead of shadowflame.
     ///</summary>
     class ChaosShockwave : ModProjectile
     {
@@ -25,8 +27,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
         const int ImpactDamage = 25;     //flat, not NPC.damage-scaled: this is a battlefield hazard, not a nuke
         const int StaggerTicks = 60;     //1 second
 
+        const int CurseBuildupBuffTicks = 300 * 60; // long, like every other CurseBuildup source: ReApply accumulates per hit
+
         int Direction => (int)Projectile.ai[0] >= 0 ? 1 : -1;
         int ArmDelay => (int)Projectile.ai[1];
+        bool CurseVariant => Projectile.ai[2] >= 0.5f;
         bool Armed => Projectile.localAI[0] > ArmDelay;
 
         public override void SetDefaults()
@@ -46,8 +51,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
         {
             Projectile.timeLeft = ArmDelay + WaveTravelTicks;
 
-            // Runs after NewProjectile assigns the passed NPC.damage/6 value, so this is the last word.
-            Projectile.damage = ImpactDamage;
+            // Runs after NewProjectile assigns the passed NPC.damage/6 value, so this is the last word. The curse variant's
+            // caller already passed its own (difficulty-converted) damage.
+            if (!CurseVariant)
+            {
+                Projectile.damage = ImpactDamage;
+            }
         }
 
         public override bool? CanDamage()
@@ -57,6 +66,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
+            if (CurseVariant)
+            {
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), CurseBuildupBuffTicks, false);
+                return;
+            }
+
             Stagger.Apply(target, StaggerTicks);
         }
 
@@ -84,17 +99,25 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
                 return;
             }
 
-            //The wave itself: dark fire geysers erupting from the ground as it passes
+            //The wave itself: dark fire geysers erupting from the ground as it passes (curse variant: abyss-purple flame + grey smoke)
+            int geyserDustType = DustID.Shadowflame;
+            int emberDustType = DustID.DemonTorch;
+            if (CurseVariant)
+            {
+                geyserDustType = DustID.PurpleTorch;
+                emberDustType = DustID.Smoke;
+            }
+
             for (int i = 0; i < 3; i++)
             {
                 Vector2 dustPosition = new Vector2(Projectile.position.X + Main.rand.NextFloat(Projectile.width), Projectile.position.Y + Projectile.height - 6f);
-                int dust = Dust.NewDust(dustPosition, 4, 4, DustID.Shadowflame, Direction * 0.5f, Main.rand.NextFloat(-6f, -3f), 80, default, Main.rand.NextFloat(1.4f, 2f));
+                int dust = Dust.NewDust(dustPosition, 4, 4, geyserDustType, Direction * 0.5f, Main.rand.NextFloat(-6f, -3f), 80, default, Main.rand.NextFloat(1.4f, 2f));
                 Main.dust[dust].noGravity = true;
             }
 
             if (Main.rand.NextBool(2))
             {
-                int ember = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.DemonTorch, 0f, -2f, 0, default, 1f);
+                int ember = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, emberDustType, 0f, -2f, 0, default, 1f);
                 Main.dust[ember].noGravity = true;
             }
 

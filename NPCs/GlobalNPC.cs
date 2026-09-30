@@ -1556,6 +1556,12 @@ namespace tsorcRevamp.NPCs
         // Bias teleport (and, later, patrol/standoff) destinations toward elevated spots with LOS — for archers
         // and high-ground hunters.
         public bool PrefersHighGround = false;
+        // Melee-aggressor teleports: land on the far side of the player from where the NPC is now (a flank), between
+        // TeleportFlankMinTiles and TeleportFlankMaxTiles out, instead of a random side at the generic 5-50 tile range.
+        // Falls back to either side if the flank side has no valid landing. 0/0 range is unused when the flag is off.
+        public bool TeleportFlanksTarget = false;
+        public int TeleportFlankMinTiles = 4;
+        public int TeleportFlankMaxTiles = 9;
         // Set once TeleportChargesRemaining has been seeded from TeleportMaxCharges (so SetDefaults overrides win).
         public bool TeleportChargesInitialized = false;
 

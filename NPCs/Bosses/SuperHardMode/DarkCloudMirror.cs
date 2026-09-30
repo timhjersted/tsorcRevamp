@@ -13,7 +13,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     [AutoloadBossHead]
     class DarkCloudMirror : ModNPC
     {
-        int antiMatDamage = 100;
+        // Half of the boss's 300 Expert Anti-Mat hit, converted to spawn damage by EnemyDamage.Projectile.
+        int antiMatDamage = EnemyDamage.Projectile(150);
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
@@ -33,7 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.height = 40;
             NPC.width = 20;
             Music = 12;
-            NPC.damage = 53;
+            EnemyDamage.SetContact(NPC, 110);
             NPC.defense = 160;
             NPC.lifeMax = 30000;
             NPC.HitSound = SoundID.NPCHit1;
@@ -105,7 +106,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (AttackModeCounter == AttackModeLimit && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage / 2, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
             }
         }
 

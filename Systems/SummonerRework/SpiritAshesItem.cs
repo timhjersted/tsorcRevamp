@@ -84,7 +84,9 @@ namespace tsorcRevamp.Systems.SummonerRework
             // alive, and must never wait on the cooldown below. Only a genuine death - which clears the
             // snapshot, see TakeDamage - has anything pending here to wait out.
             SpiritAshesRecoveryPlayer recovery = player.GetModPlayer<SpiritAshesRecoveryPlayer>();
-            bool wasOnlyDismissed = recovery.TryGetAliveState(ashType, out _, out _, out _);
+            // Only counts as "dismissed" when NOTHING of this type is alive. While any sibling lives, its AI keeps
+            // refreshing the snapshot, so a snapshot alone would make every partial-army death look like a dismissal.
+            bool wasOnlyDismissed = currentAlive <= 0 && recovery.TryGetAliveState(ashType, out _, out _, out _);
 
             if (!wasOnlyDismissed && !recovery.CanSummon(ashType, currentAlive))
             {

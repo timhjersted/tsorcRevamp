@@ -1356,6 +1356,15 @@ namespace tsorcRevamp
 
         public override void PostUpdateBuffs()
         {
+            // Suppressed also nullifies Gravitation: the vanilla buff loop (earlier in UpdateBuffs, before this
+            // hook runs) already set gravControl/gravControl2 true for this tick, so un-set them here to block
+            // the gravity-flip key read later in Player.Update. Doesn't touch the buff timer, just its effect.
+            if (Suppressed)
+            {
+                Player.gravControl = false;
+                Player.gravControl2 = false;
+            }
+
             foreach (Item thisItem in PotionBagItems)
             {
                 if (thisItem != null && !thisItem.IsAir)
@@ -2658,9 +2667,12 @@ namespace tsorcRevamp
         public override void PreUpdateMovement()
         {
             // This is the last tModLoader player hook before vanilla resolves collision and fall damage.
-            // Wings normally set noFallDmg for their entire equipped duration; retain it only while the
-            // player actively glides or hovers, or has the Wings of Seath slow-fall toggle enabled.
-            Player.noFallDmg = IsWingFallProtected(Player);
+            // Passive wings' fall immunity is stripped by WingFallDamage_Patch (vanilla checks equippedWings
+            // separately from noFallDmg); this only ADDS immunity while the player actively glides or hovers,
+            // or has the Wings of Seath slow-fall toggle enabled. It must OR into noFallDmg, never assign:
+            // Lucky Horseshoe / Obsidian Horseshoe / the horseshoe balloon bundles set noFallDmg in
+            // UpdateEquips, and overwriting it here silently deleted their fall immunity.
+            Player.noFallDmg |= IsWingFallProtected(Player);
 
             // Gravity Alignment can reverse gravity while the player already has a vertical velocity.
             // That makes the previous ascent look like a new descent to vanilla's fall-distance counter

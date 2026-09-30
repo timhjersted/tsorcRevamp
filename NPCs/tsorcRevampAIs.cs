@@ -2131,6 +2131,16 @@ namespace tsorcRevamp.NPCs
             // Clamp minRange so it's always strictly less than range.
             minRange = Math.Max(1, Math.Min(minRange, range - 1));
 
+            // Flanking teleporters (Artorias): aim for the far side of the player from where the NPC stands, close in,
+            // for the first FlankAttempts tries; after that any side and the generic range, so it never fails for lack of a flank spot.
+            tsorcRevampGlobalNPC teleporterGlobal = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            const int FlankAttempts = 60;
+            int flankSide = Math.Sign(Main.player[npc.target].Center.X - npc.Center.X);
+            if (flankSide == 0)
+            {
+                flankSide = Main.rand.NextBool() ? 1 : -1;
+            }
+
             //Try 100 times at most
             for (int i = 0; i < 100; i++)
             {
@@ -2140,10 +2150,19 @@ namespace tsorcRevamp.NPCs
                 {
                     range = 13;
                 }
-                teleportTarget.X = Main.rand.Next(minRange, range);
-                if (Main.rand.NextBool())
+
+                bool flanking = teleporterGlobal.TeleportFlanksTarget && i < FlankAttempts;
+                if (flanking)
                 {
-                    teleportTarget.X *= -1;
+                    teleportTarget.X = Main.rand.Next(teleporterGlobal.TeleportFlankMinTiles, teleporterGlobal.TeleportFlankMaxTiles + 1) * flankSide;
+                }
+                else
+                {
+                    teleportTarget.X = Main.rand.Next(minRange, range);
+                    if (Main.rand.NextBool())
+                    {
+                        teleportTarget.X *= -1;
+                    }
                 }
 
                 //Move teleportTarget up a few blocks, since in the next step the algorithm will search downward from this point to find a valid landing spot
@@ -2213,8 +2232,11 @@ namespace tsorcRevamp.NPCs
                         }
 
                         //Then teleport and return
-                        teleportTarget.X = ((int)teleportTarget.X * 16 - npc.width / 2); //Center npc at target
-                        teleportTarget.Y = (((int)teleportTarget.Y + y) * 16 - npc.height); //Subtract npc.height from y so block is under feet
+                        // Returned as the NPC's CENTER (every caller assigns it to npc.Center, and the clearance box above
+                        // assumes centre X = tile X, feet on the tile's top edge). This used to return the top-left instead,
+                        // which landed the NPC half its width left of the spot and half its height (20px for a knight) in mid-air.
+                        teleportTarget.X = (int)teleportTarget.X * 16;
+                        teleportTarget.Y = (((int)teleportTarget.Y + y) * 16 - npc.height / 2f); //Feet on the solid block's top edge
                         npc.TargetClosest(true);
                         npc.netUpdate = true;
 

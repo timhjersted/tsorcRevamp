@@ -2774,6 +2774,20 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.RequestPierceGrab:
+                    {
+                        int npcIndex = reader.ReadInt16();
+                        int npcType = reader.ReadInt32();
+
+                        bool validNpc = Main.netMode == NetmodeID.Server
+                            && npcIndex >= 0 && npcIndex < Main.maxNPCs
+                            && Main.npc[npcIndex].active && Main.npc[npcIndex].type == npcType;
+                        if (validNpc && Main.npc[npcIndex].ModNPC is NPCs.Puppets.PuppetNPC pierceDasher)
+                        {
+                            pierceDasher.HandlePierceGrabRequest(whoAmI);
+                        }
+                        break;
+                    }
                 case tsorcPacketID.ReportMadnessBuildup:
                     {
                         int buildup = reader.ReadByte();
@@ -5196,6 +5210,9 @@ namespace tsorcRevamp
         public const byte ChestTemplate = 38;
         /// <summary>Per-Player Chest Loot, server → clients: a player placed this chest, so it stays shared.</summary>
         public const byte SyncPlayerPlacedChest = 39;
+        /// <summary>Victim client → server: a puppet's Piercing Dash reached this player outside i-frames. Player.immune is not
+        /// networked, so only the victim's machine can say whether a roll passed through the dash.</summary>
+        public const byte RequestPierceGrab = 40;
     }
 
     //config moved to separate file

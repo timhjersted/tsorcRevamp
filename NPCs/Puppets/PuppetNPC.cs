@@ -754,6 +754,18 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int   PierceDashTicks            => 40;     // travel duration of the lunge
         protected virtual float PierceDashSpeed            => 15f;
         protected virtual int   PierceRecoveryTicks        => 90;
+        /// <summary>How far (px) past the target the dash runs. 0 = legacy: a fixed <see cref="PierceDashTicks"/> at
+        /// full speed regardless of distance. Above 0 the dash length is solved at launch as (distance to the target
+        /// + this) / speed, so a player who rolls through is left this far behind him, with real time to prepare for a
+        /// repeat. Capped by <see cref="PierceDashMaxTicks"/>.</summary>
+        protected virtual float PierceOvershootPastTarget  => 0f;
+        protected virtual int   PierceDashMaxTicks         => 90;
+        /// <summary>Ticks over which the dash speed ramps 0 -> full (squared), so a close target gets a readable launch
+        /// instead of a 16 px/tick start. 0 = full speed from the first tick (legacy).</summary>
+        protected virtual int   PierceDashAccelTicks       => 0;
+        /// <summary>When true (and <see cref="CanFlipSlash"/>) the Piercing Dash is preceded by a Forward Flip Slash: the
+        /// intercept starts the flip, and its landing hands off to the pierce telegraph (stab variant).</summary>
+        protected virtual bool  PierceOpensWithFlipSlash   => false;
         /// <summary>Chance (0–100), rolled once at telegraph start, that this pierce becomes the
         /// grab-and-impale variant instead of a simple pass-through lunge.</summary>
         protected virtual int   PierceStabChance           => 50;
@@ -841,6 +853,57 @@ namespace tsorcRevamp.NPCs.Puppets
         private bool  _pierceContactDodged;       // the contact landed on a player in i-frames (rolled through)
         private int   _pierceRepeatsUsed;         // whiff repeats spent this sequence (PierceWhiffRepeatCount)
         private int   _pierceTelegraphTotalTicks; // length of the telegraph now playing (first or repeat)
+        private int   _pierceDashLengthTicks;     // length the dash now playing was launched with (speed ramp reads elapsed = this - PhaseTimer)
+        private bool  _pierceGrabRequested;       // this machine already asked the server to begin contact for the current dash (unsynced)
+
+        /// <summary>Begins the dash's contact on <paramref name="victim"/>: marks it connected, applies the boss's contact hook
+        /// (hit, heal, impale) and, for the stab variant, stops the dash and enters the hold. Returns true if it entered the hold.
+        /// Server / singleplayer only.</summary>
+        private bool BeginPierceContact(Player victim)
+        {
+            _pierceHitConnected = true;
+            _pierceContactDodged = false;
+            _pierceTarget = victim;
+            OnPierceContact(victim, _pierceIsStab);
+
+            if (!_pierceIsStab)
+            {
+                return false;
+            }
+
+            NPC.velocity.X = 0f;
+            EnterPhase(AttackPhase.PierceStabHold, PierceStabRaiseTicks);
+            return true;
+        }
+
+        /// <summary>Server: a player's own machine says the pierce dash reached them and they were not in i-frames (see the
+        /// PierceDash case). Accepted only mid-dash, before any contact, for a player near the dash - the tolerance covers the
+        /// client's view of the NPC lagging the server's by a few ticks of 16 px/tick travel.</summary>
+        public void HandlePierceGrabRequest(int playerIndex)
+        {
+            const int LatencySlackX = 128;
+            const int LatencySlackY = 64;
+
+            bool acceptable = Main.netMode == NetmodeID.Server && Phase == AttackPhase.PierceDash && !_pierceHitConnected
+                && playerIndex >= 0 && playerIndex < Main.maxPlayers;
+            if (!acceptable)
+            {
+                return;
+            }
+
+            Player victim = Main.player[playerIndex];
+            if (!victim.active || victim.dead)
+            {
+                return;
+            }
+
+            Rectangle tolerance = NPC.Hitbox;
+            tolerance.Inflate(24 + LatencySlackX, 12 + LatencySlackY);
+            if (tolerance.Intersects(victim.Hitbox))
+            {
+                BeginPierceContact(victim);
+            }
+        }
         private int   _pierceDir;
         private Vector2 _pierceAnchorPos;
         private Player _pierceTarget;
@@ -947,6 +1010,10 @@ namespace tsorcRevamp.NPCs.Puppets
             + FlipSlashStrikeEaseOutTicks * 1.204f / Math.Max(0.1f, FlipSlashStrikeEaseOutDecay));
 
         private int  _flipSlashDir;
+        private bool _flipSlashIntoPierce;            // this flip is the opener of a Piercing Dash sequence (PierceOpensWithFlipSlash)
+        /// <summary>True while the Flip Slash now playing is the opener of a Piercing Dash sequence. The slam then
+        /// belongs to the pierce (subclass: curse wave, cripple) and hands off to its telegraph instead of ending.</summary>
+        protected bool FlipSlashOpensPierce => _flipSlashIntoPierce;
         protected int _flipSlashCooldown;
         private float _flipSlashLaunchBottomY;        // feet height at launch; the phase-lock assumes landing back at it
         private float _flipSlashSolvedSpinSpeed;      // rad/tick the phase-lock last solved
@@ -2769,6 +2836,12 @@ namespace tsorcRevamp.NPCs.Puppets
         // AI
         // ─────────────────────────────────────────────────────────────────────────
 
+        /// <summary>When true, a teleport that starts (or is already hiding the puppet) cancels the attack in progress, so
+        /// it reappears in neutral instead of resuming a frozen phase from a new spot - e.g. mid Jump Slash leap, whose
+        /// stored launch no longer matches where it lands. Off by default: some attacks queue their own teleport
+        /// (Cursed Dragon's poison cloud) and must keep their phase through it.</summary>
+        protected virtual bool TeleportCancelsAttack => false;
+
         private bool TickPuppetTeleport(tsorcRevampGlobalNPC globalNPC, Player target)
         {
             if (!globalNPC.TeleportChargesInitialized)
@@ -2814,6 +2887,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     globalNPC.TeleportCooldownTimer = 30;
                 }
+            }
+
+            bool teleportInProgress = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0;
+            if (teleportInProgress && TeleportCancelsAttack && Phase != AttackPhase.Idle)
+            {
+                // OnStagger is the shared "drop whatever you're doing" reset (phase, combo, leap launch, blade, flags).
+                OnStagger(NPC);
             }
 
             if (globalNPC.TeleportCountdown > 0)
@@ -3614,6 +3694,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (_thrownComboWeaponIndex >= 0 || _thrownWeaponWasSeen)
                 FinishThrownWeaponRetrieve();
             CancelAttackRuntimeV2(clearCombo: true);
+            _flipSlashIntoPierce = false;
             _bladeArmed = false;
             _jumpSlashLaunched = false;
             _comboLeapLaunched = false;
@@ -3738,6 +3819,7 @@ namespace tsorcRevamp.NPCs.Puppets
             state.Write(_pierceContactDodged);
             state.Write((byte)Math.Clamp(_pierceRepeatsUsed, 0, byte.MaxValue));
             state.Write((short)_pierceTelegraphTotalTicks);
+            state.Write((short)_pierceDashLengthTicks);
             state.Write((sbyte)_pierceDir);
             state.WriteVector2(_pierceAnchorPos);
             state.Write((sbyte)pierceTargetIndex);
@@ -3745,6 +3827,7 @@ namespace tsorcRevamp.NPCs.Puppets
             state.Write(_jumpSlashLaunched);
             state.Write(_jumpSlashFlightSpeed);
             state.Write((sbyte)_flipSlashDir);
+            state.Write(_flipSlashIntoPierce);
             state.Write(_flipSlashLaunchBottomY);
             state.Write(_flipSlashSolvedSpinSpeed);
             state.Write(_flipSlashStrikeStartRotation);
@@ -4096,6 +4179,7 @@ namespace tsorcRevamp.NPCs.Puppets
             _pierceContactDodged = state.ReadBoolean();
             _pierceRepeatsUsed = state.ReadByte();
             _pierceTelegraphTotalTicks = state.ReadInt16();
+            _pierceDashLengthTicks = state.ReadInt16();
             _pierceDir = state.ReadSByte();
             _pierceAnchorPos = state.ReadVector2();
             int pierceTargetIndex = state.ReadSByte();
@@ -4108,6 +4192,7 @@ namespace tsorcRevamp.NPCs.Puppets
             _jumpSlashLaunched = state.ReadBoolean();
             _jumpSlashFlightSpeed = state.ReadSingle();
             _flipSlashDir = state.ReadSByte();
+            _flipSlashIntoPierce = state.ReadBoolean();
             _flipSlashLaunchBottomY = state.ReadSingle();
             _flipSlashSolvedSpinSpeed = state.ReadSingle();
             _flipSlashStrikeStartRotation = state.ReadSingle();
@@ -4437,6 +4522,17 @@ namespace tsorcRevamp.NPCs.Puppets
                         _pierceContactDodged = false;
                         _pierceRepeatsUsed = 0;
                         _pierceTelegraphTotalTicks = PierceTelegraphTicks;
+
+                        if (PierceOpensWithFlipSlash && CanFlipSlash)
+                        {
+                            // The flip slam opens the sequence; its landing hands off to the pierce telegraph (FlipSlashLand),
+                            // which is always the stab variant since the whole point of the opener is what it sets up.
+                            _flipSlashIntoPierce = true;
+                            _pierceIsStab = true;
+                            EnterPhase(AttackPhase.FlipSlashRise, FlipSlashRiseMaxTicks);
+                            break;
+                        }
+
                         EnterPhase(AttackPhase.PierceTelegraph, PierceTelegraphTicks);
                         break;
                     }
@@ -4456,6 +4552,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         && dist >= FlipSlashMinRange && dist <= FlipSlashMaxRange
                         && Main.rand.Next(100) < FlipSlashChance)
                     {
+                        _flipSlashIntoPierce = false;
                         EnterPhase(AttackPhase.FlipSlashRise, FlipSlashRiseMaxTicks);
                         break;
                     }
@@ -5138,9 +5235,26 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (--PhaseTimer <= 0)
                     {
                         NPC.position = _pierceAnchorPos;
-                        NPC.velocity.X = _pierceDir * PierceDashSpeed;
                         SetDisplayWeapon(FrontHandWeaponType, swing: true);
-                        EnterPhase(AttackPhase.PierceDash, PierceDashTicks);
+
+                        // Dash length. Legacy: PierceDashTicks. With PierceOvershootPastTarget: solved from the target's
+                        // distance along the dash so it runs that far PAST them; the speed ramp's shortfall (speed ~ t^2
+                        // covers 1/3 of its span, losing 2/3 of the ramp's ticks at full speed) is added back so the
+                        // overshoot is honest.
+                        int dashTicks = PierceDashTicks;
+                        if (PierceOvershootPastTarget > 0f)
+                        {
+                            float distanceAlongDash = Math.Max(0f, (target.Center.X - NPC.Center.X) * _pierceDir);
+                            float dashDistance = distanceAlongDash + PierceOvershootPastTarget;
+                            float rampLossTicks = PierceDashAccelTicks * 2f / 3f;
+                            dashTicks = (int)Math.Ceiling(dashDistance / PierceDashSpeed + rampLossTicks);
+                            dashTicks = Math.Clamp(dashTicks, 1, PierceDashMaxTicks);
+                        }
+
+                        _pierceDashLengthTicks = dashTicks;
+                        _pierceGrabRequested = false;
+                        NPC.velocity.X = 0f;
+                        EnterPhase(AttackPhase.PierceDash, dashTicks);
                     }
                     break;
                 }
@@ -5153,28 +5267,52 @@ namespace tsorcRevamp.NPCs.Puppets
                     // The dash usually overshoots THROUGH the player; without this the sprite spun
                     // around the instant it crossed, so the lance visibly pointed back the way it came.
                     LockAttackFacing();
-                    NPC.velocity.X = _pierceDir * PierceDashSpeed;
+
+                    float dashSpeedFraction = 1f;
+                    if (PierceDashAccelTicks > 0)
+                    {
+                        int dashElapsedTicks = _pierceDashLengthTicks - PhaseTimer;
+                        float rampProgress = MathHelper.Clamp(dashElapsedTicks / (float)PierceDashAccelTicks, 0f, 1f);
+                        dashSpeedFraction = rampProgress * rampProgress;
+                    }
+
+                    NPC.velocity.X = _pierceDir * PierceDashSpeed * dashSpeedFraction;
                     DoPierceDashTick();
 
-                    // Contact is hit resolution: server only. A client adopts PierceStabHold (and the synced
-                    // _pierceTarget) from the snapshot, so the impaled player's own machine runs the hold.
-                    if (!_pierceHitConnected && !IsMultiplayerClient)
+                    // Contact is resolved by the TARGET'S OWN machine, because Player.immune (dodge-roll i-frames) is not
+                    // networked and the server can't see a remote player's roll. That machine tests the dash against its
+                    // player: in i-frames -> passed through (counts as a dodge); otherwise a client asks the server to
+                    // begin the contact (RequestPierceGrab), and singleplayer/host begins it directly. A client then adopts
+                    // PierceStabHold (and the synced _pierceTarget) from the snapshot, so the impaled player's own machine
+                    // runs the hold. The server never resolves a remote player's contact on its own.
+                    bool thisMachineOwnsTarget = target.whoAmI == Main.myPlayer;
+                    if (!_pierceHitConnected && thisMachineOwnsTarget)
                     {
                         Rectangle reach = NPC.Hitbox;
                         reach.Inflate(24, 12);
-                        if (reach.Intersects(target.Hitbox))
-                        {
-                            _pierceHitConnected = true;
-                            _pierceContactDodged = target.immune;
-                            _pierceTarget = target;
-                            OnPierceContact(target, _pierceIsStab);
+                        bool touchingTarget = reach.Intersects(target.Hitbox);
 
-                            if (_pierceIsStab)
+                        if (touchingTarget && target.immune)
+                        {
+                            // Passed through. Contact used to resolve on a rolling player anyway - the damage bounced off but
+                            // the impale hold still froze and lifted them mid-roll, so no roll timing could beat it.
+                            _pierceContactDodged = true;
+                        }
+                        else if (touchingTarget && IsMultiplayerClient)
+                        {
+                            if (!_pierceGrabRequested)
                             {
-                                NPC.velocity.X = 0f;
-                                EnterPhase(AttackPhase.PierceStabHold, PierceStabRaiseTicks);
-                                break;
+                                _pierceGrabRequested = true;
+                                ModPacket grabPacket = Mod.GetPacket();
+                                grabPacket.Write(tsorcPacketID.RequestPierceGrab);
+                                grabPacket.Write((short)NPC.whoAmI);
+                                grabPacket.Write(NPC.type);
+                                grabPacket.Send();
                             }
+                        }
+                        else if (touchingTarget && BeginPierceContact(target))
+                        {
+                            break;
                         }
                     }
 
@@ -5470,8 +5608,31 @@ namespace tsorcRevamp.NPCs.Puppets
 
                     if (--PhaseTimer <= 0)
                     {
+                        // Opener of a Piercing Dash: the chosen next phase is the server's call, so a client holds the
+                        // end of the landing until the snapshot brings the telegraph (same pattern as the dash's end).
+                        if (_flipSlashIntoPierce && IsMultiplayerClient)
+                        {
+                            PhaseTimer = 0;
+                            break;
+                        }
+
                         _flipSlashCooldown = FlipSlashCooldownAfterUse;
-                        EnterCasualOrIdle();
+
+                        if (_flipSlashIntoPierce)
+                        {
+                            _flipSlashIntoPierce = false;
+                            _pierceHitConnected = false;
+                            _pierceContactDodged = false;
+                            _pierceTarget = null;
+                            _pierceRepeatsUsed = 0;
+                            _pierceTelegraphTotalTicks = Math.Max(1, PierceRepeatTelegraphTicks);
+                            EnterPhase(AttackPhase.PierceTelegraph, _pierceTelegraphTotalTicks);
+                            NPC.netUpdate = true;
+                        }
+                        else
+                        {
+                            EnterCasualOrIdle();
+                        }
                     }
                     break;
                 }
@@ -8716,6 +8877,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     _weaponRotation = MathHelper.ToRadians(10f - 45f);
                 }
+            }
+            else if (Phase == AttackPhase.AbyssSlashPause)
+            {
+                // Return stroke between swipes: the blade eases from the follow-through back up to the held post (10°) so
+                // the next swipe starts from it instead of snapping there. Exponential (0.3/tick) so it needs no pause
+                // length: a 16t pause has it ~99% home, and it is the only pose the pause had (it fell through to idle).
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.ToRadians(10f - 45f), 0.3f);
             }
             else if (Phase == AttackPhase.AbyssSlashSwipe)
             {

@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.height = 40;
             NPC.width = 20;
             Music = 12;
-            NPC.damage = 200;
+            EnemyDamage.SetContact(NPC, 200);
             NPC.defense = 80;
             NPC.lifeMax = 300000;
             NPC.HitSound = SoundID.NPCHit1;
@@ -62,27 +62,35 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Damage variables
         const float TRAIL_LENGTH = 12;
 
-        public static int meteorDamage = 17;
-        public static int deathBallDamage = 75;
-        public static int poisonStrikeDamage = 46;
-        public static int holdBallDamage = 35;
-        public static int dragoonLanceDamage = 68;
-        public static int armageddonDamage = 65;
-        public static int gravityBallDamage = 35;
-        public static int crazedPurpleCrushDamage = 40;
-        public static int shadowShotDamage = 40;
-        public static int iceStormDamage = 33;
-        public static int darkArrowDamage = 45;
-        public static int stormWaveDamage = 95;
+        // Every projectile value below is declared as the Expert hit (before defense) and converted to the spawn
+        // damage Terraria expects by EnemyDamage.Projectile, so Normal/Master scale from it automatically.
+        // Phase 1 (classic caster AI)
+        public static int meteorDamage = EnemyDamage.Projectile(100);
+        public static int deathBallDamage = EnemyDamage.Projectile(260);
+        public static int poisonStrikeDamage = EnemyDamage.Projectile(180);
+        public static int holdBallDamage = EnemyDamage.Projectile(130);
+        public static int phaseOneDragoonLanceDamage = EnemyDamage.Projectile(250);
+        public static int armageddonDamage = EnemyDamage.Projectile(230);
+        public static int gravityBallDamage = EnemyDamage.Projectile(140);
+        public static int crazedPurpleCrushDamage = EnemyDamage.Projectile(160);
+        public static int shadowShotDamage = EnemyDamage.Projectile(160);
+        public static int iceStormDamage = EnemyDamage.Projectile(140);
+        public static int darkArrowDamage = EnemyDamage.Projectile(170);
+        public static int stormWaveDamage = EnemyDamage.Projectile(300);
 
-        public static int divineSparkDamage = 110;
-        public static int darkFlowDamage = 50;
-        public static int antiMatDamage = 100;
-        public static int darkSlashDamage = 25; //This one gets x16'd
-        public static int swordDamage = 100;
-        public static int freezeBoltDamage = 85;
-        public static int confinedBlastDamage = 250; //Very high because it isn't compensating for doubling/quadrupling, and is very easy to dodge
-        public static int arrowRainDamage = 70;
+        // Phase 2
+        public static int dragoonLanceDamage = EnemyDamage.Projectile(240);
+        // Divine Spark is a GenericLaser: it hits through Player.Hurt(Projectile.damage * 4), which skips the
+        // difficulty multiplier, so this 380 lands as 380 in every difficulty rather than scaling.
+        public static int divineSparkDamage = EnemyDamage.Projectile(380);
+        public static int darkFlowDamage = EnemyDamage.Projectile(180);
+        public static int antiMatDamage = EnemyDamage.Projectile(300);
+        public static int darkSlashDamage = EnemyDamage.Projectile(100); // Dark Wave crescents (Ultima Weapon, Teleporting Slashes)
+        public static int bodySlamWaveDamage = EnemyDamage.Projectile(120); // The 50 Dark Waves from the Ultima Weapon drop-slam
+        public static int swordProjectileDamage = EnemyDamage.Projectile(300);
+        public static int freezeBoltDamage = EnemyDamage.Projectile(280);
+        public static int confinedBlastDamage = 250; //Direct Player.Hurt (not a projectile), so not converted. Very high because it isn't compensating for doubling/quadrupling, and is very easy to dodge
+        public static int arrowRainDamage = EnemyDamage.Projectile(210);
         #endregion
 
         #region First Phase Vars
@@ -968,7 +976,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.noTileCollide = false;
                 NPC.velocity = Vector2.Zero;
                 //Do not get hit by this.
-                NPC.damage = 600;
+                EnemyDamage.SetContact(NPC, 600);
             }
 
             if (AttackModeCounter >= 600 && AttackModeCounter < 630)
@@ -1015,13 +1023,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 {
                                     velocity.Y *= -1;
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<DarkWave>(), DarkCloud.bodySlamWaveDamage, 0.5f, Main.myPlayer);
                             }
                         }
 
 
                         NPC.velocity = Vector2.Zero;
-                        NPC.damage = 200;
+                        EnemyDamage.SetContact(NPC, 200);
                         NPC.noGravity = false;
                         hitGround = true;
                     }
@@ -2607,14 +2615,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 if (chargeDamageFlag == true)
                 {
-                    NPC.damage = 120;
+                    EnemyDamage.SetContact(NPC, 120);
                     NPC.knockBackResist = 0;
                     chargeDamage++;
                 }
                 if (chargeDamage >= 96)
                 {
                     chargeDamageFlag = false;
-                    NPC.damage = 95;
+                    EnemyDamage.SetContact(NPC, 95);
                     NPC.knockBackResist = 0.2f;
                     chargeDamage = 0;
                 }
@@ -2730,7 +2738,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 speedX *= num51;
                                 speedY *= num51;
                                 int type = ModContent.ProjectileType<EnemyDragoonLance>();//44;//0x37; //14;
-                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, dragoonLanceDamage, 0f, Main.myPlayer);
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, phaseOneDragoonLanceDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 700;
                                 Main.projectile[num54].aiStyle = 1;
                             }
