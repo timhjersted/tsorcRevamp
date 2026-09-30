@@ -1363,7 +1363,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/AbysmalOolacileSorcerer",
+        "NpcName": "tsorcRevamp/GrandOccultist",
         "SpawnX": 6721.0,
         "SpawnY": 1905.0,
         "CustomHealth": null,
@@ -1390,7 +1390,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/AbysmalOolacileSorcerer",
+        "NpcName": "tsorcRevamp/GrandOccultist",
         "SpawnX": 8239.0,
         "SpawnY": 1870.0,
         "CustomHealth": null,

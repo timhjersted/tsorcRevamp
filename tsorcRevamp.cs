@@ -1254,7 +1254,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<BlightBag>()                , ModContent.NPCType<Blight>()                                                      },
                 {   ModContent.ItemType<ChaosBag>()                 , ModContent.NPCType<Chaos>()                                                       },
                 {   ModContent.ItemType<WyvernMageShadowBag>()      , ModContent.NPCType<WyvernMageShadow>()                                            },
-                {   ModContent.ItemType<OolacileSorcererBag>()      , ModContent.NPCType<AbysmalOolacileSorcerer>()                                     },
+                {   ModContent.ItemType<OolacileSorcererBag>()      , ModContent.NPCType<GrandOccultist>()                                     },
                 {   ModContent.ItemType<ArtoriasBag>()              , ModContent.NPCType<Artorias>()                                                    },
                 {   ModContent.ItemType<HellkiteBag>()              , ModContent.NPCType<HellkiteDragonHead>()                                          },
                 {   ModContent.ItemType<SeathBag>()                 , ModContent.NPCType<SeathTheScalelessHead>()                                       },
@@ -3736,13 +3736,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss", // Field Boss
                     this,
-                    nameof(AbysmalOolacileSorcerer),
+                    nameof(GrandOccultist),
                     20.8f, // Tier (look above)
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AbysmalOolacileSorcerer>())), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.NPCType<AbysmalOolacileSorcerer>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<GrandOccultist>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<GrandOccultist>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<AbysmalOolacileSorcerer>(), Language.GetText("Mods.tsorcRevamp.NPCs.AbysmalOolacileSorcerer.DisplayName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<GrandOccultist>(), Language.GetText("Mods.tsorcRevamp.NPCs.GrandOccultist.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AbysmalOolacileSorcererDesc"),
                         ["spawnItems"] = ModContent.ItemType<AbysmalStone>()
                     }

@@ -185,8 +185,8 @@ namespace tsorcRevamp
             AbyssPortal,
             GwynFight,
             RemixGwynFight,
-            AbysmalOolacileSorcererFight,
-            RemixAbysmalOolacileSorcererFight,
+            GrandOccultistFight,
+            RemixGrandOccultistFight,
             WitchkingFight,
             RemixWitchkingEvent,
             WyvernMageShadowFight,
@@ -459,9 +459,9 @@ namespace tsorcRevamp
             ScriptedEvent RemixGwynEvent = new ScriptedEvent(new Vector2(822, 1241), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.Gwyn"), Color.Red, false, RemixMapCondition);
 
             //ABYSMAL OOLACILE SORCERER
-            ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AbysmalOolacileSorcerer"), Color.Red, false, OnlyAdventureMapCondition);
+            ScriptedEvent GrandOccultistEvent = new ScriptedEvent(new Vector2(6721, 1905), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.GrandOccultist"), Color.Red, false, OnlyAdventureMapCondition);
 
-            ScriptedEvent RemixAbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(8239, 1870), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AbysmalOolacileSorcerer"), Color.Red, false, RemixMapCondition);
+            ScriptedEvent RemixGrandOccultistEvent = new ScriptedEvent(new Vector2(8239, 1870), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.GrandOccultist"), Color.Red, false, RemixMapCondition);
 
             //WITCHKING
             ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.Witchking"), Color.Red, false, OnlyAdventureMapCondition);
@@ -811,8 +811,8 @@ namespace tsorcRevamp
                 {ScriptedEventType.GwynTombVision, GwynsTombEvent},
                 {ScriptedEventType.GwynFight, GwynEvent},
                 {ScriptedEventType.RemixGwynFight, RemixGwynEvent},
-                {ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
-                {ScriptedEventType.RemixAbysmalOolacileSorcererFight, RemixAbysmalOolacileSorcererEvent},
+                {ScriptedEventType.GrandOccultistFight, GrandOccultistEvent},
+                {ScriptedEventType.RemixGrandOccultistFight, RemixGrandOccultistEvent},
                 {ScriptedEventType.WitchkingFight, WitchkingEvent},
                 {ScriptedEventType.RemixWitchkingEvent, RemixWitchkingEvent},
                 {ScriptedEventType.ChaosFight, ChaosEvent},
@@ -1754,9 +1754,21 @@ namespace tsorcRevamp
                 for (int i = 0; i < eventTypeStrings.Count; i++)
                 {
                     ScriptedEventType scriptedEventOut;
+                    string eventTypeString = eventTypeStrings[i];
+
+                    // The Grand Occultist events were saved under their old enum names; map them to the renamed
+                    // members so existing worlds keep their "already triggered" flag.
+                    if (eventTypeString == "AbysmalOolacileSorcererFight")
+                    {
+                        eventTypeString = nameof(ScriptedEventType.GrandOccultistFight);
+                    }
+                    else if (eventTypeString == "RemixAbysmalOolacileSorcererFight")
+                    {
+                        eventTypeString = nameof(ScriptedEventType.RemixGrandOccultistFight);
+                    }
 
                     //If it contains a matching event
-                    if (Enum.TryParse(eventTypeStrings[i], out scriptedEventOut))
+                    if (Enum.TryParse(eventTypeString, out scriptedEventOut))
                     {
                         //And doesn't already contain that key (just in case)
                         if (!ScriptedEventValues.ContainsKey(scriptedEventOut))

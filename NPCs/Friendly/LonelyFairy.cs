@@ -221,7 +221,7 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()))));
+            }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>()))));
 
             shop.Add(new Item(ModContent.ItemType<BarrowBlade>())
             {

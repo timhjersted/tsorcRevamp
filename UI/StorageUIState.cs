@@ -8,6 +8,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.UI;
 
 namespace tsorcRevamp.UI
@@ -49,6 +50,7 @@ namespace tsorcRevamp.UI
         private StorageItemSlot depositSlot;
         private UIScrollbar scrollbar;
         private UIText closeButton;
+        private UIText depositAllButton;
         private readonly StorageItemSlot[] slots = new StorageItemSlot[VISIBLE_SLOTS];
         private readonly List<UIText> tabButtons = new List<UIText>();
         private UIText pageText;
@@ -114,6 +116,51 @@ namespace tsorcRevamp.UI
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuClose);
             };
             panel.Append(closeButton);
+
+            // "Deposit All": sweeps the main inventory into storage. Slots 10-49 only — 0-9 is the hotbar, 50-53
+            // coins, 54-57 ammo, and everything past that is trash/equipment. Favorited items are skipped via
+            // IsStorageDepositable. Sits in the header, so HandleHeaderDrag excludes its rect from the drag zone.
+            depositAllButton = new UIText(Language.GetTextValue("Mods.tsorcRevamp.UI.StorageDepositAll"), 0.8f);
+            depositAllButton.Left.Set(206, 0);
+            depositAllButton.Top.Set(9, 0);
+            depositAllButton.TextColor = Color.LightGray;
+            depositAllButton.OnMouseOver += (evt, el) => { depositAllButton.TextColor = new Color(255, 204, 0); };
+            depositAllButton.OnMouseOut += (evt, el) => { depositAllButton.TextColor = Color.LightGray; };
+            depositAllButton.OnLeftClick += (evt, el) =>
+            {
+                tsorcRevampPlayer storagePlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
+                bool movedAnything = false;
+
+                for (int slot = 10; slot < 50; slot++)
+                {
+                    Item inventoryItem = Main.LocalPlayer.inventory[slot];
+
+                    if (!storagePlayer.IsStorageDepositable(inventoryItem))
+                    {
+                        continue;
+                    }
+
+                    int stackBefore = inventoryItem.stack;
+                    storagePlayer.DepositToStorage(inventoryItem); // leaves any overflow on the item if storage is at its cap
+
+                    if (inventoryItem.IsAir || inventoryItem.stack != stackBefore)
+                    {
+                        movedAnything = true;
+
+                        // Inventory slots are only authoritative on the owning client; tell the server what changed.
+                        if (Main.netMode == NetmodeID.MultiplayerClient)
+                        {
+                            NetMessage.SendData(MessageID.SyncEquipment, -1, -1, null, Main.myPlayer, slot, inventoryItem.prefix);
+                        }
+                    }
+                }
+
+                if (movedAnything)
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                }
+            };
+            panel.Append(depositAllButton);
 
             // Search bar (reuses the Enemy Debug Tome search field).
             searchBar = new UIEnemySearchBar();
@@ -299,11 +346,12 @@ namespace tsorcRevamp.UI
             Rectangle header = new Rectangle((int)dims.X, (int)dims.Y, (int)dims.Width, (int)HeaderHeight);
             bool overHeader = header.Contains(Main.MouseScreen.ToPoint());
             bool overClose = closeButton != null && closeButton.GetDimensions().ToRectangle().Contains(Main.MouseScreen.ToPoint());
+            bool overDepositAll = depositAllButton != null && depositAllButton.GetDimensions().ToRectangle().Contains(Main.MouseScreen.ToPoint());
 
             // Detect the press edge ourselves (Main.mouseLeft now, not last frame) so the whole header is grabbable
             // — relying on Main.mouseLeftRelease failed because the UI system consumes it on clicks over children.
             bool justPressed = Main.mouseLeft && !prevMouseLeft;
-            if (!dragging && overHeader && !overClose && justPressed)
+            if (!dragging && overHeader && !overClose && !overDepositAll && justPressed)
             {
                 dragging = true;
                 dragOffset = Main.MouseScreen - new Vector2(dims.X, dims.Y);

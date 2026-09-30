@@ -468,7 +468,7 @@ Mods: {
 			GwynTombVisions: default
 			AbyssPortal: default
 			Gwyn: Gwyn has awoken to bring your journey to its final end...
-			AbysmalOolacileSorcerer: The Grand Occultist of Oolacile shall now disembowel you...
+			GrandOccultist: The Grand Occultist of Oolacile shall now disembowel you...
 			Witchking: The Witchking has been waiting for you...
 			Blight: The Blight surfaces from the ocean!
 			Chaos: Chaos has entered this dimension!
@@ -512,6 +512,7 @@ Mods: {
 			MouseButton: Mouse button {0}
 			Storage: Storage
 			StorageDeposit: Drop an item here to store it
+			StorageDepositAll: Deposit All
 			OpenStorage: Open Storage — Shift click to store inventory items while Storage is open
 			StaminaUse: "Stamina Use: "
 			StaminaUseOnHitOnly: "Stamina Use on-hit: "
@@ -11752,7 +11753,7 @@ Mods: {
 				Defeated: Serris falls...
 			}
 
-			AbysmalOolacileSorcerer: {
+			GrandOccultist: {
 				DisplayName: Grand Occultist of Oolacile
 				DespawnHandler: The Grand Occultist of Oolacile has shattered your mind...
 				Defeated: A darkness has been lifted from the world...
@@ -12829,12 +12830,12 @@ Mods: {
 					There is a manifestation there, an infinitesimally small part of a higher being that seeks to widen the crack and fully enter our world..
 					It is a Blight on the world. If it one day makes it through I fe our realm will be shattered.
 					'''
-				AbysmalOolacileSorcerer:
+				GrandOccultist:
 					'''
 					Underneath the golem temple lies a Sorcerer, a being that holds a ring of great magic and vitality. 
 					If you wish to claim its ring for yourself {0}, I'm sure the ring would greatly boost your magical capabilities.
 					'''
-				RemixAbysmalOolacileSorcerer:
+				RemixGrandOccultist:
 					'''
 					It seems that in the Frozen Cathedral also lies a powerful Sorcerer from Oolacile, a being that holds a ring of great magic and vitality. 
 					If you wish to claim its ring for yourself {0}, I'm sure the ring would greatly boost your magical capabilities.

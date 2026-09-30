@@ -468,7 +468,7 @@ Mods: {
 			GwynTombVisions: default
 			AbyssPortal: default
 			Gwyn: 葛温已苏醒，将你的旅程推向终焉...
-			AbysmalOolacileSorcerer: 乌拉席露大秘术师将杀死你...
+			GrandOccultist: 乌拉席露大秘术师将杀死你...
 			Witchking: 巫师王已经在等你...
 			Blight: 枯萎从洋面上升起！
 			Chaos: 混沌已经进入这个维度！
@@ -11736,7 +11736,7 @@ Mods: {
 				Defeated: 「赛里斯」被击败了...
 			}
 
-			AbysmalOolacileSorcerer: {
+			GrandOccultist: {
 				DisplayName: 乌拉席露大秘术师
 				DespawnHandler: 乌拉席露大秘术师对你的心智实施了降维打击...
 				Defeated: 黑暗笼罩于世...
@@ -12815,12 +12815,12 @@ Mods: {
 					那里有高等存在的微小具现，正试图撕裂世界裂缝完全降临
 					它是世界的灾疽，若其得逞，我们的位面必将崩毁
 					'''
-				AbysmalOolacileSorcerer:
+				GrandOccultist:
 					'''
 					在石巨人神殿深处蛰伏着一位持有魔力与生机戒指的乌拉席露巫师
 					若你想夺取戒指，{0}，它必能极大提升你的魔力威能
 					'''
-				RemixAbysmalOolacileSorcerer:
+				RemixGrandOccultist:
 					'''
 					看来在寒渊大教堂还沉眠着一位来自乌拉席露的强大法师，他持有一枚蕴含浩瀚魔力与生命力的戒指
 					若你想夺取戒指，{0}，它必能极大提升你的魔力威能

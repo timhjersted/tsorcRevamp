@@ -483,6 +483,23 @@ namespace tsorcRevamp
                     }
                 }
             }
+
+            // The Grand Occultist was saved under its old class name; carry that kill over to the renamed NPC so
+            // existing worlds keep their downed flag (Lonely Fairy shop, Miakoda dialogue). Drop the stale key.
+            NPCDefinition oldOccultistKey = new NPCDefinition("tsorcRevamp", "AbysmalOolacileSorcerer");
+            int oldOccultistValue;
+
+            if (NewSlain.TryGetValue(oldOccultistKey, out oldOccultistValue))
+            {
+                NewSlain.Remove(oldOccultistKey);
+
+                NPCDefinition newOccultistKey = new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>());
+
+                if (!NewSlain.ContainsKey(newOccultistKey))
+                {
+                    NewSlain.Add(newOccultistKey, oldOccultistValue);
+                }
+            }
         }
 
         public override void NetSend(BinaryWriter writer)
@@ -2760,7 +2777,7 @@ namespace tsorcRevamp
                 {
                     count++;
                 }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>())))
+                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>())))
                 {
                     count++;
                 }
@@ -2881,7 +2898,7 @@ namespace tsorcRevamp
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>(), new Vector2(318, 1909) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>(), new Vector2(3233, 1741) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), new Vector2(8174, 867) },
-            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), new Vector2(6722, 1906) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>(), new Vector2(6722, 1906) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), new Vector2(5342, 1694) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), new Vector2(7745, 1583) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), new Vector2(6432, 247) },
@@ -2904,7 +2921,7 @@ namespace tsorcRevamp
         
         public static Dictionary<int, Vector2> RemixSHMBossIDs = new Dictionary<int, Vector2>
         {
-            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), new Vector2(8234, 1875) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>(), new Vector2(8234, 1875) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2490, 1804) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>(), new Vector2(305, 1923) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>(), new Vector2(3152, 1696) },

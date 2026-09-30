@@ -723,9 +723,9 @@ namespace tsorcRevamp.NPCs.Friendly
             else if (tsorcRevampWorld.MidSHM)
             {
                 // Tell the player about the optional boss, the abyssmal oocatile sorcerer
-                if (!BossDefeated(ModContent.NPCType<AbysmalOolacileSorcerer>()))
+                if (!BossDefeated(ModContent.NPCType<GrandOccultist>()))
                 {
-                    chat.Add(ChatUtil("AbysmalOolacileSorcerer", player.name));
+                    chat.Add(ChatUtil("GrandOccultist", player.name));
                 }
                 // Hint about the way to the Witchking - same place as the Earth Fiend Lich except you travel west
                 // Mention needing a forgotten Gaia Sword or Barrow Blade for his initial defenses

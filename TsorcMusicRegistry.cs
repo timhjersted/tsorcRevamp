@@ -150,7 +150,7 @@ namespace tsorcRevamp
             RegisterGroup(new[] { "Death", "TrueDeath" }, "Boss13", "Boss13", MusicID.Boss2);
             RegisterGroup(new[] { "WyvernMageShadow", "GhostDragonHead", "HellkiteDragonHead" }, "God-DevouringSerpent", "God-DevouringSerpent", MusicID.Boss2);
             RegisterGroup(new[] { "SeathTheScalelessHead", "PrimordialCrystal" }, "Boss9", "Boss9", MusicID.Boss2);
-            Register("AbysmalOolacileSorcerer", "Boss14", "Boss14", MusicID.Boss3);
+            Register("GrandOccultist", "Boss14", "Boss14", MusicID.Boss3);
             Register("Gwyn", "Gwyn", "Gwyn", MusicID.Boss2);
             RegisterGroup(new[] { "DarkShogunMask", "DarkDragonMask", "Okiku", "BrokenOkiku" }, "Boss5", "Boss5", MusicID.Boss2, SceneEffectPriority.BossHigh);
             RegisterGroup(new[] { "AttraidiesMimic", "Attraidies" }, "Boss8", "Boss8", MusicID.Boss2);

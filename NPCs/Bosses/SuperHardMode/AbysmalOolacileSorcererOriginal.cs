@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
     /// <summary>
     /// The pre-rework Grand Occultist, kept as READ-ONLY reference code after the identity moved to the
-    /// PuppetNPC <see cref="AbysmalOolacileSorcerer"/>. It has no spawn path at all — no SpawnChance, no
+    /// PuppetNPC <see cref="GrandOccultist"/>. It has no spawn path at all — no SpawnChance, no
     /// summon item, no boss-checklist slot, no downed flag — so it can only appear via a spawn command.
     /// It still borrows the live boss's despawn/defeat strings; it is never expected to reach either.
     /// </summary>
@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.rarity =38;
             NPC.width = 28;
             NPC.knockBackResist = 0f;
-            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.DespawnHandler"), Color.DarkRed, DustID.Firework_Red);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.GrandOccultist.DespawnHandler"), Color.DarkRed, DustID.Firework_Red);
         }
 
         // Oolacile was the town consumed by the Abyss - fitting for its own abysmal sorcerer to curse everyone
@@ -471,7 +471,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Gore
         public override void OnKill()
         {
-            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.Defeated"), 160, 160, 160);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.GrandOccultist.Defeated"), 160, 160, 160);
             SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1.1f });
             if (!Main.dedServ)
             {

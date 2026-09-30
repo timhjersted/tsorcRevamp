@@ -43,12 +43,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     /// the boss animates and fires from the staff tip for free (enemy-redesign G0.7 / G4).
     /// </summary>
     [AutoloadBossHead]
-    class AbysmalOolacileSorcerer : PuppetNPC
+    class GrandOccultist : PuppetNPC
     {
         // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s
         // Texture + "_Head_Boss" convention would look for "PuppetPlaceholder_Head_Boss".
         // PLACEHOLDER sprite (copy of AbysmalOolacileSorcererOriginal_Head_Boss) — replace with bespoke art.
-        public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/AbysmalOolacileSorcerer_Head_Boss";
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/GrandOccultist_Head_Boss";
 
         // The encounter registry already broadcasts this boss's arrival, so the invader banner would double up.
         protected override bool AnnounceInvasion => false;
@@ -775,7 +775,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.rarity = 38;
 
             _despawnHandler = new NPCDespawnHandler(
-                LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.DespawnHandler"), Color.DarkRed, DustID.Firework_Red);
+                LangUtils.GetTextValue("NPCs.GrandOccultist.DespawnHandler"), Color.DarkRed, DustID.Firework_Red);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.CanTeleport = true;
@@ -2991,7 +2991,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (target.statLife <= 0)
             {
                 target.KillMe(PlayerDeathReason.ByCustomReason(
-                    LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.DespawnHandler")), 10, 0);
+                    LangUtils.GetTextValue("NPCs.GrandOccultist.DespawnHandler")), 10, 0);
             }
         }
 
@@ -3105,7 +3105,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnKill()
         {
-            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.Defeated"), 160, 160, 160);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.GrandOccultist.Defeated"), 160, 160, 160);
             SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1.1f });
 
             // The Abyss curse was cast for this fight; killing its author lifts it at once. (It would also lapse

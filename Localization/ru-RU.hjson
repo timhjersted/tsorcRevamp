@@ -468,7 +468,7 @@ Mods: {
 			GwynTombVisions: AbyssPortal:
 			// AbyssPortal: default
 			Gwyn: Гвин пробудился, чтобы закончить ваше путешествие...
-			AbysmalOolacileSorcerer: Колдун Бездны Олачиля сейчас выпотрошит тебя...
+			GrandOccultist: Колдун Бездны Олачиля сейчас выпотрошит тебя...
 			Witchking: Король-Чародей ждал тебя...
 			Blight: Мор вырывается из океана на поверхность!
 			Chaos: Хаос вторгся в ваше измерение!
@@ -11699,7 +11699,7 @@ Mods: {
 				Defeated: Серрис пал...
 			}
 
-			AbysmalOolacileSorcerer: {
+			GrandOccultist: {
 				DisplayName: Колдун Бездны Олачиля
 				DespawnHandler: Колдун Бездны Олачиля разрушил твой разум...
 				Defeated: Тьма была рассеяна над миром...
@@ -12776,12 +12776,12 @@ Mods: {
 					There is a manifestation there, an infinitesimally small part of a higher being that seeks to widen the crack and fully enter our world..
 					It is a Blight on the world. If it one day makes it through I fe our realm will be shattered.
 					'''
-				AbysmalOolacileSorcerer:
+				GrandOccultist:
 					'''
 					Underneath the golem temple lies a Sorcerer, a being that holds a ring of great magic and vitality. 
 					If you wish to claim its ring for yourself {0}, I'm sure the ring would greatly boost your magical capabilities.
 					'''
-				/* RemixAbysmalOolacileSorcerer:
+				/* RemixGrandOccultist:
 					'''
 					It seems that in the Frozen Cathedral also lies a powerful Sorcerer from Oolacile, a being that holds a ring of great magic and vitality. 
 					If you wish to claim its ring for yourself {0}, I'm sure the ring would greatly boost your magical capabilities.

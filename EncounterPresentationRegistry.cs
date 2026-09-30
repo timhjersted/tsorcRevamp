@@ -185,7 +185,7 @@ namespace tsorcRevamp
                 || npcType == ModContent.NPCType<RedKnight>()
                 || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>()
                 || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
-                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>())
+                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>())
             {
                 return BossClassification.OptionalField;
             }

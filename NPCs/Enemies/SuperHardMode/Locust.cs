@@ -298,7 +298,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (breedTimer <= 0)
             {
                 breedTimer = Main.rand.Next(90, 151);
-                if (CountActive() < PopulationCap && !AbysmalOolacileSorcererIsAlive())
+                if (CountActive() < PopulationCap && !GrandOccultistIsAlive())
                 {
                     ChangeMode(Mode.Reproducing);
                 }
@@ -537,7 +537,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             // The boss's active NPC state is authoritative. Cancel a tell already in progress too,
             // so a sorcerer appearing mid-cycle can never allow one final offspring to spawn.
-            if (Main.netMode != NetmodeID.MultiplayerClient && AbysmalOolacileSorcererIsAlive())
+            if (Main.netMode != NetmodeID.MultiplayerClient && GrandOccultistIsAlive())
             {
                 NPC.scale = 1f;
                 ChangeMode(Mode.Swarming);
@@ -716,8 +716,8 @@ namespace tsorcRevamp.NPCs.Enemies
             return true;
         }
 
-        static bool AbysmalOolacileSorcererIsAlive()
-            => NPC.AnyNPCs(ModContent.NPCType<Bosses.SuperHardMode.AbysmalOolacileSorcerer>());
+        static bool GrandOccultistIsAlive()
+            => NPC.AnyNPCs(ModContent.NPCType<Bosses.SuperHardMode.GrandOccultist>());
 
         static int NewGroupId()
         {
