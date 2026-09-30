@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
 {
@@ -19,6 +20,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         const float RiseDrag = 0.985f;       // per tick: the initial upward shove bleeds off into a slow drift
         const float HitRadius = 34f;         // px at full size; the drawn cloud is 2x this across
         const float DrawSize = 96f;
+        const int WeightOfShadowTicks = 480; // 8 seconds
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
@@ -77,6 +79,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     new Color(150, 46, 218), Main.rand.NextFloat(0.8f, 1.2f) * Solidity);
                 mote.noGravity = true;
             }
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            // Both users (flip puff + Ground Pound eruption) inherit this: the curse leaves the target too heavy to escape upward.
+            target.AddBuff(ModContent.BuffType<WeightOfShadow>(), WeightOfShadowTicks);
         }
 
         public override bool? CanDamage()

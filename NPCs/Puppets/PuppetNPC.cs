@@ -1868,6 +1868,37 @@ namespace tsorcRevamp.NPCs.Puppets
         internal Vector2 DebugHandPos;
         internal Vector2 DebugOrigin;
         internal int     DebugDirection;
+
+        // The front-hand weapon's FINAL DrawData (after DrawPlayer's rotation + PuppetDrawScale transforms) from the
+        // most recent puppet draw, with the update tick it was captured on. Lets a projectile re-draw the blade
+        // pixel-for-pixel in a later pass (Artorias's impale draws the sword OVER the impaled player, which the
+        // puppet's own pass - behind players - cannot do). The index is where DrawWeaponToLayer put it in the
+        // cache; tsorcRevampPlayer.TransformDrawData reads it back via CaptureFinalHeldWeaponDraw once transformed.
+        internal DrawData LastHeldWeaponDraw;
+        internal uint     LastHeldWeaponDrawUpdate = uint.MaxValue;
+        int               _heldWeaponDrawCacheIndex = -1;
+
+        internal void CaptureFinalHeldWeaponDraw(ref PlayerDrawSet drawInfo)
+        {
+            if (_heldWeaponDrawCacheIndex < 0 || _heldWeaponDrawCacheIndex >= drawInfo.DrawDataCache.Count)
+            {
+                return;
+            }
+
+            DrawData finalDraw = drawInfo.DrawDataCache[_heldWeaponDrawCacheIndex];
+
+            // Something else inserted/removed cache entries (spectral armor swap) - the slot no longer holds our weapon.
+            if (finalDraw.texture == null || finalDraw.texture != _heldWeaponDrawTexture)
+            {
+                return;
+            }
+
+            LastHeldWeaponDraw = finalDraw;
+            LastHeldWeaponDrawUpdate = Main.GameUpdateCount;
+            _heldWeaponDrawCacheIndex = -1;
+        }
+
+        Texture2D _heldWeaponDrawTexture;
         internal string  DebugPhaseName => Phase.ToString();
 
         /// <summary>Extra pixels to raise the above-head debug readout. Tall puppets (e.g. mounted ones)
@@ -12074,7 +12105,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 drawRotation = (_weaponRotation + SpearDrawRotationOffset)
                     * (MirrorSpearRotationByFacing ? NPC.direction : 1);
 
-            drawInfo.DrawDataCache.Add(new DrawData(
+            DrawData heldWeaponDraw = new DrawData(
                 tex,
                 drawPos,
                 sourceRect,
@@ -12083,7 +12114,10 @@ namespace tsorcRevamp.NPCs.Puppets
                 origin,
                 NPC.scale * scale,
                 spriteFx,
-                0));
+                0);
+            _heldWeaponDrawCacheIndex = drawInfo.DrawDataCache.Count;
+            _heldWeaponDrawTexture = tex;
+            drawInfo.DrawDataCache.Add(heldWeaponDraw);
 
             if (bowStringTexels != Rectangle.Empty)
             {

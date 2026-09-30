@@ -144,6 +144,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     {
                         Main.player[i].AddBuff(BuffID.OnFire, 180);
 
+                        // Same arena-range check as the OnFire above: the abyss heat keeps flight time refilled for the whole
+                        // fight. Refreshed every tick at 60, so it lingers ~1s after leaving range instead of flickering.
+                        Main.player[i].AddBuff(ModContent.BuffType<Buffs.ThermalRise>(), 60);
+
                         bool hasCovenant = Main.player[i].GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss;
 
                         if (!hasCovenant && !displayedWarning)

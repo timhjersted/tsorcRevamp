@@ -231,6 +231,13 @@ namespace tsorcRevamp
             }
         }
 
+        // Runs after DrawPlayer's rotation + scale transforms. Only matters for the puppet players PuppetNPC draws:
+        // hands the puppet its final held-weapon DrawData so a projectile can redraw the blade over other players.
+        public override void TransformDrawData(ref PlayerDrawSet drawInfo)
+        {
+            NPCs.Puppets.PuppetNPC.DrawingPuppetFor?.CaptureFinalHeldWeaponDraw(ref drawInfo);
+        }
+
         //Only one aura can be applied, highest in the enum list takes priority
         public void SetAuraState(tsorcAuraState state)
         {

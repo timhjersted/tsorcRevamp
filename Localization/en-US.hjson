@@ -10011,6 +10011,7 @@ Mods: {
 			ThermalRise: {
 				DisplayName: Updraft
 				Description: Heat from the lasers is extending your flight!
+				AbyssDescription: The heat from the abyss is extending your flight!
 			}
 
 			ToxicCatDrain: {

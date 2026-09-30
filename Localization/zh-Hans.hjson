@@ -9994,6 +9994,7 @@ Mods: {
 			ThermalRise: {
 				DisplayName: 上升气流
 				Description: 激光的热量延长了你的飞行时间！
+				AbyssDescription: The heat from the abyss is extending your flight!
 			}
 
 			ToxicCatDrain: {

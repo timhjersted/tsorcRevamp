@@ -1843,21 +1843,32 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     new Vector2(112f, 150f), 0.34f * hazeFade, 0.72f, 1f);
             }
 
+            // Impale tether: a soft shroud from the impaled target back to Artorias, behind everything.
+            // The sword, the impale burst and the blood sit on top of the player instead - those are drawn by
+            // ArtoriasImpalingSword from its overPlayers pass.
             if (Phase == AttackPhase.PierceStabHold && _impaleTargetIndex >= 0
                 && _impaleTargetIndex < Main.maxPlayers)
             {
                 Player impaled = Main.player[_impaleTargetIndex];
                 if (impaled.active && !impaled.dead)
                 {
-                    float raise = GetImpaleRaiseProgress01();
-                    // The blade points from Artorias THROUGH the impaled target - the wind wisps
-                    // stream on out that far side, not radially.
-                    Vector2 windDirection = (impaled.Center - NPC.Center).SafeNormalize(new Vector2(NPC.direction, 0f));
-                    ArtoriasVFX.DrawImpaleTendrils(
-                        impaled.Center, windDirection, raise, 0.86f);
+                    ArtoriasVFX.DrawTendril(impaled.Center, NPC.Center, GetImpaleRaiseProgress01(), 0.48f, hostileTip: false);
                 }
             }
 
+        }
+
+        /// <summary>True only while the target is held on the raised blade (PierceStabHold) - the window in which
+        /// ArtoriasImpalingSword draws the sword and the impale burst over the player.</summary>
+        public bool IsImpaleHoldActive => Phase == AttackPhase.PierceStabHold;
+
+        /// <summary>Screen-clockwise tilt (radians) for the impaled player. The body stays perpendicular to the
+        /// blade, so it turns with the blade's 0-90 degree raise: upright while the sword is horizontal, lying
+        /// sideways across it once vertical (blade through the midsection). Sign is -direction: the blade turns
+        /// counter-clockwise for a right-facing Artorias, so the body does too. Negate to put the head on the other side.</summary>
+        public float GetImpalePlayerRotation()
+        {
+            return -NPC.direction * MathHelper.PiOver2 * GetImpaleRaiseProgress01();
         }
 
         void DrawPierceUnblockableWeaponAura(SpriteBatch spriteBatch)
@@ -2480,6 +2491,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.ImpaleFreezeTimer = 10;
             modPlayer.ImpaleWorldPosition = GetSwordTipWorldPosition();
+            modPlayer.ImpaleDrawRotation = GetImpalePlayerRotation();
 
             if (!Main.dedServ && Main.GameUpdateCount % 3 == 0)
             {
@@ -2509,6 +2521,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.ImpaleFreezeTimer = 0;
+            modPlayer.ImpaleDrawRotation = 0f;
 
             if (!Main.dedServ)
             {

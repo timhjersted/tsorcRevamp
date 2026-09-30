@@ -90,6 +90,11 @@ namespace tsorcRevamp
         public int ImpaleFreezeTimer = 0;
         public Vector2 ImpaleWorldPosition;
 
+        // Visual-only tilt (radians, screen-clockwise positive) applied while ImpaleFreezeTimer > 0, so a
+        // player hanging on a raised blade can be turned sideways instead of standing on top of it.
+        // Gwyn / Vessel leave it 0. Cleared by the releasing attack and whenever the pin ends.
+        public float ImpaleDrawRotation = 0f;
+
 
         public bool Celestriad = false;
         public bool UndeadTalisman = false;
@@ -1573,6 +1578,20 @@ namespace tsorcRevamp
                 Player.rocketTime = 0;
                 Player.jumpBoost = false;
                 Player.wingTime = 0;
+
+                // Featherfall and Gravitation go inert rather than being removed, so the potion's timer survives the debuff.
+                // They run in vanilla's buff pass before this hook; slowFall/gravControl are only read later in movement,
+                // and with gravControl off vanilla snaps gravDir back to normal on its own.
+                if (Player.HasBuff(BuffID.Featherfall))
+                {
+                    Player.slowFall = false;
+                }
+
+                if (Player.HasBuff(BuffID.Gravitation))
+                {
+                    Player.gravControl = false;
+                }
+
                 float speedCap = 12;
                 if (Player.velocity.X > speedCap)
                 {
@@ -2704,6 +2723,13 @@ namespace tsorcRevamp
                 Player.velocity = Vector2.Zero;
                 Player.Center = ImpaleWorldPosition;
                 ImpaleFreezeTimer--;
+
+                // Pin ran out without the attacker clearing the tilt (owner died mid-hold) - don't leave the player sideways.
+                if (ImpaleFreezeTimer <= 0)
+                {
+                    ImpaleDrawRotation = 0f;
+                }
+
                 return;
             }
             /*if (ShunpoTimer == 3)
@@ -3193,6 +3219,12 @@ namespace tsorcRevamp
 
             if (loveHealCooldown > 0)
             loveHealCooldown--;
+
+            // Impale tilt rides the same fullRotation path as the dodge roll (dodging is blocked while pinned).
+            if (ImpaleFreezeTimer > 0 && ImpaleDrawRotation != 0f)
+            {
+                rotation = ImpaleDrawRotation;
+            }
 
             if (!Player.mount.Active)
             {

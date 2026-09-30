@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
@@ -10,8 +12,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 {
     // Purely visual: the actual stab/bonus damage and heal are applied directly by Artorias
     // (OnPierceContact) the instant the dash connects. This projectile just tracks the sword tip
-    // position Artorias computes (GetSwordTipWorldPosition) and anchors the impaled player to it,
-    // drawn behind the player sprite so it reads as skewering through them.
+    // position Artorias computes (GetSwordTipWorldPosition), anchors the impaled player to it (turned sideways,
+    // see GetImpalePlayerRotation) and draws the blade + impale VFX OVER the player so the sword reads as
+    // driven into their midsection.
     public class ArtoriasImpalingSword : ModProjectile
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Content.Items.Weapons.Melee.Broadswords.ArtoriasGreatsword));
@@ -82,6 +85,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.ImpaleFreezeTimer = 10;
             modPlayer.ImpaleWorldPosition = tip;
+            modPlayer.ImpaleDrawRotation = artorias.GetImpalePlayerRotation();
 
             if (!Main.dedServ && --_backBloodSpawnTimer <= 0)
             {
@@ -123,28 +127,78 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
-            // Deliberately not added to overPlayers - renders behind the impaled player's sprite.
-            behindNPCs.Add(index);
+            // Over the players: the blade goes in FRONT of the impaled player (he hangs on it, sideways), and the
+            // impale burst + blood draw on top of the blade. Artorias's own pass (behind players) still draws the
+            // sword too; the redraw below is pixel-identical so it just covers the player where they overlap.
+            overPlayers.Add(index);
         }
 
-        // The held greatsword already follows this exact raise-and-flick pose. This helper only
-        // anchors the player; drawing its texture as well produced a duplicate sword.
+        // The held greatsword already follows this exact raise-and-flick pose, but the puppet draws it BEHIND
+        // players. Redrawing Artorias's final weapon DrawData here (same texture/position/rotation/scale, so no
+        // "duplicate sword") puts the blade over the player. Order: blade -> impale burst shader -> blood.
         public override bool PreDraw(ref Color lightColor)
         {
             if (OwnerWhoAmI >= 0 && OwnerWhoAmI < Main.maxNPCs && Main.npc[OwnerWhoAmI].active
-                && Main.npc[OwnerWhoAmI].ModNPC is Artorias artorias)
+                && Main.npc[OwnerWhoAmI].ModNPC is Artorias artorias && artorias.IsImpaleHoldActive)
             {
-                Vector2 start = Projectile.Center;
+                DrawBladeOverPlayer(artorias);
+
                 if (TargetWhoAmI >= 0 && TargetWhoAmI < Main.maxPlayers && Main.player[TargetWhoAmI].active)
                 {
-                    start = Main.player[TargetWhoAmI].Center;
+                    Player impaled = Main.player[TargetWhoAmI];
+
+                    // The blade points from Artorias THROUGH the impaled target - the wind wisps
+                    // stream on out that far side, not radially.
+                    Vector2 windDirection = (impaled.Center - artorias.NPC.Center)
+                        .SafeNormalize(new Vector2(artorias.NPC.direction, 0f));
+                    ArtoriasVFX.DrawImpaleTendrils(
+                        impaled.Center, windDirection, artorias.GetImpaleRaiseProgress01(), 0.86f);
                 }
-                ArtoriasVFX.DrawTendril(start, artorias.NPC.Center,
-                    artorias.GetImpaleRaiseProgress01(), 0.48f, hostileTip: false);
             }
 
             DrawBackBlood();
             return false;
+        }
+
+        void DrawBladeOverPlayer(Artorias artorias)
+        {
+            // Only trust a capture from this same update; a stale one would draw the blade where it WAS.
+            if (artorias.LastHeldWeaponDrawUpdate != Main.GameUpdateCount)
+            {
+                return;
+            }
+
+            DrawData bladeDraw = artorias.LastHeldWeaponDraw;
+            Texture2D bladeTexture = bladeDraw.texture;
+            if (bladeTexture == null || bladeDraw.sourceRect.HasValue)
+            {
+                return;
+            }
+
+            // Skip the grip: re-covering it would paint the blade over Artorias's own hand (the arm is drawn after
+            // the weapon in his pass). origin is the handle pixel in pre-flip texture space, the blade runs up-and-
+            // away from it (away = +X unflipped, -X flipped), so keep only the quadrant beyond a margin from it.
+            // The player is ~70px down the blade, so the cut is never near the overlap and the seam is invisible.
+            float gripMargin = 0.12f * Math.Max(bladeTexture.Width, bladeTexture.Height);
+            bool flippedHorizontally = bladeDraw.effect.HasFlag(SpriteEffects.FlipHorizontally);
+
+            int keepLeft = 0;
+            int keepWidth = (int)(bladeDraw.origin.X - gripMargin);
+            if (!flippedHorizontally)
+            {
+                keepLeft = (int)(bladeDraw.origin.X + gripMargin);
+                keepWidth = bladeTexture.Width - keepLeft;
+            }
+
+            int keepHeight = (int)(bladeDraw.origin.Y - gripMargin);
+            if (keepWidth <= 0 || keepHeight <= 0 || bladeDraw.effect.HasFlag(SpriteEffects.FlipVertically))
+            {
+                return;
+            }
+
+            bladeDraw.sourceRect = new Rectangle(keepLeft, 0, keepWidth, keepHeight);
+            bladeDraw.origin = new Vector2(bladeDraw.origin.X - keepLeft, bladeDraw.origin.Y);
+            bladeDraw.Draw(Main.spriteBatch);
         }
 
         void DrawBackBlood()
