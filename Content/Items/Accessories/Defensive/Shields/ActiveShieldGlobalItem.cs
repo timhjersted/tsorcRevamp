@@ -72,6 +72,19 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            if (Main.LocalPlayer == null)
+            {
+                return;
+            }
+
+            bool soulsMode = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode;
+            if (soulsMode && item.ModItem is Items.Accessories.Melee.MeleeShield)
+            {
+                // All four melee shields use their first tooltip line for the class restriction,
+                // including the Russian/Chinese Enchanted Beholder text that does not use Melee.Only.
+                tooltips.RemoveAll(line => line.Name == "Tooltip0");
+            }
+
             if (!tsorcRevampActiveShieldPlayer.RevampActive)
             {
                 return;
@@ -81,7 +94,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             {
                 return;
             }
-            if (Main.LocalPlayer == null || !Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            if (!soulsMode)
             {
                 return;
             }

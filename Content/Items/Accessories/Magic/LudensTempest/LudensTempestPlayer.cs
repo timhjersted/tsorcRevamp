@@ -32,7 +32,7 @@ public class LudensTempestPlayer : ModPlayer
                     }
                     Player.AddBuff(ModContent.BuffType<LudensTempestCooldown>(), LudensTempestItem.Cooldown * 60);
                 }
-                SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(LudensTempestFire)) + "_Cast") with { Volume = 0.25f }, target.Center);
+                SoundEngine.PlaySound(new SoundStyle(LudensTempestFire.AssetPath + "_Cast") with { Volume = 0.25f }, target.Center);
             }
             else if (Equipped && hit.DamageType == DamageClass.Magic && Player.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && proj.type != ModContent.ProjectileType<LudensTempestFire>() && proj.type != ModContent.ProjectileType<LudensTempestFirelet>())
             {
