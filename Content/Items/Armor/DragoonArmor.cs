@@ -28,8 +28,8 @@ namespace tsorcRevamp.Content.Items.Armor
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += Dmg / 100f;
-            player.GetAttackSpeed(DamageClass.Generic) += MeleeSpeed / 100f;
+            player.GetDamage(DamageClass.Generic) += Dmg / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) += MeleeSpeed / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
