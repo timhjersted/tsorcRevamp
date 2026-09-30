@@ -53,6 +53,43 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float Acceleration => 0.12f;
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
+
+        // ── Dash combos are gap-closers ─────────────────────────────────────────────
+        // The shared Greatsword table's two dash combos (Spin-Dash, Running Cleave) were ordinary Mid-band picks that only
+        // started inside ~105px - the one place a dash is pointless - so they almost never ran. Here they are
+        // RangedStartOnly: chosen only beyond melee reach, out to RangedStartComboMaxRange, at RangedStartMeleeComboChance
+        // per idle tick, and their pushes run at DashPushTopSpeed instead of his 2.4 px/t walk (a 1.4x push was 3.4 px/t).
+        // The pool is a copy of the shared table with just that flag flipped, so other greatsword wielders are untouched.
+        static MeleeCombo[] _dashGapCloserPool;
+
+        protected override MeleeCombo[] MeleeComboPoolOverride
+        {
+            get
+            {
+                if (_dashGapCloserPool == null)
+                {
+                    MeleeCombo[] sharedTable = WeaponArchetypeTables.GetMeleeCombos(WeaponArchetype.Greatsword);
+                    MeleeCombo[] pool = (MeleeCombo[])sharedTable.Clone();
+                    for (int i = 0; i < pool.Length; i++)
+                    {
+                        bool isDashCombo = pool[i].Name == "Spin-Dash" || pool[i].Name == "Running Cleave";
+                        if (isDashCombo)
+                        {
+                            pool[i].RangedStartOnly = true;
+                        }
+                    }
+
+                    _dashGapCloserPool = pool;
+                }
+
+                return _dashGapCloserPool;
+            }
+        }
+
+        protected override float RangedStartComboMaxRange => 440f;
+        protected override int RangedStartMeleeComboChance => 85;
+        // JoustDash push 1.4x / 1.6x -> ~8.4 / 9.6 px/t: a ~120-150px lunge per dash step, ~340px for Spin-Dash's spin + dash.
+        protected override float ComboForwardPushTopSpeed => 6f;
         protected override bool UseCompositeArmSwing => true;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
         protected override bool UseSwingEasing => true;
@@ -479,6 +516,43 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override int MeleeDamage => EnemyDamage.Projectile(120);
 
+        // ── Follow-up swings after a miss ───────────────────────────────────────────
+        // A combo that never connected chains: 75% into a second swing, then 40% into a third (never more). He sprints in
+        // (ClosingDistance), then telegraphs the swing that flows out of where the last one ended - underhand into overhand
+        // and back - with the usual step-in push. Only a whiff chains; a hit lets the normal recovery play.
+        protected override int MeleeFollowUpChancePercent(int followUpsDone)
+        {
+            if (followUpsDone == 0)
+            {
+                return 75;
+            }
+
+            if (followUpsDone == 1)
+            {
+                return 40;
+            }
+
+            return 0;
+        }
+
+        protected override string MeleeFollowUpComboName(string finishedComboName)
+        {
+            // Rising Slash ends high (overhead-ish finish), Heavy Chop ends low; the dash combos end on an overhead cleave
+            // / spin, so they flow into the rising cut; the leap slam ends planted low.
+            switch (finishedComboName)
+            {
+                case "Rising Slash":
+                case "Spin-Dash":
+                    return "Heavy Chop";
+                case "Heavy Chop":
+                case "Running Cleave":
+                case "Ground Pound":
+                    return "Rising Slash";
+                default:
+                    return null;
+            }
+        }
+
         // ── Piercing Dash ────────────────────────────────────────────────────────
         protected override bool  CanPierce            => true;
         protected override float PierceRange          => 700f;
@@ -519,6 +593,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // heavy-tell floor): the next dash goes live >= 40t after the last one ended, clear of the 30t
         // post-roll gap, so every dash in the chain is separately rollable.
         protected override int   PierceWhiffRepeatCount     => 2;
+        // Always the full 2 repeats after a miss, wherever the target ends up (the range gate ended the chain after one).
+        protected override bool  PierceRepeatIgnoresRange   => true;
         protected override int   PierceRepeatTelegraphTicks => 40;
 
         // ── Jumping Downward Slash ───────────────────────────────────────────────
@@ -2269,6 +2345,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static readonly WeightedSwing AirUnderhandCurve = new WeightedSwing(6, 20, 6f);
         static readonly WeightedSwing AirOverhandCurve = new WeightedSwing(8, 22, 6.5f);
 
+        // After a boomerang throw, this % of the time the recovery hands straight to an uppercut / lunge (no airborne-target
+        // wait, no aerial cooldown), out to 750px - the lunge's 70t dash covers that with room to spare.
+        const int BoomerangAerialChainChance = 50;
+        const float BoomerangChainMaxRange = 750f;
+        bool _boomerangChainRolled;
+        bool _boomerangChainActive;
+
         AerialStage _aerialStage;
         int _aerialStageTicks;
         int _aerialStageSequence; // bumped by every EnterAerialStage on every machine; clients reconcile against it
@@ -2362,15 +2445,35 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 _targetAirborneTicks++;
             }
 
-            bool canStart = _aerialStage == AerialStage.None && _aerialCooldown <= 0 && !HoldAttackSelection
-                && NPC.velocity.Y == 0f && _targetAirborneTicks >= AerialTargetAirborneTicks;
+            // Boomerang follow-up: rolled ONCE per boomerang recovery (this runs every tick), and if it hits, the recovery
+            // hands straight to an uppercut / lunge - without the usual airborne-target wait or the aerial cooldown.
+            if (Phase != AttackPhase.BoomerangRecovery)
+            {
+                _boomerangChainRolled = false;
+                _boomerangChainActive = false;
+            }
+            else if (!_boomerangChainRolled)
+            {
+                _boomerangChainRolled = true;
+                _boomerangChainActive = Main.rand.Next(100) < BoomerangAerialChainChance;
+            }
+
+            bool normalTrigger = _aerialCooldown <= 0 && _targetAirborneTicks >= AerialTargetAirborneTicks;
+            bool canStart = _aerialStage == AerialStage.None && !HoldAttackSelection
+                && NPC.velocity.Y == 0f && (normalTrigger || _boomerangChainActive);
             if (!canStart)
             {
                 return;
             }
 
             float distance = NPC.Distance(target.Center);
-            if (distance > AerialMaxRange)
+            float maxRange = AerialMaxRange;
+            if (_boomerangChainActive)
+            {
+                maxRange = BoomerangChainMaxRange;
+            }
+
+            if (distance > maxRange)
             {
                 return;
             }
@@ -2382,15 +2485,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 || Phase == AttackPhase.JumpSlashRecovery || Phase == AttackPhase.TendrilRecovery || flipStrikeSpent;
             bool neutral = Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll
                 || Phase == AttackPhase.ClosingDistance;
-            bool openerRoll = neutral && Main.rand.Next(100) < AerialOpenerChance;
-            if (!inMeleeRecovery && !openerRoll)
+            bool openerRoll = neutral && normalTrigger && Main.rand.Next(100) < AerialOpenerChance;
+            bool followUp = (inMeleeRecovery && normalTrigger) || _boomerangChainActive;
+            if (!followUp && !openerRoll)
             {
                 return;
             }
 
-            // Alternate the two moves, except the uppercut can't reach a target more than 20 tiles above him.
+            // Alternate the two moves, except the uppercut can't reach a target more than 20 tiles above him. After a
+            // boomerang the target is usually on the ground, where an uppercut (a jump up to meet them) is pointless:
+            // it needs the target at least UppercutMinRise above, else it's the lunge.
             float riseNeeded = NPC.Center.Y - target.Center.Y;
             bool uppercutReachable = riseNeeded <= UppercutMaxRise;
+            if (_boomerangChainActive)
+            {
+                uppercutReachable = uppercutReachable && riseNeeded >= UppercutMinRise;
+            }
+
             bool useLunge = true;
             if (_lastAerialWasLunge && uppercutReachable)
             {
@@ -3295,7 +3406,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int BoomerangSwingTicks => BoomerangSwingCurve.TotalTicks;
         protected override float BoomerangFireProgress =>
             (BoomerangSwingCurve.EaseInTicks - 0.5f) / BoomerangSwingCurve.TotalTicks;
-        protected override int BoomerangRecoveryTicks => 90;
+        // Was 90. Shorter, and half the time it never runs out: see BoomerangAerialChainChance.
+        protected override int BoomerangRecoveryTicks => 50;
 
         protected override void DoBoomerangSwingTick(int elapsed, int total)
         {
@@ -3383,6 +3495,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float SpiralFanMaxRange => 650f;
         protected override int SpiralFanChance => 8;
         protected override int SpiralFanCooldownAfterUse => 360;
+        // Was the base 90: he's back on you sooner, the crescents are still out there doing the work.
+        protected override int SpiralFanRecoveryTicks => 45;
         // Wind-up chop before the burst: -100° -> 70°, in 12 / out 18, k 4.5 -> 21°/t with the softest settle in his
         // kit, easing into the pose the burst holds. Kept at 30t so the burst starts exactly when it always did.
         protected override WeightedSwing SpiralFanSwingCurve => new WeightedSwing(12, 18, 4.5f);

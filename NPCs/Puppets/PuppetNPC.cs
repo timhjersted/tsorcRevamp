@@ -760,6 +760,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// repeat. Capped by <see cref="PierceDashMaxTicks"/>.</summary>
         protected virtual float PierceOvershootPastTarget  => 0f;
         protected virtual int   PierceDashMaxTicks         => 90;
+        /// <summary>When true a whiffed dash always uses its repeats (<see cref="PierceWhiffRepeatCount"/>), however far the
+        /// target has got. Default false: a repeat needs the target within <see cref="PierceRange"/>.</summary>
+        protected virtual bool  PierceRepeatIgnoresRange   => false;
         /// <summary>Ticks over which the dash speed ramps 0 -> full (squared), so a close target gets a readable launch
         /// instead of a 16 px/tick start. 0 = full speed from the first tick (legacy).</summary>
         protected virtual int   PierceDashAccelTicks       => 0;
@@ -2509,6 +2512,21 @@ namespace tsorcRevamp.NPCs.Puppets
         /// is the per-combo effective-weight array (0 = on cooldown / wrong band — don't pick those).</summary>
         protected virtual int ReactiveComboIndex(float dist, ComboRangeBand band, int[] ready) => -1;
 
+        // ── Melee follow-up swings ─────────────────────────────────────────────────
+        // After a melee combo that never connected, the puppet may chain straight into another swing: it sprints in
+        // (ClosingDistance), then starts the named combo through the normal telegraph. Off unless a subclass overrides both.
+        /// <summary>% chance, once a combo has whiffed, to queue another swing. <paramref name="followUpsDone"/> is how
+        /// many follow-ups this chain has already had (0 for the first), so a subclass can taper it. 0 = never.</summary>
+        protected virtual int MeleeFollowUpChancePercent(int followUpsDone) => 0;
+
+        /// <summary>Name of the combo that naturally follows <paramref name="finishedComboName"/> (underhand into overhand
+        /// and back), or null for none. Must name a combo in the puppet's pool.</summary>
+        protected virtual string MeleeFollowUpComboName(string finishedComboName) => null;
+
+        private string _meleeFollowUpComboName;   // queued follow-up, consumed by TryStartMeleeCombo (server-only)
+        private uint _meleeFollowUpExpireTick;    // GameUpdateCount after which a queued follow-up is stale
+        private int _meleeFollowUpsDone;          // follow-ups taken in the current chain; a fresh combo resets it
+
         /// <summary>When true (default), generic melee/spear/combo phases brake the puppet so attacks
         /// read as planted swings. Set false to preserve normal movement velocity throughout melee use.
         /// Explicit attack movement such as lunges, leaps, charges, and forward pushes still applies.</summary>
@@ -2861,8 +2879,17 @@ namespace tsorcRevamp.NPCs.Puppets
             // UpdateAttackCommitFlags) - queuing a new teleport mid-charge freezes the nova's PhaseTimer
             // (TickPuppetTeleport returns early below, skipping PuppetAttackAI) while a teleport telegraph
             // plays on top of it, leaving the player unable to tell which will resolve first.
+            // A puppet that cancels its attack on teleport (Artorias) must not START a teleport inside a Piercing Dash sequence
+            // (flip opener, telegraphs, dashes, hold, flick): the disengage blink fires after 30 ticks without line of sight,
+            // which a 400px overshoot past a corner easily causes, and it cut the sequence off after the first miss.
+            bool inPierceSequence = Phase == AttackPhase.PierceTelegraph || Phase == AttackPhase.PierceDash
+                || Phase == AttackPhase.PierceStabHold || Phase == AttackPhase.PierceStabFlick
+                || (_flipSlashIntoPierce && (Phase == AttackPhase.FlipSlashRise || Phase == AttackPhase.FlipSlashLand));
+            bool pierceSequenceHoldsTeleport = TeleportCancelsAttack && inPierceSequence;
+
             if (Main.netMode != NetmodeID.MultiplayerClient
                 && globalNPC.CanTeleport
+                && !pierceSequenceHoldsTeleport
                 && globalNPC.TeleportCountdown == 0
                 && globalNPC.TeleportAppearanceTimer == 0
                 && globalNPC.TeleportChargesRemaining > 0
@@ -5332,7 +5359,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         // telegraph, which re-faces the target and re-anchors.
                         bool whiffed = !_pierceHitConnected || _pierceContactDodged;
                         bool repeatsLeft = _pierceRepeatsUsed < PierceWhiffRepeatCount;
-                        bool targetInReach = NPC.HasValidTarget && dist <= PierceRange;
+                        bool targetInReach = NPC.HasValidTarget && (PierceRepeatIgnoresRange || dist <= PierceRange);
                         bool canRepeat = whiffed && repeatsLeft && targetInReach;
 
                         if (canRepeat)
@@ -6646,8 +6673,29 @@ namespace tsorcRevamp.NPCs.Puppets
                         {
                             _meleeComboCooldowns[_activeMeleeComboIndex] = _activeMeleeCombo.CooldownAfterUse;
                         }
+                        // A whiffed combo may queue a follow-up swing: ClosingDistance sprints in and TryStartMeleeCombo
+                        // starts the named combo, telegraph and all. Server decision; a client predicts the plain end.
+                        string followUpName = null;
+                        if (!IsMultiplayerClient && !_lastAttackHitConnected && NPC.HasValidTarget
+                            && dist <= ComboMaxStartRange + 80f
+                            && Main.rand.Next(100) < MeleeFollowUpChancePercent(_meleeFollowUpsDone))
+                        {
+                            followUpName = MeleeFollowUpComboName(_activeMeleeCombo.Name);
+                        }
+
                         _activeMeleeComboIndex = -1;
-                        EnterCasualOrIdle();
+
+                        if (followUpName != null)
+                        {
+                            _meleeFollowUpComboName = followUpName;
+                            _meleeFollowUpExpireTick = Main.GameUpdateCount + (uint)ClosingDistanceMaxTicks + 30u;
+                            EnterPhase(AttackPhase.ClosingDistance, ClosingDistanceMaxTicks);
+                            NPC.netUpdate = true;
+                        }
+                        else
+                        {
+                            EnterCasualOrIdle();
+                        }
                     }
                     break;
             }
@@ -6974,7 +7022,39 @@ namespace tsorcRevamp.NPCs.Puppets
 
             // Reactive first: let a boss pick from the player's live state (dodgeroll direction,
             // launched, flanking).  Only honoured if it names a ready combo; else weighted roll.
-            int chosen = ReactiveComboIndex(dist, band, effective);
+            // A queued follow-up swing (see MeleeFollowUpComboName) is picked by name, ahead of the reactive hook and the
+            // weighted roll, while its window is open and the combo is ready.
+            int chosen = -1;
+            bool followUpWindowOpen = _meleeFollowUpComboName != null && Main.GameUpdateCount <= _meleeFollowUpExpireTick;
+            if (followUpWindowOpen)
+            {
+                for (int i = 0; i < _meleeComboPool.Length; i++)
+                {
+                    if (_meleeComboPool[i].Name == _meleeFollowUpComboName && effective[i] > 0)
+                    {
+                        chosen = i;
+                        break;
+                    }
+                }
+            }
+
+            bool pickedFollowUp = chosen >= 0;
+            if (!pickedFollowUp)
+            {
+                chosen = ReactiveComboIndex(dist, band, effective);
+            }
+
+            if (pickedFollowUp)
+            {
+                _meleeFollowUpsDone++;
+            }
+            else
+            {
+                _meleeFollowUpsDone = 0;
+            }
+
+            _meleeFollowUpComboName = null;
+
             if (chosen < 0 || chosen >= _meleeComboPool.Length || effective[chosen] <= 0)
             {
                 int roll = Main.rand.Next(total);
