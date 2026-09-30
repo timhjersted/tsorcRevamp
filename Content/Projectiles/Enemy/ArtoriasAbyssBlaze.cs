@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -72,6 +73,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override void AI()
         {
             _elapsed++;
+
+            // Fire-rush cue once per pair: the walls always spawn as a left/right pair from the same point, so only
+            // the right-moving one plays it. _elapsed is per-machine, so every client hears it on its first tick.
+            if (_elapsed == 1 && Projectile.velocity.X > 0f && !Main.dedServ)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/Artorias/Artorias_BlazeWall") with { Volume = 0.7f },
+                    Projectile.Center);
+            }
+
             float growT = MathHelper.Clamp(_elapsed / (float)GrowTicks, 0f, 1f);
 
             int newHeight = (int)MathHelper.Lerp(StartHeight, FinalHeight, growT);

@@ -68,7 +68,7 @@ public class Shunpo : ModPlayer
                 Player.AddBuff(ModContent.BuffType<ShunpoBlink>(), (int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
                 Player.immune = true;
                 Player.SetImmuneTimeForAllTypes((int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
-                Player.AddBuff(ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoBlink.Cooldown );
+                Player.AddBuff(ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoBlink.Cooldown * 60);
                 if (Main.rand.NextBool(2))
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo1") with { Volume = 1f });

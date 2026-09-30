@@ -151,6 +151,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
+            // Grab-latch cue on the first yank tick. Lives here, not in AttachToPlayer, because attaching is server-only while
+            // every machine runs YankAI, and the attach packet carries yankTimer = 0.
+            if (yankTimer == 0 && !Main.dedServ)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/tongue-lash") with { Volume = 0.7f },
+                    player.Center);
+            }
+
             // No rolling out of the grab: the whip-back and flick must play out. noDodge is consumed on the grabbed
             // player's next roll check (their own client, which runs this AI too once the grab syncs) and also cancels
             // a roll already in progress, so a roll started just before or during the grab can't carry them free.
@@ -181,7 +189,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             {
                 if (!Main.dedServ)
                 {
-                    SoundEngine.PlaySound(SoundID.Item153 with { Volume = 0.72f, Pitch = -0.18f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/player-flick") with { Volume = 0.7f },
+                        player.Center);
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -304,7 +313,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.hostile = false; // stop re-damaging while the yank is in progress
             yankTimer = 0;
             Projectile.netUpdate = true;
-            SoundEngine.PlaySound(SoundID.NPCHit13 with { Volume = 0.5f, Pitch = -0.3f }, Projectile.Center);
         }
 
         public override void SendExtraAI(BinaryWriter writer)

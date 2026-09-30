@@ -1668,7 +1668,10 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             {
                 _swallowOpened = true;
                 UsefulFunctions.ScreenShake(NPC.Center, 8f, 24);
-                SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 1f, Pitch = -0.8f }, NPC.Center);
+                // 5.0s inhale sized to this timeline: 2s lazy pull, 2s ramp to capture (t240), 1s glide, then a hard stop
+                // at SwallowSuckDone (t300) where the gulp lands. It carries the capture beat, so capture plays nothing.
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/VesselOfSouls/Vessel_SwallowInhale") with { Volume = 0.8f },
+                    NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), Mouth(), Vector2.Zero,
                         ModContent.ProjectileType<VesselGravityWell>(), 0, 0f, Main.myPlayer,
@@ -1701,10 +1704,6 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 {
                     _swallowReturnPos = local.Center;
                     _swallowSuckStart = local.Center;
-                }
-                if (!Main.dedServ)
-                {
-                    SoundEngine.PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
                 }
             }
 
@@ -1749,6 +1748,9 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Mouth(), Vector2.Zero,
                         ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.MediumPurple));
                     UsefulFunctions.ScreenShake(NPC.Center, 6f, 16);
+                    // Jaws clamp + wet gulp + muffled implosion, landing with the flash as the inhale cuts off.
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/VesselOfSouls/Vessel_SwallowGulp") with { Volume = 0.9f },
+                        NPC.Center);
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

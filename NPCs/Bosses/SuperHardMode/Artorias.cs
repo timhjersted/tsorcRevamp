@@ -738,6 +738,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // readable two-stage warning instead of silently shrinking the safe area under them.
         enum RingCollapseState { Inactive, Telegraph, Contracting, Holding, Expanding }
         RingCollapseState _ringCollapseState = RingCollapseState.Inactive;
+        // Last state this machine played a cue for. Local and unsynced on purpose: cues fire on the state change each
+        // machine sees, whether it ran the transition itself or received it in ReceiveExtraAI.
+        RingCollapseState _ringCollapseCueState = RingCollapseState.Inactive;
         int _ringCollapseTimer;
         float _ringCollapseFrom;
         float _ringCollapseTo;
@@ -1233,11 +1236,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float AbyssSurgeTendrilSpeed = 11f;
         bool _abyssSurgeDone50;
         int _abyssSurgeTimer;
+        bool _abyssSurgeWasActive; // local, unsynced: last tick's AbyssSurgeActive, for the one-shot surge cue
         public bool AbyssSurgeActive => _abyssSurgeTimer == PersistentAbyssSurge;
 
         void TickAbyssSurges()
         {
-            if (AbyssSurgeActive)
+            // Tendril-flail cue for the 50% surge's tendril burst. StartAbyssSurge runs on the server only, so every machine
+            // plays it on the tick it first sees the synced timer flip to active.
+            bool surgeActive = AbyssSurgeActive;
+            if (surgeActive && !_abyssSurgeWasActive && !Main.dedServ)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/Artorias/Artorias_TendrilFlail") with { Volume = 0.7f },
+                    NPC.Center);
+            }
+            _abyssSurgeWasActive = surgeActive;
+
+            if (surgeActive)
             {
                 // Once a second is enough: the debuff lasts 2s, so it never lapses, and it still expires within 2s
                 // of the surge ending (kill, despawn, wipe) with no explicit clear. Re-applying every tick sent a
@@ -1444,6 +1458,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // ── Ring Collapse state machine ─────────────────────────────────────────────
         void TickRingCollapse()
         {
+            // Collapse sound covers the 30t telegraph + 120t contraction (2.5s, thud as it stops); expand covers the 120t release.
+            // Non-positional: the wall surrounds the player, and at 800px from the centre a positional cue would fade out.
+            bool ringStateChanged = _ringCollapseState != _ringCollapseCueState;
+            if (ringStateChanged && !Main.dedServ)
+            {
+                if (_ringCollapseState == RingCollapseState.Telegraph)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/Artorias/Artorias_RingCollapse") with { Volume = 0.7f });
+                }
+                else if (_ringCollapseState == RingCollapseState.Expanding)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/Artorias/Artorias_RingExpand") with { Volume = 0.7f });
+                }
+            }
+            _ringCollapseCueState = _ringCollapseState;
+
             float hpFrac = (float)NPC.life / NPC.lifeMax;
 
             if (_ringCollapseState == RingCollapseState.Inactive)
@@ -1575,6 +1605,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoPierceDashTick()
         {
+            // Lunge cue on the dash's first tick: thorn counter for the red-sword stab, hornet dash for the plain one. The hook
+            // runs before PhaseTimer counts down, and a client adopting PierceDash gets the full timer and the synced
+            // _pierceIsStab, so it fires once everywhere with the right variant.
+            if (PhaseTimer == PierceDashTicks && !Main.dedServ)
+            {
+                string dashSoundPath = "tsorcRevamp/Sounds/HollowKnight/hornet_dash";
+                if (IsPierceStab)
+                {
+                    dashSoundPath = "tsorcRevamp/Sounds/HollowKnight/hero_thorn_counter";
+                }
+
+                SoundEngine.PlaySound(new SoundStyle(dashSoundPath) with { Volume = 0.7f }, NPC.Center);
+            }
+
             if (Main.dedServ || !Main.rand.NextBool(3))
             {
                 return;
@@ -1587,6 +1631,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void OnPierceContact(Player target, bool isStab)
         {
+            // Impale cue, ahead of the client return below: PuppetNPC replays this hook on clients that adopt PierceStabHold.
+            if (isStab && !Main.dedServ)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/flesh-stab") with { Volume = 0.7f },
+                    target.Center);
+            }
+
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
@@ -1658,6 +1709,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             var modPlayer = target.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.ImpaleFreezeTimer = 0;
+
+            if (!Main.dedServ)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/player-flick") with { Volume = 0.7f },
+                    target.Center);
+            }
 
             // The flick's own hit - separate from the initial stab (PierceStabDamage) that landed back
             // at OnPierceContact. Server/singleplayer only, matching that hit's netMode gate.
@@ -1973,6 +2030,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.dedServ)
             {
                 return;
+            }
+
+            // Wind-up cue: the 0.4s peak of TendrilFlail, cut to the 24-tick telegraph so it ends as the tendril launches.
+            if (elapsed == 0)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/Artorias/Artorias_TendrilFlail_Windup") with { Volume = 0.7f },
+                    NPC.Center);
             }
 
             // The shader supplies the mass; these few particles provide physical edge breakup.
@@ -2792,7 +2856,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoNovaChargeTick(int elapsed, int total)
         {
-            if (Main.dedServ || _novaStageIndex < 0)
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            // Wraith build-up, 4.0s to match NovaChargeTicks; it hard-stops where the blast sound takes over. Played ahead
+            // of the _novaStageIndex check because that index is picked on the server and never synced to clients.
+            if (elapsed == 0)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/Artorias/Artorias_NovaCharge") with { Volume = 0.7f },
+                    NPC.Center);
+            }
+
+            if (_novaStageIndex < 0)
             {
                 return;
             }
@@ -2837,6 +2914,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoNovaBlast()
         {
+            // Wraith release. Ahead of the _novaStageIndex check for the same reason as the charge cue: clients never
+            // receive the index. Its six baked-in pulses line up with ArtoriasChargeNova's 9-tick burst train.
+            if (!Main.dedServ)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/Artorias/Artorias_NovaBlast_release") with { Volume = 0.7f },
+                    NPC.Center);
+            }
+
             if (_novaStageIndex < 0)
             {
                 return;
@@ -2849,7 +2934,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Filters.Scene[NovaDistortionFilter].Deactivate();
             }
 
-            SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1f, Pitch = -0.3f }, NPC.Center);
             UsefulFunctions.ScreenShake(NPC.Center, strength: 10f, frames: 20);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)

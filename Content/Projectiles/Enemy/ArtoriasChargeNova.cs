@@ -62,7 +62,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             bool burstStartsNow = age > 0 && age % BurstIntervalTicks == 0 && age / BurstIntervalTicks < BurstCount;
             if (burstStartsNow)
             {
-                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.55f, Pitch = -0.45f }, Projectile.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/Artorias/Artorias_NovaBlast_pulse") with { Volume = 0.7f },
+                    Projectile.Center);
             }
 
             if (Projectile.timeLeft % 2 == 0)
