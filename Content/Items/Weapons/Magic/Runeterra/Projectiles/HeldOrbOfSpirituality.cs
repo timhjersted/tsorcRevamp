@@ -6,7 +6,6 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Sounds.OrbOfSpirituality;
-using tsorcRevamp.Content.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
 {

@@ -62,7 +62,6 @@ using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.Magic;
-using tsorcRevamp.Content.Projectiles.Magic.Runeterra.LudensTempest;
 using tsorcRevamp.Content.Projectiles.Melee;
 using tsorcRevamp.Content.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Content.Projectiles.Pets;

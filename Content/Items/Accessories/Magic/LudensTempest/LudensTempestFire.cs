@@ -4,15 +4,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Accessories.Magic.LudensTempest;
 
-namespace tsorcRevamp.Content.Projectiles.Magic.Runeterra.LudensTempest
+namespace tsorcRevamp.Content.Items.Accessories.Magic.LudensTempest
 {
     class LudensTempestFire : Projectiles.VFX.DynamicTrail
     {
-        internal const string AssetPath = "tsorcRevamp/Content/Items/Accessories/Magic/LudensTempest/LudensTempestFire";
-        public override string Texture => AssetPath;
-
         public override void SetDefaults()
         {
             Projectile.width = 12;
@@ -74,7 +70,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Runeterra.LudensTempest
             }
             Projectile.timeLeft = 0;
 
-            SoundEngine.PlaySound(new SoundStyle(AssetPath + "_Boom") with { Volume = 0.25f }, Projectile.Center);
+            SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(LudensTempestFire)) + "_Boom") with { Volume = 0.25f }, Projectile.Center);
 
             float len = 4f;
             int flam = ModContent.ProjectileType<LudensTempestFirelet>();

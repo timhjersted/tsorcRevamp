@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Terraria.ID;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Sounds.OrbOfDeception;
-using tsorcRevamp.Content.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles
 {
