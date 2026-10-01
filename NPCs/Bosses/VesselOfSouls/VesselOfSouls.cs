@@ -78,12 +78,11 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         const int DeathDurationTicks = 420;  // ~7s survive-only spectacle
 
         // ── Raw projectile spawn damage (about 2x per hit in Normal, 4x in Expert) ──
-        int SkullDamage => ScaleDamage(12);
-        int ConeDamage => ScaleDamage(14);
-        int BreathDamage => ScaleDamage(15);
-        int NovaDamage => ScaleDamage(16);
-        int PlungeDamage => ScaleDamage(14);
-        int ScaleDamage(int baseDamage) => SHM ? (int)(baseDamage * 1.3f * tsorcRevampWorld.SHMScale) : baseDamage;
+        const int SkullDamage = 12;
+        const int ConeDamage = 14;
+        const int BreathDamage = 15;
+        const int NovaDamage = 16;
+        const int PlungeDamage = 14;
 
         // ── State ──
         VesselState State = VesselState.Idle;
@@ -109,7 +108,6 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         int FrameIndex;
 
         bool Phase2;
-        bool SHM;
         bool statsInitialized;
         int _contactDamage = 24;    // captured base contact; zeroed during transition/death
 
@@ -218,7 +216,7 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             NPC.height = 300;
             NPC.damage = 24;
             NPC.defense = 12;
-            NPC.lifeMax = 3000;
+            NPC.lifeMax = 6000;
             NPC.value = 40000f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -272,7 +270,6 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             writer.Write(DriftAnchor.Y);
             writer.Write(MouthOpen);
             writer.Write(Phase2);
-            writer.Write(SHM);
             writer.Write(_hideBody);
             writer.Write(ArenaCenter.X);
             writer.Write(ArenaCenter.Y);
@@ -296,7 +293,6 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             DriftAnchor.Y = reader.ReadSingle();
             MouthOpen = reader.ReadBoolean();
             Phase2 = reader.ReadBoolean();
-            SHM = reader.ReadBoolean();
             _hideBody = reader.ReadBoolean();
             ArenaCenter.X = reader.ReadSingle();
             ArenaCenter.Y = reader.ReadSingle();
@@ -961,16 +957,6 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             }
             statsInitialized = true;
             _contactDamage = NPC.damage;
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                SHM = true;
-                NPC.lifeMax = 6000;
-                NPC.life = NPC.lifeMax;
-                NPC.damage = 44;
-                _contactDamage = 44;
-                NPC.defense = 20;
-                NPC.netUpdate = true;
-            }
         }
 
         #region Idle — movement + mood + attack picking

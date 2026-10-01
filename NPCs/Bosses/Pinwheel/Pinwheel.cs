@@ -18,6 +18,7 @@ using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Systems;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Utilities;
 
@@ -168,7 +169,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 {
                     if (isClone) //Clones losing lanterns
                     {
-                        if (Main.npc[mainBossIndex].life < (int)(4100 * HealthScale) && Phase == 1)
+                        if (Main.npc[mainBossIndex].life < (int)(4100 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 1)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
@@ -186,7 +187,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++; //Use this rather than NextPhase() because I don-t want to set MoveTimer back to 0
                         }
-                        if (Main.npc[mainBossIndex].life < (int)(3700 * HealthScale) && Phase == 2)
+                        if (Main.npc[mainBossIndex].life < (int)(3700 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 2)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
@@ -204,7 +205,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (Main.npc[mainBossIndex].life < (int)(3300 * HealthScale) && Phase == 3)
+                        if (Main.npc[mainBossIndex].life < (int)(3300 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 3)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
@@ -222,7 +223,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (Main.npc[mainBossIndex].life < (int)(2900 * HealthScale) && Phase == 4)
+                        if (Main.npc[mainBossIndex].life < (int)(2900 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 4)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
@@ -241,7 +242,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (Main.npc[mainBossIndex].life < (int)(2500 * HealthScale) && Phase == 5 && NPC.life > 1)
+                        if (Main.npc[mainBossIndex].life < (int)(2500 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 5 && NPC.life > 1)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
@@ -269,7 +270,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                     else //Main boss losing lanterns
                     {
-                        if (NPC.life < (int)(4100 * HealthScale) && Phase == 1)
+                        if (NPC.life < (int)(4100 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 1)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
@@ -287,7 +288,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (NPC.life < (int)(3700 * HealthScale) && Phase == 2)
+                        if (NPC.life < (int)(3700 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 2)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
@@ -305,7 +306,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (NPC.life < (int)(3300 * HealthScale) && Phase == 3)
+                        if (NPC.life < (int)(3300 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 3)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
@@ -323,7 +324,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (NPC.life < (int)(2900 * HealthScale) && Phase == 4)
+                        if (NPC.life < (int)(2900 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 4)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
@@ -342,7 +343,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (NPC.life < (int)(2500 * HealthScale) && Phase == 5)
+                        if (NPC.life < (int)(2500 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 5)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
@@ -1165,7 +1166,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                 if (phaseTransitionTimeRemaining < phaseTransitionDuration - 300 && phaseTransitionTimeRemaining > phaseTransitionDuration - 1000)
                 {
-                    NPC.lifeMax = (int)(5000 * HealthScale);
+                    NPC.lifeMax = (int)(5000 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2));
 
                     if (NPC.life < NPC.lifeMax)
                     {
@@ -1173,7 +1174,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     }
                     if (NPC.life > NPC.lifeMax)
                     {
-                        NPC.life = (int)(5000 * HealthScale);
+                        NPC.life = (int)(5000 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2));
                     }
                 }
 
@@ -2619,7 +2620,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            /*if (NPC.lifeMax == (int)(5000 * HealthScale)) 
+            /*if (NPC.lifeMax == (int)(5000 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2))) 
             {
                 npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.PinwheelBag>())); //Bag is dropped as an item at the end of death anim instead, because checking for anything else seems to fail
             }*/

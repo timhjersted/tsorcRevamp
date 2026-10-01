@@ -22,6 +22,7 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Marilith;
 using tsorcRevamp.Content.Projectiles.Enemy.WyvernMage;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.NPCs.VanillaChanges;
 
@@ -374,7 +375,10 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
             if (TeleportTimer == 10) //If the boss just teleported
             {
-                if (NPC.life <= 12000 && lifeTimer < 1 || NPC.life <= 7000 && lifeTimer < 2)
+                // Archdeacon waves at 12000 and 7000 life (of the original 20000), scaled with the New Enemy Balance multiplier.
+                int firstArchdeaconLife = EnemyBalance.ScaleLife(NPC.type, 12000);
+                int secondArchdeaconLife = EnemyBalance.ScaleLife(NPC.type, 7000);
+                if (NPC.life <= firstArchdeaconLife && lifeTimer < 1 || NPC.life <= secondArchdeaconLife && lifeTimer < 2)
                 {
                     UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMage.Archdeacons"), 175, 75, 255);
 

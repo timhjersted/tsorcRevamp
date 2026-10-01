@@ -38,6 +38,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.aiStyle = -1;
             NPC.timeLeft = 22750;
             NPC.damage = 45;
+            NPC.defense = 20;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");

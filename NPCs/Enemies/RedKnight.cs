@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = 75;
             NPC.defense = 41;
             NPC.scale = 1.1f;
-            NPC.lifeMax = 2500;
+            NPC.lifeMax = 3000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 20000; // life / 1.25 in HM

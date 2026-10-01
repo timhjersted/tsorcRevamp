@@ -13536,13 +13536,23 @@ Mods: {
 						'''
 				}
 
+				NewEnemyBalance: {
+					Label: New Enemy Balance
+					Tooltip:
+						'''
+						Retunes boss health for the 1.0 update and balance overhaul. The numbers are set for Expert; Master, Super Hardmode and
+						multiplayer scaling still stack on top. Created as a toggle for A/B comparisons.
+						Turn off to keep the original health values. Defaults to On.
+						'''
+				}
+
 				NewSoulsModeStaminaSystem: {
 					Label: Experimental Stamina Values
 					Tooltip:
 						'''
 						Replaces the standard Souls Mode stamina numbers with a more demanding experimental set.
-						Unkindled pays 1x weapon stamina cost and regenerates at 1.5x. Bearer of the Curse pays 1.5x and regenerates at 3x.
-						By default (off) Unkindled pays 0.85x and regenerates at 1.25x, while Bearer of the Curse pays 1.15x and regenerates at 2x. Defaults to Off.
+						Unkindled pays 1x weapon stamina cost and regenerates at 2.15x. Bearer of the Curse pays 1.5x and regenerates at 2.8x.
+						By default (off) Unkindled pays 0.85x and regenerates at 1.85x, while Bearer of the Curse pays 1.15x and regenerates at 2.3x. Defaults to Off.
 						'''
 				}
 

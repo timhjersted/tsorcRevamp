@@ -22,6 +22,7 @@ using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -1811,7 +1812,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (phaseChangeCounter == 240)
             {
                 NPC.velocity = Vector2.Zero;
-                NPC.lifeMax = 700000 * Main.CurrentFrameFlags.ActivePlayersCount;
+                // Second life bar: 700000 per player, scaled by the New Enemy Balance phase multiplier (1 unless retuned).
+                int phaseTwoLifePerPlayer = (int)(700000 * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2));
+                NPC.lifeMax = phaseTwoLifePerPlayer * Main.CurrentFrameFlags.ActivePlayersCount;
                 NPC.life = NPC.lifeMax;
                 changingPhases = false;
                 NPC.dontTakeDamage = false;

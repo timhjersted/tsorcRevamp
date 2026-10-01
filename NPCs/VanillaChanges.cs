@@ -30,6 +30,7 @@ using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs
@@ -2042,7 +2043,9 @@ namespace tsorcRevamp.NPCs
                         }
                         if (Main.player[Main.myPlayer].ZoneJungle)
                         {
-                            if (Main.expertMode)
+                            // Skipped under New Enemy Balance: the registry already targets 4000 Expert HP everywhere,
+                            // and this jungle value would be multiplied again on top of it.
+                            if (Main.expertMode && !EnemyBalance.Enabled)
                             {
                                 npc.lifeMax = 3077; // Which is actually 4k hp in expert mode
                                 //npc.lifeMax = 5000; 
@@ -3663,11 +3666,14 @@ namespace tsorcRevamp.NPCs
                         npc.life = npc.lifeMax; 
                         npc.defense = (int)(npc.defense * 1.3);
                         npc.knockBackResist *= 0.8f;
-                        globalNPC.lifeBoosted = true; 
+                        globalNPC.lifeBoosted = true;
                         npc.lavaImmune = true;
                     }
                 }
             }
+
+            // Last, so the registry multiplier lands on top of the absolute lifeMax values assigned in the switch above.
+            EnemyBalance.ApplyLifeMultiplier(npc);
         }
 
 

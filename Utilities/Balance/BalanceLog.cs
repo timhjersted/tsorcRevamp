@@ -44,7 +44,7 @@ namespace tsorcRevamp.Utilities.Balance
         /// total (class + generic) damage; the old class-only figure is classOnlyNormalizedDps.
         /// 4 = Mana Burn uptime and damage, per-second stamina, Cerulean drinks counted at drink completion with mana
         /// restored, and max mana at the end of the fight.</summary>
-        internal const int LoggerRevision = 4;
+        internal const int LoggerRevision = 5;
 
         private const int SampleIntervalTicks = 60;
         private const int MaxEncounterTicks = 60 * 60 * 30;   // 30 minutes, runaway guard
@@ -84,6 +84,12 @@ namespace tsorcRevamp.Utilities.Balance
         private static int _damageThisSecond;
         private static long _lastBossLifeSum;
         private static long _lowestBossLifeSum;
+
+        // lifeMax each boss head was last seen with, to catch a boss that raises its own max mid-fight (Pinwheel 2k -> 5k).
+        private static readonly Dictionary<int, int> ParticipantLifeMax = new();
+
+        // True from a lifeMax increase until the boss has healed back to full, so the heal-up is not read as damage.
+        private static bool _awaitingFullHeal;
 
         private static readonly List<HitTaken> HitsTaken = new();
         private static readonly Dictionary<string, DamageSourceUsage> DamageSources = new();
@@ -226,6 +232,7 @@ namespace tsorcRevamp.Utilities.Balance
                 if (npc.realLife < 0 || npc.realLife == npc.whoAmI)
                 {
                     _current.bossMaxLifeTotal += npc.lifeMax;
+                    ParticipantLifeMax[npc.whoAmI] = npc.lifeMax;
                 }
             }
 
@@ -570,6 +577,7 @@ namespace tsorcRevamp.Utilities.Balance
             // Every living participant's life, summed. A linked segment mirrors its head's life, so it is skipped.
             int aliveCount = 0;
             long lifeSum = 0;
+            long maxLifeSum = 0;
 
             foreach (KeyValuePair<int, int> pair in Participants)
             {
@@ -585,11 +593,37 @@ namespace tsorcRevamp.Utilities.Balance
                 if (participant.realLife < 0 || participant.realLife == participant.whoAmI)
                 {
                     lifeSum += Math.Max(0, participant.life);
+                    maxLifeSum += participant.lifeMax;
+
+                    // A boss that raises its own lifeMax starts a fresh life bar: add it to the fight total and
+                    // hold the lowest-life tracking until the heal-up finishes.
+                    ParticipantLifeMax.TryGetValue(participant.whoAmI, out int knownLifeMax);
+                    if (knownLifeMax > 0 && participant.lifeMax > knownLifeMax)
+                    {
+                        ParticipantLifeMax[participant.whoAmI] = participant.lifeMax;
+                        _current.bossMaxLifeTotal += participant.lifeMax;
+                        _current.lifeBars.Add(participant.lifeMax);
+                        _awaitingFullHeal = true;
+                    }
                 }
             }
 
             _lastBossLifeSum = lifeSum;
-            _lowestBossLifeSum = Math.Min(_lowestBossLifeSum, lifeSum);
+
+            if (_awaitingFullHeal)
+            {
+                _lowestBossLifeSum = long.MaxValue;
+
+                if (lifeSum >= maxLifeSum)
+                {
+                    _awaitingFullHeal = false;
+                    _lowestBossLifeSum = lifeSum;
+                }
+            }
+            else
+            {
+                _lowestBossLifeSum = Math.Min(_lowestBossLifeSum, lifeSum);
+            }
 
             if (Main.GameUpdateCount >= (uint)_nextSampleTick)
             {
@@ -657,10 +691,12 @@ namespace tsorcRevamp.Utilities.Balance
             _damageThisSecond = 0;
             _lastBossLifeSum = boss.life;
             _lowestBossLifeSum = boss.life;
+            _awaitingFullHeal = false;
 
             Weapons.Clear();
             NpcDamageByType.Clear();
             Participants.Clear();
+            ParticipantLifeMax.Clear();
             HitsTaken.Clear();
             DamageSources.Clear();
             HealingSources.Clear();
@@ -707,6 +743,7 @@ namespace tsorcRevamp.Utilities.Balance
                 shmScale = tsorcRevampWorld.SHMScale,
                 subtleShmScale = tsorcRevampWorld.SubtleSHMScale,
                 gameModeLifeMult = Main.GameModeInfo.EnemyMaxLifeMultiplier,
+                newEnemyBalance = EnemyBalance.Enabled,
                 enemyDamageMult = Main.GameModeInfo.EnemyDamageMultiplier,
                 downedBossCount = downedBossTypes.Count,
                 downedBossTypes = downedBossTypes,
@@ -714,6 +751,7 @@ namespace tsorcRevamp.Utilities.Balance
                 boss = boss.ModNPC?.Name ?? boss.TypeName,
                 bossMod = boss.ModNPC?.Mod?.Name ?? "Terraria",
                 bossMaxLife = boss.lifeMax,
+                lifeBars = new List<int> { boss.lifeMax },
                 bossDefense = boss.defense,
                 baseLifeMax = baseLifeMax,
                 lifeMaxMultVsBase = lifeMaxMultVsBase,
@@ -856,7 +894,10 @@ namespace tsorcRevamp.Utilities.Balance
                 // Boss life left, as a fraction of everything that joined the fight.
                 float totalLife = Math.Max(1L, encounter.bossMaxLifeTotal);
                 encounter.bossLifeFractionAtEnd = _lastBossLifeSum / totalLife;
-                encounter.lowestBossLifeFraction = _lowestBossLifeSum / totalLife;
+
+                // Still MaxValue means the fight ended mid heal-up, so the current life is the lowest that counts.
+                long lowestLifeSum = Math.Min(_lowestBossLifeSum, _lastBossLifeSum);
+                encounter.lowestBossLifeFraction = lowestLifeSum / totalLife;
                 if (finalOutcome == "kill")
                 {
                     encounter.bossLifeFractionAtEnd = 0f;
@@ -1022,6 +1063,7 @@ namespace tsorcRevamp.Utilities.Balance
                 Weapons.Clear();
                 NpcDamageByType.Clear();
                 Participants.Clear();
+                ParticipantLifeMax.Clear();
                 HitsTaken.Clear();
                 DamageSources.Clear();
                 HealingSources.Clear();

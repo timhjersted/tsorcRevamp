@@ -17,6 +17,7 @@ using tsorcRevamp.Content.Items.Placeable.Trophies;
 using tsorcRevamp.Content.Items.Vanity;
 using tsorcRevamp.Content.Projectiles.Enemy.Prime;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
@@ -346,10 +347,14 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 return;
             }
 
+            // The core's own life pool (the arms add theirs on top). New Enemy Balance scales it like the arms, which
+            // are registered with the same multiplier; 1 when the toggle is off.
+            int coreLife = (int)(35000 * HealthScale * EnemyBalance.LifeMultiplier(NPC.type));
+
             if (AllPartsValid() && !finalStand)
             {
-                NPC.lifeMax = (int)(35000 * HealthScale) + BeamNPC.lifeMax + IonNPC.lifeMax + BuzzsawNPC.lifeMax + GatlingNPC.lifeMax + LauncherNPC.lifeMax + SeverNPC.lifeMax;
-                NPC.life = (int)(35000 * HealthScale) + BeamNPC.life + IonNPC.life + BuzzsawNPC.life + GatlingNPC.life + LauncherNPC.life + SeverNPC.life;
+                NPC.lifeMax = coreLife + BeamNPC.lifeMax + IonNPC.lifeMax + BuzzsawNPC.lifeMax + GatlingNPC.lifeMax + LauncherNPC.lifeMax + SeverNPC.lifeMax;
+                NPC.life = coreLife + BeamNPC.life + IonNPC.life + BuzzsawNPC.life + GatlingNPC.life + LauncherNPC.life + SeverNPC.life;
             }
 
             if (Phase == 0 && NPC.life < NPC.lifeMax / 1.8f)
@@ -357,7 +362,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 NextPhase();
             }
 
-            if (NPC.life <= (int)(35006 * HealthScale) && !finalStand)
+            // Final stand starts once the arms are gone and only the core's pool (plus 6 life of slack) is left.
+            if (NPC.life <= coreLife + 6 && !finalStand)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -838,7 +844,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 timeFactor = 1;
                 scaleFactor = 3;
                 effectIntensity = 1.0f;
-                if (npc.life <= (int)(35006 * (Main.masterMode ? 1.5f : 1)))
+                if (npc.life <= (int)(35006 * (Main.masterMode ? 1.5f : 1) * EnemyBalance.LifeMultiplier(npc.type)))
                 {
                     rgbColor = Color.OrangeRed;
                 }

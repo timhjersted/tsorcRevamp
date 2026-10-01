@@ -321,6 +321,9 @@ namespace tsorcRevamp.Utilities.Balance
         public float gameModeLifeMult;
         public float enemyDamageMult;
 
+        /// <summary>The New Enemy Balance health retune was on for this fight. Records with it off or absent use the original boss health.</summary>
+        public bool newEnemyBalance;
+
         /// <summary>Boss and difficulty progress at the start, so a DPS jump can be tied to how far along the
         /// player was. <see cref="downedBossTypes"/> is the mod's own NewSlain key list.</summary>
         public int downedBossCount;
@@ -331,6 +334,11 @@ namespace tsorcRevamp.Utilities.Balance
         public string boss;
         public string bossMod;
         public int bossMaxLife;
+
+        /// <summary>The anchor's lifeMax at fight start, then one entry each time a boss head raises its own
+        /// lifeMax mid-fight (Pinwheel: 2000, then 5000). More than one entry means a multi-bar fight whose
+        /// bossMaxLifeTotal is the sum of the bars.</summary>
+        public List<int> lifeBars = new();
         public int bossDefense;
 
         /// <summary>The anchor's lifeMax in ContentSamples (before difficulty / SHM / world scaling) and the
