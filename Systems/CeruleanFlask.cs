@@ -10,6 +10,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Utilities.Balance;
 
 namespace tsorcRevamp.Systems
 {
@@ -204,7 +205,11 @@ namespace tsorcRevamp.Systems
                 IsDrinking = false; //No longer drinking
                 CeruleanChargesCurrent--; //Remove a charge
                 CeruleanDrinkTimer = 0; //Set the timer back to 0
-                Player.ManaEffect((int)(((CeruleanManaGain * arcaneSorceryPlayer.CeruleanFlatManaGainMult) + CeruleanManaGainMaxManaBonus) * CeruleanManaGainManaRegenBonus * CeruleanRestorationTimerBonus)); //Show blue restoration text equal to mana gain
+                int ceruleanManaGain = (int)(((CeruleanManaGain * arcaneSorceryPlayer.CeruleanFlatManaGainMult) + CeruleanManaGainMaxManaBonus) * CeruleanManaGainManaRegenBonus * CeruleanRestorationTimerBonus);
+                Player.ManaEffect(ceruleanManaGain); //Show blue restoration text equal to mana gain
+
+                // Balance log: counts the drink and the mana it restored against the current boss fight.
+                BalanceLog.RecordCeruleanDrink(ceruleanManaGain);
                 IsCeruleanRestoring = true; //Commence restoration process
             }
         }

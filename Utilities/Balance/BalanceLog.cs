@@ -12,6 +12,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Default;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.ArcaneSorcery;
 
 namespace tsorcRevamp.Utilities.Balance
 {
@@ -40,8 +41,10 @@ namespace tsorcRevamp.Utilities.Balance
         /// <summary>Bump when a field's meaning changes, so analysis can split data taken before and after.
         /// 2 = group encounters (boss bag / participant kill detection), per-attempt and engagement fields.
         /// 3 = per-projectile damage split, automatic loadout description, and bench normalizedDps now divides by
-        /// total (class + generic) damage; the old class-only figure is classOnlyNormalizedDps.</summary>
-        internal const int LoggerRevision = 3;
+        /// total (class + generic) damage; the old class-only figure is classOnlyNormalizedDps.
+        /// 4 = Mana Burn uptime and damage, per-second stamina, Cerulean drinks counted at drink completion with mana
+        /// restored, and max mana at the end of the fight.</summary>
+        internal const int LoggerRevision = 4;
 
         private const int SampleIntervalTicks = 60;
         private const int MaxEncounterTicks = 60 * 60 * 30;   // 30 minutes, runaway guard
@@ -98,7 +101,12 @@ namespace tsorcRevamp.Utilities.Balance
         private static long _nextSampleTick;
         private static bool _lastPlayerDead;
         private static string _startGearFingerprint;
-        private static int _lastCeruleanCharges = -1;
+        private static bool _lastManaBurnActive;
+        private static int _manaBurnTicks;
+        private static int _manaBurnActivations;
+        private static long _damageDuringManaBurn;
+        private static int _ceruleanDrinks;
+        private static long _ceruleanManaRestored;
         private static readonly HashSet<int> LiveProjectileItems = new();
 
         private static string _contentFingerprint;
@@ -243,6 +251,12 @@ namespace tsorcRevamp.Utilities.Balance
                 if (isBossPart)
                 {
                     weapon.damageToBoss += damageDone;
+
+                    if (player.HasBuff(ModContent.BuffType<ManaBurn>()))
+                    {
+                        weapon.damageWhileManaBurn += damageDone;
+                    }
+
                     weapon.hitsOnBoss++;
 
                     if (crit)
@@ -291,6 +305,12 @@ namespace tsorcRevamp.Utilities.Balance
             if (isBossPart)
             {
                 _current.totalDamageToBoss += damageDone;
+
+                if (player.HasBuff(ModContent.BuffType<ManaBurn>()))
+                {
+                    _damageDuringManaBurn += damageDone;
+                }
+
                 _damageThisSecond += damageDone;
             }
             else
@@ -519,10 +539,19 @@ namespace tsorcRevamp.Utilities.Balance
             // near-zero window. This is the window that actually applies to them.
             AccumulateProjectileUptime(player);
 
-            int charges = CeruleanCharges(player);
-            if (charges >= 0 && _lastCeruleanCharges >= 0 && charges < _lastCeruleanCharges)
-                _current.ceruleanChargesUsed += _lastCeruleanCharges - charges;
-            _lastCeruleanCharges = charges;
+            // Mana Burn uptime, counted per tick, and the moments it switches on.
+            bool manaBurnActive = player.HasBuff(ModContent.BuffType<ManaBurn>());
+            if (manaBurnActive)
+            {
+                _manaBurnTicks++;
+
+                if (!_lastManaBurnActive)
+                {
+                    _manaBurnActivations++;
+                }
+            }
+
+            _lastManaBurnActive = manaBurnActive;
 
             if (player.dead && !_lastPlayerDead)
                 _current.playerDeaths++;
@@ -568,6 +597,7 @@ namespace tsorcRevamp.Utilities.Balance
                 _current.bossLifeTimeline.Add((int)Math.Min(lifeSum, int.MaxValue));
                 _current.playerLifeTimeline.Add(Math.Max(0, player.statLife));
                 _current.manaTimeline.Add(Math.Max(0, player.statMana));
+                _current.staminaTimeline.Add((int)Math.Max(0f, player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent));
                 _current.damageTimeline.Add(_damageThisSecond);
                 _damageThisSecond = 0;
             }
@@ -615,7 +645,12 @@ namespace tsorcRevamp.Utilities.Balance
             _startTick = Main.GameUpdateCount;
             _nextSampleTick = Main.GameUpdateCount;
             _lastPlayerDead = player.dead;
-            _lastCeruleanCharges = CeruleanCharges(player);
+            _lastManaBurnActive = player.HasBuff(ModContent.BuffType<ManaBurn>());
+            _manaBurnTicks = 0;
+            _manaBurnActivations = 0;
+            _damageDuringManaBurn = 0;
+            _ceruleanDrinks = 0;
+            _ceruleanManaRestored = 0;
             _emptySinceTick = -1;
             _participantDied = false;
             _bagDropped = false;
@@ -690,6 +725,10 @@ namespace tsorcRevamp.Utilities.Balance
             };
 
             _startGearFingerprint = GearFingerprint(player);
+
+            CeruleanFlaskPlayer ceruleanPlayer = player.GetModPlayer<CeruleanFlaskPlayer>();
+            _current.ceruleanChargesAtStart = ceruleanPlayer.CeruleanChargesCurrent;
+            _current.ceruleanChargesMax = ceruleanPlayer.CeruleanChargesMax;
         }
 
         /// <param name="endTick">Tick the fight really ended, for endings detected late (the grace window). -1 means now.</param>
@@ -731,6 +770,14 @@ namespace tsorcRevamp.Utilities.Balance
                 encounter.durationSeconds = ticks / 60f;
                 encounter.bagDropped = _bagDropped;
 
+                // Mana Burn, Cerulean and mana as they stood when the fight ended.
+                encounter.manaBurnTicks = _manaBurnTicks;
+                encounter.manaBurnActivations = _manaBurnActivations;
+                encounter.damageDuringManaBurn = _damageDuringManaBurn;
+                encounter.ceruleanChargesUsed = _ceruleanDrinks;
+                encounter.ceruleanManaRestored = _ceruleanManaRestored;
+                encounter.maxManaAtEnd = Main.LocalPlayer.statManaMax2;
+
                 // An ending found late (the grace window) leaves a few seconds of samples after the fight really
                 // stopped. Trim them so the timelines and the engagement numbers describe the fight only.
                 int maxSamples = ticks / SampleIntervalTicks + 1;
@@ -746,6 +793,16 @@ namespace tsorcRevamp.Utilities.Balance
                 if (encounter.durationSeconds > 0.5f)
                 {
                     encounter.bossDps = encounter.totalDamageToBoss / encounter.durationSeconds;
+                }
+
+                if (ticks > 0)
+                {
+                    encounter.manaBurnUptimeFraction = Math.Min(1f, _manaBurnTicks / (float)ticks);
+                }
+
+                if (encounter.totalDamageToBoss > 0)
+                {
+                    encounter.manaBurnDamageFraction = _damageDuringManaBurn / (float)encounter.totalDamageToBoss;
                 }
 
                 encounter.gearChangedMidFight =
@@ -1079,16 +1136,16 @@ namespace tsorcRevamp.Utilities.Balance
             });
         }
 
-        internal static int CeruleanCharges(Player player)
+        /// <summary>Logs one Cerulean flask drink, called the moment the drink completes. Silent outside a boss fight.</summary>
+        internal static void RecordCeruleanDrink(int manaRestored)
         {
-            try
+            if (_current == null)
             {
-                return player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesCurrent;
+                return;
             }
-            catch
-            {
-                return -1;
-            }
+
+            _ceruleanDrinks++;
+            _ceruleanManaRestored += Math.Max(0, manaRestored);
         }
 
         private static NpcDamage GetNpcBucket(NPC npc, bool isBossPart)

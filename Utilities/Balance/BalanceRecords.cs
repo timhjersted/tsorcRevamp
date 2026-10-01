@@ -66,6 +66,9 @@ namespace tsorcRevamp.Utilities.Balance
         /// range gives itself away here.</summary>
         public float regainDistanceSumTiles;
 
+        /// <summary>Boss damage this weapon dealt while Mana Burn was active.</summary>
+        public long damageWhileManaBurn;
+
         // --- Derived at the end of the encounter, so the log carries the weapon's own numbers and
         // analysis never has to divide them back out of the totals. -------------------------------
 
@@ -450,8 +453,41 @@ namespace tsorcRevamp.Utilities.Balance
         /// makes that gate visible instead of hiding it inside the DPS average.</summary>
         public List<int> manaTimeline = new();
 
-        /// <summary>Cerulean Tear charges spent during the fight (SoulsMode mana refills).</summary>
+        /// <summary>Stamina on the same 1 Hz cadence. Mana Burn switches on when stamina falls under a third of
+        /// its maximum, so this is the line that shows what triggers it.</summary>
+        public List<int> staminaTimeline = new();
+
+        // --- Cerulean flask (Souls-mode mana refill). Counted at the moment a drink completes, so a charge restored
+        // at a bonfire mid-fight cannot cancel a drink out of the count. ---
+        /// <summary>Flasks drunk during the fight.</summary>
         public int ceruleanChargesUsed;
+
+        /// <summary>Mana the drinks restored, as the flask itself computes it (flat gain, max-mana bonus, regen and
+        /// restoration-time bonuses). This is the refill the mage's mana economy actually got.</summary>
+        public long ceruleanManaRestored;
+        public int ceruleanChargesAtStart;
+        public int ceruleanChargesMax;
+
+        // --- Mana. maxMana is in <see cref="gear"/> at the start of the fight. ---
+        /// <summary>Max mana when the fight ended. It can differ from the start value when a buff or accessory
+        /// swap changes the pool mid-fight.</summary>
+        public int maxManaAtEnd;
+
+        // --- Mana Burn (Arcane Sorcery): with stamina under 33%, a Bearer of the Curse holding a magic weapon gets
+        // +25% magic damage and +20% magic attack speed for 5 s, at double mana cost and -40% damage resistance.
+        // The gear snapshot only says whether the buff was up when the fight began; these say how much of the fight
+        // it was up for and what it did. ---
+        public int manaBurnTicks;
+
+        /// <summary>manaBurnTicks over the fight's length.</summary>
+        public float manaBurnUptimeFraction;
+
+        /// <summary>Times the buff switched on during the fight.</summary>
+        public int manaBurnActivations;
+
+        /// <summary>Boss damage dealt while the buff was active, and its share of totalDamageToBoss.</summary>
+        public long damageDuringManaBurn;
+        public float manaBurnDamageFraction;
     }
 
     /// <summary>
@@ -623,6 +659,10 @@ namespace tsorcRevamp.Utilities.Balance
         /// <summary>Mana consumed during the run, from the OnConsumeMana hook (not net statMana).</summary>
         public long manaSpent;
         public float manaPerSecond;
+
+        /// <summary>Fraction of the run with the Mana Burn buff active (+25% magic damage, +20% magic attack speed).
+        /// The buff is already in <c>gear.buffs</c> as a start-of-run snapshot; this is the time it was really up.</summary>
+        public float manaBurnFraction;
 
         // --- Prefix. Every bench sample so far carried a prefix (Mythical, Legendary, Godly...), which
         // inflates DPS with no way to tell by how much. These put the prefix back on a level footing. ---

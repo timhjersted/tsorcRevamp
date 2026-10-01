@@ -9,6 +9,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons;
+using tsorcRevamp.Systems.ArcaneSorcery;
 
 namespace tsorcRevamp.Utilities.Balance
 {
@@ -112,6 +113,7 @@ namespace tsorcRevamp.Utilities.Balance
             public float staminaSpent;
             public int staminaTicks;
             public int staminaStarvedTicks;
+            public int manaBurnTicks;
             public float minStamina = float.MaxValue;
             public readonly List<AmmoUsage> ammo = new();
         }
@@ -397,6 +399,12 @@ namespace tsorcRevamp.Utilities.Balance
             // Sampled every tick, not only on a drop, so the starvation fraction reflects real time
             // spent empty rather than time spent spending.
             run.staminaTicks++;
+
+            if (player.HasBuff(ModContent.BuffType<ManaBurn>()))
+            {
+                run.manaBurnTicks++;
+            }
+
             run.minStamina = Math.Min(run.minStamina, stamina);
             float starvedThreshold = Math.Max(1f, CurrentStaminaMax(player) * 0.02f);
             if (stamina <= starvedThreshold)
@@ -633,6 +641,7 @@ namespace tsorcRevamp.Utilities.Balance
                     prefixSpeedMult = prefixSpeedMult,
                     prefixNeutralDps = dps / (prefixDamageMult * prefixSpeedMult),
                     manaPerSecond = run.manaSpent / seconds,
+                    manaBurnFraction = run.staminaTicks > 0 ? run.manaBurnTicks / (float)run.staminaTicks : 0f,
                     startedAt = DateTimeOffset.Now.ToString("O", CultureInfo.InvariantCulture),
                     itemType = run.itemType,
                     item = run.item,
