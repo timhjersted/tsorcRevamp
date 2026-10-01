@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons;
 
@@ -137,6 +138,32 @@ namespace tsorcRevamp.Utilities.Balance
         }
     }
 
+    /// <summary>
+    /// Item hooks for the encounter log: a boss bag spawning from loot is the one unambiguous "this boss was
+    /// killed" signal (it covers bosses that hand off to a final form and never fire OnKill on the anchor), and
+    /// a consumed healing potion is how survival from healing is told apart from survival from defense.
+    /// </summary>
+    internal sealed class BalanceLogItem : GlobalItem
+    {
+        public override void OnSpawn(Item item, IEntitySource source)
+        {
+            if (ItemID.Sets.BossBag[item.type] && source is EntitySource_Loot)
+            {
+                BalanceLog.NotifyBossBag();
+            }
+        }
+
+        public override void OnConsumeItem(Item item, Player player)
+        {
+            if (player.whoAmI != Main.myPlayer || item.healLife <= 0)
+            {
+                return;
+            }
+
+            BalanceLog.RecordHealing(item.ModItem?.Name ?? item.Name, item.healLife);
+        }
+    }
+
     internal sealed class BalanceLogPlayer : ModPlayer
     {
         /// <summary>Set in OnHurt, consumed one tick later in PostUpdate - see PostUpdate for why the
@@ -152,8 +179,22 @@ namespace tsorcRevamp.Utilities.Balance
                 return;
             }
 
-            BalanceLog.RecordDamageTaken(info.Damage);
+            BalanceLog.RecordDamageTaken(info);
             _pendingImmuneTimeCapture = true;
+        }
+
+        /// <summary>Feeds actual mana consumption to the encounter log and the dummy bench. Net-sampling statMana
+        /// misses it entirely once regeneration per tick exceeds a weapon's cost - Ultima Tome (18 mana a use)
+        /// benched as 0 mana per second across 20 samples.</summary>
+        public override void OnConsumeMana(Item item, int manaConsumed)
+        {
+            if (Player.whoAmI != Main.myPlayer)
+            {
+                return;
+            }
+
+            BalanceLog.RecordManaSpent(item.type, manaConsumed);
+            WeaponBench.RecordManaSpent(item.type, manaConsumed);
         }
 
         /// <summary>

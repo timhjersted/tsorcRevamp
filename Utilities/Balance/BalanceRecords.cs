@@ -61,6 +61,43 @@ namespace tsorcRevamp.Utilities.Balance
         /// regainCredits for the average - a weapon credited almost entirely from far outside melee
         /// range gives itself away here.</summary>
         public float regainDistanceSumTiles;
+
+        // --- Derived at the end of the encounter, so the log carries the weapon's own numbers and
+        // analysis never has to divide them back out of the totals. -------------------------------
+
+        /// <summary>What the weapon deals per use right now: <c>Player.GetWeaponDamage</c> folds in the class
+        /// multiplier and prefix. <see cref="baseDamage"/> alone is the tooltip number, which can sit far from
+        /// the real hit (Fire Spirit Tome 4 lists 2000 and lands about 490).</summary>
+        public int effectiveDamage;
+
+        /// <summary>damageToBoss / hitsOnBoss. Compare with <see cref="effectiveDamage"/> to see how much of a use
+        /// actually lands, and with other weapons for the flat-defense question.</summary>
+        public float damagePerHitMean;
+
+        public float hitsPerHeldSec;
+
+        /// <summary>damageToBoss over the seconds the item was in hand. Boss-independent for a given weapon and
+        /// gear, which is what separates "this weapon is strong" from "this boss is soft". 0 for summons and
+        /// sentries, whose staff is never held while they work - read <see cref="damagePerActiveSec"/> instead.</summary>
+        public float damagePerHeldSec;
+
+        /// <summary>damageToBoss over the seconds a projectile from this item was alive.</summary>
+        public float damagePerActiveSec;
+
+        /// <summary>Mana actually consumed by this weapon, from the OnConsumeMana hook. Net-sampling statMana
+        /// reads zero once regeneration outpaces the cost, which it does at the mana pools late game reaches.</summary>
+        public int manaSpent;
+
+        /// <summary>Ticks this weapon was held with less mana than one use costs - the mana economy gating it.</summary>
+        public int manaStarvedTicks;
+
+        /// <summary>True the first time this item dealt boss damage in the current game session, so a DPS jump
+        /// can be tied to the weapon that was just acquired.</summary>
+        public bool firstUseThisSession;
+
+        /// <summary>The item is on the outlier list (joke / endgame-novelty weapons such as Divine Boom Cannon).
+        /// Fights that use one are not representative of the progression curve.</summary>
+        public bool outlier;
     }
 
     internal sealed class AmmoUsage
@@ -82,6 +119,53 @@ namespace tsorcRevamp.Utilities.Balance
         public int hits;
     }
 
+    /// <summary>Damage the player took from one source (an NPC type or a projectile type) over an encounter.</summary>
+    internal sealed class DamageSourceUsage
+    {
+        public string source;
+        public int hits;
+        public long damage;
+        public long rawDamage;
+        public int largestHit;
+    }
+
+    /// <summary>One hit the player took. Only the largest few survive into the record - see
+    /// <see cref="BalanceEncounter.topHitsTaken"/>.</summary>
+    internal sealed class HitTaken
+    {
+        public int tick;
+        public int damage;
+        public int rawDamage;
+        public string source;
+    }
+
+    /// <summary>One healing source (Estus, a potion type) and how often it was used in an encounter.</summary>
+    internal sealed class HealingUsage
+    {
+        public string source;
+        public int uses;
+        public long healed;
+    }
+
+    /// <summary>One boss attack state: how many times it was entered and how long the boss spent in it.</summary>
+    internal sealed class AttackUsage
+    {
+        public string attack;
+        public int entries;
+        public int ticks;
+    }
+
+    /// <summary>The pieces of one class's damage multiplier, straight from <c>StatModifier</c>. Which buff or
+    /// accessory contributed each piece is not recoverable - tModLoader does not track sources - but the
+    /// additive / multiplicative split already shows whether a high multiplier is stacked or compounded.</summary>
+    internal sealed class DamageModifierBreakdown
+    {
+        public float additive;
+        public float multiplicative;
+        public float flat;
+        public float baseValue;
+    }
+
     internal sealed class EquipSlot
     {
         public int type;
@@ -92,11 +176,22 @@ namespace tsorcRevamp.Utilities.Balance
         public int defense;
     }
 
+    /// <summary>An item in a tModLoader ModAccessorySlot (the Bearer of the Curse slot, the Supersonic wing slot).
+    /// These live outside <c>Player.armor</c>, so the armor/accessory loop never sees them.</summary>
+    internal sealed class ModdedEquipSlot
+    {
+        public string slot;
+        public EquipSlot item;
+    }
+
     /// <summary>Everything on the player that multiplies weapon output, captured at encounter start.</summary>
     internal sealed class GearSnapshot
     {
         public List<EquipSlot> armor = new();
         public List<EquipSlot> accessories = new();
+
+        /// <summary>Functional items in mod accessory slots, which <see cref="accessories"/> does not cover.</summary>
+        public List<ModdedEquipSlot> moddedAccessories = new();
         /// <summary>The Active Shields Right-Click (2nd) slot item, or null when the slot is empty. Kept out of
         /// <see cref="accessories"/> because it is NOT an accessory slot: a shield parked here grants its passives
         /// while leaving every accessory slot free, so it is the one loadout choice the accessory list can't show.</summary>
@@ -139,6 +234,10 @@ namespace tsorcRevamp.Utilities.Balance
 
         public float meleeSpeed;
         public int minionSlots;
+
+        /// <summary>Per-class damage multiplier components, keyed melee / ranged / magic / summon / generic.
+        /// Early magic runs at 3x and later magic at about 1.8x with nothing in the flat floats to explain it.</summary>
+        public Dictionary<string, DamageModifierBreakdown> damageModifiers = new();
     }
 
     /// <summary>
@@ -148,9 +247,15 @@ namespace tsorcRevamp.Utilities.Balance
     internal sealed class BalanceEncounter
     {
         public string @event = "encounter";
-        public int schema = 1;
+        public int schema = 2;
+        public int loggerRevision = BalanceLog.LoggerRevision;
         public string session;
         public string modVersion;
+
+        /// <summary>Hash of every item's and boss's balance-relevant stats at load. Two records with the same value
+        /// were taken against identical weapon and boss numbers, so data survives a mod update only when
+        /// this still matches (or the analysis knows to split it).</summary>
+        public string contentFingerprint;
         public string startedAt;
 
         // Context that changes what the numbers mean.
@@ -163,6 +268,16 @@ namespace tsorcRevamp.Utilities.Balance
         public float shmScale;
         public float subtleShmScale;
 
+        /// <summary>Vanilla's per-difficulty multipliers (<c>Main.GameModeInfo</c>). The mod's own scaling on top
+        /// (x1.5 on its bosses in Master, x1.275 on vanilla ones) is captured by <see cref="lifeMaxMultVsBase"/>.</summary>
+        public float gameModeLifeMult;
+        public float enemyDamageMult;
+
+        /// <summary>Boss and difficulty progress at the start, so a DPS jump can be tied to how far along the
+        /// player was. <see cref="downedBossTypes"/> is the mod's own NewSlain key list.</summary>
+        public int downedBossCount;
+        public List<int> downedBossTypes = new();
+
         // The boss.
         public int bossType;
         public string boss;
@@ -170,16 +285,98 @@ namespace tsorcRevamp.Utilities.Balance
         public int bossMaxLife;
         public int bossDefense;
 
+        /// <summary>The anchor's lifeMax in ContentSamples (before difficulty / SHM / world scaling) and the
+        /// live lifeMax over it. Divide bossMaxLife by this multiplier to get comparable base HP across
+        /// Expert, Master and SHM, whatever applied the scaling.</summary>
+        public int baseLifeMax;
+        public float lifeMaxMultVsBase;
+        public int bossContactDamage;
+        public int baseContactDamage;
+
+        /// <summary>Sum of lifeMax over every boss part that joined the fight (worm segments and linked body parts
+        /// count once). The denominator for the life fractions below.</summary>
+        public long bossMaxLifeTotal;
+        public int participantCount;
+
         // Result.
         public string outcome;        // kill | player_death | despawn | abandoned
         public int durationTicks;
         public float durationSeconds;
+
+        /// <summary>Damage to every boss part in the group, not just the anchor.</summary>
         public long totalDamageToBoss;
         public long totalDamageToOthers;
+
+        /// <summary>Sum of npcDamage, parts and minions alike. Parts that are not boss-flagged (some segmented
+        /// bosses) land here rather than in totalDamageToBoss.</summary>
+        public long totalDamageToAllNpcs;
         public float bossDps;         // totalDamageToBoss / durationSeconds
         public int playerDeaths;
-        public long damageTaken;
+        public bool bagDropped;
         public bool gearChangedMidFight;
+
+        // --- Attempts: a death log is only a difficulty signal if you can see how far it got. ---
+        /// <summary>1 for the first try at this boss since its last kill (or since the session began), 2 for the
+        /// next, and so on.</summary>
+        public int attemptIndex;
+        public string fightGroupId;
+        public float bossLifeFractionAtEnd;
+        public float lowestBossLifeFraction;
+
+        // --- Damage taken. damageTaken is applied damage (after defense); raw is before it. ---
+        public long damageTaken;
+        public long damageTakenRaw;
+        public int hitsTaken;
+        public int largestHitTaken;
+
+        /// <summary>largestHitTaken / max life. Well above 1 means the boss one-shots the player outright, which
+        /// is the signature of fighting it before the intended tier.</summary>
+        public float largestHitVsMaxLife;
+        public List<DamageSourceUsage> damageTakenBySource = new();
+
+        /// <summary>The biggest hits taken, largest first (capped at 15).</summary>
+        public List<HitTaken> topHitsTaken = new();
+
+        // --- Healing, so survival from healing and from defense can be told apart. ---
+        public int estusDrinks;
+        public long estusHealed;
+        public int potionUses;
+        public long potionHealed;
+        public List<HealingUsage> healing = new();
+
+        // --- Time-to-kill against the design target. ---
+        public int targetTtkMinSeconds;
+        public int targetTtkMaxSeconds;
+
+        /// <summary>duration / the target midpoint. Below 1 is faster than designed. Set on kills only.</summary>
+        public float ttkRatio;
+
+        /// <summary>A kill under 60% of the target minimum - the fight was bypassed rather than played.</summary>
+        public bool bypassedFight;
+
+        /// <summary>The boss HP that would have made this kill take the target midpoint at the DPS actually
+        /// achieved. Set on kills only.</summary>
+        public long hpForTargetAtObservedDps;
+
+        // --- Engagement: how much of the fight the boss could actually be hurt. ---
+        /// <summary>Boss damage per second, on the same 1 Hz cadence as bossLifeTimeline.</summary>
+        public List<int> damageTimeline = new();
+
+        /// <summary>totalDamageToBoss over the seconds that had a hit in them. Separates "boss is evasive" from
+        /// "weapon is weak": a low bossDps with a high engagedDps is the boss, not the weapon.</summary>
+        public float engagedDps;
+        public float uptimeFraction;
+        public int longestNoDamageGapSec;
+        public float burst10sDps;
+
+        // --- Build and outlier flags. ---
+        public string primaryClass;
+        public Dictionary<string, long> damageByClass = new();
+        public bool usedOutlierWeapon;
+        public List<string> outlierWeapons = new();
+
+        /// <summary>Boss attack states entered (puppet bosses report these; other bosses leave it empty).</summary>
+        public List<AttackUsage> attacks = new();
 
         /// <summary>Sum of every weapon's regainHealed - the encounter-level "how much of damageTaken
         /// did Regain erase" figure without having to sum the per-weapon list by hand.</summary>
@@ -219,10 +416,19 @@ namespace tsorcRevamp.Utilities.Balance
     internal sealed class WeaponBenchmark
     {
         public string @event = "benchmark";
-        public int schema = 1;
+        public int schema = 2;
+        public int loggerRevision = BalanceLog.LoggerRevision;
         public string session;
         public string modVersion;
+        public string contentFingerprint;
         public string startedAt;
+
+        // Difficulty and world state. A bench run has no boss to carry these, but the player's damage
+        // multipliers and the cost of mana / stamina still depend on them.
+        public int gameMode;
+        public bool superHardMode;
+        public bool remixMap;
+        public float shmScale;
 
         public int itemType;
         public string item;
@@ -339,7 +545,22 @@ namespace tsorcRevamp.Utilities.Balance
         /// ~1.0, meaning rawDps needs no correction at all.</summary>
         public bool gearNeutral;
 
+        /// <summary>Mana consumed during the run, from the OnConsumeMana hook (not net statMana).</summary>
         public long manaSpent;
+        public float manaPerSecond;
+
+        // --- Prefix. Every bench sample so far carried a prefix (Mythical, Legendary, Godly...), which
+        // inflates DPS with no way to tell by how much. These put the prefix back on a level footing. ---
+        /// <summary>Damage of the prefixed item over the unprefixed one, from SetDefaults + Prefix(). 1 with no prefix.</summary>
+        public float prefixDamageMult;
+
+        /// <summary>Attack speed of the prefixed item over the unprefixed one (useTime ratio). 1 with no prefix.</summary>
+        public float prefixSpeedMult;
+
+        /// <summary>rawDps with the prefix's damage and speed removed. An estimate - crit and mana prefix
+        /// effects are not folded in - but it separates a weapon from its reforge.</summary>
+        public float prefixNeutralDps;
+
         public GearSnapshot gear;
     }
 }

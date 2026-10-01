@@ -257,7 +257,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                         }
                         else
                         {
-                            lightningCenter = new Vector2(Main.rand.Next(3107, 3350), 1682) * 16;
+                            // Legacy-space arena roof; MapWorld shifts it +200 tiles on the expanded map. Unmapped, the bolt spawned 200 tiles
+                            // above the arena, its 2400px length fell short of the player, and only the global thunder sound was left.
+                            lightningCenter = ExpandedWorldTransform.MapWorld(new Vector2(Main.rand.Next(3107, 3350), 1682) * 16);
                         }
                         float distance = Vector2.Distance(lightningCenter, Target.Center);
                         Vector2 lightningVector = UsefulFunctions.Aim(lightningCenter, Target.Center, distance / 30);
@@ -275,7 +277,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     }
                     else
                     {
-                        fireballCenter = new Vector2(Main.rand.Next(3107, 3350), 1687) * 16;
+                        fireballCenter = ExpandedWorldTransform.MapWorld(new Vector2(Main.rand.Next(3107, 3350), 1687) * 16);
                     }
                     Vector2 fireballVector = UsefulFunctions.Aim(fireballCenter, Target.Center, 10);
                     fireballVector += Target.velocity * Main.rand.NextFloat(0, 1);

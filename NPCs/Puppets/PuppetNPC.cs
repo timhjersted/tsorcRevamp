@@ -14,6 +14,7 @@ using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Utilities.Balance;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
@@ -8333,6 +8334,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 _predictionStartTick = Main.GameUpdateCount;
             }
             _phaseSequence++;
+
+            // Balance log: counts which of this boss's attack states the player actually saw. The guard keeps the
+            // enum ToString off the path whenever no boss fight is being recorded.
+            if (BalanceLog.EncounterActive)
+            {
+                BalanceLog.NotifyBossAttack(NPC, phase.ToString());
+            }
         }
 
         private void SlowDown() => NPC.velocity.X *= 0.80f;

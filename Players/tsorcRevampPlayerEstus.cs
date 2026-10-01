@@ -7,6 +7,7 @@ using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Accessories.Other.SporePowder;
 using tsorcRevamp.Content.Items.Accessories.Other.VenomPowder;
+using tsorcRevamp.Utilities.Balance;
 
 namespace tsorcRevamp
 {
@@ -231,6 +232,9 @@ namespace tsorcRevamp
                 EstusChargesCurrent--; //Remove a charge
                 EstusDrinkTimer = 0; //Set the timer back to 0
                 Player.HealEffect(EstusHealthGain + EstusHealthGainBonus);
+
+                // Balance log: Estus is the Bearer of the Curse's main heal, so it is counted per fight.
+                BalanceLog.RecordHealing("estus", EstusHealthGain + EstusHealthGainBonus);
 
                 // A draught of Estus repairs the summoner's spirit ashes too, splitting this same total
                 // across whichever are wounded. Applied here on the drink finishing rather than from the

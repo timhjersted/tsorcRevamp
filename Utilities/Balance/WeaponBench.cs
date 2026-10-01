@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -115,7 +117,6 @@ namespace tsorcRevamp.Utilities.Balance
         private static readonly Dictionary<AttackKey, BenchRun> ActiveRuns = new();
         private static readonly List<string> SessionResults = new();
         private static readonly List<AttackKey> Expired = new();
-        private static float _lastMana;
         private static float _lastStamina;
         private static readonly Dictionary<AttackKey, int> SampleCounts = new();
         private static readonly Dictionary<AttackKey, (int Count, long LastTick)> PendingSpawns = new();
@@ -188,7 +189,6 @@ namespace tsorcRevamp.Utilities.Balance
                 {
                     // First run of a batch: prime the resource baselines so the first tick doesn't
                     // register a phantom spend.
-                    _lastMana = player.statMana;
                     _lastStamina = CurrentStamina(player);
                 }
 
@@ -323,12 +323,9 @@ namespace tsorcRevamp.Utilities.Balance
         /// </summary>
         private static void AccumulateResourceSpend(Player player)
         {
-            float mana = player.statMana;
             float stamina = CurrentStamina(player);
 
-            float manaDrop = _lastMana - mana;
             float staminaDrop = _lastStamina - stamina;
-            _lastMana = mana;
             _lastStamina = stamina;
 
             // Attribute to the held weapon: concurrent runs are almost always "minions still ticking
@@ -337,17 +334,7 @@ namespace tsorcRevamp.Utilities.Balance
             if (held == null || held.IsAir)
                 return;
 
-            // The held weapon may have several attacks in flight at once; charge the cost to whichever
-            // of its attacks landed most recently.
-            BenchRun run = null;
-            foreach (KeyValuePair<AttackKey, BenchRun> pair in ActiveRuns)
-            {
-                if (pair.Key.ItemType == held.type
-                    && (run == null || pair.Value.lastHitTick > run.lastHitTick))
-                {
-                    run = pair.Value;
-                }
-            }
+            BenchRun run = FindLatestRunForItem(held.type);
 
             if (run == null)
                 return;
@@ -360,10 +347,42 @@ namespace tsorcRevamp.Utilities.Balance
             if (stamina <= starvedThreshold)
                 run.staminaStarvedTicks++;
 
-            if (manaDrop > 0f)
-                run.manaSpent += manaDrop;
             if (staminaDrop > 0f)
                 run.staminaSpent += staminaDrop;
+        }
+
+        /// <summary>The held weapon may have several attacks in flight at once; resource cost goes to whichever of
+        /// its attacks landed a hit most recently.</summary>
+        private static BenchRun FindLatestRunForItem(int itemType)
+        {
+            BenchRun latest = null;
+            foreach (KeyValuePair<AttackKey, BenchRun> pair in ActiveRuns)
+            {
+                if (pair.Key.ItemType == itemType
+                    && (latest == null || pair.Value.lastHitTick > latest.lastHitTick))
+                {
+                    latest = pair.Value;
+                }
+            }
+
+            return latest;
+        }
+
+        /// <summary>Credits mana a weapon consumed, straight from the OnConsumeMana hook. Replaces per-tick
+        /// sampling of statMana, which reads zero whenever regeneration outpaces the cost. Mana spent before a
+        /// run's first landed hit has no run to land in and is lost - a few uses at most.</summary>
+        internal static void RecordManaSpent(int itemType, int manaConsumed)
+        {
+            if (!AutoEnabled || manaConsumed <= 0)
+            {
+                return;
+            }
+
+            BenchRun run = FindLatestRunForItem(itemType);
+            if (run != null)
+            {
+                run.manaSpent += manaConsumed;
+            }
         }
 
         internal static float CurrentStamina(Player player)
@@ -507,10 +526,42 @@ namespace tsorcRevamp.Utilities.Balance
                 float mean = (float)(run.damageSum / run.hits);
                 float variance = (float)(run.damageSumSquares / run.hits) - mean * mean;
 
+                // Every bench sample so far carried a prefix. Rebuild the item with and without it to see how much
+                // damage and speed the reforge alone contributed, so the DPS can be put back on a prefix-free footing.
+                float prefixDamageMult = 1f;
+                float prefixSpeedMult = 1f;
+                if (run.prefix > 0)
+                {
+                    var plainItem = new Item();
+                    plainItem.SetDefaults(run.itemType);
+                    var prefixedItem = new Item();
+                    prefixedItem.SetDefaults(run.itemType);
+                    prefixedItem.Prefix(run.prefix);
+
+                    if (plainItem.damage > 0 && prefixedItem.damage > 0)
+                    {
+                        prefixDamageMult = prefixedItem.damage / (float)plainItem.damage;
+                    }
+
+                    if (plainItem.useTime > 0 && prefixedItem.useTime > 0)
+                    {
+                        prefixSpeedMult = plainItem.useTime / (float)prefixedItem.useTime;
+                    }
+                }
+
                 var record = new WeaponBenchmark
                 {
                     session = BalanceLog.SessionId,
                     modVersion = BalanceLog.ModVersion(),
+                    contentFingerprint = BalanceLog.ContentFingerprint,
+                    gameMode = Main.GameMode,
+                    superHardMode = tsorcRevampWorld.SuperHardMode,
+                    remixMap = tsorcRevampWorld.RemixMap,
+                    shmScale = tsorcRevampWorld.SHMScale,
+                    prefixDamageMult = prefixDamageMult,
+                    prefixSpeedMult = prefixSpeedMult,
+                    prefixNeutralDps = dps / (prefixDamageMult * prefixSpeedMult),
+                    manaPerSecond = run.manaSpent / seconds,
                     startedAt = DateTimeOffset.Now.ToString("O", CultureInfo.InvariantCulture),
                     itemType = run.itemType,
                     item = run.item,
@@ -692,6 +743,7 @@ namespace tsorcRevamp.Utilities.Balance
     ///   /weaponbench idle &lt;sec&gt;   → seconds of no hits before a run closes (default 4)
     ///   /weaponbench min &lt;hits&gt;  → minimum hits for a run to be recorded (default 5)
     ///   /weaponbench summary     → list every weapon benchmarked this session
+    ///   /weaponbench missing [class] → mod weapons with no sample in the bench file yet, by class
     /// </summary>
     public class WeaponBenchCommand : ModCommand
     {
@@ -762,13 +814,88 @@ namespace tsorcRevamp.Utilities.Balance
                     Summary(caller);
                     break;
 
+                case "missing":
+                {
+                    // Every tsorcRevamp weapon with no sample in the bench file yet, so a bench pass can work down the
+                    // list instead of guessing what is left. Base damage is only a rough tier proxy (see the log).
+                    string benchPath = Path.Combine(Main.SavePath, "Logs", WeaponBench.FileName);
+                    var benchedTypes = new HashSet<int>();
+                    if (File.Exists(benchPath))
+                    {
+                        foreach (string line in File.ReadLines(benchPath))
+                        {
+                            if (string.IsNullOrWhiteSpace(line))
+                            {
+                                continue;
+                            }
+
+                            int? benchedType = JObject.Parse(line)["itemType"]?.Value<int>();
+                            if (benchedType.HasValue)
+                            {
+                                benchedTypes.Add(benchedType.Value);
+                            }
+                        }
+                    }
+
+                    string classFilter = args.Length >= 2 ? args[1] : null;
+                    var missingByClass = new SortedDictionary<string, List<Item>>();
+                    foreach (Item candidate in ContentSamples.ItemsByType.Values)
+                    {
+                        bool isModWeapon = candidate.ModItem != null && candidate.ModItem.Mod.Name == "tsorcRevamp";
+                        bool isTool = candidate.pick > 0 || candidate.axe > 0 || candidate.hammer > 0;
+                        if (!isModWeapon || candidate.damage <= 0 || candidate.ammo != 0 || candidate.accessory || isTool || benchedTypes.Contains(candidate.type))
+                        {
+                            continue;
+                        }
+
+                        string className = candidate.DamageType.Name.Replace("DamageClass", string.Empty);
+                        if (classFilter != null && !className.Equals(classFilter, StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        if (!missingByClass.TryGetValue(className, out List<Item> classItems))
+                        {
+                            classItems = new List<Item>();
+                            missingByClass[className] = classItems;
+                        }
+
+                        classItems.Add(candidate);
+                    }
+
+                    if (missingByClass.Count == 0)
+                    {
+                        caller.Reply("Every matching weapon already has a bench sample.", Color.Lime);
+                        break;
+                    }
+
+                    int namesPerLine = 5;
+                    int maxLinesPerClass = classFilter == null ? 4 : 30;
+                    foreach (KeyValuePair<string, List<Item>> classEntry in missingByClass)
+                    {
+                        List<Item> ranked = classEntry.Value.OrderByDescending(item => item.damage).ToList();
+                        caller.Reply($"{classEntry.Key}: {ranked.Count} unbenched (highest base damage first)", Color.Yellow);
+
+                        for (int lineIndex = 0; lineIndex < maxLinesPerClass && lineIndex * namesPerLine < ranked.Count; lineIndex++)
+                        {
+                            IEnumerable<string> names = ranked
+                                .Skip(lineIndex * namesPerLine)
+                                .Take(namesPerLine)
+                                .Select(item => $"{item.ModItem.Name} ({item.damage})");
+                            caller.Reply("  " + string.Join(", ", names), Color.White);
+                        }
+                    }
+
+                    break;
+                }
+
                 case "status":
                     ReplyStatus(caller);
                     break;
 
                 default:
                     caller.Reply(
-                        "Usage: /weaponbench [on|off|sample <sec>|idle <sec>|min <hits>|summary|status]",
+                        "Usage: /weaponbench [on|off|sample <sec>|idle <sec>|min <hits>|summary|missing [class]|status]",
                         Color.Orange);
                     break;
             }
