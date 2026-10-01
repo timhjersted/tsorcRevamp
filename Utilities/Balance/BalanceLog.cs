@@ -38,8 +38,10 @@ namespace tsorcRevamp.Utilities.Balance
         private const long MaxFileBytes = 8L * 1024L * 1024L;
 
         /// <summary>Bump when a field's meaning changes, so analysis can split data taken before and after.
-        /// 2 = group encounters (boss bag / participant kill detection), per-attempt and engagement fields.</summary>
-        internal const int LoggerRevision = 2;
+        /// 2 = group encounters (boss bag / participant kill detection), per-attempt and engagement fields.
+        /// 3 = per-projectile damage split, automatic loadout description, and bench normalizedDps now divides by
+        /// total (class + generic) damage; the old class-only figure is classOnlyNormalizedDps.</summary>
+        internal const int LoggerRevision = 3;
 
         private const int SampleIntervalTicks = 60;
         private const int MaxEncounterTicks = 60 * 60 * 30;   // 30 minutes, runaway guard
@@ -158,7 +160,19 @@ namespace tsorcRevamp.Utilities.Balance
         internal static bool IsBossAnchor(NPC npc) =>
             npc.boss || NPCID.Sets.ShouldBeCountedAsBoss[npc.type];
 
-        internal static void RecordHit(NPC npc, Player player, int itemType, int ammoType, int damageDone, bool crit)
+        /// <summary>Display name for a projectile type for the logs; type -1 is a melee swing, which has no projectile.</summary>
+        internal static string ProjectileName(int projectileType)
+        {
+            if (projectileType < 0)
+            {
+                return "melee";
+            }
+
+            return ProjectileLoader.GetProjectile(projectileType)?.Name ?? Lang.GetProjectileName(projectileType).Value;
+        }
+
+        /// <param name="projectileType">The projectile that dealt the hit, or -1 for a melee swing.</param>
+        internal static void RecordHit(NPC npc, Player player, int itemType, int ammoType, int damageDone, bool crit, int projectileType = -1)
         {
             if (!Active || damageDone <= 0 || npc == null || player == null || player.whoAmI != Main.myPlayer)
                 return;
@@ -242,6 +256,31 @@ namespace tsorcRevamp.Utilities.Balance
                     }
 
                     weapon.lastHitTick = tick;
+
+                    // Per-attack split: one weapon can field several projectile types with very different hits.
+                    ProjectileUsage projectileUsage = null;
+                    foreach (ProjectileUsage existing in weapon.projectiles)
+                    {
+                        if (existing.type == projectileType)
+                        {
+                            projectileUsage = existing;
+                            break;
+                        }
+                    }
+
+                    if (projectileUsage == null)
+                    {
+                        projectileUsage = new ProjectileUsage { type = projectileType, name = ProjectileName(projectileType) };
+                        weapon.projectiles.Add(projectileUsage);
+                    }
+
+                    projectileUsage.hits++;
+                    projectileUsage.damage += damageDone;
+
+                    if (crit)
+                    {
+                        projectileUsage.crits++;
+                    }
                 }
                 else
                 {
@@ -283,9 +322,7 @@ namespace tsorcRevamp.Utilities.Balance
             }
             else if (info.DamageSource.SourceProjectileType > 0)
             {
-                int projectileType = info.DamageSource.SourceProjectileType;
-                string projectileName = ProjectileLoader.GetProjectile(projectileType)?.Name ?? Lang.GetProjectileName(projectileType).Value;
-                sourceName = "proj:" + projectileName;
+                sourceName = "proj:" + ProjectileName(info.DamageSource.SourceProjectileType);
             }
 
             _current.damageTaken += info.Damage;
@@ -1228,6 +1265,43 @@ namespace tsorcRevamp.Utilities.Balance
                     snapshot.buffs.Add(BuffLoader.GetBuff(buff)?.Name ?? Lang.GetBuffName(buff));
             }
 
+            // Automatic loadout description, read from what is on the player right now. Prefixes are counted across
+            // every equipped piece, so "2 Warding, 2 Menacing, 2 Arcane" is in the record and not in a note.
+            snapshot.armorPieces = snapshot.armor.Count;
+            snapshot.armorSet = string.Join("/", snapshot.armor.Select(piece => piece.name));
+            snapshot.accessoryCount = snapshot.accessories.Count + snapshot.moddedAccessories.Count;
+            snapshot.buffCount = snapshot.buffs.Count;
+            snapshot.noGearEquipped = snapshot.armorPieces == 0 && snapshot.accessoryCount == 0 && snapshot.secondSlot == null;
+
+            var equippedPieces = new List<EquipSlot>(snapshot.armor);
+            equippedPieces.AddRange(snapshot.accessories);
+            equippedPieces.AddRange(snapshot.moddedAccessories.Select(moddedSlot => moddedSlot.item));
+            if (snapshot.secondSlot != null)
+            {
+                equippedPieces.Add(snapshot.secondSlot);
+            }
+
+            foreach (EquipSlot piece in equippedPieces)
+            {
+                if (string.IsNullOrEmpty(piece.prefixName))
+                {
+                    continue;
+                }
+
+                snapshot.prefixCounts.TryGetValue(piece.prefixName, out int prefixCount);
+                snapshot.prefixCounts[piece.prefixName] = prefixCount + 1;
+            }
+
+            if (snapshot.noGearEquipped)
+            {
+                snapshot.loadoutTag = snapshot.buffCount == 0 ? "naked" : $"naked + {snapshot.buffCount} buffs";
+            }
+            else
+            {
+                string armorLabel = snapshot.armorPieces == 0 ? "no armor" : snapshot.armorSet;
+                snapshot.loadoutTag = $"{armorLabel} + {snapshot.accessoryCount} acc + {snapshot.buffCount} buffs";
+            }
+
             return snapshot;
         }
 
@@ -1264,7 +1338,7 @@ namespace tsorcRevamp.Utilities.Balance
 
         /// <summary>Cheap equality key for "did the player swap gear mid-fight", which would otherwise
         /// silently invalidate the start-of-fight gear snapshot.</summary>
-        private static string GearFingerprint(Player player)
+        internal static string GearFingerprint(Player player)
         {
             var parts = new List<string>();
             for (int i = 0; i < player.armor.Length && i < 10; i++)

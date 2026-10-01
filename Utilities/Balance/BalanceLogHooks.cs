@@ -93,7 +93,7 @@ namespace tsorcRevamp.Utilities.Balance
             if (!_counted && projectile.owner == Main.myPlayer)
             {
                 _counted = true;
-                WeaponBench.NotifyProjectileSpawned(SourceItemType, SourceAttackMode, SourceAltFunction);
+                WeaponBench.NotifyProjectileSpawned(SourceItemType, SourceAttackMode, SourceAltFunction, projectile.type);
             }
         }
 
@@ -126,10 +126,10 @@ namespace tsorcRevamp.Utilities.Balance
             if (itemType <= 0 && owner?.HeldItem != null && !owner.HeldItem.IsAir)
                 itemType = owner.HeldItem.type;
 
-            BalanceLog.RecordHit(npc, owner, itemType, attribution.SourceAmmoType, damageDone, hit.Crit);
+            BalanceLog.RecordHit(npc, owner, itemType, attribution.SourceAmmoType, damageDone, hit.Crit, projectile.type);
             WeaponBench.RecordHit(npc, owner, itemType, attribution.SourceAmmoType, damageDone, hit.Crit,
                 attribution.SourceAttackMode, attribution.SourceAltFunction,
-                attribution.RegisterHit(npc.whoAmI));
+                attribution.RegisterHit(npc.whoAmI), projectile.type);
         }
 
         public override void OnKill(NPC npc)

@@ -49,6 +49,9 @@ namespace tsorcRevamp.Utilities.Balance
         /// <summary>Runs smaller than this are discarded rather than written — an accidental clip of a
         /// dummy in passing is not a measurement.</summary>
         internal static int MinHits = 5;
+
+        /// <summary>Vanilla crit damage multiplier, used to take crits back out of a sample's DPS.</summary>
+        private const float CritDamageMultiplier = 2f;
         internal static float MinSpanSeconds = 2f;
 
         private sealed class BenchRun
@@ -80,6 +83,13 @@ namespace tsorcRevamp.Utilities.Balance
             public readonly Dictionary<int, long> perTarget = new();
 
             public int projectilesSpawned;
+
+            /// <summary>Hits, damage, crits and spawns per projectile type (-1 is a melee swing). One weapon can field
+            /// several projectile types with very different damage per hit, and the sample total hides that.</summary>
+            public readonly Dictionary<int, ProjectileUsage> byProjectile = new();
+
+            /// <summary>Gear fingerprint when the run opened, compared with the one at close to flag a mid-run swap.</summary>
+            public string startGearFingerprint;
 
             public int maxTargetsPerAttack;
             public int attackCount;
@@ -119,7 +129,7 @@ namespace tsorcRevamp.Utilities.Balance
         private static readonly List<AttackKey> Expired = new();
         private static float _lastStamina;
         private static readonly Dictionary<AttackKey, int> SampleCounts = new();
-        private static readonly Dictionary<AttackKey, (int Count, long LastTick)> PendingSpawns = new();
+        private static readonly Dictionary<(AttackKey Key, int ProjectileType), (int Count, long LastTick)> PendingSpawns = new();
         private static readonly HashSet<int> MeleeTickTargets = new();
         private static long _meleeTick = -1;
         private static AttackKey _meleeKey;
@@ -165,8 +175,9 @@ namespace tsorcRevamp.Utilities.Balance
 
         /// <param name="attackTargetIndex">1-based position of this target within the attack that hit
         /// it (one projectile's lifetime, or one melee swing).</param>
+        /// <param name="projectileType">The projectile that dealt the hit, or -1 for a melee swing.</param>
         internal static void RecordHit(NPC npc, Player player, int itemType, int ammoType, int damageDone,
-            bool crit, int attackMode, int altFunction, int attackTargetIndex = 1)
+            bool crit, int attackMode, int altFunction, int attackTargetIndex = 1, int projectileType = -1)
         {
             if (!AutoEnabled || damageDone <= 0 || itemType <= 0
                 || npc == null || npc.type != NPCID.TargetDummy
@@ -225,13 +236,22 @@ namespace tsorcRevamp.Utilities.Balance
 
             if (ammoType > 0)
                 AddAmmo(run.ammo, ammoType, damageDone);
+
+            ProjectileUsage projectileUsage = GetProjectileUsage(run.byProjectile, projectileType);
+            projectileUsage.hits++;
+            projectileUsage.damage += damageDone;
+
+            if (crit)
+            {
+                projectileUsage.crits++;
+            }
         }
 
         /// <summary>
         /// Counted from projectile spawn, not from hits, so that shots which miss entirely still show
         /// up. Without this a weapon that sprays and misses reads identically to a precise one.
         /// </summary>
-        internal static void NotifyProjectileSpawned(int itemType, int attackMode, int altFunction)
+        internal static void NotifyProjectileSpawned(int itemType, int attackMode, int altFunction, int projectileType)
         {
             if (!AutoEnabled || itemType <= 0)
                 return;
@@ -240,6 +260,7 @@ namespace tsorcRevamp.Utilities.Balance
             if (ActiveRuns.TryGetValue(key, out BenchRun run))
             {
                 run.projectilesSpawned++;
+                GetProjectileUsage(run.byProjectile, projectileType).spawned++;
                 return;
             }
 
@@ -250,22 +271,56 @@ namespace tsorcRevamp.Utilities.Balance
             // The first real test session showed exactly that for Blood Lust Cluster and DivineAfflicter.
             // Only a recent burst is kept. This fires for every projectile the player spawns anywhere,
             // so without expiry a session spent shooting enemies would hand the next dummy run a
-            // spawn count in the hundreds and report a nonsense hit rate.
+            // spawn count in the hundreds and report a nonsense hit rate. Kept per projectile type so the
+            // spawns land on the right attack once the run opens.
             long now = Main.GameUpdateCount;
-            PendingSpawns.TryGetValue(key, out (int Count, long LastTick) pending);
+            var pendingKey = (key, projectileType);
+            PendingSpawns.TryGetValue(pendingKey, out (int Count, long LastTick) pending);
             int carried = now - pending.LastTick > PendingSpawnMemoryTicks ? 0 : pending.Count;
-            PendingSpawns[key] = (carried + 1, now);
+            PendingSpawns[pendingKey] = (carried + 1, now);
         }
 
         private const long PendingSpawnMemoryTicks = 120;   // 2 seconds
 
-        /// <summary>Hands a newly opened run the spawns that preceded its first landed hit.</summary>
-        private static int ClaimPendingSpawns(AttackKey key)
+        /// <summary>The usage bucket for one projectile type within a run, created on first use.</summary>
+        private static ProjectileUsage GetProjectileUsage(Dictionary<int, ProjectileUsage> byProjectile, int projectileType)
         {
-            if (!PendingSpawns.TryGetValue(key, out (int Count, long LastTick) pending))
-                return 0;
-            PendingSpawns.Remove(key);
-            return Main.GameUpdateCount - pending.LastTick > PendingSpawnMemoryTicks ? 0 : pending.Count;
+            if (!byProjectile.TryGetValue(projectileType, out ProjectileUsage usage))
+            {
+                usage = new ProjectileUsage { type = projectileType, name = BalanceLog.ProjectileName(projectileType) };
+                byProjectile[projectileType] = usage;
+            }
+
+            return usage;
+        }
+
+        /// <summary>Hands a newly opened run the spawns that preceded its first landed hit, per projectile type.</summary>
+        private static Dictionary<int, int> ClaimPendingSpawns(AttackKey key)
+        {
+            var claimed = new Dictionary<int, int>();
+            var claimedKeys = new List<(AttackKey Key, int ProjectileType)>();
+
+            foreach (KeyValuePair<(AttackKey Key, int ProjectileType), (int Count, long LastTick)> entry in PendingSpawns)
+            {
+                if (!entry.Key.Key.Equals(key))
+                {
+                    continue;
+                }
+
+                claimedKeys.Add(entry.Key);
+
+                if (Main.GameUpdateCount - entry.Value.LastTick <= PendingSpawnMemoryTicks)
+                {
+                    claimed[entry.Key.ProjectileType] = entry.Value.Count;
+                }
+            }
+
+            foreach ((AttackKey Key, int ProjectileType) claimedKey in claimedKeys)
+            {
+                PendingSpawns.Remove(claimedKey);
+            }
+
+            return claimed;
         }
 
         internal static void Update()
@@ -464,8 +519,9 @@ namespace tsorcRevamp.Utilities.Balance
                 return null;
 
             Item live = FindItem(player, key.ItemType);
+            Dictionary<int, int> claimedSpawns = ClaimPendingSpawns(key);
 
-            return new BenchRun
+            var run = new BenchRun
             {
                 key = key,
                 itemType = key.ItemType,
@@ -485,9 +541,17 @@ namespace tsorcRevamp.Utilities.Balance
                 // dummy defense would quietly skew every number in the file.
                 dummyDefense = dummy.defense,
                 dummiesPresent = CountDummies(player),
-                projectilesSpawned = ClaimPendingSpawns(key),
+                projectilesSpawned = claimedSpawns.Values.Sum(),
                 startMana = player.statMana,
+                startGearFingerprint = BalanceLog.GearFingerprint(player),
             };
+
+            foreach (KeyValuePair<int, int> claimedSpawn in claimedSpawns)
+            {
+                GetProjectileUsage(run.byProjectile, claimedSpawn.Key).spawned = claimedSpawn.Value;
+            }
+
+            return run;
         }
 
         /// <summary>Dummies within reach of the test, not every dummy in the world — a forgotten dummy
@@ -518,6 +582,13 @@ namespace tsorcRevamp.Utilities.Balance
             {
                 float dps = run.damage / seconds;
                 float classMultiplier = player.GetDamage(run.damageClass).ApplyTo(1f);
+
+                // Class plus generic damage: the whole damage stat the weapon is multiplied by. The class figure alone
+                // missed generic damage, which armor sets and accessories feed (1.43 class against 1.79 generic on one
+                // endgame sample), so a geared run could never be put on a naked run's footing.
+                float totalDamageMultiplier = player.GetTotalDamage(run.damageClass).ApplyTo(1f);
+                float critRate = run.hits > 0 ? run.crits / (float)run.hits : 0f;
+                float critExpectation = 1f + critRate * (CritDamageMultiplier - 1f);
                 GearSnapshot gear = BalanceLog.CaptureGear(player);
 
                 List<long> perTarget = run.perTarget.Values.OrderByDescending(d => d).ToList();
@@ -585,8 +656,13 @@ namespace tsorcRevamp.Utilities.Balance
                     crits = run.crits,
                     rawDps = dps,
                     classMultiplier = classMultiplier,
+                    totalDamageMultiplier = totalDamageMultiplier,
+                    critDamageMultiplierAssumed = CritDamageMultiplier,
+                    classOnlyNormalizedDps = classMultiplier > 0.01f ? dps / classMultiplier : dps,
+                    neutralDps = totalDamageMultiplier > 0.01f ? dps / totalDamageMultiplier / critExpectation : dps / critExpectation,
+                    gearChangedDuringRun = BalanceLog.GearFingerprint(player) != run.startGearFingerprint,
                     classCrit = player.GetCritChance(run.damageClass),
-                    normalizedDps = classMultiplier > 0.01f ? dps / classMultiplier : dps,
+                    normalizedDps = totalDamageMultiplier > 0.01f ? dps / totalDamageMultiplier : dps,
                     gearNeutral = IsGearNeutral(gear),
                     manaSpent = (long)run.manaSpent,
                     gear = gear,
@@ -624,6 +700,16 @@ namespace tsorcRevamp.Utilities.Balance
                 record.perTargetDamage.AddRange(perTarget);
                 record.damageTimeline.AddRange(run.damageTimeline);
 
+                foreach (ProjectileUsage usage in run.byProjectile.Values.OrderByDescending(entry => entry.damage))
+                {
+                    if (usage.hits > 0)
+                    {
+                        usage.avgDamagePerHit = usage.damage / (float)usage.hits;
+                    }
+
+                    record.damageByProjectile.Add(usage);
+                }
+
                 BalanceLog.Append(FileName, record);
 
                 string label = run.item + (string.IsNullOrEmpty(run.prefixName) ? "" : $" ({run.prefixName})")
@@ -642,13 +728,24 @@ namespace tsorcRevamp.Utilities.Balance
                             $"single-target DPS is the {dps:0.0} raw figure, not {record.singleTargetDps:0.0}";
                 }
 
+                // Which attacks the sample measured, biggest first, so a mixed run (held orb versus thrown orb) is
+                // visible in the chat line at the moment it is taken and not only in the file.
+                var attackShares = new List<string>();
+                foreach (ProjectileUsage usage in record.damageByProjectile.Take(3))
+                {
+                    attackShares.Add($"{usage.name} {usage.damage / (float)Math.Max(1L, record.totalDamage):P0}");
+                }
+
+                string attackSummary = attackShares.Count > 1 ? " | " + string.Join(", ", attackShares) : string.Empty;
+                string loadoutNote = " | " + record.gear.loadoutTag + (record.gearChangedDuringRun ? " (CHANGED MID-RUN)" : string.Empty);
+
                 SessionResults.Add(
-                    $"{label}: {dps:0.0} raw / {record.normalizedDps:0.0} norm " +
-                    $"({run.hits} hits, {seconds:0.0}s, {record.avgDamagePerHit:0} avg/hit){crowd}");
+                    $"{label}: {dps:0.0} raw / {record.neutralDps:0.0} neutral " +
+                    $"({run.hits} hits, {seconds:0.0}s, {record.avgDamagePerHit:0} avg/hit){crowd}{attackSummary}{loadoutNote}");
 
                 Main.NewText(
-                    $"[Bench] {label}: {dps:0.0} DPS raw / {record.normalizedDps:0.0} normalized " +
-                    $"({run.hits} hits, {run.crits} crits, {seconds:0.0}s){crowd}",
+                    $"[Bench] {label}: {dps:0.0} DPS raw / {record.neutralDps:0.0} neutral " +
+                    $"({run.hits} hits, {run.crits} crits, {seconds:0.0}s){crowd}{attackSummary}{loadoutNote}",
                     record.gearNeutral ? Color.Lime : Color.Yellow);
 
                 if (record.staminaStarvedFraction > 0.25f)

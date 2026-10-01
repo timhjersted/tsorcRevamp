@@ -45,6 +45,10 @@ namespace tsorcRevamp.Utilities.Balance
         /// ranged DPS, so a weapon's numbers can't be compared without it.</summary>
         public List<AmmoUsage> ammo = new();
 
+        /// <summary>Boss damage split by the projectile type that dealt it (type -1 is a melee swing). See
+        /// <see cref="ProjectileUsage"/> for why a weapon's total can't stand in for any one of its attacks.</summary>
+        public List<ProjectileUsage> projectiles = new();
+
         // --- Regain system (Systems/Regain) --------------------------------------------------
         // Exists to catch the shape a busted weapon takes: a huge regainHealed relative to
         // damageTaken on the encounter means this weapon is draintanking; a high regainGateRefusals
@@ -98,6 +102,27 @@ namespace tsorcRevamp.Utilities.Balance
         /// <summary>The item is on the outlier list (joke / endgame-novelty weapons such as Divine Boom Cannon).
         /// Fights that use one are not representative of the progression curve.</summary>
         public bool outlier;
+    }
+
+    /// <summary>
+    /// Damage dealt by one projectile type (or a melee swing, type -1). One weapon can field several of these -
+    /// the Runeterra orbs have a held orb, a thrown orb, a flame and a charm, all benched under one "primary" attack -
+    /// and they differ by an order of magnitude per hit (about 300 versus about 4,000 on Orb of Spirituality), so
+    /// averaging them describes none of them.
+    /// </summary>
+    internal sealed class ProjectileUsage
+    {
+        public int type;
+        public string name;
+        public int hits;
+        public int crits;
+        public long damage;
+
+        /// <summary>Projectiles of this type that spawned (bench only). hits / spawned below 1 is misses, above 1 is
+        /// piercing or repeat hits.</summary>
+        public int spawned;
+
+        public float avgDamagePerHit;
     }
 
     internal sealed class AmmoUsage
@@ -192,6 +217,26 @@ namespace tsorcRevamp.Utilities.Balance
 
         /// <summary>Functional items in mod accessory slots, which <see cref="accessories"/> does not cover.</summary>
         public List<ModdedEquipSlot> moddedAccessories = new();
+
+        // --- Automatic loadout description. Taken from what is actually on the player when the record is written, so
+        // a test's setup (naked, partial, endgame) is in the record itself and never depends on notes or a command. ---
+        /// <summary>Armor item names joined with "/" - the set, in effect. Empty when no armor is worn.</summary>
+        public string armorSet = string.Empty;
+        public int armorPieces;
+
+        /// <summary>Filled accessory slots across vanilla and mod slots, not counting the right-click slot.</summary>
+        public int accessoryCount;
+
+        /// <summary>No armor, no accessory in any slot and nothing in the right-click slot.</summary>
+        public bool noGearEquipped;
+        public int buffCount;
+
+        /// <summary>Short human label such as "naked" or "DragoonHelmet2/DragoonArmor2/DragoonGreaves2 + 6 acc + 4 buffs".</summary>
+        public string loadoutTag = string.Empty;
+
+        /// <summary>How many equipped pieces (armor, accessories, mod slots, right-click slot) carry each prefix, e.g.
+        /// Warding 2, Menacing 2, Arcane 2. Prefixes move damage, crit, defense and mana, so they belong in the loadout.</summary>
+        public Dictionary<string, int> prefixCounts = new();
         /// <summary>The Active Shields Right-Click (2nd) slot item, or null when the slot is empty. Kept out of
         /// <see cref="accessories"/> because it is NOT an accessory slot: a shield parked here grants its passives
         /// while leaving every accessory slot free, so it is the one loadout choice the accessory list can't show.</summary>
@@ -531,15 +576,45 @@ namespace tsorcRevamp.Utilities.Balance
         public float staminaStarvedFraction;
         public float minStamina;
 
-        /// <summary>The class damage multiplier that was in effect. Dividing it out of
-        /// <see cref="rawDps"/> is what makes a geared run comparable to a naked one.</summary>
+        /// <summary>The class's own damage multiplier. It leaves out generic damage, which armor sets and accessories
+        /// also feed - on one endgame mage the class figure was 1.43 and the generic 1.79 - so dividing by this alone
+        /// cannot make a geared run comparable to a naked one. See <see cref="totalDamageMultiplier"/>.</summary>
         public float classMultiplier;
         public float classCrit;
 
-        /// <summary>Gear-normalized DPS: <see cref="rawDps"/> with the class damage multiplier removed.
-        /// Still imperfect — crit chance, attack-speed and set/proc effects are not a single
-        /// multiplier — so <see cref="gearNeutral"/> runs remain the gold standard.</summary>
+        /// <summary>Class plus generic damage, i.e. <c>Player.GetTotalDamage(class)</c>: everything the player's damage
+        /// stats do to this weapon.</summary>
+        public float totalDamageMultiplier;
+
+        /// <summary>Crit damage multiplier assumed when removing crit from the DPS. Vanilla crits deal 2x; a weapon
+        /// or accessory that changes that is not reflected.</summary>
+        public float critDamageMultiplierAssumed;
+
+        /// <summary><see cref="rawDps"/> with the total damage multiplier removed. This is the number to compare
+        /// across loadouts; the class-only version is kept as <see cref="classOnlyNormalizedDps"/> so older figures
+        /// stay comparable.</summary>
         public float normalizedDps;
+
+        /// <summary>The old normalization: rawDps over the class multiplier alone. Under-corrects whenever generic
+        /// damage or crit differ between samples.</summary>
+        public float classOnlyNormalizedDps;
+
+        /// <summary>
+        /// DPS with the total damage multiplier and the crits taken back out - what the weapon does per second as if
+        /// no hit crit. On a naked and an endgame Orb of Spirituality sample the damage per hit differed by 4.6x:
+        /// about 2.6x from damage multipliers and about 1.7x from crit going 20% to 100%, so removing both is what
+        /// puts them on the same footing. Weapons with crit built in lose it here, which is the point.
+        /// </summary>
+        public float neutralDps;
+
+        /// <summary>The player's loadout changed (armor, accessories or a mod slot) while this run was open, so the
+        /// gear snapshot may not describe every hit in it.</summary>
+        public bool gearChangedDuringRun;
+
+        /// <summary>Damage split by the projectile type that dealt it (type -1 is a melee swing). The orbs' held,
+        /// thrown, flame and charm attacks all benched as one "primary" attack, and the split is what shows which
+        /// of them a sample actually measured.</summary>
+        public List<ProjectileUsage> damageByProjectile = new();
 
         /// <summary>True when no armor or accessories were equipped and every class multiplier was
         /// ~1.0, meaning rawDps needs no correction at all.</summary>
