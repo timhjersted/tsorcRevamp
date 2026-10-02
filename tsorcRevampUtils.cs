@@ -1208,15 +1208,20 @@ namespace tsorcRevamp
 
             return;
         }
-        
-        public static List<int> ImmortalProjectiles = new List<int>()
+
+        public static List<int> ImmortalProjectiles;
+
+        public static void InitializeImmortalProjectiles()
         {
-            ModContent.ProjectileType<CataluminanceTrail>(),
-            ModContent.ProjectileType<SpazFireJet>(),
-            ModContent.ProjectileType<CursedMalestrom>(),
-            ProjectileID.PhantasmalDeathray,
-            ProjectileID.SaucerDeathray
-        };
+            ImmortalProjectiles = new List<int>()
+            {
+                ModContent.ProjectileType<CataluminanceTrail>(),
+                ModContent.ProjectileType<SpazFireJet>(),
+                ModContent.ProjectileType<CursedMalestrom>(),
+                ProjectileID.PhantasmalDeathray,
+                ProjectileID.SaucerDeathray
+            };
+        }
 
         ///<summary> 
         ///Checks if a projectile is hostile and safe to fuck with (destroy, reflect, etc)

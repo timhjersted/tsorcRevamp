@@ -561,6 +561,7 @@ namespace tsorcRevamp
                 // fastest (0.7x pause) and barely slows you. Rewards short reactive blocks, punishes turtling.
                 { ItemID.EoCShield,       new ActiveShieldData(30f, 0.40f, 0.95f, 2, 4.0f, ShieldResource.Stamina, chipFactor: 0.175f, blockRegenDelayMult: 0.7f) },
             };
+            UsefulFunctions.InitializeImmortalProjectiles();
 
             //Mini-boss / elite enemies that are flagged npc.boss but should still be stopped by the shield wall.
             //(True bosses not in this set push straight through, as intended.)
