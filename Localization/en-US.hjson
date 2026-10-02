@@ -13546,6 +13546,16 @@ Mods: {
 						'''
 				}
 
+				NewSpawnBalance: {
+					Label: New Enemy Spawns
+					Tooltip:
+						'''
+						Uses the central spawn registry (Systems/EnemySpawns) for the enemies listed in it instead of each enemy's own spawn rules.
+						Overall spawn frequency is still capped by player health. Created as a toggle for A/B comparisons.
+						Turn off to keep the original spawn rules. Defaults to On.
+						'''
+				}
+
 				NewSoulsModeStaminaSystem: {
 					Label: Experimental Stamina Values
 					Tooltip:

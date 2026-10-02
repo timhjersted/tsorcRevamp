@@ -104,12 +104,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 return chance;
             }
 
-            if (spawnInfo.Player.townNPCs > 0f || tsorcRevampWorld.SuperHardMode || spawnInfo.Player.ZoneDungeon) chance = 0f;
-            if (!tsorcRevampWorld.SuperHardMode && (spawnInfo.Player.ZoneOverworldHeight || spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
+            if (spawnInfo.Player.townNPCs > 0f || tsorcRevampWorld.SuperHardMode || spawnInfo.Player.ZoneDungeon) return 0f;
+
+            // Locked until the first boss is down. The Vessel of Souls (the Eye of Cthulhu replacement) sets NPC.downedBoss1 on death, so this covers either boss.
+            if (!NPC.downedBoss1) return 0f;
+
+            // Amazons don't spawn in the Meteor zone or in evil biomes.
+            if (spawnInfo.Player.ZoneMeteor || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) return 0f;
+
+            if (spawnInfo.Player.ZoneOverworldHeight || spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight)
             {
-                // Amazons don't spawn in the Meteor zone (see the comment above SpawnChance).
-                if (spawnInfo.Player.ZoneMeteor) return 0f;
-                if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.0542f;
+                return 0.0542f;
             }
 
             return chance;
