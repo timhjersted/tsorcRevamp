@@ -818,6 +818,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
+            // Legacy variant: natural spawning disabled, the non-Original Hollow replaces it. Rest of the rules kept for reference.
+            return 0f;
+
             float chance = 0;
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
             bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;

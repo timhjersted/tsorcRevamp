@@ -21,10 +21,10 @@ namespace tsorcRevamp.Content.Items.BossItems
             Item.rare = ItemRarityID.Expert;
         }
 
-        //Fully qualified: "SoulOfCinder" is ambiguous between the boss NPC and the Items.Materials item
+        //Fully qualified: "Marik" lives in NPCs.Puppets, not imported here
         public override bool CanUseItem(Player player)
         {
-            return !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>());
+            return !NPC.AnyNPCs(ModContent.NPCType<NPCs.Puppets.Marik>());
         }
 
         public override bool? UseItem(Player player)
@@ -32,11 +32,11 @@ namespace tsorcRevamp.Content.Items.BossItems
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, player.position);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)player.Center.X, (int)player.Center.Y - (16 * 12), ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>());
+                NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)player.Center.X, (int)player.Center.Y - (16 * 12), ModContent.NPCType<NPCs.Puppets.Marik>());
             }
             else
             {
-                NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>());
+                NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<NPCs.Puppets.Marik>());
             }
             return true;
         }

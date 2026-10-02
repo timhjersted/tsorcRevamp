@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Bosses.GravelordNito;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.NPCs.Puppets;
 
 namespace tsorcRevamp
 {
@@ -124,7 +125,7 @@ namespace tsorcRevamp
             Register(ModContent.NPCType<Gigas>(), 0, 0, 0, BossClassification.OptionalField, BossEncounterEra.Hardmode);
             Register(ModContent.NPCType<BlackKnight>(), 0, 0, 0, BossClassification.EliteEnemy, BossEncounterEra.Hardmode);
             Register(ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>(), 0, 29, 30, BossClassification.RequiredMajor, BossEncounterEra.Hardmode);
-            Register(ModContent.NPCType<SoulOfCinder>(), 47, 47, 48, BossClassification.OptionalMajor, BossEncounterEra.SuperHardmode, true);
+            Register(ModContent.NPCType<Marik>(), 47, 47, 48, BossClassification.OptionalMajor, BossEncounterEra.SuperHardmode, true);
 
             AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.Slogra>(), ModContent.NPCType<NPCs.Bosses.Gaibon>());
             AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>(), ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());

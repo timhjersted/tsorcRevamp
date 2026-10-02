@@ -159,7 +159,7 @@ namespace tsorcRevamp.Systems
             Register(NPCID.SkeletronHead, 8000, 9000);
             RegisterMod("GravelordNito", 4000, 12000);
             RegisterMod("AncientOolacileDemon", 4800, 10000);
-            RegisterMod("BlackNinja", 6000, 6000); // base raised in BlackNinja.cs (was 1800), so no multiplier
+            RegisterMod("BlackNinja", 6000, 8000); // base raised in BlackNinja.cs (was 1800 -> 6000), registry then takes it to 8000
             RegisterMod("AncestralSpirit", 11900, 12000);
             RegisterMod("JungleWyvernHead", 22000, 25000);
             RegisterMod("AncientDemon", 10000, 18000);

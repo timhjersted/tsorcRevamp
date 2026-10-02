@@ -748,8 +748,8 @@ Mods: {
 				The ancient pyramid grows dark once more.
 				Remix Map: Use the Dark Mirror.
 				'''
-			SoulOfCinderName: Soul of Cinder
-			SoulOfCinderDesc: A fading champion waits beyond Dark Cloud's shadow. In sandbox worlds, use the Soul of Cinder spawner.
+			MarikName: Marik of the Smoldering Bog
+			MarikDesc: A fading champion awaits. In sandbox worlds, use the Soul of Marik spawner.
 			GwynName: Gwyn, Lord of Cinder
 			GwynDesc: Seek the tomb below the Western Ocean.
 		}
@@ -2514,7 +2514,7 @@ Mods: {
 					{1}% increased critical strike chance
 					Increases maximum mana by {2}
 					{3}% reduced mana cost
-					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					Armor of Marik of the Smoldering Bog.
 					'''
 				SetBonus:
 					'''
@@ -2533,7 +2533,7 @@ Mods: {
 					{1}% increased damage reduction
 					Increases your max number of minions by {2}
 					{3}% increased max stamina
-					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					Armor of Marik of the Smoldering Bog.
 					'''
 			}
 
@@ -2545,7 +2545,7 @@ Mods: {
 					{1}% increased damage
 					Increases your max number of minions by {2}
 					{3}% increased stamina recovery speed
-					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					Armor of Marik of the Smoldering Bog.
 					'''
 			}
 
@@ -3764,7 +3764,7 @@ Mods: {
 			}
 
 			SoulOfCinderBag: {
-				DisplayName: Treasure Bag (Soul of Cinder)
+				DisplayName: Treasure Bag (Marik)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -4041,8 +4041,8 @@ Mods: {
 			}
 
 			SoulOfCinderSpawner: {
-				DisplayName: Soul of Cinder Spawner
-				Tooltip: Summons the Soul of Cinder in sandbox worlds.
+				DisplayName: Soul of Marik Spawner
+				Tooltip: Summons Marik of the Smoldering Bog in sandbox worlds.
 			}
 
 			GravelordNitoSpawner: {
@@ -5800,8 +5800,8 @@ Mods: {
 			}
 
 			SoulOfCinder: {
-				DisplayName: Soul of Cinder
-				Tooltip: "'The essence of the Soul of Cinder'"
+				DisplayName: Soul of Marik
+				Tooltip: "'The essence of Marik'"
 			}
 
 			SoulOfAttraidies: {
@@ -11835,16 +11835,16 @@ Mods: {
 				SwordShattered: Gwyn's sword has shattered! Gwyn's defenses have been weakened!
 				RainOfDeath: Gwyn's rain of death has strengthened!
 				Fury: Gwyn's fury increases!
-				Protected: Gwyn is protected by the Soul of Cinder: You're too far away!
+				Protected: Gwyn is protected by Marik: You're too far away!
 				RainsDeath: Gwyn rains down death!
 				TidalWave: Gwyn summons a tidal wave of death!
 				Challenge: Face me!
 				GiveUp: Just let go, Red. Submit to your fate!
-				Coward: The Soul of Cinder burns the flesh of cowards: You're too far away!
+				Coward: Marik burns the flesh of cowards: You're too far away!
 			}
 
-			SoulOfCinder: {
-				DisplayName: Soul of Cinder
+			Marik: {
+				DisplayName: Marik of the Smoldering Bog
 				BulletHell: The fire links itself once more.
 			}
 

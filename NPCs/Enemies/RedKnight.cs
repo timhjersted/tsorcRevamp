@@ -171,8 +171,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && P.ZoneMeteor && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.NextBool(1250)) return 1;
 
-            if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.NextBool(1350)) return 1;
-
             if (Main.hardMode && P.ZoneUnderworldHeight && Main.rand.NextBool(1100)) return 1;
 
             if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.NextBool(500)) return 1;

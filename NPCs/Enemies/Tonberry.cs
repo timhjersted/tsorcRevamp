@@ -69,9 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (tsorcRevampWorld.SuperHardMode && P.ZoneJungle && Main.rand.NextBool(75)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InGrayLayer && Main.rand.NextBool(100)) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Main.rand.NextBool(100)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Main.rand.NextBool(100)) return 1;
 
             return 0;
         }

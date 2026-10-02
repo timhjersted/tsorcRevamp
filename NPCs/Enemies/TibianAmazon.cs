@@ -107,10 +107,9 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Player.townNPCs > 0f || tsorcRevampWorld.SuperHardMode || spawnInfo.Player.ZoneDungeon) chance = 0f;
             if (!tsorcRevampWorld.SuperHardMode && (spawnInfo.Player.ZoneOverworldHeight || spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
             {
-                if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.05f;
-                if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !Main.dayTime) return 0.055f;
-                if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && Main.dayTime) return 0.0534f;
-                if (spawnInfo.Player.ZoneMeteor && !Main.dayTime) return 0.0725f;
+                // Amazons don't spawn in the Meteor zone (see the comment above SpawnChance).
+                if (spawnInfo.Player.ZoneMeteor) return 0f;
+                if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.0542f;
             }
 
             return chance;

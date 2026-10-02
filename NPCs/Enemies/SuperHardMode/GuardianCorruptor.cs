@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (tsorcRevampWorld.SuperHardMode)
             {
                 if (player.ZoneCorrupt && player.ZoneOverworldHeight && !Main.dayTime) chance = 0.5f;
-                else if (player.ZoneCorrupt && (player.ZoneRockLayerHeight || player.ZoneDirtLayerHeight) && !Main.dayTime) chance = 0.5f;
+                else if (player.ZoneCorrupt && (player.ZoneRockLayerHeight || player.ZoneDirtLayerHeight)) chance = 0.375f;
                 else if (player.ZoneCorrupt) chance = 0.25f;
                 else if (player.ZoneCorrupt && spawnInfo.Water) chance = 0.025f;
             }

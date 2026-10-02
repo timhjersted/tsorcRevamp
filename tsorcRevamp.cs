@@ -1261,7 +1261,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<WitchkingBag>()             , ModContent.NPCType<Witchking>()                                                   },
                 {   ModContent.ItemType<OolacileSerpentBag>()        , ModContent.NPCType<GreatSerpentHead>()                                        },
                 {   ModContent.ItemType<DarkCloudBag>()             , ModContent.NPCType<DarkCloud>()                                                   },
-                {   ModContent.ItemType<SoulOfCinderBag>()          , ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>()                      },
+                {   ModContent.ItemType<SoulOfCinderBag>()          , ModContent.NPCType<NPCs.Puppets.Marik>()                      },
                 {   ModContent.ItemType<GwynBag>()                  , ModContent.NPCType<Gwyn>()                                                        }
                 #endregion
             };
@@ -3816,13 +3816,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogBoss", // Name of the call
                     this,
-                    nameof(NPCs.Bosses.SuperHardMode.SoulOfCinder),
+                    nameof(NPCs.Puppets.Marik),
                     21.5f, // Tier (look above)
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>())), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Puppets.Marik>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<NPCs.Puppets.Marik>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Bosses.SuperHardMode.SoulOfCinder>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.SoulOfCinderName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Puppets.Marik>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.MarikName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
                         ["spawnItems"] = ModContent.ItemType<SoulOfCinderSpawner>()
                     }

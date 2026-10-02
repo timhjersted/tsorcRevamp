@@ -512,6 +512,7 @@ Mods: {
 			// MouseButton: Mouse button {0}
 			// Storage: Storage
 			// StorageDeposit: Drop an item here to store it
+			// StorageDepositAll: Deposit All
 			// OpenStorage: Open Storage — Shift click to store inventory items while Storage is open
 			StaminaUse: "耐力消耗: "
 			StaminaUseOnHitOnly: "命中时耐力消耗: "
@@ -751,8 +752,8 @@ Mods: {
 				古老的金字塔又一次被黑暗占据...
 				重构版地图: 使用黑镜
 				'''
-			// SoulOfCinderName: Soul of Cinder
-			// SoulOfCinderDesc: A fading champion waits beyond Dark Cloud's shadow. In sandbox worlds, use the Soul of Cinder spawner.
+			// MarikName: Soul of Cinder
+			// MarikDesc: A fading champion awaits. In sandbox worlds, use the Soul of Marik spawner.
 			GwynName: 葛温—灰烬帝王
 			GwynDesc: 西海之下的珊瑚礁引导你找到他的坟墓
 		}
@@ -2515,7 +2516,7 @@ Mods: {
 					{1}% increased critical strike chance
 					Increases maximum mana by {2}
 					{3}% reduced mana cost
-					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					Armor of Marik of the Smoldering Bog.
 					''' */
 				/* SetBonus:
 					'''
@@ -2534,7 +2535,7 @@ Mods: {
 					{1}% increased damage reduction
 					Increases your max number of minions by {2}
 					{3}% increased max stamina
-					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					Armor of Marik of the Smoldering Bog.
 					''' */
 			}
 
@@ -2546,7 +2547,7 @@ Mods: {
 					{1}% increased damage
 					Increases your max number of minions by {2}
 					{3}% increased stamina recovery speed
-					Armor of the Soul of Cinder, a deific manifestation of the Lords of Cinder, who linked the First Flame.
+					Armor of Marik of the Smoldering Bog.
 					''' */
 			}
 
@@ -11826,8 +11827,8 @@ Mods: {
 				Coward: 燃灰之魂将焚尽懦夫的肉体:你离得太远了！
 			}
 
-			SoulOfCinder: {
-				DisplayName: 葛温，灰烬帝王
+			Marik: {
+				DisplayName: Marik of the Smoldering Bog
 				BulletHell: 受死吧
 			}
 
@@ -13520,13 +13521,23 @@ Mods: {
 						''' */
 				}
 
+				NewEnemyBalance: {
+					// Label: New Enemy Balance
+					/* Tooltip:
+						'''
+						Retunes boss health for the 1.0 update and balance overhaul. The numbers are set for Expert; Master, Super Hardmode and
+						multiplayer scaling still stack on top. Created as a toggle for A/B comparisons.
+						Turn off to keep the original health values. Defaults to On.
+						''' */
+				}
+
 				NewSoulsModeStaminaSystem: {
 					// Label: Experimental Stamina Values
 					/* Tooltip:
 						'''
 						Replaces the standard Souls Mode stamina numbers with a more demanding experimental set.
-						Unkindled pays 1x weapon stamina cost and regenerates at 1.5x. Bearer of the Curse pays 1.5x and regenerates at 3x.
-						By default (off) Unkindled pays 0.85x and regenerates at 1.25x, while Bearer of the Curse pays 1.15x and regenerates at 2x. Defaults to Off.
+						Unkindled pays 1x weapon stamina cost and regenerates at 2.15x. Bearer of the Curse pays 1.5x and regenerates at 2.8x.
+						By default (off) Unkindled pays 0.85x and regenerates at 1.85x, while Bearer of the Curse pays 1.15x and regenerates at 2.3x. Defaults to Off.
 						''' */
 				}
 

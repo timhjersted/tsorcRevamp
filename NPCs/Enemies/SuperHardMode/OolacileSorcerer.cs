@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(20)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InGrayLayer && Main.rand.NextBool(50)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && InGrayLayer && Main.rand.NextBool(50)) return 1;
 
             if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Dungeon && Main.rand.NextBool(8)) return 1;
 
