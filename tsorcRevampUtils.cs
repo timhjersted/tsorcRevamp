@@ -1208,6 +1208,15 @@ namespace tsorcRevamp
 
             return;
         }
+        
+        public static List<int> ImmortalProjectiles = new List<int>()
+        {
+            ModContent.ProjectileType<CataluminanceTrail>(),
+            ModContent.ProjectileType<SpazFireJet>(),
+            ModContent.ProjectileType<CursedMalestrom>(),
+            ProjectileID.PhantasmalDeathray,
+            ProjectileID.SaucerDeathray
+        };
 
         ///<summary> 
         ///Checks if a projectile is hostile and safe to fuck with (destroy, reflect, etc)
@@ -1215,10 +1224,7 @@ namespace tsorcRevamp
         ///<param name="type">The type of projectile being checked</param>
         public static bool IsProjectileSafeToFuckWith(int type)
         {
-            if (Main.projectile[type].type == ModContent.ProjectileType<CataluminanceTrail>() ||
-                Main.projectile[type].type == ModContent.ProjectileType<SpazFireJet>() ||
-                Main.projectile[type].type == ModContent.ProjectileType<CursedMalestrom>() ||
-                Main.projectile[type].type == ProjectileID.PhantasmalDeathray || Main.projectile[type].type == ProjectileID.SaucerDeathray)
+            if (ImmortalProjectiles.Contains(Main.projectile[type].type))
             {
                 return false;
             }
