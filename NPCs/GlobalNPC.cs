@@ -4885,6 +4885,9 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            // New Enemy Balance: regular enemies registered in Systems/EnemyBalance.cs get their health here, ahead of the SHM scaling below.
+            EnemyBalance.ApplyEnemySetDefaults(npc);
+
             //Only mess with it if it's one of our bosses
             if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
             {
@@ -4901,7 +4904,7 @@ namespace tsorcRevamp.NPCs
 )
                     {
                         base.SetDefaults(npc);
-                        // Summoned CrystalSentry has an explicitly fixed4000 HP in every world tier.
+                        // Summoned CrystalSentry has an explicitly fixed HP (CrystalSentry.FixedLife) in every world tier.
                         if (npc.ModNPC is not NPCs.Enemies.SuperHardMode.CrystalSentry)
                             npc.lifeMax = (int)(tsorcRevampWorld.SHMScale * npc.lifeMax);
                         npc.defense = (int)(tsorcRevampWorld.SubtleSHMScale * npc.defense);

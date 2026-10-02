@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Projectiles.Enemy.IceGigas;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -417,6 +418,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 SHM = true;
                 NPC.lifeMax = 44000; //double the HM baseline
                 NPC.life = NPC.lifeMax;
+                // New Enemy Balance: the registry value replaces the line above when enabled. It is applied here, after vanilla scaling, so the helper applies the Expert / Master multiplier.
+                EnemyBalance.ApplyLateLife(NPC);
                 NPC.damage = 150;
                 NPC.defense = 50;
                 NPC.netUpdate = true;

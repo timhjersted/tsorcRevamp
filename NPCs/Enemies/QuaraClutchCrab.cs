@@ -7,6 +7,7 @@ using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy.Quara;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -264,6 +265,8 @@ namespace tsorcRevamp.NPCs.Enemies
             else if (Main.hardMode) { baseHp = 750; NPC.defense = 12; }
             NPC.lifeMax = baseHp;
             NPC.life = NPC.lifeMax;
+            // New Enemy Balance: the registry value replaces the line above when enabled. It is applied here, after vanilla scaling, so the helper applies the Expert / Master multiplier.
+            EnemyBalance.ApplyLateLife(NPC);
             NPC.netUpdate = true;
         }
 

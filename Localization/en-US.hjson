@@ -13540,7 +13540,7 @@ Mods: {
 					Label: New Enemy Balance
 					Tooltip:
 						'''
-						Retunes boss health for the 1.0 update and balance overhaul. The numbers are set for Expert; Master, Super Hardmode and
+						Retunes boss and enemy health for the 1.0 update and balance overhaul. The numbers are set for Expert; Master, Super Hardmode and
 						multiplayer scaling still stack on top. Created as a toggle for A/B comparisons.
 						Turn off to keep the original health values. Defaults to On.
 						'''

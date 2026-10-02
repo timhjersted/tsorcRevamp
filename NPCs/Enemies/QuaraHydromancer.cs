@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.IceGigas;
 using tsorcRevamp.Content.Projectiles.Enemy.Quara;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -271,6 +272,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 500;
             }
             NPC.life = NPC.lifeMax;
+            // New Enemy Balance: the registry value replaces the line above when enabled. It is applied here, after vanilla scaling, so the helper applies the Expert / Master multiplier.
+            EnemyBalance.ApplyLateLife(NPC);
             NPC.netUpdate = true;
         }
 

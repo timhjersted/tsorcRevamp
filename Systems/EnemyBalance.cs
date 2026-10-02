@@ -6,17 +6,32 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Systems
 {
+    /// <summary>Which world stage an enemy health value applies from.</summary>
+    public enum EnemyStage
+    {
+        PreHardmode,
+        Hardmode,
+        SuperHardmode
+    }
+
     /// <summary>
-    /// Registry of enemy health retunes, switched by the "New Enemy Balance" gameplay config (default on).
+    /// Registry of enemy health, switched by the "New Enemy Balance" gameplay config (default on).
     ///
-    /// Every entry is the Expert health the enemy had before the pass and the Expert health it should have now.
-    /// The pair becomes a multiplier on lifeMax during SetDefaults, which runs BEFORE vanilla's difficulty scaling
-    /// and the mod's own Normal / Master / SHM / multiplayer scaling, so all of those still stack on top of the
-    /// new number. "Old" must be the Expert health actually seen on the boss bar (solo, before SHM scaling),
+    /// Bosses (BuildRegistry): every entry is the Expert health the boss had before the pass and the Expert health it
+    /// should have now. The pair becomes a multiplier on lifeMax during SetDefaults, which runs BEFORE vanilla's
+    /// difficulty scaling and the mod's own Normal / Master / SHM / multiplayer scaling, so all of those still stack on
+    /// top of the new number. "Old" must be the Expert health actually seen on the boss bar (solo, before SHM scaling),
     /// not the constant in the class: some classes bake in their own multipliers, so the two differ.
     ///
     /// Bosses that reset lifeMax mid-fight (Pinwheel and Dark Cloud phase 2, The Machine) read
     /// LifeMultiplier / ScaleLife themselves so the retune follows them.
+    ///
+    /// Regular enemies (BuildEnemyRegistry): each number IS the Expert health, solo. Nothing to convert: in Expert the
+    /// enemy ends up with exactly that much, in Master 1.5x, in a Normal world half (the same 1 : 2 : 3 ratios as
+    /// vanilla), and Super Hardmode natives still get their x1.0-1.5 SHM scaling on top. The registry value replaces
+    /// whatever the class and vanilla's Hardmode stat-budget bump would have produced, so it no longer drifts with
+    /// progression; damage and defense keep the vanilla bump. Casters with zero contact damage are opted in to vanilla's
+    /// Expert / Master scaling (vanilla skips it for them), so they scale like every other enemy.
     /// </summary>
     public class EnemyBalance : ModSystem
     {
@@ -36,17 +51,142 @@ namespace tsorcRevamp.Systems
         // spawn value and lives in LifeMultipliers; bar 2 and later are read by the boss's own code through PhaseLifeMultiplier.
         private static readonly Dictionary<(int NpcType, int Bar), float> PhaseLifeMultipliers = new();
 
+        // Regular enemies: Expert health by world stage, plus optional condition variants within a stage.
+        private sealed class EnemyHpEntry
+        {
+            // Indexed by EnemyStage. 0 = no value of its own; the lookup falls back to the nearest earlier stage that has one.
+            public readonly int[] StageHp = new int[3];
+
+            // Checked first, in registration order. The first variant whose stage matches and whose condition is true wins.
+            public readonly List<(EnemyStage Stage, Func<bool> Condition, int ExpertHp)> Variants = new();
+        }
+
+        private static readonly Dictionary<int, EnemyHpEntry> EnemyHpEntries = new();
+
         public override void PostSetupContent()
         {
             LifeMultipliers.Clear();
             PhaseLifeMultipliers.Clear();
+            EnemyHpEntries.Clear();
             BuildRegistry();
+            BuildEnemyRegistry();
         }
 
         public override void Unload()
         {
             LifeMultipliers.Clear();
             PhaseLifeMultipliers.Clear();
+            EnemyHpEntries.Clear();
+        }
+
+        /// <summary>The registered Expert health for a regular enemy in the current world stage. False when the toggle is off or the type is unlisted.</summary>
+        public static bool TryGetEnemyExpertHp(int npcType, out int expertHp)
+        {
+            expertHp = 0;
+
+            if (!Enabled || !EnemyHpEntries.TryGetValue(npcType, out EnemyHpEntry entry))
+            {
+                return false;
+            }
+
+            EnemyStage stage = EnemyStage.PreHardmode;
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                stage = EnemyStage.SuperHardmode;
+            }
+            else if (Main.hardMode)
+            {
+                stage = EnemyStage.Hardmode;
+            }
+
+            foreach (var variant in entry.Variants)
+            {
+                if (variant.Stage == stage && variant.Condition())
+                {
+                    expertHp = variant.ExpertHp;
+                    return true;
+                }
+            }
+
+            for (int stageIndex = (int)stage; stageIndex >= 0; stageIndex--)
+            {
+                if (entry.StageHp[stageIndex] > 0)
+                {
+                    expertHp = entry.StageHp[stageIndex];
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>The registry's Expert health converted for the current game mode (Normal 0.5, Expert 1, Master 1.5) and, for Super Hardmode natives, the SHM scaling.</summary>
+        public static int ModeScaledLife(NPC npc, int expertHp)
+        {
+            float modeMultiplier = Main.GameModeInfo.EnemyMaxLifeMultiplier / 2f;
+            float shmScale = 1f;
+
+            if (npc.ModNPC != null && npc.ModNPC.GetType().Namespace.Contains("SuperHardMode"))
+            {
+                shmScale = tsorcRevampWorld.SHMScale;
+            }
+
+            return (int)Math.Round(expertHp * modeMultiplier * shmScale);
+        }
+
+        /// <summary>
+        /// For enemies that pick their health on the first AI tick (stage or rarity rolls), which is after vanilla's scaling has run.
+        /// Call it after the class's own lifeMax assignment: when the registry has a value it replaces that, with the mode multiplier
+        /// applied here instead. rarityMultiplier is the class's own roll (1 for none). Returns false, changing nothing, when unregistered.
+        /// </summary>
+        public static bool ApplyLateLife(NPC npc, float rarityMultiplier = 1f)
+        {
+            if (!TryGetEnemyExpertHp(npc.type, out int expertHp))
+            {
+                return false;
+            }
+
+            npc.lifeMax = ModeScaledLife(npc, (int)Math.Round(expertHp * rarityMultiplier));
+            npc.life = npc.lifeMax;
+            return true;
+        }
+
+        /// <summary>
+        /// Called from tsorcRevampGlobalNPC.SetDefaults, before its SHM scaling block, so SHMScale still multiplies the
+        /// value in a Normal world. Expert and Master are finished in EnemyBalanceNPC.ApplyDifficultyAndPlayerScaling,
+        /// after vanilla's stat-budget bump has used the class's own lifeMax for damage and defense.
+        /// </summary>
+        public static void ApplyEnemySetDefaults(NPC npc)
+        {
+            if (npc.type < NPCID.Count || !TryGetEnemyExpertHp(npc.type, out int expertHp))
+            {
+                return;
+            }
+
+            bool isPuppet = npc.ModNPC is NPCs.Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling;
+
+            if (isPuppet)
+            {
+                // Puppets already halve vanilla's Expert x2 in the mod's own hook, so the authored value is the Expert value everywhere.
+                npc.lifeMax = expertHp;
+                npc.life = npc.lifeMax;
+                return;
+            }
+
+            if (npc.damage == 0)
+            {
+                // Vanilla skips Expert / Master scaling for zero contact damage (casters). Opt them back in, and keep the Hardmode
+                // stat-budget bump off them so their defense stays exactly what the class sets.
+                NPCID.Sets.NeedsExpertScaling[npc.type] = true;
+                NPCID.Sets.DontDoHardmodeScaling[npc.type] = true;
+            }
+
+            if (!Main.expertMode)
+            {
+                npc.lifeMax = (int)Math.Round(expertHp / 2f);
+                npc.life = npc.lifeMax;
+            }
         }
 
         /// <summary>Multiplier to apply to an authored health value for this NPC type. 1 when the toggle is off or the type is unlisted.</summary>
@@ -130,6 +270,34 @@ namespace tsorcRevamp.Systems
             }
 
             PhaseLifeMultipliers[(modNpc.Type, bar)] = newExpertHp / (float)oldExpertHp;
+        }
+
+        /// <summary>Registers a regular enemy's Expert health per stage. A stage left out inherits the nearest earlier one.</summary>
+        private void Enemy(string npcName, int phm = 0, int hm = 0, int shm = 0)
+        {
+            if (!Mod.TryFind(npcName, out ModNPC modNpc))
+            {
+                Mod.Logger.Warn($"EnemyBalance: no ModNPC named '{npcName}', enemy entry skipped.");
+                return;
+            }
+
+            EnemyHpEntry entry = new EnemyHpEntry();
+            entry.StageHp[(int)EnemyStage.PreHardmode] = phm;
+            entry.StageHp[(int)EnemyStage.Hardmode] = hm;
+            entry.StageHp[(int)EnemyStage.SuperHardmode] = shm;
+            EnemyHpEntries[modNpc.Type] = entry;
+        }
+
+        /// <summary>An extra Expert health for one stage when a condition holds (the class picks its HP by progression flag). Register after Enemy(), most specific first.</summary>
+        private void EnemyVariant(string npcName, EnemyStage stage, Func<bool> condition, int expertHp)
+        {
+            if (!Mod.TryFind(npcName, out ModNPC modNpc) || !EnemyHpEntries.TryGetValue(modNpc.Type, out EnemyHpEntry entry))
+            {
+                Mod.Logger.Warn($"EnemyBalance: no registered enemy named '{npcName}', variant skipped.");
+                return;
+            }
+
+            entry.Variants.Add((stage, condition, expertHp));
         }
 
         private void BuildRegistry()
@@ -251,10 +419,197 @@ namespace tsorcRevamp.Systems
             Register(NPCID.CultistBoss, 135000, 250000);
             Register(NPCID.MartianSaucer, 35294, 60000);
         }
+
+        /// <summary>
+        /// Regular enemies. Every number is the Expert health, solo (see the class summary). Edit the numbers freely;
+        /// "authored" in each comment is what the class itself sets, for reference. A stage left out inherits the one before it.
+        /// Super Hardmode natives show their health before the x1.0-1.5 SHM scaling, which still applies on top.
+        /// </summary>
+        private void BuildEnemyRegistry()
+        {
+            // ---- Enemies that first appear before Hardmode (their HM / SHM values follow on the same line) ----
+            Enemy("SnowOwl", phm: 30, hm: 114, shm: 142); // authored 15 / 50 / 50
+            Enemy("UndeadCaster", phm: 30); // authored 30; caster, contact damage 0
+            EnemyVariant("UndeadCaster", EnemyStage.PreHardmode, () => NPC.downedBoss3, 120); // after Skeletron: authored 120
+            EnemyVariant("UndeadCaster", EnemyStage.PreHardmode, () => NPC.downedBoss1, 60); // after the Eye of Cthulhu: authored 60
+            Enemy("MutantToad", phm: 80, hm: 400, shm: 900); // authored 40 / 200 / 450
+            Enemy("DworcFleshhunter", phm: 100, hm: 200, shm: 259); // authored 50 / 100 / 100
+            Enemy("DworcVenomsniper", phm: 100, hm: 244, shm: 306); // authored 50 / 100 / 100
+            Enemy("FirebombHollow", phm: 120, hm: 1000, shm: 4000); // authored 60 / 500 / 2000
+            Enemy("StoneGolem", phm: 120, hm: 271, shm: 700); // authored 60 / 120 / 350
+            Enemy("ArmoredWraith", phm: 150, shm: 180); // authored 75 / 75
+            Enemy("MountedSandsprog", phm: 150, hm: 600, shm: 1800); // authored 75 / 300 / 900
+            Enemy("Sandsprog", phm: 150, hm: 400, shm: 1800); // authored 75 / 200 / 900
+            Enemy("SandsprogMage", phm: 150, hm: 400, shm: 1800); // authored 75 / 200 / 900
+            Enemy("DungeonMage", phm: 160, shm: 1050); // authored 160 / 1050; caster, contact damage 0
+            Enemy("MountedSandsprogMage", phm: 160, hm: 600, shm: 1800); // authored 80 / 300 / 900
+            Enemy("Parasprite", phm: 180, hm: 222, shm: 270); // authored 90 / 90 / 90
+            Enemy("TibianValkyrie", phm: 180, hm: 520, shm: 1400); // authored 90 / 260 / 700
+            Enemy("BasiliskWalker", phm: 200, hm: 500); // authored 100 / 250
+            Enemy("GhostOfAHollowWarrior", phm: 200, hm: 500, shm: 2000); // authored 100 / 250 / 1000
+            Enemy("GhostOfTheForgottenWarrior", phm: 200, hm: 400, shm: 2000); // authored 100 / 200 / 1000
+            Enemy("HollowWarrior", phm: 200, hm: 500, shm: 2000); // authored 100 / 250 / 1000
+            Enemy("OolacileCultist", phm: 200, hm: 450, shm: 3000); // authored 200 / 450 / 3000; caster, contact damage 0; puppet
+            Enemy("TibianAmazon", phm: 200, hm: 500); // authored 100 / 250
+            Enemy("HollowSpearman", phm: 210, hm: 540, shm: 2000); // authored 105 / 270 / 1000
+            Enemy("AbandonedStump", phm: 240, hm: 480, shm: 1000); // authored 120 / 240 / 500
+            Enemy("FireLurker", phm: 240, hm: 500, shm: 2400); // authored 120 / 250 / 1200
+            Enemy("ManHunter", phm: 250, hm: 500, shm: 1200); // authored 125 / 250 / 600
+            Enemy("GhostOfTheForgottenKnight", phm: 300, hm: 400, shm: 2000); // authored 150 / 200 / 1000
+            Enemy("BarrowWight", phm: 360, hm: 422, shm: 528); // authored 180 / 180 / 180
+            Enemy("AttraidiesIllusion", phm: 400); // authored 400; caster, contact damage 0
+            Enemy("AttraidiesManifestation", phm: 400, hm: 1600); // authored 400 / 800; caster, contact damage 0
+            Enemy("JungleSentree", phm: 400, hm: 800, shm: 1300); // authored 200 / 400 / 650
+            Enemy("Archdeacon", phm: 500); // authored 500; caster, contact damage 0
+            Enemy("DemonElemental", phm: 500, hm: 1000, shm: 4000); // authored 250 / 500 / 2000
+            Enemy("Eland", phm: 500, hm: 1000, shm: 20000); // authored 500 / 1000 / 20000; caster, contact damage 0
+            Enemy("HollowSoldier", phm: 500, hm: 1000, shm: 3000); // authored 250 / 500 / 1500
+            Enemy("Necromancer", phm: 800); // authored 800; caster, contact damage 0
+            Enemy("QuaraPincher", phm: 1200, hm: 2200, shm: 4200); // authored 1200 / 1200 / 1200
+            Enemy("RedCloudHunter", phm: 1200, hm: 1400, shm: 4000); // authored 600 / 700 / 2000
+            Enemy("LothricKnight", phm: 1500, hm: 2800, shm: 5000); // authored 750 / 1400 / 2500
+            Enemy("LothricSpearKnight", phm: 1500, hm: 2400, shm: 6000); // authored 750 / 1200 / 3000
+            Enemy("Warlock", phm: 1500, hm: 1500); // authored 750 / 1500; caster, contact damage 0
+            Enemy("BlackKnight", phm: 2000, hm: 4000, shm: 8000); // authored 1000 / 2000 / 4000
+            Enemy("LothricBlackKnight", phm: 2000, hm: 3000, shm: 10000); // authored 1000 / 1500 / 5000
+            Enemy("JungleWyvernJuvenileHead", phm: 2500, hm: 5000, shm: 6000); // authored 1250 / 2500 / 3000
+
+            // ---- Enemies that first appear in Hardmode ----
+            Enemy("CloudBat", hm: 200); // authored 100
+            Enemy("Dunlending", hm: 238, shm: 800); // authored 45 / 400
+            Enemy("Willowisp", hm: 300, shm: 700); // authored 150 / 350
+            Enemy("ClericOfSorrow", hm: 400, shm: 1200); // authored 400 / 1200; puppet
+            Enemy("GhostOfTheDrowned", hm: 450, shm: 1300); // authored 450 / 1300; caster, contact damage 0
+            Enemy("ShadowMage", hm: 450, shm: 1350); // authored 450 / 1350; caster, contact damage 0
+            Enemy("QuaraHydromancer", hm: 500, shm: 1500); // authored 250 / 250; caster, contact damage 0
+            Enemy("Byakhee", hm: 600, shm: 1400); // authored 300 / 700
+            Enemy("BasiliskShifter", hm: 700); // authored 350
+            Enemy("DworcVoodooShaman", hm: 750); // authored 750; caster, contact damage 0
+            Enemy("DemonSpirit", hm: 800); // authored 400
+            Enemy("EvilEye", hm: 800); // authored 400
+            Enemy("Assassin", hm: 1000, shm: 4000); // authored 500 / 2000
+            Enemy("CrazedDemonSpirit", hm: 1000, shm: 2000); // authored 500 / 1000
+            Enemy("DworcAlchemist", hm: 1000); // authored 500; caster, contact damage 0
+            Enemy("Tonberry", hm: 1500, shm: 3500); // authored 1500 / 3500; caster, contact damage 0
+            Enemy("RingedKnight", hm: 1600, shm: 5000); // authored 800 / 2500
+            Enemy("ParasyticWormHead", hm: 3000); // authored 1500
+            Enemy("FallenNecromancer", hm: 8000); // authored 4000
+            Enemy("MarilithSpiritTwin", hm: 20000); // authored 10000
+
+            // ---- Enemies that first appear in Super Hardmode (HP shown before the x1.0-1.5 SHM scaling, which still applies) ----
+            Enemy("Locust", shm: 600); // authored 300
+            Enemy("ManOfWar", shm: 1600); // authored 800
+            Enemy("DemonWheel", shm: 2000); // authored 1000
+            Enemy("VampireBat", shm: 2600); // authored 1300
+            Enemy("CrystalKnight", shm: 2800); // authored 2800; caster, contact damage 0
+            Enemy("DarkKnight", shm: 3000); // authored 3000; caster, contact damage 0
+            Enemy("AbyssLurker", shm: 3200); // authored 1600
+            Enemy("DarkBloodKnight", shm: 3200); // authored 3200; caster, contact damage 0
+            Enemy("HydrisElemental", shm: 3200); // authored 1600
+            Enemy("DworcAbysswalker", shm: 3500); // authored 3500; caster, contact damage 0
+            Enemy("HydrisNecromancer", shm: 3500); // authored 3500; caster, contact damage 0
+            Enemy("CorruptedElemental", shm: 4000); // authored 2000
+            Enemy("CorruptedHornet", shm: 4000); // authored 2000
+            Enemy("GuardianCorruptor", shm: 4400); // authored 2200
+            Enemy("IceSkeleton", shm: 4400); // authored 2200
+            Enemy("BarrowWightNemesis", shm: 5000); // authored 2500
+            Enemy("BasiliskHunter", shm: 5000); // authored 2500
+            Enemy("OolacileSorcerer", shm: 5500); // authored 5500; caster, contact damage 0
+            Enemy("GhostOfTheDarkmoonKnight", shm: 6000); // authored 3000
+            Enemy("Tetsujin", shm: 6800); // authored 3400
+            Enemy("OolacileDemon", shm: 7000); // authored 3500
+            Enemy("SlograII", shm: 8000); // authored 4000
+            Enemy("OolacileKnight", shm: 10800); // authored 5400
+            Enemy("TaurusKnight", shm: 10800); // authored 5400
+            Enemy("Plaguesmith", shm: 16500); // authored 8250
+            Enemy("AncientDemonOfTheAbyss", shm: 30000); // authored 15000
+            Enemy("Massacre", shm: 40000); // authored 20000
+            Enemy("SerpentOfTheAbyssHead", shm: 48000); // authored 24000
+            Enemy("GreatBlackKnight", shm: 50000); // authored 50000; caster, contact damage 0
+
+            // ---- Events: no natural spawn (placed by the map, summoned by a boss or event, or spawned by another enemy), alphabetical ----
+            Enemy("BarrowWightPhantom", shm: 2500); // authored 1250
+            Enemy("DemonLordApocalypse", phm: 80000); // authored 40000
+            Enemy("DestroyerLaserProbe", phm: 150, hm: 198, shm: 247); // authored 75 / 75 / 75
+            Enemy("DiscipleOfAttraidies", phm: 4500); // authored 4500; caster, contact damage 0
+            Enemy("FrozenGigasStatue", phm: 250); // authored 250; caster, contact damage 0
+            Enemy("Gigas", phm: 64000, hm: 64000, shm: 64000); // authored 32000 / 32000 / 32000
+            Enemy("Hydra", phm: 200000); // authored 100000
+            Enemy("IceGigas", phm: 44000, hm: 44000, shm: 44000); // authored 22000 / 22000 / 22000
+            Enemy("KnightOfGwyn", shm: 50000); // authored 25000
+            Enemy("MindflayerIllusion", phm: 1000); // authored 1000; caster, contact damage 0
+            Enemy("MindflayerKingServant", phm: 200); // authored 200; caster, contact damage 0
+            Enemy("MindflayerServant", phm: 70); // authored 70; caster, contact damage 0
+            Enemy("MinotaurMage", phm: 310, hm: 527, shm: 659); // authored 155 / 155 / 155
+            Enemy("PrimeLaserProbe", phm: 150, hm: 198, shm: 247); // authored 75 / 75 / 75
+            Enemy("QuaraClutchCrab", phm: 400, hm: 750, shm: 1400); // authored 400 / 400 / 400
+            Enemy("QuaraMantassin", phm: 1600); // authored 800
+            Enemy("Sahagin", phm: 88, hm: 199, shm: 248); // authored 44 / 44 / 44
+            Enemy("SerpentOfTheAbyssBody", shm: 20000); // authored 10000
+            Enemy("SerpentOfTheAbyssTail", shm: 20000); // authored 10000
+            Enemy("SpellboundGhoul", phm: 300); // authored 150
+            Enemy("TibianValkyrieSmart4", phm: 180, hm: 520, shm: 1400); // authored 90 / 260 / 700
+            Enemy("WaterSpirit", phm: 1200); // authored 600
+
+            // ---- Not registered ----
+            // Legacy copies kept for A/B reference; natural spawning is disabled in code. Not registered.
+            //   FirebombHollowOriginal: authored 60 / 500 / 2000 (legacy/disabled spawn)
+            //   GhostOfAHollowWarriorOriginal: authored 100 / 250 / 1000 (legacy/disabled spawn)
+            //   GhostOfTheDrownedOriginal: authored 150 / 450 / 1300 (legacy/disabled spawn)
+            //   HollowSoldierOriginal: authored 250 / 500 / 1500 (legacy/disabled spawn)
+            //   HollowSpearmanOriginal: authored 105 / 270 / 1000 (legacy/disabled spawn)
+            //   HollowWarriorOriginal: authored 100 / 250 / 1000 (legacy/disabled spawn)
+            //   LothricBlackKnightOriginal: authored 1000 / 1500 / 5000 (legacy/disabled spawn)
+            //   LothricKnightOriginal: authored 750 / 1400 / 2500 (legacy/disabled spawn)
+            //   LothricSpearKnightOriginal: authored 750 / 1200 / 3000 (legacy/disabled spawn)
+            //   RedKnightTest: authored 2500 / 2500 / 4000 (legacy/disabled spawn)
+            //   RingedKnightOriginal: authored 400 / 800 / 2500 (legacy/disabled spawn)
+            // Projectile-like helpers, critters and one-hit spawns (HP of 20 or less). Not registered.
+            //   CosmicCrystalLizard: authored 18
+            //   GaibonFireball: authored 1
+            //   HumanityPhantom: authored in code
+            //   LivingShroomThief: authored 16
+            //   MarilithSeeker: authored 1
+            //   MushroomCreature: authored 0
+            //   ObsidianJellyfish: authored 4 / 6 / 6
+            //   PinwheelFireball: authored 1
+            //   ResentfulSeedling: authored 14
+            //   ViciousSpit: authored 1
+            //   KhaiosTransitionOrb: authored 1
+            //   OwlCompanion: authored 1
+            //   OwlFireDiveCompanion: authored 1
+            // Wyvern and worm body / leg / tail segments: they mirror the life of the head (authored 60,000,000 and up), so the head carries the HP. Not registered.
+            //   JungleWyvernJuvenileBody: authored 60000000 (segment: mirrors the head)
+            //   JungleWyvernJuvenileBody2: authored 60000000 (segment: mirrors the head)
+            //   JungleWyvernJuvenileBody3: authored 60000000 (segment: mirrors the head)
+            //   JungleWyvernJuvenileLegs: authored 60000000 (segment: mirrors the head)
+            //   JungleWyvernJuvenileTail: authored 60000000 (segment: mirrors the head)
+            //   ParasyticWormBody: authored 91000000 (segment: mirrors the head)
+            //   ParasyticWormTail: authored 91000000 (segment: mirrors the head)
+            // Special cases. Not registered.
+            //   CrystalSentry: fixed 50,000 in every world tier by CrystalSentry.FixedLife (summoned by a boss)
+            // Puppet bosses and encounters, tracked in the boss section above or owned by other work. Not registered.
+            //   RedKnight: authored 3000 / 3000 / 4000
+            //   AbyssalNinja: authored in code
+            //   BlackNinja: authored 6000
+            //   Blaidd: authored 3000
+            //   CursedDragon: authored 25000
+            //   DreadWraith: authored 2400
+            //   Kahlrun: authored 1500
+            //   Khaios: authored 9000
+            //   Marik: authored 450000
+            //   OwlFather: authored 4000
+            //   ShadowNinja: authored 30000
+            //   SpiritOfKhaios: authored 11000
+            //   StuddedLeatherWarrior: authored 4000
+            //   Ulhan: authored 11000
+        }
     }
 
     /// <summary>Applies the registry to modded NPCs. Vanilla types are applied at the end of VanillaChanges.SetDefaults,
-    /// because that hook assigns absolute lifeMax values and would otherwise overwrite this one depending on hook order.</summary>
+    /// because that hook assigns absolute lifeMax values and would otherwise overwrite this one depending on hook order.
+    /// Boss multipliers are applied here in SetDefaults; regular enemies are applied from tsorcRevampGlobalNPC.SetDefaults
+    /// (Normal worlds) and ApplyDifficultyAndPlayerScaling below (Expert and Master).</summary>
     public class EnemyBalanceNPC : GlobalNPC
     {
         public override void SetDefaults(NPC npc)
@@ -265,16 +620,49 @@ namespace tsorcRevamp.Systems
             }
         }
 
-        // Debug aid: with DebugMode on, every registered spawn logs its final health so the registry can be checked in game.
-        public override void OnSpawn(NPC npc, Terraria.DataStructures.IEntitySource source)
+        // Runs inside vanilla's NPC.ScaleStats, after the Hardmode stat-budget bump and the Expert x2 / Master x3 life multiplier.
+        // Replaces the result with the registry's Expert value scaled by the mode (Expert 1, Master 1.5) and, for Super Hardmode
+        // natives, the same SHMScale that tsorcRevampGlobalNPC.SetDefaults applies to their authored value.
+        public override void ApplyDifficultyAndPlayerScaling(NPC npc, int numPlayers, float balance, float bossAdjustment)
         {
-            tsorcRevampGameplayConfig config = ModContent.GetInstance<tsorcRevampGameplayConfig>();
-            if (config == null || !config.DebugMode || EnemyBalance.LifeMultiplier(npc.type) == 1f)
+            if (npc.boss || npc.type < NPCID.Count)
             {
                 return;
             }
 
-            Mod.Logger.Info($"EnemyBalance: {npc.TypeName} spawned with lifeMax {npc.lifeMax} (x{EnemyBalance.LifeMultiplier(npc.type):0.###}, game mode {Main.GameMode}).");
+            if (npc.ModNPC is NPCs.Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling)
+            {
+                return;
+            }
+
+            if (!EnemyBalance.TryGetEnemyExpertHp(npc.type, out int expertHp))
+            {
+                return;
+            }
+
+            npc.lifeMax = EnemyBalance.ModeScaledLife(npc, expertHp);
+        }
+
+        // Debug aid: with DebugMode on, every registered spawn logs its final health so the registry can be checked in game.
+        public override void OnSpawn(NPC npc, Terraria.DataStructures.IEntitySource source)
+        {
+            tsorcRevampGameplayConfig config = ModContent.GetInstance<tsorcRevampGameplayConfig>();
+            if (config == null || !config.DebugMode)
+            {
+                return;
+            }
+
+            bool hasEnemyHp = EnemyBalance.TryGetEnemyExpertHp(npc.type, out int expertHp);
+            float multiplier = EnemyBalance.LifeMultiplier(npc.type);
+
+            if (hasEnemyHp)
+            {
+                Mod.Logger.Info($"EnemyBalance: {npc.TypeName} spawned with lifeMax {npc.lifeMax} (registry Expert HP {expertHp}, game mode {Main.GameMode}).");
+            }
+            else if (multiplier != 1f)
+            {
+                Mod.Logger.Info($"EnemyBalance: {npc.TypeName} spawned with lifeMax {npc.lifeMax} (x{multiplier:0.###}, game mode {Main.GameMode}).");
+            }
         }
     }
 }
