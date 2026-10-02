@@ -454,7 +454,7 @@ namespace tsorcRevamp.Systems
             Enemy("BasiliskWalker", phm: 400, hm: 6000); // authored 100 / 250
             Enemy("GhostOfAHollowWarrior", phm: 300, hm: 6000, shm: 10000); // authored 100 / 250 / 1000
             Enemy("GhostOfTheForgottenWarrior", phm: 600, hm: 4000, shm: 12000); // authored 100 / 200 / 1000
-            Enemy("HollowWarrior", phm: 900, hm: 7000, shm: 10000); // authored 100 / 250 / 1000
+            Enemy("HollowWarrior", phm: 300, hm: 3000, shm: 6000); // authored 100 / 250 / 1000
             Enemy("OolacileCultist", phm: 600, hm: 10000, shm: 40000); // authored 200 / 450 / 3000; caster, contact damage 0; puppet
             Enemy("TibianAmazon", phm: 500, hm: 3000); // authored 100 / 250
             Enemy("HollowSpearman", phm: 300, hm: 4000, shm: 10000); // authored 105 / 270 / 1000

@@ -12,12 +12,11 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(SwordOfLordGwyn));
 
-        // Player-facing draw scale for the 128px SwordOfGwyn sprite. At 1.0 it filled the screen;
-        // 0.5 reads as a large greatsword. (User asked for "0.05" — that would be ~6px / invisible,
-        // so interpreted as 0.5; change this one constant to taste.)
-        const float DrawScale = 0.5f;
+        // Player-facing draw scale for the 128px SwordOfGwyn sprite. 1.0 = native size (0.5 read as too
+        // small on the player).
+        const float DrawScale = 1.0f;
         // Hitbox kept proportional to the drawn blade so the sword hits where it visibly reaches
-        // (the old 142/42 were tuned for the full-size sprite).
+        // (142/42 are the full-size-sprite values).
         const float BladeLength = 142f * DrawScale;
         const float BladeWidth = 42f * DrawScale;
         // Grip position within the sprite (handle is lower-left): the pivot the sword is drawn
@@ -70,6 +69,15 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
             {
                 InitializeCinderTrail();
             }
+            if (Timer == 1f && Main.myPlayer == Projectile.owner)
+            {
+                // Broadsword-rework slash trail (colored by the item's slashColor). ai[0] = this swing's identity + 1
+                // tells the trail to follow our blade angle instead of the held item's useAnimation, which this
+                // projectile-driven swing never advances.
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.VFX.Slash>(), 0, 0f, Projectile.owner, Projectile.identity + 1);
+            }
+
             Projectile.timeLeft = System.Math.Min(Projectile.timeLeft, Lifetime - (int)Timer);
             Projectile.Center = player.RotatedRelativePoint(player.MountedCenter, false, false);
             Projectile.rotation = CurrentAngle();
@@ -90,7 +98,8 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
 
             Vector2 start = BladeStart();
             Vector2 end = BladeEnd();
-            for (int i = 0; i < (DashSlash ? 5 : 3); i++)
+            // Blade is twice as long at DrawScale 1.0, so counts are raised (was 5/3) to keep the fire as dense along it.
+            for (int i = 0; i < (DashSlash ? 8 : 5); i++)
             {
                 Vector2 pos = Vector2.Lerp(start, end, Main.rand.NextFloat());
                 int type = Main.rand.NextBool() ? DustID.Torch : DustID.GoldFlame;

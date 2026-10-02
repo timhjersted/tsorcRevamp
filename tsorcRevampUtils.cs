@@ -149,7 +149,9 @@ namespace tsorcRevamp
         public static readonly System.Guid EXPANDED_ADVENTURE_GUID = new System.Guid("00000000-0000-0000-0000-123000000321");
 
         public const string MUSIC_MOD_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/tsorcMusic.tmod";
-        public const string MAP_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/the-story-of-red-cloud.wld";
+        // Branch URL (always the latest upload), NOT a commit permalink. Read by Systems/BetaUpdater.cs.
+        public const string BETA_UPDATE_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/UnreleasedBeta/tsorcRevamp.tmod";
+        public const string MAP_URL ="https://github.com/timhjersted/tsorcDownload/raw/1.4.4/the-story-of-red-cloud.wld";
         public const string MAP_REMIX_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/the-story-of-red-cloud-xelvaa-remix.wld";
         public const string CHANGELOG_URL = "https://raw.githubusercontent.com/timhjersted/tsorcDownload/1.4.4/changelog.txt";
     }

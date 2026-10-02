@@ -35,7 +35,11 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             Item.shootSpeed = 1f;
 
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
-            instancedGlobal.slashColor = Color.OrangeRed;
+            instancedGlobal.slashColor = new Color(255, 160, 20); // orange-gold, between the old yellow and the first-flame orange-red
+            // Slash trail radius = sqrt(128² + 128²) * this ≈ 107px = 0.75 * the swing's 142px blade reach
+            // (SwordOfLordGwynSlash.BladeLength). A projectile-driven Slash draws a thin band 0.67R..1.33R around that,
+            // so its outer edge lands on the blade tip. Same fitting trick as ArtoriasGreatsword.
+            instancedGlobal.slashVisualScale = 0.59f;
         }
 
         public override bool CanUseItem(Player player)

@@ -553,6 +553,9 @@ Mods: {
 			GetMusic: Нажмите сюда, чтобы установить мод Story of Red Cloud Music!
 			MusicNewUpdate: Доступно обновление музыкального мода, нажмите здесь, чтобы загрузить! (Игра перезапустится!)
 			MusicFail: Загрузка музыкального мода не удалась, нажмите, чтобы повторить попытку...
+			// BetaUpdateDownloading: Downloading beta update {0}: {1}%
+			// BetaUpdateInstalling: Beta update downloaded, reloading mods...
+			// BetaUpdateFailed: Beta update failed, click to retry...
 			AdvMapDownloadProgress: Идёт загрузка карты приключений:
 			AdvMapUpdated: Обновление карты приключений завершено!
 			RemixMapDownloadProgress: "Загрузка ремикс карты в процессе: "

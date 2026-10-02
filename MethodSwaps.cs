@@ -4254,6 +4254,8 @@ namespace tsorcRevamp
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, RemixmapText, musicTextPosition, musicTextColor, 0, Vector2.Zero, musicTextScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
                     Main.spriteBatch.End();
                 }
+
+                Systems.BetaUpdater.DrawMenuButton();
             }
 
             else

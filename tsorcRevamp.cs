@@ -494,6 +494,11 @@ namespace tsorcRevamp
             }*/
             
             UpdateCheck();
+
+            if (!Main.dedServ)
+            {
+                _ = Systems.BetaUpdater.CheckForUpdateAsync();
+            }
         }
         private void PopulateArrays()
         {

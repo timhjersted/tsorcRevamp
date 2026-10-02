@@ -90,6 +90,13 @@ namespace tsorcRevamp.UI
             panel.BackgroundColor = new Color(30, 30, 40) * 0.95f; // match the Quick Add / event menu look
             panel.OnUpdate += (UIElement el) =>
             {
+                string depositAllLabel = Language.GetTextValue("Mods.tsorcRevamp.UI.StorageDepositAll");
+
+                if (depositAllButton != null && depositAllButton.Text != depositAllLabel)
+                {
+                    depositAllButton.SetText(depositAllLabel);
+                }
+
                 if (el.ContainsPoint(Main.MouseScreen))
                 {
                     Main.LocalPlayer.mouseInterface = true;
@@ -120,8 +127,10 @@ namespace tsorcRevamp.UI
             // "Deposit All": sweeps the main inventory into storage. Slots 10-49 only — 0-9 is the hotbar, 50-53
             // coins, 54-57 ammo, and everything past that is trash/equipment. Favorited items are skipped via
             // IsStorageDepositable. Sits in the header, so HandleHeaderDrag excludes its rect from the drag zone.
-            depositAllButton = new UIText(Language.GetTextValue("Mods.tsorcRevamp.UI.StorageDepositAll"), 0.8f);
-            depositAllButton.Left.Set(206, 0);
+            // Text is set empty here and filled in panel.OnUpdate: this runs from Load() via Activate(), before the
+            // localization files are loaded, so resolving the key now would display the raw key string.
+            depositAllButton = new UIText("", 0.8f);
+            depositAllButton.Left.Set(186, 0); // ~90px wide at 0.8 scale, so it ends well clear of the X at 312
             depositAllButton.Top.Set(9, 0);
             depositAllButton.TextColor = Color.LightGray;
             depositAllButton.OnMouseOver += (evt, el) => { depositAllButton.TextColor = new Color(255, 204, 0); };

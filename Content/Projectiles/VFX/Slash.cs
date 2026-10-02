@@ -50,6 +50,24 @@ namespace tsorcRevamp.Content.Projectiles.VFX
         bool flippedSwing = false;
         int AttackId = 0;
 
+        // ai[0] > 0 means "driven by another projectile": ai[0] - 1 is that projectile's identity, and its
+        // Projectile.rotation is the blade's world angle. Used by custom-swing weapons (SwordOfLordGwyn) whose
+        // swing is a projectile, not the held item's useAnimation. 0 = the normal held-item-driven slash.
+        bool DrivenByProjectile => Projectile.ai[0] > 0f;
+
+        // The strip is drawn trailWidth on EACH side of the points, and the points sit trailWidth from the pivot, so the
+        // normal slash covers radius 0..2*trailWidth. A driven (projectile) swing instead gets a thin band, a third as
+        // wide: with points at radius R the glow covers 0.67R..1.33R, so R = 0.75 * blade length puts its outer edge on the tip.
+        public override float WidthFunction(float progress)
+        {
+            if (DrivenByProjectile)
+            {
+                return trailWidth / 3f;
+            }
+
+            return trailWidth;
+        }
+
         float rotationDirection = 0;
         bool reachedEnd = false;
         Vector2 trailPivot;
@@ -102,6 +120,13 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 trailWidth = (int)(Math.Sqrt(owner.HeldItem.height * owner.HeldItem.height + owner.HeldItem.width * owner.HeldItem.width) * owner.HeldItem.scale);
                 trailWidth = Math.Max(trailWidth, 50);
                 Projectile.timeLeft = owner.itemAnimationMax + 10;
+
+                if (DrivenByProjectile)
+                {
+                    // The driving swing ends on its own (reachedEnd below); this is only a safety cap.
+                    Projectile.timeLeft = 120;
+                }
+
                 tsorcInstancedGlobalItem instancedGlobal = owner.HeldItem.GetGlobalItem<tsorcInstancedGlobalItem>();
                 float visualScale = Math.Max(0.05f, instancedGlobal.slashVisualScale);
                 trailWidth = Math.Max(1, (int)(trailWidth * visualScale));
@@ -122,7 +147,25 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             FollowOwnerPivot(owner.Center);
 
 
-            if (owner.HeldItem.TryGetGlobalItem(out ItemMeleeAttackAiming aiming))
+            Projectile drivingSwing = null;
+
+            if (DrivenByProjectile)
+            {
+                int drivingIndex = Projectile.GetByUUID(Projectile.owner, (int)Projectile.ai[0] - 1);
+
+                if (drivingIndex >= 0)
+                {
+                    drivingSwing = Main.projectile[drivingIndex];
+                }
+
+                if (drivingSwing == null || !drivingSwing.active)
+                {
+                    // Swing is over: stop adding points and let the existing trail fade (trailIntensity ramps over the last 15 ticks).
+                    reachedEnd = true;
+                    Projectile.timeLeft = Math.Min(Projectile.timeLeft, 15);
+                }
+            }
+            else if (owner.HeldItem.TryGetGlobalItem(out ItemMeleeAttackAiming aiming))
             {
                 //Main.NewText(aiming.AttackId);
                 if (AttackId != aiming.AttackId)
@@ -135,9 +178,17 @@ namespace tsorcRevamp.Content.Projectiles.VFX
 
             if (Projectile.timeLeft > 10 && !reachedEnd)
             {
-                Projectile.rotation = QuickSlashMeleeAnimation.MeleeSwingRotation(owner, owner.HeldItem, flippedSwing, 1.2f);
-                if (owner.gravDir == 1f) Projectile.rotation += MathHelper.PiOver2;
-                else if (owner.direction == 1) Projectile.rotation += (float)Math.PI;
+                if (drivingSwing != null)
+                {
+                    // Trail points sit at (rotation - PiOver2), so +PiOver2 puts them exactly along the driving blade.
+                    Projectile.rotation = drivingSwing.rotation + MathHelper.PiOver2;
+                }
+                else
+                {
+                    Projectile.rotation = QuickSlashMeleeAnimation.MeleeSwingRotation(owner, owner.HeldItem, flippedSwing, 1.2f);
+                    if (owner.gravDir == 1f) Projectile.rotation += MathHelper.PiOver2;
+                    else if (owner.direction == 1) Projectile.rotation += (float)Math.PI;
+                }
 
                 //Skip the first
                 if (lastPercent == 0)
@@ -217,7 +268,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             const float pixelBlockSize = 2f;
             Vector2 pixelGridSize = new Vector2(
                 Math.Max(trailCurrentLength / pixelBlockSize, 1f),
-                Math.Max((trailWidth * 2f) / pixelBlockSize, 1f));
+                Math.Max((WidthFunction(0f) * 2f) / pixelBlockSize, 1f));
             effect.Parameters["PixelGrid"].SetValue(new Vector4(
                 pixelGridSize.X,
                 pixelGridSize.Y,
