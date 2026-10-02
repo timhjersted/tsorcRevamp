@@ -1480,8 +1480,8 @@ namespace tsorcRevamp.NPCs
         // Patrol re-aggro radius in PIXELS that ignores LOS (a boss "hearing" a nearby player through walls). 0 = off.
         // Still requires a complete A* route, so an unreachable player can't loop give-up -> re-aggro forever.
         public float RouteReaggroRange = 0f;
-        // May this enemy climb ropes (SF4 only)? Default OFF — opt-in per enemy. Puppets default it ON, and the
-        // TibianValkyrieSmart4 rope testbed sets it. A giant beast grabbing a rope looks wrong, hence default off.
+        // May this enemy climb ropes (SF4 only)? Default OFF — opt-in per enemy. Puppets default it ON.
+        // A giant beast grabbing a rope looks wrong, hence default off.
         public bool CanUseRopes = false;
         // DisengageTimer threshold. Short = skittish (gives up fast); long = relentless hunter.
         public int NavGiveUpTicks = 600;
@@ -2621,6 +2621,9 @@ namespace tsorcRevamp.NPCs
         }
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
+            // New Enemy Spawns: the central registry replaces the pool entry of every enemy it lists. First, so the clears and removals below still win.
+            EnemySpawns.Apply(pool, spawnInfo);
+
             int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
             int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
             Player player = spawnInfo.Player;
@@ -2684,7 +2687,7 @@ namespace tsorcRevamp.NPCs
             }
 
             // The Catacombs use the Cursed Pink Tiled Wall rather than a vanilla biome flag.
-            if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.PinkDungeonTileUnsafe)
+            if (!EnemySpawns.Enabled && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.PinkDungeonTileUnsafe)
             {
                 pool.Add(ModContent.NPCType<Puppets.OolacileCultist>(), 0.2f);
             }
@@ -2696,8 +2699,13 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.DesertDjinn, 0.075f);
                 pool.Add(NPCID.DiabolistWhite, 0.02f); //was 0.1
-                pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.08f);
-                pool.Add(ModContent.NPCType<Enemies.LothricKnight>(), 0.08f);
+
+                // With New Enemy Spawns on, the registry holds these two (and Add would throw on the key it already put in the pool).
+                if (!EnemySpawns.Enabled)
+                {
+                    pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.08f);
+                    pool.Add(ModContent.NPCType<Enemies.LothricKnight>(), 0.08f);
+                }
 
             }
 
@@ -2709,7 +2717,8 @@ namespace tsorcRevamp.NPCs
 
             //machine temple (in water)
             //(depth gate is legacy 2000-space tile-Y; MapTileY shifts it on the expanded world, identity elsewhere)
-            if (spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
+            //(with New Enemy Spawns on, the registry's exclusive zones do this instead)
+            if (!EnemySpawns.Enabled && spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
             {            
                 // 98 = WallID.GreenDungeonSlabUnsafe
                 
@@ -2725,7 +2734,7 @@ namespace tsorcRevamp.NPCs
 
             }
             //machine temple (not in water)
-            if (!spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
+            if (!EnemySpawns.Enabled && !spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
             {
                 pool.Clear();
                 pool.Add(ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDrowned>(), 3f);
@@ -2786,7 +2795,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.SolarSolenian, 0.6f); 
             }
             //dungeon (rare)
-            if (spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
+            if (!EnemySpawns.Enabled && spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(ModContent.NPCType<Enemies.SuperHardMode.KnightOfGwyn>(), 0.01f);
             }
@@ -2860,13 +2869,16 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)
+            // New Enemy Spawns: the registry's exclusive zones (Machine Temple, Humanity Phantom rooms) clear the pool here, after the invasion block above.
+            EnemySpawns.ApplyExclusiveZones(pool, spawnInfo);
+
+            if (!EnemySpawns.Enabled && Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)
             {
                 pool.Clear();
                 pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
             }
 
-            if ((playerX > 6083 && playerX < 6847 && playerY > 1664 && playerY < 1999) && Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.ObsidianBrickUnsafe && tsorcRevampWorld.RemixMap)
+            if (!EnemySpawns.Enabled && (playerX > 6083 && playerX < 6847 && playerY > 1664 && playerY < 1999) && Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.ObsidianBrickUnsafe && tsorcRevampWorld.RemixMap)
             {
                 pool.Clear();
                 pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
@@ -4885,6 +4897,9 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            // New Enemy Balance: regular enemies registered in Systems/EnemyBalance.cs get their health here, ahead of the SHM scaling below.
+            EnemyBalance.ApplyEnemySetDefaults(npc);
+
             //Only mess with it if it's one of our bosses
             if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
             {
@@ -4901,7 +4916,7 @@ namespace tsorcRevamp.NPCs
 )
                     {
                         base.SetDefaults(npc);
-                        // Summoned CrystalSentry has an explicitly fixed4000 HP in every world tier.
+                        // Summoned CrystalSentry has an explicitly fixed HP (CrystalSentry.FixedLife) in every world tier.
                         if (npc.ModNPC is not NPCs.Enemies.SuperHardMode.CrystalSentry)
                             npc.lifeMax = (int)(tsorcRevampWorld.SHMScale * npc.lifeMax);
                         npc.defense = (int)(tsorcRevampWorld.SubtleSHMScale * npc.defense);

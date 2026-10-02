@@ -12,6 +12,7 @@ using tsorcRevamp.Content.Projectiles.Enemy.Gigas;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Enemies{
 	// Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
@@ -318,6 +319,8 @@ namespace tsorcRevamp.NPCs.Enemies{
                 SHM = true;
                 NPC.lifeMax = 64000; //double the late-HM baseline
                 NPC.life = NPC.lifeMax;
+                // New Enemy Balance: the registry value replaces the line above when enabled. It is applied here, after vanilla scaling, so the helper applies the Expert / Master multiplier.
+                EnemyBalance.ApplyLateLife(NPC);
                 NPC.damage = 200;
                 NPC.defense = 55;
                 NPC.netUpdate = true;

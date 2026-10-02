@@ -88,13 +88,9 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             {
                 return 0.265f;
             }
-            else if (Main.dayTime && !Main.hardMode && spawnInfo.Player.ZoneJungle && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
+            else if (!Main.hardMode && spawnInfo.Player.ZoneJungle && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
             {
-                return 0.37f;
-            }
-            else if (!Main.dayTime && !Main.hardMode && spawnInfo.Player.ZoneJungle && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
-            {
-                return 0.25f;
+                return 0.31f;
             }
 
             return chance;

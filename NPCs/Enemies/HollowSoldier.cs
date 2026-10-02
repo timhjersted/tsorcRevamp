@@ -726,8 +726,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.Player.ZoneOverworldHeight && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.035f;
             if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.075f;
 
-            if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.06f;
-            if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.08f;
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.07f;
 
             if (NPC.downedBoss2 || NPC.downedBoss3 && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.025f;
 

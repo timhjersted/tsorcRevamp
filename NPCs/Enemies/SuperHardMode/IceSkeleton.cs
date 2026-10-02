@@ -71,8 +71,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 if (p.ZoneDirtLayerHeight)
                 {
-                    if (!Main.dayTime) { return 0.2f; }
-                    else return 0.067f;
+                    return 0.134f;
                 }
                 else if (p.ZoneRockLayerHeight) { return 0.2f; } // was 0.1f
             }

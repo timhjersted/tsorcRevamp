@@ -264,7 +264,7 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             NPC.width = 20;
             NPC.height = 42;
-            NPC.lifeMax = 6200;
+            NPC.lifeMax = 30000;
             NPC.defense = 34;
             NPC.damage = 0;
             NPC.knockBackResist = 0.12f;

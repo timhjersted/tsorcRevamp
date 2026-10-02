@@ -107,8 +107,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (oUnderSurfaceByTile(p) || oUndergroundByTile(p) || oCavernByTile(p))
             {
-                if (Main.dayTime && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) chance = 0.067f;
-                if (!Main.dayTime && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) chance = 0.1f;
+                if (!spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) chance = 0.0835f;
             }
             if (Main.hardMode)
             {

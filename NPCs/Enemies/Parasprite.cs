@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -125,6 +126,8 @@ namespace tsorcRevamp.NPCs.Enemies
                     SHM = true;
                     NPC.lifeMax = 270;
                     NPC.life = NPC.lifeMax;
+                    // New Enemy Balance: the registry value replaces the line above when enabled. It is applied here, after vanilla scaling, so the helper applies the Expert / Master multiplier.
+                    EnemyBalance.ApplyLateLife(NPC);
                     NPC.damage = 90;
                 }
                 baseDamage = NPC.damage;

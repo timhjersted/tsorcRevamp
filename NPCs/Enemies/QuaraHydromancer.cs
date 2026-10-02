@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.IceGigas;
 using tsorcRevamp.Content.Projectiles.Enemy.Quara;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -126,8 +127,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //spawns more before the rage is defeated
 
             if (Main.hardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && !Main.dayTime && P.ZoneHallow && P.ZoneOverworldHeight && Main.rand.NextBool(30)) return 1;
-            if (Main.hardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && !Main.dayTime && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(25)) return 1;
-            if (Main.hardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && Main.dayTime && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(35)) return 1;
+            if (Main.hardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(30)) return 1;
             if (Main.hardMode && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(10)) return 1;
             if (Main.hardMode && spawnInfo.Lihzahrd && Main.rand.NextBool(45)) return 1;
             if (Main.hardMode && spawnInfo.Player.ZoneDesert && Main.rand.NextBool(45)) return 1;
@@ -272,6 +272,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 500;
             }
             NPC.life = NPC.lifeMax;
+            // New Enemy Balance: the registry value replaces the line above when enabled. It is applied here, after vanilla scaling, so the helper applies the Expert / Master multiplier.
+            EnemyBalance.ApplyLateLife(NPC);
             NPC.netUpdate = true;
         }
 

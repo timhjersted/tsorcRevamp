@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -11,6 +12,7 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -64,8 +66,35 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         #region Spawn
+        // Registry mode announces the knight when it really spawns naturally (not summoned or spawned by a script), instead of on a roll:
+        // a hint the first time (before it has been slain), a warning on later hunts.
+        public override void OnSpawn(IEntitySource source)
+        {
+            if (!EnemySpawns.Enabled || source is not EntitySource_SpawnNPC)
+            {
+                return;
+            }
+
+            bool slainBefore = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>()));
+            string messageKey = "NPCs.OolacileKnight.Intent";
+
+            if (slainBefore)
+            {
+                messageKey = "NPCs.OolacileKnight.Hunt";
+            }
+
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue(messageKey), 175, 75, 255);
+        }
+
+        // The old rolls below broadcast a chat message every time one succeeded, whether or not the knight then spawned.
+        // With New Enemy Spawns on, OnSpawn sends the message and the registry (Systems/EnemySpawns.cs) decides spawning, so this returns 0.
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
+            if (EnemySpawns.Enabled)
+            {
+                return 0f;
+            }
+
             Player P = spawnInfo.Player; //this shortens our code up from writing this line over and over.
 
             bool Sky = spawnInfo.SpawnTileY <= (Main.rockLayer * 4);

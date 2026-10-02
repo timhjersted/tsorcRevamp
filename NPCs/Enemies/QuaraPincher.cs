@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy.Quara;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -1084,6 +1085,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             NPC.lifeMax = (int)(baseHp * hpMult);
+            // New Enemy Balance: the registry holds the tier base (the Light variant) and the rarity multiplier stays here. Applied after vanilla scaling, so the helper applies the Expert / Master multiplier.
+            EnemyBalance.ApplyLateLife(NPC, hpMult);
             float difficultyValueMult = 1f;
 
             if (SHM)

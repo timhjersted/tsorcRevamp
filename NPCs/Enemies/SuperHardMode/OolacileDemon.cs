@@ -67,7 +67,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             bool AboveEarth = spawnInfo.SpawnTileY < Main.worldSurface;
             bool InBrownLayer = spawnInfo.SpawnTileY >= Main.worldSurface && spawnInfo.SpawnTileY < Main.rockLayer;
             bool InGrayLayer = spawnInfo.SpawnTileY >= Main.rockLayer && spawnInfo.SpawnTileY < (Main.maxTilesY - 200) * 16;
-            bool InHell = spawnInfo.SpawnTileY >= (Main.maxTilesY - 200) * 16;
+            bool InHell = spawnInfo.SpawnTileY >= Main.maxTilesY - 200;
             bool Ocean = spawnInfo.SpawnTileX < 3600 || spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
 
             // these are all the regular stuff you get , now lets see......
@@ -84,11 +84,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneUndergroundDesert && Main.rand.NextBool(20)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InHell && Main.rand.NextBool(13)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(16)) return 1;
 
             if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && InHell && Main.rand.NextBool(8)) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && Main.dayTime && InHell && Main.rand.NextBool(20)) return 1;
 
             return 0;
         }

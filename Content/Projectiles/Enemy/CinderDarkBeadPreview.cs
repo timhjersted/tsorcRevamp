@@ -30,7 +30,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
 
             NPC caster = Main.npc[ownerNpc];
-            if (caster.ModNPC is NPCs.Bosses.SuperHardMode.SoulOfCinder cinder)
+            if (caster.ModNPC is NPCs.Puppets.Marik cinder)
             {
                 Projectile.Center = cinder.StaffTipPosition;
             }

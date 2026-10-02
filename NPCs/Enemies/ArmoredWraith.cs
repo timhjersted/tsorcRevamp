@@ -35,15 +35,15 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (spawnInfo.Player.ZoneMeteor && !Main.dayTime && spawnInfo.Player.ZoneOverworldHeight)
+            if (spawnInfo.Player.ZoneMeteor && spawnInfo.Player.ZoneOverworldHeight)
             {
                 chance = .04f;
             }
-            if (spawnInfo.Player.ZoneMeteor && !Main.dayTime && spawnInfo.Player.ZoneDirtLayerHeight)
+            if (spawnInfo.Player.ZoneMeteor && spawnInfo.Player.ZoneDirtLayerHeight)
             {
                 chance = .033f;
             }
-            if (spawnInfo.Player.ZoneMeteor && !Main.dayTime && spawnInfo.Player.ZoneRockLayerHeight)
+            if (spawnInfo.Player.ZoneMeteor && spawnInfo.Player.ZoneRockLayerHeight)
             {
                 chance = .04f;
             }

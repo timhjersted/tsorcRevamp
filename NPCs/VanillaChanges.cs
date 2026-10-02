@@ -3673,7 +3673,12 @@ namespace tsorcRevamp.NPCs
             }
 
             // Last, so the registry multiplier lands on top of the absolute lifeMax values assigned in the switch above.
-            EnemyBalance.ApplyLifeMultiplier(npc);
+            // Vanilla types only: this GlobalNPC runs for modded NPCs too, and EnemyBalanceNPC already applies the registry
+            // to those, so without the guard every registered modded NPC got its multiplier twice (OwlFather 4000 -> 25000).
+            if (npc.type < NPCID.Count)
+            {
+                EnemyBalance.ApplyLifeMultiplier(npc);
+            }
         }
 
 

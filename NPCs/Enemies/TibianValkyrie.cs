@@ -23,8 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetDefaults()
         {
-            // Kept alongside the FindFrame override below (same pairing as TibianValkyrieSmart4, which is
-            // verified good): tModLoader runs vanilla's framing FIRST, then the override. Vanilla still
+            // Kept alongside the FindFrame override below: tModLoader runs vanilla's framing FIRST, then the override. Vanilla still
             // advances frameCounter/spriteDirection — which the override's walk cycle reads — while the
             // override replaces vanilla's idle/jump pose choice, whose exact `velocity != 0f` compares
             // showed the jump frame while she stood still.
@@ -154,8 +153,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (!Main.hardMode && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneJungle)
             {
-                if (!spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime) return 0.0433f;
-                if (!spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime) return 0.0555f;
+                if (!spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight)) return 0.0494f;
                 if (spawnInfo.Player.ZoneDungeon && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight)) return 0.03857f;
             }
 
@@ -164,7 +162,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
             {
                 if (spawnInfo.Player.ZoneOverworldHeight) return !Main.dayTime ? 0.025f : 0.018f;
-                if (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) return !Main.dayTime ? 0.032f : 0.022f;
+                if (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) return 0.027f;
             }
 
             return chance;
@@ -175,8 +173,7 @@ namespace tsorcRevamp.NPCs.Enemies
         //   frame 0      = jump
         //   frame 6 (7th)= standing / idle (feet together)
         //   frames 1..14 = walk cycle
-        // Ported from TibianValkyrieSmart4 (which renders from THIS sheet, so the layout is identical and
-        // its frame indices are verified good). Vanilla's Skeleton framing showed the jump pose on ~2/3 of
+        // These frame indices are verified good against this sheet. Vanilla's Skeleton framing showed the jump pose on ~2/3 of
         // stationary frames and held a mid-walk pose at rest instead of the feet-together idle.
         private const int IdleFrameIndex = 6;
         private const int JumpFrameIndex = 0;

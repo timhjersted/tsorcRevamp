@@ -18,14 +18,14 @@ using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
+namespace tsorcRevamp.NPCs.Puppets
 {
     [AutoloadBossHead]
-    class SoulOfCinder : PuppetNPC
+    class Marik : PuppetNPC
     {
-        public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/SuperHardMode/SoulOfCinder_Head_Boss";
+        public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/Marik_Head_Boss";
 
-        protected override string InvaderTitle => "Soul of Cinder";
+        protected override string InvaderTitle => "Marik of the Smoldering Bog";
 
         protected override int HeadArmorItemType => ModContent.ItemType<FirelinkHelm>();
         protected override int BodyArmorItemType => ModContent.ItemType<FirelinkArmor>();
@@ -456,7 +456,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.scale = 1.15f;
             NPC.damage = 0;
             NPC.defense = BaseDefense;
-            NPC.lifeMax = 200000;
+            NPC.lifeMax = 450000;
             NPC.knockBackResist = 0f;
             NPC.boss = true;
             NPC.netAlways = true;
@@ -466,7 +466,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 2000000;
             NPC.rarity = 47;
             Music = 12;
-            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.SoulOfCinder.DespawnHandler"), Color.OrangeRed, 6);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Marik.DespawnHandler"), Color.OrangeRed, 6);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.Agility = 0.25f;

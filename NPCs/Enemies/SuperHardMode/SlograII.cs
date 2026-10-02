@@ -65,11 +65,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && AboveEarth && Main.rand.NextBool(40)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && InBrownLayer && Main.rand.NextBool(60)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Dungeon && InBrownLayer && Main.rand.NextBool(60)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.NextBool(80)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Dungeon && InGrayLayer && Main.rand.NextBool(80)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && Main.rand.NextBool(35)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Dungeon && Jungle && Main.rand.NextBool(35)) return 1;
 
 
             return 0;

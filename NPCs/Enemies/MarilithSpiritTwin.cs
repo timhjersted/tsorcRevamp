@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && Main.bloodMoon && P.ZoneJungle && Main.rand.NextBool(12525)) return 1;
 
-            if (Main.hardMode && !Main.dayTime && P.ZoneUnderworldHeight && Main.rand.NextBool(7030)) return 1;
+            if (Main.hardMode && P.ZoneUnderworldHeight && Main.rand.NextBool(7030)) return 1;
 
             if (Main.hardMode && Main.bloodMoon && P.ZoneBeach && Main.rand.NextBool(8020)) return 1;
 

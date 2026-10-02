@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             sentry._root = root; sentry._ownerGeneration = sequence; sentry._initialized = true;
             sentry.Timer = -warning; sentry.NPC.target = target.whoAmI;
             sentry.NPC.direction = sentry.NPC.spriteDirection = target.Center.X >= root.X ? 1 : -1;
-            sentry.NPC.Bottom = root; sentry.NPC.life = sentry.NPC.lifeMax = 4000; sentry.NPC.netUpdate = true;
+            sentry.NPC.Bottom = root; sentry.NPC.life = sentry.NPC.lifeMax = FixedLife; sentry.NPC.netUpdate = true;
             return true;
         }
         public override void SetStaticDefaults()
@@ -116,14 +116,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void SetDefaults()
         {
             // Cover the horizontal head too, so ranged/melee hits on it can destroy the sentry.
-            NPC.width = 104; NPC.height = 76; NPC.lifeMax = 4000; NPC.defense = 20; NPC.damage = 0;
+            NPC.width = 104; NPC.height = 76; NPC.lifeMax = FixedLife; NPC.defense = 20; NPC.damage = 0;
             NPC.knockBackResist = 0; NPC.value = 0; NPC.npcSlots = 0;
             NPC.noGravity = true; NPC.noTileCollide = true; NPC.lavaImmune = true; NPC.aiStyle = -1;
             NPC.HitSound = SoundID.Item27; NPC.DeathSound = SoundID.Item27;
             NPC.dontTakeDamage = true;
         }
-        // User requested 4000 actual HP, including Expert/Master (not a scaled base value).
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) => NPC.lifeMax = 4000;
+        // Actual HP in every mode, including Expert/Master (not a scaled base value). Summoned by a boss; kept out of the enemy registry.
+        public const int FixedLife = 50000;
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) => NPC.lifeMax = FixedLife;
         public override bool CheckActive() => false;
         public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)

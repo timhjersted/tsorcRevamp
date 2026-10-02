@@ -30,7 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses
     //
     // Class name / namespace deliberately unchanged so every external reference keeps working:
     // the scripted-event fight (LumeliaCustomCondition), PoiseProfiles, loot, NewSlain gating,
-    // BossChecklist, gores, localization keys, SpawnChance.
+    // BossChecklist, gores, localization keys.
     //
     // KIT
     //   Melee    — AncientFireSword Broadsword combos; heavy swings throw a HeroFireArc crescent.
@@ -216,20 +216,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 doorBreakingDamage: 10,
                 attackRange: MeleeRange);
         }
-
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player P = spawnInfo.Player;
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneDesert && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>())) && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.NextBool(500))
-            {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.HeroofLumelia.Spawn"), 175, 75, 255);
-                return 1;
-            }
-
-            return 0;
-        }
-        #endregion
 
         public override void AI()
         {

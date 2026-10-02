@@ -227,8 +227,8 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Player.townNPCs > 1f) return 0f;
             if (!spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime && Main.rand.NextBool(650)) return 1;
             if (spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(450)) return 1;
-            if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !spawnInfo.Player.ZoneBeach && !Main.dayTime && Main.rand.NextBool(600)) return 1;
-            if (spawnInfo.Player.ZoneUnderworldHeight && !Main.dayTime && Main.rand.NextBool(500)) return 1;
+            if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !spawnInfo.Player.ZoneBeach && Main.rand.NextBool(600)) return 1;
+            if (spawnInfo.Player.ZoneUnderworldHeight && Main.rand.NextBool(500)) return 1;
 
 
             return 0;

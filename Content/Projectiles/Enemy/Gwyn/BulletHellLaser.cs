@@ -58,7 +58,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
             TelegraphTime = 150;
             FiringDuration = 370;
             MaxCharge = 150;
-            LaserLength = (int)NPCs.Bosses.SuperHardMode.SoulOfCinder.ARENA_HEIGHT;
+            LaserLength = (int)NPCs.Puppets.Marik.ARENA_HEIGHT;
             TileCollide = false;
             LaserTexture = TransparentTextureHandler.TransparentTextureType.BulletHellLaser;
             LaserTextureHead = new Rectangle(0, 0, 30, 24);
