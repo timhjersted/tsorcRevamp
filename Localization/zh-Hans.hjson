@@ -752,7 +752,7 @@ Mods: {
 				古老的金字塔又一次被黑暗占据...
 				重构版地图: 使用黑镜
 				'''
-			// MarikName: Soul of Cinder
+			// MarikName: Marik of the Smoldering Bog
 			// MarikDesc: A fading champion awaits. In sandbox worlds, use the Soul of Marik spawner.
 			GwynName: 葛温—灰烬帝王
 			GwynDesc: 西海之下的珊瑚礁引导你找到他的坟墓
@@ -3765,7 +3765,7 @@ Mods: {
 			}
 
 			SoulOfCinderBag: {
-				// DisplayName: Treasure Bag (Soul of Cinder)
+				// DisplayName: Treasure Bag (Marik)
 				// Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -4042,8 +4042,8 @@ Mods: {
 			}
 
 			SoulOfCinderSpawner: {
-				// DisplayName: Soul of Cinder Spawner
-				// Tooltip: Summons the Soul of Cinder in sandbox worlds.
+				// DisplayName: Soul of Marik Spawner
+				// Tooltip: Summons Marik of the Smoldering Bog in sandbox worlds.
 			}
 
 			GravelordNitoSpawner: {
@@ -5797,8 +5797,8 @@ Mods: {
 			}
 
 			SoulOfCinder: {
-				// DisplayName: Soul of Cinder
-				// Tooltip: "'The essence of the Soul of Cinder'"
+				// DisplayName: Soul of Marik
+				// Tooltip: "'The essence of Marik'"
 			}
 
 			SoulOfAttraidies: {
@@ -13201,7 +13201,6 @@ Mods: {
 			// RedKnightTest.DisplayName: Red Knight Test
 			// TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			// TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
-			// TibianValkyrieSmart4.DisplayName: Tibian Valkyrie Smart4
 			// DemonLordApocalypse.DisplayName: Demon Lord Apocalypse
 			// Eland.DisplayName: Eland
 			// EvilEye.DisplayName: Evil Eye
@@ -13525,9 +13524,19 @@ Mods: {
 					// Label: New Enemy Balance
 					/* Tooltip:
 						'''
-						Retunes boss health for the 1.0 update and balance overhaul. The numbers are set for Expert; Master, Super Hardmode and
+						Retunes boss and enemy health for the 1.0 update and balance overhaul. The numbers are set for Expert; Master, Super Hardmode and
 						multiplayer scaling still stack on top. Created as a toggle for A/B comparisons.
 						Turn off to keep the original health values. Defaults to On.
+						''' */
+				}
+
+				NewSpawnBalance: {
+					// Label: New Enemy Spawns
+					/* Tooltip:
+						'''
+						Uses the central spawn registry (Systems/EnemySpawns) for the enemies listed in it instead of each enemy's own spawn rules.
+						Overall spawn frequency is still capped by player health. Created as a toggle for A/B comparisons.
+						Turn off to keep the original spawn rules. Defaults to On.
 						''' */
 				}
 

@@ -147,7 +147,6 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<Tetsujin>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<TibianAmazon>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<TibianValkyrie>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<TibianValkyrieSmart4>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Tonberry>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<UndeadCaster>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<VampireBat>()] = EnemyImpactMaterial.Blood,

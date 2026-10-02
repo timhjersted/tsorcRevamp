@@ -1394,8 +1394,6 @@ namespace tsorcRevamp.Systems
             Spawn("TibianValkyrie", TibianLand & !(Zone.Meteor | Zone.Jungle | Evil) & Depth.Surface & Time.Day, hm: 0.018f, shm: 0.018f);
             Spawn("TibianValkyrie", TibianLand & !(Zone.Meteor | Zone.Jungle | Evil) & Depth.BelowSurface, hm: 0.027f, shm: 0.027f);
 
-            // TibianValkyrieSmart4
-
             // Gates (one in 30 to one in 200) are folded in as 1/N. The old rule only kept the Hardmode line off the east coast;
             // now every line stays off it.
             Spawn("Tonberry", Water.Dry & !Region.FrozenOcean, hm: 0.005f, shm: 0.01f);

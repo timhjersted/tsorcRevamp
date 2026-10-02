@@ -339,7 +339,7 @@ namespace tsorcRevamp.NPCs
         // driver. When true, BasicAI already advanced the shared FSM and fired combat this frame, so SF4 must NOT
         // re-run UpdateState (side effects → double give-up clock) or fire its own attacks (double shot) — it
         // reads globalNPC.PursuitState and only moves. holdForAttack = combat wants to stop-and-fire → hold this frame.
-        // Defaults false → standalone behavior (Puppets, TibianValkyrieSmart4 testbed) still owns its own
+        // Defaults false → standalone behavior (Puppets) still owns its own
         // combat, but shares the grounded overspeed brake below.
         /// <param name="movementWaypoint">Optional world-space CENTER destination. When supplied, SF4 moves toward
         /// that fixed point instead of the player while combat targeting remains on <c>npc.target</c>. This is opt-in

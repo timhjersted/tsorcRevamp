@@ -405,7 +405,7 @@ namespace tsorcRevamp.Systems
             RegisterMod("GrandOccultist", 210000, 400000); // the rebuilt Abysmal Oolacile Sorcerer
             RegisterMod("Artorias", 250000, 500000);
             RegisterMod("Chaos", 450000, 500000);
-            RegisterMod("Gwyn", 750000, 1000000);
+            RegisterMod("Gwyn", 750000, 750000); // unchanged
             RegisterMod("HellkiteDragonHead", 650000, 650000); // unchanged
             RegisterMod("WyvernMageShadow", 250000, 250000); // unchanged; its Ghost Dragon (600000) is the larger part of that fight
             RegisterMod("DarkCloud", 300000, 300000); // unchanged
@@ -428,128 +428,127 @@ namespace tsorcRevamp.Systems
         private void BuildEnemyRegistry()
         {
             // ---- Enemies that first appear before Hardmode (their HM / SHM values follow on the same line) ----
-            Enemy("SnowOwl", phm: 30, hm: 114, shm: 142); // authored 15 / 50 / 50
-            Enemy("UndeadCaster", phm: 30); // authored 30; caster, contact damage 0
-            EnemyVariant("UndeadCaster", EnemyStage.PreHardmode, () => NPC.downedBoss3, 120); // after Skeletron: authored 120
-            EnemyVariant("UndeadCaster", EnemyStage.PreHardmode, () => NPC.downedBoss1, 60); // after the Eye of Cthulhu: authored 60
-            Enemy("MutantToad", phm: 80, hm: 400, shm: 900); // authored 40 / 200 / 450
-            Enemy("DworcFleshhunter", phm: 100, hm: 200, shm: 259); // authored 50 / 100 / 100
-            Enemy("DworcVenomsniper", phm: 100, hm: 244, shm: 306); // authored 50 / 100 / 100
-            Enemy("FirebombHollow", phm: 120, hm: 1000, shm: 4000); // authored 60 / 500 / 2000
-            Enemy("StoneGolem", phm: 120, hm: 271, shm: 700); // authored 60 / 120 / 350
-            Enemy("ArmoredWraith", phm: 150, shm: 180); // authored 75 / 75
-            Enemy("MountedSandsprog", phm: 150, hm: 600, shm: 1800); // authored 75 / 300 / 900
-            Enemy("Sandsprog", phm: 150, hm: 400, shm: 1800); // authored 75 / 200 / 900
-            Enemy("SandsprogMage", phm: 150, hm: 400, shm: 1800); // authored 75 / 200 / 900
-            Enemy("DungeonMage", phm: 160, shm: 1050); // authored 160 / 1050; caster, contact damage 0
-            Enemy("MountedSandsprogMage", phm: 160, hm: 600, shm: 1800); // authored 80 / 300 / 900
-            Enemy("Parasprite", phm: 180, hm: 222, shm: 270); // authored 90 / 90 / 90
-            Enemy("TibianValkyrie", phm: 180, hm: 520, shm: 1400); // authored 90 / 260 / 700
-            Enemy("BasiliskWalker", phm: 200, hm: 500); // authored 100 / 250
-            Enemy("GhostOfAHollowWarrior", phm: 200, hm: 500, shm: 2000); // authored 100 / 250 / 1000
-            Enemy("GhostOfTheForgottenWarrior", phm: 200, hm: 400, shm: 2000); // authored 100 / 200 / 1000
-            Enemy("HollowWarrior", phm: 200, hm: 500, shm: 2000); // authored 100 / 250 / 1000
-            Enemy("OolacileCultist", phm: 200, hm: 450, shm: 3000); // authored 200 / 450 / 3000; caster, contact damage 0; puppet
-            Enemy("TibianAmazon", phm: 200, hm: 500); // authored 100 / 250
-            Enemy("HollowSpearman", phm: 210, hm: 540, shm: 2000); // authored 105 / 270 / 1000
-            Enemy("AbandonedStump", phm: 240, hm: 480, shm: 1000); // authored 120 / 240 / 500
-            Enemy("FireLurker", phm: 240, hm: 500, shm: 2400); // authored 120 / 250 / 1200
-            Enemy("ManHunter", phm: 250, hm: 500, shm: 1200); // authored 125 / 250 / 600
-            Enemy("GhostOfTheForgottenKnight", phm: 300, hm: 400, shm: 2000); // authored 150 / 200 / 1000
-            Enemy("BarrowWight", phm: 360, hm: 422, shm: 528); // authored 180 / 180 / 180
-            Enemy("AttraidiesIllusion", phm: 400); // authored 400; caster, contact damage 0
-            Enemy("AttraidiesManifestation", phm: 400, hm: 1600); // authored 400 / 800; caster, contact damage 0
-            Enemy("JungleSentree", phm: 400, hm: 800, shm: 1300); // authored 200 / 400 / 650
-            Enemy("Archdeacon", phm: 500); // authored 500; caster, contact damage 0
-            Enemy("DemonElemental", phm: 500, hm: 1000, shm: 4000); // authored 250 / 500 / 2000
-            Enemy("Eland", phm: 500, hm: 1000, shm: 20000); // authored 500 / 1000 / 20000; caster, contact damage 0
-            Enemy("HollowSoldier", phm: 500, hm: 1000, shm: 3000); // authored 250 / 500 / 1500
-            Enemy("Necromancer", phm: 800); // authored 800; caster, contact damage 0
-            Enemy("QuaraPincher", phm: 1200, hm: 2200, shm: 4200); // authored 1200 / 1200 / 1200
-            Enemy("RedCloudHunter", phm: 1200, hm: 1400, shm: 4000); // authored 600 / 700 / 2000
-            Enemy("LothricKnight", phm: 1500, hm: 2800, shm: 5000); // authored 750 / 1400 / 2500
-            Enemy("LothricSpearKnight", phm: 1500, hm: 2400, shm: 6000); // authored 750 / 1200 / 3000
-            Enemy("Warlock", phm: 1500, hm: 1500); // authored 750 / 1500; caster, contact damage 0
-            Enemy("BlackKnight", phm: 2000, hm: 4000, shm: 8000); // authored 1000 / 2000 / 4000
-            Enemy("LothricBlackKnight", phm: 2000, hm: 3000, shm: 10000); // authored 1000 / 1500 / 5000
-            Enemy("JungleWyvernJuvenileHead", phm: 2500, hm: 5000, shm: 6000); // authored 1250 / 2500 / 3000
+            Enemy("SnowOwl", phm: 150, hm: 250, shm: 3000); // authored 15 / 50 / 50
+            Enemy("UndeadCaster", phm: 100); // authored 30; caster, contact damage 0
+            EnemyVariant("UndeadCaster", EnemyStage.PreHardmode, () => NPC.downedBoss3, 500); // after Skeletron: authored 120
+            EnemyVariant("UndeadCaster", EnemyStage.PreHardmode, () => NPC.downedBoss1, 300); // after the Eye of Cthulhu: authored 60
+            Enemy("MutantToad", phm: 400, hm: 3000, shm: 12000); // authored 40 / 200 / 450
+            Enemy("DworcFleshhunter", phm: 400, hm: 1200, shm: 8000); // authored 50 / 100 / 100
+            Enemy("DworcVenomsniper", phm: 300, hm: 1500, shm: 9000); // authored 50 / 100 / 100
+            Enemy("FirebombHollow", phm: 200, hm: 4000, shm: 12000); // authored 60 / 500 / 2000
+            Enemy("StoneGolem", phm: 300, hm: 3000, shm: 10000); // authored 60 / 120 / 350
+            Enemy("ArmoredWraith", phm: 250, shm: 5000); // authored 75 / 75
+            Enemy("MountedSandsprog", phm: 475, hm: 5000, shm: 12000); // authored 75 / 300 / 900
+            Enemy("Sandsprog", phm: 400, hm: 4000, shm: 10000); // authored 75 / 200 / 900
+            Enemy("SandsprogMage", phm: 400, hm: 5000, shm: 11000); // authored 75 / 200 / 900
+            Enemy("DungeonMage", phm: 500, shm: 13000); // authored 160 / 1050; caster, contact damage 0
+            Enemy("MountedSandsprogMage", phm: 500, hm: 9000, shm: 15000); // authored 80 / 300 / 900
+            Enemy("Parasprite", phm: 190, hm: 400, shm: 900); // authored 90 / 90 / 90
+            Enemy("TibianValkyrie", phm: 300, hm: 6000, shm: 20000); // authored 90 / 260 / 700
+            Enemy("BasiliskWalker", phm: 400, hm: 6000); // authored 100 / 250
+            Enemy("GhostOfAHollowWarrior", phm: 300, hm: 6000, shm: 10000); // authored 100 / 250 / 1000
+            Enemy("GhostOfTheForgottenWarrior", phm: 600, hm: 4000, shm: 12000); // authored 100 / 200 / 1000
+            Enemy("HollowWarrior", phm: 900, hm: 7000, shm: 10000); // authored 100 / 250 / 1000
+            Enemy("OolacileCultist", phm: 600, hm: 10000, shm: 40000); // authored 200 / 450 / 3000; caster, contact damage 0; puppet
+            Enemy("TibianAmazon", phm: 500, hm: 3000); // authored 100 / 250
+            Enemy("HollowSpearman", phm: 300, hm: 4000, shm: 10000); // authored 105 / 270 / 1000
+            Enemy("AbandonedStump", phm: 250, hm: 2000, shm: 8000); // authored 120 / 240 / 500
+            Enemy("FireLurker", phm: 1000, hm: 7500, shm: 20000); // authored 120 / 250 / 1200
+            Enemy("ManHunter", phm: 400, hm: 2000, shm: 9000); // authored 125 / 250 / 600
+            Enemy("GhostOfTheForgottenKnight", phm: 700, hm: 4000, shm: 12000); // authored 150 / 200 / 1000
+            Enemy("BarrowWight", phm: 1000, hm: 5000, shm: 10000); // authored 180 / 180 / 180
+            Enemy("AttraidiesIllusion", phm: 500); // authored 400; caster, contact damage 0
+            Enemy("AttraidiesManifestation", phm: 500, hm: 10000); // authored 400 / 800; caster, contact damage 0
+            Enemy("JungleSentree", phm: 450, hm: 1200, shm: 7000); // authored 200 / 400 / 650
+            Enemy("Archdeacon", phm: 1500); // authored 500; caster, contact damage 0
+            Enemy("DemonElemental", phm: 1000, hm: 7000, shm: 8000); // authored 250 / 500 / 2000
+            Enemy("Eland", phm: 2000, hm: 10000, shm: 25000); // authored 500 / 1000 / 20000; caster, contact damage 0
+            Enemy("HollowSoldier", phm: 750, hm: 6000, shm: 10000); // authored 250 / 500 / 1500
+            Enemy("Necromancer", phm: 3000); // authored 800; caster, contact damage 0
+            Enemy("QuaraPincher", phm: 2000, hm: 9000, shm: 26000); // authored 1200 / 1200 / 1200
+            Enemy("RedCloudHunter", phm: 2000, hm: 8000, shm: 20000); // authored 600 / 700 / 2000
+            Enemy("LothricKnight", phm: 2000, hm: 15000, shm: 33000); // authored 750 / 1400 / 2500
+            Enemy("LothricSpearKnight", phm: 2000, hm: 15000, shm: 25000); // authored 750 / 1200 / 3000
+            Enemy("Warlock", phm: 8000, hm: 9000); // authored 750 / 1500; caster, contact damage 0
+            Enemy("BlackKnight", phm: 15000, hm: 30000, shm: 50000); // authored 1000 / 2000 / 4000
+            Enemy("LothricBlackKnight", phm: 8000, hm: 18000, shm: 35000); // authored 1000 / 1500 / 5000
+            Enemy("JungleWyvernJuvenileHead", phm: 3000, hm: 10000, shm: 12000); // authored 1250 / 2500 / 3000
 
             // ---- Enemies that first appear in Hardmode ----
-            Enemy("CloudBat", hm: 200); // authored 100
-            Enemy("Dunlending", hm: 238, shm: 800); // authored 45 / 400
-            Enemy("Willowisp", hm: 300, shm: 700); // authored 150 / 350
-            Enemy("ClericOfSorrow", hm: 400, shm: 1200); // authored 400 / 1200; puppet
-            Enemy("GhostOfTheDrowned", hm: 450, shm: 1300); // authored 450 / 1300; caster, contact damage 0
-            Enemy("ShadowMage", hm: 450, shm: 1350); // authored 450 / 1350; caster, contact damage 0
-            Enemy("QuaraHydromancer", hm: 500, shm: 1500); // authored 250 / 250; caster, contact damage 0
-            Enemy("Byakhee", hm: 600, shm: 1400); // authored 300 / 700
-            Enemy("BasiliskShifter", hm: 700); // authored 350
-            Enemy("DworcVoodooShaman", hm: 750); // authored 750; caster, contact damage 0
-            Enemy("DemonSpirit", hm: 800); // authored 400
-            Enemy("EvilEye", hm: 800); // authored 400
-            Enemy("Assassin", hm: 1000, shm: 4000); // authored 500 / 2000
-            Enemy("CrazedDemonSpirit", hm: 1000, shm: 2000); // authored 500 / 1000
-            Enemy("DworcAlchemist", hm: 1000); // authored 500; caster, contact damage 0
-            Enemy("Tonberry", hm: 1500, shm: 3500); // authored 1500 / 3500; caster, contact damage 0
-            Enemy("RingedKnight", hm: 1600, shm: 5000); // authored 800 / 2500
-            Enemy("ParasyticWormHead", hm: 3000); // authored 1500
-            Enemy("FallenNecromancer", hm: 8000); // authored 4000
-            Enemy("MarilithSpiritTwin", hm: 20000); // authored 10000
+            Enemy("CloudBat", hm: 900); // authored 100
+            Enemy("Dunlending", hm: 1000, shm: 11000); // authored 45 / 400
+            Enemy("Willowisp", hm: 1500, shm: 11000); // authored 150 / 350
+            Enemy("ClericOfSorrow", hm: 10000, shm: 25000); // authored 400 / 1200; puppet
+            Enemy("GhostOfTheDrowned", hm: 3500, shm: 15000); // authored 450 / 1300; caster, contact damage 0
+            Enemy("ShadowMage", hm: 4500, shm: 12000); // authored 450 / 1350; caster, contact damage 0
+            Enemy("QuaraHydromancer", hm: 9000, shm: 16000); // authored 250 / 250; caster, contact damage 0
+            Enemy("Byakhee", hm: 2500, shm: 15000); // authored 300 / 700
+            Enemy("BasiliskShifter", hm: 9000); // authored 350
+            Enemy("DworcVoodooShaman", hm: 9000); // authored 750; caster, contact damage 0
+            Enemy("DemonSpirit", hm: 5000); // authored 400
+            Enemy("EvilEye", hm: 15000); // authored 400
+            Enemy("Assassin", hm: 9000, shm: 20000); // authored 500 / 2000
+            Enemy("CrazedDemonSpirit", hm: 10000, shm: 12000); // authored 500 / 1000
+            Enemy("DworcAlchemist", hm: 9000); // authored 500; caster, contact damage 0
+            Enemy("Tonberry", hm: 5000, shm: 23000); // authored 1500 / 3500; caster, contact damage 0
+            Enemy("RingedKnight", hm: 18000, shm: 35000); // authored 800 / 2500
+            Enemy("ParasyticWormHead", hm: 4000); // authored 1500
+            Enemy("FallenNecromancer", hm: 20000); // authored 4000
+            Enemy("MarilithSpiritTwin", hm: 30000); // authored 10000
 
             // ---- Enemies that first appear in Super Hardmode (HP shown before the x1.0-1.5 SHM scaling, which still applies) ----
-            Enemy("Locust", shm: 600); // authored 300
-            Enemy("ManOfWar", shm: 1600); // authored 800
-            Enemy("DemonWheel", shm: 2000); // authored 1000
-            Enemy("VampireBat", shm: 2600); // authored 1300
-            Enemy("CrystalKnight", shm: 2800); // authored 2800; caster, contact damage 0
-            Enemy("DarkKnight", shm: 3000); // authored 3000; caster, contact damage 0
-            Enemy("AbyssLurker", shm: 3200); // authored 1600
-            Enemy("DarkBloodKnight", shm: 3200); // authored 3200; caster, contact damage 0
-            Enemy("HydrisElemental", shm: 3200); // authored 1600
-            Enemy("DworcAbysswalker", shm: 3500); // authored 3500; caster, contact damage 0
-            Enemy("HydrisNecromancer", shm: 3500); // authored 3500; caster, contact damage 0
-            Enemy("CorruptedElemental", shm: 4000); // authored 2000
-            Enemy("CorruptedHornet", shm: 4000); // authored 2000
-            Enemy("GuardianCorruptor", shm: 4400); // authored 2200
-            Enemy("IceSkeleton", shm: 4400); // authored 2200
-            Enemy("BarrowWightNemesis", shm: 5000); // authored 2500
-            Enemy("BasiliskHunter", shm: 5000); // authored 2500
-            Enemy("OolacileSorcerer", shm: 5500); // authored 5500; caster, contact damage 0
-            Enemy("GhostOfTheDarkmoonKnight", shm: 6000); // authored 3000
-            Enemy("Tetsujin", shm: 6800); // authored 3400
-            Enemy("OolacileDemon", shm: 7000); // authored 3500
-            Enemy("SlograII", shm: 8000); // authored 4000
-            Enemy("OolacileKnight", shm: 10800); // authored 5400
-            Enemy("TaurusKnight", shm: 10800); // authored 5400
-            Enemy("Plaguesmith", shm: 16500); // authored 8250
-            Enemy("AncientDemonOfTheAbyss", shm: 30000); // authored 15000
-            Enemy("Massacre", shm: 40000); // authored 20000
-            Enemy("SerpentOfTheAbyssHead", shm: 48000); // authored 24000
-            Enemy("GreatBlackKnight", shm: 50000); // authored 50000; caster, contact damage 0
+            Enemy("Locust", shm: 900); // authored 300
+            Enemy("ManOfWar", shm: 3000); // authored 800
+            Enemy("DemonWheel", shm: 4000); // authored 1000
+            Enemy("VampireBat", shm: 5000); // authored 1300
+            Enemy("CrystalKnight", shm: 60000); // authored 2800; caster, contact damage 0
+            Enemy("DarkKnight", shm: 50000); // authored 3000; caster, contact damage 0
+            Enemy("AbyssLurker", shm: 30000); // authored 1600
+            Enemy("DarkBloodKnight", shm: 50000); // authored 3200; caster, contact damage 0
+            Enemy("HydrisElemental", shm: 10000); // authored 1600
+            Enemy("DworcAbysswalker", shm: 15000); // authored 3500; caster, contact damage 0
+            Enemy("HydrisNecromancer", shm: 30000); // authored 3500; caster, contact damage 0
+            Enemy("CorruptedElemental", shm: 10000); // authored 2000
+            Enemy("CorruptedHornet", shm: 9000); // authored 2000
+            Enemy("GuardianCorruptor", shm: 12000); // authored 2200
+            Enemy("IceSkeleton", shm: 8000); // authored 2200
+            Enemy("BarrowWightNemesis", shm: 16000); // authored 2500
+            Enemy("BasiliskHunter", shm: 31000); // authored 2500
+            Enemy("OolacileSorcerer", shm: 15000); // authored 5500; caster, contact damage 0
+            Enemy("GhostOfTheDarkmoonKnight", shm: 15000); // authored 3000
+            Enemy("Tetsujin", shm: 26000); // authored 3400
+            Enemy("OolacileDemon", shm: 16000); // authored 3500
+            Enemy("SlograII", shm: 23000); // authored 4000
+            Enemy("OolacileKnight", shm: 18000); // authored 5400
+            Enemy("TaurusKnight", shm: 20000); // authored 5400
+            Enemy("Plaguesmith", shm: 75000); // authored 8250
+            Enemy("AncientDemonOfTheAbyss", shm: 35000); // authored 15000
+            Enemy("Massacre", shm: 90000); // authored 20000
+            Enemy("SerpentOfTheAbyssHead", shm: 50000); // authored 24000
+            Enemy("GreatBlackKnight", shm: 150000); // authored 50000; caster, contact damage 0
 
             // ---- Events: no natural spawn (placed by the map, summoned by a boss or event, or spawned by another enemy), alphabetical ----
-            Enemy("BarrowWightPhantom", shm: 2500); // authored 1250
-            Enemy("DemonLordApocalypse", phm: 80000); // authored 40000
+            Enemy("BarrowWightPhantom", shm: 18000); // authored 1250
+            Enemy("DemonLordApocalypse", phm: 150000); // authored 40000
             Enemy("DestroyerLaserProbe", phm: 150, hm: 198, shm: 247); // authored 75 / 75 / 75
-            Enemy("DiscipleOfAttraidies", phm: 4500); // authored 4500; caster, contact damage 0
-            Enemy("FrozenGigasStatue", phm: 250); // authored 250; caster, contact damage 0
-            Enemy("Gigas", phm: 64000, hm: 64000, shm: 64000); // authored 32000 / 32000 / 32000
-            Enemy("Hydra", phm: 200000); // authored 100000
-            Enemy("IceGigas", phm: 44000, hm: 44000, shm: 44000); // authored 22000 / 22000 / 22000
-            Enemy("KnightOfGwyn", shm: 50000); // authored 25000
-            Enemy("MindflayerIllusion", phm: 1000); // authored 1000; caster, contact damage 0
+            Enemy("DiscipleOfAttraidies", phm: 6000); // authored 4500; caster, contact damage 0
+            Enemy("FrozenGigasStatue", phm: 5000); // authored 250; caster, contact damage 0
+            Enemy("Gigas", phm: 100000, hm: 100000, shm: 400000); // authored 32000 / 32000 / 32000
+            Enemy("Hydra", phm: 400000); // authored 100000
+            Enemy("IceGigas", phm: 50000, hm: 50000, shm: 350000); // authored 22000 / 22000 / 22000
+            Enemy("KnightOfGwyn", shm: 200000); // authored 25000
+            Enemy("MindflayerIllusion", phm: 1500); // authored 1000; caster, contact damage 0
             Enemy("MindflayerKingServant", phm: 200); // authored 200; caster, contact damage 0
             Enemy("MindflayerServant", phm: 70); // authored 70; caster, contact damage 0
-            Enemy("MinotaurMage", phm: 310, hm: 527, shm: 659); // authored 155 / 155 / 155
+            Enemy("MinotaurMage", phm: 900, hm: 6000, shm: 15000); // authored 155 / 155 / 155
             Enemy("PrimeLaserProbe", phm: 150, hm: 198, shm: 247); // authored 75 / 75 / 75
-            Enemy("QuaraClutchCrab", phm: 400, hm: 750, shm: 1400); // authored 400 / 400 / 400
-            Enemy("QuaraMantassin", phm: 1600); // authored 800
-            Enemy("Sahagin", phm: 88, hm: 199, shm: 248); // authored 44 / 44 / 44
+            Enemy("QuaraClutchCrab", phm: 500, hm: 1200, shm: 10000); // authored 400 / 400 / 400
+            Enemy("QuaraMantassin", phm: 3000); // authored 800
+            Enemy("Sahagin", phm: 500, hm: 5000, shm: 10000); // authored 44 / 44 / 44
             Enemy("SerpentOfTheAbyssBody", shm: 20000); // authored 10000
             Enemy("SerpentOfTheAbyssTail", shm: 20000); // authored 10000
-            Enemy("SpellboundGhoul", phm: 300); // authored 150
-            Enemy("TibianValkyrieSmart4", phm: 180, hm: 520, shm: 1400); // authored 90 / 260 / 700
-            Enemy("WaterSpirit", phm: 1200); // authored 600
+            Enemy("SpellboundGhoul", phm: 900); // authored 150
+            Enemy("WaterSpirit", phm: 1500); // authored 600
 
             // ---- Not registered ----
             // Legacy copies kept for A/B reference; natural spawning is disabled in code. Not registered.
