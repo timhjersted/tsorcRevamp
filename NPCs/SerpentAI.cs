@@ -94,6 +94,33 @@ namespace tsorcRevamp.NPCs
         const int DespawnTicks = 60 * 60;      //60s unreachable -> give up and despawn (per design)
         const float WanderSpeedMul = 0.6f;
 
+        //-- Passive wander (the state it spawns in; see RunPassive) --
+        const float PassiveWanderSpeed = 1.5f;     //px/tick -- a slow amble, well under the 4px/tick hunting pace
+        const int PassiveLegMinTicks = 420;        //how long one walk lasts before it stops to rest (blocked terrain ends it early)
+        const int PassiveLegMaxTicks = 900;
+        const int PassiveHaltMaxTicks = 90;        //brake window cap; it also ends as soon as the head is nearly still
+        const float PassiveHaltStopSpeed = 0.15f;
+        const float PassiveTurnSpeed = 1.6f;       //px/tick along the U-turn arc
+        const float PassiveTurnMaxRadius = 56f;    //arc radius (px); the head rises 2x this at the top
+        const float PassiveTurnMinRadius = 20f;    //floor for a low ceiling -- it will graze the roof rather than skip the turn
+        const int PassiveTurnClearanceScanTiles = 14;
+        const int PassiveRestTicks = 600;
+        const float PassiveRestLowerLerp = 0.04f;  //slow settle so the head eases down off the top of the turn
+        const float PassiveRestHeadDrop = 0.3f;    //tan of the resting head's downward tilt (~17 deg)
+        const int PassiveFlickGapMinTicks = 120;
+        const int PassiveFlickGapMaxTicks = 280;
+        const int PassiveGraceTicks = 30;          //after spawn, HP is re-baselined each tick so spawn-time scaling can't read as a hit
+
+        //Tail flick: the last TailFlickPieceCount pieces (body pieces + the tail) each bend an equal share of the
+        //sweep, so the end of the snake lifts off the ground and curls up into a C, holds a moment, then lays back down.
+        //Kept to the very end of the chain on purpose: the C scales with the curled length, and curling the whole
+        //rear section (17 pieces, ~420px) towered ~20 tiles. The 98px tail piece alone is ~6 tiles of that height.
+        const int TailFlickRiseTicks = 50;
+        const int TailFlickHoldTicks = 25;
+        const int TailFlickLowerTicks = 70;
+        const int TailFlickPieceCount = 5;         //4 body pieces + the tail
+        const float TailFlickSweepRadians = 2.4f;  //total curl across those pieces (~137 deg)
+
         //-- Kiting: don't endlessly ram the player. Approach at slow speed, stop at kite range, attack from
         //there, never reverse. When it reaches the player it may cross THROUGH to the far side.
         const float KiteRangeTiles = 15f;        //stop advancing once the player is within this horizontally
@@ -328,13 +355,30 @@ namespace tsorcRevamp.NPCs
                     npc.damage = 0; //tail only deals damage while the head's stab is driving it
                 }
 
-                RunBodyFollow(npc);
+                //Passive tail flick: while the curl amount is up, every rear piece is told to hold a fixed bend
+                //relative to the piece ahead of it (instead of "point at the piece ahead"), which makes the end of
+                //the chain curl into a C through the normal hose joints. SmoothStep eases the rise and the return.
+                bool inFlickSection = isTail || segmentIndex >= GreatSerpentHead.BodySegmentCount - (TailFlickPieceCount - 1);
+                bool curling = inFlickSection && headData.TailFlickAmount > 0f;
+                float curlJointRadians = 0f;
+                if (curling)
+                {
+                    float curlShape = MathHelper.SmoothStep(0f, 1f, headData.TailFlickAmount);
+                    curlJointRadians = headData.TailFlickSign * curlShape * TailFlickSweepRadians / TailFlickPieceCount;
+                }
+
+                RunBodyFollow(npc, curling, curlJointRadians);
+
+                //The free front pieces normally ride wherever the head leads them. After the passive U-turn the
+                //neck is left hanging in a loop, so while it rests the whole body settles onto the ground like the rear does.
+                bool restingPassive = !headData.Provoked && headData.Passive == GreatSerpentHead.PassivePhase.Rest;
 
                 //Ground-snap is a SECONDARY correction on top of the hose chain (see RunBodyFollow). It used to
                 //be conditionally skipped while the head was phasing through terrain (the old Unstick failsafe,
                 //since removed -- that's what fought it and caused the body to "fly apart" as a straight
-                //diagonal line). Since nothing ever phases through terrain anymore, this can just always run.
-                if (isRearGrounded)
+                //diagonal line). Since nothing ever phases through terrain anymore, this can just always run --
+                //except on a curling piece, where it would pull the lifted C straight back down.
+                if ((isRearGrounded || restingPassive) && !curling)
                 {
                     ApplyGroundSnap(npc);
                 }
@@ -387,7 +431,7 @@ namespace tsorcRevamp.NPCs
         ///construction, and the fixed turn-rate cap is what makes the whole animal physically unable to move
         ///its head faster than its neck can bend to follow -- see JointMaxTurnRadians.
         ///</summary>
-        static void RunBodyFollow(NPC npc)
+        static void RunBodyFollow(NPC npc, bool curling = false, float curlJointRadians = 0f)
         {
             if (npc.ai[1] <= 0f || npc.ai[1] >= (float)Main.npc.Length)
             {
@@ -401,7 +445,14 @@ namespace tsorcRevamp.NPCs
                 return;
             }
 
+            //Normal joint: turn toward the piece ahead. Curling joint (passive tail flick): hold a fixed bend
+            //relative to the piece ahead's own rotation -- the ahead piece has already updated this tick (NPC
+            //index order = chain order), so the bends accumulate down the chain into one smooth curve.
             float desiredRotation = (float)Math.Atan2(offset.Y, offset.X) + 1.57f;
+            if (curling)
+            {
+                desiredRotation = ahead.rotation + curlJointRadians;
+            }
             npc.rotation = RotateTowardsAngle(npc.rotation, desiredRotation, JointMaxTurnRadians);
 
             //Link length = the average of the two neighbouring sprite lengths minus a fixed pixel overlap, so the
@@ -453,7 +504,11 @@ namespace tsorcRevamp.NPCs
         ///smoothly through the Coiling windup, then eases back to 0 once the attack ends.</summary>
         static void UpdateTailExtend(GreatSerpentHead data)
         {
-            float target = data.TailStab != GreatSerpentHead.TailStabState.None ? 1f : 0f;
+            float target = 0f;
+            if (data.TailStab != GreatSerpentHead.TailStabState.None || data.TailFlickAmount > 0f)
+            {
+                target = 1f;
+            }
             data.TailExtend = MathHelper.Lerp(data.TailExtend, target, TailExtendRate);
         }
 
@@ -486,6 +541,19 @@ namespace tsorcRevamp.NPCs
             //Contact damage is OFF by default; only specific attack states below turn it back on.
             npc.damage = 0;
 
+            //Passive tail flick curl amount: eases toward 1 while a flick is wanted and back to 0 otherwise. Runs
+            //before the stagger/passive branches so a flick interrupted by a hit or a stagger still lays itself
+            //back down instead of leaving the tail frozen up in the air.
+            if (data.TailFlickWanted)
+            {
+                data.TailFlickTimer++;
+                data.TailFlickAmount = Math.Min(1f, data.TailFlickAmount + 1f / TailFlickRiseTicks);
+            }
+            else
+            {
+                data.TailFlickAmount = Math.Max(0f, data.TailFlickAmount - 1f / TailFlickLowerTicks);
+            }
+
             if (poise.StaggerTimer > 0)
             {
                 RunStaggerFlop(npc);
@@ -501,6 +569,35 @@ namespace tsorcRevamp.NPCs
             if (data.TailStabCooldown > 0) { data.TailStabCooldown--; }
             if (data.CrossOverCooldown > 0) { data.CrossOverCooldown--; }
             if (data.CloakCooldown > 0) { data.CloakCooldown--; }
+
+            //Passive until struck. Any drop in the head's life (body hits reach it through realLife) provokes it for
+            //good; after that every branch below runs exactly as it always has. The authority decides, clients follow
+            //the synced Provoked flag. HP is re-baselined for the first PassiveGraceTicks so a spawn-time max-life
+            //rescale can't read as a hit.
+            if (!data.Provoked)
+            {
+                if (data.PassiveAge < PassiveGraceTicks)
+                {
+                    data.PassiveAge++;
+                    data.PassiveLifeBaseline = npc.life;
+                }
+
+                bool struck = npc.life < data.PassiveLifeBaseline;
+                if (struck && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    data.Provoked = true;
+                    data.TailFlickWanted = false; //any curl in progress lays itself back down while it gives chase
+                    npc.boss = true;
+                    npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
+                }
+            }
+
+            if (!data.Provoked)
+            {
+                RunPassive(npc, data);
+                SerpentLog(npc, data, player);
+                return;
+            }
 
             //While busy with a deliberate attack/hold, the head isn't "stuck" -- reset the detector so it doesn't
             //spuriously arm the forced-wander recovery mid-attack (which the log showed happening during the tail stab).
@@ -704,6 +801,231 @@ namespace tsorcRevamp.NPCs
             SnapHeadToGround(npc, GroundFollowLerp);
 
             AimHead(npc, Math.Abs(npc.velocity.X) > 0.4f ? npc.velocity.X : data.Facing, npc.velocity.Y);
+        }
+
+        ///<summary>
+        ///Pre-provocation behaviour (see GreatSerpentHead.Provoked): Wander (slow terrain-following amble that climbs
+        ///small steps) -> Halt (brake) -> Turn (head rears up and swings back over its own neck) -> Rest (head laid
+        ///down for PassiveRestTicks, tail flicking into a C every 120-280 ticks) -> Wander the other way. Never attacks,
+        ///never does contact damage (the caller already zeroed it), never despawns for being unreachable.
+        ///<para/>
+        ///The authority (server/singleplayer) rolls every random value and makes every phase change; clients run the
+        ///same per-tick motion off the synced phase + timers and wait for the next snapshot to change phase.
+        ///</summary>
+        static void RunPassive(NPC npc, GreatSerpentHead data)
+        {
+            bool isAuthority = Main.netMode != NetmodeID.MultiplayerClient;
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            //Keep the hunting systems quiet: nothing here may arm the stuck-wander, the unreachable->despawn clock
+            //or the LOS cloak, all of which key off "can't reach the player" and would misfire on a docile snake.
+            data.UnreachableTimer = 0;
+            data.StuckTimer = 0;
+            data.StuckCheckPos = npc.Center;
+            data.CloakAlphaTarget = 0;
+            npc.alpha = 0;
+
+            if (!data.PassiveStarted && isAuthority)
+            {
+                data.PassiveStarted = true;
+                data.WanderDir = Main.rand.NextBool() ? 1 : -1;
+                data.Passive = GreatSerpentHead.PassivePhase.Wander;
+                data.PassiveTimer = Main.rand.Next(PassiveLegMinTicks, PassiveLegMaxTicks + 1);
+                data.ClimbBudget = ClimbBudgetTicks; //starts at 0 otherwise, which would read the first climbable step as a wall
+                globalNPC.RequestNetworkSnapshot();
+            }
+
+            //Counts down in every phase; clamped at 0 so a client waiting on the authority's next snapshot can't run it negative.
+            data.PassiveTimer = Math.Max(data.PassiveTimer - 1, 0);
+
+            int centerTileX = (int)(npc.Center.X / TileSize);
+            int feetTileY = (int)((npc.position.Y + npc.height) / TileSize);
+
+            switch (data.Passive)
+            {
+                case GreatSerpentHead.PassivePhase.Wander:
+                {
+                    data.LastAction = "passive-wander";
+                    int dir = data.WanderDir;
+                    data.Facing = dir;
+                    npc.direction = dir;
+
+                    //Same terrain read as the hunting ground movement: a rise past SmallStepTiles is a climb, a wall
+                    //past MaxClimbHeightTiles (or no headroom to rise into) or a drop with no floor in reach ends the
+                    //leg. A lone 1-tile-wide spike is ignored.
+                    int aheadTileX = centerTileX + dir * SmallStepTiles;
+                    int obstacleHeight = GetObstacleHeightAhead(aheadTileX, feetTileY, MaxClimbHeightTiles + 2);
+                    if (obstacleHeight > SmallStepTiles)
+                    {
+                        int obstacleHeightNext = GetObstacleHeightAhead(aheadTileX + dir, feetTileY, MaxClimbHeightTiles + 2);
+                        if (obstacleHeightNext <= SmallStepTiles)
+                        {
+                            obstacleHeight = 0;
+                        }
+                    }
+
+                    int aheadGroundTileY = FindGroundSurfaceTileYSmoothed(centerTileX + dir * 2, feetTileY - GroundSnapToleranceTiles, GroundSnapToleranceTiles * 3);
+                    int headTileY = (int)(npc.position.Y / TileSize);
+                    bool hasHeadroom = !IsSolidTile(centerTileX, headTileY - 1) && !IsSolidTile(centerTileX, headTileY - 2);
+
+                    bool climbable = obstacleHeight > SmallStepTiles && obstacleHeight <= MaxClimbHeightTiles && hasHeadroom && data.ClimbBudget > 0;
+                    bool blocked = (obstacleHeight > SmallStepTiles && !climbable) || aheadGroundTileY < 0;
+
+                    if (isAuthority && (blocked || data.PassiveTimer <= 0))
+                    {
+                        data.Passive = GreatSerpentHead.PassivePhase.Halt;
+                        data.PassiveTimer = PassiveHaltMaxTicks;
+                        globalNPC.RequestNetworkSnapshot();
+                    }
+
+                    if (climbable)
+                    {
+                        npc.velocity.X = MathHelper.Lerp(npc.velocity.X, dir * PassiveWanderSpeed * 0.6f, 0.06f);
+                        npc.velocity.Y = -ClimbRiseSpeed;
+                        data.ClimbBudget--;
+                    }
+                    else if (blocked)
+                    {
+                        //Don't push into the wall/edge while the authority's Halt arrives.
+                        npc.velocity.X = MathHelper.Lerp(npc.velocity.X, 0f, 0.1f);
+                        SnapHeadToGround(npc, GroundFollowLerp);
+                    }
+                    else
+                    {
+                        npc.velocity.X = MathHelper.Lerp(npc.velocity.X, dir * PassiveWanderSpeed, 0.06f);
+                        SnapHeadToGround(npc, GroundFollowLerp);
+                        data.ClimbBudget = ClimbBudgetTicks;
+                    }
+
+                    AimHead(npc, Math.Abs(npc.velocity.X) > 0.4f ? npc.velocity.X : dir, npc.velocity.Y);
+                    break;
+                }
+
+                case GreatSerpentHead.PassivePhase.Halt:
+                {
+                    data.LastAction = "passive-halt";
+                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, 0f, 0.08f);
+                    SnapHeadToGround(npc, GroundFollowLerp);
+                    AimHead(npc, data.WanderDir, npc.velocity.Y);
+
+                    bool stopped = Math.Abs(npc.velocity.X) < PassiveHaltStopSpeed || data.PassiveTimer <= 0;
+                    if (stopped && isAuthority)
+                    {
+                        //Size the arc to the headroom: the head rises 2x the radius at the top of the swing, so leave
+                        //a tile of margin under the ceiling. A very low roof clamps to the minimum and grazes it.
+                        int headTopTileY = (int)(npc.position.Y / TileSize);
+                        int clearTiles = 0;
+                        while (clearTiles < PassiveTurnClearanceScanTiles && !IsSolidTile(centerTileX, headTopTileY - 1 - clearTiles))
+                        {
+                            clearTiles++;
+                        }
+
+                        float fitRadius = (clearTiles * TileSize - TileSize) * 0.5f;
+                        data.PassiveTurnRadius = MathHelper.Clamp(fitRadius, PassiveTurnMinRadius, PassiveTurnMaxRadius);
+                        data.PassiveTimer = (int)Math.Ceiling(MathHelper.Pi * data.PassiveTurnRadius / PassiveTurnSpeed);
+
+                        //From here WanderDir is the way it will face (and walk) after the turn; the arc starts the old way.
+                        data.WanderDir = -data.WanderDir;
+                        data.Passive = GreatSerpentHead.PassivePhase.Turn;
+                        globalNPC.RequestNetworkSnapshot();
+                    }
+                    break;
+                }
+
+                case GreatSerpentHead.PassivePhase.Turn:
+                {
+                    data.LastAction = "passive-turn";
+
+                    //The head follows a half circle: it starts moving the old way, rises, and ends moving the new way
+                    //(heading = (oldDir*cos a, -sin a), a = 0..pi). The neck hose-follows that path, folding back over itself.
+                    float arcTicks = MathHelper.Pi * data.PassiveTurnRadius / PassiveTurnSpeed;
+                    float progress = 1f;
+                    if (arcTicks >= 1f)
+                    {
+                        progress = MathHelper.Clamp(1f - data.PassiveTimer / arcTicks, 0f, 1f);
+                    }
+
+                    float arcAngle = MathHelper.Pi * progress;
+                    int oldDir = -data.WanderDir;
+                    Vector2 heading = new Vector2(oldDir * (float)Math.Cos(arcAngle), -(float)Math.Sin(arcAngle));
+                    npc.velocity = heading * PassiveTurnSpeed;
+
+                    //Rotation is driven straight off the heading so the sprite sweeps UP through vertical (AimHead
+                    //would take the shortest way round, through the ground). The sprite mirrors at the top of the arc,
+                    //where the head points straight up and a horizontal flip is seamless.
+                    npc.rotation = heading.ToRotation() + 1.57f;
+                    int arcFacing = oldDir;
+                    if (arcAngle >= MathHelper.PiOver2)
+                    {
+                        arcFacing = data.WanderDir;
+                    }
+                    npc.spriteDirection = -arcFacing;
+                    npc.direction = arcFacing;
+                    data.Facing = arcFacing;
+
+                    if (isAuthority && data.PassiveTimer <= 0)
+                    {
+                        data.Passive = GreatSerpentHead.PassivePhase.Rest;
+                        data.PassiveTimer = PassiveRestTicks;
+                        data.PassiveFlickGapTimer = Main.rand.Next(PassiveFlickGapMinTicks, PassiveFlickGapMaxTicks + 1);
+                        globalNPC.RequestNetworkSnapshot();
+                    }
+                    break;
+                }
+
+                case GreatSerpentHead.PassivePhase.Rest:
+                {
+                    data.LastAction = "passive-rest";
+                    data.Facing = data.WanderDir;
+                    npc.direction = data.WanderDir;
+
+                    //Ease down off the top of the turn onto the ground, then lie there with the snout drooping a little.
+                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, 0f, 0.1f);
+                    SnapHeadToGround(npc, PassiveRestLowerLerp);
+                    AimHead(npc, data.WanderDir, PassiveRestHeadDrop);
+
+                    int flickHeldTicks = TailFlickRiseTicks + TailFlickHoldTicks;
+                    if (data.TailFlickWanted)
+                    {
+                        //Held long enough -> let go; the curl amount then eases back down on its own (RunHeadLocomotion).
+                        if (isAuthority && data.TailFlickTimer >= flickHeldTicks)
+                        {
+                            data.TailFlickWanted = false;
+                            data.TailFlickTimer = 0;
+                            data.PassiveFlickGapTimer = Main.rand.Next(PassiveFlickGapMinTicks, PassiveFlickGapMaxTicks + 1);
+                            globalNPC.RequestNetworkSnapshot();
+                        }
+                    }
+                    else
+                    {
+                        data.PassiveFlickGapTimer = Math.Max(data.PassiveFlickGapTimer - 1, 0);
+
+                        //Only start one that can finish (rise + hold + lower) before the rest does, and only from a settled tail.
+                        bool roomToFlick = data.PassiveTimer > flickHeldTicks + TailFlickLowerTicks;
+                        bool tailSettled = data.TailFlickAmount <= 0f;
+                        if (isAuthority && data.PassiveFlickGapTimer <= 0 && roomToFlick && tailSettled)
+                        {
+                            //The body trails away from the way the head now faces (it just folded back over itself),
+                            //so "up" is a negative bend when the tail trails right and a positive one when it trails left.
+                            data.TailFlickSign = -data.WanderDir;
+                            data.TailFlickWanted = true;
+                            data.TailFlickTimer = 0;
+                            globalNPC.RequestNetworkSnapshot();
+                        }
+                    }
+
+                    //Don't leave mid-flick: wait for the tail to be fully laid back down so walking never starts from a raised C.
+                    bool restOver = data.PassiveTimer <= 0 && !data.TailFlickWanted && data.TailFlickAmount <= 0f;
+                    if (isAuthority && restOver)
+                    {
+                        data.Passive = GreatSerpentHead.PassivePhase.Wander;
+                        data.PassiveTimer = Main.rand.Next(PassiveLegMinTicks, PassiveLegMaxTicks + 1);
+                        data.ClimbBudget = ClimbBudgetTicks;
+                        globalNPC.RequestNetworkSnapshot();
+                    }
+                    break;
+                }
+            }
         }
 
         ///<summary>Give-up despawn: a dust poof and gone (kept separate from the boss's all-players-dead handler).</summary>
@@ -1749,6 +2071,7 @@ namespace tsorcRevamp.NPCs
             data.ChargeTelegraphTimer = 0;
             data.RippleTimer = 0;
             data.CrossingOver = false;
+            data.TailFlickWanted = false; //a rest flick still curled up lays back down instead of holding through the flop
 
             //Cancel an in-progress attack (windup or active) and put it on cooldown so the flop isn't
             //immediately followed by the attack it interrupted.

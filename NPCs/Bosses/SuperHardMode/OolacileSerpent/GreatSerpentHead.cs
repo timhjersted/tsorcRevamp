@@ -114,6 +114,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         public int UnreachableTimer;
         public int WanderDir = 1;
 
+        //-- Passive wander: the state it spawns in. It ambles, rests, and never attacks until it takes damage. --
+        //Provoked flips once, permanently, on the first point of damage to ANY segment (body hits reach the head's
+        //life through realLife). Server/singleplayer decides it; clients follow the synced flag.
+        public bool Provoked;
+        //Wander = slow terrain-following amble. Halt = brake to a stop. Turn = rear the head up and swing it over the
+        //neck to face back the way it came (a hose chain can't just reverse -- the body would be pushed ahead of the
+        //head). Rest = lay the head down for PassiveRestTicks while the tail flicks now and then.
+        public enum PassivePhase { Wander, Halt, Turn, Rest }
+        public PassivePhase Passive = PassivePhase.Wander;
+        public int PassiveTimer;         //ticks left in the current phase (leg length / halt cap / arc length / rest length)
+        public float PassiveTurnRadius;  //px; sized at turn start from the headroom above the head
+        public int PassiveFlickGapTimer; //ticks until the next rest tail flick (120-280, rolled by the authority)
+        public bool PassiveStarted;      //authority-only: first-tick direction/leg roll has happened
+        public int PassiveAge;           //ticks since spawn, only to give spawn-time HP scaling a grace window
+        public int PassiveLifeBaseline;  //life the head spawned with; any drop below it counts as being attacked
+
+        //Tail flick: TailFlickWanted ramps TailFlickAmount 0->1 (curl) / 1->0 (lay back down); every rear body piece
+        //and the tail bend an equal share of the sweep, signed by TailFlickSign so the C always curls UPWARD.
+        public bool TailFlickWanted;
+        public int TailFlickTimer;       //ticks spent curled-or-curling; the authority ends the flick once it's held long enough
+        public float TailFlickAmount;
+        public int TailFlickSign = -1;
+
         //Diagnostics (Logs/tsorcRevamp-serpent.log)
         public string LastAction = "init";
 
@@ -234,6 +257,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
+            //Not a boss until it's been attacked: no boss music or health bar for a snake dozing in the sun. SetDefaults
+            //leaves boss=true so spawn-time scaling treats it as one; this flips it off on the first tick and back on
+            //(on every machine, from the synced flag) the moment it's provoked.
+            NPC.boss = Provoked;
+
             int[] bodyTypes = SerpentAI.BuildBodyTypes();
             //4f pursue speed -- deliberately slow (hardmode pacing); kiting caps it further near the player.
             SerpentAI.Run(NPC, ModContent.NPCType<GreatSerpentHead>(), bodyTypes, ModContent.NPCType<GreatSerpentTail>(), TotalSegmentCount, 4f);
@@ -296,6 +324,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
 
             writer.Write(IsDying);
             writer.Write((short)Math.Clamp(DeathFadeTimer, 0, short.MaxValue));
+
+            //Passive wander. The authority rolls the leg length, direction and flick gaps; clients only run the timers.
+            writer.Write(Provoked);
+            writer.Write((byte)Passive);
+            writer.Write((short)Math.Clamp(PassiveTimer, 0, short.MaxValue));
+            writer.Write(PassiveTurnRadius);
+            writer.Write((short)Math.Clamp(PassiveFlickGapTimer, 0, short.MaxValue));
+            writer.Write((sbyte)WanderDir);
+            writer.Write(TailFlickWanted);
+            writer.Write((short)Math.Clamp(TailFlickTimer, 0, short.MaxValue));
+            writer.Write(TailFlickAmount);
+            writer.Write((sbyte)TailFlickSign);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -342,6 +382,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
 
             IsDying = reader.ReadBoolean();
             DeathFadeTimer = reader.ReadInt16();
+
+            Provoked = reader.ReadBoolean();
+            Passive = (PassivePhase)reader.ReadByte();
+            PassiveTimer = reader.ReadInt16();
+            PassiveTurnRadius = reader.ReadSingle();
+            PassiveFlickGapTimer = reader.ReadInt16();
+            WanderDir = reader.ReadSByte();
+            TailFlickWanted = reader.ReadBoolean();
+            TailFlickTimer = reader.ReadInt16();
+            TailFlickAmount = reader.ReadSingle();
+            TailFlickSign = reader.ReadSByte();
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
