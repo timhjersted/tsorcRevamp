@@ -79,6 +79,12 @@ namespace tsorcRevamp.Systems
             EnemyHpEntries.Clear();
         }
 
+        /// <summary>True when the type has an entry in the regular-enemy HP registry, whether or not the New Enemy Balance toggle is on. The balance logger samples kills of exactly these enemies.</summary>
+        public static bool IsRegisteredEnemy(int npcType)
+        {
+            return EnemyHpEntries.ContainsKey(npcType);
+        }
+
         /// <summary>The registered Expert health for a regular enemy in the current world stage. False when the toggle is off or the type is unlisted.</summary>
         public static bool TryGetEnemyExpertHp(int npcType, out int expertHp)
         {
@@ -476,22 +482,22 @@ namespace tsorcRevamp.Systems
 
             // ---- Enemies that first appear in Hardmode ----
             Enemy("CloudBat", hm: 900); // authored 100
-            Enemy("Dunlending", hm: 1000, shm: 11000); // authored 45 / 400
+            Enemy("Dunlending", phm: 50, hm: 1000, shm: 11000); // authored 45 / 400
             Enemy("Willowisp", hm: 1500, shm: 11000); // authored 150 / 350
             Enemy("ClericOfSorrow", hm: 10000, shm: 25000); // authored 400 / 1200; puppet
-            Enemy("GhostOfTheDrowned", hm: 3500, shm: 15000); // authored 450 / 1300; caster, contact damage 0
+            Enemy("GhostOfTheDrowned", phm: 175, hm: 3500, shm: 15000); // authored 150 / 450 / 1300; caster, contact damage 0
             Enemy("ShadowMage", hm: 4500, shm: 12000); // authored 450 / 1350; caster, contact damage 0
             Enemy("QuaraHydromancer", hm: 9000, shm: 16000); // authored 250 / 250; caster, contact damage 0
             Enemy("Byakhee", hm: 2500, shm: 15000); // authored 300 / 700
             Enemy("BasiliskShifter", hm: 9000); // authored 350
             Enemy("DworcVoodooShaman", hm: 9000); // authored 750; caster, contact damage 0
-            Enemy("DemonSpirit", hm: 5000); // authored 400
+            Enemy("DemonSpirit", phm: 800, hm: 5000); // authored 400
             Enemy("EvilEye", hm: 15000); // authored 400
             Enemy("Assassin", hm: 9000, shm: 20000); // authored 500 / 2000
-            Enemy("CrazedDemonSpirit", hm: 10000, shm: 12000); // authored 500 / 1000
-            Enemy("DworcAlchemist", hm: 9000); // authored 500; caster, contact damage 0
+            Enemy("CrazedDemonSpirit", phm: 1000, hm: 10000, shm: 12000); // authored 500 / 1000
+            Enemy("DworcAlchemist", phm: 500, hm: 9000); // authored 250 / 500; caster, contact damage 0
             Enemy("Tonberry", hm: 5000, shm: 23000); // authored 1500 / 3500; caster, contact damage 0
-            Enemy("RingedKnight", hm: 18000, shm: 35000); // authored 800 / 2500
+            Enemy("RingedKnight", phm: 1000, hm: 18000, shm: 35000); // authored 400 / 800 / 2500
             Enemy("ParasyticWormHead", hm: 4000); // authored 1500
             Enemy("FallenNecromancer", hm: 20000); // authored 4000
             Enemy("MarilithSpiritTwin", hm: 30000); // authored 10000

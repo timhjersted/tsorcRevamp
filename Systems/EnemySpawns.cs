@@ -955,14 +955,15 @@ namespace tsorcRevamp.Systems
 
             Spawn("DungeonMage", Zone.Dungeon & NoDungeonMiniBoss, phm: 0.05f, hm: 0.05f, shm: 0.05f);
 
-            // The old Super Hardmode line divided by zero but sat behind the Hardmode line, which always returned first; so Super
-            // Hardmode just uses the Hardmode half rate. The overworld day and night lines had stopped firing: a "spawn row 1000 or
-            // deeper" test was added to keep the enemy out of the sky, but the adventure map's surface is at row 875 (1164 expanded),
-            // so it cut the surface off too. They are written here for the real surface, with no row test (the surface zone already
-            // excludes the sky). The underground band keeps the row test: UpperCaves, just under the surface.
-            Spawn("Dunlending", DunlendingLand & Depth.Surface & Time.Day, phm: 0.067f, hm: 0.034f, shm: 0.034f);
-            Spawn("Dunlending", DunlendingLand & Depth.Surface & Time.Night, phm: 0.125f, hm: 0.0625f, shm: 0.0625f);
-            Spawn("Dunlending", DunlendingLand & Depth.UpperCaves & !Evil, phm: 0.0835f, hm: 0.042f, shm: 0.042f);
+            // Pre-Hardmode and Hardmode only, on purpose. (The old Super Hardmode line divided by zero but sat behind the Hardmode
+            // line, which always returned first, so it used to spawn there at the Hardmode half rate.)
+            // The overworld day and night lines had stopped firing: a "spawn row 1000 or deeper" test was added to keep the enemy out
+            // of the sky, but the adventure map's surface is at row 875 (1164 expanded), so it cut the surface off too. They are
+            // written here for the real surface, with no row test (the surface zone already excludes the sky). The underground band
+            // keeps the row test: UpperCaves, just under the surface.
+            Spawn("Dunlending", DunlendingLand & Depth.Surface & Time.Day, phm: 0.067f, hm: 0.034f);
+            Spawn("Dunlending", DunlendingLand & Depth.Surface & Time.Night, phm: 0.125f, hm: 0.0625f);
+            Spawn("Dunlending", DunlendingLand & Depth.UpperCaves & !Evil, phm: 0.0835f, hm: 0.042f);
 
             // The old depth scaling (x1.3 underground, x1.5 cavern) is written out; blood moon doubled the base only here.
             Spawn("DworcAbysswalker", DworcLand, shm: 0.1f, max: 1);

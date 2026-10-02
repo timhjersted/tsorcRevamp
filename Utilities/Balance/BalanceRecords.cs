@@ -288,6 +288,117 @@ namespace tsorcRevamp.Utilities.Balance
         public Dictionary<string, DamageModifierBreakdown> damageModifiers = new();
     }
 
+    /// <summary>A weapon outside the top few by boss damage, kept to the numbers needed to total a fight up. The full
+    /// <see cref="WeaponUsage"/> costs about 450 bytes; this costs about 80.</summary>
+    internal sealed class MinorWeaponUsage
+    {
+        public int itemType;
+        public string item;
+        public long damageToBoss;
+        public long damageToOthers;
+        public int hitsOnBoss;
+        public int heldTicks;
+        public int activeTicks;
+    }
+
+    /// <summary>
+    /// The equipment half of a <see cref="GearSnapshot"/>, written as its own line the first time a character is seen
+    /// wearing it (once per session). Encounters and kills carry only the <see cref="id"/>, because the same loadout
+    /// repeats fight after fight and used to be about a quarter of the file.
+    /// </summary>
+    internal sealed class GearLoadout
+    {
+        public string @event = "loadout";
+        public int schema = 1;
+        public string id;
+        public string characterTag;
+        public string session;
+        public List<EquipSlot> armor;
+        public List<EquipSlot> accessories;
+        public List<ModdedEquipSlot> moddedAccessories;
+        public EquipSlot secondSlot;
+        public Dictionary<string, int> prefixCounts;
+        public string armorSet;
+        public string loadoutTag;
+    }
+
+    /// <summary>One weapon's share of a sampled enemy kill. For a summoner this is where the minion or sentry staff and the whip
+    /// show up as separate lines, because damage is credited to the item that spawned the projectile.</summary>
+    internal sealed class KillWeapon
+    {
+        public string item;
+        public string damageClass;
+        public long damage;
+        public int hits;
+    }
+
+    /// <summary>
+    /// One sampled enemy kill: the first, fifth, tenth and twentieth kill of an enemy in each world stage (pre-Hardmode,
+    /// Hardmode, Super Hardmode), per character. Small on purpose (about 400 bytes) - every other kill is only counted, in the
+    /// character's kill statistics, and exported by /balancelog zip.
+    /// </summary>
+    internal sealed class KillSample
+    {
+        public string @event = "kill";
+        public int schema = 1;
+        public int loggerRevision = BalanceLog.LoggerRevision;
+        public string session;
+        public string characterTag;
+        public string modVersion;
+        public string contentFingerprint;
+
+        public string enemy;
+        public int enemyType;
+
+        /// <summary>PHM, HM or SHM, from the world when the enemy died.</summary>
+        public string stage;
+
+        /// <summary>1, 5, 10 or 20: which kill of this enemy, in this stage, this is.</summary>
+        public int killNumber;
+
+        public int gameMode;
+        public bool newEnemyBalance;
+        public bool remixMap;
+        public float shmScale;
+
+        /// <summary>"Classic", "Unkindled" or "BearerOfTheCurse".</summary>
+        public string soulsMode;
+        public string loadoutId;
+        public int playerMaxLife;
+        public int playerDefense;
+
+        /// <summary>Total damage multiplier (class plus generic) of the class that did the most damage in this kill.</summary>
+        public float damageMult;
+
+        public int lifeMax;
+        public int defense;
+
+        /// <summary>Ticks from the first hit on this enemy to its death. A pause of ten seconds or more between hits starts a new engagement.</summary>
+        public int ttkTicks;
+        public float ttkSeconds;
+        public int hits;
+        public long damage;
+        public int maxHit;
+        public string primaryClass;
+        public Dictionary<string, long> damageByClass;
+
+        /// <summary>Up to the three weapons that did the most damage.</summary>
+        public List<KillWeapon> weapons;
+    }
+
+    /// <summary>First line of a character's log file: who the file belongs to, in terms that survive a rename.</summary>
+    internal sealed class CharacterHeader
+    {
+        public string @event = "character";
+        public int schema = 1;
+        public int loggerRevision = BalanceLog.LoggerRevision;
+        public string characterTag;
+        public string createdAt;
+        public string modVersion;
+        public int gameMode;
+        public string soulsMode;
+    }
+
     /// <summary>
     /// One boss fight. This is the unit of analysis: practical DPS, kill time, and the build that
     /// produced them all live in the same record, so no cross-referencing is needed downstream.
@@ -298,7 +409,14 @@ namespace tsorcRevamp.Utilities.Balance
         public int schema = 2;
         public int loggerRevision = BalanceLog.LoggerRevision;
         public string session;
+
+        /// <summary>The character's 4-character log tag, which is also in the file name.</summary>
+        public string characterTag;
         public string modVersion;
+
+        /// <summary>Id of the <see cref="GearLoadout"/> line that holds this fight's armor and accessories. The equipment
+        /// lists are cleared from <see cref="gear"/> in the written record; the loadout line has them.</summary>
+        public string loadoutId;
 
         /// <summary>Hash of every item's and boss's balance-relevant stats at load. Two records with the same value
         /// were taken against identical weapon and boss numbers, so data survives a mod update only when
@@ -446,7 +564,12 @@ namespace tsorcRevamp.Utilities.Balance
         public List<int> hurtImmuneTimes = new();
 
         public GearSnapshot gear;
+
+        /// <summary>The five weapons that did the most boss damage, in full.</summary>
         public List<WeaponUsage> weapons = new();
+
+        /// <summary>Every other weapon that was used, as a short summary line each.</summary>
+        public List<MinorWeaponUsage> otherWeapons = new();
         public List<NpcDamage> npcDamage = new();
 
         /// <summary>Boss life sampled once per second. Reconstructs instantaneous DPS, invulnerability
@@ -458,7 +581,8 @@ namespace tsorcRevamp.Utilities.Balance
 
         /// <summary>Player mana on the same 1 Hz cadence. Magic weapons' practical DPS is gated by the
         /// mana economy, not by their on-paper damage — this plus <see cref="ceruleanChargesUsed"/>
-        /// makes that gate visible instead of hiding it inside the DPS average.</summary>
+        /// makes that gate visible instead of hiding it inside the DPS average. Left out (null) of fights where no
+        /// weapon spent mana and no Cerulean flask was drunk.</summary>
         public List<int> manaTimeline = new();
 
         /// <summary>Stamina on the same 1 Hz cadence. Mana Burn switches on when stamina falls under a third of

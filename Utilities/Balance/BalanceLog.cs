@@ -1,9 +1,12 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using Terraria;
@@ -17,8 +20,8 @@ using tsorcRevamp.Systems.ArcaneSorcery;
 namespace tsorcRevamp.Utilities.Balance
 {
     /// <summary>
-    /// Boss-encounter balance telemetry: one self-contained JSON record per boss fight, appended to a
-    /// single long-lived file so a player can hand over one attachment after weeks of play.
+    /// Boss-encounter balance telemetry: one self-contained JSON record per boss fight, appended to one long-lived file
+    /// per character (tsorcRevamp-balance-TAG.jsonl) so a player can hand over one attachment per run after weeks of play.
     ///
     /// Deliberately NOT the same thing as <see cref="NPCs.Puppets.PuppetAttackTelemetry"/> — that one is
     /// per-frame AI debugging that rolls a new file per session. This one is low-volume balance data
@@ -29,7 +32,68 @@ namespace tsorcRevamp.Utilities.Balance
     /// </summary>
     internal static class BalanceLog
     {
-        internal const string FileName = "tsorcRevamp-balance.jsonl";
+        internal const string FilePrefix = "tsorcRevamp-balance";
+
+        /// <summary>This character's log file: one per character, named with the 4-character tag stored in the character
+        /// save (see <see cref="BalanceLogPlayer"/>). Old single-file logs (tsorcRevamp-balance.jsonl) are left alone.</summary>
+        internal static string FileName => $"{FilePrefix}-{CharacterTag}.jsonl";
+
+        /// <summary>The current character's tag. Never the character's name, so an uploaded file does not name anyone.</summary>
+        internal static string CharacterTag
+        {
+            get
+            {
+                Player player = Main.LocalPlayer;
+                if (player == null)
+                {
+                    return "0000";
+                }
+
+                return player.GetModPlayer<BalanceLogPlayer>().Tag;
+            }
+        }
+
+        // A field left out of a record means its default: 0, false, null, an empty string or an empty list. About a third of
+        // the bytes in a record were zeros and empty lists, so analysis must read a missing field as 0 / false / empty.
+        private static readonly JsonSerializerSettings JsonSettings = new()
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Ignore,
+            ContractResolver = new OmitEmptyResolver(),
+            Formatting = Formatting.None,
+        };
+
+        /// <summary>Newtonsoft's default-value handling skips zeros and false but not empty strings, lists or dictionaries;
+        /// this skips those too.</summary>
+        private sealed class OmitEmptyResolver : DefaultContractResolver
+        {
+            protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+            {
+                JsonProperty property = base.CreateProperty(member, memberSerialization);
+                Type propertyType = property.PropertyType;
+
+                if (propertyType == typeof(string))
+                {
+                    property.ShouldSerialize = instance => !string.IsNullOrEmpty((string)property.ValueProvider.GetValue(instance));
+                }
+                else if (typeof(ICollection).IsAssignableFrom(propertyType))
+                {
+                    property.ShouldSerialize = instance =>
+                    {
+                        object value = property.ValueProvider.GetValue(instance);
+                        return value is not ICollection collection || collection.Count > 0;
+                    };
+                }
+
+                return property;
+            }
+        }
+
+        // Weapons beyond the top few by boss damage are written as a short summary instead of a full record.
+        private const int FullWeaponRecords = 5;
+
+        // Loadout ids already written to the current file this session, so each is written once.
+        private static readonly HashSet<string> LoadoutsWritten = new();
 
         /// <summary>Runtime master switch. Default on — the file is local, tiny, and only leaves the
         /// machine if the player uploads it themselves.</summary>
@@ -43,8 +107,12 @@ namespace tsorcRevamp.Utilities.Balance
         /// 3 = per-projectile damage split, automatic loadout description, and bench normalizedDps now divides by
         /// total (class + generic) damage; the old class-only figure is classOnlyNormalizedDps.
         /// 4 = Mana Burn uptime and damage, per-second stamina, Cerulean drinks counted at drink completion with mana
-        /// restored, and max mana at the end of the fight.</summary>
-        internal const int LoggerRevision = 5;
+        /// restored, and max mana at the end of the fight.
+        /// 6 = one file per character (tag in the name), equipment moved to separate "loadout" lines referenced by
+        /// loadoutId, weapons beyond the top five reduced to otherWeapons summaries, manaTimeline dropped when no mana
+        /// was used, enemy-kill samples (event "kill") in the same file, and fields at their default (0, false, empty) left out
+        /// of every record.</summary>
+        internal const int LoggerRevision = 6;
 
         private const int SampleIntervalTicks = 60;
         private const int MaxEncounterTicks = 60 * 60 * 30;   // 30 minutes, runaway guard
@@ -160,6 +228,7 @@ namespace tsorcRevamp.Utilities.Balance
         internal static string ActiveBossName => _current?.boss;
         internal static int EncountersThisSession { get; private set; }
         internal static string LogPath => Path.Combine(Main.SavePath, "Logs", FileName);
+        internal static string LogDirectory => Path.Combine(Main.SavePath, "Logs");
 
         internal static string SessionId => _sessionId ??=
             DateTimeOffset.Now.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture);
@@ -168,7 +237,7 @@ namespace tsorcRevamp.Utilities.Balance
 
         /// <summary>True when telemetry should be recording at all. Kept in one place so every hook
         /// agrees on the gate.</summary>
-        private static bool Active =>
+        internal static bool Active =>
             Enabled && !Main.dedServ && Main.netMode == NetmodeID.SinglePlayer && Main.gameMenu == false;
 
         internal static bool IsBossAnchor(NPC npc) =>
@@ -731,6 +800,7 @@ namespace tsorcRevamp.Utilities.Balance
             _current = new BalanceEncounter
             {
                 session = SessionId,
+                characterTag = CharacterTag,
                 modVersion = ModVersion(),
                 contentFingerprint = ContentFingerprint,
                 startedAt = DateTimeOffset.Now.ToString("O", CultureInfo.InvariantCulture),
@@ -828,6 +898,14 @@ namespace tsorcRevamp.Utilities.Balance
                     }
                 }
 
+                // The mana timeline is only worth its bytes when mana was part of the fight: some weapon spent it or a
+                // Cerulean flask was drunk. Left null it is not written at all.
+                bool fightUsedMana = _ceruleanDrinks > 0 || Weapons.Values.Any(weapon => weapon.manaSpent > 0);
+                if (!fightUsedMana)
+                {
+                    encounter.manaTimeline = null;
+                }
+
                 if (encounter.durationSeconds > 0.5f)
                 {
                     encounter.bossDps = encounter.totalDamageToBoss / encounter.durationSeconds;
@@ -856,7 +934,10 @@ namespace tsorcRevamp.Utilities.Balance
                 bool trivialAttempt = finalOutcome != "kill"
                     && encounter.durationSeconds < 3f
                     && encounter.totalDamageToBoss < 0.02f * Math.Max(1L, encounter.bossMaxLifeTotal);
-                if (trivialAttempt)
+                // Under a second long and short of the boss's whole life: a worm segment dying or a lingering projectile, not a fight.
+                // (The Eater of Worlds produced hundreds of these before groups of boss parts were treated as one fight.)
+                bool blinkEncounter = encounter.durationSeconds < 1f && encounter.totalDamageToBoss < encounter.bossMaxLifeTotal;
+                if (trivialAttempt || blinkEncounter)
                 {
                     return;
                 }
@@ -1048,7 +1129,34 @@ namespace tsorcRevamp.Utilities.Balance
                 encounter.healing.AddRange(HealingSources.Values);
                 encounter.attacks.AddRange(AttackStats.Values);
 
-                encounter.weapons.AddRange(Weapons.Values);
+                // The weapons that did the most boss damage keep their full record; the rest shrink to a summary line each.
+                List<WeaponUsage> rankedWeapons = Weapons.Values
+                    .OrderByDescending(weapon => weapon.damageToBoss)
+                    .ThenByDescending(weapon => weapon.heldTicks)
+                    .ToList();
+
+                for (int rank = 0; rank < rankedWeapons.Count; rank++)
+                {
+                    WeaponUsage ranked = rankedWeapons[rank];
+
+                    if (rank < FullWeaponRecords)
+                    {
+                        encounter.weapons.Add(ranked);
+                        continue;
+                    }
+
+                    encounter.otherWeapons.Add(new MinorWeaponUsage
+                    {
+                        itemType = ranked.itemType,
+                        item = ranked.item,
+                        damageToBoss = ranked.damageToBoss,
+                        damageToOthers = ranked.damageToOthers,
+                        hitsOnBoss = ranked.hitsOnBoss,
+                        heldTicks = ranked.heldTicks,
+                        activeTicks = ranked.activeTicks,
+                    });
+                }
+
                 encounter.npcDamage.AddRange(NpcDamageByType.Values);
 
                 Write(encounter);
@@ -1109,11 +1217,104 @@ namespace tsorcRevamp.Utilities.Balance
             }
         }
 
-        private static void Write(BalanceEncounter encounter) => Append(FileName, encounter);
+        /// <summary>
+        /// Writes one encounter to this character's file. A new file starts with a header line; the encounter's
+        /// equipment goes into its own "loadout" line the first time that loadout is seen, and the encounter keeps
+        /// only the loadout id.
+        /// </summary>
+        private static void Write(BalanceEncounter encounter)
+        {
+            string path = PrepareCharacterFile(encounter.characterTag, encounter.modVersion, encounter.gameMode, encounter.gear?.soulsMode);
+
+            WriteLoadoutLine(path, encounter.gear, encounter.characterTag, encounter.session, out string loadoutId);
+            encounter.loadoutId = loadoutId;
+
+            AppendLine(path, encounter);
+        }
+
+        /// <summary>
+        /// Opens this character's file for writing and returns its path. When the file is new (or was just rolled) it starts
+        /// with a header line, and the written-loadout memory is cleared so every loadout is written again into it.
+        /// </summary>
+        internal static string PrepareCharacterFile(string characterTag, string modVersion, int gameMode, string soulsMode)
+        {
+            string path = PrepareFile(FileName, out bool freshFile);
+
+            if (freshFile)
+            {
+                LoadoutsWritten.Clear();
+                AppendLine(path, new CharacterHeader
+                {
+                    characterTag = characterTag,
+                    createdAt = DateTimeOffset.Now.ToString("O", CultureInfo.InvariantCulture),
+                    modVersion = modVersion,
+                    gameMode = gameMode,
+                    soulsMode = soulsMode,
+                });
+            }
+
+            return path;
+        }
+
+        /// <summary>
+        /// Writes the equipment half of a gear snapshot as a loadout line unless this loadout has already been written
+        /// this session, then clears those fields from the snapshot so the record that carries it stays small.
+        /// </summary>
+        internal static void WriteLoadoutLine(string path, GearSnapshot gear, string characterTag, string session, out string loadoutId)
+        {
+            loadoutId = null;
+
+            if (gear == null)
+            {
+                return;
+            }
+
+            string json = JsonConvert.SerializeObject(
+                new object[] { gear.armor, gear.accessories, gear.moddedAccessories, gear.secondSlot }, JsonSettings);
+            byte[] hash = SHA1.HashData(Encoding.UTF8.GetBytes(json));
+            loadoutId = Convert.ToHexString(hash, 0, 4).ToLowerInvariant();
+
+            if (LoadoutsWritten.Add(characterTag + ":" + loadoutId))
+            {
+                AppendLine(path, new GearLoadout
+                {
+                    id = loadoutId,
+                    characterTag = characterTag,
+                    session = session,
+                    armor = gear.armor,
+                    accessories = gear.accessories,
+                    moddedAccessories = gear.moddedAccessories,
+                    secondSlot = gear.secondSlot,
+                    prefixCounts = gear.prefixCounts,
+                    armorSet = gear.armorSet,
+                    loadoutTag = gear.loadoutTag,
+                });
+            }
+
+            gear.armor = null;
+            gear.accessories = null;
+            gear.moddedAccessories = null;
+            gear.secondSlot = null;
+            gear.prefixCounts = null;
+            gear.armorSet = null;
+        }
 
         /// <summary>Appends one JSON record as a line, rolling the file if it ever grows large enough
         /// to become awkward to share.</summary>
         internal static void Append(string fileName, object record)
+        {
+            string path = PrepareFile(fileName, out bool _);
+            AppendLine(path, record);
+        }
+
+        internal static void AppendLine(string path, object record)
+        {
+            File.AppendAllText(path, JsonConvert.SerializeObject(record, JsonSettings) + Environment.NewLine);
+        }
+
+        /// <summary>Rolls the file aside when it has outgrown <see cref="MaxFileBytes"/> and returns its full path.
+        /// <paramref name="freshFile"/> is true when nothing is in it yet, so the caller knows to write a header.</summary>
+        private static string PrepareFile(string fileName, out bool freshFile)
         {
             string path = Path.Combine(Main.SavePath, "Logs", fileName);
             Directory.CreateDirectory(Path.GetDirectoryName(path));
@@ -1125,9 +1326,11 @@ namespace tsorcRevamp.Utilities.Balance
                 File.Move(path, Path.Combine(
                     Path.GetDirectoryName(path),
                     $"{stem}-{DateTimeOffset.Now:yyyyMMdd-HHmmss}.jsonl"));
+                info = new FileInfo(path);
             }
 
-            File.AppendAllText(path, JsonConvert.SerializeObject(record, Formatting.None) + Environment.NewLine);
+            freshFile = !info.Exists || info.Length == 0;
+            return path;
         }
 
         // ---------------------------------------------------------------- snapshots

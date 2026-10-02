@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 using tsorcRevamp.Content.Items.Weapons;
 
 namespace tsorcRevamp.Utilities.Balance
@@ -111,6 +113,7 @@ namespace tsorcRevamp.Utilities.Balance
             int alt = player.altFunctionUse == 2 ? 1 : 0;
 
             BalanceLog.RecordHit(npc, player, itemType, -1, damageDone, hit.Crit);
+            EnemyKillLog.RecordHit(npc, player, itemType, damageDone);
             WeaponBench.RecordHit(npc, player, itemType, -1, damageDone, hit.Crit, mode, alt,
                 WeaponBench.MeleeAttackIndex(itemType, mode, alt, npc.whoAmI));
         }
@@ -127,6 +130,7 @@ namespace tsorcRevamp.Utilities.Balance
                 itemType = owner.HeldItem.type;
 
             BalanceLog.RecordHit(npc, owner, itemType, attribution.SourceAmmoType, damageDone, hit.Crit, projectile.type);
+            EnemyKillLog.RecordHit(npc, owner, itemType, damageDone);
             WeaponBench.RecordHit(npc, owner, itemType, attribution.SourceAmmoType, damageDone, hit.Crit,
                 attribution.SourceAttackMode, attribution.SourceAltFunction,
                 attribution.RegisterHit(npc.whoAmI), projectile.type);
@@ -135,6 +139,7 @@ namespace tsorcRevamp.Utilities.Balance
         public override void OnKill(NPC npc)
         {
             BalanceLog.NotifyKilled(npc);
+            EnemyKillLog.NotifyKilled(npc);
         }
     }
 
@@ -166,6 +171,45 @@ namespace tsorcRevamp.Utilities.Balance
 
     internal sealed class BalanceLogPlayer : ModPlayer
     {
+        // Crockford base32: no I, L, O or U, so a tag read aloud or typed from a screenshot is not misread.
+        private const string TagAlphabet = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+
+        /// <summary>
+        /// This character's 4-character log tag (about a million possible values, so uploads from many players rarely
+        /// collide). Random, saved with the character, and never derived from the character's name, so renaming or
+        /// copying the character keeps its file and an uploaded file does not name anyone.
+        /// </summary>
+        public string Tag = "";
+
+        // Runs for every new player instance; LoadData replaces the value when the character already has a saved tag.
+        public override void Initialize()
+        {
+            byte[] randomBytes = RandomNumberGenerator.GetBytes(4);
+            char[] letters = new char[4];
+
+            for (int i = 0; i < letters.Length; i++)
+            {
+                letters[i] = TagAlphabet[randomBytes[i] & 31];
+            }
+
+            Tag = new string(letters);
+        }
+
+        public override void SaveData(TagCompound tag)
+        {
+            tag["balanceTag"] = Tag;
+        }
+
+        public override void LoadData(TagCompound tag)
+        {
+            string saved = tag.GetString("balanceTag");
+
+            if (!string.IsNullOrEmpty(saved))
+            {
+                Tag = saved;
+            }
+        }
+
         /// <summary>Set in OnHurt, consumed one tick later in PostUpdate - see PostUpdate for why the
         /// read can't happen directly in OnHurt. A plain bool rather than a counter: two hits landing in
         /// the exact same tick would under-count by one, which is an acceptable rare-case loss for
@@ -221,6 +265,7 @@ namespace tsorcRevamp.Utilities.Balance
         public override void PostUpdateEverything()
         {
             BalanceLog.Update();
+            EnemyKillLog.Update();
             WeaponBench.Update();
         }
 
@@ -229,6 +274,7 @@ namespace tsorcRevamp.Utilities.Balance
             // A fight in progress when the world closes is still worth keeping — it's a real
             // "player gave up on this boss" data point.
             BalanceLog.AbortForWorldChange();
+            EnemyKillLog.Reset();
 
             // A benchmark run is not: it has no meaningful duration once interrupted.
             WeaponBench.Abort();
