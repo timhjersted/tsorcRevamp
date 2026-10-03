@@ -13,7 +13,7 @@ public class ArcaneSorceryPlayer : ModPlayer
     public const float MaxManaAmplifier = 400f;
     public const float ManaCostMult = 2.5f;
     
-    public const float BaseCeruleanFlaskMaxManaScalingMult = 1.6f; //this actually determines the value used in the mode
+    public const float BaseCeruleanFlaskMaxManaScalingMult = 1f; //this actually determines the value used in the mode
     public const float BaseCeruleanFlatManaGainMult = 3f;//same as above one
     public float CeruleanFlaskMaxManaScalingMult = 1f; //this value is updated based on current difficulty
     public float CeruleanFlatManaGainMult = 1f;//same as above one
