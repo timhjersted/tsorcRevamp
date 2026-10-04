@@ -81,9 +81,9 @@ namespace tsorcRevamp.Content.Items.Potions
         {
             get => false;
         }
-        public virtual int ScalingFactor
+        public virtual int ScalingFactor //higher means slower scaling
         {
-            get => 44;
+            get => 55;
         }
 
         /// <summary>Ceiling on EffectPotency. Override per potion when a permanent shouldn't be allowed to
@@ -113,7 +113,7 @@ namespace tsorcRevamp.Content.Items.Potions
             get
             {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;
-                potency += 0.1f;
+                potency += 0.5f;
                 return Math.Min(potency, MaxPotency);
             }
         }
@@ -734,20 +734,10 @@ namespace tsorcRevamp.Content.Items.Potions
         public override string Texture => UsefulFunctions.VanillaTextureFilepath(ItemID.SummoningPotion);
         public override int PermanentID => 33;
         public override int BuffType => BuffID.Summoning;
-        public override bool CanScale => true;
-        public override float EffectPotency
-        {
-            get
-            {
-                float potency = (float)ConsumedAmount / (float)ScalingFactor;
-                potency += 0.5f;
-                return Math.Min(potency, 1f);
-            }
-        }
 
         public override void PotionEffect(Player player)
         {
-            player.maxMinions += (int)ApplyScaling(1f);
+            player.maxMinions += 1;
         }
     }
     public class PermanentDangersensePotion : PermanentPotion
@@ -1140,17 +1130,6 @@ namespace tsorcRevamp.Content.Items.Potions
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
         public override bool CanScale => true;
         public override int ScalingFactor => 14;
-        public override float EffectPotency
-        {
-            get
-            {
-                float potency = (float)ConsumedAmount / (float)ScalingFactor;
-                potency += 0.75f; //with how long these things last, decent base values is basically required
-                //theres probably some math about "break points" and "decimal rounding" that makes these numbers bad, but whatever, it's 6 am, fight me
-                //they last 8 minutes..... not 30 anymore
-                return Math.Min(potency, MaxPotency);
-            }
-        }
 
         public override void PotionEffect(Player player)
         {
@@ -1176,16 +1155,7 @@ namespace tsorcRevamp.Content.Items.Potions
         public override int BuffType => BuffID.WellFed3;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
         public override bool CanScale => true;
-        public override int ScalingFactor => 33;
-        public override float EffectPotency
-        {
-            get
-            {
-                float potency = (float)ConsumedAmount / (float)ScalingFactor;
-                potency += 0.25f;
-                return Math.Min(potency, MaxPotency);
-            }
-        }
+        public override int ScalingFactor => 30;
 
         public override void PotionEffect(Player player)
         {
@@ -1207,12 +1177,6 @@ namespace tsorcRevamp.Content.Items.Potions
         public override int PermanentID => 56;
         public override int BuffType => ModContent.BuffType<Buffs.GreenBlossom>();
         public override bool CanScale => true;
-        // 40 (was 15) so it takes 36 blossoms to cap rather than 21, and 1.0 (was the default 1.5) so the pot
-        // tops out at exactly the drinkable's 20% instead of the 45% it hit before, when it was comfortably the
-        // largest single regen source in the game. Capping at parity keeps its identity as "the same bonus,
-        // without the upkeep" and leaves the slot-costing Chloranthy rings as the actual premium option.
-        public override int ScalingFactor => 40;
-        public override float MaxPotency => 1f;
 
         public override void PotionEffect(Player player)
         {
@@ -1232,7 +1196,7 @@ namespace tsorcRevamp.Content.Items.Potions
             get
             {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;
-                potency += 0.1f;
+                potency += 1f;
                 return Math.Min(potency, 44.44f);
             }
         }

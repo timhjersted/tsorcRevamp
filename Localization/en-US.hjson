@@ -351,6 +351,7 @@ Mods: {
 					[c/77ff77:in strength with each non-permanent source of]
 					[c/77ff77:{0} consumed. Total consumed:] {1}
 					[c/77ff77:Effect potency is ]{2}%
+					[c/77ff77:Levels even before being crafted.]
 					'''
 				NoScaling: Permanently grants the {0} buff.
 				GeneralTooltip:
