@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Offline Great Serpent chain rig. Runs the mod's REAL joint solver (SerpentChain.SolveBodyJoint / PoseAlongCurve)
+    headless - no Terraria, no game launch - against scripted head paths and synthetic terrain, then writes
+    side-by-side before/after renders plus bend / clip / wiggle metrics.
+
+    Same arrangement as .agents/tools/SwingPreview: it references the mod's own compiled DLL (nothing to drift).
+    Run this first, from the repo root:
+        dotnet build tsorcRevamp.csproj -t:Compile
+    -t:Compile writes to obj\, NOT bin\ (bin\ only refreshes on a full build, with the game closed), hence obj\ below.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <AssemblyName>SerpentRig</AssemblyName>
+    <RootNamespace>SerpentRig</RootNamespace>
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
+    <TModLoaderDir>C:\Program Files (x86)\Steam\steamapps\common\tModLoader</TModLoaderDir>
+    <ModBinDir>$(MSBuildThisFileDirectory)..\..\..\obj\Debug\net8.0</ModBinDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="tsorcRevamp">
+      <HintPath>$(ModBinDir)\tsorcRevamp.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="tModLoader">
+      <HintPath>$(TModLoaderDir)\tModLoader.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="FNA">
+      <HintPath>$(TModLoaderDir)\Libraries\FNA\1.0.0\FNA.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

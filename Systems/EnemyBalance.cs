@@ -27,7 +27,7 @@ namespace tsorcRevamp.Systems
     /// LifeMultiplier / ScaleLife themselves so the retune follows them.
     ///
     /// Regular enemies (BuildEnemyRegistry): each number IS the Expert health, solo. Nothing to convert: in Expert the
-    /// enemy ends up with exactly that much, in Master 1.5x, in a Normal world half (the same 1 : 2 : 3 ratios as
+    /// enemy ends up with exactly that much, in Master 1.275x (3 x MasterEnemyLifeScale / 2), in a Normal world half (the same 1 : 2 : 3 ratios as
     /// vanilla), and Super Hardmode natives still get their x1.0-1.5 SHM scaling on top. The registry value replaces
     /// whatever the class and vanilla's Hardmode stat-budget bump would have produced, so it no longer drifts with
     /// progression; damage and defense keep the vanilla bump. Casters with zero contact damage are opted in to vanilla's
@@ -127,11 +127,19 @@ namespace tsorcRevamp.Systems
             return false;
         }
 
-        /// <summary>The registry's Expert health converted for the current game mode (Normal 0.5, Expert 1, Master 1.5) and, for Super Hardmode natives, the SHM scaling.</summary>
+        /// <summary>Master-mode HP trim for regular enemies (bosses use vanilla's bossAdjustment, also 0.85). Master ends at 3 x 0.85 / 2 = 1.275x Expert. No multiplayer scaling.</summary>
+        public const float MasterEnemyLifeScale = 0.85f;
+
+        /// <summary>The registry's Expert health converted for the current game mode (Normal 0.5, Expert 1, Master 1.275) and, for Super Hardmode natives, the SHM scaling.</summary>
         public static int ModeScaledLife(NPC npc, int expertHp)
         {
             float modeMultiplier = Main.GameModeInfo.EnemyMaxLifeMultiplier / 2f;
             float shmScale = 1f;
+
+            if (Main.masterMode)
+            {
+                modeMultiplier *= MasterEnemyLifeScale;
+            }
 
             if (npc.ModNPC != null && npc.ModNPC.GetType().Namespace.Contains("SuperHardMode"))
             {
@@ -477,7 +485,7 @@ namespace tsorcRevamp.Systems
             Enemy("LothricSpearKnight", phm: 2000, hm: 15000, shm: 25000); // authored 750 / 1200 / 3000
             Enemy("Warlock", phm: 8000, hm: 9000); // authored 750 / 1500; caster, contact damage 0
             Enemy("BlackKnight", phm: 15000, hm: 30000, shm: 50000); // authored 1000 / 2000 / 4000
-            Enemy("LothricBlackKnight", phm: 8000, hm: 18000, shm: 35000); // authored 1000 / 1500 / 5000
+            Enemy("LothricBlackKnight", phm: 2500, hm: 18000, shm: 35000); // authored 1000 / 1500 / 5000
             Enemy("JungleWyvernJuvenileHead", phm: 3000, hm: 10000, shm: 12000); // authored 1250 / 2500 / 3000
 
             // ---- Enemies that first appear in Hardmode ----
@@ -626,7 +634,7 @@ namespace tsorcRevamp.Systems
         }
 
         // Runs inside vanilla's NPC.ScaleStats, after the Hardmode stat-budget bump and the Expert x2 / Master x3 life multiplier.
-        // Replaces the result with the registry's Expert value scaled by the mode (Expert 1, Master 1.5) and, for Super Hardmode
+        // Replaces the result with the registry's Expert value scaled by the mode (Expert 1, Master 1.275) and, for Super Hardmode
         // natives, the same SHMScale that tsorcRevampGlobalNPC.SetDefaults applies to their authored value.
         public override void ApplyDifficultyAndPlayerScaling(NPC npc, int numPlayers, float balance, float bossAdjustment)
         {

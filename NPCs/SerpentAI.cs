@@ -56,26 +56,20 @@ namespace tsorcRevamp.NPCs
         //climb at ~11 tiles -- roughly the intended MaxClimbHeight -- so a mis-read wall can't lift it forever.
         const int ClimbBudgetTicks = 150;
 
-        //Follower spacing = average neighbour sprite-length minus a fixed pixel overlap. The sprites are trimmed
-        //to sit SegmentOverlap px on top of each other for a seamless body (bump this up if you still see seams).
-        const float SegmentOverlap = 9f;
-        //The first HeadGlueSegments body pieces overlap much more so the head stays welded to the body on turns.
-        const int HeadGlueSegments = 3;
-        const float HeadGlueOverlap = 18f;
+        //Follower spacing = average neighbour sprite-length minus a fixed pixel overlap (the values live on SerpentChain,
+        //which the offline rig shares). The sprites are trimmed to sit SegmentOverlap px on top of each other for a
+        //seamless body; the first HeadGlueSegments pieces overlap much more so the head stays welded to the body on turns.
+        const float SegmentOverlap = SerpentChain.SegmentOverlap;
+        const int HeadGlueSegments = SerpentChain.HeadGlueSegments;
+        const float HeadGlueOverlap = SerpentChain.HeadGlueOverlap;
 
         //Facing only flips once the neighbour is clearly to one side -- kills per-frame flicker on near-vertical
         //stretches of body (steep slopes, the overhead C). See the spriteDirection block in Run().
         const float SpriteFlipDeadzone = 6f;
 
         ///<summary>
-        ///The hose-chain joint limit: EVERY joint in the whole animal -- the head's own facing AND every body
-        ///segment's link to the piece ahead of it -- can turn at most this many radians per tick, full stop, no
-        ///per-state exceptions. This is what makes it "connected like a hose": the head literally cannot outrun
-        ///its own neck's ability to bend, because both use this exact same rate. A chain of small per-joint turns
-        ///is also what keeps S/O/C curves smooth (no single joint can kink sharply) and keeps the head from ever
-        ///visually detaching (it can only get as far ahead of the neck as the neck's bend budget allows).
-        ///~0.05 rad/tick = ~2.9 deg/tick = ~172 deg/sec for one joint; the aggregate shape can still reconfigure
-        ///fairly quickly since many joints bend a little at once, but never with a single sharp kink.
+        ///How fast the HEAD sprite may turn its facing, per tick (~0.05 rad = ~172 deg/sec). Body joints no longer use this:
+        ///they are solved by SerpentChain.SolveLink, which holds a thickness-based comfort bend between neighbours instead.
         ///</summary>
         const float JointMaxTurnRadians = 0.05f;
 
@@ -101,9 +95,9 @@ namespace tsorcRevamp.NPCs
         const int PassiveHaltMaxTicks = 90;        //brake window cap; it also ends as soon as the head is nearly still
         const float PassiveHaltStopSpeed = 0.15f;
         const float PassiveTurnSpeed = 1.6f;       //px/tick along the U-turn arc
-        const float PassiveTurnMaxRadius = 56f;    //arc radius (px); the head rises 2x this at the top
-        const float PassiveTurnMinRadius = 20f;    //floor for a low ceiling -- it will graze the roof rather than skip the turn
-        const int PassiveTurnClearanceScanTiles = 14;
+        const float PassiveTurnMaxRadius = 110f;   //arc radius (px); the head rises 2x this at the top
+        const float PassiveTurnMinRadius = 80f;    //about the tightest curve 15 deg joints allow for the ~19 px front links (link / 0.26); a low roof stops the head at the ceiling instead
+        const int PassiveTurnClearanceScanTiles = 22;
         const int PassiveRestTicks = 600;
         const float PassiveRestLowerLerp = 0.04f;  //slow settle so the head eases down off the top of the turn
         const float PassiveRestHeadDrop = 0.3f;    //tan of the resting head's downward tilt (~17 deg)
@@ -118,8 +112,8 @@ namespace tsorcRevamp.NPCs
         const int TailFlickRiseTicks = 50;
         const int TailFlickHoldTicks = 25;
         const int TailFlickLowerTicks = 70;
-        const int TailFlickPieceCount = 5;         //4 body pieces + the tail
-        const float TailFlickSweepRadians = 2.4f;  //total curl across those pieces (~137 deg)
+        const int TailFlickPieceCount = 7;         //6 body pieces + the tail
+        const float TailFlickSweepRadians = 1.5f;  //total curl across those pieces (~86 deg); per joint it must stay near the pieces comfort bend (SerpentChain.ComfortBend)
 
         //-- Kiting: don't endlessly ram the player. Approach at slow speed, stop at kite range, attack from
         //there, never reverse. When it reaches the player it may cross THROUGH to the far side.
@@ -305,7 +299,30 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == headType)
             {
+                Vector2 headPositionBefore = npc.position;
+
                 RunHeadLocomotion(npc, maxSpeed);
+
+                // noTileCollide is on (the engine would drift the head straight into walls), so stop the head at
+                // solid tiles by hand. Every locomotion branch above returns early, so this has to wrap them.
+                BlockHeadAtTerrain(npc, headPositionBefore);
+
+                // The head is the only piece that emits light (a soft pink-violet glow just ahead of the snout, brighter while
+                // the mouth is busy). It fades with the cloak so a hidden snake does not give itself away.
+                if (!Main.dedServ)
+                {
+                    GreatSerpentHead glowHead = npc.ModNPC as GreatSerpentHead;
+                    float cloakVisibility = 1f - npc.alpha / 255f;
+                    float pulse = 0.5f + 0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 2.4f);
+                    float glowStrength = 0.45f + 0.1f * pulse;
+                    if (glowHead != null && glowHead.IsMouthAttackActive)
+                    {
+                        glowStrength = 0.85f;
+                    }
+
+                    Vector3 glowColor = new Vector3(0.9f, 0.25f, 0.85f);
+                    Lighting.AddLight(npc.Center + HeadForward(npc) * EyeForwardPixels, glowColor * glowStrength * cloakVisibility);
+                }
             }
             else
             {
@@ -367,22 +384,17 @@ namespace tsorcRevamp.NPCs
                     curlJointRadians = headData.TailFlickSign * curlShape * TailFlickSweepRadians / TailFlickPieceCount;
                 }
 
-                RunBodyFollow(npc, curling, curlJointRadians);
-
                 //The free front pieces normally ride wherever the head leads them. After the passive U-turn the
                 //neck is left hanging in a loop, so while it rests the whole body settles onto the ground like the rear does.
                 bool restingPassive = !headData.Provoked && headData.Passive == GreatSerpentHead.PassivePhase.Rest;
 
-                //Ground-snap is a SECONDARY correction on top of the hose chain (see RunBodyFollow). It used to
-                //be conditionally skipped while the head was phasing through terrain (the old Unstick failsafe,
-                //since removed -- that's what fought it and caused the body to "fly apart" as a straight
-                //diagonal line). Since nothing ever phases through terrain anymore, this can just always run --
-                //except on a curling piece, where it would pull the lifted C straight back down.
-                if ((isRearGrounded || restingPassive) && !curling)
-                {
-                    ApplyGroundSnap(npc);
-                }
-                else if (headData.RippleTimer > 0)
+                //Ground-hug is a bias on the joint's pull (see RunBodyFollow), never a position write, so spacing and the
+                //bend limit still hold. Skipped on a curling piece, where it would pull the lifted C straight back down.
+                bool hugGround = (isRearGrounded || restingPassive) && !curling;
+
+                RunBodyFollow(npc, curling, curlJointRadians, hugGround, BodyFlexibility(headData));
+
+                if (!hugGround && headData.RippleTimer > 0)
                 {
                     ApplyRippleOffset(npc, segmentIndex, headData);
                 }
@@ -417,21 +429,50 @@ namespace tsorcRevamp.NPCs
             return Main.npc[headIndex].ModNPC as GreatSerpentHead;
         }
 
+        //How loose the body is right now, scaling every joint's comfort bend (see SerpentChain.ComfortBend): an unprovoked
+        //snake ambles loosely, a lunge or charge streaks nearly straight, everything else is normal.
+        const float RelaxedBodyFlexibility = 1.35f;
+        const float StreakingBodyFlexibility = 0.7f;
+
+        static float BodyFlexibility(GreatSerpentHead headData)
+        {
+            if (!headData.Provoked)
+            {
+                return RelaxedBodyFlexibility;
+            }
+
+            if (headData.IsLunging || headData.ChargeTimer > 0)
+            {
+                return StreakingBodyFlexibility;
+            }
+
+            return 1f;
+        }
+
+        //Terrain probe for body pieces: a small box at the piece's centre. Smaller than the sprite so a piece resting on
+        //the floor (centre ~half a piece above it) never counts as blocked; it only trips when a piece centre is in a wall.
+        const int BodyProbeSize = 12;
+        static readonly Func<Vector2, bool> BodyTerrainProbe = IsBodyCenterInsideTerrain;
+
+        static bool IsBodyCenterInsideTerrain(Vector2 center)
+        {
+            Vector2 probeTopLeft = center - new Vector2(BodyProbeSize / 2f, BodyProbeSize / 2f);
+            bool inside = Collision.SolidCollision(probeTopLeft, BodyProbeSize, BodyProbeSize);
+
+            return inside;
+        }
+
         ///<summary>
-        ///Hose-chain joint: this segment's ROTATION turns toward the piece ahead of it at a fixed max rate
-        ///(JointMaxTurnRadians, never proportional to how big the mismatch is), and its POSITION is then DERIVED
-        ///from that already-clamped rotation, held at exactly linkLen from the piece ahead.
+        ///Hose-chain joint, solved by SerpentChain.SolveBodyJoint: this piece's HEADING (the direction from it to the piece
+        ///ahead; rotation = heading + 90 deg) chases the pull toward the piece ahead, its bend away from the piece ahead's
+        ///heading is held near a comfort angle that comes from the sprites' thickness (and the head's flexibility), and its
+        ///position is then DERIVED from that heading at exactly one link from the piece ahead. Position can never disagree
+        ///with rotation, spacing is exact, and no joint can kink or fold back -- the chain behaves like a hose.
         ///<para/>
-        ///This replaces the old model (snap straight onto the link-distance circle every frame, with rotation as
-        ///a purely cosmetic afterthought lerping toward wherever that snap put it). That old model let position
-        ///and rotation disagree for a frame under any sudden mismatch -- exactly what a fast head move (a big
-        ///AI-driven jump, a redirect) produced: a kinked/twisted look, or with a REALLY big mismatch,
-        ///a body that's still technically "linkLen away" from its neighbour but visibly nowhere near it once you
-        ///chain 40+ of those together in a bent path. Deriving position from rotation makes the two agree by
-        ///construction, and the fixed turn-rate cap is what makes the whole animal physically unable to move
-        ///its head faster than its neck can bend to follow -- see JointMaxTurnRadians.
+        ///Terrain: if the derived centre lands inside solid tiles, SolveLink tries other legal headings, so the body
+        ///wraps corners instead of cutting through them. Ground-hug is a lean on the pull (not a position write).
         ///</summary>
-        static void RunBodyFollow(NPC npc, bool curling = false, float curlJointRadians = 0f)
+        static void RunBodyFollow(NPC npc, bool curling = false, float curlJointRadians = 0f, bool hugGround = false, float flexibility = 1f)
         {
             if (npc.ai[1] <= 0f || npc.ai[1] >= (float)Main.npc.Length)
             {
@@ -439,63 +480,65 @@ namespace tsorcRevamp.NPCs
             }
 
             NPC ahead = Main.npc[(int)npc.ai[1]];
-            Vector2 offset = ahead.Center - npc.Center;
-            if (offset.LengthSquared() < 0.01f)
+
+            // Ground-hug target: the centre height that rests this piece on the floor under it. NaN = no lean (not
+            // hugging, or no ground in reach -- a gap or open water -- so the chain spans it).
+            float groundCenterY = float.NaN;
+            if (hugGround)
             {
-                return;
+                int centerTileX = (int)(npc.Center.X / TileSize);
+                int bottomTileY = (int)((npc.position.Y + npc.height) / TileSize);
+                int groundTileY = FindGroundSurfaceTileYSmoothed(centerTileX, bottomTileY - GroundSnapToleranceTiles, GroundSnapToleranceTiles * 2);
+
+                if (groundTileY >= 0)
+                {
+                    groundCenterY = (groundTileY * TileSize) - npc.height * 0.5f;
+                }
             }
 
-            //Normal joint: turn toward the piece ahead. Curling joint (passive tail flick): hold a fixed bend
-            //relative to the piece ahead's own rotation -- the ahead piece has already updated this tick (NPC
-            //index order = chain order), so the bends accumulate down the chain into one smooth curve.
-            float desiredRotation = (float)Math.Atan2(offset.Y, offset.X) + 1.57f;
-            if (curling)
-            {
-                desiredRotation = ahead.rotation + curlJointRadians;
-            }
-            npc.rotation = RotateTowardsAngle(npc.rotation, desiredRotation, JointMaxTurnRadians);
+            // The ahead piece has already updated this tick (NPC index order = chain order), so bends accumulate
+            // down the chain into one smooth curve.
+            Vector2 newCenter;
+            float newHeading = SerpentChain.SolveBodyJoint(
+                ahead.Center, ahead.height, ahead.width, ahead.rotation - MathHelper.PiOver2,
+                npc.Center, npc.height, npc.width, npc.rotation - MathHelper.PiOver2,
+                (int)npc.ai[2], flexibility, curling, curlJointRadians, groundCenterY, BodyTerrainProbe, out newCenter);
 
-            //Link length = the average of the two neighbouring sprite lengths minus a fixed pixel overlap, so the
-            //tight-trimmed edges sit SegmentOverlap px on top of each other for a seamless tube (works across the
-            //taper where neighbour heights differ). Height is the along-chain length: the sprites are drawn
-            //rotated so their height axis runs along the chain. First few segments overlap more so the head never
-            //visually detaches from the body on a turn.
-            float overlap = (int)npc.ai[2] < HeadGlueSegments ? HeadGlueOverlap : SegmentOverlap;
-            float linkLen = (npc.height + ahead.height) * 0.5f - overlap;
-            if (linkLen < 2f)
-            {
-                linkLen = 2f;
-            }
-
+            npc.rotation = newHeading + MathHelper.PiOver2;
             npc.velocity = default;
-            npc.Center = ahead.Center - DirectionFromRotation(npc.rotation) * linkLen;
+            npc.Center = newCenter;
         }
 
         ///<summary>
-        ///Rear-grounded segments only: after the chain-follow position is set, pull Y toward sensed ground
-        ///height so the tail hugs slopes/hills. If no ground is found nearby (a gap or open water), skip the
-        ///correction and leave the segment at its pure chain-follow position -- the rigid distance-chain then
-        ///holds it suspended between its grounded neighbors, naturally spanning the gap instead of clipping.
+        ///Stops the head at solid tiles. The head runs noTileCollide (so the engine integrates velocity straight through
+        ///walls), and locomotion also writes velocity from many branches, so this runs once after all of them: if the
+        ///head's end-of-tick box would sit inside terrain, it is swept from where it started and slides along whichever
+        ///axes are free. A head that already starts embedded is left alone so it can leave.
         ///</summary>
-        //Gentler than the head's own GroundFollowLerp on purpose: this runs AFTER RunBodyFollow has already
-        //placed the segment at the exact hose-chain link distance from its neighbour, so any Y nudge here
-        //slightly stretches that link. A soft, slow settle keeps that stretch imperceptible frame-to-frame
-        //(the terrain-hug still fully catches up over time) instead of visibly tugging the segment off its link.
-        const float BodyGroundHugLerp = 0.1f;
-
-        static void ApplyGroundSnap(NPC npc)
+        static void BlockHeadAtTerrain(NPC npc, Vector2 positionBefore)
         {
-            int centerTileX = (int)(npc.Center.X / TileSize);
-            int predictedBottomTileY = (int)((npc.position.Y + npc.height) / TileSize);
-
-            int groundTileY = FindGroundSurfaceTileYSmoothed(centerTileX, predictedBottomTileY - GroundSnapToleranceTiles, GroundSnapToleranceTiles * 2);
-            if (groundTileY < 0)
+            Vector2 intendedEnd = npc.position + npc.velocity;
+            Vector2 intendedMove = intendedEnd - positionBefore;
+            if (intendedMove == Vector2.Zero)
             {
                 return;
             }
 
-            float targetY = (groundTileY * TileSize) - npc.height;
-            npc.position.Y = MathHelper.Lerp(npc.position.Y, targetY, BodyGroundHugLerp);
+            bool endsInside = Collision.SolidCollision(intendedEnd, npc.width, npc.height);
+            if (!endsInside)
+            {
+                return;
+            }
+
+            bool startedInside = Collision.SolidCollision(positionBefore, npc.width, npc.height);
+            if (startedInside)
+            {
+                return;
+            }
+
+            Vector2 allowedMove = Collision.TileCollision(positionBefore, intendedMove, npc.width, npc.height, true, true);
+            npc.position = positionBefore;
+            npc.velocity = allowedMove;
         }
 
         const float TailExtendRate = 0.045f; //~1/rate ticks to fully pop out or retract
@@ -1431,10 +1474,9 @@ namespace tsorcRevamp.NPCs
         ///tilt so the head stays near level and can never flip upside-down. Used for both movement and attacks --
         ///attack projectiles still aim freely at the player, but the head sprite only tilts a little.
         ///<para/>
-        ///Turn rate is ALWAYS JointMaxTurnRadians -- the same fixed rate every body joint uses, no per-state
-        ///exceptions (there used to be a per-caller `ease` lerp fraction here; that let the head snap its facing
-        ///far faster than the neck behind it could keep up during fast states like lunges/charges, which is
-        ///exactly the "head moves independently of the body" bug). The head is just another joint in the hose.
+        ///Turn rate is ALWAYS JointMaxTurnRadians, no per-state exceptions (there used to be a per-caller `ease` lerp
+        ///fraction here; that let the head snap its facing far faster than the neck behind it could keep up during fast
+        ///states like lunges/charges, which is exactly the "head moves independently of the body" bug).
         ///</summary>
         static void AimHead(NPC npc, float lookX, float lookY)
         {
@@ -1516,6 +1558,10 @@ namespace tsorcRevamp.NPCs
             {
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, DustID.AncientLight, 0f, -0.5f, 150, Color.Purple, 1.0f);
                 Main.dust[dust].noGravity = true;
+                //AncientLight dust lights up its surroundings on its own (cyan, scaled by dust size). The head is the only part
+                //that should glow, so the body's acid trail is kept as particles only.
+                Main.dust[dust].noLight = true;
+                Main.dust[dust].noLightEmittence = true;
             }
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -1584,6 +1630,7 @@ namespace tsorcRevamp.NPCs
         const float TailStabReachTiles = 22f;  //if the player gets farther than this (uncommitted), the strike aborts
         const float TailStabOverheadHeight = 170f; //C perch height above the head
         const float TailStabTipLerp = 0.11f;       //how fast the tip chases its phase target (lower = smoother/slower)
+        const float TailStabRetractReach = 700f;   //retract aim point behind the anchor; clamped to chain reach when posed
         //Horizontal-S specifics
         const float TailStabSCockDist = 100f;  //how far back the tail cocks before the lash
         const float TailStabSRise = 46f;        //slight raise of the S off the ground
@@ -1740,13 +1787,14 @@ namespace tsorcRevamp.NPCs
                     break;
 
                 case GreatSerpentHead.TailStabState.Retracting:
-                    //Lower the tip back toward the ground line behind the anchor for a soft hand-off to chain-follow.
-                    tipTarget = data.TailStabAnchor + new Vector2(-npc.direction * 40f, 0f);
+                    //Lay the tip out along the ground line behind the anchor for a soft hand-off to chain-follow. The distance is
+                    //deliberately far (PoseTailStabArc clamps it to the chain's real reach): a target only 40px back squeezed the whole
+                    //rear section into a tight coil/wad at the anchor instead of letting it straighten out.
+                    tipTarget = data.TailStabAnchor + new Vector2(-npc.direction * TailStabRetractReach, 0f);
                     if (data.TailStabTimer <= 0)
                     {
                         data.TailStab = GreatSerpentHead.TailStabState.None;
                         data.TailStabCooldown = TailStabCooldownTicks;
-                        ResyncTailAttackRotations(npc);
                         npc.netUpdate = true;
                     }
                     break;
@@ -1760,55 +1808,6 @@ namespace tsorcRevamp.NPCs
         ///quadratic C (bow up over the head) or a cubic S (wiggle sideways), per data.TailStabMode. Sets each
         ///piece's position/rotation and the tail's contact damage. Runs in the head's AI; posed pieces skip
         ///their own movement (see Run). Only the last TailAttackSegmentCount pieces participate.</summary>
-        ///<summary>
-        ///Called once, the instant a tail attack ends (Retracting -> None). While posed, each tail-attack
-        ///segment's rotation was driven by the Bezier arc (pointing along the CURVE's tangent at that point) --
-        ///not "pointing at my own chain neighbour" the way normal hose-follow rotation means. The instant posing
-        ///stops, RunBodyFollow resumes and reads that stale, curve-tangent rotation as its starting point, then
-        ///can only correct it at JointMaxTurnRadians per tick -- for a large mismatch that's up to ~2 seconds of
-        ///the whole tail-attack segment range hanging at a visibly wrong angle before it unwinds. Resync every
-        ///formerly-posed segment's rotation to what its CURRENT position actually implies relative to its own
-        ///neighbour, once, right here, so normal hose-follow starts from a correct baseline instead of a stale one.
-        ///</summary>
-        static void ResyncTailAttackRotations(NPC head)
-        {
-            int tailType = ModContent.NPCType<GreatSerpentTail>();
-            int attackStart = GreatSerpentHead.BodySegmentCount - GreatSerpentHead.TailAttackSegmentCount;
-
-            NPC current = head;
-            for (int hops = 0; hops < GreatSerpentHead.TotalSegmentCount + 2; hops++)
-            {
-                if (current.ai[0] <= 0f || (int)current.ai[0] >= Main.npc.Length)
-                {
-                    break;
-                }
-                NPC next = Main.npc[(int)current.ai[0]];
-                if (!next.active)
-                {
-                    break;
-                }
-                current = next;
-
-                bool isTail = current.type == tailType;
-                int idx = (int)current.ai[2];
-                if (!isTail && idx < attackStart)
-                {
-                    continue; //wasn't posed by the arc, nothing to resync
-                }
-
-                if (current.ai[1] <= 0f || (int)current.ai[1] >= Main.npc.Length)
-                {
-                    continue;
-                }
-                NPC ahead = Main.npc[(int)current.ai[1]];
-                Vector2 offset = ahead.Center - current.Center;
-                if (offset.LengthSquared() > 0.01f)
-                {
-                    current.rotation = (float)Math.Atan2(offset.Y, offset.X) + 1.57f;
-                }
-            }
-        }
-
         static void PoseTailStabArc(NPC head, GreatSerpentHead data)
         {
             int tailType = ModContent.NPCType<GreatSerpentTail>();
@@ -1907,46 +1906,35 @@ namespace tsorcRevamp.NPCs
                 c2 = anchor + new Vector2(axis.X * 0.75f, -bow);
             }
 
+            // Each posed piece is solved as a normal hose joint whose pull aims at the curve: the Bezier says where the
+            // piece WANTS to be, SolveLink keeps it exactly one link from the piece ahead and within the bend limit.
+            // (The old pose wrote the Bezier point straight into the position and aimed the rotation at the NEXT point --
+            // the opposite way round to every other joint -- so the sprites spun ~180 deg in and out of every stab.)
             int count = rear.Count;
+            float[] heights = new float[count];
+            float[] widths = new float[count];
+            Vector2[] centers = new Vector2[count];
+            float[] headings = new float[count];
             for (int i = 0; i < count; i++)
             {
-                float t = (i + 1) / (float)count;
-                float tNext = (i + 2) / (float)count;
-                Vector2 pos = CubicBezier(anchor, c1, c2, tip, t);
-                //The last piece (i == count-1) sits exactly AT the tip (t=1), so sampling "the next point"
-                //the normal way degenerates to nextPos==pos -> a zero-length segDir below, which SKIPS this
-                //piece's rotation update entirely (see the LengthSquared guard). That's what left the tail
-                //frozen at whatever rotation it had before the stab -- reading as "bent backwards" while it
-                //was actually just stale -- since it never got to face the direction it was travelling/
-                //stabbing in. Fixed by using the curve's own analytic tangent at t=1 (3*(tip-c2), direction
-                //only -- any positive multiple works since only the direction is used) instead of a second
-                //sample point that doesn't exist past the end of the curve.
-                Vector2 nextPos = (i + 1 < count) ? CubicBezier(anchor, c1, c2, tip, tNext) : tip + (tip - c2);
+                heights[i] = rear[i].height;
+                widths[i] = rear[i].width;
+                centers[i] = rear[i].Center;
+                headings[i] = rear[i].rotation - MathHelper.PiOver2;
+            }
 
+            SerpentChain.PoseAlongCurve(anchorSeg.Center, anchorSeg.height, anchorSeg.width, anchorSeg.rotation - MathHelper.PiOver2,
+                heights, widths, centers, headings, BodyFlexibility(data), c1, c2, tip, BodyTerrainProbe);
+
+            for (int i = 0; i < count; i++)
+            {
                 NPC seg = rear[i];
-                seg.Center = pos;
+                seg.rotation = headings[i] + MathHelper.PiOver2;
+                seg.Center = centers[i];
                 seg.velocity = Vector2.Zero;
-
-                //Aim the tangent at the NEXT point and EASE it (a snapped rotation off a jittery single-frame tip
-                //move caused the "violent shake"). spriteDirection is left to Run()'s deadzoned block.
-                Vector2 segDir = nextPos - pos;
-                if (segDir.LengthSquared() > 0.01f)
-                {
-                    //Arc-posed segments already have their POSITION set exactly by the Bezier this tick, so a
-                    //bounded turn rate here is purely cosmetic (no gap/kink risk either way) -- a faster rate
-                    //than the resting hose joints is fine, and reads better against a driven, actively-animating
-                    //pose. Kept bounded (not snapped) so a single jittery tip move still can't whip the sprite.
-                    seg.rotation = RotateTowardsAngle(seg.rotation, segDir.ToRotation() + 1.57f, JointMaxTurnRadians * 3f);
-                }
 
                 seg.damage = (seg == tail && data.TailStabDamaging) ? TailStabDamage : 0;
             }
-        }
-
-        static Vector2 CubicBezier(Vector2 a, Vector2 b, Vector2 c, Vector2 d, float t)
-        {
-            float u = 1f - t;
-            return (u * u * u) * a + (3f * u * u * t) * b + (3f * u * t * t) * c + (t * t * t) * d;
         }
 
         ///<summary>Walk the chain from the head to its last piece (the tail), or null if the chain is incomplete.</summary>
@@ -2835,6 +2823,264 @@ namespace tsorcRevamp.NPCs
                 }
             }
             return 0;
+        }
+    }
+
+    ///<summary>
+    ///The serpent's hose-chain joint maths with no Terraria state in it, so the game (SerpentAI.RunBodyFollow and
+    ///PoseTailStabArc) and the offline rig (.agents/tools/SerpentRig) run literally the same code and cannot drift.
+    ///<para/>
+    ///Heading convention: a piece's heading is the direction from it to the piece AHEAD of it (toward the head).
+    ///Its sprite rotation is heading + 90 degrees.
+    ///<para/>
+    ///Bend rule (how stiff the body is) is a guide that adapts, not a fixed angle: each joint has a COMFORT bend worked out
+    ///from the sprites (a piece may curve no tighter than MinBendRadiusInWidths x its own thickness, so the thin tapering
+    ///rear is more flexible than the fat front), scaled by a flexibility the head passes in (loose when relaxed, stiff in a
+    ///lunge). Past the comfort bend the joint resists smoothly (SoftLimit) up to HardBendFactor x comfort, so curves never
+    ///sit at one identical clamped angle (no faceted polygon look) and nothing kinks.
+    ///</summary>
+    public static class SerpentChain
+    {
+        ///<summary>How tight a piece may curve in comfort, as a multiple of its own thickness: minimum bend radius = this x
+        ///width. Per-joint comfort angle = linkLength / that radius (~15-17 deg for the fat front pieces, ~28 deg for Body2,
+        ///more for the thin tail end). Static fields so the rig can sweep them.</summary>
+        public static float MinBendRadiusInWidths = 2.5f;
+
+        ///<summary>The most a joint can ever bend, as a multiple of its comfort bend. Between 1x and this it resists smoothly.</summary>
+        public static float HardBendFactor = 1.6f;
+
+        ///<summary>Floor on the comfort bend for the first few neck pieces. Their links are very short (heavy head-glue overlap),
+        ///so the width rule alone would make the neck stiffer than the body.</summary>
+        public const float NeckComfortBendRadians = 0.35f;
+
+        ///<summary>Comfort bend for the first body piece, which hangs off the head. The head sprite's heading is clamped
+        ///near-horizontal (so it never renders upside-down) even while the neck climbs a wall, so it can't be tied to it tightly.</summary>
+        public const float HeadJointComfortBendRadians = 1.0f;
+
+        public const float ComfortBendFloorRadians = 0.12f;
+        public const float ComfortBendCeilingRadians = 0.6f; //~34 deg comfort, so ~55 deg at the hard limit: the thin tail end flexes but never hooks
+
+        ///<summary>Per-tick cap on how fast a heading chases its pull. Only a guard against one-tick teleports; the bend
+        ///limit is what actually shapes the body.</summary>
+        public const float MaxTurnPerTickRadians = 0.2f;
+
+        ///<summary>Fraction of the gap between a joint's heading and its pull closed each tick. Below 1 it low-passes head
+        ///jitter (ground-snap noise) so it doesn't whip down the whole body as a wiggle.</summary>
+        public const float HeadingFollow = 0.5f;
+
+        ///<summary>Extra bend a joint may use, only when the alternative is putting the piece inside terrain (15 degrees).</summary>
+        public const float TerrainEscapeExtraBendRadians = 0.2618f;
+
+        const float TerrainSearchStepRadians = 0.05f; //candidate headings tried each side, nearest first
+        const int TerrainSearchMaxSteps = 12;         //up to +-0.6 rad from the unblocked heading
+
+        //Follower spacing = average neighbour sprite-length minus a fixed pixel overlap, so the tight-trimmed sprites sit
+        //SegmentOverlap px on top of each other for a seamless tube. The first HeadGlueSegments pieces overlap much more
+        //so the head stays welded to the body on turns.
+        public const float SegmentOverlap = 9f;
+        public const int HeadGlueSegments = 3;
+        public const float HeadGlueOverlap = 18f;
+
+        //How strongly a ground-hugging joint's pull leans toward the sensed floor each tick. Soft on purpose: the lean
+        //only tilts the joint's heading (inside the bend limit), so a gentle settle looks like a body easing onto the ground.
+        public const float GroundHugLerp = 0.1f;
+
+        ///<summary>
+        ///The comfort bend (radians) of a joint between a piece and the one ahead of it: link length over the minimum bend
+        ///radius the thinner of the two allows, floored for the neck, times the head's current flexibility, kept in sane bounds.
+        ///</summary>
+        public static float ComfortBend(float linkLength, float selfWidth, float aheadWidth, int bodyIndex, float flexibility)
+        {
+            if (bodyIndex == 0)
+            {
+                return HeadJointComfortBendRadians;
+            }
+
+            float thickness = Math.Min(selfWidth, aheadWidth);
+            float comfort = linkLength / (MinBendRadiusInWidths * Math.Max(thickness, 1f));
+            if (bodyIndex < HeadGlueSegments)
+            {
+                comfort = Math.Max(comfort, NeckComfortBendRadians);
+            }
+
+            comfort *= flexibility;
+
+            return MathHelper.Clamp(comfort, ComfortBendFloorRadians, ComfortBendCeilingRadians);
+        }
+
+        ///<summary>
+        ///Resistance curve: identity up to the comfort bend (free), then a smooth tanh roll-off that approaches
+        ///comfort x HardBendFactor and never exceeds it. Continuous in value and slope at the comfort bend.
+        ///</summary>
+        public static float SoftLimit(float offset, float comfort)
+        {
+            float magnitude = Math.Abs(offset);
+            if (magnitude <= comfort)
+            {
+                return offset;
+            }
+
+            float reserve = comfort * (HardBendFactor - 1f);
+            float limited = comfort + reserve * (float)Math.Tanh((magnitude - comfort) / reserve);
+
+            return Math.Sign(offset) * limited;
+        }
+
+        ///<summary>
+        ///One ordinary body joint: the piece at bodyIndex (0 = first piece behind the head), its pull toward the piece ahead,
+        ///then SolveLink. groundCenterY (NaN = none) leans the pull toward the floor; curling instead holds a fixed bend
+        ///relative to the piece ahead (the passive tail flick). Heights are the sprites' along-chain lengths, widths their
+        ///thickness, in pixels. flexibility scales the comfort bend (1 = normal). Returns the new heading; newCenter is where
+        ///the piece goes.
+        ///</summary>
+        public static float SolveBodyJoint(Vector2 aheadCenter, float aheadHeight, float aheadWidth, float aheadHeading,
+            Vector2 selfCenter, float selfHeight, float selfWidth, float selfHeading, int bodyIndex, float flexibility,
+            bool curling, float curlJointRadians, float groundCenterY, Func<Vector2, bool> isBlocked, out Vector2 newCenter)
+        {
+            float overlap = SegmentOverlap;
+            if (bodyIndex < HeadGlueSegments)
+            {
+                overlap = HeadGlueOverlap;
+            }
+
+            float linkLength = (selfHeight + aheadHeight) * 0.5f - overlap;
+            if (linkLength < 2f)
+            {
+                linkLength = 2f;
+            }
+
+            // Where the pull comes from: this piece's own centre, leaned toward the floor when hugging ground.
+            Vector2 pullFrom = selfCenter;
+            if (!float.IsNaN(groundCenterY))
+            {
+                pullFrom.Y = MathHelper.Lerp(pullFrom.Y, groundCenterY, GroundHugLerp);
+            }
+
+            Vector2 toAhead = aheadCenter - pullFrom;
+            float desiredHeading = selfHeading;
+            if (toAhead.LengthSquared() > 0.01f)
+            {
+                desiredHeading = (float)Math.Atan2(toAhead.Y, toAhead.X);
+            }
+            if (curling)
+            {
+                desiredHeading = aheadHeading + curlJointRadians;
+            }
+
+            float comfort = ComfortBend(linkLength, selfWidth, aheadWidth, bodyIndex, flexibility);
+
+            return SolveLink(aheadCenter, aheadHeading, comfort, selfHeading, desiredHeading, linkLength, isBlocked, out newCenter);
+        }
+
+        ///<summary>
+        ///Poses a run of pieces (anchor = the grounded piece they hang off) along a cubic Bezier: each piece is a normal
+        ///joint whose pull aims at its curve sample, so the curve says where it WANTS to be and SolveLink keeps it one link
+        ///from the piece ahead and inside the bend limit. centers/headings go in as last tick's state and come out solved.
+        ///</summary>
+        public static void PoseAlongCurve(Vector2 anchorCenter, float anchorHeight, float anchorWidth, float anchorHeading,
+            float[] heights, float[] widths, Vector2[] centers, float[] headings, float flexibility,
+            Vector2 control1, Vector2 control2, Vector2 tip, Func<Vector2, bool> isBlocked)
+        {
+            Vector2 aheadCenter = anchorCenter;
+            float aheadHeight = anchorHeight;
+            float aheadWidth = anchorWidth;
+            float aheadHeading = anchorHeading;
+
+            int count = heights.Length;
+            for (int i = 0; i < count; i++)
+            {
+                float t = (i + 1) / (float)count;
+                Vector2 curvePoint = CubicBezier(anchorCenter, control1, control2, tip, t);
+
+                Vector2 toAhead = aheadCenter - curvePoint;
+                float desiredHeading = headings[i];
+                if (toAhead.LengthSquared() > 0.01f)
+                {
+                    desiredHeading = (float)Math.Atan2(toAhead.Y, toAhead.X);
+                }
+
+                float linkLength = (heights[i] + aheadHeight) * 0.5f - SegmentOverlap;
+                if (linkLength < 2f)
+                {
+                    linkLength = 2f;
+                }
+
+                float comfort = ComfortBend(linkLength, widths[i], aheadWidth, int.MaxValue, flexibility);
+
+                Vector2 newCenter;
+                float newHeading = SolveLink(aheadCenter, aheadHeading, comfort, headings[i], desiredHeading, linkLength, isBlocked, out newCenter);
+
+                centers[i] = newCenter;
+                headings[i] = newHeading;
+
+                aheadCenter = newCenter;
+                aheadHeight = heights[i];
+                aheadWidth = widths[i];
+                aheadHeading = newHeading;
+            }
+        }
+
+        ///<summary>
+        ///Solves one joint. The piece's heading closes HeadingFollow of its gap to desiredHeading per tick (a low-pass that
+        ///filters head jitter, capped at MaxTurnPerTickRadians), its bend away from aheadHeading is passed through SoftLimit
+        ///(free up to comfortBend, resisting beyond it, never past HardBendFactor x comfortBend), and its centre is then DERIVED
+        ///from that heading at exactly linkLength from the piece ahead, so position and rotation can never disagree and
+        ///spacing is exact.
+        ///<para/>
+        ///Terrain: if isBlocked says the derived centre is in terrain, the nearest clear heading is used instead (the body
+        ///wraps the corner). Avoiding terrain outranks the bend limit, so that search may use a window
+        ///TerrainEscapeExtraBendRadians wider than the hard limit; if every candidate is blocked the original stands.
+        ///Returns the new heading (wrapped to -pi..pi).
+        ///</summary>
+        public static float SolveLink(Vector2 aheadCenter, float aheadHeading, float comfortBend, float selfHeading, float desiredHeading,
+            float linkLength, Func<Vector2, bool> isBlocked, out Vector2 newCenter)
+        {
+            float gap = MathHelper.WrapAngle(desiredHeading - selfHeading);
+            float swing = MathHelper.Clamp(gap * HeadingFollow, -MaxTurnPerTickRadians, MaxTurnPerTickRadians);
+            float heading = selfHeading + swing;
+
+            float bendOffset = MathHelper.WrapAngle(heading - aheadHeading);
+            heading = aheadHeading + SoftLimit(bendOffset, comfortBend);
+            newCenter = aheadCenter - HeadingToDirection(heading) * linkLength;
+
+            if (isBlocked != null && isBlocked(newCenter))
+            {
+                float escapeLimit = comfortBend * HardBendFactor + TerrainEscapeExtraBendRadians;
+
+                for (int step = 1; step <= TerrainSearchMaxSteps; step++)
+                {
+                    for (int side = -1; side <= 1; side += 2)
+                    {
+                        float candidate = heading + side * step * TerrainSearchStepRadians;
+                        float candidateBend = Math.Abs(MathHelper.WrapAngle(candidate - aheadHeading));
+                        if (candidateBend > escapeLimit)
+                        {
+                            continue;
+                        }
+
+                        Vector2 candidateCenter = aheadCenter - HeadingToDirection(candidate) * linkLength;
+                        if (!isBlocked(candidateCenter))
+                        {
+                            newCenter = candidateCenter;
+                            return MathHelper.WrapAngle(candidate);
+                        }
+                    }
+                }
+            }
+
+            return MathHelper.WrapAngle(heading);
+        }
+
+        ///<summary>Unit vector for a heading angle (radians, +X = 0, +Y down as in Terraria).</summary>
+        public static Vector2 HeadingToDirection(float heading)
+        {
+            return new Vector2((float)Math.Cos(heading), (float)Math.Sin(heading));
+        }
+
+        public static Vector2 CubicBezier(Vector2 a, Vector2 b, Vector2 c, Vector2 d, float t)
+        {
+            float u = 1f - t;
+            return (u * u * u) * a + (3f * u * u * t) * b + (3f * u * t * t) * c + (t * t * t) * d;
         }
     }
 }

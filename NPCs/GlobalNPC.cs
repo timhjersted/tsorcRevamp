@@ -4997,7 +4997,23 @@ namespace tsorcRevamp.NPCs
 
                 //Add our scaling
                 npc.lifeMax = (int)(npc.lifeMax * (1f + ((numPlayers - 1f) * .4f))); // was .5
+
+                // Master-mode HP trim. bossAdjustment is vanilla's 0.85 in Master and 1.0 otherwise, so Master lands at
+                // 1.275x authored instead of 1.5x. Deliberately NOT multiplied by `balance`: the line above is already
+                // the multiplayer scaling, and applying balance too would count it twice.
+                npc.lifeMax = (int)(npc.lifeMax * bossAdjustment);
                 return;
+            }
+
+            // Regular mod enemies: the same Master trim as bosses but from the EnemyBalance constant, and with no
+            // multiplayer scaling (enemies never had any). Registry enemies get it in EnemyBalance.ModeScaledLife
+            // instead, because EnemyBalanceNPC overwrites lifeMax with the registry value after this hook may have run.
+            bool isRegularEnemy = isModNPC && !npc.friendly && !npc.townNPC;
+            bool isRegistryEnemy = EnemyBalance.TryGetEnemyExpertHp(npc.type, out _);
+
+            if (isRegularEnemy && !isRegistryEnemy && Main.masterMode)
+            {
+                npc.lifeMax = (int)(npc.lifeMax * EnemyBalance.MasterEnemyLifeScale);
             }
         }
         public override void HitEffect(NPC npc, NPC.HitInfo hit)

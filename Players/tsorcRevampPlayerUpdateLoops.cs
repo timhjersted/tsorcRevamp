@@ -2902,6 +2902,23 @@ namespace tsorcRevamp
                 Player.AddBuff(ModContent.BuffType<Suppressed>(), 1 * 60, false);
             }
 
+            // Shadow Temple (Hardmode desert dungeon), original Adventure map only. Identified by its wall: plain Pink Dungeon Wall (ID 9),
+            // x 1117-2226, y 1185-1899 in the 8400x2400 map. The same wall also appears below y~2000 in the abyss dungeon, hence the depth cap.
+            // Skipped while a boss is alive; already-applied stacks just expire within 60 ticks.
+            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.RemixMap
+                && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !tsorcRevampWorld.BossAlive)
+            {
+                Point playerTile = (Player.Center / 16f).ToPoint();
+                Tile playerWallTile = Main.tile[playerTile.X, playerTile.Y];
+                bool inShadowTempleWall = playerWallTile.WallType == WallID.PinkDungeonUnsafe;
+                bool aboveAbyssDungeon = playerTile.Y < 1950;
+
+                if (inShadowTempleWall && aboveAbyssDungeon)
+                {
+                    Player.AddBuff(ModContent.BuffType<WeightOfShadow>(), 1 * 60, false);
+                }
+            }
+
             // Original Adventure map only (Remix has its own Seath ice-biome block below): the SHM ice biome tears
             // the player's wings until Seath is slain (permanent, read from NewSlain), and is lifted while any boss is alive.
             bool seathSlain = tsorcRevampWorld.BossDefeated(ModContent.NPCType<SeathTheScalelessHead>());

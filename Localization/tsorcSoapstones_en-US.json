@@ -33,13 +33,6 @@
   "locationName": "HOME OF THE SHAMAN ELDER"
 }
 {
-  "text": "A dark impulse compels you to kill the flower.... but you question whether you should.",
-  "tileX": 247,
-  "tileY": 1484,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "In the murkey waters you realize there are pink flowers everywhere.  --NEWLINE  --NEWLINE Their allure is dark but seductive.. the flowers want to be destroyed...",
   "tileX": 284,
   "tileY": 1556,
@@ -2361,13 +2354,6 @@
   "style": 1,
   "category": "location",
   "locationName": "WYVERN MAGE'S FORTRESS"
-}
-{
-  "text": "A voice whispers to you... \u0022Seek the Ghost Wyvern Mage, who lives imprisoned in a cage of enchanted glass. It floats in the sky, high above the fortress above these mountains....\u0022",
-  "tileX": 6779,
-  "tileY": 706,
-  "textWidth": 320,
-  "style": 1
 }
 {
   "text": "\u0022The gravity seems to be affected farther down into the Earth.\u0022",
