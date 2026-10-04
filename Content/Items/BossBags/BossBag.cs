@@ -100,6 +100,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -123,6 +124,7 @@ namespace tsorcRevamp.Content.Items.BossBags
          public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -143,6 +145,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -159,6 +162,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -173,6 +177,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -187,6 +192,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -201,6 +207,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -221,6 +228,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -243,6 +251,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -266,6 +275,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -281,6 +291,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -295,6 +306,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
