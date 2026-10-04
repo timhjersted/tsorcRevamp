@@ -37,15 +37,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
         }
         public override void OnSpawn(IEntitySource source)
         {
-            Player player = Main.player[Projectile.owner];
             SoundEngine.PlaySound(new SoundStyle(SoundPath + "FireCast") with { Volume = OrbOfDeception.OrbSoundVolume });
-            if (Projectile.ai[0] != 1)
-            {
-                int manaCost = player.GetManaCost(player.HeldItem);
-                player.statMana += manaCost / 2;
-            }
         }
-
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -57,9 +50,9 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
 
             if (closestNPC == null || (Projectile.timeLeft >= 780 && Projectile.ai[0] != 1))
             {
-                currentAngle += (angularSpeed / (50f * 0.001f + 1f));
+                currentAngle += (angularSpeed / (circleRad1 * 0.001f + 1f));
 
-                Vector2 offset = new Vector2(0, 50f).RotatedBy(-currentAngle);
+                Vector2 offset = new Vector2(0, -50f).RotatedBy(-currentAngle);
 
                 Projectile.Center = player.Center + offset;
 

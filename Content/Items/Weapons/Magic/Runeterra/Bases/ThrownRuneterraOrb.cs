@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Projectiles;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Systems.ArcaneSorcery;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
 {
@@ -60,7 +61,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
             Projectile.penetrate = -1; // Infinite pierce
             Projectile.DamageType = DamageClass.Magic; // Deals melee damage
             Projectile.usesLocalNPCImmunity = true; // Used for hit cooldown changes in the ai hook
-            Projectile.localNPCHitCooldown = 10; // This facilitates custom hit cooldown logic
+            Projectile.localNPCHitCooldown = -1; // This facilitates custom hit cooldown logic
             Projectile.tileCollide = false;
             Projectile.aiStyle = -1;
             switch (Tier)
@@ -83,22 +84,14 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
             }
         }
 
-        // Increase the speed multiplier the longer the orb is out
-        float extraSpeed = 0;
-        Vector2 originalVelocity;
-
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
             var orbPlayer = player.GetModPlayer<RuneterraOrbPlayer>();
             Projectile.originalDamage = Projectile.damage;
 
-            originalVelocity = new Vector2();
-            originalVelocity.X = Projectile.velocity.X;
-            originalVelocity.Y = Projectile.velocity.Y;
 
             SoundEngine.PlaySound(new SoundStyle(SoundPath + "OrbCast") with { Volume = OrbOfDeception.OrbSoundVolume });
-            extraSpeed = 0;
 
             if (orbPlayer.EssenceThief > 8)
             {
@@ -106,24 +99,34 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
             }
         }
 
+        public float Acceleration = 1f;
+        public float AccelerationPerTick = 0.015f;
+        public float ReturnDistanceFromPlayer = 650f;
+        public Vector2 OriginalVelocity = Vector2.Zero;
+        public bool AppliedOnSpawn = false;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
             var modPlayer = player.GetModPlayer<RuneterraOrbPlayer>();
-            Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(player.Center).SafeNormalize(Vector2.Zero) * (OrbOfDeception.ShootSpeed + extraSpeed);
-            extraSpeed += 0.08f;
+            Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(player.Center).SafeNormalize(Vector2.Zero) * (OrbOfDeception.ShootSpeed);
+
+            if (!AppliedOnSpawn)
+            {
+                OriginalVelocity = Projectile.velocity;
+                AppliedOnSpawn = true;
+            }
+            
+            Acceleration += AccelerationPerTick;
 
             switch (CurrentAIState)
             {
                 case AIState.LaunchingForward:
                     {
-                        Vector2 newVelocity = originalVelocity.SafeNormalize(Vector2.Zero) * (OrbOfDeception.ShootSpeed + extraSpeed);
-                        if (newVelocity != Vector2.Zero) Projectile.velocity = newVelocity;
-
-                        if (Projectile.Distance(player.Center) > 800f)
+                        Projectile.velocity = OriginalVelocity * Acceleration;
+                        if (Projectile.Distance(player.Center) > ReturnDistanceFromPlayer)
                         {
                             CurrentAIState = AIState.Retracting;
-                            extraSpeed = 0;
+                            Acceleration = 1f;
                             StateTimer = 0f;
                             Hit = false;
                             Projectile.damage = Projectile.originalDamage;
@@ -135,7 +138,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
                     }
                 case AIState.Retracting:
                     {
-                        Projectile.velocity = unitVectorTowardsPlayer;
+                        Projectile.velocity = unitVectorTowardsPlayer * Acceleration;
                         if (Projectile.Hitbox.Intersects(player.Hitbox))
                         {
                             if (modPlayer.EssenceThief > 8 && !Full)
@@ -184,14 +187,14 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            modifiers.SourceDamage += OrbOfDeception.OrbDmgMod / 100f;
+            modifiers.SourceDamage += OrbOfDeception.OrbSourceDmgMod / 100f;
             if (Full)
             {
-                modifiers.ScalingBonusDamage += OrbOfDeception.FilledOrbDmgMod / 100f;
+                modifiers.ScalingBonusDamage += OrbOfDeception.FilledOrbScalingBonusDmgMod / 100f;
             }
             if (CurrentAIState == AIState.Retracting)
             {
-                modifiers.ScalingBonusDamage += OrbOfDeception.OrbReturnDmgMod / 100f;
+                modifiers.ScalingBonusDamage += OrbOfDeception.OrbReturnScalingBonusDmgMod / 100f;
             }
             modifiers.HitDirectionOverride = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
         }
@@ -212,7 +215,17 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
                 }
                 if (Full)
                 {
-                    player.Heal((int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(player.statManaMax2 / OrbOfDeception.HealManaDivisor) + OrbOfDeception.HealBaseValue);
+                    float healDivisor = OrbOfDeception.HealManaDivisor;
+                    if (player.HasBuff(ModContent.BuffType<ArcaneSorcery>()))
+                    {
+                        healDivisor += ArcaneSorceryPlayer.MaxManaAmplifier;
+                    }
+
+                    int healValue =
+                        (int)player.GetTotalDamage(DamageClass.Magic)
+                            .ApplyTo((float)(player.statManaMax2 / healDivisor) +
+                                     OrbOfDeception.HealBaseValue);
+                    player.Heal(healValue);
                 }
                 Hit = true;
             }

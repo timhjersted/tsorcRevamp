@@ -13,7 +13,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra
     {
         public override int Width => 32;
         public override int Height => 32;
-        public override int Damage => 60;
+        public override int Damage => 69;
         public override int ManaCost => 40;
         public override int Rarity => ItemRarityID.LightPurple;
         public override int Value => Item.buyPrice(0, 50, 0, 0);
