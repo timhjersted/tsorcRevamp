@@ -8,6 +8,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
 {
     class BloodShot : ModProjectile
     {
+        // Legacy projectile referenced only by the unused legacy volley path in DeathBossBase.
 
         public override void SetDefaults()
         {

@@ -50,6 +50,20 @@ float4 DominionFieldPS(PixelInput input) : COLOR0
     return float4(color, alpha) * input.Color;
 }
 
+float4 DominionFieldEvenPS(PixelInput input) : COLOR0
+{
+    float2 p = input.TexCoord - 0.5;
+    float radius = length(p);
+    float2 slowUV = p * 2.35 + float2(Time * 0.017, -Time * 0.026);
+    float cloud = hashNoise(slowUV);
+    float boundaryNoise = (cloud - 0.5) * 0.006;
+    float outside = smoothstep(RadiusRatio - 0.003 + boundaryNoise,
+        RadiusRatio + 0.012 + boundaryNoise, radius);
+    float3 color = lerp(DarkColor, MidColor, cloud * 0.82) * Intensity;
+    float alpha = outside * Opacity;
+    return float4(color, alpha) * input.Color;
+}
+
 float4 DominionEdgePS(PixelInput input) : COLOR0
 {
     float2 p = input.TexCoord - 0.5;
@@ -112,6 +126,11 @@ float4 DominionNovaPS(PixelInput input) : COLOR0
 technique DominionField
 {
     pass Pass1 { PixelShader = compile ps_2_0 DominionFieldPS(); }
+}
+
+technique DominionFieldEven
+{
+    pass Pass1 { PixelShader = compile ps_2_0 DominionFieldEvenPS(); }
 }
 
 technique DominionEdge

@@ -11525,6 +11525,14 @@ Mods: {
 			CrystalSentryCrystal.DisplayName: Crystal Sentry Crystal
 			BlightTendrils.DisplayName: Blight Tendrils
 			BlightTeleportCloud.DisplayName: Blight Teleport Cloud
+			DeathSickleProjectile.DisplayName: Death Sickle Projectile
+			DeathSickleWeapon.DisplayName: Death Sickle Weapon
+			DeathBolt.DisplayName: Death Bolt
+			DeathReaperLaser.DisplayName: Death Reaper Laser
+			DeathFlamingScythe.DisplayName: Death Flaming Scythe
+			DeathFlamingScythePhantom.DisplayName: Death Flaming Scythe Phantom
+			DeathSpawnWarning.DisplayName: Death Spawn Warning
+			DeathLaserWarning.DisplayName: Death Laser Warning
 			CrystalKnightFrostWave.DisplayName: Crystal Knight Frost Wave
 			ProximityMine.DisplayName: Proximity Mine
 			ProximityMineExplosion.DisplayName: Proximity Mine Explosion
@@ -13346,6 +13354,8 @@ Mods: {
 
 			OwlCompanion.DisplayName: Owl Companion
 			OwlFireDiveCompanion.DisplayName: Owl Fire Dive Companion
+			DeathReaper.DisplayName: Death Servant
+			DeathSickleWeapon.DisplayName: Death Sickle Weapon
 		}
 
 		Prefixes: {
