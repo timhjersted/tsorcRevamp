@@ -41,6 +41,23 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             }
         }
 
+        // Passive DR for vanilla shields, which have no ModItem to add it. UpdateAccessory runs for an accessory-slot
+        // shield and, via ApplyEquipFunctional, for a vanilla shield in the Right-Click slot, so one hook covers both.
+        // Mod shields are skipped: their own UpdateAccessory already adds their DR.
+        public override void UpdateAccessory(Item item, Player player, bool hideVisual)
+        {
+            if (item.ModItem != null || !tsorcRevampActiveShieldPlayer.ActiveFor(player) || tsorcRevamp.ActiveShieldRegistry == null)
+            {
+                return;
+            }
+            if (!tsorcRevamp.ActiveShieldRegistry.TryGetValue(item.type, out ActiveShieldData data))
+            {
+                return;
+            }
+
+            player.endurance += data.PassiveResistance / 100f;
+        }
+
         // One shield at a time (active mode only): can't equip a registered shield in an accessory slot while
         // another registered shield is in a different accessory slot OR in the Right-Click (2nd) slot.
         public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
@@ -137,6 +154,12 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             {
                 TooltipLine drLine = new TooltipLine(Mod, "ActiveShieldDR", Language.GetTextValue(Key + "EmergencyBarrier", 16)) { OverrideColor = bodyColor };
                 InsertPassiveLine(tooltips, drLine);
+            }
+
+            if (item.ModItem == null && data.PassiveResistance > 0f)
+            {
+                TooltipLine vanillaDrLine = new TooltipLine(Mod, "ActiveShieldDR", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.DRStat", data.PassiveResistance)) { OverrideColor = bodyColor };
+                InsertPassiveLine(tooltips, vanillaDrLine);
             }
 
             if (data.ActiveDefense > 0)

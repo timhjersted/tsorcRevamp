@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.damage = 35;
             NPC.lifeMax = 100;
-            NPC.defense = 16;
+            NPC.defense = 10;
             NPC.value = 500; // was 35
             NPC.width = 20;
             NPC.aiStyle = -1;

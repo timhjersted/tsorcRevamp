@@ -2929,6 +2929,15 @@ namespace tsorcRevamp
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), new Vector2(6500, 1875) },
         };
 
+        // Expanded Adventure only: rematch targets that follow their relocated events. Values are the
+        // DynamicEvents.json CenterX/CenterY (legacy 2000-space TILE coords), so the transform below shifts
+        // them like every other entry. Legacy Adventure and Remix keep the dicts above.
+        public static Dictionary<int, Vector2> ExpandedAdventureBossIDs = new Dictionary<int, Vector2>
+        {
+            { NPCID.EyeofCthulhu, new Vector2(3886, 595) },
+            { NPCID.BrainofCthulhu, new Vector2(5348, 1090) },
+        };
+
 
         private static Dictionary<int, Vector2> BossIDsAndCoordinatesInternal;
         public static Dictionary<int, Vector2> BossIDsAndCoordinates
@@ -3006,6 +3015,11 @@ namespace tsorcRevamp
                     // Moved in here: MapTile is additive, so in the getter this ran on every read.
                     if (ExpandedWorldTransform.Active)
                     {
+                        foreach (KeyValuePair<int, Vector2> pair in ExpandedAdventureBossIDs)
+                        {
+                            BossIDsAndCoordinatesInternal[pair.Key] = pair.Value;
+                        }
+
                         foreach (int key in new List<int>(BossIDsAndCoordinatesInternal.Keys))
                             BossIDsAndCoordinatesInternal[key] = ExpandedWorldTransform.MapTile(BossIDsAndCoordinatesInternal[key]);
                     }

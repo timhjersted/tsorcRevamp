@@ -1709,8 +1709,15 @@ namespace tsorcRevamp
         ///<param name="Y2">The bottom coordinate of the rectangle zone</param>
         public static bool PlayerInZone(in Player player, int X1, int X2, int Y1, int Y2)
         {
+            // Every caller passes legacy 2000-tall-map tile coordinates. On the expanded world the rows moved (+200, or +400
+            // below the fold), so shift the Y bounds; X never changes. MapTileY is the identity on every other world.
+            int mappedY1 = ExpandedWorldTransform.MapTileY(X1, Y1);
+            int mappedY2 = ExpandedWorldTransform.MapTileY(X2, Y2);
+
             int XPosition = (int)(player.position.X / 16);
             int YPosition = (int)(player.position.Y / 16);
+            Y1 = mappedY1;
+            Y2 = mappedY2;
             if (X1 <= XPosition && XPosition <= X2 && Y1 <= YPosition && YPosition <= Y2)
             {
                 return true;

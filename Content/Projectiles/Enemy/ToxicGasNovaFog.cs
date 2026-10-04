@@ -89,7 +89,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         internal static int NovaDebuffDuration => !Main.hardMode
             ? 20 * 60
-            : tsorcRevampWorld.SuperHardMode ? 15 * 60 : 10 * 60;
+            : tsorcRevampWorld.SuperHardMode ? 10 * 60 : 5 * 60;
 
         public override bool PreDraw(ref Color lightColor)
         {

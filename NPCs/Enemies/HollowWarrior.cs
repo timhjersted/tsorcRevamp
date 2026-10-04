@@ -78,6 +78,12 @@ namespace tsorcRevamp.NPCs.Enemies
             globalNPC.CanUseRopes = true;
             globalNPC.MaxJumpPower = 9f;            // default reach; SF4's up-and-over arc needs this to climb out of ~6-tile pits (TibianAmazon escapes the same pit on 9)
             globalNPC.RemembersLastKnownPos = true; // melee pursuer: investigate last-seen spot before patrolling
+            // Unreachable-but-visible player: give up after ~3s, ignore them for 10s and patrol around the give-up spot
+            // instead of standing frozen at the wall (see HollowSoldier / GlobalNPC.UnreachableWanderTicks). A hit re-engages.
+            globalNPC.NavGiveUpTicks = 180;
+            globalNPC.UnreachableWanderTicks = 600;
+            globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
+            globalNPC.PatrolRange = 24;
             // Poise / stagger: opt in. A stagger cancels a windup attack via IStaggerable.OnStagger below
             // (clears the slashing/jumpSlashing/shielding flags + resets the attack timers).
             globalNPC.PoiseMax = 15f;

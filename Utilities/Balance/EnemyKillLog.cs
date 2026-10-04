@@ -180,7 +180,10 @@ namespace tsorcRevamp.Utilities.Balance
                 int ticks = Math.Max(1, (int)Main.GameUpdateCount - tracker.FirstHitTick);
                 string stageCode = StageCodes[EnemySpawns.CurrentStageIndex()];
                 string enemyName = npc.ModNPC?.Name ?? npc.TypeName;
-                string statKey = enemyName + "|" + stageCode;
+
+                // Scripted-event enemies have hand-set stats, so their kills are counted under their own key.
+                bool fromEvent = npc.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventOwner != null;
+                string statKey = (fromEvent ? enemyName + "@event" : enemyName) + "|" + stageCode;
 
                 EnemyKillStatsPlayer statsPlayer = player.GetModPlayer<EnemyKillStatsPlayer>();
 
@@ -205,7 +208,7 @@ namespace tsorcRevamp.Utilities.Balance
 
                 if (Array.IndexOf(SampledKillNumbers, stat.Count) >= 0)
                 {
-                    WriteSample(npc, player, tracker, enemyName, stageCode, stat.Count, ticks);
+                    WriteSample(npc, player, tracker, enemyName, stageCode, stat.Count, ticks, fromEvent);
                 }
             }
             catch
@@ -214,7 +217,7 @@ namespace tsorcRevamp.Utilities.Balance
             }
         }
 
-        private static void WriteSample(NPC npc, Player player, KillTracker tracker, string enemyName, string stageCode, int killNumber, int ticks)
+        private static void WriteSample(NPC npc, Player player, KillTracker tracker, string enemyName, string stageCode, int killNumber, int ticks, bool fromEvent)
         {
             GearSnapshot gear = BalanceLog.CaptureGear(player);
             string characterTag = BalanceLog.CharacterTag;
@@ -269,6 +272,10 @@ namespace tsorcRevamp.Utilities.Balance
                 });
             }
 
+            // Percent bonus (additive times multiplicative) and the flat bonus kept apart. ApplyTo(1f) mixes them: a flat +3 made a
+            // 1.2x loadout read as 4.2x.
+            StatModifier totalDamage = player.GetTotalDamage(primaryClass);
+
             var killSample = new KillSample
             {
                 session = session,
@@ -287,9 +294,11 @@ namespace tsorcRevamp.Utilities.Balance
                 loadoutId = loadoutId,
                 playerMaxLife = gear.maxLife,
                 playerDefense = gear.defense,
-                damageMult = player.GetTotalDamage(primaryClass).ApplyTo(1f),
+                damageMult = totalDamage.Additive * totalDamage.Multiplicative,
+                damageFlat = totalDamage.Flat,
                 lifeMax = npc.lifeMax,
                 defense = npc.defense,
+                fromEvent = fromEvent,
                 ttkTicks = ticks,
                 ttkSeconds = ticks / 60f,
                 hits = tracker.Hits,

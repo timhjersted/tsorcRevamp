@@ -77,6 +77,11 @@ namespace tsorcRevamp.NPCs
 
             bool inAggro = npc.Distance(player.Center) <= aggroRange;
 
+            if (globalNPC.UnreachableWanderTimer > 0)
+            {
+                globalNPC.UnreachableWanderTimer--; // counts down once per FSM tick; ForceDisengage sets it
+            }
+
             // A leash is distinct from the A* search radius: it measures whether a fleeing player
             // is steadily opening the gap. Run this before the LOS fast-path so visible players can
             // still escape an enemy that simply cannot keep up with them.
@@ -115,7 +120,8 @@ namespace tsorcRevamp.NPCs
             // is true and undo the flee before it moves anywhere.
             // GhostUnreachableWanderTimer is the same kind of intentional disengage: let wall-phasing ghosts
             // finish their wander beat instead of snapping back to a known-bad player column.
-            if (hasLos && globalNPC.PursuitState != PursuitState.Flee && globalNPC.GhostUnreachableWanderTimer <= 0)
+            if (hasLos && globalNPC.PursuitState != PursuitState.Flee && globalNPC.GhostUnreachableWanderTimer <= 0
+                && globalNPC.UnreachableWanderTimer <= 0)
             {
                 globalNPC.LastKnownPlayerPos = player.Center;
                 if (globalNPC.PursuitState == PursuitState.Pursue || inAggro)
@@ -216,6 +222,16 @@ namespace tsorcRevamp.NPCs
         {
             StampMutation(globalNPC, "ForceDisengage", caller, line);
             globalNPC.PursuitFallBehindTimer = 0;
+
+            // Opt-in (UnreachableWanderTicks): go straight to Patrol and ignore the still-visible player for a while,
+            // instead of Search (its target is the unreachable spot) followed by an instant LOS re-aggro.
+            if (globalNPC.UnreachableWanderTicks > 0 && globalNPC.PursuitState == PursuitState.Pursue)
+            {
+                EnterPatrol(npc, globalNPC);
+                globalNPC.UnreachableWanderTimer = globalNPC.UnreachableWanderTicks;
+                return;
+            }
+
             if (globalNPC.RemembersLastKnownPos && globalNPC.PursuitState == PursuitState.Pursue)
             {
                 globalNPC.PursuitState = PursuitState.Search;

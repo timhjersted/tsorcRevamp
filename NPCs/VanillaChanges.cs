@@ -3828,7 +3828,10 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.TownSlimeYellow
                     || npc.type == NPCID.FaceMonster
                     || npc.type == NPCID.BloodCrawler
-                    || npc.type == NPCID.BloodCrawlerWall)
+                    || npc.type == NPCID.BloodCrawlerWall
+                    || npc.type == NPCID.Herpling
+                    || npc.type == NPCID.Crimslime
+                    || npc.type == NPCID.FloatyGross)
                 {
                     npc.active = false;
                 }

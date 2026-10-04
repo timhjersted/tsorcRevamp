@@ -37,11 +37,27 @@ namespace tsorcRevamp
             float rotation,
             Vector2 origin,
             float scale,
-            SpriteEffects effects = SpriteEffects.None)
+            SpriteEffects effects = SpriteEffects.None,
+            Vector3? glowColor = null,
+            Vector3? coreColor = null)
         {
             if (Main.dedServ || texture == null || texture.IsDisposed)
             {
                 return;
+            }
+
+            // Null means the original unblockable red / warm-white; a caller passes both to recolor the tell (RGB 0-1).
+            Vector3 outlineTint = new Vector3(1f, 0.015f, 0.01f);
+            Vector3 centerTint = new Vector3(1f, 0.9f, 0.72f);
+
+            if (glowColor.HasValue)
+            {
+                outlineTint = glowColor.Value;
+            }
+
+            if (coreColor.HasValue)
+            {
+                centerTint = coreColor.Value;
             }
 
             if (UnblockableGlowEffect == null || UnblockableGlowEffect.IsDisposed)
@@ -56,8 +72,8 @@ namespace tsorcRevamp
 
             UsefulFunctions.StartAdditiveSpritebatch(ref spriteBatch);
 
-            UnblockableGlowEffect.Parameters["glowColor"].SetValue(new Vector3(1f, 0.015f, 0.01f));
-            UnblockableGlowEffect.Parameters["coreColor"].SetValue(new Vector3(1f, 0.9f, 0.72f));
+            UnblockableGlowEffect.Parameters["glowColor"].SetValue(outlineTint);
+            UnblockableGlowEffect.Parameters["coreColor"].SetValue(centerTint);
             UnblockableGlowEffect.Parameters["coreAmount"].SetValue(0f);
             UnblockableGlowEffect.Parameters["opacity"].SetValue(MathHelper.Lerp(0.76f, 1f, pulse));
             UnblockableGlowEffect.CurrentTechnique.Passes[0].Apply();

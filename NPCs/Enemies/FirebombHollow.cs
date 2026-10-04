@@ -64,6 +64,12 @@ namespace tsorcRevamp.NPCs.Enemies
             g.StandoffDistance = 8;
             g.MaxJumpPower = 7f;
             g.RemembersLastKnownPos = true;
+            // Unreachable-but-visible player: give up after ~3s, ignore them for 10s and patrol around the give-up spot
+            // instead of standing frozen (see HollowSoldier / GlobalNPC.UnreachableWanderTicks). A hit re-engages.
+            g.NavGiveUpTicks = 180;
+            g.UnreachableWanderTicks = 600;
+            g.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
+            g.PatrolRange = 24;
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

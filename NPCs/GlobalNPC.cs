@@ -1416,6 +1416,12 @@ namespace tsorcRevamp.NPCs
         // Wall-phasing ghosts that prove the target is unreachable spend a short stint drifting away instead
         // of immediately re-fixating on the player's X column.
         public int GhostUnreachableWanderTimer = 0;
+        // Opt-in lever, 0 = off. A player who is VISIBLE but unreachable re-aggros the FSM every frame (LOS inside aggro range
+        // forces Pursue), so after SF4's no-path / hard-stuck give-up the enemy just stood at the wall forever. With this set,
+        // that give-up goes straight to Patrol (skipping Search: the last-known spot is the unreachable one) and LOS re-aggro is
+        // ignored for this many ticks. A hit clears it. UnreachableWanderTimer is the live countdown (synced).
+        public int UnreachableWanderTicks = 0;
+        public int UnreachableWanderTimer = 0;
         // Set true each frame the NPC runs the mod's custom BasicAI/Fighter/Archer AI. Lets PostAI apply
         // confusion (reversed movement) only to these NPCs — vanilla-AI NPCs already handle Confused themselves,
         // so we must not double-flip them. Consumed (reset) in PostAI.
@@ -2361,6 +2367,7 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write(FleeOriginX);
             binaryWriter.Write(FleeDirection);
             binaryWriter.Write(FleeElapsedFrames);
+            binaryWriter.Write(UnreachableWanderTimer);
             // Permanent resources — charge counts deplete and never refill, so they must stay in sync
             binaryWriter.Write(TeleportChargesRemaining);
             binaryWriter.Write(AttackIndex);
@@ -2483,6 +2490,7 @@ namespace tsorcRevamp.NPCs
             FleeOriginX = binaryReader.ReadSingle();
             FleeDirection = binaryReader.ReadInt32();
             FleeElapsedFrames = binaryReader.ReadInt32();
+            UnreachableWanderTimer = binaryReader.ReadInt32();
             TeleportChargesRemaining = binaryReader.ReadInt32();
             AttackIndex = binaryReader.ReadInt32();
             IsTeleportIllusion = binaryReader.ReadBoolean();
@@ -2843,8 +2851,11 @@ namespace tsorcRevamp.NPCs
                 }
             }            
 
+            // The invasion zone is the surface band around world spawn: X 74560-82016px, Y above legacy tile 1000 (16000px).
+            // That Y is authored in 2000-tall space, so shift it on the expanded world or the surface falls below the cutoff.
+            float invasionZoneMaxY = ExpandedWorldTransform.MapTileY(4900, 1000) * 16f;
             bool invasion = Main.invasionType != 0;
-            if (!tsorcRevampWorld.SuperHardMode && (player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > 16000))
+            if (!tsorcRevampWorld.SuperHardMode && (player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > invasionZoneMaxY))
             {
                 invasion = false;
             }
@@ -2928,7 +2939,18 @@ namespace tsorcRevamp.NPCs
                 tsorcRevampWorld.RemixMap ? RemixHealthSpawnModifiers :
                 tsorcRevampWorld.OnlyAdventureMap ? AdventureHealthSpawnModifiers : null;
 
-            if (healthModifiers != null)
+            // Events skip the low-health spawn slowdown below, so an invasion isn't throttled into nothing. "Near an invasion" is
+            // vanilla's own test (NPC.SpawnNPC): the invasion is spawning (no delay, enemies left) and the player is within
+            // 3000px (~187 tiles) of its front, which sits at the world spawn once it has arrived.
+            bool nearInvasion = Main.invasionType != 0
+                && Main.invasionDelay == 0
+                && Main.invasionSize > 0
+                && Math.Abs(player.position.X - Main.invasionX * 16.0) < 3000.0;
+            bool eventActive = nearInvasion
+                || player.ZoneTowerSolar || player.ZoneTowerNebula || player.ZoneTowerStardust || player.ZoneTowerVortex
+                || player.ZoneOldOneArmy;
+
+            if (healthModifiers != null && !eventActive)
             {
                 int healthBracket = player.statLifeMax2 <= 160 ? 0 :
                     player.statLifeMax2 <= 200 ? 1 :
@@ -2945,7 +2967,9 @@ namespace tsorcRevamp.NPCs
             }
 
             //Peace candles do not activate if there is a) an invasion and b) the player is near the center of the world.
-            if ((Main.invasionType == 0 || player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > 16000))
+            // Same legacy-tile-1000 Y cutoff as EditSpawnPool, shifted for the expanded world.
+            float invasionZoneMaxY = ExpandedWorldTransform.MapTileY(4900, 1000) * 16f;
+            if ((Main.invasionType == 0 || player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > invasionZoneMaxY))
             {
                 if (player.HasBuff(BuffID.PeaceCandle))
                 {

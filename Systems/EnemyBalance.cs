@@ -310,10 +310,10 @@ namespace tsorcRevamp.Systems
         {
             // ---- Pre-Hardmode ----
             Register(NPCID.EyeofCthulhu, 3640, 4000);
-            RegisterMod("Kahlrun", 1500, 1800);
+            RegisterMod("Kahlrun", 1500, 2500);
             RegisterMod("VesselOfSouls", 6000, 6000); // base raised in VesselOfSouls.cs (was 3000), so no multiplier
             RegisterMod("RedKnight", 3000, 3000); // base raised in RedKnight.cs (was 2500); scripted events override HP via SetCustomStats
-            RegisterMod("OwlFather", 4000, 10000);
+            RegisterMod("OwlFather", 4000, 7000);
             Register(NPCID.KingSlime, 2800, 3000);
 
             // Eater of Worlds: +1000 on a worm of roughly 18000 total, spread over every segment type.
@@ -333,7 +333,7 @@ namespace tsorcRevamp.Systems
             Register(NPCID.SkeletronHead, 8000, 9000);
             RegisterMod("GravelordNito", 4000, 12000);
             RegisterMod("AncientOolacileDemon", 4800, 10000);
-            RegisterMod("BlackNinja", 6000, 8000); // base raised in BlackNinja.cs (was 1800 -> 6000), registry then takes it to 8000
+            RegisterMod("BlackNinja", 6000, 6000); // base raised in BlackNinja.cs (was 1800 -> 6000); registry now keeps it there (was 8000)
             RegisterMod("AncestralSpirit", 11900, 12000);
             RegisterMod("JungleWyvernHead", 22000, 25000);
             RegisterMod("AncientDemon", 10000, 18000);
@@ -411,7 +411,7 @@ namespace tsorcRevamp.Systems
             RegisterMod("GrandOccultist", 210000, 400000); // the rebuilt Abysmal Oolacile Sorcerer
             RegisterMod("Artorias", 250000, 500000);
             RegisterMod("Chaos", 450000, 500000);
-            RegisterMod("Gwyn", 750000, 750000); // unchanged
+            RegisterMod("Gwyn", 750000, 1000000);
             RegisterMod("HellkiteDragonHead", 650000, 650000); // unchanged
             RegisterMod("WyvernMageShadow", 250000, 250000); // unchanged; its Ghost Dragon (600000) is the larger part of that fight
             RegisterMod("DarkCloud", 300000, 300000); // unchanged
@@ -469,7 +469,7 @@ namespace tsorcRevamp.Systems
             Enemy("Archdeacon", phm: 1500); // authored 500; caster, contact damage 0
             Enemy("DemonElemental", phm: 1000, hm: 7000, shm: 8000); // authored 250 / 500 / 2000
             Enemy("Eland", phm: 2000, hm: 10000, shm: 25000); // authored 500 / 1000 / 20000; caster, contact damage 0
-            Enemy("HollowSoldier", phm: 750, hm: 6000, shm: 10000); // authored 250 / 500 / 1500
+            Enemy("HollowSoldier", phm: 350, hm: 6000, shm: 10000); // authored 250 / 500 / 1500
             Enemy("Necromancer", phm: 3000); // authored 800; caster, contact damage 0
             Enemy("QuaraPincher", phm: 2000, hm: 9000, shm: 26000); // authored 1200 / 1200 / 1200
             Enemy("RedCloudHunter", phm: 2000, hm: 8000, shm: 20000); // authored 600 / 700 / 2000

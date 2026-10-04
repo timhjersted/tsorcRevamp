@@ -415,6 +415,7 @@ Mods: {
 			BossDeath1: 不要放弃！ 一些Boss需要多次尝试才能击败。
 			BossDeath2: 可能会提前碰到不是当前时期的某些Boss。如果你打不过，试着提升装备后再来挑战。
 			DarkCloud: 你无法摆脱你的阴暗面。
+			// OwlFather: When facing a strong foe, sometimes it is wise to find a path around them and return later...
 			Tonberry: (O_O;)
 			Marilith: 一些强大的攻击只能通过翻滚闪避！
 			ChloranthyRingTip: 绿花戒指可以提高你的翻滚能力, 让你可以更好地躲避攻击...

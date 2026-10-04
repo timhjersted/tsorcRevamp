@@ -540,6 +540,7 @@ namespace tsorcRevamp.NPCs
                         globalNPC.BeastStale = false;
                         globalNPC.BeastUnreachableFrames = 0;
                         globalNPC.GhostUnreachableWanderTimer = 0;
+                        globalNPC.UnreachableWanderTimer = 0; // a hit ends the "ignore the unreachable player" window
                     }
                 }
 

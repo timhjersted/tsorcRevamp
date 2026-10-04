@@ -6,6 +6,7 @@ using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -2805,6 +2806,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float RiposteProjectileThreatRange = 920f;
         const int RipostePreemptiveChance = 180;
         const int RiposteReflectedDamage = 50;
+        // Guard tell colors, RGB 0-1 for the UnblockableGlow shader: violet outline, pale lavender core.
+        static readonly Vector3 RiposteAuraGlow = new Vector3(0.62f, 0.1f, 1f);
+        static readonly Vector3 RiposteAuraCore = new Vector3(0.9f, 0.78f, 1f);
         int _riposteCd = RiposteCooldownTicks;
         int _riposteTimer;
         bool _riposteCounterPending;
@@ -2911,7 +2915,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             float progress = MathHelper.Clamp(1f - ticksRemaining / (float)RiposteGuardTicks, 0f, 1f);
             float bladeReach = ComboReachBase * 0.7f;
             Vector2 bladeTip = PuppetWeaponTipPosition(bladeReach);
-            Lighting.AddLight(bladeTip, 0.75f + 0.35f * progress, 0.58f + 0.25f * progress, 0.12f);
+            Lighting.AddLight(bladeTip, 0.5f + 0.3f * progress, 0.12f + 0.1f * progress, 0.85f + 0.15f * progress);
 
             if (Main.netMode == NetmodeID.MultiplayerClient && ticksRemaining == RiposteGuardTicks)
             {
@@ -2921,7 +2925,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.netMode != NetmodeID.Server && Main.rand.NextBool(2))
             {
                 Vector2 offset = Main.rand.NextVector2Circular(7f, 24f);
-                int dustType = Main.rand.NextBool() ? DustID.GoldCoin : DustID.GoldFlame;
+                int dustType = Main.rand.NextBool() ? DustID.PurpleTorch : DustID.Shadowflame;
                 Dust dust = Dust.NewDustPerfect(bladeTip + offset, dustType,
                     -offset.SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(0.3f, 1.3f), 50, default,
                     MathHelper.Lerp(0.72f, 1.18f, progress));
@@ -4740,6 +4744,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             base.PostDraw(spriteBatch, screenPos, drawColor);
+
+            // Riposte guard tell: the same silhouette aura as the unblockable dash, but purple, so "this blade is a
+            // counter" reads differently from "this attack can't be blocked". Redrawn from the held-weapon snapshot
+            // the puppet draw stores (hand, origin, rotation), the way Artorias does for his pierce.
+            bool guardAuraVisible = RiposteGuardActive
+                && !Main.dedServ
+                && DebugHeldItemType > 0
+                && DebugHeldItemType < TextureAssets.Item.Length;
+
+            if (guardAuraVisible)
+            {
+                Texture2D guardWeapon = TextureAssets.Item[DebugHeldItemType].Value;
+                SpriteEffects guardEffects = SpriteEffects.None;
+
+                if (DebugDirection == -1)
+                {
+                    guardEffects = SpriteEffects.FlipHorizontally;
+                }
+
+                AttackTelegraphDraw.DrawUnblockableWeaponAura(
+                    spriteBatch, guardWeapon, DebugHandPos - Main.screenPosition, null,
+                    MathHelper.ToRadians(DebugDrawRotationDeg), DebugOrigin,
+                    NPC.scale * MeleeWeaponDrawScale, guardEffects, RiposteAuraGlow, RiposteAuraCore);
+            }
 
             if (!IsDashGrabSequence || LordEmbraceOrbActive || Main.dedServ)
                 return;

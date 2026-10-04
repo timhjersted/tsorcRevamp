@@ -550,21 +550,22 @@ namespace tsorcRevamp
                 { ModContent.ItemType<Celestriad>(),                    new ActiveShieldData(30f, 0.35f, 0.97f, 0, 4.0f, ShieldResource.Mana) },
 
                 //--- Vanilla physical shields (stamina) --- keep native vanilla defense (activeDefense unused for these)
-                { ItemID.CobaltShield,    new ActiveShieldData(30f, 0.40f, 0.89f, 0, 4.4f) },
-                { ItemID.ObsidianShield,  new ActiveShieldData(27f, 0.38f, 0.90f, 0, 4.6f) },
+                // passiveResistance (percent) is the always-on DR vanilla shields never had; mod shields add theirs in their own UpdateAccessory.
+                { ItemID.CobaltShield,    new ActiveShieldData(30f, 0.40f, 0.89f, 0, 4.4f, passiveResistance: 4f) },
+                { ItemID.ObsidianShield,  new ActiveShieldData(27f, 0.38f, 0.90f, 0, 4.6f, passiveResistance: 5f) },
                 // GREATSHIELD archetype (hardmode entry): the tower shield of the vanilla line.
-                { ItemID.PaladinsShield,  new ActiveShieldData(21f, 0.30f, 0.88f, 0, 5.4f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.55f, passiveRegenPenalty: 0.05f) },
-                { ItemID.AnkhShield,      new ActiveShieldData(18f, 0.27f, 0.95f, 0, 5.8f) },
+                { ItemID.PaladinsShield,  new ActiveShieldData(21f, 0.30f, 0.88f, 0, 5.4f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.55f, passiveRegenPenalty: 0.05f, passiveResistance: 7f) },
+                { ItemID.AnkhShield,      new ActiveShieldData(18f, 0.27f, 0.95f, 0, 5.8f, passiveResistance: 8f) },
                 // GREATSHIELD archetype (top of the line): a wall of ice — nothing chips through, but you barely move
                 // and recover slowly. The lighter Ankh/Hero shields around it stay leaky-but-nimble by contrast, so
                 // upgrading Frozen → Hero is a side-grade (lose no-chip, gain mobility + utility), not a strict win.
-                { ItemID.FrozenShield,    new ActiveShieldData(15f, 0.23f, 0.90f, 0, 6.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.45f, passiveRegenPenalty: 0.05f) },
-                { ItemID.HeroShield,      new ActiveShieldData(12f, 0.20f, 0.97f, 0, 6.5f) }, // top vanilla shield (Ankh + Frozen + Berserker)
+                { ItemID.FrozenShield,    new ActiveShieldData(15f, 0.23f, 0.90f, 0, 6.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.45f, passiveRegenPenalty: 0.05f, passiveResistance: 9f) },
+                { ItemID.HeroShield,      new ActiveShieldData(12f, 0.20f, 0.97f, 0, 6.5f, passiveResistance: 10f) }, // top vanilla shield (Ankh + Frozen + Berserker)
                 // Shield of Cthulhu: early-game right-click block (7% slow, def 2). Its vanilla double-tap dash is
                 // untouched and shows the shield while dashing (see tsorcRevampActiveShieldPlayer.PostUpdate).
                 // BUCKLER archetype: the opposite trade — leaks the most chip of any physical shield, but recovers
                 // fastest (0.7x pause) and barely slows you. Rewards short reactive blocks, punishes turtling.
-                { ItemID.EoCShield,       new ActiveShieldData(30f, 0.40f, 0.95f, 2, 4.0f, ShieldResource.Stamina, chipFactor: 0.175f, blockRegenDelayMult: 0.7f) },
+                { ItemID.EoCShield,       new ActiveShieldData(30f, 0.40f, 0.95f, 2, 4.0f, ShieldResource.Stamina, chipFactor: 0.175f, blockRegenDelayMult: 0.7f, passiveResistance: 2f) },
             };
             UsefulFunctions.InitializeImmortalProjectiles();
 

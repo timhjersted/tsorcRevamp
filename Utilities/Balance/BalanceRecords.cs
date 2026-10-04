@@ -367,11 +367,17 @@ namespace tsorcRevamp.Utilities.Balance
         public int playerMaxLife;
         public int playerDefense;
 
-        /// <summary>Total damage multiplier (class plus generic) of the class that did the most damage in this kill.</summary>
+        /// <summary>Percent damage multiplier (additive times multiplicative, class plus generic) of the class that did the most
+        /// damage in this kill. Flat bonuses are in <see cref="damageFlat"/>, never folded in here.</summary>
         public float damageMult;
+        public float damageFlat;
 
         public int lifeMax;
         public int defense;
+
+        /// <summary>The enemy was spawned by a scripted event, which sets its own HP, defense and damage (so the enemy
+        /// registry's value does not apply). Counted apart from natural spawns.</summary>
+        public bool fromEvent;
 
         /// <summary>Ticks from the first hit on this enemy to its death. A pause of ten seconds or more between hits starts a new engagement.</summary>
         public int ttkTicks;

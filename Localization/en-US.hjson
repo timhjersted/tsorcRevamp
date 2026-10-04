@@ -251,7 +251,7 @@ Mods: {
 			AtkSpeed: Increases attack speed by {0}%
 			StaminaRegen: Increases stamina regeneration rate by {0}%
 			StaminaRecovery: Increases stamina recovery speed by {0}%
-			DRStat: Increases Resistance by {0}
+			DRStat: Increases Resistance by {0}%
 			BadDRStat: Decreases resistance by {0}
 			Cooldown: "{0} seconds cooldown"
 			CritDmg: Critical strikes deal {0}% more damage
@@ -415,6 +415,7 @@ Mods: {
 			BossDeath1: Don't give up! Some bosses might take several tries to defeat
 			BossDeath2: Certain bosses can be fought earlier than necessary. If you're struggling, try coming back when you're more powerful
 			DarkCloud: You can't outrun your shadow
+			OwlFather: When facing a strong foe, sometimes it is wise to find a path around them and return later...
 			Tonberry: (O_O;)
 			Marilith: Some powerful attacks can only be avoided by dodgerolling!
 			ChloranthyRingTip: The Chloranthy Ring massively improves your dodgeroll, allowing even more evasion...

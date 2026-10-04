@@ -50,6 +50,11 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
         /// mode (config + SoulsMode), alongside ActiveDefense.</summary>
         public readonly float PassiveRegenPenalty;
 
+        /// <summary>Always-on damage resistance in percent (4 = 4%) for VANILLA shields, which have no ModItem to set
+        /// player.endurance themselves. Applied by ActiveShieldGlobalItem.UpdateAccessory in active mode only. Leave 0 for
+        /// mod shields: their own UpdateAccessory already adds their DR, so setting it here would double-count.</summary>
+        public readonly float PassiveResistance;
+
         // Chip auto-derivation: maps shield quality (DamageFactor) onto a chip band. Anchored on the registry's
         // current best/worst physical factors, so the whole roster spans the full band.
         private const float ChipBestFactor = 0.14f;   // Icebound Mythril Aegis
@@ -87,7 +92,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
         /// <summary>True for the greatshield archetype: takes no chip at all, and pays for it elsewhere.</summary>
         public bool IsGreatshield => ChipFactor == 0f;
 
-        public ActiveShieldData(float baseCost, float damageFactor, float moveSpeedMult = 0.75f, int activeDefense = 0, float knockback = 5f, ShieldResource resource = ShieldResource.Stamina, float chipFactor = -1f, float blockRegenDelayMult = 1f, float passiveRegenPenalty = 0f)
+        public ActiveShieldData(float baseCost, float damageFactor, float moveSpeedMult = 0.75f, int activeDefense = 0, float knockback = 5f, ShieldResource resource = ShieldResource.Stamina, float chipFactor = -1f, float blockRegenDelayMult = 1f, float passiveRegenPenalty = 0f, float passiveResistance = 0f)
         {
             BaseCost = baseCost;
             DamageFactor = damageFactor;
@@ -98,6 +103,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             ChipFactor = chipFactor;
             BlockRegenDelayMult = blockRegenDelayMult;
             PassiveRegenPenalty = passiveRegenPenalty;
+            PassiveResistance = passiveResistance;
         }
     }
 }

@@ -72,6 +72,12 @@ namespace tsorcRevamp.NPCs.Enemies
             globalNPC.CanUseRopes = true;
             globalNPC.MaxJumpPower = 10f;           // preserves the old -9.5f overhead-jump reach
             globalNPC.RemembersLastKnownPos = true; // pursuer: investigate last-seen spot before patrolling
+            // Unreachable-but-visible player: give up after ~3s, ignore them for 10s and patrol around the give-up spot
+            // instead of standing frozen at the wall (see HollowSoldier / GlobalNPC.UnreachableWanderTicks). A hit re-engages.
+            globalNPC.NavGiveUpTicks = 180;
+            globalNPC.UnreachableWanderTicks = 600;
+            globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
+            globalNPC.PatrolRange = 24;
             // Poise / stagger: opt in. A stagger cancels an attack via IStaggerable.OnStagger below.
             globalNPC.PoiseMax = 15f;
             // Reactive greatshield: pre-emptive + on-hit block chance. See ShieldProfile.

@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -465,6 +466,19 @@ namespace tsorcRevamp
                 return true;
             }
 
+            // Chests / dressers etc. under the cursor and in reach. SmartInteract below doesn't always flag them (it
+            // depends on the player's smart-interact settings), and vanilla opens them from this same right-click, so
+            // the slot item would fire AND the chest would open. Main.tileContainer is vanilla's "opens a storage UI" flag.
+            Tile hoveredTile = Framing.GetTileSafely(Player.tileTargetX, Player.tileTargetY);
+            bool hoveringContainer = hoveredTile.HasTile
+                && Main.tileContainer[hoveredTile.TileType]
+                && Player.IsInTileInteractionRange(Player.tileTargetX, Player.tileTargetY, TileReachCheckSettings.Simple);
+
+            if (hoveringContainer)
+            {
+                return true;
+            }
+
             Player.SmartInteractLookup();
 
             if (!Main.SmartInteractShowingGenuine)
@@ -575,6 +589,23 @@ namespace tsorcRevamp
             usingSecondSlotItem = false;
             swappedSlotIndex = -1;
             secondSlotStoredItem = null;
+        }
+
+        // Runs every frame the game is auto-paused (Main.autoPause + inventory/chest open), when Player.Update and so
+        // ProcessTriggers don't. If a 2nd-slot use began on the frame something opened the inventory, UpdateSecondSlotUse
+        // never gets its abort check, and the frozen itemAnimation/itemTime make vanilla ItemSlot reject every click
+        // (ItemSlot.LeftClick bails while either is non-zero). Undo the swap and clear both so the UI is usable.
+        public override void UpdateAutopause()
+        {
+            if (!usingSecondSlotItem)
+            {
+                return;
+            }
+
+            EndSecondSlotUse();
+            Player.itemAnimation = 0;
+            Player.itemTime = 0;
+            Player.controlUseItem = false;
         }
 
         // Undo the swap before the character is saved so a mid-use save can never persist the swapped/duplicated state.

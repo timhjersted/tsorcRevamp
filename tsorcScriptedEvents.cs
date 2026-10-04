@@ -3055,6 +3055,10 @@ namespace tsorcRevamp
                 {
                     if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
                         Main.NewText($"[Event] NPC #{i} failed to resolve (type 0) — check its NpcName in DynamicEvents.json", Color.OrangeRed);
+
+                    // Never spawned, so its index stays 0 and the per-tick alive check would read Main.npc[0] (inactive, type 0)
+                    // as a despawn and tear the whole event down, taking the NPCs that DID spawn with it. Treat it as already dead.
+                    eventNPCs[i].killed = true;
                     continue;
                 }
 

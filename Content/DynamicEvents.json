@@ -177,7 +177,7 @@
         "NpcName": "tsorcRevamp/RedKnight",
         "SpawnX": 5616.0,
         "SpawnY": 934.0,
-        "CustomHealth": 600,
+        "CustomHealth": 1500,
         "CustomDamage": 55,
         "CustomDefense": 9,
         "CustomSouls": 700
@@ -2009,7 +2009,7 @@
         "NpcName": "tsorcRevamp/AbandonedStump",
         "SpawnX": 5012.0,
         "SpawnY": 851.0,
-        "CustomHealth": 400,
+        "CustomHealth": 275,
         "CustomDamage": null,
         "CustomDefense": null,
         "CustomSouls": null
@@ -2490,7 +2490,7 @@
         "CustomSouls": null
       },
       {
-        "NpcName": "tsorcRevamp/Abysswalker",
+        "NpcName": "tsorcRevamp/DworcAbysswalker",
         "SpawnX": 3675.0,
         "SpawnY": 1545.0,
         "CustomHealth": null,
@@ -2733,7 +2733,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/Abysswalker",
+        "NpcName": "tsorcRevamp/DworcAbysswalker",
         "SpawnX": 5781.0,
         "SpawnY": 1525.0,
         "CustomHealth": null,
@@ -5236,6 +5236,42 @@
         "NpcName": "EyeofCthulhu",
         "SpawnX": 3887.0,
         "SpawnY": 584.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "b7ddb772-e136-478d-ba75-d46702824ed2",
+    "CenterX": 4703.0,
+    "CenterY": 1163.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "SpikeBall",
+        "SpawnX": 4769.0,
+        "SpawnY": 1167.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "SpikeBall",
+        "SpawnX": 4789.0,
+        "SpawnY": 1151.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

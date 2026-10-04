@@ -764,7 +764,11 @@ namespace tsorcRevamp
                 Player.ClearBuff(BuffID.QueenSlimeMount);
             }
 
-            if (tsorcRevampWorld.BossAlive && ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig)
+            // The Black Knight is a regular enemy (npc.boss is false, so BossAlive ignores it) but gets boss-zen anyway:
+            // the buff stops other spawns for as long as one is alive. Runs on the server too, which is what reads the flag.
+            bool blackKnightAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Enemies.BlackKnight>());
+
+            if ((tsorcRevampWorld.BossAlive || blackKnightAlive) && ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig)
             {
                 Player.AddBuff(ModContent.BuffType<Buffs.BossZenBuff>(), 5);
             }
@@ -2574,6 +2578,12 @@ namespace tsorcRevamp
                     deathTextOverridden = true;
                 }
 
+                if (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Puppets.OwlFather>())
+                {
+                    text = LangUtils.GetTextValue("DeathText.OwlFather");
+                    deathTextOverridden = true;
+                }
+
                 //If you want to add custom text for other bosses, stick it here using the line above as a template
             }
 
@@ -2883,8 +2893,10 @@ namespace tsorcRevamp
 
             // ZoneLihzhardTemple is true only while the player occupies the unsafe Lihzahrd
             // Brick wall used by the Forbidden dungeon, so nearby Jungle terrain is unaffected.
-            // This is shared by the original and Remix Adventure maps.
-            if (Player.ZoneLihzhardTemple && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            // This is shared by the original and Remix Adventure maps. The Golem's arena uses the same
+            // wall, so both debuffs are skipped while the Golem is alive (already-applied ones expire within 60 ticks).
+            if (Player.ZoneLihzhardTemple && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode
+                && !NPC.AnyNPCs(NPCID.Golem))
             {
                 Player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
                 Player.AddBuff(ModContent.BuffType<Suppressed>(), 1 * 60, false);
