@@ -989,8 +989,9 @@ namespace tsorcRevamp.Systems
             Spawn("DworcVoodooShaman", Water.Dry & DworcLand & Depth.Cavern, hm: 0.03f, shm: 0.03f, max: 1);
             Spawn("DworcVoodooShaman", Water.Dry & Region.TropicalOcean & Zone.Jungle, hm: 0.045f, shm: 0.045f, max: 1);
 
-            // Hardmode and Super Hardmode share one weight, as in the old rule (it tested Main.hardMode, which stays true in SHM).
-            Spawn("Eland", Zone.Jungle & !Evil & Depth.BelowSurface, phm: 0.01f, hm: 0.25f, shm: 0.25f);
+            // Underground jungle only, never inside the Golem's temple: Zone.Lihzahrd is the player standing on Lihzahrd wall,
+            // and the Wall.Is catches a spawn tile inside the temple while the player is just outside it.
+            Spawn("Eland", Zone.Jungle & !Evil & Depth.BelowSurface & !Zone.Lihzahrd & !Wall.Is(WallID.LihzahrdBrickUnsafe), phm: 0.01f, hm: 0.05f, shm: 0.75f);
             Spawn("Eland", Zone.Jungle & !Evil & Depth.Surface & Weather.Raining & Time.Night, hm: 0.15f, shm: 0.15f);
 
             // Was 0.3 behind a one-in-150 random gate, folded into the weight (0.3 / 150).

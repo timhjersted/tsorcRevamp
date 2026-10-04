@@ -540,6 +540,8 @@ namespace tsorcRevamp.NPCs
                         globalNPC.BeastStale = false;
                         globalNPC.BeastUnreachableFrames = 0;
                         globalNPC.GhostUnreachableWanderTimer = 0;
+                        globalNPC.GhostWallGaveUp = false;
+                        globalNPC.GhostWallPressFrames = 0;
                         globalNPC.UnreachableWanderTimer = 0; // a hit ends the "ignore the unreachable player" window
                     }
                 }
@@ -581,6 +583,15 @@ namespace tsorcRevamp.NPCs
                 else
                 {
                     fsmState = NavBehavior.UpdateState(npc, globalNPC, fsmPlayer, fsmLos, fsmProgress, FighterAggroRange);
+
+                    // Re-sighting the player (any state but Patrol) ends a ghost's wall give-up, so the next Patrol
+                    // starts with the drift-and-phase behaviour again. Search keeps the flag clear too: it is a chase.
+                    if (fsmState != PursuitState.Patrol)
+                    {
+                        globalNPC.GhostWallGaveUp = false;
+                        globalNPC.GhostWallPressFrames = 0;
+                    }
+
                     if (globalNPC.RequiresFlatGround
                         && globalNPC.BeastUnreachableFrames > 120
                         && globalNPC.FramesSinceHit > globalNPC.BeastStaleWanderTicks)
@@ -707,7 +718,7 @@ namespace tsorcRevamp.NPCs
                                 AutoStepUp(npc);
                             }
                         }
-                        else if (globalNPC.CanPassThroughWalls && !xAlignedDiffLevel)
+                        else if (globalNPC.CanPassThroughWalls && !xAlignedDiffLevel && !globalNPC.GhostWallGaveUp)
                         {
                             // Ghost enemies always drift toward the player even in "patrol" — wandering away from
                             // a wall they can't pathfind through means TryGhostWallTeleport never fires.
@@ -723,6 +734,40 @@ namespace tsorcRevamp.NPCs
                             if (!npc.noTileCollide && !npc.noGravity)
                             {
                                 AutoStepUp(npc);
+                            }
+
+                            // Tell PostAI's wall-teleport gate we are really pushing forward (see GhostDriftIntent).
+                            globalNPC.GhostDriftIntent = true;
+
+                            // Give-up clock: if the teleport had a landing spot it would have fired on the first pressed
+                            // frame and moved us ~tiles; ~1.5s of zero horizontal movement means the wall is too thick /
+                            // solid earth beyond. 0.25 px/frame is the "not moving" floor (collision leaves 0 displacement).
+                            const int GhostWallGiveUpFrames = 90;
+                            float movedX = Math.Abs(npc.position.X - npc.oldPosition.X);
+
+                            if (movedX < 0.25f)
+                            {
+                                globalNPC.GhostWallPressFrames++;
+                            }
+                            else
+                            {
+                                globalNPC.GhostWallPressFrames = 0;
+                            }
+
+                            // Decision is the server's; clients follow the synced GhostWallGaveUp.
+                            if (globalNPC.GhostWallPressFrames >= GhostWallGiveUpFrames && Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                globalNPC.GhostWallGaveUp = true;
+                                globalNPC.GhostWallPressFrames = 0;
+
+                                // Wander starts heading away from the wall we were stuck on, not back into it.
+                                int awayFromPlayerDir = -(int)Math.Sign(fsmPlayer.Center.X - npc.Center.X);
+                                if (awayFromPlayerDir != 0)
+                                {
+                                    globalNPC.PatrolDirection = awayFromPlayerDir;
+                                }
+
+                                npc.netUpdate = true;
                             }
                         }
                         else

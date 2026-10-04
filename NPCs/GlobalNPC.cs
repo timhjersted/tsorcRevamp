@@ -1416,6 +1416,16 @@ namespace tsorcRevamp.NPCs
         // Wall-phasing ghosts that prove the target is unreachable spend a short stint drifting away instead
         // of immediately re-fixating on the player's X column.
         public int GhostUnreachableWanderTimer = 0;
+        // A Patrol-drifting ghost that pushed into a wall it could not phase through (too thick / solid earth beyond) gave up on
+        // the player's column: it wanders for real (RunPatrol) instead of pressing the wall forever. Server-decided + synced.
+        // Cleared when the FSM leaves Patrol (re-sighted the player) or on a hit.
+        public bool GhostWallGaveUp = false;
+        // Consecutive frames the Patrol drift has pushed toward the player with no horizontal movement (the give-up clock).
+        public int GhostWallPressFrames = 0;
+        // Set each tick the Patrol drift pushes toward the player; PostAI's wall-teleport gate reads and clears it. A body
+        // pinned against a wall has its velocity zeroed by collision every frame, so the Lerp in the drift never builds the
+        // 0.2 px/tick forward speed the gate otherwise demands, and the teleport silently never fired.
+        public bool GhostDriftIntent = false;
         // Opt-in lever, 0 = off. A player who is VISIBLE but unreachable re-aggros the FSM every frame (LOS inside aggro range
         // forces Pursue), so after SF4's no-path / hard-stuck give-up the enemy just stood at the wall forever. With this set,
         // that give-up goes straight to Patrol (skipping Search: the last-known spot is the unreachable one) and LOS re-aggro is
@@ -2143,7 +2153,9 @@ namespace tsorcRevamp.NPCs
             // that decelerate to 0 during attacks (e.g. GhostOfAHollowWarrior's slash) could
             // silently accumulate the timer and teleport mid-animation.
             float _ghostFwdVel = npc.direction * npc.velocity.X;
-            bool wallBlocked = _ghostFwdVel > 0.2f && IsWallBlockingAhead(npc);
+            bool pushingForward = _ghostFwdVel > 0.2f || GhostDriftIntent;
+            GhostDriftIntent = false;
+            bool wallBlocked = pushingForward && IsWallBlockingAhead(npc);
 
             if (wallBlocked)
                 GhostWallTimer++;
@@ -2368,6 +2380,7 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write(FleeDirection);
             binaryWriter.Write(FleeElapsedFrames);
             binaryWriter.Write(UnreachableWanderTimer);
+            binaryWriter.Write(GhostWallGaveUp);
             // Permanent resources — charge counts deplete and never refill, so they must stay in sync
             binaryWriter.Write(TeleportChargesRemaining);
             binaryWriter.Write(AttackIndex);
@@ -2491,6 +2504,7 @@ namespace tsorcRevamp.NPCs
             FleeDirection = binaryReader.ReadInt32();
             FleeElapsedFrames = binaryReader.ReadInt32();
             UnreachableWanderTimer = binaryReader.ReadInt32();
+            GhostWallGaveUp = binaryReader.ReadBoolean();
             TeleportChargesRemaining = binaryReader.ReadInt32();
             AttackIndex = binaryReader.ReadInt32();
             IsTeleportIllusion = binaryReader.ReadBoolean();
