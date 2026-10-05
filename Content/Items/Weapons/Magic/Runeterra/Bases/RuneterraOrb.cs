@@ -27,25 +27,26 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
         public abstract int Tier { get; }
         public abstract string LocalizationPath { get; }
 
-        public const float OrbDmgMod = 50f;
-        public const float OrbReturnDmgMod = 50f;
+        public const float OrbSourceDmgMod = 80f;
+        public const float OrbReturnScalingBonusDmgMod = 50f;
         public const float EssenceThiefOnKillChance = 20f;
-        public const float FilledOrbDmgMod = 75f;
-        public const float ShootSpeed = 20f;
+        public const float FilledOrbScalingBonusDmgMod = 75f;
+        public const float ShootSpeed = 15f;
         public const float OrbSoundVolume = 0.25f;
         public const int HealManaDivisor = 100;
         public const int HealBaseValue = 4;
+        public const float FlameManaCostReduction = 50f;
 
         public const float FireballDmgMod = 250f;
         public const float FireballHPPercentDmg = 0.6f;
         public const int FireballHPDmgCap = (int)(450000f * FireballHPPercentDmg / 100f);
-        public const float MagicSunder = 20f;
+        public const float MagicSunder = 10f;
         public const int FireballCD = 4;
         public const int FireballDuration = 6;
 
         public const int DashBuffDuration = 10;
-        public const int PerDashCD = 8;
-        public const int DashCostMultiplier = 4;
+        public const int SpiritRushCooldown = 30;
+        public const int DashManaCostMultiplier = 4;
         public override void SetStaticDefaults()
         {
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));
@@ -88,6 +89,15 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
                 type = CharmProjectile;
             }
         }
+
+        public override void ModifyManaCost(Player player, ref float reduce, ref float mult)
+        {
+            if (player.ownedProjectileCounts[OrbProjectile] != 0)
+            {
+                mult = 1f - FlameManaCostReduction / 100f;
+            }
+        }
+
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
             if (Tier > 1)
@@ -144,7 +154,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Bases
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details").FormatWith(OrbDmgMod, (OrbReturnDmgMod + OrbDmgMod), EssenceThiefOnKillChance, FilledOrbDmgMod, FireballDmgMod / 100f, FireballCD, FireballHPPercentDmg, FireballHPDmgCap, MagicSunder, DashBuffDuration, PerDashCD, (int)(Item.mana * player.manaCost * DashCostMultiplier), FireballDuration)));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details").FormatWith(OrbSourceDmgMod, (OrbReturnScalingBonusDmgMod + OrbSourceDmgMod), EssenceThiefOnKillChance, FilledOrbScalingBonusDmgMod, FireballDmgMod / 100f, FireballCD, FireballHPPercentDmg, FireballHPDmgCap, MagicSunder, DashBuffDuration, SpiritRushCooldown, (int)(Item.mana * player.manaCost * DashManaCostMultiplier), FireballDuration, FlameManaCostReduction)));
                 }
             }
             else

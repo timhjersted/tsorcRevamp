@@ -151,6 +151,10 @@ namespace tsorcRevamp
         public const string MUSIC_MOD_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/tsorcMusic.tmod";
         // Branch URL (always the latest upload), NOT a commit permalink. Read by Systems/BetaUpdater.cs.
         public const string BETA_UPDATE_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/UnreleasedBeta/tsorcRevamp.tmod";
+        // Beta world: the .wld plus a one-line version file (e.g. "1.3.80"). Upload order: .tmod, .wld, then the .txt LAST,
+        // since the .txt is what triggers the download. Read by Systems/BetaUpdater.cs.
+        public const string BETA_MAP_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/UnreleasedBeta/the-story-of-red-cloud.wld";
+        public const string BETA_MAP_VERSION_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/UnreleasedBeta/tsorcBetaMap.txt";
         public const string MAP_URL ="https://github.com/timhjersted/tsorcDownload/raw/1.4.4/the-story-of-red-cloud.wld";
         public const string MAP_REMIX_URL = "https://github.com/timhjersted/tsorcDownload/raw/1.4.4/the-story-of-red-cloud-xelvaa-remix.wld";
         public const string CHANGELOG_URL = "https://raw.githubusercontent.com/timhjersted/tsorcDownload/1.4.4/changelog.txt";

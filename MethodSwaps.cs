@@ -2548,6 +2548,45 @@ namespace tsorcRevamp
                 }
             }
 
+            // Crimson only counts while the player is actually near crimson tiles. Vanilla sets ZoneCrimson at 300 crimson
+            // tiles anywhere in a ~169x124 window around the player (Main.buffScanAreaWidth/Height), so the red water,
+            // background and music reach ~80 tiles past the biome edge. Here we also require MinTiles crimson tiles inside
+            // a small box (RadiusX/Y tiles each side). Clearing the flag before orig() also keeps ZonePurity honest.
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && self.ZoneCrimson)
+            {
+                const int RadiusX = 12;
+                const int RadiusY = 10;
+                const int MinTiles = 20;
+
+                int centerTileX = (int)self.Center.X / 16;
+                int centerTileY = (int)self.Center.Y / 16;
+                int nearbyCrimsonTiles = 0;
+
+                // Stops counting as soon as MinTiles is reached; the common case (standing in crimson) exits within a few columns.
+                for (int tileX = centerTileX - RadiusX; tileX <= centerTileX + RadiusX && nearbyCrimsonTiles < MinTiles; tileX++)
+                {
+                    for (int tileY = centerTileY - RadiusY; tileY <= centerTileY + RadiusY && nearbyCrimsonTiles < MinTiles; tileY++)
+                    {
+                        if (!WorldGen.InWorld(tileX, tileY))
+                        {
+                            continue;
+                        }
+
+                        Tile tile = Main.tile[tileX, tileY];
+
+                        if (tile.HasTile && TileID.Sets.Crimson[tile.TileType])
+                        {
+                            nearbyCrimsonTiles++;
+                        }
+                    }
+                }
+
+                if (nearbyCrimsonTiles < MinTiles)
+                {
+                    self.ZoneCrimson = false;
+                }
+            }
+
             return orig(self);
         }
 

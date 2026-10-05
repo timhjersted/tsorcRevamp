@@ -35,41 +35,46 @@ public class RuneterraOrbPlayer : ModPlayer
     {
         if (tsorcRevamp.specialAbility.JustPressed)
         {
-                if (Player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() 
-                    && Player.statMana >= (Player.GetManaCost(Player.HeldItem) * OrbOfSpirituality.DashCostMultiplier) 
-                    && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>())
-                    && SpiritRushCharges == MaxSpiritRushCharges)
+            int dashManaCost = Player.GetManaCost(Player.HeldItem) * OrbOfSpirituality.DashManaCostMultiplier;
+            if (Player.ownedProjectileCounts[ModContent.ProjectileType<ThrownOrbOfSpirituality>()] != 0)
+            {
+                dashManaCost = (int)(dashManaCost / (1f - RuneterraOrb.FlameManaCostReduction / 100f)); //item mana cost gets halved while orb is out so this is needed to correct that
+            }
+            if (Player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() 
+                && Player.statMana >= dashManaCost 
+                && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>())
+                && SpiritRushCharges == MaxSpiritRushCharges)
+            {
+                Player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), OrbOfSpirituality.DashBuffDuration * 60);
+                Player.statMana -= dashManaCost;
+            }
+            if (Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && SpiritRushCooldown <= 0 && SpiritRushCharges > 0)
+            {
+                Player.immune = true;
+                SpiritRushVelocity = Player.DirectionTo(Main.MouseWorld) * 25f;
+                SpiritRushTimer = (int)(60 * 0.3f);
+                SpiritRushCooldown = SpiritRushCooldownTime;
+                Player.SetImmuneTimeForAllTypes(60);
+                if (SpiritRushSoundStyle == 0)
                 {
-                    Player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), OrbOfSpirituality.DashBuffDuration * 60);
-                    Player.statMana -= Player.GetManaCost(Player.HeldItem) * OrbOfSpirituality.DashCostMultiplier;
+                    SoundEngine.PlaySound(new SoundStyle( UsefulFunctions.RefactorableFilepath(typeof(OrbOfSpiritualitySound)) + "_Dash1") with { Volume = RuneterraOrb.OrbSoundVolume });
+                    SpiritRushSoundStyle += 1;
                 }
-                if (Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && SpiritRushCooldown <= 0 && SpiritRushCharges > 0)
+                else
+                if (SpiritRushSoundStyle == 1)
                 {
-                    Player.immune = true;
-                    SpiritRushVelocity = Player.DirectionTo(Main.MouseWorld) * 25f;
-                    SpiritRushTimer = (int)(60 * 0.3f);
-                    SpiritRushCooldown = SpiritRushCooldownTime;
-                    Player.SetImmuneTimeForAllTypes(60);
-                    if (SpiritRushSoundStyle == 0)
-                    {
-                        SoundEngine.PlaySound(new SoundStyle( UsefulFunctions.RefactorableFilepath(typeof(OrbOfSpiritualitySound)) + "_Dash1") with { Volume = RuneterraOrb.OrbSoundVolume });
-                        SpiritRushSoundStyle += 1;
-                    }
-                    else
-                    if (SpiritRushSoundStyle == 1)
-                    {
-                        SoundEngine.PlaySound(new SoundStyle( UsefulFunctions.RefactorableFilepath(typeof(OrbOfSpiritualitySound)) + "_Dash2") with { Volume = RuneterraOrb.OrbSoundVolume });
-                        SpiritRushSoundStyle += 1;
-                    }
-                    else
-                    if (SpiritRushSoundStyle == 2)
-                    {
-                        SoundEngine.PlaySound(new SoundStyle( UsefulFunctions.RefactorableFilepath(typeof(OrbOfSpiritualitySound)) + "_Dash3") with { Volume = RuneterraOrb.OrbSoundVolume });
-                        SpiritRushSoundStyle = 0;
-                    }
-                    Projectile.NewProjectile(Projectile.GetSource_None(), Player.Center, Vector2.One, ModContent.ProjectileType<FlameSpiritRush>(), Player.HeldItem.damage, Player.HeldItem.knockBack, Player.whoAmI, 1);
-                    SpiritRushCharges--;
+                    SoundEngine.PlaySound(new SoundStyle( UsefulFunctions.RefactorableFilepath(typeof(OrbOfSpiritualitySound)) + "_Dash2") with { Volume = RuneterraOrb.OrbSoundVolume });
+                    SpiritRushSoundStyle += 1;
                 }
+                else
+                if (SpiritRushSoundStyle == 2)
+                {
+                    SoundEngine.PlaySound(new SoundStyle( UsefulFunctions.RefactorableFilepath(typeof(OrbOfSpiritualitySound)) + "_Dash3") with { Volume = RuneterraOrb.OrbSoundVolume });
+                    SpiritRushSoundStyle = 0;
+                }
+                Projectile.NewProjectile(Projectile.GetSource_None(), Player.Center, Vector2.One, ModContent.ProjectileType<FlameSpiritRush>(), Player.HeldItem.damage, Player.HeldItem.knockBack, Player.whoAmI, 1);
+                SpiritRushCharges--;
+            }
         }
     }
 

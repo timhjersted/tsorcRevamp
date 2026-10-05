@@ -10,6 +10,7 @@ using Terraria.GameContent.UI.States;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.UI
@@ -234,6 +235,15 @@ namespace tsorcRevamp.UI
             string baseMapFileName = separator + "tsorcBaseMap.wld";
             string userMapFileName = separator +  "TheStoryofRedCloud.wld";
             string worldsFolder = Main.SavePath + separator + "Worlds";
+
+            // Beta players (opted in by the auto-updater) get the beta world template instead of the stable one.
+            bool betaOptedIn = File.Exists(dataDir + separator + BetaUpdater.OptInFileName);
+            bool betaTemplateExists = File.Exists(dataDir + separator + BetaUpdater.BetaMapTemplateFileName);
+
+            if (betaOptedIn && betaTemplateExists)
+            {
+                baseMapFileName = separator + BetaUpdater.BetaMapTemplateFileName;
+            }
 
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
             tsorcRevamp thisMod = (tsorcRevamp)mod;

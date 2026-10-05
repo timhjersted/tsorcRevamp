@@ -846,7 +846,7 @@
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,
-        "CustomSouls": 25000
+        "CustomSouls": 2500
       }
     ]
   },
@@ -5272,6 +5272,870 @@
         "NpcName": "SpikeBall",
         "SpawnX": 4789.0,
         "SpawnY": 1151.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "44b1ea13-b501-4fb1-a2ec-fd7c16f76556",
+    "CenterX": 4586.0,
+    "CenterY": 1232.0,
+    "Radius": 1081600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4586.0,
+        "SpawnY": 1232.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "1e96edd4-e863-4610-84c5-e03406209739",
+    "CenterX": 4557.0,
+    "CenterY": 1240.0,
+    "Radius": 774400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4557.0,
+        "SpawnY": 1240.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "fbb746fa-ac73-40db-888b-11379ec639a9",
+    "CenterX": 4542.0,
+    "CenterY": 1285.0,
+    "Radius": 774400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4542.0,
+        "SpawnY": 1285.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "0df3ae07-5ef9-42a7-a605-0ad3187e9ed9",
+    "CenterX": 4476.0,
+    "CenterY": 1284.0,
+    "Radius": 774400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4476.0,
+        "SpawnY": 1284.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "0afb3ef8-0e66-4a4b-b531-d016f22ae458",
+    "CenterX": 4470.0,
+    "CenterY": 1287.0,
+    "Radius": 774400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4470.0,
+        "SpawnY": 1287.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "727c62b4-7816-47f5-be13-3fdfa98726cd",
+    "CenterX": 4370.0,
+    "CenterY": 1287.0,
+    "Radius": 774400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4370.0,
+        "SpawnY": 1287.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "47829919-e7d0-44bb-a41a-00c430bc5082",
+    "CenterX": 4353.0,
+    "CenterY": 1286.0,
+    "Radius": 774400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4353.0,
+        "SpawnY": 1286.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "619a6f04-e5ce-42e2-8da4-02f62162e44e",
+    "CenterX": 4367.0,
+    "CenterY": 1354.0,
+    "Radius": 774400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4367.0,
+        "SpawnY": 1354.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "f33ff0ed-e022-4116-9b05-a7f3969a0eb0",
+    "CenterX": 4373.0,
+    "CenterY": 1389.0,
+    "Radius": 774400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4373.0,
+        "SpawnY": 1389.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "c09aa26a-977f-4062-8d3e-ddeb3e513a71",
+    "CenterX": 4370.0,
+    "CenterY": 1421.0,
+    "Radius": 774400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4370.0,
+        "SpawnY": 1421.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "7e6cca95-c5e4-4900-8ef3-8d69e1ad7c5c",
+    "CenterX": 4414.0,
+    "CenterY": 1420.0,
+    "Radius": 774400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4414.0,
+        "SpawnY": 1420.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "92e786d4-e1a7-433c-bcbb-94573aadcf63",
+    "CenterX": 4440.0,
+    "CenterY": 1409.0,
+    "Radius": 774400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4440.0,
+        "SpawnY": 1409.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "788f384e-607b-4345-92b0-3b70bb2ce03f",
+    "CenterX": 4484.0,
+    "CenterY": 1379.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4484.0,
+        "SpawnY": 1379.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "4e977a40-77b5-4549-b674-49f3e482e967",
+    "CenterX": 4428.0,
+    "CenterY": 1374.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "GreenJellyfish",
+        "SpawnX": 4428.0,
+        "SpawnY": 1374.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "a49b0e82-e0b8-424b-9f5c-2905120c033f",
+    "CenterX": 4455.0,
+    "CenterY": 1363.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4455.0,
+        "SpawnY": 1363.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "a461db30-cc1f-4f9e-b236-8babf1d290c8",
+    "CenterX": 4399.0,
+    "CenterY": 1322.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4399.0,
+        "SpawnY": 1322.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "5bc330ff-9974-4edf-b37e-a1ed0e83150c",
+    "CenterX": 4379.0,
+    "CenterY": 1322.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4379.0,
+        "SpawnY": 1322.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "53776eac-7119-43c2-b326-5c20a0a92a9e",
+    "CenterX": 4505.0,
+    "CenterY": 1351.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4505.0,
+        "SpawnY": 1351.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "66706e3a-3870-4949-9f67-8581a63b0ac7",
+    "CenterX": 4532.0,
+    "CenterY": 1383.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4532.0,
+        "SpawnY": 1383.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "b39f05d4-92d8-4664-bceb-cad300bce7ac",
+    "CenterX": 4553.0,
+    "CenterY": 1381.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4553.0,
+        "SpawnY": 1381.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "5a2110f8-c3d9-4e25-9372-4748f6940756",
+    "CenterX": 4576.0,
+    "CenterY": 1338.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4576.0,
+        "SpawnY": 1338.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "32780b84-8440-4043-af92-e5a85894c309",
+    "CenterX": 4621.0,
+    "CenterY": 1334.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4621.0,
+        "SpawnY": 1334.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "c15422b7-b03c-4a77-ac07-a8670e0a9920",
+    "CenterX": 4639.0,
+    "CenterY": 1266.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4639.0,
+        "SpawnY": 1266.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "3260d52e-2a66-4421-b550-5c57fb1a66f8",
+    "CenterX": 4671.0,
+    "CenterY": 1337.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4671.0,
+        "SpawnY": 1337.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "4fc481ad-359a-43bc-8b18-52668764b775",
+    "CenterX": 4779.0,
+    "CenterY": 1294.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4779.0,
+        "SpawnY": 1294.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "c0820145-6af3-44ca-ac05-624e613de8f7",
+    "CenterX": 4826.0,
+    "CenterY": 1292.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/GhostOfTheDrowned",
+        "SpawnX": 4826.0,
+        "SpawnY": 1292.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "148c324c-9af9-4d66-bbe9-d2b6d943c9a2",
+    "CenterX": 4654.0,
+    "CenterY": 1302.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "SpikeBall",
+        "SpawnX": 4654.0,
+        "SpawnY": 1302.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "506de7a2-1aeb-4193-a8a0-d0059791c849",
+    "CenterX": 4805.0,
+    "CenterY": 1105.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/ObsidianJellyfish",
+        "SpawnX": 4805.0,
+        "SpawnY": 1105.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "323501de-076d-41e3-a34a-69edd9e3c934",
+    "CenterX": 4771.0,
+    "CenterY": 1105.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/ObsidianJellyfish",
+        "SpawnX": 4771.0,
+        "SpawnY": 1105.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "9c2069d0-16ed-4a09-80d8-f4c8daa70a33",
+    "CenterX": 4953.0,
+    "CenterY": 1197.0,
+    "Radius": 6400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Tonberry",
+        "SpawnX": 5034.0,
+        "SpawnY": 1211.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "d03e9115-0fd2-438a-b59a-c88cf4636d3d",
+    "CenterX": 3405.0,
+    "CenterY": 1389.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "Salamander3",
+        "SpawnX": 3367.0,
+        "SpawnY": 1414.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "6b0f28af-cfc0-4676-a156-8d91b8cbca31",
+    "CenterX": 4871.0,
+    "CenterY": 1236.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": true,
+    "Npcs": [
+      {
+        "NpcName": "SpikeBall",
+        "SpawnX": 4871.0,
+        "SpawnY": 1236.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

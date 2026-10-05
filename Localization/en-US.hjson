@@ -351,6 +351,7 @@ Mods: {
 					[c/77ff77:in strength with each non-permanent source of]
 					[c/77ff77:{0} consumed. Total consumed:] {1}
 					[c/77ff77:Effect potency is ]{2}%
+					[c/77ff77:Levels even before being crafted.]
 					'''
 				NoScaling: Permanently grants the {0} buff.
 				GeneralTooltip:
@@ -557,6 +558,12 @@ Mods: {
 			BetaUpdateDownloading: Downloading beta update {0}: {1}%
 			BetaUpdateInstalling: Beta update downloaded, reloading mods...
 			BetaUpdateFailed: Beta update failed, click to retry...
+			BetaWorldDownloading: Downloading beta world {0}...
+			BetaWorldAdded:
+				'''
+				New beta world {0} downloaded and added to your world list!
+				(It's a fresh world, your old ones are untouched.)
+				'''
 			AdvMapDownloadProgress: "Adventure Map Download In Progress: "
 			AdvMapUpdated: Adventure Map Update Complete!
 			RemixMapDownloadProgress: "Remix Map Download In Progress: "
@@ -8020,7 +8027,7 @@ Mods: {
 				Details:
 					'''
 					The [c/87cefa:Orb] deals {0}% more damage and {1}% on the way back
-					[c/87cefa:Homing flames restore half of their mana cost on-hit]
+					[c/87cefa:Homing flames cast mana cost is reduced by {9}%]
 					Only the first [c/87cefa:Orb] hit and the first hit once it starts returning grant [c/87cefa:Essence Thief] stacks
 					Gain 2 [c/87cefa:Essence Thief] stacks if those crit
 					Also has a {2}% chance to gain an [c/87cefa:Essence Thief] stack on enemy kills
@@ -8047,7 +8054,7 @@ Mods: {
 					[c/ff7f50:Sunder] increases magic damage taken by {8}%({$CommonItemTooltip.SecondDuration@12})
 					[c/87cefa:Homing flames] will prioritize [c/ff7f50:sundered] targets
 					The [c/87cefa:Orb] deals {0}% more damage and {1}% on the way back
-					[c/87cefa:Homing flames restore half of their mana cost on-hit]
+					[c/87cefa:Homing flames cast mana cost is reduced by {9}%]
 					Only the first [c/87cefa:Orb] hit and the first hit once it starts returning grant [c/87cefa:Essence Thief] stacks
 					Gain 2 [c/87cefa:Essence Thief] stacks if those crit
 					Also has a {2}% chance to gain an [c/87cefa:Essence Thief] stack on enemy kills
@@ -8072,13 +8079,13 @@ Mods: {
 				Details:
 					'''
 					Using [c/ff00ff:Special Ability] grants you a buff({$CommonItemTooltip.SecondDuration@9}),
-					which will allow you to [c/ff00ff:dash up to 3 times]({$CommonItemTooltip.Cooldown@10} per dash)
-					[c/87cefa:Homing flames] [c/ff00ff:spawned by dashing do not restore mana, Special Ability costs {11} mana to cast]
+					which will allow you to [c/ff00ff:dash up to 3 times]({$CommonItemTooltip.Cooldown@10})
+					[c/87cefa:Homing flames] [c/ff00ff:spawned by dashing have infinite pierce, Special Ability costs {11} mana to cast]
 					[c/ff7f50:Charm] deals {4}x damage({$CommonItemTooltip.Cooldown@5}) and {6}% max health damage on-hit, up to {7}
 					[c/ff7f50:Sunder] increases magic damage taken by {8}%({$CommonItemTooltip.SecondDuration@12})
 					[c/87cefa:Homing flames] will prioritize [c/ff7f50:sundered] targets
 					The [c/87cefa:Orb] deals {0}% more damage and {1}% on the way back
-					[c/87cefa:Homing flames restore half of their mana cost on-hit]
+					[c/87cefa:Homing flames cast mana cost is reduced by {9}%]
 					Only the first [c/87cefa:Orb] hit and the first hit once it starts returning grant [c/87cefa:Essence Thief] stacks
 					Gain 2 [c/87cefa:Essence Thief] stacks if those crit
 					Also has a {2}% chance to gain an [c/87cefa:Essence Thief] stack on enemy kills

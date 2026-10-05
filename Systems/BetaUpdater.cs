@@ -20,7 +20,9 @@ namespace tsorcRevamp.Systems
         None,
         Downloading,
         Installing,
-        Failed
+        Failed,
+        WorldDownloading,
+        WorldAdded
     }
 
     /// <summary>
@@ -37,8 +39,14 @@ namespace tsorcRevamp.Systems
         public static Version RemoteVersion;
         public static int DownloadPercent;
 
+        public const string OptInFileName = "tsorcBetaOptIn.txt";
+        public const string BetaMapTemplateFileName = "tsorcBetaMap.wld"; // the single current beta world template, in DataDirectory; also read by CustomMapUIState
+
         private const string ModName = "tsorcRevamp";
         private const string BetaFilePrefix = "tsorcRevamp_Beta_";
+        private const string BetaWorldCopyPrefix = "TsorcBetaWorld_"; // deliberately NOT containing "TheStoryofRedCloud", which TryCopyMap treats as "stable world already exists"
+        private static readonly Version MinimumBetaMapVersion = new Version(1, 3);
+        private const double WorldMessageSeconds = 30;
         private const int HeaderBytesToRead = 1024; // magic + tML version + 20 hash + 256 signature + int + name + version is ~314 bytes
         private const double RecheckMinutes = 30;
 
@@ -48,6 +56,9 @@ namespace tsorcRevamp.Systems
         private static bool downloading;
         private static bool checking;
         private static DateTime lastCheckUtc = DateTime.MinValue;
+
+        public static Version BetaWorldVersion; // version shown in the world status messages
+        private static DateTime worldMessageHideUtc = DateTime.MinValue;
 
         private sealed class TmodHeader
         {
@@ -108,7 +119,7 @@ namespace tsorcRevamp.Systems
 
             log4net.ILog logger = ModContent.GetInstance<tsorcRevamp>().Logger;
             Version runningVersion = ModContent.GetInstance<tsorcRevamp>().Version;
-            string optInPath = Path.Combine(DataDirectory, "tsorcBetaOptIn.txt");
+            string optInPath = Path.Combine(DataDirectory, OptInFileName);
 
             try
             {
@@ -191,6 +202,9 @@ namespace tsorcRevamp.Systems
 
                 if (remoteHeader.Version <= runningVersion)
                 {
+                    // Mod is current, so now it's safe to check the beta world. Done only here (never while a newer .tmod is
+                    // pending) so a world never lands before the build that understands it. `checking` stays true meanwhile.
+                    await CheckForBetaWorldAsync(logger);
                     return;
                 }
 
@@ -226,6 +240,124 @@ namespace tsorcRevamp.Systems
             }
 
             await DownloadAndInstallAsync();
+        }
+
+        /// <summary>
+        /// Reads the one-line beta world version from GitHub. If it's newer than the installed one, downloads the world,
+        /// replaces the single beta template in DataDirectory, drops a fresh copy into Worlds\ and shows a menu message.
+        /// The previous auto-added copy is removed only if it was never saved (no .twld beside it). Never throws.
+        /// </summary>
+        private static async Task CheckForBetaWorldAsync(log4net.ILog logger)
+        {
+            string installedVersionPath = Path.Combine(DataDirectory, "tsorcBetaMapVersion.txt");
+            string lastCopyPath = Path.Combine(DataDirectory, "tsorcBetaMapCopy.txt"); // file name of the copy we last put in Worlds\
+            string templatePath = Path.Combine(DataDirectory, BetaMapTemplateFileName);
+            string tempPath = Path.Combine(DataDirectory, "tsorcBetaMapDownload.wld");
+            tsorcRevamp thisMod = ModContent.GetInstance<tsorcRevamp>();
+
+            try
+            {
+                using HttpClient client = new HttpClient();
+                client.Timeout = TimeSpan.FromMinutes(5);
+
+                string versionText = await client.GetStringAsync(VariousConstants.BETA_MAP_VERSION_URL);
+                versionText = versionText.Trim().TrimStart('﻿').Trim(); // BOM from Notepad would otherwise break the parse
+
+                if (!Version.TryParse(versionText, out Version remoteMapVersion))
+                {
+                    logger.Warn("Beta world: version file didn't contain a version number (got '" + versionText + "').");
+                    return;
+                }
+
+                // Guards against a typo'd version file (or a stable-channel number) pushing a wrong world to beta players.
+                if (remoteMapVersion < MinimumBetaMapVersion)
+                {
+                    logger.Warn("Beta world: remote version " + remoteMapVersion + " is below the beta minimum " + MinimumBetaMapVersion + "; ignoring.");
+                    return;
+                }
+
+                Version installedVersion = null;
+
+                if (File.Exists(installedVersionPath))
+                {
+                    Version.TryParse(File.ReadAllText(installedVersionPath).Trim(), out installedVersion);
+                }
+
+                // The version file is written LAST (after the copy into Worlds\), so a half-finished install is retried.
+                if (installedVersion != null && remoteMapVersion <= installedVersion && !thisMod.IsMapInvalid(templatePath))
+                {
+                    return;
+                }
+
+                logger.Info("Beta world: " + (installedVersion?.ToString() ?? "none") + " -> " + remoteMapVersion + ", downloading.");
+                BetaWorldVersion = remoteMapVersion;
+                Status = BetaUpdateStatus.WorldDownloading;
+                Directory.CreateDirectory(DataDirectory);
+
+                byte[] worldBytes = await client.GetByteArrayAsync(VariousConstants.BETA_MAP_URL);
+                await File.WriteAllBytesAsync(tempPath, worldBytes);
+
+                // Rejects truncated downloads and Git LFS pointer text files, same check the stable map download uses.
+                if (thisMod.IsMapInvalid(tempPath))
+                {
+                    throw new InvalidDataException("Downloaded beta world isn't a valid .wld (LFS pointer or moved file?).");
+                }
+
+                File.Move(tempPath, templatePath, overwrite: true);
+
+                string worldsFolder = Path.Combine(Main.SavePath, "Worlds");
+                Directory.CreateDirectory(worldsFolder);
+
+                // Remove the previous auto-added copy, but only if the player never saved it. Terraria/tML writes a .twld the
+                // first time a world is saved, and the template ships none, so no .twld means nothing of theirs is in it.
+                if (File.Exists(lastCopyPath))
+                {
+                    string previousCopyPath = Path.Combine(worldsFolder, File.ReadAllText(lastCopyPath).Trim());
+
+                    if (File.Exists(previousCopyPath) && !File.Exists(Path.ChangeExtension(previousCopyPath, ".twld")))
+                    {
+                        File.Delete(previousCopyPath);
+                        File.Delete(previousCopyPath + ".bak");
+                        logger.Info("Beta world: removed unplayed previous copy " + previousCopyPath);
+                    }
+                }
+
+                // Never overwrite: if this name exists the player may have played it (version file was deleted/reset).
+                string newCopyName = BetaWorldCopyPrefix + remoteMapVersion + ".wld";
+                string newCopyPath = Path.Combine(worldsFolder, newCopyName);
+
+                if (!File.Exists(newCopyPath))
+                {
+                    File.Copy(templatePath, newCopyPath, overwrite: false);
+                    tsorcRevamp.StampWorldFileAsCreatedNow(newCopyPath, logger);
+                }
+
+                File.WriteAllText(lastCopyPath, newCopyName);
+                File.WriteAllText(installedVersionPath, remoteMapVersion.ToString());
+
+                logger.Info("Beta world " + remoteMapVersion + " installed to " + newCopyPath);
+                Status = BetaUpdateStatus.WorldAdded;
+                worldMessageHideUtc = DateTime.UtcNow.AddSeconds(WorldMessageSeconds);
+            }
+            catch (Exception exception)
+            {
+                // Silent to the player (retried at the next recheck); the .tmod updater is the one with a retry button.
+                logger.Warn("Beta world update failed: " + exception.Message);
+
+                if (Status == BetaUpdateStatus.WorldDownloading)
+                {
+                    Status = BetaUpdateStatus.None;
+                }
+
+                try
+                {
+                    File.Delete(tempPath);
+                }
+                catch
+                {
+                    // best effort
+                }
+            }
         }
 
         /// <summary>Downloads the beta .tmod, verifies its SHA1, drops it into Mods\ and queues a mod reload.</summary>
@@ -335,6 +467,12 @@ namespace tsorcRevamp.Systems
                 return;
             }
 
+            // The "world added" message is timed; clearing it back to None also re-enables the periodic recheck.
+            if (Status == BetaUpdateStatus.WorldAdded && DateTime.UtcNow > worldMessageHideUtc)
+            {
+                Status = BetaUpdateStatus.None;
+            }
+
             bool recheckDue = (DateTime.UtcNow - lastCheckUtc).TotalMinutes > RecheckMinutes;
 
             if (Status == BetaUpdateStatus.None && recheckDue && !checking && !downloading)
@@ -361,13 +499,34 @@ namespace tsorcRevamp.Systems
             {
                 text = LangUtils.GetTextValue("UI.BetaUpdateFailed");
             }
+            else if (Status == BetaUpdateStatus.WorldDownloading)
+            {
+                text = LangUtils.GetTextValue("UI.BetaWorldDownloading", BetaWorldVersion);
+            }
+            else if (Status == BetaUpdateStatus.WorldAdded)
+            {
+                text = LangUtils.GetTextValue("UI.BetaWorldAdded", BetaWorldVersion);
+            }
 
             const float textScale = 1.5f;
-            const float textTop = 570f; // above the music (610) / map (650, 690) lines in MethodSwaps.DownloadMapButton
+            const float textTop = 730f; // below the Exit button and below the music (610) / map (650, 690) lines in MethodSwaps.DownloadMapButton
 
-            Vector2 textSize = FontAssets.MouseText.Value.MeasureString(text) * textScale;
-            Vector2 textPosition = new Vector2(Main.screenWidth / 2f - textSize.X / 2f, textTop);
-            Rectangle textBounds = new Rectangle((int)textPosition.X, (int)textPosition.Y, (int)textSize.X, (int)textSize.Y);
+            // Same placement convention as those lines: menu-space coordinates multiplied by Main.UIScale. Without the multiply
+            // the text lands up-and-left of where it should whenever UIScale != 1 (it overlapped the menu buttons).
+            // Each '\n'-separated line is measured and centered on its own so a long line can't run under anything.
+            string[] textLines = text.Split('\n');
+            float lineHeight = FontAssets.MouseText.Value.LineSpacing * textScale;
+            float centerX = Main.screenWidth / 2f * Main.UIScale;
+            float topY = textTop * Main.UIScale;
+            float widestLine = 0f;
+
+            for (int i = 0; i < textLines.Length; i++)
+            {
+                float lineWidth = FontAssets.MouseText.Value.MeasureString(textLines[i]).X * textScale;
+                widestLine = Math.Max(widestLine, lineWidth);
+            }
+
+            Rectangle textBounds = new Rectangle((int)(centerX - widestLine / 2f), (int)topY, (int)widestLine, (int)(lineHeight * textLines.Length));
 
             bool clickable = Status == BetaUpdateStatus.Failed;
             bool hovering = clickable && textBounds.Contains(Main.mouseX, Main.mouseY);
@@ -386,8 +545,15 @@ namespace tsorcRevamp.Systems
             }
 
             Main.spriteBatch.Begin();
-            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, text, textPosition + new Vector2(2f, 2f), Color.Black, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
-            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, text, textPosition, textColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+            for (int i = 0; i < textLines.Length; i++)
+            {
+                float lineWidth = FontAssets.MouseText.Value.MeasureString(textLines[i]).X * textScale;
+                Vector2 linePosition = new Vector2(centerX - lineWidth / 2f, topY + lineHeight * i);
+
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, textLines[i], linePosition + new Vector2(2f, 2f), Color.Black, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, textLines[i], linePosition, textColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+            }
+
             Main.spriteBatch.End();
         }
     }

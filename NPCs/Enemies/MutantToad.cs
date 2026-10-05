@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -120,6 +121,166 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
+
+        // Bored state: the toad gave up on a player it can't reach (walled off, or out of the water). It swims casually
+        // AWAY for BoredAwayTicks, then idles back and forth, and only re-engages once it has line of sight again (or is
+        // hit). Decided on the server, synced in SendExtraAI; every machine runs the same movement from the synced state.
+        bool bored;
+        int boredTimer;
+        int boredDirection;
+
+        // Stuck detector: net movement is sampled over StuckWindowTicks windows while chasing; StuckStrikesToGiveUp dead
+        // windows in a row (~4s) means the player is unreachable. Server-only bookkeeping, never synced.
+        Vector2 stuckWindowStart;
+        int stuckWindowTimer;
+        int stuckStrikes;
+
+        const int StuckWindowTicks = 120;         // 2s sample window
+        const float StuckMinMovePx = 40f;         // < 2.5 tiles of net movement in a window = no progress
+        const float ContactRangePx = 80f;         // closer than this the toad is in melee contact, not stuck
+        const float TrackRangePx = 1200f;         // farther than this it isn't really chasing anyone
+        const int StuckStrikesToGiveUp = 2;
+        const int BoredAwayTicks = 300;           // 5s casual swim away before the idle phase
+        const int BoredIdleLegTicks = 180;        // idle phase reverses heading this often
+        const float BoredAwaySpeed = 1.0f;
+        const float BoredIdleSpeed = 0.4f;
+        const float ReengageRangePx = 700f;       // must be this close AND have line of sight to re-engage
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(bored);
+            writer.Write((short)boredTimer);
+            writer.Write((sbyte)boredDirection);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            bored = reader.ReadBoolean();
+            boredTimer = reader.ReadInt16();
+            boredDirection = reader.ReadSByte();
+        }
+
+        // Runs before the vanilla walker AI and the copy of it in AI(). Returning false skips BOTH, which is how the bored
+        // toad stops chasing: the vanilla code would otherwise re-aim it at the player and hop the wall every frame.
+        public override bool PreAI()
+        {
+            Player targetPlayer = Main.player[NPC.target];
+            bool playerValid = targetPlayer.active && !targetPlayer.dead;
+            float playerDistance = NPC.Distance(targetPlayer.Center);
+            bool hasLineOfSight = Collision.CanHitLine(NPC.position, NPC.width, NPC.height, targetPlayer.position, targetPlayer.width, targetPlayer.height);
+
+            // The low-HP breath explosion owns the toad's last 20 ticks; never interrupt it.
+            if (breath)
+            {
+                bored = false;
+                return true;
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (bored)
+                {
+                    // A hit always wakes it. Otherwise it must have finished the swim-away AND see the player again.
+                    bool sightedPlayer = playerValid && hasLineOfSight && playerDistance < ReengageRangePx;
+                    bool wakeUp = NPC.justHit || (boredTimer >= BoredAwayTicks && sightedPlayer);
+
+                    if (wakeUp)
+                    {
+                        bored = false;
+                        boredTimer = 0;
+                        stuckStrikes = 0;
+                        stuckWindowTimer = 0;
+                        NPC.netUpdate = true;
+                    }
+                }
+                else if (playerValid && playerDistance > ContactRangePx && playerDistance < TrackRangePx)
+                {
+                    if (stuckWindowTimer == 0)
+                    {
+                        stuckWindowStart = NPC.Center;
+                    }
+
+                    stuckWindowTimer++;
+
+                    if (stuckWindowTimer >= StuckWindowTicks)
+                    {
+                        float movedPx = Vector2.Distance(NPC.Center, stuckWindowStart);
+
+                        if (movedPx < StuckMinMovePx)
+                        {
+                            stuckStrikes++;
+                        }
+                        else
+                        {
+                            stuckStrikes = 0;
+                        }
+
+                        stuckWindowTimer = 0;
+
+                        if (stuckStrikes >= StuckStrikesToGiveUp)
+                        {
+                            // Heading = away from the player; 0 (exactly aligned) falls back to the toad's own facing.
+                            bored = true;
+                            boredTimer = 0;
+                            stuckStrikes = 0;
+                            boredDirection = Math.Sign(NPC.Center.X - targetPlayer.Center.X);
+
+                            if (boredDirection == 0)
+                            {
+                                boredDirection = NPC.direction != 0 ? NPC.direction : 1;
+                            }
+
+                            NPC.netUpdate = true;
+                        }
+                    }
+                }
+                else
+                {
+                    stuckWindowTimer = 0;
+                    stuckStrikes = 0;
+                }
+            }
+
+            if (!bored)
+            {
+                return true;
+            }
+
+            // ── Bored movement (all machines, from the synced state) ────────────────────────────────
+            boredTimer++;
+
+            // Idle phase: after the swim-away, reverse heading every BoredIdleLegTicks so it mills about in place.
+            int idleTicks = boredTimer - BoredAwayTicks;
+
+            if (idleTicks > 0 && idleTicks % BoredIdleLegTicks == 0)
+            {
+                boredDirection = -boredDirection;
+            }
+
+            float casualSpeed = BoredAwaySpeed;
+
+            if (idleTicks > 0)
+            {
+                casualSpeed = BoredIdleSpeed;
+            }
+
+            NPC.direction = boredDirection;
+            NPC.spriteDirection = boredDirection;
+            NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, boredDirection * casualSpeed, 0.1f);
+
+            // Lazy stroke every ~1.2s, only if there is still water above to swim into (never beaches itself).
+            if (NPC.wet && boredTimer % 70 == 0)
+            {
+                bool waterAbove = Collision.WetCollision(NPC.position + new Vector2(0f, -48f), NPC.width, 32);
+
+                if (waterAbove)
+                {
+                    NPC.velocity.Y -= 1.6f;
+                }
+            }
+
+            return false;
+        }
 
         public override void AI()
         {
