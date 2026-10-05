@@ -558,7 +558,11 @@ Mods: {
 			// BetaUpdateInstalling: Beta update downloaded, reloading mods...
 			// BetaUpdateFailed: Beta update failed, click to retry...
 			// BetaWorldDownloading: Downloading beta world {0}...
-			// BetaWorldAdded: New beta world {0} downloaded and added to your world list! (It's a fresh world, your old ones are untouched.)
+			/* BetaWorldAdded:
+				'''
+				New beta world {0} downloaded and added to your world list!
+				(It's a fresh world, your old ones are untouched.)
+				''' */
 			AdvMapDownloadProgress: (在原版创意工坊订阅 Dark Souls Adventure Map，再在Tmod内创意工坊选择导入世界)地图下载中:
 			AdvMapUpdated: 冒险地图下载完成！
 			RemixMapDownloadProgress: (QQ群文件获取：837959415获取)重构版地图地图下载中:

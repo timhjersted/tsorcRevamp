@@ -509,11 +509,24 @@ namespace tsorcRevamp.Systems
             }
 
             const float textScale = 1.5f;
-            const float textTop = 570f; // above the music (610) / map (650, 690) lines in MethodSwaps.DownloadMapButton
+            const float textTop = 730f; // below the Exit button and below the music (610) / map (650, 690) lines in MethodSwaps.DownloadMapButton
 
-            Vector2 textSize = FontAssets.MouseText.Value.MeasureString(text) * textScale;
-            Vector2 textPosition = new Vector2(Main.screenWidth / 2f - textSize.X / 2f, textTop);
-            Rectangle textBounds = new Rectangle((int)textPosition.X, (int)textPosition.Y, (int)textSize.X, (int)textSize.Y);
+            // Same placement convention as those lines: menu-space coordinates multiplied by Main.UIScale. Without the multiply
+            // the text lands up-and-left of where it should whenever UIScale != 1 (it overlapped the menu buttons).
+            // Each '\n'-separated line is measured and centered on its own so a long line can't run under anything.
+            string[] textLines = text.Split('\n');
+            float lineHeight = FontAssets.MouseText.Value.LineSpacing * textScale;
+            float centerX = Main.screenWidth / 2f * Main.UIScale;
+            float topY = textTop * Main.UIScale;
+            float widestLine = 0f;
+
+            for (int i = 0; i < textLines.Length; i++)
+            {
+                float lineWidth = FontAssets.MouseText.Value.MeasureString(textLines[i]).X * textScale;
+                widestLine = Math.Max(widestLine, lineWidth);
+            }
+
+            Rectangle textBounds = new Rectangle((int)(centerX - widestLine / 2f), (int)topY, (int)widestLine, (int)(lineHeight * textLines.Length));
 
             bool clickable = Status == BetaUpdateStatus.Failed;
             bool hovering = clickable && textBounds.Contains(Main.mouseX, Main.mouseY);
@@ -532,8 +545,15 @@ namespace tsorcRevamp.Systems
             }
 
             Main.spriteBatch.Begin();
-            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, text, textPosition + new Vector2(2f, 2f), Color.Black, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
-            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, text, textPosition, textColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+            for (int i = 0; i < textLines.Length; i++)
+            {
+                float lineWidth = FontAssets.MouseText.Value.MeasureString(textLines[i]).X * textScale;
+                Vector2 linePosition = new Vector2(centerX - lineWidth / 2f, topY + lineHeight * i);
+
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, textLines[i], linePosition + new Vector2(2f, 2f), Color.Black, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, textLines[i], linePosition, textColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+            }
+
             Main.spriteBatch.End();
         }
     }
