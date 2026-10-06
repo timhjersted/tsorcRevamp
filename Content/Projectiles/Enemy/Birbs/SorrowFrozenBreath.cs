@@ -80,6 +80,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Birbs
             {
                 size += 2;
             }
+
+            // Frost builds every tick the local player stands in the beam. OnHitPlayer can't do this: it only fires when
+            // damage lands, once per i-frame window. Colliding is the same cone test the damage uses (false in the last
+            // 15 ticks, and needs `angle`, which PreDraw sets, so skip on a dedicated server).
+            Player localPlayer = Main.LocalPlayer;
+
+            if (Main.netMode != NetmodeID.Server && !localPlayer.dead)
+            {
+                bool inBeam = Colliding(Projectile.Hitbox, localPlayer.Hitbox) == true;
+
+                if (inBeam)
+                {
+                    Buffs.Debuffs.FrostBuildup.Apply(localPlayer, NPCs.Bosses.TheSorrow.BreathFrostBuildupPerTick);
+                }
+            }
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {

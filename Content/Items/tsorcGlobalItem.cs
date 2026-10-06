@@ -258,16 +258,17 @@ namespace tsorcRevamp.Content.Items
                     if (!string.IsNullOrEmpty(formatted))
                     {
                         string[] formattedLines = formatted.Replace("\r", "").Split('\n');
-                        int tooltipIndex = 0;
                         for (int i = 0; i < tooltips.Count; i++)
                         {
-                            if (tooltips[i].Mod == "Terraria" && tooltips[i].Name.StartsWith("Tooltip") && int.TryParse(tooltips[i].Name.Substring(7), out _))
+                            // Use the N from the line's own "TooltipN" name, not a running count: an earlier
+                            // GlobalItem (ActiveShieldGlobalItem) may have removed lines, and counting would
+                            // paste the removed lines' text back over the survivors.
+                            if (tooltips[i].Mod == "Terraria" && tooltips[i].Name.StartsWith("Tooltip") && int.TryParse(tooltips[i].Name.Substring(7), out int lineNumber))
                             {
-                                if (tooltipIndex < formattedLines.Length)
+                                if (lineNumber < formattedLines.Length)
                                 {
-                                    tooltips[i].Text = formattedLines[tooltipIndex];
+                                    tooltips[i].Text = formattedLines[lineNumber];
                                 }
-                                tooltipIndex++;
                             }
                         }
                     }

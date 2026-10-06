@@ -509,7 +509,7 @@ namespace tsorcRevamp.Systems
             }
 
             const float textScale = 1.5f;
-            const float textTop = 730f; // below the Exit button and below the music (610) / map (650, 690) lines in MethodSwaps.DownloadMapButton
+            const float textTop = 745f; // below the Exit button and clear of the music (610) / map (650, 690) lines in MethodSwaps.DownloadMapButton; those are scale 2, so the last one ends near 690 + 2 * LineSpacing = ~738
 
             // Same placement convention as those lines: menu-space coordinates multiplied by Main.UIScale. Without the multiply
             // the text lands up-and-left of where it should whenever UIScale != 1 (it overlapped the menu buttons).

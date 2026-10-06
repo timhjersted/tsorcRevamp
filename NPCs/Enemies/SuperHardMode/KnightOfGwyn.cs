@@ -70,14 +70,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         //chaos
         int holdTimer = 0;
 
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            poisonStrikeDamage = (int)(poisonStrikeDamage * tsorcRevampWorld.SHMScale);
-            redKnightsSpearDamage = (int)(redKnightsSpearDamage * tsorcRevampWorld.SHMScale);
-            redMagicDamage = (int)(redMagicDamage * tsorcRevampWorld.SHMScale);
-            darkBeadDamage = (int)(darkBeadDamage * tsorcRevampWorld.SHMScale);
-        }
-
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);

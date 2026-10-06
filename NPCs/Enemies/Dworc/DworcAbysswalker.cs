@@ -67,12 +67,6 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesRange = 50;
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesPercent = 12;
         }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            poisonBallDamage = (int)(poisonBallDamage * tsorcRevampWorld.SHMScale);
-            stormBallDamage = (int)(stormBallDamage * tsorcRevampWorld.SHMScale);
-        }
-
         //Spawns in the Jungle Underground and in the Cavern.
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

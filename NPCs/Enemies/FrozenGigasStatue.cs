@@ -25,10 +25,10 @@ namespace tsorcRevamp.NPCs.Enemies
         const int ArmedFanTick = 60;
         const int ArmedShatterTick = 90;
 
-        //Mid-Hardmode values; SHM encounters escalate like the parent (×1.3 × SHMScale)
+        //Mid-Hardmode values; SHM encounters get the parent's flat ×1.3 bump (progress scaling is global, in ProgressionScalingPlayer)
         int FanDamage => ScaleDamage(36);
         int ShatterShardDamage => ScaleDamage(28);
-        static int ScaleDamage(int baseDamage) => tsorcRevampWorld.SuperHardMode ? (int)(baseDamage * 1.3f * tsorcRevampWorld.SHMScale) : baseDamage;
+        static int ScaleDamage(int baseDamage) => tsorcRevampWorld.SuperHardMode ? (int)(baseDamage * 1.3f) : baseDamage;
 
         int Lifetime => NPC.ai[0] > 0f ? (int)NPC.ai[0] : 300;
         bool Armed => NPC.ai[1] == 1f;

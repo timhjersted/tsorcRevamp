@@ -30,13 +30,13 @@ namespace tsorcRevamp.Content.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.OolacileSerpent.GreatSerpentHead>());
             return true;
         }
 
         public override bool CanUseItem(Player player)
         {
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.OolacileSerpent.GreatSerpentHead>()))
             {
                 return false;
             }

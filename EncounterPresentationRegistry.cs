@@ -184,7 +184,7 @@ namespace tsorcRevamp
             if (npcType == NPCID.KingSlime
                 || npcType == NPCID.QueenBee
                 || npcType == ModContent.NPCType<RedKnight>()
-                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>()
+                || npcType == ModContent.NPCType<NPCs.Bosses.OolacileSerpent.GreatSerpentHead>()
                 || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
                 || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>())
             {

@@ -44,11 +44,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BarrowWightNemesisBanner>();
         }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            breathDamage = (int)(breathDamage * tsorcRevampWorld.SHMScale);
-        }
-
         int breathCD = 45;
         //int previous = 0;
         bool breath = false;

@@ -110,7 +110,7 @@ namespace tsorcRevamp.NPCs
                 {
                     if (npc.ModNPC.GetType().Namespace.Contains("SuperHardMode"))
                     {
-                        projectileDamage = (int)(tsorcRevampWorld.SHMScale * projectileDamage);
+                        // Only speed ramps here; damage is scaled for every enemy hit in ProgressionScalingPlayer.
                         projectileVelocity = (int)(tsorcRevampWorld.SubtleSHMScale * projectileVelocity);
                     }
                 }

@@ -39,11 +39,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CorruptedHornetBanner>();
         }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            abyssFlameDamage = (int)(abyssFlameDamage * tsorcRevampWorld.SHMScale);
-        }
-
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             if (tsorcRevampWorld.SuperHardMode)

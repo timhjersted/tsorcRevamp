@@ -39,6 +39,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
         }
 
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            // Ice 3 is also cast by Shadow Mage and Marik; only shots traced back to The Sorrow build Frost.
+            int sourceNPCType = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
+
+            if (sourceNPCType == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
+            {
+                Buffs.Debuffs.FrostBuildup.Apply(target, NPCs.Bosses.TheSorrow.FrostBuildupPerHit);
+            }
+        }
+
         public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item30 with { Volume = 0.2f, Pitch = 0.3f }, Projectile.Center); //ice materialize - good

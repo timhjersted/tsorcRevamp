@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheRage : ModNPC
     {
-        int fireTrailsDamage = 27;   
+        int fireTrailsDamage = 30;
         int rageBreathDamage = 30;
         int demonBoltDamage = 33;
         int homingFireDamage = 36;
@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = BaseHP;
-            NPC.damage = 100;
+            NPC.damage = 120;
             NPC.defense = 32;
             NPC.knockBackResist = 0f;
             NPC.value = 120000;
@@ -320,7 +320,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 // Normal Mode
                 NPC.alpha = 0;
-                NPC.damage = 100;
+                NPC.damage = 120;
                 //NPC.defense = 32;
                 FlameShotCounter = 0;
 
@@ -457,7 +457,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.ai[3]++;
                 //NPC.alpha = 210; //No longer goes invisible
                 //NPC.defense = 32;
-                NPC.damage = 140;
+                NPC.damage = 160;
                 NPC.netUpdate = true;
 
                 // FlameShotCounter2 = 0;
@@ -509,7 +509,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.ai[3] = 1;
 
                     // Gains life on enrage: re-added to fit with rage theme                 
-                    NPC.life += 300;
+                    NPC.life += 900;
 
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }

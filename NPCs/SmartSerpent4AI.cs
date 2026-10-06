@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent;
+using tsorcRevamp.NPCs.Bosses.OolacileSerpent;
 
 namespace tsorcRevamp.NPCs
 {

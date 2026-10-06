@@ -58,8 +58,25 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override void DoMeleeAttack() { } // All melee is owned by the bespoke combo pool.
         protected override int MagicWeaponItemType => ModContent.ItemType<Content.Items.Weapons.Enemy.CrystalKnightHammer>();
         // Raw hostile hitbox damage, not the old contact damage.
-        protected override int MeleeDamage => (int)(34f * 1.3f * tsorcRevampWorld.SubtleSHMScale);
-        protected override int MagicDamage => (int)((_spell == 1 ? 28f : _spell == 2 ? 34f : 30f) * tsorcRevampWorld.SubtleSHMScale);
+        // SHM progress no longer multiplies these: ProgressionScalingPlayer scales every enemy hit on the player.
+        protected override int MeleeDamage => (int)(34f * 1.3f);
+        protected override int MagicDamage
+        {
+            get
+            {
+                if (_spell == 1)
+                {
+                    return 28;
+                }
+
+                if (_spell == 2)
+                {
+                    return 34;
+                }
+
+                return 30;
+            }
+        }
         protected override float TopSpeed => 2.5f;
         protected override float Acceleration => 0.09f;
         protected override bool HasWings => true;
@@ -757,7 +774,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Projectile.NewProjectile(NPC.GetSource_FromThis(), impact - Vector2.UnitY * 24f,
                 Vector2.Zero, ModContent.ProjectileType<PuppetMeleeHitbox>(),
                 (int)(MeleeDamage * 1.2f), 4f, Main.myPlayer, 64f, 48f);
-            int waveDamage = (int)(30f * tsorcRevampWorld.SubtleSHMScale);
+            int waveDamage = 30;
             for (int direction = -1; direction <= 1; direction += 2)
             {
                 float previousGroundY = impact.Y;
