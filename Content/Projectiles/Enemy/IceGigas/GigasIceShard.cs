@@ -156,6 +156,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
+            // Shared by the Ice Gigas, Quara and others; only shards traced back to the Cleric of Sorrow build Frost.
+            int sourceNPCType = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
+
+            if (sourceNPCType == ModContent.NPCType<NPCs.Puppets.ClericOfSorrow>())
+            {
+                Buffs.Debuffs.FrostBuildup.Apply(target, NPCs.Puppets.ClericOfSorrow.FrostBuildupPerHit);
+            }
+
             if (Projectile.ai[1] != QuaraGuidedThirty && Projectile.ai[1] != QuaraOverflightThirty)
             {
                 return;

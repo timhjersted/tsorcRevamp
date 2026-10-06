@@ -109,11 +109,34 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 Projectile.ai[0] += 1f;
             }
             Projectile.rotation += 0.3f * (float)Projectile.direction;
+
+            // Mecha Dragon only (Seath and the Barrow Wights share this projectile): the stream builds Frost while the local
+            // player is inside it. Many particles overlap at once, so lastFrostTick caps it at one application per game tick.
+            int sourceNPCType = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
+            bool fromMechaDragon = sourceNPCType == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>();
+
+            if (fromMechaDragon && Main.netMode != NetmodeID.Server)
+            {
+                Player localPlayer = Main.LocalPlayer;
+                bool touchingPlayer = !localPlayer.dead && Projectile.Hitbox.Intersects(localPlayer.Hitbox);
+
+                if (touchingPlayer && lastFrostTick != Main.GameUpdateCount)
+                {
+                    lastFrostTick = Main.GameUpdateCount;
+                    FrostBuildup.Apply(localPlayer, NPCs.Bosses.WyvernMage.MechaDragonHead.BreathFrostBuildupPerTick);
+                }
+            }
         }
+
+        private static uint lastFrostTick;
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())))
+            // The Frozen / Powerful Curse roll stays for Seath and the Barrow Wights; the Mecha Dragon's breath uses Frost instead.
+            int sourceNPCType = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
+            bool fromMechaDragon = sourceNPCType == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>();
+
+            if (!fromMechaDragon && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())))
             {
                 if (Main.rand.NextBool(5))
                 {

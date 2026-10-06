@@ -110,6 +110,9 @@ namespace tsorcRevamp.NPCs.Puppets
         const int UndertowShardDamage = 18;
         const int ShellShardDamage = 20;
         const int LastRitesRingDamage = 30;
+
+        // Frost meter gain per hit (FrostBuildup, meter caps at 100) from the Cleric's shards and Last Rites ring.
+        public const int FrostBuildupPerHit = 35;
         const int CommunionHealPerPulse = 20;
         const float UndertowMinTiles = 20f;
         const float UndertowMaxTiles = 40f;
