@@ -251,7 +251,7 @@ Mods: {
 			AtkSpeed: Increases attack speed by {0}%
 			StaminaRegen: Increases stamina regeneration rate by {0}%
 			StaminaRecovery: Increases stamina recovery speed by {0}%
-			DRStat: Increases Resistance by {0}%
+			DRStat: Increases Resistance by {0}
 			BadDRStat: Decreases resistance by {0}
 			Cooldown: "{0} seconds cooldown"
 			CritDmg: Critical strikes deal {0}% more damage
