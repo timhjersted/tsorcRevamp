@@ -78,6 +78,13 @@ namespace tsorcRevamp.Content.Projectiles
 
         protected abstract void Shoot();
 
+        // Runs once when stamina hits 0 while held, just before the projectile is removed. Bows do nothing (the
+        // draw is cancelled). Spears override it to finish the attack instead: a click that overdraws into
+        // stamina debt lands at 0 on the very first tick, and Dark Souls rules say that attack still goes through.
+        protected virtual void OnStaminaDepleted(Player player)
+        {
+        }
+
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.WriteVector2(aimVector);
@@ -99,6 +106,11 @@ namespace tsorcRevamp.Content.Projectiles
             float stamina = player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
             if (stamina <= 0)
             {
+                if (!fired)
+                {
+                    OnStaminaDepleted(player);
+                    fired = true;
+                }
                 Projectile.Kill();
                 player.channel = false;
                 return;

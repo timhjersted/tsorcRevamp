@@ -111,6 +111,7 @@ public class LethalTempoGlobalProjectile : GlobalProjectile
         ModContent.ProjectileType<Limit>(),
         ModContent.ProjectileType<LonginusHeld>(),
         ModContent.ProjectileType<LonginusThrown>(),
+        ModContent.ProjectileType<LonginusPoke>(), // the jab, now reachable on every press — banned like the rest of Longinus
         81, //idk why but Longinus uses id 81 somehow
         ModContent.ProjectileType<Bolt1Revamped>(), //Doomhammer
         ModContent.ProjectileType<DoomhammerFireball>(), //^^^^^^^^^^
