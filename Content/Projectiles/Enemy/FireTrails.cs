@@ -87,6 +87,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             set => Projectile.ai[AI_Timer_Slot] = value;
         }
 
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            // 120 ticks = 2s of Dark Inferno
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DarkInferno>(), 120);
+        }
+
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             Projectile.timeLeft = 60;

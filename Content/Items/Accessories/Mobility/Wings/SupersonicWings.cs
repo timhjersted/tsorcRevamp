@@ -64,7 +64,6 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
                 speed = SoulsModeMobility.SupersonicWingsFlightSpeed;
                 acceleration = SoulsModeMobility.SupersonicWingsFlightAcceleration;
             }
-            SoulsModeMobility.ApplyFlightCap(player, ref speed, ref acceleration);
         }
         public override void UpdateAccessory(Player player, bool hideVisual)
         {

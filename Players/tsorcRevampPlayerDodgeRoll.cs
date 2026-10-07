@@ -84,6 +84,9 @@ namespace tsorcRevamp
         public const float PerfectDodgeWindow = 12f / 60f;
         /// <summary>Fraction of the roll's stamina cost refunded on a perfect dodge (matches PerfectParryCostMult).</summary>
         public const float PerfectDodgeRefundMult = 0.5f;
+        /// <summary>Max horizontal speed (px/tick) a roll carries in or out. Stops knockback / boss pushes / dash
+        /// spikes from becoming the roll's base speed. Replaces the old SoulsModeMobility global run cap.</summary>
+        public const float RollMaxCarrySpeed = 10f;
 
         private float lastRollStaminaCost;
         private bool perfectDodgeTriggered;
@@ -578,11 +581,11 @@ namespace tsorcRevamp
                 }
             }
 
-            // Capped at the game's own run-speed ceiling: this carries the player's current speed INTO the
+            // Capped at RollMaxCarrySpeed: this carries the player's current speed INTO the
             // roll (see UpdateDodging), and without a cap any external velocity spike — a boss push, a
             // knockback, anything that sets velocity.X directly rather than through normal acceleration —
             // becomes the roll's new base speed and then gets the 1.4x ground multiplier on top of it.
-            beforeRollSpeed = Math.Min(Math.Abs(Player.velocity.X), SoulsModeMobility.GlobalRunSpeedCap);
+            beforeRollSpeed = Math.Min(Math.Abs(Player.velocity.X), RollMaxCarrySpeed);
 
 
             if (!Player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging)
@@ -884,10 +887,10 @@ namespace tsorcRevamp
                         if (holdingDashDirection)
                         {
                             // Carry momentum: ease down to run speed instead of braking. Exit speed is the player's
-                            // run speed, or their pre-dash speed if that was higher, capped at the global run cap.
+                            // run speed, or their pre-dash speed if that was higher, capped at RollMaxCarrySpeed.
                             // From a standstill this is what turns the dash into a running start.
                             float runSpeed = Math.Max(Player.maxRunSpeed, Player.accRunSpeed);
-                            float exitSpeed = Math.Min(Math.Max(runSpeed, beforeRollSpeed), SoulsModeMobility.GlobalRunSpeedCap);
+                            float exitSpeed = Math.Min(Math.Max(runSpeed, beforeRollSpeed), RollMaxCarrySpeed);
                             Player.velocity.X = MathHelper.Lerp(Player.velocity.X, exitSpeed * dodgeDirection, GhostMomentumBlend);
                         }
                         else

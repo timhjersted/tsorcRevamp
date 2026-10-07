@@ -12,7 +12,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
+namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
 {
     [AutoloadBossHead]
     class GreatSerpentHead : ModNPC, IStaggerable

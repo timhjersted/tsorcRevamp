@@ -8,21 +8,21 @@ namespace tsorcRevamp.Systems.ArcaneSorcery;
 
 public class ArcaneSorceryPlayer : ModPlayer
 {
-    public bool ArcaneSorcerer = false;
+    public bool ArcaneSorcerer;
 
     public const float MaxManaAmplifier = 400f;
     public const float ManaCostMult = 2.5f;
     
     public const float BaseCeruleanFlaskMaxManaScalingMult = 1f; //this actually determines the value used in the mode
-    public const float BaseCeruleanFlatManaGainMult = 3f;//same as above one
+    public const float BaseCeruleanFlatManaGainMult = 2.5f;//same as above one
     public float CeruleanFlaskMaxManaScalingMult = 1f; //this value is updated based on current difficulty
     public float CeruleanFlatManaGainMult = 1f;//same as above one
     
     public bool ManaBurn;
     public const float ManaBurnStaminaThreshold = 33f;
-    public const float ManaBurnCostMult = 2f;
-    public const float ManaBurnBadResistance = 40f;
-    public const float ManaBurnMagicDamageAmp = 25f;
+    public const float ManaBurnCostMult = 4f;
+    public const float ManaBurnBadResistance = 100f;
+    public const float ManaBurnMagicDamageAmp = 10f;
     public const float ManaBurnMagicAttackSpeedAmp = 0f; //was 20f; zeroed to test Mana Burn's damage without the attack speed bonus
 
     

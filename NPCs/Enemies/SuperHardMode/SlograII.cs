@@ -38,11 +38,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<EarthTrident>(), tridentDamage, 11, SoundID.Item17);
         }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            tridentDamage = (int)(tridentDamage * tsorcRevampWorld.SHMScale);
-        }
-
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

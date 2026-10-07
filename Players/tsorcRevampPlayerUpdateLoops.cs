@@ -2089,6 +2089,10 @@ namespace tsorcRevamp
         {
             if (supersonicLevel != 0)
             {
+                // Air speed the equipped wing already applied this tick: vanilla's WingAirLogicTweaks and the wing's
+                // HorizontalWingSpeeds hook both run BEFORE this hook, so accRunSpeed holds it until we overwrite it.
+                float wingAirSpeed = Player.accRunSpeed;
+
                 float moveSpeedPercentBoost = 1;
                 float baseSpeed = 1;
 
@@ -2146,26 +2150,19 @@ namespace tsorcRevamp
                     }
                 }
 
-                //((player.moveSpeed * 0.5f) + 0.5) means 50% of the player's moveSpeed bonus will be applied
-                //The general form is ((player.moveSpeed * %theyshouldget) + (1 - %theyshouldget))
-                Player.accRunSpeed = baseSpeed * ((Player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
-                Player.maxRunSpeed = baseSpeed * ((Player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
+                float supersonicSpeed = SoulsModeMobility.SupersonicRunSpeed(baseSpeed, moveSpeedPercentBoost, Player.moveSpeed);
+                Player.accRunSpeed = supersonicSpeed;
+                Player.maxRunSpeed = supersonicSpeed;
 
-                // Hard speed cap commented out in favor of smooth scaling (can be re-enabled if needed):
-                // if (SoulsModeMobility.Enabled(Player))
-                // {
-                //     float cappedSpeed = supersonicLevel switch
-                //     {
-                //         SoulsModeMobility.SupersonicBootsLevel => SoulsModeMobility.SupersonicBootsRunSpeed,
-                //         SoulsModeMobility.SupersonicWingsLevel => SoulsModeMobility.SupersonicWingsRunSpeed,
-                //         SoulsModeMobility.SupersonicWings2Level => SoulsModeMobility.SupersonicWings2RunSpeed,
-                //         SoulsModeMobility.WingsOfSeathLevel => SoulsModeMobility.WingsOfSeathRunSpeed,
-                //         _ => Player.maxRunSpeed
-                //     };
-                //
-                //     Player.accRunSpeed = Math.Min(cappedSpeed, SoulsModeMobility.GlobalRunSpeedCap);
-                //     Player.maxRunSpeed = Math.Min(cappedSpeed, SoulsModeMobility.GlobalRunSpeedCap);
-                // }
+                // Airborne with a harness-slotted wing or Wings of Seath: fly at whichever is faster, the Supersonic
+                // formula or the wing's own speed (vanilla's "take the higher" rule for wings vs boots). Same airborne
+                // test vanilla uses for wing speed, so ground running stays pure Supersonic. Runs before the Suppressed clamp.
+                bool wingSpeedCounts = hasSlottedWing || supersonicLevel == SoulsModeMobility.WingsOfSeathLevel;
+                bool airborneOnWings = Player.wingsLogic > 0 && Player.velocity.Y != 0f && !Player.merman && !Player.mount.Active;
+                if (wingSpeedCounts && airborneOnWings)
+                {
+                    Player.accRunSpeed = Math.Max(Player.accRunSpeed, wingAirSpeed);
+                }
 
                 if (FastFallTimer > 0)
                 {
@@ -2189,7 +2186,9 @@ namespace tsorcRevamp
                     // Vertical nerf to match the horizontal one. jumpSpeed/jumpHeight were already resolved from
                     // jumpBoost/jumpSpeedBoost earlier this tick (UpdateJumpHeight), so clamp the final values.
                     // Mounts own their jump stats. Wing ascent is clamped in tsorcGlobalItem.VerticalWingSpeeds.
-                    if (!Player.mount.Active)
+                    // The Triad's Faster Than Sight jump boost is exempt so a Suppressed zone can't cancel it mid-fight.
+                    bool hasTriadFlight = Player.HasBuff<FasterThanSight>();
+                    if (!Player.mount.Active && !hasTriadFlight)
                     {
                         float suppressedJumpSpeed = SoulsModeMobility.SuppressedJumpSpeed;
                         int suppressedJumpHeight = SoulsModeMobility.SuppressedJumpHeight;
@@ -2218,13 +2217,6 @@ namespace tsorcRevamp
                     }
                 }
             }
-
-            // Global run speed cap commented out per design (can be re-enabled if needed):
-            // if (SoulsModeMobility.Enabled(Player))
-            // {
-            //     Player.accRunSpeed = Math.Min(Player.accRunSpeed, SoulsModeMobility.GlobalRunSpeedCap);
-            //     Player.maxRunSpeed = Math.Min(Player.maxRunSpeed, SoulsModeMobility.GlobalRunSpeedCap);
-            // }
 
             if (Player.HasBuff<MarilithHold>() || Player.HasBuff<MarilithWind>())
             {
@@ -2702,6 +2694,14 @@ namespace tsorcRevamp
             // Lucky Horseshoe / Obsidian Horseshoe / the horseshoe balloon bundles set noFallDmg in
             // UpdateEquips, and overwriting it here silently deleted their fall immunity.
             Player.noFallDmg |= IsWingFallProtected(Player);
+
+            // Classic keeps vanilla's full wing fall immunity; the wing fall-damage rule is Souls Mode only.
+            // Setting noFallDmg (not just skipping WingFallDamage_Patch) also zeroes GetPredictedFallDamage, so
+            // the red fall-warning trails stay for wingless Classic falls but never warn about damage wings will negate.
+            if (!SoulsMode && HasFunctionalWings(Player))
+            {
+                Player.noFallDmg = true;
+            }
 
             // Gravity Alignment can reverse gravity while the player already has a vertical velocity.
             // That makes the previous ascent look like a new descent to vanilla's fall-distance counter

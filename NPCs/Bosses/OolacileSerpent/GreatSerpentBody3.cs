@@ -4,9 +4,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
-namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
+namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
 {
-    class GreatSerpentTail : ModNPC
+    class GreatSerpentBody3 : ModNPC
     {
         public override void SetStaticDefaults()
         {
@@ -15,29 +15,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
                 Hide = true
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
-            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
-            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
-            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
-            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Daybreak] = true;
+            NPCID.Sets.ImmuneToRegularBuffs[Type] = true;
         }
         public override void SetDefaults()
         {
             NPC.netAlways = true;
             NPC.npcSlots = 2;
-            //Tight-cropped sprite (GreatSerpentTail.png is actually 10x98 -- long and narrow; these dims were
-            //stale copy-paste from Body2's 22x44 and didn't match the real art at all, which is very likely why
-            //the tail read as bent/misaligned/wrong-facing: physics packed it at a ~44px link length while the
-            //ACTUAL drawn sprite was more than double that, so the visible tail always overshot well past where
-            //the chain math thought it ended). Height is the along-chain link length.
-            NPC.width = 10;
-            NPC.height = 98;
+            //Tight-cropped sprite (GreatSerpentBody3.png = 18x44). Height is the along-chain link length.
+            NPC.width = 18;
+            NPC.height = 44;
             DrawOffsetY = 0;
             NPC.aiStyle = -1; // fully custom AI (SerpentAI); -1 stops vanilla worm AI + its dig sound
             NPC.knockBackResist = 0;
             NPC.scale = 1f;
             NPC.timeLeft = 22750;
-            NPC.damage = 0; //0 except during the overhead tail stab, where SerpentAI sets it (see TailStab)
-            NPC.defense = 40;
+            NPC.damage = 0; //Only the head does contact damage
+            NPC.defense = 50;
             NPC.HitSound = SoundID.NPCHit13;
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.lifeMax = 20000;
@@ -49,12 +42,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;
-        }
-
-        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
-        {
-            //The tail stab injects venom (matches the pounce's toxin theme)
-            target.AddBuff(BuffID.Venom, 8 * 60, false);
         }
         public override void AI()
         {

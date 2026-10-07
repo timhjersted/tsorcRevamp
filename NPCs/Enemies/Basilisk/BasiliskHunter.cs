@@ -65,16 +65,6 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             globalNPC.KiteRangeMax = 18f;
             globalNPC.KiteLooseness = 0.4f;
         }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            cursedBreathDamage = (int)(cursedBreathDamage * tsorcRevampWorld.SHMScale);
-            darkExplosionDamage = (int)(darkExplosionDamage * tsorcRevampWorld.SHMScale);
-            disruptDamage = (int)(disruptDamage * tsorcRevampWorld.SHMScale);
-            bioSpitDamage = (int)(bioSpitDamage * tsorcRevampWorld.SHMScale);
-            bioSpitfinalDamage = (int)(bioSpitfinalDamage * tsorcRevampWorld.SHMScale);
-            leechTongueDamage = (int)(leechTongueDamage * tsorcRevampWorld.SHMScale);
-        }
-
 
         public Player player
         {

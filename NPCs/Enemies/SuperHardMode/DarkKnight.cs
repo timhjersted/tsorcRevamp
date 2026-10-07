@@ -80,7 +80,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         // In Expert Mode, a hostile projectile hit is about 4x its raw spawn damage. Keep puppet
         // hitboxes on the same pre-hit damage scale as Dark Wave rather than NPC contact damage.
-        protected override int MeleeDamage => (int)(35f * AttackDamageIncrease * tsorcRevampWorld.SubtleSHMScale);
+        // SHM progress scaling of this hit now happens for every enemy in ProgressionScalingPlayer.
+        protected override int MeleeDamage => (int)(35f * AttackDamageIncrease);
         protected override int RangedDamage => 0;
         protected override int MagicDamage => _stormWaveDamage;
         private int EdgeOfNightProjectileDamage => (int)(MagicDamage * AttackDamageIncrease);
@@ -415,11 +416,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             globalNPC.NavSearchRadius = 40;
             globalNPC.RemembersLastKnownPos = true;
             globalNPC.CanUseRopes = true;
-        }
-
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
-        {
-            _stormWaveDamage = (int)(_stormWaveDamage * tsorcRevampWorld.SHMScale);
         }
 
         protected override void RunMovementAI(float speedMult)

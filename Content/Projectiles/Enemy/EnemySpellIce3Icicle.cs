@@ -21,6 +21,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.DamageType = DamageClass.Magic;
         }
 
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            // Spawned by Ice 3 balls from Shadow Mage and Marik as well; only shots traced back to The Sorrow build Frost.
+            int sourceNPCType = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
+
+            if (sourceNPCType == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
+            {
+                Buffs.Debuffs.FrostBuildup.Apply(target, NPCs.Bosses.TheSorrow.FrostBuildupPerHit);
+            }
+        }
+
         public override void AI()
         {
             Lighting.AddLight(Projectile.Center, TorchID.Ice);

@@ -1,4 +1,3 @@
-using System;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -34,9 +33,10 @@ namespace tsorcRevamp
         public const float SupersonicWings2RunSpeed = 7.5f;
         public const float WingsOfSeathRunSpeed = 8.25f;
 
-        // Harness fallback flight times (frames) when no wing is slotted in Souls Mode
-        public const int HarnessFallbackFlightTimeTier1 = 90; // 1.5s
-        public const int HarnessFallbackFlightTimeTier2 = 180; // 3.0s
+        // Harness fallback flight times (frames) when no wing is slotted.
+        // Tier 1 matches Angel Wings' 100 (its recipe wing) so crafting the harness never loses flight time.
+        public const int HarnessFallbackFlightTimeTier1 = 100; // ~1.7s
+        public const int HarnessFallbackFlightTimeTier2 = 210; // 3.5s
 
         public const int SupersonicWings2FlightTime = 600;
         public const int WingsOfSeathFlightTime = 300; // 5.0s in Souls Mode (down from 1200 / infinite)
@@ -48,9 +48,11 @@ namespace tsorcRevamp
         public const float SupersonicWings2FlightSpeed = 6.55f;
         public const float SupersonicWings2FlightAcceleration = 0.15f;
 
-        public const float WingsOfSeathFlightSpeed = 7.25f;
+        // Seath's minimum AIR speed (px/tick): PostUpdateRunSpeeds takes the higher of this and the Supersonic
+        // formula while airborne. 8.0 = Fishron / Empress wings. Hover keeps its +0.5 lead.
+        public const float WingsOfSeathFlightSpeed = 8.0f;
         public const float WingsOfSeathFlightAcceleration = 0.2f;
-        public const float WingsOfSeathHoverFlightSpeed = 7.75f;
+        public const float WingsOfSeathHoverFlightSpeed = 8.5f;
         public const float WingsOfSeathHoverFlightAcceleration = 0.26f;
         public const float WingsOfSeathAscentMultiplier = 3.20f;
 
@@ -74,28 +76,26 @@ namespace tsorcRevamp
         public const float SuppressedConstantAscendSeath = 0.145f;
         public const float SuppressedAscentWhenFalling = 0.85f;
         public const float SuppressedAscentWhenFallingSeath = 0.9f;
-	
-	// global speed caps are currently disabled
-        public const float GlobalRunSpeedCap = 10.00f;
-        public const float GlobalFlightSpeedCap = 10.00f;
-        public const float GlobalFlightAccelerationCap = 0.32f;
 
+        // The mobility rework now applies in every mode; the config toggle was removed. The !Enabled() branches
+        // in the four mobility items are the OLD Classic stats, kept unreachable on purpose so the toggle can be
+        // restored by reverting this check. Classic's one difference (wing fall immunity) gates on SoulsMode directly.
         public static bool Enabled(Player player)
         {
-            if (player == null || Main.gameMenu) return false;
-            return player.GetModPlayer<tsorcRevampPlayer>().SoulsMode
-                && ModContent.GetInstance<tsorcRevampConfig>().EnableSoulsModeMobilityLimit;
-        }
-
-        public static void ApplyFlightCap(Player player, ref float speed, ref float acceleration)
-        {
-            if (!Enabled(player))
+            if (player == null || Main.gameMenu)
             {
-                return;
+                return false;
             }
 
-            speed = Math.Min(speed, GlobalFlightSpeedCap);
-            acceleration = Math.Min(acceleration, GlobalFlightAccelerationCap);
+            return true;
+        }
+
+        // Supersonic sprint speed (px/tick). Only boostPercent of the player's total moveSpeed applies:
+        // boostPercent 0.25 at moveSpeed 1.5 gives baseSpeed * 1.125. Used by PostUpdateRunSpeeds and the wing tooltip.
+        public static float SupersonicRunSpeed(float baseSpeed, float boostPercent, float moveSpeed)
+        {
+            float scaledMoveSpeed = (moveSpeed * boostPercent) + (1 - boostPercent);
+            return baseSpeed * scaledMoveSpeed;
         }
     }
 }

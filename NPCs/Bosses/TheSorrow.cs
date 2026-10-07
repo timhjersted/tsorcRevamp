@@ -26,6 +26,10 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheSorrow : ModNPC
     {
+        // Frost meter gain (FrostBuildup, meter caps at 100): per projectile hit, and per tick spent inside the Frozen Breath beam.
+        public const int FrostBuildupPerHit = 40;
+        public const int BreathFrostBuildupPerTick = 1;
+
         int waterTrailsDamage = 36;
         int sorrowFrozenBreathDamage = 39;
         int iceSpiritDamage = 42;
@@ -43,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = BaseHP;
-            NPC.damage = 65;
+            NPC.damage = 110;
             NPC.defense = 34;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
@@ -363,7 +367,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 // Normal Phase
                 NPC.alpha = 0;
                 NPC.defense = 34;
-                NPC.damage = 80;
+                NPC.damage = 110;
                 NPC.netUpdate = true;
 
                 if (NPC.ai[2] < 600)
@@ -466,8 +470,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 // Enrage Phase
                 NPC.ai[3]++;
                 //NPC.alpha = 220; // No longer goes invisible, that is now just a Hunter mechanic
-                NPC.defense = 87; // Was 57, increased greatly just for The Sorrow to fit with frozen ice theme
-                NPC.damage = 100;
+                NPC.defense = 97; // Was 57, increased greatly just for The Sorrow to fit with frozen ice theme
+                NPC.damage = 150;
                 NPC.netUpdate = true;
 
                 if (Main.player[NPC.target].Center.X < NPC.Center.X)

@@ -2740,93 +2740,17 @@ namespace tsorcRevamp
             }
         }
 
-        //Returns 0-12 for normal bosses, 13 including Gwyn
-        public static int SHMDowned
-        {
-            get
-            {
-                if (NewSlain == null)
-                {
-                    return 0;
-                }
+        // SHM progress lives in Systems/ProgressionScaling.cs (cached, refreshed when a boss is slain). These forward there so
+        // the existing callers (shop conditions, AIs, balance logs) keep working.
 
-                int count = 0;
-                if (NewSlain.ContainsKey(
-                    new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>())
-                    ))
-                {
-                    count++;
-                }
-                if ((NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()))))
-                {
-                    count++;
-                }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>())))
-                {
-                    count++;
-                }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>())))
-                {
-                    count++;
-                }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>())))
-                {
-                    count++;
-                }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>())))
-                {
-                    count++;
-                }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>())))
-                {
-                    count++;
-                }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())))
-                {
-                    count++;
-                }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>())))
-                {
-                    count++;
-                }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
-                {
-                    count++;
-                }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>())))
-                {
-                    count++;
-                }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())))
-                {
-                    count++;
-                }
-                if (NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>())))
-                {
-                    count++;
-                }
+        /// <summary>SHM bosses dead: 0 to 12, 13 with Gwyn.</summary>
+        public static int SHMDowned => Systems.ProgressionScaling.ShmBossesDowned;
 
-                return count;
-            }
-        }
+        /// <summary>1.0 with no SHM bosses dead, linear to 1.5 at twelve.</summary>
+        public static float SHMScale => Systems.ProgressionScaling.ShmScale;
 
-        // Scaling formula
-        // Starts at 1 with no bosses dead, ramps up linearly to 1.5x with all but Gwyn dead
-        public static float SHMScale
-        {
-            get { return (float)Math.Min(1.5f, 1f + (0.5f * SHMDowned / 12f)); }
-            
-        }
-
-        //Less steep scaling formula, goes from 1 to 1.2
-        //For things that need more subtle tuning, like enemy movement and projectile speeds
-        public static float SubtleSHMScale
-        {
-            get
-            {
-                return (float)Math.Min(1.2f, 1f + (0.2f * SHMDowned / 12f));
-            }
-        }
+        /// <summary>1.0 to 1.2: the gentler ramp for speeds, defense and damage taken.</summary>
+        public static float SubtleSHMScale => Systems.ProgressionScaling.SubtleShmScale;
 
         public static void PopulatePairedBosses()
         {
@@ -2892,7 +2816,7 @@ namespace tsorcRevamp
         {
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), new Vector2(4182, 626) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2483, 1796) },
-            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>(), new Vector2(1040, 1865) },
+            { ModContent.NPCType<NPCs.Bosses.OolacileSerpent.GreatSerpentHead>(), new Vector2(1040, 1865) },
             { NPCID.MoonLordCore, new Vector2(5408, 584) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>(), new Vector2(1814, 1711) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>(), new Vector2(318, 1909) },

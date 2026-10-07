@@ -258,16 +258,17 @@ namespace tsorcRevamp.Content.Items
                     if (!string.IsNullOrEmpty(formatted))
                     {
                         string[] formattedLines = formatted.Replace("\r", "").Split('\n');
-                        int tooltipIndex = 0;
                         for (int i = 0; i < tooltips.Count; i++)
                         {
-                            if (tooltips[i].Mod == "Terraria" && tooltips[i].Name.StartsWith("Tooltip") && int.TryParse(tooltips[i].Name.Substring(7), out _))
+                            // Use the N from the line's own "TooltipN" name, not a running count: an earlier
+                            // GlobalItem (ActiveShieldGlobalItem) may have removed lines, and counting would
+                            // paste the removed lines' text back over the survivors.
+                            if (tooltips[i].Mod == "Terraria" && tooltips[i].Name.StartsWith("Tooltip") && int.TryParse(tooltips[i].Name.Substring(7), out int lineNumber))
                             {
-                                if (tooltipIndex < formattedLines.Length)
+                                if (lineNumber < formattedLines.Length)
                                 {
-                                    tooltips[i].Text = formattedLines[tooltipIndex];
+                                    tooltips[i].Text = formattedLines[lineNumber];
                                 }
-                                tooltipIndex++;
                             }
                         }
                     }
@@ -280,12 +281,17 @@ namespace tsorcRevamp.Content.Items
 
             if (item.wingSlot > 0 || item.type == ModContent.ItemType<SupersonicWings>() || item.type == ModContent.ItemType<SupersonicWings2>())
             {
-                // Replace standalone immunity claims with the shared rule in the current language.
-                string vanillaFallImmunity = Lang.GetTooltip(ItemID.LuckyHorseshoe).GetLine(0);
-                string modFallImmunity = Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.NoFallDmg");
-                tooltips.RemoveAll(line => line.Text == vanillaFallImmunity || line.Text == modFallImmunity);
-                tooltips.Add(new TooltipLine(Mod, "WingFallProtection",
-                    Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingFallProtection", tsorcRevampPlayer.WingSafeFallDistanceBonus)));
+                // Souls Mode only: replace standalone immunity claims with the shared wing fall-damage rule.
+                // Classic keeps vanilla's full wing fall immunity, so its tooltips stay as they are.
+                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+                {
+                    string vanillaFallImmunity = Lang.GetTooltip(ItemID.LuckyHorseshoe).GetLine(0);
+                    string modFallImmunity = Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.NoFallDmg");
+                    tooltips.RemoveAll(line => line.Text == vanillaFallImmunity || line.Text == modFallImmunity);
+                    tooltips.Add(new TooltipLine(Mod, "WingFallProtection",
+                        Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingFallProtection", tsorcRevampPlayer.WingSafeFallDistanceBonus)));
+                }
+
                 Utilities.WingTooltipStats.Add(item, tooltips, Mod);
             }
 

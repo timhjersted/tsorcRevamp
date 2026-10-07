@@ -106,6 +106,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             collisionPadding = trailPositions.Count / 8;
         }
 
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            Buffs.Debuffs.FrostBuildup.Apply(target, NPCs.Bosses.TheSorrow.FrostBuildupPerHit);
+        }
+
         public override bool OnTileCollide(Vector2 oldVelocity)
         { //allow the projectile to bounce
             Projectile.penetrate--;

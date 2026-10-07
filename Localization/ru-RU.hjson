@@ -13478,17 +13478,6 @@ Mods: {
 						''' */
 				}
 
-				SoulsModeMobilityLimit: {
-					// Label: Souls Mode Mobility
-					/* Tooltip:
-						'''
-						Retunes the mobility power curve while Unkindled or Bearer of the Curse.
-						Affects Supersonic Boots, Supersonic Wings I & II, and Wings of Seath.
-						Supersonic Wings grant a wing accessory slot that inherits the slotted wing's attributes.
-						Defaults to On.
-						''' */
-				}
-
 				ActiveShieldsRevamp: {
 					// Label: Active Shields Revamp
 					/* Tooltip:

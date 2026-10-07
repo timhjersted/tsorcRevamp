@@ -361,6 +361,15 @@ namespace tsorcRevamp.Utilities.Balance
         public bool remixMap;
         public float shmScale;
 
+        /// <summary>Hardmode gating bosses dead, 0 to 7 (Rage, Sorrow, Hunter, Destroyer, Triad, Machine, Golem). Drives progressLifeScale before SHM.</summary>
+        public int hmBossesDowned;
+
+        /// <summary>SHM bosses dead, 0 to 12 (13 with Gwyn). Drives progressLifeScale in SHM.</summary>
+        public int shmDowned;
+
+        /// <summary>World-progress HP factor (ProgressionScaling.LifeScale) for this enemy at death: 1.0-2.0 before SHM, 1.0-1.5 in SHM, 1 when out of scope or New Enemy Balance is off. lifeMax already includes it.</summary>
+        public float progressLifeScale;
+
         /// <summary>"Classic", "Unkindled" or "BearerOfTheCurse".</summary>
         public string soulsMode;
         public string loadoutId;
@@ -440,8 +449,17 @@ namespace tsorcRevamp.Utilities.Balance
         public float shmScale;
         public float subtleShmScale;
 
+        /// <summary>Hardmode gating bosses dead, 0 to 7. Bosses get no world-progress HP scale of their own; this is context for the fight.</summary>
+        public int hmBossesDowned;
+
+        /// <summary>World-progress HP factor regular enemies (and any adds in the fight) get right now: 1.0-2.0 before SHM, 1.0-1.5 in SHM.</summary>
+        public float enemyProgressLifeScale;
+
+        /// <summary>Multiplier on all damage the player takes from enemies, this boss included: 1 + 0.02 per Hardmode boss + (subtleShmScale - 1).</summary>
+        public float damageTakenScale;
+
         /// <summary>Vanilla's per-difficulty multipliers (<c>Main.GameModeInfo</c>). The mod's own scaling on top
-        /// (x1.5 on its bosses in Master, x1.275 on vanilla ones) is captured by <see cref="lifeMaxMultVsBase"/>.</summary>
+        /// (x1.275 on its bosses and vanilla ones in Master) is captured by <see cref="lifeMaxMultVsBase"/>.</summary>
         public float gameModeLifeMult;
         public float enemyDamageMult;
 

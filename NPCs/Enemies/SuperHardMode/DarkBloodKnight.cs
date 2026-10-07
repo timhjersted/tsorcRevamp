@@ -82,9 +82,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         // Expert Mode hostile projectile hits are about 4x these raw spawn values;
         // keeping them near Dark Knight's Dark Wave avoids treating puppet attacks like contact damage.
-        protected override int MeleeDamage => (int)(34f * AttackDamageIncrease * tsorcRevampWorld.SubtleSHMScale);
-        protected override int RangedDamage => (int)(23f * AttackDamageIncrease * tsorcRevampWorld.SubtleSHMScale);
-        protected override int SecondaryRangedDamage => (int)(25f * AttackDamageIncrease * tsorcRevampWorld.SubtleSHMScale);
+        // SHM progress scaling of these hits now happens for every enemy in ProgressionScalingPlayer.
+        protected override int MeleeDamage => (int)(34f * AttackDamageIncrease);
+        protected override int RangedDamage => (int)(23f * AttackDamageIncrease);
+        protected override int SecondaryRangedDamage => (int)(25f * AttackDamageIncrease);
         protected override int EstusChargesMax => 0;
 
         protected override float TopSpeed => 2.7f;

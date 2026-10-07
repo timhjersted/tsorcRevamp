@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         //Projectile damage, tuned for a MID-HARDMODE boss event (hostile projectiles deal 2x this
         //on hit in normal mode). In SuperHardMode every value additionally runs through ScaleDamage
-        //(×1.3 × SHMScale, matching the ArcherAI convention for SHM enemies).
+        //(×1.3 flat SHM bump; SHM progress is applied to every enemy hit in ProgressionScalingPlayer).
         int SpikeDamage => ScaleDamage(45);
         int BreathDamage => ScaleDamage(16);  //rapid ticks, so each is small
         int HailDamage => ScaleDamage(40);
@@ -118,7 +118,7 @@ namespace tsorcRevamp.NPCs.Enemies
         int HeartRingDamage => ScaleDamage(50);
         int CreepDamage => ScaleDamage(38); //a touch under the spikes — it lingers
 
-        int ScaleDamage(int baseDamage) => SHM ? (int)(baseDamage * 1.3f * tsorcRevampWorld.SHMScale) : baseDamage;
+        int ScaleDamage(int baseDamage) => SHM ? (int)(baseDamage * 1.3f) : baseDamage;
 
         AttackState State = AttackState.None;
 

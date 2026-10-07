@@ -111,8 +111,11 @@ namespace tsorcRevamp.Utilities.Balance
         /// 6 = one file per character (tag in the name), equipment moved to separate "loadout" lines referenced by
         /// loadoutId, weapons beyond the top five reduced to otherWeapons summaries, manaTimeline dropped when no mana
         /// was used, enemy-kill samples (event "kill") in the same file, and fields at their default (0, false, empty) left out
-        /// of every record.</summary>
-        internal const int LoggerRevision = 6;
+        /// of every record.
+        /// 7 = world-progress scaling (Systems/ProgressionScaling.cs): enemy damage now ramps through one damage-taken multiplier
+        /// (encounter damageTakenScale; divide damageTaken by it to compare across progress), enemy HP through progressLifeScale /
+        /// enemyProgressLifeScale, plus hmBossesDowned and the kill sample's shmDowned.</summary>
+        internal const int LoggerRevision = 7;
 
         private const int SampleIntervalTicks = 60;
         private const int MaxEncounterTicks = 60 * 60 * 30;   // 30 minutes, runaway guard
@@ -812,6 +815,9 @@ namespace tsorcRevamp.Utilities.Balance
                 shmDowned = SafeShmDowned(),
                 shmScale = tsorcRevampWorld.SHMScale,
                 subtleShmScale = tsorcRevampWorld.SubtleSHMScale,
+                hmBossesDowned = ProgressionScaling.HardmodeBossesDowned,
+                enemyProgressLifeScale = ProgressionScaling.CurrentLifeScale,
+                damageTakenScale = ProgressionScaling.DamageTakenScale,
                 gameModeLifeMult = Main.GameModeInfo.EnemyMaxLifeMultiplier,
                 newEnemyBalance = EnemyBalance.Enabled,
                 enemyDamageMult = Main.GameModeInfo.EnemyDamageMultiplier,

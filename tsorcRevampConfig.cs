@@ -93,18 +93,6 @@ namespace tsorcRevamp
             set => ModContent.GetInstance<tsorcRevampGameplayConfig>().DisableModWingsFallControlDuringFlight = value;
         }
 
-        public bool EnableSoulsModeMobilityLimit
-        {
-            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().SoulsModeMobilityLimit;
-            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().SoulsModeMobilityLimit = value;
-        }
-
-        public bool SoulsModeMobilityLimit
-        {
-            get => ModContent.GetInstance<tsorcRevampGameplayConfig>().SoulsModeMobilityLimit;
-            set => ModContent.GetInstance<tsorcRevampGameplayConfig>().SoulsModeMobilityLimit = value;
-        }
-
         public bool ActiveShieldsRevamp
         {
             get => ModContent.GetInstance<tsorcRevampGameplayConfig>().ActiveShieldsRevamp;
@@ -337,9 +325,6 @@ namespace tsorcRevamp
 
         [DefaultValue(true)]
         public bool BossZenConfig { get; set; }
-
-        [DefaultValue(true)]
-        public bool SoulsModeMobilityLimit { get; set; }
 
         [DefaultValue(true)]
         public bool ActiveShieldsRevamp { get; set; }

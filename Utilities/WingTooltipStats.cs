@@ -92,6 +92,40 @@ namespace tsorcRevamp.Utilities
             preview.runAcceleration = 0.08f * stats.AccRunAccelerationMult;
             ItemLoader.HorizontalWingSpeeds(preview);
 
+            // Souls Mode: harness and Seath fly at the higher of the Supersonic sprint formula and the wing's own
+            // speed (PostUpdateRunSpeeds). Shown with only the item's own moveSpeed bonus, i.e. no other gear.
+            if (souls)
+            {
+                float supersonicBaseSpeed = 0f;
+                float supersonicBoostPercent = 0f;
+                float supersonicMoveSpeedBonus = 0f;
+
+                if (harness1)
+                {
+                    supersonicBaseSpeed = SoulsModeMobility.SupersonicWingsBaseSpeed;
+                    supersonicBoostPercent = SoulsModeMobility.SupersonicWingsBoostPercent;
+                    supersonicMoveSpeedBonus = SoulsModeMobility.SupersonicWingsMoveSpeedBonus;
+                }
+                else if (harness2)
+                {
+                    supersonicBaseSpeed = SoulsModeMobility.SupersonicWings2BaseSpeed;
+                    supersonicBoostPercent = SoulsModeMobility.SupersonicWings2BoostPercent;
+                    supersonicMoveSpeedBonus = SoulsModeMobility.SupersonicWings2MoveSpeedBonus;
+                }
+                else if (item.type == ModContent.ItemType<WingsOfSeath>())
+                {
+                    supersonicBaseSpeed = SoulsModeMobility.WingsOfSeathBaseSpeed;
+                    supersonicBoostPercent = SoulsModeMobility.WingsOfSeathBoostPercent;
+                    supersonicMoveSpeedBonus = SoulsModeMobility.WingsOfSeathMoveSpeedBonus;
+                }
+
+                if (supersonicBaseSpeed > 0f)
+                {
+                    float supersonicSpeed = SoulsModeMobility.SupersonicRunSpeed(supersonicBaseSpeed, supersonicBoostPercent, 1f + supersonicMoveSpeedBonus);
+                    preview.accRunSpeed = Math.Max(preview.accRunSpeed, supersonicSpeed);
+                }
+            }
+
             // WingMovement includes vanilla's wing-specific ascent rules and modded wing hooks.
             // A fast upward input is clamped to the wing's normal ascent speed limit.
             preview.velocity = new Vector2(0f, -10000f);

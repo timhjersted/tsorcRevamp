@@ -51,13 +51,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int darkOrbDamage = 60;
         int seekerDamage = 49;
 
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            darkBeadDamage = (int)(darkBeadDamage * tsorcRevampWorld.SHMScale);
-            darkOrbDamage = (int)(darkOrbDamage * tsorcRevampWorld.SHMScale);
-            seekerDamage = (int)(seekerDamage * tsorcRevampWorld.SHMScale);
-        }
-
 
         //float customAi1;
 

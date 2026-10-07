@@ -52,13 +52,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int darkExplosionDamage = 37;
         int earthTridentDamage = 35;
 
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            dragonsBreathDamage = (int)(dragonsBreathDamage * tsorcRevampWorld.SHMScale);
-            darkExplosionDamage = (int)(darkExplosionDamage * tsorcRevampWorld.SHMScale);
-            earthTridentDamage = (int)(earthTridentDamage * tsorcRevampWorld.SHMScale);
-        }
-
         //Never despawn except by timing out
         public override bool CheckActive()
         {

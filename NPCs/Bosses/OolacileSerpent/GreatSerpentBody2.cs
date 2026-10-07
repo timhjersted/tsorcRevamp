@@ -4,9 +4,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
-namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
+namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
 {
-    class GreatSerpentBody3 : ModNPC
+    class GreatSerpentBody2 : ModNPC
     {
         public override void SetStaticDefaults()
         {
@@ -21,8 +21,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
         {
             NPC.netAlways = true;
             NPC.npcSlots = 2;
-            //Tight-cropped sprite (GreatSerpentBody3.png = 18x44). Height is the along-chain link length.
-            NPC.width = 18;
+            //Tight-cropped sprite (GreatSerpentBody2.png = 22x44). Height is the along-chain link length.
+            NPC.width = 22;
             NPC.height = 44;
             DrawOffsetY = 0;
             NPC.aiStyle = -1; // fully custom AI (SerpentAI); -1 stops vanilla worm AI + its dig sound

@@ -90,12 +90,12 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int MeleeWeaponItemType  => ModContent.ItemType<SteelTempest>();
         protected override int RangedWeaponItemType => ModContent.ItemType<AbyssalStar>();
 
-        protected override int MeleeDamage  => (int)(80 * tsorcRevampWorld.SHMScale);
-        protected override int RangedDamage => (int)(55 * tsorcRevampWorld.SHMScale);
+        protected override int MeleeDamage  => 80;
+        protected override int RangedDamage => 55;
 
         // ── Secondary ranged: HeavyCrossbow ──────────────────────────────────────
         protected override int         SecondaryRangedWeaponItemType  => ModContent.ItemType<HeavyCrossbow>();
-        protected override int         SecondaryRangedDamage          => (int)(70 * tsorcRevampWorld.SHMScale);  // bolt hits harder than stars
+        protected override int         SecondaryRangedDamage          => 70;  // bolt hits harder than stars
         protected override RangedStyle SecondaryRangedAnimStyle       => RangedStyle.Crossbow;
         protected override float       SecondaryRangedRange           => 600f;
         protected override float       SecondaryRangedMinRange        => 350f; // must be far enough to bother aiming
@@ -246,14 +246,14 @@ namespace tsorcRevamp.NPCs.Puppets
         //   Telegraph: 18 ticks (slow down, arm raised; white flash at 30 ticks remaining)
         //   Attack:    WeaponAnimMax ticks (swing arc + melee hitbox spawned)
         //   Recovery:  25 ticks
-        //   Damage:    MeleeDamage = 80 × SHMScale
+        //   Damage:    MeleeDamage = 80
         //
         // STAB / LUNGE — 90px < dist ≤ 200px, on-ground, heightDiff < 48px, no cooldown
         //   Telegraph: 24 ticks (slow down, arm dipped — "cocked" read; flash fires immediately)
         //   Attack:    9 ticks  (lunge: TopSpeed × StabLungeSpeedMult = 3.2 × 2.0 = 6.4 px/f)
         //   Recovery:  36 ticks
         //   Cooldown:  120 ticks after each stab
-        //   Damage:    MeleeDamage = 80 × SHMScale, reach = StabRange × 0.55 = 110px
+        //   Damage:    MeleeDamage = 80, reach = StabRange × 0.55 = 110px
         //
         // PRIMARY RANGED: THROWING STARS — 280px ≤ dist ≤ 480px, _rangedCooldown == 0
         //   Style:     RangedStyle.Throw — arm lifts up then swings forward
@@ -262,7 +262,7 @@ namespace tsorcRevamp.NPCs.Puppets
         //   Burst:     rolls 1–3; 25% chance of single shot
         //   Recovery:  55 ticks
         //   Cooldown:  180 ticks (forces melee/stab first)
-        //   Damage:    RangedDamage = 55 × SHMScale
+        //   Damage:    RangedDamage = 55
         //
         // SECONDARY RANGED: CROSSBOW — 350px ≤ dist ≤ 600px, _secondaryRangedCooldown == 0
         //   35% chance to use when both primary and secondary are in range.
@@ -270,7 +270,7 @@ namespace tsorcRevamp.NPCs.Puppets
         //   Base telegraph: 32 ticks (80% standing); bolt speed 14, gravity 0.02f (flat trajectory)
         //   Recovery:  50 ticks
         //   Cooldown:  240 ticks (~4 s between bursts)
-        //   Damage:    SecondaryRangedDamage = 70 × SHMScale, knockback 4
+        //   Damage:    SecondaryRangedDamage = 70, knockback 4
         //
         //   PATTERN 0 — single shot (55% chance)
         //     Telegraph: 32 ticks; white flash at 30 ticks remaining

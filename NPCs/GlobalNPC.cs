@@ -699,7 +699,7 @@ namespace tsorcRevamp.NPCs
             Add<Bosses.SuperHardMode.Witchking>(0.15f, 120f);
             Add<Bosses.SuperHardMode.GrandOccultist>(0.15f, 120f); // the one stagger window is Dark Bead Barrage's first 55t
             Add<Bosses.SuperHardMode.Chaos>(0.15f, 120f); // the one stagger window is the Fireball Storm channel's first 66t
-            Add<Bosses.SuperHardMode.OolacileSerpent.GreatSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
+            Add<Bosses.OolacileSerpent.GreatSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
             Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
             Add<Bosses.HeroofLumelia>(0.15f, 120f);
             Add<Enemies.SuperHardMode.SlograII>(0.4f, 50f);
@@ -4935,8 +4935,13 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            // New Enemy Balance: regular enemies registered in Systems/EnemyBalance.cs get their health here, ahead of the SHM scaling below.
-            EnemyBalance.ApplyEnemySetDefaults(npc);
+            // New Enemy Balance: regular enemies registered in Systems/EnemyBalance.cs get their health here, world-progress
+            // scaling included (Systems/ProgressionScaling.cs), so the SHM block below skips them. Vanilla types are done at the
+            // end of VanillaChanges.SetDefaults instead, after its absolute lifeMax values.
+            if (npc.type >= NPCID.Count)
+            {
+                EnemyBalance.ApplyEnemySetDefaults(npc);
+            }
 
             //Only mess with it if it's one of our bosses
             if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
@@ -4948,18 +4953,27 @@ namespace tsorcRevamp.NPCs
                     //Rounded, because casting to an int truncates it which causes slight inaccuracies later on
                     npc.lifeMax = (int)Math.Round(npc.lifeMax / 1.3f);
                 }
-                else
+
+                // SHM-namespace classes (Gwyn excluded): HP follows the SHM ramp (1.0-1.5), defense the subtle one (1.0-1.2).
+                // Registry enemies already got the HP ramp from ProgressionScaling.LifeScale. Damage is not scaled here: every
+                // enemy hit on a player is scaled in ProgressionScalingPlayer instead. Bosses now get this in Normal worlds too;
+                // it used to sit in the else of the Normal-boss branch above, so Normal-mode SHM bosses never ramped.
+                bool isShmNative = npc.ModNPC.GetType().Namespace.Contains("SuperHardMode")
+                    && npc.ModNPC.GetType() != typeof(NPCs.Bosses.SuperHardMode.Gwyn);
+
+                if (isShmNative)
                 {
-                    if (npc.ModNPC.GetType().Namespace.Contains("SuperHardMode") && (npc.ModNPC.GetType() != typeof(NPCs.Bosses.SuperHardMode.Gwyn))
-)
+                    bool lifeFromRegistry = EnemyBalance.TryGetEnemyExpertHp(npc.type, out _);
+
+                    // Summoned CrystalSentry has an explicitly fixed HP (CrystalSentry.FixedLife) in every world tier.
+                    bool hasFixedLife = npc.ModNPC is NPCs.Enemies.SuperHardMode.CrystalSentry;
+
+                    if (!lifeFromRegistry && !hasFixedLife)
                     {
-                        base.SetDefaults(npc);
-                        // Summoned CrystalSentry has an explicitly fixed HP (CrystalSentry.FixedLife) in every world tier.
-                        if (npc.ModNPC is not NPCs.Enemies.SuperHardMode.CrystalSentry)
-                            npc.lifeMax = (int)(tsorcRevampWorld.SHMScale * npc.lifeMax);
-                        npc.defense = (int)(tsorcRevampWorld.SubtleSHMScale * npc.defense);
-                        npc.damage = (int)(tsorcRevampWorld.SubtleSHMScale * npc.damage);
+                        npc.lifeMax = (int)(tsorcRevampWorld.SHMScale * npc.lifeMax);
                     }
+
+                    npc.defense = (int)(tsorcRevampWorld.SubtleSHMScale * npc.defense);
                 }
             }
 

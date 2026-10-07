@@ -55,12 +55,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         int AbyssFlamesDamage = 39;
         int dragonMeteorDamage = 41;
 
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            cursedBreathDamage = (int)(cursedBreathDamage * tsorcRevampWorld.SHMScale);
-            AbyssFlamesDamage = (int)(AbyssFlamesDamage * tsorcRevampWorld.SHMScale);
-            dragonMeteorDamage = (int)(dragonMeteorDamage * tsorcRevampWorld.SHMScale);
-        }
         int[] bodyTypes;
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

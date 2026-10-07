@@ -41,13 +41,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int laserDamage = 20; //17
         int breathDamage = 20; //33
         int blasterDamage = 22; //35
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            laserDamage = (int)(laserDamage * tsorcRevampWorld.SHMScale);
-            breathDamage = (int)(breathDamage * tsorcRevampWorld.SHMScale);
-            blasterDamage = (int)(blasterDamage * tsorcRevampWorld.SHMScale);
-        }
-
 
         //float customAi1;
         int breathCD = 30;

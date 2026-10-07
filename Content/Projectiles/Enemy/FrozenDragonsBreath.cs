@@ -109,20 +109,29 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 Projectile.ai[0] += 1f;
             }
             Projectile.rotation += 0.3f * (float)Projectile.direction;
+
+            // The stream builds Frost while the local player is inside it (Mecha Dragon, Seath, Barrow Wights). Many particles
+            // overlap at once, so lastFrostTick caps it at one application per game tick. OnHitPlayer can't do this: it only
+            // fires when damage lands, and each particle dies on its first hit.
+            if (Main.netMode != NetmodeID.Server)
+            {
+                Player localPlayer = Main.LocalPlayer;
+                bool touchingPlayer = !localPlayer.dead && Projectile.Hitbox.Intersects(localPlayer.Hitbox);
+
+                if (touchingPlayer && lastFrostTick != Main.GameUpdateCount)
+                {
+                    lastFrostTick = Main.GameUpdateCount;
+                    FrostBuildup.Apply(localPlayer, FrostBuildupPerTick);
+                }
+            }
         }
+
+        // Frost meter gain (FrostBuildup, meter caps at 100) per tick the local player is inside the stream.
+        public const int FrostBuildupPerTick = 1;
+        private static uint lastFrostTick;
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())))
-            {
-                if (Main.rand.NextBool(5))
-                {
-
-                    target.AddBuff(BuffID.Frozen, 10, false);
-                    target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 18000, false); //may lose -100 max HP after taking enough hits. It had 100% trigger before. I think that was the problem.
-                }
-
-            }
             target.AddBuff(BuffID.Chilled, 90, false);
             target.AddBuff(BuffID.Slow, 60, false);
             target.AddBuff(BuffID.Frostburn, 90, false);

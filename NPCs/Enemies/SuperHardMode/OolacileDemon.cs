@@ -43,12 +43,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         int cursedBreathDamage = 35;
         int bioSpitDamage = 40;
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            cursedBreathDamage = (int)(cursedBreathDamage * tsorcRevampWorld.SHMScale);
-            bioSpitDamage = (int)(bioSpitDamage * tsorcRevampWorld.SHMScale);
-        }
-
         //float customAi1;
         int breathCD = 60;
         bool breath = false;

@@ -4,7 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
-namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent
+namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
 {
     class GreatSerpentBody : ModNPC
     {

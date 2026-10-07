@@ -3678,6 +3678,10 @@ namespace tsorcRevamp.NPCs
             if (npc.type < NPCID.Count)
             {
                 EnemyBalance.ApplyLifeMultiplier(npc);
+
+                // Regular-enemy registry (EnemyBalance.BuildVanillaEnemyRegistry), world progress included. Last, so it replaces
+                // the absolute lifeMax values and SHM multipliers above; Expert and Master are finished in EnemyBalanceNPC's hook.
+                EnemyBalance.ApplyEnemySetDefaults(npc);
             }
         }
 

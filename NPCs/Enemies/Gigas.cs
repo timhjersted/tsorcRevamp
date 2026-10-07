@@ -63,7 +63,7 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         //Projectile damage, tuned for a LATE-HARDMODE boss event (hostile projectiles deal 2x this
         //on hit in normal mode). SuperHardMode encounters additionally run every value through
-        //ScaleDamage (×1.3 × SHMScale, the ArcherAI convention for SHM enemies).
+        //ScaleDamage (×1.3 flat SHM bump; SHM progress is applied to every enemy hit in ProgressionScalingPlayer).
         int ShockwaveDamage => ScaleDamage(60);
         int NovaDamage => ScaleDamage(70);
         int SpearDamage => ScaleDamage(45);
@@ -75,7 +75,7 @@ namespace tsorcRevamp.NPCs.Enemies{
         int CometDamage => ScaleDamage(40);
         int ConsecratedDamage => ScaleDamage(25);
 
-        int ScaleDamage(int baseDamage) => SHM ? (int)(baseDamage * 1.3f * tsorcRevampWorld.SHMScale) : baseDamage;
+        int ScaleDamage(int baseDamage) => SHM ? (int)(baseDamage * 1.3f) : baseDamage;
 
         AttackState State = AttackState.None;
         AttackState LastAttack = AttackState.None;

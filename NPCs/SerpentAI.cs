@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode.OolacileSerpent;
+using tsorcRevamp.NPCs.Bosses.OolacileSerpent;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs

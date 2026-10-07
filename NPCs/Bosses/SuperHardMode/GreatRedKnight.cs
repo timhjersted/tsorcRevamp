@@ -128,13 +128,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             redKnightGlobalNPC.NavSearchRadius = 80; // Phase 2: SmartFighter4AI movement
             redKnightGlobalNPC.CanUseRopes = true;
         }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            redKnightsSpearDamage = (int)(redKnightsSpearDamage * tsorcRevampWorld.SHMScale);
-            redMagicDamage = (int)(redMagicDamage * tsorcRevampWorld.SHMScale);
-            redKnightsGreatDamage = (int)(redKnightsGreatDamage * tsorcRevampWorld.SHMScale);
-            redKnightsBombDamage = (int)(redKnightsBombDamage * tsorcRevampWorld.SHMScale);
-        }
         #endregion
 
 

@@ -51,11 +51,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             casterGlobalNPC.NavSearchRadius = 30; // Phase 2: SmartFighter4AI movement
             casterGlobalNPC.CanHealAllies = true;
         }
-        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
-        {
-            deathStrikeDamage = (int)(deathStrikeDamage * tsorcRevampWorld.SHMScale);
-        }
-
         //Spawns in the Underground and Cavern before 3.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
 
         #region Spawn
