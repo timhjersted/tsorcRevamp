@@ -64,7 +64,6 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
                 speed = SoulsModeMobility.SupersonicWings2FlightSpeed;
                 acceleration = SoulsModeMobility.SupersonicWings2FlightAcceleration;
             }
-            SoulsModeMobility.ApplyFlightCap(player, ref speed, ref acceleration);
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
@@ -86,12 +85,12 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
                 player.jumpBoost = true;
                 player.noKnockback = true;
                 player.rocketBoots = 2;
-                player.jumpSpeedBoost = 3.2f;
+                player.jumpSpeedBoost += 3.2f;
                 player.wingTimeMax = 1200;
             }
             else
             {
-                player.jumpSpeedBoost = 0.8f;
+                player.jumpSpeedBoost += 0.8f;
                 player.rocketBoots = 2;
                 // Fallback flight time if no other wing is slotted
                 if (!modPlayer.hasSlottedWing)

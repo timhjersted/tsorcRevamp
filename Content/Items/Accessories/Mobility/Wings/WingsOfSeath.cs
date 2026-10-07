@@ -77,7 +77,6 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
                     acceleration = SoulsModeMobility.WingsOfSeathHoverFlightAcceleration;
                 }
             }
-            SoulsModeMobility.ApplyFlightCap(player, ref speed, ref acceleration);
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
@@ -98,14 +97,17 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
                 int flightTime = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().Suppressed
                     ? SoulsModeMobility.WingsOfSeathSuppressedFlightTime
                     : SoulsModeMobility.WingsOfSeathFlightTime;
-                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityWingsOfSeath", flightTime / 60, SoulsModeMobility.WingsOfSeathAscentMultiplier.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture))));
+                // px/tick -> tiles/s (60 ticks per second, 16 px per tile), same unit as the shift-for-details wing stats.
+                float minFlightTilesPerSecond = SoulsModeMobility.WingsOfSeathFlightSpeed * 60f / 16f;
+                string ascentMultiplierText = SoulsModeMobility.WingsOfSeathAscentMultiplier.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+                string minFlightSpeedText = minFlightTilesPerSecond.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+                tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimit", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityWingsOfSeath", flightTime / 60, ascentMultiplierText, minFlightSpeedText)));
                 tooltips.Add(new TooltipLine(Mod, "SoulsModeMobilityLimitRun", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.SoulsModeMobilityLimitRunOnly", (int)(SoulsModeMobility.WingsOfSeathBoostPercent * 100))));
             }
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = SoulsModeMobility.WingsOfSeathLevel;
             if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)
             {
                 player.velocity.Y = 1f;
@@ -194,11 +196,13 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
             }
 
             player.fireWalk = true;
-            player.jumpSpeedBoost = 1.4f;
+            player.jumpSpeedBoost += 1.4f;
             player.buffImmune[BuffID.OnFire] = true;
             player.buffImmune[BuffID.Frostburn] = true;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && player.whoAmI == Main.myPlayer)
+            // Owning client only: the keybind and the player's own movement both live there. The old
+            // netMode != MultiplayerClient gate meant MP clients could never toggle (the server has no keys either).
+            if (player.whoAmI == Main.myPlayer)
             {
                 if (tsorcRevamp.WingsOfSeath.JustReleased)
                 {

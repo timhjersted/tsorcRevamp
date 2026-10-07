@@ -63,10 +63,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         int breathCD = 150;
         bool breath = false;
         int breathDamage = 30;
-
-        // Frost meter gain (FrostBuildup, meter caps at 100) per tick the local player is inside the frost breath stream.
-        public const int BreathFrostBuildupPerTick = 1;
-
         public static int[] bodyTypes;
 
         /**public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)

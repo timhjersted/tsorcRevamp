@@ -110,12 +110,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
             Projectile.rotation += 0.3f * (float)Projectile.direction;
 
-            // Mecha Dragon only (Seath and the Barrow Wights share this projectile): the stream builds Frost while the local
-            // player is inside it. Many particles overlap at once, so lastFrostTick caps it at one application per game tick.
-            int sourceNPCType = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
-            bool fromMechaDragon = sourceNPCType == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>();
-
-            if (fromMechaDragon && Main.netMode != NetmodeID.Server)
+            // The stream builds Frost while the local player is inside it (Mecha Dragon, Seath, Barrow Wights). Many particles
+            // overlap at once, so lastFrostTick caps it at one application per game tick. OnHitPlayer can't do this: it only
+            // fires when damage lands, and each particle dies on its first hit.
+            if (Main.netMode != NetmodeID.Server)
             {
                 Player localPlayer = Main.LocalPlayer;
                 bool touchingPlayer = !localPlayer.dead && Projectile.Hitbox.Intersects(localPlayer.Hitbox);
@@ -123,29 +121,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 if (touchingPlayer && lastFrostTick != Main.GameUpdateCount)
                 {
                     lastFrostTick = Main.GameUpdateCount;
-                    FrostBuildup.Apply(localPlayer, NPCs.Bosses.WyvernMage.MechaDragonHead.BreathFrostBuildupPerTick);
+                    FrostBuildup.Apply(localPlayer, FrostBuildupPerTick);
                 }
             }
         }
 
+        // Frost meter gain (FrostBuildup, meter caps at 100) per tick the local player is inside the stream.
+        public const int FrostBuildupPerTick = 1;
         private static uint lastFrostTick;
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            // The Frozen / Powerful Curse roll stays for Seath and the Barrow Wights; the Mecha Dragon's breath uses Frost instead.
-            int sourceNPCType = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
-            bool fromMechaDragon = sourceNPCType == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>();
-
-            if (!fromMechaDragon && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())))
-            {
-                if (Main.rand.NextBool(5))
-                {
-
-                    target.AddBuff(BuffID.Frozen, 10, false);
-                    target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 18000, false); //may lose -100 max HP after taking enough hits. It had 100% trigger before. I think that was the problem.
-                }
-
-            }
             target.AddBuff(BuffID.Chilled, 90, false);
             target.AddBuff(BuffID.Slow, 60, false);
             target.AddBuff(BuffID.Frostburn, 90, false);
