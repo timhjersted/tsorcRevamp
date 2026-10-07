@@ -187,9 +187,9 @@ Mods: {
 			// UnkindledReducedHeal: Heals the [c/6d8827:Unkindled] for half the normal amount
 			// LifeCrystalSoulsMode: Permanently increases maximum life by {0}
 			// ManaCrystalSoulsMode: Permanently increases maximum mana by {0}
-			// SoulsModeMobilityLimitRunOnly: Souls Mode mobility: sprint speed scales with {0}% of movement speed bonuses.
-			// SoulsModeMobilityHarness: Souls Mode mobility harness: grants a dedicated Wing Slot for any wings you find. Provides fallback flight when empty.
-			// SoulsModeMobilityWingsOfSeath: Souls Mode mobility: flight time is {0} seconds; vertical climb rate is {1}x.
+			// SoulsModeMobilityLimitRunOnly: Sprint speed scales with {0}% of movement speed bonuses.
+			// SoulsModeMobilityHarness: Grants a dedicated Wing Slot to equip any wings you find. Your flight stats come from the slotted wings, except horizontal flight speed, which takes the higher of the wings and your sprint speed. Fallback flight when empty.
+			// SoulsModeMobilityWingsOfSeath: Flight time is {0} seconds; vertical climb rate is {1}x; flight speed is at least {2} tiles/s.
 			// FireBlocksImmunity: Grants immunity to fire blocks.
 			// FrostburnAndFireBlocksImmunity: Grants immunity to frostburn and fire blocks
 			// SupersonicWingSlotHover: Wing Harness Slot (Wings Only)
@@ -219,7 +219,7 @@ Mods: {
 			// WingDetailsRange: "{0}–{1}"
 			/* WingFallProtection:
 				'''
-				Increases safe fall distance by {0} tiles, but does not grant complete fall damage immunity.
+				Increases safe fall distance by {0} tiles, but [c/FFA500:does not grant complete fall damage immunity.]
 				Red afterimage trails warn of expected fall damage.
 				Fly, glide, or use an extra jump before landing to break your fall.
 				''' */
@@ -9539,6 +9539,7 @@ Mods: {
 			Hollowed: {
 				DisplayName: Полый
 				Description: Максимальное здоровье снижено на 20%
+				// ReturnToBloodstain: Return to your blood stain to restore your humanity.
 			}
 
 			Invincible: {

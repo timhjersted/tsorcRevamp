@@ -25,9 +25,10 @@ namespace tsorcRevamp.NPCs.Special
         protected override Color DespawnTextColor => Color.Red;
         protected override int DespawnDustType => DustID.CrimsonSpray;
         protected override int VolleyProjectileType => ModContent.ProjectileType<BloodShot>();
-        protected override int BoltDamage => 222;
-        protected override int SickleDamage => 222;
+        protected override int BoltDamage => 333;
+        protected override int SickleDamage => 333;
         protected override int GiantScytheDamage => 666;
+        protected override int BodyContactDamage => 2222;
         protected override int VolleyInterval => 11;
         protected override int VolleyCount => 7;
         protected override float VolleySpeed => 0.8f;

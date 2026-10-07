@@ -24,8 +24,10 @@ No in-game verification has been recorded here yet.
   larger than the intended collision size.
 - Death Reaper uses the vanilla Reaper sprite as a placeholder and keeps frame 0 as a static
   presentation.
-- Death Reaper is damageable. Normal Death Reapers have 1200 HP, 30 defense, and 74 contact
-  damage; Absolute Death Reapers have 33333 HP, 66 defense, and 2222 contact damage.
+- Death Reaper is damageable. Normal Death Reapers have 1200 HP, 30 defense, and 111 contact
+  damage (222 Expert / 333 Master); Absolute Death Reapers have 33333 HP, 66 defense, and
+  2222 contact damage.
+- Normal Death's small sickle and bolt projectiles use 111 base damage (222 Expert / 333 Master).
 - Reaper HP and contact damage use the normal Expert (2x) and Master (3x) difficulty multipliers.
 - Death Reaper always faces the target horizontally, matching the Death boss rather than rotating
   its sprite around the formation.
@@ -48,7 +50,7 @@ No in-game verification has been recorded here yet.
 
 - Weapon/prop: vanilla Death Sickle projectile placeholder.
 - Tell: 15-tick opacity/speed fade-in on each sickle; no separate spawn telegraph.
-- Projectile: DeathSickleProjectile; 5 px/tick default speed; 30-tick fade-in; 8-second lifetime;
+- Projectile: DeathSickleProjectile; 5 px/tick default speed; 8-second lifetime;
   15-tick fade-in and 15-tick fade-out; damage is disabled during fade-in/out.
 - Birth/life/death: randomly spawned 500-750 px from the target; aimed once; no homing; no tile
   collision; `OnKill` dust burst.
@@ -73,7 +75,8 @@ No in-game verification has been recorded here yet.
 - Random pressure: DeathSickleProjectile every 60 ticks for normal Death, every 20 ticks for
   Absolute Death.
 - Body shot: DeathBolt aimed at the target. Speed 20 px/tick. Interval scales linearly from 60
-  ticks at full health to 20 ticks near zero health.
+  ticks at full health to 20 ticks near zero health for normal Death, and from 20 to 7 ticks
+  for Absolute Death.
 - Bolt: direct spawn; no pre-spawn warning.
 - Duration: 6 seconds.
 
@@ -100,10 +103,9 @@ No in-game verification has been recorded here yet.
 - Freeze and spiral volleys: both variants fire a 2-sickle, 20-degree fan. Normal Death fires every
   10 ticks; Absolute Death fires every 5 ticks.
 - Body bolts: direct spawn; no pre-spawn warning.
-- Body shots: normal Death begins firing only after orbit ends at tick 330; Absolute Death begins
-  at tick 120. Body shots stop at tick 540; interval 60 ticks.
-- Body shot pattern: normal Death fires 2 bolts with 60-degree spacing; Absolute Death fires 5
-  bolts with 45-degree spacing.
+- Body shots: normal Death fires none. Absolute Death begins at tick 120, stops at tick 540,
+  and fires every 60 ticks.
+- Body shot pattern: Absolute Death fires 5 bolts with 45-degree spacing.
 - Arena: containment ring is anchored to the formation center for this move.
 - Duration: 10 seconds.
 
@@ -116,8 +118,8 @@ No in-game verification has been recorded here yet.
   turn bursts.
 - Normal Death: inner Reapers start at tick 120, outer at tick 150; Reaper fans use 3 sickles at
   15 degrees; body bolts are disabled.
-- Absolute Death: Reaper sickle speed 18 px/tick; body bolts are enabled; body bolt ring uses 6
-  bolts at 60-degree spacing.
+- Absolute Death: Reaper sickle speed 18 px/tick; Reaper fans use 5 sickles at 15 degrees;
+  body bolts are disabled.
 - Fade: Reapers fade from tick 600 to tick 660.
 - Duration: 11 seconds.
 
@@ -131,7 +133,7 @@ No in-game verification has been recorded here yet.
 - Normal Death: 3 scythes, 15-degree adjacent spread.
 - Absolute Death: 12 scythes evenly distributed around the full circle.
 - Scythe movement: 800 px outbound over 60 ticks, then returns over 60 ticks; projectile rotates at
-  18 degrees/tick; infinite penetration; 0.8x raw-texture hitbox; 8-tick fade-in and 10-tick
+  12 degrees/tick; infinite penetration; 0.8x raw-texture hitbox; 8-tick fade-in and 10-tick
   fade-out; damage is disabled during both fades.
 - Duration: 300 ticks.
 
@@ -162,7 +164,7 @@ No in-game verification has been recorded here yet.
 - Warning: a fixed 1200 px beam appears for 60 ticks before the rush.
 - Rush: three full rotations over 2000 px. One rotation matches one 16-tick swing animation cycle.
 - Finisher: sickle completes its half rotation over 8 ticks, while the ring returns smoothly over 90 ticks.
-- During the 90-tick recovery, Death uses smooth acceleration/deceleration to return to the player-orbit circle and settle there.
+- During the 90-tick recovery, Death clears rush inertia, then uses smooth velocity-based acceleration and braking to return to the player-orbit circle with contact damage disabled until it arrives.
 - Sickle damage is disabled during fade-in and fade-out.
 
 ### PhaseTwoStrong4SickleDash

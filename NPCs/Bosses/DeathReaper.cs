@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses
         const float OrbitRadiansPerSecond = MathHelper.PiOver2;
         const float SpiralRadiusPerSecond = -300f;
         const float LaserSpeed = 20f;
-        const int LaserDamage = 222;
+        const int LaserDamage = 333;
         const int FormationTicks = 60;
         const int IdleEndTicks = 90;
         internal const int OrbitEndTicks = 330;
@@ -412,7 +412,8 @@ namespace tsorcRevamp.NPCs.Bosses
         DeathBossBase GetOwnerBoss()
         {
             int ownerIndex = (int)NPC.ai[0];
-            if (ownerIndex >= 0 && ownerIndex < Main.maxNPCs)
+            // Treat an inactive owner slot as missing so reapers despawn with the boss.
+            if (ownerIndex >= 0 && ownerIndex < Main.maxNPCs && Main.npc[ownerIndex].active)
             {
                 return Main.npc[ownerIndex].ModNPC as DeathBossBase;
             }

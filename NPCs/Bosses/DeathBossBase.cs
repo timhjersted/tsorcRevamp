@@ -67,6 +67,8 @@ namespace tsorcRevamp.NPCs.Bosses
         protected abstract int BoltDamage { get; }
         protected abstract int SickleDamage { get; }
         protected abstract int GiantScytheDamage { get; }
+        // Restored after Weak5 recovery; subclasses opt in with their contact damage.
+        protected virtual int BodyContactDamage => 0;
         protected virtual int VolleyDamage => BoltDamage;
         internal Color SickleGlowColor => AuraColor;
         internal virtual float SickleScaleMultiplier => 1f;
@@ -188,7 +190,8 @@ namespace tsorcRevamp.NPCs.Bosses
         protected virtual int PhaseTwoWeak4RecoveryTicks => 30;
         protected virtual int PhaseTwoWeak4DurationTicks =>
             PhaseTwoWeak4ReleaseTicks + (PhaseTwoWeak4VolleyCount - 1) * PhaseTwoWeak4VolleyIntervalTicks + PhaseTwoWeak4RecoveryTicks;
-        protected virtual int PhaseTwoWeak5TeleportDistance => 400;
+        // Weak5 teleports behind and below the player, 45 degrees off the rear axis.
+        protected virtual int PhaseTwoWeak5TeleportDistance => 600;
         protected virtual int PhaseTwoWeak5FadeInTicks => 30;
         protected virtual int PhaseTwoWeak5ChargeRotateTicks => 15;
         protected virtual int PhaseTwoWeak5ChargeHoldTicks => 45;
@@ -865,6 +868,7 @@ namespace tsorcRevamp.NPCs.Bosses
             phaseOneSickleTimer = 0;
             NPC.velocity = Vector2.Zero;
             containmentRingFollowsBoss = true;
+            NPC.netUpdate = true;
         }
 
         void TickPhaseTwoWeakMove(Player target)
@@ -950,6 +954,7 @@ namespace tsorcRevamp.NPCs.Bosses
             phaseTwoAttackTimer = 0;
             phaseTwoWeak2AimAngle = 0f;
             NPC.velocity = Vector2.Zero;
+            NPC.netUpdate = true;
         }
 
         void TickPhaseTwoWeakFlamingScythe(Player target)
@@ -1006,6 +1011,7 @@ namespace tsorcRevamp.NPCs.Bosses
             phaseTwoWeak3AimAngle = 0f;
             NPC.velocity = Vector2.Zero;
             containmentRingFollowsBoss = true;
+            NPC.netUpdate = true;
         }
 
         void TickPhaseTwoWeak3Move(Player target)
@@ -1214,6 +1220,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Main.rand.NextFloat(MathHelper.TwoPi));
                 SpawnPhaseTwoWeak4Warnings(0);
             }
+            NPC.netUpdate = true;
         }
 
         void TickPhaseTwoWeak4Move(Player target)
@@ -1370,7 +1377,8 @@ namespace tsorcRevamp.NPCs.Bosses
             Vector2 sickleOffset = SickleAnchorOffset;
             float rushSpeed = PhaseTwoWeak5RushDistance / Math.Max(1, rushTicks);
             int facing = NPC.direction == 0 ? 1 : NPC.direction;
-            float chargeRotation = MathHelper.PiOver4 * facing;
+            // Start the wind-up opposite the sprite-facing side so the blade sweeps inward.
+            float chargeRotation = -MathHelper.PiOver4 * facing;
             float spinDirection = facing;
 
             if (elapsed < PhaseTwoWeak5FadeInTicks)
@@ -1438,7 +1446,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.direction = phaseTwoDashDirection.X < 0f ? -1 : 1;
                     NPC.spriteDirection = NPC.direction;
                     facing = NPC.direction;
-                    chargeRotation = MathHelper.PiOver4 * facing;
+                    chargeRotation = -MathHelper.PiOver4 * facing;
                     spinDirection = facing;
                     phaseTwoSickleBaseRotation = chargeRotation;
                 }
@@ -1463,6 +1471,8 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.velocity = Vector2.Zero;
             }
+            // Stop dealing contact damage while the boss brakes back into the player orbit.
+            NPC.damage = 0;
             MovePhaseTwoWeak5Return(target);
             float finalRotation = phaseTwoSickleBaseRotation
                 + spinDirection * MathHelper.TwoPi * PhaseTwoWeak5SwingCycles
@@ -1478,6 +1488,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 KillPhaseTwoSickle();
                 containmentRingFollowsBoss = true;
                 containmentRingCenter = NPC.Center;
+                // Only restore contact damage once the recovery motion has finished.
+                NPC.damage = BodyContactDamage;
                 BeginPhaseTwoIntermission(0);
             }
         }
@@ -1768,6 +1780,7 @@ namespace tsorcRevamp.NPCs.Bosses
             phaseTwoIntermissionDuration = duration ?? PhaseTwoIntermissionTicks;
             NPC.velocity = Vector2.Zero;
             containmentRingFollowsBoss = true;
+            NPC.netUpdate = true;
         }
 
         void TickPhaseTwoIntermission(Player target)
@@ -1810,11 +1823,14 @@ namespace tsorcRevamp.NPCs.Bosses
             float distance = toDestination.Length();
 
             Vector2 desiredVelocity = Vector2.Zero;
-            if (distance > 6f)
+            if (distance > 4f)
             {
-                float slowFactor = MathHelper.Clamp(distance / 180f, 0f, 1f);
-                float speed = MathHelper.Lerp(PhaseTwoWeak5CircleReturnMinSpeed, PhaseTwoWeak5CircleReturnMaxSpeed, slowFactor);
-                desiredVelocity = toDestination / distance * speed;
+                // Brake into the orbit instead of accelerating through the destination.
+                float stoppingDistance = Math.Max(0f, distance - 4f);
+                float desiredSpeed = (float)Math.Sqrt(
+                    2f * PhaseTwoWeak5CircleReturnDeceleration * stoppingDistance);
+                desiredSpeed = Math.Min(desiredSpeed, PhaseTwoWeak5CircleReturnMaxSpeed);
+                desiredVelocity = toDestination / distance * desiredSpeed;
             }
 
             NPC.velocity = SmoothVelocity(
@@ -2062,6 +2078,7 @@ namespace tsorcRevamp.NPCs.Bosses
             phaseTwoAttackState = PhaseTwoAttackState.DashPause;
             phaseTwoAttackTimer = 0;
             NPC.velocity = Vector2.Zero;
+            NPC.netUpdate = true;
         }
 
         void BeginPhaseTwoFiveDashRingReturn()
@@ -2069,6 +2086,7 @@ namespace tsorcRevamp.NPCs.Bosses
             phaseTwoAttackState = PhaseTwoAttackState.DashRingReturn;
             phaseTwoAttackTimer = 0;
             NPC.velocity = Vector2.Zero;
+            NPC.netUpdate = true;
         }
 
         void TickPhaseTwoDashMovement()
@@ -2281,6 +2299,7 @@ namespace tsorcRevamp.NPCs.Bosses
             phaseOneSpecialState = PhaseOneSpecialState.Pause;
             phaseOneSpecialTimer = 0;
             NPC.velocity = Vector2.Zero;
+            NPC.netUpdate = true;
         }
 
         void EndPhaseOneSpecialAttack()
@@ -2426,6 +2445,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.netUpdate = true;
         }
 
+        // Attack state and timers are custom fields, so transitions must request a sync explicitly.
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(nextWarpAngle);
@@ -2664,7 +2684,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
         protected virtual void OnPlayerOutsideContainmentRing(Player player, float distanceOutside)
         {
-            if (Main.GameUpdateCount % 2 == 0)
+            // Blight is server-authoritative; clients receive the resulting sync from BlightPlayer.
+            if (Main.netMode != NetmodeID.MultiplayerClient && Main.GameUpdateCount % 2 == 0)
             {
                 BlightBuildup.Apply(player, 1);
             }

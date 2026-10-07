@@ -23,9 +23,12 @@ namespace tsorcRevamp.NPCs.Bosses
         protected override Color DespawnTextColor => Color.DarkMagenta;
         protected override int DespawnDustType => DustID.Demonite;
         protected override int VolleyProjectileType => ModContent.ProjectileType<ShadowShot>();
-        protected override int BoltDamage => 74;
-        protected override int SickleDamage => 74;
+        // Base damage before difficulty scaling: 111 -> 222 in Expert and 333 in Master.
+        protected override int BoltDamage => 111;
+        // Reaper contact damage also derives from this base.
+        protected override int SickleDamage => 111;
         protected override int GiantScytheDamage => 222;
+        protected override int BodyContactDamage => 222;
         protected override bool PhaseTwoStrong2BodyBoltsEnabled => false;
 
         public override void SetDefaults()
