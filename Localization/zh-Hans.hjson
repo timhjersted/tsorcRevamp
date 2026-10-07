@@ -11257,7 +11257,7 @@ Mods: {
 			XBowArrow.DisplayName: 未知之弦
 			DragoonSpearZap.DisplayName: Dragoon Spear Zap
 			FlameScrollStrike.DisplayName: Flame Scroll Strike
-			BloodShot.DisplayName: 死神
+			BloodShot.DisplayName: 血弹
 			SunderedMoon.DisplayName: 残月秘典
 			DragoonLanceZap.DisplayName: 龙骑枪
 			OldUltimaExplosion.DisplayName: Old Ultima Explosion
@@ -11516,6 +11516,14 @@ Mods: {
 			// CrystalSentryCrystal.DisplayName: Crystal Sentry Crystal
 			// BlightTendrils.DisplayName: Blight Tendrils
 			// BlightTeleportCloud.DisplayName: Blight Teleport Cloud
+			DeathSickleProjectile.DisplayName: 死神镰刀
+			DeathSickleWeapon.DisplayName: 死神战镰
+			DeathBolt.DisplayName: 死亡弹
+			DeathReaperLaser.DisplayName: 死神激光
+			DeathFlamingScythe.DisplayName: 炽焰死神镰刀
+			DeathFlamingScythePhantom.DisplayName: 炽焰死神镰刀幻影
+			DeathSpawnWarning.DisplayName: 死神生成预警
+			DeathLaserWarning.DisplayName: 死亡预警射线
 			// CrystalKnightFrostWave.DisplayName: Crystal Knight Frost Wave
 			// ProximityMine.DisplayName: Proximity Mine
 			// ProximityMineExplosion.DisplayName: Proximity Mine Explosion
@@ -13199,7 +13207,7 @@ Mods: {
 			AttraidiesShield.DisplayName: 阿卓迪斯护盾
 			LichKingDisciple.DisplayName: 巫妖王信徒
 			LeonhardRemix.DisplayName: 李奥纳德
-			TrueDeath.DisplayName: 死神
+			TrueDeath.DisplayName: 绝对死神
 			// DarkCloudShadow.DisplayName: Dark Cloud Shadow
 			// AbyssalNinja.DisplayName: Abyssal Ninja
 			// StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
@@ -13338,6 +13346,8 @@ Mods: {
 
 			// OwlCompanion.DisplayName: Owl Companion
 			// OwlFireDiveCompanion.DisplayName: Owl Fire Dive Companion
+			DeathReaper.DisplayName: 死神之仆
+			// DeathSickleWeapon.DisplayName: Death Sickle Weapon
 		}
 
 		Prefixes: {

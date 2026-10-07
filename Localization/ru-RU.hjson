@@ -11479,6 +11479,14 @@ Mods: {
 			// CrystalSentryCrystal.DisplayName: Crystal Sentry Crystal
 			// BlightTendrils.DisplayName: Blight Tendrils
 			// BlightTeleportCloud.DisplayName: Blight Teleport Cloud
+			DeathSickleProjectile.DisplayName: Коса Смерти
+			DeathSickleWeapon.DisplayName: Коса Смерти (оружие)
+			DeathBolt.DisplayName: Смертный снаряд
+			DeathReaperLaser.DisplayName: Лазер жнеца
+			DeathFlamingScythe.DisplayName: Пылающая коса Смерти
+			DeathFlamingScythePhantom.DisplayName: Призрачная пылающая коса Смерти
+			DeathSpawnWarning.DisplayName: Предупреждение о появлении
+			DeathLaserWarning.DisplayName: Предупреждающий луч Смерти
 			// CrystalKnightFrostWave.DisplayName: Crystal Knight Frost Wave
 			// ProximityMine.DisplayName: Proximity Mine
 			// ProximityMineExplosion.DisplayName: Proximity Mine Explosion
@@ -13301,6 +13309,8 @@ Mods: {
 
 			// OwlCompanion.DisplayName: Owl Companion
 			// OwlFireDiveCompanion.DisplayName: Owl Fire Dive Companion
+			DeathReaper.DisplayName: Слуга Смерти
+			// DeathSickleWeapon.DisplayName: Death Sickle Weapon
 		}
 
 		Prefixes: {
