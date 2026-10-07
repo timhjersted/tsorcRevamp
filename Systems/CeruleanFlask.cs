@@ -28,6 +28,7 @@ namespace tsorcRevamp.Systems
 
         public int CeruleanChargesCurrent = 9; //Current amount of charges left
         public const int DefaultCeruleanChargesMax = 9; //How many charges the player starts with
+        public const int ChargesPerEstusUpgrade = 1; //Cerulean charges gained for each Estus Flask Shard upgrade (Emerald Herald, Darksign recompute)
         public int CeruleanChargesMax; //The max amount of charges the player has
         public const int DefaultCeruleanManaGain = 120; //How much 1 charge heals to begin with
         public int CeruleanManaGain; //The amount of mana restored per charge

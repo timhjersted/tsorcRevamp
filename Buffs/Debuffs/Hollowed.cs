@@ -2,18 +2,24 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
     public class Hollowed : ModBuff
     {
-        public override string Texture => "Terraria/Images/Buff";
-
+        // PLACEHOLDER sprite pending something better. Autoloads from Hollowed.png.
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;
             BuffID.Sets.NurseCannotRemoveDebuff[Type] = true; //I hate having to add this but without this Bonfires just clear it instantly upon respawn...
+        }
+
+        public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
+        {
+            // Only Bearer of the Curse respawns apply this buff (tsorcRevampPlayer.OnRespawn), so every Hollowed is from dying.
+            tip += "\n" + LangUtils.GetTextValue("Buffs.Hollowed.ReturnToBloodstain");
         }
 
         public override void Update(Player player, ref int buffIndex)

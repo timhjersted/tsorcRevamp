@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
 {
@@ -72,6 +73,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
 
             target.AddBuff(BuffID.BrokenArmor, 300 / buffLengthMod);
+            SeathTheScalelessHead.ApplyProjectileFrost(Projectile, target);
             if (Main.rand.NextBool(10))
             {
                 target.AddBuff(BuffID.Silenced, 180 / buffLengthMod);
