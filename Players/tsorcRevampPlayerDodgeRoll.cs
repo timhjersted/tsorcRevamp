@@ -192,7 +192,9 @@ namespace tsorcRevamp
             ModContent.ItemType<SunderingLight>()
         };
 
-        int oldItemAnimation = 0;
+        // Last tick's itemAnimation. A rise means "a new use started" and charges weapon stamina (PreItemCheck).
+        // Internal so code that deliberately extends an in-progress use (ChargedSpearHeld's stab) can raise it too.
+        internal int oldItemAnimation = 0;
         bool wasJustRolling = false;
         int blockVisuals; //Block the remaining itemAnimation visuals after a roll, to prevent visual jank
         public override bool PreItemCheck()

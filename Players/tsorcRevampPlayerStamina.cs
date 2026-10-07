@@ -201,9 +201,8 @@ namespace tsorcRevamp
         /// so ReduceStamina has nothing sane to scale against.
         ///
         /// The output-based machinery itself (BeginOutputBasedWeaponUse, GetExpectedOutputBasedWeaponCost,
-        /// the EMA tracking) is NOT dead code — GaeBolg/Longinus/DarkTrident call
-        /// GetExpectedOutputBasedWeaponCost directly for their own charge-up affordability checks
-        /// (never gated behind this switch), Dragon Crest Shield reads PlayerDamagePerSecondEma to scale
+        /// the EMA tracking) is NOT dead code — the stamina tooltip and the balance log call
+        /// GetExpectedOutputBasedWeaponCost directly (never gated behind this switch), Dragon Crest Shield reads PlayerDamagePerSecondEma to scale
         /// its fire breath, and the balance-log telemetry records both EMAs. Keep it running; this
         /// function just stops being what routes the general weapon roster into it.
         /// </summary>

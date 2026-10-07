@@ -7032,7 +7032,7 @@ Mods: {
 				Tooltip:
 					'''
 					Pierce reality 
-					Hold left click to charge a throw, right click to stab
+					Click to stab, or hold to charge a throw
 					'''
 			}
 
@@ -7051,7 +7051,7 @@ Mods: {
 				Tooltip:
 					'''
 					Legendary spear fabled to hold sway over the world.
-					Hold left click to charge a throw, right click to stab
+					Click to stab, or hold to charge a throw
 					Fully charged spears create large powerful explosions
 					'''
 			}
@@ -7197,7 +7197,7 @@ Mods: {
 				Tooltip:
 					'''
 					Pierces enemies with dark magic
-					Hold left click to charge a throw, right click to stab
+					Click to stab, or hold to charge a throw
 					Changes its damage type between ranged or melee depending your highest stats
 					Fully charged tridents ignite, setting hit enemies ablaze
 					'''
