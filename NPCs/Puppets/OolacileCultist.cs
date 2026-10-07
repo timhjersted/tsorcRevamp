@@ -1264,7 +1264,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
         private static void ApplyMadnessBuildup(Player target)
         {
-            if (tsorcRevampWorld.SuperHardMode)
+            if (Main.hardMode)
             {
                 MadnessBuildup.Apply(target, MadnessBuildupAmount, MadnessBuildupWindowTicks);
             }

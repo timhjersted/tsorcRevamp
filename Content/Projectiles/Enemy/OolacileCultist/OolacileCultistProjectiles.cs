@@ -207,7 +207,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileCultist
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (tsorcRevampWorld.SuperHardMode)
+            if (Main.hardMode)
             {
                 MadnessBuildup.Apply(target, MadnessBuildupAmount, MadnessBuildupWindowTicks);
             }
@@ -379,7 +379,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileCultist
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.OnFire, BurnDebuffTicks);
-            if (tsorcRevampWorld.SuperHardMode)
+            if (Main.hardMode)
             {
                 MadnessBuildup.Apply(target, 45, 30 * 60);
             }
@@ -461,7 +461,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileCultist
             target.AddBuff(BuffID.Bleeding, BaseBleedingTicks * DifficultyScale);
             target.AddBuff(BuffID.ManaSickness, BaseSicknessTicks * DifficultyScale);
             target.AddBuff(BuffID.PotionSickness, BaseSicknessTicks * DifficultyScale);
-            if (tsorcRevampWorld.SuperHardMode)
+            if (Main.hardMode)
             {
                 MadnessBuildup.Apply(target, 45, 30 * 60);
             }

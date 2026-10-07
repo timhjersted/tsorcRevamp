@@ -89,7 +89,7 @@ namespace tsorcRevamp.Content.Items
         }
         public override bool? UseItem(Player player) // Won't consume item without this
         {
-            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax = ((player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax - tsorcRevampEstusPlayer.DefaultEstusChargesMax) * 3) + CeruleanFlaskPlayer.DefaultCeruleanChargesMax;
+            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax = ((player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax - tsorcRevampEstusPlayer.DefaultEstusChargesMax) * CeruleanFlaskPlayer.ChargesPerEstusUpgrade) + CeruleanFlaskPlayer.DefaultCeruleanChargesMax;
             player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanManaGain = player.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain - tsorcRevampEstusPlayer.DefaultEstusHealthGain + CeruleanFlaskPlayer.DefaultCeruleanManaGain;
             return true;
         }

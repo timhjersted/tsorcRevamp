@@ -1,4 +1,6 @@
 ﻿using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Projectiles
@@ -18,7 +20,7 @@ namespace tsorcRevamp.Content.Projectiles
             Projectile.penetrate = -1;
             Projectile.scale = 1;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 36000;
+            Projectile.timeLeft = 216000; // 60 minutes at 60 ticks/s; when it runs out OnKill clears the owner's Hollowed
             Projectile.alpha = 254; //start nearly invis
         }
         public float AI_Projectile_Lifetime
@@ -78,6 +80,49 @@ namespace tsorcRevamp.Content.Projectiles
             }
 
         }
+        public override void OnSpawn(IEntitySource source)
+        {
+            // One stain per player: a new death replaces the old one. Runs where the stain is created (singleplayer, the
+            // server's world-load restore, or the owner's client); other clients just receive the old stain's removal.
+            bool createdHere = Main.netMode != NetmodeID.MultiplayerClient || Projectile.owner == Main.myPlayer;
+
+            if (!createdHere)
+            {
+                return;
+            }
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile other = Main.projectile[i];
+                bool oldStain = other.active && i != Projectile.whoAmI && other.type == Projectile.type && other.owner == Projectile.owner;
+
+                if (oldStain)
+                {
+                    other.Kill();
+                }
+            }
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            // timeLeft > 0 means the player returned (AI fades it out and kills it) or something else killed it; only a natural
+            // expiry (0) lifts the curse. Runs on every client, so only the owner's client clears their own buff.
+            bool expired = timeLeft <= 0;
+            bool isOwnerClient = Projectile.owner == Main.myPlayer;
+
+            if (!expired || !isOwnerClient)
+            {
+                return;
+            }
+
+            Player owner = Main.player[Projectile.owner];
+
+            if (owner.HasBuff(ModContent.BuffType<Buffs.Debuffs.Hollowed>()))
+            {
+                owner.ClearBuff(ModContent.BuffType<Buffs.Debuffs.Hollowed>());
+            }
+        }
+
         public override bool? CanDamage()
         {
             return false;

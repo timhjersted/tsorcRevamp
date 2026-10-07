@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
@@ -46,6 +47,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             //target.AddBuff(BuffID.Blackout, 360, false); //darkness
             target.AddBuff(ModContent.BuffType<Frostbite>(), 180, false);
+            SeathTheScalelessHead.ApplyProjectileFrost(Projectile, target);
 
         }
 

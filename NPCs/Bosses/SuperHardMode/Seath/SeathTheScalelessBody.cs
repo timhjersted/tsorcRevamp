@@ -39,10 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
-            if (Main.rand.NextBool(2))
-            {
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false);
-            }
+            FrostBuildup.Apply(target, SeathTheScalelessHead.FrostBuildupPerHit);
         }
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)

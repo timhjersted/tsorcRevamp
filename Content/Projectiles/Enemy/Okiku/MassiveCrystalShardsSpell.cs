@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Okiku
 {
@@ -29,6 +30,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Okiku
             {
                 Projectile.Kill();
             }
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            SeathTheScalelessHead.ApplyProjectileFrost(Projectile, target);
         }
 
         public override void OnKill(int timeLeft)

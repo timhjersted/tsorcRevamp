@@ -9593,6 +9593,7 @@ Mods: {
 			Hollowed: {
 				DisplayName: Hollowed
 				Description: Max HP reduced by 20%
+				ReturnToBloodstain: Return to your blood stain to restore your humanity.
 			}
 
 			Invincible: {

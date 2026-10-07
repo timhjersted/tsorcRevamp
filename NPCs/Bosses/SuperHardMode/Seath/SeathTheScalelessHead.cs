@@ -13,6 +13,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
 using tsorcRevamp.Utilities;
@@ -72,11 +73,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         bool secondCrystalSpawned = false;
         bool finalCrystalsSpawned = false;
         float customspawn1;
+        // Frost meter gain (FrostBuildup, meter caps at 100) per contact hit from the head or body; replaced the old Curse buildup.
+        public const int FrostBuildupPerHit = 40;
+
+        // Frost meter gain per hit from Seath's thrown projectiles (Frozen Saw, Ice Storm ball + icicles, Massive Crystal Shards).
+        public const int ProjectileFrostBuildupPerHit = 30;
+
+        // Several of those projectiles are shared with other bosses (Dark Cloud, Wyvern Mage, Disciple of Attraidies...), so only
+        // shots whose source chain traces back to Seath's head build Frost. Runs on the hit player's machine.
+        public static void ApplyProjectileFrost(Projectile projectile, Player target)
+        {
+            int sourceNPCType = projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
+
+            if (sourceNPCType == ModContent.NPCType<SeathTheScalelessHead>())
+            {
+                FrostBuildup.Apply(target, ProjectileFrostBuildupPerHit);
+            }
+        }
+
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(ModContent.BuffType<Frostbite>(), 1 * 60, false);
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 30 * 60, false);
+            FrostBuildup.Apply(target, FrostBuildupPerHit);
 
         }
 

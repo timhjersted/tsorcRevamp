@@ -175,7 +175,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 if (player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
                 {
                     player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax += 1;
-                    player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax += 3;
+                    player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax += CeruleanFlaskPlayer.ChargesPerEstusUpgrade;
                     if (player.inventory[shardIndex].stack == 1) player.inventory[shardIndex].TurnToAir();
                     else player.inventory[shardIndex].stack--;
                     if (Main.netMode != NetmodeID.Server)
