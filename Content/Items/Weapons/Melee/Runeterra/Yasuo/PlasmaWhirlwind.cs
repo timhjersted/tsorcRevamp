@@ -1,0 +1,47 @@
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Bases;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Buffs;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Projectiles;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Sounds.PlasmaWhirlwind;
+
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo
+{
+    public class PlasmaWhirlwind : RuneterraKatanaItem
+    {
+        public override int DashCooldownBuffID => ModContent.BuffType<PlasmaWhirlwindDashCooldown>();
+        public override int DashDustID => DustID.CoralTorch;
+        public override int DashBuffID => ModContent.BuffType<PlasmaWhirlwindDash>();
+        public override int SpinProjectileID => ModContent.ProjectileType<PlasmaWhirlwindSpin>();
+        public override int Tier => 2;
+        public override float SwingSoundVolume => 0.25f;
+        public override int RarityID => ItemRarityID.LightPurple;
+        public override int Value => Item.buyPrice(0, 30, 0, 0);
+        public override int BaseDamage => 75;
+        public override int ItemWidth => 70;
+        public override int ItemHeight => 68;
+        public const float BaseScale = 1.1f; public override float ItemScale => BaseScale;
+        public override float ItemKnockback => 4f;
+        public override Color SlashColor => Color.Cyan;
+        public override int TornadoReadyDustID => DustID.ApprenticeStorm;
+        public override string SoundPath => UsefulFunctions.RefactorableFilepath(typeof(PlasmaWhirlwindSound));
+        public override int ThrustCooldownBuffID => ModContent.BuffType<PlasmaWhirlwindThrustCooldown>();
+        public override int ThrustProjectileID => ModContent.ProjectileType<PlasmaWhirlwindThrust>();
+        public override string LocalizationPath => "Items.PlasmaWhirlwind.";
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+
+            recipe.AddIngredient(ModContent.ItemType<SteelTempest>());
+            recipe.AddIngredient(ItemID.ChlorophyteBar, 11);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 45000);
+
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+    }
+}

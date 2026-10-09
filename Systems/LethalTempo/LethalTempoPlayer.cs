@@ -55,12 +55,12 @@ public class LethalTempoPlayer : ModPlayer
         {
             if (Stacks < MaxStacks - 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with 
+                SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(LethalTempo)) + "_Stack") with 
                     { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.002f }, Player.Center);
             }
             else if (Stacks == MaxStacks - 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with 
+                SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(LethalTempo)) + "_FullyStacked") with 
                     { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.003f }, Player.Center);
             }
             Player.AddBuff(ModContent.BuffType<LethalTempo>(), Duration * 60);

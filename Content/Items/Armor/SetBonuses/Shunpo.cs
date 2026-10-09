@@ -14,6 +14,7 @@ public class Shunpo : ModPlayer
 {
     public bool HasShunpo;
     public const int ShunpoCooldownPerHit = -60;
+    public Vector2 MouseHitboxSize = new Vector2(125, 125);
     public override void ResetEffects()
     {
         HasShunpo = false;
@@ -132,7 +133,7 @@ public class Shunpo : ModPlayer
             {
                 NPC other = Main.npc[i];
 
-                if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, Player.GetModPlayer<tsorcRevampPlayer>().MouseHitboxSize)))
+                if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)))
                 {
                     Lighting.AddLight(other.Center, Color.Red.ToVector3() * 0.35f);
                     UsefulFunctions.DustRing(other.Center, other.width / 2, DustID.Titanium, 5, 1);

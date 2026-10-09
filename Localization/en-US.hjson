@@ -7845,9 +7845,9 @@ Mods: {
 				DisplayName: Steel Tempest
 				Tooltip:
 					'''
-					<right> to [c/708090:thrust]
+					Right-click to [c/708090:thrust]
 					Gain a stack of [c/708090:Steel Tempest] upon [c/708090:thrusting] an enemy
-					Upon reaching 2 stacks, the next <right> will release a [c/708090:tornado]
+					Upon reaching 2 stacks, the next Right-click will release a [c/708090:tornado]
 					[c/708090:'Death is like the wind, always by my side']
 					'''
 				Details:
@@ -7866,11 +7866,11 @@ Mods: {
 				DisplayName: Plasma Whirlwind
 				Tooltip:
 					'''
-					<right> to [c/708090:thrust]
+					Right-click to [c/708090:thrust]
 					Gain a stack of [c/708090:Steel Tempest] upon [c/708090:thrusting] an enemy
-					Upon reaching 2 stacks, the next <right> will release a [c/708090:tornado]
+					Upon reaching 2 stacks, the next Right-click will release a [c/708090:tornado]
 					{$Items.PlasmaWhirlwind.Keybind1}Special Ability{$Items.PlasmaWhirlwind.Keybind2}
-					<right>ing while [c/00ffff:dashing] will release a [c/00ffff:Spinning Slash]
+					Right-clicking while [c/00ffff:dashing] will release a [c/00ffff:Spinning Slash]
 					[c/00ffff:'A companion on this Odyssey']
 					'''
 				Keybind1: "Hover your mouse over an enemy and press "
@@ -7895,11 +7895,11 @@ Mods: {
 				DisplayName: Nightbringer
 				Tooltip:
 					'''
-					<right> to [c/708090:thrust]
+					Right-click to [c/708090:thrust]
 					Gain a stack of [c/708090:Steel Tempest] upon [c/708090:thrusting] an enemy
-					Upon reaching 2 stacks, the next <right> will release a [c/708090:tornado]
+					Upon reaching 2 stacks, the next Right-click will release a [c/708090:tornado]
 					{$Items.PlasmaWhirlwind.Keybind1}Special Ability{$Items.PlasmaWhirlwind.Keybind2}
-					<right>ing while [c/00ffff:dashing] will release a [c/00ffff:Spinning Slash]
+					Right-clicking while [c/00ffff:dashing] will release a [c/00ffff:Spinning Slash]
 					{$Items.Nightbringer.Keybind1}Special Ability{$Items.Nightbringer.Keybind2}
 					[c/ff4500:'Harmony is a lie told to force Obedience']
 					'''
@@ -7960,7 +7960,7 @@ Mods: {
 					[c/ba55d3:Inhibits player movement conditionally] whilst being used
 					[c/ba55d3:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					<right> to shoot a homing [c/00ffff:Blinding Laser] which inflicts confusion
+					Right-click to shoot a homing [c/00ffff:Blinding Laser] which inflicts confusion
 					[c/00ffff:'Armed and ready']
 					'''
 				Details:
@@ -7989,7 +7989,7 @@ Mods: {
 					[c/ba55d3:Inhibits player movement conditionally] whilst being used
 					[c/ba55d3:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					<right> to shoot a homing [c/00ffff:Blinding Laser] which inflicts confusion
+					Right-click to shoot a homing [c/00ffff:Blinding Laser] which inflicts confusion
 					{$Items.OmegaSquadRifle.Keybind1}Special Ability{$Items.OmegaSquadRifle.Keybind2}
 					[c/adff2f:'There's a mushroom out there with your name on it']
 					'''
@@ -8174,7 +8174,7 @@ Mods: {
 				StackGained: "{0} / 10"
 			}
 
-			SteraksGage: {
+			SteraksGageItem: {
 				DisplayName: Steraks Gage
 				Tooltip:
 					'''
@@ -8186,7 +8186,7 @@ Mods: {
 				Bonus: Currently granting {0}% based on the current held weapon
 			}
 
-			InfinityEdge: {
+			InfinityEdgeItem: {
 				DisplayName: Infinity Edge
 				Tooltip:
 					'''

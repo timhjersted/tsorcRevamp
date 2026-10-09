@@ -21,7 +21,6 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Content.Items;
@@ -47,11 +46,11 @@ using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Content.Items.VanillaItems.Summoner;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
-using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Buffs;
 using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Buffs;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
@@ -63,7 +62,6 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.Magic;
 using tsorcRevamp.Content.Projectiles.Melee;
-using tsorcRevamp.Content.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Content.Projectiles.Pets;
 using tsorcRevamp.Content.Projectiles.Ranged;
 using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
@@ -886,7 +884,6 @@ namespace tsorcRevamp
                 }
             }
 
-            SteelTempestStacks = 0;
 
             if (!onePlayerAlive)
             {
@@ -1332,10 +1329,6 @@ namespace tsorcRevamp
             {
                 modifiers.FinalDamage -= ArtoriasArmor.DmgMultWhileRolling;
             }
-            if (modifiers.DamageType == DamageClass.Ranged && InfinityEdge)
-            {
-                modifiers.CritDamage += Content.Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
-            }
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<CernosPrime>())
             {
                 modifiers.FinalDamage *= 0.55f;
@@ -1671,83 +1664,6 @@ namespace tsorcRevamp
                         }
         }
 
-        public NPC SweepingBladeTarget = Main.npc.Last();
-        public void DoSweepingBlade()
-        {
-            /*List<NPC> validTargets = new List<NPC>();
-            SweepingBladeTarget = Main.npc.Last();
-            bool plasma = true;
-            foreach (var other in Main.ActiveNPCs)
-            {
-                bool hasPlasma = Player.HeldItem.type == ModContent.ItemType<PlasmaWhirlwind>() &&
-                                 !Player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>());
-                bool hasNightbringer = Player.HeldItem.type == ModContent.ItemType<Nightbringer>() &&
-                                       !Player.HasBuff(ModContent.BuffType<NightbringerDash>());
-                bool targetable = !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly 
-                    && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) 
-                    && other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>())
-                    && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>());
-                if (targetable && hasPlasma)
-                {
-                    validTargets.Add(other);
-                    plasma = true;
-                } //cooldown is added by On-Hit in the dash projectile hitbox
-                if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && targetable  && hasNightbringer)
-                {
-                    validTargets.Add(other);
-                    plasma = false;
-                } //cooldown is added by On-Hit in the dash projectile hitbox
-
-                foreach (NPC target in validTargets)
-                {
-                    if (target.Center.Distance(Main.MouseWorld) < SweepingBladeTarget.Center.Distance(Main.MouseWorld))
-                    {
-                        SweepingBladeTarget = target; //so it actually dashes to the npc nearest to your cursor, not any random npc that is in the cursors range
-                    }
-                }
-            }*/
-
-            if (SweepingBladeTarget != Main.npc.Last())
-            {
-                int heldItem = Player.HeldItem.type;
-                if (heldItem == ModContent.ItemType<PlasmaWhirlwind>())
-                {
-                    Player.immune = true;
-                    Player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
-                    SweepingBladeVelocity = Player.DirectionTo(SweepingBladeTarget.Center) * 17;
-                    Player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Dash") with { Volume = 1f });
-                    Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Player.Center, Vector2.Zero, 
-                        ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), Player.HeldItem.damage, 0, Player.whoAmI, SweepingBladeTarget.whoAmI);
-                }
-                else if (heldItem == ModContent.ItemType<Nightbringer>())
-                {
-                    Player.immune = true;
-                    SweepingBladeVelocity = Player.DirectionTo(SweepingBladeTarget.Center) * 17;
-                    Player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
-                    Player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/Dash") with { Volume = 1f });                    
-                    Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Player.Center, Vector2.Zero, 
-                        ModContent.ProjectileType<NightbringerDashHitbox>(), Player.HeldItem.damage, 0, Player.whoAmI, SweepingBladeTarget.whoAmI);
-
-                }
-            }
-        }
-
-        public void DoFirewall()
-        {
-            bool hasNightbringer = Player.HeldItem.type == ModContent.ItemType<Nightbringer>() &&
-                                   !Player.HasBuff(ModContent.BuffType<NightbringerFirewallCooldown>());
-            if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && hasNightbringer)
-            {
-                Vector2 unitVectorTowardsMouse = Player.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * Player.direction);
-                Projectile Firewall = Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), Player.Center, unitVectorTowardsMouse * 5f,
-                    ModContent.ProjectileType<NightbringerFirewall>(), Player.HeldItem.damage, 0, Main.myPlayer);
-
-                Player.AddBuff(ModContent.BuffType<NightbringerFirewallCooldown>(), Nightbringer.WindwallCooldown * 60);
-            }
-        }
-
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
             Player player = Main.player[Main.myPlayer];
@@ -1802,12 +1718,6 @@ namespace tsorcRevamp
 
             if (tsorcRevamp.specialAbility.JustReleased)
             {
-                #region Sweeping Blade & Firewall
-                
-                DoSweepingBlade();
-
-                DoFirewall();
-                #endregion
 
                 #region Scouts Boost & Nuclear Mushrooms
                 if (!player.HasBuff(ModContent.BuffType<ScoutsBoost2Cooldown>()) && (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienGun>()))

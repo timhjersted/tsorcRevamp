@@ -10,6 +10,7 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Commo
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities._DataStructures;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities._Extensions;
 using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 
