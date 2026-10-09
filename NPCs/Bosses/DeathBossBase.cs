@@ -361,7 +361,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.friendly = false;
             NPC.boss = true;
             NPC.noTileCollide = true;
-            NPC.behindTiles = true;
+            // Keep the boss silhouette and its arena VFX in front of tiles.
+            NPC.behindTiles = false;
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
             NPC.value = 150000;
@@ -1478,9 +1479,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 + spinDirection * MathHelper.TwoPi * PhaseTwoWeak5SwingCycles
                 + spinDirection * MathHelper.Pi * fadeProgress;
             SetPhaseTwoSicklePose(NPC.Center + sickleOffset, finalRotation, facing, 1f - fadeProgress, 0);
+            // Follow Death during its return; the ring must not stick to the player.
             containmentRingCenter = Vector2.Lerp(
                 phaseTwoFixedRingCenter,
-                target.Center,
+                NPC.Center,
                 MathHelper.SmoothStep(0f, 1f, ringReturnProgress));
 
             if (elapsed >= totalTicks)

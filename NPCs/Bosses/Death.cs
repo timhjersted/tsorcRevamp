@@ -10,6 +10,7 @@ using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -23,12 +24,13 @@ namespace tsorcRevamp.NPCs.Bosses
         protected override Color DespawnTextColor => Color.DarkMagenta;
         protected override int DespawnDustType => DustID.Demonite;
         protected override int VolleyProjectileType => ModContent.ProjectileType<ShadowShot>();
-        // Base damage before difficulty scaling: 111 -> 222 in Expert and 333 in Master.
-        protected override int BoltDamage => 111;
-        // Reaper contact damage also derives from this base.
-        protected override int SickleDamage => 111;
+        // EnemyDamage.Projectile declares the Expert pre-defense hit; vanilla applies Normal/Master scaling.
+        protected override int BoltDamage => EnemyDamage.Projectile(222);
+        protected override int SickleDamage => EnemyDamage.Projectile(222);
         protected override int GiantScytheDamage => 222;
         protected override int BodyContactDamage => 222;
+        // Reaper contact is declared as an Expert baseline for EnemyDamage.SetContact.
+        protected override int GetReaperContactDamage() => 222;
         protected override bool PhaseTwoStrong2BodyBoltsEnabled => false;
 
         public override void SetDefaults()

@@ -24,10 +24,12 @@ No in-game verification has been recorded here yet.
   larger than the intended collision size.
 - Death Reaper uses the vanilla Reaper sprite as a placeholder and keeps frame 0 as a static
   presentation.
-- Death Reaper is damageable. Normal Death Reapers have 1200 HP, 30 defense, and 111 contact
-  damage (222 Expert / 333 Master); Absolute Death Reapers have 33333 HP, 66 defense, and
-  2222 contact damage.
-- Normal Death's small sickle and bolt projectiles use 111 base damage (222 Expert / 333 Master).
+- Death Reaper is damageable. Normal Death Reapers have 1200 HP, 30 defense, and 222 Expert
+  contact damage (333 Master); Absolute Death Reapers have 33333 HP, 66 defense, and 2222
+  Expert contact damage (3333 Master).
+- Normal Death's small sickle and bolt projectiles declare 222 Expert damage through
+  `EnemyDamage.Projectile`; integer spawn rounding makes the hits approximately 224 Expert /
+  336 Master.
 - Reaper HP and contact damage use the normal Expert (2x) and Master (3x) difficulty multipliers.
 - Death Reaper always faces the target horizontally, matching the Death boss rather than rotating
   its sprite around the formation.
