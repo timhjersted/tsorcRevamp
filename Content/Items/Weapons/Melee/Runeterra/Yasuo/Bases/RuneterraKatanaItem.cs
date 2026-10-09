@@ -92,7 +92,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Bases
             {
                 List<NPC> validTargets = new List<NPC>();
                 modPlayer.SweepingBladeTarget = Main.npc.Last();
-                bool plasma = Tier == 2;
                 foreach (var other in Main.ActiveNPCs)
                 {
                     bool targetable = !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, modPlayer.MouseHitboxSize)) 
