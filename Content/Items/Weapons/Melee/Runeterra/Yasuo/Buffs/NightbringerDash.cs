@@ -1,0 +1,36 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Bases;
+
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Buffs
+{
+    public class NightbringerDash : ModBuff
+    {
+        public override void SetStaticDefaults()
+        {
+            Main.debuff[Type] = true;
+            Main.buffNoTimeDisplay[Type] = false;
+            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
+        }
+
+        public override void Update(Player player, ref int buffIndex)
+        {
+            var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.Torch, Scale: 3f);
+            dust.noGravity = true;
+
+            player.immune = true;
+
+            if (player.buffTime[buffIndex] >= (int)(PlasmaWhirlwind.DashDuration * 60))
+            {
+                player.GetModPlayer<RuneterraKatanaPlayer>().SweepingBladeTimer = 2;
+            }
+            if (player.velocity.X > 0)
+            {
+                player.direction = 1;
+            }
+            else
+            { player.direction = -1; }
+        }
+    }
+}

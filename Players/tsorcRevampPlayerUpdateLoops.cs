@@ -17,7 +17,6 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
@@ -128,8 +127,6 @@ namespace tsorcRevamp
 
         public int MaxMinionTurretMultiplier;
 
-        public bool SteraksGage = false;
-        public bool InfinityEdge = false;
         public bool OwlRingEquipped = false;
 
         public int WorldEnderSwing = 1;
@@ -190,11 +187,6 @@ namespace tsorcRevamp
 
         public bool MythrilOrichalcumCritDamage = false;
         public bool PilgrimSpontoonBuff = false;
-
-        public int SteelTempestStacks = 0;
-        public int SweepingBladeTimer = 0;
-        public Vector2 SweepingBladeVelocity;
-        public Vector2 MouseHitboxSize = new Vector2(125, 125);
 
         public int RuneterraMinionHitSoundCooldown = 0;
         public bool Turboboost = false;
@@ -527,8 +519,6 @@ namespace tsorcRevamp
             Player.armorEffectDrawShadowEOCShield = false;
             UndeadTalisman = false;
 
-            SteraksGage = false;
-            InfinityEdge = false;
             OwlRingEquipped = false;
 
             JaggedFlatCritDmgBonus = 0;
@@ -1888,12 +1878,6 @@ namespace tsorcRevamp
             {
                 UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<BarrierCooldown>(), -1);
             }
-            if (SteraksGage && Player.statLife < (Player.statLifeMax2 * Content.Items.Accessories.Melee.SteraksGage.LifeThreshold / 100f) && !Player.HasBuff(ModContent.BuffType<SteraksGageCooldown>()))
-            {
-                Player.statLife += Content.Items.Accessories.Melee.SteraksGage.ShieldHeal;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteraksGageShield") with { Volume = 0.6f }, Player.Center);
-                Player.AddBuff(ModContent.BuffType<SteraksGageCooldown>(), Content.Items.Accessories.Melee.SteraksGage.Cooldown * 60);
-            }
             if (DragoonBoots && DragoonBootsEnable)
             {
                 //Player.jumpSpeed += 10f; why
@@ -2759,12 +2743,6 @@ namespace tsorcRevamp
                 //Player.velocity -= ShunpoVelocity; //make player move at their prior speed
                 Player.RefreshMovementAbilities();
             }*/
-            if (SweepingBladeTimer > 0)
-            {
-                Player.velocity = SweepingBladeVelocity;
-                SweepingBladeTimer--;
-                Player.RefreshMovementAbilities();
-            }
         }
         public override void UpdateDead()
         {

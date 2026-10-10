@@ -171,12 +171,12 @@ public class LethalTempoGlobalProjectile : GlobalProjectile
         {
             if (modPlayer.Stacks < LethalTempoPlayer.MaxStacks - 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with 
+                SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(LethalTempo)) + "_Stack") with 
                     { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.002f }, player.Center);
             }
             else if (modPlayer.Stacks == LethalTempoPlayer.MaxStacks - 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with 
+                SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(LethalTempo)) + "_FullyStacked") with 
                     { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.003f }, player.Center);
             }
             player.AddBuff(ModContent.BuffType<LethalTempo>(), LethalTempoPlayer.Duration * 60);
