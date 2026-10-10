@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Weapons.Melee;
 using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs;

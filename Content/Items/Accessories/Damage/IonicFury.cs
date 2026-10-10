@@ -21,7 +21,10 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.SetAuraState(tsorcAuraState.Ion);
+            if (!hideVisual)
+            {
+                modPlayer.SetAuraState(tsorcAuraState.Ion);
+            }
 
             if (Main.GameUpdateCount % 105 == 0 && player.whoAmI == Main.myPlayer)
             {

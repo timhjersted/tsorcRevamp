@@ -8170,26 +8170,26 @@ Mods: {
 				StackGained: "{0} / 10"
 			}
 
-			SteraksGage: {
-				DisplayName: 斯特拉克的挑战护手
-				Tooltip:
+			SteraksGageItem: {
+				// DisplayName: Steraks Gage
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					[c/8b0000:根据武器使用时间快慢，获得近战伤害加成（加成最高到 {1}%）]
 					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
-					[c/8b0000:当生命值低于 {3}% 时，回复 {4} 点生命值（{$CommonItemTooltip.Cooldown@5}）]
-					'''
-				Bonus: 当前手持武器获得 {0}% 近战伤害加成
+					[c/8b0000:Further increases the damage of slow weapons based on how slow they are(up to {1}%)]
+					[c/8b0000:Heals you for {4} life when life goes below {3}%({$CommonItemTooltip.Cooldown@5})]
+					''' */
+				// Bonus: Currently granting {0}% based on the current held weapon
 			}
 
-			InfinityEdge: {
-				DisplayName: 无尽之刃
-				Tooltip:
+			InfinityEdgeItem: {
+				// DisplayName: Infinity Edge
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedRangedDamage@1}
 					{$CommonItemTooltip.PercentIncreasedRangedCritChance@2}
 					[c/ffd700:{$CommonItemTooltip.Ranged.CritDmg}]
-					'''
+					''' */
 			}
 
 			LudensTempestItem: {

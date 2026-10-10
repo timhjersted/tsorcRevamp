@@ -8137,26 +8137,26 @@ Mods: {
 				StackGained: "{0} / 10"
 			}
 
-			SteraksGage: {
-				DisplayName: Калибр Стерака
-				Tooltip:
+			SteraksGageItem: {
+				// DisplayName: Steraks Gage
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
-					[c/8b0000:Дополнительно увеличивает урон от медленного оружия в зависимости от того, насколько оно медленно работает (до {1}%)]
-					[c/8b0000:Восстанавливает {4} ед. здоровья когда оно падает ниже {3}%({$CommonItemTooltip.Cooldown@5})]
-					'''
-				Bonus: сейчас начисляется {0}% в зависимости от текущего удерживаемого оружия
+					[c/8b0000:Further increases the damage of slow weapons based on how slow they are(up to {1}%)]
+					[c/8b0000:Heals you for {4} life when life goes below {3}%({$CommonItemTooltip.Cooldown@5})]
+					''' */
+				// Bonus: Currently granting {0}% based on the current held weapon
 			}
 
-			InfinityEdge: {
-				DisplayName: Грань бесконечности
-				Tooltip:
+			InfinityEdgeItem: {
+				// DisplayName: Infinity Edge
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedRangedDamage@1}
 					{$CommonItemTooltip.PercentIncreasedRangedCritChance@2}
 					[c/ffd700:{$CommonItemTooltip.Ranged.CritDmg}]
-					'''
+					''' */
 			}
 
 			LudensTempestItem: {
