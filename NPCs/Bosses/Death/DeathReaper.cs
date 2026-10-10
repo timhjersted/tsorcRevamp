@@ -5,8 +5,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy.Death;
+using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Bosses
+namespace tsorcRevamp.NPCs.Bosses.Death
 {
     /// <summary>
     /// Damageable Reaper summon used by Death's second phase formation attacks.
@@ -430,7 +431,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.life = NPC.lifeMax;
             }
             NPC.defense = owner.ReaperDefenseStat;
-            NPC.damage = owner.ReaperContactDamage * difficultyMultiplier;
+            EnemyDamage.SetContact(NPC, owner.ReaperContactDamage);
             NPC.netUpdate = true;
         }
 

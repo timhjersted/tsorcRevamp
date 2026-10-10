@@ -27,9 +27,9 @@ namespace tsorcRevamp.Content.Items.BossItems
         }
         public override bool? UseItem(Player player)
         {
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Death>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Death.Death>()))
             {
-                NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Bosses.Death>()); //placeholder
+                NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Bosses.Death.Death>()); //placeholder
                 return true;
             }
             else
