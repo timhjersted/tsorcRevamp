@@ -12,7 +12,7 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Bosses
+namespace tsorcRevamp.NPCs.Bosses.Death
 {
     [AutoloadBossHead]
     class Death : DeathBossBase

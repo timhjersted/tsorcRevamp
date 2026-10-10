@@ -12,7 +12,7 @@ using tsorcRevamp.Content.Projectiles.Enemy.Death;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Bosses
+namespace tsorcRevamp.NPCs.Bosses.Death
 {
     /// <summary>
     /// Shared state machine for Death and Absolute Death. Phase one, the transition, phase-two

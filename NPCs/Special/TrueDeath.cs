@@ -12,7 +12,7 @@ using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Projectiles.Enemy.Death;
-using tsorcRevamp.NPCs.Bosses;
+using tsorcRevamp.NPCs.Bosses.Death;
 
 namespace tsorcRevamp.NPCs.Special
 {

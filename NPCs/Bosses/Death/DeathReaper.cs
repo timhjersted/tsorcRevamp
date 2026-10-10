@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy.Death;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Bosses
+namespace tsorcRevamp.NPCs.Bosses.Death
 {
     /// <summary>
     /// Damageable Reaper summon used by Death's second phase formation attacks.

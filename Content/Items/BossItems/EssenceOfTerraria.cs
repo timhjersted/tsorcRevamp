@@ -53,7 +53,7 @@ namespace tsorcRevamp.Content.Items.BossItems
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.Golem);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.DukeFishron);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.CultistBoss);
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Death>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Death.Death>());
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.HallowBoss);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>());

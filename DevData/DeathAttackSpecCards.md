@@ -1,7 +1,8 @@
 # Death Attack Spec Cards
 
 Developer reference for the current Death / Absolute Death implementation. Values are taken from
-`NPCs/Bosses/DeathBossBase.cs`, `NPCs/Bosses/Death.cs`, and `NPCs/Special/TrueDeath.cs`.
+`NPCs/Bosses/Death/DeathBossBase.cs`, `NPCs/Bosses/Death/Death.cs`, and
+`NPCs/Special/TrueDeath.cs`.
 No in-game verification has been recorded here yet.
 
 `DeathSpawnWarning` is the pre-spawn controller for the large FlamingScythe only.

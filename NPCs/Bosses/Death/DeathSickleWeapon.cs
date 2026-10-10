@@ -7,7 +7,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Bosses
+namespace tsorcRevamp.NPCs.Bosses.Death
 {
     /// <summary>
     /// Standalone Death Sickle entity. It can follow an owner or be driven independently through
@@ -30,7 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses
         const float TextureWidth = 97f;
         int currentContactDamage;
 
-        public override string Texture => "tsorcRevamp/NPCs/Bosses/DeathSickleWeapon";
+        public override string Texture => "tsorcRevamp/NPCs/Bosses/Death/DeathSickleWeapon";
 
         internal int OwnerIndex => (int)NPC.ai[0];
         internal MovementMode Mode => (MovementMode)(int)NPC.ai[1];
