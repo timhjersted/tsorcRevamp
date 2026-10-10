@@ -188,7 +188,13 @@ Mods: {
 			// LifeCrystalSoulsMode: Permanently increases maximum life by {0}
 			// ManaCrystalSoulsMode: Permanently increases maximum mana by {0}
 			// SoulsModeMobilityLimitRunOnly: Sprint speed scales with {0}% of movement speed bonuses.
-			// SoulsModeMobilityHarness: Grants a dedicated Wing Slot to equip any wings you find. Your flight stats come from the slotted wings, except horizontal flight speed, which takes the higher of the wings and your sprint speed. Fallback flight when empty.
+			/* SoulsModeMobilityHarness:
+				'''
+				Grants a dedicated Wing Slot to equip any wings you find. 
+				Your flight stats come from the slotted wings, except horizontal flight speed,
+				 which takes the higher of the wings and your sprint speed. 
+				Fallback flight when empty.
+				''' */
 			// SoulsModeMobilityWingsOfSeath: Flight time is {0} seconds; vertical climb rate is {1}x; flight speed is at least {2} tiles/s.
 			// FireBlocksImmunity: Grants immunity to fire blocks.
 			// FrostburnAndFireBlocksImmunity: Grants immunity to frostburn and fire blocks
@@ -1958,20 +1964,20 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.Magic.ArmorPen}"
 			}
 
-			CelestialCloak: {
-				DisplayName: Небесный покров
-				Tooltip:
+			CelestialCloakItem: {
+				// DisplayName: Celestial Cloak
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
-					Дает эффект шипов, масштабируемый с максимальной маной
-					Небольшой шанс появления падающих звезд маны при ударе по врагу.
-					Их урон увеличивается с максимальной маной.
-					Звезды маны восстанавливают ману при сборе
-					Автоматически использует зелья маны при необходимости
-					Увеличивает дальность подбора звёзд маны
-					Восстанавливает ману при получении урона
-					'''
+					Grants a thorns effects scaling with max mana
+					Small chance to spawn falling mana stars when hitting an enemy
+					Their damage scales with max mana
+					Mana stars restore mana when collected
+					Automatically use mana potions when needed
+					Increases pickup range for mana stars
+					Restores mana when damaged
+					''' */
 			}
 
 			EnchantedWizardsHat: {
@@ -10465,7 +10471,7 @@ Mods: {
 
 			SeveringDuskBuff: {
 				// DisplayName: Severing Dusk Buff
-				// Description: Mods.tsorcRevamp.Buffs.SeveringDuskBuff.Description
+				// Description: The blade's damage is increased
 			}
 		}
 

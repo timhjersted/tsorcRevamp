@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories.Magic;
+using tsorcRevamp.Content.Items.Accessories.Magic.CelestialCloak;
 using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Utilities;
 
@@ -30,7 +31,7 @@ public class ArcaneSorceryItems : GlobalItem
             TooltipHelper.SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicCuffsBotC", ManaRestorationCuffsPercentage));
         }
 
-        if (arcanePlayer.ArcaneSorcerer && player.whoAmI == Main.myPlayer && (item.type == ItemID.CelestialCuffs | item.type == ModContent.ItemType<CelestialCloak>()))
+        if (arcanePlayer.ArcaneSorcerer && player.whoAmI == Main.myPlayer && (item.type == ItemID.CelestialCuffs | item.type == ModContent.ItemType<CelestialCloakItem>()))
         {
             TooltipHelper.SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CelestialMagnetBotC", ManaStarMaxManaPercentage) + "\n" + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicCuffsBotC", ManaRestorationCuffsPercentage));
         }

@@ -2,18 +2,17 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Accessories.Magic
+namespace tsorcRevamp.Content.Items.Accessories.Magic.CelestialCloak
 {
     [AutoloadEquip(new EquipType[]
     {
         EquipType.Back,
         EquipType.Front
     })]
-    public class CelestialCloak : ModItem
+    public class CelestialCloakItem : ModItem
     {
         public static int MaxMana = 40;
         public static float ManaCost = 10f;
@@ -52,7 +51,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Magic
             player.manaMagnet = true;
             player.magicCuffs = true;
             player.starCloakItem_manaCloakOverrideItem = Item;
-            player.GetModPlayer<tsorcRevampPlayer>().CelestialCloak = true;
+            player.GetModPlayer<CelestialCloakPlayer>().Equipped = true;
         }
 
     }

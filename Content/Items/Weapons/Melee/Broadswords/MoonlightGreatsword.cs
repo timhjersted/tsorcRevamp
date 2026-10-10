@@ -40,8 +40,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
                 damage += NightDamageIncrease / 100f;
             }
 
-            float bonusMagicDmg = player.GetTotalDamage(DamageClass.Magic).Additive -
-                                  player.GetTotalDamage(DamageClass.Generic).Additive;
+            float bonusMagicDmg = (player.GetTotalDamage(DamageClass.Magic).ApplyTo(1f) -
+                                   player.GetTotalDamage(DamageClass.Generic).ApplyTo(1f));
             damage += (bonusMagicDmg > 0f ? bonusMagicDmg : 0f); //so it can't lose dmg if magic dmg is negative
             base.ModifyWeaponDamage(player, ref damage);
         }

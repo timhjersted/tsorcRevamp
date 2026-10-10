@@ -27,9 +27,9 @@ namespace tsorcRevamp.Content.Items
     public class tsorcGlobalItem : GlobalItem
     {
         // Magic Weapon imbue bonuses
-        public static float BonusDamage1 = 30f; // MagicWeapon
-        public static float BonusDamage2 = 50f; // GreatMagicWeapon
-        public static float BonusDamage3 = 75f; // CrystalMagicWeapon
+        public const float BonusDamage1 = 30f; // MagicWeapon
+        public const float BonusDamage2 = 50f; // GreatMagicWeapon
+        public const float BonusDamage3 = 75f; // CrystalMagicWeapon
 
         public static List<int> potionList;
         public static List<int> ammoList;

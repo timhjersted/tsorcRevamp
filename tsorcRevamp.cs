@@ -69,6 +69,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Content.Items.Accessories.Magic.Bands;
+using tsorcRevamp.Content.Items.Accessories.Magic.CelestialCloak;
 using tsorcRevamp.Content.Items.Accessories.Melee;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Accessories.Runeterra.LudensTempest;
@@ -2077,7 +2078,7 @@ namespace tsorcRevamp
                 {ModContent.ItemType<BandOfCosmicPower>(), BandOfCosmicPower.MaxManaIncrease},
                 {ModContent.ItemType<BandOfGreatCosmicPower>(), BandOfGreatCosmicPower.MaxManaIncrease},
                 {ModContent.ItemType<BandOfPhenomenalCosmicPower>(), BandOfPhenomenalCosmicPower.MaxManaIncrease},
-                {ModContent.ItemType<CelestialCloak>(), CelestialCloak.MaxMana},
+                {ModContent.ItemType<CelestialCloakItem>(), CelestialCloakItem.MaxMana},
                 {ModContent.ItemType<NecromancersShirt>(), NecromancersShirt.MaxMana},
                 {ModContent.ItemType<BlueHerosHat>(), BlueHerosHat.MaxMana},
                 {ModContent.ItemType<DragoonHelmet>(), DragoonHelmet.MaxMana},

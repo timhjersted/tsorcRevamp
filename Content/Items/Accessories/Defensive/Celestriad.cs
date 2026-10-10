@@ -5,6 +5,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Accessories.Magic;
+using tsorcRevamp.Content.Items.Accessories.Magic.CelestialCloak;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
@@ -75,7 +76,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
             for (int i = 3; i < (8 + player.extraAccessorySlots); i++)
             {
                 //If they're wearing the accesories that totally break this concept, it won't function for them.
-                if (player.armor[i].type == ItemID.MagicCuffs || player.armor[i].type == ItemID.CelestialCuffs || player.armor[i].type == ItemID.ManaRegenerationBand || player.armor[i].type == ModContent.ItemType<CelestialCloak>())
+                if (player.armor[i].type == ItemID.MagicCuffs || player.armor[i].type == ItemID.CelestialCuffs || player.armor[i].type == ItemID.ManaRegenerationBand || player.armor[i].type == ModContent.ItemType<CelestialCloakItem>())
                 {
                     player.GetModPlayer<tsorcRevampPlayer>().manaShield = 0;
                     return;

@@ -134,7 +134,6 @@ namespace tsorcRevamp
         public bool MaskOfTheFather = false;
         public bool equippedPinwheelMask = false;
         public bool BoneRing;
-        public bool CelestialCloak;
 
         public bool CanUseItemsWhileDodging;
         public bool ArtoriasAbysswalker;
@@ -555,7 +554,6 @@ namespace tsorcRevamp
 
             Celestriad = false;
             MaxManaAmplifier = 0f;
-            CelestialCloak = false;
 
             CanUseItemsWhileDodging = false;
             ArtoriasAbysswalker = false;
@@ -1941,12 +1939,11 @@ namespace tsorcRevamp
 
             if (Player.HeldItem.CountsAsClass(DamageClass.Melee))
             {
-                /*Main.NewText("magicDamage: " + player.GetDamage(DamageClass.Magic));
-				Main.NewText("magicDamageMult: " + player.GetDamage(DamageClass.Magic)Mult);
-				Main.NewText((player.GetDamage(DamageClass.Magic) - player.GetDamage(DamageClass.Magic)Mult) * .5f);*/
+                float bonusMagicDamage = (Player.GetTotalDamage(DamageClass.Magic).ApplyTo(1f) -
+                                          Player.GetTotalDamage(DamageClass.Generic).ApplyTo(1f));
                 if (Player.HasBuff(ModContent.BuffType<MagicWeapon>()))
                 {
-                    float bonusDamage = ((Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * tsorcGlobalItem.BonusDamage1 / 100f;
+                    float bonusDamage = bonusMagicDamage * tsorcGlobalItem.BonusDamage1 / 100f;
                     if (bonusDamage >= 0)
                     {
                         Player.GetDamage(DamageClass.Melee) += bonusDamage;
@@ -1954,7 +1951,7 @@ namespace tsorcRevamp
                 }
                 if (Player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()))
                 {
-                    float bonusDamage = ((Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * tsorcGlobalItem.BonusDamage2 / 100f;
+                    float bonusDamage = bonusMagicDamage * tsorcGlobalItem.BonusDamage2 / 100f;
                     if (bonusDamage >= 0)
                     {
                         Player.GetDamage(DamageClass.Melee) += bonusDamage;
@@ -1962,7 +1959,7 @@ namespace tsorcRevamp
                 }
                 if (Player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>()))
                 {
-                    float bonusDamage = (Player.GetDamage(DamageClass.Magic).Additive * Player.GetDamage(DamageClass.Magic).Multiplicative) * tsorcGlobalItem.BonusDamage3 / 100f;
+                    float bonusDamage = bonusMagicDamage * tsorcGlobalItem.BonusDamage3 / 100f;
                     if (bonusDamage >= 0)
                     {
                         Player.GetDamage(DamageClass.Melee) += bonusDamage;
@@ -2810,10 +2807,6 @@ namespace tsorcRevamp
             if (MaxManaAmplifier > 0f)
             {
                 Player.statManaMax2 = (int)(Player.statManaMax2 * (1f + MaxManaAmplifier / 100f));
-            }
-            if (CelestialCloak)
-            {
-                Player.thorns += 0.1f + (Player.statManaMax2 / 50f);
             }
 
             AbyssTransitionEffects();

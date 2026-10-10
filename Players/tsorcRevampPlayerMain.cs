@@ -1356,24 +1356,6 @@ namespace tsorcRevamp
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (CelestialCloak && (hit.DamageType == DamageClass.Magic || hit.DamageType == DamageClass.MagicSummonHybrid))
-            {
-                if (Main.rand.NextBool(25))
-                {
-                    Vector2 starvector1 = new Vector2(-40, -200) + target.Center;
-                    Vector2 starvector2 = new Vector2(40, -200) + target.Center;
-                    Vector2 starvector3 = new Vector2(0, -200) + target.Center;
-                    Vector2 starmove1 = new Vector2(+4, 20);
-                    Vector2 starmove2 = new Vector2(-4, 20);
-                    Vector2 starmove3 = new Vector2(0, 20);
-                    if (Main.myPlayer == Player.whoAmI)
-                    {
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                    }
-                }
-            }
             if (MagmaArmor && (target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3)))
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);

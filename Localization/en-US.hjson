@@ -188,13 +188,13 @@ Mods: {
 			LifeCrystalSoulsMode: Permanently increases maximum life by {0}
 			ManaCrystalSoulsMode: Permanently increases maximum mana by {0}
 			SoulsModeMobilityLimitRunOnly: Sprint speed scales with {0}% of movement speed bonuses.
-			SoulsModeMobilityHarness: 
-			'''
-			Grants a dedicated Wing Slot to equip any wings you find. 
-			Your flight stats come from the slotted wings, except horizontal flight speed,
-			 which takes the higher of the wings and your sprint speed. 
-			Fallback flight when empty.
-			'''
+			SoulsModeMobilityHarness:
+				'''
+				Grants a dedicated Wing Slot to equip any wings you find. 
+				Your flight stats come from the slotted wings, except horizontal flight speed,
+				 which takes the higher of the wings and your sprint speed. 
+				Fallback flight when empty.
+				'''
 			SoulsModeMobilityWingsOfSeath: Flight time is {0} seconds; vertical climb rate is {1}x; flight speed is at least {2} tiles/s.
 			FireBlocksImmunity: Grants immunity to fire blocks.
 			FrostburnAndFireBlocksImmunity: Grants immunity to frostburn and fire blocks
@@ -2001,7 +2001,7 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.Magic.ArmorPen}"
 			}
 
-			CelestialCloak: {
+			CelestialCloakItem: {
 				DisplayName: Celestial Cloak
 				Tooltip:
 					'''

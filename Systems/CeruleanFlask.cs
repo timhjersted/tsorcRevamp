@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Accessories.Magic;
+using tsorcRevamp.Content.Items.Accessories.Magic.CelestialCloak;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Utilities.Balance;
@@ -255,9 +256,9 @@ namespace tsorcRevamp.Systems
             Player player = Main.LocalPlayer;
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
-            if (modPlayer.SoulsMode && player.whoAmI == Main.myPlayer && (item.type == ItemID.ManaFlower || item.type == ItemID.ArcaneFlower || item.type == ItemID.MagnetFlower || item.type == ItemID.ManaCloak || item.type == ModContent.ItemType<CelestialCloak>()))
+            if (modPlayer.SoulsMode && player.whoAmI == Main.myPlayer && (item.type == ItemID.ManaFlower || item.type == ItemID.ArcaneFlower || item.type == ItemID.MagnetFlower || item.type == ItemID.ManaCloak || item.type == ModContent.ItemType<CelestialCloakItem>()))
             {
-                int add = item.type == ModContent.ItemType<CelestialCloak>() ? 10 : 2;
+                int add = item.type == ModContent.ItemType<CelestialCloakItem>() ? 10 : 2;
                 tooltips.Insert(ttindex + add, new TooltipLine(Mod, "DrinkTime", LangUtils.GetTextValue("CommonItemTooltip.CeruleanManaFlower", CeruleanFlaskPlayer.CeruleanManaFlowerStrength)));
             }
             if (modPlayer.SoulsMode && player.whoAmI == Main.myPlayer && item.type == ItemID.ManaRegenerationPotion && ttindex != -1)
