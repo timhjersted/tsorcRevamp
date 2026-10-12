@@ -11,8 +11,9 @@ No in-game verification has been recorded here yet.
 
 - Death and Absolute Death share `DeathBossBase`; Absolute Death overrides damage, movement, and
   projectile density per card.
-- The containment ring is intentionally boss-following during neutral phase-two play. It is anchored
-  to the Reaper formation center during strong move 2.
+- The containment ring is intentionally boss-following during neutral phase-two play. Several moves
+  pin it instead (strong moves 1, 2, 4 and 6, weak move 5); each slides it back to Death before
+  the intermission.
 - When the containment ring appears, Death locks the world to midnight (`Main.time = 16240`).
 - The containment ring draws a deep-purple `DominionFieldEven` shader fog outside its boundary;
   it keeps the cloud movement but omits the outward-increasing depth ramp. Players found
@@ -21,13 +22,19 @@ No in-game verification has been recorded here yet.
 - Direct Death body contact applies the standard 15 Blight buildup.
 - Projectiles that ignore tiles do so deliberately so the arena boundary, not terrain, controls the
   fight.
+- Death's hostile projectiles use `DamageClass.Generic`. The flaming-scythe phantom keeps
+  `hostile = true` with `CanDamage() => false` so player melee-buff visual hooks do not affect it.
 - The large flaming scythe uses a reduced 0.8x raw-texture hitbox because its visual scale is much
   larger than the intended collision size.
+- Large flaming scythes (and the held sickle's contact damage) declare the `GiantScytheDamage`
+  Expert baseline through `EnemyDamage`: normal 222/666, Expert 444/1332, Master 666/1998.
 - Death Reaper uses the vanilla Reaper sprite as a placeholder and keeps frame 0 as a static
   presentation.
 - Death Reaper is damageable. Normal Death Reapers have 1200 HP, 30 defense, and 222 Expert
-  contact damage (333 Master); Absolute Death Reapers have 33333 HP, 66 defense, and 2222
-  Expert contact damage (3333 Master).
+  contact damage (333 Master); Absolute Death Reapers have 22222 HP (66666 Master), 66 defense,
+  and 2222 Expert contact damage (3333 Master).
+- Death Reapers draw a foreground sprite-aligned silhouette blur/glow at full brightness in vivid purple
+  (vivid red for Absolute Death) and have stronger self-illumination.
 - Normal Death's small sickle and bolt projectiles declare 222 Expert damage through
   `EnemyDamage.Projectile`; integer spawn rounding makes the hits approximately 224 Expert /
   336 Master.
@@ -42,6 +49,10 @@ No in-game verification has been recorded here yet.
 - Its custom two-rectangle collision is resolved manually; NPC default square contact damage is disabled.
 - Held-sickle contact uses GiantScytheDamage rather than the smaller sickle projectile damage.
 - When Death dies, every active Death Reaper is cleared immediately.
+- When a player kills a Death Reaper, the owner Death takes damage equal to half that Reaper's max life.
+  Manual despawn or end-of-move cleanup does not trigger this.
+- Death's body draws a sprite-aligned silhouette blur/glow in vivid purple. Weak moves use 0.2 brightness
+  and strong moves use full brightness; transitions are smoothed, and phase one has no aura.
 - Large-scythe warning beams are orange (`new Color(255, 120, 35)`); their lengths are 1800 px
   for weak move 2, 1500 px for weak move 3, and 1800 px for weak move 4.
 - Death and Absolute Death use small dark body dust. Death is dark purple; Absolute Death is
@@ -100,7 +111,7 @@ No in-game verification has been recorded here yet.
 - Tell: strong-move roar; Reapers fade in over 60 ticks.
 - Reaper movement: formation at radius 300 px, idle to 90 ticks, orbit from 90-330 ticks, freeze
   from 330-420 ticks, spiral from 420-540 ticks, fade out from 540-600 ticks.
-- Reaper count: normal Death uses 6; Absolute Death uses 9.
+- Reaper count: both variants use 6.
 - Reaper attack: both variants currently use DeathSickleProjectile.
 - Orbit volleys: normal Death fires 4 shots every 60 ticks; Absolute Death keeps 3 shots every 30 ticks.
 - Freeze and spiral volleys: both variants fire a 2-sickle, 20-degree fan. Normal Death fires every
@@ -115,8 +126,9 @@ No in-game verification has been recorded here yet.
 ### PhaseTwoStrong3ScatterReapers
 
 - Tell: strong-move roar; 6 Reapers split into inner and outer rings.
-- Currently excluded from the random strong-move bag. The implementation remains available for manual use.
-- Formation: inner radius 70 px; outer radius 120 px; Reapers arrive during the first second.
+- Currently parked: excluded from every strong-move bag (normal Death and Absolute Death),
+  but the implementation is kept and remains available for manual use.
+- Formation: inner radius 100 px; outer radius 200 px; Reapers arrive during the first second.
 - Attack window: from tick 120/150 until tick 600; Reapers fire sickle fans and perform short
   turn bursts.
 - Normal Death: inner Reapers start at tick 120, outer at tick 150; Reaper fans use 3 sickles at
@@ -174,13 +186,56 @@ No in-game verification has been recorded here yet.
 
 - Tell: strong-move roar, ring anchored, sickle fades in over 60 ticks on a 100 px orbit.
 - Sickle uses middle-pivot mode while orbiting and dashing.
-- Dashes: 6 dashes, 60 ticks each, 18-tick gaps, locked player aim, smoothed 900-1600 px travel.
+- Dashes: 6 dashes, 60 ticks each, 48-tick gaps, locked player aim, smoothed 900-1600 px travel.
 - Rotation: random clockwise/counter-clockwise per dash; gaps preserve damped motion.
 - Body: Death uses the existing player-orbit motion behavior.
 - Strong move 4 currently fires no bolt and no warning beam.
 - Exit: 30-tick sickle fade-out, ring return, then a 90-tick wait.
 
+### PhaseTwoStrong5ReaperScytheRush
+
+- Tell: strong-move roar, then Death attaches to the player-orbit circle and waits 60 ticks.
+- Attack window: 240 ticks (4 seconds). Death keeps using the player-orbit motion during this window
+  with a Strong5 speed cap of 2 px/tick for normal Death and 5 px/tick for Absolute Death.
+- Scythes: normal Death fires four waves every 60 ticks; Absolute Death fires eight waves every
+  30 ticks. Each wave fires 6 large flaming scythes in an
+  even 60-degree circle. Odd waves rotate so one line is on the player; even waves rotate
+  so the player is on the bisector between two lines.
+- Warnings: each wave gets 30-tick warning beams and no phantom scythes.
+- Scythe release: each wave plays the Death Sickle use sound and Death keeps its special
+  swing animation during the full 4-second attack window.
+- Reapers: spawn one every 15 ticks, up to 8. They move out to 100 px over 45 ticks,
+  wait 15 ticks, then accelerate to 20 px/tick.
+- Dash tell: normal Death Reapers show a 1500 px purple warning line for the full 15-tick
+  wait; Absolute Death Reapers have no warning line. Dash direction locks at the start of the wait.
+- Reaper sickles: during the charge, a reaper fires one small sickle every 20 ticks along its
+  dash direction. The sickle starts at speed 1, holds for 180 ticks (3 seconds), then
+  accelerates to 10 over the next 30 ticks.
+  Reapers stop firing these trailing sickles once they are more than 1400 px from Death.
+- Recovery: after the 240-tick attack window, Death stops moving for 180 ticks, then clears all
+  remaining Death Reapers and enters intermission.
+
 ## Open Verification Items
+### PhaseTwoStrong6DeathSquad (Absolute Death only)
+
+- Tell: strong-move roar; the containment ring is pinned at its current centre and Death
+  teleports 600 px straight up.
+- Safety: Death deals no contact damage for the first 60 ticks after the teleport, so the blind
+  jump can never land directly on the player for an unavoidable hit.
+- Firing line: 4 Death Reapers spawn at -400/-200/+200/+400 px from the boss, numbered 1-4 left
+  to right, and hold those anchors for the whole move.
+- Wait: the squad fades in over the 60-tick teleport wait and only opens fire afterwards.
+- Attack window: 480 ticks (8 seconds).
+- #1 and #4: every 12 ticks, four sickles at 8 px/tick on the cardinals around d1. d1 starts
+  pointing down and sweeps 90 degrees per second, counter-clockwise on #1 and clockwise on #4.
+- #2 and #3, first 4 seconds: each rolls its own 0.5-1.5 second cadence, locks onto the player
+  once and fires a five-bolt string at 15 px/tick across 20 ticks (5-tick spacing).
+- #2 and #3 finishers: one solo pincer of two five-bolt strings at +/-30 degrees at 4.5 s, the
+  other at 5.5 s, then both together at 6.5 s and 7.5 s.
+- Recovery: the squad fades out over the boss's 120-tick wait and the containment ring slides
+  back over the final 60 ticks.
+- Duration: 660 ticks total (60 wait + 480 attack + 120 recovery).
+
 
 - Record in-game close/typical/max-range checks for each active move.
 - Confirm the warning-line and large-scythe visuals at both normal and Absolute Death scales.

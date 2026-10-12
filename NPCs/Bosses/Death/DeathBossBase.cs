@@ -31,6 +31,9 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         internal virtual ReaperFacingMode CurrentReaperFacingMode => ReaperFacingMode.IntentDirection;
         internal Color ReaperLightColor => AuraColor;
         internal int ReaperLaserCount => PhaseTwoReaperLaserCount;
+        internal virtual bool ReaperStrong5WarningEnabled => true;
+        internal virtual float ReaperStrong5WarningLength => 1500f;
+        internal virtual int ReaperStrong5WarningTicks => 15;
         internal int ReaperLaserIntervalTicks => PhaseTwoReaperLaserIntervalTicks;
         internal int ReaperBurstIntervalTicks => PhaseTwoReaperBurstIntervalTicks;
         internal int ReaperBurstShotCount => PhaseTwoReaperBurstShotCount;
@@ -43,58 +46,50 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         internal int ScatterInnerStartTicks => PhaseTwoScatterInnerStartTicks;
         internal int ScatterOuterStartTicks => PhaseTwoScatterOuterStartTicks;
         internal int ScatterFireIntervalTicks => PhaseTwoScatterFireIntervalTicks;
-        internal int ScatterSickleCount => PhaseTwoScatterSickleCount;
-        internal float ScatterSickleSpreadDegrees => PhaseTwoScatterSickleSpreadDegrees;
-        internal float ScatterSickleSpeed => PhaseTwoScatterSickleSpeed;
-        internal int ScatterExtraSickleCount => PhaseTwoScatterExtraSickleCount;
-        internal float ScatterExtraSickleSpreadDegrees => PhaseTwoScatterExtraSickleSpreadDegrees;
-        internal float ScatterExtraSickleSpeed => PhaseTwoScatterExtraSickleSpeed;
-        internal int ScatterTurnTicks => PhaseTwoScatterTurnTicks;
-        internal float ScatterTurnMinDegrees => PhaseTwoScatterTurnMinDegrees;
-        internal float ScatterTurnMaxDegrees => PhaseTwoScatterTurnMaxDegrees;
+        internal float ScatterFastSickleSpeed => PhaseTwoScatterFastSickleSpeed;
+        internal float ScatterSlowSickleSpeed => PhaseTwoScatterSlowSickleSpeed;
+        internal float ScatterSwirlDegreesPerSecond => PhaseTwoScatterSwirlDegreesPerSecond;
         internal int ScatterFadeStartTicks => PhaseTwoScatterFadeStartTicks;
         internal int ScatterDurationTicks => PhaseTwoScatterDurationTicks;
         internal bool ScatterBodyBoltsEnabled => PhaseTwoScatterBodyBoltsEnabled;
-        internal int ScatterRotationSeed => phaseTwoScatterRotationSeed;
+        internal float ScatterFormationAngle => GetScatterFormationAngle();
         internal int ReaperSickleDamage => SickleDamage;
+        internal int ReaperBoltDamage => BoltDamage;
+        internal float ReaperBoltColorValue => UsefulFunctions.ColorToFloat(PhaseOneBoltColor);
         internal int ReaperLifeMax => GetReaperLifeMax();
         internal int ReaperDefenseStat => GetReaperDefense();
         internal int ReaperContactDamage => GetReaperContactDamage();
+        internal int Strong6AttackStartTicks => PhaseTwoStrong6AttackStartTicks;
+        internal int Strong6AttackEndTicks => PhaseTwoStrong6AttackStartTicks + PhaseTwoStrong6AttackDurationTicks;
+        internal int Strong6RecoveryTicks => PhaseTwoStrong6RecoveryTicks;
         protected abstract Color AuraDustColor { get; }
         protected abstract Color DespawnTextColor { get; }
         protected abstract int DespawnDustType { get; }
-        protected abstract int VolleyProjectileType { get; }
         protected abstract int BoltDamage { get; }
         protected abstract int SickleDamage { get; }
         protected abstract int GiantScytheDamage { get; }
         // Restored after Weak5 recovery; subclasses opt in with their contact damage.
         protected virtual int BodyContactDamage => 0;
-        protected virtual int VolleyDamage => BoltDamage;
-        internal Color SickleGlowColor => AuraColor;
+        // Deepened violet family: scale the old (190,70,255) down so the additive aura reads as
+        // saturated violet instead of washing toward pink/white.
+        internal virtual Color VfxGlowColor => new Color(140, 35, 205);
+        internal Color SickleGlowColor => VfxGlowColor;
         internal virtual float SickleScaleMultiplier => 1f;
         protected virtual int GetReaperLifeMax() => 1200;
         protected virtual int GetReaperDefense() => 30;
         protected virtual int GetReaperContactDamage() => SickleDamage;
 
         protected virtual float AuraDustScale => 0.5f;
-        protected virtual int VolleyInterval => 12;
-        protected virtual int VolleyCount => 5;
-        protected virtual float VolleySpeed => 0.5f;
         protected virtual float PhaseDustHealthThreshold => 0.30f;
         protected virtual float HighHealthDustScale => 1.2f;
         protected virtual float LowHealthDustScale => 1.7f;
-        protected virtual int NormalWarpTicks => 150;
-        protected virtual int LowHealthWarpTicks => 100;
-        protected virtual float LowHealthWarpThreshold => 0.15f;
-        protected virtual int WarpDistance => 600;
-        protected virtual float WarpSpeed => 14f;
         protected virtual float GoreScale => 1.1f;
         protected virtual bool UsesContainmentRing => true;
         protected virtual float ContainmentRingRadius => 1000f;
         protected virtual float ContainmentRingPullSpeed => 5f;
-        protected virtual Color ContainmentFogDarkColor => new Color(5, 0, 16);
-        protected virtual Color ContainmentFogMidColor => new Color(42, 6, 76);
-        protected virtual Color ContainmentFogCoreColor => new Color(118, 26, 172);
+        protected virtual Color ContainmentFogDarkColor => new Color(3, 0, 10);
+        protected virtual Color ContainmentFogMidColor => new Color(26, 4, 48);
+        protected virtual Color ContainmentFogCoreColor => new Color(82, 18, 130);
         protected virtual Vector2 SickleAnchorOffset => new Vector2(0f, -10f);
         protected virtual float ContainmentFogOpacity => 0.92f;
         protected virtual double ContainmentRingMidnightTime => 16240.0;
@@ -140,30 +135,27 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         protected virtual int PhaseTwoReaperOrbitVolleyIntervalTicks => 60;
         protected virtual int PhaseTwoIntermissionTicks => 60;
         protected virtual int PhaseTwoScatterReaperCount => 6;
-        protected virtual float PhaseTwoScatterInnerRadius => 70f;
-        protected virtual float PhaseTwoScatterOuterRadius => 120f;
+        protected virtual float PhaseTwoScatterInnerRadius => 100f;
+        protected virtual float PhaseTwoScatterOuterRadius => 200f;
         protected virtual int PhaseTwoScatterInnerStartTicks => 120;
         protected virtual int PhaseTwoScatterOuterStartTicks => 150;
-        protected virtual int PhaseTwoScatterFireIntervalTicks => 60;
-        protected virtual int PhaseTwoScatterSickleCount => 3;
-        protected virtual float PhaseTwoScatterSickleSpreadDegrees => 15f;
-        protected virtual float PhaseTwoScatterSickleSpeed => 12f;
-        protected virtual int PhaseTwoScatterExtraSickleCount => 0;
-        protected virtual float PhaseTwoScatterExtraSickleSpreadDegrees => 15f;
-        protected virtual float PhaseTwoScatterExtraSickleSpeed => 20f;
-        protected virtual int PhaseTwoScatterTurnTicks => 15;
-        protected virtual float PhaseTwoScatterTurnMinDegrees => 25f;
-        protected virtual float PhaseTwoScatterTurnMaxDegrees => 50f;
-        protected virtual int PhaseTwoScatterBoltCount => 6;
-        protected virtual float PhaseTwoScatterBoltSpacingDegrees => 60f;
-        protected virtual float PhaseTwoScatterBoltSpeed => 20f;
-        protected virtual int PhaseTwoScatterBoltIntervalTicks => 60;
+        protected virtual int PhaseTwoScatterFireIntervalTicks => 15;
+        // Each stream fires two sickles along the same line: a fast one and a slow one.
+        protected virtual float PhaseTwoScatterFastSickleSpeed => 8f;
+        protected virtual float PhaseTwoScatterSlowSickleSpeed => 5f;
+        /// <summary>dt: the swirl angle grows by 90 degrees per second, mirrored on both sides.</summary>
+        protected virtual float PhaseTwoScatterSwirlDegreesPerSecond => 90f;
+        protected virtual int PhaseTwoScatterFlamingScytheIntervalTicks => 120;
+        protected virtual float PhaseTwoScatterFlamingScytheSpeed => 10f;
+        // Radius of the circle the boss slides along when PhaseTwoScatterMovesOnCircle is set.
+        protected virtual float PhaseTwoScatterCircleRadius => 600f;
+        // Firing phase: first volley at PhaseTwoScatterInnerStartTicks (2s) through 10s, i.e. 8s of
+        // fire, then the usual 1s fade-out.
         protected virtual int PhaseTwoScatterFadeStartTicks => 10 * 60;
         protected virtual int PhaseTwoScatterDurationTicks => 11 * 60;
         protected virtual int PhaseTwoWeakDurationTicks => 6 * 60;
         protected virtual int PhaseTwoWeak2WarningTicks => 2 * 60;
         protected virtual int PhaseTwoWeak2ThrowTicks => 150;
-        protected virtual int PhaseTwoWeak2ReturnTicks => 270;
         protected virtual int PhaseTwoWeak2DurationTicks => 300;
         protected virtual int PhaseTwoWeak2ScytheCount => 3;
         protected virtual float PhaseTwoWeak2ScytheSpreadDegrees => 15f;
@@ -202,14 +194,54 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         protected virtual int PhaseTwoWeak5RecoveryTicks => 90;
         protected virtual float PhaseTwoWeak5RushDistance => 2000f;
         protected virtual float PhaseTwoWeak5CircleReturnMaxSpeed => 45f;
-        protected virtual float PhaseTwoWeak5CircleReturnMinSpeed => 2f;
         protected virtual float PhaseTwoWeak5CircleReturnAcceleration => 1.20f;
         protected virtual float PhaseTwoWeak5CircleReturnDeceleration => 2.00f;
         protected virtual int PhaseTwoStrong4FadeInTicks => 60;
         protected virtual float PhaseTwoStrong4SpawnRadius => 100f;
         protected virtual int PhaseTwoStrong4DashCount => 6;
         protected virtual int PhaseTwoStrong4DashTicks => 60;
-        protected virtual int PhaseTwoStrong4GapTicks => 18;
+        protected virtual int PhaseTwoStrong4GapTicks => 48;
+        protected virtual int PhaseTwoStrong5AttackStartTicks => 60;
+        protected virtual int PhaseTwoStrong5AttackDurationTicks => 4 * 60;
+        protected virtual int PhaseTwoStrong5RecoveryTicks => 3 * 60;
+        protected virtual int PhaseTwoStrong5DurationTicks =>
+            PhaseTwoStrong5AttackStartTicks + PhaseTwoStrong5AttackDurationTicks + PhaseTwoStrong5RecoveryTicks;
+        protected virtual int PhaseTwoStrong5WaveCount => 4;
+        protected virtual int PhaseTwoStrong5ScythesPerWave => 6;
+        protected virtual int PhaseTwoStrong5WaveIntervalTicks => 60;
+        protected virtual int PhaseTwoStrong5WarningTicks => 30;
+        protected virtual float PhaseTwoStrong5ScytheSpeed => 30f;
+        protected virtual float PhaseTwoStrong5WarningLength => 1800f;
+        protected virtual int PhaseTwoStrong5ReaperIntervalTicks => 15;
+        protected virtual int PhaseTwoStrong5ReaperCount => 8;
+        protected virtual float PhaseTwoStrong5CircleMoveMaxSpeed => 5f;
+        /// <summary>
+        /// True: snap onto the circle once, then hold position as soon as the first flaming-scythe
+        /// volley is away (normal Death). Absolute Death keeps orbiting for the whole move.
+        /// </summary>
+        protected virtual bool PhaseTwoStrong5SnapsThenHolds => true;
+
+        // Strong move 6 (Absolute Death only): Death roars, pins the ring, teleports straight up
+        // and drops a four-Reaper firing line that hammers the arena for eight seconds.
+        protected virtual int PhaseTwoStrong6TeleportOffset => 600;
+        protected virtual int PhaseTwoStrong6ContactSuppressTicks => 60;
+        protected virtual int PhaseTwoStrong6AttackStartTicks => 60;
+        protected virtual int PhaseTwoStrong6AttackDurationTicks => 8 * 60;
+        protected virtual int PhaseTwoStrong6RecoveryTicks => 2 * 60;
+        protected virtual int PhaseTwoStrong6RingReturnTicks => 60;
+        protected virtual int PhaseTwoStrong6DurationTicks =>
+            PhaseTwoStrong6AttackStartTicks + PhaseTwoStrong6AttackDurationTicks + PhaseTwoStrong6RecoveryTicks;
+        /// <summary>Spawn spacing of the firing line: slots sit at -2, -1, +1 and +2 spacings.</summary>
+        protected virtual float PhaseTwoStrong6ReaperSpacing => 200f;
+
+        /// <summary>
+        /// Bit mask of the phase-two strong moves this variant may pick. Ids match the switch in
+        /// StartNextPhaseTwoMove: 2 = five-dash, 3 = reaper formation, 4 = scatter sickles,
+        /// 7 = sickle dashes, 9 = flaming scythes + reaper rush, 10 = death squad
+        /// (Absolute Death). Move 4 is parked out of every bag for now; its code is kept intact.
+        /// </summary>
+        protected virtual int StrongMoveMask => (1 << 2) | (1 << 3) | (1 << 7) | (1 << 9);
+
         protected virtual float PhaseTwoStrong4DashMinDistance => 900f;
         protected virtual float PhaseTwoStrong4DashMaxDistance => 1600f;
         protected virtual float PhaseTwoStrong4DashOvershoot => 220f;
@@ -227,6 +259,10 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         protected virtual bool PhaseTwoStrong2UsesSickles => true;
         protected virtual float PhaseTwoStrong2SickleSpeed => 12f;
         protected virtual bool PhaseTwoScatterBodyBoltsEnabled => false;
+        /// <summary>Scatter move: true when the body also lobs flaming scythes at the player.</summary>
+        protected virtual bool PhaseTwoScatterBodyScytheEnabled => true;
+        /// <summary>Scatter move: true when the boss keeps sliding onto the circle around the player.</summary>
+        protected virtual bool PhaseTwoScatterMovesOnCircle => false;
         protected virtual float PhaseTwoReaperLaserSpreadDegrees => 20f;
         protected virtual float PhaseTwoCircleMoveMaxSpeed => 6f;
         protected virtual float PhaseTwoCircleMoveMinSpeed => 1.5f;
@@ -249,10 +285,6 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         protected virtual Color LargeScytheWarningColor => new Color(255, 120, 35);
         protected virtual float AnimationFrameCounterStep => 0.25f;
 
-        protected int volleyTimer;
-        protected int teleportTimer;
-        protected int volleyShotsFired;
-        protected float nextWarpAngle;
 
         const int ScatterReaperModeBit = 1 << 17;
 
@@ -286,6 +318,8 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             WeakInwardScythes,
             WeakSickleRush,
             StrongSickleDash,
+            StrongReaperScytheRush,
+            StrongDeathSquad,
             Intermission
         }
 
@@ -314,6 +348,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         float phaseTwoWeak2AimAngle;
         float phaseTwoWeak3AimAngle;
         Vector4 phaseTwoWeak4WaveAngles;
+        Vector4 phaseTwoStrong5WaveAngles;
         bool phaseTwoReaperClockwise;
         int phaseTwoScatterRotationSeed;
         int phaseTwoSickleNpcIndex;
@@ -329,6 +364,17 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         int phaseTwoStrong4SpinDirection;
         bool containmentRingInitialized;
         bool containmentRingFollowsBoss;
+        // Body shader glow: nothing in phase one; it fades in with the containment ring during the
+        // transition, breathes at a baseline, and takes a 0.4s expand-then-contract pulse whenever
+        // a strong move starts.
+        const int BodyGlowFlashTicks = 24;
+        const float BodyGlowFlashOpacity = 0.5f;
+        protected virtual float BodyGlowBaselineOpacity => 0.45f;
+
+
+        float strongMoveGlowOpacity;
+        float bodyGlowFlashTimer = BodyGlowFlashTicks;
+        bool bodyGlowStrongMoveWasActive;
         Vector2 containmentRingCenter;
 
         NPCDespawnHandler despawnHandler;
@@ -389,6 +435,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             phaseTwoWeak2AimAngle = 0f;
             phaseTwoWeak3AimAngle = 0f;
             phaseTwoWeak4WaveAngles = Vector4.Zero;
+            phaseTwoStrong5WaveAngles = Vector4.Zero;
             phaseTwoReaperCenter = Vector2.Zero;
             phaseTwoReaperClockwise = true;
             phaseTwoScatterRotationSeed = 0;
@@ -404,6 +451,9 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             phaseTwoSickleSpawnAngle = 0f;
             phaseTwoStrong4SpinDirection = 1;
             containmentRingInitialized = false;
+            strongMoveGlowOpacity = 0f;
+            bodyGlowFlashTimer = BodyGlowFlashTicks;
+            bodyGlowStrongMoveWasActive = false;
             containmentRingFollowsBoss = true;
             containmentRingCenter = Vector2.Zero;
 
@@ -522,6 +572,23 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                     RunPhaseTwoAI();
                     break;
             }
+
+            float glowTarget = GetPhaseTwoGlowTargetOpacity();
+            strongMoveGlowOpacity = MathHelper.Lerp(strongMoveGlowOpacity, glowTarget, 0.035f);
+
+            // Rising edge of a strong move restarts the expand-and-contract flash. It is read off
+            // the synced attack state, so every client agrees without extra netcode.
+            bool strongMoveActive = IsStrongMoveGlowActive;
+            if (strongMoveActive && !bodyGlowStrongMoveWasActive)
+            {
+                bodyGlowFlashTimer = 0f;
+            }
+
+            bodyGlowStrongMoveWasActive = strongMoveActive;
+            if (bodyGlowFlashTimer < BodyGlowFlashTicks)
+            {
+                bodyGlowFlashTimer++;
+            }
         }
 
         void UpdateContainmentRing()
@@ -558,6 +625,39 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             return MathHelper.SmoothStep(0f, ContainmentRingRadius, GetContainmentRingProgress());
         }
 
+        bool IsStrongMoveGlowActive =>
+            bossPhase == BossPhase.PhaseTwo
+            && phaseTwoAttackState != PhaseTwoAttackState.Inactive
+            && phaseTwoAttackState != PhaseTwoAttackState.Intermission
+            && phaseTwoAttackState != PhaseTwoAttackState.WeakMove
+            && phaseTwoAttackState != PhaseTwoAttackState.WeakFlamingScythe
+            && phaseTwoAttackState != PhaseTwoAttackState.WeakStraightScythe
+            && phaseTwoAttackState != PhaseTwoAttackState.WeakInwardScythes
+            && phaseTwoAttackState != PhaseTwoAttackState.WeakSickleRush;
+
+        float GetPhaseTwoGlowTargetOpacity()
+        {
+            if (bossPhase != BossPhase.PhaseTwo)
+            {
+                return 0f;
+            }
+
+            return IsStrongMoveGlowActive ? 1f : 0.2f;
+        }
+
+        /// <summary>
+        /// 0 -> 1 -> 0 over BodyGlowFlashTicks: the glow swells out first, then contracts back.
+        /// </summary>
+        float GetBodyGlowFlash()
+        {
+            if (bodyGlowFlashTimer >= BodyGlowFlashTicks)
+            {
+                return 0f;
+            }
+
+            return (float)Math.Sin(MathHelper.Pi * bodyGlowFlashTimer / BodyGlowFlashTicks);
+        }
+
         void StartPhaseTransition()
         {
             bossPhase = BossPhase.Transition;
@@ -565,8 +665,6 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             phaseTransitionHealTimer = 0;
             phaseOneSpecialState = PhaseOneSpecialState.Inactive;
             phaseOneSpecialTimer = 0;
-            volleyTimer = 0;
-            teleportTimer = 0;
             NPC.velocity = Vector2.Zero;
             NPC.dontTakeDamage = true;
             NPC.netUpdate = true;
@@ -631,8 +729,6 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             phaseTransitionTimer = 0;
             phaseTransitionHealTimer = 0;
             NPC.dontTakeDamage = false;
-            volleyTimer = 0;
-            teleportTimer = 0;
             StartNextPhaseTwoMove();
             NPC.netUpdate = true;
         }
@@ -677,6 +773,12 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                     break;
                 case 8:
                     StartPhaseTwoWeak5Move();
+                    break;
+                case 9:
+                    StartPhaseTwoStrong5Move();
+                    break;
+                case 10:
+                    StartPhaseTwoStrong6Move();
                     break;
                 default:
                     StartPhaseTwoScatterMove();
@@ -730,7 +832,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
 
         int PickRandomStrongMove()
         {
-            const int allStrongMoves = (1 << 2) | (1 << 3) | (1 << 7);
+            int allStrongMoves = StrongMoveMask;
             int available = phaseTwoStrongBagMask;
             int lastMask = phaseTwoLastStrongMove >= 0 ? 1 << phaseTwoLastStrongMove : 0;
 
@@ -742,7 +844,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             available &= ~lastMask;
 
             int availableCount = 0;
-            for (int move = 2; move <= 7; move++)
+            for (int move = 2; move <= 10; move++)
             {
                 if ((available & (1 << move)) != 0)
                 {
@@ -752,7 +854,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
 
             int selectedSlot = Main.rand.Next(availableCount);
             int selectedMove = 2;
-            for (; selectedMove <= 7; selectedMove++)
+            for (; selectedMove <= 10; selectedMove++)
             {
                 if ((available & (1 << selectedMove)) == 0)
                 {
@@ -825,7 +927,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             FacePhaseOneTarget(target);
             if (PhaseTwoStrong2MovesOnCircle)
             {
-                MovePhaseTwoOnCircle(target);
+                MovePhaseTwoOnCircle(target, PhaseTwoStrong5CircleMoveMaxSpeed);
             }
 
             if (PhaseTwoStrong2BodyBoltsEnabled
@@ -993,7 +1095,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                         NPC.GetSource_FromAI(),
                         NPC.Center,
                         direction,
-                        GiantScytheDamage,
+                        EnemyDamage.Projectile(GiantScytheDamage),
                         UsefulFunctions.ColorToFloat(new Color(255, 120, 35)),
                         playReleaseSound: i == 0);
                 }
@@ -1177,7 +1279,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                     position,
                     direction * PhaseTwoWeak3ScytheSpeed,
                     ModContent.ProjectileType<DeathFlamingScythe>(),
-                    GiantScytheDamage,
+                    EnemyDamage.Projectile(GiantScytheDamage),
                     0f,
                     Main.myPlayer,
                     position.X,
@@ -1196,7 +1298,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                     position,
                     -direction * PhaseTwoWeak3ScytheSpeed,
                     ModContent.ProjectileType<DeathFlamingScythe>(),
-                    GiantScytheDamage,
+                    EnemyDamage.Projectile(GiantScytheDamage),
                     0f,
                     Main.myPlayer,
                     position.X,
@@ -1330,7 +1432,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                     position,
                     -radial * PhaseTwoWeak3ScytheSpeed,
                     ModContent.ProjectileType<DeathFlamingScythe>(),
-                    GiantScytheDamage,
+                    EnemyDamage.Projectile(GiantScytheDamage),
                     0f,
                     Main.myPlayer,
                     position.X,
@@ -1537,7 +1639,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                 FacePhaseOneTarget(target);
                 float progress = (elapsed + 1) / (float)PhaseTwoStrong4FadeInTicks;
                 float rotation = phaseTwoSickleBaseRotation + phaseTwoStrong4SpinDirection * 0.35f * progress;
-                SetPhaseTwoSicklePose(phaseTwoSickleSpawnPosition, rotation, NPC.direction, progress, 0);
+                SetPhaseTwoSicklePose(phaseTwoSickleSpawnPosition, rotation, 1, progress, 0);
                 return;
             }
 
@@ -1590,7 +1692,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                         sickle.NPC.rotation += phaseTwoSickleAngularVelocity;
                         phaseTwoSickleAngularVelocity *= 0.92f;
                     }
-                    sickle.SetPose(sickle.NPC.Center, sickle.NPC.rotation, NPC.direction, 1f, GiantScytheDamage);
+                    sickle.SetPose(sickle.NPC.Center, sickle.NPC.rotation, 1, 1f, GiantScytheDamage);
                 }
                 NPC.netUpdate = true;
                 return;
@@ -1606,7 +1708,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                     sickle.NPC.Center += phaseTwoSickleVelocity;
                     phaseTwoSickleVelocity *= 0.90f;
                     sickle.NPC.rotation += phaseTwoStrong4SpinDirection * 0.05f;
-                    sickle.SetPose(sickle.NPC.Center, sickle.NPC.rotation, NPC.direction, 1f - progress, 0);
+                    sickle.SetPose(sickle.NPC.Center, sickle.NPC.rotation, 1, 1f - progress, 0);
                 }
 
                 containmentRingCenter = Vector2.Lerp(
@@ -1625,6 +1727,299 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             {
                 BeginPhaseTwoIntermission(0);
             }
+        }
+
+        void StartPhaseTwoStrong5Move()
+        {
+            PlayStrongMoveRoar();
+            phaseTwoAttackState = PhaseTwoAttackState.StrongReaperScytheRush;
+            phaseTwoAttackTimer = 0;
+            phaseTwoStrong5WaveAngles = Vector4.Zero;
+            containmentRingFollowsBoss = true;
+            NPC.velocity = Vector2.Zero;
+            NPC.netUpdate = true;
+        }
+
+        void TickPhaseTwoStrong5Move(Player target)
+        {
+            phaseTwoAttackTimer++;
+            int elapsed = phaseTwoAttackTimer - 1;
+            int attackEnd = PhaseTwoStrong5AttackStartTicks + PhaseTwoStrong5AttackDurationTicks;
+            if (elapsed < attackEnd)
+            {
+                if (PhaseTwoStrong5SnapsThenHolds && elapsed >= PhaseTwoStrong5AttackStartTicks)
+                {
+                    // One snap onto the circle, then planted: after the opening volley the boss holds
+                    // position for the rest of the move.
+                    NPC.velocity = Vector2.Zero;
+                    FacePhaseOneTarget(target);
+                }
+                else
+                {
+                    MovePhaseTwoOnCircle(target);
+                }
+            }
+            else
+            {
+                NPC.velocity = Vector2.Zero;
+                FacePhaseOneTarget(target);
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                SpawnPhaseTwoStrong5Warnings(elapsed);
+                SpawnPhaseTwoStrong5Waves(elapsed);
+                SpawnPhaseTwoStrong5Reapers(elapsed);
+            }
+
+            if (elapsed >= PhaseTwoStrong5DurationTicks)
+            {
+                ClearDeathReapers();
+                containmentRingFollowsBoss = true;
+                containmentRingCenter = NPC.Center;
+                BeginPhaseTwoIntermission();
+            }
+        }
+
+        void StartPhaseTwoStrong6Move()
+        {
+            PlayStrongMoveRoar();
+            phaseTwoAttackState = PhaseTwoAttackState.StrongDeathSquad;
+            phaseTwoAttackTimer = 0;
+            containmentRingFollowsBoss = false;
+            phaseTwoFixedRingCenter = containmentRingCenter;
+            NPC.velocity = Vector2.Zero;
+
+            // Teleport straight up so the firing line gets a clean platform over the arena.
+            NPC.Center = new Vector2(NPC.Center.X, NPC.Center.Y - PhaseTwoStrong6TeleportOffset);
+            // Landing on top of the player right after a blind teleport would be unavoidable, so
+            // contact damage stays off until the squad is up and firing.
+            NPC.damage = 0;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                SpawnPhaseTwoStrong6Squad();
+            }
+
+            NPC.netUpdate = true;
+        }
+
+        /// <summary>
+        /// Spawns the four-Reaper firing line. Slots are numbered 1-4 from left to right at
+        /// -2, -1, +1 and +2 spacings; DeathReaper drives their individual fire patterns.
+        /// </summary>
+        void SpawnPhaseTwoStrong6Squad()
+        {
+            float spacing = PhaseTwoStrong6ReaperSpacing;
+            for (int index = 1; index <= 4; index++)
+            {
+                // Slots read 1-2-3-4 strictly left to right: -2, -1, +1, +2 spacings. #1/#4 are
+                // therefore the outer pair (the cardinal sweepers) and #2/#3 sit inside them.
+                float offset = index switch
+                {
+                    1 => -2f * spacing,
+                    2 => -spacing,
+                    3 => spacing,
+                    _ => 2f * spacing
+                };
+                Vector2 spawn = new Vector2(NPC.Center.X + offset, NPC.Center.Y);
+
+                NPC.NewNPC(
+                    NPC.GetSource_FromAI(),
+                    (int)spawn.X,
+                    (int)spawn.Y,
+                    ModContent.NPCType<DeathReaper>(),
+                    ai0: NPC.whoAmI,
+                    ai1: DeathReaper.Strong6ModeBit | index,
+                    ai2: spawn.X,
+                    ai3: spawn.Y);
+            }
+        }
+
+        void TickPhaseTwoStrong6Move(Player target)
+        {
+            phaseTwoAttackTimer++;
+            int elapsed = phaseTwoAttackTimer - 1;
+            int attackEnd = PhaseTwoStrong6AttackStartTicks + PhaseTwoStrong6AttackDurationTicks;
+            int ringReturnStart = attackEnd + PhaseTwoStrong6RecoveryTicks - PhaseTwoStrong6RingReturnTicks;
+
+            // The boss plants itself for the whole move; the squad does the work.
+            NPC.velocity = Vector2.Zero;
+            FacePhaseOneTarget(target);
+
+            if (elapsed < PhaseTwoStrong6ContactSuppressTicks)
+            {
+                NPC.damage = 0;
+            }
+            else if (NPC.damage != BodyContactDamage)
+            {
+                NPC.damage = BodyContactDamage;
+            }
+
+            if (elapsed < ringReturnStart)
+            {
+                containmentRingCenter = phaseTwoFixedRingCenter;
+            }
+            else
+            {
+                float progress = MathHelper.Clamp(
+                    (elapsed - ringReturnStart) / (float)PhaseTwoStrong6RingReturnTicks,
+                    0f,
+                    1f);
+                containmentRingCenter = Vector2.Lerp(
+                    phaseTwoFixedRingCenter,
+                    NPC.Center,
+                    MathHelper.SmoothStep(0f, 1f, progress));
+            }
+
+            if (elapsed >= PhaseTwoStrong6DurationTicks)
+            {
+                ClearDeathReapers();
+                containmentRingFollowsBoss = true;
+                containmentRingCenter = NPC.Center;
+                NPC.damage = BodyContactDamage;
+                BeginPhaseTwoIntermission();
+            }
+        }
+
+        void SpawnPhaseTwoStrong5Warnings(int elapsed)
+        {
+            int warningStart = PhaseTwoStrong5AttackStartTicks - PhaseTwoStrong5WarningTicks;
+            if (elapsed < warningStart)
+            {
+                return;
+            }
+
+            int wave = (elapsed - warningStart) / PhaseTwoStrong5WaveIntervalTicks;
+            if (wave < 0 || wave >= PhaseTwoStrong5WaveCount
+                || (elapsed - warningStart) % PhaseTwoStrong5WaveIntervalTicks != 0)
+            {
+                return;
+            }
+
+            float aimAngle = (Main.player[NPC.target].Center - NPC.Center).ToRotation();
+            SetPhaseTwoStrong5WaveAngle(wave, aimAngle);
+
+            for (int i = 0; i < PhaseTwoStrong5ScythesPerWave; i++)
+            {
+                float angle = GetPhaseTwoStrong5ScytheAngle(wave, i, aimAngle);
+                Vector2 direction = angle.ToRotationVector2();
+                DeathLaserWarning.Spawn(
+                    NPC.GetSource_FromAI(),
+                    NPC,
+                    LargeScytheWarningColor,
+                    trackTicks: 0,
+                    totalTicks: PhaseTwoStrong5WarningTicks,
+                    beamLength: PhaseTwoStrong5WarningLength,
+                    beamSize: 0.18f,
+                    beamBrightness: 1.2f,
+                    origin: NPC.Center,
+                    direction: direction,
+                    followHost: true);
+            }
+        }
+
+        void SpawnPhaseTwoStrong5Waves(int elapsed)
+        {
+            if (elapsed < PhaseTwoStrong5AttackStartTicks)
+            {
+                return;
+            }
+
+            int wave = (elapsed - PhaseTwoStrong5AttackStartTicks) / PhaseTwoStrong5WaveIntervalTicks;
+            if (wave < 0 || wave >= PhaseTwoStrong5WaveCount
+                || (elapsed - PhaseTwoStrong5AttackStartTicks) % PhaseTwoStrong5WaveIntervalTicks != 0)
+            {
+                return;
+            }
+
+            float aimAngle = GetPhaseTwoStrong5WaveAngle(wave);
+            for (int i = 0; i < PhaseTwoStrong5ScythesPerWave; i++)
+            {
+                float angle = GetPhaseTwoStrong5ScytheAngle(wave, i, aimAngle);
+                Vector2 direction = angle.ToRotationVector2();
+                Projectile.NewProjectile(
+                    NPC.GetSource_FromAI(),
+                    NPC.Center,
+                    direction * PhaseTwoStrong5ScytheSpeed,
+                    ModContent.ProjectileType<DeathFlamingScythe>(),
+                    EnemyDamage.Projectile(GiantScytheDamage),
+                    0f,
+                    Main.myPlayer,
+                    NPC.Center.X,
+                    NPC.Center.Y,
+                    (float)DeathFlamingScythe.MovementMode.Straight);
+            }
+
+            PlayDeathSickleUseSound();
+        }
+
+        void SpawnPhaseTwoStrong5Reapers(int elapsed)
+        {
+            if (elapsed < PhaseTwoStrong5AttackStartTicks)
+            {
+                return;
+            }
+
+            int reaperIndex = (elapsed - PhaseTwoStrong5AttackStartTicks) / PhaseTwoStrong5ReaperIntervalTicks;
+            if (reaperIndex < 0 || reaperIndex >= PhaseTwoStrong5ReaperCount
+                || (elapsed - PhaseTwoStrong5AttackStartTicks) % PhaseTwoStrong5ReaperIntervalTicks != 0)
+            {
+                return;
+            }
+
+            float spawnAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+            NPC.NewNPC(
+                NPC.GetSource_FromAI(),
+                (int)NPC.Center.X,
+                (int)NPC.Center.Y,
+                ModContent.NPCType<DeathReaper>(),
+                ai0: NPC.whoAmI,
+                ai1: DeathReaper.Strong5ChargeModeBit,
+                ai2: spawnAngle,
+                ai3: 0f);
+        }
+
+        float GetPhaseTwoStrong5ScytheAngle(int wave, int index, float aimAngle)
+        {
+            // Wave 0 and every even wave put the player on the bisector between two lines (even volley);
+            // odd waves put a line straight on the player. The two alternate across the move.
+            float step = MathHelper.TwoPi / PhaseTwoStrong5ScythesPerWave;
+            bool bisectorWave = wave % 2 == 0;
+            float offset = bisectorWave ? step * 0.5f : 0f;
+            return aimAngle + offset + index * step;
+        }
+
+        float GetPhaseTwoStrong5WaveAngle(int wave)
+        {
+            return wave switch
+            {
+                0 => phaseTwoStrong5WaveAngles.X,
+                1 => phaseTwoStrong5WaveAngles.Y,
+                2 => phaseTwoStrong5WaveAngles.Z,
+                _ => phaseTwoStrong5WaveAngles.W
+            };
+        }
+
+        void SetPhaseTwoStrong5WaveAngle(int wave, float angle)
+        {
+            switch (wave)
+            {
+                case 0:
+                    phaseTwoStrong5WaveAngles.X = angle;
+                    break;
+                case 1:
+                    phaseTwoStrong5WaveAngles.Y = angle;
+                    break;
+                case 2:
+                    phaseTwoStrong5WaveAngles.Z = angle;
+                    break;
+                default:
+                    phaseTwoStrong5WaveAngles.W = angle;
+                    break;
+            }
+
+            NPC.netUpdate = true;
         }
 
         DeathSickleWeapon GetPhaseTwoSickle()
@@ -1684,13 +2079,31 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             }
         }
 
+        /// <summary>
+        /// Random rotation applied to the scatter formation. Derived from the synced seed rather than
+        /// Main.rand so every client places the six summons identically while the spacing stays even.
+        /// </summary>
+        float GetScatterFormationAngle()
+        {
+            uint hash = (uint)phaseTwoScatterRotationSeed;
+            hash ^= hash >> 16;
+            hash *= 0x7FEB352Du;
+            hash ^= hash >> 15;
+            hash *= 0x846CA68Bu;
+            hash ^= hash >> 16;
+            return (hash & 0xFFFF) / 65535f * MathHelper.TwoPi;
+        }
+
         void StartPhaseTwoScatterMove()
         {
             PlayStrongMoveRoar();
             phaseTwoAttackState = PhaseTwoAttackState.ScatterMove;
             phaseTwoAttackTimer = 0;
             NPC.velocity = Vector2.Zero;
-            containmentRingFollowsBoss = true;
+            // Pin the ring where it stands for the whole move; it slides back onto the boss during the
+            // fade-out.
+            containmentRingFollowsBoss = false;
+            phaseTwoFixedRingCenter = containmentRingCenter;
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -1722,48 +2135,70 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         void TickPhaseTwoScatterMove(Player target)
         {
             phaseTwoAttackTimer++;
-            NPC.velocity = Vector2.Zero;
             NPC.rotation = 0f;
             FacePhaseOneTarget(target);
 
-            if (phaseTwoAttackTimer >= PhaseTwoReaperBoltStartTicks
-                && PhaseTwoScatterBodyBoltsEnabled
-                && phaseTwoAttackTimer < PhaseTwoScatterFadeStartTicks
-                && (phaseTwoAttackTimer - PhaseTwoReaperBoltStartTicks) % PhaseTwoScatterBoltIntervalTicks == 0)
+            if (PhaseTwoScatterMovesOnCircle)
             {
-                SpawnPhaseTwoScatterBoltRing(target);
+                MovePhaseTwoOnCircle(target, radiusOverride: PhaseTwoScatterCircleRadius);
+            }
+            else
+            {
+                NPC.velocity = Vector2.Zero;
+            }
+
+            // The body lobs a flaming scythe at the player on its interval - no telegraph line.
+            if (PhaseTwoScatterBodyScytheEnabled
+                && phaseTwoAttackTimer >= PhaseTwoReaperBoltStartTicks
+                && phaseTwoAttackTimer < PhaseTwoScatterFadeStartTicks
+                && (phaseTwoAttackTimer - PhaseTwoReaperBoltStartTicks) % PhaseTwoScatterFlamingScytheIntervalTicks == 0)
+            {
+                // Swing sound on every client; the projectile itself is only spawned by the server.
+                PlayDeathSickleUseSound();
+                SpawnPhaseTwoScatterFlamingScythe(target);
+            }
+
+            if (phaseTwoAttackTimer >= PhaseTwoScatterFadeStartTicks)
+            {
+                // The fade-out doubles as the pinned ring sliding back onto the boss.
+                float ringReturnProgress = MathHelper.Clamp(
+                    (phaseTwoAttackTimer - PhaseTwoScatterFadeStartTicks)
+                        / (float)Math.Max(1, PhaseTwoScatterDurationTicks - PhaseTwoScatterFadeStartTicks),
+                    0f,
+                    1f);
+                containmentRingCenter = Vector2.Lerp(
+                    phaseTwoFixedRingCenter,
+                    NPC.Center,
+                    MathHelper.SmoothStep(0f, 1f, ringReturnProgress));
             }
 
             if (phaseTwoAttackTimer >= PhaseTwoScatterDurationTicks)
             {
+                containmentRingFollowsBoss = true;
+                containmentRingCenter = NPC.Center;
                 BeginPhaseTwoIntermission();
             }
         }
 
-        void SpawnPhaseTwoScatterBoltRing(Player target)
+        void SpawnPhaseTwoScatterFlamingScythe(Player target)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
 
-            float aimAngle = (target.Center - NPC.Center).ToRotation();
-            float spacing = MathHelper.ToRadians(PhaseTwoScatterBoltSpacingDegrees);
-            for (int i = 0; i < PhaseTwoScatterBoltCount; i++)
-            {
-                Vector2 direction = (aimAngle + spacing * i).ToRotationVector2();
-                Projectile.NewProjectile(
-                    NPC.GetSource_FromAI(),
-                    NPC.Center,
-                    direction * PhaseTwoScatterBoltSpeed,
-                    ModContent.ProjectileType<DeathBolt>(),
-                    BoltDamage,
-                    0f,
-                    Main.myPlayer,
-                    direction.X,
-                    direction.Y,
-                    UsefulFunctions.ColorToFloat(PhaseOneBoltColor));
-            }
+            Vector2 direction = (target.Center - NPC.Center).SafeNormalize(-Vector2.UnitY);
+            Projectile.NewProjectile(
+                NPC.GetSource_FromAI(),
+                NPC.Center,
+                direction * PhaseTwoScatterFlamingScytheSpeed,
+                ModContent.ProjectileType<DeathFlamingScythe>(),
+                EnemyDamage.Projectile(GiantScytheDamage),
+                0f,
+                Main.myPlayer,
+                NPC.Center.X,
+                NPC.Center.Y,
+                (float)DeathFlamingScythe.MovementMode.Straight);
         }
 
         void MovePhaseTwoChase(Player target)
@@ -1796,12 +2231,12 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             }
         }
 
-        void MovePhaseTwoOnCircle(Player target)
+        void MovePhaseTwoOnCircle(Player target, float? maxSpeedOverride = null, float? radiusOverride = null)
         {
             NPC.rotation = 0f;
             Vector2 fromPlayer = NPC.Center - target.Center;
             Vector2 radial = fromPlayer.SafeNormalize(-Vector2.UnitY);
-            Vector2 destination = target.Center + radial * PhaseTwoCircleRadius;
+            Vector2 destination = target.Center + radial * (radiusOverride ?? PhaseTwoCircleRadius);
             Vector2 toDestination = destination - NPC.Center;
             float distance = toDestination.Length();
 
@@ -1809,7 +2244,8 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             if (distance > 1f)
             {
                 float slowFactor = MathHelper.Clamp(distance / 120f, 0f, 1f);
-                float speed = MathHelper.Lerp(PhaseTwoCircleMoveMinSpeed, PhaseTwoCircleMoveMaxSpeed, slowFactor);
+                float maxSpeed = maxSpeedOverride ?? PhaseTwoCircleMoveMaxSpeed;
+                float speed = MathHelper.Lerp(PhaseTwoCircleMoveMinSpeed, maxSpeed, slowFactor);
                 desiredVelocity = toDestination / distance * speed;
             }
 
@@ -1963,6 +2399,14 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             else if (phaseTwoAttackState == PhaseTwoAttackState.StrongSickleDash)
             {
                 TickPhaseTwoStrong4Move(Main.player[NPC.target]);
+            }
+            else if (phaseTwoAttackState == PhaseTwoAttackState.StrongReaperScytheRush)
+            {
+                TickPhaseTwoStrong5Move(Main.player[NPC.target]);
+            }
+            else if (phaseTwoAttackState == PhaseTwoAttackState.StrongDeathSquad)
+            {
+                TickPhaseTwoStrong6Move(Main.player[NPC.target]);
             }
             else if (phaseTwoAttackState == PhaseTwoAttackState.Intermission)
             {
@@ -2351,109 +2795,10 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             }
         }
 
-        // Legacy fallback retained for reference only. The current state machine never calls it;
-        // remove it with the old volley/warp fields in a dedicated cleanup.
-        void RunLegacyPlaceholderAI()
-        {
-            volleyTimer++;
-            teleportTimer++;
-            TickVolley();
-
-            if (teleportTimer >= 40)
-            {
-                NPC.velocity.X *= 0.97f;
-                NPC.velocity.Y *= 0.97f;
-            }
-
-            if (ShouldWarp())
-            {
-                WarpNearTarget();
-            }
-        }
-
-        void TickVolley()
-        {
-            if (volleyTimer < VolleyInterval || volleyShotsFired >= VolleyCount)
-            {
-                return;
-            }
-
-            Vector2 origin = new Vector2(NPC.position.X + NPC.width * 0.5f, NPC.position.Y + NPC.height * 0.5f);
-            Player target = Main.player[NPC.target];
-            float rotation = (float)Math.Atan2(
-                origin.Y - (target.position.Y + target.height * 0.5f),
-                origin.X - (target.position.X + target.width * 0.5f));
-
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Projectile.NewProjectile(
-                    NPC.GetSource_FromThis(),
-                    origin.X,
-                    origin.Y,
-                    (float)(Math.Cos(rotation) * VolleySpeed) * -1f,
-                    (float)(Math.Sin(rotation) * VolleySpeed) * -1f,
-                    VolleyProjectileType,
-                    VolleyDamage,
-                    0f,
-                    Main.myPlayer);
-            }
-
-            volleyTimer = 0;
-            volleyShotsFired++;
-        }
-
-        bool ShouldWarp()
-        {
-            bool lowHealth = NPC.life <= NPC.lifeMax * LowHealthWarpThreshold;
-            return lowHealth
-                ? teleportTimer >= LowHealthWarpTicks
-                : teleportTimer >= NormalWarpTicks;
-        }
-
-        void WarpNearTarget()
-        {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-
-            for (int i = 0; i < 10; i++)
-            {
-                int dust = Dust.NewDust(
-                    NPC.position,
-                    NPC.width,
-                    NPC.height,
-                    DustID.GemAmethyst,
-                    NPC.velocity.X + Main.rand.Next(-10, 10),
-                    NPC.velocity.Y + Main.rand.Next(-10, 10),
-                    200,
-                    default,
-                    4f);
-                Main.dust[dust].noGravity = true;
-            }
-
-            volleyShotsFired = 0;
-            teleportTimer = 0;
-
-            Player target = Main.player[NPC.target];
-            NPC.position.X = target.position.X + (float)(WarpDistance * Math.Cos(nextWarpAngle)) * -1f;
-            NPC.position.Y = target.position.Y + (float)(WarpDistance * Math.Sin(nextWarpAngle)) * -1f;
-
-            Vector2 origin = new Vector2(NPC.position.X + NPC.width * 0.5f, NPC.position.Y + NPC.height * 0.5f);
-            float rotation = (float)Math.Atan2(
-                origin.Y - (target.position.Y + target.height * 0.5f),
-                origin.X - (target.position.X + target.width * 0.5f));
-
-            NPC.velocity.X = (float)Math.Cos(rotation) * WarpSpeed * -1f;
-            NPC.velocity.Y = (float)Math.Sin(rotation) * WarpSpeed * -1f;
-            nextWarpAngle = (float)(Main.rand.Next(360) * (Math.PI / 180));
-            NPC.netUpdate = true;
-        }
 
         // Attack state and timers are custom fields, so transitions must request a sync explicitly.
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(nextWarpAngle);
-            writer.Write(volleyTimer);
-            writer.Write(teleportTimer);
-            writer.Write(volleyShotsFired);
             writer.Write(containmentRingInitialized);
             writer.WriteVector2(containmentRingCenter);
             writer.Write((byte)bossPhase);
@@ -2479,6 +2824,10 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             writer.Write(phaseTwoWeak4WaveAngles.Y);
             writer.Write(phaseTwoWeak4WaveAngles.Z);
             writer.Write(phaseTwoWeak4WaveAngles.W);
+            writer.Write(phaseTwoStrong5WaveAngles.X);
+            writer.Write(phaseTwoStrong5WaveAngles.Y);
+            writer.Write(phaseTwoStrong5WaveAngles.Z);
+            writer.Write(phaseTwoStrong5WaveAngles.W);
             writer.Write(phaseTwoScatterRotationSeed);
             writer.Write(phaseTwoSickleNpcIndex);
             writer.WriteVector2(phaseTwoSickleVelocity);
@@ -2498,10 +2847,6 @@ namespace tsorcRevamp.NPCs.Bosses.Death
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            nextWarpAngle = reader.ReadSingle();
-            volleyTimer = reader.ReadInt32();
-            teleportTimer = reader.ReadInt32();
-            volleyShotsFired = reader.ReadInt32();
             containmentRingInitialized = reader.ReadBoolean();
             containmentRingCenter = reader.ReadVector2();
             bossPhase = (BossPhase)reader.ReadByte();
@@ -2528,6 +2873,11 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                 reader.ReadSingle(),
                 reader.ReadSingle(),
                 reader.ReadSingle());
+            phaseTwoStrong5WaveAngles = new Vector4(
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle());
             phaseTwoScatterRotationSeed = reader.ReadInt32();
             phaseTwoSickleNpcIndex = reader.ReadInt32();
             phaseTwoSickleVelocity = reader.ReadVector2();
@@ -2549,16 +2899,13 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         {
             if (!Main.dedServ)
             {
-                if (containmentRingInitialized && containmentRingAge > 0)
-                {
-                    DrawBossGlow(screenPos);
-                }
+                DrawBodyGlow();
             }
 
             if (UsesContainmentRing && !Main.dedServ && containmentRingAge > 0)
             {
                 float opacity = MathHelper.SmoothStep(0f, 1f, GetContainmentRingProgress());
-                Color coreColor = Color.Lerp(AuraColor, Color.White, 0.65f);
+            Color coreColor = Color.Lerp(AuraColor, Color.White, 0.2f);
                 DeathContainmentRingVFX.DrawBoundaryFog(
                     containmentRingCenter,
                     GetContainmentRingRadius(),
@@ -2576,36 +2923,88 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             }
 
 
-            return base.PreDraw(spriteBatch, screenPos, drawColor);
+            if (!Main.dedServ)
+            {
+                DrawBody(screenPos, drawColor);
+            }
+
+
+            return false;
         }
 
-        void DrawBossGlow(Vector2 screenPos)
+        /// <summary>
+        /// Draws the body ourselves instead of letting the vanilla path do it. Measured off a
+        /// screenshot with a hitbox overlay, the vanilla draw on this NPC lands the sprite ~34
+        /// source pixels above its own hitbox (and above the aura), so the body is drawn here from
+        /// NPC.Center with the frame-centre origin, matching the aura's screen-space source.
+        /// </summary>
+        void DrawBody(Vector2 screenPos, Color drawColor)
         {
-            Texture2D texture = TextureAssets.Npc[NPC.type].Value;
+            if (NPC.hide)
+            {
+                return;
+            }
+
             Rectangle frame = NPC.frame;
             if (frame.Width <= 0 || frame.Height <= 0)
             {
                 return;
             }
 
-            Vector2 origin = frame.Size() / 2f;
-            Vector2 position = NPC.Center - screenPos + new Vector2(0f, -4f);
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Color glowColor = Color.Lerp(AuraColor, new Color(70, 10, 100), 0.35f);
+            Main.EntitySpriteDraw(
+                TextureAssets.Npc[NPC.type].Value,
+                NPC.Center - Main.screenPosition + new Vector2(0f, NPC.gfxOffY),
+                frame,
+                NPC.GetAlpha(drawColor),
+                NPC.rotation,
+                frame.Size() / 2f,
+                NPC.scale,
+                NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+                0f);
+        }
 
-            for (int i = 4; i >= 1; i--)
+        /// <summary>
+        /// Body aura. Shader-driven so it follows the body's exact frame, rotation and flip.
+        /// Baseline breathes on its own (see DeathVFX.DrawShaderGlow); a running strong move holds
+        /// a bigger, brighter aura, and its opening moments add a swell-then-contract flash.
+        /// </summary>
+        void DrawBodyGlow()
+        {
+            Rectangle frame = NPC.frame;
+            if (frame.Width <= 0 || frame.Height <= 0)
             {
-                Main.EntitySpriteDraw(
-                    texture,
-                    position,
-                    frame,
-                    glowColor * (0.07f * i),
-                    NPC.rotation,
-                    origin,
-                    NPC.scale * (1f + i * 0.055f),
-                    effects,
-                    0f);
+                return;
             }
+
+            // Phase one carries no aura at all: the glow fades in with the containment ring that
+            // appears during the phase transition.
+            float fadeIn = UsesContainmentRing ? MathHelper.SmoothStep(0f, 1f, GetContainmentRingProgress()) : 0f;
+            if (fadeIn <= 0.001f)
+            {
+                return;
+            }
+
+            float steady = MathHelper.Lerp(BodyGlowBaselineOpacity, 1f, strongMoveGlowOpacity);
+            float flash = GetBodyGlowFlash();
+            float opacity = MathHelper.Clamp(steady + flash * BodyGlowFlashOpacity, 0f, 1f) * fadeIn;
+
+            DeathVFX.DrawShaderGlow(
+                TextureAssets.Npc[NPC.type].Value,
+                frame,
+                NPC.Center,
+                NPC.rotation,
+                frame.Size() / 2f,
+                NPC.scale,
+                NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+                VfxGlowColor,
+                opacity,
+                haloRadius: MathHelper.Lerp(5f, 8f, strongMoveGlowOpacity) + flash * 3.5f,
+                haloDirections: 10,
+                bloomScale: MathHelper.Lerp(1.18f, 1.32f, strongMoveGlowOpacity) + flash * 0.25f,
+                bloomOpacity: 0.22f + 0.25f * strongMoveGlowOpacity + flash * 0.2f,
+                rimOpacity: 0.35f + 0.25f * strongMoveGlowOpacity + flash * 0.3f,
+                coreOpacity: 0.3f + 0.15f * strongMoveGlowOpacity + flash * 0.25f,
+                coreWhiteMix: 0.3f);
         }
 
         void TickContainmentRingVisuals()
@@ -2734,6 +3133,9 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                 && phaseTwoAttackTimer >= PhaseTwoWeak5FadeInTicks + PhaseTwoWeak5ChargeRotateTicks + PhaseTwoWeak5ChargeHoldTicks
                 && phaseTwoAttackTimer < PhaseTwoWeak5FadeInTicks + PhaseTwoWeak5ChargeRotateTicks + PhaseTwoWeak5ChargeHoldTicks
                     + PhaseTwoWeak5SwingCycleTicks * PhaseTwoWeak5SwingCycles;
+            specialAnimation |= phaseTwoAttackState == PhaseTwoAttackState.StrongReaperScytheRush
+                && phaseTwoAttackTimer >= PhaseTwoStrong5AttackStartTicks
+                && phaseTwoAttackTimer < PhaseTwoStrong5AttackStartTicks + PhaseTwoStrong5AttackDurationTicks;
             int frameStart = specialAnimation ? SpecialAnimationFrameStart : 0;
             int frameCount = specialAnimation ? SpecialAnimationFrameCount : NormalAnimationFrameCount;
             NPC.frameCounter += AnimationFrameCounterStep;
@@ -2791,11 +3193,132 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             // NOTE: Death and Absolute Death are not registered in PoiseProfiles yet, and the
             // attack state machine does not set AttackTelegraphing/AttackCommitted. This method
             // deliberately preserves current behavior until the poise rollout is designed.
-            volleyTimer = 0;
-            teleportTimer = 0;
-            volleyShotsFired = 0;
             npc.velocity *= 0.5f;
             npc.netUpdate = true;
         }
+
+        // ---------------------------------------------------------------------------------------
+        // OLD AI (pre-rework Death behaviour) - kept commented out for reference only.
+        // It chased the player, fired a homing volley on a timer and warped around them. The
+        // current state machine never calls any of it. The matching overrides are commented out in
+        // Death.cs / TrueDeath.cs; the old reset lines lived in StartPhaseTransition, the
+        // transition-to-phase-two hand-off, OnStagger, SendExtraAI and ReceiveExtraAI.
+        // To restore: un-comment this block plus those overrides, and re-add the reset/sync lines.
+        //
+        // protected abstract int VolleyProjectileType { get; }
+        // protected virtual int VolleyDamage => BoltDamage;
+        // protected virtual int VolleyInterval => 12;
+        // protected virtual int VolleyCount => 5;
+        // protected virtual float VolleySpeed => 0.5f;
+        // protected virtual int NormalWarpTicks => 150;
+        // protected virtual int LowHealthWarpTicks => 100;
+        // protected virtual float LowHealthWarpThreshold => 0.15f;
+        // protected virtual int WarpDistance => 600;
+        // protected virtual float WarpSpeed => 14f;
+        //
+        // protected int volleyTimer;
+        // protected int teleportTimer;
+        // protected int volleyShotsFired;
+        // protected float nextWarpAngle;
+        //
+        // void RunLegacyPlaceholderAI()
+        // {
+        //     volleyTimer++;
+        //     teleportTimer++;
+        //     TickVolley();
+        //
+        //     if (teleportTimer >= 40)
+        //     {
+        //         NPC.velocity.X *= 0.97f;
+        //         NPC.velocity.Y *= 0.97f;
+        //     }
+        //
+        //     if (ShouldWarp())
+        //     {
+        //         WarpNearTarget();
+        //     }
+        // }
+        //
+        // void TickVolley()
+        // {
+        //     if (volleyTimer < VolleyInterval || volleyShotsFired >= VolleyCount)
+        //     {
+        //         return;
+        //     }
+        //
+        //     Vector2 origin = new Vector2(NPC.position.X + NPC.width * 0.5f, NPC.position.Y + NPC.height * 0.5f);
+        //     Player target = Main.player[NPC.target];
+        //     float rotation = (float)Math.Atan2(
+        //         origin.Y - (target.position.Y + target.height * 0.5f),
+        //         origin.X - (target.position.X + target.width * 0.5f));
+        //
+        //     if (Main.netMode != NetmodeID.MultiplayerClient)
+        //     {
+        //         Projectile.NewProjectile(
+        //             NPC.GetSource_FromThis(),
+        //             origin.X,
+        //             origin.Y,
+        //             (float)(Math.Cos(rotation) * VolleySpeed) * -1f,
+        //             (float)(Math.Sin(rotation) * VolleySpeed) * -1f,
+        //             VolleyProjectileType,
+        //             VolleyDamage,
+        //             0f,
+        //             Main.myPlayer);
+        //     }
+        //
+        //     volleyTimer = 0;
+        //     volleyShotsFired++;
+        // }
+        //
+        // bool ShouldWarp()
+        // {
+        //     bool lowHealth = NPC.life <= NPC.lifeMax * LowHealthWarpThreshold;
+        //     return lowHealth
+        //         ? teleportTimer >= LowHealthWarpTicks
+        //         : teleportTimer >= NormalWarpTicks;
+        // }
+        //
+        // void WarpNearTarget()
+        // {
+        //     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+        //
+        //     for (int i = 0; i < 10; i++)
+        //     {
+        //         int dust = Dust.NewDust(
+        //             NPC.position,
+        //             NPC.width,
+        //             NPC.height,
+        //             DustID.GemAmethyst,
+        //             NPC.velocity.X + Main.rand.Next(-10, 10),
+        //             NPC.velocity.Y + Main.rand.Next(-10, 10),
+        //             200,
+        //             default,
+        //             4f);
+        //         Main.dust[dust].noGravity = true;
+        //     }
+        //
+        //     volleyShotsFired = 0;
+        //     teleportTimer = 0;
+        //
+        //     Player target = Main.player[NPC.target];
+        //     NPC.position.X = target.position.X + (float)(WarpDistance * Math.Cos(nextWarpAngle)) * -1f;
+        //     NPC.position.Y = target.position.Y + (float)(WarpDistance * Math.Sin(nextWarpAngle)) * -1f;
+        //
+        //     Vector2 origin = new Vector2(NPC.position.X + NPC.width * 0.5f, NPC.position.Y + NPC.height * 0.5f);
+        //     float rotation = (float)Math.Atan2(
+        //         origin.Y - (target.position.Y + target.height * 0.5f),
+        //         origin.X - (target.position.X + target.width * 0.5f));
+        //
+        //     NPC.velocity.X = (float)Math.Cos(rotation) * WarpSpeed * -1f;
+        //     NPC.velocity.Y = (float)Math.Sin(rotation) * WarpSpeed * -1f;
+        //     nextWarpAngle = (float)(Main.rand.Next(360) * (Math.PI / 180));
+        //     NPC.netUpdate = true;
+        // }
+        //
+        // // Old AI state resets (removed from StartPhaseTransition, the phase-two hand-off and OnStagger):
+        // //   volleyTimer = 0; teleportTimer = 0; volleyShotsFired = 0;
+        // // Old AI network sync (removed from SendExtraAI / ReceiveExtraAI, in this order):
+        // //   nextWarpAngle, volleyTimer, teleportTimer, volleyShotsFired
+        // ---------------------------------------------------------------------------------------
     }
 }

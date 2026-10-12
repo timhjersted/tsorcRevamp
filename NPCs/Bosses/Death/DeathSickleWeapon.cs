@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Death;
 
 namespace tsorcRevamp.NPCs.Bosses.Death
 {
@@ -109,20 +110,25 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             float opacity = NPC.Opacity;
 
+            float intensity = currentContactDamage > 0 ? 1.25f : 0.85f;
             Color glowColor = GetGlowColor();
-            for (int i = 3; i >= 1; i--)
-            {
-                Main.EntitySpriteDraw(
-                    texture,
-                    NPC.Center - screenPos + new Vector2(0f, NPC.gfxOffY),
-                    null,
-                    glowColor * (0.10f * i * opacity),
-                    NPC.rotation,
-                    origin,
-                    NPC.scale * (1f + i * 0.045f),
-                    effects,
-                    0f);
-            }
+            // Shader-driven glow, shaped by the sickle's own sprite.
+            DeathVFX.DrawShaderGlow(
+                texture,
+                null,
+                NPC.Center + new Vector2(0f, NPC.gfxOffY),
+                NPC.rotation,
+                origin,
+                NPC.scale,
+                effects,
+                glowColor,
+                opacity * intensity,
+                haloRadius: 3f,
+                haloDirections: 8,
+                bloomScale: 1.22f,
+                bloomOpacity: 0.28f,
+                rimOpacity: 0.5f,
+                coreOpacity: 0.4f);
 
             Main.EntitySpriteDraw(
                 texture,
