@@ -199,31 +199,43 @@ namespace tsorcRevamp
         int blockVisuals; //Block the remaining itemAnimation visuals after a roll, to prevent visual jank
         public override bool PreItemCheck()
         {
-            if (Player.GetModPlayer<tsorcRevampPlayer>().ImpaleFreezeTimer > 0)
-                return false;
-
-            UpdateDodging();
-            //UpdateSwordflip();
-
-            //Make held item vfx code still run while rolling
             Item item = Player.HeldItem;
-            if (item != null && item.ModItem != null)
-            {
-                Player.HeldItem.ModItem.HoldItem(Player);
-            }
 
-            //Stop players from using items while rolling, and fix their offset
-            if ((isDodging || dodgeCooldown.Value != 0) && !Player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging)
-            {
-                Player.itemLocation = Player.Center + new Vector2(-32, -16); //Stops it from being as disjointed when the player comes out of a roll
-                wasJustRolling = true;
-                blockVisuals = Player.itemAnimation;
-                return false;
-            }
+            // A friendly puppet (Mimic Tear) borrows this player's ItemCheck a second time per tick via
+            // FriendlyPuppetSwap. The dodge timers, impale freeze and HoldItem below already ran once this tick
+            // for the real player, so the puppet skips straight to the stamina block, which charges its
+            // swapped-in pool.
+            bool puppetSwap = NPCs.FriendlyPuppets.FriendlyPuppetSwap.Active;
 
-            if (blockVisuals > 0)
+            if (!puppetSwap)
             {
-                blockVisuals--;
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ImpaleFreezeTimer > 0)
+                {
+                    return false;
+                }
+
+                UpdateDodging();
+                //UpdateSwordflip();
+
+                //Make held item vfx code still run while rolling
+                if (item != null && item.ModItem != null)
+                {
+                    Player.HeldItem.ModItem.HoldItem(Player);
+                }
+
+                //Stop players from using items while rolling, and fix their offset
+                if ((isDodging || dodgeCooldown.Value != 0) && !Player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging)
+                {
+                    Player.itemLocation = Player.Center + new Vector2(-32, -16); //Stops it from being as disjointed when the player comes out of a roll
+                    wasJustRolling = true;
+                    blockVisuals = Player.itemAnimation;
+                    return false;
+                }
+
+                if (blockVisuals > 0)
+                {
+                    blockVisuals--;
+                }
             }
 
 

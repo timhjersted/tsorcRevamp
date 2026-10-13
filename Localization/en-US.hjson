@@ -13370,6 +13370,7 @@ Mods: {
 			OwlFireDiveCompanion.DisplayName: Owl Fire Dive Companion
 			DeathReaper.DisplayName: Death Servant
 			DeathSickleWeapon.DisplayName: Death Sickle Weapon
+			MimicSwapTestDummy.DisplayName: Mimic Swap Test Dummy
 		}
 
 		Prefixes: {

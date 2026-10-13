@@ -126,6 +126,13 @@ namespace tsorcRevamp.Systems
 
         public override bool PreItemCheck()
         {
+            // A friendly puppet borrowing this ItemCheck (FriendlyPuppetSwap) must not advance the drink a
+            // second time this tick.
+            if (NPCs.FriendlyPuppets.FriendlyPuppetSwap.Active)
+            {
+                return true;
+            }
+
             UpdateDrinkingCerulean();
 
             if (IsDrinking && (Player.HeldItem.type == ItemID.Umbrella || Player.HeldItem.type == ItemID.BreathingReed))

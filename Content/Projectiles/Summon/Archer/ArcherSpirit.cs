@@ -14,6 +14,17 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
         private const int ArcherNavSearchRadius = 100;
         private const int AimWindupFrames = 12;
 
+        // Leash: start walking back past this distance from the owner, stop once this close again.
+        private const float ReturnStartDistance = 480f;
+        private const float ReturnStopDistance = 160f;
+        // Beyond this the archer ignores every target and only returns (or teleports when stuck).
+        private const float HardLeashDistance = 800f;
+        // Aim range from the archer itself, with hysteresis so it does not flicker at the edge.
+        private const float AimStartRange = 650f;
+        private const float AimStopRange = 750f;
+        // Targets must stay this close to the owner (box, per axis) so the archer does not wander off chasing.
+        private const float OwnerTargetBox = 640f;
+
         public static int CalculateArrowDamage(Player player)
         {
             // Remove only BotC's Arcane Sorcery multiplier; gear's max-mana bonuses still count.
@@ -79,19 +90,30 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
             float distToPlayer = Vector2.Distance(Projectile.Center, player.Center);
             if (isReturning)
             {
-                if (distToPlayer <= 160f)
+                if (distToPlayer <= ReturnStopDistance)
                 {
                     isReturning = false;
                 }
             }
             else
             {
-                if (distToPlayer > 320f)
+                if (distToPlayer > ReturnStartDistance)
                 {
                     isReturning = true;
                 }
             }
-            bool returningToPlayer = isReturning;
+
+            NPC targetNPC = null;
+            bool targetVisible = false;
+            if (distToPlayer < HardLeashDistance)
+            {
+                targetNPC = FindTarget(player, out targetVisible);
+            }
+
+            // A target the archer can already shoot interrupts the walk back: it stops and fires instead of
+            // walking past it. Only unseen targets wait until the archer is back near the owner.
+            bool shootableNow = targetVisible && Vector2.Distance(targetNPC.Center, Projectile.Center) <= AimStartRange;
+            bool returningToPlayer = isReturning && !shootableNow;
             bool isTryingToMove = false;
 
             if (returningToPlayer)
@@ -151,76 +173,9 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
             }
             else
             {
-                // Targeting and attacking logic
-                bool foundTarget = false;
-                Vector2 targetCenter = Vector2.Zero;
-                float distToTarget = 800f;
-                NPC targetNPC = null;
-
-                // 1. Minion target feature check (whip targets)
-                NPC minionTarget = Projectile.OwnerMinionAttackTargetNPC;
-                if (minionTarget != null && minionTarget.CanBeChasedBy(this))
-                {
-                    float between = Vector2.Distance(minionTarget.Center, Projectile.Center);
-                    if (between < 800f)
-                    {
-                        targetCenter = minionTarget.Center;
-                        distToTarget = between;
-                        foundTarget = true;
-                        targetNPC = minionTarget;
-                    }
-                }
-
-                // 2. Check if previous target is still valid (Stickiness to avoid flipping jitter)
-                if (!foundTarget && lastTargetWhoAmI >= 0 && lastTargetWhoAmI < Main.maxNPCs)
-                {
-                    NPC prevTarget = Main.npc[lastTargetWhoAmI];
-                    if (prevTarget.active && prevTarget.CanBeChasedBy(this))
-                    {
-                        float horizDistToPlayer = Math.Abs(prevTarget.Center.X - player.Center.X);
-                        float vertDistToPlayer = Math.Abs(prevTarget.Center.Y - player.Center.Y);
-                        if (horizDistToPlayer < 480f && vertDistToPlayer < 480f) // within 30 tiles
-                        {
-                            float between = Vector2.Distance(prevTarget.Center, Projectile.Center);
-                            if (between < 800f)
-                            {
-                                targetCenter = prevTarget.Center;
-                                distToTarget = between;
-                                foundTarget = true;
-                                targetNPC = prevTarget;
-                            }
-                        }
-                    }
-                }
-
-                // 3. Scan for a new target if none found or previous is invalid
-                if (!foundTarget)
-                {
-                    int maxLife = -1;
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        NPC npc = Main.npc[i];
-                        if (npc.CanBeChasedBy(this))
-                        {
-                            float horizDistToPlayer = Math.Abs(npc.Center.X - player.Center.X);
-                            float vertDistToPlayer = Math.Abs(npc.Center.Y - player.Center.Y);
-                            
-                            // More aggressive default search range: within 30 tiles of player
-                            if (horizDistToPlayer < 480f && vertDistToPlayer < 480f)
-                            {
-                                float between = Vector2.Distance(npc.Center, Projectile.Center);
-                                if (npc.life > maxLife)
-                                {
-                                    maxLife = npc.life;
-                                    targetCenter = npc.Center;
-                                    distToTarget = between;
-                                    foundTarget = true;
-                                    targetNPC = npc;
-                                }
-                            }
-                        }
-                    }
-                }
+                bool foundTarget = targetNPC != null;
+                Vector2 targetCenter = foundTarget ? targetNPC.Center : Vector2.Zero;
+                float distToTarget = foundTarget ? Vector2.Distance(targetCenter, Projectile.Center) : AimStopRange;
 
                 // Update sticky target tracker
                 if (foundTarget && targetNPC != null)
@@ -245,7 +200,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                         Projectile.spriteDirection = targetDir;
                     }
 
-                    bool canSee = Collision.CanHitLine(Projectile.Center, 1, 1, targetCenter, 1, 1);
+                    bool canSee = targetVisible;
 
                     // Update aiming and backing-away states with hysteresis
                     if (!canSee)
@@ -258,14 +213,14 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                         // Hysteresis for aiming
                         if (isAiming)
                         {
-                            if (distToTarget > 750f)
+                            if (distToTarget > AimStopRange)
                             {
                                 isAiming = false;
                             }
                         }
                         else
                         {
-                            if (distToTarget <= 650f)
+                            if (distToTarget <= AimStartRange)
                             {
                                 isAiming = true;
                             }
@@ -397,11 +352,11 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                         }
                         else if (isBackingAway)
                         {
-                            // Back away from target, but only if we stay within 20 tiles of player
+                            // Back away from target, but never far enough to trip the return leash
                             int backDir = -targetDir;
                             float nextDistToPlayer = Vector2.Distance(Projectile.Center + new Vector2(backDir * 4f, 0f), player.Center);
                             
-                            if (nextDistToPlayer < 320f)
+                            if (nextDistToPlayer < ReturnStartDistance)
                             {
                                 isTryingToMove = true;
 
@@ -565,21 +520,6 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                 stuckTimer = 0;
             }
 
-            // Debug logging (every 60 frames)
-            if (Main.GameUpdateCount % 60 == 0)
-            {
-                string logPath = System.IO.Path.Combine(Main.SavePath, "Logs", "archer-spirit-bell.log");
-                try
-                {
-                    string logMessage = $"[{System.DateTime.Now:yyyy-MM-dd HH:mm:ss}] ID: {Projectile.whoAmI}, isAiming: {isAiming}, isBackingAway: {isBackingAway}, stuckTimer: {stuckTimer}, pos: {Projectile.position}, vel: {Projectile.velocity}, oldVelX: {oldVelocityX}, targetID: {lastTargetWhoAmI}, returning: {returningToPlayer}, tryingToMove: {isTryingToMove}\r\n";
-                    System.IO.File.AppendAllText(logPath, logMessage);
-                }
-                catch (System.Exception ex)
-                {
-                    Mod.Logger.Warn("Failed to write to archer-spirit-bell.log: " + ex.Message);
-                }
-            }
-
             if (stuckTimer >= 90) // 1.5 seconds
             {
                 stuckTimer = 0;
@@ -618,6 +558,86 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                     Projectile.velocity.Y = 10f;
                 }
             }
+        }
+
+        /// <summary>
+        /// Picks what to shoot. Anything the archer has a clear line to always beats anything behind a wall, so a
+        /// high-HP enemy out of sight can no longer pin it in place while visible enemies go unshot. Order:
+        /// the owner's right-click target when visible, then the previous target while it stays visible
+        /// (avoids flip-flopping), then the highest-HP visible enemy in range. With nothing visible it walks
+        /// toward the nearest unseen enemy near the owner, and switches the moment one comes into view.
+        /// </summary>
+        private NPC FindTarget(Player owner, out bool visible)
+        {
+            NPC minionTarget = Projectile.OwnerMinionAttackTargetNPC;
+            if (IsCandidate(minionTarget, owner) && CanSee(minionTarget))
+            {
+                visible = true;
+                return minionTarget;
+            }
+
+            if (lastTargetWhoAmI >= 0 && lastTargetWhoAmI < Main.maxNPCs)
+            {
+                NPC previous = Main.npc[lastTargetWhoAmI];
+                if (IsCandidate(previous, owner) && CanSee(previous))
+                {
+                    visible = true;
+                    return previous;
+                }
+            }
+
+            NPC bestVisible = null;
+            NPC nearestHidden = null;
+            float nearestHiddenDistance = float.MaxValue;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC npc = Main.npc[i];
+                if (!IsCandidate(npc, owner))
+                {
+                    continue;
+                }
+
+                if (CanSee(npc))
+                {
+                    if (bestVisible == null || npc.life > bestVisible.life)
+                    {
+                        bestVisible = npc;
+                    }
+                }
+                else
+                {
+                    float distance = Vector2.Distance(npc.Center, Projectile.Center);
+                    if (distance < nearestHiddenDistance)
+                    {
+                        nearestHiddenDistance = distance;
+                        nearestHidden = npc;
+                    }
+                }
+            }
+
+            if (bestVisible != null)
+            {
+                visible = true;
+                return bestVisible;
+            }
+
+            // The right-click target is still worth walking toward when nothing else can be shot.
+            visible = false;
+            return IsCandidate(minionTarget, owner) ? minionTarget : nearestHidden;
+        }
+
+        private bool IsCandidate(NPC npc, Player owner)
+        {
+            return npc != null
+                && npc.CanBeChasedBy(this)
+                && Math.Abs(npc.Center.X - owner.Center.X) < OwnerTargetBox
+                && Math.Abs(npc.Center.Y - owner.Center.Y) < OwnerTargetBox
+                && Vector2.Distance(npc.Center, Projectile.Center) < AimStopRange;
+        }
+
+        private bool CanSee(NPC npc)
+        {
+            return Collision.CanHitLine(Projectile.Center, 1, 1, npc.Center, 1, 1);
         }
 
         private void SetAimingFrame(Vector2 targetCenter)
