@@ -169,6 +169,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 StaminaInitialized = true;
             }
 
+            // Captured BEFORE the subclass hook so stamina it spends there (the Mimic Tear's dodge roll) also
+            // counts as "spent this tick" and pauses regen, exactly like a weapon swing.
+            float staminaBefore = StaminaCurrent;
+
             UpdateOwnerSide(owner);
 
             // Between uses the puppet faces the way it moves (NPC.direction, set by the movement AI); during a
@@ -189,7 +193,6 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 wantsUse = ChooseAttack(owner, out aimWorld);
             }
 
-            float staminaBefore = StaminaCurrent;
             int manaBefore = ManaCurrent;
 
             if (hasWeapon)
@@ -270,6 +273,13 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             DecorateDisplayClone(DisplayClone);
 
             SendOwnerStateIfNeeded();
+        }
+
+        /// <summary>Minion slots this puppet occupies on its owner (reserved each tick by
+        /// <see cref="FriendlyPuppetOwnerPlayer"/>). 0 = free.</summary>
+        public virtual float GetMinionSlotsUsed(Player owner)
+        {
+            return 0f;
         }
 
         /// <summary>Owner-client only, once per tick before the attack decision. For owner-side state such as
@@ -1021,6 +1031,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 {
                     continue;
                 }
+
+                // Minion slots: vanilla zeroes slotsMinions late in Player.Update (just before ItemCheck) and each
+                // minion projectile re-adds its own slots when IT updates, killing itself if there's no room. A
+                // puppet is an NPC, so its owner reserves its slots here — after the reset, before the projectiles
+                // run — and ordinary minions then fit themselves into what's left.
+                Player.slotsMinions += puppet.GetMinionSlotsUsed(Player);
 
                 puppet.RunOwnerTick(Player);
             }

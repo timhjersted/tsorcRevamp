@@ -302,19 +302,15 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override bool HasSpectralOverlay => _spectralFormActive;
         // The giant form is his real body, so the phase-two Burning Hades dyes must survive the 2x copy.
         protected override bool SpectralKeepsArmorDyes => true;
-        // UseVanillaAncientArmor path: there is no oversized template, so THIS is what physically
-        // enlarges phase two — a feet-anchored 2x scale of the plain small Ancient-set sprites (the
-        // same Hydra-shield transform every other spectral-overlay puppet already uses), which is
-        // also where the ghost-trail/halo copies below come from for free.
-        // Legacy X2-template path (UseVanillaAncientArmor = false): the authored X2 equip sheets
-        // provide the physical enlargement instead, so this stays at 1x to avoid enlarging an
-        // already-oversized template a second time.
-        protected override float SpectralOverlayScale => UseVanillaAncientArmor ? 2f : 1f;
+        // There is no oversized equip template, so THIS is what physically enlarges phase two — a
+        // feet-anchored 2x scale of the plain small Ancient-set sprites (the same Hydra-shield
+        // transform every other spectral-overlay puppet already uses), which is also where the
+        // ghost-trail/halo copies below come from for free.
+        protected override float SpectralOverlayScale => 2f;
         protected override int PuppetVisualWidth => 20;
         protected override int PuppetVisualHeight => 42;
-        // The X2 template (legacy path) is the solid foreground body. The spectral pass is
-        // deliberately an independent, behind-armor glow/trail so phase two keeps its ephemeral
-        // presence without fading the authored armor back into a ghostly duplicate.
+        // The spectral pass is deliberately an independent, behind-armor glow/trail so phase two
+        // keeps its ephemeral presence without fading the armor back into a ghostly duplicate.
         protected override Color SpectralOverlayColor => new Color(255, 218, 70);
         protected override float SpectralCoreTintStrength => 0.08f;
         protected override float SpectralCoreOpacity => 0.85f;
@@ -417,21 +413,11 @@ namespace tsorcRevamp.NPCs.Puppets
         // controller's generic dive, so PuppetNPC applies this cooldown when the combo starts.
         protected override int AerialDiveCooldownTicks => 300; // matches the ground leap combos' pace
 
-        // Worn in both phases. Phase two additionally draws it at 2x via SpectralOverlayScale above,
-        // instead of the bespoke X2 sprite sheets below — flip UseVanillaAncientArmor off to go
-        // straight back to the original authored set (both phases); nothing about the X2 art or its
-        // texture paths was touched.
-        private const bool UseVanillaAncientArmor = true;
-
-        protected override int HeadArmorItemType => UseVanillaAncientArmor
-            ? ItemID.AncientArmorHat
-            : ModContent.ItemType<OwlFatherMask>();
-        protected override int BodyArmorItemType => UseVanillaAncientArmor
-            ? ItemID.AncientArmorShirt
-            : ModContent.ItemType<OwlFatherArmor>();
-        protected override int LegsArmorItemType => UseVanillaAncientArmor
-            ? ItemID.AncientArmorPants
-            : ModContent.ItemType<OwlFatherGreaves>();
+        // Vanilla Ancient set, worn in both phases. Phase two additionally draws it at 2x via
+        // SpectralOverlayScale above.
+        protected override int HeadArmorItemType => ItemID.AncientArmorHat;
+        protected override int BodyArmorItemType => ItemID.AncientArmorShirt;
+        protected override int LegsArmorItemType => ItemID.AncientArmorPants;
         // Phase two: Burning Hades on all three pieces and the wings (PuppetNPC hot-swaps dyes on the
         // phase change). Phase one keeps the Brown-and-Black Ancient look.
         private int OwlArmorDyeItemType
@@ -443,7 +429,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     return ItemID.BurningHadesDye;
                 }
 
-                return UseVanillaAncientArmor ? ItemID.BrownAndBlackDye : 0;
+                return ItemID.BrownAndBlackDye;
             }
         }
         protected override int HeadArmorDyeItemType => OwlArmorDyeItemType;
@@ -451,11 +437,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int LegsArmorDyeItemType => OwlArmorDyeItemType;
         // Wings only exist in phase two (HasWings), so this is phase-two only by construction.
         protected override int WingsDyeItemType => ItemID.BurningHadesDye;
-        protected override int ArmorTemplateScale =>
-            !UseVanillaAncientArmor && _spectralFormActive ? 2 : 1;
-        protected override string LargeHeadArmorTemplateTexture => "tsorcRevamp/Content/Items/Armor/OwlFatherMask_Head_X2";
-        protected override string LargeBodyArmorTemplateTexture => "tsorcRevamp/Content/Items/Armor/OwlFatherArmor_Body_X2";
-        protected override string LargeLegsArmorTemplateTexture => "tsorcRevamp/Content/Items/Armor/OwlFatherGreaves_Legs_X2";
+        // Oversized armor sheets the solar-overlay mask is built from (art only; the player armor
+        // they came from was removed). Missing files fail silently - PuppetNPC skips a null template.
+        protected override string LargeHeadArmorTemplateTexture => UsefulFunctions.RefactorableFilepath(typeof(OwlFather)) + "_ArmorHead_X2";
+        protected override string LargeBodyArmorTemplateTexture => UsefulFunctions.RefactorableFilepath(typeof(OwlFather)) + "_ArmorBody_X2";
+        protected override string LargeLegsArmorTemplateTexture => UsefulFunctions.RefactorableFilepath(typeof(OwlFather)) + "_ArmorLegs_X2";
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyGreatFireAxe>();
         // Sprite/animation only — Owl Father never gets a copy of this item; it isn't in
@@ -1182,9 +1168,6 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            // npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherMask>()));
-            // npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherArmor>()));
-            // npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlFatherGreaves>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncientFireAxe>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OwlRing>()));
             npcLoot.Add(ItemDropRule.ByCondition(new FirstBossKillRule(), ModContent.ItemType<SublimeBoneDust>()));

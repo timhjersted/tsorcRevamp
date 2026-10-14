@@ -642,7 +642,7 @@ namespace ShaderPreview
                 Name = name,
                 Effect = "OwlFatherSolarArmorMask",
                 Technique = "OwlFatherSolarArmorMask",
-                Primary = "Content/Items/Armor/OwlFatherArmor_Body_X2",
+                Primary = "NPCs/Puppets/OwlFather_ArmorBody_X2",
                 Detail = "Turbulence_06-512x512",
                 DrawSize = new Vector2(80f, 112f),
                 SourceOverride = source,

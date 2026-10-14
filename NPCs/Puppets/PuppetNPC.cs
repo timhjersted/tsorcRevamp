@@ -1995,6 +1995,10 @@ namespace tsorcRevamp.NPCs.Puppets
             Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
             Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery;
 
+        /// <summary>True while a melee swing is live or about to be (telegraph + attack). Read by the Mimic Tear to
+        /// decide when to roll away; recovery/pause are excluded because the danger has passed.</summary>
+        public bool IsMeleeSwingThreatening => Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack;
+
         /// <summary>Recovery phases that end a weapon swing, and so can hold the finished pose for a
         /// beat before easing back to the carried hold — see
         /// <see cref="IsHoldingMeleeRecoveryFollowThrough"/>. None of these have a rotation branch of

@@ -19,7 +19,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
     /// that AI would do to that player is redirected: damage goes to the puppet (<see cref="FriendlyPuppetAggroPlayer"/>)
     /// and buffs are dropped. The real player is restored before anything else runs.
     ///
-    /// Bosses are excluded (v1): their AIs lean on the player for arena bounds, teleports and despawn checks.
+    /// Bosses can be drawn onto a puppet too, but only once they are 5 seconds old (BossAggroDelayTicks): their AIs
+    /// set up arena bounds, intro positions and despawn anchors from the player at spawn. Later boss logic that
+    /// reads the player (teleports, arena leashes, despawn-when-far) will read the PUPPET while decoyed — watch for it.
     /// Damage that never goes through the AI already reaches the puppet the vanilla way: hostile projectiles and
     /// contact hit friendly NPCs (Projectile.Damage / NPC.GetHurtByOtherNPCs).
     ///
@@ -32,6 +34,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         /// <summary>NPC index of the friendly puppet this enemy is fighting instead of its target player, or -1.</summary>
         public int DecoyPuppetIndex = -1;
+
+        /// <summary>Ticks this NPC has existed. Bosses only become decoy-able after
+        /// <see cref="FriendlyPuppetAggroSystem.BossAggroDelayTicks"/>, so their opening setup runs against the real player.</summary>
+        public int TicksAlive;
+
+        public override void PostAI(NPC npc)
+        {
+            TicksAlive++;
+        }
 
         public override void SendExtraAI(NPC npc, BitWriter bitWriter, BinaryWriter binaryWriter)
         {
@@ -68,6 +79,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// this much closer to steal it back — hysteresis, so enemies don't flip targets every check. ESTIMATE.</summary>
         private const float AggroSwitchMargin = 3f * 16f;
 
+        /// <summary>A boss can't be drawn onto a puppet for its first 5 seconds: bosses set up arenas, intro positions
+        /// and despawn anchors from their target player when they spawn, and that must be the real player.</summary>
+        internal const int BossAggroDelayTicks = 5 * 60;
+
         /// <summary>True only while a decoyed enemy's AI is running.</summary>
         internal static bool DecoyActive;
         internal static Player DecoyPlayer;
@@ -81,7 +96,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             On_Player.AddBuff += BlockDecoyBuffs;
         }
 
-        /// <summary>Server (and single player): every <see cref="AggroIntervalTicks"/>, each non-boss enemy picks either
+        /// <summary>Server (and single player): every <see cref="AggroIntervalTicks"/>, each enemy (bosses only once 5 s old) picks either
         /// its target player or the nearest aggro-drawing puppet, whichever is meaningfully closer.</summary>
         public override void PostUpdateNPCs()
         {
@@ -122,9 +137,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 // Worm bodies and other segments follow their head; only the head decides.
                 bool isFollowerSegment = enemy.realLife >= 0 && enemy.realLife != enemy.whoAmI;
                 bool targetIndexValid = enemy.target >= 0 && enemy.target < Main.maxPlayers;
+                bool bossStillSettingUp = enemy.boss && aggro.TicksAlive < BossAggroDelayTicks;
                 bool canBeDecoyed = EligiblePuppets.Count > 0
                     && UsefulFunctions.IsHostileThreat(enemy)
-                    && !enemy.boss
+                    && !bossStillSettingUp
                     && !isFollowerSegment
                     && targetIndexValid;
 
@@ -264,7 +280,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             FriendlyPuppetNPC puppet = FriendlyPuppetAggroSystem.DecoyPuppet;
 
-            if (puppet.DecoyHitCooldown <= 0)
+            // dontTakeDamage covers the puppet's own i-frames (the Mimic Tear's dodge roll, its summon rise): the hit
+            // is still swallowed, it just lands on nothing.
+            if (puppet.DecoyHitCooldown <= 0 && !puppet.NPC.dontTakeDamage)
             {
                 int damage = Math.Max(1, info.SourceDamage);
                 puppet.NPC.SimpleStrikeNPC(damage, info.HitDirection);

@@ -37,7 +37,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems
         {
             if (set == "Hero's Clothes")
             {
-                player.GetCritChance(DamageClass.Generic) += CritChance / 100f;
+                player.GetCritChance(DamageClass.Generic) += CritChance;
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRegen / 100f;
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + MaxStamina / 100f;
             }

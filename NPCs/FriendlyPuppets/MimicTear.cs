@@ -32,7 +32,26 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             DrinkingEstus = 2,
             /// <summary>Rising out of its liquid-metal pool: invulnerable, no aggro, no moving or attacking.</summary>
             Summoning = 3,
+            /// <summary>Dodge roll: the player's roll (same length, speed and i-frames), paid from the mimic's stamina.</summary>
+            Rolling = 4,
+            /// <summary>Wants an Estus: stops attacking, makes space if crowded, then drinks (see the Estus block in AI).</summary>
+            PreparingEstus = 5,
+            /// <summary>Lifetime over (or dismissed): melting back into its pool. Invulnerable, no aggro, no actions.</summary>
+            Dissolving = 6,
         }
+
+        /// <summary>Minion slots the Mimic Tear takes: all the owner has, up to this many. Shown in the Mimic Rune tooltip.</summary>
+        public const int MinionSlotCost = 3;
+        /// <summary>Resummon cooldown, applied as the MimicTearCooldown debuff (cleared on death). Shown in the tooltip.</summary>
+        public const int ResummonCooldownSeconds = 300;
+        /// <summary>How long a Soul Mimic lasts before it dissolves on its own, counted from spawn. Shown in the tooltip.
+        /// Equal to the cooldown on purpose: the rune comes off cooldown as the mimic it made runs out.</summary>
+        public const int LifetimeSeconds = 300;
+        /// <summary>Length of the dissolve (1 s).</summary>
+        private const int DissolveTicks = 60;
+        /// <summary>How long the MimicTearBuff lasts with no mimic alive — covers the spawn round-trip in multiplayer.
+        /// The server also waits this long after spawning before it treats "owner has no buff" as a dismissal.</summary>
+        public const int SummonBuffGraceTicks = 300;
 
         /// <summary>Loadout slot 0 = the owner's held weapon (tracked live); 1 and 2 = hotbar slots 1 and 2,
         /// snapshotted at summon. Design §5.</summary>
@@ -62,10 +81,66 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>Winded below 15% of max stamina; recovered (fights again) at 60%. Hysteresis so it doesn't flicker.</summary>
         private const float WindedEnterFraction = 0.15f;
         private const float WindedExitFraction = 0.6f;
-        /// <summary>While winded with a target, hold at least this far from it (25 tiles).</summary>
-        private const float WindedBackOffDistance = 25f * 16f;
+        /// <summary>While winded with a target: closer than 3 tiles → step back to 4.5; at 3 tiles or more it just
+        /// holds and catches its breath. A short breather, not a retreat.</summary>
+        private const float WindedNearDistance = 3f * 16f;
+        private const float WindedSettleDistance = 4.5f * 16f;
         /// <summary><see cref="FriendlyPuppetNPC.OwnerFlags"/> bit: the owner-side stamina pool says "winded".</summary>
         private const byte OwnerFlagWinded = 1;
+        /// <summary><see cref="FriendlyPuppetNPC.OwnerFlags"/> bit: the owner-side pool has stamina for a roll. Same rule
+        /// as the player (TryStartDodgeroll): any stamina above zero.</summary>
+        private const byte OwnerFlagCanRoll = 2;
+        /// <summary><see cref="FriendlyPuppetNPC.OwnerFlags"/> bit: a weapon use is in progress (item animation running).
+        /// The server won't start an Estus drink until it clears.</summary>
+        private const byte OwnerFlagAttacking = 4;
+
+        /// <summary>Estus: an enemy within 4 tiles is "crowding"; it backs off toward 6 before drinking (the 4–8 band),
+        /// and gives up and drinks anyway after 2.5 s of failing to get clear.</summary>
+        private const float EstusSpaceNearDistance = 4f * 16f;
+        private const float EstusSpaceSettleDistance = 6f * 16f;
+        private const int EstusSpaceTimeoutTicks = 150;
+        /// <summary>Jump attack on an overhead target: launch speed is solved from the height, clamped to this range
+        /// (9 px/tick ≈ an 8-tile jump at NPC gravity 0.3); targets higher than JumpAttackMaxHeight are left to a
+        /// ranged weapon. One jump per JumpAttackCooldownTicks.</summary>
+        private const float JumpAttackMinSpeed = 5f;
+        private const float JumpAttackMaxSpeed = 9f;
+        private const float JumpAttackMaxHeight = 9f * 16f;
+        private const int JumpAttackCooldownTicks = 45;
+        /// <summary>Roll look-ahead: the roll covers about 8 tiles; a wall inside the first 2 means no room; ground must
+        /// exist within 3 tiles below the feet all the way along, or it's a ledge.</summary>
+        private const int RollPathTiles = 8;
+        private const int RollMinClearTiles = 2;
+        private const int RollLedgeDropTiles = 3;
+        /// <summary>SmartFighter4's door value: non-zero lets it path through closed doors and open them (it opens,
+        /// it doesn't destroy — see SmartFighter4AI.TryDoor). 4 is SF4's own default.</summary>
+        private const int DoorOpenValue = 4;
+        /// <summary>Knockback taken, as a fraction of a normal NPC's (0 = none). ESTIMATE.</summary>
+        private const float KnockbackTaken = 0.6f;
+
+        // ── Evasion (server). The roll's numbers ARE the player's: tsorcRevampPlayer.DodgeTimeMax (0.37 s = 22 ticks,
+        // immune throughout), DodgeDefaultCooldown (30 ticks), dodgeSpeed (8 px/tick for the first half, then decay). ──
+        private static readonly int RollTicks = (int)(tsorcRevampPlayer.DodgeTimeMax * 60f);
+        private static readonly int RollCooldownTicks = (int)tsorcRevampPlayer.DodgeDefaultCooldown;
+        private const float RollSpeed = 8f;
+        /// <summary>Per-tick velocity kept during the second half of the roll (the player's coast-and-decay tail).</summary>
+        private const float RollTailRetention = 0.88f;
+        /// <summary>The player's roll pivots about this point of the 20x42 body (tsorcRevampPlayer: fullRotationOrigin).</summary>
+        private static readonly Vector2 RollRotationOrigin = new Vector2(11f, 22f);
+        /// <summary>A projectile is a threat if its closest approach within this many ticks passes inside
+        /// (its half-size + EvadeBodyRadius) of the mimic. 20 ticks ≈ one roll's worth of warning.</summary>
+        private const float EvadeLookaheadTicks = 20f;
+        private const float EvadeBodyRadius = 26f;
+        /// <summary>An enemy mid-swing within this range (5 tiles) is a melee threat.</summary>
+        private const float MeleeThreatRange = 5f * 16f;
+        /// <summary>Chance it reacts to a given threat. Below 1 on purpose: a mimic that dodges everything isn't a
+        /// copy of a player. One decision per EvadeDecisionLockoutTicks, so a miss isn't re-rolled every tick. ESTIMATE.</summary>
+        private const float EvadeChance = 0.75f;
+        private const int EvadeDecisionLockoutTicks = 20;
+        /// <summary>Jump-evade launch speed (px/tick upward) — about a 3.5-tile hop over a low shot.</summary>
+        private const float JumpEvadeSpeed = 7.5f;
+        /// <summary>Sidestep: run this far to the side (5 tiles) for this long instead of the normal waypoint.</summary>
+        private const float StrafeDistance = 5f * 16f;
+        private const int StrafeTicks = 24;
         /// <summary>Past this distance from the owner, teleport back to them (60 tiles).</summary>
         private const float TeleportToOwnerDistance = 60f * 16f;
         /// <summary>Close enough to the engagement spot that it stops walking and just fights.</summary>
@@ -105,12 +180,20 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private int _estusHealTicksLeft;
         private float _estusHealPerTick;
         private float _estusHealAccumulator;
+        private int _serverAgeTicks;
+        private int _rollDirection;
+        private int _rollCooldown;
+        private int _evadeLockout;
+        private int _strafeTicksLeft;
+        private int _strafeDirection;
+        private int _jumpAttackCooldown;
 
         // All machines: local timer for the current state (reset when ai[3] changes), used for drink pose/progress.
         private MimicState _lastSeenState = MimicState.Fight;
         private int _stateTimer;
 
         // Owner-client only.
+        private MimicState _ownerLastState = MimicState.Summoning;
         private readonly Item[] _ownerLoadout = new Item[LoadoutSize];
         private bool _ownerLoadoutInitialized;
         private bool _ceruleanInitialized;
@@ -165,6 +248,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.value = 0f;
+            NPC.knockBackResist = KnockbackTaken;
+
+            // Ropes are a per-NPC opt-in for SmartFighter4 (doors are enabled by the value passed to Run).
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
             NPC.ai[1] = -1f;
         }
 
@@ -325,6 +412,26 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     SoundEngine.PlaySound(SoundID.Item29 with { Pitch = -0.4f, Volume = 0.6f }, NPC.Center);
                 }
 
+                bool startedDissolve = state == MimicState.Dissolving && !Main.dedServ;
+
+                if (startedDissolve)
+                {
+                    SoundEngine.PlaySound(SoundID.Splash with { Pitch = -0.8f, Volume = 0.8f }, NPC.Bottom);
+                }
+
+                bool startedRoll = state == MimicState.Rolling && !Main.dedServ;
+
+                if (startedRoll)
+                {
+                    // The player's own roll thud (tsorcRevampPlayer.TryStartDodgeroll).
+                    SoundStyle rollSound = new SoundStyle("tsorcRevamp/Sounds/DarkSouls/roll1")
+                    {
+                        Volume = 0.1f,
+                        PitchVariance = 0.4f
+                    };
+                    SoundEngine.PlaySound(rollSound, NPC.Center);
+                }
+
                 _lastSeenState = state;
                 _stateTimer = 0;
             }
@@ -336,17 +443,31 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             // ── Summon: forming out of a liquid-metal pool (every machine) ──
             // Drawn behind tiles, so the ground hides whatever part of the body is still below the surface while
             // DisplayDrawOffset raises it; invulnerable until fully formed.
+            // A roll is immune for its whole length, like the player's (isDodging gates every hit).
+            // Dissolving is the same picture in reverse: it melts back down into the pool when its time is up.
             bool summoning = state == MimicState.Summoning;
-            NPC.dontTakeDamage = summoning;
-            NPC.behindTiles = summoning;
+            bool rolling = state == MimicState.Rolling;
+            bool dissolving = state == MimicState.Dissolving;
+            NPC.dontTakeDamage = summoning || rolling || dissolving;
+            NPC.behindTiles = summoning || dissolving;
 
-            if (summoning && !Main.dedServ)
+            if ((summoning || dissolving) && !Main.dedServ)
             {
-                // Pool: spreads over SummonPoolTicks, holds, then pulls in over the last quarter as the body leaves it.
-                float spread = Math.Min(1f, _stateTimer / (float)SummonPoolTicks);
-                float shrinkStart = SummonTicks * 0.75f;
-                float shrink = 1f - Math.Clamp((_stateTimer - shrinkStart) / (SummonTicks - shrinkStart), 0f, 1f);
-                float poolRadius = SummonPoolRadius * spread * shrink;
+                float poolRadius;
+
+                if (summoning)
+                {
+                    // Pool: spreads over SummonPoolTicks, holds, then pulls in over the last quarter as the body leaves it.
+                    float spread = Math.Min(1f, _stateTimer / (float)SummonPoolTicks);
+                    float shrinkStart = SummonTicks * 0.75f;
+                    float shrink = 1f - Math.Clamp((_stateTimer - shrinkStart) / (SummonTicks - shrinkStart), 0f, 1f);
+                    poolRadius = SummonPoolRadius * spread * shrink;
+                }
+                else
+                {
+                    // Dissolve: the pool widens as the body runs down into it.
+                    poolRadius = SummonPoolRadius * Math.Min(1f, _stateTimer / (DissolveTicks * 0.5f));
+                }
 
                 for (int i = 0; i < 3; i++)
                 {
@@ -364,9 +485,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     glint.noGravity = true;
                 }
 
-                bool rising = _stateTimer >= SummonPoolTicks;
+                // Drips only while some of the body is above the surface (after the pool phase of the rise; all
+                // through the dissolve).
+                bool bodyAboveSurface = dissolving || _stateTimer >= SummonPoolTicks;
 
-                if (rising && Main.rand.NextBool(2))
+                if (bodyAboveSurface && Main.rand.NextBool(2))
                 {
                     float risenHeight = NPC.height - DisplayDrawOffset.Y;
                     Vector2 dripPosition = NPC.Bottom + new Vector2(Main.rand.NextFloat(-NPC.width * 0.5f, NPC.width * 0.5f), -Main.rand.NextFloat(0f, risenHeight));
@@ -395,11 +518,80 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return;
             }
 
+            // Dismissed: the owner cancelled (or lost) the MimicTearBuff. Player buffs reach the server through
+            // vanilla's own sync, so wait out the spawn round-trip before trusting "no buff".
+            _serverAgeTicks++;
+            int summonBuffType = ModContent.BuffType<Buffs.Weapons.Summon.MimicTearBuff>();
+            bool dismissed = _serverAgeTicks > SummonBuffGraceTicks && !owner.HasBuff(summonBuffType);
+
+            // Its time is up (LifetimeSeconds from spawn), or it was dismissed: melt back into the pool, then go.
+            bool expired = _serverAgeTicks >= LifetimeSeconds * 60;
+
+            if ((dismissed || expired) && !dissolving)
+            {
+                State = MimicState.Dissolving;
+                NPC.netUpdate = true;
+                return;
+            }
+
+            if (dissolving)
+            {
+                NPC.velocity.X = 0f;
+
+                if (_stateTimer >= DissolveTicks)
+                {
+                    NPC.active = false;
+
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPC.whoAmI);
+                    }
+                }
+
+                return;
+            }
+
             if (summoning)
             {
                 NPC.velocity.X = 0f;
 
                 if (_stateTimer >= SummonTicks)
+                {
+                    State = MimicState.Fight;
+                    NPC.netUpdate = true;
+                }
+
+                return;
+            }
+
+            // ── Dodge roll in progress: the player's profile — full speed for the first half, then coast and decay ──
+            if (_rollCooldown > 0)
+            {
+                _rollCooldown--;
+            }
+
+            if (_evadeLockout > 0)
+            {
+                _evadeLockout--;
+            }
+
+            if (_strafeTicksLeft > 0)
+            {
+                _strafeTicksLeft--;
+            }
+
+            if (rolling)
+            {
+                if (_stateTimer < RollTicks / 2)
+                {
+                    NPC.velocity.X = _rollDirection * RollSpeed;
+                }
+                else
+                {
+                    NPC.velocity.X *= RollTailRetention;
+                }
+
+                if (_stateTimer >= RollTicks)
                 {
                     State = MimicState.Fight;
                     NPC.netUpdate = true;
@@ -559,14 +751,206 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 }
             }
 
+            // ── Estus: never mid-attack, and not with an enemy on top of it ──
+            // Wanting a drink puts it in PreparingEstus, which (being not-Fight) makes the owner client stop starting
+            // attacks. It drinks once the swing in progress has finished (OwnerFlagAttacking clear) AND no enemy is
+            // within 4 tiles; while crowded it backs off toward 6 tiles (movement block below). If it can't get clear
+            // within EstusSpaceTimeoutTicks it drinks anyway rather than die waiting.
             bool lowLife = NPC.life < NPC.lifeMax * EstusDrinkLifeFraction;
-            bool canStartEstus = state == MimicState.Fight && lowLife && _estusCharges > 0 && !IsDrinkingCerulean && _estusHealTicksLeft == 0;
+            bool wantsEstus = lowLife && _estusCharges > 0 && !IsDrinkingCerulean && _estusHealTicksLeft == 0;
+            bool canPrepare = state == MimicState.Fight || state == MimicState.PreparingEstus;
+            NPC crowdingEnemy = null;
 
-            if (canStartEstus)
+            if (canPrepare && wantsEstus)
             {
-                State = MimicState.DrinkingEstus;
+                float nearestEnemyDistance = EstusSpaceNearDistance;
+
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC enemy = Main.npc[i];
+
+                    if (!UsefulFunctions.IsHostileThreat(enemy))
+                    {
+                        continue;
+                    }
+
+                    float enemyDistance = Vector2.Distance(enemy.Center, NPC.Center);
+
+                    if (enemyDistance < nearestEnemyDistance)
+                    {
+                        nearestEnemyDistance = enemyDistance;
+                        crowdingEnemy = enemy;
+                    }
+                }
+
+                bool attacking = (OwnerFlags & OwnerFlagAttacking) != 0;
+                bool gaveUpOnSpace = state == MimicState.PreparingEstus && _stateTimer >= EstusSpaceTimeoutTicks;
+                bool hasSpace = crowdingEnemy == null || gaveUpOnSpace;
+
+                if (hasSpace && !attacking)
+                {
+                    State = MimicState.DrinkingEstus;
+                    NPC.netUpdate = true;
+                    return;
+                }
+
+                if (state == MimicState.Fight)
+                {
+                    State = MimicState.PreparingEstus;
+                    NPC.netUpdate = true;
+                }
+            }
+            else if (state == MimicState.PreparingEstus)
+            {
+                // Healed some other way, or out of charges: back to fighting.
+                State = MimicState.Fight;
                 NPC.netUpdate = true;
-                return;
+            }
+
+            // ── Evasion: find the most urgent threat, then roll / jump / sidestep ──
+            // Threat 1: a hostile projectile whose closest approach in the next EvadeLookaheadTicks passes through us.
+            // Solved in the mimic's frame: relative position + relative velocity, closest approach at
+            // t = -(r·v)/(v·v).
+            bool threatFound = false;
+            float threatTicks = EvadeLookaheadTicks;
+            Vector2 threatVelocity = Vector2.Zero;
+            Vector2 threatOrigin = NPC.Center;
+            bool threatIsMelee = false;
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+
+                if (!projectile.active || !projectile.hostile || projectile.damage <= 0)
+                {
+                    continue;
+                }
+
+                Vector2 relativePosition = projectile.Center - NPC.Center;
+                Vector2 relativeVelocity = projectile.velocity - NPC.velocity;
+                float relativeSpeedSquared = relativeVelocity.LengthSquared();
+
+                // Stationary hazards (auras, lingering fields) have no approach to dodge.
+                if (relativeSpeedSquared < 0.25f)
+                {
+                    continue;
+                }
+
+                float ticksToClosest = -Vector2.Dot(relativePosition, relativeVelocity) / relativeSpeedSquared;
+
+                if (ticksToClosest < 0f || ticksToClosest >= threatTicks)
+                {
+                    continue;
+                }
+
+                Vector2 closestOffset = relativePosition + relativeVelocity * ticksToClosest;
+                float hitRadius = Math.Max(projectile.width, projectile.height) * 0.5f + EvadeBodyRadius;
+
+                if (closestOffset.Length() > hitRadius)
+                {
+                    continue;
+                }
+
+                threatFound = true;
+                threatTicks = ticksToClosest;
+                threatVelocity = relativeVelocity;
+                threatOrigin = projectile.Center;
+                threatIsMelee = false;
+            }
+
+            // Threat 2: an enemy within reach that is winding up or swinging (FighterAI's AttackCommitted, or a
+            // puppet enemy's melee telegraph/attack phase). Only looked for if no projectile is about to land.
+            if (!threatFound)
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC enemy = Main.npc[i];
+
+                    if (!UsefulFunctions.IsHostileThreat(enemy) || Vector2.Distance(enemy.Center, NPC.Center) > MeleeThreatRange)
+                    {
+                        continue;
+                    }
+
+                    bool fighterSwinging = enemy.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackCommitted;
+                    bool puppetSwinging = enemy.ModNPC is Puppets.PuppetNPC puppetEnemy && puppetEnemy.IsMeleeSwingThreatening;
+
+                    if (!fighterSwinging && !puppetSwinging)
+                    {
+                        continue;
+                    }
+
+                    threatFound = true;
+                    threatOrigin = enemy.Center;
+                    threatIsMelee = true;
+                    break;
+                }
+            }
+
+            if (threatFound && _evadeLockout == 0)
+            {
+                _evadeLockout = EvadeDecisionLockoutTicks;
+                bool reacts = Main.rand.NextFloat() < EvadeChance;
+
+                if (reacts)
+                {
+                    bool grounded = NPC.velocity.Y == 0f;
+                    bool canRoll = (OwnerFlags & OwnerFlagCanRoll) != 0 && _rollCooldown == 0 && grounded;
+                    bool mostlyHorizontal = Math.Abs(threatVelocity.X) > Math.Abs(threatVelocity.Y);
+
+                    // Away from where the threat is: for melee, away from the attacker; for a shot from above or
+                    // below, out from under it.
+                    int awayDirection = Math.Sign(NPC.Center.X - threatOrigin.X);
+
+                    if (awayDirection == 0)
+                    {
+                        awayDirection = -NPC.direction;
+                    }
+
+                    if (canRoll)
+                    {
+                        // A level shot is rolled THROUGH (toward where it came from — the i-frames carry it past);
+                        // anything else is rolled away from.
+                        int rollDirection = awayDirection;
+
+                        if (!threatIsMelee && mostlyHorizontal)
+                        {
+                            rollDirection = -Math.Sign(threatVelocity.X);
+                        }
+
+                        // Look before rolling: no ledges, no wall in the first two tiles. If the preferred way is
+                        // bad, the other way still gets the i-frames; if both are bad, fall through to jump/sidestep.
+                        bool rollPathSafe = IsRollPathSafe(rollDirection);
+
+                        if (!rollPathSafe)
+                        {
+                            rollDirection = -rollDirection;
+                            rollPathSafe = IsRollPathSafe(rollDirection);
+                        }
+
+                        if (rollPathSafe)
+                        {
+                            _rollDirection = rollDirection;
+                            _rollCooldown = RollTicks + RollCooldownTicks;
+                            NPC.direction = rollDirection;
+                            State = MimicState.Rolling;
+                            NPC.netUpdate = true;
+                            return;
+                        }
+                    }
+
+                    if (grounded && !threatIsMelee && mostlyHorizontal)
+                    {
+                        // No roll available: hop over a level shot.
+                        NPC.velocity.Y = -JumpEvadeSpeed;
+                        NPC.netUpdate = true;
+                    }
+                    else
+                    {
+                        // Sidestep out of the way for a moment.
+                        _strafeDirection = awayDirection;
+                        _strafeTicksLeft = StrafeTicks;
+                    }
+                }
             }
 
             // ── Weapon choice: prefer the held weapon (slot 0) whenever it reaches, else any slot that does ──
@@ -635,11 +1019,57 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return;
             }
 
+            // Getting ready to drink Estus: if an enemy is crowding it, open up 6 tiles of space first; otherwise
+            // just stop and wait for the swing in progress to finish (the state machine above starts the drink).
+            if (State == MimicState.PreparingEstus)
+            {
+                if (crowdingEnemy == null)
+                {
+                    NPC.velocity.X *= 0.8f;
+                    return;
+                }
+
+                int sideOfCrowder = Math.Sign(NPC.Center.X - crowdingEnemy.Center.X);
+
+                if (sideOfCrowder == 0)
+                {
+                    sideOfCrowder = -NPC.direction;
+                }
+
+                Vector2 spaceWaypoint = crowdingEnemy.Center + new Vector2(sideOfCrowder * EstusSpaceSettleDistance, 0f);
+                bool spaceWaypointDrifted = !_hasHeldWaypoint || Vector2.Distance(spaceWaypoint, _heldWaypoint) > WaypointRefreshDistance;
+
+                if (spaceWaypointDrifted)
+                {
+                    _heldWaypoint = spaceWaypoint;
+                    _hasHeldWaypoint = true;
+                }
+
+                SmartFighter4AI.Run(NPC, topSpeed, acceleration, doorBreakingDamage: DoorOpenValue, movementWaypoint: _heldWaypoint);
+                return;
+            }
+
+            // Sidestep (from the evasion block): for StrafeTicks the only goal is to get out from under the threat.
+            if (_strafeTicksLeft > 0)
+            {
+                Vector2 strafeWaypoint = NPC.Center + new Vector2(_strafeDirection * StrafeDistance, 0f);
+                bool strafeWaypointDrifted = !_hasHeldWaypoint || Vector2.Distance(strafeWaypoint, _heldWaypoint) > WaypointRefreshDistance * 3f;
+
+                if (strafeWaypointDrifted)
+                {
+                    _heldWaypoint = strafeWaypoint;
+                    _hasHeldWaypoint = true;
+                }
+
+                SmartFighter4AI.Run(NPC, topSpeed, acceleration, doorBreakingDamage: DoorOpenValue, movementWaypoint: _heldWaypoint);
+                return;
+            }
+
             Vector2 waypoint;
             float stopDistance;
 
-            // Winded (owner-side stamina below the threshold, OwnerFlags): back off from the target and let the pool
-            // refill, like a player who's run dry. The owner client also refuses attacks while winded (ChooseAttack).
+            // Winded (owner-side stamina below the threshold, OwnerFlags): a short breather near the target while the
+            // pool refills, like a player who's run dry. The owner client also refuses attacks while winded (ChooseAttack).
             bool winded = (OwnerFlags & OwnerFlagWinded) != 0;
 
             if (target != null)
@@ -654,15 +1084,34 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 }
 
                 float preferredDistance = RangedPreferred;
+                float maximumDistance = RangedMaximum;
 
                 if (activeType > 0)
                 {
-                    GetEngagementRange(ContentSamples.ItemsByType[activeType], out preferredDistance, out _);
+                    GetEngagementRange(ContentSamples.ItemsByType[activeType], out preferredDistance, out maximumDistance);
                 }
 
-                if (winded)
+                // Jump attack: a melee-range weapon and a target overhead that it can't reach from the ground (a
+                // flyer, or something on a ledge). Launch speed is solved for the height: v = sqrt(2·g·h), clamped —
+                // the owner client swings when the target comes into reach mid-air (ChooseAttack only needs range).
+                if (_jumpAttackCooldown > 0)
                 {
-                    preferredDistance = Math.Max(preferredDistance, WindedBackOffDistance);
+                    _jumpAttackCooldown--;
+                }
+
+                float heightAboveMimic = NPC.Center.Y - target.Center.Y;
+                bool meleeRangeWeapon = maximumDistance <= SpearLikeMaximum;
+                bool targetOverhead = Math.Abs(NPC.Center.X - target.Center.X) <= maximumDistance
+                    && heightAboveMimic > maximumDistance * 0.6f
+                    && heightAboveMimic <= JumpAttackMaxHeight;
+                bool canJumpAttack = meleeRangeWeapon && targetOverhead && !winded && NPC.velocity.Y == 0f && _jumpAttackCooldown == 0 && State == MimicState.Fight;
+
+                if (canJumpAttack)
+                {
+                    float launchSpeed = (float)Math.Sqrt(2f * NPC.gravity * heightAboveMimic);
+                    NPC.velocity.Y = -Math.Clamp(launchSpeed, JumpAttackMinSpeed, JumpAttackMaxSpeed);
+                    _jumpAttackCooldown = JumpAttackCooldownTicks;
+                    NPC.netUpdate = true;
                 }
 
                 int sideOfTarget = Math.Sign(NPC.Center.X - target.Center.X);
@@ -670,6 +1119,22 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 if (sideOfTarget == 0)
                 {
                     sideOfTarget = -owner.direction;
+                }
+
+                if (winded)
+                {
+                    // Catching its breath: only give ground if the target is right on top of it (< 3 tiles), and
+                    // then just to 4.5 tiles. Otherwise hold where it is, facing the target.
+                    float gapToTarget = Math.Abs(NPC.Center.X - target.Center.X);
+
+                    if (gapToTarget >= WindedNearDistance)
+                    {
+                        NPC.velocity.X *= 0.8f;
+                        NPC.direction = -sideOfTarget;
+                        return;
+                    }
+
+                    preferredDistance = WindedSettleDistance;
                 }
 
                 waypoint = target.Center + new Vector2(sideOfTarget * preferredDistance, 0f);
@@ -744,7 +1209,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 _hasHeldWaypoint = true;
             }
 
-            SmartFighter4AI.Run(NPC, topSpeed, acceleration, doorBreakingDamage: 0, movementWaypoint: _heldWaypoint);
+            SmartFighter4AI.Run(NPC, topSpeed, acceleration, doorBreakingDamage: DoorOpenValue, movementWaypoint: _heldWaypoint);
         }
 
         // ── Owner side: loadout, Cerulean, attack decision ─────────────────────────────────────────
@@ -795,6 +1260,39 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             else
             {
                 OwnerFlags = (byte)(OwnerFlags & ~OwnerFlagWinded);
+            }
+
+            // ── Dodge roll: the server starts it (State → Rolling); the stamina it costs is charged here, to the
+            // mimic's own pool, at exactly the owner's roll price. The pool may be overdrawn to zero, never below.
+            // Then tell the server whether another roll is affordable (the player's rule: any stamina above zero).
+            MimicState currentState = State;
+            bool rollJustStarted = currentState == MimicState.Rolling && _ownerLastState != MimicState.Rolling;
+
+            if (rollJustStarted)
+            {
+                float rollCost = owner.GetModPlayer<tsorcRevampPlayer>().RollStaminaCost;
+                StaminaCurrent = Math.Max(0f, StaminaCurrent - rollCost);
+            }
+
+            _ownerLastState = currentState;
+
+            if (StaminaCurrent > 0f)
+            {
+                OwnerFlags = (byte)(OwnerFlags | OwnerFlagCanRoll);
+            }
+            else
+            {
+                OwnerFlags = (byte)(OwnerFlags & ~OwnerFlagCanRoll);
+            }
+
+            // A use in progress (as of last tick's ItemCheck): the server holds off on Estus until it's over.
+            if (UseState.ItemAnimation > 0)
+            {
+                OwnerFlags = (byte)(OwnerFlags | OwnerFlagAttacking);
+            }
+            else
+            {
+                OwnerFlags = (byte)(OwnerFlags & ~OwnerFlagAttacking);
             }
 
             Item heldItem = owner.HeldItem;
@@ -934,9 +1432,16 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         // ── Aggro, network extras, display ──────────────────────────────────────────────────────
 
+        /// <summary>All the owner's minion slots, up to <see cref="MinionSlotCost"/> (design §2). A non-summoner with
+        /// one slot pays one; a summoner pays three and keeps the rest.</summary>
+        public override float GetMinionSlotsUsed(Player owner)
+        {
+            return Math.Min(MinionSlotCost, owner.maxMinions);
+        }
+
         public override bool DrawsAggro => true;
 
-        public override bool CanDrawAggroNow => State != MimicState.Summoning;
+        public override bool CanDrawAggroNow => State != MimicState.Summoning && State != MimicState.Dissolving;
 
         protected override bool HasOwnerActivity => IsDrinkingCerulean;
 
@@ -963,6 +1468,13 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
             get
             {
+                // Dissolve: sinks back down, slow at first then faster (ease-in), the reverse of the rise.
+                if (State == MimicState.Dissolving)
+                {
+                    float sinkProgress = Math.Clamp(_stateTimer / (float)DissolveTicks, 0f, 1f);
+                    return new Vector2(0f, sinkProgress * sinkProgress * NPC.height);
+                }
+
                 if (State != MimicState.Summoning)
                 {
                     return Vector2.Zero;
@@ -1007,6 +1519,19 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             if (estusPose || ceruleanPose)
             {
                 clone.bodyFrame = PlayerFrames.Use2.ToRectangle();
+            }
+
+            // Dodge roll: one full tumble over the roll's length, tucked legs — the player's own roll visual
+            // (tsorcRevampPlayer.UpdateDodging: rotation lerps to ±2π, forcedLegFrame = Jump).
+            clone.fullRotation = 0f;
+
+            if (State == MimicState.Rolling)
+            {
+                float rollProgress = Math.Clamp(_stateTimer / (float)RollTicks, 0f, 1f);
+                int rollFacing = NPC.direction == 0 ? 1 : NPC.direction;
+                clone.fullRotation = rollFacing * rollProgress * MathHelper.TwoPi;
+                clone.fullRotationOrigin = RollRotationOrigin;
+                clone.legFrame = PlayerFrames.Jump.ToRectangle();
             }
         }
 
@@ -1120,6 +1645,56 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             maximum = RangedMaximum;
         }
 
+        /// <summary>
+        /// Whether a roll in <paramref name="direction"/> stays on solid ground. Walks the roll's ~8-tile path column by
+        /// column: a wall at body height within the first RollMinClearTiles means there's no room (false); a wall
+        /// further on just ends the roll early (true); a column with no ground within RollLedgeDropTiles below the
+        /// feet is a ledge (false). Platforms count as ground, not as walls.
+        /// </summary>
+        private bool IsRollPathSafe(int direction)
+        {
+            int startTileX = (int)(NPC.Center.X / 16f);
+            int feetTileY = (int)((NPC.Bottom.Y - 1f) / 16f);
+
+            for (int step = 1; step <= RollPathTiles; step++)
+            {
+                int tileX = startTileX + direction * step;
+
+                // World edge: nothing to stand on out there.
+                if (tileX < 1 || tileX >= Main.maxTilesX - 1 || feetTileY < 3)
+                {
+                    return false;
+                }
+
+                // Body rows above the feet row (the feet row itself may be a 1-tile step, which it rolls up).
+                bool wallAtChest = UsefulFunctions.IsTileReallySolid(new Vector2(tileX, feetTileY - 1));
+                bool wallAtHead = UsefulFunctions.IsTileReallySolid(new Vector2(tileX, feetTileY - 2));
+
+                if (wallAtChest || wallAtHead)
+                {
+                    return step > RollMinClearTiles;
+                }
+
+                bool groundBelow = false;
+
+                for (int drop = 1; drop <= RollLedgeDropTiles; drop++)
+                {
+                    if (UsefulFunctions.IsTileReallySolid(tileX, feetTileY + drop))
+                    {
+                        groundBelow = true;
+                        break;
+                    }
+                }
+
+                if (!groundBelow)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private static int FirstFilledSlot(int[] loadoutTypes)
         {
             for (int slot = 0; slot < loadoutTypes.Length; slot++)
@@ -1184,8 +1759,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return;
             }
 
+            // Debug path: skips the Mimic Rune cooldown and slot checks, but still needs the buff — the server treats a
+            // mimic whose owner has no MimicTearBuff as dismissed.
+            caller.Player.AddBuff(ModContent.BuffType<Buffs.Weapons.Summon.MimicTearBuff>(), MimicTear.SummonBuffGraceTicks);
             MimicTear.RequestSpawn(caller.Player);
-            caller.Reply("Mimic Tear summoned.", Color.Lime);
+            caller.Reply("Mimic Tear summoned (debug: no cooldown).", Color.Lime);
         }
     }
 }

@@ -91,6 +91,17 @@ namespace tsorcRevamp
         private float lastRollStaminaCost;
         private bool perfectDodgeTriggered;
 
+        /// <summary>Stamina one dodge roll costs this player right now: 30 base, x1.25 while Tired, less the Artorias
+        /// Abysswalker reduction. Shared with the Mimic Tear, whose rolls are charged to its own pool at this rate.</summary>
+        public float RollStaminaCost
+        {
+            get
+            {
+                float abysswalkerMult = 1f - ArtoriasAbysswalkerDodgeStaminaCostReduction / 100f;
+                return 30f * TiredStaminaMult * abysswalkerMult;
+            }
+        }
+
         public static float DodgeTimeMax => 0.37f;
         public static uint DodgeDefaultCooldown => 30;
         public static int DefaultDodgeImmuneTime = 18;
@@ -555,7 +566,7 @@ namespace tsorcRevamp
 
             }
             //only subtract stamina on a successful roll
-            float rollStaminaCost = 30 * Player.GetModPlayer<tsorcRevampPlayer>().TiredStaminaMult * (1f - Player.GetModPlayer<tsorcRevampPlayer>().ArtoriasAbysswalkerDodgeStaminaCostReduction / 100f);
+            float rollStaminaCost = RollStaminaCost;
             Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= rollStaminaCost;
 
             // Remembered so a perfect dodge can refund half of what this specific roll actually cost —

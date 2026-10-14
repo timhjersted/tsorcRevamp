@@ -161,6 +161,7 @@ namespace tsorcRevamp.NPCs
                             //If players have been out of bounds for more than 10 seconds, then despawn the boss
                             if (OutOfBoundsTimer == 0)
                             {
+                                global::tsorcRevamp.Systems.BossVanishDiagnostics.LogHandlerDespawn(npcID, "a player stayed out of range for the full out-of-bounds timer", targetIDs, targetAlive, targetCount);
                                 for (int j = 0; j < targetAlive.Length; j++)
                                 {
                                     targetAlive[j] = false;
@@ -180,6 +181,7 @@ namespace tsorcRevamp.NPCs
                 //If there's no player that has not yet died, then despawn.
                 if (!viableTarget)
                 {
+                    global::tsorcRevamp.Systems.BossVanishDiagnostics.LogHandlerDespawn(npcID, "no tracked player is alive and active", targetIDs, targetAlive, targetCount);
                     if (despawnText != null)
                     {
                         UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Player.AllDied"), Color.Yellow);

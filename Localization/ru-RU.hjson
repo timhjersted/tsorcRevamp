@@ -2952,22 +2952,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
 			}
 
-			OwlFatherArmor: {
-				// DisplayName: Owl Father Armor
-				// Tooltip: Increases melee damage by {0}%
-			}
-
-			OwlFatherGreaves: {
-				// DisplayName: Owl Father Greaves
-				// Tooltip: Increases melee damage by {0}%
-			}
-
-			OwlFatherMask: {
-				// DisplayName: Owl Father Mask
-				// Tooltip: Increases movement speed by {0}%
-				// SetBonus: Increases melee damage by 15%
-			}
-
 			ArtoriasOfTheAbyssArmor: {
 				// DisplayName: Abysswalker Armor
 				/* Tooltip:

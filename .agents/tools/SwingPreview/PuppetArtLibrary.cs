@@ -160,9 +160,9 @@ namespace SwingPreview
                 return new PuppetArt
                 {
                     Name = "OwlFather",
-                    BodySheet = P("Content", "Items", "Armor", "OwlFatherArmor_Body_X2.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "OwlFatherGreaves_Legs_X2.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "OwlFatherMask_Head_X2.png"),
+                    BodySheet = P("NPCs", "Puppets", "OwlFather_ArmorBody_X2.png"),
+                    LegsSheet = P("NPCs", "Puppets", "OwlFather_ArmorLegs_X2.png"),
+                    HeadSheet = P("NPCs", "Puppets", "OwlFather_ArmorHead_X2.png"),
                     WeaponSprite = P("Content", "Items", "Weapons", "Melee", "Axes", "GreatFireAxe.png"),
                     WeaponRotationOffset = 1f,
                     // Phase two doubles the complete final player cache, including the ordinary
