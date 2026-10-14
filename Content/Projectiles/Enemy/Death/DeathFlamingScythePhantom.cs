@@ -38,14 +38,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
             Texture2D texture = ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Projectile.width = (int)(texture.Width * 0.8f);
             Projectile.height = (int)(texture.Height * 0.8f);
-            Projectile.hostile = false;
+            Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 60;
-            Projectile.DamageType = DamageClass.Melee;
+            Projectile.DamageType = DamageClass.Generic;
             Projectile.netImportant = true;
+        }
+
+        public override bool? CanDamage()
+        {
+            return false;
         }
 
         public override void AI()

@@ -307,9 +307,9 @@ namespace tsorcRevamp
             FireLurkerAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<GreenBlossom>() }, new List<int>() { 5 }, true);
 
             //DEATH
-            ScriptedEvent Death = new ScriptedEvent(new Vector2(1066, 529), 30, ModContent.NPCType<NPCs.Bosses.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false, OnlyAdventureMapCondition);
+            ScriptedEvent Death = new ScriptedEvent(new Vector2(1066, 529), 30, ModContent.NPCType<NPCs.Bosses.Death.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false, OnlyAdventureMapCondition);
 
-            ScriptedEvent DeathRemix = new ScriptedEvent(new Vector2(8091, 557), 30, ModContent.NPCType<NPCs.Bosses.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false, RemixMapCondition);
+            ScriptedEvent DeathRemix = new ScriptedEvent(new Vector2(8091, 557), 30, ModContent.NPCType<NPCs.Bosses.Death.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false, RemixMapCondition);
 
             //BLACK KNIGHT IN BLUE SHM DUNGEON
             ScriptedEvent BlackKnightSHMDungeon = new ScriptedEvent(new Vector2(2282, 1650), 30, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);

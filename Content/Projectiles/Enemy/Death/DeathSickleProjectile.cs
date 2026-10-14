@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
@@ -12,16 +13,23 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
     /// <summary>
     /// Death's phase-one sickle. It keeps the vanilla Death Sickle texture, but all movement
     /// and lifecycle behavior is owned by this class: no vanilla slowdown or homing.
+    /// ai[0]/ai[1] = travel direction, ai[2] = travel speed. localAI[2] is 1 for the charged
+    /// (held-then-accelerated) variant and 2 for the scatter volley, which is removed after it has
+    /// flown ScatterTravelLimit pixels. (Projectile arrays only have maxAI = 3 slots.)
     /// </summary>
     class DeathSickleProjectile : ModProjectile
     {
         const float DefaultTravelSpeed = 5f;
         const int FadeInTicks = 15;
+        const int ChargedHoldTicks = 3 * 60;
+        const int ChargedAccelerationTicks = 30;
         const int LifetimeTicks = 8 * 60;
         const int FadeOutTicks = 15;
+        /// <summary>Scatter volley sickles (ai[3] == 1) are removed once they have flown this far.</summary>
+        const float ScatterTravelLimit = 1500f;
 
         public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.DeathSickle;
-        // PLACEHOLDER sprite (copy of vanilla Death Sickle projectile).
+        // Placeholder sprite: vanilla Death Sickle projectile art.
 
         public override void SetDefaults()
         {
@@ -60,12 +68,48 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
                 direction.Normalize();
             }
 
-            float speedRamp = MathHelper.SmoothStep(
-                0f,
-                1f,
-                MathHelper.Clamp(Projectile.localAI[0] / FadeInTicks, 0f, 1f));
             float travelSpeed = Projectile.ai[2] > 0f ? Projectile.ai[2] : DefaultTravelSpeed;
-            Projectile.velocity = direction * travelSpeed * speedRamp;
+            float speed;
+            if (Projectile.localAI[2] == 1f)
+            {
+                if (Projectile.localAI[0] <= ChargedHoldTicks)
+                {
+                    speed = 1f;
+                }
+                else if (Projectile.localAI[0] <= ChargedHoldTicks + ChargedAccelerationTicks)
+                {
+                    float progress = (Projectile.localAI[0] - ChargedHoldTicks) / (float)ChargedAccelerationTicks;
+                    speed = MathHelper.Lerp(1f, travelSpeed, MathHelper.SmoothStep(0f, 1f, progress));
+                }
+                else
+                {
+                    speed = travelSpeed;
+                }
+            }
+            else
+            {
+                float speedRamp = MathHelper.SmoothStep(
+                    0f,
+                    1f,
+                    MathHelper.Clamp(Projectile.localAI[0] / FadeInTicks, 0f, 1f));
+                speed = travelSpeed * speedRamp;
+            }
+
+            if (Projectile.localAI[2] == 2f)
+            {
+                // Scatter volley: keep the streams from piling up on screen (and in the projectile
+                // array) by dropping each sickle once it has flown far enough. The ramp part of the
+                // fade-in averages out to half of FadeInTicks, so the travelled distance is just
+                // speed * (age - FadeInTicks / 2).
+                float travelled = travelSpeed * Math.Max(0f, Projectile.localAI[0] - FadeInTicks * 0.5f);
+                if (travelled >= ScatterTravelLimit)
+                {
+                    Projectile.Kill();
+                    return;
+                }
+            }
+
+            Projectile.velocity = direction * speed;
             Projectile.localAI[1] += 0.22f;
             Projectile.rotation = direction.ToRotation() + MathHelper.PiOver2 + Projectile.localAI[1];
 
@@ -132,12 +176,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
         {
             writer.Write(Projectile.localAI[0]);
             writer.Write(Projectile.localAI[1]);
+            writer.Write(Projectile.localAI[2]);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             Projectile.localAI[0] = reader.ReadSingle();
             Projectile.localAI[1] = reader.ReadSingle();
+            Projectile.localAI[2] = reader.ReadSingle();
         }
     }
 }

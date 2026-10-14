@@ -30,6 +30,7 @@ using tsorcRevamp.Banners;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.NPCs.Bosses;
+using tsorcRevamp.NPCs.Bosses.Death;
 using tsorcRevamp.NPCs.Bosses.JungleWyvern;
 using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
 using tsorcRevamp.NPCs.Bosses.Okiku.FirstForm;

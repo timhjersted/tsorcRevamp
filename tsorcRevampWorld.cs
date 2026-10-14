@@ -2801,7 +2801,7 @@ namespace tsorcRevamp
             { ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>(), new Vector2(7192, 347) },
             { ModContent.NPCType<NPCs.Bosses.TheSorrow>(), new Vector2(8236, 1650) },
             { ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>(), new Vector2(1098, 962) },
-            { ModContent.NPCType<NPCs.Bosses.Death>(), new Vector2(1076, 545) },
+            { ModContent.NPCType<NPCs.Bosses.Death.Death>(), new Vector2(1076, 545) },
             { ModContent.NPCType<NPCs.Bosses.TheHunter>(), new Vector2(295, 1515) },
             { NPCID.TheDestroyer, new Vector2(2109, 856) },
             { ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>(), new Vector2(5066, 1056) },
@@ -2840,7 +2840,7 @@ namespace tsorcRevamp
 
         public static Dictionary<int, Vector2> RemixHardmodeBossIDs = new Dictionary<int, Vector2>
         {
-            { ModContent.NPCType<NPCs.Bosses.Death>(), new Vector2(8091, 557) },
+            { ModContent.NPCType<NPCs.Bosses.Death.Death>(), new Vector2(8091, 557) },
         };
         
         public static Dictionary<int, Vector2> RemixSHMBossIDs = new Dictionary<int, Vector2>

@@ -32,7 +32,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
         MovementMode Mode => (MovementMode)(int)Projectile.ai[2];
 
         public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.FlamingScythe;
-        // PLACEHOLDER sprite (copy of vanilla Flaming Scythe projectile).
+        // Placeholder sprite: vanilla Flaming Scythe projectile art.
 
         public override void SetStaticDefaults()
         {
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
             Projectile.penetrate = -1;
             Projectile.timeLeft = OutboundTicks + ReturnTicks + 4;
             Projectile.light = 1f;
-            Projectile.DamageType = DamageClass.Melee;
+            Projectile.DamageType = DamageClass.Generic;
             Projectile.netImportant = true;
         }
 
