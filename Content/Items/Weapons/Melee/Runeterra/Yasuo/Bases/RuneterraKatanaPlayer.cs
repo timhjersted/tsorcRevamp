@@ -44,67 +44,60 @@ public class RuneterraKatanaPlayer : ModPlayer
         SteelTempestStacks = 0;
     }
 
-    public NPC SweepingBladeTarget = Main.npc.Last();
+    // Picked each tick by RuneterraKatanaItem.HoldItem (owner only); null when nothing valid is under the cursor.
+    public NPC SweepingBladeTarget;
+
+    public override void ResetEffects()
+    {
+        // Runs after ProcessTriggers and before HoldItem, so the dash key always sees last tick's pick and
+        // never a reference left over from when the katana was last held (that NPC slot may be reused by now).
+        SweepingBladeTarget = null;
+    }
+
         public void DoSweepingBlade()
         {
-            /*List<NPC> validTargets = new List<NPC>();
-            SweepingBladeTarget = Main.npc.Last();
-            bool plasma = true;
-            foreach (var other in Main.ActiveNPCs)
+            NPC target = SweepingBladeTarget;
+            if (target == null || !target.active || target.dontTakeDamage)
             {
-                bool hasPlasma = Player.HeldItem.type == ModContent.ItemType<PlasmaWhirlwind>() &&
-                                 !Player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>());
-                bool hasNightbringer = Player.HeldItem.type == ModContent.ItemType<Nightbringer>() &&
-                                       !Player.HasBuff(ModContent.BuffType<NightbringerDash>());
-                bool targetable = !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly 
-                    && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) 
-                    && other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>())
-                    && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>());
-                if (targetable && hasPlasma)
-                {
-                    validTargets.Add(other);
-                    plasma = true;
-                } //cooldown is added by On-Hit in the dash projectile hitbox
-                if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && targetable  && hasNightbringer)
-                {
-                    validTargets.Add(other);
-                    plasma = false;
-                } //cooldown is added by On-Hit in the dash projectile hitbox
-
-                foreach (NPC target in validTargets)
-                {
-                    if (target.Center.Distance(Main.MouseWorld) < SweepingBladeTarget.Center.Distance(Main.MouseWorld))
-                    {
-                        SweepingBladeTarget = target; //so it actually dashes to the npc nearest to your cursor, not any random npc that is in the cursors range
-                    }
-                }
-            }*/
-
-            if (SweepingBladeTarget != Main.npc.Last())
-            {
-                int heldItem = Player.HeldItem.type;
-                if (heldItem == ModContent.ItemType<PlasmaWhirlwind>())
-                {
-                    Player.immune = true;
-                    Player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
-                    SweepingBladeVelocity = Player.DirectionTo(SweepingBladeTarget.Center) * 17;
-                    Player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
-                    SoundEngine.PlaySound(new SoundStyle( UsefulFunctions.RefactorableFilepath(typeof(PlasmaWhirlwindSound)) + "_Dash") with { Volume = 1f });
-                    Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Player.Center, Vector2.Zero, 
-                        ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), Player.HeldItem.damage, 0, Player.whoAmI, SweepingBladeTarget.whoAmI);
-                }
-                else if (heldItem == ModContent.ItemType<Nightbringer>())
-                {
-                    Player.immune = true;
-                    SweepingBladeVelocity = Player.DirectionTo(SweepingBladeTarget.Center) * 17;
-                    Player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
-                    Player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
-                    SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(NightbringerSound)) + "_Dash") with { Volume = 1f });                    
-                    Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Player.Center, Vector2.Zero, 
-                        ModContent.ProjectileType<NightbringerDashHitbox>(), Player.HeldItem.damage, 0, Player.whoAmI, SweepingBladeTarget.whoAmI);
-
-                }
+                return;
             }
+
+            int heldItem = Player.HeldItem.type;
+            int dashBuffID;
+            int dashHitboxID;
+            string dashSoundPath;
+
+            if (heldItem == ModContent.ItemType<PlasmaWhirlwind>())
+            {
+                dashBuffID = ModContent.BuffType<PlasmaWhirlwindDash>();
+                dashHitboxID = ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>();
+                dashSoundPath = UsefulFunctions.RefactorableFilepath(typeof(PlasmaWhirlwindSound));
+            }
+            else if (heldItem == ModContent.ItemType<Nightbringer>())
+            {
+                dashBuffID = ModContent.BuffType<NightbringerDash>();
+                dashHitboxID = ModContent.ProjectileType<NightbringerDashHitbox>();
+                dashSoundPath = UsefulFunctions.RefactorableFilepath(typeof(NightbringerSound));
+            }
+            else
+            {
+                return;
+            }
+
+            // Dash toward the target at 17 px/tick. DirectionTo turns a zero vector into NaN when the player's center
+            // sits exactly on the target's, and vanilla never repairs a NaN velocity, so it would poison the player's
+            // position. SafeNormalize falls back to dashing the way the player faces.
+            Vector2 toTarget = target.Center - Player.Center;
+            Vector2 dashDirection = toTarget.SafeNormalize(Vector2.UnitX * Player.direction);
+            SweepingBladeVelocity = dashDirection * 17;
+
+            Player.immune = true;
+            Player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
+            Player.AddBuff(dashBuffID, (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
+            SoundEngine.PlaySound(new SoundStyle(dashSoundPath + "_Dash") with { Volume = 1f });
+
+            //cooldown is added to the target by the dash hitbox's AI (ai[0] = target index)
+            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Player.Center, Vector2.Zero, dashHitboxID, Player.HeldItem.damage, 0, Player.whoAmI, target.whoAmI);
         }
 
         public void DoFirewall()

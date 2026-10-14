@@ -88,28 +88,40 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Bases
                     TornadoReady.scale = 1.25f;
                 }
             }
-            if (Tier > 1)
+            // Pick the Sweeping Blade target: the valid NPC nearest the cursor. Only the owner's mouse means anything,
+            // so other machines skip this. ResetEffects nulls the target every tick, so the dash key only ever sees
+            // one picked last tick (never a dead NPC whose slot got reused).
+            if (Tier > 1 && player.whoAmI == Main.myPlayer)
             {
-                List<NPC> validTargets = new List<NPC>();
-                modPlayer.SweepingBladeTarget = Main.npc.Last();
-                foreach (var other in Main.ActiveNPCs)
+                Rectangle cursorHitbox = Utils.CenteredRectangle(Main.MouseWorld, modPlayer.MouseHitboxSize);
+                float closestCursorDistance = float.MaxValue;
+
+                foreach (NPC other in Main.ActiveNPCs)
                 {
-                    bool targetable = !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, modPlayer.MouseHitboxSize)) 
-                        && other.Distance(player.Center) <= 400 && !other.HasBuff(DashCooldownBuffID) && Collision.CanHitLine(player.position, player.width, player.height, other.position, other.width, other.height);
-                    if (targetable)
+                    bool canBeHit = !other.friendly && !other.dontTakeDamage && !other.immortal && !tsorcRevamp.UntargetableNPCs.Contains(other.type);
+                    bool inReach = other.Hitbox.Intersects(cursorHitbox) && other.Distance(player.Center) <= 400;
+                    bool offCooldown = !other.HasBuff(DashCooldownBuffID);
+
+                    if (!canBeHit || !inReach || !offCooldown)
                     {
-                        validTargets.Add(other);
+                        continue;
                     }
-                }
-                foreach (NPC target in validTargets)
-                {
-                    if (target.Center.Distance(Main.MouseWorld) < modPlayer.SweepingBladeTarget.Center.Distance(Main.MouseWorld))
+
+                    bool hasLineOfSight = Collision.CanHitLine(player.position, player.width, player.height, other.position, other.width, other.height);
+                    if (!hasLineOfSight)
                     {
-                        modPlayer.SweepingBladeTarget = target; //so it actually dashes to the npc nearest to your cursor, not any random npc that is in the cursors range
+                        continue;
+                    }
+
+                    float cursorDistance = other.Center.Distance(Main.MouseWorld);
+                    if (cursorDistance < closestCursorDistance)
+                    {
+                        closestCursorDistance = cursorDistance;
+                        modPlayer.SweepingBladeTarget = other;
                     }
                 }
 
-                if (modPlayer.SweepingBladeTarget != Main.npc.Last())
+                if (modPlayer.SweepingBladeTarget != null)
                 {
                     UsefulFunctions.DustRing(modPlayer.SweepingBladeTarget.Center, modPlayer.SweepingBladeTarget.width / 2, DashDustID, 5, 2);
                 }
