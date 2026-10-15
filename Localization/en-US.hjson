@@ -657,6 +657,7 @@ Mods: {
 			FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: Only drops on the first kill outside of Expert Mode]"
 			DownedSkeletron: "[c/ff9999: Drops after defeating Skeletron]"
+			IllusionWandOfFrost: "[c/99ccff:Guaranteed once per world, after Skeletron or Gravelord Nito is defeated]"
 		}
 
 		Quest: {
@@ -997,11 +998,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AttraidiesIllusion.DisplayName}"
 			}
 
-			AttraidiesManifestationBanner: {
-				DisplayName: "{$NPCs.AttraidiesManifestation.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AttraidiesManifestation.DisplayName}"
-			}
-
 			BarrowWightBanner: {
 				DisplayName: "{$NPCs.BarrowWight.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BarrowWight.DisplayName}"
@@ -1200,21 +1196,6 @@ Mods: {
 			MarilithSpiritTwinBanner: {
 				DisplayName: "{$NPCs.MarilithSpiritTwin.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MarilithSpiritTwin.DisplayName}"
-			}
-
-			MindflayerIllusionBanner: {
-				DisplayName: "{$NPCs.MindflayerIllusion.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerIllusion.DisplayName}"
-			}
-
-			MindflayerKingServantBanner: {
-				DisplayName: "{$NPCs.MindflayerKingServant.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerKingServant.DisplayName}"
-			}
-
-			MindflayerServantBanner: {
-				DisplayName: "{$NPCs.MindflayerServant.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerServant.DisplayName}"
 			}
 
 			MutantToadBanner: {
@@ -10726,8 +10707,8 @@ Mods: {
 			EnemySpellLightPillar.DisplayName: Enemy Spell Light Pillar
 			EnemySpellLightPillarBall.DisplayName: Enemy Spell Light Pillar Ball
 			EnemySpellMeteor.DisplayName: Enemy Spell Meteor
-			EnemySpellPoisonField.DisplayName: Enemy Spell Poison Field
-			EnemySpellPoisonFieldBall.DisplayName: Enemy Spell Poison Field Ball
+			IllusionVenomField.DisplayName: Venom Field
+			IllusionVenomOrb.DisplayName: Venom Orb
 			EnemySpellPoisonStorm.DisplayName: Enemy Spell Poison Storm
 			EnemySpellPoisonStormBall.DisplayName: Enemy Spell Great Poison Strike Ball
 			EnemySpellSuddenDeathBall.DisplayName: Enemy Spell Sudden Death Ball
@@ -12058,11 +12039,6 @@ Mods: {
 				Death: The Attraidies Illusion has been defeated...
 			}
 
-			AttraidiesManifestation: {
-				DisplayName: Attraidies Manifestation
-				Death: The Attraidies Manifestation has been vanquished...
-			}
-
 			BarrowWight.DisplayName: Barrow Wight
 			BasiliskShifter.DisplayName: Basilisk Shifter
 			BasiliskWalker.DisplayName: Basilisk Walker
@@ -12121,13 +12097,6 @@ Mods: {
 			MarilithSeeker.DisplayName: Marilith Seeker
 			MarilithSpiritTwin.DisplayName: Marilith Spirit Twin
 
-			MindflayerIllusion: {
-				DisplayName: Mindflayer Illusion
-				Destroy: Hahahahaha! I'm going to destroy you, Red...
-			}
-
-			MindflayerKingServant.DisplayName: Mindflayer King Servant
-			MindflayerServant.DisplayName: Mindflayer Servant
 			MutantToad.DisplayName: Mutant Toad
 			Necromancer.DisplayName: Necromancer
 			FallenNecromancer.DisplayName: Fallen Necromancer

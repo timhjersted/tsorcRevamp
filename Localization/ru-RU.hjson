@@ -962,11 +962,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AttraidiesIllusion.DisplayName}"
 			}
 
-			AttraidiesManifestationBanner: {
-				DisplayName: Знамя проявления Аттрайдиса
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AttraidiesManifestation.DisplayName}"
-			}
-
 			BarrowWightBanner: {
 				DisplayName: Знамя умертвия
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BarrowWight.DisplayName}"
@@ -1165,21 +1160,6 @@ Mods: {
 			MarilithSpiritTwinBanner: {
 				DisplayName: Знамя духовного близнеца Марилит
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MarilithSpiritTwin.DisplayName}"
-			}
-
-			MindflayerIllusionBanner: {
-				DisplayName: Знамя иллюзии Истязателя разума
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerIllusion.DisplayName}"
-			}
-
-			MindflayerKingServantBanner: {
-				DisplayName: Знамя слуги Короля-истязателя разума
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerKingServant.DisplayName}"
-			}
-
-			MindflayerServantBanner: {
-				DisplayName: Знамя слуги Истязателя разума
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerServant.DisplayName}"
 			}
 
 			MutantToadBanner: {
@@ -10610,8 +10590,6 @@ Mods: {
 			EnemySpellLightPillar.DisplayName: Вражеское заклинание "Световой столб"
 			EnemySpellLightPillarBall.DisplayName: Вражеское заклинание Шар светового столба
 			EnemySpellMeteor.DisplayName: Вражеское заклинание "Метеор"
-			EnemySpellPoisonField.DisplayName: Ядовитое поле вражеского заклинания
-			EnemySpellPoisonFieldBall.DisplayName: Ядовитый полевой шар вражеского заклинания
 			EnemySpellPoisonStorm.DisplayName: Вражеское заклинание Ядовитый шторм
 			EnemySpellPoisonStormBall.DisplayName: Вражеское заклинание "Великий ядовитый ударный шар"
 			EnemySpellSuddenDeathBall.DisplayName: Вражеское заклинание "Шар внезапной смерти"
@@ -11942,11 +11920,6 @@ Mods: {
 				Death: Иллюзия Аттрайдиса была побеждена
 			}
 
-			AttraidiesManifestation: {
-				DisplayName: Проявление Аттрайдиса
-				Death: Проявление Аттрайдиса было побеждено
-			}
-
 			BarrowWight.DisplayName: Умертвие
 			BasiliskShifter.DisplayName: Василиск-оборотень
 			BasiliskWalker.DisplayName: Ходячий василиск
@@ -12005,13 +11978,6 @@ Mods: {
 			MarilithSeeker.DisplayName: Искатель Марилит
 			MarilithSpiritTwin.DisplayName: Духовный близнец Марилит
 
-			MindflayerIllusion: {
-				DisplayName: Иллюзия истязателя разума
-				Destroy: Хахахахаха! Я собираюсь уничтожить тебя, Рэд...
-			}
-
-			MindflayerKingServant.DisplayName: Слуга Короля-истязателя разума
-			MindflayerServant.DisplayName: Слуга Короля-истязателя разума
 			MutantToad.DisplayName: Жаба-мутант
 			Necromancer.DisplayName: Некромант
 			FallenNecromancer.DisplayName: Падший некромант

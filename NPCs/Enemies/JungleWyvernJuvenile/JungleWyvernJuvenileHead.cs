@@ -70,7 +70,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             float chance = 0f;
 
             if (NPC.downedBoss3 && spawnInfo.Player.ZoneJungle && spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
-                && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.DungeonMage>()) < 1)
+                && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.DungeonMage>()) < 1)
             {
                 chance = 0.05f;
             }

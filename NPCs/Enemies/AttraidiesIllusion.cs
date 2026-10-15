@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,7 +14,9 @@ using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Potions.RadiantLifegem;
 using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Projectiles.Enemy.Attraidies;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
@@ -26,9 +29,12 @@ namespace tsorcRevamp.NPCs.Enemies
         // Oracle Fan 36t / 3 simultaneous shots over 40 degrees / 40t recovery;
         // Crystal 60t / 30t harmless portal formation + bounded pursuit / 48t recovery;
         // Mirrorstep 40t departure + fresh 40t tell / volley + one delayed echo shot / 60t recovery.
-        // Raw projectile damage stays 7 (Oracle) and 12 (crystal), with the original debuffs.
+        // Demon Spirit Volley (ported from the deleted Attraidies Manifestation) 50t overhead tell / 3 homing DemonSpirits
+        // 14t apart from the tip, 4 below 50% life / 48t recovery; Venom Orb (also ported) flies up to its hover point
+        // first, then 50t tell / one lobbed IllusionVenomOrb landing 64px past the player, two below 50% / 48t recovery.
+        // Raw projectile damage: Oracle 7, crystal and rune 12, spirit 15, venom 12; all x HardmodeDamageMultiplier in Hardmode.
         // The dedicated projectiles reuse existing art; their full lifecycles are independent of shared spells.
-        private enum Spell : byte { OracleVolley, OracleFan, SuspendedCrystal, Mirrorstep, EchoShot, RuneBlade }
+        private enum Spell : byte { OracleVolley, OracleFan, SuspendedCrystal, Mirrorstep, EchoShot, RuneBlade, DemonSpiritVolley, VenomOrb }
         private readonly struct SpellSpec
         {
             public readonly string Name;
@@ -44,7 +50,35 @@ namespace tsorcRevamp.NPCs.Enemies
             new SpellSpec("Mirrorstep Volley", 40, 49, 60),
             new SpellSpec("Mirror Echo", 40, 1, 24),
             new SpellSpec("Rune Blade Conjuration", RuneBladeConjuration.TellTicks, 96, 60),
+            new SpellSpec("Demon Spirit Volley", 50, SpiritIntervalTicks * 3 + 1, 48),
+            new SpellSpec("Venom Orb", 50, VenomSecondOrbTicks + 1, 48),
         };
+
+        // ── Ported Manifestation spells ──
+        // Damage before the Hardmode multiplier. Hardmode doubles every spell, matching the old Manifestation's step-up.
+        private const int OracleDamage = 7;
+        private const int CrystalDamage = 12;
+        private const int RuneDamage = 12;
+        private const int SpiritDamage = 15;
+        private const int VenomDamage = 12;
+        private const float HardmodeDamageMultiplier = 2f;
+
+        // Demon Spirit Volley: spirits leave the tip 14t apart. DemonSpirit homes at 4.5px/t, so the 200px minimum range
+        // gives at least 44t to react, and it stops homing for its last 60t.
+        private const int SpiritIntervalTicks = 14;
+        private const float SpiritLaunchSpeed = 4.5f;
+        private const float SpiritMinRange = 200f;
+        private const int SpiritCooldownTicks = 360;
+        private static readonly Color SpiritColor = new Color(170, 60, 220);
+
+        // Venom Orb: cast only from the flight hover point (above and beside the player). Lobs land VenomOvershoot past the
+        // player's floor point; the second orb (below 50% life) lands VenomSecondOrbSpread further along their facing.
+        private const int VenomSecondOrbTicks = 24;
+        private const float VenomOvershoot = 64f;
+        private const float VenomSecondOrbSpread = 160f;
+        private const float VenomMinRange = 160f;
+        private const int VenomCooldownTicks = 420;
+        private const int VenomApproachTimeout = 180;
         private readonly List<Spell> _spellBag = new List<Spell>();
         private Spell _spell, _lastSpell = Spell.EchoShot;
         private Vector2 _aim = Vector2.UnitX, _portal, _blinkDestination, _echoAnchor;
@@ -54,6 +88,10 @@ namespace tsorcRevamp.NPCs.Enemies
         private Player _staffPose;
         private bool _runeFirstUnderhand;
         private int _runeCount = 1, _runeCooldown;
+        private int _spiritCooldown;
+        private int _venomCooldown;
+        private bool _venomApproach;
+        private int _venomApproachTicks;
         // Rune approach: low hover over real floor, 5px/t closing; 3.2px/t advancing cast.
         // Start tells at <=96px, re-check the actual 128px blade sweep on EVERY release.
         // Live cut remains15t (<22 roll i-frames), with locked facing/stride and no vertical homing.
@@ -103,14 +141,41 @@ namespace tsorcRevamp.NPCs.Enemies
         protected override int MagicAttackTicks => IsRune ? RuneBladeConjuration.ActiveTicks(_runeCount) : CurrentSpell.Active;
         protected override int MagicRecoveryTicks => CurrentSpell.Recovery;
         protected override int MagicCooldownAfterUse => 0;
-        protected override bool BrakeDuringMagicCast => !IsRune && (_spell == Spell.SuspendedCrystal || IsEcho);
+        protected override bool BrakeDuringMagicCast => !IsRune && (_spell == Spell.SuspendedCrystal || _spell == Spell.DemonSpiritVolley || IsEcho);
         protected override bool UseAuthoredMagicCastPose => true;
         protected override float MagicCastStartRotation => _spell == Spell.Mirrorstep ? -1.2f : -0.3f;
         protected override float MagicCastEndRotation => CastRotation;
         protected override float MagicWeaponRotationOffset => MathHelper.PiOver4;
         protected override bool MirrorMagicWeaponRotationByFacing => true;
         protected override int MagicWeaponRecoveryHoldTicks => MagicRecoveryTicks;
-        protected override Color MagicTelegraphFlashColor => IsRune ? RuneColor : _spell == Spell.SuspendedCrystal ? CrystalColor : OracleColor;
+        // Tell dust and flash colour per spell, matched to each projectile's sprite.
+        protected override Color MagicTelegraphFlashColor
+        {
+            get
+            {
+                if (IsRune)
+                {
+                    return RuneColor;
+                }
+
+                if (_spell == Spell.SuspendedCrystal)
+                {
+                    return CrystalColor;
+                }
+
+                if (_spell == Spell.DemonSpiritVolley)
+                {
+                    return SpiritColor;
+                }
+
+                if (_spell == Spell.VenomOrb)
+                {
+                    return IllusionVenomOrb.VenomColor;
+                }
+
+                return OracleColor;
+            }
+        }
         protected override int MagicTelegraphFlashLeadTicks => MagicTelegraphTicks;
         protected override bool UseCompositeArmForAdditionalPhase => true;
         protected override bool UseCompositeArmSwing => true;
@@ -170,7 +235,14 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<AttraidiesManifestation>()) < 1
+
+            // Pre-Hardmode and Hardmode only; it does not spawn in Super Hardmode.
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                return 0f;
+            }
+
+            if (spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<AttraidiesIllusion>()) < 1
                 && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1 && NPC.CountNPCS(ModContent.NPCType<DungeonMage>()) < 1)
             {
                 if (!Main.hardMode) { chance = .02f; }
@@ -200,7 +272,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (IsEcho && Vector2.Distance(NPC.Center, _echoAnchor) > 64f)
             { NPC.velocity.X *= 0.7f; return; }
             if (Phase == AttackPhase.MagicAttack || (_aimLocked && Phase == AttackPhase.MagicTelegraph)
-                || (_spell == Spell.SuspendedCrystal && Phase == AttackPhase.MagicTelegraph))
+                || ((_spell == Spell.SuspendedCrystal || _spell == Spell.DemonSpiritVolley) && Phase == AttackPhase.MagicTelegraph))
             { NPC.velocity.X *= 0.7f; return; }
             SmartFighter4AI.Run(NPC, TopSpeed * speedMult * (IsNeutral ? 1f : 0.6f),
                 Acceleration, doorBreakingDamage: 0, attackRange: MagicRange);
@@ -219,6 +291,17 @@ namespace tsorcRevamp.NPCs.Enemies
             if (_blinkCooldown > 0) _blinkCooldown--;
             if (_crystalCooldown > 0) _crystalCooldown--;
             if (_runeCooldown > 0) _runeCooldown--;
+
+            if (_spiritCooldown > 0)
+            {
+                _spiritCooldown--;
+            }
+
+            if (_venomCooldown > 0)
+            {
+                _venomCooldown--;
+            }
+
             bool server = Main.netMode != NetmodeID.MultiplayerClient;
             if (IsEcho) _echoAge++;
             if (server && IsEcho && (!OwnerAlive || _echoFired && _neutralDelay <= 0))
@@ -250,7 +333,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (!IsNeutral) NPC.direction = NPC.spriteDirection = _facing;
             if (Flight != null && Flight.Mode == FlightMode.Hover
                 && (Phase == AttackPhase.MagicAttack || Phase == AttackPhase.MagicTelegraph
-                    && (_aimLocked || _spell == Spell.SuspendedCrystal))) NPC.velocity = Vector2.Zero;
+                    && (_aimLocked || _spell == Spell.SuspendedCrystal || _spell == Spell.VenomOrb))) NPC.velocity = Vector2.Zero;
             if (server && _blinkPending && g.TeleportCountdown == 0 && g.TeleportAppearanceTimer == 0)
             { _blinkPending = false; _aimLocked = false; NPC.netUpdate = true; }
             if (server && previousPhase == AttackPhase.MagicRecovery && IsNeutral)
@@ -298,6 +381,34 @@ namespace tsorcRevamp.NPCs.Enemies
                 && Main.npc[_echoIndex].ModNPC is AttraidiesIllusion echo && echo._ownerIndex == NPC.whoAmI) return;
             bool clear = Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1);
             if (!clear) _flightFailureTicks++; else _flightFailureTicks = 0;
+
+            // Venom Orb positioning: the cast waits until the flight controller has carried the caster to its hover point
+            // (HoverAltitude above, HoverSideOffset beside the player). Gives up after VenomApproachTimeout or if the
+            // takeoff never happened, with a short cooldown so the bag moves on.
+            if (_venomApproach)
+            {
+                _venomApproachTicks++;
+
+                bool hovering = Flight != null && Flight.Mode == FlightMode.Hover;
+                bool timedOut = _venomApproachTicks > VenomApproachTimeout;
+                bool neverTookOff = Flight == null || (!Flight.IsAirborne && _venomApproachTicks > 30);
+
+                if (timedOut || neverTookOff)
+                {
+                    _venomApproach = false;
+                    _venomCooldown = Math.Max(_venomCooldown, 120);
+                    NPC.netUpdate = true;
+                    return;
+                }
+
+                if (hovering && clear)
+                {
+                    _venomApproach = false;
+                    BeginSpell(Spell.VenomOrb);
+                }
+
+                return;
+            }
             bool canFly = Flight != null && !Flight.IsAirborne && Flight.CooldownRemaining <= 0;
             if (canFly && (target.Center.Y < NPC.Center.Y - 96f || _flightFailureTicks >= 90)
                 && !Collision.SolidCollision(NPC.position - new Vector2(0f, 64f), NPC.width, NPC.height + 64))
@@ -321,7 +432,8 @@ namespace tsorcRevamp.NPCs.Enemies
             if (distance > MagicRange) return;
             if (_spellBag.Count == 0)
             {
-                _spellBag.AddRange(new[] { Spell.OracleVolley, Spell.OracleFan, Spell.SuspendedCrystal, Spell.Mirrorstep, Spell.RuneBlade });
+                _spellBag.AddRange(new[] { Spell.OracleVolley, Spell.OracleFan, Spell.SuspendedCrystal, Spell.Mirrorstep, Spell.RuneBlade,
+                    Spell.DemonSpiritVolley, Spell.VenomOrb });
                 for (int i = _spellBag.Count - 1; i > 0; i--)
                 { int j = Main.rand.Next(i + 1); Spell swap = _spellBag[i]; _spellBag[i] = _spellBag[j]; _spellBag[j] = swap; }
             }
@@ -338,7 +450,27 @@ namespace tsorcRevamp.NPCs.Enemies
                     || HasCrystal() || !TryFindPortal(target, out _portal))) continue;
                 if (candidate == Spell.Mirrorstep && (_blinkCooldown > 0 || NPC.velocity.Y != 0f
                     || (Flight != null && Flight.IsAirborne) || !TryFindBlinkDestination(target, out _blinkDestination))) continue;
+                if (candidate == Spell.DemonSpiritVolley && (_spiritCooldown > 0 || distance < SpiritMinRange)) continue;
+
+                // Venom Orb is only cast from the hover point: take off now (or cast at once if already hovering).
+                // No headroom or flight on cooldown leaves it in the bag for later.
+                bool hoveringNow = Flight != null && Flight.Mode == FlightMode.Hover;
+                bool hasHeadroom = !Collision.SolidCollision(NPC.position - new Vector2(0f, 64f), NPC.width, NPC.height + 64);
+                bool canTakeOff = Flight != null && !Flight.IsAirborne && Flight.CooldownRemaining <= 0 && hasHeadroom;
+                if (candidate == Spell.VenomOrb && (_venomCooldown > 0 || distance < VenomMinRange || (!hoveringNow && !canTakeOff))) continue;
+
                 _spellBag.RemoveAt(i); _lastSpell = candidate;
+
+                if (candidate == Spell.VenomOrb && !hoveringNow)
+                {
+                    Flight.RequestTakeoff();
+                    _venomApproach = true;
+                    _venomApproachTicks = 0;
+                    DebugAttackLabel = "Venom Orb: taking position";
+                    NPC.netUpdate = true;
+                    return;
+                }
+
                 if (candidate == Spell.RuneBlade)
                 {
                     _runeApproach = true; _runeApproachTicks = 0;
@@ -374,6 +506,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (!_blinkPending) _spell = Spell.OracleVolley;
             }
             if (spell == Spell.SuspendedCrystal) _crystalCooldown = 300;
+
+            if (spell == Spell.DemonSpiritVolley)
+            {
+                _spiritCooldown = SpiritCooldownTicks;
+            }
+
+            if (spell == Spell.VenomOrb)
+            {
+                _venomCooldown = VenomCooldownTicks;
+            }
+
             if (spell == Spell.RuneBlade)
             {
                 _runeRecoveryPose = RuneBladeConjuration.Carry;
@@ -396,7 +539,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (PortalSafe(_portal))
                     Projectile.NewProjectile(NPC.GetSource_FromAI(), _portal,
                         (Main.player[NPC.target].Center - _portal).SafeNormalize(Vector2.UnitY) * 2f,
-                        ModContent.ProjectileType<IllusionCrystal>(), 12, 0f, Main.myPlayer, NPC.whoAmI, NPC.target);
+                        ModContent.ProjectileType<IllusionCrystal>(), ScaledDamage(CrystalDamage), 0f, Main.myPlayer, NPC.whoAmI, NPC.target);
+            }
+            else if (_spell == Spell.DemonSpiritVolley)
+            {
+                FireDemonSpirit();
+                _releasedShots = 1;
+            }
+            else if (_spell == Spell.VenomOrb)
+            {
+                FireVenomOrb(0f);
+                _releasedShots = 1;
             }
             else if (_spell == Spell.OracleFan)
             { for (int i = -1; i <= 1; i++) FireOracle(_aim.RotatedBy(MathHelper.ToRadians(i * 20f)) * 5f); }
@@ -432,7 +585,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     _runeStride = (Main.player[NPC.target].Center.X - NPC.Center.X) * _facing > 72f ? RuneCastSpeed * _facing : 0f;
                     NPC.netUpdate = true;
                     Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + RuneBladeConjuration.Offset(underhand, _facing),
-                        Vector2.Zero, ModContent.ProjectileType<IllusionRuneBlade>(), 12, 0f, Main.myPlayer,
+                        Vector2.Zero, ModContent.ProjectileType<IllusionRuneBlade>(), ScaledDamage(RuneDamage), 0f, Main.myPlayer,
                         NPC.whoAmI, _facing * (underhand ? 2 : 1));
                 }
                 return;
@@ -440,19 +593,114 @@ namespace tsorcRevamp.NPCs.Enemies
             if ((_spell == Spell.OracleVolley || _spell == Spell.Mirrorstep)
                 && elapsed > 0 && elapsed % 12 == 0 && _releasedShots < 5)
             { FireOracle(_aim * 6f); _releasedShots++; NPC.netUpdate = true; }
+
+            // Demon Spirit Volley: one spirit every SpiritIntervalTicks; 3 spirits, 4 below 50% life.
+            int spiritCount = 3;
+            if (NPC.life <= NPC.lifeMax * 0.5f)
+            {
+                spiritCount = 4;
+            }
+
+            bool spiritBeat = elapsed > 0 && elapsed % SpiritIntervalTicks == 0;
+            if (_spell == Spell.DemonSpiritVolley && spiritBeat && _releasedShots < spiritCount)
+            {
+                FireDemonSpirit();
+                _releasedShots++;
+                NPC.netUpdate = true;
+            }
+
+            // Venom Orb: below 50% life a second orb follows VenomSecondOrbTicks later, landing further along the player's run.
+            bool secondOrbBeat = elapsed == VenomSecondOrbTicks && _releasedShots == 1;
+            if (_spell == Spell.VenomOrb && secondOrbBeat && NPC.life <= NPC.lifeMax * 0.5f)
+            {
+                Player target = Main.player[NPC.target];
+                float runDirection = target.direction;
+
+                if (Math.Abs(target.velocity.X) > 0.5f)
+                {
+                    runDirection = Math.Sign(target.velocity.X);
+                }
+
+                FireVenomOrb(runDirection * VenomSecondOrbSpread);
+                _releasedShots++;
+                NPC.netUpdate = true;
+            }
         }
+
+        // Hardmode doubles every spell, matching the step-up the old Manifestation had.
+        private static int ScaledDamage(int baseDamage)
+        {
+            if (Main.hardMode)
+            {
+                return (int)(baseDamage * HardmodeDamageMultiplier);
+            }
+
+            return baseDamage;
+        }
+
         private void FireOracle(Vector2 velocity)
         {
             // A projectile is born exactly at the displayed tip; one shared pure pose computation is used on all peers.
             Projectile.NewProjectile(NPC.GetSource_FromAI(), StaffTipWorld,
-                velocity, ModContent.ProjectileType<IllusionOracle>(), 7, 0f, Main.myPlayer,
+                velocity, ModContent.ProjectileType<IllusionOracle>(), ScaledDamage(OracleDamage), 0f, Main.myPlayer,
                 IsEcho ? _ownerIndex : NPC.whoAmI);
+        }
+
+        // Shared DemonSpirit projectile, unchanged: it homes on the nearest player by itself, fans its three-way arc by
+        // identity, and owns its own travel trail and burst. Launched from the tip in the overhead staff's direction.
+        private void FireDemonSpirit()
+        {
+            Vector2 launchVelocity = new Vector2(_facing * 0.6f, -1f).SafeNormalize(-Vector2.UnitY) * SpiritLaunchSpeed;
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), StaffTipWorld, launchVelocity,
+                ModContent.ProjectileType<Content.Projectiles.Enemy.DemonSpirit>(), ScaledDamage(SpiritDamage), 0f, Main.myPlayer);
+        }
+
+        // Lob an IllusionVenomOrb from the tip to land VenomOvershoot past the player's floor point (plus extraOffsetX).
+        // Flight time scales with distance (30-70t); the launch solves the discrete gravity drop Gravity * T(T+1)/2.
+        private void FireVenomOrb(float extraOffsetX)
+        {
+            Player target = Main.player[NPC.target];
+            Vector2 tip = StaffTipWorld;
+
+            float overshootDirection = Math.Sign(target.Center.X - NPC.Center.X);
+            if (overshootDirection == 0f)
+            {
+                overshootDirection = _facing;
+            }
+
+            Vector2 landing = target.Bottom + new Vector2(overshootDirection * VenomOvershoot + extraOffsetX, -8f);
+            Vector2 toLanding = landing - tip;
+
+            int flightTicks = (int)MathHelper.Clamp(toLanding.Length() / 6f, 30f, 70f);
+            float gravityDrop = IllusionVenomOrb.Gravity * flightTicks * (flightTicks + 1) / 2f;
+            Vector2 launchVelocity = new Vector2(toLanding.X / flightTicks, (toLanding.Y - gravityDrop) / flightTicks);
+
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), tip, launchVelocity,
+                ModContent.ProjectileType<IllusionVenomOrb>(), ScaledDamage(VenomDamage), 0f, Main.myPlayer);
         }
         protected override void DoMeleeAttack() { }
         protected override void DoRangedAttack() { }
 
-        private float CastRotation => _spell == Spell.SuspendedCrystal ? -MathHelper.PiOver2
-            : MathHelper.WrapAngle(_facing == 1 ? _aim.ToRotation() : MathHelper.Pi - _aim.ToRotation());
+        // Crystal and Demon Spirits are conjured with the staff raised straight up; every other spell points it along _aim
+        // (Venom Orb's _aim tracks the player from the hover point, so the staff angles down at them).
+        private float CastRotation
+        {
+            get
+            {
+                if (_spell == Spell.SuspendedCrystal || _spell == Spell.DemonSpiritVolley)
+                {
+                    return -MathHelper.PiOver2;
+                }
+
+                float aimAngle = _aim.ToRotation();
+                if (_facing != 1)
+                {
+                    aimAngle = MathHelper.Pi - aimAngle;
+                }
+
+                return MathHelper.WrapAngle(aimAngle);
+            }
+        }
         private float StaffRotation
         {
             get
@@ -677,6 +925,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void OnStagger(NPC npc)
         {
             _runeApproach = _runeLowHover = false; NPC.noGravity = false;
+            _venomApproach = false;
             base.OnStagger(npc); CancelBlink(); _neutralDelay = 60; _aimLocked = false;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -754,12 +1003,45 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             if (g.TeleportVisualStyle == TeleportVisualStyle.GreySmoke && g.TeleportCountdown > 0) return false;
             bool charging = Phase == AttackPhase.MagicTelegraph && !_blinkPending;
-            bool streaming = Phase == AttackPhase.MagicAttack && (_spell == Spell.OracleVolley || _spell == Spell.Mirrorstep);
+            // Between-shot previews: the second Venom Orb only exists below 50% life, so only then does its preview regrow.
+            bool secondVenomOrbComing = _spell == Spell.VenomOrb && NPC.life <= NPC.lifeMax * 0.5f;
+            bool streaming = Phase == AttackPhase.MagicAttack
+                && (_spell == Spell.OracleVolley || _spell == Spell.Mirrorstep || _spell == Spell.DemonSpiritVolley || secondVenomOrbComing);
             if ((charging || streaming) && !IsRune)
             {
                 float progress = charging ? 1f - PhaseTimer / (float)MagicTelegraphTicks : 1f;
                 Vector2 tip = StaffTipWorld - screenPos;
-                if (_spell != Spell.SuspendedCrystal)
+
+                // Ported spells grow their real projectile art at the tip; Demon Spirit shows frame 0 of its 6-frame sheet.
+                // Neither gets an aim line: spirits home, and the orb's arc is not a straight line.
+                if (_spell == Spell.DemonSpiritVolley || _spell == Spell.VenomOrb)
+                {
+                    int previewInterval = SpiritIntervalTicks;
+                    if (_spell == Spell.VenomOrb)
+                    {
+                        previewInterval = VenomSecondOrbTicks;
+                    }
+
+                    float previewGrowth = MathHelper.Clamp((30f - PhaseTimer) / 30f, 0f, 1f);
+                    if (!charging)
+                    {
+                        previewGrowth = (MagicAttackTicks - PhaseTimer) % previewInterval / (float)previewInterval;
+                    }
+
+                    Texture2D previewTexture = TextureAssets.Projectile[ModContent.ProjectileType<IllusionVenomOrb>()].Value;
+                    Rectangle previewFrame = previewTexture.Bounds;
+                    float previewScale = previewGrowth;
+                    if (_spell == Spell.DemonSpiritVolley)
+                    {
+                        previewTexture = TextureAssets.Projectile[ModContent.ProjectileType<Content.Projectiles.Enemy.DemonSpirit>()].Value;
+                        previewFrame = new Rectangle(0, 0, previewTexture.Width, previewTexture.Height / 6);
+                        previewScale = previewGrowth * 0.6f;
+                    }
+
+                    spriteBatch.Draw(previewTexture, tip, previewFrame, Color.White * previewGrowth, Main.GameUpdateCount * 0.1f,
+                        previewFrame.Size() * 0.5f, previewScale, SpriteEffects.None, 0f);
+                }
+                else if (_spell != Spell.SuspendedCrystal)
                 {
                     Texture2D orb = ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/TheOracle").Value;
                     float growth = charging ? MathHelper.Clamp((20f - PhaseTimer) / 20f, 0f, 1f)
@@ -794,6 +1076,10 @@ namespace tsorcRevamp.NPCs.Enemies
             writer.Write(_runeHoverY); writer.Write(_runeStride);
             writer.Write(_runeDesiredX);
             writer.Write(_runeRecoveryPose);
+            writer.Write(_spiritCooldown);
+            writer.Write(_venomCooldown);
+            writer.Write(_venomApproach);
+            writer.Write(_venomApproachTicks);
         }
         public override void ReceiveExtraAI(BinaryReader reader)
         {
@@ -812,7 +1098,16 @@ namespace tsorcRevamp.NPCs.Enemies
             _runeHoverY = reader.ReadSingle(); _runeStride = reader.ReadSingle();
             _runeDesiredX = reader.ReadSingle();
             _runeRecoveryPose = reader.ReadSingle();
+            _spiritCooldown = reader.ReadInt32();
+            _venomCooldown = reader.ReadInt32();
+            _venomApproach = reader.ReadBoolean();
+            _venomApproachTicks = reader.ReadInt32();
             if (_runeApproach) DebugAttackLabel = "Rune Blade: closing distance";
+
+            if (_venomApproach)
+            {
+                DebugAttackLabel = "Venom Orb: taking position";
+            }
         }
 
         public override void OnKill()
@@ -826,6 +1121,37 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.netMode == NetmodeID.MultiplayerClient) return;
             UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.AttraidiesIllusion.Death"), 190, 140, 150);
+
+            // Loot resolves before OnKill, so the Wand of Frost has already dropped on this kill if it was due; mark it given.
+            if (WandOfFrostFirstKillRule.GateOpen && !tsorcRevampWorld.IllusionWandOfFrostGiven)
+            {
+                tsorcRevampWorld.IllusionWandOfFrostGiven = true;
+            }
+        }
+
+        /// <summary>The Wand of Frost (moved here from the deleted Attraidies Manifestation): guaranteed on the first kill
+        /// once Skeletron or Gravelord Nito is dead, then never again in that world. Kills before the gate opens don't
+        /// use it up. The flag is world-saved in tsorcRevampWorld and set in OnKill.</summary>
+        private class WandOfFrostFirstKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
+        {
+            public static bool GateOpen
+            {
+                get
+                {
+                    NPCDefinition nito = new NPCDefinition(ModContent.NPCType<Bosses.GravelordNito.GravelordNito>());
+                    bool nitoDown = tsorcRevampWorld.NewSlain != null && tsorcRevampWorld.NewSlain.ContainsKey(nito);
+                    return NPC.downedBoss3 || nitoDown;
+                }
+            }
+
+            public bool CanDrop(DropAttemptInfo info)
+            {
+                return GateOpen && !tsorcRevampWorld.IllusionWandOfFrostGiven;
+            }
+
+            public bool CanShowItemDropInUI() => true;
+
+            public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.IllusionWandOfFrost");
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
@@ -842,6 +1168,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<HealingElixir>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegemItem>(), 2));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShardItem>(), 6));
+            npcLoot.Add(ItemDropRule.ByCondition(new WandOfFrostFirstKillRule(), ModContent.ItemType<WandOfFrost>()));
         }
 
     }

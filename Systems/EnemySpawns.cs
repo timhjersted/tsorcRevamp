@@ -517,7 +517,6 @@ namespace tsorcRevamp.Systems
         // The dungeon mini-bosses keep to one at a time between them. Dungeon Mage waits for them but not for other mages.
         private static readonly SpawnCondition NoDungeonMiniBoss =
             Alive.None<AttraidiesIllusion>()
-            & Alive.None<AttraidiesManifestation>()
             & Alive.None<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>();
 
         private static readonly SpawnCondition NoDungeonMiniBossOrMage = NoDungeonMiniBoss & Alive.None<DungeonMage>();
@@ -862,13 +861,10 @@ namespace tsorcRevamp.Systems
             Spawn("Assassin", Depth.Underground & Time.BloodMoon, shm: 0.004f);
             Spawn("Assassin", Depth.Cavern & Time.BloodMoon, shm: 0.002f);
 
-            Spawn("AttraidiesIllusion", Zone.Dungeon & NoDungeonMiniBossOrMage, phm: 0.02f, hm: 0.0125f, shm: 0.0125f);
+            // Pre-Hardmode weight raised from 0.02 to 0.05 when the Attraidies Manifestation (0.04 here) was folded into it.
+            Spawn("AttraidiesIllusion", Zone.Dungeon & NoDungeonMiniBossOrMage, phm: 0.05f, hm: 0.0125f); // not in Super Hardmode
             Spawn("AttraidiesIllusion", Depth.Underworld, phm: 0.033f, max: 1);
             Spawn("AttraidiesIllusion", Depth.Cavern, hm: 0.00525f);
-
-            // The Hardmode cavern line was weight 1 behind a one-in-100 gate, folded into the weight.
-            Spawn("AttraidiesManifestation", Zone.Dungeon & NoDungeonMiniBossOrMage, phm: 0.04f);
-            Spawn("AttraidiesManifestation", Depth.BelowSurface & Water.Dry, hm: 0.01f);
 
             // The old depth tests used the pixel-versus-tile helpers; the ground bands are the intent (everything but sky and underworld).
             Spawn("BarrowWight", Town.None & !Zone.Meteor & Downed.Skeletron & Depth.SurfaceToUpperCaves & Region.SideLands, phm: 0.005f, hm: 0.005f, shm: 0.005f);
@@ -1226,8 +1222,6 @@ namespace tsorcRevamp.Systems
             // Super Hardmode only; the gate of one in 45 is folded in.
             Spawn("Massacre", Depth.Underworld | (Depth.Surface & Time.Night), shm: 0.0222f);
 
-            // MindflayerKingServant
-            // MindflayerServant
             // MinotaurMage
 
             // The old rule also excluded the very top rows of the map, which no one can reach.

@@ -998,11 +998,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AttraidiesIllusion.DisplayName}"
 			}
 
-			AttraidiesManifestationBanner: {
-				DisplayName: "{$NPCs.AttraidiesManifestation.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AttraidiesManifestation.DisplayName}"
-			}
-
 			BarrowWightBanner: {
 				DisplayName: "{$NPCs.BarrowWight.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BarrowWight.DisplayName}"
@@ -1201,21 +1196,6 @@ Mods: {
 			MarilithSpiritTwinBanner: {
 				DisplayName: "{$NPCs.MarilithSpiritTwin.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MarilithSpiritTwin.DisplayName}"
-			}
-
-			MindflayerIllusionBanner: {
-				DisplayName: "{$NPCs.MindflayerIllusion.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerIllusion.DisplayName}"
-			}
-
-			MindflayerKingServantBanner: {
-				DisplayName: "{$NPCs.MindflayerKingServant.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerKingServant.DisplayName}"
-			}
-
-			MindflayerServantBanner: {
-				DisplayName: "{$NPCs.MindflayerServant.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerServant.DisplayName}"
 			}
 
 			MutantToadBanner: {
@@ -10647,8 +10627,6 @@ Mods: {
 			EnemySpellLightPillar.DisplayName: 法术光柱
 			EnemySpellLightPillarBall.DisplayName: 法术光柱球
 			EnemySpellMeteor.DisplayName: 法术流星
-			EnemySpellPoisonField.DisplayName: 法术剧毒力场
-			EnemySpellPoisonFieldBall.DisplayName: 法术剧毒力场球
 			EnemySpellPoisonStorm.DisplayName: 法术剧毒风暴
 			EnemySpellPoisonStormBall.DisplayName: 法术打击球
 			EnemySpellSuddenDeathBall.DisplayName: 法术即死球
@@ -11979,11 +11957,6 @@ Mods: {
 				Death: 阿卓迪斯幻象被击败了...
 			}
 
-			AttraidiesManifestation: {
-				DisplayName: 阿卓迪斯幻象
-				Death: 阿卓迪斯幻象被击败了...
-			}
-
 			BarrowWight.DisplayName: 巴罗·怀特
 			BasiliskShifter.DisplayName: 变形蛇怪
 			BasiliskWalker.DisplayName: 蛇形漫步者
@@ -12042,13 +12015,6 @@ Mods: {
 			MarilithSeeker.DisplayName: 马瑞丽斯求索者
 			MarilithSpiritTwin.DisplayName: 马瑞里斯双子幽灵
 
-			MindflayerIllusion: {
-				DisplayName: 夺心魔幻象
-				Destroy: 哈哈哈！我要摧毁你，瑞德...
-			}
-
-			MindflayerKingServant.DisplayName: 夺心魔王之仆
-			MindflayerServant.DisplayName: 夺心魔之仆
 			MutantToad.DisplayName: 突变蟾蜍
 			Necromancer.DisplayName: 死灵法师
 			FallenNecromancer.DisplayName: 堕落巫师

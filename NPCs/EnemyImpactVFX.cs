@@ -107,10 +107,8 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<Massacre>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<MarilithSeeker>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<MinotaurMage>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<MindflayerKingServant>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<MountedSandsprog>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<MountedSandsprogMage>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<MindflayerServant>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<MushroomCreature>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<MutantToad>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Necromancer>()] = EnemyImpactMaterial.Blood,
@@ -155,7 +153,6 @@ namespace tsorcRevamp.NPCs
             // Incorporeal enemies: visual ghost dust, never red blood.
             [ModContent.NPCType<ArmoredWraith>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<AttraidiesIllusion>()] = EnemyImpactMaterial.GhostDust,
-            [ModContent.NPCType<AttraidiesManifestation>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<BarrowWight>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<BarrowWightNemesis>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<BarrowWightPhantom>()] = EnemyImpactMaterial.GhostDust,
@@ -173,7 +170,6 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<HumanityPhantom>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<HydrisElemental>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<MarilithSpiritTwin>()] = EnemyImpactMaterial.GhostDust,
-            [ModContent.NPCType<MindflayerIllusion>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<WaterSpirit>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<Willowisp>()] = EnemyImpactMaterial.GhostDust,
 

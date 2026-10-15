@@ -38,6 +38,8 @@ namespace tsorcRevamp
         public static bool DownedBetsy;
         public static bool isHellkiteDragonDead;
         public static bool isOolacileSerpentDead;
+        // Set when an Attraidies Illusion gives its one-time Wand of Frost (see AttraidiesIllusion.WandOfFrostFirstKillRule).
+        public static bool IllusionWandOfFrostGiven;
         public static bool SuperHardMode;
         public static bool TheEnd;
         public static bool CustomMap;
@@ -179,6 +181,7 @@ namespace tsorcRevamp
             DownedBetsy = false;
             isHellkiteDragonDead = false;
             isOolacileSerpentDead = false;
+            IllusionWandOfFrostGiven = false;
             SuperHardMode = false;
             TheEnd = false;
             CustomMap = false;
@@ -268,6 +271,10 @@ namespace tsorcRevamp
             {
                 downed.Add("isOolacileSerpentDead");
             }
+            if (IllusionWandOfFrostGiven)
+            {
+                downed.Add("IllusionWandOfFrostGiven");
+            }
             tag.Add("downed", downed);
             tag.Add("world_state", world_state);
             SaveSlain(tag);
@@ -295,6 +302,7 @@ namespace tsorcRevamp
             DownedBetsy = downedList.Contains("DownedBetsy");
             isHellkiteDragonDead = downedList.Contains("isHellkiteDragonDead");
             isOolacileSerpentDead = downedList.Contains("isOolacileSerpentDead");
+            IllusionWandOfFrostGiven = downedList.Contains("IllusionWandOfFrostGiven");
 
             IList<string> worldStateList = tag.GetList<string>("world_state");
             SuperHardMode = worldStateList.Contains("SuperHardMode");

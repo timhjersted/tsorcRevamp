@@ -210,13 +210,6 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<Assassin>();
     }
 
-    public class AttraidiesManifestationBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 16;
-
-        public override int NPCType => ModContent.NPCType<AttraidiesManifestation>();
-    }
-
     public class BarrowWightBanner : EnemyBanner
     {
         public override int PlaceStyle => 17;
@@ -369,27 +362,6 @@ namespace tsorcRevamp.Banners
         public override int PlaceStyle => 40;
 
         public override int NPCType => ModContent.NPCType<MarilithSpiritTwin>();
-    }
-
-    public class MindflayerIllusionBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 41;
-
-        public override int NPCType => ModContent.NPCType<MindflayerIllusion>();
-    }
-
-    public class MindflayerKingServantBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 42;
-
-        public override int NPCType => ModContent.NPCType<MindflayerKingServant>();
-    }
-
-    public class MindflayerServantBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 43;
-
-        public override int NPCType => ModContent.NPCType<MindflayerServant>();
     }
 
     public class MutantToadBanner : EnemyBanner

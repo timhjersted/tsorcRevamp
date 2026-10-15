@@ -483,8 +483,7 @@ namespace tsorcRevamp.Systems
             Enemy("ManHunter", phm: 400, hm: 800, shm: 8000); // standard / fodder / fodder; authored 125 / 250 / 600
             Enemy("GhostOfTheForgottenKnight", phm: 700, hm: 1400, shm: 14000); // standard / fodder / standard; authored 150 / 200 / 1000
             Enemy("BarrowWight", phm: 900, hm: 3500, shm: 18000); // standard / standard / fodder; authored 180 / 180 / 180
-            Enemy("AttraidiesIllusion", phm: 500); // strong; authored 400; caster, contact damage 0
-            Enemy("AttraidiesManifestation", phm: 1000, hm: 10000); // standard / strong; authored 400 / 800; caster, contact damage 0
+            Enemy("AttraidiesIllusion", phm: 500, hm: 5000); // strong; authored 400; caster, contact damage 0; HM HP added when it absorbed the Manifestation; does not spawn in SHM
             Enemy("JungleSentree", phm: 450, hm: 1250, shm: 9000); // standard / fodder / fodder; authored 200 / 400 / 650
             Enemy("Archdeacon", phm: 1500, hm: 3000, shm: 12000); // strong; authored 500; caster, contact damage 0
             Enemy("DemonElemental", phm: 1000, hm: 2000, shm: 12000); // strong / strong / standard; authored 250 / 500 / 2000
@@ -563,9 +562,6 @@ namespace tsorcRevamp.Systems
             Enemy("Hydra", phm: 400000); // mini-boss; authored 100000
             Enemy("IceGigas", phm: 50000, hm: 50000, shm: 350000); // mini-boss; authored 22000 / 22000 / 22000
             Enemy("KnightOfGwyn", shm: 200000); // elite; authored 25000
-            Enemy("MindflayerIllusion", phm: 1500); // strong; authored 1000; caster, contact damage 0
-            Enemy("MindflayerKingServant", phm: 200); // standard; authored 200; caster, contact damage 0
-            Enemy("MindflayerServant", phm: 70); // fodder; authored 70; caster, contact damage 0
             Enemy("MinotaurMage", phm: 900, hm: 1800, shm: 10800); // standard; authored 155 / 155 / 155
             Enemy("PrimeLaserProbe", phm: 150, hm: 198, shm: 247); // fodder; authored 75 / 75 / 75
             Enemy("QuaraClutchCrab", phm: 500, hm: 2000, shm: 7200); // standard / standard / fodder; authored 400 / 400 / 400

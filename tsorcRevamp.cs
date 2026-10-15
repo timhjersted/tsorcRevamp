@@ -1839,7 +1839,6 @@ namespace tsorcRevamp
                 NPCID.Necromancer,
                 NPCID.NecromancerArmored,
                 ModContent.NPCType<UndeadCaster>(),
-                ModContent.NPCType<MindflayerServant>(),
                 ModContent.NPCType<DungeonMage>(),
                 ModContent.NPCType<MountedSandsprogMage>(),
                 ModContent.NPCType<SandsprogMage>(),
@@ -1849,7 +1848,6 @@ namespace tsorcRevamp
                 ModContent.NPCType<DemonSpirit>(),
                 ModContent.NPCType<ShadowMage>(),
                 ModContent.NPCType<AttraidiesIllusion>(),
-                ModContent.NPCType<AttraidiesManifestation>(),
                 ModContent.NPCType<AttraidiesMimic>(),
                 ModContent.NPCType<WyvernMage>(),
                 ModContent.NPCType<DarkShogunMask>(),
@@ -1857,9 +1855,6 @@ namespace tsorcRevamp
                 ModContent.NPCType<Okiku>(),
                 ModContent.NPCType<BrokenOkiku>(),
                 ModContent.NPCType<Attraidies>(),
-                ModContent.NPCType<MindflayerKingServant>(),
-                ModContent.NPCType<MindflayerServant>(),
-                ModContent.NPCType<MindflayerIllusion>(),
                 ModContent.NPCType<NPCs.Puppets.Kahlrun>(),
             };
             #endregion
