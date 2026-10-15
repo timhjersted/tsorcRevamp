@@ -312,7 +312,7 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.value    = 50000f;
             NPC.boss     = true;
-            NPC.npcSlots = 8f;
+            NPC.npcSlots = 10f;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

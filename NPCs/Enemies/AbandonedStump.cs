@@ -28,6 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetDefaults()
         {
+            NPC.npcSlots = 3;
             NPC.width = 40;
             NPC.height = 32;
             NPC.aiStyle = -1; //Unique AI is -1

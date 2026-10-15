@@ -273,7 +273,7 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.value = 26000f;
             NPC.boss = true;
-            NPC.npcSlots = 6f;
+            NPC.npcSlots = 10f;
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.PoiseMax = 32f;

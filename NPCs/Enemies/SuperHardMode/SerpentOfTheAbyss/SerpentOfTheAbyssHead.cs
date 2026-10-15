@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         public override void SetDefaults()
         {
             NPC.netAlways = true;
-            NPC.npcSlots = 3;
+            NPC.npcSlots = 7;
             NPC.width = 42;
             NPC.height = 81;
             NPC.aiStyle = 6;

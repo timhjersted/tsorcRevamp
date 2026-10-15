@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         }
         public override void SetDefaults()
         {
-            NPC.npcSlots = 2;
+            NPC.npcSlots = 3;
             AnimationType = 28;
             NPC.knockBackResist = 0.3f;
             NPC.damage = 23;

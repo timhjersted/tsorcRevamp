@@ -26,6 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetDefaults()
         {
+            NPC.npcSlots = 3;
             NPC.knockBackResist = 0.75f;
             NPC.aiStyle = -1;
             NPC.damage = 16;

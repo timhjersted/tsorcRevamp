@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
         public override void SetDefaults()
         {
+            NPC.npcSlots = 3;
             NPC.timeLeft = 60;
             NPC.knockBackResist = 0f; //Ghost
             NPC.aiStyle = -1;

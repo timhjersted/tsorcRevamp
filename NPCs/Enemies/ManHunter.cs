@@ -18,6 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetDefaults()
         {
+            NPC.npcSlots = 3;
             AIType = NPCID.SkeletonArcher;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;

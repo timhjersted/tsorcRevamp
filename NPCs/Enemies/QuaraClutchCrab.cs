@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 0f;          //not a soul source (anti-farm); it's a tactical threat, not a reward
-            NPC.npcSlots = 1f;
+            NPC.npcSlots = 0f;
             NPC.knockBackResist = 0.5f; //overridden by PoiseProfiles
             NPC.alpha = 255;         //starts invisible, fades in during the emerge
 

@@ -127,6 +127,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void SetDefaults()
         {
+            NPC.npcSlots = 5;
             NPC.width = 20;
             NPC.height = 40;
             NPC.aiStyle = -1;

@@ -167,6 +167,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetDefaults()
         {
+            NPC.npcSlots = 10;
             AnimationType = -1; // FindFrame owns idle, jump, and walk frames.
             NPC.aiStyle = -1;
             NPC.height = 40;

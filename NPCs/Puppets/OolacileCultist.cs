@@ -454,7 +454,7 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.knockBackResist = 0.35f; // overridden by the PoiseProfiles entry
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.npcSlots = 2f;
+            NPC.npcSlots = 5f;
 
             // Tier neighbours: Basilisk Walker / Shifter / Hunter — a bit more HP, a bit less defense, more value.
             if (tsorcRevampWorld.SuperHardMode)

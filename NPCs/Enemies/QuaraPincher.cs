@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
     // Amphibious: land-adept FighterAI PLUS a buoyant submerged pursuit (bubble jets, no swim anim needed).
     // Spawns in the Ocean and the Underground Desert. Aggressive bruiser (kiting off); the clutch-crab
     // copies kite. Rarity variants (Light / Medium / Elite "Quara Broodfather") scale HP, brood cap,
-    // npcSlots and value.
+    // and value.
     //
     // Poise contract (0.3/60 in PoiseProfiles): short casts hyper-armored; Brood Call's long channel is
     // staggerable for its first two thirds so a poise break cancels the summon.
@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Enemies
             BroodCall,     // long staggerable channel -> clutch-crabs erupt to top up the brood
         }
 
-        // Rarity tiers: rolled once on spawn, scale HP / brood cap / npcSlots / value. Elite = "Quara Broodfather".
+        // Rarity tiers: rolled once on spawn, scale HP / brood cap / value (npcSlots is the same for all of them). Elite = "Quara Broodfather".
         enum Variant : byte { Light = 0, Medium = 1, Elite = 2 }
 
         //Timings (ticks). Placeholders for the stub attacks; real values arrive with each attack's build.
@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 2600f;
-            NPC.npcSlots = 40f;          //bumped for rarer variants (crowds out other spawns)
+            NPC.npcSlots = 5f;          //strong tier; the same for every rarity variant
             NPC.knockBackResist = 0.3f;  //overridden by the PoiseProfiles entry
             NPC.lavaImmune = false;
 
@@ -1038,14 +1038,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 return; //clients receive tier + variant via sync
             }
 
-            //Rarity roll: Light ~70% / Medium ~25% / Elite ~5%. Sets brood cap, npcSlots, HP + value mult.
+            //Rarity roll: Light ~70% / Medium ~25% / Elite ~5%. Sets brood cap, HP + value mult.
             float rarityRoll = Main.rand.NextFloat();
             float hpMult, valueMult;
             if (rarityRoll < 0.05f)
             {
                 variant = Variant.Elite;
                 broodCap = 4;
-                NPC.npcSlots = 110f;
                 hpMult = 2.2f;
                 valueMult = 3.0f;
                 NPC.scale = 1.45f;
@@ -1054,7 +1053,6 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 variant = Variant.Medium;
                 broodCap = 2;
-                NPC.npcSlots = 70f;
                 hpMult = 1.5f;
                 valueMult = 1.8f;
                 NPC.scale = 1.3f;
@@ -1063,7 +1061,6 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 variant = Variant.Light;
                 broodCap = 1;
-                NPC.npcSlots = 40f;
                 hpMult = 1.0f;
                 valueMult = 1.0f;
                 NPC.scale = 1.2f;

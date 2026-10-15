@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
         public override void SetDefaults()
         {
             NPC.netAlways = true;
-            NPC.npcSlots = 1;
+            NPC.npcSlots = 0;
             NPC.aiStyle = 6;
             NPC.width = 30;
             NPC.height = 30;

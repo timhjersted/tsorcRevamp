@@ -64,7 +64,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 80000;
-			NPC.npcSlots = 5;
+			NPC.npcSlots = 7;
 			NPC.knockBackResist = 0f;
 			Main.npcFrameCount[NPC.type] = 16;
 			AnimationType = 28;

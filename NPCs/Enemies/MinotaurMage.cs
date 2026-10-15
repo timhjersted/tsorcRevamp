@@ -74,7 +74,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 5000f;
-			NPC.npcSlots = 100;
+			NPC.npcSlots = 3;
             NPC.scale = 1.1f;
 			NPC.knockBackResist = 0.6f; //overridden by the PoiseProfiles entry
 			Main.npcFrameCount[NPC.type] = 15;

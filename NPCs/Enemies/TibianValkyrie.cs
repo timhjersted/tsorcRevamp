@@ -23,6 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetDefaults()
         {
+            NPC.npcSlots = 5;
             // Kept alongside the FindFrame override below: tModLoader runs vanilla's framing FIRST, then the override. Vanilla still
             // advances frameCounter/spriteDirection — which the override's walk cycle reads — while the
             // override replaces vanilla's idle/jump pose choice, whose exact `velocity != 0f` compares

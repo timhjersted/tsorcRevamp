@@ -23,6 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
         public override void SetDefaults()
         {
+            NPC.npcSlots = 5;
             NPC.height = 40;
             NPC.width = 20;
             NPC.damage = 55;

@@ -463,11 +463,11 @@ namespace tsorcRevamp.Systems
             Enemy("DworcVenomsniper", phm: 300, hm: 600, shm: 6000); // fodder; authored 50 / 100 / 100
             Enemy("FirebombHollow", phm: 200, hm: 1600, shm: 8000); // fodder / strong / standard; authored 60 / 500 / 2000
             Enemy("StoneGolem", phm: 300, hm: 600, shm: 6000); // fodder; authored 60 / 120 / 350
-            Enemy("ArmoredWraith", phm: 250, hm: 500, shm: 5000); // fodder / ? / fodder; authored 75 / 75
+            Enemy("ArmoredWraith", phm: 250, hm: 500, shm: 5000); // standard; authored 75 / 75
             Enemy("MountedSandsprog", phm: 450, hm: 900, shm: 9000); // fodder / standard / standard; authored 75 / 300 / 900
-            Enemy("Sandsprog", phm: 400, hm: 800, shm: 8000); // fodder / fodder / standard; authored 75 / 200 / 900
-            Enemy("SandsprogMage", phm: 400, hm: 800, shm: 8000); // fodder / fodder / standard; authored 75 / 200 / 900
-            Enemy("DungeonMage", phm: 500, hm: 1000, shm: 10000); // fodder / ? / fodder; authored 160 / 1050; caster, contact damage 0
+            Enemy("Sandsprog", phm: 400, hm: 800, shm: 8000); // standard; authored 75 / 200 / 900
+            Enemy("SandsprogMage", phm: 400, hm: 800, shm: 8000); // standard; authored 75 / 200 / 900
+            Enemy("DungeonMage", phm: 500, hm: 1000, shm: 10000); // standard; authored 160 / 1050; caster, contact damage 0
             Enemy("MountedSandsprogMage", phm: 500, hm: 1000, shm: 15000); // fodder / standard / standard; authored 80 / 300 / 900
             Enemy("Parasprite", phm: 200, hm: 800, shm: 1600); // fodder; authored 90 / 90 / 90
             Enemy("TibianValkyrie", phm: 300, hm: 600, shm: 6000); // strong; authored 90 / 260 / 700
@@ -483,7 +483,7 @@ namespace tsorcRevamp.Systems
             Enemy("ManHunter", phm: 400, hm: 800, shm: 8000); // standard / fodder / fodder; authored 125 / 250 / 600
             Enemy("GhostOfTheForgottenKnight", phm: 700, hm: 1400, shm: 14000); // standard / fodder / standard; authored 150 / 200 / 1000
             Enemy("BarrowWight", phm: 900, hm: 3500, shm: 18000); // standard / standard / fodder; authored 180 / 180 / 180
-            Enemy("AttraidiesIllusion", phm: 500); // standard; authored 400; caster, contact damage 0
+            Enemy("AttraidiesIllusion", phm: 500); // strong; authored 400; caster, contact damage 0
             Enemy("AttraidiesManifestation", phm: 1000, hm: 10000); // standard / strong; authored 400 / 800; caster, contact damage 0
             Enemy("JungleSentree", phm: 450, hm: 1250, shm: 9000); // standard / fodder / fodder; authored 200 / 400 / 650
             Enemy("Archdeacon", phm: 1500, hm: 3000, shm: 12000); // strong; authored 500; caster, contact damage 0
@@ -491,14 +491,14 @@ namespace tsorcRevamp.Systems
             Enemy("Eland", phm: 2000, hm: 6250, shm: 25000); // strong; authored 500 / 1000 / 20000; caster, contact damage 0
             Enemy("HollowSoldier", phm: 350, hm: 600, shm: 6000); // strong / strong / standard; authored 250 / 500 / 1500
             Enemy("Necromancer", phm: 3000, hm: 6000, shm: 24000); // strong; authored 800; caster, contact damage 0
-            Enemy("QuaraPincher", phm: 1000, hm: 2000, shm: 20000); // strong / strong / standard; authored 1200 / 1200 / 1200
+            Enemy("QuaraPincher", phm: 1000, hm: 2000, shm: 20000); // strong; authored 1200 / 1200 / 1200
             Enemy("RedCloudHunter", phm: 1500, hm: 3000, shm: 18000); // strong / strong / standard; authored 600 / 700 / 2000
             Enemy("LothricKnight", phm: 2000, hm: 6000, shm: 24000); // strong / elite / strong; authored 750 / 1400 / 2500
             Enemy("LothricSpearKnight", phm: 2000, hm: 4000, shm: 24000); // strong; authored 750 / 1200 / 3000
             Enemy("Warlock", phm: 1500, hm: 3000); // elite / strong; authored 750 / 1500; caster, contact damage 0
             Enemy("BlackKnight", phm: 10000, hm: 20000, shm: 40000); // elite / elite / strong; authored 1000 / 2000 / 4000
             Enemy("LothricBlackKnight", phm: 2500, hm: 5000, shm: 30000); // elite / elite / strong; authored 1000 / 1500 / 5000
-            Enemy("JungleWyvernJuvenileHead", phm: 3000, hm: 6000, shm: 12000); // standard; authored 1250 / 2500 / 3000; HP set high on purpose: piercing weapons hit every segment
+            Enemy("JungleWyvernJuvenileHead", phm: 3000, hm: 6000, shm: 12000); // strong; authored 1250 / 2500 / 3000; HP set high on purpose: piercing weapons hit every segment
             Enemy("Dunlending", phm: 50, hm: 1450, shm: 11000); // ? / fodder / fodder; authored 45 / 400
             Enemy("RingedKnight", phm: 1000, hm: 4000, shm: 12000); // ? / strong / strong; authored 400 / 800 / 2500
 
@@ -513,11 +513,11 @@ namespace tsorcRevamp.Systems
             Enemy("BasiliskShifter", hm: 3500); // strong; authored 350
             Enemy("DworcVoodooShaman", hm: 1500); // standard; authored 750; caster, contact damage 0
             Enemy("DemonSpirit", phm: 800, hm: 1600); // ? / standard; authored 400
-            Enemy("EvilEye", hm: 9000); // strong; authored 400
+            Enemy("EvilEye", hm: 9000); // elite; authored 400
             Enemy("Assassin", hm: 1000, shm: 6000); // standard; authored 500 / 2000
             Enemy("CrazedDemonSpirit", phm: 1000, hm: 2000, shm: 12000); // ? / standard / standard; authored 500 / 1000
             Enemy("DworcAlchemist", phm: 500, hm: 1000); // ? / strong; authored 250 / 500; caster, contact damage 0
-            Enemy("Tonberry", hm: 3000, shm: 18000); // strong / standard; authored 1500 / 3500; caster, contact damage 0
+            Enemy("Tonberry", hm: 3000, shm: 18000); // strong; authored 1500 / 3500; caster, contact damage 0
             Enemy("ParasyticWormHead", hm: 3000); // elite; authored 1500
             Enemy("FallenNecromancer", hm: 8000); // elite; authored 4000
             Enemy("MarilithSpiritTwin", hm: 20000); // mini-boss; authored 10000
@@ -527,13 +527,13 @@ namespace tsorcRevamp.Systems
             Enemy("ManOfWar", shm: 3000); // fodder; authored 800
             Enemy("DemonWheel", shm: 4000); // standard; authored 1000
             Enemy("VampireBat", shm: 4000); // standard; authored 1300
-            Enemy("CrystalKnight", shm: 50000); // standard; authored 2800; caster, contact damage 0
-            Enemy("DarkKnight", shm: 40000); // standard; authored 3000; caster, contact damage 0
-            Enemy("AbyssLurker", shm: 20000); // standard; authored 1600
-            Enemy("DarkBloodKnight", shm: 40000); // standard; authored 3200; caster, contact damage 0
+            Enemy("CrystalKnight", shm: 50000); // elite; authored 2800; caster, contact damage 0
+            Enemy("DarkKnight", shm: 40000); // elite; authored 3000; caster, contact damage 0
+            Enemy("AbyssLurker", shm: 20000); // strong; authored 1600
+            Enemy("DarkBloodKnight", shm: 40000); // elite; authored 3200; caster, contact damage 0
             Enemy("HydrisElemental", shm: 10000); // standard; authored 1600
-            Enemy("DworcAbysswalker", shm: 15000); // standard; authored 3500; caster, contact damage 0
-            Enemy("HydrisNecromancer", shm: 30000); // standard; authored 3500; caster, contact damage 0
+            Enemy("DworcAbysswalker", shm: 15000); // strong; authored 3500; caster, contact damage 0
+            Enemy("HydrisNecromancer", shm: 30000); // strong; authored 3500; caster, contact damage 0
             Enemy("CorruptedElemental", shm: 12000); // standard; authored 2000
             Enemy("CorruptedHornet", shm: 9000); // standard; authored 2000
             Enemy("GuardianCorruptor", shm: 12000); // standard; authored 2200
@@ -547,11 +547,11 @@ namespace tsorcRevamp.Systems
             Enemy("SlograII", shm: 24000); // strong; authored 4000
             Enemy("OolacileKnight", shm: 18000); // strong; authored 5400
             Enemy("TaurusKnight", shm: 20000); // strong; authored 5400
-            Enemy("Plaguesmith", shm: 50000); // strong; authored 8250
+            Enemy("Plaguesmith", shm: 50000); // elite; authored 8250
             Enemy("AncientDemonOfTheAbyss", shm: 35000); // elite; authored 15000
             Enemy("Massacre", shm: 90000); // elite; authored 20000
             Enemy("SerpentOfTheAbyssHead", shm: 50000); // elite; authored 24000
-            Enemy("GreatBlackKnight", shm: 80000); // elite; authored 50000; caster, contact damage 0
+            Enemy("GreatBlackKnight", shm: 80000); // mini-boss; authored 50000; caster, contact damage 0
 
             // ---- Events: no natural spawn (placed by the map, summoned by a boss or event, or spawned by another enemy), alphabetical ----
             Enemy("BarrowWightPhantom", shm: 18000); // standard; authored 1250
@@ -559,14 +559,14 @@ namespace tsorcRevamp.Systems
             Enemy("DestroyerLaserProbe", phm: 150, hm: 198, shm: 247); // fodder; authored 75 / 75 / 75
             Enemy("DiscipleOfAttraidies", phm: 6000); // elite; authored 4500; caster, contact damage 0
             Enemy("FrozenGigasStatue", phm: 5000); // standard; authored 250; caster, contact damage 0
-            Enemy("Gigas", phm: 100000, hm: 100000, shm: 400000); // mini-boss / mini-boss / elite; authored 32000 / 32000 / 32000
+            Enemy("Gigas", phm: 100000, hm: 100000, shm: 400000); // mini-boss; authored 32000 / 32000 / 32000
             Enemy("Hydra", phm: 400000); // mini-boss; authored 100000
-            Enemy("IceGigas", phm: 50000, hm: 50000, shm: 350000); // mini-boss / mini-boss / elite; authored 22000 / 22000 / 22000
+            Enemy("IceGigas", phm: 50000, hm: 50000, shm: 350000); // mini-boss; authored 22000 / 22000 / 22000
             Enemy("KnightOfGwyn", shm: 200000); // elite; authored 25000
             Enemy("MindflayerIllusion", phm: 1500); // strong; authored 1000; caster, contact damage 0
             Enemy("MindflayerKingServant", phm: 200); // standard; authored 200; caster, contact damage 0
             Enemy("MindflayerServant", phm: 70); // fodder; authored 70; caster, contact damage 0
-            Enemy("MinotaurMage", phm: 900, hm: 1800, shm: 10800); // standard / standard / fodder; authored 155 / 155 / 155
+            Enemy("MinotaurMage", phm: 900, hm: 1800, shm: 10800); // standard; authored 155 / 155 / 155
             Enemy("PrimeLaserProbe", phm: 150, hm: 198, shm: 247); // fodder; authored 75 / 75 / 75
             Enemy("QuaraClutchCrab", phm: 500, hm: 2000, shm: 7200); // standard / standard / fodder; authored 400 / 400 / 400
             Enemy("QuaraMantassin", phm: 3000); // elite; authored 800

@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 20000;
             NPC.lavaImmune = true;
-            NPC.npcSlots = 5;
+            NPC.npcSlots = 7;
             NPC.aiStyle = 0;
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

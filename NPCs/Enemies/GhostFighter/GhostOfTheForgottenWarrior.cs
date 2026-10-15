@@ -20,6 +20,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         public int warriorDamage = 20;
         public override void SetDefaults()
         {
+            NPC.npcSlots = 3;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.damage = 35;

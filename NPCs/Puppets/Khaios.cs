@@ -99,7 +99,7 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.value = 18000f;
             NPC.boss = true;
-            NPC.npcSlots = 5f;
+            NPC.npcSlots = 10f;
             Music = MusicID.Boss2; // Phase-one placeholder; intentionally distinct from the Spirit track.
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();

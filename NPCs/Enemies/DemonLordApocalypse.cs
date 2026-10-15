@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 100000f;
-            NPC.npcSlots = 100;
+            NPC.npcSlots = 10;
             NPC.knockBackResist = 0.05f;
             NPC.scale = 1.3f;
 

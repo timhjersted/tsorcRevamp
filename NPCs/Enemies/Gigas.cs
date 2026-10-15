@@ -127,7 +127,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 200000f; //Dark Souls = value / 25 (GlobalNPC.OnKill) = 8000 — a bit under TheHunter's 8800
-			NPC.npcSlots = 100;
+			NPC.npcSlots = 10;
             NPC.scale = 1f;
 			DrawOffsetY = 4;
 			NPC.knockBackResist = 0.1f;

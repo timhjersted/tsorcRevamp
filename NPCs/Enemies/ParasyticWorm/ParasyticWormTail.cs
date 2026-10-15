@@ -19,6 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies.ParasyticWorm
 
         public override void SetDefaults()
         {
+            NPC.npcSlots = 0;
             AnimationType = 10;
             NPC.netAlways = true;
             NPC.width = 38;

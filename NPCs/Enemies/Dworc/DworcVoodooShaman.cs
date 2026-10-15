@@ -22,6 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
         }
         public override void SetDefaults()
         {
+            NPC.npcSlots = 3;
             NPC.HitSound = SoundID.NPCHit29;
             NPC.DeathSound = SoundID.NPCDeath31;
             NPC.damage = 0;

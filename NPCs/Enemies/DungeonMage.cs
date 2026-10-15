@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetDefaults()
         {
-            NPC.npcSlots = 5;
+            NPC.npcSlots = 3;
             NPC.aiStyle = 0;
             NPC.damage = 0;
             NPC.defense = 10;

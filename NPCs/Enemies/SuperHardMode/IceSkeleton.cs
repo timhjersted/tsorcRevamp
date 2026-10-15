@@ -18,6 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         public override void SetDefaults()
         {
+            NPC.npcSlots = 3;
             AnimationType = NPCID.AngryBones;
             NPC.width = 18;
             NPC.height = 40;

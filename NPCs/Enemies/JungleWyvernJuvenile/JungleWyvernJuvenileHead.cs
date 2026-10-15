@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
         {
             NPC.aiStyle = 6;
             NPC.netAlways = true;
-            NPC.npcSlots = 2;
+            NPC.npcSlots = 5;
             NPC.width = 30;
             NPC.height = 30;
             NPC.timeLeft = 22000;

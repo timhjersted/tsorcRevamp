@@ -18,6 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetDefaults()
         {
             NPC.CloneDefaults(NPCID.GiantWalkingAntlion);
+            NPC.npcSlots = 3;
             AIType = NPCID.GiantWalkingAntlion;
             NPC.height = 44;
             NPC.damage = 33;

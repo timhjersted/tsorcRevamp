@@ -23,6 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         public override void SetDefaults()
         {
+            NPC.npcSlots = 7;
             NPC.knockBackResist = 0;
             NPC.damage = 55;
             NPC.defense = 75;

@@ -172,7 +172,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 150000f; //Dark Souls = value / 25 (GlobalNPC.OnKill) = 6000 — a bit under TheSorrow's 6800
-            NPC.npcSlots = 100;
+            NPC.npcSlots = 10;
             NPC.scale = 1f;
             NPC.knockBackResist = 0.1f;
             DrawOffsetY = SpriteDrawOffsetY; //plant the feet on the ground, as Holy Gigas does

@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         public override void SetDefaults()
         {
-            NPC.npcSlots = 3;
+            NPC.npcSlots = 5;
             NPC.width = 38;
             NPC.height = 32;
             AnimationType = 104;

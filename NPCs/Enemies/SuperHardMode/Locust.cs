@@ -209,6 +209,14 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             initialized = true;
+
+            // Only the natural-spawn seed counts against the spawn cap (fodder, 1 slot). Everything it or the Grand Occultist
+            // generates is born with ai[0] = 1 and takes 0, otherwise a swarm of up to 100 would block every other spawn.
+            if (NPC.ai[0] != 0f)
+            {
+                NPC.npcSlots = 0f;
+            }
+
             groupId = (int)NPC.ai[1];
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {

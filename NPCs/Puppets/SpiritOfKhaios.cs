@@ -113,7 +113,7 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.value = 24000f;
             NPC.boss = true;
-            NPC.npcSlots = 6f;
+            NPC.npcSlots = 10f;
             Music = MusicID.Boss3; // Independent phase-two slot; replace when Khaios's track is chosen.
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();

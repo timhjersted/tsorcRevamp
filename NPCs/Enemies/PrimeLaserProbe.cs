@@ -16,6 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetDefaults()
         {
             NPC.CloneDefaults(NPCID.Probe);
+            NPC.npcSlots = 0;
             NPC.lifeMax = 75;
             NPC.damage = 48;
             NPC.scale = 1f;

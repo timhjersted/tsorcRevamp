@@ -24,6 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetDefaults()
         {
             NPC.CloneDefaults(NPCID.Demon);
+            NPC.npcSlots = 3;
             NPC.damage = 40;
             NPC.defense = 8;
             NPC.lifeMax = 300;

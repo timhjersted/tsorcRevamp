@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Enemies.ParasyticWorm
         {
             AnimationType = 10;
             NPC.netAlways = true;
-            NPC.npcSlots = 1;
+            NPC.npcSlots = 0;
             NPC.width = 38;
             NPC.height = 24;
             NPC.aiStyle = 6;

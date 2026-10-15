@@ -26,6 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetDefaults()
         {
+            NPC.npcSlots = 5;
             NPC.lifeMax = 500;
             EnemyDamage.SetContact(NPC, Main.hardMode ? 60 : 40);
             NPC.defense = 6;
