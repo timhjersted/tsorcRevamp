@@ -46,19 +46,18 @@ namespace tsorcRevamp.Buffs.Debuffs
             if (player.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
                 LastTickSoundsSettings(out float soundVolume);
-                if (!PlaysVanillaSound)
+                // Marf forgot the null check; adding it.
+                if (!string.IsNullOrEmpty(LastTickSoundPath) && !LastTickSoundPath.StartsWith("tsorcRevamp/"))
                 {
-                    // Keep this inside the branch: buffs using a vanilla sound never assign LastTickSoundPath,
-                    // so the old null dereference threw out of Player.UpdateBuffs and Vanilla killed the summons.
-                    if (!LastTickSoundPath.StartsWith("tsorcRevamp/"))
-                    {
-                        LastTickSoundPath = "tsorcRevamp/" + LastTickSoundPath;
-                    }
-                    SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume });
+                    LastTickSoundPath = "tsorcRevamp/" + LastTickSoundPath;
                 }
-                else
+                if (PlaysVanillaSound)
                 {
                     SoundEngine.PlaySound(VanillaSoundID with { Volume = soundVolume });
+                }
+                else if (!string.IsNullOrEmpty(LastTickSoundPath))
+                {
+                    SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume });
                 }
             }
         }
@@ -67,17 +66,17 @@ namespace tsorcRevamp.Buffs.Debuffs
             if (npc.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
                 LastTickSoundsSettings(out float soundVolume);
-                if (!PlaysVanillaSound)
+                if (!string.IsNullOrEmpty(LastTickSoundPath) && !LastTickSoundPath.StartsWith("tsorcRevamp/"))
                 {
-                    if (!LastTickSoundPath.StartsWith("tsorcRevamp/"))
-                    {
-                        LastTickSoundPath = "tsorcRevamp/" + LastTickSoundPath;
-                    }
-                    SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume }, npc.Center);
+                    LastTickSoundPath = "tsorcRevamp/" + LastTickSoundPath;
                 }
-                else
+                if (PlaysVanillaSound)
                 {
                     SoundEngine.PlaySound(VanillaSoundID with { Volume = soundVolume }, npc.Center);
+                }
+                else if (!string.IsNullOrEmpty(LastTickSoundPath))
+                {
+                    SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume }, npc.Center);
                 }
             }
         }
