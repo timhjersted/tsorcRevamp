@@ -46,12 +46,14 @@ namespace tsorcRevamp.Buffs.Debuffs
             if (player.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
                 LastTickSoundsSettings(out float soundVolume);
-                if (!LastTickSoundPath.StartsWith("tsorcRevamp/"))
-                {
-                    LastTickSoundPath = "tsorcRevamp/" + LastTickSoundPath;
-                }
                 if (!PlaysVanillaSound)
                 {
+                    // Keep this inside the branch: buffs using a vanilla sound never assign LastTickSoundPath,
+                    // so the old null dereference threw out of Player.UpdateBuffs and Vanilla killed the summons.
+                    if (!LastTickSoundPath.StartsWith("tsorcRevamp/"))
+                    {
+                        LastTickSoundPath = "tsorcRevamp/" + LastTickSoundPath;
+                    }
                     SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume });
                 }
                 else
@@ -67,6 +69,10 @@ namespace tsorcRevamp.Buffs.Debuffs
                 LastTickSoundsSettings(out float soundVolume);
                 if (!PlaysVanillaSound)
                 {
+                    if (!LastTickSoundPath.StartsWith("tsorcRevamp/"))
+                    {
+                        LastTickSoundPath = "tsorcRevamp/" + LastTickSoundPath;
+                    }
                     SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume }, npc.Center);
                 }
                 else

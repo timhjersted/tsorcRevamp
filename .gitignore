@@ -16,3 +16,5 @@ tsorcRevamp.sln
 # projects, so their build output needs explicit rules or it gets committed.
 .agents/**/bin/
 .agents/**/obj/
+/docs
+AGENTS.md
