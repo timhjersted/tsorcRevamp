@@ -17,8 +17,8 @@ namespace tsorcRevamp
     /// </summary>
     public class MiasmaPlayer : ModPlayer
     {
-        // Bright purple leaning pink. Shared by the meter fill and the infection dust.
-        public static readonly Color MiasmaColor = new Color(225, 80, 255);
+        // Deep violet. Shared by the meter/status bar fill, the infection dust and Plantera's breath.
+        public static readonly Color MiasmaColor = new Color(104, 18, 205);
         // Hot pink accent mixed into the hit burst.
         public static readonly Color MiasmaPinkColor = new Color(255, 105, 215);
 
@@ -293,7 +293,8 @@ namespace tsorcRevamp
         public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.FrontAccFront);
 
         public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
-            => !Main.gameMenu && !drawInfo.drawPlayer.dead && drawInfo.drawPlayer.GetModPlayer<MiasmaPlayer>().MiasmaLevel > 0;
+            => !Main.gameMenu && !drawInfo.drawPlayer.dead && drawInfo.drawPlayer.GetModPlayer<MiasmaPlayer>().MiasmaLevel > 0
+            && ModContent.GetInstance<tsorcRevampVisualConfig>().ClassicStatusMeters; // replaced by Players/StatusBars.cs unless Classic is on
 
         protected override void Draw(ref PlayerDrawSet drawInfo)
         {

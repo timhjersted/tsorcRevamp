@@ -420,11 +420,18 @@ namespace tsorcRevamp
         [DefaultValue(false)]
         public bool HideOverheadStaminaBar { get; set; }
 
+        // Off = stacked overhead status bars (Players/StatusBars.cs). On = the older per-status icon meters.
+        [DefaultValue(false)]
+        public bool ClassicStatusMeters { get; set; }
+
         [DefaultValue(false)]
         public bool EnemyHealthBars { get; set; }
 
         [DefaultValue(true)]
         public bool AccuracyCombatText { get; set; }
+
+        [DefaultValue(false)]
+        public bool HideEnemyDamageNumbers { get; set; }
 
         [DefaultValue(true)]
         public bool PlayerHurtVisuals { get; set; }

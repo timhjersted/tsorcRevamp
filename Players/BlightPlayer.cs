@@ -210,7 +210,8 @@ namespace tsorcRevamp
     {
         public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.FrontAccFront);
         public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
-            => !Main.gameMenu && !drawInfo.drawPlayer.dead && drawInfo.drawPlayer.GetModPlayer<BlightPlayer>().BlightLevel > 0;
+            => !Main.gameMenu && !drawInfo.drawPlayer.dead && drawInfo.drawPlayer.GetModPlayer<BlightPlayer>().BlightLevel > 0
+            && ModContent.GetInstance<tsorcRevampVisualConfig>().ClassicStatusMeters; // replaced by Players/StatusBars.cs unless Classic is on
 
         protected override void Draw(ref PlayerDrawSet drawInfo)
         {

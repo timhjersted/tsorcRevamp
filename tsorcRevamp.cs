@@ -2897,6 +2897,24 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.SyncPoisonLevel:
+                    {
+                        // Owner → server carries [level] (sender is whoAmI); server → clients carries [player][level].
+                        int playerIndex = whoAmI;
+
+                        if (Main.netMode == NetmodeID.MultiplayerClient)
+                        {
+                            playerIndex = reader.ReadByte();
+                        }
+
+                        int level = reader.ReadByte();
+
+                        if (playerIndex >= 0 && playerIndex < Main.maxPlayers)
+                        {
+                            Main.player[playerIndex].GetModPlayer<PoisonPlayer>().ReceiveLevel(level, whoAmI);
+                        }
+                        break;
+                    }
                 case tsorcPacketID.TeleportAllPlayers:
                     {
                         Vector2 targetLocation = reader.ReadVector2();
@@ -5274,6 +5292,8 @@ namespace tsorcRevamp
         public const byte ReportMiasmaBuildup = 43;
         /// <summary>Server meter snapshot plus a sequenced flag that starts the Miasma drain once per proc.</summary>
         public const byte SyncMiasmaState = 44;
+        /// <summary>Owner client → server → other clients: the owner-authoritative poison meter value, display only.</summary>
+        public const byte SyncPoisonLevel = 45;
     }
 
     //config moved to separate file

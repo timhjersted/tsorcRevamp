@@ -816,6 +816,10 @@ namespace tsorcRevamp.Content.Projectiles
                 {
                     miasmaBuildup = PlanteraThornBallMiasmaBuildup;
                 }
+                else if (projectile.type == ModContent.ProjectileType<NPCs.MiasmaBreathPuff>())
+                {
+                    miasmaBuildup = PlanteraBreathMiasmaBuildup;
+                }
 
                 MiasmaBuildup.Apply(target, miasmaBuildup);
             }
@@ -825,6 +829,8 @@ namespace tsorcRevamp.Content.Projectiles
         public const int PlanteraSeedMiasmaBuildup = 8;
         public const int PlanteraPoisonSeedMiasmaBuildup = 10;
         public const int PlanteraThornBallMiasmaBuildup = 15;
+        // Breath puffs pierce, so i-frames cap this at ~3 hits per 2s breath for anyone standing in it.
+        public const int PlanteraBreathMiasmaBuildup = 10;
 
         public override bool PreKill(Projectile projectile, int timeLeft)
         {

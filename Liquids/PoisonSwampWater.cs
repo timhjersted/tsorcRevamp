@@ -32,8 +32,17 @@ namespace tsorcRevamp.Liquids
     // ──────────────────────────────────────────────────────────────────────────
     internal static class PoisonSwampCondition
     {
-        internal static bool IsActive(Player player) =>
-            player.ZoneJungle && player.ZoneDungeon;
+        //     Also active near an Eater of Worlds fight, whose toxic drips leave
+        //     real water behind (NPCs/EaterOfWorldsToxicDrip.cs).
+        internal static bool IsActive(Player player)
+        {
+            if (player.ZoneJungle && player.ZoneDungeon)
+            {
+                return true;
+            }
+
+            return NPCs.EaterOfWorldsToxicDrip.IsToxicFightNear(player);
+        }
     }
 
 
@@ -90,19 +99,15 @@ namespace tsorcRevamp.Liquids
 
 
     // ──────────────────────────────────────────────────────────────────────────
-    //  4. PLAYER EFFECT  —  debuff while swimming in swamp water
-    //     Runs every tick for the local player only.  AddBuff handles immunity
-    //     (Obsidian Skin, Ankh Shield, etc.) automatically.
-    //
-    //     Tuning knobs:
-    //       debuffDuration  — ticks added per frame (refreshes timer each tick,
-    //                         so the debuff lingers this many frames after exiting)
-    //       SuperHardMode   — escalates Poison → Venom once SuperHardMode is active
+    //  4. PLAYER EFFECT  —  poison buildup while swimming in swamp water
+    //     Runs every tick for the local player only.  Adds BuildupPerTick to the
+    //     Poison Buildup meter (Buffs/Debuffs/PoisonBuildup.cs); a full meter
+    //     poisons for 60s.  Poison immunity (Bezoar etc.) blocks the buildup.
     // ──────────────────────────────────────────────────────────────────────────
     public class PoisonSwampPlayerEffect : ModPlayer
     {
-        // 120 ticks = 2 seconds of lingering debuff after exiting the water.
-        private const int debuffDuration = 120;
+        // 1 per tick = a full meter after ~1.7s of continuous contact.
+        public const int BuildupPerTick = 1;
 
         public override void PostUpdate()
         {
@@ -116,9 +121,7 @@ namespace tsorcRevamp.Liquids
 
             if (!inSwampWater) return;
 
-            // SuperHardMode escalates to Venom; otherwise plain Poison.
-            int debuff = tsorcRevampWorld.SuperHardMode ? BuffID.Venom : BuffID.Poisoned;
-            Player.AddBuff(debuff, debuffDuration);
+            Buffs.Debuffs.PoisonBuildup.Apply(Player, BuildupPerTick);
         }
     }
 

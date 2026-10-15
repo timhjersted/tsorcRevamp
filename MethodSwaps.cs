@@ -214,6 +214,8 @@ namespace tsorcRevamp
 
             On_Projectile.StatusNPC += On_Projectile_StatusNPC;
 
+            On_CombatText.NewText_Rectangle_Color_string_bool_bool += On_CombatText_NewText_String;
+
             On_NPC.CanBeChasedBy += On_NPC_CanBeChasedBy;
 
             On_Player.ApplyEquipFunctional += On_Player_ApplyEquipFunctional;
@@ -2030,6 +2032,32 @@ namespace tsorcRevamp
                 return true;
 
             return orig(self, attacker, ignoreDontTakeDamage);
+        }
+
+        // "Hide Enemy Damage Numbers" (Visual config). Every damage number in the game, vanilla hit text, the mod's own
+        // crit-tier text and damage-over-time ticks, goes through this one overload (the int overload calls it), so hooking it
+        // covers them all. Text over an enemy is recognised by its rectangle being exactly an active hostile NPC's Hitbox, which
+        // is how StrikeNPC, the DoT code and CustomCombatText all build it. Heals (green life / blue mana) are left alone.
+        private static int On_CombatText_NewText_String(On_CombatText.orig_NewText_Rectangle_Color_string_bool_bool orig,
+            Rectangle location, Color color, string text, bool dramatic, bool dot)
+        {
+            bool hideEnemyNumbers = ModContent.GetInstance<tsorcRevampVisualConfig>().HideEnemyDamageNumbers;
+            bool isHeal = color == CombatText.HealLife || color == CombatText.HealMana;
+
+            if (hideEnemyNumbers && !isHeal)
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC npc = Main.npc[i];
+
+                    if (npc.active && !npc.friendly && npc.Hitbox == location)
+                    {
+                        return Main.maxCombatText; // vanilla's "no free slot" result; callers ignore it
+                    }
+                }
+            }
+
+            return orig(location, color, text, dramatic, dot);
         }
 
         private static void On_Projectile_StatusNPC(On_Projectile.orig_StatusNPC orig, Projectile self, int i)

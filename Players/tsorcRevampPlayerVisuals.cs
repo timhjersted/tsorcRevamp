@@ -965,7 +965,8 @@ namespace tsorcRevamp
             #endregion
 
             #region curse meter
-            if (!Main.gameMenu)
+            // Replaced by the Curse row in Players/StatusBars.cs unless the Classic Status Meters option is on.
+            if (!Main.gameMenu && ModContent.GetInstance<tsorcRevampVisualConfig>().ClassicStatusMeters)
             {
                 float curseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().CurseLevel;
                 float powerfulCurseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel;

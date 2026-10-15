@@ -9401,6 +9401,15 @@ Mods: {
 				Description: The blight has consumed you.
 			}
 
+			PoisonBuildup: {
+				DisplayName: Poison Buildup
+				Description:
+					'''
+					Poison buildup: {0}/{1}.
+					At {1}, you will be poisoned for {2} seconds.
+					'''
+			}
+
 			MiasmaBuildup: {
 				DisplayName: Miasma Buildup
 				Description:
@@ -13735,6 +13744,11 @@ Mods: {
 					Tooltip: ""
 				}
 
+				ClassicStatusMeters: {
+					Label: Classic Status Meters
+					Tooltip: Show buildup debuffs (Curse, Madness, Frost, etc.) as the older icon meters instead of stacked bars.
+				}
+
 				EnemyHealthBars: {
 					Label: Enemy Health Bars
 					Tooltip: Show vanilla health bars below non-boss enemies. Defaults to Off.
@@ -13747,6 +13761,11 @@ Mods: {
 						Show floating text when Bearer of the Curse's ranged accuracy crosses into a new 10% band.
 						Your exact accuracy is always readable on the Accuracy buff regardless of this setting. Defaults to On.
 						'''
+				}
+
+				HideEnemyDamageNumbers: {
+					Label: Hide Enemy Damage Numbers
+					Tooltip: Hides the floating damage numbers that appear over enemies when they take damage, including damage over time. Defaults to Off.
 				}
 
 				PlayerHurtVisuals: {
