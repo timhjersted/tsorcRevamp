@@ -89,11 +89,7 @@ namespace tsorcRevamp.Content.Projectiles
                     if (Main.myPlayer == Projectile.owner)
                     {
                         Vector2 velocity = UsefulFunctions.Aim(Projectile.Center, Main.npc[target.Value].Center, 10);
-                        int damage = 1 + (int)(tsorcRevampWorld.NewSlain.Count * 2f);
-                        if (tsorcRevampWorld.SuperHardMode)
-                        {
-                            damage *= 2;
-                        }
+                        int damage = Items.Accessories.Damage.BurningAura.FireballDamage;
                         Projectile.NewProjectile(player.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<Projectiles.HomingFireball>(), damage, 0.5f, player.whoAmI);
                         shotCooldown = 45;
                     }

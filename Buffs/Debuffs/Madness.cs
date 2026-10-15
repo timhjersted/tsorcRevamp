@@ -1,3 +1,4 @@
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -19,6 +20,12 @@ namespace tsorcRevamp.Buffs.Debuffs
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
             BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
+        }
+
+        public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
+        {
+            int attackSpeedPercent = (int)Math.Round(MeleeAttackSpeedBonus * 100f);
+            tip = base.Description.WithFormatArgs(attackSpeedPercent, ManaRegenerationMultiplier).Value;
         }
 
         public override void Update(Player player, ref int buffIndex)

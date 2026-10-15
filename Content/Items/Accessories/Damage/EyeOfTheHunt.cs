@@ -9,7 +9,9 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
     public class EyeOfTheHunt : ModItem
     {
         public const float CritDamage = 15;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDamage);
+        public const int MinionDamage = 40;
+        public const float ShotDamageFraction = 0.75f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDamage, MinionDamage, (int)(MinionDamage * ShotDamageFraction));
         public override void SetStaticDefaults()
         {
         }
@@ -36,7 +38,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
                     player.Center,
                     Vector2.Zero,
                     ModContent.ProjectileType<YoungHunter>(),
-                    40, 
+                    MinionDamage,
                     2f, 
                     player.whoAmI
                 );

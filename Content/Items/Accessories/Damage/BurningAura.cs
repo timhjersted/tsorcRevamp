@@ -10,7 +10,34 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
 {
     public class BurningAura : ModItem
     {
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BurningStone.DamageIncrease);
+        public const int FireballBaseDamage = 1;
+        public const float FireballDamagePerBossKill = 2f;
+        public const int FireballSuperHardmodeMultiplier = 2;
+
+        // Damage of one homing fireball right now. Shared by BurningShards (the shot) and the tooltip, so they cannot drift.
+        public static int FireballDamage
+        {
+            get
+            {
+                int bossKills = 0;
+
+                if (tsorcRevampWorld.NewSlain != null)
+                {
+                    bossKills = tsorcRevampWorld.NewSlain.Count;
+                }
+
+                int damage = FireballBaseDamage + (int)(bossKills * FireballDamagePerBossKill);
+
+                if (tsorcRevampWorld.SuperHardMode)
+                {
+                    damage *= FireballSuperHardmodeMultiplier;
+                }
+
+                return damage;
+            }
+        }
+
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BurningStone.DamageIncrease, FireballDamage);
         public override void SetStaticDefaults()
         {
         }

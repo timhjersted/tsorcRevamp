@@ -231,12 +231,67 @@ namespace tsorcRevamp.Systems
         }
 
         /// <summary>
+        /// Event enemies (Old One's Army, Goblin Army, Frost Legion, Pirates, Martians, Pumpkin / Frost Moon, Solar Eclipse; the
+        /// Lunar pillars' enemies are deliberately NOT here and keep the ramp). Their registry HP is already tuned per event tier, so the Hardmode ramp is skipped for them
+        /// (LifeScale returns 1 before SHM). The SHM ramp still applies. Bosses are excluded elsewhere (npc.boss).
+        /// </summary>
+        private static readonly HashSet<int> HardmodeRampExcludedEventEnemies = new HashSet<int>
+        {
+            // Goblin Army
+            NPCID.GoblinPeon, NPCID.GoblinThief, NPCID.GoblinWarrior, NPCID.GoblinSorcerer, NPCID.GoblinArcher, NPCID.GoblinSummoner,
+            // Frost Legion
+            NPCID.MisterStabby, NPCID.SnowmanGangsta, NPCID.SnowBalla,
+            // Pirate Invasion
+            NPCID.PirateDeckhand, NPCID.PirateCorsair, NPCID.PirateDeadeye, NPCID.PirateCrossbower, NPCID.PirateCaptain,
+            NPCID.PirateShipCannon, NPCID.Parrot,
+            // Martian Madness
+            NPCID.MartianDrone, NPCID.MartianEngineer, NPCID.MartianOfficer, NPCID.MartianTurret, NPCID.MartianWalker,
+            NPCID.GigaZapper, NPCID.RayGunner, NPCID.GrayGrunt, NPCID.BrainScrambler, NPCID.Scutlix, NPCID.ScutlixRider,
+            NPCID.MartianProbe,
+            // Pumpkin Moon
+            NPCID.Scarecrow1, NPCID.Scarecrow2, NPCID.Scarecrow3, NPCID.Scarecrow4, NPCID.Scarecrow5,
+            NPCID.Scarecrow6, NPCID.Scarecrow7, NPCID.Scarecrow8, NPCID.Scarecrow9, NPCID.Scarecrow10,
+            NPCID.Splinterling, NPCID.Hellhound, NPCID.Poltergeist, NPCID.HeadlessHorseman, NPCID.MourningWood,
+            NPCID.Pumpking, NPCID.PumpkingBlade,
+            // Frost Moon
+            NPCID.ZombieElf, NPCID.ZombieElfBeard, NPCID.ZombieElfGirl, NPCID.PresentMimic, NPCID.GingerbreadMan, NPCID.Yeti,
+            NPCID.Everscream, NPCID.IceQueen, NPCID.SantaNK1, NPCID.ElfCopter, NPCID.Nutcracker, NPCID.NutcrackerSpinning,
+            NPCID.Krampus, NPCID.Flocko,
+            // Solar Eclipse
+            NPCID.Eyezor, NPCID.Frankenstein, NPCID.SwampThing, NPCID.Vampire, NPCID.VampireBat, NPCID.Reaper, NPCID.Butcher,
+            NPCID.CreatureFromTheDeep, NPCID.Fritz, NPCID.Psycho, NPCID.DeadlySphere, NPCID.DrManFly, NPCID.ThePossessed,
+            NPCID.Nailhead, NPCID.Mothron, NPCID.MothronEgg, NPCID.MothronSpawn
+        };
+
+        /// <summary>True for any enemy that belongs to an invasion / event: the list above plus everything in the Old One's Army.</summary>
+        public static bool IsEventEnemy(int npcType)
+        {
+            if (NPCID.Sets.BelongsToInvasionOldOnesArmy[npcType])
+            {
+                return true;
+            }
+
+            if (tsorcRevamp.EnemiesOOA != null && tsorcRevamp.EnemiesOOA.Contains(npcType))
+            {
+                return true;
+            }
+
+            return HardmodeRampExcludedEventEnemies.Contains(npcType);
+        }
+
+        /// <summary>
         /// HP multiplier for this NPC from world progress: CurrentLifeScale for a non-boss with a registry value (modded or vanilla),
         /// 1 for everything else. The registry already leaves out boss parts, critters, town NPCs and block-listed vanilla enemies.
+        /// Event enemies skip the Hardmode ramp (see HardmodeRampExcludedEventEnemies).
         /// </summary>
         public static float LifeScale(NPC npc)
         {
             if (npc.boss)
+            {
+                return 1f;
+            }
+
+            if (!tsorcRevampWorld.SuperHardMode && IsEventEnemy(npc.type))
             {
                 return 1f;
             }

@@ -186,6 +186,9 @@ namespace tsorcRevamp
         // contact and would otherwise be filed away and re-collected endlessly. Populated in PopulateArrays().
         public static HashSet<int> StorageExcludedTypes;
         public static List<int> RestrictedHooks;
+        // Accessories live in Player.armor[3..9] (5 base slots + the two extra ones); this is the exclusive end for scan loops.
+        // Do not use `8 + Player.extraAccessorySlots`: that field is only 0/1 (the Demon Heart flag) and skips slots 8 and 9.
+        public const int AccessorySlotEnd = 10;
         public static List<int> DisabledRecipes = new List<int>();
         public static List<int> EnemiesOOA;
         public static List<int> GiantWormSegments;
@@ -2867,6 +2870,33 @@ namespace tsorcRevamp
                                 .ReceiveState(buildup, decayTimer, procSequence, triggerDamage);
                         break;
                     }
+                case tsorcPacketID.ReportMiasmaBuildup:
+                    {
+                        int buildup = reader.ReadByte();
+
+                        if (Main.netMode == NetmodeID.Server && whoAmI >= 0 && whoAmI < Main.maxPlayers
+                            && Main.player[whoAmI].active && !Main.player[whoAmI].dead)
+                        {
+                            Main.player[whoAmI].GetModPlayer<MiasmaPlayer>().ApplyBuildupAuthoritative(buildup);
+                        }
+                        break;
+                    }
+                case tsorcPacketID.SyncMiasmaState:
+                    {
+                        int playerIndex = reader.ReadByte();
+                        int buildup = reader.ReadByte();
+                        int decayTimer = reader.ReadByte();
+                        int procSequence = reader.ReadInt32();
+                        bool triggered = reader.ReadBoolean();
+                        bool hitBurst = reader.ReadBoolean();
+
+                        if (Main.netMode == NetmodeID.MultiplayerClient && playerIndex >= 0 && playerIndex < Main.maxPlayers)
+                        {
+                            Main.player[playerIndex].GetModPlayer<MiasmaPlayer>()
+                                .ReceiveState(buildup, decayTimer, procSequence, triggered, hitBurst);
+                        }
+                        break;
+                    }
                 case tsorcPacketID.TeleportAllPlayers:
                     {
                         Vector2 targetLocation = reader.ReadVector2();
@@ -3012,7 +3042,7 @@ namespace tsorcRevamp
 
                 case tsorcPacketID.SyncFriendlyPuppetOwnerState:
                 {
-                    NPCs.FriendlyPuppets.FriendlyPuppetNPC.ReceiveOwnerState(reader, whoAmI);
+                    NPCs.FriendlyPuppets.MirrorPuppetNPC.ReceiveOwnerState(reader, whoAmI);
                     break;
                 }
 
@@ -5238,8 +5268,12 @@ namespace tsorcRevamp
         /// Estus numbers aren't synced, and clients can't spawn NPCs. See NPCs/FriendlyPuppets/MimicTear.cs.</summary>
         public const byte RequestFriendlyPuppetSpawn = 41;
         /// <summary>Puppet owner → server → other clients: status flags the server's AI needs (winded, drinking),
-        /// plus the streamed pose while the puppet is mid-use, so other players see its swings. FriendlyPuppetNPC.cs.</summary>
+        /// plus the streamed pose while the puppet is mid-use, so other players see its swings. MirrorPuppetNPC.cs.</summary>
         public const byte SyncFriendlyPuppetOwnerState = 42;
+        /// <summary>Victim client reports a Miasma hit; the server owns buildup and threshold resolution.</summary>
+        public const byte ReportMiasmaBuildup = 43;
+        /// <summary>Server meter snapshot plus a sequenced flag that starts the Miasma drain once per proc.</summary>
+        public const byte SyncMiasmaState = 44;
     }
 
     //config moved to separate file

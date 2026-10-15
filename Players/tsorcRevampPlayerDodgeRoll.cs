@@ -212,11 +212,11 @@ namespace tsorcRevamp
         {
             Item item = Player.HeldItem;
 
-            // A friendly puppet (Mimic Tear) borrows this player's ItemCheck a second time per tick via
-            // FriendlyPuppetSwap. The dodge timers, impale freeze and HoldItem below already ran once this tick
+            // A mirror puppet (Soul Mimic, swap dummy) borrows this player's ItemCheck a second time per tick via
+            // MirrorPuppetSwap. The dodge timers, impale freeze and HoldItem below already ran once this tick
             // for the real player, so the puppet skips straight to the stamina block, which charges its
             // swapped-in pool.
-            bool puppetSwap = NPCs.FriendlyPuppets.FriendlyPuppetSwap.Active;
+            bool puppetSwap = NPCs.FriendlyPuppets.MirrorPuppetSwap.Active;
 
             if (!puppetSwap)
             {

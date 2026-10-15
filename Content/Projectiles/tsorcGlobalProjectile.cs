@@ -646,11 +646,21 @@ namespace tsorcRevamp.Content.Projectiles
 
 
         }
+        public const int TrimarangFrostburnChance = 2; // NextBool(2) = 1 in 2
+        public const int TrimarangFrostburnSeconds = 3;
+
         public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
         {
             // Marks this projectile as having actually landed a hit - see HasHitAnNpc's doc comment.
             // Must be set before anything below can early-return, so it is first.
             HasHitAnNpc = true;
+
+            // Trimarang is crafted from the Ice Boomerang but lost its Frostburn; same proc as the Ice Boomerang's (113):
+            // 50% chance, 3 seconds.
+            if (projectile.type == ProjectileID.Trimarang && Main.rand.NextBool(TrimarangFrostburnChance))
+            {
+                target.AddBuff(BuffID.Frostburn, TrimarangFrostburnSeconds * 60);
+            }
 
             Player player = Main.player[projectile.owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
@@ -669,7 +679,7 @@ namespace tsorcRevamp.Content.Projectiles
                 // the single deliberate action it is. Minions still pay their own way just below.
                 // Friendly-puppet (Mimic Tear) projectiles are excluded for the same reason as minions:
                 // they are not the player's own output, and the puppet's damage derives from this EMA.
-                bool fromFriendlyPuppet = projectile.GetGlobalProjectile<NPCs.FriendlyPuppets.FriendlyPuppetProjectile>().FromFriendlyPuppet;
+                bool fromFriendlyPuppet = projectile.GetGlobalProjectile<NPCs.FriendlyPuppets.MirrorPuppetProjectile>().FromMirrorPuppet;
 
                 if (WeaponStaminaSourceItemType > 0 && !WeaponStaminaSourceIsSummon && !fromFriendlyPuppet)
                 {
@@ -792,7 +802,29 @@ namespace tsorcRevamp.Content.Projectiles
             if (projectile.hostile && info.Damage > 0
                 && SourceNPCType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>())
                 BlightBuildup.Apply(target);
+
+            // Every shot Plantera fires builds Miasma, keyed off the synced SourceNPCType.
+            if (projectile.hostile && info.Damage > 0 && SourceNPCType == NPCID.Plantera)
+            {
+                int miasmaBuildup = PlanteraSeedMiasmaBuildup;
+
+                if (projectile.type == ProjectileID.PoisonSeedPlantera)
+                {
+                    miasmaBuildup = PlanteraPoisonSeedMiasmaBuildup;
+                }
+                else if (projectile.type == ProjectileID.ThornBall)
+                {
+                    miasmaBuildup = PlanteraThornBallMiasmaBuildup;
+                }
+
+                MiasmaBuildup.Apply(target, miasmaBuildup);
+            }
         }
+
+        // Miasma buildup per Plantera projectile hit. Seed is also the fallback for any other Plantera shot.
+        public const int PlanteraSeedMiasmaBuildup = 8;
+        public const int PlanteraPoisonSeedMiasmaBuildup = 10;
+        public const int PlanteraThornBallMiasmaBuildup = 15;
 
         public override bool PreKill(Projectile projectile, int timeLeft)
         {

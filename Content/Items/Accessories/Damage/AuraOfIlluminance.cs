@@ -22,7 +22,12 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<tsorcRevampPlayer>().AuraOfIlluminance = true;
-            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Cataluminance);
+
+            // Cosmetic aura only: the accessory's "visible" toggle hides it.
+            if (!hideVisual)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Cataluminance);
+            }
 
             if (player.whoAmI == Main.myPlayer)
             {

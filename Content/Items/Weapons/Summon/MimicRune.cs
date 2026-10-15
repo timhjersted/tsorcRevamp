@@ -12,7 +12,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
     /// Summons a Soul Mimic (the MimicTear NPC — NPCs/FriendlyPuppets/MimicTear.cs). No recipe — it is a drop.
     ///
     /// Unlike the Spirit Bells this spawns no minion projectile: the mimic is an NPC, its minion slots are reserved
-    /// by FriendlyPuppetOwnerPlayer, its lifetime is <see cref="MimicTearBuff"/> and its cooldown is
+    /// by MirrorPuppetOwnerPlayer, its lifetime is <see cref="MimicTearBuff"/> and its cooldown is
     /// <see cref="MimicTearCooldown"/>. Damage is 0 on purpose: the mimic's damage comes from the weapons it copies,
     /// and a damage of 0 keeps the Spirit Ashes summon-weapon rules (SpiritAshesItem.IsSummonWeapon) off it.
     /// </summary>

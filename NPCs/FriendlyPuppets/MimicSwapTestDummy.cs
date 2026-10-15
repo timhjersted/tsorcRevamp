@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,7 +12,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
     /// A motionless reflective copy of the player that uses hotbar slot 1 or 2 through the owner's real
     /// ItemCheck. Spawned and steered with /mimictest. Not obtainable in normal play.
     ///
-    /// ai[0] = owner, ai[1] = aim mode (0 nearest target, 1 owner's cursor), ai[2] = hotbar slot (0 or 1).
+    /// ai[0] = owner, ai[1] = aim mode (0 nearest target, 1 owner's cursor), ai[2] = hotbar slot (0 or 1),
+    /// ai[3] = melee clock (0 native, 1 eased — design §12.6, the hostile invader's swing prototype).
     /// </summary>
     public class MimicSwapTestDummy : FriendlyPuppetNPC
     {
@@ -23,26 +26,33 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>Hotbar slots 1 and 2, cloned on the owner's client the first tick it runs.</summary>
         private Item[] _loadout;
 
-        protected override Item ActiveWeapon
+        /// <summary>A/B toggle for the eased melee clock (<c>/mimictest ease on|off</c>). Lives in ai[3] so vanilla
+        /// syncs it from the server, where the command runs, to the owner client, where the clock runs.</summary>
+        protected override bool UsesEasedMeleeClock => NPC.ai[3] != 0f;
+
+        /// <summary>One log line per swing, eased or native, so the two can be compared against §12.6.</summary>
+        protected override bool LogsMeleeClock => true;
+
+        protected override Item ActiveWeapon => TestRigWeapon(ref _loadout, NPC, OwnerIndex);
+
+        /// <summary>Both test rigs: snapshot the owner's hotbar slots 1+2 on first use, return the one ai[2] selects.</summary>
+        internal static Item TestRigWeapon(ref Item[] loadout, NPC npc, int ownerIndex)
         {
-            get
+            if (loadout == null)
             {
-                if (_loadout == null)
-                {
-                    Player owner = Main.player[OwnerIndex];
-                    _loadout = new Item[] { owner.inventory[0].Clone(), owner.inventory[1].Clone() };
-                }
-
-                int slot = (int)NPC.ai[2];
-                bool slotValid = slot >= 0 && slot < _loadout.Length;
-
-                if (!slotValid)
-                {
-                    return null;
-                }
-
-                return _loadout[slot];
+                Player owner = Main.player[ownerIndex];
+                loadout = new Item[] { owner.inventory[0].Clone(), owner.inventory[1].Clone() };
             }
+
+            int slot = (int)npc.ai[2];
+            bool slotValid = slot >= 0 && slot < loadout.Length;
+
+            if (!slotValid)
+            {
+                return null;
+            }
+
+            return loadout[slot];
         }
 
         public override void SetDefaults()
@@ -106,6 +116,120 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
     }
 
     /// <summary>
+    /// Step-3 rig for the hostile mirror damage path (design §12.3–12.4): a motionless, immortal copy of the owner that
+    /// attacks the nearest living player (you, in single player) with hotbar slot 1 or 2 — eased melee strikes that
+    /// hurt, flipped hostile projectiles, the per-hit cap and the death message. Not the invader: no movement, tells,
+    /// bursts, rolls or Estus (steps 4–5). Debug: the strike hitbox is outlined red while it's live.
+    /// Spawned with /mimictest hostile; 1/2/ease/clear work on it like on the friendly dummy.
+    ///
+    /// ai[0] = owner (the host that runs its swap), ai[2] = hotbar slot (0 or 1), ai[3] = melee clock (1 eased, default).
+    /// </summary>
+    public class MirrorInvaderTestDummy : HostileMirrorPuppetNPC
+    {
+        /// <summary>Max distance (px) to the player it attacks: 50 tiles.</summary>
+        private const float TargetRange = 50f * 16f;
+
+        private Item[] _loadout;
+
+        protected override Item ActiveWeapon => MimicSwapTestDummy.TestRigWeapon(ref _loadout, NPC, OwnerIndex);
+
+        protected override bool UsesEasedMeleeClock => NPC.ai[3] != 0f;
+
+        protected override bool LogsMeleeClock => true;
+
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+
+            // Stands where it was spawned and can be hit (damage numbers) but never dies.
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.immortal = true;
+            NPC.lifeMax = 10000;
+            NPC.HitSound = SoundID.NPCHit4;
+        }
+
+        public override void AI()
+        {
+            base.AI();
+
+            if (DespawnIfOwnerGone())
+            {
+                return;
+            }
+
+            // Face the nearest player on every machine. Between uses the swap takes its facing from NPC.direction.
+            Player target = FindNearestLivingPlayer();
+
+            if (target != null)
+            {
+                NPC.direction = target.Center.X < NPC.Center.X ? -1 : 1;
+                NPC.spriteDirection = NPC.direction;
+            }
+        }
+
+        protected override bool ChooseAttack(Player owner, out Vector2 aimWorld)
+        {
+            // Test-rig shortcut: the target is picked on the host's client (the invader will get it from the server).
+            Player target = FindNearestLivingPlayer();
+
+            if (target == null)
+            {
+                aimWorld = NPC.Center + new Vector2(NPC.direction * 100f, 0f);
+                return false;
+            }
+
+            aimWorld = target.Center;
+            return true;
+        }
+
+        private Player FindNearestLivingPlayer()
+        {
+            Player nearest = null;
+            float nearestDistance = TargetRange;
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player candidate = Main.player[i];
+
+                if (!candidate.active || candidate.dead)
+                {
+                    continue;
+                }
+
+                float distance = Vector2.Distance(NPC.Center, candidate.Center);
+
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearest = candidate;
+                }
+            }
+
+            return nearest;
+        }
+
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (LastStrikeShowTicks <= 0)
+            {
+                return;
+            }
+
+            // Red outline of the last Strike-segment hitbox (2px lines), so the live window can be judged by eye.
+            Rectangle box = LastStrikeHitboxWorld;
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Color lineColor = Color.Red * 0.8f;
+            int left = (int)(box.X - screenPos.X);
+            int top = (int)(box.Y - screenPos.Y);
+            spriteBatch.Draw(pixel, new Rectangle(left, top, box.Width, 2), lineColor);
+            spriteBatch.Draw(pixel, new Rectangle(left, top + box.Height - 2, box.Width, 2), lineColor);
+            spriteBatch.Draw(pixel, new Rectangle(left, top, 2, box.Height), lineColor);
+            spriteBatch.Draw(pixel, new Rectangle(left + box.Width - 2, top, 2, box.Height), lineColor);
+        }
+    }
+
+    /// <summary>
     /// /mimictest — spawn and steer the swap test rig. World command: runs on the server in multiplayer,
     /// which owns NPC spawning; settings go through ai[] so they sync to the owner's client.
     /// </summary>
@@ -115,7 +239,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override string Command => "mimictest";
 
-        public override string Usage => "/mimictest [spawn|clear|cursor|target|1|2]";
+        public override string Usage => "/mimictest [spawn|hostile|clear|cursor|target|1|2|ease on|ease off]";
 
         public override string Description => "Mimic Tear swap test rig: spawn a reflective copy that uses hotbar slot 1/2 through your own item code.";
 
@@ -136,6 +260,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 action = args[0].ToLowerInvariant();
             }
 
+            // Second word of "ease on|off".
+            string easeSetting = "";
+
+            if (args.Length > 1)
+            {
+                easeSetting = args[1].ToLowerInvariant();
+            }
+
             int dummyType = ModContent.NPCType<MimicSwapTestDummy>();
 
             if (action == "spawn")
@@ -148,16 +280,28 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return;
             }
 
+            int hostileDummyType = ModContent.NPCType<MirrorInvaderTestDummy>();
+
+            if (action == "hostile")
+            {
+                // Five tiles in front of the player (out of first-swing reach), feet level with theirs; eased clock on.
+                int spawnX = (int)(player.Center.X + player.direction * 80f);
+                int spawnY = (int)player.Bottom.Y;
+                NPC.NewNPC(player.GetSource_FromThis(), spawnX, spawnY, hostileDummyType, 0, player.whoAmI, 0f, 0f, 1f);
+                caller.Reply("Hostile mirror test dummy spawned (slot 1, eased). It attacks the nearest player. Hotbar 1+2 are snapshotted now.", Color.OrangeRed);
+                return;
+            }
+
             int affected = 0;
 
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC npc = Main.npc[i];
-                bool ownedPuppet = npc.active && npc.ModNPC is FriendlyPuppetNPC && (int)npc.ai[0] == player.whoAmI;
-                bool isDummy = npc.type == dummyType;
+                bool ownedPuppet = npc.active && npc.ModNPC is MirrorPuppetNPC && (int)npc.ai[0] == player.whoAmI;
+                bool isDummy = npc.type == dummyType || npc.type == hostileDummyType;
 
-                // "clear" removes every friendly puppet you own (dummy and Mimic Tear); the other settings only
-                // apply to the dummy, whose ai[1]/ai[2] mean something different from the Mimic Tear's.
+                // "clear" removes every mirror puppet you own (both dummies and the Soul Mimic); the other settings
+                // only apply to the dummies, whose ai[1]/ai[2] mean something different from the Soul Mimic's.
                 if (!ownedPuppet || (!isDummy && action != "clear"))
                 {
                     continue;
@@ -183,6 +327,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 {
                     npc.ai[2] = 1f;
                 }
+                else if (action == "ease" && easeSetting == "on")
+                {
+                    npc.ai[3] = 1f;
+                }
+                else if (action == "ease" && easeSetting == "off")
+                {
+                    npc.ai[3] = 0f;
+                }
                 else
                 {
                     caller.Reply("Usage: " + Usage, Color.Orange);
@@ -198,7 +350,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 affected++;
             }
 
-            caller.Reply($"/mimictest {action}: {affected} dummy(s) updated.", Color.Lime);
+            string reply = $"/mimictest {action}: {affected} dummy(s) updated.";
+
+            if (action == "ease")
+            {
+                reply += " Eased clock shapes swing/thrust melee only; one [MeleeClock] line per swing goes to client.log.";
+            }
+
+            caller.Reply(reply, Color.Lime);
         }
     }
 }

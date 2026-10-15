@@ -600,9 +600,14 @@ namespace tsorcRevamp.Content.Items.Potions
         public override bool CanScale => true;
         public override int ScalingFactor => 30;
 
+        // Same duration range as vanilla's Flask of Ichor (StatusToNPC): 10-19 seconds per hit.
+        public const int DebuffMinSeconds = 10;
+        public const int DebuffMaxSeconds = 20;
+
         public override void PotionEffect(Player player)
         {
             player.meleeEnchant = 5;
+            player.GetModPlayer<tsorcRevampPlayer>().PermanentIchorImbue = true;
             player.GetDamage(DamageClass.Melee) += ApplyScaling(Flasks.IchorFlaskDMG / 100f);
             player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(Flasks.IchorFlaskDMG / 100f);
         }
@@ -1232,7 +1237,11 @@ namespace tsorcRevamp.Content.Items.Potions
 
         public override void PotionEffect(Player player)
         {
-            player.meleeEnchant = 6;
+            // Same as the drinkable AbyssWeaponImbue buff: the Abyss debuff is applied by AbyssWeaponEnchantement's hit hooks,
+            // which only run when this flag is set. This used to set meleeEnchant = 6 instead, which is vanilla's Nanites
+            // value, so the perma flask applied Confused and never the Abyss debuff.
+            player.GetModPlayer<AbyssWeaponEnchantement>().abyssWeaponImbue = true;
+            player.MeleeEnchantActive = true;
             player.GetDamage(DamageClass.Melee) += (AbyssFlask.DamageCritIncrease / 100f);
             player.GetCritChance(DamageClass.Melee) += ApplyScaling(AbyssFlask.DamageCritIncrease);
 			player.GetDamage(DamageClass.SummonMeleeSpeed) += (AbyssFlask.DamageCritIncrease / 100f);

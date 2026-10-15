@@ -52,7 +52,7 @@ namespace tsorcRevamp
                 Player p = Main.LocalPlayer;
                 if (tsorcRevampActiveShieldPlayer.ActiveFor(p))
                 {
-                    for (int i = 3; i < 8 + p.extraAccessorySlots; i++)
+                    for (int i = 3; i < tsorcRevamp.AccessorySlotEnd; i++)
                     {
                         Item acc = p.armor[i];
                         if (acc != null && !acc.IsAir && tsorcRevamp.ActiveShieldRegistry.ContainsKey(acc.type))

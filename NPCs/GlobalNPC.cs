@@ -4584,6 +4584,10 @@ namespace tsorcRevamp.NPCs
                 damage += (int)Math.Round(DoTPerS);
             }
         }
+        // Miasma buildup per contact hit from Plantera. Plantera's projectiles are in tsorcGlobalProjectile.OnHitPlayer.
+        public const int PlanteraBiteMiasmaBuildup = 20;
+        public const int PlanteraTentacleMiasmaBuildup = 10;
+
         public override void OnHitPlayer(NPC npc, Player target, Player.HurtInfo hurtInfo)
         {
             if (PlaguesmithBuff)
@@ -4593,6 +4597,16 @@ namespace tsorcRevamp.NPCs
             if (SorrowfulCurse)
             {
                 target.AddBuff(BuffID.CursedInferno, 300);
+            }
+
+            // Contact hits run on the victim's machine; Apply reports to the server in multiplayer.
+            if (npc.type == NPCID.Plantera)
+            {
+                Buffs.Debuffs.MiasmaBuildup.Apply(target, PlanteraBiteMiasmaBuildup);
+            }
+            else if (npc.type == NPCID.PlanterasTentacle)
+            {
+                Buffs.Debuffs.MiasmaBuildup.Apply(target, PlanteraTentacleMiasmaBuildup);
             }
         }
 

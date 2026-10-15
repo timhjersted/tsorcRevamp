@@ -24,6 +24,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
         const int InitialSwarmSize = 25;
         public const int PopulationCap = 100;
+        // Ticks between one locust's breeding attempts (was 90-150, which doubled a swarm in seconds and made it
+        // impossible to clear). Each locust rolls its own timer, so the colony still grows, just slowly.
+        const int BreedMinTicks = 300;
+        const int BreedMaxTicks = 450;
+        // Natural-spawn weight; also used by the EnemySpawns registry entry.
+        public const float NaturalSpawnChance = 0.1f;
         const int ArrivalTicks = 30;
         const int ReproductionTellTicks = 30;
         const int FleeTicks = 90;
@@ -90,18 +96,22 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
+            // One natural swarm at a time: a fresh group of 25 must not arrive while the last one is still being fought.
             if (!tsorcRevampWorld.SuperHardMode || !spawnInfo.Player.ZoneCrimson || spawnInfo.Water
-                || CountActive() >= PopulationCap)
+                || CountActive() > 0)
             {
                 return 0f;
             }
 
-            return 0.2f;
+            return NaturalSpawnChance;
         }
 
         public override void OnKill()
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient || !IsLastLivingGroupMember())
+            // The cache pays once, when the last locust of ANY group dies. It used to check only this locust's flock
+            // (groupId), but flocks split in two whenever one is hit (TriggerFlee), so every fragment's last member paid
+            // 2000. CountActive() still includes this locust (it is active during OnKill), so > 1 means others are alive.
+            if (Main.netMode == NetmodeID.MultiplayerClient || CountActive() > 1)
             {
                 return;
             }
@@ -211,7 +221,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.ai[1] = groupId;
             }
 
-            breedTimer = Main.rand.Next(90, 151);
+            breedTimer = Main.rand.Next(BreedMinTicks, BreedMaxTicks + 1);
 
             //ai[0] is the seed guard. Natural spawns arrive with zero; every generated member is
             //born with one so it cannot recursively create another initial pack of 25.
@@ -297,7 +307,7 @@ namespace tsorcRevamp.NPCs.Enemies
             breedTimer--;
             if (breedTimer <= 0)
             {
-                breedTimer = Main.rand.Next(90, 151);
+                breedTimer = Main.rand.Next(BreedMinTicks, BreedMaxTicks + 1);
                 if (CountActive() < PopulationCap && !GrandOccultistIsAlive())
                 {
                     ChangeMode(Mode.Reproducing);
@@ -699,21 +709,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
             return count;
-        }
-
-        bool IsLastLivingGroupMember()
-        {
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                NPC other = Main.npc[i];
-                if (other.active && other.whoAmI != NPC.whoAmI && other.type == Type
-                    && other.ModNPC is Locust locust && locust.groupId == groupId)
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         static bool GrandOccultistIsAlive()

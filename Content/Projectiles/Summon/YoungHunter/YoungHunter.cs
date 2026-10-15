@@ -81,7 +81,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.YoungHunter
             {
                 if (foundTarget)
                 {
-                    int projDamage = (int)(Projectile.damage * 0.75f); 
+                    int projDamage = (int)(Projectile.damage * EyeOfTheHunt.ShotDamageFraction); 
                     Vector2 shootDirection = UsefulFunctions.Aim(Projectile.Center, targetCenter, 7f);
 
                     Projectile.NewProjectile(
@@ -101,7 +101,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.YoungHunter
 
                 if (foundTarget)
                 {
-                    int projDamage = (int)(Projectile.damage * 0.75f); 
+                    int projDamage = (int)(Projectile.damage * EyeOfTheHunt.ShotDamageFraction); 
                     Vector2 shootDirection = UsefulFunctions.Aim(Projectile.Center, targetCenter, 11f);
 
                     Projectile.NewProjectile(

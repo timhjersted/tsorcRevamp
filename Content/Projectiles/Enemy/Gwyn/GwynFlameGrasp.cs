@@ -112,6 +112,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
                 return;
             }
 
+            // No rolling out of the grab. noDodge is consumed on the grabbed player's next roll check (their own client
+            // runs this AI too once the grab syncs) and also cancels a roll in progress. Same as the Artorias tendril.
+            target.GetModPlayer<tsorcRevampPlayer>().noDodge = true;
+
             int direction = owner.spriteDirection == 0 ? owner.direction : owner.spriteDirection;
             Vector2 capturePoint = owner.Center + new Vector2(direction * CaptureStandoff, -4f);
             Vector2 toCapture = capturePoint - target.Center;

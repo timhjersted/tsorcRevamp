@@ -67,7 +67,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             {
                 return true;
             }
-            for (int i = 3; i < 8 + player.extraAccessorySlots; i++)
+            for (int i = 3; i < tsorcRevamp.AccessorySlotEnd; i++)
             {
                 if (i == slot)
                 {

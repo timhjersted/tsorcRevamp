@@ -324,7 +324,7 @@ namespace tsorcRevamp
             bestData = default;
             int best = -1;
             float bestBase = float.MaxValue;
-            int slots = 8 + Player.extraAccessorySlots;
+            int slots = tsorcRevamp.AccessorySlotEnd;
             for (int i = 3; i < slots; i++)
             {
                 Item acc = Player.armor[i];
@@ -348,7 +348,7 @@ namespace tsorcRevamp
         /// left at -1 outside of an equip slot).</summary>
         private int GetEquippedShieldSlot(int itemType)
         {
-            int slots = 8 + Player.extraAccessorySlots;
+            int slots = tsorcRevamp.AccessorySlotEnd;
             for (int i = 3; i < slots; i++)
             {
                 Item acc = Player.armor[i];
@@ -649,6 +649,15 @@ namespace tsorcRevamp
                 Player.dashType = 1; // 1 = Shield of Cthulhu dash
             }
 
+            // An accessory slot gets the reforge stats (GrantPrefixBenefits) and the item's base defense
+            // (GrantArmorBenefits) from vanilla's UpdateEquips loop; ApplyEquipFunctional below does neither, so the
+            // 2nd slot ignored both. Same expert-only gate as vanilla. Goes through the mod's prefix detour.
+            bool grantsBenefits = !rc.expertOnly || Main.expertMode;
+            if (grantsBenefits)
+            {
+                Player.GrantPrefixBenefits(rc);
+            }
+
             if (rc.ModItem != null)
             {
                 rc.ModItem.UpdateAccessory(Player, false); // mod shields: passive resistance + utility immunities
@@ -662,6 +671,13 @@ namespace tsorcRevamp
                 // vanilla shield in the 2nd slot behave like one worn in an accessory slot — block + native
                 // passive — instead of block-only.
                 Player.ApplyEquipFunctional(rc, true);
+
+                // Vanilla shields have ActiveDefense 0 and keep their own base defense, which is added here because
+                // the 2nd slot never goes through GrantArmorBenefits. Mod shields get ActiveDefense above instead.
+                if (grantsBenefits)
+                {
+                    Player.statDefense += rc.defense;
+                }
             }
 
             // Greatshield equip-load tax, applied for BOTH branches. Neither path reaches

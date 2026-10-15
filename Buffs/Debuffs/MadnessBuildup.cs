@@ -22,7 +22,7 @@ namespace tsorcRevamp.Buffs.Debuffs
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
             int buildup = Main.LocalPlayer.GetModPlayer<MadnessPlayer>().MadnessLevel;
-            tip = base.Description.WithFormatArgs(MaximumBuildup, buildup).Value;
+            tip = base.Description.WithFormatArgs(buildup, MaximumBuildup, MadnessPlayer.FlatTriggerDamage).Value;
         }
 
         /// <summary>

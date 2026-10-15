@@ -181,6 +181,7 @@ Mods: {
 				This item has been [c/383838:cursed] and can't be used yet
 				You can see a strange [c/878787:skull] symbol glowing on its surface...	
 				'''
+			CursedNeverUsable: This item is [c/383838:cursed] and can never be used.
 			CorruptionCursed: This item has been [c/383838:cursed] by the [c/701070:corruption] and can't be used yet
 			QueenBeeCursed: This item has been [c/383838:cursed] by the [c/701070:jungle] and can't be used until Queen Bee is defeated
 			BotCNoHeal: Doesn't heal the [c/6d8827:Bearer of the Curse]
@@ -413,6 +414,7 @@ Mods: {
 			MadnessDeathReason: "{0} succumbed to madness"
 			FrostDeathReason: "{0} shattered from frost"
 			BlightDeathReason: "{0} was consumed by blight"
+			MiasmaDeathReason: "{0} could not survive the miasma"
 			BotC1: Bearer of the Curse mode can be disabled at any time...
 			BotC2: Bearer of the Curse mode is intended for experienced players
 			BotC3: Try reading the Darksign's description
@@ -1420,7 +1422,7 @@ Mods: {
 
 			AuraOfDecay: {
 				DisplayName: Aura of Decay
-				Tooltip: You periodically release a damaging wave of poison
+				Tooltip: Every {1} seconds you release a wave of poison that deals {0} damage
 			}
 
 			AuraOfIlluminance: {
@@ -1725,7 +1727,7 @@ Mods: {
 					'''
 					An array of meteorite shards, floating in a slow orbit
 					Passively launches homing fireballs at nearby enemies
-					Fireballs scale in power with each boss you kill
+					Fireballs deal {1} damage, scaling with each boss you kill
 					Burning foes take {0}% more damage from other attacks
 					'''
 			}
@@ -8982,6 +8984,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.AggroDecrease}
 					Summon a young hunter to protect you
+					Base damage: {1} on contact, {2} per thorn shot
 					The young hunter inflicts Acid Venom and {0}% more damage on crit
 					Scale with summon damage and critical strike chance
 					'''
@@ -9385,25 +9388,53 @@ Mods: {
 
 			BlightBuildup: {
 				DisplayName: Blight Buildup
-				Description: Blight buildup: {0}/100. Direct hits add 15; lingering blight clouds add 1 every 2 ticks. Decays by 1 per second. At 100, take damage equal to 200% of maximum life.
+				Description:
+					'''
+					Blight buildup: {0}/{1}.
+					At {1}, your body will become
+					fully infected with blight.
+					'''
 			}
 
 			Blight: {
 				DisplayName: Blight
-				Description: The abyss has consumed you
+				Description: The blight has consumed you.
+			}
+
+			MiasmaBuildup: {
+				DisplayName: Miasma Buildup
+				Description:
+					'''
+					Miasma buildup: {0}/{1}.
+					At {1}, miasma will drain your life for {2} seconds.
+					'''
+			}
+
+			Miasma: {
+				DisplayName: Miasma
+				Description:
+					'''
+					Miasma is draining your life, {0} per second.
+					There is no cure. It can only be survived.
+					'''
 			}
 
 			MadnessBuildup: {
 				DisplayName: Madness Buildup
-				Description: At {0} buildup, take 200 damage and become staggered. Current buildup: {1}
+				Description:
+					'''
+					Madness: {0}/{1}.
+					At {1} buildup, your knowledge of the occult
+					will cause you to take {2} damage and become staggered.
+					'''
 			}
 
 			Madness: {
 				DisplayName: Madness
 				Description:
 					'''
-					Your perception fractures into lingering afterimages
-					25% increased melee attack speed and 10x mana regeneration
+					You see cause and effect across an infinite expanse of time.
+					{0}% increased melee attack speed and {1}x mana regeneration
 					'''
 			}
 
@@ -9475,9 +9506,8 @@ Mods: {
 				DisplayName: Suppressed
 				Description:
 					'''
-					Something is dampening your speed here.
-					Supersonic Boots, Supersonic Wings, and Supersonic Wings II are reduced to roughly early hardmode levels, and lose their knockback immunity, water-walking, and ice skating.
-					Wings of Seath is weakened as well, but less severely.
+					A dark force is dampening your speed
+					and ability to float or defy gravity here.
 					'''
 			}
 
@@ -13379,6 +13409,8 @@ Mods: {
 			DeathSickleWeapon.DisplayName: Death Sickle Weapon
 			MimicSwapTestDummy.DisplayName: Mimic Swap Test Dummy
 			MimicTear.DisplayName: Soul Mimic
+			MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
+			HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
 		}
 
 		Prefixes: {

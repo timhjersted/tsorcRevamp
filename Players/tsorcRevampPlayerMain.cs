@@ -1434,6 +1434,13 @@ namespace tsorcRevamp
         }
         public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
         {
+            // Explicit Ichor so the enemy's yellow tint doesn't depend on the vanilla meleeEnchant path alone.
+            if (PermanentIchorImbue && item.DamageType.CountsAsClass<MeleeDamageClass>())
+            {
+                int ichorSeconds = Main.rand.Next(PermanentIchorImbuement.DebuffMinSeconds, PermanentIchorImbuement.DebuffMaxSeconds);
+                target.AddBuff(BuffID.Ichor, ichorSeconds * 60);
+            }
+
             if (MeleeArmorVamp10)
             {
                 if (Main.rand.NextBool(10))
@@ -1451,6 +1458,14 @@ namespace tsorcRevamp
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
         {
             Player owner = Main.player[proj.owner];
+
+            bool isMeleeOrWhip = proj.DamageType.CountsAsClass<MeleeDamageClass>() || ProjectileID.Sets.IsAWhip[proj.type];
+            if (PermanentIchorImbue && isMeleeOrWhip && !proj.noEnchantments)
+            {
+                int ichorSeconds = Main.rand.Next(PermanentIchorImbuement.DebuffMinSeconds, PermanentIchorImbuement.DebuffMaxSeconds);
+                target.AddBuff(BuffID.Ichor, ichorSeconds * 60);
+            }
+
             if (Main.rand.NextBool(MagicPlating.MagicPlatingStacksChance) && Player.HasBuff(ModContent.BuffType<MagicPlating>()))
             {
                 if (proj.IsMinionOrSentryRelated)

@@ -523,7 +523,7 @@ namespace tsorcRevamp.Systems
             Enemy("MarilithSpiritTwin", hm: 20000); // mini-boss; authored 10000
 
             // ---- Enemies that first appear in Super Hardmode (HP shown before the x1.0-1.5 SHM progress scaling, which still applies) ----
-            Enemy("Locust", shm: 900); // fodder; authored 300
+            Enemy("Locust", shm: 500); // fodder; authored 300; was 900 (too spongy for a swarm that breeds)
             Enemy("ManOfWar", shm: 3000); // fodder; authored 800
             Enemy("DemonWheel", shm: 4000); // standard; authored 1000
             Enemy("VampireBat", shm: 4000); // standard; authored 1300

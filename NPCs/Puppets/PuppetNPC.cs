@@ -4326,7 +4326,13 @@ namespace tsorcRevamp.NPCs.Puppets
             // Check before the main switch so any phase can be interrupted to flee and heal.
             // Both intercepts are decisions (HP thresholds, one-shot subclass state): server only. A client
             // follows the FleeToHeal / NovaCharge phase from the snapshot.
-            if (!IsMultiplayerClient && ShouldHeal())
+            // A grab hold (PierceStabHold / PierceStabFlick) must play out: interrupting it released the held player
+            // after ~10 ticks (ImpaleFreezeTimer runs dry) without the flick. The phase test sits BEFORE ShouldHeal /
+            // ShouldTriggerNova in each condition because those flip one-shot threshold flags when they return true;
+            // the intercept simply fires after the hold ends.
+            bool inGrabHold = Phase == AttackPhase.PierceStabHold || Phase == AttackPhase.PierceStabFlick;
+
+            if (!IsMultiplayerClient && !inGrabHold && ShouldHeal())
             {
                 CancelAttackRuntimeV2(clearCombo: true);
                 EnterPhase(AttackPhase.FleeToHeal, FleeToHealMaxTicks);
@@ -4334,8 +4340,8 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             // ── Charge-up Nova intercept (health-threshold set-piece) ─────────────
-            // Also checked before the main switch: a nova can interrupt any in-progress attack.
-            if (!IsMultiplayerClient && CanNova && Phase != AttackPhase.NovaCharge && Phase != AttackPhase.NovaBlast
+            // Also checked before the main switch: a nova can interrupt any in-progress attack (except a grab hold).
+            if (!IsMultiplayerClient && !inGrabHold && CanNova && Phase != AttackPhase.NovaCharge && Phase != AttackPhase.NovaBlast
                 && Phase != AttackPhase.NovaRecovery && ShouldTriggerNova())
             {
                 CancelAttackRuntimeV2(clearCombo: true);

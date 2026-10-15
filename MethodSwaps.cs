@@ -2037,6 +2037,38 @@ namespace tsorcRevamp
             NPC nPC = Main.npc[i];
             if (self.type == ProjectileID.BlandWhip || self.type == ProjectileID.ThornWhip || self.type == ProjectileID.BoneWhip || self.type == ProjectileID.FireWhip || self.type == ProjectileID.CoolWhip || self.type == ProjectileID.SwordWhip || self.type == ProjectileID.MaceWhip || self.type == ProjectileID.ScytheWhip || self.type == ProjectileID.RainbowWhip)
             {
+                // The early return drops the vanilla whips' built-in tag debuffs (the mod has its own tags). It also dropped
+                // the flask/imbue debuff, which vanilla applies in this same method, so no flask (drunk or permanent) ever
+                // landed on these nine whips (e.g. Kaleidoscope, Durendal). Re-apply just that part, same values as vanilla.
+                Player whipOwner = Main.player[self.owner];
+                if (whipOwner.meleeEnchant > 0 && !self.noEnchantments)
+                {
+                    switch (whipOwner.meleeEnchant)
+                    {
+                        case 1:
+                            nPC.AddBuff(BuffID.Venom, 60 * Main.rand.Next(5, 10));
+                            break;
+                        case 2:
+                            nPC.AddBuff(BuffID.CursedInferno, 60 * Main.rand.Next(3, 7));
+                            break;
+                        case 3:
+                            nPC.AddBuff(BuffID.OnFire, 60 * Main.rand.Next(3, 7));
+                            break;
+                        case 4:
+                            nPC.AddBuff(BuffID.Midas, 120);
+                            break;
+                        case 5:
+                            nPC.AddBuff(BuffID.Ichor, 60 * Main.rand.Next(10, 20));
+                            break;
+                        case 6:
+                            nPC.AddBuff(BuffID.Confused, 60 * Main.rand.Next(1, 4));
+                            break;
+                        case 8:
+                            nPC.AddBuff(BuffID.Poisoned, 60 * Main.rand.Next(5, 10));
+                            break;
+                    }
+                }
+
                 return;
             }
             if (self.type == ProjectileID.Flames)

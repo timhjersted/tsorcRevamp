@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 {
     /// <summary>
     /// The Mimic Tear: a reflective copy of its owner that walks with them, fights with their weapons (through the
-    /// owner's own ItemCheck — see <see cref="FriendlyPuppetSwap"/>), and has their max HP, defense, stamina, mana,
+    /// owner's own ItemCheck — see <see cref="MirrorPuppetSwap"/>), and has their max HP, defense, stamina, mana,
     /// Estus and Cerulean. Design: tsorcDocs/MimicTear_FriendlyPuppet_Design.md.
     ///
     /// Authority (CLAUDE.md multiplayer rule):
@@ -85,12 +85,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// holds and catches its breath. A short breather, not a retreat.</summary>
         private const float WindedNearDistance = 3f * 16f;
         private const float WindedSettleDistance = 4.5f * 16f;
-        /// <summary><see cref="FriendlyPuppetNPC.OwnerFlags"/> bit: the owner-side stamina pool says "winded".</summary>
+        /// <summary><see cref="MirrorPuppetNPC.OwnerFlags"/> bit: the owner-side stamina pool says "winded".</summary>
         private const byte OwnerFlagWinded = 1;
-        /// <summary><see cref="FriendlyPuppetNPC.OwnerFlags"/> bit: the owner-side pool has stamina for a roll. Same rule
+        /// <summary><see cref="MirrorPuppetNPC.OwnerFlags"/> bit: the owner-side pool has stamina for a roll. Same rule
         /// as the player (TryStartDodgeroll): any stamina above zero.</summary>
         private const byte OwnerFlagCanRoll = 2;
-        /// <summary><see cref="FriendlyPuppetNPC.OwnerFlags"/> bit: a weapon use is in progress (item animation running).
+        /// <summary><see cref="MirrorPuppetNPC.OwnerFlags"/> bit: a weapon use is in progress (item animation running).
         /// The server won't start an Estus drink until it clears.</summary>
         private const byte OwnerFlagAttacking = 4;
 

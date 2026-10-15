@@ -1171,7 +1171,7 @@ namespace tsorcRevamp.Systems
             // Daytime grass with open air above, away from the evil, desert, jungle and meteor biomes. One alive at a time.
             Spawn("LivingShroomThief", Time.Day & Water.Dry & Terrain.OnGrass & Terrain.WallFreeAbove & !(Evil | Zone.Desert | Zone.Jungle | Zone.Meteor), phm: 0.17f, hm: 0.17f, shm: 0.17f, max: 1);
 
-            Spawn("Locust", Zone.Crimson & Water.Dry, shm: 0.2f, max: Locust.PopulationCap);
+            Spawn("Locust", Zone.Crimson & Water.Dry, shm: Locust.NaturalSpawnChance, max: 1); // max 1: one natural swarm at a time
 
             // Super Hardmode plain ground, the dungeon, and (very rarely) plain ground once Skeletron is down. The old Hardmode
             // dungeon line (0.005) sat behind the plain dungeon line (0.001) and never fired; it is now the Hardmode weight there.

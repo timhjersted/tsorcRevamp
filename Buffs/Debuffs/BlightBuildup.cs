@@ -20,7 +20,8 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
-            tip = Description.WithFormatArgs(Main.LocalPlayer.GetModPlayer<BlightPlayer>().BlightLevel).Value;
+            int currentBuildup = Main.LocalPlayer.GetModPlayer<BlightPlayer>().BlightLevel;
+            tip = Description.WithFormatArgs(currentBuildup, MaximumBuildup).Value;
         }
 
         // Direct hits normally add 15. Persistent hazards pass a smaller authored amount.

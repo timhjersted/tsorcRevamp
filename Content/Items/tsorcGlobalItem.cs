@@ -55,6 +55,12 @@ namespace tsorcRevamp.Content.Items
                 return false;
             }
 
+            // Cursed permanently: the Pumpkin Moon can never be started with the Medallion.
+            if (item.type == ItemID.PumpkinMoonMedallion)
+            {
+                return false;
+            }
+
             if (item.type == ItemID.SlimySaddle && !NPC.downedQueenBee)
             {
                 return false;
@@ -366,6 +372,11 @@ namespace tsorcRevamp.Content.Items
                 }
             }
 
+
+            if (item.type == ItemID.PumpkinMoonMedallion)
+            {
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.CursedNeverUsable")));
+            }
 
             if (item.type == ItemID.SlimySaddle && !NPC.downedQueenBee)
             {

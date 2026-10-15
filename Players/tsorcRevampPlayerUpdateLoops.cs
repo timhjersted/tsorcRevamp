@@ -222,6 +222,7 @@ namespace tsorcRevamp
         public float SoulSiphonScaling = 1;
 
         public bool BurningAura = false;
+        public bool PermanentIchorImbue = false; // set by PermanentIchorImbuement each tick; the on-hit hooks in tsorcRevampPlayerMain apply Ichor
         public bool BurningStone = false;
 
         public bool Sharpened = false;
@@ -663,6 +664,7 @@ namespace tsorcRevamp
 
             PowerWithin = false;
             BurningAura = false;
+            PermanentIchorImbue = false;
             BurningStone = false;
             StaminaReaper = 0;
 
@@ -1411,39 +1413,10 @@ namespace tsorcRevamp
         }
         public override void PostUpdateEquips()
         {
-            if (!Main.gameMenu && Player.whoAmI == Main.myPlayer && (!hasSupersonicHarness || !SoulsModeMobility.Enabled(Player)))
-            {
-                try
-                {
-                    var slotInstance = ModContent.GetInstance<SupersonicWingSlot>();
-                    if (slotInstance != null)
-                    {
-                        var slot = LoaderManager.Get<AccessorySlotLoader>().Get(slotInstance.Type, Player);
-                        if (slot != null)
-                        {
-                            if (slot.FunctionalItem != null && !slot.FunctionalItem.IsAir)
-                            {
-                                Player.QuickSpawnItem(Player.GetSource_Accessory(slot.FunctionalItem), slot.FunctionalItem, slot.FunctionalItem.stack);
-                                slot.FunctionalItem = new Item();
-                            }
-                            if (slot.VanityItem != null && !slot.VanityItem.IsAir)
-                            {
-                                Player.QuickSpawnItem(Player.GetSource_Accessory(slot.VanityItem), slot.VanityItem, slot.VanityItem.stack);
-                                slot.VanityItem = new Item();
-                            }
-                            if (slot.DyeItem != null && !slot.DyeItem.IsAir)
-                            {
-                                Player.QuickSpawnItem(Player.GetSource_Accessory(slot.DyeItem), slot.DyeItem, slot.DyeItem.stack);
-                                slot.DyeItem = new Item();
-                            }
-                        }
-                    }
-                }
-                catch
-                {
-                    // Ignore slot access if not initialized
-                }
-            }
+            // The wing harness slot used to eject its items when the harness was unequipped or Souls Mode mobility turned
+            // off. It now just goes inactive, like the other mod slots: SupersonicWingSlot.IsEnabled() returns false, tML
+            // skips ApplyEquipEffects for it (so no wing effects), keeps it drawn while it still holds items
+            // (IsVisibleWhenNotEnabled defaults to !IsEmpty), and it disappears once emptied.
 
             // If a Pinwheel mask is equipped in the head armor slot, displace any Pinwheel mask in accessory slots
             if (!Main.gameMenu && Player.whoAmI == Main.myPlayer && Content.Items.Armor.PinwheelMaskHelper.IsPinwheelMask(Player.armor[0]))
@@ -1570,6 +1543,32 @@ namespace tsorcRevamp
             if (Suppressed)
             {
                 Player.gravControl2 = false;
+
+                // Suppressed shuts down float/flight from ANY source, not just the Supersonic items: every wing is
+                // capped to the same short flight time PostUpdateRunSpeeds uses (Wings of Seath keeps its longer cap),
+                // and rocket boots + the bottle/mount extra jumps are disabled. Runs after the equip pass that sets them.
+                bool wearingSeath = supersonicLevel == SoulsModeMobility.WingsOfSeathLevel;
+                int suppressedFlightTicks = 90;
+                if (wearingSeath)
+                {
+                    suppressedFlightTicks = SoulsModeMobility.WingsOfSeathSuppressedFlightTime;
+                }
+
+                Player.wingTimeMax = Math.Min(Player.wingTimeMax, suppressedFlightTicks);
+                if (Player.wingTime > Player.wingTimeMax)
+                {
+                    Player.wingTime = Player.wingTimeMax;
+                }
+
+                Player.canRocket = false;
+                Player.rocketTime = 0;
+
+                Player.GetJumpState(ExtraJump.CloudInABottle).Disable();
+                Player.GetJumpState(ExtraJump.BlizzardInABottle).Disable();
+                Player.GetJumpState(ExtraJump.SandstormInABottle).Disable();
+                Player.GetJumpState(ExtraJump.FartInAJar).Disable();
+                Player.GetJumpState(ExtraJump.TsunamiInABottle).Disable();
+                Player.GetJumpState(ExtraJump.UnicornMount).Disable();
             }
 
             if (ShadowWeight)
@@ -2199,6 +2198,21 @@ namespace tsorcRevamp
                 }
             }
 
+            // Suppressed also slows mounts (the block above is gated on Supersonic gear and skips them). Scale the
+            // mount's run speed/acceleration, then clamp velocity.X to the new max so flying mounts and dashes can't
+            // carry past it. Runs after the mount set maxRunSpeed this tick.
+            if (Suppressed && Player.mount.Active)
+            {
+                float mountSpeedMultiplier = SoulsModeMobility.SuppressedMountSpeedMultiplier;
+
+                Player.maxRunSpeed *= mountSpeedMultiplier;
+                Player.accRunSpeed *= mountSpeedMultiplier;
+                Player.runAcceleration *= mountSpeedMultiplier;
+
+                float mountSpeedCap = Player.maxRunSpeed;
+                Player.velocity.X = MathHelper.Clamp(Player.velocity.X, -mountSpeedCap, mountSpeedCap);
+            }
+
             if (Player.HasBuff<MarilithHold>() || Player.HasBuff<MarilithWind>())
             {
                 int? marilithIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>());
@@ -2622,7 +2636,8 @@ namespace tsorcRevamp
                     if (slotInstance != null)
                     {
                         var slot = LoaderManager.Get<AccessorySlotLoader>().Get(slotInstance.Type, player);
-                        if (slot?.FunctionalItem != null && slot.FunctionalItem.type == ModContent.ItemType<WingsOfSeath>())
+                        // A disabled slot keeps its items but they must not grant anything.
+                        if (slot != null && slot.IsEnabled() && slot.FunctionalItem != null && slot.FunctionalItem.type == ModContent.ItemType<WingsOfSeath>())
                         {
                             return true;
                         }

@@ -73,7 +73,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
             player.GetDamage(DamageClass.Summon) *= 1f - BadDmgMultiplier / 100f;
 
             //Iterate through the five main accessory slots
-            for (int i = 3; i < (8 + player.extraAccessorySlots); i++)
+            for (int i = 3; i < tsorcRevamp.AccessorySlotEnd; i++)
             {
                 //If they're wearing the accesories that totally break this concept, it won't function for them.
                 if (player.armor[i].type == ItemID.MagicCuffs || player.armor[i].type == ItemID.CelestialCuffs || player.armor[i].type == ItemID.ManaRegenerationBand || player.armor[i].type == ModContent.ItemType<CelestialCloakItem>())

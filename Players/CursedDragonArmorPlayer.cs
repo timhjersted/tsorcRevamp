@@ -139,7 +139,7 @@ namespace tsorcRevamp
 
         private bool HasFunctionalWingsEquipped()
         {
-            int slots = 8 + Player.extraAccessorySlots;
+            int slots = tsorcRevamp.AccessorySlotEnd;
             for (int i = 3; i < slots; i++)
             {
                 Item item = Player.armor[i];

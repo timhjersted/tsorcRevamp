@@ -102,6 +102,10 @@ namespace tsorcRevamp.Content.Items.VanillaItems
             if (item.type == ItemID.Trimarang)
             {
                 //item.mana = 4;
+                // Crafted from Enchanted + Shroomerang + Ice Boomerang, so it must not be weaker than them:
+                // damage up from 21 and knockback up from 4.5 to the Shroomerang's. Frostburn is in tsorcGlobalProjectile.
+                item.damage = 23;
+                item.knockBack = 7f;
             }
             if (item.type == ItemID.IceBlade)
             {

@@ -201,7 +201,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             bool decoyIndexValid = decoyIndex >= 0 && decoyIndex < Main.maxNPCs;
             bool targetIndexValid = npc.target >= 0 && npc.target < Main.maxPlayers;
 
-            if (!decoyIndexValid || !targetIndexValid || DecoyActive || FriendlyPuppetSwap.Active)
+            if (!decoyIndexValid || !targetIndexValid || DecoyActive || MirrorPuppetSwap.Active)
             {
                 orig(npc);
                 return;

@@ -15,7 +15,7 @@ namespace tsorcRevamp
     public class MadnessPlayer : ModPlayer
     {
         private const int TrailCount = 12;
-        private const int FlatTriggerDamage = 200;
+        public const int FlatTriggerDamage = 200;
         private const int BuildupDecayIntervalTicks = 60;
 
         public int MadnessLevel;

@@ -126,9 +126,9 @@ namespace tsorcRevamp.Systems
 
         public override bool PreItemCheck()
         {
-            // A friendly puppet borrowing this ItemCheck (FriendlyPuppetSwap) must not advance the drink a
+            // A mirror puppet borrowing this ItemCheck (MirrorPuppetSwap) must not advance the drink a
             // second time this tick.
-            if (NPCs.FriendlyPuppets.FriendlyPuppetSwap.Active)
+            if (NPCs.FriendlyPuppets.MirrorPuppetSwap.Active)
             {
                 return true;
             }

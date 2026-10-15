@@ -65,6 +65,9 @@ namespace tsorcRevamp
         public const int SuppressedJumpHeight = 18;
         public const int SuppressedJumpHeightSeath = 20;
 
+        // Suppressed while mounted: multiplier on the mount's run speed / acceleration (0.6 = 40% slower).
+        public const float SuppressedMountSpeedMultiplier = 0.6f;
+
         // Suppressed wing ascent caps, in the units of ModItem.VerticalWingSpeeds. Rising / constant /
         // falling caps equal Supersonic Wings' own values; Seath is capped down from 0.2 / 0.15 / 0.95.
         // Max climb speed = jumpSpeed * this multiplier, so it compounds with the jump-speed cap above.
