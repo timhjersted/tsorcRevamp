@@ -173,13 +173,13 @@ No in-game verification has been recorded here yet.
 
 ### PhaseTwoWeak5SickleRush
 
-- Ring: anchored when the move starts, then smoothly returns to Death during the finisher.
+- Ring: anchored when the move starts, stays anchored through the charge, rush and recovery, then glides back to Death over 60 ticks once it has settled on the orbit.
 - Death teleports 600 px behind and below the player's facing direction, 45 degrees from straight back.
 - Sickle: end-pivot mode, 30-tick fade-in, 15-tick 45-degree wind-up, 45-tick hold.
 - Warning: a fixed 1200 px beam appears for 60 ticks before the rush.
 - Rush: three full rotations over 2000 px. One rotation matches one 16-tick swing animation cycle.
-- Finisher: sickle completes its half rotation over 8 ticks, while the ring returns smoothly over 90 ticks.
-- During the 90-tick recovery, Death clears rush inertia, then uses smooth velocity-based acceleration and braking to return to the player-orbit circle with contact damage disabled until it arrives.
+- Finisher: sickle completes its half rotation over 8 ticks; the ring is still anchored for the whole 90-tick recovery.
+- During the 90-tick recovery, Death clears rush inertia, then uses smooth velocity-based acceleration and braking to return to the player-orbit circle; contact damage stays off until the move ends.
 - Sickle damage is disabled during fade-in and fade-out.
 
 ### PhaseTwoStrong4SickleDash
@@ -194,24 +194,34 @@ No in-game verification has been recorded here yet.
 
 ### PhaseTwoStrong5ReaperScytheRush
 
-- Tell: strong-move roar, then Death attaches to the player-orbit circle and waits 60 ticks.
-- Attack window: 240 ticks (4 seconds). Death keeps using the player-orbit motion during this window
-  with a Strong5 speed cap of 2 px/tick for normal Death and 5 px/tick for Absolute Death.
-- Scythes: normal Death fires four waves every 60 ticks; Absolute Death fires eight waves every
-  30 ticks. Each wave fires 6 large flaming scythes in an
-  even 60-degree circle. Odd waves rotate so one line is on the player; even waves rotate
-  so the player is on the bisector between two lines.
+Both variants run the same 540-tick shape (120 start + 240 attack + 180 recovery) and the same
+Reaper rush. They differ only in how Death moves and how many scythe waves go out.
+
+- Tell: strong-move roar, then Death attaches to the player-orbit circle.
+- Movement: normal Death orbits during the first second of the lead-in and eases to a stop over its
+  last quarter second, then holds position for the rest of the move (`PhaseTwoStrong5SnapsThenHolds`).
+  Absolute Death orbits for the whole move.
+- Ring: normal Death pins the containment ring on the arena when the move starts and slides it back
+  under itself over the last second of the move, like the five-dash. Absolute Death keeps dragging the
+  ring along with it.
+- Attack window: 240 ticks (4 seconds). The first wave is held back 120 ticks (2 seconds).
+- Scythes: one wave every 60 ticks for normal Death (4 waves) and every 30 ticks for Absolute Death
+  (8 waves), so both fit the same window. Each wave fires 6 large flaming scythes in an even
+  60-degree circle. Odd waves rotate so one line is on the player; even waves rotate so the player
+  is on the bisector between two lines.
 - Warnings: each wave gets 30-tick warning beams and no phantom scythes.
-- Scythe release: each wave plays the Death Sickle use sound and Death keeps its special
-  swing animation during the full 4-second attack window.
-- Reapers: spawn one every 15 ticks, up to 8. They move out to 100 px over 45 ticks,
-  wait 15 ticks, then accelerate to 20 px/tick.
-- Dash tell: normal Death Reapers show a 1500 px purple warning line for the full 15-tick
-  wait; Absolute Death Reapers have no warning line. Dash direction locks at the start of the wait.
-- Reaper sickles: during the charge, a reaper fires one small sickle every 20 ticks along its
-  dash direction. The sickle starts at speed 1, holds for 180 ticks (3 seconds), then
-  accelerates to 10 over the next 30 ticks.
-  Reapers stop firing these trailing sickles once they are more than 1400 px from Death.
+- Scythe release: each wave plays the Death Sickle use sound and Death keeps its special swing
+  animation during the full attack window.
+- Reapers: one spawns every 20 ticks from the first wave until the last one, and 3 more leave on the
+  last wave's tick (12 total for normal Death, 14 for Absolute Death). No cap. They move out to
+  100 px over 45 ticks, wait 15 ticks, then accelerate to 20 px/tick over 1 second. Dash direction
+  locks at the start of the wait. No warning line.
+- Reaper sickles: during the charge, a reaper fires one small sickle every 20 ticks along its dash
+  direction. The sickle starts at speed 1, holds for 180 ticks (3 seconds), then accelerates to 10
+  over the next 30 ticks. Reapers stop firing these trailing sickles once they are more than
+  1400 px from Death.
+- Fade: a reaper more than 1800 px from Death fades out over the next 600 px of its rush and then
+  disappears, so a charge never loops back.
 - Recovery: after the 240-tick attack window, Death stops moving for 180 ticks, then clears all
   remaining Death Reapers and enters intermission.
 

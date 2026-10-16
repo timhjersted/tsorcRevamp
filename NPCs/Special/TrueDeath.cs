@@ -75,6 +75,7 @@ namespace tsorcRevamp.NPCs.Special
         protected override int PhaseTwoWeak4VolleyCount => 4;
         protected override bool LargeScythePhantomsEnabled => false;
         protected override bool PhaseTwoWeak2FullCircle => true;
+        // Eight waves, half the interval of normal Death, so the volley window stays 240 ticks.
         protected override int PhaseTwoStrong5WaveCount => 8;
         protected override int PhaseTwoStrong5WaveIntervalTicks => 30;
         protected override int PhaseTwoScatterInnerStartTicks => 135;
@@ -91,12 +92,11 @@ namespace tsorcRevamp.NPCs.Special
         protected override int GetReaperLifeMax() => 22222;
         protected override int GetReaperDefense() => 66;
         protected override int GetReaperContactDamage() => 2222;
-        internal override bool ReaperStrong5WarningEnabled => false;
         // Absolute Death drops the five-dash (move 2); the scatter volley (move 4) is parked out of
         // every bag for now. The death squad (move 10) is Absolute Death's exclusive strong move.
         protected override int StrongMoveMask => (1 << 3) | (1 << 7) | (1 << 9) | (1 << 10);
-        // Absolute Death keeps orbiting the player for the whole Strong5 move instead of planting
-        // itself after the opening volley like normal Death does.
+        // Absolute Death orbits for the whole strong move instead of planting itself after the
+        // opening volley, and its volley is twice as long as normal Death's.
         protected override bool PhaseTwoStrong5SnapsThenHolds => false;
         internal override Color VfxGlowColor => new Color(190, 25, 50);
 

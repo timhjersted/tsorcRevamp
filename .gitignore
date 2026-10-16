@@ -18,3 +18,4 @@ tsorcRevamp.sln
 .agents/**/obj/
 /docs
 AGENTS.md
+/.scratch
