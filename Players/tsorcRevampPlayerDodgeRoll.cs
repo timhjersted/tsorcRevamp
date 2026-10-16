@@ -80,8 +80,8 @@ namespace tsorcRevamp
     public partial class tsorcRevampPlayer : ModPlayer
     {
         /// <summary>Seconds from the start of a roll within which an incoming attack counts as a perfect
-        /// dodge. 12 frames, matching the shield's PerfectParryWindow.</summary>
-        public const float PerfectDodgeWindow = 12f / 60f;
+        /// dodge. 10 frames — 2 tighter than the shield's 12-frame PerfectParryWindow.</summary>
+        public const float PerfectDodgeWindow = 10f / 60f;
         /// <summary>Fraction of the roll's stamina cost refunded on a perfect dodge (matches PerfectParryCostMult).</summary>
         public const float PerfectDodgeRefundMult = 0.5f;
         /// <summary>Max horizontal speed (px/tick) a roll carries in or out. Stops knockback / boss pushes / dash

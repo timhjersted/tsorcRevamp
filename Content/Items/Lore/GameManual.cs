@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Systems.Regain;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.Lore
@@ -17,17 +18,22 @@ namespace tsorcRevamp.Content.Items.Lore
     /// ModifyTooltips switches on. Page bodies live entirely in localization as multi-line strings and are split
     /// into one TooltipLine each, so writing or reordering a page never touches C#.
     ///
-    /// One page is interactive — CanUseItem only returns true on the Controls page, so left-click toggles
-    /// Recommended Controls there and does nothing anywhere else. Same shape as the Darksign, which gates
-    /// CanUseItem on game mode.
+    /// Three pages are interactive — CanUseItem only returns true on the Controls page and the two UI-option pages,
+    /// so left-click toggles that page's setting and does nothing anywhere else. Same shape as the Darksign, which
+    /// gates CanUseItem on game mode.
     /// </summary>
     public class GameManual : ModItem
     {
         /// <summary>Total pages. Must match the number of Page* entries in localization.</summary>
-        public const int PageCount = 12;
+        public const int PageCount = 15;
 
-        /// <summary>The one page with a left-click action (see CanUseItem / UseItem).</summary>
+        /// <summary>Pages with a left-click action (see CanUseItem / UseItem).</summary>
         private const int ControlsPage = 3;
+        private const int DodgeRollPage = 6;
+        private const int RegainPage = 7;
+        private const int GameModesPage = 11;
+        private const int DamageNumbersPage = 14;
+        private const int MinimalMinimapPage = 15;
 
         /// <summary>Per-instance so the book remembers where you left off, like the Darksign's ClassCounter.</summary>
         public int Page = 1;
@@ -62,11 +68,16 @@ namespace tsorcRevamp.Content.Items.Lore
             }
         }
 
-        // Left-click is inert except on the Controls page, so there's no way to trigger the toggle by accident
+        // Left-click is inert except on the toggle pages, so there's no way to trigger a toggle by accident
         // while flipping through.
         public override bool CanUseItem(Player player)
         {
-            return Page == ControlsPage;
+            if (Page == ControlsPage || Page == DamageNumbersPage || Page == MinimalMinimapPage)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public override bool? UseItem(Player player)
@@ -74,6 +85,41 @@ namespace tsorcRevamp.Content.Items.Lore
             if (player.whoAmI != Main.myPlayer || Main.netMode == NetmodeID.Server)
             {
                 return false;
+            }
+
+            // The two UI-option pages flip a client-side Visual config bool and save it, so the choice survives a restart.
+            // Both are read live every frame (MethodSwaps), so the change shows immediately.
+            if (Page == DamageNumbersPage || Page == MinimalMinimapPage)
+            {
+                tsorcRevampVisualConfig visualConfig = ModContent.GetInstance<tsorcRevampVisualConfig>();
+                bool nowOn;
+                string messageKey;
+
+                if (Page == DamageNumbersPage)
+                {
+                    visualConfig.HideEnemyDamageNumbers = !visualConfig.HideEnemyDamageNumbers;
+                    nowOn = visualConfig.HideEnemyDamageNumbers;
+                    messageKey = "Items.GameManual.DamageNumbersToggled";
+                }
+                else
+                {
+                    visualConfig.OnlyShowMapWhenInventoryIsOpen = !visualConfig.OnlyShowMapWhenInventoryIsOpen;
+                    nowOn = visualConfig.OnlyShowMapWhenInventoryIsOpen;
+                    messageKey = "Items.GameManual.MinimalMinimapToggled";
+                }
+
+                tsorcRevamp.SaveConfigToDisk(visualConfig);
+
+                string stateText = LangUtils.GetTextValue(nowOn ? "Items.GameManual.StateOn" : "Items.GameManual.StateOff");
+                Color messageColor = Color.LightGray;
+
+                if (nowOn)
+                {
+                    messageColor = Color.LightGreen;
+                }
+
+                Main.NewText(LangUtils.GetTextValue(messageKey, stateText), messageColor);
+                return true;
             }
 
             if (!tsorcRevamp.TryToggleRecommendedControlsFromItem(out bool enabled))
@@ -101,8 +147,44 @@ namespace tsorcRevamp.Content.Items.Lore
                 LangUtils.GetTextValue("Items.GameManual.PageHeader", Page, PageCount, heading))
             { OverrideColor = new Color(255, 223, 80) });
 
+            // Every number a page quotes is read from the constant that drives it, filled into that page's {0}, {1}...
+            // so balance changes can't leave the manual stale. Pages without placeholders get no args.
+            // Ticks are converted to seconds and fractions to percentages here; the localization only adds the unit.
+            object[] pageArgs = System.Array.Empty<object>();
+
+            if (Page == DodgeRollPage)
+            {
+                int buffSeconds = Buffs.PerfectDodge.DurationTicks / 60;
+                pageArgs = new object[] { Buffs.PerfectDodge.StaminaRegenBonus, Buffs.PerfectDodge.CriticalStrikeChanceBonus, buffSeconds };
+            }
+            else if (Page == RegainPage)
+            {
+                int holdSeconds = Regain.HoldTicks / 60;
+                float poolCapPercent = Regain.MaxPoolFractionOfMaxLife * 100f;
+                int hitWindowSeconds = Regain.ConsecutiveHitResetTicks / 60;
+                pageArgs = new object[] { holdSeconds, poolCapPercent, hitWindowSeconds, Regain.FullRegainRangeTiles };
+            }
+            else if (Page == GameModesPage)
+            {
+                pageArgs = new object[] { Darksign.BotCSoulDropAmplifier };
+            }
+            else if (Page == DamageNumbersPage || Page == MinimalMinimapPage)
+            {
+                // Toggle pages end with "Currently: {0}" — a coloured On/Off so the state is visible before clicking.
+                tsorcRevampVisualConfig visualConfig = ModContent.GetInstance<tsorcRevampVisualConfig>();
+                bool toggleIsOn = visualConfig.OnlyShowMapWhenInventoryIsOpen;
+
+                if (Page == DamageNumbersPage)
+                {
+                    toggleIsOn = visualConfig.HideEnemyDamageNumbers;
+                }
+
+                string stateText = LangUtils.GetTextValue(toggleIsOn ? "Items.GameManual.StateOnColored" : "Items.GameManual.StateOffColored");
+                pageArgs = new object[] { stateText };
+            }
+
             // Page bodies are one multi-line localization string each; split so each line lays out properly.
-            string body = LangUtils.GetTextValue("Items.GameManual.Page" + Page);
+            string body = LangUtils.GetTextValue("Items.GameManual.Page" + Page, pageArgs);
             foreach (string line in body.Split('\n'))
             {
                 if (!string.IsNullOrWhiteSpace(line))
@@ -112,8 +194,22 @@ namespace tsorcRevamp.Content.Items.Lore
                 }
             }
 
-            tooltips.Insert(++index, new TooltipLine(Mod, "ManualTurn",
-                LangUtils.GetTextValue(Page == ControlsPage ? "Items.GameManual.TurnAndToggle" : "Items.GameManual.Turn"))
+            string turnKey = "Items.GameManual.Turn";
+
+            if (Page == ControlsPage)
+            {
+                turnKey = "Items.GameManual.TurnAndToggle";
+            }
+            else if (Page == DamageNumbersPage)
+            {
+                turnKey = "Items.GameManual.TurnAndToggleDamageNumbers";
+            }
+            else if (Page == MinimalMinimapPage)
+            {
+                turnKey = "Items.GameManual.TurnAndToggleMinimalMinimap";
+            }
+
+            tooltips.Insert(++index, new TooltipLine(Mod, "ManualTurn", LangUtils.GetTextValue(turnKey))
             { OverrideColor = new Color(150, 150, 150) });
         }
     }

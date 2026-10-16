@@ -4605,11 +4605,20 @@ Mods: {
 				PageHeader: — Page {0} of {1}: {2} —
 				Turn: Right-click to turn the page
 				TurnAndToggle: Right-click to turn the page · Left-click to toggle Recommended Controls
+				TurnAndToggleDamageNumbers: Right-click to turn the page · Left-click to toggle enemy damage numbers
+				TurnAndToggleMinimalMinimap: Right-click to turn the page · Left-click to toggle the Minimal Mini-Map
+				StateOn: On
+				StateOff: Off
+				StateOnColored: "[c/78DC78:On]"
+				StateOffColored: "[c/A0A0A0:Off]"
+				DamageNumbersToggled: Hide Enemy Damage Numbers: {0}
+				MinimalMinimapToggled: Minimal Mini-Map: {0}
 				Heading1: How to Read This Manual
 				Page1:
 					'''
 					Right-click this book to turn the page. 
-					Page 2 explains your extra inventory slots, page 3 explains the controls, and pages 4–12 explain the mod's core mechanics.
+					Page 2 explains your extra inventory slots, page 3 explains the controls, pages 4–13 explain the mod's core mechanics,
+					and pages 14–15 offer optional settings for a more minimal interface.
 					'''
 				Heading2: Your Extra Inventory Slots
 				Page2:
@@ -4648,17 +4657,18 @@ Mods: {
 					Rolling costs stamina and makes you briefly invulnerable.
 					Learn the timing and you can pass straight through an attack.
 					Rolling in the air allows you to cross bigger gaps and reverse your momentum instantly.
-					A perfect dodge refunds half its cost and briefly boosts stamina regen and critical strike chance.
+					Roll as the attack is just about to land and you get a Perfect Dodge.
+					It refunds half the roll's stamina and grants +{0}% stamina regen and +{1}% critical strike chance for {2} seconds.
 					'''
 				Heading7: Regain
 				Page7:
 					'''
 					In Unkindled and Bearer of the Curse, landing attacks can recover health you recently lost.
-					For 5 seconds after getting hit, the recoverable portion of your health bar will turn white, then fades away.
-					Getting hit wipes any recoverable health you had and creates a new pool, capped at 25% of your maximum health.
-					Taking multiple hits within a 4 second window will reduce the portion you can win back.
+					For {0} seconds after getting hit, the recoverable portion of your health bar will turn white, then fades away.
+					Getting hit wipes any recoverable health you had and creates a new pool, capped at {1}% of your maximum health.
+					Taking multiple hits within a {2} second window will reduce the portion you can win back.
 					Minions, sentries and secondary projectiles do not trigger Regain.
-					Stay close: recovery is strongest within 9 tiles and weakens with distance.
+					Stay close: recovery is strongest within {3} tiles and weakens with distance.
 					Slow weapons recover more per hit; fast weapons recover smaller amounts more often.
 					Regain does not apply in Classic mode and can be disabled in the mod's config.
 					'''
@@ -4698,7 +4708,7 @@ Mods: {
 					'''
 					Unkindled: the default. Flasks, stamina on weapons, active shields and an extra accesory slot.
 					Bearer of the Curse: everything above, plus an additional combat mechanic for each weapon class,
-					20% more souls and a different stamina tempo, with stricter limits on healing & mana regen.
+					{0}% more souls and a different stamina tempo, with stricter limits on healing & mana regen.
 					Classic: vanilla healing, shields and magic, with no flask interface or stamina-based weapons.
 					Left-click the Darksign to switch, and right-click it to read your class mechanic.				
 					'''
@@ -4712,6 +4722,32 @@ Mods: {
 					A heavy enough hit will break your guard outright, however much stamina you have.
 					Greatshields leak nothing at all but are slower to recover. Bucklers are the opposite.
 					Prefer a dedicated block key? Bind Raise Shield under Controls, in the mod keybinds; it blocks even while holding a weapon that has its own right-click.
+					'''
+				Heading13: Poise and Stagger
+				Page13:
+					'''
+					Most enemies have poise. Every hit wears it down, and when it breaks the enemy is staggered for a moment and usually knocked out of the attack it was winding up.
+					Weapons with more knockback break poise faster. Weapons with no knockback, like most magic, barely build it. But ghost enemies that take no knockback can be staggered by magic.
+					Orange bar under an enemy: its poise is filling. Flashing yellow: it's staggered, so punish it.
+					White: when an enemy is about to attack or still recovering from a stagger, it gains hyperarmor and will push through your hits.
+					Each stagger makes that enemy harder to stagger again for a while.
+					A perfect parry with a shield deals heavy poise damage, even mid-attack.
+					'''
+				Heading14: Combat Numbers
+				Page14:
+					'''
+					Hides the floating damage numbers that pop up over enemies, including damage over time.
+					Your own healing text and any numbers on you are unaffected.
+					Currently: {0}
+					'''
+				Heading15: Minimal Mini-Map
+				Page15:
+					'''
+					Hides the mini-map while you explore. It only appears while your inventory is open.
+					This keeps the screen clear and makes checking your map a deliberate choice, like stopping to unfold a real one.
+					The full-screen map still opens as normal.
+					Without this you'd need to keep switching the mini-map on and off to get the same effect.
+					Currently: {0}
 					'''
 			}
 

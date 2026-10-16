@@ -4185,6 +4185,15 @@ namespace tsorcRevamp
             tsorcRevampControlsConfig.LastRecommendedControls = requestedState;
             enabled = requestedState;
 
+            SaveConfigToDisk(config);
+
+            return true;
+        }
+
+        // Persists a config changed from gameplay (e.g. a Game Manual toggle) rather than the config menu.
+        // Writes the same "<Mod>_<Config>.json" file tModLoader loads on startup; a failed write only loses the change on restart, so it's logged, not thrown.
+        internal static void SaveConfigToDisk(ModConfig config)
+        {
             try
             {
                 Directory.CreateDirectory(ConfigManager.ModConfigPath);
@@ -4193,10 +4202,8 @@ namespace tsorcRevamp
             }
             catch (Exception e)
             {
-                ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Recommended controls changed, but the config toggle could not be saved: " + e);
+                ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Config " + config.Name + " changed in-game, but could not be saved: " + e);
             }
-
-            return true;
         }
 
         internal static bool ApplyRecommendedControlBindings(bool onlyIfDefaultOrOldDefault)
