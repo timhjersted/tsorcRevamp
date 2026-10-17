@@ -8,9 +8,10 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Armor.Ranged;
+using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Ranged;
 
-namespace tsorcRevamp.Content.Projectiles.Ranged
+namespace tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet
 {
     public class KrakenTsunami : ModProjectile
     {
@@ -40,9 +41,6 @@ namespace tsorcRevamp.Content.Projectiles.Ranged
             Projectile.localNPCHitCooldown = 20;
             Projectile.ignoreWater = true;
         }
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-        }
         public override void OnSpawn(IEntitySource source)
         {
             SoundEngine.PlaySound(SoundID.Item21 with { Volume = 1.5f });
@@ -62,15 +60,18 @@ namespace tsorcRevamp.Content.Projectiles.Ranged
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
+            var modPlayer = player.GetModPlayer<KrakenSetPlayer>();
             Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Water, Scale: 2);
             dust.noGravity = true;
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (var other in Main.ActiveProjectiles)
             {
-                Projectile other = Main.projectile[i];
+                var otherGlobalProj = other.GetGlobalProjectile<KrakenSetProj>();
 
-                if (i != Projectile.whoAmI && other.active && other.friendly && Projectile.Hitbox.Intersects(other.Hitbox) && other.DamageType == DamageClass.Ranged && !other.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered && other.type != ModContent.ProjectileType<KrakenTsunamiShark>() && player.ownedProjectileCounts[ModContent.ProjectileType<KrakenTsunamiShark>()] < 10)
+                if (other.whoAmI != Projectile.whoAmI && other.active && other.friendly && Projectile.Hitbox.Intersects(other.Hitbox) 
+                    && other.DamageType == DamageClass.Ranged && !otherGlobalProj.Empowered && other.type != ModContent.ProjectileType<KrakenTsunamiShark>() 
+                    && player.ownedProjectileCounts[ModContent.ProjectileType<KrakenTsunamiShark>()] < 10)
                 {
-                    other.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered = true;
+                    otherGlobalProj.Empowered = true;
                     // limited to 3 sharks per sec 
                     if (SharkSpawnCounter < 3 && Main.myPlayer == Projectile.owner)
                     {
@@ -111,6 +112,10 @@ namespace tsorcRevamp.Content.Projectiles.Ranged
             {
                 SharkSpawnTimer = 0;
                 SharkSpawnCounter = 0;
+            }
+            if (modPlayer.Equipped)
+            {
+                Projectile.timeLeft = 2;
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

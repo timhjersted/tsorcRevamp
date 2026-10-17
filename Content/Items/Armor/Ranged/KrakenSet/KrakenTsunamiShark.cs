@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs;
 
-namespace tsorcRevamp.Content.Projectiles.Ranged
+namespace tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet
 {
     public class KrakenTsunamiShark : DynamicTrail
     {

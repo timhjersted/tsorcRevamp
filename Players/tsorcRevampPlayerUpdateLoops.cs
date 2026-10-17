@@ -140,7 +140,6 @@ namespace tsorcRevamp
         public float ArtoriasAbysswalkerDodgeStaminaCostReduction;
         public int ArtoriasAbysswalkerCounterType;
 
-        public bool Kraken;
         public bool NecromanticSerpent = false;
 
         public int SeveringDuskDashTime = 0;

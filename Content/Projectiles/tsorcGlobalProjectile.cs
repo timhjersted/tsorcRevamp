@@ -11,6 +11,7 @@ using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Content.Items.Armor.Ranged;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet;
 using tsorcRevamp.Content.Projectiles.Ranged;
 using MiakodaCrescent = tsorcRevamp.Content.Projectiles.Pets.MiakodaCrescent;
 using MiakodaNew = tsorcRevamp.Content.Projectiles.Pets.MiakodaNew;
@@ -62,7 +63,6 @@ namespace tsorcRevamp.Content.Projectiles
         public override bool InstancePerEntity => true;
         public bool AppliedConqueror = false;
         public bool ModdedFlail = false;
-        public bool KrakenEmpowered = false;
         public bool Initialized;
         public bool IsReflectedRiposte = false;
         public int ReflectedDamage = 0;
@@ -757,10 +757,6 @@ namespace tsorcRevamp.Content.Projectiles
                 {
                     modifiers.FinalDamage *= 0.89f;
                 }
-            }
-            if (KrakenEmpowered)
-            {
-                modifiers.SourceDamage += KrakenCarcass.TsunamiDmgBoost / 100f;
             }
         }
 

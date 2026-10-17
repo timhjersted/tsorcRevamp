@@ -4,12 +4,11 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.Content.Items.Armor.Ranged
+namespace tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet
 {
     [AutoloadEquip(EquipType.Body)]
     public class KrakenCarcass : ModItem
@@ -44,7 +43,7 @@ namespace tsorcRevamp.Content.Items.Armor.Ranged
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().Kraken = true;
+            player.GetModPlayer<KrakenSetPlayer>().Equipped = true;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet;
 using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Content.Projectiles.Ranged;
 using tsorcRevamp.Utilities;

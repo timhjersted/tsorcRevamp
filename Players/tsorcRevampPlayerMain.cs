@@ -34,6 +34,7 @@ using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Armor.Melee;
 using tsorcRevamp.Content.Items.Armor.Ranged;
+using tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet;
 using tsorcRevamp.Content.Items.Armor.Summon;
 using tsorcRevamp.Content.Items.Armor.Summon.AncientDemon;
 using tsorcRevamp.Content.Items.Lore;
@@ -1563,10 +1564,6 @@ namespace tsorcRevamp
 
         public override void ArmorSetBonusActivated()
         {
-            if (Kraken)
-            {
-                DoKrakenCast();
-            }
         }
 
         public void ShunpoTooltip(List<TooltipLine> tooltips)
@@ -1581,12 +1578,6 @@ namespace tsorcRevamp
                 tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", ArmorSetBonusKeybind 
                     + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ShunpoKeybind1") + ShunpoString + LangUtils.GetTextValue("CommonItemTooltip.ShunpoKeybind2")));
             }
-        }
-        public void DoKrakenCast()
-        {                
-            Projectile Tsunami = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero,
-                ModContent.ProjectileType<KrakenTsunami>(), (int)Player.GetTotalDamage(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseDmg),
-                Player.GetTotalKnockback(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseKnockback), Player.whoAmI);
         }
 
 
@@ -1633,10 +1624,6 @@ namespace tsorcRevamp
                 }
             }
 
-            if (tsorcRevamp.KrakensCast.JustReleased && Kraken)
-            {
-                DoKrakenCast();
-            }
 
             if (tsorcRevamp.specialAbility.JustReleased)
             {
