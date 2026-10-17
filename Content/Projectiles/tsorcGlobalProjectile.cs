@@ -816,7 +816,7 @@ namespace tsorcRevamp.Content.Projectiles
                 {
                     miasmaBuildup = PlanteraThornBallMiasmaBuildup;
                 }
-                else if (projectile.type == ModContent.ProjectileType<NPCs.MiasmaBreathPuff>())
+                else if (projectile.type == ModContent.ProjectileType<NPCs.Bosses.Plantera.MiasmaBreathPuff>())
                 {
                     miasmaBuildup = PlanteraBreathMiasmaBuildup;
                 }

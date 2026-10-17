@@ -4125,8 +4125,8 @@ Mods: {
 			}
 
 			PottedPlanteraBulb: {
-				DisplayName: Potted Plantera Bulb
-				Tooltip: Summons Plantera
+				DisplayName: Potted Monarch Bulb
+				Tooltip: Summons the Verdurous Monarch
 			}
 
 			SerrisBait: {
@@ -11676,7 +11676,7 @@ Mods: {
 			WallOfFlesh.DespawnHandler: The Wall's rage is satisfied...
 			QueenSlime.DespawnHandler: Queen Slime returns to her throne...
 			Destroyer.DespawnHandler: The Destroyer returns to the depths of the corruption...
-			Plantera.DespawnHandler: Plantera has avenged its child...
+			Plantera.DespawnHandler: The Verdurous Monarch has avenged its child...
 			DukeFishron.DespawnHandler: Duke Fishron has slain all of those trespassing in its domain...
 			Golem.DespawnHandler: Golem has repelled the invaders...
 			Betsy.DespawnHandler: Betsy is satisfied with her freshly-cooked meal...
@@ -12777,13 +12777,13 @@ Mods: {
 					'''
 				PlanteraLorePart1:
 					'''
-					Do you wish to know more about The Awakened? I will now tell you about Plantera, the Infection that plagues the Jungle.
+					Do you wish to know more about The Awakened? I will now tell you about the Verdurous Monarch, the Infection that plagues the Jungle.
 					The Jungle is the heart of Mother Nature. When it was tunneled through by the Destroyer, the corruption it left behind could not consume the Jungle. However, its presence had other effects within.
 					'''
 				PlanteraLorePart2:
 					'''
 					It became a madness, a disease. Mother Nature could only contain the infection and keep it at bay.
-					But Plantera, the incarnation of death and madness, will truly be freed one day. Its taint continues to spread throughout the Jungle whispering to those foolish enough to draw near.
+					But the Verdurous Monarch, the incarnation of death and madness, will truly be freed one day. Its taint continues to spread throughout the Jungle whispering to those foolish enough to draw near.
 					'''
 				GolemLorePart1:
 					'''
@@ -12795,7 +12795,7 @@ Mods: {
 					'''
 					His last act while still sane was to seal himself away deep within his Temple.
 					The sealing was said to be done in two parts. The lock was entrusted to the Moon Tribe, who resided in the present day Flooded Machine Temple.
-					The key was linked to the very infection that drove them mad: Plantera itself. If the source of the madness could be destroyed, the key to their freedom would reveal itself.
+					The key was linked to the very infection that drove them mad: the Verdurous Monarch itself. If the source of the madness could be destroyed, the key to their freedom would reveal itself.
 					'''
 				GolemEnter:
 					'''
@@ -14251,3 +14251,27 @@ Mods: {
 }
 
 LegacyInterface.38: YOU DIED
+
+// Vanilla display-name overrides: Plantera is presented as the Verdurous Monarch. Overriding the vanilla keys (rather than
+// GlobalNPC.ModifyTypeName) also reaches the "has awoken!" net message, boss bar, bestiary, items and map tooltip.
+NPCName.Plantera: Verdurous Monarch
+NPCName.PlanterasHook: Monarch's Hook
+NPCName.PlanterasTentacle: Monarch's Tentacle
+MapObject.PlanterasBulb: Monarch's Bulb
+ItemName.PlanteraTrophy: Verdurous Monarch Trophy
+ItemName.PlanteraMask: Verdurous Monarch Mask
+ItemName.PlanteraMasterTrophy: Verdurous Monarch Relic
+ItemName.PlanteraBossBag: Treasure Bag (Verdurous Monarch)
+ItemName.MusicBoxPlantera: Music Box (Verdurous Monarch)
+ItemName.MusicBoxOWPlantera: Otherworldly Music Box (Verdurous Monarch)
+ItemName.PlanteraPetItem: Monarch Seedling
+ItemTooltip.PlanteraPetItem:
+	'''
+	Summons a newly sprouted Verdurous Monarch
+	'Get to the root of the problem.'
+	'''
+BuffName.PlanteraPet: Monarch Seedling
+Bestiary_ItemDropConditions.YoyosKraken: Drops after defeating the Verdurous Monarch
+Achievements.THE_GREAT_SOUTHERN_PLANTKILL_Description: Defeat the Verdurous Monarch, the overgrown monstrosity of the jungle's depths.
+Conditions.DownedPlantera: After defeating the Verdurous Monarch
+Conditions.NotDownedPlantera: Before defeating the Verdurous Monarch

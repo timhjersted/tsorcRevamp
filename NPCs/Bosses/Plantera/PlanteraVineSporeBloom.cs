@@ -4,7 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
-namespace tsorcRevamp.NPCs
+namespace tsorcRevamp.NPCs.Bosses.Plantera
 {
     /// <summary>
     /// Spore Bloom: Plantera's vines (vanilla draws one from each Plantera's Hook to her center) shed Miasma spores

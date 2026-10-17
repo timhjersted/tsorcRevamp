@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles;
 
-namespace tsorcRevamp.NPCs
+namespace tsorcRevamp.NPCs.Bosses.Plantera
 {
     /// <summary>
     /// Miasma Breath: a phase-2 (below 50% life) attack layered on top of vanilla Plantera's AI.

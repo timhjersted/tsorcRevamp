@@ -2129,7 +2129,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found Golem\u0027s Temple - --NEWLINE  --NEWLINE You must offer two Large Rubies and defeat Plantera to enter.",
+  "text": "- You\u0027ve found Golem\u0027s Temple - --NEWLINE  --NEWLINE You must offer two Large Rubies and defeat the Verdurous Monarch to enter.",
   "tileX": 6098,
   "tileY": 1386,
   "textWidth": 320,
@@ -2446,7 +2446,7 @@
   "category": "story"
 }
 {
-  "text": "\u0022This is grave, indeed, Red. I could sense something had happened; a portal was opened from another, far more hellish world. I have seen this place in my dreams. According to legend, long ago the demons from this other world once claimed these lands as their own, before they were banished during the great war of the Cataclysm. I believe they have now returned to the lands they once ruled. You have already defeated one, The Rage. But 7 more await.\u0022",
+  "text": "\u0022This is grave, indeed, Red. I could sense something had happened; a portal was opened from another, far more hellish world. I have seen this place in my dreams. According to legend, long ago the demons from this other world once claimed these lands as their own, before they were banished during the great war of the Cataclysm. I believe they have now returned to the lands they once ruled. You have already defeated one, The Rage. But 6 more await.\u0022",
   "tileX": 7321,
   "tileY": 604,
   "textWidth": 320,
@@ -2454,7 +2454,7 @@
   "category": "story"
 }
 {
-  "text": "\u0022The Sorrow, The Hunter, Plantera, The Destroyer, The Machine, the Triad, and the forgotten Golem. You\u0027ll have to brave battles with each of them if you ever hope to weaken Attraidies\u0027 power enough to kill him. With a shard taken from each of these 8 gods, you will be able to craft a catalyst strong enough to summon and face Attraidies.\u0022",
+  "text": "\u0022The Sorrow, The Hunter, The Destroyer, The Machine, the Triad, and the forgotten Golem. You\u0027ll have to brave battles with each of them if you ever hope to weaken Attraidies\u0027 power enough to kill him. With a shard taken from each of these 7 gods, you will be able to craft a catalyst strong enough to summon and face Attraidies.\u0022",
   "tileX": 7324,
   "tileY": 604,
   "textWidth": 320,
