@@ -162,7 +162,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems.Summoner
             }
             #endregion
         }
-        public const float StardustDragonBaseDmgMult = 0.4f;
+        public const float StardustDragonBaseDmgMult = 0.5f;
 
         public const float BeetleSummonTagStrengthBoost = 20f;
         public const float BeetleSummonCritChance = 5f;
