@@ -53,8 +53,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.timeLeft = 2; //sets it to 2 frames, to let the explosion ai kick in. Setdefaults is -1 pen, this allows it to only hit one npc, then run explosion ai.
             Projectile.netUpdate = true;
         }
+        // Firebomb Hollow's bombs set you alight. Shared class (Red Knights, Faraam, Leonhard, Nameless King throw it too),
+        // so this keys off the synced SourceNPCType. 1s; On Fire is a LongerExpertDebuff, so 2s Expert / 2.5s Master.
+        private const int FirebombHollowOnFireTicks = 1 * 60;
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
+            int sourceNPCType = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
+            if (sourceNPCType == ModContent.NPCType<NPCs.Enemies.FirebombHollow>())
+            {
+                target.AddBuff(BuffID.OnFire, FirebombHollowOnFireTicks);
+            }
+
             if (Projectile.owner == Main.myPlayer && Projectile.timeLeft <= 1) //the one frame make the explosion only deal damage once.
             {
                 Projectile.tileCollide = false;

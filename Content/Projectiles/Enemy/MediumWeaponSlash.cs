@@ -46,8 +46,24 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
         }
 
+        // Which enemy's slash this is, passed as ai[2] (synced). Default: Hollow Soldier, Lothric Black Knight, Ringed Knight.
+        public const int VariantDefault = 0;
+        public const int VariantLothricKnight = 1;
+
+        // Lothric Knight: 3s each in Normal; Broken Armor stretches in Expert/Master itself, Crippled via ScaledTicks.
+        private const int LothricKnightDebuffTicks = 3 * 60;
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
+            int variant = (int)Projectile.ai[2];
+
+            if (variant == VariantLothricKnight)
+            {
+                target.AddBuff(ModContent.BuffType<Crippled>(), Crippled.ScaledTicks(LothricKnightDebuffTicks));
+                target.AddBuff(Terraria.ID.BuffID.BrokenArmor, LothricKnightDebuffTicks);
+                return;
+            }
+
             target.AddBuff(ModContent.BuffType<Crippled>(), 600);
         }
     }

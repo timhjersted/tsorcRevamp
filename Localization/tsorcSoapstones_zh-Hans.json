@@ -1968,7 +1968,8 @@
   "tileX": 5662,
   "tileY": 1790,
   "textWidth": 250,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "一个老德鲁伊的家，很久以前就被遗弃了。",
@@ -2452,7 +2453,8 @@
   "tileX": 7556,
   "tileY": 1536,
   "textWidth": 480,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "Miakoda告诉你，悲伤生活在这片冻洋的深处。 --NEWLINE   --NEWLINE 强烈的隆隆声在冰层中震荡，让你浑身发抖。深呼吸，使用芦苇管…",

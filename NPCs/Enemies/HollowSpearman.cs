@@ -93,7 +93,8 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(BuffID.BrokenArmor, 3 * 60, false); //broken armor
+            // On `target` (the player actually hit), not the `player` property, which is NPC.target.
+            target.AddBuff(BuffID.BrokenArmor, 3 * 60, false);
         }
 
         // On-hit reactive block: a chance to raise the greatshield to catch the rest of a combo.
@@ -336,7 +337,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, Spearhead.VariantHollowSpearman)];
                             stab.timeLeft = 6;
                             stab.velocity.X = 5;
                         }
@@ -347,7 +348,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, Spearhead.VariantHollowSpearman)];
                             stab.timeLeft = 6;
                             stab.velocity.X = 5;
                         }
@@ -358,7 +359,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, Spearhead.VariantHollowSpearman)];
                             stab.timeLeft = 6;
                             stab.velocity.X = 5;
                         }
@@ -371,7 +372,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, Spearhead.VariantHollowSpearman)];
                             stab.timeLeft = 6;
                             stab.velocity.X = -5;
                         }
@@ -382,7 +383,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, Spearhead.VariantHollowSpearman)];
                             stab.timeLeft = 6;
                             stab.velocity.X = -5;
                         }
@@ -393,7 +394,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, Spearhead.VariantHollowSpearman)];
                             stab.timeLeft = 6;
                             stab.velocity.X = -5;
                         }
@@ -435,9 +436,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile spear = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -16), UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center + new Vector2(0, -20), 10), ModContent.ProjectileType<ThrowingSpear>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI)];
-                        spear.friendly = false;
-                        spear.hostile = true;
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -16), UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center + new Vector2(0, -20), 10), ModContent.ProjectileType<HollowSpearmanThrownSpear>(), spearStabDamage, 5, Main.myPlayer, 15f);
                     }
                 }
 

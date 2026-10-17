@@ -49,17 +49,52 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
         }
 
+        // Which enemy's stab this is, passed as ai[2] (synced, so every client picks the same debuffs).
+        public const int VariantDefault = 0;              // Lothric Black Knight, Ringed Knight
+        public const int VariantHollowSpearman = 1;
+        public const int VariantGhostOfTheDrowned = 2;
+        public const int VariantLothricKnight = 3;
+        public const int VariantLothricSpearKnight = 4;
+        public const int VariantLothricSpearKnightEnraged = 5; // spear knight below 50% life, chosen at spawn
+
+        // Normal-mode ticks. Broken Armor and Bleeding stretch in Expert/Master on their own; Crippled goes through
+        // Crippled.ScaledTicks to match them.
+        private const int HollowSpearmanCrippledTicks = 3 * 60;
+        private const int LothricKnightDebuffTicks = 3 * 60;
+        private const int LothricSpearKnightDebuffTicks = 3 * 60;
+        private const int LothricSpearKnightEnragedDebuffTicks = 6 * 60;
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (Projectile.ai[2] == 0) //Lothric enemies
+            int variant = (int)Projectile.ai[2];
+            int crippledType = ModContent.BuffType<Crippled>();
+
+            if (variant == VariantDefault)
             {
-                target.AddBuff(ModContent.BuffType<Crippled>(), 600);
+                target.AddBuff(crippledType, 600);
             }
-            else if (Projectile.ai[2] == 1) //Hollow Spearman
+            else if (variant == VariantHollowSpearman)
             {
-                target.AddBuff(ModContent.BuffType<Crippled>(), 360);
+                target.AddBuff(crippledType, Crippled.ScaledTicks(HollowSpearmanCrippledTicks));
             }
-            else if (Projectile.ai[2] == 2) //Ghost of the Drowned
+            else if (variant == VariantLothricKnight)
+            {
+                target.AddBuff(crippledType, Crippled.ScaledTicks(LothricKnightDebuffTicks));
+                target.AddBuff(BuffID.BrokenArmor, LothricKnightDebuffTicks);
+            }
+            else if (variant == VariantLothricSpearKnight || variant == VariantLothricSpearKnightEnraged)
+            {
+                int debuffTicks = LothricSpearKnightDebuffTicks;
+                if (variant == VariantLothricSpearKnightEnraged)
+                {
+                    debuffTicks = LothricSpearKnightEnragedDebuffTicks;
+                }
+
+                target.AddBuff(crippledType, Crippled.ScaledTicks(debuffTicks));
+                target.AddBuff(BuffID.BrokenArmor, debuffTicks);
+                target.AddBuff(BuffID.Bleeding, debuffTicks);
+            }
+            else if (variant == VariantGhostOfTheDrowned)
             {
                 SoundEngine.PlaySound(SoundID.Drown, target.Center);
                 target.AddBuff(BuffID.Darkness, 8 * 60);

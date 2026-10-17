@@ -46,5 +46,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
 
         }
+
+        // Hollow Warrior / Ghost of a Hollow Warrior (its only users): 3s Bleeding, stretched in Expert/Master by vanilla.
+        private const int BleedingTicks = 3 * 60;
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(Terraria.ID.BuffID.Bleeding, BleedingTicks);
+        }
     }
 }

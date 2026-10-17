@@ -27,13 +27,10 @@ namespace tsorcRevamp.Buffs.Debuffs
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
             int currentBuildup = Main.LocalPlayer.GetModPlayer<AcidVenomPlayer>().VenomLevel;
-            int venomSeconds = VenomDurationTicks / 60;
-
-            // Show what the player will actually get: Expert/Master (expertMode covers both) double Venom.
-            if (Main.expertMode)
-            {
-                venomSeconds *= 2;
-            }
+            // Show what the player will actually get: vanilla stretches Venom by the mode's debuff multiplier
+            // (x1 Normal, x2 Expert, x2.5 Master).
+            float debuffTimeMultiplier = Main.GameModeInfo.DebuffTimeMultiplier;
+            int venomSeconds = (int)(VenomDurationTicks * debuffTimeMultiplier) / 60;
 
             tip =Description.WithFormatArgs(currentBuildup, MaximumBuildup, venomSeconds).Value;
         }

@@ -1999,7 +1999,8 @@
   "tileX": 5662,
   "tileY": 1790,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "An old druid\u0027s home, long since abandoned.",
@@ -2490,7 +2491,8 @@
   "tileX": 7556,
   "tileY": 1536,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "The Sorrow lives deep below these waters, Miakoda tells you. --NEWLINE  --NEWLINE A powerful rumbling shakes up through the ice and gives you a freezing shiver. Taking a deep breath, you break the Mythril Ice and you pull out your breathing reed... ",
