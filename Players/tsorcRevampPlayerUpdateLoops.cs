@@ -139,7 +139,6 @@ namespace tsorcRevamp
         public bool ArtoriasAbysswalker;
         public float ArtoriasAbysswalkerDodgeStaminaCostReduction;
         public int ArtoriasAbysswalkerCounterType;
-        public bool Witch;
 
         public bool Kraken;
         public bool NecromanticSerpent = false;
@@ -559,8 +558,6 @@ namespace tsorcRevamp
             CanUseItemsWhileDodging = false;
             ArtoriasAbysswalker = false;
             ArtoriasAbysswalkerDodgeStaminaCostReduction = 0f;
-
-            Witch = false;
 
             DragoonBoots = false;
             OldWeapon = false;

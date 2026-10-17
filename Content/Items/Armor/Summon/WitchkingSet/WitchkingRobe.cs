@@ -3,13 +3,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.Content.Items.Armor.Summon
+namespace tsorcRevamp.Content.Items.Armor.Summon.WitchkingSet
 {
     [AutoloadEquip(EquipType.Body)]
     public class WitchkingRobe : ModItem
@@ -44,7 +43,7 @@ namespace tsorcRevamp.Content.Items.Armor.Summon
             int i2 = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int j2 = (int)(player.position.Y + 2f) / 16;
             Lighting.AddLight(i2, j2, 0.92f, 0.8f, 0.65f);
-            player.GetModPlayer<tsorcRevampPlayer>().Witch = true;
+            player.GetModPlayer<WitchkingSetPlayer>().Equipped = true;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

@@ -266,7 +266,7 @@ public class ElectrocutePlayer : ModPlayer
     {
         int baseDamage = ElectrocuteProjectileDamage1[npc.whoAmI] + ElectrocuteProjectileDamage2[npc.whoAmI]  + ElectrocuteProjectileDamage3[npc.whoAmI];
         critChance = 0;
-        damage = (int)Player.GetTotalDamage(DamageClass.Ranged).ApplyTo(baseDamage);
+        damage = baseDamage; //baseDamage is already scaled by ranged dmg mods(total dmg)
         List<int> critChances = new List<int>()
         {
             ElectrocuteProjectileCritChance1[npc.whoAmI],
