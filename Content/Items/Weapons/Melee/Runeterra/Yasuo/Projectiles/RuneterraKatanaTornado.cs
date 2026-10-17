@@ -97,15 +97,16 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Projectiles
                     }
                 }
                 Projectile.Resize((int)(Projectile.width / baseScale * Projectile.scale), (int)(Projectile.height / baseScale * Projectile.scale));
+                player.GetModPlayer<RuneterraKatanaPlayer>().SteelTempestStacks = 0;
+                if (Projectile.velocity == Vector2.Zero)
+                {
+                    Projectile.timeLeft = (int)((float)Projectile.timeLeft / 1.5f);
+                }
                 AppliedOnSpawn = true;
             }
             Vector2 mountedCenter = player.MountedCenter + new Vector2(-player.width / 2, 0);
             Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustID, Scale: 2);
             dust.noGravity = true;
-            if (Projectile.timeLeft == baseTimeLeft - 40)
-            {
-                player.GetModPlayer<RuneterraKatanaPlayer>().SteelTempestStacks = 0;
-            }
             if (Projectile.velocity == Vector2.Zero && Projectile.timeLeft > baseTimeLeft - PlasmaWhirlwind.DashDuration * 60)
             {
                 Projectile.Center = mountedCenter;

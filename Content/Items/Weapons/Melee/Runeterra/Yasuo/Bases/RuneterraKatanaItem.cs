@@ -8,6 +8,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Buffs;
 using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Projectiles;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Utilities;
@@ -153,6 +154,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Bases
         {
             float totalMeleeAttackSpeed = player.GetTotalAttackSpeed(DamageClass.Melee);
             var modPlayer = player.GetModPlayer<RuneterraKatanaPlayer>();
+            float tornadoSpeedMod = 1.65f;
             if (player.altFunctionUse != 2) //shoot Nothing
             {
                 Item.useStyle = ItemUseStyleID.Swing;
@@ -205,7 +207,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Bases
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "_TornadoCast") with { Volume = SwingSoundVolume });
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, ItemKnockback * 2, player.whoAmI, Tier);
+                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity * tornadoSpeedMod, ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, ItemKnockback * 2, player.whoAmI, Tier);
                     }
                 }
             }
@@ -251,7 +253,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Bases
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "_TornadoCast") with { Volume = 1f });
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, knockback * 2, player.whoAmI, Tier);
+                        Projectile Tornado = Projectile.NewProjectileDirect(source, position, velocity * tornadoSpeedMod, ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, knockback * 2, player.whoAmI, Tier);
                     }
                 }
                 else if (modPlayer.SteelTempestStacks >= 2 && player.HasBuff(DashBuffID))
@@ -276,7 +278,10 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Bases
         }
         public override bool AltFunctionUse(Player player)
         {
-            if (!player.HasBuff(ThrustCooldownBuffID))
+            bool thrustOnCd = player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()) 
+                              || player.HasBuff(ModContent.BuffType<PlasmaWhirlwindThrustCooldown>()) 
+                              || player.HasBuff(ModContent.BuffType<NightbringerThrustCooldown>());
+            if (!thrustOnCd)
             {
                 return true;
             }
