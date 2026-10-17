@@ -31,9 +31,12 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         internal virtual ReaperFacingMode CurrentReaperFacingMode => ReaperFacingMode.IntentDirection;
         internal Color ReaperLightColor => AuraColor;
         internal int ReaperLaserCount => PhaseTwoReaperLaserCount;
-        internal virtual bool ReaperStrong5WarningEnabled => true;
-        internal virtual float ReaperStrong5WarningLength => 1500f;
-        internal virtual int ReaperStrong5WarningTicks => 15;
+        /// <summary>Rushing Reaper acceleration time; the Strong5 rework stretches it to a second.</summary>
+        internal virtual int ReaperStrong5AccelerationTicks => 60;
+        /// <summary>Interval of the trailing sickle volley a rushing Reaper fires; 0 disables it.</summary>
+        internal virtual int ReaperStrong5TrailSickleIntervalTicks => 20;
+        /// <summary>Distance from Death at which a rushing Reaper fades out; 0 keeps it alive.</summary>
+        internal virtual float ReaperStrong5FadeDistance => 1800f;
         internal int ReaperLaserIntervalTicks => PhaseTwoReaperLaserIntervalTicks;
         internal int ReaperBurstIntervalTicks => PhaseTwoReaperBurstIntervalTicks;
         internal int ReaperBurstShotCount => PhaseTwoReaperBurstShotCount;
@@ -196,30 +199,42 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         protected virtual float PhaseTwoWeak5CircleReturnMaxSpeed => 45f;
         protected virtual float PhaseTwoWeak5CircleReturnAcceleration => 1.20f;
         protected virtual float PhaseTwoWeak5CircleReturnDeceleration => 2.00f;
+        /// <summary>The ring stays pinned until Death has settled, then glides home over this many ticks.</summary>
+        protected virtual int PhaseTwoWeak5RingReturnTicks => 60;
         protected virtual int PhaseTwoStrong4FadeInTicks => 60;
         protected virtual float PhaseTwoStrong4SpawnRadius => 100f;
         protected virtual int PhaseTwoStrong4DashCount => 6;
         protected virtual int PhaseTwoStrong4DashTicks => 60;
         protected virtual int PhaseTwoStrong4GapTicks => 48;
-        protected virtual int PhaseTwoStrong5AttackStartTicks => 60;
-        protected virtual int PhaseTwoStrong5AttackDurationTicks => 4 * 60;
+        protected virtual int PhaseTwoStrong5AttackStartTicks => 120;
+        protected virtual int PhaseTwoStrong5AttackDurationTicks => PhaseTwoStrong5WaveCount * PhaseTwoStrong5WaveIntervalTicks;
         protected virtual int PhaseTwoStrong5RecoveryTicks => 3 * 60;
         protected virtual int PhaseTwoStrong5DurationTicks =>
             PhaseTwoStrong5AttackStartTicks + PhaseTwoStrong5AttackDurationTicks + PhaseTwoStrong5RecoveryTicks;
         protected virtual int PhaseTwoStrong5WaveCount => 4;
-        protected virtual int PhaseTwoStrong5ScythesPerWave => 6;
         protected virtual int PhaseTwoStrong5WaveIntervalTicks => 60;
+        /// <summary>Large scythes spread evenly around the full circle in every wave.</summary>
+        protected virtual int PhaseTwoStrong5ScythesPerWave => 6;
+        /// <summary>Warning beam ahead of each wave.</summary>
         protected virtual int PhaseTwoStrong5WarningTicks => 30;
         protected virtual float PhaseTwoStrong5ScytheSpeed => 30f;
         protected virtual float PhaseTwoStrong5WarningLength => 1800f;
-        protected virtual int PhaseTwoStrong5ReaperIntervalTicks => 15;
-        protected virtual int PhaseTwoStrong5ReaperCount => 8;
         protected virtual float PhaseTwoStrong5CircleMoveMaxSpeed => 5f;
         /// <summary>
-        /// True: snap onto the circle once, then hold position as soon as the first flaming-scythe
-        /// volley is away (normal Death). Absolute Death keeps orbiting for the whole move.
+        /// True: orbit for the first second, then hold position for the rest of the move (normal
+        /// Death). Absolute Death keeps orbiting for the whole move.
         /// </summary>
         protected virtual bool PhaseTwoStrong5SnapsThenHolds => true;
+
+        // Normal Death orbits for the first second of the lead-in, easing to a stop over its last
+        // quarter second, and the pinned ring slides back under it over the last second of the move.
+        private const int Strong5LeadInSlowdownTicks = 45;
+        private const int Strong5LeadInOrbitTicks = 60;
+        private const int Strong5RingReturnTicks = 60;
+        // One Reaper every 20 ticks while the waves fire, then three more as the last wave leaves.
+        // No cap: they fade out on their own once they have rushed past the boss.
+        private const int Strong5ReaperIntervalTicks = 20;
+        private const int Strong5FinalReaperBurst = 3;
 
         // Strong move 6 (Absolute Death only): Death roars, pins the ring, teleports straight up
         // and drops a four-Reaper firing line that hammers the arena for eight seconds.
@@ -1476,7 +1491,8 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             int rushStart = warningStart + PhaseTwoWeak5WarningTicks;
             int rushTicks = PhaseTwoWeak5SwingCycleTicks * PhaseTwoWeak5SwingCycles;
             int fadeOutStart = rushStart + rushTicks;
-            int totalTicks = fadeOutStart + PhaseTwoWeak5RecoveryTicks;
+            int ringReturnStart = fadeOutStart + PhaseTwoWeak5RecoveryTicks;
+            int totalTicks = ringReturnStart + PhaseTwoWeak5RingReturnTicks;
             Vector2 sickleOffset = SickleAnchorOffset;
             float rushSpeed = PhaseTwoWeak5RushDistance / Math.Max(1, rushTicks);
             int facing = NPC.direction == 0 ? 1 : NPC.direction;
@@ -1568,8 +1584,6 @@ namespace tsorcRevamp.NPCs.Bosses.Death
 
             float fadeProgress = MathHelper.Clamp(
                 (elapsed - fadeOutStart) / (float)(PhaseTwoWeak5SwingCycleTicks / 2), 0f, 1f);
-            float ringReturnProgress = MathHelper.Clamp(
-                (elapsed - fadeOutStart) / (float)PhaseTwoWeak5RecoveryTicks, 0f, 1f);
             if (elapsed == fadeOutStart)
             {
                 NPC.velocity = Vector2.Zero;
@@ -1577,15 +1591,26 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             // Stop dealing contact damage while the boss brakes back into the player orbit.
             NPC.damage = 0;
             MovePhaseTwoWeak5Return(target);
+            FacePhaseOneTarget(target);
             float finalRotation = phaseTwoSickleBaseRotation
                 + spinDirection * MathHelper.TwoPi * PhaseTwoWeak5SwingCycles
                 + spinDirection * MathHelper.Pi * fadeProgress;
             SetPhaseTwoSicklePose(NPC.Center + sickleOffset, finalRotation, facing, 1f - fadeProgress, 0);
-            // Follow Death during its return; the ring must not stick to the player.
-            containmentRingCenter = Vector2.Lerp(
-                phaseTwoFixedRingCenter,
-                NPC.Center,
-                MathHelper.SmoothStep(0f, 1f, ringReturnProgress));
+            // Hold the ring where it was pinned until Death has settled back onto the orbit, then
+            // glide it home over a fixed number of ticks.
+            if (elapsed < ringReturnStart)
+            {
+                containmentRingCenter = phaseTwoFixedRingCenter;
+            }
+            else
+            {
+                float ringReturnProgress = MathHelper.Clamp(
+                    (elapsed - ringReturnStart + 1) / (float)PhaseTwoWeak5RingReturnTicks, 0f, 1f);
+                containmentRingCenter = Vector2.Lerp(
+                    phaseTwoFixedRingCenter,
+                    NPC.Center,
+                    MathHelper.SmoothStep(0f, 1f, ringReturnProgress));
+            }
 
             if (elapsed >= totalTicks)
             {
@@ -1735,7 +1760,12 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             phaseTwoAttackState = PhaseTwoAttackState.StrongReaperScytheRush;
             phaseTwoAttackTimer = 0;
             phaseTwoStrong5WaveAngles = Vector4.Zero;
-            containmentRingFollowsBoss = true;
+            containmentRingFollowsBoss = !PhaseTwoStrong5SnapsThenHolds;
+            if (PhaseTwoStrong5SnapsThenHolds)
+            {
+                // The boss plants itself, so anchor the ring on the arena instead of dragging it along.
+                phaseTwoFixedRingCenter = containmentRingCenter;
+            }
             NPC.velocity = Vector2.Zero;
             NPC.netUpdate = true;
         }
@@ -1747,16 +1777,26 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             int attackEnd = PhaseTwoStrong5AttackStartTicks + PhaseTwoStrong5AttackDurationTicks;
             if (elapsed < attackEnd)
             {
-                if (PhaseTwoStrong5SnapsThenHolds && elapsed >= PhaseTwoStrong5AttackStartTicks)
+                if (PhaseTwoStrong5SnapsThenHolds && elapsed >= Strong5LeadInOrbitTicks)
                 {
-                    // One snap onto the circle, then planted: after the opening volley the boss holds
-                    // position for the rest of the move.
+                    // Planted for the rest of the lead-in and the whole volley.
                     NPC.velocity = Vector2.Zero;
                     FacePhaseOneTarget(target);
                 }
                 else
                 {
                     MovePhaseTwoOnCircle(target);
+                    FacePhaseOneTarget(target);
+                    if (PhaseTwoStrong5SnapsThenHolds && elapsed >= Strong5LeadInSlowdownTicks)
+                    {
+                        // Ease the orbit to a stop instead of cutting it dead at the full second.
+                        float slowdownProgress = MathHelper.Clamp(
+                            (elapsed - Strong5LeadInSlowdownTicks + 1)
+                                / (float)(Strong5LeadInOrbitTicks - Strong5LeadInSlowdownTicks),
+                            0f,
+                            1f);
+                        NPC.velocity *= 1f - MathHelper.SmoothStep(0f, 1f, slowdownProgress);
+                    }
                 }
             }
             else
@@ -1770,6 +1810,21 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                 SpawnPhaseTwoStrong5Warnings(elapsed);
                 SpawnPhaseTwoStrong5Waves(elapsed);
                 SpawnPhaseTwoStrong5Reapers(elapsed);
+            }
+
+            if (PhaseTwoStrong5SnapsThenHolds)
+            {
+                // Slide the pinned ring back under the boss over the last second, like the five-dash.
+                int ringReturnStart = PhaseTwoStrong5DurationTicks - Strong5RingReturnTicks;
+                if (elapsed >= ringReturnStart)
+                {
+                    float ringReturnProgress = MathHelper.Clamp(
+                        (elapsed - ringReturnStart + 1) / (float)Strong5RingReturnTicks, 0f, 1f);
+                    containmentRingCenter = Vector2.Lerp(
+                        phaseTwoFixedRingCenter,
+                        NPC.Center,
+                        MathHelper.SmoothStep(0f, 1f, ringReturnProgress));
+                }
             }
 
             if (elapsed >= PhaseTwoStrong5DurationTicks)
@@ -1956,18 +2011,30 @@ namespace tsorcRevamp.NPCs.Bosses.Death
 
         void SpawnPhaseTwoStrong5Reapers(int elapsed)
         {
-            if (elapsed < PhaseTwoStrong5AttackStartTicks)
+            int lastWaveElapsed = PhaseTwoStrong5AttackStartTicks
+                + (PhaseTwoStrong5WaveCount - 1) * PhaseTwoStrong5WaveIntervalTicks;
+            if (elapsed < PhaseTwoStrong5AttackStartTicks || elapsed > lastWaveElapsed)
             {
                 return;
             }
 
-            int reaperIndex = (elapsed - PhaseTwoStrong5AttackStartTicks) / PhaseTwoStrong5ReaperIntervalTicks;
-            if (reaperIndex < 0 || reaperIndex >= PhaseTwoStrong5ReaperCount
-                || (elapsed - PhaseTwoStrong5AttackStartTicks) % PhaseTwoStrong5ReaperIntervalTicks != 0)
+            // Nothing caps the rush: three Reapers leave with the last wave, one every 20 ticks
+            // until then, and each one fades out on its own once it is past the boss.
+            if (elapsed == lastWaveElapsed)
             {
-                return;
+                for (int i = 0; i < Strong5FinalReaperBurst; i++)
+                {
+                    SpawnPhaseTwoStrong5Reaper();
+                }
             }
+            else if ((elapsed - PhaseTwoStrong5AttackStartTicks) % Strong5ReaperIntervalTicks == 0)
+            {
+                SpawnPhaseTwoStrong5Reaper();
+            }
+        }
 
+        void SpawnPhaseTwoStrong5Reaper()
+        {
             float spawnAngle = Main.rand.NextFloat(MathHelper.TwoPi);
             NPC.NewNPC(
                 NPC.GetSource_FromAI(),

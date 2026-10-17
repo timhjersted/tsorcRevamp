@@ -40,11 +40,11 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         const int Strong5WaitTicks = 15;
 
         const float Strong5OrbitRadius = 100f;
-        const int Strong5AccelerationTicks = 30;
         const float Strong5MaxSpeed = 20f;
-        const int Strong5SickleIntervalTicks = 20;
         const float Strong5SickleMaxSpeed = 10f;
         const float Strong5SickleMaxDistanceFromOwner = 1400f;
+        // Distance a rushing reaper covers while fading out, so the fade keeps pace on every client.
+        const float Strong5FadeTravelDistance = 600f;
 
         internal const int Strong6ModeBit = 1 << 19;
         // Strong move 6 (Absolute Death only): #1/#4 sweep cardinal fans, #2/#3 fire aimed
@@ -269,39 +269,34 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                 NPC.velocity = Vector2.Zero;
                 intendedFacingAngle = (target.Center - NPC.Center).ToRotation();
                 NPC.alpha = 0;
-
-                if (owner.ReaperStrong5WarningEnabled && Age == Strong5OrbitTicks)
-                {
-                    Vector2 warningDirection = NPC.ai[3].ToRotationVector2();
-                    DeathLaserWarning.Spawn(
-                        NPC.GetSource_FromAI(),
-                        owner.NPC,
-                        owner.ReaperLightColor,
-                        trackTicks: 0,
-                        totalTicks: owner.ReaperStrong5WarningTicks,
-                        beamLength: owner.ReaperStrong5WarningLength,
-                        beamSize: 0.12f,
-                        beamBrightness: 1.2f,
-                        origin: NPC.Center,
-                        direction: warningDirection,
-                        followHost: false);
-                }
-
                 return;
             }
 
             float dashAngle = NPC.ai[3];
             Vector2 dashDirection = dashAngle.ToRotationVector2();
             float accelerationProgress = MathHelper.Clamp(
-                (Age - dashStartAge) / (float)Strong5AccelerationTicks, 0f, 1f);
+                (Age - dashStartAge) / Math.Max(1f, owner.ReaperStrong5AccelerationTicks), 0f, 1f);
             float speed = MathHelper.SmoothStep(0f, 1f, accelerationProgress) * Strong5MaxSpeed;
             NPC.velocity = dashDirection * speed;
             intendedFacingAngle = dashAngle;
             NPC.alpha = 0;
 
-            if ((Age - dashStartAge) % Strong5SickleIntervalTicks == 0)
+            if (owner.ReaperStrong5TrailSickleIntervalTicks > 0
+                && (Age - dashStartAge) % owner.ReaperStrong5TrailSickleIntervalTicks == 0)
             {
                 FireStrong5Sickle(owner, dashDirection);
+            }
+
+            // Dissolve once the rush has carried the reaper well past Death instead of circling back.
+            float fadeDistance = owner.ReaperStrong5FadeDistance;
+            float travelledPast = Vector2.Distance(NPC.Center, owner.NPC.Center) - fadeDistance;
+            if (fadeDistance > 0f && travelledPast > 0f)
+            {
+                NPC.alpha = (int)MathHelper.Clamp(travelledPast / Strong5FadeTravelDistance * 255f, 0f, 255f);
+                if (travelledPast >= Strong5FadeTravelDistance)
+                {
+                    NPC.active = false;
+                }
             }
         }
 

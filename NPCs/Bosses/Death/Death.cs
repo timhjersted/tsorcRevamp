@@ -67,7 +67,6 @@ namespace tsorcRevamp.NPCs.Bosses.Death
     ///     DeathBossBase, with its overrides commented out here and in Special/TrueDeath.cs.
     ///   - The old soft blur masks (DeathBlur / DeathReaperBlur / DeathSickleWeaponBlur) and the
     ///     non-shader glow path were removed.
-    ///   - NPCs/Bosses/Death/DeathAttackSpecCards.md holds the per-attack spec cards - keep in sync.
     /// </summary>
     [AutoloadBossHead]
     class Death : DeathBossBase

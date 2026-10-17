@@ -18,7 +18,11 @@ namespace tsorcRevamp.Buffs.Accessories
         public override void Update(Player player, ref int buffIndex)
         {
             base.Update(player, ref buffIndex);
-            player.buffTime[buffIndex]++;
+            // Keep the timer from running down on its own, but don't revive it once the last-tick sound has played.
+            if (player.buffTime[buffIndex] > 0)
+            {
+                player.buffTime[buffIndex]++;
+            }
         }
     }
 }

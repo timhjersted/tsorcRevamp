@@ -46,17 +46,17 @@ namespace tsorcRevamp.Buffs.Debuffs
             if (player.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
                 LastTickSoundsSettings(out float soundVolume);
-                if (!LastTickSoundPath.StartsWith("tsorcRevamp/"))
+                if (!string.IsNullOrEmpty(LastTickSoundPath) && !LastTickSoundPath.StartsWith("tsorcRevamp/"))
                 {
                     LastTickSoundPath = "tsorcRevamp/" + LastTickSoundPath;
                 }
-                if (!PlaysVanillaSound)
-                {
-                    SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume });
-                }
-                else
+                if (PlaysVanillaSound)
                 {
                     SoundEngine.PlaySound(VanillaSoundID with { Volume = soundVolume });
+                }
+                else if (!string.IsNullOrEmpty(LastTickSoundPath))
+                {
+                    SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume });
                 }
             }
         }
@@ -65,13 +65,17 @@ namespace tsorcRevamp.Buffs.Debuffs
             if (npc.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
                 LastTickSoundsSettings(out float soundVolume);
-                if (!PlaysVanillaSound)
+                if (!string.IsNullOrEmpty(LastTickSoundPath) && !LastTickSoundPath.StartsWith("tsorcRevamp/"))
                 {
-                    SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume }, npc.Center);
+                    LastTickSoundPath = "tsorcRevamp/" + LastTickSoundPath;
                 }
-                else
+                if (PlaysVanillaSound)
                 {
                     SoundEngine.PlaySound(VanillaSoundID with { Volume = soundVolume }, npc.Center);
+                }
+                else if (!string.IsNullOrEmpty(LastTickSoundPath))
+                {
+                    SoundEngine.PlaySound(new SoundStyle(LastTickSoundPath) with { Volume = soundVolume }, npc.Center);
                 }
             }
         }

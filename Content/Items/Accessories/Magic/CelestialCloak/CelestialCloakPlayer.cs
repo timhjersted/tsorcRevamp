@@ -18,7 +18,7 @@ public class CelestialCloakPlayer : ModPlayer
     {
         if (Equipped)
         {
-            int trueMaxMana = (int)(Player.statManaMax2 / (Player.HasBuff(ModContent.BuffType<ArcaneSorcery>()) 
+            int trueMaxMana = (int)(Player.statManaMax2 / (Player.GetModPlayer<ArcaneSorceryPlayer>().ArcaneSorcerer
                 ? (100f + ArcaneSorceryPlayer.MaxManaAmplifier) / 100f : 1f));
             Player.thorns += 0.1f + (trueMaxMana / 50f);
         }
@@ -28,7 +28,7 @@ public class CelestialCloakPlayer : ModPlayer
     {
         if (Equipped && (hit.DamageType == DamageClass.Magic || hit.DamageType == DamageClass.MagicSummonHybrid))
         {
-            int trueMaxMana = (int)(Player.statManaMax2 / (Player.HasBuff(ModContent.BuffType<ArcaneSorcery>()) 
+            int trueMaxMana = (int)(Player.statManaMax2 / (Player.GetModPlayer<ArcaneSorceryPlayer>().ArcaneSorcerer
                 ? (100f + ArcaneSorceryPlayer.MaxManaAmplifier) / 100f : 1f));
             if (Main.rand.NextBool(25))
             {
