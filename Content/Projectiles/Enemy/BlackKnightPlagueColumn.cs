@@ -123,6 +123,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 dust.noGravity = true;
                 dust.fadeIn = 0.6f;
             }
+
+            // Curse accent: pink flames rising through the purple column (it builds curse while you stand in it).
+            if (Main.rand.NextBool(2))
+            {
+                float accentHeight = Main.rand.NextFloat(0f, ColumnHeight * ramp);
+                Vector2 accentPosition = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-ColumnWidth * 0.45f, ColumnWidth * 0.45f), -accentHeight);
+                Vector2 accentVelocity = new Vector2(0f, -Main.rand.NextFloat(1f, 2.4f));
+                CurseBuildup.SpawnAccentDust(accentPosition, 0, 0, accentVelocity, Main.rand.NextFloat(1.3f, 1.9f) * fade);
+            }
             Lighting.AddLight(Projectile.Center, new Vector3(0.32f, 0.10f, 0.44f) * fade);
         }
 

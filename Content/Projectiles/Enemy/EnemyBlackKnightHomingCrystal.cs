@@ -72,6 +72,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
                     }
 
+                    // Curse accent: only non-Great-Black-Knight crystals build curse (the GBK's build Blight instead).
+                    bool buildsCurse = !BlightBuildup.FromGreatBlackKnight(Projectile);
+                    if (buildsCurse && Main.rand.NextBool(4))
+                    {
+                        CurseBuildup.SpawnAccentDust(Projectile.position, Projectile.width, Projectile.height, Projectile.velocity * 0.2f, 1.2f);
+                    }
+
 
                     /*
                     for (int i = 0; i < 10; i++)

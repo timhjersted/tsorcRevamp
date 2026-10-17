@@ -84,6 +84,12 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                     Dust purple = Dust.NewDustPerfect(position - direction * Main.rand.NextFloat(4f, 18f), DustID.PurpleTorch, velocity * 0.4f, 210, new Color(120, 45, 170), Main.rand.NextFloat(0.8f, 1.35f) * dissipate);
                     purple.noGravity = true;
                 }
+
+                // Curse accent, only on clouds that build curse (ai[0] == 1): sparse pink flames inside the smoke.
+                if (AppliesCurse && Main.rand.NextBool(6))
+                {
+                    CurseBuildup.SpawnAccentDust(position, 0, 0, velocity, Main.rand.NextFloat(1.1f, 1.6f) * dissipate);
+                }
             }
         }
 

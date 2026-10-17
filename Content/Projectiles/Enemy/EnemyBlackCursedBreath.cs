@@ -110,6 +110,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, BlightBuildup.FromGreatBlackKnight(Projectile) ? DustID.Wraith : DustID.ShadowbeamStaff, 0, 0, 50, Color.DarkGray, 0.7f);
                 Main.dust[dust].noGravity = true;
             }
+
+            // Curse accent: only non-Great-Black-Knight breaths build curse (the GBK's build Blight instead).
+            bool buildsCurse = !BlightBuildup.FromGreatBlackKnight(Projectile);
+            if (buildsCurse && Main.rand.NextBool(4))
+            {
+                CurseBuildup.SpawnAccentDust(Projectile.position, Projectile.width, Projectile.height, Projectile.velocity * 0.2f, 1.3f);
+            }
         }
         public override bool PreDraw(ref Color lightColor)
         {

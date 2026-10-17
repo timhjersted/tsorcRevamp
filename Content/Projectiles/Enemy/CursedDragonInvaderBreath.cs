@@ -30,6 +30,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.scale = 1f;
         }
 
+        // Powerful-curse telegraph: plum flames mixed into the orange stream. Runs after vanilla aiStyle 23 so the
+        // flamethrower motion is untouched; 1-in-3 per tick keeps the plum an accent, not the core colour.
+        private const int AccentDustChanceDenominator = 3;
+
+        public override void PostAI()
+        {
+            if (!Main.rand.NextBool(AccentDustChanceDenominator))
+            {
+                return;
+            }
+
+            PowerfulCurseBuildup.SpawnAccentDust(Projectile.position, Projectile.width, Projectile.height, Projectile.velocity * 0.4f, Main.rand.NextFloat(1.6f, 2.4f));
+        }
+
         public override bool PreKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = -0.2f }, Projectile.Center); // flamethrower puff

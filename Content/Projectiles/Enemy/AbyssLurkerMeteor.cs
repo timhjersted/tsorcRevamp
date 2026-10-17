@@ -239,7 +239,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<AbyssInferno>(), 4 * 60, false);
+            target.AddBuff(ModContent.BuffType<AbyssInferno>(), NPCs.Enemies.SuperHardMode.AbyssLurker.AbyssInfernoTicks, false);
+            target.AddBuff(ModContent.BuffType<Abyss>(), NPCs.Enemies.SuperHardMode.AbyssLurker.AbyssDebuffTicks, false);
         }
     }
 }

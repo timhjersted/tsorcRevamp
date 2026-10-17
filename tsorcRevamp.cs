@@ -2910,6 +2910,24 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.SyncAcidVenomLevel:
+                    {
+                        // Same shape as SyncPoisonLevel: owner → server carries [level]; server → clients carries [player][level].
+                        int playerIndex = whoAmI;
+
+                        if (Main.netMode == NetmodeID.MultiplayerClient)
+                        {
+                            playerIndex = reader.ReadByte();
+                        }
+
+                        int level = reader.ReadByte();
+
+                        if (playerIndex >= 0 && playerIndex < Main.maxPlayers)
+                        {
+                            Main.player[playerIndex].GetModPlayer<AcidVenomPlayer>().ReceiveLevel(level, whoAmI);
+                        }
+                        break;
+                    }
                 case tsorcPacketID.TeleportAllPlayers:
                     {
                         Vector2 targetLocation = reader.ReadVector2();
@@ -5296,6 +5314,8 @@ namespace tsorcRevamp
         public const byte SyncMiasmaState = 44;
         /// <summary>Owner client → server → other clients: the owner-authoritative poison meter value, display only.</summary>
         public const byte SyncPoisonLevel = 45;
+        /// <summary>Owner client → server → other clients: the owner-authoritative acid venom meter value, display only.</summary>
+        public const byte SyncAcidVenomLevel = 46;
     }
 
     //config moved to separate file

@@ -3684,7 +3684,7 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffbf00:{$CommonItemTooltip.RestoresLife}, with only {1} seconds of potion sickness.]
-					[c/ffbf00:Removes bleeding and poisoned.]
+					[c/ffbf00:Removes bleeding and poisoned, and clears poison buildup.]
 					A supply of these may be essential for exploring some areas.
 					Can still be used to remove poison and bleeding while under the
 					effect of potion sickness or being the [c/6d8827:Bearer of the Curse]. However, it will not heal any HP.
@@ -9427,6 +9427,15 @@ Mods: {
 					'''
 			}
 
+			AcidVenomBuildup: {
+				DisplayName: Acid Venom Buildup
+				Description:
+					'''
+					Acid venom buildup: {0}/{1}.
+					At {1}, you will be afflicted with acid venom for {2} seconds.
+					'''
+			}
+
 			MiasmaBuildup: {
 				DisplayName: Miasma Buildup
 				Description:
@@ -11417,6 +11426,10 @@ Mods: {
 			TeleportFireFlame.DisplayName: Teleport Fire Flame
 			EnemyEphemeralThrowingAxeProj.DisplayName: Enemy Ephemeral Throwing Axe Proj
 			BasiliskLeechTongue.DisplayName: Basilisk Leech Tongue
+			BasiliskAcidSpit.DisplayName: Acid Spit
+			BasiliskHypnoticDisrupter.DisplayName: Hypnotic Disrupter
+			BasiliskShifterBreath.DisplayName: Curse Breath
+			BasiliskHunterBreath.DisplayName: Curse Breath
 			FireLurkerMeteor.DisplayName: Fire Lurker Meteor
 			FireLurkerFlameOrb.DisplayName: Fire Lurker Flame Orb
 			EnemyCaltrop.DisplayName: Enemy Caltrop

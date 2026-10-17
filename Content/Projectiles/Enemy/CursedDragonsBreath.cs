@@ -26,6 +26,29 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.DamageType = DamageClass.Magic;
         }
 
+        // Powerful-curse telegraph: plum flames mixed into the orange stream, shown only once the breath actually builds
+        // powerful curse (Hunter + Rage slain, same gate as OnHitPlayer). MaxUpdates = 2 runs this twice a tick,
+        // so 1-in-6 per update is ~1-in-3 per tick.
+        private const int AccentDustChanceDenominator = 6;
+
+        public override void PostAI()
+        {
+            if (!Main.rand.NextBool(AccentDustChanceDenominator) || !BuildsPowerfulCurse())
+            {
+                return;
+            }
+
+            PowerfulCurseBuildup.SpawnAccentDust(Projectile.position, Projectile.width, Projectile.height, Projectile.velocity * 0.4f, Main.rand.NextFloat(1.6f, 2.4f));
+        }
+
+        private static bool BuildsPowerfulCurse()
+        {
+            bool hunterSlain = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>()));
+            bool rageSlain = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>()));
+
+            return hunterSlain && rageSlain;
+        }
+
         public override bool PreKill(int timeLeft)
         {
             Projectile.type = 85;
@@ -34,7 +57,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())) && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())))
+            if (BuildsPowerfulCurse())
             {
                 target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000);
             }

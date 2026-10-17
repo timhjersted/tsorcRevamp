@@ -50,6 +50,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 Main.dust[dust].noGravity = true;
             }
 
+            // Curse accent on every spear that builds curse (everything except the Blight arrow-flight mode).
+            bool buildsCurse = Projectile.ai[2] != ArrowFlightMode;
+            if (buildsCurse && Main.rand.NextBool(4))
+            {
+                CurseBuildup.SpawnAccentDust(Projectile.position, Projectile.width, Projectile.height, Projectile.velocity * 0.1f, 1.2f);
+            }
+
             // Sparse plague dust at the tip, Black Knight / Great Black Knight only (ai[2] == 1 is
             // RedKnight's empowered reuse of this class — left untouched). Very low frequency by
             // design; this is a flavour trace, not the main dust trail above.

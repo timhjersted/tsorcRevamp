@@ -42,7 +42,7 @@ namespace tsorcRevamp
                 Fill = player => CurseFill(player.GetModPlayer<tsorcRevampPlayer>().CurseLevel, 100f),
                 OverlayFill = player => CurseFill(player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel, 500f),
                 MainColor = new Color(248, 0, 118),
-                OverlayColor = new Color(146, 0, 138),
+                OverlayColor = PowerfulCurseBuildup.PowerfulCurseColor,
                 IconBuffType = () => ModContent.BuffType<CurseBuildup>(),
             },
             new StatusBarEntry
@@ -76,6 +76,12 @@ namespace tsorcRevamp
                 Fill = player => player.GetModPlayer<PoisonPlayer>().PoisonLevel / (float)PoisonBuildup.MaximumBuildup,
                 MainColor = PoisonPlayer.PoisonColor,
                 IconBuffType = () => ModContent.BuffType<PoisonBuildup>(),
+            },
+            new StatusBarEntry
+            {
+                Fill = player => player.GetModPlayer<AcidVenomPlayer>().VenomLevel / (float)AcidVenomBuildup.MaximumBuildup,
+                MainColor = AcidVenomPlayer.VenomColor,
+                IconBuffType = () => ModContent.BuffType<AcidVenomBuildup>(),
             },
         };
 

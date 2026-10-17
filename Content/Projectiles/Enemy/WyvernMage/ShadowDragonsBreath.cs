@@ -67,6 +67,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.WyvernMage
                     }
                 }
                 Projectile.ai[0] += 1f;
+
+                // Powerful-curse accent: plum flames through the purple shadow stream, ~1 tick in 3 once it is visible.
+                if (Main.rand.NextBool(3))
+                {
+                    PowerfulCurseBuildup.SpawnAccentDust(Projectile.position, Projectile.width, Projectile.height, Projectile.velocity * 0.3f, Main.rand.NextFloat(1.8f, 2.6f) * num152);
+                }
+
                 int num153 = 6;
                 if (Projectile.type == ModContent.ProjectileType<ShadowDragonsBreath>())
                 {

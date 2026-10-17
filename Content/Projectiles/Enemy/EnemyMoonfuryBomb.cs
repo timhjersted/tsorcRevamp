@@ -113,6 +113,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     Main.dust[dustIndex].noGravity = true;*/
                     // Main.dust[dustIndex].position = projectile.Center + new Vector2(0f, (float)(-(float)projectile.height / 2 - 6)).RotatedBy((double)projectile.rotation, default(Vector2)) * 1.1f;
                 }
+
+                // Curse accent: only non-Great-Black-Knight bombs build curse (the GBK's build Blight instead).
+                bool buildsCurse = !BlightBuildup.FromGreatBlackKnight(Projectile);
+                if (buildsCurse && Main.rand.NextBool(4))
+                {
+                    CurseBuildup.SpawnAccentDust(Projectile.position, Projectile.width, Projectile.height, Projectile.velocity * 0.2f, 1.2f);
+                }
             }
             Projectile.ai[0] += 1f;
             if (Projectile.ai[0] > 5f)

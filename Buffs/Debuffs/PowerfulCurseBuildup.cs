@@ -8,6 +8,27 @@ namespace tsorcRevamp.Buffs.Debuffs
 {
     public class PowerfulCurseBuildup : ModBuff
     {
+        // Plum overlay colour of the powerful-curse meter (sampled from CurseMeter_powerfulFull). Attacks that build
+        // powerful curse tint their VFX with it, so the telegraph matches the meter it fills.
+        public static readonly Color PowerfulCurseColor = new Color(146, 0, 138);
+
+        /// <summary>
+        /// Colour-code for attacks that build powerful curse: one plum flame mote (pink flame multiplied by
+        /// <see cref="PowerfulCurseColor"/>) layered over the attack's own palette. Regular curse uses the untinted
+        /// version, <see cref="CurseBuildup.SpawnAccentDust"/>. Callers roll their own chance. No-ops on the server.
+        /// </summary>
+        public static Dust SpawnAccentDust(Vector2 position, int width, int height, Vector2 velocity, float scale = 1.6f)
+        {
+            if (Main.dedServ)
+            {
+                return null;
+            }
+
+            Dust accent = Dust.NewDustDirect(position, width, height, DustID.PinkTorch, velocity.X, velocity.Y, 40, PowerfulCurseColor, scale);
+            accent.noGravity = true;
+            return accent;
+        }
+
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;

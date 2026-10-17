@@ -58,6 +58,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     int dustDeath = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 55, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 200, Color.White, 2f);
                     Main.dust[dustDeath].noGravity = true;
                 }
+
+                // Detonation: a ring of plum flames so the blast reads as powerful curse.
+                for (int i = 0; i < 8; i++)
+                {
+                    Vector2 burstVelocity = Main.rand.NextVector2Circular(5f, 5f);
+                    PowerfulCurseBuildup.SpawnAccentDust(Projectile.position, Projectile.width, Projectile.height, burstVelocity, 2.2f);
+                }
             }
             if (Projectile.frameCounter >= 182)
             {
@@ -70,6 +77,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, Projectile.alpha, Color.White, 2.0f);
                 Main.dust[dust].noGravity = true;
+            }
+
+            // Powerful-curse accent over the orange charge-up, ~1 tick in 4.
+            if (Main.rand.NextBool(4))
+            {
+                PowerfulCurseBuildup.SpawnAccentDust(Projectile.position, Projectile.width, Projectile.height, Vector2.Zero, 1.6f);
             }
         }
 

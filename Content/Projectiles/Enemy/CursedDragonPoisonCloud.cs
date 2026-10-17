@@ -71,6 +71,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 Dust d = Dust.NewDustPerfect(dustPos, DustID.Poisoned, Main.rand.NextVector2Circular(0.6f, 0.6f), 100, default, Main.rand.NextFloat(1.6f, 2.6f));
                 d.noGravity = true;
             }
+
+            // Powerful-curse accent: occasional plum flame inside the green rim, since lingering builds powerful curse.
+            if (Main.rand.NextBool(5))
+            {
+                Vector2 accentPosition = Projectile.Center + Main.rand.NextVector2Circular(radius * 0.8f, radius * 0.8f);
+                PowerfulCurseBuildup.SpawnAccentDust(accentPosition, 0, 0, Main.rand.NextVector2Circular(0.6f, 0.6f), Main.rand.NextFloat(1.4f, 2f));
+            }
             Lighting.AddLight(Projectile.Center, 0.12f, 0.22f, 0.08f);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)

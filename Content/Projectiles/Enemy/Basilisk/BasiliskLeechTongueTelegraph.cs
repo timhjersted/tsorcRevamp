@@ -4,13 +4,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Content.Projectiles.Enemy
+namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 {
     internal class BasiliskLeechTongueTelegraph : ModProjectile
     {
         public const int Duration = 45;
         private static readonly Vector2 TelegraphHeightOffset = new(0f, -10f);
-        public override string Texture => "tsorcRevamp/Content/Projectiles/Enemy/BasiliskLeechTongue";
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(BasiliskLeechTongue));
 
         public override void SetStaticDefaults()
         {

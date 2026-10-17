@@ -31,7 +31,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
             if (Projectile.ai[1] > 3)
             {
-                int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.PinkTorch, Projectile.velocity.X * 2f, Projectile.velocity.Y * 2f, 70, default(Color), Main.rand.NextFloat(2.8f, 4.3f));
+                // Plum-tinted pink flame: this breath builds powerful curse, so it wears that meter's colour.
+                int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.PinkTorch, Projectile.velocity.X * 2f, Projectile.velocity.Y * 2f, 70, PowerfulCurseBuildup.PowerfulCurseColor, Main.rand.NextFloat(2.8f, 4.3f));
                 Main.dust[dust].noGravity = true;
             }
 

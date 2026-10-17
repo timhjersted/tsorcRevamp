@@ -37,6 +37,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 50, Color.Chartreuse, 3.0f * scale);
             Main.dust[dust].noGravity = true;
+
+            // Powerful-curse accent: plum flames through the green stream, ~1 tick in 3.
+            if (Main.rand.NextBool(3))
+            {
+                PowerfulCurseBuildup.SpawnAccentDust(Projectile.position, Projectile.width, Projectile.height, Vector2.Zero, 2f * scale);
+            }
         }
 
         public override bool PreKill(int timeLeft)

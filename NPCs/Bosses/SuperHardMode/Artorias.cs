@@ -391,7 +391,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //
         // Cursebreaker (below 66% health)    Owl: Greatfire Breaker. Close band, weight 52, cooldown 250.
         // Tell:     45t authored = 60t. Strike is Heavy Chop's curve (13/26 k9, 30°/t, live 16.5t), 1.6x damage, 48px step-in.
-        // Impact:   the blade meets the floor ~18t in (92% of the sweep), and two curse waves leave his feet: 7 px/t for 640px,
+        // Impact:   the blade meets the floor ~18t in (92% of the sweep), and two shadow waves leave his feet: 7 px/t for 640px,
         //           armed after 12t. A player who rolled through the cut meets them >= 40t after the step began, after the
         //           earliest re-roll, so a jump (the wave is 42px tall) or a second roll answers them. Open: ~22t tail + 36t recovery.
         //
@@ -799,7 +799,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             base.OnMeleeComboAttackTick(combo, step, elapsed, total);
 
             // Cursebreaker: the tick the blade meets the floor (a fixed fraction of the step, so the phantom's faster tempo
-            // scales it) shakes the ground and throws a curse wave each way along it. Sound and shake run on every client;
+            // scales it) shakes the ground and throws a shadow wave each way along it. Sound and shake run on every client;
             // the waves, like all projectiles, are spawned by the server only.
             bool cursebreakerImpact = combo.Name == CursebreakerName
                 && elapsed == (int)Math.Round(total * CursebreakerImpactFraction);
@@ -2713,7 +2713,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int FlipBlazeDamage = 150;
         const float FlipBlazeSpeed = 5f;
 
-        // Piercing Dash opener slam: 600px cripple for 6 seconds, and a ChaosShockwave in its curse mode (ai[2] = 1) each way.
+        // Piercing Dash opener slam: 600px cripple for 6 seconds, and a ChaosShockwave in its shadow mode (ai[2] = 1) each way.
         const float PierceSlamCrippleRange = 600f;
         const int PierceSlamCrippleTicks = 6 * 60;
         const int CurseWaveDamage = 100; // Expert hit before defense; the wave also builds curse on top
@@ -4109,13 +4109,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Main.myPlayer, straightTicks, HomingVolleyCurveTicks);
         }
 
-        // ── Miasma Upswing: a rising underhand cut that throws one curse wave along the floor ───────────────────
+        // ── Miasma Upswing: a rising underhand cut that throws one shadow wave along the floor ───────────────────
         // Replaces the Boomerang Crescent. It runs on PuppetNPC's Boomerang phase machinery (swing telegraph, swing,
         // recovery), which Gwyn and Soul of Cinder share, so the phase and virtual names keep "Boomerang".
         //
         // Poses:    2.05 -> -1.55 (206° envelope) on Rising Slash's curve, 6/22 k5.5, 34°/t. The blade itself deals no damage.
         // Tell:     30t: blade dragged low and back, void motes converging on the tip (the shared boomerang charge VFX).
-        // Release:  tick 5.5 of 28, the peak. One curse ChaosShockwave leaves the floor 30px ahead: 7 px/t for 600px (86t).
+        // Release:  tick 5.5 of 28, the peak. One shadow ChaosShockwave leaves the floor 30px ahead: 7 px/t for 600px (86t).
         // Range:    200..560px. Past ~570px the wave dies before it reaches the target, so the move is not offered there.
         // Counter:  jump it (the wave is 42px tall, hugs the floor and climbs steps up to 3 tiles) or roll through it (it
         //           crosses a standing player in ~7t). Open: 22t tail + 50t recovery.

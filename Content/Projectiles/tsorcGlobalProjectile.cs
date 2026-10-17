@@ -823,7 +823,31 @@ namespace tsorcRevamp.Content.Projectiles
 
                 MiasmaBuildup.Apply(target, miasmaBuildup);
             }
+
+            // Basilisk "Poison Lob": vanilla DrakinShot is shared with Ancient Demons/knights, so only lobs whose synced
+            // SourceNPCType is a Basilisk add Acid Venom (on top of vanilla's own 5s Withered Weapon).
+            bool isDrakinShot = projectile.type == ProjectileID.DD2DrakinShot;
+            bool firedByBasilisk = SourceNPCType == ModContent.NPCType<NPCs.Enemies.Basilisk.BasiliskShifter>()
+                || SourceNPCType == ModContent.NPCType<NPCs.Enemies.Basilisk.BasiliskHunter>();
+
+            if (isDrakinShot && firedByBasilisk && info.Damage > 0)
+            {
+                target.AddBuff(BuffID.Venom, BasiliskLobAcidVenomTicks, false);
+            }
+
+            // Abyss Lurker's death Lost Soul: vanilla LostSoulHostile is shared, so key it off the synced SourceNPCType
+            // (EntitySource_Death is an EntitySource_Parent, so OnSpawn records the lurker) like every other lurker hit.
+            bool isLostSoul = projectile.type == ProjectileID.LostSoulHostile;
+            bool firedByAbyssLurker = SourceNPCType == ModContent.NPCType<NPCs.Enemies.SuperHardMode.AbyssLurker>();
+
+            if (isLostSoul && firedByAbyssLurker && info.Damage > 0)
+            {
+                target.AddBuff(ModContent.BuffType<AbyssInferno>(), NPCs.Enemies.SuperHardMode.AbyssLurker.AbyssInfernoTicks, false);
+                target.AddBuff(ModContent.BuffType<Abyss>(), NPCs.Enemies.SuperHardMode.AbyssLurker.AbyssDebuffTicks, false);
+            }
         }
+
+        public const int BasiliskLobAcidVenomTicks = 3 * 60;
 
         // Miasma buildup per Plantera projectile hit. Seed is also the fallback for any other Plantera shot.
         public const int PlanteraSeedMiasmaBuildup = 8;

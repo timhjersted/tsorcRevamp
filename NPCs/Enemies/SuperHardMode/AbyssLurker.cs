@@ -287,16 +287,21 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #endregion
 
         #region Debuffs
+        // Every Abyss Lurker hit drags the player into the Abyss (the Abyss debuff sets EnterTheAbyss) for this long.
+        // Shared by contact, AbyssLurkerFlameOrb, AbyssLurkerMeteor and the death Lost Soul (tsorcGlobalProjectile).
+        public const int AbyssDebuffTicks = 30 * 60;
+        // Abyssal Inferno on every hit, same set as above. 3s; it's a LongerExpertDebuff, so Expert/Master make it 6s.
+        public const int AbyssInfernoTicks = 3 * 60;
+        // Contact only, guaranteed. Vanilla doubles both in Expert/Master (LongerExpertDebuff).
+        private const int ContactBrokenArmorTicks = 3 * 60;
+        private const int ContactDarknessTicks = 3 * 60;
+
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(ModContent.BuffType<AbyssInferno>(), 4 * 60, false);
-
-            if (Main.rand.NextBool(8))
-            {
-                target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
-                target.AddBuff(BuffID.Darkness, 5 * 60, false);
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 360 * 60, false); //-20 life if counter hits 100
-            }
+            target.AddBuff(ModContent.BuffType<AbyssInferno>(), AbyssInfernoTicks, false);
+            target.AddBuff(ModContent.BuffType<Abyss>(), AbyssDebuffTicks, false);
+            target.AddBuff(BuffID.BrokenArmor, ContactBrokenArmorTicks, false);
+            target.AddBuff(BuffID.Darkness, ContactDarknessTicks, false);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -351,38 +356,5 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             condition.OnSuccess(drop);
             npcLoot.Add(condition);
         }
-
-        /*
-		#region Draw Projectile
-		static Texture2D spearTexture;
-		public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-		{
-			if (spearTexture == null || spearTexture.IsDisposed)
-			{
-				spearTexture = (Texture2D)ModContent.Request<Texture2D>("Projectiles/Enemy/EnemyBioSpitBall");
-			}
-			if (customAi1 >= 120)
-			{
-				Lighting.AddLight(npc.Center, Color.Green.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-				if (Main.rand.NextBool(3))
-				{
-					Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
-					Dust.NewDust(npc.position, npc.width, npc.height, DustID.IchorTorch, npc.velocity.X, npc.velocity.Y);
-				}
-
-				SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-				if (npc.spriteDirection == -1)
-				{
-					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 10), npc.scale, effects, 0); // facing left (8, 38 work)
-				}
-				else
-				{
-					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 13), npc.scale, effects, 0); // facing right, first value is height, higher number is higher, 2nd value is width axis
-				
-				}
-			}
-		}
-		#endregion
-		*/
     }
 }

@@ -10,6 +10,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Basilisk;
 
 namespace tsorcRevamp.NPCs.Enemies.Basilisk
 {
@@ -59,9 +60,9 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             BannerItem = ModContent.ItemType<Banners.BasiliskWalkerBanner>();
             // "Bio Spit" — aimed acid glob. commitFraction 0.5: the flash→fire tell is half cancellable (poise-stagger
             // can interrupt the windup), half committed (hyperarmor). telegraphTime 40 gives a readable stun window.
-            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<EnemyBioSpitBall>(), bioSpitDamage, 8, SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, telegraphColor: Color.GreenYellow, telegraphTime: 40, commitFraction: 0.5f, lockAimAtTelegraph: true);
+            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<BasiliskAcidSpit>(), bioSpitDamage, 8, SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, telegraphColor: Color.GreenYellow, telegraphTime: 40, commitFraction: 0.5f, lockAimAtTelegraph: true);
             // "Hypnotic Disrupter" — rare heavy lob (longer tell)
-            UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, weight: 0.08f, telegraphColor: Color.Purple, telegraphTime: 50, commitFraction: 0.5f, lockAimAtTelegraph: true);
+            UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<BasiliskHypnoticDisrupter>(), hypnoticDisruptorDamage, 3, SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, weight: 0.08f, telegraphColor: Color.Purple, telegraphTime: 50, commitFraction: 0.5f, lockAimAtTelegraph: true);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.MaxJumpPower = 9f;
@@ -226,8 +227,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 return;
             }
 
-            int bioSpitType = ModContent.ProjectileType<EnemyBioSpitBall>();
-            int disruptorType = ModContent.ProjectileType<HypnoticDisrupter>();
+            int bioSpitType = ModContent.ProjectileType<BasiliskAcidSpit>();
+            int disruptorType = ModContent.ProjectileType<BasiliskHypnoticDisrupter>();
             if (globalNPC.CurrentAttack.type == bioSpitType)
             {
                 BasiliskHeldProjectileDraw.Draw(NPC, spriteBatch, drawColor, bioSpitType, Color.GreenYellow);
@@ -238,23 +239,15 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             }
         }
         #region Debuffs
+        // Contact bite: a short poison tick every hit, plus poison buildup (a full 100 meter = 60s of Poisoned, see
+        // PoisonBuildup). Curse comes only from the leech tongue now (BasiliskLeechTongue).
+        private const int ContactPoisonedTicks = 2 * 60;
+        private const int ContactPoisonBuildup = 40;
+
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(BuffID.Hunter, 3 * 60, false);
-
-            if (Main.rand.NextBool(2))
-            {
-                target.AddBuff(BuffID.Poisoned, 5 * 60, false);
-            }
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead)))
-            {
-                CurseBuildup.ApplyExplicit(target, 5, 300 * 60); //-20 life if counter hits 100
-            }
-            if (Main.rand.NextBool(10))
-            {
-                target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
-            }
-
+            target.AddBuff(BuffID.Poisoned, ContactPoisonedTicks, false);
+            PoisonBuildup.Apply(target, ContactPoisonBuildup);
         }
         #endregion
 

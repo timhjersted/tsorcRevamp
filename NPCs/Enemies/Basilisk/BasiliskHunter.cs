@@ -10,6 +10,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Basilisk;
 using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Enemies.Basilisk
@@ -237,14 +238,15 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 }
 
                 NPC.velocity = Vector2.Zero;
-                Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
+                // Plum wind-up: the breath builds powerful curse, so the tell uses that meter's colour.
+                Lighting.AddLight(NPC.Center, PowerfulCurseBuildup.PowerfulCurseColor.ToVector3() * 3f);
 
                 if (Main.rand.NextBool(2))
                 {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 1f);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 1f);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 2f);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 2f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.VilePowder, 0, 0, 50, PowerfulCurseBuildup.PowerfulCurseColor, 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.VilePowder, 0, 0, 50, PowerfulCurseBuildup.PowerfulCurseColor, 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, 0, 0, 50, PowerfulCurseBuildup.PowerfulCurseColor, 2f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, 0, 0, 50, PowerfulCurseBuildup.PowerfulCurseColor, 2f);
                 }
             }
             if (NPC.localAI[2] == BreathCommitTime && !desperate)
@@ -257,7 +259,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             if (breath)
             {
                 NPC.velocity = Vector2.Zero;
-                Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 3f);
+                Lighting.AddLight(NPC.Center, PowerfulCurseBuildup.PowerfulCurseColor.ToVector3() * 3f);
 
                 if (breathCD % 20 == 0)
                 {
@@ -266,7 +268,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, NPC.velocity.X * 3f + Main.rand.Next(-2, 2), NPC.velocity.Y * 3f + Main.rand.Next(-2, 2), ModContent.ProjectileType<EnemyCursedBreath>(), cursedFlamesDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, NPC.velocity.X * 3f + Main.rand.Next(-2, 2), NPC.velocity.Y * 3f + Main.rand.Next(-2, 2), ModContent.ProjectileType<BasiliskHunterBreath>(), cursedFlamesDamage, 0f, Main.myPlayer);
                 }
                 NPC.netUpdate = true;
 
@@ -424,7 +426,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             if (!Collision.CanHitLine(NPC.Center, 0, 0, targetPosition, 0, 0)) return;
 
             Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 10);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<BasiliskAcidSpit>(), bioSpitDamage, 5f, Main.myPlayer);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = wounded ? 0.5f : -0.5f }, NPC.Center);
         }
 
@@ -432,7 +434,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         {
             Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, GetLockedTargetPosition(player), 8);
             speed += Main.rand.NextVector2Circular(-6, -2);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyBioSpitBall>(), bioSpitfinalDamage, 5f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<BasiliskAcidSpit>(), bioSpitfinalDamage, 5f, Main.myPlayer);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = 0.2f }, NPC.Center);
         }
 
@@ -440,7 +442,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         {
             Vector2 targetPosition = GetDisrupterTargetPosition(player, shotIndex);
             Vector2 projectileVelocity = GetDisrupterLaunchVelocity(shotIndex);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<HypnoticDisrupter>(), disruptDamage, 5f, Main.myPlayer, targetPosition.X, -targetPosition.Y);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<BasiliskHypnoticDisrupter>(), disruptDamage, 5f, Main.myPlayer, targetPosition.X, -targetPosition.Y);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.8f, Pitch = -0.2f }, NPC.Center);
         }
 
@@ -588,7 +590,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         {
             for (int i = 0; i < 18; i++)
             {
-                Dust dust = Dust.NewDustPerfect(center + Main.rand.NextVector2Circular(NPC.width / 2f, NPC.height / 2f), DustID.CursedTorch, Main.rand.NextVector2Circular(3f, 3f), 100, Color.GreenYellow, 1.5f);
+                Dust dust = Dust.NewDustPerfect(center + Main.rand.NextVector2Circular(NPC.width / 2f, NPC.height / 2f), DustID.PinkTorch, Main.rand.NextVector2Circular(3f, 3f), 100, PowerfulCurseBuildup.PowerfulCurseColor, 1.5f);
                 dust.noGravity = true;
             }
         }
@@ -608,8 +610,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             return lockedAttack switch
             {
                 0 => ProjectileID.DD2DrakinShot,
-                4 => ModContent.ProjectileType<HypnoticDisrupter>(),
-                _ => ModContent.ProjectileType<EnemyBioSpitBall>()
+                4 => ModContent.ProjectileType<BasiliskHypnoticDisrupter>(),
+                _ => ModContent.ProjectileType<BasiliskAcidSpit>()
             };
         }
 
@@ -670,20 +672,16 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         #endregion
 
         #region Debuffs
+        // Contact bite: a short poison tick every hit, plus poison buildup (a full 100 meter = 60s of Poisoned, see
+        // PoisonBuildup). Broken Armor and curse come from the leech tongue and the breath now.
+        private const int ContactPoisonedTicks = 5 * 60;
+        private const int ContactPoisonBuildup = 40;
+
+        // Debuffs go on `target` (the player actually bitten), not the `player` property, which is NPC.target.
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(36, 600, false); //broken armor
-            player.AddBuff(20, 1800, false); //poisoned
-            player.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 life if counter hits 100
-
-            if (Main.rand.NextBool(2))
-            {
-
-                player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1800, false);
-
-            }
-
-
+            target.AddBuff(BuffID.Poisoned, ContactPoisonedTicks, false);
+            PoisonBuildup.Apply(target, ContactPoisonBuildup);
         }
         #endregion
 

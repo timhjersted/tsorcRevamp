@@ -10,6 +10,23 @@ namespace tsorcRevamp.Buffs.Debuffs
     {
         public const int DefaultBuildupPerHit = 35;
 
+        /// <summary>
+        /// Colour-code for attacks that build curse: one bright-pink flame mote layered over the attack's own palette.
+        /// Untinted PinkTorch is the regular-curse pink; powerful curse uses <see cref="PowerfulCurseBuildup.SpawnAccentDust"/>
+        /// (same flame, plum-tinted). Callers roll their own chance. Visual only, so it no-ops on the server.
+        /// </summary>
+        public static Dust SpawnAccentDust(Vector2 position, int width, int height, Vector2 velocity, float scale = 1.4f)
+        {
+            if (Main.dedServ)
+            {
+                return null;
+            }
+
+            Dust accent = Dust.NewDustDirect(position, width, height, DustID.PinkTorch, velocity.X, velocity.Y, 60, default, scale);
+            accent.noGravity = true;
+            return accent;
+        }
+
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;

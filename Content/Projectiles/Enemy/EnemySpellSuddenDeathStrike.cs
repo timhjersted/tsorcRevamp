@@ -46,6 +46,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 Main.dust[dust].velocity *= 0.3f;
             }
             if (!Main.dedServ) Lighting.AddLight(Projectile.Center, 0.35f, 0.15f, 0.5f);
+
+            // Blight accent: every caster's strike builds Blight now, so the non-GBK shadowflame sigils carry black
+            // wraith wisps too (the GBK's palette above is already wraith-black and gold).
+            bool blightPalette = BlightBuildup.FromGreatBlackKnight(Projectile);
+            if (!Main.dedServ && !blightPalette && Main.rand.NextBool(2))
+            {
+                Dust wraith = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Wraith, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1.3f);
+                wraith.noGravity = true;
+                wraith.velocity *= 0.3f;
+            }
         }
         #endregion
 
@@ -72,8 +82,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (BlightBuildup.FromGreatBlackKnight(Projectile)) BlightBuildup.Apply(target);
-            else target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000);
+            // Blight from every caster (was powerful curse unless the Great Black Knight cast it).
+            BlightBuildup.Apply(target);
             target.AddBuff(BuffID.Silenced, 120);
             target.AddBuff(BuffID.Weak, 600);
         }

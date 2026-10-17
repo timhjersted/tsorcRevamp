@@ -10,6 +10,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Basilisk;
 using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Enemies.Basilisk
@@ -186,14 +187,14 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 breathVel = GetConeLimitedBreathVelocity(player, 9f) + Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<EnemyCursedBreathCollides>(), cursedBreathDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<BasiliskShifterBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
                     NPC.ai[3] = 0; // no teleporting mid-breath
                 }
             }
-            if (breathTimer > 360 && breathTimer <= 480 && !lowHP) // shrinking-ring telegraph
+            if (breathTimer > 360 && breathTimer <= 480 && !lowHP) // shrinking-ring telegraph, plum = powerful curse breath
             {
-                UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 120)), DustID.CursedTorch, 48, 4);
-                Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 5);
+                UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 120)), DustID.PinkTorch, 48, 4);
+                Lighting.AddLight(NPC.Center, PowerfulCurseBuildup.PowerfulCurseColor.ToVector3() * 5);
             }
             if (breathTimer == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -332,7 +333,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         private void FireSpit(Player player)
         {
             Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, GetLockedTargetPosition(player), 9);
-            int p = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
+            int p = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<BasiliskAcidSpit>(), bioSpitDamage, 0f, Main.myPlayer);
             Main.projectile[p].timeLeft = 300;
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
         }
@@ -340,7 +341,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         private void FireFinal(Player player)
         {
             Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, GetLockedTargetPosition(player), 10);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<BasiliskAcidSpit>(), bioSpitDamage, 0f, Main.myPlayer);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.1f }, NPC.Center);
         }
 
@@ -348,7 +349,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         {
             Vector2 targetPosition = GetDisrupterTargetPosition(player, shotIndex);
             Vector2 velocity = GetDisrupterLaunchVelocity(targetPosition, shotIndex);
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<HypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer, targetPosition.X, -targetPosition.Y);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<BasiliskHypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer, targetPosition.X, -targetPosition.Y);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, player.Center);
         }
 
@@ -458,8 +459,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             return lockedAttack switch
             {
                 0 => ProjectileID.DD2DrakinShot,
-                3 => ModContent.ProjectileType<HypnoticDisrupter>(),
-                _ => ModContent.ProjectileType<EnemyBioSpitBall>()
+                3 => ModContent.ProjectileType<BasiliskHypnoticDisrupter>(),
+                _ => ModContent.ProjectileType<BasiliskAcidSpit>()
             };
         }
 
@@ -516,19 +517,15 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         #endregion
 
         #region Debuffs
+        // Contact bite: a short poison tick every hit, plus poison buildup (a full 100 meter = 60s of Poisoned, see
+        // PoisonBuildup). Broken Armor and curse come only from the leech tongue now (BasiliskLeechTongue).
+        private const int ContactPoisonedTicks = 3 * 60;
+        private const int ContactPoisonBuildup = 40;
+
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 life if counter hits 100
-            target.AddBuff(BuffID.Poisoned, 10 * 60, false);
-
-            if (Main.rand.NextBool(2))
-            {
-                target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
-            }
-            if (Main.rand.NextBool(4))
-            {
-                target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 300 * 60, false);
-            }
+            target.AddBuff(BuffID.Poisoned, ContactPoisonedTicks, false);
+            PoisonBuildup.Apply(target, ContactPoisonBuildup);
         }
         #endregion
 

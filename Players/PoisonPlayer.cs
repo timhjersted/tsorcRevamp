@@ -57,6 +57,20 @@ namespace tsorcRevamp
             SendLevel();
         }
 
+        // Cures (Bloodred Moss Clump) empty the meter. Owner-only like AddBuildupLocal; the reset is relayed at once.
+        internal void ClearBuildupLocal()
+        {
+            if (Player.whoAmI != Main.myPlayer || PoisonLevel <= 0)
+            {
+                return;
+            }
+
+            PoisonLevel = 0;
+            decayTimer = 0;
+            Player.ClearBuff(ModContent.BuffType<PoisonBuildup>());
+            SendLevel();
+        }
+
         // Client → server: [level]. Server → other clients: [player][level].
         private void SendLevel(int toWho = -1, int ignoreClient = -1)
         {

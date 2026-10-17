@@ -41,6 +41,9 @@ namespace tsorcRevamp.Content.Items.Potions
                 buffIndex++;
             }
 
+            // Also empties the poison buildup meter, so the next poison hit after curing doesn't instantly re-trigger Poisoned.
+            player.GetModPlayer<PoisonPlayer>().ClearBuildupLocal();
+
             // Tier-aware heal: Classic full, Unkindled half, BotC zero.
             // (Bleed/poison cure above always runs regardless of tier.)
             if (!player.HasBuff(BuffID.PotionSickness))

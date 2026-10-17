@@ -15,8 +15,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
     ///position IS the hitbox — it travels at the wave's leading edge, so touching it anywhere is touching
     ///the danger.
     ///Hugs the terrain (steps up/down small ledges); dies against walls taller than 3 tiles.
-    ///ai[2] >= 1 is the CURSE variant Artorias reuses (Piercing Dash opener, Cursebreaker, Miasma Upswing): keeps the caller's
-    ///spawn damage instead of the flat hazard damage, builds Curse instead of staggering, and runs abyss-purple/grey smoke dust
+    ///ai[2] >= 1 is the SHADOW variant Artorias reuses (Piercing Dash opener, Cursebreaker, Miasma Upswing): keeps the caller's
+    ///spawn damage instead of the flat hazard damage, applies Weight of Shadow instead of staggering, and runs abyss-purple/grey smoke dust
     ///instead of shadowflame. Exactly 1 keeps the default run; a larger value is the run in px (Miasma Upswing passes 600).
     ///</summary>
     class ChaosShockwave : ModProjectile
@@ -29,14 +29,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
         const int ImpactDamage = 25;     //flat, not NPC.damage-scaled: this is a battlefield hazard, not a nuke
         const int StaggerTicks = 60;     //1 second
 
-        const int CurseBuildupBuffTicks = 300 * 60; // long, like every other CurseBuildup source: ReApply accumulates per hit
+        const int WeightOfShadowTicks = 3 * 60; // fixed 3s: Weight of Shadow is not a LongerExpertDebuff, so Expert does not stretch it
 
         int Direction => (int)Projectile.ai[0] >= 0 ? 1 : -1;
         int ArmDelay => (int)Projectile.ai[1];
-        bool CurseVariant => Projectile.ai[2] >= 0.5f;
+        bool ShadowVariant => Projectile.ai[2] >= 0.5f;
         bool Armed => Projectile.localAI[0] > ArmDelay;
 
-        // Ticks the wave crawls after arming. A curse wave whose ai[2] is above 1 carries its run in px, converted at WaveSpeed.
+        // Ticks the wave crawls after arming. A shadow wave whose ai[2] is above 1 carries its run in px, converted at WaveSpeed.
         int TravelTicks
         {
             get
@@ -67,9 +67,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
         {
             Projectile.timeLeft = ArmDelay + TravelTicks;
 
-            // Runs after NewProjectile assigns the passed NPC.damage/6 value, so this is the last word. The curse variant's
+            // Runs after NewProjectile assigns the passed NPC.damage/6 value, so this is the last word. The shadow variant's
             // caller already passed its own (difficulty-converted) damage.
-            if (!CurseVariant)
+            if (!ShadowVariant)
             {
                 Projectile.damage = ImpactDamage;
             }
@@ -82,9 +82,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (CurseVariant)
+            if (ShadowVariant)
             {
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), CurseBuildupBuffTicks, false);
+                target.AddBuff(ModContent.BuffType<WeightOfShadow>(), WeightOfShadowTicks, false);
                 return;
             }
 
@@ -115,10 +115,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
                 return;
             }
 
-            //The wave itself: dark fire geysers erupting from the ground as it passes (curse variant: abyss-purple flame + grey smoke)
+            //The wave itself: dark fire geysers erupting from the ground as it passes (shadow variant: abyss-purple flame + grey smoke)
             int geyserDustType = DustID.Shadowflame;
             int emberDustType = DustID.DemonTorch;
-            if (CurseVariant)
+            if (ShadowVariant)
             {
                 geyserDustType = DustID.PurpleTorch;
                 emberDustType = DustID.Smoke;

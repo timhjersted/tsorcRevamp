@@ -7,8 +7,11 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.NPCs.Enemies.Basilisk;
 
-namespace tsorcRevamp.Content.Projectiles.Enemy
+namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 {
     internal class BasiliskLeechTongue : ModProjectile
     {
@@ -35,8 +38,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         private const float HeadAttachOffset = 10f;
         private const float TongueSegmentSpacing = 8f;
         private const int GrabPadding = 18;
+        // Curse meter is 100 and decays 1/s, so 1 stack every 2 ticks fills it in ~3.4s of continuous suck.
+        private const int CurseBuildupIntervalTicks = 2;
+        private const int CurseBuildupPerInterval = 1;
+        private const int CurseBuildupMarkerTicks = 300 * 60;
+        // 5s; Expert/Master's LongerExpertDebuff doubles Broken Armor to 10s.
+        private const int AttachBrokenArmorTicks = 5 * 60;
 
         private int targetWho = -1;
+        // Victim-client-only debuff bookkeeping; deliberately not synced (see AttachedAI).
+        private bool attachDebuffsApplied;
+        private int curseBuildupTimer;
         private int attachLife;
         private int launchTimer;
         private int drainTimer;
@@ -85,6 +97,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             else
             {
                 Projectile.rotation = 0f;
+            }
+
+            if ((int)Projectile.ai[1] != StateAttached)
+            {
+                attachDebuffsApplied = false;
+                curseBuildupTimer = 0;
             }
             AnimateSucker();
 
@@ -194,7 +212,44 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
             Projectile.Center = GetPlayerHeadAnchor(player);
             Projectile.velocity = Vector2.Zero;
-            player.AddBuff(BuffID.Blackout, 60, false);
+
+            // Suck debuffs, per owner. Applied only on the victim's own client: buffs are owner-synced by vanilla, and
+            // the curse meter is client-local. Walker: curse only (after EoW). Shifter/Hunter: blackout, a one-time
+            // Broken Armor on the grab, and curse. attachDebuffsApplied is local and resets whenever not attached.
+            if (player.whoAmI == Main.myPlayer)
+            {
+                bool isWalker = owner.type == ModContent.NPCType<BasiliskWalker>();
+                bool curseUnlocked = !isWalker || tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead));
+
+                if (!isWalker)
+                {
+                    player.AddBuff(BuffID.Blackout, 60, false);
+                }
+
+                if (!isWalker && !attachDebuffsApplied)
+                {
+                    player.AddBuff(BuffID.BrokenArmor, AttachBrokenArmorTicks, false);
+                }
+                attachDebuffsApplied = true;
+
+                curseBuildupTimer++;
+                if (curseUnlocked && curseBuildupTimer >= CurseBuildupIntervalTicks)
+                {
+                    curseBuildupTimer = 0;
+
+                    // Add straight to the meter while the marker buff is up: going through AddBuff every 2 ticks
+                    // would run CurseBuildup.ReApply, which bursts 10 dusts per call. ApplyExplicit starts the meter.
+                    int curseType = ModContent.BuffType<CurseBuildup>();
+                    if (player.HasBuff(curseType))
+                    {
+                        player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += CurseBuildupPerInterval;
+                    }
+                    else
+                    {
+                        CurseBuildup.ApplyExplicit(player, CurseBuildupPerInterval, CurseBuildupMarkerTicks);
+                    }
+                }
+            }
 
             hurtSoundTimer++;
             if (hurtSoundTimer >= HurtSoundInterval)
@@ -574,7 +629,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         private void DrawTongue(Vector2 start, Vector2 end)
         {
-            Texture2D segmentTexture = ModContent.Request<Texture2D>("tsorcRevamp/Content/Projectiles/Enemy/BasiliskTonque").Value;
+            Texture2D segmentTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(BasiliskLeechTongue)) + "_Segment").Value;
             Vector2 direction = end - start;
             Vector2 normal = direction.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2);
 
