@@ -17,5 +17,6 @@ tsorcRevamp.sln
 .agents/**/bin/
 .agents/**/obj/
 /docs
-AGENTS.md
 /.scratch
+AGENTS.md
+/.vscode

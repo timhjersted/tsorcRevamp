@@ -3249,6 +3249,10 @@ namespace tsorcRevamp.NPCs
             {
                 SummonTagScalingDamage += DetonationSignal.SummonTagScalingDamage / 100f;
             }
+            if (markedBySupremeDragoonLash)
+            {
+                SummonTagCriticalStrikeChance += SupremeDragoonLash.SummonTagCrit;
+            }
             #endregion
             #region Vanilla Whips
             if (markedByLeatherWhip)

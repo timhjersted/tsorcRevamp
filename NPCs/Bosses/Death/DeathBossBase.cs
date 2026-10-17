@@ -1591,6 +1591,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             // Stop dealing contact damage while the boss brakes back into the player orbit.
             NPC.damage = 0;
             MovePhaseTwoWeak5Return(target);
+            FacePhaseOneTarget(target);
             float finalRotation = phaseTwoSickleBaseRotation
                 + spinDirection * MathHelper.TwoPi * PhaseTwoWeak5SwingCycles
                 + spinDirection * MathHelper.Pi * fadeProgress;
@@ -1785,6 +1786,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
                 else
                 {
                     MovePhaseTwoOnCircle(target);
+                    FacePhaseOneTarget(target);
                     if (PhaseTwoStrong5SnapsThenHolds && elapsed >= Strong5LeadInSlowdownTicks)
                     {
                         // Ease the orbit to a stop instead of cutting it dead at the full second.

@@ -46,7 +46,6 @@ namespace tsorcRevamp.Buffs.Debuffs
             if (player.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
                 LastTickSoundsSettings(out float soundVolume);
-                // Marf forgot the null check; adding it.
                 if (!string.IsNullOrEmpty(LastTickSoundPath) && !LastTickSoundPath.StartsWith("tsorcRevamp/"))
                 {
                     LastTickSoundPath = "tsorcRevamp/" + LastTickSoundPath;

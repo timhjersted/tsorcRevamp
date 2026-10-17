@@ -215,7 +215,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Ahri.Bases
                 if (Full)
                 {
                     float healDivisor = OrbOfDeception.HealManaDivisor;
-                    if (player.HasBuff(ModContent.BuffType<ArcaneSorcery>()))
+                    if (player.GetModPlayer<ArcaneSorceryPlayer>().ArcaneSorcerer)
                     {
                         healDivisor += ArcaneSorceryPlayer.MaxManaAmplifier;
                     }
