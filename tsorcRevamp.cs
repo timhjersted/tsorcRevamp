@@ -94,6 +94,7 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Hammers;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon.NullSpriteStaff;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
@@ -109,7 +110,6 @@ using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 using tsorcRevamp.Content.Projectiles.Summon;
 using tsorcRevamp.Content.Projectiles.Summon.Archer;
 using tsorcRevamp.Content.Projectiles.Summon.EtherianWyvern;
-using tsorcRevamp.Content.Projectiles.Summon.NullSprite;
 using tsorcRevamp.Content.Projectiles.Summon.Phoenix;
 using tsorcRevamp.Content.Projectiles.Summon.PhotonicDownpour;
 using tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles;
@@ -3198,11 +3198,11 @@ namespace tsorcRevamp
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
-                    ModContent.ItemType<NullSpriteStaff>(),
+                    ModContent.ItemType<NullSpriteStaffItem>(),
                     ModContent.BuffType<NullSpriteBuff>(),
                     new Dictionary<string, object>()
                     {
-                        ["ProjID"] = ModContent.ProjectileType<NullSprite>(),
+                        ["ProjID"] = ModContent.ProjectileType<NullSpriteProj>(),
                         ["Slot"] = 0.75f,
                     }
                     );

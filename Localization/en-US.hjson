@@ -7422,13 +7422,14 @@ Mods: {
 					'''
 			}
 
-			NullSpriteStaff: {
+			NullSpriteStaffItem: {
 				DisplayName: Null Sprite Staff
 				Tooltip:
 					'''
 					Summons a null sprite to fight for you
-					Null sprites apply dissolving, a debuff that increases
-					damage taken from all sources by {0}%
+					Null sprites apply a stacking debuff for {0} seconds each hit,
+					with each stack increasing damage dealt by {1}%
+					Prior stack durations are not refreshed on-hit
 					'''
 			}
 
@@ -10599,6 +10600,11 @@ Mods: {
 				DisplayName: Severing Dusk Buff
 				Description: The blade's damage is increased
 			}
+
+			NullSpriteDissolving: {
+				DisplayName: Null Sprite Dissolving
+				Description: Mods.tsorcRevamp.Buffs.NullSpriteDissolving.Description
+			}
 		}
 
 		Projectiles: {
@@ -11104,7 +11110,7 @@ Mods: {
 			FriendlyRetinazer.DisplayName: Friendly Retinazer
 			FriendlySpazmatism.DisplayName: Friendly Spazmatism
 			FriendlyTetsujinLaser.DisplayName: Friendly Tetsujin Laser
-			NullSprite.DisplayName: Null Sprite
+			NullSpriteProj.DisplayName: Null Sprite
 			PhoenixProjectile.DisplayName: Phoenix Juvenile
 			CenterOfTheUniverseStar.DisplayName: Center of the Universe Star
 			CenterOfTheUniverseStellarNova.DisplayName: Center of the Universe Stellar Nova
@@ -11633,6 +11639,8 @@ Mods: {
 			ShadowNinjaPoisonArrow.DisplayName: Shadow Ninja Poison Arrow
 			ShadowNinjaStarProj.DisplayName: Shadow Ninja Star Proj
 			ArtoriasCurseCloud.DisplayName: Artorias Curse Cloud
+			MiasmaBreathPuff.DisplayName: Miasma Breath Puff
+			EaterToxicOoze.DisplayName: Eater Toxic Ooze
 		}
 
 		NPCs: {
@@ -12145,7 +12153,6 @@ Mods: {
 			ManHunter.DisplayName: Man Hunter
 			MarilithSeeker.DisplayName: Marilith Seeker
 			MarilithSpiritTwin.DisplayName: Marilith Spirit Twin
-
 			MutantToad.DisplayName: Mutant Toad
 			Necromancer.DisplayName: Necromancer
 			FallenNecromancer.DisplayName: Fallen Necromancer
@@ -14252,19 +14259,26 @@ Mods: {
 
 LegacyInterface.38: YOU DIED
 
-// Vanilla display-name overrides: Plantera is presented as the Verdurous Monarch. Overriding the vanilla keys (rather than
-// GlobalNPC.ModifyTypeName) also reaches the "has awoken!" net message, boss bar, bestiary, items and map tooltip.
-NPCName.Plantera: Verdurous Monarch
-NPCName.PlanterasHook: Monarch's Hook
-NPCName.PlanterasTentacle: Monarch's Tentacle
+NPCName: {
+	// Vanilla display-name overrides: Plantera is presented as the Verdurous Monarch. Overriding the vanilla keys (rather than
+	// GlobalNPC.ModifyTypeName) also reaches the "has awoken!" net message, boss bar, bestiary, items and map tooltip.
+	Plantera: Verdurous Monarch
+	PlanterasHook: Monarch's Hook
+	PlanterasTentacle: Monarch's Tentacle
+}
+
 MapObject.PlanterasBulb: Monarch's Bulb
-ItemName.PlanteraTrophy: Verdurous Monarch Trophy
-ItemName.PlanteraMask: Verdurous Monarch Mask
-ItemName.PlanteraMasterTrophy: Verdurous Monarch Relic
-ItemName.PlanteraBossBag: Treasure Bag (Verdurous Monarch)
-ItemName.MusicBoxPlantera: Music Box (Verdurous Monarch)
-ItemName.MusicBoxOWPlantera: Otherworldly Music Box (Verdurous Monarch)
-ItemName.PlanteraPetItem: Monarch Seedling
+
+ItemName: {
+	PlanteraTrophy: Verdurous Monarch Trophy
+	PlanteraMask: Verdurous Monarch Mask
+	PlanteraMasterTrophy: Verdurous Monarch Relic
+	PlanteraBossBag: Treasure Bag (Verdurous Monarch)
+	MusicBoxPlantera: Music Box (Verdurous Monarch)
+	MusicBoxOWPlantera: Otherworldly Music Box (Verdurous Monarch)
+	PlanteraPetItem: Monarch Seedling
+}
+
 ItemTooltip.PlanteraPetItem:
 	'''
 	Summons a newly sprouted Verdurous Monarch
@@ -14273,5 +14287,8 @@ ItemTooltip.PlanteraPetItem:
 BuffName.PlanteraPet: Monarch Seedling
 Bestiary_ItemDropConditions.YoyosKraken: Drops after defeating the Verdurous Monarch
 Achievements.THE_GREAT_SOUTHERN_PLANTKILL_Description: Defeat the Verdurous Monarch, the overgrown monstrosity of the jungle's depths.
-Conditions.DownedPlantera: After defeating the Verdurous Monarch
-Conditions.NotDownedPlantera: Before defeating the Verdurous Monarch
+
+Conditions: {
+	DownedPlantera: After defeating the Verdurous Monarch
+	NotDownedPlantera: Before defeating the Verdurous Monarch
+}

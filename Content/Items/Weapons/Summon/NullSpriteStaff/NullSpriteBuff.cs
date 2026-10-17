@@ -1,9 +1,7 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Weapons.Summon;
-using tsorcRevamp.Content.Projectiles.Summon.NullSprite;
 
-namespace tsorcRevamp.Buffs.Weapons.Summon
+namespace tsorcRevamp.Content.Items.Weapons.Summon.NullSpriteStaff
 {
     public class NullSpriteBuff : ModBuff
     {
@@ -16,12 +14,12 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
-            if (player.HeldItem.type == ModContent.ItemType<NullSpriteStaff>())
+            if (player.HeldItem.type == ModContent.ItemType<NullSpriteStaffItem>())
             {
                 player.maxMinions += 1;
             }
 
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<NullSprite>()] > 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<NullSpriteProj>()] > 0)
             {
                 player.buffTime[buffIndex] = 18000;
             }

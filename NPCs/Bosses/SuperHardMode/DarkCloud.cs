@@ -18,6 +18,7 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Guns;
 using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon.NullSpriteStaff;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.DarkCloud;
@@ -2128,7 +2129,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MoonlightGreatsword>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<RadiantStrand>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SunderedMoon>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<NullSpriteStaff>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<NullSpriteStaffItem>()));
             npcLoot.Add(notExpertCondition);
         }
 

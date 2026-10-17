@@ -36,6 +36,7 @@ using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Summon.NullSpriteStaff;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Content.Items.BossBags
@@ -626,7 +627,7 @@ namespace tsorcRevamp.Content.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.MoonlightGreatsword>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.Bows.RadiantStrand>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SunderedMoon>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.NullSpriteStaff>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<NullSpriteStaffItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 2000, 2500));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GuardianSoul>(), 1, 5, 10));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));

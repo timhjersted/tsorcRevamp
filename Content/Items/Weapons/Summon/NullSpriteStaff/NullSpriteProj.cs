@@ -5,9 +5,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 
-namespace tsorcRevamp.Content.Projectiles.Summon.NullSprite
+namespace tsorcRevamp.Content.Items.Weapons.Summon.NullSpriteStaff
 {
-    public class NullSprite : ModProjectile
+    public class NullSpriteProj : ModProjectile
     {
 
         public override void SetStaticDefaults()
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.NullSprite
 
         private void AI_062()
         {
-            int attackInterval = 50;
+            int attackInterval = 60;
             Projectile.tileCollide = true;
             float idleSpeed = 0.6f;
             for (int i = 0; i < Main.maxProjectiles; i++)

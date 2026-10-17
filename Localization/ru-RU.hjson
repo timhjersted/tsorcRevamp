@@ -181,6 +181,7 @@ Mods: {
 				Этот предмет [c/383838:проклят] и пока не может быть использован
 				можно заметить как странный символ [c/878787:черепа] светится на его поверхности...	
 				'''
+			// CursedNeverUsable: This item is [c/383838:cursed] and can never be used.
 			CorruptionCursed: Этот предмет был [c/383838:проклят] [c/701070:порчей] и пока не может быть использован
 			// QueenBeeCursed: This item has been [c/383838:cursed] by the [c/701070:jungle] and can't be used until Queen Bee is defeated
 			BotCNoHeal: Не исцеляет [c/6d8827:носителя проклятия]
@@ -412,6 +413,7 @@ Mods: {
 			// MadnessDeathReason: "{0} succumbed to madness"
 			// FrostDeathReason: "{0} shattered from frost"
 			// BlightDeathReason: "{0} was consumed by blight"
+			// MiasmaDeathReason: "{0} could not survive the miasma"
 			BotC1: Режим Носителя проклятия можно отключить в любой момент...
 			BotC2: Режим Носителя проклятия предназначен для опытных игроков.
 			BotC3: Попробуйте прочитать описание Тёмного знака
@@ -654,6 +656,7 @@ Mods: {
 			// FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: Выпадает только при первом убийстве вне режима эксперта]"
 			DownedSkeletron: "[c/ff9999:Выпадает после победы над Скелетроном]"
+			// IllusionWandOfFrost: "[c/99ccff:Guaranteed once per world, after Skeletron or Gravelord Nito is defeated]"
 		}
 
 		Quest: {
@@ -4559,11 +4562,20 @@ Mods: {
 				// PageHeader: — Page {0} of {1}: {2} —
 				// Turn: Right-click to turn the page
 				// TurnAndToggle: Right-click to turn the page · Left-click to toggle Recommended Controls
+				// TurnAndToggleDamageNumbers: Right-click to turn the page · Left-click to toggle enemy damage numbers
+				// TurnAndToggleMinimalMinimap: Right-click to turn the page · Left-click to toggle the Minimal Mini-Map
+				// StateOn: On
+				// StateOff: Off
+				// StateOnColored: "[c/78DC78:On]"
+				// StateOffColored: "[c/A0A0A0:Off]"
+				// DamageNumbersToggled: Hide Enemy Damage Numbers: {0}
+				// MinimalMinimapToggled: Minimal Mini-Map: {0}
 				// Heading1: How to Read This Manual
 				/* Page1:
 					'''
 					Right-click this book to turn the page. 
-					Page 2 explains your extra inventory slots, page 3 explains the controls, and pages 4–12 explain the mod's core mechanics.
+					Page 2 explains your extra inventory slots, page 3 explains the controls, pages 4–13 explain the mod's core mechanics,
+					and pages 14–15 offer optional settings for a more minimal interface.
 					''' */
 				// Heading2: Your Extra Inventory Slots
 				/* Page2:
@@ -4602,17 +4614,18 @@ Mods: {
 					Rolling costs stamina and makes you briefly invulnerable.
 					Learn the timing and you can pass straight through an attack.
 					Rolling in the air allows you to cross bigger gaps and reverse your momentum instantly.
-					A perfect dodge refunds half its cost and briefly boosts stamina regen and critical strike chance.
+					Roll as the attack is just about to land and you get a Perfect Dodge.
+					It refunds half the roll's stamina and grants +{0}% stamina regen and +{1}% critical strike chance for {2} seconds.
 					''' */
 				// Heading7: Regain
 				/* Page7:
 					'''
 					In Unkindled and Bearer of the Curse, landing attacks can recover health you recently lost.
-					For 5 seconds after getting hit, the recoverable portion of your health bar will turn white, then fades away.
-					Getting hit wipes any recoverable health you had and creates a new pool, capped at 25% of your maximum health.
-					Taking multiple hits within a 4 second window will reduce the portion you can win back.
+					For {0} seconds after getting hit, the recoverable portion of your health bar will turn white, then fades away.
+					Getting hit wipes any recoverable health you had and creates a new pool, capped at {1}% of your maximum health.
+					Taking multiple hits within a {2} second window will reduce the portion you can win back.
 					Minions, sentries and secondary projectiles do not trigger Regain.
-					Stay close: recovery is strongest within 9 tiles and weakens with distance.
+					Stay close: recovery is strongest within {3} tiles and weakens with distance.
 					Slow weapons recover more per hit; fast weapons recover smaller amounts more often.
 					Regain does not apply in Classic mode and can be disabled in the mod's config.
 					''' */
@@ -4652,7 +4665,7 @@ Mods: {
 					'''
 					Unkindled: the default. Flasks, stamina on weapons, active shields and an extra accesory slot.
 					Bearer of the Curse: everything above, plus an additional combat mechanic for each weapon class,
-					20% more souls and a different stamina tempo, with stricter limits on healing & mana regen.
+					{0}% more souls and a different stamina tempo, with stricter limits on healing & mana regen.
 					Classic: vanilla healing, shields and magic, with no flask interface or stamina-based weapons.
 					Left-click the Darksign to switch, and right-click it to read your class mechanic.				
 					''' */
@@ -4666,6 +4679,32 @@ Mods: {
 					A heavy enough hit will break your guard outright, however much stamina you have.
 					Greatshields leak nothing at all but are slower to recover. Bucklers are the opposite.
 					Prefer a dedicated block key? Bind Raise Shield under Controls, in the mod keybinds; it blocks even while holding a weapon that has its own right-click.
+					''' */
+				// Heading13: Poise and Stagger
+				/* Page13:
+					'''
+					Most enemies have poise. Every hit wears it down, and when it breaks the enemy is staggered for a moment and usually knocked out of the attack it was winding up.
+					Weapons with more knockback break poise faster. Weapons with no knockback, like most magic, barely build it. But ghost enemies that take no knockback can be staggered by magic.
+					Orange bar under an enemy: its poise is filling. Flashing yellow: it's staggered, so punish it.
+					White: when an enemy is about to attack or still recovering from a stagger, it gains hyperarmor and will push through your hits.
+					Each stagger makes that enemy harder to stagger again for a while.
+					A perfect parry with a shield deals heavy poise damage, even mid-attack.
+					''' */
+				// Heading14: Combat Numbers
+				/* Page14:
+					'''
+					Hides the floating damage numbers that pop up over enemies, including damage over time.
+					Your own healing text and any numbers on you are unaffected.
+					Currently: {0}
+					''' */
+				// Heading15: Minimal Mini-Map
+				/* Page15:
+					'''
+					Hides the mini-map while you explore. It only appears while your inventory is open.
+					This keeps the screen clear and makes checking your map a deliberate choice, like stopping to unfold a real one.
+					The full-screen map still opens as normal.
+					Without this you'd need to keep switching the mini-map on and off to get the same effect.
+					Currently: {0}
 					''' */
 			}
 
@@ -7349,14 +7388,15 @@ Mods: {
 					'''
 			}
 
-			NullSpriteStaff: {
-				DisplayName: Посох нулевой феи
-				Tooltip:
+			NullSpriteStaffItem: {
+				// DisplayName: Null Sprite Staff
+				/* Tooltip:
 					'''
-					Призывает нулевю фею сражаться за вас
-					Нулевые феи накладывают "разделение", которое увеличивает
-					урон получаемый из всех источников на {0}%
-					'''
+					Summons a null sprite to fight for you
+					Null sprites apply a stacking debuff for {0} seconds each hit,
+					with each stack increasing damage dealt by {1}%
+					Prior stack durations are not refreshed on-hit
+					''' */
 			}
 
 			PeculiarSphere: {
@@ -7412,6 +7452,19 @@ Mods: {
 					Bearer of the Curse's mana multiplier does not increase arrow damage
 					Uses 2 summoner slots
 					The spirit targets the highest HP enemy nearby
+					''' */
+			}
+
+			MimicRune: {
+				// DisplayName: Mimic Rune
+				/* Tooltip:
+					'''
+					Summons a Soul Mimic: a liquid-metal copy of you
+					It fights with the weapon you are holding and those in hotbar slots 1 and 2
+					It has your health, defense, stamina and mana, drinks its own Estus and Cerulean, and dodge rolls
+					Takes all your summoner slots, up to {0}
+					Lasts {1} minutes, then dissolves
+					Cannot be used again for {2} minutes (resets on death)
 					''' */
 			}
 
@@ -8895,6 +8948,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.AggroDecrease}
 					Summon a young hunter to protect you
+					Base damage: {1} on contact, {2} per thorn shot
 					The young hunter inflicts Acid Venom and {0}% more damage on crit
 					Scale with summon damage and critical strike chance
 					''' */
@@ -9298,25 +9352,71 @@ Mods: {
 
 			BlightBuildup: {
 				// DisplayName: Blight Buildup
-				// Description: Blight buildup: {0}/100. Direct hits add 15; lingering blight clouds add 1 every 2 ticks. Decays by 1 per second. At 100, take damage equal to 200% of maximum life.
+				/* Description:
+					'''
+					Blight buildup: {0}/{1}.
+					At {1}, your body will become
+					fully infected with blight.
+					''' */
 			}
 
 			Blight: {
 				// DisplayName: Blight
-				// Description: The abyss has consumed you
+				// Description: The blight has consumed you.
+			}
+
+			PoisonBuildup: {
+				// DisplayName: Poison Buildup
+				/* Description:
+					'''
+					Poison buildup: {0}/{1}.
+					At {1}, you will be poisoned for {2} seconds.
+					''' */
+			}
+
+			AcidVenomBuildup: {
+				// DisplayName: Acid Venom Buildup
+				/* Description:
+					'''
+					Acid venom buildup: {0}/{1}.
+					At {1}, you will be afflicted with acid venom for {2} seconds.
+					''' */
+			}
+
+			MiasmaBuildup: {
+				// DisplayName: Miasma Buildup
+				/* Description:
+					'''
+					Miasma buildup: {0}/{1}.
+					At {1}, miasma will drain your life for {2} seconds.
+					''' */
+			}
+
+			Miasma: {
+				// DisplayName: Miasma
+				/* Description:
+					'''
+					Miasma is draining your life, {0} per second.
+					There is no cure. It can only be survived.
+					''' */
 			}
 
 			MadnessBuildup: {
 				// DisplayName: Madness Buildup
-				// Description: At {0} buildup, take 200 damage and become staggered. Current buildup: {1}
+				/* Description:
+					'''
+					Madness: {0}/{1}.
+					At {1} buildup, your knowledge of the occult
+					will cause you to take {2} damage and become staggered.
+					''' */
 			}
 
 			Madness: {
 				// DisplayName: Madness
 				/* Description:
 					'''
-					Your perception fractures into lingering afterimages
-					25% increased melee attack speed and 10x mana regeneration
+					You see cause and effect across an infinite expanse of time.
+					{0}% increased melee attack speed and {1}x mana regeneration
 					''' */
 			}
 
@@ -9388,9 +9488,8 @@ Mods: {
 				// DisplayName: Suppressed
 				/* Description:
 					'''
-					Something is dampening your speed here.
-					Supersonic Boots, Supersonic Wings, and Supersonic Wings II are reduced to roughly early hardmode levels, and lose their knockback immunity, water-walking, and ice skating.
-					Wings of Seath is weakened as well, but less severely.
+					A dark force is dampening your speed
+					and ability to float or defy gravity here.
 					''' */
 			}
 
@@ -10171,6 +10270,16 @@ Mods: {
 				// Description: The Archer Spirit will shoot down your enemies!
 			}
 
+			MimicTearBuff: {
+				// DisplayName: Soul Mimic
+				// Description: Your reflection fights beside you until its time runs out. Cancel this to dismiss it.
+			}
+
+			MimicTearCooldown: {
+				// DisplayName: Soul Mimic Recovery
+				// Description: The Mimic Rune cannot be used again yet. Clears on death.
+			}
+
 			SpiritAshRecoveryBuff: {
 				// DisplayName: Spirit Ash Recovery
 				// Description: Tracks each minion or sentry's 90-second cooldown. If one dies before the cooldown expires, it cannot be brought back until it does.
@@ -10437,6 +10546,11 @@ Mods: {
 				// DisplayName: Severing Dusk Buff
 				// Description: The blade's damage is increased
 			}
+
+			NullSpriteDissolving: {
+				// DisplayName: Null Sprite Dissolving
+				// Description: Mods.tsorcRevamp.Buffs.NullSpriteDissolving.Description
+			}
 		}
 
 		Projectiles: {
@@ -10590,6 +10704,8 @@ Mods: {
 			EnemySpellLightPillar.DisplayName: Вражеское заклинание "Световой столб"
 			EnemySpellLightPillarBall.DisplayName: Вражеское заклинание Шар светового столба
 			EnemySpellMeteor.DisplayName: Вражеское заклинание "Метеор"
+			// IllusionVenomField.DisplayName: Venom Field
+			// IllusionVenomOrb.DisplayName: Venom Orb
 			EnemySpellPoisonStorm.DisplayName: Вражеское заклинание Ядовитый шторм
 			EnemySpellPoisonStormBall.DisplayName: Вражеское заклинание "Великий ядовитый ударный шар"
 			EnemySpellSuddenDeathBall.DisplayName: Вражеское заклинание "Шар внезапной смерти"
@@ -10940,7 +11056,7 @@ Mods: {
 			FriendlyRetinazer.DisplayName: Дружественный ретинизатор
 			FriendlySpazmatism.DisplayName: Дружественный спазматизм
 			FriendlyTetsujinLaser.DisplayName: Дружественный лазер Тэцудзин
-			NullSprite.DisplayName: Нулевой спрайт
+			// NullSpriteProj.DisplayName: Null Sprite
 			PhoenixProjectile.DisplayName: Молодой феникс
 			CenterOfTheUniverseStar.DisplayName: Звезда, находящаяся в центре Вселенной
 			CenterOfTheUniverseStellarNova.DisplayName: Центр Вселенной - Новая звезда
@@ -11262,6 +11378,10 @@ Mods: {
 			// TeleportFireFlame.DisplayName: Teleport Fire Flame
 			// EnemyEphemeralThrowingAxeProj.DisplayName: Enemy Ephemeral Throwing Axe Proj
 			// BasiliskLeechTongue.DisplayName: Basilisk Leech Tongue
+			// BasiliskAcidSpit.DisplayName: Acid Spit
+			// BasiliskHypnoticDisrupter.DisplayName: Hypnotic Disrupter
+			// BasiliskShifterBreath.DisplayName: Curse Breath
+			// BasiliskHunterBreath.DisplayName: Curse Breath
 			// FireLurkerMeteor.DisplayName: Fire Lurker Meteor
 			// FireLurkerFlameOrb.DisplayName: Fire Lurker Flame Orb
 			// EnemyCaltrop.DisplayName: Enemy Caltrop
@@ -11465,6 +11585,8 @@ Mods: {
 			// ShadowNinjaPoisonArrow.DisplayName: Shadow Ninja Poison Arrow
 			// ShadowNinjaStarProj.DisplayName: Shadow Ninja Star Proj
 			// ArtoriasCurseCloud.DisplayName: Artorias Curse Cloud
+			// MiasmaBreathPuff.DisplayName: Miasma Breath Puff
+			// EaterToxicOoze.DisplayName: Eater Toxic Ooze
 		}
 
 		NPCs: {
@@ -11977,7 +12099,6 @@ Mods: {
 			ManHunter.DisplayName: Охотник за людьми
 			MarilithSeeker.DisplayName: Искатель Марилит
 			MarilithSpiritTwin.DisplayName: Духовный близнец Марилит
-
 			MutantToad.DisplayName: Жаба-мутант
 			Necromancer.DisplayName: Некромант
 			FallenNecromancer.DisplayName: Падший некромант
@@ -13268,6 +13389,9 @@ Mods: {
 			DeathReaper.DisplayName: Слуга Смерти
 			// DeathSickleWeapon.DisplayName: Death Sickle Weapon
 			// MimicSwapTestDummy.DisplayName: Mimic Swap Test Dummy
+			// MimicTear.DisplayName: Soul Mimic
+			// MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
+			// HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
 		}
 
 		Prefixes: {
@@ -13592,6 +13716,11 @@ Mods: {
 					// Tooltip: ""
 				}
 
+				ClassicStatusMeters: {
+					// Label: Classic Status Meters
+					// Tooltip: Show buildup debuffs (Curse, Madness, Frost, etc.) as the older icon meters instead of stacked bars.
+				}
+
 				EnemyHealthBars: {
 					// Label: Enemy Health Bars
 					// Tooltip: Show vanilla health bars below non-boss enemies. Defaults to Off.
@@ -13604,6 +13733,11 @@ Mods: {
 						Show floating text when Bearer of the Curse's ranged accuracy crosses into a new 10% band.
 						Your exact accuracy is always readable on the Accuracy buff regardless of this setting. Defaults to On.
 						''' */
+				}
+
+				HideEnemyDamageNumbers: {
+					// Label: Hide Enemy Damage Numbers
+					// Tooltip: Hides the floating damage numbers that appear over enemies when they take damage, including damage over time. Defaults to Off.
 				}
 
 				PlayerHurtVisuals: {
@@ -14071,3 +14205,37 @@ Mods: {
 }
 
 // LegacyInterface.38: YOU DIED
+
+NPCName: {
+	// Vanilla display-name overrides: Plantera is presented as the Verdurous Monarch. Overriding the vanilla keys (rather than
+	// GlobalNPC.ModifyTypeName) also reaches the "has awoken!" net message, boss bar, bestiary, items and map tooltip.
+	// Plantera: Verdurous Monarch
+	// PlanterasHook: Monarch's Hook
+	// PlanterasTentacle: Monarch's Tentacle
+}
+
+// MapObject.PlanterasBulb: Monarch's Bulb
+
+ItemName: {
+	// PlanteraTrophy: Verdurous Monarch Trophy
+	// PlanteraMask: Verdurous Monarch Mask
+	// PlanteraMasterTrophy: Verdurous Monarch Relic
+	// PlanteraBossBag: Treasure Bag (Verdurous Monarch)
+	// MusicBoxPlantera: Music Box (Verdurous Monarch)
+	// MusicBoxOWPlantera: Otherworldly Music Box (Verdurous Monarch)
+	// PlanteraPetItem: Monarch Seedling
+}
+
+/* ItemTooltip.PlanteraPetItem:
+	'''
+	Summons a newly sprouted Verdurous Monarch
+	'Get to the root of the problem.'
+	''' */
+// BuffName.PlanteraPet: Monarch Seedling
+// Bestiary_ItemDropConditions.YoyosKraken: Drops after defeating the Verdurous Monarch
+// Achievements.THE_GREAT_SOUTHERN_PLANTKILL_Description: Defeat the Verdurous Monarch, the overgrown monstrosity of the jungle's depths.
+
+Conditions: {
+	// DownedPlantera: After defeating the Verdurous Monarch
+	// NotDownedPlantera: Before defeating the Verdurous Monarch
+}

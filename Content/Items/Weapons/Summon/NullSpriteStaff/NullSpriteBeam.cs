@@ -2,8 +2,9 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles;
 
-namespace tsorcRevamp.Content.Projectiles.Summon.NullSprite
+namespace tsorcRevamp.Content.Items.Weapons.Summon.NullSpriteStaff
 {
     public class NullSpriteBeam : ModProjectile
     {
@@ -47,7 +48,16 @@ namespace tsorcRevamp.Content.Projectiles.Summon.NullSprite
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.Dissolving>(), 2);
+            var globalNPC = target.GetGlobalNPC<NullSpriteNPC>();
+            target.AddBuff(ModContent.BuffType<NullSpriteDissolving>(), NullSpriteStaffItem.DissolveDuration * 60);
+            for (int index = 0; index < NullSpriteNPC.DissolveSize; index++)
+            {
+                if (globalNPC.NullSpriteDissolveDuration[index] <= 0)
+                {
+                    globalNPC.NullSpriteDissolveDuration[index] = NullSpriteStaffItem.DissolveDuration * 60;
+                    break;
+                }
+            }
         }
     }
 }

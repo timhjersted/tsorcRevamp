@@ -5,12 +5,13 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
-using tsorcRevamp.Content.Projectiles.Summon.NullSprite;
 
-namespace tsorcRevamp.Content.Items.Weapons.Summon
+namespace tsorcRevamp.Content.Items.Weapons.Summon.NullSpriteStaff
 {
-    public class NullSpriteStaff : ModItem
+    public class NullSpriteStaffItem : ModItem
     {
+        public const int DissolveDuration = 4;
+        public const float DissolveDmgPerStack = 0.5f;
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -19,10 +20,10 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1f;
         }
 
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Buffs.Dissolving.MaxDissolvingStacks);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DissolveDuration, DissolveDmgPerStack);
         public override void SetDefaults()
         {
-            Item.damage = 66;
+            Item.damage = 100;
             Item.knockBack = 1f;
             Item.width = 44;
             Item.height = 50;
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<NullSpriteBuff>();
-            Item.shoot = ModContent.ProjectileType<NullSprite>();
+            Item.shoot = ModContent.ProjectileType<NullSpriteProj>();
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
