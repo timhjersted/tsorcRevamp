@@ -16,6 +16,7 @@ using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Utilities.Balance;
 
 namespace tsorcRevamp
 {
@@ -637,16 +638,33 @@ namespace tsorcRevamp
             {
                 return;
             }
+
+            // Balance log: regen while standing still is logged apart because it carries the x1.5 stationary bonus.
+            string regenSource = BalanceLog.StaminaFromRegen;
+            if (Player.velocity == Vector2.Zero)
+            {
+                regenSource = BalanceLog.StaminaFromRegenStanding;
+            }
+
             if (staminaDebt > 0f)
             {
+                float repaid = Math.Min(staminaDebt, gain);
+                BalanceLog.RecordStaminaGained(Player, BalanceLog.StaminaFromDebtRepaid, repaid);
+
                 staminaDebt -= gain;
                 if (staminaDebt < 0f)
                 {
-                    staminaResourceCurrent += -staminaDebt;
+                    float carriedOver = -staminaDebt;
+                    BalanceLog.RecordStaminaGained(Player, regenSource, carriedOver);
+                    staminaResourceCurrent += carriedOver;
                     staminaDebt = 0f;
                 }
                 return;
             }
+
+            // Only the part that fits counts; the excess is clamped away at the end of UpdateResource.
+            float roomInBar = Math.Max(0f, staminaResourceMax2 - staminaResourceCurrent);
+            BalanceLog.RecordStaminaGained(Player, regenSource, Math.Min(gain, roomInBar));
             staminaResourceCurrent += gain;
         }
 

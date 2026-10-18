@@ -205,7 +205,25 @@ namespace tsorcRevamp.NPCs.AI
             }
             else
             {
-                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -Config.TakeOffSpeed, 0.20f);
+                // Ceiling-aware climb: slow down over the last stretch (0.12 px/t per px of room left) so it
+                // settles at the allowed height instead of bonking the ceiling. Open sky = full TakeOffSpeed.
+                float highestAllowedY = ClampBelowCeiling(npc, npc.Center.X, float.NegativeInfinity);
+                float climbSpeed = Config.TakeOffSpeed;
+                bool underCeiling = !float.IsNegativeInfinity(highestAllowedY);
+
+                if (underCeiling)
+                {
+                    float roomLeft = npc.Center.Y - highestAllowedY;
+                    climbSpeed = MathHelper.Clamp(roomLeft * 0.12f, 0f, Config.TakeOffSpeed);
+
+                    if (roomLeft <= 4f)
+                    {
+                        EnterMode(FlightMode.Hover, Config.HoverDwellTicks);
+                        return;
+                    }
+                }
+
+                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -climbSpeed, 0.20f);
                 npc.velocity.X *= 0.85f;
                 WingsActiveThisTick = true;
             }
@@ -255,6 +273,9 @@ namespace tsorcRevamp.NPCs.AI
                     // Offset the desired Y so the velocity spring chases the drifted target.
                     desired.Y += _driftY;
                 }
+
+                // After the drift, so the flap-burst spring-up can't lift it into the ceiling either.
+                desired.Y = ClampBelowCeiling(npc, desired.X, desired.Y);
             }
             TargetWaypoint = desired;
 
@@ -304,6 +325,7 @@ namespace tsorcRevamp.NPCs.AI
                 float t = 1f - (float)ModeTimer / Config.StrafeTicks;
                 targetY -= (float)Math.Sin(t * Math.PI) * Config.StrafeArcHeight;
             }
+            targetY = ClampBelowCeiling(npc, npc.Center.X, targetY);
             float yErr = targetY - npc.Center.Y;
             npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, MathHelper.Clamp(yErr * 0.06f, -2f, 2f), 0.15f);
 
@@ -421,6 +443,80 @@ namespace tsorcRevamp.NPCs.AI
                     return true;
             }
             return false;
+        }
+
+        /// <summary>Opt-in ceiling awareness (Config.CeilingClearanceFraction > 0). Returns desiredCenterY pushed down
+        /// so the NPC's head stays CeilingClearanceFraction of the floor-to-ceiling gap (at least CeilingMinPadding px)
+        /// below the ceiling over column x. No ceiling within CeilingScanTiles, or the feature off = unchanged.
+        /// A room too low for that headroom puts the NPC halfway between floor and ceiling instead.</summary>
+        private float ClampBelowCeiling(NPC npc, float x, float desiredCenterY)
+        {
+            if (Config.CeilingClearanceFraction <= 0f)
+            {
+                return desiredCenterY;
+            }
+
+            const int CeilingScanTiles = 30;
+            int leftTile = (int)((x - npc.width * 0.5f) / 16f);
+            int rightTile = (int)((x + npc.width * 0.5f - 1f) / 16f);
+            int startRow = (int)(npc.position.Y / 16f);
+
+            // Lowest ceiling over any column the body covers. Bottom edge of that tile, in px.
+            float ceilingY = float.NegativeInfinity;
+            for (int column = leftTile; column <= rightTile; column++)
+            {
+                if (column < 0 || column >= Main.maxTilesX)
+                {
+                    continue;
+                }
+
+                for (int row = startRow; row > startRow - CeilingScanTiles && row >= 0; row--)
+                {
+                    Tile tile = Framing.GetTileSafely(column, row);
+                    if (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType])
+                    {
+                        float tileBottom = (row + 1) * 16f;
+                        ceilingY = Math.Max(ceilingY, tileBottom);
+                        break;
+                    }
+                }
+            }
+
+            if (float.IsNegativeInfinity(ceilingY))
+            {
+                return desiredCenterY;
+            }
+
+            // Floor under the column's centre; with none in range, measure the gap to the NPC's feet instead.
+            int centerColumn = (int)(x / 16f);
+            float floorY = npc.Bottom.Y;
+            for (int row = startRow; row < startRow + CeilingScanTiles && row < Main.maxTilesY; row++)
+            {
+                if (centerColumn < 0 || centerColumn >= Main.maxTilesX)
+                {
+                    break;
+                }
+
+                Tile tile = Framing.GetTileSafely(centerColumn, row);
+                bool standable = tile.HasUnactuatedTile && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]);
+                if (standable && row * 16f > ceilingY)
+                {
+                    floorY = row * 16f;
+                    break;
+                }
+            }
+
+            float gap = floorY - ceilingY;
+            float headroom = Math.Max(gap * Config.CeilingClearanceFraction, Config.CeilingMinPadding);
+            float highestCenterY = ceilingY + headroom + npc.height * 0.5f;
+            float lowestCenterY = floorY - npc.height * 0.5f - 4f;
+
+            if (highestCenterY > lowestCenterY)
+            {
+                return Math.Max(desiredCenterY, (ceilingY + floorY) * 0.5f);
+            }
+
+            return Math.Max(desiredCenterY, highestCenterY);
         }
 
         /// <summary>Scan ±96px from the NPC for the side with more overhead clearance.
@@ -576,6 +672,14 @@ namespace tsorcRevamp.NPCs.AI
         /// 0 disables the arc (flat strafe line).</summary>
         public float StrafeArcHeight;
 
+        // ── Ceiling awareness (opt-in) ───────────────────────────────────────
+        /// <summary>Under a ceiling, keep the NPC's head at least this fraction of the floor-to-ceiling gap below
+        /// the ceiling (0.33 = the top third of the room stays empty). TakeOff eases to a stop there and
+        /// Hover/Strafe targets are pushed down to it. 0 = off: only the old head-bump clearance routing.</summary>
+        public float CeilingClearanceFraction;
+        /// <summary>Minimum headroom in px when CeilingClearanceFraction is on, for very low rooms.</summary>
+        public float CeilingMinPadding;
+
         /// <summary>Reasonable defaults for medium-size invaders.</summary>
         public static EnemyFlightConfig Default => new EnemyFlightConfig
         {
@@ -601,6 +705,8 @@ namespace tsorcRevamp.NPCs.AI
             HoverFlapRise      = 18f,
             HoverFlapBurstTicks = 18,
             StrafeArcHeight    = 0f, // off by default; opt in per-invader
+            CeilingClearanceFraction = 0f, // off by default; opt in per-invader
+            CeilingMinPadding  = 24f,
         };
     }
 }

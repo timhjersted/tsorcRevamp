@@ -197,6 +197,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 config.MaxFlightTicks = 180; config.CooldownTicks = 360;
                 config.TakeOffTicks = 24; config.HoverDwellTicks = 180;
                 config.LandTicks = 60; config.LandSpeed = 3f;
+                // Keep the top quarter of a low room empty so the hover never bobs against the ceiling.
+                config.CeilingClearanceFraction = 0.25f;
                 return config;
             }
         }

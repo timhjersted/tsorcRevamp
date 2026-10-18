@@ -37,12 +37,16 @@ namespace tsorcRevamp.Content.Items
                     amount /= 2;
                 }
 
+                float staminaBefore = stamPlayer.staminaResourceCurrent;
                 stamPlayer.staminaResourceCurrent += amount;
 
                 if (stamPlayer.staminaResourceCurrent > stamPlayer.staminaResourceMax2)
                 {
                     stamPlayer.staminaResourceCurrent = stamPlayer.staminaResourceMax2;
                 }
+
+                float staminaGained = stamPlayer.staminaResourceCurrent - staminaBefore;
+                Utilities.Balance.BalanceLog.RecordStaminaGained(player, Utilities.Balance.BalanceLog.StaminaFromDroplet, staminaGained);
                 CombatText.NewText(player.getRect(), Color.YellowGreen, (int)amount);
                 for (int i = 0; i < 15; i++)
                 {

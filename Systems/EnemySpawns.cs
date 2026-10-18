@@ -489,6 +489,8 @@ namespace tsorcRevamp.Systems
         {
             // Hardmode or later (Super Hardmode keeps the Hardmode flag on).
             public static readonly SpawnCondition Hardmode = new(context => Main.hardMode);
+
+            public static readonly SpawnCondition SuperHardmode = new(context => tsorcRevampWorld.SuperHardMode);
         }
 
         // Vanilla progression flags. The mod's replacement bosses set the same flags.
@@ -580,6 +582,21 @@ namespace tsorcRevamp.Systems
 
         // The Wyvern Fortress in the sky: meteorite brick or glass walls.
         private static readonly SpawnCondition WyvernFortress = Depth.Sky & Wall.Is(WallID.MeteoriteBrick, WallID.Glass);
+
+        // The Sunken Sky Temple in the adventure map's underworld: a Meteorite Brick floor, or Meteorite Brick Wall behind the
+        // player. Spawn tile in the bottom 13% of the map (row ~2090+ on the 2400-tall map, ~1740+ on the 2000-tall one), which
+        // keeps the Wyvern Fortress's meteorite walls in the sky out of it.
+        private static readonly SpawnCondition SunkenSkyTemple =
+            !Mode.Sandbox
+            & Depth.Rows(0.87f, 1f)
+            & (SpawnTile.Is(TileID.MeteoriteBrick) | Wall.AtPlayer(WallID.MeteoriteBrick));
+
+        // The adventure map's Wyvern Fortress for its exclusive zone: Smooth Marble Wall behind the player, or a Smooth Marble
+        // Block floor, at sky height. (WyvernFortress above is the older wall test the Archdeacon's own lines still use.)
+        private static readonly SpawnCondition AdventureWyvernFortress =
+            !Mode.Sandbox
+            & Depth.Sky
+            & (Wall.AtPlayer(WallID.MarbleBlock) | SpawnTile.Is(TileID.MarbleBlock));
 
         // Basilisk country: evil biomes and desert, away from the themed zones, dry land below the surface or on it at night.
         private static readonly SpawnCondition BasiliskGround =
@@ -1433,6 +1450,19 @@ namespace tsorcRevamp.Systems
             // Humanity Phantom rooms: only Phantoms spawn. The Starlit Heaven wallpaper room, and the Remix Map's obsidian vault.
             SpawnOnly(Wall.AtPlayer(WallID.StarlitHeavenWallpaper), ("HumanityPhantom", 10f));
             SpawnOnly(Mode.Remix & Region.RemixVaultBox & Wall.AtPlayer(WallID.ObsidianBrickUnsafe), ("HumanityPhantom", 10f));
+
+            // Sunken Sky Temple: only the listed Vortex enemies, from the start of the game. Written after the Phantom rooms so the
+            // temple's own list wins over any Starlit Heaven wallpaper inside it.
+            SpawnOnly(SunkenSkyTemple,
+                ("VortexSoldier", 3f), ("VortexRifleman", 1f));
+
+            // Wyvern Fortress: Archdeacons only, from the start of the game until the Wyvern Mage falls, and in Super Hardmode
+            // until its Shadow falls. Otherwise (that stage's Mage slain) nothing spawns there.
+            SpawnOnly(AdventureWyvernFortress);
+            SpawnOnly(AdventureWyvernFortress & !Progress.SuperHardmode & !Slain.WyvernMage,
+                ("Archdeacon", 1f));
+            SpawnOnly(AdventureWyvernFortress & Progress.SuperHardmode & !Slain.WyvernMageShadow,
+                ("Archdeacon", 1f));
         }
     }
 

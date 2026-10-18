@@ -201,7 +201,25 @@ namespace tsorcRevamp.Utilities.Balance
         public string mod;
         public int prefix;
         public string prefixName;
+
+        /// <summary>Internal prefix name ("Warding", "Hasty2", "Blessed2"), the same in every game language.
+        /// prefixName is the player's language, so a Chinese client logs 护佑 for Warding.</summary>
+        public string prefixKey;
         public int defense;
+    }
+
+    /// <summary>One curse's rolled stats as they act on the player: boons already multiplied by
+    /// <see cref="GearSnapshot.cursePositiveMult"/>, penalties as rolled. A stat at 0 was not rolled.
+    /// Mirrors tsorcRevampPlayer.AddCurseStats and UpdateLifeRegen / UpdateBadLifeRegen.</summary>
+    internal sealed class CurseRoll
+    {
+        public float maxLifePercent;
+        public float lifeRegenPerSecond;
+        public int defense;
+        public float resistance;
+        public float damagePercent;
+        public float attackSpeedPercent;
+        public float moveSpeedPercent;
     }
 
     /// <summary>An item in a tModLoader ModAccessorySlot (the Bearer of the Curse slot, the Supersonic wing slot).
@@ -238,7 +256,8 @@ namespace tsorcRevamp.Utilities.Balance
         public string loadoutTag = string.Empty;
 
         /// <summary>How many equipped pieces (armor, accessories, mod slots, right-click slot) carry each prefix, e.g.
-        /// Warding 2, Menacing 2, Arcane 2. Prefixes move damage, crit, defense and mana, so they belong in the loadout.</summary>
+        /// Warding 2, Menacing 2, Arcane 2. Prefixes move damage, crit, defense and mana, so they belong in the loadout.
+        /// Keyed by <see cref="EquipSlot.prefixKey"/> from logger revision 8; earlier logs used the localized name.</summary>
         public Dictionary<string, int> prefixCounts = new();
         /// <summary>The Active Shields Right-Click (2nd) slot item, or null when the slot is empty. Kept out of
         /// <see cref="accessories"/> because it is NOT an accessory slot: a shield parked here grants its passives
@@ -282,6 +301,31 @@ namespace tsorcRevamp.Utilities.Balance
 
         public float meleeSpeed;
         public int minionSlots;
+
+        // --- Stats the damage numbers above don't show. Accessory prefixes and the curse move these (Armored adds
+        // Resistance, Spiked and Hard add thorns, Lucky and Blessed add luck, Guarding and Angry add stamina regen),
+        // so without them a prefix stack is visible only as a name count. ---
+        /// <summary>Player.endurance x 100. The mod turns it into damage x 100/(100+resistance), see
+        /// MethodSwaps.On_Player_ApplyVanillaHurtEffectModifiers.</summary>
+        public float resistance;
+        public float thorns;
+        public float luck;
+        public float moveSpeed;
+
+        /// <summary>Generic attack speed; class bonuses stack on it (meleeSpeed above is the melee total).</summary>
+        public float attackSpeed;
+        public float armorPenetration;
+        public float manaCost;
+
+        /// <summary>Stamina regen multiplier (staminaResourceGainMult).</summary>
+        public float staminaRegenMult;
+
+        // --- Curse. "Curse" in buffs says nothing about the roll, which ranges from -30% max life alone to +80 defense
+        // with Ring of Artorias. Both curses can be active at once. Null when that curse is not active. ---
+        /// <summary>Multiplier on curse boons: 1, or 1.34 with Ring of Artorias.</summary>
+        public float cursePositiveMult;
+        public CurseRoll curse;
+        public CurseRoll powerfulCurse;
 
         /// <summary>Per-class damage multiplier components, keyed melee / ranged / magic / summon / generic.
         /// Early magic runs at 3x and later magic at about 1.8x with nothing in the flat floats to explain it.</summary>
@@ -644,6 +688,34 @@ namespace tsorcRevamp.Utilities.Balance
         /// <summary>Boss damage dealt while the buff was active, and its share of totalDamageToBoss.</summary>
         public long damageDuringManaBurn;
         public float manaBurnDamageFraction;
+
+        /// <summary>Every buff and debuff that was up during the fight, longest first. gear.buffs is only the
+        /// start-of-fight snapshot, so a curse that triggered mid-fight or a potion drunk at half health never showed.</summary>
+        public List<BuffUptime> buffUptime = new();
+
+        /// <summary>Stamina the player got back during the fight, by source, largest first. Shows whether stamina debt
+        /// is paid by regen or skipped by refills (Cerulean, droplets). Only real gains count: a refill at a full bar is 0.</summary>
+        public List<StaminaGain> staminaGained = new();
+    }
+
+    /// <summary>Stamina gained from one source over an encounter. Sources are the BalanceLog.StaminaFrom* names:
+    /// regen / regenStanding (regen ticks while standing still, which get x1.5), debtRepaid (regen spent paying off
+    /// overdraw debt instead of filling the bar), cerulean, droplet, abysswalkerPoise, gwynKindling.</summary>
+    internal sealed class StaminaGain
+    {
+        public string source;
+        public float amount;
+        public int events;
+    }
+
+    /// <summary>One buff or debuff over an encounter. Names are internal (ModBuff class name or BuffID field name), so
+    /// logs from any game language read the same. activations counts each time it came on, including being up at the start.</summary>
+    internal sealed class BuffUptime
+    {
+        public string buff;
+        public float seconds;
+        public float uptimeFraction;
+        public int activations;
     }
 
     /// <summary>

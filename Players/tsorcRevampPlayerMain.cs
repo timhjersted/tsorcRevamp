@@ -1199,7 +1199,11 @@ namespace tsorcRevamp
 
             tsorcRevampStaminaPlayer staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
             float staminaRestored = staminaPlayer.staminaResourceMax2 * ArtoriasOfTheAbyssHelm.PoiseStaminaRestore / 100f;
+            float staminaBefore = staminaPlayer.staminaResourceCurrent;
             staminaPlayer.staminaResourceCurrent = MathHelper.Clamp(staminaPlayer.staminaResourceCurrent + staminaRestored, 0, staminaPlayer.staminaResourceMax2);
+
+            float staminaGained = staminaPlayer.staminaResourceCurrent - staminaBefore;
+            Utilities.Balance.BalanceLog.RecordStaminaGained(Player, Utilities.Balance.BalanceLog.StaminaFromAbysswalkerPoise, staminaGained);
 
             if (Main.myPlayer == Player.whoAmI)
             {

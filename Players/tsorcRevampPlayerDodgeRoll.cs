@@ -82,13 +82,10 @@ namespace tsorcRevamp
         /// <summary>Seconds from the start of a roll within which an incoming attack counts as a perfect
         /// dodge. 10 frames — 2 tighter than the shield's 12-frame PerfectParryWindow.</summary>
         public const float PerfectDodgeWindow = 10f / 60f;
-        /// <summary>Fraction of the roll's stamina cost refunded on a perfect dodge (matches PerfectParryCostMult).</summary>
-        public const float PerfectDodgeRefundMult = 0.5f;
         /// <summary>Max horizontal speed (px/tick) a roll carries in or out. Stops knockback / boss pushes / dash
         /// spikes from becoming the roll's base speed. Replaces the old SoulsModeMobility global run cap.</summary>
         public const float RollMaxCarrySpeed = 10f;
 
-        private float lastRollStaminaCost;
         private bool perfectDodgeTriggered;
 
         /// <summary>Stamina one dodge roll costs this player right now: 30 base, x1.25 while Tired, less the Artorias
@@ -369,8 +366,9 @@ namespace tsorcRevamp
         }
 
         /// <summary>
-        /// Perfect dodge: rolling into an attack that was about to connect refunds half the roll's stamina and
-        /// grants a short stamina-regeneration and critical-strike buff.
+        /// Perfect dodge: rolling into an attack that was about to connect grants a short stamina-regeneration and
+        /// critical-strike buff. It used to refund half the roll's stamina too; that was removed 2026-10-18 because
+        /// it let a well-timed roll skip most of its cost.
         ///
         /// Detected by hitbox overlap rather than by hooking the hit, because a successful dodge produces
         /// no hit to hook — the roll sets <c>Player.immune</c>, and damage sources check that themselves
@@ -420,10 +418,6 @@ namespace tsorcRevamp
         {
             perfectDodgeTriggered = true;
 
-            tsorcRevampStaminaPlayer stamina = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
-            stamina.staminaResourceCurrent = Math.Min(
-                stamina.staminaResourceCurrent + lastRollStaminaCost * PerfectDodgeRefundMult,
-                stamina.staminaResourceMax2);
             Player.AddBuff(ModContent.BuffType<Buffs.PerfectDodge>(), Buffs.PerfectDodge.DurationTicks);
 
             SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.35f, PitchVariance = 0.2f }, Player.position);
@@ -568,11 +562,6 @@ namespace tsorcRevamp
             //only subtract stamina on a successful roll
             float rollStaminaCost = RollStaminaCost;
             Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= rollStaminaCost;
-
-            // Remembered so a perfect dodge can refund half of what this specific roll actually cost —
-            // the cost is charged up front, before anything is known about the roll's timing, so the
-            // discount has to arrive later as a refund.
-            lastRollStaminaCost = rollStaminaCost;
             perfectDodgeTriggered = false;
             Player.immune = true;
             Player.immuneTime = DefaultDodgeImmuneTime;

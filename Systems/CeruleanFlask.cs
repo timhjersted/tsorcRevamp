@@ -206,7 +206,10 @@ namespace tsorcRevamp.Systems
                 {
                     Player.DelBuff(Player.FindBuffIndex(BuffID.ManaSickness));
                 }
-                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
+                tsorcRevampStaminaPlayer drinkerStamina = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                float staminaRefilled = drinkerStamina.staminaResourceMax2 - drinkerStamina.staminaResourceCurrent;
+                BalanceLog.RecordStaminaGained(Player, BalanceLog.StaminaFromCerulean, staminaRefilled);
+                drinkerStamina.staminaResourceCurrent = drinkerStamina.staminaResourceMax2;
 
                 // On-finish WaterCandle dust burst removed — drink completion is already signalled
                 // by the two sound effects and the ManaEffect text below.

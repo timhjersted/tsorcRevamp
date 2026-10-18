@@ -721,6 +721,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
             // Standard fighters
             Add<AttraidiesIllusion>(0.3f, 30f);
+            Add<Enemies.Archdeacon>(0.2f, 40f); // Wyvern Fortress caster, 3000 HP in Hardmode: tougher than the Illusion; its tells and Blink are the stagger windows
             Add<Enemies.MinotaurMage>(0.3f, 35f); // beefy caster; its Ring of Cinders cast is the stagger window
             Add<Enemies.SuperHardMode.DarkBloodKnight>(0.3f, 35f);
             Add<Enemies.SuperHardMode.OolacileKnight>(0.3f, 35f);
@@ -2834,8 +2835,9 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.VortexLarva, 2f); //.1 is 3%
             }
-            // molten sky temple
-            if (spawnInfo.Player.ZoneUnderworldHeight && (spawnInfo.SpawnTileType == TileID.MeteoriteBrick || spawnInfo.SpawnTileType == TileID.HeavenforgeBrick || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.HeavenforgeBrickWall) && tsorcRevampWorld.SuperHardMode)
+            // sunken sky temple
+            // (with New Enemy Spawns on, the registry's Sunken Sky Temple exclusive zone does this instead)
+            if (!EnemySpawns.Enabled && spawnInfo.Player.ZoneUnderworldHeight &&(spawnInfo.SpawnTileType == TileID.MeteoriteBrick || spawnInfo.SpawnTileType == TileID.HeavenforgeBrick || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.HeavenforgeBrickWall) && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.VortexRifleman, 0.1f); //.1 is 3%
                 pool.Add(NPCID.VortexHornet, 0.02f); //.5 is 16%

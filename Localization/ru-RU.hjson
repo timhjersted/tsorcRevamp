@@ -4615,7 +4615,7 @@ Mods: {
 					Learn the timing and you can pass straight through an attack.
 					Rolling in the air allows you to cross bigger gaps and reverse your momentum instantly.
 					Roll as the attack is just about to land and you get a Perfect Dodge.
-					It refunds half the roll's stamina and grants +{0}% stamina regen and +{1}% critical strike chance for {2} seconds.
+					It grants +{0}% stamina regen and +{1}% critical strike chance for {2} seconds.
 					''' */
 				// Heading7: Regain
 				/* Page7:

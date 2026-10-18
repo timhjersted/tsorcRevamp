@@ -199,13 +199,13 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered the Molten Sky Temple -",
+  "text": "- You\u0027ve discovered the Sunken Sky Temple -",
   "tileX": 586,
   "tileY": 1919,
   "textWidth": 320,
   "style": 1,
   "category": "location",
-  "locationName": "MOLTEN SKY TEMPLE"
+  "locationName": "SUNKEN SKY TEMPLE"
 }
 {
   "text": "You come upon a mystic sanctuary, and feel a deep feeling of peace in your heart for perhaps the first time since the day your parents died and you lost your wife. A great feeling of love overwhelms you, mixed with great sadness as the thought grabs you. You decide to stay here for a moment longer to reflect on your journey... and to summon all your courage for the path ahead.",
@@ -256,13 +256,13 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered the Molten Sky Temple -",
+  "text": "- You\u0027ve discovered the Sunken Sky Temple -",
   "tileX": 1355,
   "tileY": 1935,
   "textWidth": 320,
   "style": 1,
   "category": "location",
-  "locationName": "MOLTEN SKY TEMPLE"
+  "locationName": "SUNKEN SKY TEMPLE"
 }
 {
   "text": "You\u0027ve found the Temple of Attraidies --NEWLINE  --NEWLINE Once you\u0027ve obtained a shard from defeating each of the 8 demon-gods, combine them with the contents in the chest to create the catalyst necessary to summon Attraidies here. The catalyst will weaken Attraidies just enough to give you a chance. --NEWLINE \u0022It\u0027s time to end this.\u0022",
@@ -2032,7 +2032,8 @@
   "tileX": 5833,
   "tileY": 1674,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "The gate must only open from the other side...",

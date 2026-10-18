@@ -114,8 +114,12 @@ namespace tsorcRevamp.Utilities.Balance
         /// of every record.
         /// 7 = world-progress scaling (Systems/ProgressionScaling.cs): enemy damage now ramps through one damage-taken multiplier
         /// (encounter damageTakenScale; divide damageTaken by it to compare across progress), enemy HP through progressLifeScale /
-        /// enemyProgressLifeScale, plus hmBossesDowned and the kill sample's shmDowned.</summary>
-        internal const int LoggerRevision = 7;
+        /// enemyProgressLifeScale, plus hmBossesDowned and the kill sample's shmDowned.
+        /// 8 = language-independent names: prefixCounts keyed by internal prefix name (EquipSlot.prefixKey) and gear.buffs as
+        /// internal buff names; new gear stats (resistance, thorns, luck, moveSpeed, attackSpeed, armorPenetration, manaCost,
+        /// staminaRegenMult), the curse rolls (gear.curse / gear.powerfulCurse), per-buff uptime (encounter buffUptime), and stamina
+        /// gained by source (encounter staminaGained).</summary>
+        internal const int LoggerRevision = 8;
 
         private const int SampleIntervalTicks = 60;
         private const int MaxEncounterTicks = 60 * 60 * 30;   // 30 minutes, runaway guard
@@ -184,6 +188,34 @@ namespace tsorcRevamp.Utilities.Balance
         private static long _damageDuringManaBurn;
         private static int _ceruleanDrinks;
         private static long _ceruleanManaRestored;
+
+        // Per buff type: ticks up, times it came on, and the last tick it was seen (a gap means it went away and came back).
+        private static readonly Dictionary<int, (int Ticks, int Activations, long LastTick)> BuffTracking = new();
+
+        // Stamina gained per source this encounter: total amount and how many separate gains made it up.
+        private static readonly Dictionary<string, (float Amount, int Events)> StaminaGains = new();
+
+        // Source names for RecordStaminaGained, shared by every call site so the log keys can't drift apart.
+        internal const string StaminaFromRegen = "regen";
+        internal const string StaminaFromRegenStanding = "regenStanding";
+        internal const string StaminaFromDebtRepaid = "debtRepaid";
+        internal const string StaminaFromCerulean = "cerulean";
+        internal const string StaminaFromDroplet = "droplet";
+        internal const string StaminaFromAbysswalkerPoise = "abysswalkerPoise";
+        internal const string StaminaFromGwynKindling = "gwynKindling";
+
+        /// <summary>Counts stamina the local player actually gained (pass the real increase, not the nominal amount) toward
+        /// the open encounter. No-op with no encounter, on other players' copies, or for amounts of 0 or less.</summary>
+        internal static void RecordStaminaGained(Player player, string source, float amount)
+        {
+            if (_current == null || amount <= 0f || player.whoAmI != Main.myPlayer)
+            {
+                return;
+            }
+
+            StaminaGains.TryGetValue(source, out var gained);
+            StaminaGains[source] = (gained.Amount + amount, gained.Events + 1);
+        }
         private static readonly HashSet<int> LiveProjectileItems = new();
 
         private static string _contentFingerprint;
@@ -632,6 +664,28 @@ namespace tsorcRevamp.Utilities.Balance
 
             _lastManaBurnActive = manaBurnActive;
 
+            // Every buff's uptime and activations. A buff missing on the previous tick has come on (again).
+            long tickNow = Main.GameUpdateCount;
+            for (int i = 0; i < player.buffType.Length; i++)
+            {
+                int buffType = player.buffType[i];
+                if (buffType <= 0 || player.buffTime[i] <= 0)
+                {
+                    continue;
+                }
+
+                BuffTracking.TryGetValue(buffType, out var tracked);
+                bool cameOn = tracked.Ticks == 0 || tracked.LastTick != tickNow - 1;
+                int activations = tracked.Activations;
+
+                if (cameOn)
+                {
+                    activations++;
+                }
+
+                BuffTracking[buffType] = (tracked.Ticks + 1, activations, tickNow);
+            }
+
             if (player.dead && !_lastPlayerDead)
                 _current.playerDeaths++;
             _lastPlayerDead = player.dead;
@@ -774,6 +828,8 @@ namespace tsorcRevamp.Utilities.Balance
             HealingSources.Clear();
             AttackStats.Clear();
             OpenAttackByNpc.Clear();
+            BuffTracking.Clear();
+            StaminaGains.Clear();
 
             // The ContentSamples copy is the NPC as defined, before difficulty, SHM and world scaling, so the live
             // lifeMax over it is the total multiplier applied to this boss whatever applied it.
@@ -925,6 +981,33 @@ namespace tsorcRevamp.Utilities.Balance
                 if (encounter.totalDamageToBoss > 0)
                 {
                     encounter.manaBurnDamageFraction = _damageDuringManaBurn / (float)encounter.totalDamageToBoss;
+                }
+
+                foreach (KeyValuePair<int, (int Ticks, int Activations, long LastTick)> tracked in BuffTracking.OrderByDescending(pair => pair.Value.Ticks))
+                {
+                    float uptimeFraction = 0f;
+                    if (ticks > 0)
+                    {
+                        uptimeFraction = Math.Min(1f, tracked.Value.Ticks / (float)ticks);
+                    }
+
+                    encounter.buffUptime.Add(new BuffUptime
+                    {
+                        buff = BuffKey(tracked.Key),
+                        seconds = MathF.Round(tracked.Value.Ticks / 60f, 1),
+                        uptimeFraction = MathF.Round(uptimeFraction, 3),
+                        activations = tracked.Value.Activations,
+                    });
+                }
+
+                foreach (KeyValuePair<string, (float Amount, int Events)> gained in StaminaGains.OrderByDescending(pair => pair.Value.Amount))
+                {
+                    encounter.staminaGained.Add(new StaminaGain
+                    {
+                        source = gained.Key,
+                        amount = MathF.Round(gained.Value.Amount, 1),
+                        events = gained.Value.Events,
+                    });
                 }
 
                 encounter.gearChangedMidFight =
@@ -1477,7 +1560,29 @@ namespace tsorcRevamp.Utilities.Balance
                 mod = item.ModItem?.Mod?.Name ?? "Terraria",
                 prefix = item.prefix,
                 prefixName = PrefixName(item.prefix),
+                prefixKey = PrefixKey(item.prefix),
                 defense = item.defense,
+            };
+        }
+
+        /// <summary>One curse's live stats for the log. Boons get the Ring of Artorias multiplier and penalties stay as
+        /// rolled, the same rule tsorcRevampPlayer.AddCurseStats applies. Called for the weak and the powerful curse.</summary>
+        private static CurseRoll MakeCurseRoll(float maxLife, float lifeRegen, float defense, float resistance, float damage,
+            float attackSpeed, float moveSpeed, float positiveMult)
+        {
+            float effectiveLifeRegen = lifeRegen > 0f ? lifeRegen * positiveMult : lifeRegen;
+            float effectiveDefense = defense > 0f ? defense * positiveMult : defense;
+
+            // lifeRegen is half-HP per second and the player code truncates it to int before applying it.
+            return new CurseRoll
+            {
+                maxLifePercent = Math.Min(maxLife, 0f),
+                lifeRegenPerSecond = (int)effectiveLifeRegen / 2f,
+                defense = (int)MathF.Round(effectiveDefense),
+                resistance = resistance > 0f ? resistance * positiveMult : resistance,
+                damagePercent = damage > 0f ? damage * positiveMult : damage,
+                attackSpeedPercent = attackSpeed > 0f ? attackSpeed * positiveMult : attackSpeed,
+                moveSpeedPercent = moveSpeed > 0f ? moveSpeed * positiveMult : moveSpeed,
             };
         }
 
@@ -1498,9 +1603,35 @@ namespace tsorcRevamp.Utilities.Balance
                 magicCrit = player.GetCritChance(DamageClass.Magic),
                 meleeSpeed = player.GetAttackSpeed(DamageClass.Melee),
                 minionSlots = player.maxMinions,
+                resistance = player.endurance * 100f,
+                thorns = player.thorns,
+                luck = player.luck,
+                moveSpeed = player.moveSpeed,
+                attackSpeed = player.GetAttackSpeed(DamageClass.Generic),
+                armorPenetration = player.GetArmorPenetration(DamageClass.Generic),
+                manaCost = player.manaCost,
+                staminaRegenMult = player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult,
             };
 
             CaptureSoulsMode(player, snapshot);
+
+            // The curse rolls, rerolled by Humanity and by every new trigger, so they can differ fight to fight.
+            tsorcRevampPlayer cursePlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            snapshot.cursePositiveMult = cursePlayer.CursePositiveStatsMultiplier;
+
+            if (cursePlayer.CurseActive)
+            {
+                snapshot.curse = MakeCurseRoll(cursePlayer.CurseMaxLifeMultiplier, cursePlayer.CurseLifeRegenerationBonus,
+                    cursePlayer.CurseDefenseBonus, cursePlayer.CurseResistanceBonus, cursePlayer.CurseDamageBonus,
+                    cursePlayer.CurseAttackSpeedBonus, cursePlayer.CurseMovementSpeedBonus, cursePlayer.CursePositiveStatsMultiplier);
+            }
+
+            if (cursePlayer.powerfulCurseActive)
+            {
+                snapshot.powerfulCurse = MakeCurseRoll(cursePlayer.powerfulCurseMaxLifeMultiplier, cursePlayer.powerfulCurseLifeRegenerationBonus,
+                    cursePlayer.powerfulCurseDefenseBonus, cursePlayer.powerfulCurseResistanceBonus, cursePlayer.powerfulCurseDamageBonus,
+                    cursePlayer.powerfulCurseAttackSpeedBonus, cursePlayer.powerfulCurseMovementSpeedBonus, cursePlayer.CursePositiveStatsMultiplier);
+            }
 
             // The multiplier pieces behind the floats above - see DamageModifierBreakdown for why sources aren't here.
             DamageClass[] trackedClasses = { DamageClass.Melee, DamageClass.Ranged, DamageClass.Magic, DamageClass.Summon, DamageClass.Generic };
@@ -1570,7 +1701,7 @@ namespace tsorcRevamp.Utilities.Balance
             {
                 int buff = player.buffType[i];
                 if (buff > 0 && player.buffTime[i] > 0)
-                    snapshot.buffs.Add(BuffLoader.GetBuff(buff)?.Name ?? Lang.GetBuffName(buff));
+                    snapshot.buffs.Add(BuffKey(buff));
             }
 
             // Automatic loadout description, read from what is on the player right now. Prefixes are counted across
@@ -1591,13 +1722,13 @@ namespace tsorcRevamp.Utilities.Balance
 
             foreach (EquipSlot piece in equippedPieces)
             {
-                if (string.IsNullOrEmpty(piece.prefixName))
+                if (string.IsNullOrEmpty(piece.prefixKey))
                 {
                     continue;
                 }
 
-                snapshot.prefixCounts.TryGetValue(piece.prefixName, out int prefixCount);
-                snapshot.prefixCounts[piece.prefixName] = prefixCount + 1;
+                snapshot.prefixCounts.TryGetValue(piece.prefixKey, out int prefixCount);
+                snapshot.prefixCounts[piece.prefixKey] = prefixCount + 1;
             }
 
             if (snapshot.noGearEquipped)
@@ -1671,6 +1802,47 @@ namespace tsorcRevamp.Utilities.Balance
             if (prefix <= 0 || Lang.prefix == null || prefix >= Lang.prefix.Length)
                 return string.Empty;
             return Lang.prefix[prefix]?.Value ?? string.Empty;
+        }
+
+        /// <summary>Language-independent buff name: the ModBuff class name, or the BuffID field name for vanilla
+        /// ("Ironskin", "WellFed2"). Before logger revision 8 vanilla buffs were logged in the player's language.</summary>
+        internal static string BuffKey(int buffType)
+        {
+            ModBuff modBuff = BuffLoader.GetBuff(buffType);
+            if (modBuff != null)
+            {
+                return modBuff.Name;
+            }
+
+            if (BuffID.Search.TryGetName(buffType, out string vanillaName))
+            {
+                return vanillaName;
+            }
+
+            return Lang.GetBuffName(buffType);
+        }
+
+        /// <summary>Language-independent prefix name: the ModPrefix class name, or the PrefixID field name for vanilla
+        /// ("Warding", "Hasty2"). Used to key prefixCounts so logs from any game language can be totalled together.</summary>
+        internal static string PrefixKey(int prefix)
+        {
+            if (prefix <= 0)
+            {
+                return string.Empty;
+            }
+
+            ModPrefix modPrefix = PrefixLoader.GetPrefix(prefix);
+            if (modPrefix != null)
+            {
+                return modPrefix.Name;
+            }
+
+            if (PrefixID.Search.TryGetName(prefix, out string vanillaName))
+            {
+                return vanillaName;
+            }
+
+            return string.Empty;
         }
 
         private static int SafeShmDowned()

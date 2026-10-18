@@ -33,7 +33,7 @@ internal static class Program
         ["Arazium's Mountain Caverns"] = 20,
         ["Machine Temple"] = 21,
         ["Catacombs"] = 22,
-        ["Molten Sky Temple"] = 23,
+        ["Sunken Sky Temple"] = 23,
         ["Origin of the Abyss"] = 24,
         ["Remix Obsidian Zone"] = 25,
         ["Remix Reef"] = 26,
@@ -1605,7 +1605,7 @@ internal static class Program
             if (text.Contains("WallType == 98", StringComparison.Ordinal) || text.Contains("GreenDungeonSlabUnsafe", StringComparison.Ordinal)) return "Machine Temple";
             if (text.Contains("DirtUnsafe1", StringComparison.Ordinal) || text.Contains("DirtUnsafe2", StringComparison.Ordinal)) return "Arazium's Mountain Caverns";
             if (text.Contains("TileID.BoneBlock", StringComparison.Ordinal)) return "Catacombs";
-            if (text.Contains("HeavenforgeBrick", StringComparison.Ordinal)) return "Molten Sky Temple";
+            if (text.Contains("HeavenforgeBrick", StringComparison.Ordinal)) return "Sunken Sky Temple";
             if ((text.Contains("TileID.Coralstone", StringComparison.Ordinal) || text.Contains("TileID.ReefBlock", StringComparison.Ordinal)) && text.Contains("RemixMap", StringComparison.Ordinal)) return "Remix Reef";
             return null;
         }

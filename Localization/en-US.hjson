@@ -4658,7 +4658,7 @@ Mods: {
 					Learn the timing and you can pass straight through an attack.
 					Rolling in the air allows you to cross bigger gaps and reverse your momentum instantly.
 					Roll as the attack is just about to land and you get a Perfect Dodge.
-					It refunds half the roll's stamina and grants +{0}% stamina regen and +{1}% critical strike chance for {2} seconds.
+					It grants +{0}% stamina regen and +{1}% critical strike chance for {2} seconds.
 					'''
 				Heading7: Regain
 				Page7:
@@ -9223,6 +9223,11 @@ Mods: {
 				DisplayName: Purple Gem Staff
 			}
 
+			ArchdeaconStaff: {
+				Tooltip: ""
+				DisplayName: Archdeacon Staff
+			}
+
 			OolacileCultistStaff: {
 				Tooltip: ""
 				DisplayName: Oolacile Cultist Staff
@@ -10760,6 +10765,11 @@ Mods: {
 			EnemySpellMeteor.DisplayName: Enemy Spell Meteor
 			IllusionVenomField.DisplayName: Venom Field
 			IllusionVenomOrb.DisplayName: Venom Orb
+			ArchdeaconGlintStar.DisplayName: Glintstone Star
+			ArchdeaconGlintOrb.DisplayName: Glintstone Orb
+			ArchdeaconGlintSnare.DisplayName: Glintstone Snare
+			ArchdeaconGlintRune.DisplayName: Glintstone Rune
+			ArchdeaconGlintLance.DisplayName: Glintstone Lance
 			EnemySpellPoisonStorm.DisplayName: Enemy Spell Poison Storm
 			EnemySpellPoisonStormBall.DisplayName: Enemy Spell Great Poison Strike Ball
 			EnemySpellSuddenDeathBall.DisplayName: Enemy Spell Sudden Death Ball

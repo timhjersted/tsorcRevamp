@@ -4198,7 +4198,7 @@ namespace tsorcRevamp
             }
         }
 
-        //boss zen actually zens
+        //boss zen actually zens; also opens the Sunken Sky Temple and Wyvern Fortress walls to spawns in Adventure Mode
         internal static void BossZenPatch(Terraria.On_NPC.orig_SpawnNPC orig)
         {
             bool BossZen = false;
@@ -4219,9 +4219,29 @@ namespace tsorcRevamp
             {
                 return;
             }
-            else
+
+            // Adventure Mode: let enemies spawn in front of Meteorite Brick Wall (Sunken Sky Temple) and Smooth Marble Wall
+            // (Wyvern Fortress). Vanilla's spawn search skips any open tile backed by a "house" (crafted) wall, so the flags are
+            // cleared for this pass only and restored after; town-NPC housing checks run elsewhere and still see house walls.
+            bool openDungeonWalls = ModContent.GetInstance<tsorcRevampConfig>().AdventureMode;
+
+            if (openDungeonWalls)
+            {
+                Main.wallHouse[WallID.MeteoriteBrick] = false;
+                Main.wallHouse[WallID.MarbleBlock] = false;
+            }
+
+            try
             {
                 orig();
+            }
+            finally
+            {
+                if (openDungeonWalls)
+                {
+                    Main.wallHouse[WallID.MeteoriteBrick] = true;
+                    Main.wallHouse[WallID.MarbleBlock] = true;
+                }
             }
         }
 
