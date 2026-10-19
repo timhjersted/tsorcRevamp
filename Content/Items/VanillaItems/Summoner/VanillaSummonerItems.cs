@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Content.Items.Armor.Summon;
 using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.VanillaItems.Summoner
 {
@@ -161,7 +162,61 @@ namespace tsorcRevamp.Content.Items.VanillaItems.Summoner
                 item.damage = 58;
             }
             #endregion
+
+            #region Armor
+
+            if (item.type == ItemID.SquireGreatHelm)
+            {
+                item.defense = 6;
+            }
+            if (item.type == ItemID.SquirePlating)
+            {
+                item.defense = 14;
+            }
+            if (item.type == ItemID.SquireGreaves)
+            {
+                item.defense = 9;
+            }
+            
+            if (item.type == ItemID.SquireAltHead) //Valhalla Knight
+            {
+                item.defense = 10;
+            }
+            if (item.type == ItemID.SquireAltShirt)
+            {
+                item.defense = 12;
+            }
+            if (item.type == ItemID.SquireAltPants)
+            {
+                item.defense = 12;
+            }
+
+            #endregion
         }
+
+        public const int SquireHelmSentrySlots = 1;
+        public const int SquireHelmLifeRegenPerSec = 2; //to negate it properly
+        public const int SquireHelmMinionSlots = 1;
+        public const float SquirePlatingSummonDmg = 15f;
+        public const float SquirePlatingMeleeDmg = 15f; //to negate it properly
+        public const int SquirePlatingMinionSlots = 1;
+        public const float SquireGreavesSummonDmg = 15f;
+        public const float SquireGreavesMeleeCrit = 15f; //to negate it properly
+        public const float SquireGreavesMoveSpeed = 15f;
+        public const float SquireGreavesCritChance = 15f;
+
+        public const int ValhallaKnightHelmSentrySlots = 2;
+        public const float ValhallaKnightHelmSummonDmg = 10f;
+        public const float ValhallaKnightHelmMeleeDmg = 10f;
+        public const int ValhallaKnightHelmMinionSlots = 2;
+        public const int ValhallaKnightBreastplateLifeRegenPerSec = 4;
+        public const float ValhallaKnightBreastplateSummonDmg = 30f;
+        public const int ValhallaKnightBreastplateMinionSlots = 1;
+        public const float ValhallaKnightGreavesSummonDmg = 20f;
+        public const float ValhallaKnightGreavesMeleeCritChance = 20f;
+        public const float ValhallaKnightGreavesMoveSpeed = 20f;
+        public const float ValhallaKnightGreavesCritChance = 20f;
+        
         public const float StardustDragonBaseDmgMult = 0.5f;
 
         public const float BeetleSummonTagStrengthBoost = 20f;
@@ -350,6 +405,66 @@ namespace tsorcRevamp.Content.Items.VanillaItems.Summoner
                 if (ttindex1 != -1)
                 {
                     tooltips.RemoveAt(ttindex1);
+                }
+            }
+            if (item.type == ItemID.SquireGreatHelm)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "Rework", LangUtils.GetTextValue("Items.VanillaItems.SquireHelm",
+                        SquireHelmSentrySlots, SquireHelmMinionSlots)));
+                }
+            }
+            if (item.type == ItemID.SquirePlating)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "Rework", LangUtils.GetTextValue("Items.VanillaItems.SquirePlating",
+                        SquirePlatingSummonDmg, SquirePlatingMinionSlots)));
+                }
+            }
+            if (item.type == ItemID.SquireGreaves)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "Rework", LangUtils.GetTextValue("Items.VanillaItems.SquireGreaves",
+                        SquireGreavesSummonDmg, SquireGreavesCritChance, SquireGreavesMoveSpeed)));
+                }
+            }
+            if (item.type == ItemID.SquireAltHead)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "Rework", LangUtils.GetTextValue("Items.VanillaItems.ValhallaKnightHelm",
+                        ValhallaKnightHelmSentrySlots, ValhallaKnightHelmMinionSlots, ValhallaKnightHelmSummonDmg)));
+                }
+            }
+            if (item.type == ItemID.SquireAltShirt)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "Rework", LangUtils.GetTextValue("Items.VanillaItems.ValhallaKnightBreastplate",
+                        ValhallaKnightBreastplateSummonDmg, ValhallaKnightBreastplateMinionSlots)));
+                }
+            }
+            if (item.type == ItemID.SquireAltPants)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "Rework", LangUtils.GetTextValue("Items.VanillaItems.ValhallaKnightGreaves",
+                        ValhallaKnightGreavesSummonDmg, ValhallaKnightGreavesCritChance, ValhallaKnightGreavesMoveSpeed)));
                 }
             }
         }

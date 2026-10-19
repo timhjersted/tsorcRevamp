@@ -743,6 +743,38 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
+				/* SquireHelm:
+					'''
+					{$CommonItemTooltip.IncreasesMaxSentriesBy}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					''' */
+				/* SquirePlating:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					''' */
+				/* SquireGreaves:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.CritChance@1}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@2}
+					''' */
+				/* ValhallaKnightHelm:
+					'''
+					{$CommonItemTooltip.IncreasesMaxSentriesBy}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					{$CommonItemTooltip.PercentIncreasedSummonDamage@2}
+					''' */
+				/* ValhallaKnightBreastplate:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					''' */
+				/* ValhallaKnightGreaves:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.CritChance@1}
+					''' */
 				LockedCrates: "[c/383838:Проклят] свирепым [c/009400:охотником]"
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
@@ -9169,6 +9201,11 @@ Mods: {
 				// DisplayName: Purple Gem Staff
 			}
 
+			ArchdeaconStaff: {
+				// Tooltip: ""
+				// DisplayName: Archdeacon Staff
+			}
+
 			OolacileCultistStaff: {
 				// Tooltip: ""
 				// DisplayName: Oolacile Cultist Staff
@@ -10706,6 +10743,11 @@ Mods: {
 			EnemySpellMeteor.DisplayName: Вражеское заклинание "Метеор"
 			// IllusionVenomField.DisplayName: Venom Field
 			// IllusionVenomOrb.DisplayName: Venom Orb
+			// ArchdeaconGlintStar.DisplayName: Glintstone Star
+			// ArchdeaconGlintOrb.DisplayName: Glintstone Orb
+			// ArchdeaconGlintSnare.DisplayName: Glintstone Snare
+			// ArchdeaconGlintRune.DisplayName: Glintstone Rune
+			// ArchdeaconGlintLance.DisplayName: Glintstone Lance
 			EnemySpellPoisonStorm.DisplayName: Вражеское заклинание Ядовитый шторм
 			EnemySpellPoisonStormBall.DisplayName: Вражеское заклинание "Великий ядовитый ударный шар"
 			EnemySpellSuddenDeathBall.DisplayName: Вражеское заклинание "Шар внезапной смерти"
@@ -11382,6 +11424,7 @@ Mods: {
 			// BasiliskHypnoticDisrupter.DisplayName: Hypnotic Disrupter
 			// BasiliskShifterBreath.DisplayName: Curse Breath
 			// BasiliskHunterBreath.DisplayName: Curse Breath
+			// HollowSpearmanThrownSpear.DisplayName: Throwing Spear
 			// FireLurkerMeteor.DisplayName: Fire Lurker Meteor
 			// FireLurkerFlameOrb.DisplayName: Fire Lurker Flame Orb
 			// EnemyCaltrop.DisplayName: Enemy Caltrop
