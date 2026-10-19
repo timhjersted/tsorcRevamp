@@ -8,6 +8,8 @@ namespace tsorcRevamp.Content.Items
 {
     class StaminaDroplet : ModItem
     {
+        public const float SoulsRestorePercent = 50f;
+        public const float ClassicRestorePercent = 25f;
 
         public override void SetDefaults()
         {
@@ -27,26 +29,20 @@ namespace tsorcRevamp.Content.Items
             if (player.whoAmI == Main.myPlayer) /*i dont know if this is necessary but better safe than sorry*/
             {
                 tsorcRevampStaminaPlayer stamPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-                float amount = stamPlayer.staminaResourceMax2 / 2;
+                // Share of max stamina restored: both Souls classes 50%, Classic 25% (2026-10-18; was BotC 50%, others 25%).
+                tsorcRevampPlayer soulsPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                float restorePercent = ClassicRestorePercent;
+
+                if (soulsPlayer.BearerOfTheCurse || soulsPlayer.Unkindled)
+                {
+                    restorePercent = SoulsRestorePercent;
+                }
+
+                float amount = stamPlayer.staminaResourceMax2 * restorePercent / 100f;
 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Drip with { Volume = 0.3f });
 
-
-                if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                {
-                    amount /= 2;
-                }
-
-                float staminaBefore = stamPlayer.staminaResourceCurrent;
-                stamPlayer.staminaResourceCurrent += amount;
-
-                if (stamPlayer.staminaResourceCurrent > stamPlayer.staminaResourceMax2)
-                {
-                    stamPlayer.staminaResourceCurrent = stamPlayer.staminaResourceMax2;
-                }
-
-                float staminaGained = stamPlayer.staminaResourceCurrent - staminaBefore;
-                Utilities.Balance.BalanceLog.RecordStaminaGained(player, Utilities.Balance.BalanceLog.StaminaFromDroplet, staminaGained);
+                stamPlayer.RestoreStamina(amount, Utilities.Balance.BalanceLog.StaminaFromDroplet);
                 CombatText.NewText(player.getRect(), Color.YellowGreen, (int)amount);
                 for (int i = 0; i < 15; i++)
                 {

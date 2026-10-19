@@ -3414,6 +3414,17 @@ namespace tsorcRevamp
         ///</summary>  
         const float CurseMovementSpeedMultiplier = 1.5f;
 
+        ///<summary>
+        ///Multiplies the resistance a curse GIVES (boons only; a resistance penalty is unchanged). Halved 2026-10-18.
+        ///</summary>
+        const float CurseResistanceBoonMultiplier = 0.5f;
+
+        ///<summary>
+        ///Bump when the curse roll rules change. A saved curse rolled under an older version is rerolled once on load, so
+        ///old saves lose removed boons (defense, life regen) and pick up the halved resistance. 2 = 2026-10-18 nerf.
+        ///</summary>
+        public const int CurseRollVersion = 2;
+
 
         ///<summary> 
         ///Randomizes a Curse's stats. 
@@ -3547,9 +3558,28 @@ namespace tsorcRevamp
 
             int pickedPositiveStats = 0;
             int PositiveStatsAmount = Main.rand.Next(isCursePowerful ? 3 : 2) + 1;
+
+            // Boons left to pick from: resistance, damage, attack speed, move speed, minus any taken as a penalty. A powerful
+            // curse can spend 3 of those 4 on penalties, so without this cap the loop below could need 3 boons from 1 and
+            // never end. Capped before the boon sizes are computed, so fewer boons are each bigger, as before.
+            int freeBoonStats = 0;
+            bool[] boonStatsTaken = { pickedResistance, pickedDamage, pickedAttackSpeed, pickedMovementSpeed };
+            foreach (bool taken in boonStatsTaken)
+            {
+                if (!taken)
+                {
+                    freeBoonStats++;
+                }
+            }
+
+            PositiveStatsAmount = Math.Min(PositiveStatsAmount, freeBoonStats);
+
             //calculating positive stats
             while (pickedPositiveStats < PositiveStatsAmount)
             {
+                // Life regen and defense are no longer boons (2026-10-18: regen sat outside the Estus healing economy, and
+                // a defense roll reached +81 with Ring of Artorias). Both can still roll as penalties above.
+                /*
                 if (Main.rand.NextBool(7) && !pickedLifeRegeneration)
                 {
                     pickedLifeRegeneration = true;
@@ -3578,18 +3608,19 @@ namespace tsorcRevamp
                         CurseDefenseBonus = ((weakCurseBonus / (float)PositiveStatsAmount) * CurseDefenseMultiplier) * BaseCursePositiveStatPercentage;
                     }
                 }
-                else if (Main.rand.NextBool(7) && !pickedResistance)
+                */
+                if (Main.rand.NextBool(7) && !pickedResistance)
                 {
                     pickedResistance = true;
                     pickedPositiveStats++;
 
                     if (isCursePowerful)
                     {
-                        powerfulCurseResistanceBonus = (powerfulCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
+                        powerfulCurseResistanceBonus = (powerfulCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage * CurseResistanceBoonMultiplier;
                     }
                     else
                     {
-                        CurseResistanceBonus = (weakCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
+                        CurseResistanceBonus = (weakCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage * CurseResistanceBoonMultiplier;
                     }
                 }
                 else if (Main.rand.NextBool(7) && !pickedDamage)

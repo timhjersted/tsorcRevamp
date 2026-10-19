@@ -27,6 +27,33 @@ namespace tsorcRevamp.Buffs.Debuffs
             return accent;
         }
 
+        public const int CurseBurstDustCount = 50;
+
+        /// <summary>
+        /// The moment a curse lands: CurseBurstDustCount flame motes thrown outward from the player's centre all at once,
+        /// pink for the regular curse and plum for the powerful one (the same accent dusts the curse-building attacks use).
+        /// Speeds 3-7 px/t in random directions so it reads as a burst out of the body. Visual only, no-ops on the server.
+        /// </summary>
+        public static void SpawnCurseBurst(Player player, bool powerful)
+        {
+            Vector2 burstOrigin = player.Center - new Vector2(4f, 4f);
+
+            for (int i = 0; i < CurseBurstDustCount; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 7f);
+                float scale = Main.rand.NextFloat(1.6f, 2.4f);
+
+                if (powerful)
+                {
+                    PowerfulCurseBuildup.SpawnAccentDust(burstOrigin, 8, 8, velocity, scale);
+                }
+                else
+                {
+                    SpawnAccentDust(burstOrigin, 8, 8, velocity, scale);
+                }
+            }
+        }
+
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;
@@ -65,16 +92,9 @@ namespace tsorcRevamp.Buffs.Debuffs
 
             modPlayer.CurseLevel = 0; // Reset it to 0
 
+            // No trigger buffs any more (Invincible, Green Blossom, Strength removed 2026-10-18): the curse is the whole effect.
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.75f, Pitch = -0.35f, PitchVariance = 0.1f }, player.Center);
-            player.AddBuff(ModContent.BuffType<Invincible>(), 8 * 60, false); // 8 seconds
-            player.AddBuff(ModContent.BuffType<GreenBlossom>(), 60 * 60, false);
-            player.AddBuff(ModContent.BuffType<Strength>(), 60 * 60, false);
-
-            for (int i = 0; i < 30; i++)
-            {
-                var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.VilePowder, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 200, Color.Pink, Main.rand.NextFloat(2f, 5f));
-                dust.noGravity = true;
-            }
+            SpawnCurseBurst(player, powerful: false);
         }
 
         public override bool ReApply(Player player, int time, int buffIndex)

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ItemDropRules;
@@ -155,6 +156,11 @@ namespace tsorcRevamp.NPCs
 
         /// <summary>Opt-out for staged encounter actors whose intermediate death must produce no global drops.</summary>
         public bool SuppressGlobalOnKillDrops;
+        /// <summary>True for an NPC a boss spawned (directly, or through another boss add or a boss's own segment). Set in OnSpawn
+        /// where the NPC is created, so the server and single player know it; only those run OnKill drops, so it needs no sync.</summary>
+        public bool SpawnedByBoss;
+        /// <summary>Chance per eligible kill of the first stamina droplet (OnKill). A second, independent 1-in-12 roll follows.</summary>
+        public const float StaminaDropletChance = 0.4f;
         /// <summary>True for a temporary combat duplicate left behind by a MagicIllusion teleport.</summary>
         public bool IsTeleportIllusion;
         public int TeleportIllusionTimeLeft;
@@ -3022,6 +3028,25 @@ namespace tsorcRevamp.NPCs
 
         //vanilla npc changes moved to separate file
 
+        // Marks boss adds for the stamina-droplet rule in OnKill. Bosses spawn adds through NPC.GetSource_FromAI/FromThis,
+        // which are EntitySource_Parent with the boss as Entity. A parent that is itself a boss add, or a segment whose head
+        // (realLife) is a boss, counts too, so adds of adds and worm-boss spawns are covered.
+        public override void OnSpawn(NPC npc, IEntitySource source)
+        {
+            if (source is not EntitySource_Parent parentSource || parentSource.Entity is not NPC parent)
+            {
+                return;
+            }
+
+            bool parentIsBossPart = parent.realLife >= 0 && parent.realLife < Main.maxNPCs && Main.npc[parent.realLife].boss;
+            bool parentIsBossAdd = parent.GetGlobalNPC<tsorcRevampGlobalNPC>().SpawnedByBoss;
+
+            if (parent.boss || parentIsBossPart || parentIsBossAdd)
+            {
+                SpawnedByBoss = true;
+            }
+        }
+
         public override void OnKill(NPC npc)
         {
             Player LocalPlayer = Main.LocalPlayer;
@@ -3080,9 +3105,26 @@ namespace tsorcRevamp.NPCs
                     }
                 }
 
-            if (!SuppressGlobalOnKillDrops && Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+            // Stamina droplets: not from boss adds, worm body/tail segments, or enemies that give no money (helpers, props,
+            // critters). Those used to make boss fights with adds a stamina fountain (2026-10-18).
+            bool isLinkedSegment = npc.realLife >= 0 && npc.realLife != npc.whoAmI;
+            // Eater of Worlds pieces aren't linked by realLife, and every split piece becomes a new head, so all three count.
+            bool isEaterOfWorldsSegment = npc.type == NPCID.EaterofWorldsHead || npc.type == NPCID.EaterofWorldsBody || npc.type == NPCID.EaterofWorldsTail;
+            bool dropsStaminaDroplets = !SpawnedByBoss && !isLinkedSegment && !isEaterOfWorldsSegment && npc.value > 0f;
+
+            // Single player skips the roll at full stamina. A server can't check that: stamina is never synced to it, and its
+            // Main.LocalPlayer is an unused slot whose max stamina stays 0, so the old check blocked every multiplayer drop.
+            bool staminaNotFull = true;
+            if (Main.netMode == NetmodeID.SinglePlayer)
             {
-                if (Main.rand.NextBool(2))
+                tsorcRevampStaminaPlayer killerStamina = Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>();
+                staminaNotFull = killerStamina.staminaResourceCurrent < killerStamina.staminaResourceMax2;
+            }
+
+            if (!SuppressGlobalOnKillDrops && dropsStaminaDroplets && staminaNotFull)
+            {
+                // First droplet 40% (was 50% until 2026-10-18), plus an independent 1-in-12 second one.
+                if (Main.rand.NextFloat() < StaminaDropletChance)
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<StaminaDroplet>(), 1);
                 }

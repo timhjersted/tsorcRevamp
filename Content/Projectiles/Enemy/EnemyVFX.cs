@@ -49,6 +49,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         static Asset<Effect> quaraTideRush;
         static Asset<Effect> greatBlackKnightFlail;
         static Asset<Effect> voidExplosion;
+        static Asset<Effect> archdeaconGlintstone;
 
         static Asset<Texture2D> circle;
         static Asset<Texture2D> gradient;
@@ -120,6 +121,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         static readonly Color PlagueAshMid = new(74, 66, 86);
         static readonly Color PlagueAshCore = new(198, 196, 206);
 
+        // Archdeacon glintstone palette: deep azure body / glint blue / blue-white (approved in the offline preview).
+        static readonly Color GlintDark = new(20, 50, 140);
+        static readonly Color GlintMid = new(70, 145, 255);
+        static readonly Color GlintCore = new(225, 245, 255);
+
         static void LoadAssets()
         {
             if (Main.dedServ)
@@ -149,6 +155,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             quaraTideRush ??= ModContent.Request<Effect>(EffectRoot + "QuaraTideRush", AssetRequestMode.ImmediateLoad);
             greatBlackKnightFlail ??= ModContent.Request<Effect>(EffectRoot + "GreatBlackKnightFlail", AssetRequestMode.ImmediateLoad);
             voidExplosion ??= ModContent.Request<Effect>(EffectRoot + "VoidExplosion", AssetRequestMode.ImmediateLoad);
+            archdeaconGlintstone ??= ModContent.Request<Effect>(EffectRoot + "ArchdeaconGlintstone", AssetRequestMode.ImmediateLoad);
 
             circle ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_CircleFit1", AssetRequestMode.ImmediateLoad);
             gradient ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Gradient_circle22", AssetRequestMode.ImmediateLoad);
@@ -337,6 +344,49 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Draw(blackKnightSpearWake, "BlackKnightSpearWake", perlinTiled, cloudNoise,
                 center, size, rotation, PlagueAshDark, PlagueAshMid, PlagueAshCore,
                 opacity, 0.5f, 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        // Archdeacon glintstone sorcery (Effects/ArchdeaconGlintstone.fx). All four are premultiplied AlphaBlend over a
+        // procedural quad (cloud noise drawn, broken noise in s1), 2px pixel filter.
+        // Comet: the head sits at uv.x 0.80 of a 3:1 quad pointing along `rotation`; tailLength 0 = bare glint.
+        internal static void DrawArchdeaconGlintComet(Vector2 headCenter, float rotation, float height, float tailLength, float opacity)
+        {
+            LoadAssets();
+            Vector2 size = new Vector2(height * 3f, height);
+            // Shift the quad back along the travel direction so the head, not the quad centre, sits on headCenter.
+            Vector2 quadCenter = headCenter - rotation.ToRotationVector2() * (size.X * 0.30f);
+            Draw(archdeaconGlintstone, "ArchdeaconGlintComet", cloudNoise, brokenNoise,
+                quadCenter, size, rotation, GlintDark, GlintMid, GlintCore,
+                opacity, MathHelper.Clamp(tailLength, 0f, 1f), 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        // Orb: sphere radius is 0.52 of half the quad, the ribbons reach 0.82.
+        internal static void DrawArchdeaconGlintOrb(Vector2 center, float diameter, float opacity)
+        {
+            LoadAssets();
+            Draw(archdeaconGlintstone, "ArchdeaconGlintOrb", cloudNoise, brokenNoise,
+                center, new Vector2(diameter), 0f, GlintDark, GlintMid, GlintCore,
+                opacity, 0f, 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        // Snare field: a square quad whose floor line is 92% of the way down it. `pulse` 0..1 flashes the field bright.
+        internal static void DrawArchdeaconGlintSnare(Vector2 floorCenter, float width, float opacity, float pulse)
+        {
+            LoadAssets();
+            Vector2 size = new Vector2(width, width);
+            Vector2 quadCenter = floorCenter + new Vector2(0f, size.Y * (0.5f - 0.92f));
+            Draw(archdeaconGlintstone, "ArchdeaconGlintSnare", cloudNoise, brokenNoise,
+                quadCenter, size, 0f, GlintDark, GlintMid, GlintCore,
+                opacity, MathHelper.Clamp(pulse, 0f, 1f), 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        // Lance: drawn on the lance hitbox, tip at the top.
+        internal static void DrawArchdeaconGlintLance(Vector2 center, Vector2 size, float opacity)
+        {
+            LoadAssets();
+            Draw(archdeaconGlintstone, "ArchdeaconGlintLance", cloudNoise, brokenNoise,
+                center, size, 0f, GlintDark, GlintMid, GlintCore,
+                opacity, 0f, 1f, 1f, BlendState.AlphaBlend);
         }
 
         internal static void DrawDemonSpiritCastSigil(Vector2 center, int pattern, float progress, Vector2 aimDirection)

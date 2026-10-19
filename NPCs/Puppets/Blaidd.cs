@@ -282,7 +282,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Terraria.ModLoader.Config.NPCDefinition definition = new(ModContent.NPCType<Blaidd>());
             if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
             {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Content.Items.StaminaDroplet>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<global::tsorcRevamp.Content.Items.StaminaVessel>());
                 tsorcRevampWorld.NewSlain.Add(definition, 1);
 
                 if (Main.netMode == NetmodeID.Server)

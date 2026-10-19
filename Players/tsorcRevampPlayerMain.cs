@@ -260,6 +260,7 @@ namespace tsorcRevamp
             tag.Add("powerfulCurseDmg", powerfulCurseDamageBonus);
             tag.Add("powerfulCurseAtkSpd", powerfulCurseAttackSpeedBonus);
             tag.Add("powerfulCurseMoveSpd", powerfulCurseMovementSpeedBonus);
+            tag.Add("CurseRollVersion", CurseRollVersion);
             tag.Add("SoulVessel", SoulVessel);
             tag.Add("DeathTextIndex", currentDeathTextIndex);
             tag.Add("StartingClass", (int)startingClass);
@@ -417,6 +418,23 @@ namespace tsorcRevamp
             powerfulCurseDamageBonus = tag.GetFloat("powerfulCurseDmg");
             powerfulCurseAttackSpeedBonus = tag.GetFloat("powerfulCurseAtkSpd");
             powerfulCurseMovementSpeedBonus = tag.GetFloat("powerfulCurseMoveSpd");
+
+            // A curse rolled under older rules (missing key = version 1) is rerolled once, so removed boons (defense, life
+            // regen) and the pre-halving resistance don't live on in old saves.
+            int savedCurseRollVersion = tag.ContainsKey("CurseRollVersion") ? tag.GetInt("CurseRollVersion") : 1;
+            if (savedCurseRollVersion < CurseRollVersion)
+            {
+                if (CurseActive)
+                {
+                    CalculateCurseStats(false);
+                }
+
+                if (powerfulCurseActive)
+                {
+                    CalculateCurseStats(true);
+                }
+            }
+
             SoulVessel = tag.GetInt("SoulVessel");
 
             if(tag.ContainsKey("DeathTextIndex"))
@@ -1199,11 +1217,7 @@ namespace tsorcRevamp
 
             tsorcRevampStaminaPlayer staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
             float staminaRestored = staminaPlayer.staminaResourceMax2 * ArtoriasOfTheAbyssHelm.PoiseStaminaRestore / 100f;
-            float staminaBefore = staminaPlayer.staminaResourceCurrent;
-            staminaPlayer.staminaResourceCurrent = MathHelper.Clamp(staminaPlayer.staminaResourceCurrent + staminaRestored, 0, staminaPlayer.staminaResourceMax2);
-
-            float staminaGained = staminaPlayer.staminaResourceCurrent - staminaBefore;
-            Utilities.Balance.BalanceLog.RecordStaminaGained(Player, Utilities.Balance.BalanceLog.StaminaFromAbysswalkerPoise, staminaGained);
+            staminaPlayer.RestoreStamina(staminaRestored, Utilities.Balance.BalanceLog.StaminaFromAbysswalkerPoise);
 
             if (Main.myPlayer == Player.whoAmI)
             {

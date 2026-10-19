@@ -12,7 +12,76 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
     public override void Load()
     {
         On_Player.GrantPrefixBenefits += CustomAccessoryPrefixStats;
+        On_Item.Prefix += TrackRandomPrefixRoll;
     }
+
+    // True only while Item.Prefix is rolling a random prefix (reforge, crafting, loot: prefixWeWant < 0). tModLoader also runs
+    // AllowPrefix when a saved or synced item re-applies its exact prefix, and returning false there deletes the prefix, so
+    // the Warding/Armored rule below must only act during random rolls. ThreadStatic because world gen rolls chest loot on
+    // its own thread.
+    [System.ThreadStatic]
+    private static bool _rollingRandomPrefix;
+
+    private static bool TrackRandomPrefixRoll(On_Item.orig_Prefix orig, Item self, int prefixWeWant)
+    {
+        bool wasRolling = _rollingRandomPrefix;
+        _rollingRandomPrefix = prefixWeWant < 0;
+
+        try
+        {
+            return orig(self, prefixWeWant);
+        }
+        finally
+        {
+            _rollingRandomPrefix = wasRolling;
+        }
+    }
+
+    // Roll rules for new accessory prefixes (reforge, crafting, loot). Returning false makes tModLoader pick another prefix;
+    // items that already have a now-blocked prefix keep it.
+    //  - Hard, Armored and Warding only roll on accessories that give defense on their own (base defense from ContentSamples,
+    //    so a prefix never counts). No list: shields, defensive rings, Dragoon pieces, Shackle...
+    //  - Wings never roll defense or damage/crit prefixes, so the wing slot can't carry another defense or damage piece.
+    public override bool AllowPrefix(Item item, int pre)
+    {
+        if (!_rollingRandomPrefix || !item.accessory)
+        {
+            return true;
+        }
+
+        bool isWings = item.wingSlot > 0;
+        if (!isWings && item.ModItem != null)
+        {
+            // Supersonic harness wings assign wingSlot lazily in UpdateAccessory, so ask the equip loader as well.
+            isWings = EquipLoader.GetEquipSlot(item.ModItem.Mod, item.ModItem.Name, EquipType.Wings) > 0;
+        }
+
+        if (isWings && WingBlockedPrefixes.Contains(pre))
+        {
+            return false;
+        }
+
+        bool needsBaseDefense = pre == PrefixID.Hard || pre == PrefixID.Armored || pre == PrefixID.Warding;
+        if (!needsBaseDefense)
+        {
+            return true;
+        }
+
+        int baseDefense = item.defense;
+        if (ContentSamples.ItemsByType.TryGetValue(item.type, out Item sample))
+        {
+            baseDefense = sample.defense;
+        }
+
+        return baseDefense > 0;
+    }
+
+    // Defense prefixes and damage/crit prefixes, which wings can't roll.
+    private static readonly HashSet<int> WingBlockedPrefixes = new()
+    {
+        PrefixID.Hard, PrefixID.Guarding, PrefixID.Armored, PrefixID.Warding,
+        PrefixID.Menacing, PrefixID.Angry, PrefixID.Spiked, PrefixID.Jagged, PrefixID.Precise, PrefixID.Lucky,
+    };
     public const int HardDefense = 2;
     public const float HardThornsGain = 10f;
     public const int GuardingDefense = 1;

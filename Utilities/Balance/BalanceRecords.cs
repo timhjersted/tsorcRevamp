@@ -699,8 +699,9 @@ namespace tsorcRevamp.Utilities.Balance
     }
 
     /// <summary>Stamina gained from one source over an encounter. Sources are the BalanceLog.StaminaFrom* names:
-    /// regen / regenStanding (regen ticks while standing still, which get x1.5), debtRepaid (regen spent paying off
-    /// overdraw debt instead of filling the bar), cerulean, droplet, abysswalkerPoise, gwynKindling.</summary>
+    /// regen / regenStanding (regen ticks with the standing-still bonus active: x1.25 after 0.5 s still), debtRepaid (regen spent paying off
+    /// overdraw debt instead of filling the bar), cerulean, droplet, abysswalkerPoise, gwynKindling. Item refills pay debt first and
+    /// their amount includes the debt they paid.</summary>
     internal sealed class StaminaGain
     {
         public string source;

@@ -80,6 +80,17 @@ namespace ShaderPreview
         {
             return new[]
             {
+                // Archdeacon glintstone shader (Effects/ArchdeaconGlintstone.fx) - the live default look since 2026-10-18
+                // (/glintlegacy switches back to the old sprites). Sizes mirror the projectiles' real draw quads.
+                Glintstone("GlintCometSky", "ArchdeaconGlintComet", new Vector2(96f, 32f), SkyBlue),
+                Glintstone("GlintCometCave", "ArchdeaconGlintComet", new Vector2(96f, 32f), CaveDark),
+                Glintstone("GlintOrbSky", "ArchdeaconGlintOrb", new Vector2(100f, 100f), SkyBlue),
+                Glintstone("GlintOrbCave", "ArchdeaconGlintOrb", new Vector2(100f, 100f), CaveDark),
+                Glintstone("GlintSnareSky", "ArchdeaconGlintSnare", new Vector2(120f, 120f), SkyBlue),
+                Glintstone("GlintSnareCave", "ArchdeaconGlintSnare", new Vector2(120f, 120f), CaveDark),
+                Glintstone("GlintLanceSky", "ArchdeaconGlintLance", new Vector2(32f, 264f), SkyBlue),
+                Glintstone("GlintLanceCave", "ArchdeaconGlintLance", new Vector2(32f, 264f), CaveDark),
+
                 OwlFatherSolarArmor("OwlSolarArmorSky", SkyBlue),
                 OwlFatherSolarArmor("OwlSolarArmorCave", CaveDark),
                 OwlFatherSolarAxe("OwlSolarAxeSky", SkyBlue),
@@ -751,6 +762,28 @@ namespace ShaderPreview
                     effect.Parameters["DriftUV"].SetValue(localRight * (8f / scale) / textureSize);
                     effect.Parameters["PixelGrid"].SetValue(new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                 },
+            };
+        }
+
+        // Proposed call site: full-texture premultiplied draw of a noise quad, 2px pixel filter, glintstone palette
+        // (deep azure / glint blue / blue-white, matching ArchdeaconGlintStar's GlintColor + GlintCore).
+        private static Recipe Glintstone(string name, string technique, Vector2 drawSize, Color clear)
+        {
+            return new Recipe
+            {
+                Name = name,
+                Effect = "ArchdeaconGlintstone",
+                Technique = technique,
+                Primary = "T_CloudNoise_Tiled",
+                Detail = "T_VFX_Noise41",
+                DrawSize = drawSize,
+                FullTexture = true,
+                Dark = new Color(20, 50, 140),
+                Mid = new Color(70, 145, 255),
+                Core = new Color(225, 245, 255),
+                Blend = BlendState.AlphaBlend,
+                PixelBlockSize = 2f,
+                Clear = clear,
             };
         }
     }

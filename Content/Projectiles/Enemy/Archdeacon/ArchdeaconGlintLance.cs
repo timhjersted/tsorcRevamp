@@ -7,25 +7,31 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+using tsorcRevamp.Utilities;
+
 namespace tsorcRevamp.Content.Projectiles.Enemy.Archdeacon
 {
     // Archdeacon's Glintstone Eruption lance, spawned buried by ArchdeaconGlintRune and bursting up out of the floor.
-    // Art: ArchdeaconGlintLance.png is a copy of IlluminantHomingStar (34x90, round head at the BOTTOM), drawn rotated
-    // 180° so the head leads upward and the flame tail trails into the floor. Drawn behind tiles to hide the buried part.
-    // Life: rises at RiseSpeed with RiseDrag per tick (total rise ~ RiseSpeed / (1 - RiseDrag) = 83px of its 88px), then stands.
+    // A 32x264 needle of light (3x the original 88px, requested 2026-10-18); the hitbox matches the visual.
+    // Look: the ArchdeaconGlintLance shader by default. /glintlegacy draws ArchdeaconGlintLance.png instead (a copy of
+    // IlluminantHomingStar, 34x90, round head at the BOTTOM) flipped head-up and stretched 3x to the hitbox.
+    // Drawn behind tiles to hide the buried part.
+    // Life: rises at RiseSpeed with RiseDrag per tick (total rise ~ RiseSpeed / (1 - RiseDrag) = 250px of its 264px):
+    // 100px in its first 6t, so it bursts out of the floor; then it stands.
     // Death: fades over FadeTicks and bursts into sparkles. Deliberately ignores tiles: it is born inside the floor.
     public class ArchdeaconGlintLance : ModProjectile
     {
-        public const float RiseSpeed = 10f;
-        public const float HalfHeight = 44f;
-        private const float RiseDrag = 0.88f;
-        private const int LifetimeTicks = 45;
-        private const int FadeTicks = 15;
+        public const float RiseSpeed = 20f;
+        public const float HalfHeight = 132f;
+        private const float RiseDrag = 0.92f;
+        // 30t solid (damaging) + a 30t fade. The fade was 15t; lifetime grew with it so the solid window is unchanged.
+        private const int LifetimeTicks = 60;
+        private const int FadeTicks = 30;
 
         public override void SetDefaults()
         {
             Projectile.width = 32;
-            Projectile.height = 88;
+            Projectile.height = (int)(HalfHeight * 2f);
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
@@ -89,12 +95,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Archdeacon
 
         public override bool PreDraw(ref Color lightColor)
         {
+            // Default look: the ArchdeaconGlintLance shader on the hitbox (tip up); /glintlegacy = the comet sprite.
+            if (!GlintLegacyCommand.UseLegacySprites)
+            {
+                EnemyVFX.DrawArchdeaconGlintLance(Projectile.Center, Projectile.Size, 1f - Projectile.alpha / 255f);
+                return false;
+            }
+
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             float opacity = 1f - Projectile.alpha / 255f;
             Color glow = new Color(255, 255, 255, 0) * opacity;
 
+            Vector2 stretchToHitbox = new Vector2(1f, Projectile.height / (float)texture.Height);
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, glow, MathHelper.Pi,
-                texture.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+                texture.Size() * 0.5f, stretchToHitbox, SpriteEffects.None, 0);
             return false;
         }
 

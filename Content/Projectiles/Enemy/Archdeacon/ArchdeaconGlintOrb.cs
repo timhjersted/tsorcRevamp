@@ -7,6 +7,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy.Triad;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Archdeacon
 {
@@ -276,8 +277,42 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Archdeacon
             }
         }
 
+        // Default look: the ArchdeaconGlintOrb shader. Same pulse as the sprite (faster while Burst flashes); the burst
+        // swells the orb 60% while it fades out over the DyingTicks the star ring takes to spawn.
+        private void DrawShader()
+        {
+            float diameter = 100f;
+            if (OrbMode == Mode.Burst)
+            {
+                diameter = 64f;
+            }
+
+            bool flashing = OrbMode == Mode.Burst && Age > TravelTicks && DyingSince == 0;
+            float pulse = 1f + 0.06f * (float)Math.Sin(Age * 0.3f);
+            if (flashing)
+            {
+                pulse = 1f + 0.18f * (float)Math.Sin(Age * 0.9f);
+            }
+
+            float opacity = 1f;
+            if (DyingSince > 0)
+            {
+                float burstProgress = MathHelper.Clamp((Age - DyingSince) / (float)DyingTicks, 0f, 1f);
+                pulse *= 1f + burstProgress * 0.6f;
+                opacity = 1f - burstProgress;
+            }
+
+            EnemyVFX.DrawArchdeaconGlintOrb(Projectile.Center, diameter * pulse, opacity);
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
+            if (!GlintLegacyCommand.UseLegacySprites)
+            {
+                DrawShader();
+                return false;
+            }
+
             Texture2D sheet = TextureAssets.Projectile[Type].Value;
             int frameHeight = sheet.Height / FrameCount;
             Rectangle frame = new Rectangle(0, Projectile.frame * frameHeight, sheet.Width, frameHeight);

@@ -591,6 +591,17 @@ namespace tsorcRevamp
         internal int staminaRegenDelayTimer;
         private float _staminaLastFrame;
 
+        /// <summary>Regen multiplier while standing still, once the player has been still for StationaryRegenDelayTicks.</summary>
+        public const float StationaryRegenMult = 1.25f;
+
+        /// <summary>Ticks of zero velocity before the standing-still bonus starts (30 = half a second).</summary>
+        public const int StationaryRegenDelayTicks = 30;
+
+        private int stationaryTicks;
+
+        /// <summary>True while the standing-still regen bonus applies. Also how the balance log tells standing regen apart.</summary>
+        private bool StationaryRegenActive => stationaryTicks >= StationaryRegenDelayTicks;
+
         /// <summary>Ordinary post-spend regen pause for this player's class.</summary>
         internal int SpendRegenDelay => Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse
             ? StaminaRegenDelayTicksBotC
@@ -639,9 +650,9 @@ namespace tsorcRevamp
                 return;
             }
 
-            // Balance log: regen while standing still is logged apart because it carries the x1.5 stationary bonus.
+            // Balance log: regen with the standing-still bonus active is logged apart (it carries the StationaryRegenMult bonus).
             string regenSource = BalanceLog.StaminaFromRegen;
-            if (Player.velocity == Vector2.Zero)
+            if (StationaryRegenActive)
             {
                 regenSource = BalanceLog.StaminaFromRegenStanding;
             }
@@ -666,6 +677,30 @@ namespace tsorcRevamp
             float roomInBar = Math.Max(0f, staminaResourceMax2 - staminaResourceCurrent);
             BalanceLog.RecordStaminaGained(Player, regenSource, Math.Min(gain, roomInBar));
             staminaResourceCurrent += gain;
+        }
+
+        /// <summary>
+        /// Stamina restored by an item or effect (droplets, set bonuses). Pays off overdraw debt first and only the rest fills
+        /// the bar, clamped to max, so a refill can't skip the debt lockout. Logs the real gain (debt paid + bar filled) to the
+        /// balance log under <paramref name="logSource"/>. Returns that gain.
+        /// </summary>
+        public float RestoreStamina(float amount, string logSource)
+        {
+            if (amount <= 0f)
+            {
+                return 0f;
+            }
+
+            float debtPaid = Math.Min(staminaDebt, amount);
+            staminaDebt -= debtPaid;
+
+            float leftover = amount - debtPaid;
+            float barBefore = staminaResourceCurrent;
+            staminaResourceCurrent = Math.Min(staminaResourceCurrent + leftover, staminaResourceMax2);
+
+            float gained = debtPaid + (staminaResourceCurrent - barBefore);
+            BalanceLog.RecordStaminaGained(Player, logSource, gained);
+            return gained;
         }
 
         internal void PauseStaminaRegen(int ticks)
@@ -855,9 +890,21 @@ namespace tsorcRevamp
 
 
             staminaResourceGain = staminaResourceGainMult * staminaResourceRegenRate; //Apply our multiplier to our base regen rate
+
+            // Standing-still bonus: only after StationaryRegenDelayTicks of zero velocity, so tapping still between moves
+            // doesn't earn it. Was x1.5 from the first still tick until 2026-10-18.
             if (Player.velocity == Vector2.Zero)
             {
-                staminaResourceGain *= 1.5f;
+                stationaryTicks++;
+            }
+            else
+            {
+                stationaryTicks = 0;
+            }
+
+            if (StationaryRegenActive)
+            {
+                staminaResourceGain *= StationaryRegenMult;
             }
 
             // A raised shield retains only a fraction of normal stamina recovery. The existing post-block delay

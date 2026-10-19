@@ -18,6 +18,8 @@ using tsorcRevamp.Content.Projectiles.Enemy.Triad;
 using tsorcRevamp.Content.Projectiles.Enemy.Archdeacon;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.Utilities;
+using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -48,7 +50,7 @@ namespace tsorcRevamp.NPCs.Enemies
     //                       Entering it holds a player in place for 2s (attacks still work), once per field; dodge-rolling
     //                       across it is safe / 40t recovery. At most 2 fields at once. Cooldown 300t.
     //   Glintstone Eruption 30t raised tell / a rune under every player in range: 40t floor telegraph, then the centre
-    //                       lance, side lances 12t later / 44t recovery. Dmg 22.
+    //                       lance, side lances 12t later (each a 264px / ~16-tile needle) / 44t recovery. Dmg 22.
     //   Blink               40t teleport telegraph to a spot 12-20 tiles beside the player with line of sight, then it
     //                       opens with the next spell after 12t. Also the navigation fallback after 3s without line of sight.
     // Selection: a shuffled bag (Phalanx x2 + one of everything else), server-only, never the same spell twice in a row;
@@ -1345,8 +1347,33 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 tip = StaffTipWorld;
                 Vector2 tipOnScreen = tip - screenPos;
                 Color glow = new Color(255, 255, 255, 0) * tellProgress;
+                bool orbSpell = _spell == Spell.GreatOrb || _spell == Spell.StarBurst;
 
-                if (_spell == Spell.GreatOrb || _spell == Spell.StarBurst)
+                if (!GlintLegacyCommand.UseLegacySprites)
+                {
+                    // Default look: the same shaders the projectiles use, growing at the tip over the tell.
+                    if (orbSpell)
+                    {
+                        float fullDiameter = 100f;
+                        if (_spell == Spell.StarBurst)
+                        {
+                            fullDiameter = 64f;
+                        }
+
+                        EnemyVFX.DrawArchdeaconGlintOrb(tip, fullDiameter * tellProgress, tellProgress);
+                    }
+                    else
+                    {
+                        float glintHeight = 24f;
+                        if (_spell == Spell.Comet)
+                        {
+                            glintHeight = 40f;
+                        }
+
+                        EnemyVFX.DrawArchdeaconGlintComet(tip, _aim.ToRotation(), glintHeight * tellProgress, 0f, tellProgress);
+                    }
+                }
+                else if (orbSpell)
                 {
                     Texture2D sheet = TextureAssets.Projectile[ModContent.ProjectileType<ArchdeaconGlintOrb>()].Value;
                     Rectangle sphereFrame = new Rectangle(0, 0, sheet.Width, sheet.Height / 5);

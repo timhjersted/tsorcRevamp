@@ -255,11 +255,7 @@ namespace tsorcRevamp.Content.Items.Armor
             }
             RestoreMana(KindlingManaRestore);
             tsorcRevampStaminaPlayer stamina = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
-            float staminaBefore = stamina.staminaResourceCurrent;
-            stamina.staminaResourceCurrent = MathHelper.Clamp(stamina.staminaResourceCurrent + KindlingStaminaRestore, 0f, stamina.staminaResourceMax2);
-
-            float staminaGained = stamina.staminaResourceCurrent - staminaBefore;
-            Utilities.Balance.BalanceLog.RecordStaminaGained(Player, Utilities.Balance.BalanceLog.StaminaFromGwynKindling, staminaGained);
+            stamina.RestoreStamina(KindlingStaminaRestore, Utilities.Balance.BalanceLog.StaminaFromGwynKindling);
         }
 
         void RestoreMana(int amount)

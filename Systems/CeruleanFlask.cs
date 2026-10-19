@@ -206,10 +206,10 @@ namespace tsorcRevamp.Systems
                 {
                     Player.DelBuff(Player.FindBuffIndex(BuffID.ManaSickness));
                 }
+                // Full stamina refill on drink completion. Goes through RestoreStamina so any overdraw debt is paid first, like
+                // every other refill; the rest fills the bar.
                 tsorcRevampStaminaPlayer drinkerStamina = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
-                float staminaRefilled = drinkerStamina.staminaResourceMax2 - drinkerStamina.staminaResourceCurrent;
-                BalanceLog.RecordStaminaGained(Player, BalanceLog.StaminaFromCerulean, staminaRefilled);
-                drinkerStamina.staminaResourceCurrent = drinkerStamina.staminaResourceMax2;
+                drinkerStamina.RestoreStamina(drinkerStamina.staminaResourceMax2, BalanceLog.StaminaFromCerulean);
 
                 // On-finish WaterCandle dust burst removed — drink completion is already signalled
                 // by the two sound effects and the ManaEffect text below.
