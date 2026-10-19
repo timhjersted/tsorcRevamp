@@ -23,7 +23,7 @@ namespace tsorcRevamp.Content.Items.Armor
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 15;
+            Item.defense = 16;
             Item.rare = ItemRarityID.Cyan;
             Item.value = PriceByRarity.fromItem(Item);
         }
