@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Systems;
+namespace tsorcRevamp.Systems.VanillaPrefixEdits;
 
 public class WeaponPrefixEdits : ModSystem
 {

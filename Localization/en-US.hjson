@@ -82,6 +82,7 @@ Mods: {
 					[c/6cac6c:+{1}% stamina recovery speed]
 					'''
 				Armored: "[c/6cac6c:+{0} resistance]"
+				Warding: "[c/9b6263:-{0}% movement speed]"
 				Jagged: "[c/6cac6c:+{0} flat crit damage]"
 				Spiked:
 					'''

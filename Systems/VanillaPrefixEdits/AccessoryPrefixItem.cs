@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -5,9 +6,9 @@ using Terraria.ModLoader;
 using tsorcRevamp.Prefixes;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.Systems;
+namespace tsorcRevamp.Systems.VanillaPrefixEdits;
 
-public class AccessoryPrefixTooltipEdits : GlobalItem
+public class AccessoryPrefixItem : GlobalItem
 {
     public override void Load()
     {
@@ -87,7 +88,8 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
     public const int GuardingDefense = 1;
     public const float GuardingStaminaRegenBonus = 5f;
     public const float ArmoredResistanceGain = 4f;
-    //Warding unchanged
+    public const int WardingDefense = 4;
+    public const float WardingBadMovespeedScale = 0.9f;
     public const int JaggedFlatCritDmgBonus = 4;
     public const float SpikedThornsGain = 25f;
     public const int SpikedBadDefense = 2;
@@ -116,6 +118,7 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
         {
             var modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
             var staminaPlayer = self.GetModPlayer<tsorcRevampStaminaPlayer>();
+            var prefixPlayer = self.GetModPlayer<AccessoryPrefixEditsPlayer>();
             if (item.prefix == PrefixID.Hard) //default +1def
             {
                 self.statDefense += HardDefense;
@@ -132,7 +135,8 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
             }
             if (item.prefix == PrefixID.Warding) //default
             {
-                self.statDefense += 4;
+                self.statDefense += WardingDefense;
+                prefixPlayer.WardingAccessories++;
             }
             if (item.prefix == PrefixID.Jagged) //default +1% dmg
             {
@@ -159,7 +163,7 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
             if (item.prefix == PrefixID.Lucky) //default +4 crit chance
             {
                 self.GetCritChance(DamageClass.Generic) += LuckyCritChance;
-                self.GetModPlayer<AccessoryPrefixEditsPlayer>().LuckyAccessories++;
+                prefixPlayer.LuckyAccessories++;
             }
             if (item.prefix == PrefixID.Brisk) //default 1% movespeed
             {
@@ -211,6 +215,7 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
     {
         Player player = Main.LocalPlayer;
         var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+        var prefixPlayer = player.GetModPlayer<AccessoryPrefixEditsPlayer>();
         if (item.prefix == PrefixID.Hard)
         {
             int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDefense");
@@ -238,7 +243,15 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
                 tooltips.Insert(ttindex, new TooltipLine(Mod, "RealDR", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Armored", (int)ArmoredResistanceGain)));
             }
         }
-        //Warding unchanged
+        if (item.prefix == PrefixID.Warding)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDefense");
+            if (ttindex != -1)
+            {
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "MovespeedLoss", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Warding", 
+                    MathF.Round(MathF.Max(1f * WardingBadMovespeedScale, prefixPlayer.WardingAccessories * WardingBadMovespeedScale), 1))));
+            }
+        }
         if (item.prefix == PrefixID.Jagged)
         {
             int ttindex = tooltips.FindIndex(t => t.Name == "PrefixAccDamage");
@@ -357,22 +370,5 @@ public class AccessoryPrefixTooltipEdits : GlobalItem
                 tooltips.Insert(ttindex, new TooltipLine(Mod, "ManaEfficiency", LangUtils.GetTextValue("CommonItemTooltip.AccessoryPrefixes.Arcane", (int)((float)ArcaneManaGain * (1f + modPlayer.MaxManaAmplifier / 100f)), ArcaneManaCostReduction)));
             }
         }
-    }
-}
-
-public class AccessoryPrefixEditsPlayer : ModPlayer
-{
-    public int LuckyAccessories;
-    public int BlessedAccessories;
-    public override void ResetEffects()
-    {
-        LuckyAccessories = 0;
-        BlessedAccessories = 0;
-    }
-
-    public override void ModifyLuck(ref float luck)
-    {
-        luck += LuckyAccessories * AccessoryPrefixTooltipEdits.LuckyPercentLuck / 100f;
-        luck += BlessedAccessories * Blessed2.Luck / 100f;
     }
 }
