@@ -44,6 +44,14 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
 
             recipe.Register();
         }
+        public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
+        {
+            if (equippedItem.type == ModContent.ItemType<WolfRingItem>())
+            {
+                return false;
+            }
+            return base.CanAccessoryBeEquippedWith(equippedItem, incomingItem, player);
+        }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {

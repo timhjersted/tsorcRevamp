@@ -21,7 +21,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             Item.width = 24;
             Item.height = 24;
             Item.accessory = true;
-            Item.defense = 12;
+            Item.defense = 10;
             Item.value = PriceByRarity.Purple_11;
             Item.rare = ItemRarityID.Purple;
         }

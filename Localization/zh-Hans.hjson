@@ -8883,7 +8883,7 @@ Mods: {
 				/* Tooltip:
 					'''
 					[c/ffbf00:You feel the power of the 3 Wings and the elements within you]
-					Based on your currently held weapon, grants a temporary buff to two other classes on-hit.
+					Based on your used weapon, grants a temporary buff to two other classes on-hit.
 					Buffs can only be procced by and go towards Melee, Ranged or Magic classes.
 					[c/00ffd4:Buff increases critical strike chance by {1}%]
 					({$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown})

@@ -203,9 +203,9 @@ namespace tsorcRevamp.Content.Items.VanillaItems.Summoner
         public const float SquireGreavesSummonDmg = 15f;
         public const float SquireGreavesMeleeCrit = 15f; //to negate it properly
         public const float SquireGreavesMoveSpeed = 15f;
-        public const float SquireGreavesCritChance = 15f;
+        public const float SquireGreavesCritChance = 8f;
 
-        public const int ValhallaKnightHelmSentrySlots = 2;
+        public const int ValhallaKnightHelmSentrySlots = 1;
         public const float ValhallaKnightHelmSummonDmg = 10f;
         public const float ValhallaKnightHelmMeleeDmg = 10f;
         public const int ValhallaKnightHelmMinionSlots = 2;
@@ -215,7 +215,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems.Summoner
         public const float ValhallaKnightGreavesSummonDmg = 20f;
         public const float ValhallaKnightGreavesMeleeCritChance = 20f;
         public const float ValhallaKnightGreavesMoveSpeed = 20f;
-        public const float ValhallaKnightGreavesCritChance = 20f;
+        public const float ValhallaKnightGreavesCritChance = 10f;
         
         public const float StardustDragonBaseDmgMult = 0.5f;
 
