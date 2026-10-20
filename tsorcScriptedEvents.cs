@@ -14,7 +14,7 @@ using Terraria.ModLoader.IO;
 using tsorcRevamp;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
-using tsorcRevamp.Content.Items.Accessories.Other.Trinity;
+using tsorcRevamp.Content.Items.Accessories.Damage.Trinity;
 using tsorcRevamp.Content.Items.Debug;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;

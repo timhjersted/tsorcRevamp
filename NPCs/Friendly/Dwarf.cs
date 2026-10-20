@@ -10,7 +10,7 @@ using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
-using tsorcRevamp.Content.Items.Accessories.Other.Trinity;
+using tsorcRevamp.Content.Items.Accessories.Damage.Trinity;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Materials;

@@ -8901,9 +8901,10 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffbf00:You feel the power of the 3 Wings and the elements within you]
-					Inflicts acid venom, has a chance to freeze nearby enemies, and gains rapid healing for a small duration upon taking damage
-					When the wearer is below 50% life, activates his natural defenses and gains a buff
-					[c/00ffd4:The buff grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed]
+					Based on your used weapon, grants a temporary buff to two other classes on-hit.
+					Buffs can only be procced by and go towards Melee, Ranged or Magic classes.
+					[c/00ffd4:Buff increases critical strike chance by {1}%]
+					({$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown})
 					'''
 			}
 
@@ -10486,12 +10487,13 @@ Mods: {
 			}
 
 			TrinityBuff: {
-				DisplayName: Natural Defenses
-				Description:
-					'''
-					Your natural defenses have been activated!
-					Grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed 
-					'''
+				DisplayName: Spellblade
+				Description: Your crit chance is greatly increased
+			}
+
+			TrinityCooldown: {
+				DisplayName: Spellblade Cooldown
+				Description: You can't proc Spellblade again until this runs out
 			}
 
 			WitchkingScreamCooldown: {
