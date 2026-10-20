@@ -1554,8 +1554,8 @@ Mods: {
 				Tooltip:
 					'''
 					The rare gem called tearstone has the uncanny ability to sense imminent death.
-					{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1} and
-					{$CommonItemTooltip.DRStat@2}
+					Increases the damage dealt by ranged projectiles based on how long they travel for.
+					Caps at {0}% and takes {1} seconds to reach the maximum.
 					'''
 			}
 

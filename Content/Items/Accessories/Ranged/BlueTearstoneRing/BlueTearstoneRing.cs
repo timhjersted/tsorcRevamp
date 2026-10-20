@@ -2,14 +2,14 @@
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
+namespace tsorcRevamp.Content.Items.Accessories.Ranged.BlueTearstoneRing
 {
     public class BlueTearstoneRing : ModItem
     {
-        public static float LifeThreshold = 40f;
-        public static int Defense = 15;
-        public static float DrIncrease = 18f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Defense, DrIncrease);
+        public const float DmgCap = 25f;
+        public const float SecondsForMaxDmg = 1.5f;
+        public const float DmgPerTick = DmgCap / SecondsForMaxDmg / 60f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgCap, SecondsForMaxDmg);
         public override void SetStaticDefaults()
         {
         }
@@ -18,21 +18,13 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
         {
             Item.width = 24;
             Item.height = 24;
-            Item.defense = 16;
             Item.accessory = true;
             Item.value = PriceByRarity.Purple_11;
             Item.rare = ModContent.RarityType<DarkBlue>();
         }
-
-
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
-            {
-                player.statDefense += Defense;
-                player.endurance += DrIncrease / 100f;
-            }
+            player.GetModPlayer<BlueTearstoneRingPlayer>().Equipped = true;
         }
-
     }
 }

@@ -20,6 +20,7 @@ using tsorcRevamp.Content.Items.Accessories.Mobility.Wings;
 using tsorcRevamp.Content.Items.Accessories.Other;
 using tsorcRevamp.Content.Items.Accessories.Other.SilverSerpentRing;
 using tsorcRevamp.Content.Items.Accessories.Ranged;
+using tsorcRevamp.Content.Items.Accessories.Ranged.BlueTearstoneRing;
 using tsorcRevamp.Content.Items.Accessories.Summon;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.BossItems;
