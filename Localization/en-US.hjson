@@ -4555,9 +4555,9 @@ Mods: {
 					Mana regen is suppressed but the stat affects mana regain speed when using your Cerulean flask.
 					Weapons use stamina. Lost health can be briefly recovered by hiting enemies. Gain +1 accessory slot.
 
-					[c/dd3333:Bearer of the Curse]: All Unkindled features plus combat class mechanics, and {0}% more souls.
+					[c/dd3333:Bearer of the Curse]: All Unkindled features plus combat class mechanics.
 					Weapons drain more stamina but stamina regens faster. Healing potions don't work. Mana regen is
-					disabled outside bonfires, and dying costs {1}% max HP until your soul is recovered.
+					disabled outside bonfires, and dying costs {0}% max HP until your soul is recovered.
 
 					[c/aaaaaa:Classic]: No flasks. Vanilla Terraria healing, shield and magic systems.
 
@@ -4740,7 +4740,7 @@ Mods: {
 					'''
 					Unkindled: the default. Flasks, stamina on weapons, active shields and an extra accesory slot.
 					Bearer of the Curse: everything above, plus an additional combat mechanic for each weapon class,
-					{0}% more souls and a different stamina tempo, with stricter limits on healing & mana regen.
+					a different stamina tempo, with stricter limits on healing & mana regen.
 					Classic: vanilla healing, shields and magic, with no flask interface or stamina-based weapons.
 					Left-click the Darksign to switch, and right-click it to read your class mechanic.				
 					'''

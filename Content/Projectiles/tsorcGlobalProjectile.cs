@@ -799,6 +799,18 @@ namespace tsorcRevamp.Content.Projectiles
                 && SourceNPCType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>())
                 BlightBuildup.Apply(target);
 
+            // Every shot Seath fires builds Frost (Frozen Saw, Frost Blast, Ice Storm + icicles, Frost Wave, Crystal Shards).
+            // Most are shared with other bosses, so key off the synced SourceNPCType. His breath is excluded: it already builds
+            // 1 per tick inside the stream (FrozenDragonsBreath.AI). Runs on the hit player's machine; FrostBuildup.Apply
+            // reports the gain to the server, which owns the meter.
+            bool firedBySeath = SourceNPCType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>();
+            bool isBreath = projectile.type == ModContent.ProjectileType<Enemy.FrozenDragonsBreath>();
+
+            if (projectile.hostile && info.Damage > 0 && firedBySeath && !isBreath)
+            {
+                FrostBuildup.Apply(target, NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead.FrostBuildupPerHit);
+            }
+
             // Every shot Plantera fires builds Miasma, keyed off the synced SourceNPCType.
             if (projectile.hostile && info.Damage > 0 && SourceNPCType == NPCID.Plantera)
             {

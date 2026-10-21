@@ -159,7 +159,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             else
             {
                 _clockTracking = false;
-                HasStrikeHitbox = false;
+                HasStrikeSweep = false;
+                _hasPreviousBlade = false;
                 CurrentMeleeSegment = MeleeClockSegment.None;
             }
 
@@ -281,10 +282,23 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// for weapons the clock doesn't shape. The future hostile damage path arms hits only in Strike.</summary>
         internal MeleeClockSegment CurrentMeleeSegment { get; private set; }
 
-        /// <summary>Owner side, rebuilt every tick: the melee hitbox (world coords) of this tick's Strike-segment runs.
-        /// Only the hostile layer uses it (victim-side player hits); vanilla NPC hits are separate.</summary>
-        internal Rectangle StrikeHitbox;
-        internal bool HasStrikeHitbox;
+        /// <summary>
+        /// Owner side, rebuilt every tick: the blade's sweep during this tick's Strike-segment runs, as two grip→tip
+        /// segments in world coords — where the blade was when the sweep began (the last pose before this tick's first
+        /// strike run) and where it is now. The hostile layer tests players against everything swept between them.
+        /// Built from the DRAWN pose (<see cref="ComputeHeldBlade"/>), not vanilla's melee rectangle: vanilla builds that
+        /// rectangle in fixed stages of the swing and ignores the broadsword rework's rotation, so it jumped around.
+        /// </summary>
+        internal Vector2 StrikeSweepStartHilt;
+        internal Vector2 StrikeSweepStartTip;
+        internal Vector2 StrikeSweepEndHilt;
+        internal Vector2 StrikeSweepEndTip;
+        internal bool HasStrikeSweep;
+
+        // The blade after the previous run of the current use, so a sweep can start from the pose before it.
+        private bool _hasPreviousBlade;
+        private Vector2 _previousBladeHilt;
+        private Vector2 _previousBladeTip;
 
         private int _ownerTickCount;
         private int _lastLiveEndTick = int.MinValue / 2;
@@ -305,6 +319,31 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private bool _clockLiveStarted;
         private int _clockFirstShotRealTick;
         private int _clockFirstShotNative;
+
+        /// <summary>
+        /// The held weapon's blade as vanilla DRAWS it (PlayerDrawLayers.DrawPlayer_27_HeldItem): the sprite sits at
+        /// <paramref name="itemLocation"/>, rotated by <paramref name="itemRotation"/>, with its origin at the bottom
+        /// corner on the hand side (bottom-left facing right; bottom-right facing left, the sprite flipped). For a swing
+        /// the blade runs from that grip corner to the opposite top corner; for a thrust (useStyle 3) it points straight
+        /// out from the grip along the facing. Frame size, not item.width/height, so it matches the art. Client only
+        /// (needs the texture) — the hosting client is the only caller.
+        /// </summary>
+        internal static void ComputeHeldBlade(Item weapon, Vector2 itemLocation, float itemRotation, int direction, float drawScale, out Vector2 hilt, out Vector2 tip)
+        {
+            Main.instance.LoadItem(weapon.type);
+            Rectangle frame = Main.player[Main.myPlayer].GetItemDrawFrame(weapon.type);
+            int facing = direction == 0 ? 1 : direction;
+
+            Vector2 gripToTip = new Vector2(facing * frame.Width, -frame.Height);
+
+            if (weapon.useStyle == ItemUseStyleID.Thrust)
+            {
+                gripToTip = new Vector2(facing * frame.Width, 0f);
+            }
+
+            hilt = itemLocation;
+            tip = itemLocation + (gripToTip * drawScale).RotatedBy(itemRotation);
+        }
 
         /// <summary>The weapons the eased clock shapes: real swing/thrust melee (the blade IS the hitbox). Held-projectile
         /// melee (spears, yoyos, flails), whips and channelled weapons run their own timers in projectile AI (§12.5).</summary>
@@ -331,7 +370,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private void RunWeaponClock(Player owner, Item weapon, bool wantsUse, Vector2 aimWorld)
         {
             _ownerTickCount++;
-            HasStrikeHitbox = false;
+            HasStrikeSweep = false;
             int runs = 1;
 
             if (_clockTracking)
@@ -394,25 +433,41 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
                 bool shotThisRun = MirrorPuppetSwap.ProjectilesSpawned > shotsBefore;
 
-                // Strike hitbox: the run's hitbox counts only if the pose it was built from is in the Strike segment
-                // (native n in [ease-in end, strike end)). Two runs in one tick union into one swept box.
-                bool runHitboxInStrike = false;
+                // Strike sweep: the blade as DRAWN after this run (grip→tip from the pose the swap just copied out).
+                // The run counts as a strike only if vanilla would attack with it (MeleeEffects fired) and its pose is
+                // in the Strike segment (native n in [ease-in end, strike end)). A tick's sweep starts from the blade
+                // before its first strike run — the previous run's pose — so two runs in a tick, or a fast swing,
+                // become one continuous sweep instead of jumps.
+                bool midUse = _clockTracking && UseState.ItemAnimation > 0;
+                bool runIsStrike = false;
+                Vector2 bladeHilt = Vector2.Zero;
+                Vector2 bladeTip = Vector2.Zero;
 
-                if (MirrorPuppetSwap.HasCapturedMeleeHitbox && _clockTracking && UseState.ItemAnimation > 0)
+                if (midUse)
                 {
                     int runNativeProgress = _clockNativeLength - UseState.ItemAnimation;
-                    runHitboxInStrike = runNativeProgress >= _clockEaseInEnd && runNativeProgress < _clockStrikeEnd;
+                    bool poseInStrike = runNativeProgress >= _clockEaseInEnd && runNativeProgress < _clockStrikeEnd;
+                    runIsStrike = MirrorPuppetSwap.HasCapturedMeleeHitbox && poseInStrike;
+                    float drawScale = DisplayClone.GetAdjustedItemScale(weapon);
+                    ComputeHeldBlade(weapon, UseState.ItemLocation, UseState.ItemRotation, UseState.Direction, drawScale, out bladeHilt, out bladeTip);
                 }
 
-                if (runHitboxInStrike && HasStrikeHitbox)
+                if (runIsStrike)
                 {
-                    StrikeHitbox = Rectangle.Union(StrikeHitbox, MirrorPuppetSwap.CapturedMeleeHitbox);
+                    if (!HasStrikeSweep)
+                    {
+                        StrikeSweepStartHilt = _hasPreviousBlade ? _previousBladeHilt : bladeHilt;
+                        StrikeSweepStartTip = _hasPreviousBlade ? _previousBladeTip : bladeTip;
+                        HasStrikeSweep = true;
+                    }
+
+                    StrikeSweepEndHilt = bladeHilt;
+                    StrikeSweepEndTip = bladeTip;
                 }
-                else if (runHitboxInStrike)
-                {
-                    StrikeHitbox = MirrorPuppetSwap.CapturedMeleeHitbox;
-                    HasStrikeHitbox = true;
-                }
+
+                _hasPreviousBlade = midUse;
+                _previousBladeHilt = bladeHilt;
+                _previousBladeTip = bladeTip;
 
                 // A use timer can only go UP by a use starting (ItemCheck otherwise only counts it down).
                 bool useStarted = UseState.ItemAnimation > animationBefore;
@@ -536,7 +591,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
         }
 
-        /// <summary>Owner-client only, right after this tick's weapon use (segment and <see cref="StrikeHitbox"/> are
+        /// <summary>Owner-client only, right after this tick's weapon use (segment and the StrikeSweep* fields are
         /// current), before the owner-state packet is written. The hostile layer's host-side melee hit test.</summary>
         protected virtual void AfterWeaponUse(Player owner, Item weapon)
         {
@@ -609,6 +664,20 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             clone.underShirtColor = owner.underShirtColor;
             clone.pantsColor = owner.pantsColor;
             clone.shoeColor = owner.shoeColor;
+
+            // The owner's actual equipment items, not just the slot numbers: vanilla PlayerFrame re-derives head/body/
+            // legs from armor[0..2] (vanity 10..12 overriding) and re-runs UpdateVisibleAccessories from armor[3..19]
+            // EVERY call, so a clone with empty armor[] was stripped to plain clothes on its first frame. Copies, so the
+            // clone never shares an Item with the owner; hidden-accessory toggles come along so hidden stays hidden.
+            for (int slot = 0; slot < clone.armor.Length && slot < owner.armor.Length; slot++)
+            {
+                clone.armor[slot] = owner.armor[slot].Clone();
+            }
+
+            for (int slot = 0; slot < clone.hideVisibleAccessory.Length && slot < owner.hideVisibleAccessory.Length; slot++)
+            {
+                clone.hideVisibleAccessory[slot] = owner.hideVisibleAccessory[slot];
+            }
 
             clone.head = owner.head;
             clone.body = owner.body;
@@ -1017,9 +1086,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// diffs it around each run to log where in a swing a sword beam fires.</summary>
         public static int ProjectilesSpawned;
 
-        /// <summary>The melee hitbox vanilla built during the current run (MirrorPuppetGlobalItem.MeleeEffects receives
-        /// the final itemRectangle). The melee clock clears it before each run and keeps it only for Strike runs.</summary>
-        public static Rectangle CapturedMeleeHitbox;
+        /// <summary>True when vanilla would have attacked with the current run (MirrorPuppetGlobalItem.MeleeEffects only
+        /// fires then). The melee clock clears it before each run and uses it to decide whether the run is a strike;
+        /// the strike's SHAPE comes from the drawn blade (ComputeHeldBlade), not vanilla's rectangle.</summary>
         public static bool HasCapturedMeleeHitbox;
 
         // Player.ItemUsesThisAnimation has a private setter; restoring it needs reflection.
@@ -1526,11 +1595,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override void MeleeEffects(Item item, Player player, Rectangle hitbox)
         {
-            // The final melee hitbox of this ItemCheck (called from ItemCheck_EmitUseVisuals, only when vanilla would
-            // attack with it). The melee clock decides whether it counts as a strike.
+            // Called from ItemCheck_EmitUseVisuals only when vanilla would attack this run — that's the signal we need.
+            // The rectangle itself is not used (it ignores the drawn blade; see MirrorPuppetNPC.StrikeSweep*).
             if (MirrorPuppetSwap.Active)
             {
-                MirrorPuppetSwap.CapturedMeleeHitbox = hitbox;
                 MirrorPuppetSwap.HasCapturedMeleeHitbox = true;
             }
         }
@@ -1585,6 +1653,26 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>NPC index of the puppet this projectile belongs to, or -1. Lets its AI run inside that puppet's
         /// swap. Local to the owner's client (OnSpawn only runs where the projectile was created).</summary>
         public int PuppetNpcIndex = -1;
+
+        /// <summary>
+        /// Where a projectile's owner VISUALLY is: the puppet's centre for a projectile a mirror puppet owns, otherwise
+        /// the owning player's centre. For VFX that re-anchor to <c>Main.player[owner]</c> at DRAW time (the Slash
+        /// trail does): draw runs outside any swap, so reading the player there pulls a puppet's effect onto the
+        /// player. The puppet's hitbox is player-sized, so its Center is where the swapped owner stood.
+        /// </summary>
+        public static Vector2 GetOwnerVisualCenter(Projectile projectile)
+        {
+            MirrorPuppetProjectile tag = projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+            int puppetIndex = tag.PuppetNpcIndex;
+            bool puppetIndexValid = tag.FromMirrorPuppet && puppetIndex >= 0 && puppetIndex < Main.maxNPCs;
+
+            if (puppetIndexValid && Main.npc[puppetIndex].active && Main.npc[puppetIndex].ModNPC is MirrorPuppetNPC)
+            {
+                return Main.npc[puppetIndex].Center;
+            }
+
+            return Main.player[projectile.owner].Center;
+        }
 
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
@@ -1681,18 +1769,34 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
         {
+            // Puppet index for EVERY puppet projectile (friendly too): other clients need it to draw owner-anchored VFX on
+            // the puppet (GetOwnerVisualCenter); for hostile ones it also names the killer on the victim's client.
+            bitWriter.WriteBit(FromMirrorPuppet);
+
+            if (FromMirrorPuppet)
+            {
+                binaryWriter.Write((short)PuppetNpcIndex);
+            }
+
             bitWriter.WriteBit(HostileToPlayers);
 
             if (HostileToPlayers)
             {
-                // The puppet index lets the victim's client name the killer; the cap travels as whole percent.
-                binaryWriter.Write((short)PuppetNpcIndex);
+                // The cap travels as whole percent.
                 binaryWriter.Write((byte)Math.Round(HitCapFraction * 100f));
             }
         }
 
         public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
         {
+            bool fromMirrorPuppet = bitReader.ReadBit();
+
+            if (fromMirrorPuppet)
+            {
+                FromMirrorPuppet = true;
+                PuppetNpcIndex = binaryReader.ReadInt16();
+            }
+
             bool hostileToPlayers = bitReader.ReadBit();
 
             if (!hostileToPlayers)
@@ -1701,8 +1805,6 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             HostileToPlayers = true;
-            FromMirrorPuppet = true;
-            PuppetNpcIndex = binaryReader.ReadInt16();
             HitCapFraction = binaryReader.ReadByte() / 100f;
             projectile.hostile = true;
             projectile.friendly = false;

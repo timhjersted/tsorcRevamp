@@ -216,16 +216,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return;
             }
 
-            // Red outline of the last Strike-segment hitbox (2px lines), so the live window can be judged by eye.
-            Rectangle box = LastStrikeHitboxWorld;
-            Texture2D pixel = TextureAssets.MagicPixel.Value;
-            Color lineColor = Color.Red * 0.8f;
-            int left = (int)(box.X - screenPos.X);
-            int top = (int)(box.Y - screenPos.Y);
-            spriteBatch.Draw(pixel, new Rectangle(left, top, box.Width, 2), lineColor);
-            spriteBatch.Draw(pixel, new Rectangle(left, top + box.Height - 2, box.Width, 2), lineColor);
-            spriteBatch.Draw(pixel, new Rectangle(left, top, 2, box.Height), lineColor);
-            spriteBatch.Draw(pixel, new Rectangle(left + box.Width - 2, top, 2, box.Height), lineColor);
+            // The last strike sweep, so the live window can be judged by eye: the blade where the sweep began (dim red),
+            // where it ended (bright red), and the arc its tip covered between them (orange). Utils.DrawLine takes
+            // world coords. Everything inside that wedge is what TryStrikeLocalPlayer tested.
+            Color startColor = Color.Red * 0.45f;
+            Color endColor = Color.Red * 0.9f;
+            Color tipPathColor = Color.Orange * 0.8f;
+            Utils.DrawLine(spriteBatch, LastSweepStartHilt, LastSweepStartTip, startColor, startColor, 2f);
+            Utils.DrawLine(spriteBatch, LastSweepEndHilt, LastSweepEndTip, endColor, endColor, 2f);
+            Utils.DrawLine(spriteBatch, LastSweepStartTip, LastSweepEndTip, tipPathColor, tipPathColor, 2f);
         }
     }
 

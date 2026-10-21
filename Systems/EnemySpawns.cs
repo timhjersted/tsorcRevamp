@@ -1451,10 +1451,10 @@ namespace tsorcRevamp.Systems
             SpawnOnly(Wall.AtPlayer(WallID.StarlitHeavenWallpaper), ("HumanityPhantom", 10f));
             SpawnOnly(Mode.Remix & Region.RemixVaultBox & Wall.AtPlayer(WallID.ObsidianBrickUnsafe), ("HumanityPhantom", 10f));
 
-            // Sunken Sky Temple: only the listed Vortex enemies, from the start of the game. Written after the Phantom rooms so the
-            // temple's own list wins over any Starlit Heaven wallpaper inside it.
+            // Sunken Sky Temple: only the listed Vortex enemies and Tetsujin, from the start of the game. Written after the Phantom
+            // rooms so the temple's own list wins over any Starlit Heaven wallpaper inside it.
             SpawnOnly(SunkenSkyTemple,
-                ("VortexSoldier", 3f), ("VortexRifleman", 1f));
+                ("VortexSoldier", 3f), ("VortexRifleman", 1f), ("Tetsujin", 1f));
 
             // Wyvern Fortress: Archdeacons only, from the start of the game until the Wyvern Mage falls, and in Super Hardmode
             // until its Shadow falls. Otherwise (that stage's Mage slain) nothing spawns there.

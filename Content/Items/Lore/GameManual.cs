@@ -31,7 +31,6 @@ namespace tsorcRevamp.Content.Items.Lore
         private const int ControlsPage = 3;
         private const int DodgeRollPage = 6;
         private const int RegainPage = 7;
-        private const int GameModesPage = 11;
         private const int DamageNumbersPage = 14;
         private const int MinimalMinimapPage = 15;
 
@@ -163,10 +162,6 @@ namespace tsorcRevamp.Content.Items.Lore
                 float poolCapPercent = Regain.MaxPoolFractionOfMaxLife * 100f;
                 int hitWindowSeconds = Regain.ConsecutiveHitResetTicks / 60;
                 pageArgs = new object[] { holdSeconds, poolCapPercent, hitWindowSeconds, Regain.FullRegainRangeTiles };
-            }
-            else if (Page == GameModesPage)
-            {
-                pageArgs = new object[] { Darksign.BotCSoulDropAmplifier };
             }
             else if (Page == DamageNumbersPage || Page == MinimalMinimapPage)
             {

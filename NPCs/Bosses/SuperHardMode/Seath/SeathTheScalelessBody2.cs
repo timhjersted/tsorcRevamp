@@ -38,6 +38,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
 
 
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        {
+            FrostBuildup.Apply(target, SeathTheScalelessHead.FrostBuildupPerHit);
+        }
+
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;

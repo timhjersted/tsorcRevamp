@@ -1850,15 +1850,15 @@ Mods: {
 					'''
 			}
 
-			DuskCrownRing: {
-				DisplayName: Кольцо с сумеречной короной
-				Tooltip:
+			DuskCrownRingItem: {
+				// DisplayName: Dusk Crown Ring
+				/* Tooltip:
 					'''
-					Это волшебное кольцо в форме короны было подарено принцессе Даск из Олачиля при её рождении.
+					This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth.
 					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicDamage}]
 					[c/ffbf00:{$CommonItemTooltip.LifeRegen@1}]
-					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@2}.] При снятии кольца ваш предыдущий максимальный уровень здоровья восстанавливается
-					'''
+					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@2}.] Your previous max HP is restored when the ring is removed.
+					''' */
 			}
 
 			GoldenHairpin: {
@@ -4512,9 +4512,9 @@ Mods: {
 					Лечащие предметы действуют вполовину слабее; восстановление маны снижено вне костров.
 					Оружие расходует выносливость. Часть потерянного здоровья можно вернуть, поражая врагов. +1 слот для аксессуаров.
 
-					[c/dd3333:Носитель проклятия]: все особенности Неугасшего плюс механики боевых классов, и на {0}% больше душ.
+					[c/dd3333:Носитель проклятия]: все особенности Неугасшего плюс механики боевых классов.
 					Оружие расходует больше выносливости, но она восстанавливается быстрее. Зелья лечения не действуют. Восстановление маны
-					полностью отключено вне костров, а смерть отнимает {1}% максимального здоровья до тех пор, пока душа не будет возвращена.
+					полностью отключено вне костров, а смерть отнимает {0}% максимального здоровья до тех пор, пока душа не будет возвращена.
 
 					[c/aaaaaa:Классический]: без фляг. Ванильные системы лечения, щитов и магии Terraria.
 
@@ -4697,7 +4697,7 @@ Mods: {
 					'''
 					Unkindled: the default. Flasks, stamina on weapons, active shields and an extra accesory slot.
 					Bearer of the Curse: everything above, plus an additional combat mechanic for each weapon class,
-					{0}% more souls and a different stamina tempo, with stricter limits on healing & mana regen.
+					a different stamina tempo, with stricter limits on healing & mana regen.
 					Classic: vanilla healing, shields and magic, with no flask interface or stamina-based weapons.
 					Left-click the Darksign to switch, and right-click it to read your class mechanic.				
 					''' */
@@ -9254,11 +9254,6 @@ Mods: {
 
 			EnemyPoisonBow: {
 				// DisplayName: Enemy Poison Bow
-				// Tooltip: ""
-			}
-
-			DuskCrownRingItem: {
-				// DisplayName: Dusk Crown Ring Item
 				// Tooltip: ""
 			}
 		}

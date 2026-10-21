@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {
@@ -33,6 +34,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.noTileCollide = false;
         }
         int? seathID;
+
+        // The crystals' 1-damage contact counts as a Seath hit too.
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        {
+            FrostBuildup.Apply(target, SeathTheScalelessHead.FrostBuildupPerHit);
+        }
+
         public override void AI()
         {
             NPC.rotation += 0.02f;

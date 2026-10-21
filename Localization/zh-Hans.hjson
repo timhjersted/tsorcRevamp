@@ -1890,15 +1890,15 @@ Mods: {
 					'''
 			}
 
-			DuskCrownRing: {
-				DisplayName: 幽暗宝冠戒指
-				Tooltip:
+			DuskCrownRingItem: {
+				// DisplayName: Dusk Crown Ring
+				/* Tooltip:
 					'''
-					这枚魔法皇冠样式的魔戒是乌拉席露的黄昏公主出生时铸造的
+					This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth.
 					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicDamage}]
-					[c/ffbf00:{$CommonItemTooltip.LifeRegen@1}，{$CommonItemTooltip.BadMaxLife@2}]
-					当这枚戒指被摘下时，你的最大生命值会恢复至正常值
-					'''
+					[c/ffbf00:{$CommonItemTooltip.LifeRegen@1}]
+					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@2}.] Your previous max HP is restored when the ring is removed.
+					''' */
 			}
 
 			GoldenHairpin: {
@@ -4553,9 +4553,9 @@ Mods: {
 					治疗物品效果减半；篝火以外的法力回复速度降低。
 					武器消耗耐力。损失的生命可通过击中敌人短暂恢复。获得 +1 个饰品栏位。
 
-					[c/dd3333:被诅咒者]：包含余烬的所有特性，外加战斗职业机制，并额外获得 {0}% 灵魂。
+					[c/dd3333:被诅咒者]：包含余烬的所有特性，外加战斗职业机制。
 					武器消耗更多耐力，但耐力恢复更快。治疗药水不起作用。篝火以外的法力回复
-					完全停止，死亡会损失 {1}% 最大生命值，直到你的灵魂被找回为止。
+					完全停止，死亡会损失 {0}% 最大生命值，直到你的灵魂被找回为止。
 
 					[c/aaaaaa:经典]：没有药水。使用原版泰拉瑞亚的治疗、盾牌与魔法系统。
 
@@ -4738,7 +4738,7 @@ Mods: {
 					'''
 					Unkindled: the default. Flasks, stamina on weapons, active shields and an extra accesory slot.
 					Bearer of the Curse: everything above, plus an additional combat mechanic for each weapon class,
-					{0}% more souls and a different stamina tempo, with stricter limits on healing & mana regen.
+					a different stamina tempo, with stricter limits on healing & mana regen.
 					Classic: vanilla healing, shields and magic, with no flask interface or stamina-based weapons.
 					Left-click the Darksign to switch, and right-click it to read your class mechanic.				
 					''' */
@@ -9291,11 +9291,6 @@ Mods: {
 
 			EnemyPoisonBow: {
 				// DisplayName: Enemy Poison Bow
-				// Tooltip: ""
-			}
-
-			DuskCrownRingItem: {
-				// DisplayName: Dusk Crown Ring Item
 				// Tooltip: ""
 			}
 		}

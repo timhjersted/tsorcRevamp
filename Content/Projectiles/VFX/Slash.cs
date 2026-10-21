@@ -295,8 +295,10 @@ namespace tsorcRevamp.Content.Projectiles.VFX
         public override bool PreDraw(ref Color lightColor)
         {
             visualizeTrail = false;
-            // The owner can move after projectile AI; anchor again immediately before rendering.
-            FollowOwnerPivot(Main.player[Projectile.owner].Center);
+            // The owner can move after projectile AI; anchor again immediately before rendering. A slash swung by a
+            // mirror puppet (Soul Mimic / mirror invader) anchors to the puppet, not the player whose ItemCheck it borrowed.
+            Vector2 ownerCenter = NPCs.FriendlyPuppets.MirrorPuppetProjectile.GetOwnerVisualCenter(Projectile);
+            FollowOwnerPivot(ownerCenter);
             base.PreDraw(ref lightColor);
             return false;
         }

@@ -21,9 +21,8 @@ namespace tsorcRevamp.Content.Items
 
     public class Darksign : ModItem
     {
-        public static float BotCSoulDropAmplifier = 20f;
         public static float BotCMaxHPLossPercentage = 20f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BotCSoulDropAmplifier, BotCMaxHPLossPercentage);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BotCMaxHPLossPercentage);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.

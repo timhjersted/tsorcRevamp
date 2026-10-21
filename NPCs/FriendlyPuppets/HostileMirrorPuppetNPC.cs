@@ -14,8 +14,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
     ///
     ///   Projectiles — MirrorPuppetProjectile flips everything this puppet's swap spawns to hostile (synced through its
     ///                 extra AI), so vanilla tests every client's own player against the real projectile.
-    ///   Melee       — the swing's hitbox, kept only for Strike-segment runs of the eased clock (MirrorPuppetNPC
-    ///                 .StrikeHitbox), is tested against the host's own player here and streamed to the other clients
+    ///   Melee       — the blade as DRAWN (grip→tip), swept across each tick's Strike-segment runs of the eased clock
+    ///                 (MirrorPuppetNPC.StrikeSweep*), is tested against the host's own player here and streamed to the other clients
     ///                 in the owner-state extras, where each tests ITS own player (victim-authoritative).
     ///   Vanilla     — the borrowed ItemCheck lands no NPC or PvP hits (<see cref="SwapHitsAsOwner"/> = false).
     ///   Damage      — base weapon damage (item damage incl. prefix, none of the host's bonuses), reduced by the victim's
@@ -68,17 +68,26 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         // ── Melee strike: host computes it, every client tests its own player ────────────────────────
 
-        // This tick's strike (host) or the last streamed one (other clients). The hitbox is kept relative to
-        // NPC.position so on remote screens it stays attached to the body they see.
+        /// <summary>Half-thickness-ish of the blade line for hit tests (px), so a blade grazing the hitbox edge counts.</summary>
+        internal const float BladeHitThickness = 10f;
+
+        // This tick's strike sweep (host) or the last streamed one (other clients): the blade at the start and end of
+        // the sweep, each point kept relative to NPC.position so on remote screens it stays attached to the body they see.
         private bool _strikeActive;
-        private Rectangle _strikeHitboxOffset;
+        private Vector2 _sweepStartHiltOffset;
+        private Vector2 _sweepStartTipOffset;
+        private Vector2 _sweepEndHiltOffset;
+        private Vector2 _sweepEndTipOffset;
         private int _strikeDamage;
 
         /// <summary>Cap of the current strike's weapon; read by HostileMirrorPuppetPlayer.ModifyHurt on the victim.</summary>
         internal float StrikeCapFraction;
 
-        /// <summary>Last strike hitbox in world coords and how many more ticks to show it (debug drawing).</summary>
-        internal Rectangle LastStrikeHitboxWorld;
+        /// <summary>Last strike sweep in world coords and how many more ticks to show it (debug drawing).</summary>
+        internal Vector2 LastSweepStartHilt;
+        internal Vector2 LastSweepStartTip;
+        internal Vector2 LastSweepEndHilt;
+        internal Vector2 LastSweepEndTip;
         internal int LastStrikeShowTicks;
 
         public override void AI()
@@ -91,20 +100,22 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         protected override void AfterWeaponUse(Player owner, Item weapon)
         {
-            _strikeActive = HasStrikeHitbox && weapon != null && !weapon.IsAir;
+            _strikeActive = HasStrikeSweep && weapon != null && !weapon.IsAir;
 
             if (!_strikeActive)
             {
                 return;
             }
 
-            Rectangle strikeWorld = StrikeHitbox;
-            _strikeHitboxOffset = new Rectangle(strikeWorld.X - (int)NPC.position.X, strikeWorld.Y - (int)NPC.position.Y, strikeWorld.Width, strikeWorld.Height);
+            _sweepStartHiltOffset = StrikeSweepStartHilt - NPC.position;
+            _sweepStartTipOffset = StrikeSweepStartTip - NPC.position;
+            _sweepEndHiltOffset = StrikeSweepEndHilt - NPC.position;
+            _sweepEndTipOffset = StrikeSweepEndTip - NPC.position;
             _strikeDamage = weapon.damage;
             StrikeCapFraction = GetHitCapFraction(weapon);
 
             // The host's own player is a victim like any other. The swap has restored the host's real position by now.
-            TryStrikeLocalPlayer(strikeWorld);
+            TryStrikeLocalPlayer();
         }
 
         /// <summary>Subclasses that add their own extras must call base first (and in ReadOwnerExtras).</summary>
@@ -117,10 +128,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return;
             }
 
-            writer.Write((short)_strikeHitboxOffset.X);
-            writer.Write((short)_strikeHitboxOffset.Y);
-            writer.Write((short)_strikeHitboxOffset.Width);
-            writer.Write((short)_strikeHitboxOffset.Height);
+            writer.Write((short)_sweepStartHiltOffset.X);
+            writer.Write((short)_sweepStartHiltOffset.Y);
+            writer.Write((short)_sweepStartTipOffset.X);
+            writer.Write((short)_sweepStartTipOffset.Y);
+            writer.Write((short)_sweepEndHiltOffset.X);
+            writer.Write((short)_sweepEndHiltOffset.Y);
+            writer.Write((short)_sweepEndTipOffset.X);
+            writer.Write((short)_sweepEndTipOffset.Y);
             writer.Write(_strikeDamage);
             writer.Write((byte)Math.Round(StrikeCapFraction * 100f));
         }
@@ -134,30 +149,45 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return;
             }
 
-            int offsetX = reader.ReadInt16();
-            int offsetY = reader.ReadInt16();
-            int width = reader.ReadInt16();
-            int height = reader.ReadInt16();
-            _strikeHitboxOffset = new Rectangle(offsetX, offsetY, width, height);
+            float startHiltX = reader.ReadInt16();
+            float startHiltY = reader.ReadInt16();
+            float startTipX = reader.ReadInt16();
+            float startTipY = reader.ReadInt16();
+            float endHiltX = reader.ReadInt16();
+            float endHiltY = reader.ReadInt16();
+            float endTipX = reader.ReadInt16();
+            float endTipY = reader.ReadInt16();
+            _sweepStartHiltOffset = new Vector2(startHiltX, startHiltY);
+            _sweepStartTipOffset = new Vector2(startTipX, startTipY);
+            _sweepEndHiltOffset = new Vector2(endHiltX, endHiltY);
+            _sweepEndTipOffset = new Vector2(endTipX, endTipY);
             _strikeDamage = reader.ReadInt32();
             StrikeCapFraction = reader.ReadByte() / 100f;
 
-            // The server only forwards; each client tests its own player against the box on its own copy of the body.
+            // The server only forwards; each client tests its own player against the sweep on its own copy of the body.
             if (Main.dedServ)
             {
                 return;
             }
 
-            Rectangle strikeWorld = new Rectangle((int)NPC.position.X + offsetX, (int)NPC.position.Y + offsetY, width, height);
-            TryStrikeLocalPlayer(strikeWorld);
+            TryStrikeLocalPlayer();
         }
 
-        /// <summary>Victim-authoritative melee hit: this machine's own player against one strike hitbox. Player.Hurt
-        /// respects i-frames (rolls, post-hit immunity), so a strike lands at most once per 40 ticks; the cap and the
-        /// death message are applied in HostileMirrorPuppetPlayer.ModifyHurt (source = this NPC).</summary>
-        private void TryStrikeLocalPlayer(Rectangle strikeWorld)
+        /// <summary>Victim-authoritative melee hit: this machine's own player against the blade's whole sweep this tick
+        /// (start segment → end segment, interpolated so a fast swing can't skip past). Player.Hurt respects i-frames
+        /// (rolls, post-hit immunity), so a strike lands at most once per 40 ticks; the cap and the death message are
+        /// applied in HostileMirrorPuppetPlayer.ModifyHurt (source = this NPC).</summary>
+        private void TryStrikeLocalPlayer()
         {
-            LastStrikeHitboxWorld = strikeWorld;
+            Vector2 startHilt = NPC.position + _sweepStartHiltOffset;
+            Vector2 startTip = NPC.position + _sweepStartTipOffset;
+            Vector2 endHilt = NPC.position + _sweepEndHiltOffset;
+            Vector2 endTip = NPC.position + _sweepEndTipOffset;
+
+            LastSweepStartHilt = startHilt;
+            LastSweepStartTip = startTip;
+            LastSweepEndHilt = endHilt;
+            LastSweepEndTip = endTip;
             LastStrikeShowTicks = StrikeDebugShowTicks;
 
             Player victim = Main.LocalPlayer;
@@ -167,7 +197,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return;
             }
 
-            if (!strikeWorld.Intersects(victim.Hitbox))
+            bool bladeTouches = Puppets.MeleeBladeCollision.SweptSegmentIntersectsRect(
+                startHilt, startTip, endHilt, endTip, BladeHitThickness, victim.Hitbox, out _, out _);
+
+            if (!bladeTouches)
             {
                 return;
             }

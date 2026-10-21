@@ -41,10 +41,6 @@ public class DarkSoulPlayer : ModPlayer
         {
             multiplier += VaultOfEndlessGreed.SoulAmplifier / 100f;
         }
-        if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-        {
-            multiplier += Darksign.BotCSoulDropAmplifier / 100f;
-        }
         switch (Main.GameMode)
         {
             case GameModeID.Normal:
