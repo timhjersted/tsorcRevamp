@@ -1912,12 +1912,11 @@ Mods: {
 			}
 
 			IceboundMythrilAegis: {
-				DisplayName: Icebound Mythril Aegis
+				DisplayName: Icebound Aegis
 				Tooltip:
 					'''
-					Inherits Mythril Bulwark, Ankh Shield and Frozen Shield effects
+					Inherits Ankh Shield and Frozen Shield effects
 					Slows down your dodgeroll slightly
-					Rolling through an enemy may inflict some debuffs this item grants immunity to
 					'''
 			}
 
@@ -11232,6 +11231,7 @@ Mods: {
 			HomingMissileTrail.DisplayName: Homing Missile Trail
 			ExplosionFlash.DisplayName: Explosion Flash
 			FriendlyIonBomb.DisplayName: Friendly Ion Bomb
+			MythrilReflectedShot.DisplayName: Reflected Shot
 			PhotonicDownpourProjectile.DisplayName: Photonic Downpour
 			PhotonicDownpourLaser.DisplayName: Photonic Downpour Laser
 			LanceBeamLaser.DisplayName: Lance Beam Laser

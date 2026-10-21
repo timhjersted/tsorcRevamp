@@ -13,6 +13,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Accessories.Melee;
 using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Accessories;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp
@@ -81,6 +82,32 @@ namespace tsorcRevamp
         /// <summary>True when the Active Shields Revamp governs this player's shields (config on + SoulsMode).
         /// Shields read this to decide whether to apply their classic passive bonuses or defer to active blocking.</summary>
         public static bool ActiveFor(Player player) => RevampActive && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode;
+
+        // Largest hostile projectile Mythril Bulwark will deflect, in px per side. Bigger hitboxes are arena hazards
+        // (rings, walls, beams) rather than shots, and parrying one must not delete it.
+        private const int MythrilReflectMaxSize = 64;
+
+        /// <summary>
+        /// Whether a blocked projectile is a deflectable shot for Mythril Bulwark's perfect parry: an active, moving
+        /// (at least 1 px/tick), shot-sized hostile projectile that isn't a puppet's melee hitbox. Shared by the
+        /// blocking client and the server's ReportBlockedAttack handler so both agree on what gets reflected.
+        /// </summary>
+        public static bool CanMythrilReflect(Projectile projectile)
+        {
+            if (!projectile.active || !projectile.hostile)
+            {
+                return false;
+            }
+
+            if (projectile.type == ModContent.ProjectileType<HumanoidMeleeHitbox>())
+            {
+                return false;
+            }
+
+            bool moving = projectile.velocity.LengthSquared() >= 1f;
+            bool shotSized = projectile.width <= MythrilReflectMaxSize && projectile.height <= MythrilReflectMaxSize;
+            return moving && shotSized;
+        }
 
         /// <summary>True for a raised shield or, on the owning client, an eligible shield input that has not yet
         /// reached <see cref="ProcessTriggers"/> this frame. Item and quick-use hooks can precede that update.</summary>
@@ -1100,17 +1127,24 @@ namespace tsorcRevamp
             if (shieldType == ModContent.ItemType<MythrilBulwark>())
             {
                 attacker.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), MythrilBulwark.VulnerabilityDuration * 60);
-                // ...and deflects a blocked hostile projectile straight back at its source.
-                if (attackingProjectile != null && attackingProjectile.active && attackingProjectile.hostile
-                    && attackingProjectile.type !=
-                        ModContent.ProjectileType<HumanoidMeleeHitbox>())
+                // ...and deflects a blocked hostile shot straight back at its source. The shot is replaced by a friendly
+                // MythrilReflectedShot owned by this player (spawned here, synced like any player projectile) rather
+                // than flipped in place, because hostile/friendly are not networked. In MP the server removes the
+                // hostile original for everyone in the ReportBlockedAttack handler; here we only hide our own copy.
+                if (attackingProjectile != null && CanMythrilReflect(attackingProjectile) && Player.whoAmI == Main.myPlayer)
                 {
-                    Projectile p = attackingProjectile;
-                    p.hostile = false;
-                    p.friendly = true;
-                    p.owner = Player.whoAmI;
-                    p.velocity = -p.velocity;
-                    p.netUpdate = true;
+                    Projectile blockedShot = attackingProjectile;
+                    float shotSpeed = blockedShot.velocity.Length();
+                    Vector2 reversedDirection = -blockedShot.velocity / shotSpeed;
+                    Vector2 toSource = (attacker.Center - blockedShot.Center).SafeNormalize(reversedDirection);
+                    float rotationOffset = blockedShot.rotation - blockedShot.velocity.ToRotation();
+
+                    Projectile.NewProjectile(Player.GetSource_Misc("ActiveShieldBlock"), blockedShot.Center, toSource * shotSpeed,
+                        ModContent.ProjectileType<MythrilReflectedShot>(), blockedShot.damage, blockedShot.knockBack,
+                        Player.whoAmI, blockedShot.type, rotationOffset);
+
+                    // Silent removal, not Kill(): an exploding shot must not detonate on the shield it was parried by.
+                    blockedShot.active = false;
                 }
             }
 
@@ -1145,7 +1179,7 @@ namespace tsorcRevamp
                 TryIgniteFireBreath();
             }
 
-            // Icebound Mythril Aegis — a small frost nova on block.
+            // Icebound Aegis — a small frost nova on block.
             if (shieldType == ModContent.ItemType<IceboundMythrilAegis>())
             {
                 attacker.AddBuff(BuffID.Frostburn, 180);
@@ -1370,7 +1404,9 @@ namespace tsorcRevamp
             packet.Write(tsorcPacketID.ReportBlockedAttack);
             packet.Write(attacker.whoAmI);
             packet.Write(attacker.type);
-            packet.Write(attackingProjectile?.whoAmI ?? -1);
+            // identity, not whoAmI: a client's projectile slot differs from the server's, but a server-owned (hostile)
+            // projectile's identity IS its server slot, which the handler indexes with.
+            packet.Write(attackingProjectile?.identity ?? -1);
             packet.Write(attackingProjectile?.type ?? -1);
             packet.Write(Math.Max(0, blockedDamage));
             packet.Write(perfectParry);

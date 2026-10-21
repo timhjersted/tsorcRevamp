@@ -1875,12 +1875,11 @@ Mods: {
 			}
 
 			IceboundMythrilAegis: {
-				DisplayName: Скованная льдом Мифриловая Эгида
+				DisplayName: Скованная льдом Эгида
 				Tooltip:
 					'''
-					Наследует эффекты Мифрилового оплота, Щита Анха и Ледяного щита
+					Наследует эффекты Щита Анха и Ледяного щита
 					Немного замедляет ваш перекат
-					Перекат сквозь врага может наложить некоторые дебаффы, к которым этот предмет даёт иммунитет
 					'''
 			}
 
@@ -11187,6 +11186,7 @@ Mods: {
 			HomingMissileTrail.DisplayName: След самонаводящейся ракеты
 			ExplosionFlash.DisplayName: Вспышка взрыва
 			FriendlyIonBomb.DisplayName: Дружественная ионная бомба
+			MythrilReflectedShot.DisplayName: Отражённый снаряд
 			PhotonicDownpourProjectile.DisplayName: Фотонный ливень
 			PhotonicDownpourLaser.DisplayName: Фотонный ливневый лазер
 			LanceBeamLaser.DisplayName: Лазерный луч копья

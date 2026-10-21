@@ -1915,12 +1915,11 @@ Mods: {
 			}
 
 			IceboundMythrilAegis: {
-				DisplayName: 冰封的神话宙斯盾
+				DisplayName: 冰封宙斯盾
 				Tooltip:
 					'''
-					继承黑曜石护盾、冰冻护盾和神话壁垒的效果
+					继承十字章护盾和冰冻护盾的效果
 					稍微减慢翻滚时的速度
-					翻滚经过敌人时有概率对其施加本饰品所免疫的状态效果
 					'''
 			}
 
@@ -11224,6 +11223,7 @@ Mods: {
 			HomingMissileTrail.DisplayName: 旧日机械支配者的追踪导弹
 			ExplosionFlash.DisplayName: 爆炸闪光
 			FriendlyIonBomb.DisplayName: 离子炸弹
+			MythrilReflectedShot.DisplayName: 反弹弹幕
 			PhotonicDownpourProjectile.DisplayName: 光子陷阵战机
 			PhotonicDownpourLaser.DisplayName: 光子陷阵激光
 			LanceBeamLaser.DisplayName: 激光束长矛

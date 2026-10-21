@@ -861,33 +861,6 @@ namespace tsorcRevamp
                         }
                     }
                 }
-                if (isDodging && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
-                {
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        NPC other = Main.npc[i];
-
-                        if (!other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
-                        {
-                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
-                            other.AddBuff(BuffID.Frostburn2, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
-
-                            if (Main.rand.NextBool(3))
-                            {
-                                other.AddBuff(BuffID.Confused, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
-                            }
-                            if (Main.rand.NextBool(3))
-                            {
-                                other.AddBuff(BuffID.Bleeding, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
-                            }
-                            if (Main.rand.NextBool(3))
-                            {
-                                other.AddBuff(BuffID.Poisoned, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
-                            }
-                        }
-                    }
-                }
-
                 if (dodgeIsGhostStep)
                 {
                     // dodgeTime was already advanced above, so a frame is past the burst only if the PRE-increment

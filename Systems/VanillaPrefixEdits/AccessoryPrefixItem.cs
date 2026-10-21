@@ -43,6 +43,7 @@ public class AccessoryPrefixItem : GlobalItem
     //  - Hard, Armored and Warding only roll on accessories that give defense on their own (base defense from ContentSamples,
     //    so a prefix never counts). No list: shields, defensive rings, Dragoon pieces, Shackle...
     //  - Wings never roll defense or damage/crit prefixes, so the wing slot can't carry another defense or damage piece.
+    //  - Shields (anything in ActiveShieldRegistry) never roll Armored/Warding or damage/crit prefixes; Hard/Guarding stay.
     public override bool AllowPrefix(Item item, int pre)
     {
         if (!_rollingRandomPrefix || !item.accessory)
@@ -58,6 +59,12 @@ public class AccessoryPrefixItem : GlobalItem
         }
 
         if (isWings && WingBlockedPrefixes.Contains(pre))
+        {
+            return false;
+        }
+
+        bool isShield = tsorcRevamp.ActiveShieldRegistry != null && tsorcRevamp.ActiveShieldRegistry.ContainsKey(item.type);
+        if (isShield && ShieldBlockedPrefixes.Contains(pre))
         {
             return false;
         }
@@ -82,6 +89,13 @@ public class AccessoryPrefixItem : GlobalItem
     {
         PrefixID.Hard, PrefixID.Guarding, PrefixID.Armored, PrefixID.Warding,
         PrefixID.Menacing, PrefixID.Angry, PrefixID.Spiked, PrefixID.Jagged, PrefixID.Precise, PrefixID.Lucky,
+    };
+
+    // Big defense prefixes and damage/crit prefixes, which shields can't roll.
+    private static readonly HashSet<int> ShieldBlockedPrefixes = new()
+    {
+        PrefixID.Armored, PrefixID.Warding,
+        PrefixID.Menacing, PrefixID.Angry, PrefixID.Jagged, PrefixID.Precise, PrefixID.Lucky,
     };
     public const int HardDefense = 2;
     public const float HardThornsGain = 10f;

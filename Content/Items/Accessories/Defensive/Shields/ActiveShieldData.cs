@@ -57,7 +57,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
 
         // Chip auto-derivation: maps shield quality (DamageFactor) onto a chip band. Anchored on the registry's
         // current best/worst physical factors, so the whole roster spans the full band.
-        private const float ChipBestFactor = 0.14f;   // Icebound Mythril Aegis
+        private const float ChipBestFactor = 0.14f;   // Icebound Aegis (IceboundMythrilAegis)
         private const float ChipWorstFactor = 0.45f;  // Mana Shield
         private const float ChipBestFraction = 0.06f;
         private const float ChipWorstFraction = 0.15f;

@@ -542,7 +542,7 @@ namespace tsorcRevamp
                 // between the three untouched while softening the pause across the board.
                 { ModContent.ItemType<DragonCrestShield>(),     new ActiveShieldData(24f, 0.35f, 0.87f, 5, 5.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.60f, passiveRegenPenalty: 0.05f) }, // repositioned to mid pre-hardmode
                 { ModContent.ItemType<MythrilBulwark>(),                   new ActiveShieldData(22f, 0.32f, 0.92f, 6, 5.2f) },
-                { ModContent.ItemType<IceboundMythrilAegis>(),  new ActiveShieldData(9f,  0.14f, 0.99f, 15, 7.0f) },
+                { ModContent.ItemType<IceboundMythrilAegis>(),  new ActiveShieldData(9f,  0.14f, 0.99f, 8, 7.0f) },
 
                 //--- Melee Shield family (stamina) ---
                 { ModContent.ItemType<GazingShield>(),                      new ActiveShieldData(24f, 0.34f, 0.91f, 6, 5.0f) },
@@ -564,7 +564,7 @@ namespace tsorcRevamp
                 // GREATSHIELD archetype (top of the line): a wall of ice — nothing chips through, but you barely move
                 // and recover slowly. The lighter Ankh/Hero shields around it stay leaky-but-nimble by contrast, so
                 // upgrading Frozen → Hero is a side-grade (lose no-chip, gain mobility + utility), not a strict win.
-                { ItemID.FrozenShield,    new ActiveShieldData(15f, 0.23f, 0.90f, 0, 6.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.45f, passiveRegenPenalty: 0.05f, passiveResistance: 9f) },
+                { ItemID.FrozenShield,    new ActiveShieldData(15f, 0.23f, 0.90f, 0, 6.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.45f, passiveRegenPenalty: 0.05f) },
                 { ItemID.HeroShield,      new ActiveShieldData(12f, 0.20f, 0.97f, 0, 6.5f, passiveResistance: 10f) }, // top vanilla shield (Ankh + Frozen + Berserker)
                 // Shield of Cthulhu: early-game right-click block (7% slow, def 2). Its vanilla double-tap dash is
                 // untouched and shows the shield while dashing (see tsorcRevampActiveShieldPlayer.PostUpdate).
@@ -2693,15 +2693,15 @@ namespace tsorcRevamp
                         {
                             bool mythrilReflection = perfectParry
                                 && shieldPlayer.activeShieldType == ModContent.ItemType<MythrilBulwark>()
-                                && attackingProjectile.type !=
-                                    ModContent.ProjectileType<HumanoidMeleeHitbox>();
+                                && tsorcRevampActiveShieldPlayer.CanMythrilReflect(attackingProjectile);
                             if (mythrilReflection)
                             {
-                                attackingProjectile.hostile = false;
-                                attackingProjectile.friendly = true;
-                                attackingProjectile.owner = whoAmI;
-                                attackingProjectile.velocity = -attackingProjectile.velocity;
-                                attackingProjectile.netUpdate = true;
+                                // The blocking client already spawned its friendly MythrilReflectedShot. Remove the
+                                // hostile original everywhere: silently here (no Kill(), so it can't explode on the
+                                // shield), and via KillProjectile on the other clients.
+                                attackingProjectile.active = false;
+                                NetMessage.SendData(MessageID.KillProjectile, -1, -1, null,
+                                    attackingProjectile.identity, attackingProjectile.owner);
                             }
                             else tsorcGlobalProjectile.TryBreakOnShieldImpact(attackingProjectile);
                         }
