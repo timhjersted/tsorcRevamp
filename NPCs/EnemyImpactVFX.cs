@@ -61,7 +61,6 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<DarkKnight>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<DemonLordApocalypse>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<DemonWheel>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<DiscipleOfAttraidies>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<DungeonMage>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Dunlending>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<DworcAbysswalker>()] = EnemyImpactMaterial.Blood,

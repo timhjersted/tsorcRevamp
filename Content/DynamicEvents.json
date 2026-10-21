@@ -3442,13 +3442,13 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/DiscipleOfAttraidies",
+        "NpcName": "tsorcRevamp/AttraidiesIllusion",
         "SpawnX": 6971.0,
         "SpawnY": 1113.0,
-        "CustomHealth": null,
+        "CustomHealth": 6000,
         "CustomDamage": null,
         "CustomDefense": null,
-        "CustomSouls": null
+        "CustomSouls": 3000
       }
     ]
   },

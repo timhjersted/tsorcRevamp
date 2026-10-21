@@ -106,30 +106,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private const float JumpAttackMaxSpeed = 9f;
         private const float JumpAttackMaxHeight = 9f * 16f;
         private const int JumpAttackCooldownTicks = 45;
-        /// <summary>Roll look-ahead: the roll covers about 8 tiles; a wall inside the first 2 means no room; ground must
-        /// exist within 3 tiles below the feet all the way along, or it's a ledge.</summary>
-        private const int RollPathTiles = 8;
-        private const int RollMinClearTiles = 2;
-        private const int RollLedgeDropTiles = 3;
         /// <summary>SmartFighter4's door value: non-zero lets it path through closed doors and open them (it opens,
         /// it doesn't destroy — see SmartFighter4AI.TryDoor). 4 is SF4's own default.</summary>
         private const int DoorOpenValue = 4;
         /// <summary>Knockback taken, as a fraction of a normal NPC's (0 = none). ESTIMATE.</summary>
         private const float KnockbackTaken = 0.6f;
 
-        // ── Evasion (server). The roll's numbers ARE the player's: tsorcRevampPlayer.DodgeTimeMax (0.37 s = 22 ticks,
-        // immune throughout), DodgeDefaultCooldown (30 ticks), dodgeSpeed (8 px/tick for the first half, then decay). ──
-        private static readonly int RollTicks = (int)(tsorcRevampPlayer.DodgeTimeMax * 60f);
-        private static readonly int RollCooldownTicks = (int)tsorcRevampPlayer.DodgeDefaultCooldown;
-        private const float RollSpeed = 8f;
-        /// <summary>Per-tick velocity kept during the second half of the roll (the player's coast-and-decay tail).</summary>
-        private const float RollTailRetention = 0.88f;
-        /// <summary>The player's roll pivots about this point of the 20x42 body (tsorcRevampPlayer: fullRotationOrigin).</summary>
-        private static readonly Vector2 RollRotationOrigin = new Vector2(11f, 22f);
-        /// <summary>A projectile is a threat if its closest approach within this many ticks passes inside
-        /// (its half-size + EvadeBodyRadius) of the mimic. 20 ticks ≈ one roll's worth of warning.</summary>
-        private const float EvadeLookaheadTicks = 20f;
-        private const float EvadeBodyRadius = 26f;
+        // ── Evasion (server). The roll's numbers (RollTicks, RollSpeed…) and the projectile look-ahead live in the shared
+        // base (MirrorPuppetNPC) — the mirror invader rolls the same way. ──
         /// <summary>An enemy mid-swing within this range (5 tiles) is a melee threat.</summary>
         private const float MeleeThreatRange = 5f * 16f;
         /// <summary>Chance it reacts to a given threat. Below 1 on purpose: a mimic that dodges everything isn't a
@@ -154,14 +138,6 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>The flask and arm pose appear 5% into the drink, matching the player (UpdateDrinkingEstus).</summary>
         private const float DrinkPoseStartFraction = 0.05f;
 
-        // Engagement bands per weapon kind (pixels): where it likes to stand, and the furthest it will attack from.
-        private const float SpearLikePreferred = 80f;
-        private const float SpearLikeMaximum = 220f;
-        private const float WhipPreferred = 90f;
-        private const float WhipMaximum = 170f;
-        private const float RangedPreferred = 280f;
-        private const float RangedMaximum = 640f;
-        private const float SwordBeamMaximum = 400f;
         /// <summary>The movement waypoint is only re-sent to SF4 once the desired spot moves this far (2 tiles).</summary>
         private const float WaypointRefreshDistance = 32f;
         /// <summary>Lead aiming is capped so a slow projectile doesn't aim absurdly far ahead.</summary>
@@ -811,52 +787,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             // Threat 1: a hostile projectile whose closest approach in the next EvadeLookaheadTicks passes through us.
             // Solved in the mimic's frame: relative position + relative velocity, closest approach at
             // t = -(r·v)/(v·v).
-            bool threatFound = false;
-            float threatTicks = EvadeLookaheadTicks;
-            Vector2 threatVelocity = Vector2.Zero;
-            Vector2 threatOrigin = NPC.Center;
+            bool threatFound = FindIncomingProjectile(false, out _, out Vector2 threatVelocity, out Vector2 threatOrigin);
             bool threatIsMelee = false;
-
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile projectile = Main.projectile[i];
-
-                if (!projectile.active || !projectile.hostile || projectile.damage <= 0)
-                {
-                    continue;
-                }
-
-                Vector2 relativePosition = projectile.Center - NPC.Center;
-                Vector2 relativeVelocity = projectile.velocity - NPC.velocity;
-                float relativeSpeedSquared = relativeVelocity.LengthSquared();
-
-                // Stationary hazards (auras, lingering fields) have no approach to dodge.
-                if (relativeSpeedSquared < 0.25f)
-                {
-                    continue;
-                }
-
-                float ticksToClosest = -Vector2.Dot(relativePosition, relativeVelocity) / relativeSpeedSquared;
-
-                if (ticksToClosest < 0f || ticksToClosest >= threatTicks)
-                {
-                    continue;
-                }
-
-                Vector2 closestOffset = relativePosition + relativeVelocity * ticksToClosest;
-                float hitRadius = Math.Max(projectile.width, projectile.height) * 0.5f + EvadeBodyRadius;
-
-                if (closestOffset.Length() > hitRadius)
-                {
-                    continue;
-                }
-
-                threatFound = true;
-                threatTicks = ticksToClosest;
-                threatVelocity = relativeVelocity;
-                threatOrigin = projectile.Center;
-                threatIsMelee = false;
-            }
 
             // Threat 2: an enemy within reach that is winding up or swinging (FighterAI's AttackCommitted, or a
             // puppet enemy's melee telegraph/attack phase). Only looked for if no projectile is about to land.
@@ -1535,8 +1467,66 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
         }
 
+        // ── Damage taken: the owner's rules, not an NPC's (design §11.6) ─────────────────────────────
+
+        /// <summary>The owner's post-hit immunity: 40 ticks, 80 with a Cross Necklace-type longInvince (vanilla Player.Hurt).</summary>
+        internal override int PostHitImmunityTicks
+        {
+            get
+            {
+                bool ownerIndexValid = OwnerIndex >= 0 && OwnerIndex < Main.maxPlayers;
+
+                if (ownerIndexValid && Main.player[OwnerIndex].longInvince)
+                {
+                    return 80;
+                }
+
+                return base.PostHitImmunityTicks;
+            }
+        }
+
+        /// <summary>
+        /// Every hit is taken the way the owner would take it. NPC strikes count defense at 50%; a player counts it at
+        /// their own DefenseEffectiveness (0.75 Expert, 1.0 Master, plus gear), so the ratio is applied on top. Then the
+        /// owner's damage reduction (endurance) and the mod's enemy-hit progression scaling (ProgressionScaling, x1.0-1.34),
+        /// as ProgressionScalingPlayer applies to players. Owner stats are read live (the server updates every player).
+        /// </summary>
+        public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
+        {
+            bool ownerIndexValid = OwnerIndex >= 0 && OwnerIndex < Main.maxPlayers;
+
+            if (!ownerIndexValid)
+            {
+                return;
+            }
+
+            Player owner = Main.player[OwnerIndex];
+            float defenseRatio = owner.DefenseEffectiveness.Value / NpcDefenseEffectiveness;
+            modifiers.DefenseEffectiveness *= defenseRatio;
+
+            float damageReduction = MathHelper.Clamp(owner.endurance, 0f, 1f);
+            modifiers.FinalDamage *= 1f - damageReduction;
+            modifiers.FinalDamage *= ProgressionScaling.DamageTakenScale;
+        }
+
+        /// <summary>NPC.HitModifiers' default defense effectiveness (vanilla: NPC defense counts half).</summary>
+        private const float NpcDefenseEffectiveness = 0.5f;
+
+        /// <summary>Hostile projectiles hurt players for twice their damage (vanilla Projectile.Damage: DamageVar(damage) x 2)
+        /// but friendly NPCs for once — so the mimic took half of what its owner would.</summary>
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            if (projectile.hostile)
+            {
+                modifiers.SourceDamage *= 2f;
+            }
+        }
+
         public override void HitEffect(NPC.HitInfo hit)
         {
+            // Starts the shared post-hit immunity (FriendlyPuppetNPC).
+            base.HitEffect(hit);
+
             if (Main.dedServ)
             {
                 return;
@@ -1594,102 +1584,6 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             if (item.useAmmo > 0 && !owner.HasAmmo(item))
             {
                 return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Where the mimic likes to stand with this weapon and the furthest it will attack from (pixels).
-        /// Melee swing reach is measured from the item's sprite; everything that fires gets a ranged band.
-        /// </summary>
-        private static void GetEngagementRange(Item item, out float preferred, out float maximum)
-        {
-            bool shootsWhip = item.shoot > ProjectileID.None && ProjectileID.Sets.IsAWhip[item.shoot];
-
-            if (shootsWhip)
-            {
-                preferred = WhipPreferred;
-                maximum = WhipMaximum;
-                return;
-            }
-
-            bool isMelee = item.DamageType.CountsAsClass(DamageClass.Melee);
-            bool firesProjectile = item.shoot > ProjectileID.None;
-
-            // Spears, yoyos, flails, boomerangs: melee damage, but the hit comes from a projectile, not the swing.
-            if (isMelee && item.noMelee && firesProjectile)
-            {
-                preferred = SpearLikePreferred;
-                maximum = SpearLikeMaximum;
-                return;
-            }
-
-            if (isMelee && !item.noMelee)
-            {
-                // Swing reach ≈ the sprite's diagonal at its use scale, plus a little for the hitbox edge.
-                float spriteDiagonal = (float)Math.Sqrt(item.width * item.width + item.height * item.height) * item.scale;
-                preferred = spriteDiagonal * 0.6f;
-                maximum = spriteDiagonal + 16f;
-
-                // Sword beams and similar: still prefers to stand close, but can attack from further out.
-                if (firesProjectile)
-                {
-                    maximum = SwordBeamMaximum;
-                }
-
-                return;
-            }
-
-            preferred = RangedPreferred;
-            maximum = RangedMaximum;
-        }
-
-        /// <summary>
-        /// Whether a roll in <paramref name="direction"/> stays on solid ground. Walks the roll's ~8-tile path column by
-        /// column: a wall at body height within the first RollMinClearTiles means there's no room (false); a wall
-        /// further on just ends the roll early (true); a column with no ground within RollLedgeDropTiles below the
-        /// feet is a ledge (false). Platforms count as ground, not as walls.
-        /// </summary>
-        private bool IsRollPathSafe(int direction)
-        {
-            int startTileX = (int)(NPC.Center.X / 16f);
-            int feetTileY = (int)((NPC.Bottom.Y - 1f) / 16f);
-
-            for (int step = 1; step <= RollPathTiles; step++)
-            {
-                int tileX = startTileX + direction * step;
-
-                // World edge: nothing to stand on out there.
-                if (tileX < 1 || tileX >= Main.maxTilesX - 1 || feetTileY < 3)
-                {
-                    return false;
-                }
-
-                // Body rows above the feet row (the feet row itself may be a 1-tile step, which it rolls up).
-                bool wallAtChest = UsefulFunctions.IsTileReallySolid(new Vector2(tileX, feetTileY - 1));
-                bool wallAtHead = UsefulFunctions.IsTileReallySolid(new Vector2(tileX, feetTileY - 2));
-
-                if (wallAtChest || wallAtHead)
-                {
-                    return step > RollMinClearTiles;
-                }
-
-                bool groundBelow = false;
-
-                for (int drop = 1; drop <= RollLedgeDropTiles; drop++)
-                {
-                    if (UsefulFunctions.IsTileReallySolid(tileX, feetTileY + drop))
-                    {
-                        groundBelow = true;
-                        break;
-                    }
-                }
-
-                if (!groundBelow)
-                {
-                    return false;
-                }
             }
 
             return true;

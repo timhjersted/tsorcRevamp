@@ -259,7 +259,7 @@ namespace tsorcRevamp
             WyvernPrisonEvent,
             SandstormElementalEvent2,
             DeathRemix,
-            DiscipleOfAttraidiesEvent,
+            AttraidiesIllusionRemixEvent,
             WyvernFortressEvent,
             SpawnLonelyFairy,
             Dutchman,
@@ -735,7 +735,11 @@ namespace tsorcRevamp
             IceGolemIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion}, new List<int>() { 5, 3 });
             IceGolemIsland.SetCustomStats(null, null, null, 10000);
 
-            ScriptedEvent DiscipleOfAttraidiesEvent = new ScriptedEvent(new Vector2(6971, 1113), 40, ModContent.NPCType<NPCs.Enemies.DiscipleOfAttraidies>(), 15, true, true, false, LangUtils.GetTextValue("Events.DiscipleOfAttraidiesEvent"), Color.Cyan, false, RemixMapCondition);
+            // Was the Disciple of Attraidies (deleted 2026-10-21). The copy that actually runs is in Content/DynamicEvents.json
+            // (a dynamic event within 2 tiles replaces this hardcoded one); keep the two in step.
+            ScriptedEvent AttraidiesIllusionRemixEvent = new ScriptedEvent(new Vector2(6971, 1113), 40, ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>(), 15, true, true, false, LangUtils.GetTextValue("Events.AttraidiesIllusionRemixEvent"), Color.Cyan, false, RemixMapCondition);
+            // Event-only: 6000 HP (every mode) and 3000 souls = NPC value 30000 (souls x 10; x 25 in Expert).
+            AttraidiesIllusionRemixEvent.SetCustomStats(6000, null, null, 3000);
 
             ScriptedEvent WyvernFortressEvent = new ScriptedEvent(new Vector2(7022, 288), 85, NPCID.WyvernHead, 16, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Cyan, false, RemixMapCondition);
 
@@ -885,7 +889,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.SkeletronPrimeEvent, SkeletronPrimeEvent },
                 {ScriptedEventType.SandstormElementalEvent2, SandstormElementalEvent2 },
                 {ScriptedEventType.DeathRemix, DeathRemix },
-                {ScriptedEventType.DiscipleOfAttraidiesEvent, DiscipleOfAttraidiesEvent },
+                {ScriptedEventType.AttraidiesIllusionRemixEvent, AttraidiesIllusionRemixEvent },
                 {ScriptedEventType.Dutchman, Dutchman },
                 {ScriptedEventType.ThunderBird, ThunderBird },
                 {ScriptedEventType.ThunderBird2, ThunderBird2 },
@@ -1765,6 +1769,10 @@ namespace tsorcRevamp
                     else if (eventTypeString == "RemixAbysmalOolacileSorcererFight")
                     {
                         eventTypeString = nameof(ScriptedEventType.RemixGrandOccultistFight);
+                    }
+                    else if (eventTypeString == "DiscipleOfAttraidiesEvent")
+                    {
+                        eventTypeString = nameof(ScriptedEventType.AttraidiesIllusionRemixEvent);
                     }
 
                     //If it contains a matching event

@@ -1540,7 +1540,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool _ringCollapseDone30;
 
         const float PhaseTwoRingRadius = RingRadius * 0.70f;
-        const float FinalPhaseRingRadius = RingRadius * 0.50f;
+        const float FinalPhaseRingRadius = RingRadius * 0.60f;
         const int   RingCollapseTelegraphTicks = 30;
         const int   RingCollapseMoveTicks      = 120;       // 2s each way - "slowly"
         const int   PhaseTwoRingHoldTicks      = 12 * 60;
@@ -1605,7 +1605,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnSpawn(IEntitySource source)
         {
+            // Drop the ring centre onto the arena floor so every ring's widest diameter lies along the ground:
+            // a ring centred at spawn height (above the floor) left the shrunk rings' safe area up near the ceiling.
+            // Scans down from spawn for the first full-solid tile (platforms skipped); capped at the ring radius,
+            // and with no floor in reach the centre stays at spawn. OnSpawn is server-side; _ringCenter is synced.
             _ringCenter = NPC.Center;
+            int spawnTileX = (int)(NPC.Center.X / 16f);
+            int spawnTileY = (int)(NPC.Center.Y / 16f);
+            int maxFloorScanTiles = (int)(RingRadius / 16f);
+
+            for (int i = 0; i <= maxFloorScanTiles; i++)
+            {
+                int scanTileY = spawnTileY + i;
+                bool isFullSolid = UsefulFunctions.IsTileReallySolid(spawnTileX, scanTileY)
+                    && !Main.tileSolidTop[Main.tile[spawnTileX, scanTileY].TileType];
+
+                if (isFullSolid)
+                {
+                    float floorSurfaceY = scanTileY * 16f;
+                    _ringCenter.Y = floorSurfaceY;
+                    break;
+                }
+            }
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), _ringCenter, Vector2.Zero,

@@ -459,7 +459,7 @@ Mods: {
 			WingTrio: 三鸟重聚于世，惩罚你这不敬之人！
 			SandstormElementalEvent: 一个强大的沙尘精被召唤出来了！
 			Dutchman: 荷兰飞盗船入侵了热带地区！
-			DiscipleOfAttraidiesEvent: 你正面对阿卓迪斯军团的一位强大魔法师！
+			AttraidiesIllusionRemixEvent: 你正面对阿卓迪斯军团的一位强大魔法师！
 			IceGolemWyvern: ！！！
 			IceGolem: ！
 			KingSlime: 史莱姆王出现了！
@@ -1112,11 +1112,6 @@ Mods: {
 			DemonSpiritBanner: {
 				DisplayName: "{$NPCs.DemonSpirit.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DemonSpirit.DisplayName}"
-			}
-
-			DiscipleOfAttraidiesBanner: {
-				DisplayName: "{$NPCs.DiscipleOfAttraidies.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: 《放假了》（bushi
 			}
 
 			DungeonMageBanner: {
@@ -12197,7 +12192,6 @@ Mods: {
 			DemonElemental.DisplayName: 恶魔元素
 			DemonSpirit.DisplayName: 恶灵意志
 			DestroyerLaserProbe.DisplayName: 激光探针
-			DiscipleOfAttraidies.DisplayName: 阿卓迪斯的门徒
 			DungeonMage.DisplayName: 幽暗地牢法师
 			Dunlending.DisplayName: 黑蛮地野人
 			DworcFleshhunter.DisplayName: 德沃克血肉捕手

@@ -39,6 +39,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override bool? CanBeHitByProjectile(Projectile projectile)
         {
+            // Post-hit immunity, shared with contact and the decoy redirect (PostHitImmunity).
+            if (PostHitImmunity > 0)
+            {
+                return false;
+            }
+
             // Player weapons never hit a friendly puppet. Hostile projectiles fall through to vanilla, which hits
             // friendly NPCs (Projectile.Damage: npc.friendly && !dontTakeDamageFromHostiles) — that only matters
             // for subclasses that turn off dontTakeDamage (the Mimic Tear has HP).
@@ -52,14 +58,33 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             return null;
         }
 
-        /// <summary>Ticks before a decoyed enemy's redirected hit can land again (FriendlyPuppetAggroPlayer). Per machine.</summary>
-        internal int DecoyHitCooldown;
+        /// <summary>
+        /// The player's post-hit immunity, one window for every way a puppet can be hurt: a hit from anything (contact,
+        /// a hostile projectile, a decoyed enemy's redirected attack) blocks all of them for PostHitImmunityTicks. Vanilla
+        /// alone would give three separate windows — 10 ticks per projectile, 30 for contact, plus the redirect — so a
+        /// puppet holding several enemies' attention was hit far more often than its owner would be. Per machine; set in
+        /// HitEffect, which every strike path runs.
+        /// </summary>
+        internal int PostHitImmunity;
+
+        /// <summary>Length of <see cref="PostHitImmunity"/>: the player's 40 ticks by default.</summary>
+        internal virtual int PostHitImmunityTicks => 40;
+
+        public override bool CanBeHitByNPC(NPC attacker)
+        {
+            return PostHitImmunity <= 0;
+        }
+
+        public override void HitEffect(NPC.HitInfo hit)
+        {
+            PostHitImmunity = PostHitImmunityTicks;
+        }
 
         public override void AI()
         {
-            if (DecoyHitCooldown > 0)
+            if (PostHitImmunity > 0)
             {
-                DecoyHitCooldown--;
+                PostHitImmunity--;
             }
 
             // Owner left the world: despawn (server decides; vanilla syncs the deactivation).
@@ -120,6 +145,13 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// Overwrites every colour/dye field the base copied from the owner.
         /// </summary>
         protected override void StyleDisplayClone(Player clone)
+        {
+            ApplyObsidianShell(clone);
+        }
+
+        /// <summary>The Soul Mimic's look: gunmetal body colours and Reflective Obsidian Dye on every equipment slot and
+        /// the skin. Callers: the friendly clone (above) and the mirror invader's adds (PuppetNPC.MirrorShell).</summary>
+        internal static void ApplyObsidianShell(Player clone)
         {
             clone.hairDye = 0;
 

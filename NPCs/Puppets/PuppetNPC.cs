@@ -60,7 +60,26 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Only specifically designated invaders use the great-invader banner.</summary>
         protected virtual bool IsGreatInvader => false;
 
-        internal bool ShouldAnnounceInvaderDefeat => AnnounceInvaderDefeat;
+        internal bool ShouldAnnounceInvaderDefeat => AnnounceInvaderDefeat && !MirrorShell;
+
+        /// <summary>
+        /// Per-instance: this puppet is a mirror invader's summoned add (NPCs/FriendlyPuppets/MirrorInvader.cs), not the
+        /// real encounter. It draws in the Soul Mimic's reflective-obsidian shell (FriendlyPuppetNPC.ApplyObsidianShell),
+        /// is no boss (no boss bar), shows no invasion banners, and drops nothing — PreKill false also skips OnKill, so no
+        /// first-kill rewards or NewSlain flags, and re-summons can't be farmed. Set on the server at spawn, synced in
+        /// SendExtraAI.
+        /// </summary>
+        public bool MirrorShell;
+
+        public override bool PreKill()
+        {
+            if (MirrorShell)
+            {
+                return false;
+            }
+
+            return base.PreKill();
+        }
         internal EncounterBannerStyle InvaderDefeatBanner => IsGreatInvader
             ? EncounterBannerStyle.GreatInvaderVanquished
             : EncounterBannerStyle.InvaderVanquished;
@@ -3108,7 +3127,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // localAI[0] is not synced across the network, so every client (and singleplayer)
             // initialises it at 0 independently.  On the very first tick we fire the banner
             // exactly once per NPC instance on each client — no packet required.
-            if (!gnpc.IsTeleportIllusion && AnnounceInvasion
+            if (!gnpc.IsTeleportIllusion && AnnounceInvasion && !MirrorShell
                 && Main.netMode != NetmodeID.Server && NPC.localAI[0] == 0f)
             {
                 NPC.localAI[0] = 1f;
@@ -3791,6 +3810,13 @@ namespace tsorcRevamp.NPCs.Puppets
             writer.Write(_mountSpawned);
             writer.Write(_abandonedDespawnStarted);
             writer.Write(_attackRuntimeV2.Active);
+            writer.Write(MirrorShell);
+
+            // A mirror add's health is set after spawn (MirrorInvader), and vanilla's NPC sync sends life but not lifeMax.
+            if (MirrorShell)
+            {
+                writer.Write(NPC.lifeMax);
+            }
 
             // ── Phase header (see _phaseSequence) ──
             writer.Write(_phaseSequence);
@@ -3960,6 +3986,25 @@ namespace tsorcRevamp.NPCs.Puppets
                 _abandonedDespawnStarted = true;
             }
             bool runtimeActive = reader.ReadBoolean();
+
+            // A mirror add is never a boss (NPC.boss comes from SetDefaults on each machine, so clear it here too).
+            MirrorShell = reader.ReadBoolean();
+
+            if (MirrorShell)
+            {
+                NPC.boss = false;
+
+                // Vanilla read life first; a full-health packet set it to this machine's SetDefaults lifeMax, so a full
+                // add stays full at the synced maximum.
+                int syncedLifeMax = reader.ReadInt32();
+                bool wasFull = NPC.life >= NPC.lifeMax;
+                NPC.lifeMax = syncedLifeMax;
+
+                if (wasFull)
+                {
+                    NPC.life = NPC.lifeMax;
+                }
+            }
 
             int receivedSequence = reader.ReadInt32();
             AttackPhase receivedPhase = (AttackPhase)reader.ReadByte();
@@ -10379,6 +10424,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 _puppet.cBody = _puppet.dye[1].dye;
                 _puppet.cLegs = _puppet.dye[2].dye;
                 _puppet.cWings = _puppet.dye[3].dye;
+            }
+
+            // A mirror invader's add: every slot in the Soul Mimic's obsidian shell, re-applied each frame so the dye
+            // hot-swap above can't put the class's own dyes back.
+            if (MirrorShell)
+            {
+                FriendlyPuppets.FriendlyPuppetNPC.ApplyObsidianShell(_puppet);
             }
 
             // Mount visual is DERIVED from the gameplay flag every frame rather than driven by mount/dismount

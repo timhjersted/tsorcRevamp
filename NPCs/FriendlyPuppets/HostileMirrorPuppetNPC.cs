@@ -55,6 +55,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         // Item speed, not the host's: a host change must not change how fast it swings (§12.2).
         internal override bool UsesOwnerAttackSpeed => false;
 
+        // Basic ammo for every ammo weapon, whatever the host carries (MirrorPuppetSwap.BasicAmmoFor).
+        internal override bool UsesBasicAmmo => true;
+
         internal override void ModifySwapWeaponDamage(Item item, Player owner, ref StatModifier damage)
         {
             // Base weapon damage: drop the host's class/armor bonuses so a host change doesn't change how hard it hits.
@@ -323,18 +326,36 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             return WeaponCategory.Shot;
         }
 
-        /// <summary>px/tick the weapon's own projectile covers: shootSpeed x (1 + extraUpdates). ESTIMATE for ammo
-        /// weapons — the ammo's speed bonus and projectile aren't known until PickAmmo.</summary>
+        /// <summary>px/tick the projectile covers: shootSpeed x (1 + extraUpdates). Ammo weapons fire their basic ammo
+        /// (UsesBasicAmmo), so its speed bonus and projectile are known here too, as PickAmmo adds them.</summary>
         internal static float EffectiveShotSpeed(Item item)
         {
+            float speed = item.shootSpeed;
+            int projectileType = item.shoot;
+
+            if (item.useAmmo > 0)
+            {
+                Item basicAmmo = MirrorPuppetSwap.BasicAmmoFor(item.useAmmo);
+
+                if (basicAmmo != null)
+                {
+                    speed += basicAmmo.shootSpeed;
+
+                    if (basicAmmo.shoot > ProjectileID.None)
+                    {
+                        projectileType = basicAmmo.shoot;
+                    }
+                }
+            }
+
             int extraUpdates = 0;
 
-            if (ContentSamples.ProjectilesByType.TryGetValue(item.shoot, out Projectile sample))
+            if (ContentSamples.ProjectilesByType.TryGetValue(projectileType, out Projectile sample))
             {
                 extraUpdates = sample.extraUpdates;
             }
 
-            return item.shootSpeed * (1 + extraUpdates);
+            return speed * (1 + extraUpdates);
         }
 
         /// <summary>
@@ -487,6 +508,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 _shotSuppressed = false;
                 LastUseFailed = false;
 
+                // Face the aim for the start run: vanilla takes a swing's side from the facing, and between uses the base
+                // copies the MOVEMENT facing (NPC.direction), which points away while the invader backs off.
+                UseState.Direction = 1;
+
+                if (aimDirection.X < 0f)
+                {
+                    UseState.Direction = -1;
+                }
+
                 // Mute the start run's use sound (ItemCheck_StartActualUse plays it); release plays it. Our own item copy,
                 // restored in AfterWeaponUse right after the run.
                 _tellUseSound = null;
@@ -610,6 +640,17 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 if (!hasTarget)
                 {
                     wantsUse = false;
+                }
+
+                // Between uses of a burst, face the (re-aimed) target before the next use starts, as at the tell's start.
+                if (UseState.ItemAnimation == 0 && wantsUse)
+                {
+                    UseState.Direction = 1;
+
+                    if (aimDirection.X < 0f)
+                    {
+                        UseState.Direction = -1;
+                    }
                 }
 
                 // Ends once the last use has finished AND nothing more will start (a one-tick release between uses or the

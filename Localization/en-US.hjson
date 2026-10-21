@@ -460,7 +460,7 @@ Mods: {
 			WingTrio: The Three Wings have united again, ready to fight you!
 			SandstormElementalEvent: A powerful elemental is summoned!
 			Dutchman: A flying Dutchman invades the tropics!
-			DiscipleOfAttraidiesEvent: A powerful mage from the Atraidies army confronts you!
+			AttraidiesIllusionRemixEvent: A powerful mage from the Atraidies army confronts you!
 			IceGolemWyvern: !!!
 			IceGolem: !
 			KingSlime: King Slime appears!
@@ -1109,11 +1109,6 @@ Mods: {
 			DemonSpiritBanner: {
 				DisplayName: "{$NPCs.DemonSpirit.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DemonSpirit.DisplayName}"
-			}
-
-			DiscipleOfAttraidiesBanner: {
-				DisplayName: "{$NPCs.DiscipleOfAttraidies.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DiscipleOfAttraidies.DisplayName}"
 			}
 
 			DungeonMageBanner: {
@@ -12210,7 +12205,6 @@ Mods: {
 			DemonElemental.DisplayName: Demon Elemental
 			DemonSpirit.DisplayName: Demon Spirit
 			DestroyerLaserProbe.DisplayName: Laser Probe
-			DiscipleOfAttraidies.DisplayName: Disciple of Attraidies
 			DungeonMage.DisplayName: Dungeon Mage
 			Dunlending.DisplayName: Dunlending
 			DworcFleshhunter.DisplayName: Dworc Fleshhunter
@@ -13543,6 +13537,7 @@ Mods: {
 			MimicSwapTestDummy.DisplayName: Mimic Swap Test Dummy
 			MimicTear.DisplayName: Soul Mimic
 			MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
+			MirrorInvader.DisplayName: Mirror Invader
 			HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
 		}
 

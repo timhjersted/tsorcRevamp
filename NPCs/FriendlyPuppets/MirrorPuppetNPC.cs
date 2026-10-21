@@ -291,6 +291,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// uses. The hostile layer turns it off so its weapons run at item speed whoever hosts it (§12.12 step 3 gap).</summary>
         internal virtual bool UsesOwnerAttackSpeed => true;
 
+        /// <summary>Whether every ammo weapon fires <see cref="MirrorPuppetSwap.BasicAmmoFor"/> (the cheapest non-homing ammo of
+        /// its type) instead of whatever the host carries. The hostile layer turns it on: host-independent, never the
+        /// host's homing bullets, and a weapon works even when the host has no ammo for it (§12.9 Flintlock fallback).</summary>
+        internal virtual bool UsesBasicAmmo => false;
+
         /// <summary>Called from MirrorPuppetGlobalItem.CanShoot during this puppet's swap. False = vanilla skips the shot
         /// before ApplyItemTime, so itemTime stays 0 and the shot can still happen on a later run of the same use.</summary>
         internal virtual bool AllowSwapShot()
@@ -629,6 +634,204 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
         }
 
+        // ── Body helpers shared by the Soul Mimic and the mirror invader (server side) ─────────────────
+        // Moved here from MimicTear.cs unchanged when the invader became their second user (design §12.12 step 5).
+
+        // Engagement bands per weapon kind (pixels): where it likes to stand, and the furthest it will attack from.
+        internal const float SpearLikePreferred = 80f;
+        internal const float SpearLikeMaximum = 220f;
+        internal const float WhipPreferred = 90f;
+        internal const float WhipMaximum = 170f;
+        internal const float RangedPreferred = 280f;
+        internal const float RangedMaximum = 640f;
+        internal const float SwordBeamMaximum = 400f;
+
+        // The roll's numbers ARE the player's: tsorcRevampPlayer.DodgeTimeMax (0.37 s = 22 ticks, immune throughout),
+        // DodgeDefaultCooldown (30 ticks), dodgeSpeed (8 px/tick for the first half, then decay).
+        internal static readonly int RollTicks = (int)(tsorcRevampPlayer.DodgeTimeMax * 60f);
+        internal static readonly int RollCooldownTicks = (int)tsorcRevampPlayer.DodgeDefaultCooldown;
+        internal const float RollSpeed = 8f;
+        /// <summary>Per-tick velocity kept during the second half of the roll (the player's coast-and-decay tail).</summary>
+        internal const float RollTailRetention = 0.88f;
+        /// <summary>The player's roll pivots about this point of the 20x42 body (tsorcRevampPlayer: fullRotationOrigin).</summary>
+        internal static readonly Vector2 RollRotationOrigin = new Vector2(11f, 22f);
+
+        /// <summary>Roll look-ahead: the roll covers about 8 tiles; a wall inside the first 2 means no room; ground must
+        /// exist within 3 tiles below the feet all the way along, or it's a ledge.</summary>
+        private const int RollPathTiles = 8;
+        private const int RollMinClearTiles = 2;
+        private const int RollLedgeDropTiles = 3;
+
+        /// <summary>A projectile is a threat if its closest approach within this many ticks passes inside
+        /// (its half-size + EvadeBodyRadius) of the puppet. 20 ticks ≈ one roll's worth of warning.</summary>
+        internal const float EvadeLookaheadTicks = 20f;
+        internal const float EvadeBodyRadius = 26f;
+
+        /// <summary>
+        /// The most urgent incoming projectile: one whose closest approach in the next EvadeLookaheadTicks passes
+        /// through the body. Solved in the puppet's frame: relative position + relative velocity, closest approach at
+        /// t = -(r·v)/(v·v). <paramref name="fromPlayers"/> false = enemy shots (hostile; the Soul Mimic); true = player
+        /// shots (friendly, player-owned, not a mirror puppet's own; the invader).
+        /// </summary>
+        protected bool FindIncomingProjectile(bool fromPlayers, out float ticksToClosestApproach, out Vector2 threatVelocity, out Vector2 threatOrigin)
+        {
+            bool threatFound = false;
+            ticksToClosestApproach = EvadeLookaheadTicks;
+            threatVelocity = Vector2.Zero;
+            threatOrigin = NPC.Center;
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+
+                if (!projectile.active || projectile.damage <= 0)
+                {
+                    continue;
+                }
+
+                bool dangerous = projectile.hostile;
+
+                if (fromPlayers)
+                {
+                    bool puppetShot = projectile.GetGlobalProjectile<MirrorPuppetProjectile>().FromMirrorPuppet;
+                    dangerous = projectile.friendly && !projectile.hostile && projectile.owner < Main.maxPlayers && !puppetShot;
+                }
+
+                if (!dangerous)
+                {
+                    continue;
+                }
+
+                Vector2 relativePosition = projectile.Center - NPC.Center;
+                Vector2 relativeVelocity = projectile.velocity - NPC.velocity;
+                float relativeSpeedSquared = relativeVelocity.LengthSquared();
+
+                // Stationary hazards (auras, lingering fields) have no approach to dodge.
+                if (relativeSpeedSquared < 0.25f)
+                {
+                    continue;
+                }
+
+                float ticksToClosest = -Vector2.Dot(relativePosition, relativeVelocity) / relativeSpeedSquared;
+
+                if (ticksToClosest < 0f || ticksToClosest >= ticksToClosestApproach)
+                {
+                    continue;
+                }
+
+                Vector2 closestOffset = relativePosition + relativeVelocity * ticksToClosest;
+                float hitRadius = Math.Max(projectile.width, projectile.height) * 0.5f + EvadeBodyRadius;
+
+                if (closestOffset.Length() > hitRadius)
+                {
+                    continue;
+                }
+
+                threatFound = true;
+                ticksToClosestApproach = ticksToClosest;
+                threatVelocity = relativeVelocity;
+                threatOrigin = projectile.Center;
+            }
+
+            return threatFound;
+        }
+
+        /// <summary>
+        /// Where a puppet likes to stand with this weapon and the furthest it will attack from (pixels).
+        /// Melee swing reach is measured from the item's sprite; everything that fires gets a ranged band.
+        /// </summary>
+        internal static void GetEngagementRange(Item item, out float preferred, out float maximum)
+        {
+            bool shootsWhip = item.shoot > ProjectileID.None && ProjectileID.Sets.IsAWhip[item.shoot];
+
+            if (shootsWhip)
+            {
+                preferred = WhipPreferred;
+                maximum = WhipMaximum;
+                return;
+            }
+
+            bool isMelee = item.DamageType.CountsAsClass(DamageClass.Melee);
+            bool firesProjectile = item.shoot > ProjectileID.None;
+
+            // Spears, yoyos, flails, boomerangs: melee damage, but the hit comes from a projectile, not the swing.
+            if (isMelee && item.noMelee && firesProjectile)
+            {
+                preferred = SpearLikePreferred;
+                maximum = SpearLikeMaximum;
+                return;
+            }
+
+            if (isMelee && !item.noMelee)
+            {
+                // Swing reach ≈ the sprite's diagonal at its use scale, plus a little for the hitbox edge.
+                float spriteDiagonal = (float)Math.Sqrt(item.width * item.width + item.height * item.height) * item.scale;
+                preferred = spriteDiagonal * 0.6f;
+                maximum = spriteDiagonal + 16f;
+
+                // Sword beams and similar: still prefers to stand close, but can attack from further out.
+                if (firesProjectile)
+                {
+                    maximum = SwordBeamMaximum;
+                }
+
+                return;
+            }
+
+            preferred = RangedPreferred;
+            maximum = RangedMaximum;
+        }
+
+        /// <summary>
+        /// Whether a roll in <paramref name="direction"/> stays on solid ground. Walks the roll's ~8-tile path column by
+        /// column: a wall at body height within the first RollMinClearTiles means there's no room (false); a wall
+        /// further on just ends the roll early (true); a column with no ground within RollLedgeDropTiles below the
+        /// feet is a ledge (false). Platforms count as ground, not as walls.
+        /// </summary>
+        protected bool IsRollPathSafe(int direction)
+        {
+            int startTileX = (int)(NPC.Center.X / 16f);
+            int feetTileY = (int)((NPC.Bottom.Y - 1f) / 16f);
+
+            for (int step = 1; step <= RollPathTiles; step++)
+            {
+                int tileX = startTileX + direction * step;
+
+                // World edge: nothing to stand on out there.
+                if (tileX < 1 || tileX >= Main.maxTilesX - 1 || feetTileY < 3)
+                {
+                    return false;
+                }
+
+                // Body rows above the feet row (the feet row itself may be a 1-tile step, which it rolls up).
+                bool wallAtChest = UsefulFunctions.IsTileReallySolid(new Vector2(tileX, feetTileY - 1));
+                bool wallAtHead = UsefulFunctions.IsTileReallySolid(new Vector2(tileX, feetTileY - 2));
+
+                if (wallAtChest || wallAtHead)
+                {
+                    return step > RollMinClearTiles;
+                }
+
+                bool groundBelow = false;
+
+                for (int drop = 1; drop <= RollLedgeDropTiles; drop++)
+                {
+                    if (UsefulFunctions.IsTileReallySolid(tileX, feetTileY + drop))
+                    {
+                        groundBelow = true;
+                        break;
+                    }
+                }
+
+                if (!groundBelow)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>Owner-client only, once per tick before the attack decision. For owner-side state such as
         /// the mimic's Cerulean drinking (its mana pool lives on the owner's client).</summary>
         protected virtual void UpdateOwnerSide(Player owner)
@@ -689,6 +892,16 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             if (DisplayClone != null)
             {
                 return;
+            }
+
+            // Whose look to copy: LookSourceIndex (the invader's triggering player) when that player is in the world,
+            // else the owner. "owner" is re-pointed so everything below reads the look source.
+            int lookIndex = LookSourceIndex;
+            bool lookIndexValid = lookIndex >= 0 && lookIndex < Main.maxPlayers && Main.player[lookIndex].active;
+
+            if (lookIndexValid)
+            {
+                owner = Main.player[lookIndex];
             }
 
             Player clone = new Player();
@@ -778,6 +991,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             DisplayClone = clone;
         }
+
+        /// <summary>The player whose look (armor, dyes, skin) the display clone copies. Default: the owner. The mirror
+        /// invader copies its triggering player even while another player hosts its swap (§12.2).</summary>
+        protected virtual int LookSourceIndex => OwnerIndex;
 
         /// <summary>Once, when the clone is built: the subclass's look on top of the owner's real one
         /// (the Soul Mimic's Reflective Obsidian shell). Default: a true copy.</summary>
@@ -1135,6 +1352,66 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// the strike's SHAPE comes from the drawn blade (ComputeHeldBlade), not vanilla's rectangle.</summary>
         public static bool HasCapturedMeleeHitbox;
 
+        /// <summary>The first of vanilla's four ammo slots (54-57), which PickAmmo searches before the rest.</summary>
+        private const int FirstAmmoSlot = 54;
+
+        // Ammo type (AmmoID) -> the basic ammo item a hostile puppet fires (null = none exists). Built lazily.
+        private static readonly System.Collections.Generic.Dictionary<int, Item> BasicAmmoByAmmoId = new System.Collections.Generic.Dictionary<int, Item>();
+
+        /// <summary>
+        /// The cheapest (lowest value, then lowest type) ammo item of <paramref name="ammoId"/> whose projectile isn't on
+        /// vanilla's homing list (CultistIsResistantTo): Musket Ball for bullets, Wooden Arrow for arrows, and so on, modded
+        /// ammo types included. A full stack, cached; null when no such item exists. Callers: the swap (hostile puppets'
+        /// ammo), the invader's loadout filter and HostileMirrorPuppetNPC.EffectiveShotSpeed.
+        /// </summary>
+        internal static Item BasicAmmoFor(int ammoId)
+        {
+            if (BasicAmmoByAmmoId.TryGetValue(ammoId, out Item cached))
+            {
+                return cached;
+            }
+
+            Item cheapest = null;
+
+            foreach (Item candidate in ContentSamples.ItemsByType.Values)
+            {
+                if (candidate.ammo != ammoId)
+                {
+                    continue;
+                }
+
+                bool shootsHoming = candidate.shoot > ProjectileID.None
+                    && candidate.shoot < ProjectileID.Sets.CultistIsResistantTo.Length
+                    && ProjectileID.Sets.CultistIsResistantTo[candidate.shoot];
+
+                if (shootsHoming)
+                {
+                    continue;
+                }
+
+                bool cheaper = cheapest == null
+                    || candidate.value < cheapest.value
+                    || (candidate.value == cheapest.value && candidate.type < cheapest.type);
+
+                if (cheaper)
+                {
+                    cheapest = candidate;
+                }
+            }
+
+            Item basicAmmo = null;
+
+            if (cheapest != null)
+            {
+                basicAmmo = new Item();
+                basicAmmo.SetDefaults(cheapest.type);
+                basicAmmo.stack = basicAmmo.maxStack;
+            }
+
+            BasicAmmoByAmmoId[ammoId] = basicAmmo;
+            return basicAmmo;
+        }
+
         // Player.ItemUsesThisAnimation has a private setter; restoring it needs reflection.
         private static readonly Action<Player, int> SetItemUsesThisAnimation = CreateItemUsesSetter();
 
@@ -1199,6 +1476,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             public int StaminaOldItemAnimation;
             public int[] MeleeNpcHitCooldown;
             public Vector2 BroadswordMouseWorld;
+            public Item FirstAmmoSlotItem;
             public int MouseX;
             public int MouseY;
             public bool MouseLeft;
@@ -1254,6 +1532,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 snapshot.StaminaOldItemAnimation = owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation;
                 snapshot.MeleeNpcHitCooldown = owner.meleeNPCHitCooldown;
                 snapshot.BroadswordMouseWorld = owner.GetModPlayer<BroadswordReworkPlayer>().MouseWorld;
+                snapshot.FirstAmmoSlotItem = owner.inventory[FirstAmmoSlot];
                 snapshot.MouseX = Main.mouseX;
                 snapshot.MouseY = Main.mouseY;
                 snapshot.MouseLeft = Main.mouseLeft;
@@ -1310,6 +1589,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation = StaminaOldItemAnimation;
                 owner.meleeNPCHitCooldown = MeleeNpcHitCooldown;
                 owner.GetModPlayer<BroadswordReworkPlayer>().MouseWorld = BroadswordMouseWorld;
+                owner.inventory[FirstAmmoSlot] = FirstAmmoSlotItem;
                 Main.mouseX = MouseX;
                 Main.mouseY = MouseY;
                 Main.mouseLeft = MouseLeft;
@@ -1395,6 +1675,18 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 Main.mouseX = (int)(aimWorld.X - Main.screenPosition.X);
                 Main.mouseY = (int)(aimWorld.Y - Main.screenPosition.Y);
                 owner.GetModPlayer<BroadswordReworkPlayer>().MouseWorld = aimWorld;
+
+                // Basic ammo (hostile puppets): vanilla's PickAmmo searches the ammo slots 54-57 first, so the basic ammo in
+                // slot 54 is always the one chosen. Never consumed (CanConsumeAmmo is off in a swap); restored after.
+                if (puppet.UsesBasicAmmo && weapon.useAmmo > 0)
+                {
+                    Item basicAmmo = BasicAmmoFor(weapon.useAmmo);
+
+                    if (basicAmmo != null)
+                    {
+                        owner.inventory[FirstAmmoSlot] = basicAmmo;
+                    }
+                }
 
                 // Stamina and mana: the puppet's own pools, charged by the owner's real per-item cost code.
                 // (Both are restored to the owner's values by the snapshot afterwards.)

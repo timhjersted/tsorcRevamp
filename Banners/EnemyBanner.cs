@@ -259,12 +259,8 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<DemonSpirit>();
     }
 
-    public class DiscipleOfAttraidiesBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 24;
-
-        public override int NPCType => ModContent.NPCType<DiscipleOfAttraidies>();
-    }
+    // PlaceStyle 24 was the Disciple of Attraidies banner (enemy deleted 2026-10-21). Left unused on purpose: placed
+    // copies in old worlds stay inert, and no other banner's style shifts.
 
     public class DungeonMageBanner : EnemyBanner
     {

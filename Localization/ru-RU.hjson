@@ -459,7 +459,7 @@ Mods: {
 			WingTrio: Крылатое трио снова объединились, чтобы сразиться с вами!
 			SandstormElementalEvent: Призван могущественный элементаль!
 			Dutchman: Летучий голландец вторгается в тропики!
-			DiscipleOfAttraidiesEvent: Вам противостоит могущественный маг из армии Аттрайдиса
+			AttraidiesIllusionRemixEvent: Вам противостоит могущественный маг из армии Аттрайдиса
 			IceGolemWyvern: !!!
 			IceGolem: !
 			KingSlime: Король Слизней появляется!
@@ -1076,11 +1076,6 @@ Mods: {
 			DemonSpiritBanner: {
 				DisplayName: Знамя духа демона
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DemonSpirit.DisplayName}"
-			}
-
-			DiscipleOfAttraidiesBanner: {
-				DisplayName: Знамя ученика Аттрайдиса
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DiscipleOfAttraidies.DisplayName}"
 			}
 
 			DungeonMageBanner: {
@@ -12160,7 +12155,6 @@ Mods: {
 			DemonElemental.DisplayName: Демонический элементаль
 			DemonSpirit.DisplayName: Дух демона
 			DestroyerLaserProbe.DisplayName: Лазерный зонд
-			DiscipleOfAttraidies.DisplayName: Ученик Аттрайдиса
 			DungeonMage.DisplayName: Маг подземелья
 			Dunlending.DisplayName: Дунэлиндец
 			DworcFleshhunter.DisplayName: Дворк-охотник за плотью

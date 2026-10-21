@@ -86,8 +86,8 @@ namespace tsorcRevamp.Utilities
 
             PuppetSpriteExporterSystem.Queue(selected, outputDirectory);
             caller.Reply(
-                $"Queued {selected.Count * 2} portrait exports ({selected.Count} puppets). " +
-                $"One PNG will be written per frame to: {outputDirectory}",
+                $"Queued {selected.Count * 2} portrait exports ({selected.Count} puppets), plus a boss head icon " +
+                $"(<Name>_Head_Boss.png) cropped from each idle portrait. One export per frame, to: {outputDirectory}",
                 Color.LightGreen);
         }
 
@@ -118,6 +118,14 @@ namespace tsorcRevamp.Utilities
     {
         private const int RenderTargetSize = 512;
         private const int CropPadding = 2;
+
+        /// <summary>Boss head icon (map / boss bar / Boss Checklist): a window this many pixels square, taken at 1x from
+        /// the top of the idle render's body column, trimmed, then outlined. The mod's hand-made puppet icons are 26-38 px.</summary>
+        private const int HeadIconWindow = 32;
+        /// <summary>Half-width of the column (around the body's centre) searched for the top of the head, so wings or a
+        /// raised shield beside the body don't count as "the top".</summary>
+        private const int HeadColumnHalfWidth = 10;
+        private static readonly Color HeadIconOutline = new Color(20, 20, 24);
 
         private sealed class ExportJob
         {
@@ -255,6 +263,14 @@ namespace tsorcRevamp.Utilities
                 string suffix = job.WithPrimaryWeapon ? "PrimaryWeapon" : "Idle";
                 string filename = $"{SanitizeFileName(job.Name)}_{suffix}.png";
                 SaveCropped(renderTarget, Path.Combine(outputDirectory, filename));
+
+                // The idle pose also yields the boss head icon, named as tModLoader expects (<Class>_Head_Boss).
+                if (!job.WithPrimaryWeapon)
+                {
+                    int bodyCenterX = (int)(screenPosition.X + npc.width * 0.5f);
+                    string headFilename = $"{SanitizeFileName(job.Name)}_Head_Boss.png";
+                    SaveHeadIcon(renderTarget, bodyCenterX, Path.Combine(outputDirectory, headFilename));
+                }
             }
             finally
             {
@@ -334,10 +350,118 @@ namespace tsorcRevamp.Utilities
                     croppedWidth);
             }
 
-            using Texture2D texture = new Texture2D(Main.graphics.GraphicsDevice, croppedWidth, croppedHeight);
-            texture.SetData(cropped);
+            WritePng(cropped, croppedWidth, croppedHeight, path);
+        }
+
+        /// <summary>
+        /// Boss head icon from the idle render: find the highest opaque pixel in the body's column (+-HeadColumnHalfWidth
+        /// around <paramref name="bodyCenterX"/>), take a HeadIconWindow-square window starting just above it, centred on
+        /// the body, trim its transparent margins, then add a 1-px dark outline (4-neighbour) so it reads on the map.
+        /// </summary>
+        private static void SaveHeadIcon(RenderTarget2D renderTarget, int bodyCenterX, string path)
+        {
+            int width = renderTarget.Width;
+            int height = renderTarget.Height;
+            Color[] source = new Color[width * height];
+            renderTarget.GetData(source);
+
+            int headTopY = -1;
+
+            for (int y = 0; y < height && headTopY < 0; y++)
+            {
+                for (int x = bodyCenterX - HeadColumnHalfWidth; x <= bodyCenterX + HeadColumnHalfWidth; x++)
+                {
+                    bool inside = x >= 0 && x < width;
+
+                    if (inside && source[y * width + x].A > 0)
+                    {
+                        headTopY = y;
+                        break;
+                    }
+                }
+            }
+
+            if (headTopY < 0)
+            {
+                throw new InvalidOperationException("No head found in the idle render's body column.");
+            }
+
+            // The window, clamped to the canvas.
+            int windowLeft = Math.Clamp(bodyCenterX - HeadIconWindow / 2, 0, width - HeadIconWindow);
+            int windowTop = Math.Clamp(headTopY - 1, 0, height - HeadIconWindow);
+
+            // Trim to the opaque pixels inside the window.
+            int minX = HeadIconWindow;
+            int minY = HeadIconWindow;
+            int maxX = -1;
+            int maxY = -1;
+
+            for (int y = 0; y < HeadIconWindow; y++)
+            {
+                for (int x = 0; x < HeadIconWindow; x++)
+                {
+                    Color pixel = source[(windowTop + y) * width + windowLeft + x];
+
+                    if (pixel.A == 0)
+                    {
+                        continue;
+                    }
+
+                    minX = Math.Min(minX, x);
+                    minY = Math.Min(minY, y);
+                    maxX = Math.Max(maxX, x);
+                    maxY = Math.Max(maxY, y);
+                }
+            }
+
+            // 1 px of padding on every side holds the outline.
+            int iconWidth = maxX - minX + 3;
+            int iconHeight = maxY - minY + 3;
+            Color[] icon = new Color[iconWidth * iconHeight];
+
+            for (int y = minY; y <= maxY; y++)
+            {
+                for (int x = minX; x <= maxX; x++)
+                {
+                    Color pixel = source[(windowTop + y) * width + windowLeft + x];
+                    icon[(y - minY + 1) * iconWidth + (x - minX + 1)] = pixel;
+                }
+            }
+
+            // Outline: every empty pixel touching an opaque one. Read from a copy so new outline pixels don't spread.
+            Color[] body = (Color[])icon.Clone();
+
+            for (int y = 0; y < iconHeight; y++)
+            {
+                for (int x = 0; x < iconWidth; x++)
+                {
+                    if (body[y * iconWidth + x].A > 0)
+                    {
+                        continue;
+                    }
+
+                    bool touchesLeft = x > 0 && body[y * iconWidth + x - 1].A > 0;
+                    bool touchesRight = x < iconWidth - 1 && body[y * iconWidth + x + 1].A > 0;
+                    bool touchesUp = y > 0 && body[(y - 1) * iconWidth + x].A > 0;
+                    bool touchesDown = y < iconHeight - 1 && body[(y + 1) * iconWidth + x].A > 0;
+
+                    if (touchesLeft || touchesRight || touchesUp || touchesDown)
+                    {
+                        icon[y * iconWidth + x] = HeadIconOutline;
+                    }
+                }
+            }
+
+            WritePng(icon, iconWidth, iconHeight, path);
+        }
+
+        /// <summary>Callers: the portrait crop and the head icon.</summary>
+        private static void WritePng(Color[] pixels, int pixelWidth, int pixelHeight, string path)
+        {
+            using Texture2D texture = new Texture2D(Main.graphics.GraphicsDevice, pixelWidth, pixelHeight);
+            texture.SetData(pixels);
             using FileStream stream = File.Create(path);
-            texture.SaveAsPng(stream, croppedWidth, croppedHeight);
+            texture.SaveAsPng(stream, pixelWidth, pixelHeight);
         }
 
         private static string SanitizeFileName(string name)

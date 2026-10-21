@@ -261,14 +261,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
     /// <summary>
     /// Damage a decoyed enemy's AI deals to its (relocated) target player lands on the puppet instead. Pre-defense
-    /// damage is used so only the puppet's own defense applies. Rate-limited like the player's post-hit immunity,
-    /// because the player never gets i-frames from a dodged hit.
+    /// damage is used so only the puppet's own defense applies. Gated by the puppet's shared post-hit immunity
+    /// (FriendlyPuppetNPC.PostHitImmunity), because the player never gets i-frames from a dodged hit.
     /// </summary>
     public class FriendlyPuppetAggroPlayer : ModPlayer
     {
-        /// <summary>Matches the player's 40-tick post-hit immunity (attack-timing-design §2).</summary>
-        private const int DecoyHitCooldownTicks = 40;
-
         public override bool FreeDodge(Player.HurtInfo info)
         {
             bool hitWhileDecoyed = FriendlyPuppetAggroSystem.DecoyActive && FriendlyPuppetAggroSystem.DecoyPlayer == Player;
@@ -282,11 +279,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             // dontTakeDamage covers the puppet's own i-frames (the Mimic Tear's dodge roll, its summon rise): the hit
             // is still swallowed, it just lands on nothing.
-            if (puppet.DecoyHitCooldown <= 0 && !puppet.NPC.dontTakeDamage)
+            // The strike's HitEffect starts the puppet's shared post-hit immunity.
+            if (puppet.PostHitImmunity <= 0 && !puppet.NPC.dontTakeDamage)
             {
                 int damage = Math.Max(1, info.SourceDamage);
                 puppet.NPC.SimpleStrikeNPC(damage, info.HitDirection);
-                puppet.DecoyHitCooldown = DecoyHitCooldownTicks;
             }
 
             return true;

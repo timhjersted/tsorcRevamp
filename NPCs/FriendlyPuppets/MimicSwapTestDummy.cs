@@ -253,7 +253,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override string Command => "mimictest";
 
-        public override string Usage => "/mimictest [spawn|hostile|clear|cursor|target|1|2|ease on|ease off]";
+        public override string Usage => "/mimictest [spawn|hostile|invader|clear|cursor|target|1|2|ease on|ease off]";
 
         public override string Description => "Mimic Tear swap test rig: spawn a reflective copy that uses hotbar slot 1/2 through your own item code.";
 
@@ -303,6 +303,22 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 int spawnY = (int)player.Bottom.Y;
                 NPC.NewNPC(player.GetSource_FromThis(), spawnX, spawnY, hostileDummyType, 0, player.whoAmI, 0f, 0f, 1f);
                 caller.Reply("Hostile mirror test dummy spawned (slot 1, eased). It attacks the nearest player. Hotbar 1+2 are snapshotted now.", Color.OrangeRed);
+                return;
+            }
+
+            if (action == "invader")
+            {
+                // The real invader (build step 5), copying you: ten tiles in front, feet level with yours.
+                Vector2 invaderFeet = player.Bottom + new Vector2(player.direction * 160f, 0f);
+                int invaderIndex = MirrorInvader.SpawnFor(player, invaderFeet);
+
+                if (invaderIndex < 0)
+                {
+                    caller.Reply("Mirror invader could not be spawned.", Color.Orange);
+                    return;
+                }
+
+                caller.Reply("Mirror invader spawned: your look and every usable hotbar weapon. /mimictest clear removes it.", Color.OrangeRed);
                 return;
             }
 
