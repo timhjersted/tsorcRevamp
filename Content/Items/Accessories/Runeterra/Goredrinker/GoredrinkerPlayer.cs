@@ -4,9 +4,8 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker;
 
-namespace tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker
+namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker
 {
     public class GoredrinkerPlayer : ModPlayer
     {
@@ -15,7 +14,6 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker
         {
             Equipped = false;
         }
-
         public bool Ready;
         public bool Swung;
         public int Hits;

@@ -9,6 +9,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker;
 using tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker;
 using tsorcRevamp.Content.Projectiles.Summon.Whips.PolarisLeash;
 using tsorcRevamp.Systems;

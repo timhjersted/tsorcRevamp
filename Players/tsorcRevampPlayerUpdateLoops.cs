@@ -1409,6 +1409,7 @@ namespace tsorcRevamp
         }
         public override void PostUpdateEquips()
         {
+            
             // The wing harness slot used to eject its items when the harness was unequipped or Souls Mode mobility turned
             // off. It now just goes inactive, like the other mod slots: SupersonicWingSlot.IsEnabled() returns false, tML
             // skips ApplyEquipEffects for it (so no wing effects), keeps it drawn while it still holds items
@@ -1899,8 +1900,6 @@ namespace tsorcRevamp
             {
                 Player.GetCritChance(DamageClass.Ranged) += Player.ChooseAmmo(Player.HeldItem).damage / 2;
             }
-            Player.GetModPlayer<RubyCrystalPlayer>().Update();
-            Player.GetModPlayer<ZirconRingPlayer>().Update();
 
             if (CurseActive || powerfulCurseActive)
             {
@@ -3778,8 +3777,8 @@ namespace tsorcRevamp
             }
             float curseMaxLifeMultiplier = Math.Min(CurseMaxLifeMultiplier, 0f);
             float powerfulCurseMaxLifeMultiplierToApply = Math.Min(powerfulCurseMaxLifeMultiplier, 0f);
-            Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f + (curseMaxLifeMultiplier / 100f) + (powerfulCurseMaxLifeMultiplierToApply / 100f)));
-            Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
+            Player.GetModPlayer<MaxHealthCalculator>().MaxHealthMultiplier += (curseMaxLifeMultiplier / 100f) + (powerfulCurseMaxLifeMultiplierToApply / 100f);
+            //Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
             //life regen is in updateregen functions
             Player.statDefense += (int)MathF.Round((CurseDefenseBonus * ((CurseDefenseBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseDefenseBonus * ((powerfulCurseDefenseBonus > 0) ? CursePositiveStatsMultiplier : 1f)));
             Player.endurance += ((CurseResistanceBonus * ((CurseResistanceBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseResistanceBonus * ((powerfulCurseResistanceBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
@@ -3810,8 +3809,8 @@ namespace tsorcRevamp
             if (DestinedDeathCurrentHPLoss > 0f)
             {
                 // Apply max HP reduction
-                Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f - DestinedDeathCurrentHPLoss));
-                Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
+                Player.GetModPlayer<MaxHealthCalculator>().MaxHealthMultiplier -= DestinedDeathCurrentHPLoss; //feel free to multiply the mult instead if you want the debuffs impact to be higher
+                //Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
 
                 // At 60% max HP loss cap, gain 15% extra damage (additive)
                 if (DestinedDeathCurrentHPLoss >= 0.60f)

@@ -5,13 +5,14 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories.Damage.ShadowmoonCloak;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Defensive.LightCloak;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Accessories.Other
 {
     public class DragoonCloak : ModItem
     {
-        public static float LifeThreshold = (LightCloak.LifeThreshold + ShadowmoonCloakItem.LifeThreshold + DarkCloak.LifeThreshold) / 3;
+        public static float LifeThreshold = (LightCloakItem.LifeThreshold + ShadowmoonCloakItem.LifeThreshold + DarkCloak.LifeThreshold) / 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold);
 
         public override void SetDefaults()
@@ -27,7 +28,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Other
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<LightCloak>());
+            recipe.AddIngredient(ModContent.ItemType<LightCloakItem>());
             recipe.AddIngredient(ModContent.ItemType<DarkCloak>());
             recipe.AddIngredient(ModContent.ItemType<ShadowmoonCloakItem>());
             recipe.AddIngredient(ItemID.ChlorophyteBar, 1);
@@ -47,7 +48,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Other
             }
 
             player.GetModPlayer<ShadowmoonCloakPlayer>().ShadowmoonCloak = true;
-            player.lifeRegen += (int)LightCloak.LifeRegen1;
+            player.lifeRegen += (int)LightCloakItem.LifeRegen1;
             player.starCloakItem = new Item(ItemID.StarCloak);
             player.GetCritChance(DamageClass.Generic) += ShadowmoonCloakItem.DamageAndCritIncrease1;
             player.GetDamage(DamageClass.Generic) += ShadowmoonCloakItem.DamageAndCritIncrease1 / 100f;
@@ -55,7 +56,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Other
 
             if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))
             {
-                player.lifeRegen += (int)(LightCloak.LifeRegen2 - LightCloak.LifeRegen1);
+                player.lifeRegen += (int)(LightCloakItem.LifeRegen2 - LightCloakItem.LifeRegen1);
                 player.statDefense += DarkCloak.Defense2;
                 player.manaRegenBonus += ShadowmoonCloakItem.ManaRegenBonus;
                 player.GetCritChance(DamageClass.Generic) += ShadowmoonCloakItem.DamageAndCritIncrease2;

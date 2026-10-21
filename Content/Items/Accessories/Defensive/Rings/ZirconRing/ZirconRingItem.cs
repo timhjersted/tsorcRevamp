@@ -9,7 +9,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings.ZirconRing
 {
     public class ZirconRingItem : ModItem
     {
-        public static float PercentMaxLifeIncrease = 20f;
+        public const float PercentMaxLifeIncrease = 33f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PercentMaxLifeIncrease);
         public override void SetStaticDefaults()
         {

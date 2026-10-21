@@ -32,7 +32,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.RubyCrystal
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<RubyCrystalPlayer>().Equipped =  true;
+            player.statLifeMax2 += MaxLifeIncrease;
         }
     }
 }

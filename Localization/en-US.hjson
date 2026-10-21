@@ -1592,7 +1592,7 @@ Mods: {
 				Tooltip:
 					'''
 					A great ring, resonating with the abyss, which gives you a will of steel.
-					Inherits {$Items.RingOfClarity.DisplayName} and {$Items.WolfRing.DisplayName} immunities
+					Inherits {$Items.RingOfClarity.DisplayName} and {$Items.WolfRingItem.DisplayName} immunities
 					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
 					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
@@ -1611,7 +1611,7 @@ Mods: {
 					'''
 			}
 
-			LightCloak: {
+			LightCloakItem: {
 				DisplayName: Light Cloak
 				Tooltip:
 					'''
@@ -1886,7 +1886,7 @@ Mods: {
 					'''
 			}
 
-			DuskCrownRing: {
+			DuskCrownRingItem: {
 				DisplayName: Dusk Crown Ring
 				Tooltip:
 					'''
@@ -2002,7 +2002,7 @@ Mods: {
 					'''
 			}
 
-			HerosCrest: {
+			HerosCrestItem: {
 				DisplayName: Hero's Crest
 				Tooltip:
 					'''

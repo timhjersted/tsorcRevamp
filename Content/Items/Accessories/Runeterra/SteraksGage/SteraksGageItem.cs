@@ -17,11 +17,11 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.SteraksGage
         public static float MeleeDmg = 10f;
         public static float UseTimeRatio = 1.5f;
         public static float MaxDmg = 20f;
-        public static int MaxLife = 45;
+        public static int MaxLifeIncrease = 45;
         public static float LifeThreshold = 30f;
         public static int ShieldHeal = 50;
         public static int Cooldown = 90;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg, MaxDmg, MaxLife, LifeThreshold, ShieldHeal, Cooldown);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg, MaxDmg, MaxLifeIncrease, LifeThreshold, ShieldHeal, Cooldown);
         public override void SetStaticDefaults()
         {
         }
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.SteraksGage
             player.GetModPlayer<SteraksGagePlayer>().Equipped = true;
             player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;
             player.GetDamage(DamageClass.Melee) += MathF.Min((float)(player.HeldItem.useAnimation - 18) / UseTimeRatio / 100f, MaxDmg / 100f);
-            player.statLifeMax2 += MaxLife;
+            player.statLifeMax2 += MaxLifeIncrease;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

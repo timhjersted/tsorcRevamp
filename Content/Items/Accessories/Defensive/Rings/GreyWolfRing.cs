@@ -9,6 +9,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.ZirconRing;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
@@ -57,7 +58,8 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             player.GetModPlayer<WolfRingPlayer>().Equipped = true;
-            player.GetModPlayer<ZirconRingPlayer>().Equipped  = true;
+            player.GetModPlayer<MaxHealthCalculator>().MaxHealthMultiplier +=
+                MaxLifeIncrease / 100f;
 
             //Ring of Clarity inheritance
             player.lifeRegen += (int)RingOfClarity.LifeRegen;

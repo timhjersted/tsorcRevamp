@@ -1614,13 +1614,13 @@ Mods: {
 					'''
 			}
 
-			LightCloak: {
-				DisplayName: 光明斗篷
-				Tooltip:
+			LightCloakItem: {
+				// DisplayName: Light Cloak
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.LifeRegen}
 					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.LifeRegen@2}
-					'''
+					''' */
 			}
 
 			ManaShield: {
@@ -2005,14 +2005,14 @@ Mods: {
 					'''
 			}
 
-			HerosCrest: {
-				DisplayName: 英雄证章
-				Tooltip:
+			HerosCrestItem: {
+				// DisplayName: Hero's Crest
+				/* Tooltip:
 					'''
-					永久增加 {0}% 伤害和暴击率
-					永久增加 {1} 最大生命值和 0.{0} 运气
-					"英雄功业的证明"
-					'''
+					Permanently increases damage dealt and crit chance by {0}%,
+					maximum life by {1} and Luck by 0.{0}
+					"Proof of the hero's accomplishments"
+					''' */
 			}
 
 			AquamarineRing: {
@@ -9292,6 +9292,11 @@ Mods: {
 
 			EnemyPoisonBow: {
 				// DisplayName: Enemy Poison Bow
+				// Tooltip: ""
+			}
+
+			DuskCrownRingItem: {
+				// DisplayName: Dusk Crown Ring Item
 				// Tooltip: ""
 			}
 		}

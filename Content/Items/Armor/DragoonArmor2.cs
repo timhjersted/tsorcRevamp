@@ -8,6 +8,7 @@ using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.Accessories.Damage;
 using tsorcRevamp.Content.Items.Accessories.Damage.ShadowmoonCloak;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Defensive.LightCloak;
 using tsorcRevamp.Content.Items.Accessories.Other;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
@@ -40,14 +41,14 @@ namespace tsorcRevamp.Content.Items.Armor
             player.GetDamage(DamageClass.Generic) += Dmg / 100f;
             player.GetAttackSpeed(DamageClass.Melee) += MeleeSpeed / 100f;
             player.starCloakItem = new Item(ItemID.StarCloak);
-            player.lifeRegen += (int)(LightCloak.LifeRegen1 * DragoonCloakEfficiency / 100f);
+            player.lifeRegen += (int)(LightCloakItem.LifeRegen1 * DragoonCloakEfficiency / 100f);
             player.GetCritChance(DamageClass.Generic) += ShadowmoonCloakItem.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f;
             player.GetDamage(DamageClass.Generic) += ShadowmoonCloakItem.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f / 100f;
 
             player.GetModPlayer<ShadowmoonCloakPlayer>().ShadowmoonCloak = true;
             if (player.statLife <= (player.statLifeMax2 * DragoonCloak.LifeThreshold / 100f))
             {
-                player.lifeRegen += (int)(LightCloak.LifeRegen2 * DragoonCloakEfficiency / 100f);
+                player.lifeRegen += (int)(LightCloakItem.LifeRegen2 * DragoonCloakEfficiency / 100f);
                 player.statDefense += (int)(DarkCloak.Defense2 * DragoonCloakEfficiency / 100f);
                 player.manaRegenBonus += (int)(ShadowmoonCloakItem.ManaRegenBonus * DragoonCloakEfficiency / 100f);
                 player.GetCritChance(DamageClass.Generic) += ShadowmoonCloakItem.DamageAndCritIncrease2 * DragoonCloakEfficiency / 100f;

@@ -3,21 +3,16 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Accessories.Defensive
+namespace tsorcRevamp.Content.Items.Accessories.Defensive.LightCloak
 {
-    public class LightCloak : ModItem
+    public class LightCloakItem : ModItem
     {
         public const float LifeRegen1 = 4f;
         public const float LifeThreshold = 40f;
         public const float LifeRegen2 = 6f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen1 / 2f, LifeThreshold, LifeRegen2 / 2f);
-        public override void SetStaticDefaults()
-        {
-        }
 
         public override void SetDefaults()
         {
@@ -41,13 +36,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.lifeRegen += (int)LifeRegen1;
-            if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))
-            {
-                player.lifeRegen += (int)(LifeRegen2 - LifeRegen1);
-
-                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.White, 1.0f);
-                Main.dust[dust].noGravity = true;
-            }
+            player.GetModPlayer<LightCloakPlayer>().Equipped  = true;
         }
     }
 }

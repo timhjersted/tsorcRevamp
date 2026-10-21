@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker;
 using tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker;
 
 namespace tsorcRevamp.Buffs.Runeterra.Summon

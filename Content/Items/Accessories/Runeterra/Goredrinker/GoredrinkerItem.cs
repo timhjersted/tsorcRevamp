@@ -9,22 +9,19 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Melee.Hammers;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker
 {
     public class GoredrinkerItem : ModItem
     {
         public const float SummonDamage = 10f;
-        public const int MaxLife = 40;
+        public const int MaxLifeIncrease = 40;
         public const float HealBaseValue = 7f;
         public const float WhipDmgRange = 33f; //dmg is divided by 3 and gets applied in modplayer
         public const int Cooldown = 12;
 
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, MaxLife, Cooldown);
-        public override void SetStaticDefaults()
-        {
-        }
-
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, MaxLifeIncrease, Cooldown);
         public override void SetDefaults()
         {
             Item.width = 30;
@@ -51,12 +48,12 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker
         {
             player.GetModPlayer<GoredrinkerPlayer>().Equipped = true;
             player.GetDamage(DamageClass.Summon) += SummonDamage / 100f;
-            player.statLifeMax2 += MaxLife;
             if (!player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && player.HeldItem.type != ModContent.ItemType<WitchkingsSword>())
             {
                 player.GetModPlayer<GoredrinkerPlayer>().Ready = true;
                 player.whipRangeMultiplier += WhipDmgRange / 100f;
             }
+            player.statLifeMax2 += MaxLifeIncrease;
         }
     }
 }
