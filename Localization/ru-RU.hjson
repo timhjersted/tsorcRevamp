@@ -8192,6 +8192,19 @@ Mods: {
 				StackGained: "{0} / 10"
 			}
 
+			StormrazorItem: {
+				// DisplayName: Stormrazor
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					[c/f7b10f:Moving will charge you up, ]
+					[c/f7b10f: when fully charged the next melee attack will consume the charges to ]
+					[c/f7b10f: deal extra dmg and grant you a burst of movement speed ]
+					''' */
+			}
+
 			SteraksGageItem: {
 				// DisplayName: Steraks Gage
 				/* Tooltip:
@@ -8202,6 +8215,18 @@ Mods: {
 					[c/8b0000:Heals you for {4} life when life goes below {3}%({$CommonItemTooltip.Cooldown@5})]
 					''' */
 				// Bonus: Currently granting {0}% based on the current held weapon
+			}
+
+			BlackCleaverItem: {
+				// DisplayName: Black Cleaver
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedRangedDamage}
+					Increases ranged attack speed by {1}%
+					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
+					[c/e34444:Ranged attacks apply a stacking debuff up to 6 times]
+					[c/e34444:Each stack reduces the targets defense by {3}]
+					''' */
 			}
 
 			InfinityEdgeItem: {
@@ -8223,6 +8248,29 @@ Mods: {
 					{$CommonItemTooltip.IncreasesMaxManaBy@2}
 					[c/9400d3:Dealing magic damage launches extra damaging projectiles({$CommonItemTooltip.Cooldown@3})]
 					[c/9400d3:Cooldown is reduced on each magic damage hit]
+					''' */
+			}
+
+			LiandrysTormentItem: {
+				// DisplayName: Liandrys Torment
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
+					{$CommonItemTooltip.IncreasesMaxManaBy@2}
+					[c/1bf5f2:Dealing magic damage applies a damage over time debuff for {5} seconds]
+					[c/1bf5f2:This debuff deals at least {4} damage or {3}% of the targets max life per second]
+					''' */
+			}
+
+			ImperialMandateItem: {
+				// DisplayName: Imperial Mandate
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.AtkSpeed@1}
+					[c/e34444:Minion and sentry hits apply a tag effect]
+					[c/e34444:Hit the tagged enemy with a whip to deal extra dmg]
 					''' */
 			}
 
@@ -10593,6 +10641,11 @@ Mods: {
 			NullSpriteDissolving: {
 				// DisplayName: Null Sprite Dissolving
 				// Description: Mods.tsorcRevamp.Buffs.NullSpriteDissolving.Description
+			}
+
+			LiandrysTormentBurn: {
+				// DisplayName: Liandrys Torment Burn
+				// Description: Mods.tsorcRevamp.Buffs.LiandrysTormentBurn.Description
 			}
 		}
 

@@ -27,6 +27,7 @@ using tsorcRevamp;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories.Damage;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Runeterra.LiandrysTorment;
 using tsorcRevamp.Content.Items.Armor.Melee;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.ItemCrates;
@@ -4334,6 +4335,14 @@ namespace tsorcRevamp.NPCs
             DragonStoneNPC.CustomUpdateLifeRegen(npc, ref damage);
             float dotBase;
             float DoTPerS = 0;
+
+            if (npc.GetGlobalNPC<LiandrysTormentNPC>().Burning)
+            {
+                dotBase = MathF.Max(npc.lifeMax * LiandrysTormentItem.MaxHealthDmgPerSec / 100f,
+                    LiandrysTormentItem.MinDmgPerSec);
+                DoTPerS += DoDamageOverTime(npc, dotBase, true, true);
+            }
+            
             if (Ignited)
             {
                 dotBase = MagmaBreastplate.BaseDoT;

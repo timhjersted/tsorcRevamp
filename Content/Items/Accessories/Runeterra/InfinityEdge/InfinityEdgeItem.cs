@@ -29,7 +29,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.InfinityEdge
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.IronBroadsword);
+            recipe.AddIngredient(ItemID.BoneSword);
             recipe.AddIngredient(ItemID.IronPickaxe);
             recipe.AddIngredient(ItemID.HunterCloak);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
