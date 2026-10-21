@@ -278,6 +278,30 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>Owner side: write one tModLoader log line per tracked swing (the test dummy's A/B readout).</summary>
         protected virtual bool LogsMeleeClock => false;
 
+        /// <summary>Owner side: while true and a use is in progress, the borrowed ItemCheck is not run at all (0 runs), so
+        /// the weapon's real pose holds exactly where the last run left it. The hostile layer's tell: it starts a use and
+        /// holds its first pose (weapon raised / pointed) before letting it play.</summary>
+        protected virtual bool HoldUsePose => false;
+
+        /// <summary>Owner side: every use the borrowed ItemCheck has started, any weapon (itemAnimation rising in a run).
+        /// The hostile layer diffs it to count the uses in a burst.</summary>
+        internal int UsesStartedTotal { get; private set; }
+
+        /// <summary>Whether the host's own attack speed (class speed + ModPlayer multipliers) applies to this puppet's
+        /// uses. The hostile layer turns it off so its weapons run at item speed whoever hosts it (§12.12 step 3 gap).</summary>
+        internal virtual bool UsesOwnerAttackSpeed => true;
+
+        /// <summary>Called from MirrorPuppetGlobalItem.CanShoot during this puppet's swap. False = vanilla skips the shot
+        /// before ApplyItemTime, so itemTime stays 0 and the shot can still happen on a later run of the same use.</summary>
+        internal virtual bool AllowSwapShot()
+        {
+            return true;
+        }
+
+        // Where the body was at the last ItemCheck run, so a held pose's item location can follow the body (0 runs
+        // means vanilla doesn't re-place itemLocation, which is in world coords).
+        private Vector2 _positionAtLastRun;
+
         /// <summary>Owner side: which part of the current swing/thrust use the pose is in. None when not mid-use or
         /// for weapons the clock doesn't shape. The future hostile damage path arms hits only in Strike.</summary>
         internal MeleeClockSegment CurrentMeleeSegment { get; private set; }
@@ -326,7 +350,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// corner on the hand side (bottom-left facing right; bottom-right facing left, the sprite flipped). For a swing
         /// the blade runs from that grip corner to the opposite top corner; for a thrust (useStyle 3) it points straight
         /// out from the grip along the facing. Frame size, not item.width/height, so it matches the art. Client only
-        /// (needs the texture) — the hosting client is the only caller.
+        /// (needs the texture): the host's strike sweep, and every client's tell dust (HostileMirrorPuppetNPC).
         /// </summary>
         internal static void ComputeHeldBlade(Item weapon, Vector2 itemLocation, float itemRotation, int direction, float drawScale, out Vector2 hilt, out Vector2 tip)
         {
@@ -371,6 +395,19 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
             _ownerTickCount++;
             HasStrikeSweep = false;
+
+            // Held pose (the hostile tell): no run this tick, and the eased schedule's real-tick count doesn't advance,
+            // so the swing resumes as if the hold never happened. Only the item location moves, to stay on the body.
+            bool holdingPose = HoldUsePose && UseState.ItemAnimation > 0;
+
+            if (holdingPose)
+            {
+                Vector2 bodyMovedBy = NPC.position - _positionAtLastRun;
+                UseState.ItemLocation += bodyMovedBy;
+                _positionAtLastRun = NPC.position;
+                return;
+            }
+
             int runs = 1;
 
             if (_clockTracking)
@@ -473,6 +510,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 bool useStarted = UseState.ItemAnimation > animationBefore;
                 bool useEnded = UseState.ItemAnimation == 0;
 
+                if (useStarted)
+                {
+                    UsesStartedTotal++;
+                }
+
                 if (_clockTracking && (useStarted || useEnded))
                 {
                     _clockTracking = false;
@@ -544,6 +586,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     break;
                 }
             }
+
+            _positionAtLastRun = NPC.position;
 
             // Segment of the pose this tick ends on (what gets drawn), counted once per real tick.
             if (!_clockTracking)
@@ -1136,6 +1180,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             public Rectangle HeadFrame;
             public bool ControlUseItem;
             public bool ReleaseUseItem;
+            public bool ControlLeft;
+            public bool ControlRight;
+            public int Grappling0;
             public bool ControlUseTile;
             public bool ReleaseUseTile;
             public bool MouseInterface;
@@ -1188,6 +1235,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 snapshot.HeadFrame = owner.headFrame;
                 snapshot.ControlUseItem = owner.controlUseItem;
                 snapshot.ReleaseUseItem = owner.releaseUseItem;
+                snapshot.ControlLeft = owner.controlLeft;
+                snapshot.ControlRight = owner.controlRight;
+                snapshot.Grappling0 = owner.grappling[0];
                 snapshot.ControlUseTile = owner.controlUseTile;
                 snapshot.ReleaseUseTile = owner.releaseUseTile;
                 snapshot.MouseInterface = owner.mouseInterface;
@@ -1241,6 +1291,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.headFrame = HeadFrame;
                 owner.controlUseItem = ControlUseItem;
                 owner.releaseUseItem = ReleaseUseItem;
+                owner.controlLeft = ControlLeft;
+                owner.controlRight = ControlRight;
+                owner.grappling[0] = Grappling0;
                 owner.controlUseTile = ControlUseTile;
                 owner.releaseUseTile = ReleaseUseTile;
                 owner.mouseInterface = MouseInterface;
@@ -1327,6 +1380,13 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.controlUseTile = false;
                 owner.releaseUseTile = false;
                 owner.mouseInterface = false;
+
+                // Facing leak: ItemCheck_StartActualUse turns the player by their left/right keys when the weapon is
+                // useTurnOnAnimationStart or the player is grappling (grappling[0] > -1, which also resets the pulley).
+                // The puppet has no keys and no hook, so it keeps its own facing (useState.Direction, loaded above).
+                owner.controlLeft = false;
+                owner.controlRight = false;
+                owner.grappling[0] = -1;
                 Main.mouseLeft = wantsUse;
                 Main.mouseLeftRelease = !useState.PreviousControlUseItem;
 
@@ -1625,6 +1685,39 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             return true;
+        }
+
+        public override bool CanShoot(Item item, Player player)
+        {
+            if (!MirrorPuppetSwap.Active || MirrorPuppetSwap.Current == null)
+            {
+                return true;
+            }
+
+            return MirrorPuppetSwap.Current.AllowSwapShot();
+        }
+
+        public override float UseSpeedMultiplier(Item item, Player player)
+        {
+            bool cancelOwnerSpeed = MirrorPuppetSwap.Active && MirrorPuppetSwap.Current != null && !MirrorPuppetSwap.Current.UsesOwnerAttackSpeed;
+
+            if (!cancelOwnerSpeed)
+            {
+                return 1f;
+            }
+
+            // TotalUseSpeedMultiplier = PlayerLoader x ItemLoader (this hook included) x the class attack speed, so
+            // dividing out the two player parts leaves item speed (other GlobalItems' item-specific multipliers stay).
+            float ownerPlayerHooks = PlayerLoader.UseSpeedMultiplier(player, item);
+            float ownerClassSpeed = player.GetWeaponAttackSpeed(item);
+            float ownerSpeed = ownerPlayerHooks * ownerClassSpeed;
+
+            if (ownerSpeed <= 0f)
+            {
+                return 1f;
+            }
+
+            return 1f / ownerSpeed;
         }
 
         public override bool CanConsumeAmmo(Item weapon, Item ammo, Player player)

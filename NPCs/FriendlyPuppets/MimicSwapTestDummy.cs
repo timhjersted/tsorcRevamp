@@ -118,8 +118,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
     /// <summary>
     /// Step-3 rig for the hostile mirror damage path (design §12.3–12.4): a motionless, immortal copy of the owner that
     /// attacks the nearest living player (you, in single player) with hotbar slot 1 or 2 — eased melee strikes that
-    /// hurt, flipped hostile projectiles, the per-hit cap and the death message. Not the invader: no movement, tells,
-    /// bursts, rolls or Estus (steps 4–5). Debug: the strike hitbox is outlined red while it's live.
+    /// hurt, flipped hostile projectiles, the per-hit cap and the death message — through the step-4 use wrapper
+    /// (tells, aim cap + lock, bursts, recovery, ranged minimum distance; one [MirrorUse] log line per release and per
+    /// burst). Not the invader: no movement, rolls or Estus (step 5). Debug: the last strike sweep is drawn in red and
+    /// the wrapper phase is written above its head.
     /// Spawned with /mimictest hostile; 1/2/ease/clear work on it like on the friendly dummy.
     ///
     /// ai[0] = owner (the host that runs its swap), ai[2] = hotbar slot (0 or 1), ai[3] = melee clock (1 eased, default).
@@ -168,18 +170,18 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
         }
 
-        protected override bool ChooseAttack(Player owner, out Vector2 aimWorld)
+        protected override bool ChooseTarget(Player owner, out Vector2 targetCenter)
         {
             // Test-rig shortcut: the target is picked on the host's client (the invader will get it from the server).
             Player target = FindNearestLivingPlayer();
 
             if (target == null)
             {
-                aimWorld = NPC.Center + new Vector2(NPC.direction * 100f, 0f);
+                targetCenter = NPC.Center;
                 return false;
             }
 
-            aimWorld = target.Center;
+            targetCenter = target.Center;
             return true;
         }
 
@@ -211,6 +213,19 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            base.PostDraw(spriteBatch, screenPos, drawColor);
+
+            // Wrapper phase above the head (screen coords), plus "too close" when a shot is refused for distance.
+            string phaseLabel = CurrentUsePhase.ToString();
+
+            if (TooCloseToFire)
+            {
+                phaseLabel += " (too close)";
+            }
+
+            Vector2 labelPosition = NPC.Top - screenPos + new Vector2(-30f, -28f);
+            Utils.DrawBorderString(spriteBatch, phaseLabel, labelPosition, Color.OrangeRed, 0.8f);
+
             if (LastStrikeShowTicks <= 0)
             {
                 return;
