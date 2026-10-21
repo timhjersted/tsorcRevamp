@@ -1223,9 +1223,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileKnight.DisplayName}"
 			}
 
-			OolacileSorcererBanner: {
-				DisplayName: Знамя колдуна Олачиля
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileSorcerer.DisplayName}"
+			OolacileAcolyteBanner: {
+				DisplayName: Знамя послушника Колдуна Бездны
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileAcolyte.DisplayName}"
 			}
 
 			ParaspriteBanner: {
@@ -8264,8 +8264,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
-					[c/e34444:Minion and sentry hits apply a tag effect]
-					[c/e34444:Hit the tagged enemy with a whip to deal extra dmg]
+					[c/ffbc12:Minion and sentry hits apply a tag effect]
+					[c/ffbc12:Hit the tagged enemy with a whip to deal extra dmg]
 					''' */
 			}
 
@@ -9265,6 +9265,11 @@ Mods: {
 				// DisplayName: Grand Oolacile Staff
 			}
 
+			EnemyOolacileAcolyteStaff: {
+				Tooltip: ""
+				DisplayName: Посох послушника Олачиля
+			}
+
 			EnemyOccultistAxe: {
 				// Tooltip: ""
 				// DisplayName: Grand Oolacile Axe
@@ -9490,6 +9495,15 @@ Mods: {
 					At {1} buildup, your knowledge of the occult
 					will cause you to take {2} damage and become staggered.
 					''' */
+			}
+
+			MadnessMarked: {
+				DisplayName: Метка безумия
+				Description:
+					'''
+					Ваше безумие больше не угасает.
+					Безумие послушника накапливается быстрее.
+					'''
 			}
 
 			Madness: {
@@ -11505,6 +11519,16 @@ Mods: {
 			// OccultistStarBig.DisplayName: Occultist Star Big
 			// OccultistAbyssRing.DisplayName: Abyss Ring
 			// OccultistMagicRing.DisplayName: Occultist Magic Ring
+			AcolyteShriekRing.DisplayName: Вопль
+			AbyssDropPortal.DisplayName: Портал бездны
+			MadnessMote.DisplayName: Искра безумия
+			MadnessEye.DisplayName: Глаз безумия
+			MadnessScrawl.DisplayName: Безумные письмена
+			AcolyteHallucination.DisplayName: Галлюцинация
+			MarkGlyph.DisplayName: Метка безумия
+			MirrorEcho.DisplayName: Зеркало безумия
+			MadnessThread.DisplayName: Колыбель для кошки
+			MadnessClock.DisplayName: Часы безумия
 			// AbyssTeleportBlast.DisplayName: Abyss Teleport Blast
 			// AbyssTeleportMistLinger.DisplayName: Abyss Teleport Mist Linger
 			// AbyssSlash.DisplayName: Abyss Slash
@@ -12265,9 +12289,9 @@ Mods: {
 				Hunt: На вас объявлена охота...
 			}
 
-			OolacileSorcerer: {
-				DisplayName: Колдун Олачия
-				Defeated: Колдун Олачия был повержен...
+			OolacileAcolyte: {
+				DisplayName: Послушник Колдуна Бездны
+				Defeated: Послушник Колдуна Бездны повержен...
 			}
 
 			SerpentOfTheAbyssBody.DisplayName: Змей бездны
@@ -13488,6 +13512,7 @@ Mods: {
 			// MimicSwapTestDummy.DisplayName: Mimic Swap Test Dummy
 			// MimicTear.DisplayName: Soul Mimic
 			// MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
+			// MirrorInvader.DisplayName: Mirror Invader
 			// HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
 		}
 

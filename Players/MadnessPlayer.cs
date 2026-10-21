@@ -157,6 +157,12 @@ namespace tsorcRevamp
                 return;
             }
 
+            // Mark of Madness freezes the meter: no decay while the Marked debuff lasts.
+            if (Player.HasBuff(ModContent.BuffType<MadnessMarked>()))
+            {
+                return;
+            }
+
             // Both server and clients advance this deterministic cosmetic-facing decay. The next
             // authoritative hit snapshot corrects any small latency drift.
             buildupDecayTimer++;

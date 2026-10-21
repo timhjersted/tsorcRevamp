@@ -729,6 +729,7 @@ namespace tsorcRevamp.NPCs
             // Standard fighters
             Add<AttraidiesIllusion>(0.3f, 30f);
             Add<Enemies.Archdeacon>(0.2f, 40f); // Wyvern Fortress caster, 3000 HP in Hardmode: tougher than the Illusion; its tells and Blink are the stagger windows
+            Add<Enemies.SuperHardMode.OolacileAcolyte>(0.2f, 40f); // SHM Madness caster: the Archdeacon's poise; tells and the Babbling Spiral channel are the stagger windows
             Add<Enemies.MinotaurMage>(0.3f, 35f); // beefy caster; its Ring of Cinders cast is the stagger window
             Add<Enemies.SuperHardMode.DarkBloodKnight>(0.3f, 35f);
             Add<Enemies.SuperHardMode.OolacileKnight>(0.3f, 35f);

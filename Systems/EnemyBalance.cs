@@ -539,7 +539,7 @@ namespace tsorcRevamp.Systems
             Enemy("IceSkeleton", shm: 7000); // standard; authored 2200
             Enemy("BarrowWightNemesis", shm: 16000); // strong; authored 2500
             Enemy("BasiliskHunter", shm: 18000); // strong; authored 2500
-            Enemy("OolacileSorcerer", shm: 15000); // strong; authored 5500; caster, contact damage 0
+            Enemy("OolacileAcolyte", shm: 15000); // strong; authored 5500; caster, contact damage 0
             Enemy("GhostOfTheDarkmoonKnight", shm: 15000); // strong; authored 3000
             Enemy("Tetsujin", shm: 20000); // strong; authored 3400
             Enemy("OolacileDemon", shm: 16000); // strong; authored 3500

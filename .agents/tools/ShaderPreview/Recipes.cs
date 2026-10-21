@@ -91,6 +91,28 @@ namespace ShaderPreview
                 Glintstone("GlintLanceSky", "ArchdeaconGlintLance", new Vector2(32f, 264f), SkyBlue),
                 Glintstone("GlintLanceCave", "ArchdeaconGlintLance", new Vector2(32f, 264f), CaveDark),
 
+                // Acolyte of Grand Occultist Madness kit (Effects/OolacileMadness.fx), sizes from AcolyteSpells.cs call sites.
+                // Progress is the per-technique main parameter (mote: unused; eye: lid; ring: radius; glyph: reveal;
+                // scrawl: ripple front; thread: tautness). Extra mirrors what AcolyteMadnessDraw passes.
+                Madness("MadnessMoteSky", "MadnessMote", new Vector2(36f, 36f), SkyBlue, new Vector4(1.25f, 1.9f, 1.6f, 1.1f)),
+                Madness("MadnessMoteCave", "MadnessMote", new Vector2(36f, 36f), CaveDark, new Vector4(1.25f, 1.9f, 1.6f, 1.1f)),
+                Madness("MadnessEyeSky", "MadnessEye", new Vector2(72f, 72f), SkyBlue, new Vector4(0.6f, 0.3f, 0.12f, 0.8f)),
+                Madness("MadnessEyeCave", "MadnessEye", new Vector2(72f, 72f), CaveDark, new Vector4(0.6f, 0.3f, 0.12f, 0.8f)),
+                Madness("MadnessBeamSky", "MadnessBeam", new Vector2(300f, 16f), SkyBlue, new Vector4(18.75f, 56f, 0f, 0f)),
+                Madness("MadnessBeamCave", "MadnessBeam", new Vector2(300f, 16f), CaveDark, new Vector4(18.75f, 56f, 0f, 0f)),
+                Madness("MadnessRingSky", "MadnessRing", new Vector2(340f, 340f), SkyBlue, new Vector4(15.5f, 0f, 0f, 0f)),
+                Madness("MadnessRingCave", "MadnessRing", new Vector2(340f, 340f), CaveDark, new Vector4(15.5f, 0f, 0f, 0f)),
+                AbyssPortal("MadnessAbyssPortalSky", SkyBlue),
+                AbyssPortal("MadnessAbyssPortalCave", CaveDark),
+                Madness("MadnessGlyphSky", "MadnessGlyph", new Vector2(64f, 64f), SkyBlue, Vector4.Zero),
+                Madness("MadnessGlyphCave", "MadnessGlyph", new Vector2(64f, 64f), CaveDark, Vector4.Zero),
+                Madness("MadnessGlyphEyeSky", "MadnessGlyphEye", new Vector2(64f, 64f), SkyBlue, Vector4.Zero),
+                Madness("MadnessGlyphEyeCave", "MadnessGlyphEye", new Vector2(64f, 64f), CaveDark, Vector4.Zero),
+                Madness("MadnessScrawlSky", "MadnessScrawlPreview", new Vector2(320f, 20f), SkyBlue, new Vector4(0f, 0.5f, 16f, 12.5f)),
+                Madness("MadnessScrawlCave", "MadnessScrawlPreview", new Vector2(320f, 20f), CaveDark, new Vector4(0f, 0.5f, 16f, 12.5f)),
+                Madness("MadnessThreadSky", "MadnessThreadPreview", new Vector2(400f, 12f), SkyBlue, new Vector4(0f, 1f, 33f, 0f)),
+                Madness("MadnessThreadCave", "MadnessThreadPreview", new Vector2(400f, 12f), CaveDark, new Vector4(0f, 1f, 33f, 0f)),
+
                 OwlFatherSolarArmor("OwlSolarArmorSky", SkyBlue),
                 OwlFatherSolarArmor("OwlSolarArmorCave", CaveDark),
                 OwlFatherSolarAxe("OwlSolarAxeSky", SkyBlue),
@@ -785,6 +807,39 @@ namespace ShaderPreview
                 PixelBlockSize = 2f,
                 Clear = clear,
             };
+        }
+
+        // AcolyteMadnessDraw call site: full-texture premultiplied draw of a cloud-noise quad, T_VFX_Noise41 detail, 2px pixel
+        // filter, Madness palette (burnt amber / Madness yellow / white). `extra` is the technique's Extra uniform.
+        private static Recipe Madness(string name, string technique, Vector2 drawSize, Color clear, Vector4 extra)
+        {
+            return new Recipe
+            {
+                Name = name,
+                Effect = "OolacileMadness",
+                Technique = technique,
+                Primary = "T_CloudNoise_Tiled",
+                Detail = "T_VFX_Noise41",
+                DrawSize = drawSize,
+                FullTexture = true,
+                Dark = new Color(120, 78, 0),
+                Mid = new Color(255, 220, 45),
+                Core = Color.White,
+                Blend = BlendState.AlphaBlend,
+                PixelBlockSize = 2f,
+                Clear = clear,
+                Configure = (effect, progress, scale) => effect.Parameters["Extra"]?.SetValue(extra),
+            };
+        }
+
+        // Abyss Drop's portal: MadnessRing with the dark-red Abyss palette, a fixed radius and a dark interior.
+        private static Recipe AbyssPortal(string name, Color clear)
+        {
+            Recipe recipe = Madness(name, "MadnessRing", new Vector2(90f, 90f), clear, new Vector4(10f, 0.9f, 0f, 0f));
+            recipe.Dark = new Color(40, 0, 10);
+            recipe.Mid = new Color(190, 20, 45);
+            recipe.Core = new Color(255, 140, 150);
+            return recipe;
         }
     }
 }

@@ -32,6 +32,7 @@ default, not written in the file · `.` off by default, never considered
 | CrystalKnight | Halberd | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
 | DarkBloodKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | DarkKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
+| OolacileAcolyte | — | Y | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | AbyssalNinja | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | BlackNinja | Flail | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | Y | . |
 | Blaidd | Greatsword | . | . | Y | . | . | Y | . | Y | . | . | . | . | . | . | . | Y | . |

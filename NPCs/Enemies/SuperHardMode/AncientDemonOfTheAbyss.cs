@@ -345,7 +345,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.SuperHardMode.OolacileSorcerer>(), 0);
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.SuperHardMode.OolacileAcolyte>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     spawnedDemons++;
                     if (Main.netMode == NetmodeID.Server)

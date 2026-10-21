@@ -119,12 +119,8 @@ namespace tsorcRevamp.Utilities
         private const int RenderTargetSize = 512;
         private const int CropPadding = 2;
 
-        /// <summary>Boss head icon (map / boss bar / Boss Checklist): a window this many pixels square, taken at 1x from
-        /// the top of the idle render's body column, trimmed, then outlined. The mod's hand-made puppet icons are 26-38 px.</summary>
-        private const int HeadIconWindow = 32;
-        /// <summary>Half-width of the column (around the body's centre) searched for the top of the head, so wings or a
-        /// raised shield beside the body don't count as "the top".</summary>
-        private const int HeadColumnHalfWidth = 10;
+        /// <summary>Boss head icon (map / boss bar / Boss Checklist) outline colour; the icon itself is the top square of the
+        /// idle portrait (SaveHeadIcon).</summary>
         private static readonly Color HeadIconOutline = new Color(20, 20, 24);
 
         private sealed class ExportJob
@@ -262,14 +258,13 @@ namespace tsorcRevamp.Utilities
 
                 string suffix = job.WithPrimaryWeapon ? "PrimaryWeapon" : "Idle";
                 string filename = $"{SanitizeFileName(job.Name)}_{suffix}.png";
-                SaveCropped(renderTarget, Path.Combine(outputDirectory, filename));
+                SaveCropped(renderTarget, Path.Combine(outputDirectory, filename), out Color[] croppedPixels, out int croppedWidth, out int croppedHeight);
 
                 // The idle pose also yields the boss head icon, named as tModLoader expects (<Class>_Head_Boss).
                 if (!job.WithPrimaryWeapon)
                 {
-                    int bodyCenterX = (int)(screenPosition.X + npc.width * 0.5f);
                     string headFilename = $"{SanitizeFileName(job.Name)}_Head_Boss.png";
-                    SaveHeadIcon(renderTarget, bodyCenterX, Path.Combine(outputDirectory, headFilename));
+                    SaveHeadIcon(croppedPixels, croppedWidth, croppedHeight, Path.Combine(outputDirectory, headFilename));
                 }
             }
             finally
@@ -300,7 +295,9 @@ namespace tsorcRevamp.Utilities
                 device.SetRenderTargets(previousTargets);
         }
 
-        private static void SaveCropped(RenderTarget2D renderTarget, string path)
+        /// <summary>Writes the render trimmed to its visible pixels (+CropPadding), and hands the trimmed image back for
+        /// the head icon.</summary>
+        private static void SaveCropped(RenderTarget2D renderTarget, string path, out Color[] cropped, out int croppedWidth, out int croppedHeight)
         {
             int width = renderTarget.Width;
             int height = renderTarget.Height;
@@ -337,9 +334,9 @@ namespace tsorcRevamp.Utilities
             maxX = Math.Min(width - 1, maxX + CropPadding);
             maxY = Math.Min(height - 1, maxY + CropPadding);
 
-            int croppedWidth = maxX - minX + 1;
-            int croppedHeight = maxY - minY + 1;
-            Color[] cropped = new Color[croppedWidth * croppedHeight];
+            croppedWidth = maxX - minX + 1;
+            croppedHeight = maxY - minY + 1;
+            cropped = new Color[croppedWidth * croppedHeight];
             for (int y = 0; y < croppedHeight; y++)
             {
                 Array.Copy(
@@ -354,78 +351,20 @@ namespace tsorcRevamp.Utilities
         }
 
         /// <summary>
-        /// Boss head icon from the idle render: find the highest opaque pixel in the body's column (+-HeadColumnHalfWidth
-        /// around <paramref name="bodyCenterX"/>), take a HeadIconWindow-square window starting just above it, centred on
-        /// the body, trim its transparent margins, then add a 1-px dark outline (4-neighbour) so it reads on the map.
+        /// Boss head icon: the top square of the trimmed idle portrait — side = the portrait's width (its height if that is
+        /// smaller), so a 32x48 idle gives a 32x32 icon of the head and shoulders at 1x. The portrait's 2-px crop padding
+        /// leaves room for a 1-px dark outline (4-neighbour) so it reads on the map; the cut edge at the bottom gets none.
         /// </summary>
-        private static void SaveHeadIcon(RenderTarget2D renderTarget, int bodyCenterX, string path)
+        private static void SaveHeadIcon(Color[] idlePixels, int idleWidth, int idleHeight, string path)
         {
-            int width = renderTarget.Width;
-            int height = renderTarget.Height;
-            Color[] source = new Color[width * height];
-            renderTarget.GetData(source);
-
-            int headTopY = -1;
-
-            for (int y = 0; y < height && headTopY < 0; y++)
-            {
-                for (int x = bodyCenterX - HeadColumnHalfWidth; x <= bodyCenterX + HeadColumnHalfWidth; x++)
-                {
-                    bool inside = x >= 0 && x < width;
-
-                    if (inside && source[y * width + x].A > 0)
-                    {
-                        headTopY = y;
-                        break;
-                    }
-                }
-            }
-
-            if (headTopY < 0)
-            {
-                throw new InvalidOperationException("No head found in the idle render's body column.");
-            }
-
-            // The window, clamped to the canvas.
-            int windowLeft = Math.Clamp(bodyCenterX - HeadIconWindow / 2, 0, width - HeadIconWindow);
-            int windowTop = Math.Clamp(headTopY - 1, 0, height - HeadIconWindow);
-
-            // Trim to the opaque pixels inside the window.
-            int minX = HeadIconWindow;
-            int minY = HeadIconWindow;
-            int maxX = -1;
-            int maxY = -1;
-
-            for (int y = 0; y < HeadIconWindow; y++)
-            {
-                for (int x = 0; x < HeadIconWindow; x++)
-                {
-                    Color pixel = source[(windowTop + y) * width + windowLeft + x];
-
-                    if (pixel.A == 0)
-                    {
-                        continue;
-                    }
-
-                    minX = Math.Min(minX, x);
-                    minY = Math.Min(minY, y);
-                    maxX = Math.Max(maxX, x);
-                    maxY = Math.Max(maxY, y);
-                }
-            }
-
-            // 1 px of padding on every side holds the outline.
-            int iconWidth = maxX - minX + 3;
-            int iconHeight = maxY - minY + 3;
+            int iconWidth = Math.Min(idleWidth, idleHeight);
+            int iconHeight = iconWidth;
+            int leftOffset = (idleWidth - iconWidth) / 2;
             Color[] icon = new Color[iconWidth * iconHeight];
 
-            for (int y = minY; y <= maxY; y++)
+            for (int y = 0; y < iconHeight; y++)
             {
-                for (int x = minX; x <= maxX; x++)
-                {
-                    Color pixel = source[(windowTop + y) * width + windowLeft + x];
-                    icon[(y - minY + 1) * iconWidth + (x - minX + 1)] = pixel;
-                }
+                Array.Copy(idlePixels, y * idleWidth + leftOffset, icon, y * iconWidth, iconWidth);
             }
 
             // Outline: every empty pixel touching an opaque one. Read from a copy so new outline pixels don't spread.

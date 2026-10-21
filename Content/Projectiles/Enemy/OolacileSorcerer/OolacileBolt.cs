@@ -18,7 +18,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer
             Projectile.timeLeft = 600;
             Projectile.hostile = true;
             Projectile.friendly = false;
-            Projectile.tileCollide = false;
+            // Dies on walls: OnTileCollide starts the death (burst + 15t trail fade) instead of flying through terrain.
+            Projectile.tileCollide = true;
+            deathSpeed = 1f / 15f;
 
             trailWidth = 26;
             trailPointLimit = 160;
@@ -37,6 +39,54 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DarkInferno>(), 120);
+        }
+
+        // ai[2] > 0 caps the 1.02x-per-tick acceleration at that speed (the Acolyte passes 10); 0 keeps the old uncapped bolt.
+        private float TopSpeed => Projectile.ai[2];
+        private bool burstPlayed;
+
+        // A wall hit freezes the head where it struck and lets DynamicTrail fade the trail out over deathSpeed (15t).
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            StartDeath();
+            return false;
+        }
+
+        public override bool CanHitPlayer(Player target) => !dying;
+
+        private void StartDeath()
+        {
+            dying = true;
+            Projectile.velocity = Vector2.Zero;
+            Projectile.tileCollide = false;
+            PlayDeathBurst();
+        }
+
+        // 40 red-black dusts at the head, once per bolt whichever way it dies (wall, timeout fade or being cleared).
+        private void PlayDeathBurst()
+        {
+            if (burstPlayed || Main.dedServ)
+            {
+                return;
+            }
+
+            burstPlayed = true;
+            for (int i = 0; i < 40; i++)
+            {
+                int dustType = Terraria.ID.DustID.CrimsonSpray;
+                if (i % 3 == 0)
+                {
+                    dustType = Terraria.ID.DustID.Shadowflame;
+                }
+
+                Dust shard = Dust.NewDustPerfect(Projectile.Center, dustType, Main.rand.NextVector2Circular(4f, 4f), 60, default, Main.rand.NextFloat(1f, 1.7f));
+                shard.noGravity = true;
+            }
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            PlayDeathBurst();
         }
 
         bool playedSound = false;
@@ -59,9 +109,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer
                 }
             }
             
-            if (accel)
+            if (dying)
+            {
+                // Timing out: the head stops so the fading trail does not drift on past its last drawn point.
+                Projectile.velocity = Vector2.Zero;
+                PlayDeathBurst();
+            }
+            else if (accel)
             {
                 Projectile.velocity *= 1.02f;
+
+                float speed = Projectile.velocity.Length();
+                if (TopSpeed > 0f && speed > TopSpeed)
+                {
+                    Projectile.velocity *= TopSpeed / speed;
+                }
             }
             teleAlpha -= 0.0025f;
         }

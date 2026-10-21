@@ -1292,12 +1292,12 @@ namespace tsorcRevamp.Systems
             // Super Hardmode only, one alive at a time; gates (one in 8 to one in 70) are folded in as 1/N. The old "ocean" test and
             // "gray layer" test mixed tile and pixel units (the ocean covered the west 43% of the map; the gray layer ran through
             // the underworld); this uses the ocean strips and the cavern band they were written for.
-            Spawn("OolacileSorcerer", Zone.Jungle & !Zone.Dungeon & !Evil & (Depth.Sky | Depth.Surface) & !Region.Ocean, shm: 0.0143f, max: 1);
-            Spawn("OolacileSorcerer", Region.Ocean & !(Depth.Sky | Depth.Surface), shm: 0.04f, max: 1);
-            Spawn("OolacileSorcerer", Time.BloodMoon & Zone.Jungle & !Zone.Dungeon & !Evil & !(Depth.Sky | Depth.Surface) & !Region.Ocean, shm: 0.0333f, max: 1);
-            Spawn("OolacileSorcerer", Zone.Crimson, shm: 0.05f, max: 1);
-            Spawn("OolacileSorcerer", Depth.Cavern, shm: 0.02f, max: 1);
-            Spawn("OolacileSorcerer", Time.BloodMoon & Zone.Dungeon, shm: 0.125f, max: 1);
+            Spawn("OolacileAcolyte", Zone.Jungle & !Zone.Dungeon & !Evil & (Depth.Sky | Depth.Surface) & !Region.Ocean, shm: 0.0143f, max: 1);
+            Spawn("OolacileAcolyte", Region.Ocean & !(Depth.Sky | Depth.Surface), shm: 0.04f, max: 1);
+            Spawn("OolacileAcolyte", Time.BloodMoon & Zone.Jungle & !Zone.Dungeon & !Evil & !(Depth.Sky | Depth.Surface) & !Region.Ocean, shm: 0.0333f, max: 1);
+            Spawn("OolacileAcolyte", Zone.Crimson, shm: 0.05f, max: 1);
+            Spawn("OolacileAcolyte", Depth.Cavern, shm: 0.02f, max: 1);
+            Spawn("OolacileAcolyte", Time.BloodMoon & Zone.Dungeon, shm: 0.125f, max: 1);
 
             Spawn("Parasprite", Zone.Hallow & Water.Dry & Downed.Skeletron & Depth.SurfaceToUpperCaves, phm: 0.15f, hm: 0.15f, shm: 0.15f);
 

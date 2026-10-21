@@ -1256,9 +1256,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileKnight.DisplayName}"
 			}
 
-			OolacileSorcererBanner: {
-				DisplayName: "{$NPCs.OolacileSorcerer.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileSorcerer.DisplayName}"
+			OolacileAcolyteBanner: {
+				DisplayName: "{$NPCs.OolacileAcolyte.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileAcolyte.DisplayName}"
 			}
 
 			ParaspriteBanner: {
@@ -9319,6 +9319,11 @@ Mods: {
 				DisplayName: Grand Oolacile Staff
 			}
 
+			EnemyOolacileAcolyteStaff: {
+				Tooltip: ""
+				DisplayName: Acolyte's Oolacile Staff
+			}
+
 			EnemyOccultistAxe: {
 				Tooltip: ""
 				DisplayName: Grand Oolacile Axe
@@ -9543,6 +9548,15 @@ Mods: {
 					Madness: {0}/{1}.
 					At {1} buildup, your knowledge of the occult
 					will cause you to take {2} damage and become staggered.
+					'''
+			}
+
+			MadnessMarked: {
+				DisplayName: Marked by Madness
+				Description:
+					'''
+					Your Madness no longer fades.
+					The acolyte's Madness builds up faster.
 					'''
 			}
 
@@ -11555,6 +11569,16 @@ Mods: {
 			OccultistStarBig.DisplayName: Occultist Star Big
 			OccultistAbyssRing.DisplayName: Abyss Ring
 			OccultistMagicRing.DisplayName: Occultist Magic Ring
+			AcolyteShriekRing.DisplayName: Shriek
+			AbyssDropPortal.DisplayName: Abyss Portal
+			MadnessMote.DisplayName: Madness Mote
+			MadnessEye.DisplayName: Eye of Madness
+			MadnessScrawl.DisplayName: Mad Scrawl
+			AcolyteHallucination.DisplayName: Hallucination
+			MarkGlyph.DisplayName: Mark of Madness
+			MirrorEcho.DisplayName: Mirror of Madness
+			MadnessThread.DisplayName: Cat's Cradle
+			MadnessClock.DisplayName: Madness Clock
 			AbyssTeleportBlast.DisplayName: Abyss Teleport Blast
 			AbyssTeleportMistLinger.DisplayName: Abyss Teleport Mist Linger
 			AbyssSlash.DisplayName: Abyss Slash
@@ -12315,9 +12339,9 @@ Mods: {
 				Hunt: You are being hunted...
 			}
 
-			OolacileSorcerer: {
-				DisplayName: Oolacile Sorcerer
-				Defeated: The sorcerer of Oolacile has been defeated...
+			OolacileAcolyte: {
+				DisplayName: Acolyte of Grand Occultist
+				Defeated: The acolyte of the Grand Occultist has been defeated...
 			}
 
 			SerpentOfTheAbyssBody.DisplayName: Serpent of the Abyss

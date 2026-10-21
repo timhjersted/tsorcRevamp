@@ -114,7 +114,7 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<ObsidianJellyfish>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<OolacileDemon>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<OolacileKnight>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<OolacileSorcerer>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<OolacileAcolyte>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Parasprite>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<ParasyticWormHead>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<ParasyticWormBody>()] = EnemyImpactMaterial.Blood,

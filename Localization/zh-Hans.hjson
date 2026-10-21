@@ -1259,9 +1259,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileKnight.DisplayName}"
 			}
 
-			OolacileSorcererBanner: {
-				DisplayName: "{$NPCs.OolacileSorcerer.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileSorcerer.DisplayName}"
+			OolacileAcolyteBanner: {
+				DisplayName: "{$NPCs.OolacileAcolyte.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileAcolyte.DisplayName}"
 			}
 
 			ParaspriteBanner: {
@@ -8297,8 +8297,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
-					[c/e34444:Minion and sentry hits apply a tag effect]
-					[c/e34444:Hit the tagged enemy with a whip to deal extra dmg]
+					[c/ffbc12:Minion and sentry hits apply a tag effect]
+					[c/ffbc12:Hit the tagged enemy with a whip to deal extra dmg]
 					''' */
 			}
 
@@ -9302,6 +9302,11 @@ Mods: {
 				// DisplayName: Grand Oolacile Staff
 			}
 
+			EnemyOolacileAcolyteStaff: {
+				Tooltip: ""
+				DisplayName: 侍僧的乌拉席露法杖
+			}
+
 			EnemyOccultistAxe: {
 				// Tooltip: ""
 				// DisplayName: Grand Oolacile Axe
@@ -9527,6 +9532,15 @@ Mods: {
 					At {1} buildup, your knowledge of the occult
 					will cause you to take {2} damage and become staggered.
 					''' */
+			}
+
+			MadnessMarked: {
+				DisplayName: 疯狂印记
+				Description:
+					'''
+					你的疯狂不再消退。
+					侍僧的疯狂积累得更快。
+					'''
 			}
 
 			Madness: {
@@ -11542,6 +11556,16 @@ Mods: {
 			// OccultistStarBig.DisplayName: Occultist Star Big
 			// OccultistAbyssRing.DisplayName: Abyss Ring
 			// OccultistMagicRing.DisplayName: Occultist Magic Ring
+			AcolyteShriekRing.DisplayName: 尖啸
+			AbyssDropPortal.DisplayName: 深渊之门
+			MadnessMote.DisplayName: 疯狂微光
+			MadnessEye.DisplayName: 疯狂之眼
+			MadnessScrawl.DisplayName: 疯狂涂写
+			AcolyteHallucination.DisplayName: 幻象
+			MarkGlyph.DisplayName: 疯狂印记
+			MirrorEcho.DisplayName: 疯狂之镜
+			MadnessThread.DisplayName: 翻花绳
+			MadnessClock.DisplayName: 疯狂之钟
 			// AbyssTeleportBlast.DisplayName: Abyss Teleport Blast
 			// AbyssTeleportMistLinger.DisplayName: Abyss Teleport Mist Linger
 			// AbyssSlash.DisplayName: Abyss Slash
@@ -12302,9 +12326,9 @@ Mods: {
 				Hunt: 你被狩猎了...
 			}
 
-			OolacileSorcerer: {
-				DisplayName: 乌拉席露巫师
-				Defeated: 乌拉席露巫师已被击败...
+			OolacileAcolyte: {
+				DisplayName: 大秘术师的侍僧
+				Defeated: 大秘术师的侍僧已被击败...
 			}
 
 			SerpentOfTheAbyssBody.DisplayName: 幽渊狂蟒
@@ -13525,6 +13549,7 @@ Mods: {
 			// MimicSwapTestDummy.DisplayName: Mimic Swap Test Dummy
 			// MimicTear.DisplayName: Soul Mimic
 			// MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
+			// MirrorInvader.DisplayName: Mirror Invader
 			// HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
 		}
 
