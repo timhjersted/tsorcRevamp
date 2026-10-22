@@ -9345,6 +9345,16 @@ Mods: {
 				Tooltip: ""
 			}
 
+			TaurusGreathammer: {
+				DisplayName: Taurus Greathammer
+				Tooltip: ""
+			}
+
+			TaurusEarthTridentProp: {
+				DisplayName: Earth Trident
+				Tooltip: ""
+			}
+
 			EnemyProximityMine: {
 				DisplayName: Enemy Proximity Mine
 				Tooltip: ""
@@ -11764,6 +11774,10 @@ Mods: {
 			DeathSpawnWarning.DisplayName: Death Spawn Warning
 			DeathLaserWarning.DisplayName: Death Laser Warning
 			CrystalKnightFrostWave.DisplayName: Crystal Knight Frost Wave
+			TaurusQuakeShockwave.DisplayName: Quake Shockwave
+			TaurusJavelin.DisplayName: Earth Trident
+			TaurusSandCloud.DisplayName: Sand Cloud
+			TaurusBrimstoneFlame.DisplayName: Brimstone Flame
 			ProximityMine.DisplayName: Proximity Mine
 			ProximityMineExplosion.DisplayName: Proximity Mine Explosion
 			ProximityMineRocket.DisplayName: Proximity Mine Rocket
@@ -12366,8 +12380,7 @@ Mods: {
 			SlograII.DisplayName: Slogra
 
 			TaurusKnight: {
-				DisplayName: Taurus Knight
-				Nearby: A Taurus Knight is close...
+				DisplayName: Taurus, the Disgraced Champion
 			}
 
 			Tetsujin.DisplayName: Tetsujin

@@ -724,7 +724,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.Hydra>(0.2f, 60f);
             Add<Enemies.SuperHardMode.Massacre>(0.2f, 60f);
             // Elite / heavy knight
-            Add<Enemies.SuperHardMode.TaurusKnight>(0.2f, 55f);
+            Add<Enemies.SuperHardMode.TaurusKnight>(0.15f, 80f); // puppet great-hammer elite: tells are the stagger windows; Quake Slam, Bull Rush and the breath are hyper-armored
             Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
             // Standard fighters
             Add<AttraidiesIllusion>(0.3f, 30f);

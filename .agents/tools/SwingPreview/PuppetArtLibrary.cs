@@ -12,7 +12,7 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
+        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, TaurusKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
@@ -75,6 +75,21 @@ namespace SwingPreview
                     // Exact installed holdout exported with ExportVanillaTexture.ps1, not proxy art.
                     WeaponSprite = P("tsorcDocs", "SwingReports", "CrystalKnight", "NorthPole.png"),
                     WeaponRotationOffset = (float)Math.PI / 2f,
+                };
+            }
+
+            if (puppet.Equals("TaurusKnight", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "TaurusKnight",
+                    // Vanilla Fossil set (head 188, body 189, legs 129), exported from the installed XNBs.
+                    BodySheet = P("tsorcDocs", "SwingReports", "TaurusKnight", "FossilShirt_Body.png"),
+                    LegsSheet = P("tsorcDocs", "SwingReports", "TaurusKnight", "FossilPants_Legs.png"),
+                    HeadSheet = P("tsorcDocs", "SwingReports", "TaurusKnight", "FossilHelm_Head.png"),
+                    // TaurusGreathammer shares the Doomhammer's texture.
+                    WeaponSprite = P("Content", "Items", "Weapons", "Melee", "Hammers", "Doomhammer.png"),
+                    WeaponRotationOffset = 0f,
                 };
             }
 

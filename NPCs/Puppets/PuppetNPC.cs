@@ -1147,7 +1147,14 @@ namespace tsorcRevamp.NPCs.Puppets
             _lastAttackHitConnected = true;
             if (IsMeleeComboPhase)
                 _currentComboStepHitConnected = true;
+
+            OnAttackHitReported();
         }
+
+        /// <summary>Server (or singleplayer) side of <see cref="ReportAttackHit"/>: a hit resolved on the
+        /// victim's machine has reached the authority. Lets a subclass end a bespoke set-piece on contact
+        /// (Taurus Knight's Bull Rush). Default no-op.</summary>
+        protected virtual void OnAttackHitReported() { }
 
         /// <summary>
         /// If the swing that just ended fully whiffed, rolls <see cref="DodgePunishChainChance"/> and
