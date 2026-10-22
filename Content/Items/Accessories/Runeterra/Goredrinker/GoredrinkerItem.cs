@@ -16,7 +16,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker
     public class GoredrinkerItem : ModItem
     {
         public const float SummonDamage = 10f;
-        public const int MaxLifeIncrease = 40;
+        public const int MaxLifeIncrease = 45;
         public const float HealBaseValue = 7f;
         public const float WhipDmgRange = 33f; //dmg is divided by 3 and gets applied in modplayer
         public const int Cooldown = 12;

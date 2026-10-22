@@ -17,7 +17,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.SteraksGage
         public static float MeleeDmg = 10f;
         public static float UseTimeRatio = 1.5f;
         public static float MaxDmg = 20f;
-        public static int MaxLifeIncrease = 45;
+        public static int MaxLifeIncrease = 50;
         public static float LifeThreshold = 30f;
         public static int ShieldHeal = 50;
         public static int Cooldown = 90;

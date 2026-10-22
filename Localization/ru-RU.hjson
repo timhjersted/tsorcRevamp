@@ -8220,8 +8220,8 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedRangedDamage}
 					Increases ranged attack speed by {1}%
 					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
-					[c/e34444:Ranged attacks apply a stacking debuff up to 6 times]
-					[c/e34444:Each stack reduces the targets defense by {3}]
+					[c/e34444:Ranged attacks apply a stacking debuff up to {3} times({$CommonItemTooltip.SecondDuration@4})]
+					[c/e34444:Each stack reduces the targets defense by {5}]
 					''' */
 			}
 
@@ -10666,6 +10666,11 @@ Mods: {
 			StormrazorProc: {
 				// DisplayName: Stormrazor Proc
 				// Description: Charged up!
+			}
+
+			BlackCleaverDebuff: {
+				// DisplayName: Black Cleaver Debuff
+				// Description: Mods.tsorcRevamp.Buffs.BlackCleaverDebuff.Description
 			}
 		}
 
