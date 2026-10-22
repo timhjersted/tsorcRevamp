@@ -94,12 +94,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems
             }
             return true;
         }
-        public override void UpdateEquip(Item item, Player player)
-        {
-            base.UpdateEquip(item, player);
-        }
-
-        public const float HunterCloakCritChance = 5f;
+        public const float HunterCloakCritChance = 3f;
 
         public override void UpdateAccessory(Item item, Player player, bool hideVisual)
         {
