@@ -1239,7 +1239,7 @@ namespace tsorcRevamp.Systems
             // Super Hardmode only; the gate of one in 45 is folded in.
             Spawn("Massacre", Depth.Underworld | (Depth.Surface & Time.Night), shm: 0.0222f);
 
-            // MinotaurMage
+            Spawn("MinotaurMage", AnyDesert, phm: 0.025f, hm: 0.025f, shm: 0.025f);
 
             // The old rule also excluded the very top rows of the map, which no one can reach.
             Spawn("MountedSandsprog", Invasion.None & !Zone.Snow & AnyDesert, phm: 0.05f, hm: 0.05f, shm: 0.05f);

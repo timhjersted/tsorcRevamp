@@ -3,17 +3,19 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy.Minotaur;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies{
 	// Sprite by Omnir, from Omnir's Nostalgia Pack: https://forums.terraria.org/index.php?threads/omnirs-nostalgia-pack.11875/
 	//
 	// Fire-staff caster, rebuilt with the Gigas Method (see tsorcDocs/EnemyRedesignSkillGuide.md)
-	// at common-enemy scale: 5 attacks (2 gated below half health), short telegraphs, brisk cooldowns.
+	// at common-enemy scale: 6 attacks (2 gated below half health), short telegraphs, brisk cooldowns.
 	// All attack language is dust and projectiles — the sprite only has walk/idle/jump frames, but it
 	// holds a staff, so casts read from a glowing staff tip. Its historic identity (the old
 	// MNPC.teleporterAI) survives as the Blink Volley. Below half health the beast under the robes
@@ -28,27 +30,38 @@ namespace tsorcRevamp.NPCs.Enemies{
         {
             None = 0,
             EmberBolts,     // staff glint → three quick fire bolts
-            FlameWave,      // staff slam → short ground-crawling fire waves both ways
-            BlinkVolley,    // the old teleporter identity: blink to the player's flank, two snap bolts
+            FlameWave,      // staff slam → ground-crawling fire waves both ways
+            BlinkVolley,    // blink to the player's flank, gather fire for 30t, two aimed bolts
             BullhornCharge, // below 50%: snorting windup → hyper-armored horn rush, big punish recovery
             RingOfCinders,  // below 50%: long staggerable cast → radial arcing embers
+            FlankingFlames, // burning floor patches six tiles either side of the player
         }
 
         //Timings (ticks)
         const int BoltsTelegraphTicks = 25;
-        const int WaveTelegraphTicks = 30;
+        const int WaveTelegraphTicks = 55;
         const int BlinkTelegraphTicks = 18;
+        const int BlinkShotDelay = 30;
+        const int FloorTelegraphTicks = 45;
         const int ChargeTelegraphTicks = 35;
         const int ChargeTicks = 55;
         const int ChargeRecoveryTicks = 45;
         const int CindersTelegraphTicks = 40;
         const int CindersStaggerableTicks = 26; //first two thirds: a poise break cancels the cast
 
-        //Projectile damage (hostile projectiles deal 2x this on hit in normal mode)
-        const int BoltDamage = 12;
-        const int WaveDamage = 14;
-        const int CinderDamage = 11;
+        // True Expert hit damage, before defense, damage variation and world-progress scaling.
+        // Includes the +40 attack increase. Apply the SHM multiplier before converting once at spawn.
+        const int BoltDamage = 88;
+        const int WaveDamage = 96;
+        const int CinderDamage = 84;
+        const int ContactDamage = 58;
+        const int ChargeContactDamage = 76;
+        const float SuperHardmodeDamageMultiplier = 1.25f;
         const float ChargeSpeed = 5.5f;
+
+        static int StageDamage(int expertDamage) => tsorcRevampWorld.SuperHardMode
+            ? (int)Math.Round(expertDamage * SuperHardmodeDamageMultiplier, MidpointRounding.AwayFromZero)
+            : expertDamage;
 
         AttackState State = AttackState.None;
         AttackState LastAttack = AttackState.None;
@@ -56,20 +69,23 @@ namespace tsorcRevamp.NPCs.Enemies{
         int AttackCooldown = 90;
         int lockedDir = 1;          //horn-charge direction, locked at charge start
         bool AngrySnortDone;        //one-time below-half flourish
-        int baseContactDamage = -1; //contact damage to restore after the charge's boost
+        readonly List<AttackState> attackBag = new(); // selection is server-only
+        Vector2 floorCastAnchor;
 
         public override void SetStaticDefaults()
         {
             NPCID.Sets.TrailCacheLength[NPC.type] = 6; //afterimages for the horn charge
             NPCID.Sets.TrailingMode[NPC.type] = 0;
+            // Defense is explicitly authored per stage; do not add vanilla's hidden Hardmode stat budget.
+            NPCID.Sets.DontDoHardmodeScaling[Type] = true;
         }
 
         public override void SetDefaults()
 		{
 			NPC.width = 20;
 			NPC.height = 40;
-			NPC.damage = 9;
-			NPC.defense = 4;
+            EnemyDamage.SetContact(NPC, StageDamage(ContactDamage));
+            NPC.defense = tsorcRevampWorld.SuperHardMode ? 44 : Main.hardMode ? 12 : 4;
 			NPC.lifeMax = 155;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -90,6 +106,8 @@ namespace tsorcRevamp.NPCs.Enemies{
             writer.Write(AttackCooldown);
             writer.Write((sbyte)lockedDir);
             writer.Write(AngrySnortDone);
+            writer.Write(floorCastAnchor.X);
+            writer.Write(floorCastAnchor.Y);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -99,6 +117,9 @@ namespace tsorcRevamp.NPCs.Enemies{
             AttackCooldown = reader.ReadInt32();
             lockedDir = reader.ReadSByte();
             AngrySnortDone = reader.ReadBoolean();
+            floorCastAnchor = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            if (State == AttackState.BlinkVolley && AttackTimer == BlinkTelegraphTicks)
+                BlinkFlash();
         }
 
         ///<summary>The glowing tip of its staff — where every cast's dust language originates.</summary>
@@ -117,20 +138,22 @@ namespace tsorcRevamp.NPCs.Enemies{
                     Main.dust[dust].noGravity = true;
                 }
             }
-            State = AttackState.None;
-            AttackTimer = 0;
-            AttackCooldown = Math.Max(AttackCooldown, 60);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                State = AttackState.None;
+                AttackTimer = 0;
+                AttackCooldown = Math.Max(AttackCooldown, 60);
+                SetContactDamage(false);
+                NPC.netUpdate = true;
+            }
         }
 
 		public override void AI()
 		{
             tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+                NPC.TargetClosest();
             Player player = Main.player[NPC.target];
-            if (baseContactDamage < 0)
-            {
-                baseContactDamage = NPC.damage;
-            }
-
             g.AttackTelegraphing = false;
             g.AttackCommitted = false;
 
@@ -146,22 +169,26 @@ namespace tsorcRevamp.NPCs.Enemies{
             if (!AngrySnortDone && NPC.life < NPC.lifeMax / 2)
             {
                 AngrySnortDone = true;
-                SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.35f, Pitch = 0.5f }, NPC.Center);
-                for (int i = 0; i < 12; i++)
+                if (!Main.dedServ)
                 {
-                    Vector2 nose = NPC.Center + new Vector2(NPC.direction * 12f, -10f);
-                    int puff = Dust.NewDust(nose, 8, 8, DustID.Smoke, NPC.direction * 2f, 0f, 120, default, 1.1f);
-                    Main.dust[puff].velocity *= 0.5f;
+                    SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.35f, Pitch = 0.5f }, NPC.Center);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        Vector2 nose = NPC.Center + new Vector2(NPC.direction * 12f, -10f);
+                        int puff = Dust.NewDust(nose, 8, 8, DustID.Smoke, NPC.direction * 2f, 0f, 120, default, 1.1f);
+                        Main.dust[puff].velocity *= 0.5f;
+                    }
                 }
-                NPC.netUpdate = true;
+                if (Main.netMode != NetmodeID.MultiplayerClient) NPC.netUpdate = true;
             }
 
             if (State == AttackState.None)
             {
-                tsorcRevampAIs.FighterAI(NPC, topSpeed: 1.3f, acceleration: 0.7f, canTeleport: false);
+                SetContactDamage(false);
+                tsorcRevampAIs.FighterAI(NPC, topSpeed: 1.3f, acceleration: 0.7f, canTeleport: false, canPounce: false);
 
                 //Idle staff glow — its element reads at a glance
-                if (Main.rand.NextBool(4))
+                if (!Main.dedServ && Main.rand.NextBool(4))
                 {
                     int glow = Dust.NewDust(StaffTip, 4, 4, DustID.Torch, 0f, -0.5f, 120, default, 0.8f);
                     Main.dust[glow].noGravity = true;
@@ -191,46 +218,47 @@ namespace tsorcRevamp.NPCs.Enemies{
             bool sameLevel = Math.Abs(player.Bottom.Y - NPC.Bottom.Y) < 4 * 16f;
             bool belowHalf = NPC.life < NPC.lifeMax / 2;
 
-            Span<(AttackState state, float weight)> pool = stackalloc (AttackState, float)[]
+            bool Eligible(AttackState attack) => attack switch
             {
-                (AttackState.EmberBolts,     1f),
-                (AttackState.FlameWave,      distTiles < 12f ? 1.1f : 0.2f),
-                (AttackState.BlinkVolley,    0.7f),
-                (AttackState.BullhornCharge, belowHalf && distTiles > 6f && distTiles < 30f && sameLevel ? 1.2f : 0f),
-                (AttackState.RingOfCinders,  !belowHalf ? 0f : distTiles < 10f ? 1f : 0.4f),
+                AttackState.FlameWave => sameLevel && distTiles < 34f,
+                AttackState.BullhornCharge => belowHalf && distTiles > 6f && distTiles < 30f && sameLevel,
+                AttackState.RingOfCinders => belowHalf,
+                _ => true,
             };
-            float total = 0f;
-            for (int i = 0; i < pool.Length; i++)
+            // Deal every eligible attack once before refilling; never immediately repeat.
+            attackBag.RemoveAll(attack => !Eligible(attack));
+            if (attackBag.Count == 0)
             {
-                if (pool[i].state == LastAttack)
+                foreach (AttackState attack in Enum.GetValues<AttackState>())
+                    if (attack != AttackState.None && Eligible(attack)) attackBag.Add(attack);
+                for (int i = attackBag.Count - 1; i > 0; i--)
                 {
-                    pool[i].weight *= 0.5f;
-                }
-                total += pool[i].weight;
-            }
-            float roll = Main.rand.NextFloat(total);
-            AttackState chosen = AttackState.EmberBolts;
-            for (int i = 0; i < pool.Length; i++)
-            {
-                roll -= pool[i].weight;
-                if (roll <= 0f)
-                {
-                    chosen = pool[i].state;
-                    break;
+                    int j = Main.rand.Next(i + 1);
+                    (attackBag[i], attackBag[j]) = (attackBag[j], attackBag[i]);
                 }
             }
+            int pick = attackBag.Count - 1;
+            if (attackBag[pick] == LastAttack && pick > 0) pick--;
+            AttackState chosen = attackBag[pick];
+            attackBag.RemoveAt(pick);
             State = chosen;
             AttackTimer = 0;
+            if (chosen == AttackState.FlankingFlames)
+            {
+                floorCastAnchor = player.Bottom;
+                SpawnFlankingFlames();
+            }
             NPC.netUpdate = true;
         }
 
         void EndAttack(int cooldown)
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient) return;
             LastAttack = State;
             State = AttackState.None;
             AttackTimer = 0;
             //Safety: restore anything an attack changed
-            NPC.damage = baseContactDamage;
+            SetContactDamage(false);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 AttackCooldown = cooldown + Main.rand.Next(40);
@@ -260,6 +288,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                 case AttackState.BlinkVolley: RunBlinkVolley(g, player); break;
                 case AttackState.BullhornCharge: RunBullhornCharge(g); break;
                 case AttackState.RingOfCinders: RunRingOfCinders(g); break;
+                case AttackState.FlankingFlames: RunFlankingFlames(g); break;
             }
         }
 
@@ -268,14 +297,14 @@ namespace tsorcRevamp.NPCs.Enemies{
             g.AttackCommitted = AttackTimer <= BoltsTelegraphTicks + 16;
             NPC.velocity.X *= 0.85f;
 
-            if (AttackTimer <= BoltsTelegraphTicks)
+            if (AttackTimer <= BoltsTelegraphTicks + 16 && !Main.dedServ)
             {
                 if (AttackTimer == 1)
                 {
                     SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.2f }, NPC.Center);
                 }
                 //Staff tip ramps up: fire gathering into the cast point
-                float progress = AttackTimer / (float)BoltsTelegraphTicks;
+                float progress = MathHelper.Clamp(AttackTimer / (float)BoltsTelegraphTicks, 0f, 1f);
                 for (int i = 0; i < 1 + (int)(progress * 2f); i++)
                 {
                     float angle = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -286,13 +315,13 @@ namespace tsorcRevamp.NPCs.Enemies{
                 }
                 Lighting.AddLight(StaffTip, 0.5f * progress, 0.3f * progress, 0.1f * progress);
             }
-            //Three quick bolts, re-aimed each shot with a little spread
+            //Three quick bolts, re-aimed each shot with capped intercept prediction.
             if ((AttackTimer == BoltsTelegraphTicks || AttackTimer == BoltsTelegraphTicks + 8 || AttackTimer == BoltsTelegraphTicks + 16)
                 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Vector2 vel = (player.Center - StaffTip).SafeNormalize(new Vector2(NPC.direction, 0f)).RotatedBy(Main.rand.NextFloat(-0.08f, 0.08f)) * 9f;
+                Vector2 vel = AimBolt(player, 9f);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTip, vel,
-                    ModContent.ProjectileType<MinotaurEmberBolt>(), BoltDamage, 1f, Main.myPlayer);
+                    ModContent.ProjectileType<MinotaurEmberBolt>(), EnemyDamage.Projectile(StageDamage(BoltDamage)), 1f, Main.myPlayer);
                 SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = 0.3f }, NPC.Center);
             }
             if (AttackTimer >= BoltsTelegraphTicks + 16 + 24) //short recovery, no armor
@@ -313,13 +342,11 @@ namespace tsorcRevamp.NPCs.Enemies{
                     SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.5f }, NPC.Center);
                 }
                 //Fire builds at the staff tip while the ground at its feet simmers — the wave's read
-                int dust = Dust.NewDust(StaffTip, 4, 4, DustID.Torch, 0f, -1f, 90, default, 1.2f);
-                Main.dust[dust].noGravity = true;
-                if (Main.rand.NextBool(2))
+                if (!Main.dedServ)
                 {
-                    Vector2 pos = new Vector2(NPC.position.X + Main.rand.NextFloat(NPC.width), NPC.Bottom.Y - 6f);
-                    int simmer = Dust.NewDust(pos, 4, 4, DustID.Torch, 0f, -1.5f, 110, default, 1f);
-                    Main.dust[simmer].noGravity = true;
+                    int dust = Dust.NewDust(StaffTip, 4, 4, DustID.Torch, 0f, -1f, 90, default, 1.2f);
+                    Main.dust[dust].noGravity = true;
+                    MinotaurFireVFX.Embers(NPC.Bottom, 20f, 3);
                 }
                 if (AttackTimer == WaveTelegraphTicks)
                 {
@@ -331,7 +358,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                         for (int dir = -1; dir <= 1; dir += 2)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Bottom + new Vector2(dir * 16f, -16f), Vector2.Zero,
-                                ModContent.ProjectileType<MinotaurFlameWave>(), WaveDamage, 2f, Main.myPlayer, dir, 8f);
+                                ModContent.ProjectileType<MinotaurFlameWave>(), EnemyDamage.Projectile(StageDamage(WaveDamage)), 2f, Main.myPlayer, dir, 8f);
                         }
                     }
                 }
@@ -346,19 +373,79 @@ namespace tsorcRevamp.NPCs.Enemies{
             }
         }
 
+        Vector2 AimBolt(Player player, float speed)
+        {
+            Vector2 delta = player.Center - StaffTip;
+            Vector2 motion = player.velocity;
+            float a = motion.LengthSquared() - speed * speed;
+            float b = 2f * Vector2.Dot(delta, motion);
+            float c = delta.LengthSquared();
+            float time = delta.Length() / speed;
+            float discriminant = b * b - 4f * a * c;
+            if (Math.Abs(a) > 0.001f && discriminant >= 0f)
+            {
+                float root = (float)Math.Sqrt(discriminant);
+                float t1 = (-b - root) / (2f * a);
+                float t2 = (-b + root) / (2f * a);
+                if (t1 > 0f || t2 > 0f)
+                    time = t1 > 0f && t2 > 0f ? Math.Min(t1, t2) : Math.Max(t1, t2);
+            }
+            // Short prediction improves accuracy without aiming far past sudden turns.
+            return (delta + motion * MathHelper.Clamp(time, 0f, 24f))
+                .SafeNormalize(new Vector2(NPC.direction, 0f)) * speed;
+        }
+
+        void SpawnFlankingFlames()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            foreach (Player target in Main.player)
+            {
+                if (!target.active || target.dead || NPC.Distance(target.Center) > 1000f) continue;
+                // Three tiles per patch, centered six tiles either side. Leave the player's floor open.
+                foreach (int offset in new[] { 0, -1, 1 })
+                {
+                    for (int side = -1; side <= 1; side += 2)
+                    {
+                        float x = target.Center.X + (side * 6 + offset) * 16f;
+                        float y = FindGroundY(new Vector2(x, target.Bottom.Y - 48f), 15);
+                        if (y < 0f) continue;
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(x, y - 14f), Vector2.Zero,
+                            ModContent.ProjectileType<MinotaurFloorFlame>(), EnemyDamage.Projectile(StageDamage(WaveDamage)), 1f, Main.myPlayer,
+                            FloorTelegraphTicks + Math.Abs(offset) * 3);
+                    }
+                }
+            }
+        }
+
+        void RunFlankingFlames(tsorcRevampGlobalNPC g)
+        {
+            NPC.velocity.X *= 0.8f;
+            g.AttackCommitted = AttackTimer <= FloorTelegraphTicks;
+            if (!Main.dedServ && AttackTimer <= FloorTelegraphTicks)
+            {
+                MinotaurFireVFX.Embers(StaffTip, 5f, 2);
+                if (AttackTimer == 1)
+                    SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.6f, Pitch = -0.4f }, floorCastAnchor);
+            }
+            if (AttackTimer >= FloorTelegraphTicks + 30) EndAttack(200);
+        }
+
         void RunBlinkVolley(tsorcRevampGlobalNPC g, Player player)
         {
-            g.AttackCommitted = AttackTimer <= BlinkTelegraphTicks + 14;
+            g.AttackCommitted = AttackTimer <= BlinkTelegraphTicks + BlinkShotDelay + 8;
             NPC.velocity.X *= 0.8f;
 
             if (AttackTimer <= BlinkTelegraphTicks)
             {
                 //Winding up the blink: the classic white teleport shimmer, in fire
-                for (int i = 0; i < 2; i++)
+                if (!Main.dedServ)
                 {
-                    int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Torch, 0f, 0f, 120, Color.White, 1.2f);
-                    Main.dust[dust].noGravity = true;
-                    Main.dust[dust].velocity = (NPC.Center - Main.dust[dust].position) * 0.1f;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Torch, 0f, 0f, 120, Color.White, 1.2f);
+                        Main.dust[dust].noGravity = true;
+                        Main.dust[dust].velocity = (NPC.Center - Main.dust[dust].position) * 0.1f;
+                    }
                 }
                 if (AttackTimer == BlinkTelegraphTicks && Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -366,28 +453,46 @@ namespace tsorcRevamp.NPCs.Enemies{
                     int side = Main.rand.NextBool() ? 1 : -1;
                     float destX = player.Center.X + side * Main.rand.NextFloat(10f, 14f) * 16f;
                     float groundY = FindGroundY(new Vector2(destX, player.Bottom.Y - 48f), 15);
-                    if (groundY > 0f)
+                    if (groundY > 0f && !Collision.SolidCollision(new Vector2(destX - NPC.width / 2f, groundY - NPC.height), NPC.width, NPC.height))
                     {
                         BlinkFlash();
                         NPC.Bottom = new Vector2(destX, groundY);
+                        NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
+                        NPC.spriteDirection = NPC.direction;
                         NPC.velocity = Vector2.Zero;
                         BlinkFlash();
                         NPC.netUpdate = true;
                     }
                 }
             }
-            //Two snap bolts right out of the blink — the punish for standing still
-            if ((AttackTimer == BlinkTelegraphTicks + 6 || AttackTimer == BlinkTelegraphTicks + 14)
+            // Hold a full 30 ticks after teleporting; continue gathering through both shots.
+            if (AttackTimer > BlinkTelegraphTicks && AttackTimer <= BlinkTelegraphTicks + BlinkShotDelay + 8)
+                MinotaurFireVFX.Embers(StaffTip, 5f, 2);
+            if ((AttackTimer == BlinkTelegraphTicks + BlinkShotDelay || AttackTimer == BlinkTelegraphTicks + BlinkShotDelay + 8)
                 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Vector2 vel = (player.Center - StaffTip).SafeNormalize(new Vector2(NPC.direction, 0f)) * 9.5f;
+                Vector2 vel = AimBolt(player, 9.5f);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTip, vel,
-                    ModContent.ProjectileType<MinotaurEmberBolt>(), BoltDamage, 1f, Main.myPlayer);
+                    ModContent.ProjectileType<MinotaurEmberBolt>(), EnemyDamage.Projectile(StageDamage(BoltDamage)), 1f, Main.myPlayer);
                 SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = 0.4f }, NPC.Center);
             }
-            if (AttackTimer >= BlinkTelegraphTicks + 14 + 22) //recovery, no armor
+            if (AttackTimer >= BlinkTelegraphTicks + BlinkShotDelay + 8 + 22) //recovery, no armor
             {
                 EndAttack(150);
+            }
+        }
+
+        void SetContactDamage(bool charging)
+        {
+            int expertDamage = StageDamage(charging ? ChargeContactDamage : ContactDamage);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+                EnemyDamage.SetContact(NPC, expertDamage);
+            else
+            {
+                // Mirror the synced attack and world stage with the same difficulty conversion.
+                // The rush has its own +40 baseline; it no longer deals twice normal contact.
+                NPC.damage = EnemyDamage.ScaleContact(expertDamage);
+                NPC.defDamage = NPC.damage;
             }
         }
 
@@ -397,19 +502,23 @@ namespace tsorcRevamp.NPCs.Enemies{
             {
                 g.AttackCommitted = true;
                 NPC.velocity.X *= 0.8f;
-                lockedDir = NPC.direction;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    lockedDir = NPC.direction;
+                    if (AttackTimer == ChargeTelegraphTicks) NPC.netUpdate = true;
+                }
                 if (AttackTimer == 1)
                 {
                     SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.4f, Pitch = 0.5f }, NPC.Center);
                 }
                 //Pawing the ground + snorting smoke — unmistakably a bull about to run you down
-                if (AttackTimer % 12 < 3)
+                if (!Main.dedServ && AttackTimer % 12 < 3)
                 {
                     Vector2 hoof = NPC.Bottom + new Vector2(NPC.direction * 8f, -4f);
                     int dust = Dust.NewDust(hoof, 8, 4, DustID.Smoke, -NPC.direction * 2f, -1f, 100, default, 1f);
                     Main.dust[dust].velocity *= 0.5f;
                 }
-                if (AttackTimer % 15 == 0)
+                if (!Main.dedServ && AttackTimer % 15 == 0)
                 {
                     Vector2 nose = NPC.Center + new Vector2(NPC.direction * 12f, -10f);
                     int puff = Dust.NewDust(nose, 8, 8, DustID.Smoke, NPC.direction * 2.5f, 0f, 120, default, 1.1f);
@@ -420,15 +529,15 @@ namespace tsorcRevamp.NPCs.Enemies{
             {
                 //The rush: hyper-armored, harder contact hit, afterimage trail (PreDraw)
                 g.AttackCommitted = true;
-                NPC.damage = baseContactDamage * 2;
+                SetContactDamage(true);
                 NPC.velocity.X = lockedDir * ChargeSpeed;
-                if (Main.rand.NextBool(2))
+                if (!Main.dedServ && Main.rand.NextBool(2))
                 {
                     int dust = Dust.NewDust(NPC.position + new Vector2(0f, NPC.height - 8f), NPC.width, 8, DustID.Smoke, -lockedDir * 2f, -0.5f, 120, default, 1f);
                     Main.dust[dust].velocity *= 0.4f;
                 }
                 //Hit a wall: skip straight to the recovery
-                if (NPC.collideX && AttackTimer > ChargeTelegraphTicks + 8)
+                if (Main.netMode != NetmodeID.MultiplayerClient && NPC.collideX && AttackTimer > ChargeTelegraphTicks + 8)
                 {
                     AttackTimer = ChargeTelegraphTicks + ChargeTicks;
                     NPC.netUpdate = true;
@@ -437,9 +546,9 @@ namespace tsorcRevamp.NPCs.Enemies{
             else
             {
                 //Blown past you and winded: the punish window
-                NPC.damage = baseContactDamage;
+                SetContactDamage(false);
                 NPC.velocity.X *= 0.8f;
-                if (Main.rand.NextBool(3))
+                if (!Main.dedServ && Main.rand.NextBool(3))
                 {
                     Vector2 nose = NPC.Center + new Vector2(NPC.direction * 12f, -10f);
                     int puff = Dust.NewDust(nose, 8, 8, DustID.Smoke, NPC.direction * 1.5f, 0.3f, 140, default, 0.9f);
@@ -475,26 +584,32 @@ namespace tsorcRevamp.NPCs.Enemies{
                     SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.6f, Pitch = 0.2f }, NPC.Center); //commit cue
                 }
                 //Fire spiralling inward to the staff
-                float progress = AttackTimer / (float)CindersTelegraphTicks;
-                for (int i = 0; i < 2; i++)
+                if (!Main.dedServ)
                 {
-                    float angle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    float radius = MathHelper.Lerp(60f, 10f, progress) + Main.rand.NextFloat(10f);
-                    Vector2 pos = StaffTip + angle.ToRotationVector2() * radius;
-                    int dust = Dust.NewDust(pos, 4, 4, DustID.Torch, 0f, 0f, 100, default, 1.1f);
-                    Main.dust[dust].noGravity = true;
-                    Main.dust[dust].velocity = (StaffTip - pos) * 0.08f;
+                    float progress = AttackTimer / (float)CindersTelegraphTicks;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                        float radius = MathHelper.Lerp(60f, 10f, progress) + Main.rand.NextFloat(10f);
+                        Vector2 pos = StaffTip + angle.ToRotationVector2() * radius;
+                        int dust = Dust.NewDust(pos, 4, 4, DustID.Torch, 0f, 0f, 100, default, 1.1f);
+                        Main.dust[dust].noGravity = true;
+                        Main.dust[dust].velocity = (StaffTip - pos) * 0.08f;
+                    }
+                    Lighting.AddLight(StaffTip, 0.6f * progress, 0.35f * progress, 0.1f * progress);
                 }
-                Lighting.AddLight(StaffTip, 0.6f * progress, 0.35f * progress, 0.1f * progress);
 
                 if (AttackTimer == CindersTelegraphTicks)
                 {
                     SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.6f, Pitch = 0.1f }, NPC.Center);
-                    for (int i = 0; i < 18; i++)
+                    if (!Main.dedServ)
                     {
-                        Vector2 vel = Main.rand.NextVector2Circular(4f, 4f);
-                        int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Torch, vel.X, vel.Y, 60, default, 1.5f);
-                        Main.dust[dust].noGravity = true;
+                        for (int i = 0; i < 18; i++)
+                        {
+                            Vector2 vel = Main.rand.NextVector2Circular(4f, 4f);
+                            int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Torch, vel.X, vel.Y, 60, default, 1.5f);
+                            Main.dust[dust].noGravity = true;
+                        }
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -503,7 +618,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                         {
                             Vector2 vel = (MathHelper.TwoPi * i / 8f + Main.rand.NextFloat(0.2f)).ToRotationVector2() * 7f;
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel,
-                                ModContent.ProjectileType<MinotaurCinder>(), CinderDamage, 1f, Main.myPlayer, 0.2f);
+                                ModContent.ProjectileType<MinotaurCinder>(), EnemyDamage.Projectile(StageDamage(CinderDamage)), 1f, Main.myPlayer, 0.2f);
                         }
                     }
                 }
@@ -520,7 +635,7 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         void BlinkFlash()
         {
-            if (Main.netMode == NetmodeID.Server)
+            if (Main.dedServ)
             {
                 return;
             }
@@ -545,12 +660,12 @@ namespace tsorcRevamp.NPCs.Enemies{
             for (int d = 0; d <= maxTilesDown; d++)
             {
                 int y = ty + d;
-                if (y >= Main.maxTilesY - 5)
+                if (y < 5 || y >= Main.maxTilesY - 5)
                 {
                     break;
                 }
                 Tile tile = Main.tile[tx, y];
-                if (tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType])
+                if (tile.HasTile && !tile.IsActuated && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]))
                 {
                     return y * 16f;
                 }
@@ -561,6 +676,30 @@ namespace tsorcRevamp.NPCs.Enemies{
         ///<summary>Smoke-and-ember afterimage trail during the horn charge.</summary>
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            if (State == AttackState.FlameWave && AttackTimer <= WaveTelegraphTicks)
+            {
+                float progress = AttackTimer / (float)WaveTelegraphTicks;
+                MinotaurFireVFX.Draw(NPC.Bottom - new Vector2(0f, 12f), new Vector2(52f, 28f),
+                    0.25f + progress * 0.35f, NPC.whoAmI * 0.17f);
+            }
+            bool aimingBolts = State == AttackState.EmberBolts && AttackTimer <= BoltsTelegraphTicks + 16;
+            bool aimingBlink = State == AttackState.BlinkVolley && AttackTimer > BlinkTelegraphTicks
+                && AttackTimer <= BlinkTelegraphTicks + BlinkShotDelay + 8;
+            if (aimingBolts || aimingBlink || (State == AttackState.FlankingFlames && AttackTimer <= FloorTelegraphTicks))
+            {
+                MinotaurFireVFX.Draw(StaffTip, new Vector2(18f, 24f), 0.55f, NPC.whoAmI * 0.17f);
+                if (aimingBolts || aimingBlink)
+                {
+                    Vector2 aim = AimBolt(Main.player[NPC.target], aimingBlink ? 9.5f : 9f).SafeNormalize(Vector2.UnitX);
+                    for (int step = 1; step <= 18; step++)
+                    {
+                        Vector2 point = StaffTip + aim * step * 8f - screenPos;
+                        spriteBatch.Draw(TextureAssets.MagicPixel.Value, point, null,
+                            new Color(255, 100, 20, 0) * (0.25f * (1f - step / 19f)), 0f,
+                            Vector2.Zero, new Vector2(2f), SpriteEffects.None, 0f);
+                    }
+                }
+            }
             bool charging = State == AttackState.BullhornCharge && AttackTimer > ChargeTelegraphTicks && AttackTimer <= ChargeTelegraphTicks + ChargeTicks;
             if (charging || NPC.velocity.Length() > 7f)
             {
@@ -579,6 +718,7 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         public override void OnKill()
         {
+            if (Main.dedServ) return;
             //Its fire escapes it: the classic torch-dust burst, kept from the original
             for (int i = 0; i < 30; i++)
             {

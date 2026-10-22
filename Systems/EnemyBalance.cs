@@ -561,7 +561,7 @@ namespace tsorcRevamp.Systems
             Enemy("Hydra", phm: 400000); // mini-boss; authored 100000
             Enemy("IceGigas", phm: 50000, hm: 50000, shm: 350000); // mini-boss; authored 22000 / 22000 / 22000
             Enemy("KnightOfGwyn", shm: 200000); // elite; authored 25000
-            Enemy("MinotaurMage", phm: 900, hm: 1800, shm: 10800); // standard; authored 155 / 155 / 155
+            Enemy("MinotaurMage", phm: 800, hm: 2800, shm: 10800); // standard; authored 155 / 155 / 155
             Enemy("MirrorInvader", hm: 100000, shm: 300000); // mini-boss (event ring, mid HM); authored 20000; contact damage 0. ESTIMATE: ~1m 25s at the HM 1,187 / ~1m 40s at the SHM ~2,950 reference DPS, before its 3 Estus (+36%)
             Enemy("PrimeLaserProbe", phm: 150, hm: 198, shm: 247); // fodder; authored 75 / 75 / 75
             Enemy("QuaraClutchCrab", phm: 500, hm: 2000, shm: 7200); // standard / standard / fodder; authored 400 / 400 / 400
