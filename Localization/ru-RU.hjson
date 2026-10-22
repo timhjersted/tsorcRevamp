@@ -8194,9 +8194,10 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
-					[c/f7b10f:Moving will charge you up, ]
-					[c/f7b10f: when fully charged the next melee attack will consume the charges to ]
-					[c/f7b10f: deal extra dmg and grant you a burst of movement speed ]
+					[c/f7b10f:Moving and attacking will grant charges,]
+					[c/f7b10f:when fully charged the next melee attack will consume the charges to:]
+					[c/f7b10f:deal {3} extra damage(2x on crits) and]
+					[c/f7b10f:grant you {4}% movement speed({$CommonItemTooltip.SecondDuration@5})]
 					''' */
 			}
 
@@ -10655,6 +10656,16 @@ Mods: {
 			LiandrysTormentBurn: {
 				// DisplayName: Liandrys Torment Burn
 				// Description: Mods.tsorcRevamp.Buffs.LiandrysTormentBurn.Description
+			}
+
+			StormrazorEnergy: {
+				// DisplayName: Stormrazor Energy
+				// Description: Charging up for an energized strike!
+			}
+
+			StormrazorProc: {
+				// DisplayName: Stormrazor Proc
+				// Description: Charged up!
 			}
 		}
 

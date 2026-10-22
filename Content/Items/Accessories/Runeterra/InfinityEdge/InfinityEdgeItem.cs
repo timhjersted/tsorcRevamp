@@ -11,7 +11,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.InfinityEdge
     {
         public static float CritDmgIncrease = 20f;
         public static float Dmg = 8f;
-        public static float Crit = 3f;
+        public static float Crit = 5f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDmgIncrease, Dmg, Crit);
         public override void SetStaticDefaults()
         {

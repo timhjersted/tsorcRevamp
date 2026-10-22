@@ -23,6 +23,10 @@ namespace tsorcRevamp.Content.Items.VanillaItems
         public const float TurtleSetResistBonus = 2f;
         public override void SetDefaults(Item item)
         {
+            if (item.type == ItemID.HunterCloak)
+            {
+                item.vanity = false;
+            }
             /*if ((item.type == ItemID.StaffofRegrowth || item.type == ItemID.AcornAxe) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 item.createTile = -1; //block placing grass, thus allowing use
@@ -95,8 +99,26 @@ namespace tsorcRevamp.Content.Items.VanillaItems
             base.UpdateEquip(item, player);
         }
 
+        public const float HunterCloakCritChance = 5f;
+
+        public override void UpdateAccessory(Item item, Player player, bool hideVisual)
+        {
+            if (item.type == ItemID.HunterCloak)
+            {
+                player.GetCritChance(DamageClass.Generic) += HunterCloakCritChance;
+            }
+        }
+
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            if (item.type == ItemID.HunterCloak)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Equipable");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CritChance", Language.GetTextValue("CommonItemTooltip.PercentIncreasedCritChance", HunterCloakCritChance)));
+                }
+            }
             if (item.type == ItemID.MechanicalEye)
             {
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
