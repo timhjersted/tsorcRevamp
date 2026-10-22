@@ -1371,13 +1371,6 @@ namespace tsorcRevamp.Systems
             // Gate of one in 40 folded in as 0.025. Hardmode and later.
             Spawn("ShadowMage", Zone.Dungeon | Depth.Underworld, hm: 0.025f, shm: 0.025f);
 
-            // Super Hardmode only, never in the dungeon; gates (one in 35 to one in 80) are folded in as 1/N. The old gray-layer test
-            // mixed units and ran through the underworld; the cavern band is used.
-            Spawn("SlograII", !Zone.Dungeon & Zone.Jungle & Time.Night & (Depth.Sky | Depth.Surface), shm: 0.025f);
-            Spawn("SlograII", !Zone.Dungeon & Depth.Underground, shm: 0.0167f);
-            Spawn("SlograII", !Zone.Dungeon & Depth.Cavern, shm: 0.0125f);
-            Spawn("SlograII", !Zone.Dungeon & Zone.Jungle, shm: 0.0286f);
-
             // Was any spot with more than five snow tiles, read from the local client's scene. Snow zone is the server-safe equivalent.
             Spawn("SnowOwl", Zone.Snow & Water.Dry, phm: 0.2f, hm: 0.2f);
 

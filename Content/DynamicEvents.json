@@ -2948,33 +2948,6 @@
     ]
   },
   {
-    "EventID": "4f56e9b2-cef7-4e06-9eac-caa4847a3980",
-    "CenterX": 3181.0,
-    "CenterY": 1334.0,
-    "Radius": 160000.0,
-    "Square": false,
-    "TriggerDust": 6,
-    "VisibleRing": true,
-    "SaveOnCompletion": true,
-    "TextToDisplay": "!!!",
-    "TextColorHex": "FF0000FF",
-    "WorldCondition": null,
-    "MapCondition": "RemixMapCondition",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcName": "tsorcRevamp/SlograII",
-        "SpawnX": 3181.0,
-        "SpawnY": 1334.0,
-        "CustomHealth": 9000,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      }
-    ]
-  },
-  {
     "EventID": "c166bb70-8b0b-450c-8270-5deab022f92c",
     "CenterX": 7635.0,
     "CenterY": 1735.0,

@@ -245,7 +245,6 @@ namespace tsorcRevamp
             BloodBossEvent2,
             BloodBossEvent3,
             TwinsEvent,
-            CatacombsEvent,
             FoundryEvent,
             FoundryEvent2,
             FrozenCathedralEvent,
@@ -695,9 +694,6 @@ namespace tsorcRevamp
             List<Vector2> TwinsEventEnemyLocations = new List<Vector2>() { new Vector2(2864, 236), new Vector2(2904, 236) };
             ScriptedEvent TwinsEvent = new ScriptedEvent(new Vector2(2884, 236), 42, TwinsEventEnemyTypeList, TwinsEventEnemyLocations, 15, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Green, false, RemixMapCondition, SetNightCustomAction); 
 
-            ScriptedEvent CatacombsEvent = new ScriptedEvent(new Vector2(3181, 1334), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SlograII>(), DustID.Torch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapCondition);
-            CatacombsEvent.SetCustomStats(9000, null, null, null);
-
             ScriptedEvent Dutchman = new ScriptedEvent(new Vector2(597, 848), 50, NPCID.PirateShip, DustID.GoldFlame, true, false, true, LangUtils.GetTextValue("Events.Dutchman"), Color.Yellow, false, RemixMapCondition);
             Dutchman.SetCustomStats(null, null, null, 8000);
 
@@ -874,7 +870,6 @@ namespace tsorcRevamp
                 {ScriptedEventType.BloodBossEvent2, BloodBossEvent2 },
                 {ScriptedEventType.BloodBossEvent3, BloodBossEvent3 },
                 {ScriptedEventType.TwinsEvent, TwinsEvent },
-                {ScriptedEventType.CatacombsEvent, CatacombsEvent },
                 {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent },
                 {ScriptedEventType.EnragedQB, EnragedQB },
                 {ScriptedEventType.FoundryEvent, FoundryEvent },
@@ -1773,6 +1768,12 @@ namespace tsorcRevamp
                     else if (eventTypeString == "DiscipleOfAttraidiesEvent")
                     {
                         eventTypeString = nameof(ScriptedEventType.AttraidiesIllusionRemixEvent);
+                    }
+                    else if (eventTypeString == "CatacombsEvent")
+                    {
+                        // Deleted 2026-10-22 along with its enemy (SlograII). Drop the saved flag silently instead of
+                        // broadcasting the "failed to convert" error on every old remix world.
+                        continue;
                     }
 
                     //If it contains a matching event

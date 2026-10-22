@@ -543,7 +543,6 @@ namespace tsorcRevamp.Systems
             Enemy("GhostOfTheDarkmoonKnight", shm: 15000); // strong; authored 3000
             Enemy("Tetsujin", shm: 20000); // strong; authored 3400
             Enemy("OolacileDemon", shm: 16000); // strong; authored 3500
-            Enemy("SlograII", shm: 24000); // strong; authored 4000
             Enemy("OolacileKnight", shm: 18000); // strong; authored 5400
             Enemy("TaurusKnight", shm: 20000); // strong; authored 5400
             Enemy("Plaguesmith", shm: 50000); // elite; authored 8250

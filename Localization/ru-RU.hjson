@@ -1268,11 +1268,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ShadowMage.DisplayName}"
 			}
 
-			SlograIIBanner: {
-				DisplayName: Знамя Слогры
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SlograII.DisplayName}"
-			}
-
 			SnowOwlBanner: {
 				DisplayName: Знамя снежной совы
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SnowOwl.DisplayName}"
@@ -12317,7 +12312,6 @@ Mods: {
 			SerpentOfTheAbyssBody.DisplayName: Змей бездны
 			SerpentOfTheAbyssHead.DisplayName: Змей бездны
 			SerpentOfTheAbyssTail.DisplayName: Змей бездны
-			SlograII.DisplayName: Слогра
 
 			TaurusKnight: {
 				DisplayName: Рыцарь-Телец

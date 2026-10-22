@@ -1301,11 +1301,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ShadowMage.DisplayName}"
 			}
 
-			SlograIIBanner: {
-				DisplayName: "{$NPCs.SlograII.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SlograII.DisplayName}"
-			}
-
 			SnowOwlBanner: {
 				DisplayName: "{$NPCs.SnowOwl.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SnowOwl.DisplayName}"
@@ -12382,7 +12377,6 @@ Mods: {
 			SerpentOfTheAbyssBody.DisplayName: Serpent of the Abyss
 			SerpentOfTheAbyssHead.DisplayName: Serpent of the Abyss
 			SerpentOfTheAbyssTail.DisplayName: Serpent of the Abyss
-			SlograII.DisplayName: Slogra
 
 			TaurusKnight: {
 				DisplayName: Taurus, the Disgraced Champion

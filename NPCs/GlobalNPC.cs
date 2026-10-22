@@ -712,7 +712,6 @@ namespace tsorcRevamp.NPCs
             Add<Bosses.OolacileSerpent.GreatSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
             Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
             Add<Bosses.HeroofLumelia>(0.15f, 120f);
-            Add<Enemies.SuperHardMode.SlograII>(0.4f, 50f);
             // Heavy giants / demons
             Add<Bosses.AncientDemon>(0.15f, 80f);
             Add<Bosses.AncientOolacileDemon>(0.15f, 80f);

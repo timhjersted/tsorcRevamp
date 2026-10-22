@@ -137,7 +137,6 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<SerpentOfTheAbyssHead>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<SerpentOfTheAbyssBody>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<SerpentOfTheAbyssTail>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<SlograII>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<SnowOwl>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<SpellboundGhoul>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<TaurusKnight>()] = EnemyImpactMaterial.Blood,

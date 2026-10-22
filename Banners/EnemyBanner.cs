@@ -606,13 +606,6 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<OolacileAcolyte>();
     }
 
-    public class SlograIIBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 80;
-
-        public override int NPCType => ModContent.NPCType<SlograII>();
-    }
-
     public class TaurusKnightBanner : EnemyBanner
     {
         public override int PlaceStyle => 81;

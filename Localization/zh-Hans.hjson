@@ -1304,11 +1304,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ShadowMage.DisplayName}"
 			}
 
-			SlograIIBanner: {
-				DisplayName: "{$NPCs.SlograII.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SlograII.DisplayName}"
-			}
-
 			SnowOwlBanner: {
 				DisplayName: "{$NPCs.SnowOwl.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: 你意识到今天并不是冬天，保护色没用（bushi）
@@ -12354,7 +12349,6 @@ Mods: {
 			SerpentOfTheAbyssBody.DisplayName: 幽渊狂蟒
 			SerpentOfTheAbyssHead.DisplayName: 幽渊狂蟒
 			SerpentOfTheAbyssTail.DisplayName: 幽渊狂蟒
-			SlograII.DisplayName: 斯洛格拉
 
 			TaurusKnight: {
 				DisplayName: 金牛座骑士
