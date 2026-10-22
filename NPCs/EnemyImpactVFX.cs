@@ -122,7 +122,7 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<Plaguesmith>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<QuaraClutchCrab>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<QuaraHydromancer>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<QuaraMantassin>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<Mantassin>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<QuaraPincher>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<RedCloudHunter>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<ResentfulSeedling>()] = EnemyImpactMaterial.Blood,

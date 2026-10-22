@@ -10828,6 +10828,10 @@ Mods: {
 			// IllusionVenomField.DisplayName: Venom Field
 			// IllusionVenomOrb.DisplayName: Venom Orb
 			// ArchdeaconGlintStar.DisplayName: Glintstone Star
+			// MantassinGlintNail.DisplayName: Glintstone Nail
+			// MantassinMicrocosm.DisplayName: Fleeting Microcosm
+			// MantassinCherishingArc.DisplayName: Cherishing Light
+			// MantassinRune.DisplayName: Glintstone Sigil
 			// ArchdeaconGlintOrb.DisplayName: Glintstone Orb
 			// ArchdeaconGlintSnare.DisplayName: Glintstone Snare
 			// ArchdeaconGlintRune.DisplayName: Glintstone Rune
@@ -13415,7 +13419,7 @@ Mods: {
 			// Massacre.DisplayName: Juggernaut
 			// MinotaurMage.DisplayName: Minotaur Mage
 			// Plaguesmith.DisplayName: Plaguesmith
-			// QuaraMantassin.DisplayName: Quara Mantassin
+			// Mantassin.DisplayName: Mantassin
 			// QuaraPincher.DisplayName: Quara Pincher
 			// QuaraClutchCrab.DisplayName: Clutch Crab
 			// Sahagin.DisplayName: Sahagin

@@ -1320,7 +1320,9 @@ namespace tsorcRevamp.Systems
             Spawn("QuaraHydromancer", Water.Dry & Zone.Hallow, shm: 0.1f);
             Spawn("QuaraHydromancer", Water.Dry & Zone.Glowshroom, shm: 0.2f);
 
-            // QuaraMantassin
+            // Mantassin
+            // SHM only: a cloaked glintstone finger sorcerer in the ice caves. One at a time.
+            Spawn("Mantassin", Town.None & Zone.Snow & Depth.BelowSurface, shm: 0.05f, max: 1);
 
             // Beach is its home; it is also displaced into the underground desert. Gates (one in 18 to one in 140) are folded in
             // as 1/N. No town NPCs, dungeon or Pumpkin / Frost Moon.

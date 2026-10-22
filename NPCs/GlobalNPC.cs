@@ -111,7 +111,9 @@ namespace tsorcRevamp.NPCs
     {
         Random,    // ambient per-frame flicker between visible/invisible; any hit snaps fully visible
         Predator,  // invisible while moving (and not attack-telling); a hit reveals for ~1.5s
-        Evasive    // threat-reactive cloak: a hit or a nearby threat rolls the cloak; lingers, then fades
+        Evasive,   // threat-reactive cloak: a hit or a nearby threat rolls the cloak; lingers, then fades
+        Stalker    // life-threshold cloak: every StalkerLifeStep of max life lost it vanishes almost completely, relocates to the
+                   // player's far side, glints only in its first and last StalkerGlintTicks, then reappears (StalkerCooldownTicks)
     }
 
     public enum PounceStyle
@@ -745,6 +747,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.QuaraHydromancer>(0.35f, 30f);
             Add<Enemies.QuaraPincher>(0.3f, 60f); // brood-leader bruiser: Brood Call is the interruptible window
             Add<Enemies.QuaraClutchCrab>(0.5f, 18f); // summoned support kiter: fragile, easily staggered
+            Add<Enemies.SuperHardMode.Mantassin>(0.3f, 20f); // finger sorcerer: 3-4 hits break any cast; every tell is interruptible
             // Human / skilled
             Add<Enemies.FallenNecromancer>(0.4f, 26f);
             Add<Enemies.Necromancer>(0.4f, 26f);
@@ -1657,6 +1660,19 @@ namespace tsorcRevamp.NPCs
         public int EvasiveCloakCooldownTicks = 300;    // downtime after a reveal before it can cloak again (balances easy cloakers)
         private int EvasiveCloakTimer = 0;             // ticks left of the current cloak (server-only)
         private int EvasiveCloakCooldown = 0;          // ticks left of post-reveal downtime (server-only)
+        // === Stalker style tuning (only used when InvisibilityStyle == Stalker) ===
+        public float StalkerLifeStep = 0.25f;       // fraction of max life lost per cloak: 0.25 = at 75% / 50% / 25% life, so up to 3
+        public int StalkerCooldownTicks = 600;      // after it reappears, before a queued threshold can cloak it again
+        public int StalkerGlintTicks = 60;          // glint shown for this long after vanishing AND before reappearing
+        public int StalkerHiddenTicks = 240;        // fully hidden prowl between the two glints, then it relocates
+        public int StalkerFlankMinTiles = 6;        // relocation distance on the player's far side
+        public int StalkerFlankMaxTiles = 9;
+        public Color StalkerGlintColor = Color.White;
+        public int StalkerTimer = 0;                // ticks since this cloak began (synced; clients tick it between syncs)
+        private float stalkerNextLifeFraction = -1f; // next life fraction that queues a cloak (server-only; -1 = not set yet)
+        private int stalkerPendingCloaks = 0;        // thresholds crossed but not yet used (server-only)
+        private int stalkerCooldown = 0;             // server-only
+        private bool stalkerWasInvisible = false;    // client-local: last tick's IsInvisible, to catch vanish / reappear once
         public bool IsInvisible = false;
         // Draws the same ghostly afterimage/shimmer used while invisible, without changing alpha or targeting.
         public bool HasGhostAfterimages = false;
@@ -1820,7 +1836,12 @@ namespace tsorcRevamp.NPCs
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (npc.justHit && InvisibilityStyle != InvisibilityStyle.Evasive)
+                if (InvisibilityStyle == InvisibilityStyle.Stalker)
+                {
+                    // Owns its hit handling: ordinary hits never reveal it (only a poise break does).
+                    UpdateStalkerInvisibility(npc);
+                }
+                else if (npc.justHit && InvisibilityStyle != InvisibilityStyle.Evasive)
                 {
                     // Random/Predator: any hit snaps fully visible. Evasive owns its own hit handling (a hit is a
                     // cloak TRIGGER when visible, and only a CHANCE to reveal when already cloaked) — see below.
@@ -1858,7 +1879,138 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
+                if (InvisibilityStyle == InvisibilityStyle.Stalker && IsInvisible)
+                {
+                    StalkerTimer++;
+                }
                 ApplyInvisibilityAlpha(npc, false);
+            }
+
+            if (InvisibilityStyle == InvisibilityStyle.Stalker)
+            {
+                DrawStalkerGlint(npc);
+            }
+        }
+
+        // Stalker (server): queue a cloak each time life falls past the next StalkerLifeStep mark; spend one when off cooldown
+        // and not mid-attack. While cloaked: hidden for StalkerGlintTicks + StalkerHiddenTicks, then relocate to the player's
+        // far side, glint StalkerGlintTicks there, reappear. Hits deal 1 hidden damage but build poise, and a poise break
+        // rips the cloak off at once (ModifyHitBy*).
+        private void UpdateStalkerInvisibility(NPC npc)
+        {
+            if (stalkerNextLifeFraction < 0f)
+            {
+                stalkerNextLifeFraction = 1f - StalkerLifeStep;
+            }
+            while (stalkerNextLifeFraction > 0f && npc.life <= npc.lifeMax * stalkerNextLifeFraction)
+            {
+                stalkerPendingCloaks++;
+                stalkerNextLifeFraction -= StalkerLifeStep;
+            }
+
+            if (!IsInvisible)
+            {
+                if (stalkerCooldown > 0)
+                {
+                    stalkerCooldown--;
+                }
+
+                bool canCloak = stalkerPendingCloaks > 0 && stalkerCooldown == 0 && StaggerTimer == 0 && !InAttack;
+                if (canCloak)
+                {
+                    stalkerPendingCloaks--;
+                    StalkerTimer = 0;
+                    SetInvisible(npc, true);
+                    RequestNetworkSnapshot();
+                }
+                else
+                {
+                    ApplyInvisibilityAlpha(npc, false);
+                }
+                return;
+            }
+
+            StalkerTimer++;
+            int relocateTick = StalkerGlintTicks + StalkerHiddenTicks;
+            int revealTick = relocateTick + StalkerGlintTicks;
+
+            if (StaggerTimer > 0 || StalkerTimer >= revealTick)
+            {
+                StalkerTimer = 0;
+                SetInvisible(npc, false);
+                stalkerCooldown = StalkerCooldownTicks;
+                RequestNetworkSnapshot();
+                return;
+            }
+
+            if (StalkerTimer == relocateTick && npc.HasValidTarget)
+            {
+                // Borrow the teleport finder's flank mode (far side of the player, StalkerFlank tiles out, line of sight),
+                // then put the NPC's own teleport settings back. No spot found = it reappears where it is.
+                bool savedFlanks = TeleportFlanksTarget;
+                int savedFlankMin = TeleportFlankMinTiles;
+                int savedFlankMax = TeleportFlankMaxTiles;
+                TeleportFlanksTarget = true;
+                TeleportFlankMinTiles = StalkerFlankMinTiles;
+                TeleportFlankMaxTiles = StalkerFlankMaxTiles;
+                Vector2? flankSpot = tsorcRevampAIs.GenerateTeleportPosition(npc, StalkerFlankMaxTiles + 4, true, false, StalkerFlankMinTiles);
+                TeleportFlanksTarget = savedFlanks;
+                TeleportFlankMinTiles = savedFlankMin;
+                TeleportFlankMaxTiles = savedFlankMax;
+
+                if (flankSpot.HasValue)
+                {
+                    npc.Center = flankSpot.Value;
+                    npc.velocity = Vector2.Zero;
+                    RequestNetworkSnapshot();
+                }
+            }
+            ApplyInvisibilityAlpha(npc, false);
+        }
+
+        // Stalker glints (every machine but a server): a puff where it vanishes, a pinprick glint through its first and last
+        // StalkerGlintTicks (the only tells while hidden), and a burst as it reappears.
+        private void DrawStalkerGlint(NPC npc)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            bool vanished = IsInvisible && !stalkerWasInvisible;
+            bool reappeared = !IsInvisible && stalkerWasInvisible;
+            stalkerWasInvisible = IsInvisible;
+
+            if (vanished)
+            {
+                SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.5f, Pitch = -0.4f }, npc.Center);
+                for (int i = 0; i < 24; i++)
+                {
+                    Dust puff = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height * 0.5f),
+                        DustID.TintableDustLighted, Main.rand.NextVector2Circular(1.5f, 1.5f), 60, StalkerGlintColor, 0.9f);
+                    puff.noGravity = true;
+                }
+            }
+
+            int relocateTick = StalkerGlintTicks + StalkerHiddenTicks;
+            bool fadingGlint = StalkerTimer <= StalkerGlintTicks;
+            bool arrivingGlint = StalkerTimer > relocateTick;
+            if (IsInvisible && (fadingGlint || arrivingGlint) && Main.GameUpdateCount % 4 == 0)
+            {
+                Dust glint = Dust.NewDustPerfect(npc.Center + new Vector2(0f, -npc.height * 0.25f) + Main.rand.NextVector2Circular(4f, 4f),
+                    DustID.TintableDustLighted, Vector2.Zero, 40, StalkerGlintColor, 0.75f);
+                glint.noGravity = true;
+            }
+
+            if (reappeared)
+            {
+                SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.6f, Pitch = 0.2f }, npc.Center);
+                for (int i = 0; i < 30; i++)
+                {
+                    Dust burst = Dust.NewDustPerfect(npc.Center, DustID.TintableDustLighted,
+                        Main.rand.NextVector2CircularEdge(3.5f, 3.5f), 40, StalkerGlintColor, 0.9f);
+                    burst.noGravity = true;
+                }
             }
         }
 
@@ -1981,6 +2133,13 @@ namespace tsorcRevamp.NPCs
 
         private bool IsUsingAttackTell()
         {
+            // Bespoke state machines (Mantassin, the Gigas-Method enemies) flag their windups and releases here rather than
+            // through AttackList, so a Predator cloak must read these too or it stays invisible through its own tell.
+            if (AttackTelegraphing || AttackCommitted)
+            {
+                return true;
+            }
+
             if (ArcherAimDirection != 0f || FighterRangedStandShotsRemaining > 0 || TeleportCountdown > 0 || TeleportAppearanceTimer > 0)
             {
                 return true;
@@ -2361,6 +2520,7 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write(TeleportAppearanceTimer);
             binaryWriter.WriteVector2(TeleportTelegraph);
             binaryWriter.Write(IsInvisible);
+            binaryWriter.Write(StalkerTimer);
 
             binaryWriter.Write(Aggression);
             binaryWriter.Write(Patience);
@@ -2485,6 +2645,7 @@ namespace tsorcRevamp.NPCs
             TeleportAppearanceTimer = binaryReader.ReadInt32();
             TeleportTelegraph = binaryReader.ReadVector2();
             IsInvisible = binaryReader.ReadBoolean();
+            StalkerTimer = binaryReader.ReadInt32();
 
             Aggression = binaryReader.ReadSingle();
             Patience = binaryReader.ReadSingle();
@@ -3238,6 +3399,14 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
+            // Stalker cloak: hits still land and build poise (a stagger rips the cloak off), but each is capped at 1 damage with
+            // the number hidden — the game's minimum, so effectively none. Damage-over-time debuffs still tick.
+            if (StalkerCloaked)
+            {
+                modifiers.SetMaxDamage(1);
+                modifiers.HideCombatText();
+            }
+
             // Poise damage scales with the projectile's knockback stat × its per-projectile ProjectilePoiseMultiplier
             // lever (see project_poise_stagger_system).
             float poiseKnockback = projectile.knockBack * projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier;
@@ -3556,6 +3725,14 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
+            // Stalker cloak: hits still land and build poise (a stagger rips the cloak off), but each is capped at 1 damage with
+            // the number hidden — the game's minimum, so effectively none. Damage-over-time debuffs still tick.
+            if (StalkerCloaked)
+            {
+                modifiers.SetMaxDamage(1);
+                modifiers.HideCombatText();
+            }
+
             // Poise damage scales with the weapon's knockback stat × its per-weapon WeaponPoiseMultiplier lever
             // (see project_poise_stagger_system).
             float poiseKnockback = item.knockBack * item.GetGlobalItem<tsorcInstancedGlobalItem>().WeaponPoiseMultiplier;
@@ -3972,6 +4149,9 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        /// <summary>True while a Stalker-style cloak is up (hits deal 1 hidden damage but still build poise).</summary>
+        public bool StalkerCloaked => CanGoInvisible && InvisibilityStyle == InvisibilityStyle.Stalker && IsInvisible;
+
         public override bool? CanBeHitByItem(NPC npc, Player player, Item item)
         {
             if (DodgeTimer > 0 || QuickStepTimer > 0) // i-frames during a dodgeroll / standing quick step
@@ -4244,7 +4424,9 @@ namespace tsorcRevamp.NPCs
 
         public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            bool drawInvisibleAfterimages = CanGoInvisible && IsInvisible && !LocalPlayerRevealsInvisibleNPCs();
+            // Stalker cloaks are near-total: no shimmer afterimages, or the trail would be far easier to see than the body.
+            bool drawInvisibleAfterimages = CanGoInvisible && IsInvisible && !LocalPlayerRevealsInvisibleNPCs()
+                && InvisibilityStyle != InvisibilityStyle.Stalker;
             if (!drawInvisibleAfterimages && !HasGhostAfterimages && !EvasiveAfterimagesActive)
             {
                 return;

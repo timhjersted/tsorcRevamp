@@ -565,7 +565,7 @@ namespace tsorcRevamp.Systems
             Enemy("MirrorInvader", hm: 100000, shm: 300000); // mini-boss (event ring, mid HM); authored 20000; contact damage 0. ESTIMATE: ~1m 25s at the HM 1,187 / ~1m 40s at the SHM ~2,950 reference DPS, before its 3 Estus (+36%)
             Enemy("PrimeLaserProbe", phm: 150, hm: 198, shm: 247); // fodder; authored 75 / 75 / 75
             Enemy("QuaraClutchCrab", phm: 500, hm: 2000, shm: 7200); // standard / standard / fodder; authored 400 / 400 / 400
-            Enemy("QuaraMantassin", phm: 3000); // elite; authored 800
+            Enemy("Mantassin", shm: 30000); // elite; authored 3000; caster, contact damage 0, SHM-only spawn
             Enemy("Sahagin", phm: 300, hm: 3000, shm: 18000); // fodder; authored 44 / 44 / 44
             Enemy("SerpentOfTheAbyssBody", shm: 20000); // elite; authored 10000
             Enemy("SerpentOfTheAbyssTail", shm: 20000); // elite; authored 10000

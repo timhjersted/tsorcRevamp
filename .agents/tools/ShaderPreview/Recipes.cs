@@ -91,6 +91,18 @@ namespace ShaderPreview
                 Glintstone("GlintLanceSky", "ArchdeaconGlintLance", new Vector2(32f, 264f), SkyBlue),
                 Glintstone("GlintLanceCave", "ArchdeaconGlintLance", new Vector2(32f, 264f), CaveDark),
 
+                // Mantassin finger sorceries (Effects/MantassinGlintstone.fx). Sizes mirror EnemyVFX.DrawMantassin*: glint 30px,
+                // Microcosm quad = 400px hit diameter / 0.70, ray = 640 x 45, crescent = 96px radius / 0.75 x 2, rune 96 x 29.
+                // MantassinNailTrail is a vertex-shader strip, not a quad, so it has no recipe here.
+                Mantassin("MantassinGlintSky", "MantassinNailGlint", new Vector2(30f, 30f), SkyBlue, 1f),
+                Mantassin("MantassinGlintCave", "MantassinNailGlint", new Vector2(30f, 30f), CaveDark, 1f),
+                Mantassin("MantassinMicrocosmSky", "MantassinMicrocosm", new Vector2(572f, 572f), SkyBlue, 0f),
+                Mantassin("MantassinMicrocosmCave", "MantassinMicrocosm", new Vector2(572f, 572f), CaveDark, 0f),
+                Mantassin("MantassinRayCave", "MantassinMicrocosmRay", new Vector2(640f, 45f), CaveDark, 0f),
+                Mantassin("MantassinCrescentSky", "MantassinCrescent", new Vector2(256f, 256f), SkyBlue, 0f),
+                Mantassin("MantassinCrescentCave", "MantassinCrescent", new Vector2(256f, 256f), CaveDark, 0f),
+                Mantassin("MantassinRuneCave", "MantassinRune", new Vector2(96f, 29f), CaveDark, 0f),
+
                 // Acolyte of Grand Occultist Madness kit (Effects/OolacileMadness.fx), sizes from AcolyteSpells.cs call sites.
                 // Progress is the per-technique main parameter (mote: unused; eye: lid; ring: radius; glyph: reveal;
                 // scrawl: ripple front; thread: tautness). Extra mirrors what AcolyteMadnessDraw passes.
@@ -803,6 +815,30 @@ namespace ShaderPreview
                 Dark = new Color(20, 50, 140),
                 Mid = new Color(70, 145, 255),
                 Core = new Color(225, 245, 255),
+                Blend = BlendState.AlphaBlend,
+                PixelBlockSize = 2f,
+                Clear = clear,
+            };
+        }
+
+        // EnemyVFX.DrawMantassin* call site: full-texture premultiplied draw of a cloud-noise quad, T_VFX_Noise41 detail, 2px
+        // pixel filter, Mantassin palette (silver-lavender / white / Microcosm gold). `active` = the Active uniform (flash).
+        private static Recipe Mantassin(string name, string technique, Vector2 drawSize, Color clear, float active)
+        {
+            return new Recipe
+            {
+                Name = name,
+                Effect = "MantassinGlintstone",
+                Technique = technique,
+                Primary = "T_CloudNoise_Tiled",
+                Detail = "T_VFX_Noise41",
+                DrawSize = drawSize,
+                FullTexture = true,
+                Dark = Color.Black,
+                Mid = new Color(168, 172, 226),
+                Accent = new Color(255, 196, 92),
+                Core = new Color(246, 246, 255),
+                Active = active,
                 Blend = BlendState.AlphaBlend,
                 PixelBlockSize = 2f,
                 Clear = clear,
