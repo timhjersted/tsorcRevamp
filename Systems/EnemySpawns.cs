@@ -1070,13 +1070,6 @@ namespace tsorcRevamp.Systems
             Spawn("GreatBlackKnight", Mode.Sandbox & Town.AtMostOne & !Evil & !Zone.Beach, shm: 0.0017f);
             Spawn("GreatBlackKnight", Mode.Sandbox & Town.AtMostOne & Depth.Underworld, shm: 0.002f);
 
-            // Super Hardmode only, corruption only, in the old order. The old water line (0.025) sat behind the plain corruption line
-            // (0.25) and never fired; it is now written before it.
-            Spawn("GuardianCorruptor", Zone.Corruption & Depth.Surface & Time.Night, shm: 0.5f, stop: true);
-            Spawn("GuardianCorruptor", Zone.Corruption & Depth.BelowSurface, shm: 0.375f, stop: true);
-            Spawn("GuardianCorruptor", Zone.Corruption & Water.Wet, shm: 0.025f, stop: true);
-            Spawn("GuardianCorruptor", Zone.Corruption, shm: 0.25f, stop: true);
-
             // HeroofLumelia
 
             // The old rule is a long list of early returns, so every line here decides (stop) and they are in the old order. The

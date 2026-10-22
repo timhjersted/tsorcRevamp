@@ -98,13 +98,6 @@ namespace tsorcRevamp.Banners
 
     #region Banner Classes
 
-    public class GuardianCorruptorBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 0;
-
-        public override int NPCType => ModContent.NPCType<GuardianCorruptor>();
-    }
-
     public class CloudBatBanner : EnemyBanner
     {
         public override int PlaceStyle => 1;

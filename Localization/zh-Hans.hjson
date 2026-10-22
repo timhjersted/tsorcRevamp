@@ -1169,11 +1169,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GreatRedKnight.DisplayName}"
 			}
 
-			GuardianCorruptorBanner: {
-				DisplayName: "{$NPCs.GuardianCorruptor.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GuardianCorruptor.DisplayName}"
-			}
-
 			HydrisElementalBanner: {
 				DisplayName: "{$NPCs.HydrisElemental.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisElemental.DisplayName}"
@@ -12320,7 +12315,6 @@ Mods: {
 			}
 
 			// GreatRedKnightTest.DisplayName: Great Red Knight Test
-			GuardianCorruptor.DisplayName: 腐化守护者
 			HydrisElemental.DisplayName: 海德里斯元素
 			HydrisNecromancer.DisplayName: 海德里斯死灵法师
 			IceSkeleton.DisplayName: 希斯门徒
@@ -12360,7 +12354,6 @@ Mods: {
 			TibianValkyrie.DisplayName: 提比亚·瓦尔基里
 			Tonberry.DisplayName: 浆果人
 			UndeadCaster.DisplayName: 不死巫士
-			ViciousSpit.DisplayName: 恶臭唾液
 
 			Warlock: {
 				DisplayName: 术士

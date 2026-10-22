@@ -535,7 +535,6 @@ namespace tsorcRevamp.Systems
             Enemy("HydrisNecromancer", shm: 30000); // strong; authored 3500; caster, contact damage 0
             Enemy("CorruptedElemental", shm: 12000); // standard; authored 2000
             Enemy("CorruptedHornet", shm: 9000); // standard; authored 2000
-            Enemy("GuardianCorruptor", shm: 12000); // standard; authored 2200
             Enemy("IceSkeleton", shm: 7000); // standard; authored 2200
             Enemy("BarrowWightNemesis", shm: 16000); // strong; authored 2500
             Enemy("BasiliskHunter", shm: 18000); // strong; authored 2500
@@ -594,7 +593,6 @@ namespace tsorcRevamp.Systems
             //   ObsidianJellyfish: authored 4 / 6 / 6
             //   PinwheelFireball: authored 1
             //   ResentfulSeedling: authored 14
-            //   ViciousSpit: authored 1
             //   KhaiosTransitionOrb: authored 1
             //   OwlCompanion: authored 1
             //   OwlFireDiveCompanion: authored 1

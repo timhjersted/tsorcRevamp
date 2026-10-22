@@ -1166,11 +1166,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GreatRedKnight.DisplayName}"
 			}
 
-			GuardianCorruptorBanner: {
-				DisplayName: "{$NPCs.GuardianCorruptor.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GuardianCorruptor.DisplayName}"
-			}
-
 			HydrisElementalBanner: {
 				DisplayName: "{$NPCs.HydrisElemental.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisElemental.DisplayName}"
@@ -12348,7 +12343,6 @@ Mods: {
 			}
 
 			GreatRedKnightTest.DisplayName: Great Red Knight Test
-			GuardianCorruptor.DisplayName: Guardian Corruptor
 			HydrisElemental.DisplayName: Hydris Elemental
 			HydrisNecromancer.DisplayName: Hydris Necromancer
 			IceSkeleton.DisplayName: Adept of Seath
@@ -12388,7 +12382,6 @@ Mods: {
 			TibianValkyrie.DisplayName: Tibian Valkyrie
 			Tonberry.DisplayName: Tonberry
 			UndeadCaster.DisplayName: Undead Caster
-			ViciousSpit.DisplayName: Vicious Spit
 
 			Warlock: {
 				DisplayName: Warlock

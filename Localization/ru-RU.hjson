@@ -1133,11 +1133,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GreatRedKnight.DisplayName}"
 			}
 
-			GuardianCorruptorBanner: {
-				DisplayName: Знамя стража-искажателя
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GuardianCorruptor.DisplayName}"
-			}
-
 			HydrisElementalBanner: {
 				DisplayName: Знамя элементаля Гидриса
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisElemental.DisplayName}"
@@ -12283,7 +12278,6 @@ Mods: {
 			}
 
 			// GreatRedKnightTest.DisplayName: Great Red Knight Test
-			GuardianCorruptor.DisplayName: Страж искажатель
 			HydrisElemental.DisplayName: Элементаль Гидриса
 			HydrisNecromancer.DisplayName: Некромант Гидрис
 			IceSkeleton.DisplayName: Ледяной скелет
@@ -12323,7 +12317,6 @@ Mods: {
 			TibianValkyrie.DisplayName: Тибианская валькирия
 			Tonberry.DisplayName: Тонберри
 			UndeadCaster.DisplayName: Заклинатель нежити
-			ViciousSpit.DisplayName: Злобный плевок
 
 			Warlock: {
 				DisplayName: Варлок

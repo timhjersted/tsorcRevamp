@@ -75,7 +75,6 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<FireLurker>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Gigas>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<GreatBlackKnight>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<GuardianCorruptor>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<HollowSoldier>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<HollowSoldierOriginal>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<HollowSpearman>()] = EnemyImpactMaterial.Blood,
@@ -182,7 +181,6 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<KhaiosTransitionOrb>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<PinwheelFireball>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<PrimeLaserProbe>()] = EnemyImpactMaterial.None,
-            [ModContent.NPCType<ViciousSpit>()] = EnemyImpactMaterial.None,
         };
 
         internal static void Spawn(NPC npc, NPC.HitInfo hit, tsorcRevampGlobalNPC globalNPC)
