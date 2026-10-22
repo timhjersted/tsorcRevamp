@@ -4505,11 +4505,12 @@ namespace tsorcRevamp.NPCs
         /// <param name="dotBase">The base damage of the DoT effect</param>
         /// <param name="reducedDragonPotency">Whether Dragon Stone's potency should be reduced for this DoT</param>
         /// <param name="isFire">Whether the DoT effect is fire-related. Determines if the Oiled debuff adds damage to this.</param>
+        /// <param name="dragonStoneForbidden">Whether the DoT effect shouldn't be affected by Dragon Stone at all. If true, Dragon Stones buff is not applied to it. </param>
         /// <returns></returns>
-        public static float DoDamageOverTime(in NPC npcType, in float dotBase, in bool reducedDragonPotency, in bool isFire)
+        public static float DoDamageOverTime(in NPC npcType, in float dotBase, in bool reducedDragonPotency, in bool isFire, bool dragonStoneForbidden = false)
         {
             float DoTPerSec = dotBase;
-            DoTPerSec += DragonStoneNPC.AddDragonStonePotencyDoT(npcType, dotBase, reducedDragonPotency, isFire);
+            DoTPerSec += DragonStoneNPC.AddDragonStonePotencyDoT(npcType, dotBase, reducedDragonPotency, isFire, dragonStoneForbidden);
             return DoTPerSec;
         }
 
@@ -4523,7 +4524,7 @@ namespace tsorcRevamp.NPCs
             {
                 dotBase = MathF.Max(npc.lifeMax * LiandrysTormentItem.MaxHealthDmgPerSec / 100f,
                     LiandrysTormentItem.MinDmgPerSec);
-                DoTPerS += DoDamageOverTime(npc, dotBase, true, true);
+                DoTPerS += DoDamageOverTime(npc, dotBase, true, true, true);
             }
             
             if (Ignited)

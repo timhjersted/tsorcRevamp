@@ -8229,8 +8229,8 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
 					[c/f7b10f:Moving and attacking will grant charges,]
 					[c/f7b10f:when fully charged the next melee attack will consume the charges to:]
 					[c/f7b10f:deal {3} extra damage(2x on crits) and]
@@ -8303,7 +8303,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
 					[c/ffbc12:Minion and sentry hits apply a tag effect]
-					[c/ffbc12:Hit the tagged enemy with a whip to deal extra dmg]
+					[c/ffbc12:Hit the tagged enemy with to deal extra dmg]
 					'''
 			}
 
@@ -8312,8 +8312,9 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.AtkSpeed@2}
 					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
-					[c/dc143c:Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@2})]
+					[c/dc143c:Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@3})]
 					[c/dc143c:Empowered whip swings gain extra damage, range, count as tip hits and heal you on-hit]
 					Heal scales with whip damage and missing life
 					Cooldown is reduced on every normal whip hit

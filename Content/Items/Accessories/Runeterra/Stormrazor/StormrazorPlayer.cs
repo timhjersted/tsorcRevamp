@@ -29,7 +29,7 @@ public class StormrazorPlayer : ModPlayer
             Distance = Vector2.Distance(Player.Center, LastPosition);
             if (EnergizedStacks < StormrazorItem.MaxEnergizedStacks)
             {
-                EnergizedStacks += Distance / 20f;
+                EnergizedStacks += Distance / StormrazorItem.EnergizedStackDivisor;
             }
             Player.AddBuff(ModContent.BuffType<StormrazorEnergy>(), 2);
         }
