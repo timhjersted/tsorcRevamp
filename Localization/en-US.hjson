@@ -8292,8 +8292,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
-					[c/ffbc12:Minion and sentry hits apply a tag effect]
-					[c/ffbc12:Hit the tagged enemy with to deal extra dmg]
+					[c/ffbc12:Minion and sentry hits apply a mark({$CommonItemTooltip.SecondDuration@4})]
+					[c/ffbc12:Hit the tagged enemy with a whip to deal {2}% of their current life as bonus damage({$CommonItemTooltip.Cooldown@3})]
 					'''
 			}
 
@@ -10723,6 +10723,16 @@ Mods: {
 				DisplayName: Black Cleaver Debuff
 				Description: Mods.tsorcRevamp.Buffs.BlackCleaverDebuff.Description
 			}
+
+			ImperialMandateCooldown: {
+				DisplayName: Imperial Mandate Cooldown
+				Description: Mods.tsorcRevamp.Buffs.ImperialMandateCooldown.Description
+			}
+
+			ImperialMandateMark: {
+				DisplayName: Imperial Mandate Mark
+				Description: Mods.tsorcRevamp.Buffs.ImperialMandateMark.Description
+			}
 		}
 
 		Projectiles: {
@@ -11784,6 +11794,10 @@ Mods: {
 			ArtoriasCurseCloud.DisplayName: Artorias Curse Cloud
 			MiasmaBreathPuff.DisplayName: Miasma Breath Puff
 			EaterToxicOoze.DisplayName: Eater Toxic Ooze
+			MinotaurFloorFlame.DisplayName: Minotaur Floor Flame
+			OolacileDemonAcid.DisplayName: Oolacile Demon Acid
+			OolacileDemonAcidPool.DisplayName: Oolacile Demon Acid Pool
+			OolacileDemonBreath.DisplayName: Oolacile Demon Breath
 		}
 
 		NPCs: {
@@ -12371,11 +12385,7 @@ Mods: {
 			SerpentOfTheAbyssBody.DisplayName: Serpent of the Abyss
 			SerpentOfTheAbyssHead.DisplayName: Serpent of the Abyss
 			SerpentOfTheAbyssTail.DisplayName: Serpent of the Abyss
-
-			TaurusKnight: {
-				DisplayName: Taurus, the Disgraced Champion
-			}
-
+			TaurusKnight.DisplayName: Taurus, the Disgraced Champion
 			Tetsujin.DisplayName: Tetsujin
 			VampireBat.DisplayName: Vampire Bat
 			TibianAmazon.DisplayName: Tibian Amazon

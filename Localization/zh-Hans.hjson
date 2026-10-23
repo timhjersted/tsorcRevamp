@@ -8215,8 +8215,8 @@ Mods: {
 				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
 					[c/f7b10f:Moving and attacking will grant charges,]
 					[c/f7b10f:when fully charged the next melee attack will consume the charges to:]
 					[c/f7b10f:deal {3} extra damage(2x on crits) and]
@@ -8288,8 +8288,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
-					[c/ffbc12:Minion and sentry hits apply a tag effect]
-					[c/ffbc12:Hit the tagged enemy with a whip to deal extra dmg]
+					[c/ffbc12:Minion and sentry hits apply a mark({$CommonItemTooltip.SecondDuration@4})]
+					[c/ffbc12:Hit the tagged enemy with a whip to deal {2}% of their current life as bonus damage{$CommonItemTooltip.Cooldown@3}]
 					''' */
 			}
 
@@ -8298,8 +8298,9 @@ Mods: {
 				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.AtkSpeed@2}
 					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
-					[c/dc143c:Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@2})]
+					[c/dc143c:Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@3})]
 					[c/dc143c:Empowered whip swings gain extra damage, range, count as tip hits and heal you on-hit]
 					Heal scales with whip damage and missing life
 					Cooldown is reduced on every normal whip hit
@@ -9315,6 +9316,16 @@ Mods: {
 
 			CrystalKnightHammer: {
 				// DisplayName: Crystal Knight Hammer
+				// Tooltip: ""
+			}
+
+			TaurusGreathammer: {
+				// DisplayName: Taurus Greathammer
+				// Tooltip: ""
+			}
+
+			TaurusEarthTridentProp: {
+				// DisplayName: Earth Trident
 				// Tooltip: ""
 			}
 
@@ -10699,6 +10710,16 @@ Mods: {
 				// DisplayName: Black Cleaver Debuff
 				// Description: Mods.tsorcRevamp.Buffs.BlackCleaverDebuff.Description
 			}
+
+			ImperialMandateCooldown: {
+				// DisplayName: Imperial Mandate Cooldown
+				// Description: Mods.tsorcRevamp.Buffs.ImperialMandateCooldown.Description
+			}
+
+			ImperialMandateMark: {
+				// DisplayName: Imperial Mandate Mark
+				// Description: Mods.tsorcRevamp.Buffs.ImperialMandateMark.Description
+			}
 		}
 
 		Projectiles: {
@@ -11745,6 +11766,10 @@ Mods: {
 			DeathSpawnWarning.DisplayName: 死神生成预警
 			DeathLaserWarning.DisplayName: 死亡预警射线
 			// CrystalKnightFrostWave.DisplayName: Crystal Knight Frost Wave
+			// TaurusQuakeShockwave.DisplayName: Quake Shockwave
+			// TaurusJavelin.DisplayName: Earth Trident
+			// TaurusSandCloud.DisplayName: Sand Cloud
+			// TaurusBrimstoneFlame.DisplayName: Brimstone Flame
 			// ProximityMine.DisplayName: Proximity Mine
 			// ProximityMineExplosion.DisplayName: Proximity Mine Explosion
 			// ProximityMineRocket.DisplayName: Proximity Mine Rocket
@@ -11756,6 +11781,10 @@ Mods: {
 			// ArtoriasCurseCloud.DisplayName: Artorias Curse Cloud
 			// MiasmaBreathPuff.DisplayName: Miasma Breath Puff
 			// EaterToxicOoze.DisplayName: Eater Toxic Ooze
+			// MinotaurFloorFlame.DisplayName: Minotaur Floor Flame
+			// OolacileDemonAcid.DisplayName: Oolacile Demon Acid
+			// OolacileDemonAcidPool.DisplayName: Oolacile Demon Acid Pool
+			// OolacileDemonBreath.DisplayName: Oolacile Demon Breath
 		}
 
 		NPCs: {
@@ -12343,11 +12372,7 @@ Mods: {
 			SerpentOfTheAbyssBody.DisplayName: 幽渊狂蟒
 			SerpentOfTheAbyssHead.DisplayName: 幽渊狂蟒
 			SerpentOfTheAbyssTail.DisplayName: 幽渊狂蟒
-
-			TaurusKnight: {
-				DisplayName: 金牛座骑士
-			}
-
+			TaurusKnight.DisplayName: 金牛座骑士
 			Tetsujin.DisplayName: 钢铁锻造者
 			VampireBat.DisplayName: 吸血蝙蝠
 			TibianAmazon.DisplayName: 提比亚·亚马逊

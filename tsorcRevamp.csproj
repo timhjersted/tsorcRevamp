@@ -10,7 +10,6 @@
 
 	<!-- References -->
 	<ItemGroup>
-	  <Folder Include="Content\Items\Accessories\Runeterra\ImperialMandate\" />
 	  <Folder Include="Systems\Player\" />
 	</ItemGroup>
 
