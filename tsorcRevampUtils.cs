@@ -640,6 +640,7 @@ namespace tsorcRevamp
                     Main.player[i].immune = true;
                     tsorcRevampPlayer modPlayer = Main.player[i].GetModPlayer<tsorcRevampPlayer>();
                     modPlayer.OverrideCamera = true;
+                    modPlayer.OverrideCameraTick = Main.GameUpdateCount;
                     modPlayer.newScreenPosition = target;
                     modPlayer.progress = progress;
                 }

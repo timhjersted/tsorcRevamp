@@ -3368,13 +3368,12 @@ namespace tsorcRevamp
         public bool OverrideCamera;
         public Vector2 newScreenPosition;
         public float progress;
+        public uint OverrideCameraTick;
         public override void ModifyScreenPosition()
         {
-            if (OverrideCamera)
+            if (OverrideCamera && Main.GameUpdateCount - OverrideCameraTick <= 2)
             {
-                Main.screenPosition = newScreenPosition = Vector2.Lerp(Main.screenPosition, newScreenPosition - Main.ScreenSize.ToVector2() / 2f, progress);
-                OverrideCamera = false;
-                progress = 0;
+                Main.screenPosition = Vector2.Lerp(Main.screenPosition, newScreenPosition - Main.ScreenSize.ToVector2() / 2f, progress);
             }
         }
 

@@ -40,7 +40,7 @@ namespace tsorcRevamp.Content.Projectiles
                 Projectile.DamageType = DamageClass.Ranged;
                 AppliedOnSpawn = true;
             }
-            Main.NewText(Projectile.DamageType);
+            //Main.NewText(Projectile.DamageType);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
         }
 
