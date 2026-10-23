@@ -14,7 +14,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.SteraksGage
 {
     public class SteraksGageItem : ModItem
     {
-        public static float MeleeDmg = 10f;
+        public static float MeleeDmg = 6f;
         public static float UseTimeRatio = 1.5f;
         public static float MaxDmg = 20f;
         public static int MaxLifeIncrease = 50;

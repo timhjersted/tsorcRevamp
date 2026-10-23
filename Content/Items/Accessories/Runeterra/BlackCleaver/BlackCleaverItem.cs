@@ -15,7 +15,7 @@ public class BlackCleaverItem : ModItem
     public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(LudensTempestItem)); //temp
     public const float Dmg = 4f;
     public const int Health = 45;
-    public const float AtkSpeed = 5f;
+    public const float AtkSpeed = 3f;
     public const int MaxStacks = 6;
     public const int DefenseReductionPerStack = 2;
     public const int DebuffDuration = 3;

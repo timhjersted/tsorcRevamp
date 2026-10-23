@@ -13,7 +13,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.LiandrysTorment;
 public class LiandrysTormentItem : ModItem
 {
     public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(LudensTempestItem)); //temp
-    public const float Dmg = 4f;
+    public const float Dmg = 2f;
     public const int Mana = 20;
     public const int Health = 40;
     public const float MaxHealthDmgPerSec = 0.15f; //at this number the debuff will need 667 seconds to get through the entire enemy health by itself

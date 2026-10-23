@@ -13,9 +13,9 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Stormrazor;
 public class StormrazorItem : ModItem
 {
     public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(LudensTempestItem)); //temp
-    public const float Dmg = 5f;
-    public const float Crit = 5f;
-    public const float AtkSpeed = 5f;
+    public const float Dmg = 3f;
+    public const float Crit = 3f;
+    public const float AtkSpeed = 3f;
     public const int MaxEnergizedStacks = 100;
     public const float MovespeedBoost = 40f;
     public const int MovespeedDuration = 4;
