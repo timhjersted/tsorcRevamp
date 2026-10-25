@@ -1,0 +1,58 @@
+using System;
+using System.Collections.Generic;
+using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+
+namespace tsorcRevamp.Content.Items.Armor.SentientSet;
+
+[Autoload(false)]
+[AutoloadEquip(EquipType.Legs)]
+public class SentientLegs : ModItem
+{
+    public float DistanceTraveled;
+    public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
+    public override void SetDefaults()
+    {
+        Item.width = 18;
+        Item.height = 18;
+        Item.defense = 9;
+        Item.rare = ItemRarityID.Orange;
+        Item.value = PriceByRarity.fromItem(Item);
+    }
+    public override void UpdateEquip(Player player)
+    {
+        var modPlayer = player.GetModPlayer<SentientSetPlayer>();
+        modPlayer.EquippedLegs = this;
+        float level = MathF.Sqrt(DistanceTraveled / 1000f);
+        player.moveSpeed += (level / 100f);
+    }
+    public override void SaveData(TagCompound tag)
+    {
+        tag.Add("DistTrav", DistanceTraveled);
+    }
+    public override void LoadData(TagCompound tag)
+    {
+        DistanceTraveled = tag.GetFloat("DistTrav");
+    }
+    public override void ModifyTooltips(List<TooltipLine> tooltips)
+    {
+        int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+        if (ttindex != -1)
+        {
+            tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Lvl", "Distance traveled: " + DistanceTraveled));
+        }
+    }
+    public override void AddRecipes()
+    {
+        Recipe recipe = CreateRecipe();
+        recipe.AddIngredient(ItemID.CrimsonGreaves);
+        recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2600);
+        recipe.AddTile(TileID.DemonAltar);
+
+        recipe.Register();
+    }
+}
