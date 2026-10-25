@@ -1617,14 +1617,14 @@ Mods: {
 					'''
 			}
 
-			MythrilGlove: {
+			MythrilGloveItem: {
 				DisplayName: Mythril Glove
 				Tooltip:
 					'''
 					Grants bonus defense and resistance based on health:
-					Increase defense by 6 and resistance by 10 at all times
-					Increase defense by 11 and resistance by 18 below 66% health
-					Increase defense by 18 and resistance by 34 below 33% health
+					Increase defense by {0} and resistance by {1} at all times
+					Increase defense by {2} and resistance by {3} below {4}% health
+					Increase defense by {5} and resistance by {6} below {7}% health
 					'''
 			}
 

@@ -4,10 +4,13 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories.Damage.ShadowmoonCloak;
 using tsorcRevamp.Content.Items.Accessories.Defensive.DarkCloak;
 using tsorcRevamp.Content.Items.Accessories.Defensive.LightCloak;
+using tsorcRevamp.Content.Items.Accessories.Defensive.MythrilGlove;
 using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Content.Items.Accessories.Magic.DuskCrownRing;
 using tsorcRevamp.Content.Items.Accessories.Other.DragoonCloak;
 using tsorcRevamp.Content.Items.Armor.SupremeDragoonSet;
+using tsorcRevamp.Content.Items.VanillaItems.FrozenTurtleShell;
+using tsorcRevamp.Content.Items.VanillaItems.PaladinsShield;
 
 namespace tsorcRevamp.Systems;
 
@@ -44,6 +47,17 @@ public class MaxHealthCalculator : ModPlayer
         //effects based on health thresholds must be called here
 
         #region Variables
+        
+        var frozenTurtleShellPlayer = Player.GetModPlayer<FrozenTurtleShellPlayer>();
+
+        var paladinShieldPlayer = Player.GetModPlayer<PaladinsShieldPlayer>();
+
+        var mythrilGlovePlayer = Player.GetModPlayer<MythrilGlovePlayer>();
+
+
+        #endregion
+
+        #region Dragoon Cloaks
 
         var lightCloakPlayer = Player.GetModPlayer<LightCloakPlayer>();
         int lightCloakThreshold = (int)(maxHealth * (LightCloakItem.LifeThreshold / 100f));
@@ -58,11 +72,7 @@ public class MaxHealthCalculator : ModPlayer
         int dragoonCloakThreshold = (int)(maxHealth * (DragoonCloakItem.LifeThreshold / 100f));
         
         var supremeDragoonCloakPlayer = Player.GetModPlayer<SupremeDragoonCloakPlayer>();
-
-        #endregion
-
-        #region Dragoon Cloaks
-
+        
         if (supremeDragoonCloakPlayer.Equipped)
         {
             supremeDragoonCloakPlayer.ApplySupremeDragoonCloak(currentHealth, dragoonCloakThreshold, SupremeDragoonArmor.DragoonCloakEfficiency / 100f);
@@ -85,6 +95,21 @@ public class MaxHealthCalculator : ModPlayer
         }
 
         #endregion
+
+        if (frozenTurtleShellPlayer.Equipped && currentHealth <= maxHealth / 2) //under 50%
+        {
+            frozenTurtleShellPlayer.ApplyIceBarrier();
+        }
+
+        if (paladinShieldPlayer.Equipped && currentHealth >= maxHealth / 4) //over 25%
+        {
+            paladinShieldPlayer.ApplyPaladinsShield();
+        }
+
+        if (mythrilGlovePlayer.Equipped)
+        {
+            mythrilGlovePlayer.ApplyMythrilGlove(currentHealth, (int)(maxHealth * MythrilGloveItem.Threshold1 / 100f), (int)(maxHealth * MythrilGloveItem.Threshold2 / 100f));
+        }
     }
 
     public override void PostUpdateBuffs()

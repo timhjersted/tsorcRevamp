@@ -9306,6 +9306,11 @@ Mods: {
 				// DisplayName: Enemy Poison Bow
 				// Tooltip: ""
 			}
+
+			MythrilGloveItem: {
+				// DisplayName: Mythril Glove Item
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {

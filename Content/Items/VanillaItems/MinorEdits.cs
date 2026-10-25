@@ -9,6 +9,7 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Items.VanillaItems.FrozenTurtleShell;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.VanillaItems
@@ -156,7 +157,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, 25 + tsorcGlobalBuff.IceBarrierResistBonus)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, IceBarrierBuff.IceBarrierResistance)));
                 }
             }
             if (item.type == ItemID.FrozenShield)
@@ -165,7 +166,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, 25 + tsorcGlobalBuff.IceBarrierResistBonus)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, IceBarrierBuff.IceBarrierResistance)));
                 }
             }
             
