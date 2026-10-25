@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.aiStyle = 0;
             NPC.width = 80;
             NPC.height = 100;
-            NPC.damage = 10;
+            NPC.damage = 50;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.lifeMax = Int32.MaxValue;

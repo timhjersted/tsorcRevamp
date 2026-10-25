@@ -2,16 +2,14 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Accessories.Defensive
+namespace tsorcRevamp.Content.Items.Accessories.Defensive.DarkCloak
 {
-    public class DarkCloak : ModItem
+    public class DarkCloakItem : ModItem
     {
         public static int Defense1 = 7;
-        public static float LifeThreshold = 40f;
+        public const float LifeThreshold = 40f;
         public static int Defense2 = 10;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Defense2);
         public override void SetStaticDefaults()
@@ -25,7 +23,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
-            Item.defense = Defense1;
+            Item.defense = Defense1; //item has defense stat by itself
         }
 
         public override void AddRecipes()
@@ -40,10 +38,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))
-            {
-                player.statDefense += Defense2;
-            }
+            player.GetModPlayer<DarkCloakPlayer>().Equipped = true;
         }
 
     }

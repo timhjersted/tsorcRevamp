@@ -10,6 +10,7 @@
 
 	<!-- References -->
 	<ItemGroup>
+	  <Folder Include="Content\Items\Armor\DragoonSet\" />
 	  <Folder Include="Systems\Player\" />
 	</ItemGroup>
 

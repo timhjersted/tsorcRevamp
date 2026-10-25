@@ -2,11 +2,11 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Armor.SupremeDragoonSet;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Armor
+namespace tsorcRevamp.Content.Items.Armor.DragoonSet
 {
     [AutoloadEquip(EquipType.Head)]
     public class DragoonHelmet : ModItem
@@ -40,9 +40,9 @@ namespace tsorcRevamp.Content.Items.Armor
             //The way it works is that the head checks if the others are valid. If the head isn't on, the chest checks. If that isn't on either, then the greaves check.
             //This way only one of them ever applies it at a time.
 
-            if (body.type == ModContent.ItemType<DragoonArmor>() || body.type == ModContent.ItemType<DragoonArmor2>())
+            if (body.type == ModContent.ItemType<DragoonArmor>() || body.type == ModContent.ItemType<SupremeDragoonArmor>())
             {
-                if (legs.type == ModContent.ItemType<DragoonGreaves>() || legs.type == ModContent.ItemType<DragoonGreaves2>())
+                if (legs.type == ModContent.ItemType<DragoonGreaves>() || legs.type == ModContent.ItemType<SupremeDragoonGreaves>())
                 {
                     return true;
                 }

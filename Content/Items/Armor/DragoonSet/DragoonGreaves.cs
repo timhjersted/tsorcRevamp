@@ -2,11 +2,11 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Armor.SupremeDragoonSet;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Armor
+namespace tsorcRevamp.Content.Items.Armor.DragoonSet
 {
     [AutoloadEquip(EquipType.Legs)]
     public class DragoonGreaves : ModItem
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Content.Items.Armor
             }
 
             //If neither the head or legs are on, check if the upgraded versions are. If so, apply the set bonus.
-            if (head.type == ModContent.ItemType<DragoonHelmet2>() && body.type == ModContent.ItemType<DragoonArmor2>())
+            if (head.type == ModContent.ItemType<SupremeDragoonHelmet>() && body.type == ModContent.ItemType<SupremeDragoonArmor>())
             {
                 return true;
             }

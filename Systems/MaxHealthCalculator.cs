@@ -1,9 +1,13 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Accessories.Damage.ShadowmoonCloak;
+using tsorcRevamp.Content.Items.Accessories.Defensive.DarkCloak;
 using tsorcRevamp.Content.Items.Accessories.Defensive.LightCloak;
 using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Content.Items.Accessories.Magic.DuskCrownRing;
+using tsorcRevamp.Content.Items.Accessories.Other.DragoonCloak;
+using tsorcRevamp.Content.Items.Armor.SupremeDragoonSet;
 
 namespace tsorcRevamp.Systems;
 
@@ -38,11 +42,49 @@ public class MaxHealthCalculator : ModPlayer
     public void ApplyMaxHealthEffects(in int maxHealth, in int currentHealth)
     {
         //effects based on health thresholds must be called here
+
+        #region Variables
+
         var lightCloakPlayer = Player.GetModPlayer<LightCloakPlayer>();
+        int lightCloakThreshold = (int)(maxHealth * (LightCloakItem.LifeThreshold / 100f));
+        
+        var darkCloakPlayer = Player.GetModPlayer<DarkCloakPlayer>();
+        int darkCloakThreshold = (int)(maxHealth * (DarkCloakItem.LifeThreshold / 100f));
+        
+        var shadowmoonCloakPlayer = Player.GetModPlayer<ShadowmoonCloakPlayer>();
+        int shadowmoonCloakThreshold = (int)(maxHealth * (ShadowmoonCloakItem.LifeThreshold / 100f));
+        
+        var dragoonCloakPlayer = Player.GetModPlayer<DragoonCloakPlayer>();
+        int dragoonCloakThreshold = (int)(maxHealth * (DragoonCloakItem.LifeThreshold / 100f));
+        
+        var supremeDragoonCloakPlayer = Player.GetModPlayer<SupremeDragoonCloakPlayer>();
+
+        #endregion
+
+        #region Dragoon Cloaks
+
+        if (supremeDragoonCloakPlayer.Equipped)
+        {
+            supremeDragoonCloakPlayer.ApplySupremeDragoonCloak(currentHealth, dragoonCloakThreshold, SupremeDragoonArmor.DragoonCloakEfficiency / 100f);
+        }
+        if (dragoonCloakPlayer.Equipped)
+        {
+            dragoonCloakPlayer.ApplyDragoonCloak(currentHealth, dragoonCloakThreshold);
+        }
         if (lightCloakPlayer.Equipped)
         {
-            lightCloakPlayer.CheckHealthThreshold(maxHealth, currentHealth);
+            lightCloakPlayer.ApplyLightCloak(currentHealth, lightCloakThreshold);
         }
+        if (darkCloakPlayer.Equipped)
+        {
+            darkCloakPlayer.ApplyDarkCloak(currentHealth, darkCloakThreshold);
+        }
+        if (shadowmoonCloakPlayer.Equipped)
+        {
+            shadowmoonCloakPlayer.ApplyShadowMoonCloak(currentHealth, shadowmoonCloakThreshold);
+        }
+
+        #endregion
     }
 
     public override void PostUpdateBuffs()

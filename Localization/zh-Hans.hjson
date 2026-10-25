@@ -1570,9 +1570,9 @@ Mods: {
 					''' */
 			}
 
-			DarkCloak: {
-				DisplayName: 暗黑斗篷
-				Tooltip: "[c/ffbf00:{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1}]"
+			DarkCloakItem: {
+				// DisplayName: Dark Cloak
+				// Tooltip: "[c/ffbf00:{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1}]"
 			}
 
 			GreyWolfRing: {
@@ -1695,14 +1695,14 @@ Mods: {
 				// Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeByPercent}"
 			}
 
-			DragoonCloak: {
-				DisplayName: 龙骑士斗篷
-				Tooltip:
+			DragoonCloakItem: {
+				// DisplayName: Dragoon Cloak
+				/* Tooltip:
 					'''
-					融合了光明、黑暗斗篷与影月斗篷的全能型防护装备
-					发动特殊效果的生命阈值为 {0}%
-					大量的黑暗之魂被用来保存每个斗篷的效力
-					'''
+					Combines the effects of the Dark, Light and Shadowmoon Cloak into one all-powerful protective cloak.
+					Life Threshold for empowered effects is {0}%
+					A large amount of Dark Souls were used to preserve each cloak's potency.
+					''' */
 			}
 
 			EnchantedMoonCharm: {
@@ -2604,43 +2604,43 @@ Mods: {
 					'''
 			}
 
-			DragoonHelmet2: {
-				DisplayName: 至尊龙盔
-				Tooltip:
+			SupremeDragoonHelmet: {
+				// DisplayName: Supreme Dragoon Helmet
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.Magic.ManaRegen@2}
-					提供点金石的效果
+					Grants Philosopher's Stone effect
 					{$CommonItemTooltip.LifeRegen@4}
-					{$CommonItemTooltip.SetBonus}调和四种元素属性—火、水、土、风
+					{$CommonItemTooltip.SetBonus}Harmonized with the four elements: fire, water, earth and air
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
-					'''
+					''' */
 			}
 
-			DragoonArmor2: {
-				DisplayName: 至尊龙铠甲
-				Tooltip:
+			SupremeDragoonArmor: {
+				// DisplayName: Supreme Dragoon Armor
+				/* Tooltip:
 					'''
-					对于传奇龙骑士盔甲的重铸升级
-					你是力量之主、大地的守护者、时代的英雄
-					龙骑士斗篷的力量嵌入它的镀蓝胸甲中
-					龙骑士斗篷只发挥{0}%的效果，具有相同的触发生命阈值
+					A reforged upgrade to the legendary Dragoon Armor.
+					You are a master of all forces, the protector of Earth, the Hero of the age.
+					The powers of the Dragoon Cloak are embedded within its blue-plated chest piece.
+					The potency of the Dragoon Cloak effects is {0}%, with the same life threshold
 					{$CommonItemTooltip.PercentIncreasedDamage@2}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@3}
-					'''
+					''' */
 			}
 
-			DragoonGreaves2: {
-				DisplayName: 至尊龙腿甲
-				Tooltip:
+			SupremeDragoonGreaves: {
+				// DisplayName: Supreme Dragoon Greaves
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					提供额外二段跳和闪亮红气球的效果
+					Grants an extra double jump and Shiny Red Balloon effect
 					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					{$CommonItemTooltip.MaxStamina@2}
 					{$CommonItemTooltip.StaminaRegen@3}
-					'''
+					''' */
 			}
 
 			HollowSoldierBreastplate: {
@@ -8289,7 +8289,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
 					[c/ffbc12:Minion and sentry hits apply a mark({$CommonItemTooltip.SecondDuration@4})]
-					[c/ffbc12:Hit the tagged enemy with a whip to deal {2}% of their current life as bonus damage{$CommonItemTooltip.Cooldown@3}]
+					[c/ffbc12:Hit the tagged enemy with a whip to deal {2}% of their current life as bonus damage({$CommonItemTooltip.Cooldown@3})]
 					''' */
 			}
 

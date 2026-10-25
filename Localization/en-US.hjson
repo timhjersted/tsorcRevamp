@@ -1567,7 +1567,7 @@ Mods: {
 					'''
 			}
 
-			DarkCloak: {
+			DarkCloakItem: {
 				DisplayName: Dark Cloak
 				Tooltip: "[c/ffbf00:{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1}]"
 			}
@@ -1692,7 +1692,7 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeByPercent}"
 			}
 
-			DragoonCloak: {
+			DragoonCloakItem: {
 				DisplayName: Dragoon Cloak
 				Tooltip:
 					'''
@@ -2603,7 +2603,7 @@ Mods: {
 					'''
 			}
 
-			DragoonHelmet2: {
+			SupremeDragoonHelmet: {
 				DisplayName: Supreme Dragoon Helmet
 				Tooltip:
 					'''
@@ -2617,7 +2617,7 @@ Mods: {
 					'''
 			}
 
-			DragoonArmor2: {
+			SupremeDragoonArmor: {
 				DisplayName: Supreme Dragoon Armor
 				Tooltip:
 					'''
@@ -2630,7 +2630,7 @@ Mods: {
 					'''
 			}
 
-			DragoonGreaves2: {
+			SupremeDragoonGreaves: {
 				DisplayName: Supreme Dragoon Greaves
 				Tooltip:
 					'''

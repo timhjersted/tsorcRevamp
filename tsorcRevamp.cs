@@ -75,7 +75,9 @@ using tsorcRevamp.Content.Items.Accessories.Melee;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Accessories.Runeterra.LudensTempest;
 using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Armor.DragoonSet;
 using tsorcRevamp.Content.Items.Armor.Magic;
+using tsorcRevamp.Content.Items.Armor.SupremeDragoonSet;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.Lore;
@@ -2081,7 +2083,7 @@ namespace tsorcRevamp
                 {ModContent.ItemType<NecromancersShirt>(), NecromancersShirt.MaxMana},
                 {ModContent.ItemType<BlueHerosHat>(), BlueHerosHat.MaxMana},
                 {ModContent.ItemType<DragoonHelmet>(), DragoonHelmet.MaxMana},
-                {ModContent.ItemType<DragoonHelmet2>(), DragoonHelmet2.MaxMana},
+                {ModContent.ItemType<SupremeDragoonHelmet>(), SupremeDragoonHelmet.MaxMana},
                 {ModContent.ItemType<AnkorWatHelmet>(), AnkorWatHelmet.MaxMana},
                 {ModContent.ItemType<DragonScaleHelmet>(), DragonScaleHelmet.MaxMana},
                 {ModContent.ItemType<GenjiGreaves>(), GenjiGreaves.MaxMana},

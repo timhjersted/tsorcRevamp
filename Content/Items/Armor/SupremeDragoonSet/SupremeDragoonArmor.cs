@@ -4,21 +4,25 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Accessories.Damage.ShadowmoonCloak;
+using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Defensive.DarkCloak;
+using tsorcRevamp.Content.Items.Accessories.Defensive.LightCloak;
+using tsorcRevamp.Content.Items.Accessories.Other;
+using tsorcRevamp.Content.Items.Accessories.Other.DragoonCloak;
+using tsorcRevamp.Content.Items.Armor.DragoonSet;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
-using tsorcRevamp.Content.Items.Materials.Titanite;
 
-namespace tsorcRevamp.Content.Items.Armor
+namespace tsorcRevamp.Content.Items.Armor.SupremeDragoonSet
 {
-    [AutoloadEquip(EquipType.Legs)]
-    public class DragoonGreaves2 : ModItem
+    [AutoloadEquip(EquipType.Body)]
+    public class SupremeDragoonArmor : ModItem
     {
-        public static float MoveSpeed = 25f;
-        public static int MinionSlots = 3;
-        public static float MaxStamina = 20f;
-        public static float StaminaRegen = 20f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MinionSlots, MaxStamina, StaminaRegen);
+        public const float DragoonCloakEfficiency = 60f;
+        public const float Dmg = 32f;
+        public const float MeleeSpeed = 35f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DragoonCloakEfficiency, DragoonCloakItem.LifeThreshold, Dmg, MeleeSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -27,24 +31,16 @@ namespace tsorcRevamp.Content.Items.Armor
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 19;
+            Item.defense = 28;
             Item.rare = ItemRarityID.Expert;
             Item.value = PriceByRarity.fromItem(Item);
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += MoveSpeed / 100f;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().DisableDragoonGreavesDoubleJump)
-            {
-                player.GetJumpState(ExtraJump.UnicornMount).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
-            }
-            player.jumpBoost = true;
-            player.maxMinions += MinionSlots;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRegen / 100f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + MaxStamina / 100f;
+            player.GetDamage(DamageClass.Generic) += Dmg / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) += MeleeSpeed / 100f;
         }
-
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
             RasterizerState OverflowHiddenRasterizerState = new RasterizerState
@@ -70,16 +66,14 @@ namespace tsorcRevamp.Content.Items.Armor
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DragoonGreaves>());
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 56000);
+            recipe.AddIngredient(ModContent.ItemType<DragoonArmor>());
+            recipe.AddIngredient(ModContent.ItemType<DragoonCloakItem>());
+            //recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
         }
     }
 }
-

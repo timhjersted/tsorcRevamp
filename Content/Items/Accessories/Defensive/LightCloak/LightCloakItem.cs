@@ -35,8 +35,9 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.LightCloak
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.lifeRegen += (int)LifeRegen1;
-            player.GetModPlayer<LightCloakPlayer>().Equipped  = true;
+            var modPlayer = player.GetModPlayer<LightCloakPlayer>();
+            modPlayer.Equipped  = true;
+            modPlayer.Visual = !hideVisual;
         }
     }
 }

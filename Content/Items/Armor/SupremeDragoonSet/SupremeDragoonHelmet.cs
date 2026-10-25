@@ -4,15 +4,16 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Armor.DragoonSet;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 
-namespace tsorcRevamp.Content.Items.Armor
+namespace tsorcRevamp.Content.Items.Armor.SupremeDragoonSet
 {
     [AutoloadEquip(EquipType.Head)]
-    public class DragoonHelmet2 : ModItem
+    public class SupremeDragoonHelmet : ModItem
     {
         public const int MaxMana = 200;
         public const float ManaCost = 17f;
@@ -44,30 +45,23 @@ namespace tsorcRevamp.Content.Items.Armor
  
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == ModContent.ItemType<DragoonArmor2>() && legs.type == ModContent.ItemType<DragoonGreaves2>();
+            return body.type == ModContent.ItemType<SupremeDragoonArmor>() && legs.type == ModContent.ItemType<SupremeDragoonGreaves>();
         }
 
         public override void UpdateArmorSet(Player player)
         {
+            player.GetModPlayer<SupremeDragoonCloakPlayer>().Equipped = true;
+            player.GetCritChance(DamageClass.Generic) += CritChance;
+            
             player.lavaImmune = true;
             player.fireWalk = true;
             player.breath = 9999999;
             player.waterWalk = true;
             player.noKnockback = true;
-            player.GetCritChance(DamageClass.Generic) += CritChance;
 
-            //player.wings = 34; // looks like Jim's Wings
-            //player.wingsLogic = 34;
-            //player.wingTimeMax = 180;
             player.ignoreWater = true;
             player.iceSkate = true;
         }
-
-        public override bool WingUpdate(Player player, bool inUse)
-        {
-            return base.WingUpdate(player, inUse);
-        }
-
         public override void ArmorSetShadows(Player player)
         {
             player.armorEffectDrawShadow = true;

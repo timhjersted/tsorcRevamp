@@ -1533,9 +1533,9 @@ Mods: {
 					''' */
 			}
 
-			DarkCloak: {
-				DisplayName: Тёмный плащ
-				Tooltip: "[c/ffbf00:{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1}]"
+			DarkCloakItem: {
+				// DisplayName: Dark Cloak
+				// Tooltip: "[c/ffbf00:{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1}]"
 			}
 
 			GreyWolfRing: {
@@ -1658,14 +1658,14 @@ Mods: {
 				// Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeByPercent}"
 			}
 
-			DragoonCloak: {
-				DisplayName: Плащ драгуна
-				Tooltip:
+			DragoonCloakItem: {
+				// DisplayName: Dragoon Cloak
+				/* Tooltip:
 					'''
-					Объединяет эффекты Тёмного, Светлого и Теневого Плаща в один всемогущий защитный плащ.
-					Жизненный порог для усиления эффектов равен {0}%
-					Для сохранения эффективности каждого плаща было использовано большое количество Тёмных Душ.
-					'''
+					Combines the effects of the Dark, Light and Shadowmoon Cloak into one all-powerful protective cloak.
+					Life Threshold for empowered effects is {0}%
+					A large amount of Dark Souls were used to preserve each cloak's potency.
+					''' */
 			}
 
 			EnchantedMoonCharm: {
@@ -2564,43 +2564,43 @@ Mods: {
 					'''
 			}
 
-			DragoonHelmet2: {
-				DisplayName: Шлем Верховного драгуна
-				Tooltip:
+			SupremeDragoonHelmet: {
+				// DisplayName: Supreme Dragoon Helmet
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.Magic.ManaRegen@2}
-					Даёт эффект философского камня
+					Grants Philosopher's Stone effect
 					{$CommonItemTooltip.LifeRegen@4}
-					{$CommonItemTooltip.SetBonus}Гармонирует с четырьмя стихиями: огнём, водой, землёй и воздухом
+					{$CommonItemTooltip.SetBonus}Harmonized with the four elements: fire, water, earth and air
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
-					'''
+					''' */
 			}
 
-			DragoonArmor2: {
-				DisplayName: Доспехи верховного драгуна
-				Tooltip:
+			SupremeDragoonArmor: {
+				// DisplayName: Supreme Dragoon Armor
+				/* Tooltip:
 					'''
-					Обновлённый вариант легендарной брони драгуна.
-					Ты - повелитель всех сил, защитник Земли, Герой нашего времени.
-					Сила драгунского плаща воплощена в его нагрудной части с синим покрытием.
-					Эффективность эффектов плаща драгуна составляет {0}% при том же жизненном пороге
+					A reforged upgrade to the legendary Dragoon Armor.
+					You are a master of all forces, the protector of Earth, the Hero of the age.
+					The powers of the Dragoon Cloak are embedded within its blue-plated chest piece.
+					The potency of the Dragoon Cloak effects is {0}%, with the same life threshold
 					{$CommonItemTooltip.PercentIncreasedDamage@2}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@3}
-					'''
+					''' */
 			}
 
-			DragoonGreaves2: {
-				DisplayName: Поножи верховного драгуна
-				Tooltip:
+			SupremeDragoonGreaves: {
+				// DisplayName: Supreme Dragoon Greaves
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					Обеспечивает дополнительный двойной прыжок и эффект блестящего красного воздушного шара
+					Grants an extra double jump and Shiny Red Balloon effect
 					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					{$CommonItemTooltip.MaxStamina@2}
 					{$CommonItemTooltip.StaminaRegen@3}
-					'''
+					''' */
 			}
 
 			HollowSoldierBreastplate: {
@@ -8256,7 +8256,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
 					[c/ffbc12:Minion and sentry hits apply a mark({$CommonItemTooltip.SecondDuration@4})]
-					[c/ffbc12:Hit the tagged enemy with a whip to deal {2}% of their current life as bonus damage{$CommonItemTooltip.Cooldown@3}]
+					[c/ffbc12:Hit the tagged enemy with a whip to deal {2}% of their current life as bonus damage({$CommonItemTooltip.Cooldown@3})]
 					''' */
 			}
 
