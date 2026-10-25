@@ -3,18 +3,16 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Armor.Magic
+namespace tsorcRevamp.Content.Items.Armor.Magic.MimeticSet
 {
     [AutoloadEquip(EquipType.Body)]
     public class MimeticSuit : ModItem
     {
-        public static float Dmg = 11f;
-        public static int ManaRegen = 7;
-        public static float LifeThreshold = 40f;
+        public const float Dmg = 11f;
+        public const int ManaRegen = 7;
+        public const float LifeThreshold = 40f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, ManaRegen, LifeThreshold);
         public override void SetStaticDefaults()
         {
@@ -38,13 +36,12 @@ namespace tsorcRevamp.Content.Items.Armor.Magic
         }
         public override void UpdateArmorSet(Player player)
         {
-            if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
+            var modPlayer = player.GetModPlayer<MimeticSetPlayer>();
+            modPlayer.Equipped = true;
+            bool isVisible = player.armor[10].IsAir && player.armor[11].IsAir && player.armor[12].IsAir;
+            if (isVisible)
             {
-                player.manaRegenBonus += ManaRegen;
-                player.manaCost -= MimeticHat.ManaCost / 100f;
-
-                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Green, 1.0f);
-                Main.dust[dust].noGravity = true;
+                modPlayer.Visual = true;
             }
         }
         public override void AddRecipes()

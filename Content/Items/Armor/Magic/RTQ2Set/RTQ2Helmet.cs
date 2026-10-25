@@ -2,11 +2,9 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Armor.Magic
+namespace tsorcRevamp.Content.Items.Armor.Magic.RTQ2Set
 {
     [AutoloadEquip(EquipType.Head)]
     public class RTQ2Helmet : ModItem

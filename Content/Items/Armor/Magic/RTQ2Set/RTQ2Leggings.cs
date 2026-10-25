@@ -2,18 +2,15 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Armor.Magic
+namespace tsorcRevamp.Content.Items.Armor.Magic.RTQ2Set
 {
-    [AutoloadEquip(EquipType.Head)]
-    public class MimeticHat : ModItem
+    [AutoloadEquip(EquipType.Legs)]
+    public class RTQ2Leggings : ModItem
     {
-        public static int MaxMana = 80;
-        public static float ManaCost = 16f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost);
+        public static float MoveSpeed = 13f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -21,19 +18,18 @@ namespace tsorcRevamp.Content.Items.Armor.Magic
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 6;
-            Item.rare = ItemRarityID.LightRed;
+            Item.defense = 7;
+            Item.rare = ItemRarityID.Pink;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            player.statManaMax2 += 80;
-            player.manaCost -= 0.16f;
+            player.moveSpeed += MoveSpeed / 100f;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.JungleHat, 1);
+            recipe.AddIngredient(ItemID.MeteorLeggings, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -41,3 +37,4 @@ namespace tsorcRevamp.Content.Items.Armor.Magic
         }
     }
 }
+

@@ -77,6 +77,8 @@ using tsorcRevamp.Content.Items.Accessories.Runeterra.LudensTempest;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Armor.DragoonSet;
 using tsorcRevamp.Content.Items.Armor.Magic;
+using tsorcRevamp.Content.Items.Armor.Magic.DragonScaleSet;
+using tsorcRevamp.Content.Items.Armor.Magic.MimeticSet;
 using tsorcRevamp.Content.Items.Armor.SupremeDragoonSet;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.BossItems;

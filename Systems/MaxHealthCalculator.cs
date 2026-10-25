@@ -8,6 +8,13 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.MythrilGlove;
 using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Content.Items.Accessories.Magic.DuskCrownRing;
 using tsorcRevamp.Content.Items.Accessories.Other.DragoonCloak;
+using tsorcRevamp.Content.Items.Armor.Magic.DragonScaleSet;
+using tsorcRevamp.Content.Items.Armor.Magic.MimeticSet;
+using tsorcRevamp.Content.Items.Armor.Magic.RTQ2Set;
+using tsorcRevamp.Content.Items.Armor.Melee.CrystalSet;
+using tsorcRevamp.Content.Items.Armor.Ranged.ShellSet;
+using tsorcRevamp.Content.Items.Armor.ShadowCloakSet;
+using tsorcRevamp.Content.Items.Armor.Summon.AncientDemon;
 using tsorcRevamp.Content.Items.Armor.SupremeDragoonSet;
 using tsorcRevamp.Content.Items.VanillaItems.FrozenTurtleShell;
 using tsorcRevamp.Content.Items.VanillaItems.PaladinsShield;
@@ -54,7 +61,22 @@ public class MaxHealthCalculator : ModPlayer
 
         var mythrilGlovePlayer = Player.GetModPlayer<MythrilGlovePlayer>();
 
+        var shellSetPlayer = Player.GetModPlayer<ShellSetPlayer>();
+        
+        var mimeticSetPlayer = Player.GetModPlayer<MimeticSetPlayer>();
+        
+        var shadowCloakSetPlayer = Player.GetModPlayer<ShadowCloakSetPlayer>();
 
+        var rtq2SetPlayer = Player.GetModPlayer<RTQ2SetPlayer>();
+        
+        var demonSetPlayer = Player.GetModPlayer<AncientDemonSetPlayer>();
+        
+        var dragonScaleSetPlayer = Player.GetModPlayer<DragonScaleSetPlayer>();
+        
+        var crystalEnchantedSetPlayer = Player.GetModPlayer<CrystalEnchantedSetPlayer>();
+        
+        var crystalSightedSetPlayer = Player.GetModPlayer<CrystalSightedSetPlayer>();
+        
         #endregion
 
         #region Dragoon Cloaks
@@ -109,6 +131,39 @@ public class MaxHealthCalculator : ModPlayer
         if (mythrilGlovePlayer.Equipped)
         {
             mythrilGlovePlayer.ApplyMythrilGlove(currentHealth, (int)(maxHealth * MythrilGloveItem.Threshold1 / 100f), (int)(maxHealth * MythrilGloveItem.Threshold2 / 100f));
+        }
+
+        if (shellSetPlayer.Equipped)
+        {
+            shellSetPlayer.ApplyShellSetBonus(currentHealth, (int)(maxHealth * ShellHelmet.LifeThreshold / 100f));
+        }
+        if (mimeticSetPlayer.Equipped)
+        {
+            mimeticSetPlayer.ApplyMimeticSetBonus(currentHealth, (int)(maxHealth * MimeticSuit.LifeThreshold / 100f));
+        }
+        if (shadowCloakSetPlayer.Equipped)
+        {
+            shadowCloakSetPlayer.ApplyShadowCloakSetBonus(currentHealth, (int)(maxHealth * ShadowCloakPlateMail.LifeThreshold / 100f));
+        }
+        if (rtq2SetPlayer.Equipped)
+        {
+            rtq2SetPlayer.ApplyRTQ2SetBonus(currentHealth, (int)(maxHealth * RTQ2Chestplate.LifeThreshold / 100f));
+        }
+        if (demonSetPlayer.Equipped)
+        {
+            demonSetPlayer.ApplyDemonSetBonus(currentHealth, (int)(maxHealth * AncientDemonArmor.LifeThreshold / 100f));
+        }
+        if (dragonScaleSetPlayer.Equipped)
+        {
+            dragonScaleSetPlayer.ApplyDragonScaleSetBonus(currentHealth, (int)(maxHealth * DragonScaleMail.LifeThreshold / 100f));
+        }
+        if (crystalEnchantedSetPlayer.Equipped)
+        {
+            crystalEnchantedSetPlayer.ApplyCrystalEnchantedSetBonus(currentHealth, (int)(maxHealth * CrystalEnchantedHelmet.LifeThreshold / 100f));
+        }
+        if (crystalSightedSetPlayer.Equipped)
+        {
+            crystalSightedSetPlayer.ApplyCrystalSightedSetBonus(currentHealth, (int)(maxHealth * CrystalSightedHelmet.LifeThreshold / 100f));
         }
     }
 

@@ -4,18 +4,16 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Armor.Ranged
+namespace tsorcRevamp.Content.Items.Armor.Ranged.ShellSet
 {
     [AutoloadEquip(EquipType.Head)]
     class ShellHelmet : ModItem
     {
-        public static float CritChance = 16f;
-        public static float LifeThreshold = 50f;
-        public static int AmmoChance = 20;  //changing this number has no effect since an ammo consumption chance stat doesn't exist
+        public const float CritChance = 16f;
+        public const float LifeThreshold = 50f;
+        public const int AmmoChance = 20;  //changing this number has no effect since an ammo consumption chance stat doesn't exist
         public const float CritCap = 50f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance, LifeThreshold, AmmoChance, CritCap);
         public override void SetStaticDefaults()
@@ -41,14 +39,13 @@ namespace tsorcRevamp.Content.Items.Armor.Ranged
 
         public override void UpdateArmorSet(Player player)
         {
-            if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
+            var modPlayer = player.GetModPlayer<ShellSetPlayer>();
+            modPlayer.Equipped = true;
+            bool isVisible = player.armor[10].IsAir && player.armor[11].IsAir && player.armor[12].IsAir;
+            if (isVisible)
             {
-                player.GetCritChance(DamageClass.Ranged) += MathF.Min(player.GetWeaponCrit(player.HeldItem), CritCap);
-
-                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Black, 1.0f);
-                Main.dust[dust].noGravity = true;
+                modPlayer.Visual = true;
             }
-            player.ammoCost80 = true;
         }
 
         public override void AddRecipes()

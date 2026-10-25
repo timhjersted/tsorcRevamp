@@ -1583,15 +1583,15 @@ Mods: {
 					'''
 			}
 
-			MythrilGlove: {
-				DisplayName: Мифриловая перчатка
-				Tooltip:
+			MythrilGloveItem: {
+				// DisplayName: Mythril Glove
+				/* Tooltip:
 					'''
-					Дает дополнительную защиту и сопротивление, зависящие от здоровья:
-					Увеличивает защиту на 5 и сопротивление на 8 в любое время.
-					Увеличивает защиту на 10 и сопротивление на 16 при уровне здоровья ниже 66%.
-					Увеличивает защиту на 16 и сопротивление на 32 при уровне здоровья ниже 33%.
-					'''
+					Grants bonus defense and resistance based on health:
+					Increase defense by {0} and resistance by {1} at all times
+					Increase defense by {2} and resistance by {3} below {4}% health
+					Increase defense by {5} and resistance by {6} below {7}% health
+					''' */
 			}
 
 			ProtectRing: {
@@ -9304,11 +9304,6 @@ Mods: {
 
 			EnemyPoisonBow: {
 				// DisplayName: Enemy Poison Bow
-				// Tooltip: ""
-			}
-
-			MythrilGloveItem: {
-				// DisplayName: Mythril Glove Item
 				// Tooltip: ""
 			}
 		}

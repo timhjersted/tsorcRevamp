@@ -3,17 +3,15 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Armor
+namespace tsorcRevamp.Content.Items.Armor.ShadowCloakSet
 {
     [AutoloadEquip(EquipType.Body)]
     public class ShadowCloakPlateMail : ModItem
     {
-        public static float Dmg = 9f;
-        public static float LifeThreshold = 50f;
+        public const float Dmg = 9f;
+        public const float LifeThreshold = 50f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, LifeThreshold);
         public override void SetStaticDefaults()
         {
@@ -38,24 +36,13 @@ namespace tsorcRevamp.Content.Items.Armor
         }
         public override void UpdateArmorSet(Player player)
         {
-            if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
+            var modPlayer = player.GetModPlayer<ShadowCloakSetPlayer>();
+            modPlayer.Equipped = true;
+            bool isVisible = player.armor[10].IsAir && player.armor[11].IsAir && player.armor[12].IsAir;
+            if (isVisible)
             {
-                player.panic = true;
-
-                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.Violet, 2.0f);
-                Main.dust[dust].noGravity = true;
+                modPlayer.Visual = true;
             }
-
-            if (Main.rand.NextBool(7))
-            {
-                int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 200, Color.Violet, 1.0f);
-                Main.dust[dust2].noGravity = true;
-
-                Main.dust[dust2].noGravity = true;
-            }
-
-            player.GetJumpState(ExtraJump.SantankMount).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */; //so it stacks with commonly used Cloud in a Bottle
-            player.shadowArmor = true;
         }
 
         public override void AddRecipes()

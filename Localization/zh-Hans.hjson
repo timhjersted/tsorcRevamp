@@ -1620,15 +1620,15 @@ Mods: {
 					'''
 			}
 
-			MythrilGlove: {
-				DisplayName: 神秘手套
-				Tooltip:
+			MythrilGloveItem: {
+				// DisplayName: Mythril Glove
+				/* Tooltip:
 					'''
-					基于生命值提供防御和抵抗力加成：
-					始终提供 6 防御和 10 抵抗力
-					当生命值低于 66% 时，提供 11 点防御和 18 抵抗力
-					当生命值低于 33% 时，提供 18 点防御和 34 抵抗力
-					'''
+					Grants bonus defense and resistance based on health:
+					Increase defense by {0} and resistance by {1} at all times
+					Increase defense by {2} and resistance by {3} below {4}% health
+					Increase defense by {5} and resistance by {6} below {7}% health
+					''' */
 			}
 
 			ProtectRing: {
@@ -9341,11 +9341,6 @@ Mods: {
 
 			EnemyPoisonBow: {
 				// DisplayName: Enemy Poison Bow
-				// Tooltip: ""
-			}
-
-			MythrilGloveItem: {
-				// DisplayName: Mythril Glove Item
 				// Tooltip: ""
 			}
 		}

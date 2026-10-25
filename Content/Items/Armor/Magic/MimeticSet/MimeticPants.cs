@@ -2,17 +2,16 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Armor.Magic
+namespace tsorcRevamp.Content.Items.Armor.Magic.MimeticSet
 {
     [AutoloadEquip(EquipType.Legs)]
-    public class RTQ2Leggings : ModItem
+    public class MimeticPants : ModItem
     {
-        public static float MoveSpeed = 13f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
+        public static float MoveSpeed = 10f;
+        public static float CritChance = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -21,17 +20,18 @@ namespace tsorcRevamp.Content.Items.Armor.Magic
             Item.width = 18;
             Item.height = 18;
             Item.defense = 7;
-            Item.rare = ItemRarityID.Pink;
+            Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += MoveSpeed / 100f;
+            player.GetCritChance(DamageClass.Magic) += CritChance;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.MeteorLeggings, 1);
+            recipe.AddIngredient(ItemID.JunglePants, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
