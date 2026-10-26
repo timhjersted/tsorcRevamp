@@ -5,6 +5,7 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.CeruleanFlask;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
 {
@@ -59,7 +60,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
             {
                 if (!player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking && player.manaFlower)
                 {
-                    MethodSwaps.TryUseQuickMana(player);
+                    CeruleanFlaskQuickManaOverride.TryUseQuickMana(player);
                 }
                 if (player.statMana <= manaCost)
                 {

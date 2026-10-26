@@ -8,6 +8,8 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities._Extensions;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 
 namespace tsorcRevamp.NPCs.FriendlyPuppets
 {
@@ -240,7 +242,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// </summary>
         public static void RequestSpawn(Player owner)
         {
-            tsorcRevampEstusPlayer estus = owner.GetModPlayer<tsorcRevampEstusPlayer>();
+            EstusFlaskPlayer estus = owner.GetModPlayer<EstusFlaskPlayer>();
 
             MimicStats stats = new MimicStats();
             stats.LifeMax = owner.statLifeMax2;
@@ -1427,7 +1429,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
             // The flask draw layer (tsorcRevampPlayerHeldDrawLayers) reads the drawn player's own Estus/Cerulean
             // ModPlayer state, so setting the CLONE's copies puts the flask in the mimic's hand.
-            tsorcRevampEstusPlayer cloneEstus = clone.GetModPlayer<tsorcRevampEstusPlayer>();
+            EstusFlaskPlayer cloneEstus = clone.GetModPlayer<EstusFlaskPlayer>();
             bool drinkingEstus = State == MimicState.DrinkingEstus;
             float estusDrinkSeconds = Math.Max(1, _stats.EstusDrinkTicks) / 60f;
             cloneEstus.IsDrinking = drinkingEstus;

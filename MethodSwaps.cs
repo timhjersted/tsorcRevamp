@@ -45,6 +45,8 @@ using tsorcRevamp.NPCs.Bosses.Pinwheel;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -112,8 +114,6 @@ namespace tsorcRevamp
             Terraria.On_NPC.AI_111_DD2LightningBug += LightningBugTeleport;
 
             Terraria.On_Player.QuickBuff += CustomQuickBuff;
-            Terraria.On_Player.QuickMana += CustomQuickMana;
-            Terraria.On_Player.QuickHeal += CustomQuickHeal;
             Terraria.On_Player.QuickGrapple_GetItemToUse += Player_QuickGrapple_GetItemToUse;
             Terraria.On_Player.QuickMount_GetItemToUse += Player_QuickMount_GetItemToUse; ;
 
@@ -3302,129 +3302,13 @@ namespace tsorcRevamp
             }
         }
 
-        private static bool HasGuardActionLock(Player player)
+        public static bool HasGuardActionLock(Player player)
         {
             // Flask animations bypass ItemCheck, so they need to explicitly respect both the
             // forced guard-break lockout and a shield that is currently raised.
             return player.HasBuff(ModContent.BuffType<ShieldGuardBreak>())
                 || player.GetModPlayer<tsorcRevampActiveShieldPlayer>().IsBlockingOrRaisingShield;
         }
-
-        public static void TryUseQuickMana(Player player)
-        {
-            if (HasGuardActionLock(player))
-            {
-                return;
-            }
-
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
-            CeruleanFlaskPlayer ceruleanFlaskPlayer = player.GetModPlayer<CeruleanFlaskPlayer>();
-            if (modPlayer.SoulsMode && player.statMana < player.statManaMax2 && ceruleanFlaskPlayer.CeruleanChargesCurrent > 0)
-            {
-                if (player == Main.LocalPlayer && !player.mouseInterface && ceruleanFlaskPlayer.CeruleanChargesCurrent > 0 && player.itemAnimation == 0
-                && !modPlayer.isDodging && !ceruleanFlaskPlayer.IsDrinking && !player.CCed && !estusPlayer.IsDrinking && !ceruleanFlaskPlayer.IsCeruleanRestoring)
-                {
-                    ceruleanFlaskPlayer.IsDrinking = true;
-                    ceruleanFlaskPlayer.CeruleanDrinkTimer = 0;
-
-                    // Cerulean drinks intentionally apply NO mobility/defense debuffs — drinking for
-                    // mana shouldn't lock the player down. The Chloranthy ring's "trade slowdown for
-                    // vulnerability" mechanic was moved to the Estus drink (see CustomQuickHeal below)
-                    // since healing drinks happen more often in active combat.
-                }
-                return;
-            }
-            if (player.noItems || player.statMana == player.statManaMax2)
-            {
-                return;
-            }
-            Item selectedItem = player.QuickMana_GetItemToUse();
-            if (player.HasItemInInventoryOrOpenVoidBag(ModContent.ItemType<SupremeManaPotion>()))
-            {
-                for (int i = 0; i < player.inventory.Length; i++)
-                {
-                    if (player.inventory[i] != null && player.inventory[i].type == ModContent.ItemType<SupremeManaPotion>())
-                    {
-                        selectedItem = player.inventory[i];
-                    }
-                }
-            }
-            if (selectedItem == null)
-            {
-                selectedItem = new Item();
-                selectedItem.SetDefaults(0);
-            }
-
-            Item[] PotionBagItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
-
-            if (PotionBagItems != null)
-            {
-                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
-                {
-                    if (PotionBagItems[i] != null)
-                    {
-                        if (PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && (player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true)) || PotionBagItems[i].type == ModContent.ItemType<SupremeManaPotion>())
-                        {
-                            selectedItem = PotionBagItems[i];
-                        }
-                    }
-                }
-            }
-
-            UsePotion(selectedItem, player);
-        }
-
-        private static void CustomQuickMana(Terraria.On_Player.orig_QuickMana orig, Player player)
-        {
-            TryUseQuickMana(player);            
-        }
-
-        private static void CustomQuickHeal(Terraria.On_Player.orig_QuickHeal orig, Player player)
-        {
-            if (HasGuardActionLock(player))
-            {
-                return;
-            }
-
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
-            CeruleanFlaskPlayer ceruleanFlaskPlayer = player.GetModPlayer<CeruleanFlaskPlayer>();
-
-            if (modPlayer.SoulsMode && player.statLife < player.statLifeMax2)
-            {
-                if (player == Main.LocalPlayer && !player.mouseInterface && estusPlayer.EstusChargesCurrent > 0 && player.itemAnimation == 0
-                && !modPlayer.isDodging && !estusPlayer.IsDrinking && !player.CCed && !ceruleanFlaskPlayer.IsDrinking)
-                {
-                    estusPlayer.IsDrinking = true;
-                    estusPlayer.EstusDrinkTimer = 0;
-                }
-                return;
-            }
-
-            if (player.noItems || player.statLife == player.statLifeMax2 || player.potionDelay > 0)
-                return;
-            Item selectedItem = player.QuickHeal_GetItemToUse();
-            if (selectedItem == null)
-            {
-                selectedItem = new Item();
-                selectedItem.SetDefaults(0);
-            }
-            Item[] PotionBagItems = modPlayer.PotionBagItems;
-            if (!player.HasBuff(BuffID.PotionSickness))
-            {
-                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
-                {
-                    if (PotionBagItems[i] != null && PotionBagItems[i].potion && ItemLoader.CanUseItem(PotionBagItems[i], player) && (selectedItem == null || player.GetHealLife(PotionBagItems[i], true) > player.GetHealLife(selectedItem, true)))
-                    {
-                        selectedItem = PotionBagItems[i];
-                    }
-                }
-
-                UsePotion(selectedItem, player);
-            }
-        }
-
         public static void CheckUseWellFed(Player player, Item[] PotionBagItems)
         {
             bool bestWellFedInPotionBag = false;
@@ -3567,7 +3451,7 @@ namespace tsorcRevamp
         }
 
         //Generic "use item" code. Since items can be any or all of the 3 categories at once, self handles all of it.
-        private static void UsePotion(Item item, Player player)
+        public static void UsePotion(Item item, Player player)
         {
             if (item.UseSound != null)
             {

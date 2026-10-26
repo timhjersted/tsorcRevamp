@@ -20,6 +20,8 @@ using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Melee;
 using tsorcRevamp.Content.Projectiles.Summon.ShatteredReflection;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using ManaShield = tsorcRevamp.Content.Items.Accessories.Defensive.Shields.ManaShield;
 using PiercingGaze = tsorcRevamp.Content.Projectiles.Ranged.PiercingGaze;
 
@@ -394,7 +396,7 @@ namespace tsorcRevamp
             ModLoader.TryGetMod("tsorcRevamp", out Mod mod);
             if (drawInfo.drawPlayer.HeldItem.ModItem != null)
                 return drawInfo.drawPlayer.HeldItem.ModItem.Mod == mod;
-            else if (drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking)
+            else if (drawInfo.drawPlayer.GetModPlayer<EstusFlaskPlayer>().IsDrinking)
                 return true;
             else if (drawInfo.drawPlayer.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
                 return true;
@@ -628,7 +630,7 @@ namespace tsorcRevamp
             #endregion
 
             #region estus flask
-            tsorcRevampEstusPlayer estusPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>();
+            EstusFlaskPlayer estusPlayer = drawInfo.drawPlayer.GetModPlayer<EstusFlaskPlayer>();
             if (!estusPlayer.Player.dead)
             {
                 int estusFrameCount = 3;

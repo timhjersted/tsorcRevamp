@@ -1,19 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Humanizer;
+﻿using System.Linq;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Content.Items.Accessories.Magic;
-using tsorcRevamp.Content.Items.Accessories.Magic.CelestialCloak;
 using tsorcRevamp.Systems.ArcaneSorcery;
-using tsorcRevamp.Utilities;
 using tsorcRevamp.Utilities.Balance;
 
-namespace tsorcRevamp.Systems
+namespace tsorcRevamp.Systems.CeruleanFlask
 {
 
     //This class stores necessary player info for Cerulean usage, which is used by those playing as Bearer of the Curse, as their main source of MP recovery
@@ -255,25 +249,6 @@ namespace tsorcRevamp.Systems
                     CeruleanRestorationTimer = 0; //Set timer back to 0
                     IsCeruleanRestoring = false; //No longer drinking
                 }
-            }
-        }
-    }
-
-    public class CeruleanFlaskItems : GlobalItem
-    {
-        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
-        {
-            Player player = Main.LocalPlayer;
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
-            if (modPlayer.SoulsMode && player.whoAmI == Main.myPlayer && (item.type == ItemID.ManaFlower || item.type == ItemID.ArcaneFlower || item.type == ItemID.MagnetFlower || item.type == ItemID.ManaCloak || item.type == ModContent.ItemType<CelestialCloakItem>()))
-            {
-                int add = item.type == ModContent.ItemType<CelestialCloakItem>() ? 10 : 2;
-                tooltips.Insert(ttindex + add, new TooltipLine(Mod, "DrinkTime", LangUtils.GetTextValue("CommonItemTooltip.CeruleanManaFlower", CeruleanFlaskPlayer.CeruleanManaFlowerStrength)));
-            }
-            if (modPlayer.SoulsMode && player.whoAmI == Main.myPlayer && item.type == ItemID.ManaRegenerationPotion && ttindex != -1)
-            {
-                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "RestorationTime", LangUtils.GetTextValue("Items.VanillaItems.CeruleanManaRegenerationPotion", CeruleanFlaskPlayer.ManaRegenPotRestorationTimerBonus)));
             }
         }
     }

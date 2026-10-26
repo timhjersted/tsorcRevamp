@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.VanillaItems
@@ -167,7 +168,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems
 
             if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.whoAmI == Main.myPlayer && (item.type == ItemID.PhilosophersStone || item.type == ItemID.CharmofMyths || item.type == ModContent.ItemType<SupremeDragoonHelmet>()))
             {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.EstusPStone", tsorcRevampEstusPlayer.EstusPStoneDrinkTimeReduction));
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.EstusPStone", EstusFlaskPlayer.EstusPStoneDrinkTimeReduction));
             }
 
 

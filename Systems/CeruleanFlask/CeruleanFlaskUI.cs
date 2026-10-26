@@ -3,11 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
-using tsorcRevamp.Systems;
 
-namespace tsorcRevamp.UI
+namespace tsorcRevamp.Systems.CeruleanFlask
 {
-    internal class CeruleanFlaskUIState : UIState
+    internal class CeruleanFlaskUI : UIState
     {
         // For this bar we'll be using a frame texture and then a gradient inside bar, as it's one of the more simpler approaches while still looking decent.
         // Once this is all set up make sure to go and do the required stuff for most UI's in the Mod class.
@@ -53,9 +52,9 @@ namespace tsorcRevamp.UI
                 float chargesPercentage = (float)chargesCurrent / chargesMax;
                 chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
 
-                UsefulFunctions.EnsureLoaded(ref textureFull, "tsorcRevamp/UI/CeruleanFlask_full");
-                UsefulFunctions.EnsureLoaded(ref textureEmpty, "tsorcRevamp/UI/CeruleanFlask_empty");
-                UsefulFunctions.EnsureLoaded(ref textureCharges, "tsorcRevamp/UI/CeruleanFlask_charges");
+                UsefulFunctions.EnsureLoaded(ref textureFull,  UsefulFunctions.RefactorableFilepath( typeof(CeruleanFlaskUI)) + "_full");
+                UsefulFunctions.EnsureLoaded(ref textureEmpty, UsefulFunctions.RefactorableFilepath( typeof(CeruleanFlaskUI)) + "_empty");
+                UsefulFunctions.EnsureLoaded(ref textureCharges, UsefulFunctions.RefactorableFilepath( typeof(CeruleanFlaskUI)) + "_charges");
 
                 int frameHeight = textureCharges.Height / chargesFrameCount;
                 int frame;

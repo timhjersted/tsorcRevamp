@@ -125,6 +125,8 @@ using tsorcRevamp.Content.Projectiles.Summon.TripleThreat;
 using tsorcRevamp.Content.Projectiles.Throwing;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Systems.OverCrit;
 using tsorcRevamp.Textures;
 using DemonSpirit = tsorcRevamp.NPCs.Enemies.DemonSpirit;
@@ -263,8 +265,8 @@ namespace tsorcRevamp
         internal DarkSoulCounterUIState DarkSoulCounterUIState;
         internal UserInterface _darkSoulCounterUIState; //"prefacing a name with an underscore is supposed to be for private fields!"
         internal UserInterface EmeraldHeraldUserInterface;
-        internal EstusFlaskUIState EstusFlaskUIState;
-        internal CeruleanFlaskUIState CeruleanFlaskUIState;
+        internal EstusFlaskUI EstusFlaskUIState;
+        internal CeruleanFlaskUI CeruleanFlaskUIState;
         internal UserInterface _estusFlaskUIState; //okay
         internal UserInterface _ceruleanFlaskUIState; //idk what to say
         internal PotionBagUIState PotionUIState;
@@ -390,11 +392,11 @@ namespace tsorcRevamp
             //if (!Main.dedServ) DarkSoulCounterUIState.Activate();
             _darkSoulCounterUIState = new UserInterface();
 
-            EstusFlaskUIState = new EstusFlaskUIState();
+            EstusFlaskUIState = new EstusFlaskUI();
             //if (!Main.dedServ) EstusFlaskUIState.Activate();
             _estusFlaskUIState = new UserInterface();
 
-            CeruleanFlaskUIState = new CeruleanFlaskUIState();
+            CeruleanFlaskUIState = new CeruleanFlaskUI();
             _ceruleanFlaskUIState = new UserInterface();
 
             PotionUIState = new PotionBagUIState();

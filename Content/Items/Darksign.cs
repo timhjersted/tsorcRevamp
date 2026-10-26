@@ -11,8 +11,10 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
 using tsorcRevamp.Systems.Conqueror;
 using tsorcRevamp.Systems.Electrocute;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Systems.LethalTempo;
 using tsorcRevamp.Utilities;
 
@@ -88,8 +90,8 @@ namespace tsorcRevamp.Content.Items
         }
         public override bool? UseItem(Player player) // Won't consume item without this
         {
-            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax = ((player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax - tsorcRevampEstusPlayer.DefaultEstusChargesMax) * CeruleanFlaskPlayer.ChargesPerEstusUpgrade) + CeruleanFlaskPlayer.DefaultCeruleanChargesMax;
-            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanManaGain = player.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain - tsorcRevampEstusPlayer.DefaultEstusHealthGain + CeruleanFlaskPlayer.DefaultCeruleanManaGain;
+            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax = ((player.GetModPlayer<EstusFlaskPlayer>().EstusChargesMax - EstusFlaskPlayer.DefaultEstusChargesMax) * CeruleanFlaskPlayer.ChargesPerEstusUpgrade) + CeruleanFlaskPlayer.DefaultCeruleanChargesMax;
+            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanManaGain = player.GetModPlayer<EstusFlaskPlayer>().EstusHealthGain - EstusFlaskPlayer.DefaultEstusHealthGain + CeruleanFlaskPlayer.DefaultCeruleanManaGain;
             return true;
         }
         public override void UseStyle(Player player, Rectangle rectangle)

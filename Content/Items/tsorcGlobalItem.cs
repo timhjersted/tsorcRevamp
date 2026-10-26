@@ -20,6 +20,8 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.UI;
 
 namespace tsorcRevamp.Content.Items
@@ -128,7 +130,7 @@ namespace tsorcRevamp.Content.Items
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if ((player.GetModPlayer<tsorcRevampPlayer>().isDodging && !player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging) || player.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking || player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
+                if ((player.GetModPlayer<tsorcRevampPlayer>().isDodging && !player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging) || player.GetModPlayer<EstusFlaskPlayer>().IsDrinking || player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
                 {
                     return false;
                 }

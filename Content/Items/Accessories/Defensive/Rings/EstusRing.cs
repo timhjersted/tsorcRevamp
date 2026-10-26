@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Systems.EstusFlask;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
 {
@@ -26,7 +27,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<tsorcRevampEstusPlayer>().EstusRing = true;
+            player.GetModPlayer<EstusFlaskPlayer>().EstusRing = true;
         }
 
     }

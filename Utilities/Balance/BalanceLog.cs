@@ -16,6 +16,7 @@ using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Default;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
 
 namespace tsorcRevamp.Utilities.Balance
 {

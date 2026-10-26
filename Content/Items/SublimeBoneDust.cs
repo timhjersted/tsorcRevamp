@@ -5,6 +5,8 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 
 namespace tsorcRevamp.Content.Items
 {
@@ -32,7 +34,7 @@ namespace tsorcRevamp.Content.Items
 
         public override bool CanUseItem(Player player)
         {
-            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain < 360)
+            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<EstusFlaskPlayer>().EstusHealthGain < 360)
             {
                 return true;
             }
@@ -44,11 +46,11 @@ namespace tsorcRevamp.Content.Items
         }
         public override bool? UseItem(Player player)
         {
-            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain < 360)
+            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<EstusFlaskPlayer>().EstusHealthGain < 360)
             {
-                player.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain += 30;
+                player.GetModPlayer<EstusFlaskPlayer>().EstusHealthGain += 30;
                 player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanManaGain += 30;
-                Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.EstusFlaskPotency") + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain, Color.OrangeRed);
+                Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.EstusFlaskPotency") + Main.LocalPlayer.GetModPlayer<EstusFlaskPlayer>().EstusHealthGain, Color.OrangeRed);
                 Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.CeruleanFlaskPotency") + Main.LocalPlayer.GetModPlayer<CeruleanFlaskPlayer>().CeruleanManaGain, Color.RoyalBlue);
                 return true;
             }

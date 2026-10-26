@@ -17,6 +17,8 @@ using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Textures;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.UI;
@@ -559,11 +561,11 @@ namespace tsorcRevamp
 
             mod.EmeraldHeraldUserInterface?.Update(gameTime);
 
-            if (EstusFlaskUIState.Visible)
+            if (EstusFlaskUI.Visible)
             {
                 mod._estusFlaskUIState?.Update(gameTime);
             }
-            if (CeruleanFlaskUIState.Visible)
+            if (CeruleanFlaskUI.Visible)
             {
                 mod._ceruleanFlaskUIState?.Update(gameTime);
             }

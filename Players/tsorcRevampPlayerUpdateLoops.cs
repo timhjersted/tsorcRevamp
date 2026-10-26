@@ -50,6 +50,8 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Systems.LethalTempo;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
@@ -2793,7 +2795,7 @@ namespace tsorcRevamp
                 PhazonCorruption = false;
                 Falling = false;
                 FracturingArmor = 1;
-                tsorcRevampEstusPlayer estusPlayer = Player.GetModPlayer<tsorcRevampEstusPlayer>();
+                EstusFlaskPlayer estusPlayer = Player.GetModPlayer<EstusFlaskPlayer>();
                 estusPlayer.IsDrinking = false;
                 estusPlayer.EstusDrinkTimer = 0;
                 var ceruleanPlayer = Player.GetModPlayer<CeruleanFlaskPlayer>();

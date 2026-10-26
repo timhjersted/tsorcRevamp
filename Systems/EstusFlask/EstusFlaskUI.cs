@@ -4,9 +4,9 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace tsorcRevamp.UI
+namespace tsorcRevamp.Systems.EstusFlask
 {
-    internal class EstusFlaskUIState : UIState
+    internal class EstusFlaskUI : UIState
     {
         // For this bar we'll be using a frame texture and then a gradient inside bar, as it's one of the more simpler approaches while still looking decent.
         // Once this is all set up make sure to go and do the required stuff for most UI's in the Mod class.
@@ -41,7 +41,7 @@ namespace tsorcRevamp.UI
             }
 
             Player player = Main.LocalPlayer;
-            var estusPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>();
+            var estusPlayer = Main.LocalPlayer.GetModPlayer<EstusFlaskPlayer>();
 
             if (player.whoAmI == Main.myPlayer && !Main.gameMenu)
             {
@@ -51,9 +51,9 @@ namespace tsorcRevamp.UI
                 float chargesPercentage = (float)chargesCurrent / chargesMax;
                 chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
 
-                UsefulFunctions.EnsureLoaded(ref textureFull, "tsorcRevamp/UI/EstusFlask_full");
-                UsefulFunctions.EnsureLoaded(ref textureEmpty, "tsorcRevamp/UI/EstusFlask_empty");
-                UsefulFunctions.EnsureLoaded(ref textureCharges, "tsorcRevamp/UI/EstusFlask_charges");
+                UsefulFunctions.EnsureLoaded(ref textureFull, UsefulFunctions.RefactorableFilepath( typeof(EstusFlaskUI)) + "_full");
+                UsefulFunctions.EnsureLoaded(ref textureEmpty, UsefulFunctions.RefactorableFilepath( typeof(EstusFlaskUI)) + "_empty");
+                UsefulFunctions.EnsureLoaded(ref textureCharges, UsefulFunctions.RefactorableFilepath( typeof(EstusFlaskUI)) + "_charges");
 
                 int frameHeight = textureCharges.Height / chargesFrameCount;
                 int drawFrame = (int)(frameHeight * estusPlayer.EstusChargesCurrent); // Correct calculation of drawFrame

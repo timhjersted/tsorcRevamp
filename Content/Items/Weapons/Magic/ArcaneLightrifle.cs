@@ -7,6 +7,7 @@ using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.CeruleanFlask;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic
 {
@@ -58,7 +59,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
             float staminaCost = (30 * modPlayer.WeaponStaminaMult(Item)) / player.GetWeaponAttackSpeed(player.HeldItem);
             if (player.statMana <= player.GetManaCost(player.HeldItem) && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && !player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
             {
-                MethodSwaps.TryUseQuickMana(player);
+                CeruleanFlaskQuickManaOverride.TryUseQuickMana(player);
             }
             if (player.statMana <= player.GetManaCost(player.HeldItem) || (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < staminaCost))
             {

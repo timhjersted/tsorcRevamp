@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System.Linq;
+﻿using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,17 +8,17 @@ using tsorcRevamp.Content.Items.Accessories.Other.SporePowder;
 using tsorcRevamp.Content.Items.Accessories.Other.VenomPowder;
 using tsorcRevamp.Utilities.Balance;
 
-namespace tsorcRevamp
+namespace tsorcRevamp.Systems.EstusFlask
 {
 
     //This class stores necessary player info for Estus usage, which is used by those playing as Bearer of the Curse, as their main source of HP recovery
 
-    public class tsorcRevampEstusPlayer : ModPlayer
+    public class EstusFlaskPlayer : ModPlayer
     {
 
-        public static tsorcRevampEstusPlayer ModPlayer(Player player)
+        public static EstusFlaskPlayer ModPlayer(Player player)
         {
-            return player.GetModPlayer<tsorcRevampEstusPlayer>();
+            return player.GetModPlayer<EstusFlaskPlayer>();
         }
 
 

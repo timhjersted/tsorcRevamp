@@ -15,6 +15,8 @@ using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Utilities.Balance;
 
@@ -942,7 +944,7 @@ namespace tsorcRevamp
             // A simple timer that goes up to 3, increases the exampleResourceCurrent by 1 and then resets back to 0.
             if (Player.whoAmI == Main.myPlayer && staminaRegenDelayTimer <= 0)
             {
-                bool isDrinkingFlask = Player.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking
+                bool isDrinkingFlask = Player.GetModPlayer<EstusFlaskPlayer>().IsDrinking
                     || Player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking;
 
                 //no stamina regen during a roll/swordspin/using an item/drinking a flask, for balance? Yes

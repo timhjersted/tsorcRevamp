@@ -21,6 +21,7 @@ using tsorcRevamp.Content.Projectiles.Melee.Broadswords;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Utilities;
 
 // NOTE: the folder is Gwyn/, but the namespace stays flat (…SuperHardMode) — a namespace segment
@@ -2062,7 +2063,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Player drinker = Main.player[NPC.target];
                 bool drinking = drinker.active && !drinker.dead
-                    && drinker.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking;
+                    && drinker.GetModPlayer<EstusFlaskPlayer>().IsDrinking;
                 bool inPunishRange = NPC.Distance(drinker.Center) <= EstusPunishRange;
                 if (!drinking)
                 {

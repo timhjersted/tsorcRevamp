@@ -9,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities._Extensions;
+using tsorcRevamp.Systems.EstusFlask;
 
 namespace tsorcRevamp.NPCs.FriendlyPuppets
 {
@@ -111,8 +112,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private const int MaxEstusCharges = 3;
         private const float EstusHealLifeFraction = 0.12f;
         private const float EstusDrinkLifeFraction = 0.4f;
-        private static readonly int EstusDrinkTicks = (int)(tsorcRevampEstusPlayer.EstusDrinkTimerMaxBase * 60f);
-        private static readonly int EstusHealTicks = (int)tsorcRevampEstusPlayer.DefaultEstusHealingTimerMax;
+        private static readonly int EstusDrinkTicks = (int)(EstusFlaskPlayer.EstusDrinkTimerMaxBase * 60f);
+        private static readonly int EstusHealTicks = (int)EstusFlaskPlayer.DefaultEstusHealingTimerMax;
         private const float EstusSpaceNearDistance = 4f * 16f;
         private const float EstusSpaceSettleDistance = 6f * 16f;
         private const int EstusSpaceTimeoutTicks = 150;
@@ -1439,7 +1440,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
             // The flask draw layer reads the drawn player's own Estus state, so setting the CLONE's copy puts the flask
             // in the invader's hand; the raised drinking arm starts 5% into the drink, as for the player.
-            tsorcRevampEstusPlayer cloneEstus = clone.GetModPlayer<tsorcRevampEstusPlayer>();
+            EstusFlaskPlayer cloneEstus = clone.GetModPlayer<EstusFlaskPlayer>();
             bool drinkingEstus = State == InvaderState.DrinkingEstus;
             cloneEstus.IsDrinking = drinkingEstus;
             cloneEstus.EstusDrinkTimer = drinkingEstus ? _stateTimer / 60f : 0f;

@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
 
 namespace tsorcRevamp.Content.Projectiles.Magic
 {
@@ -55,7 +56,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic
                 {
                     if (!player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
                     {
-                        MethodSwaps.TryUseQuickMana(player);
+                        CeruleanFlaskQuickManaOverride.TryUseQuickMana(player);
                     }
                 }
 
