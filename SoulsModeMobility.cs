@@ -40,7 +40,6 @@ namespace tsorcRevamp
 
         public const int SupersonicWings2FlightTime = 600;
         public const int WingsOfSeathFlightTime = 300; // 5.0s in Souls Mode (down from 1200 / infinite)
-        public const int WingsOfSeathSuppressedFlightTime = 180;
 
         public const float SupersonicWingsFlightSpeed = 6.25f;
         public const float SupersonicWingsFlightAcceleration = 0.12f;
@@ -64,21 +63,6 @@ namespace tsorcRevamp
         public const float SuppressedJumpSpeedSeath = 6.3f;
         public const int SuppressedJumpHeight = 18;
         public const int SuppressedJumpHeightSeath = 20;
-
-        // Suppressed while mounted: multiplier on the mount's run speed / acceleration (0.6 = 40% slower).
-        public const float SuppressedMountSpeedMultiplier = 0.6f;
-
-        // Suppressed wing ascent caps, in the units of ModItem.VerticalWingSpeeds. Rising / constant /
-        // falling caps equal Supersonic Wings' own values; Seath is capped down from 0.2 / 0.15 / 0.95.
-        // Max climb speed = jumpSpeed * this multiplier, so it compounds with the jump-speed cap above.
-        public const float SuppressedMaxAscentMultiplier = 2.3f;
-        public const float SuppressedMaxAscentMultiplierSeath = 2.6f;
-        public const float SuppressedAscentWhenRising = 0.15f;
-        public const float SuppressedAscentWhenRisingSeath = 0.17f;
-        public const float SuppressedConstantAscend = 0.135f;
-        public const float SuppressedConstantAscendSeath = 0.145f;
-        public const float SuppressedAscentWhenFalling = 0.85f;
-        public const float SuppressedAscentWhenFallingSeath = 0.9f;
 
         // The mobility rework now applies in every mode; the config toggle was removed. The !Enabled() branches
         // in the four mobility items are the OLD Classic stats, kept unreachable on purpose so the toggle can be

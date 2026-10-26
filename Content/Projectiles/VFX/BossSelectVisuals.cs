@@ -696,6 +696,14 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 spawnOffset.Y += 250;
             }
 
+            // Pinwheel is a grounded boss that hangs in place (noGravity, zero velocity) through its intro, so the default 400px-up
+            // spawn left it embedded in the arena ceiling. Spawn at the player's height instead (NewNPC's Y is the hitbox bottom)
+            // and let it settle once the intro ends; it deals no contact damage, so overlapping the player is harmless.
+            if (id == ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>())
+            {
+                spawnOffset = Vector2.Zero;
+            }
+
             //The "Prime Intro" NPC must be spawned instead of prime itself for its intro to work properly on the adventure map
             if (id == ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>())
             {

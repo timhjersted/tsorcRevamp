@@ -187,6 +187,21 @@ namespace tsorcRevamp
                 }
             }
 
+            // Grounded wings (Torn Wings / Crippled / Suppressed) stay folded, so it reads that they don't work.
+            // FrameEffects runs after this tick's wing animation, so pinning wingFrame here wins. Frame 0 is the folded
+            // pose for every wing except slot 4, which rests on frame 3 (same exception vanilla makes when it resets wings).
+            if (WingsDisabled)
+            {
+                int foldedWingFrame = 0;
+                if (Player.wings == 4)
+                {
+                    foldedWingFrame = 3;
+                }
+
+                Player.wingFrame = foldedWingFrame;
+                Player.wingFrameCounter = 0;
+            }
+
             if (MiakodaNewBoost)
             {
                 Player.armorEffectDrawShadow = true;

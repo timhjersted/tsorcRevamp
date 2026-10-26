@@ -21,7 +21,7 @@ namespace tsorcRevamp.Utilities
         {
             internal ulong Frame;
             internal Item FlightItem;
-            internal bool Unkindled, BearerOfTheCurse, Souls, Suppressed;
+            internal bool Unkindled, BearerOfTheCurse, Souls, WingsDisabled;
             internal string Culture;
             internal List<TooltipLine> Lines;
         }
@@ -55,7 +55,7 @@ namespace tsorcRevamp.Utilities
             if (cache.Lines != null && Main.GameUpdateCount >= cache.Frame && Main.GameUpdateCount - cache.Frame < 30
                 && cache.FlightItem == flightItem && cache.Unkindled == localModPlayer.Unkindled
                 && cache.BearerOfTheCurse == localModPlayer.BearerOfTheCurse && cache.Souls == souls
-                && cache.Suppressed == localModPlayer.Suppressed && cache.Culture == culture)
+                && cache.WingsDisabled == localModPlayer.WingsDisabled && cache.Culture == culture)
             {
                 foreach (var line in cache.Lines)
                     tooltips.Add(new TooltipLine(mod, line.Name, line.Text));
@@ -84,9 +84,11 @@ namespace tsorcRevamp.Utilities
             else if (flightItem.type == ModContent.ItemType<WingsOfSeath>())
                 flightTicks = souls ? SoulsModeMobility.WingsOfSeathFlightTime : int.MaxValue;
 
-            bool suppressedWing = flightItem.type == ModContent.ItemType<WingsOfSeath>() || harness1 || harness2;
-            if (localModPlayer.Suppressed && suppressedWing)
-                flightTicks = Math.Min(flightTicks, flightItem.type == ModContent.ItemType<WingsOfSeath>() ? SoulsModeMobility.WingsOfSeathSuppressedFlightTime : 90);
+            // Torn Wings / Crippled / Suppressed ground every wing (tsorcRevampPlayer.PostUpdateMiscEffects).
+            if (localModPlayer.WingsDisabled)
+            {
+                flightTicks = 0;
+            }
 
             preview.accRunSpeed = Math.Max(3f, stats.AccRunSpeedOverride);
             preview.runAcceleration = 0.08f * stats.AccRunAccelerationMult;
@@ -155,7 +157,7 @@ namespace tsorcRevamp.Utilities
             cache.Unkindled = localModPlayer.Unkindled;
             cache.BearerOfTheCurse = localModPlayer.BearerOfTheCurse;
             cache.Souls = souls;
-            cache.Suppressed = localModPlayer.Suppressed;
+            cache.WingsDisabled = localModPlayer.WingsDisabled;
             cache.Culture = culture;
             cache.Lines = tooltips.GetRange(firstDetail, tooltips.Count - firstDetail);
         }

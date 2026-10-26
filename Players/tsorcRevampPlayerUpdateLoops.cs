@@ -80,6 +80,11 @@ namespace tsorcRevamp
         public bool BeastMode1 = false;
         public bool TornWings = false;
         public bool Crippled = false;
+
+        // Torn Wings, Crippled and Suppressed all ground the wings: no flight, no glide, and the wings stay folded
+        // (PostUpdateMiscEffects clears wingsLogic; FrameEffects pins the wings to their folded frame).
+        public bool WingsDisabled => TornWings || Crippled || Suppressed;
+
         public bool WitchkingsGrasp = false;
         public int PullStrength = 0;
         public int PullFrame = 0;
@@ -1543,22 +1548,9 @@ namespace tsorcRevamp
             {
                 Player.gravControl2 = false;
 
-                // Suppressed shuts down float/flight from ANY source, not just the Supersonic items: every wing is
-                // capped to the same short flight time PostUpdateRunSpeeds uses (Wings of Seath keeps its longer cap),
-                // and rocket boots + the bottle/mount extra jumps are disabled. Runs after the equip pass that sets them.
-                bool wearingSeath = supersonicLevel == SoulsModeMobility.WingsOfSeathLevel;
-                int suppressedFlightTicks = 90;
-                if (wearingSeath)
-                {
-                    suppressedFlightTicks = SoulsModeMobility.WingsOfSeathSuppressedFlightTime;
-                }
-
-                Player.wingTimeMax = Math.Min(Player.wingTimeMax, suppressedFlightTicks);
-                if (Player.wingTime > Player.wingTimeMax)
-                {
-                    Player.wingTime = Player.wingTimeMax;
-                }
-
+                // Suppressed shuts down float/flight from ANY source, not just the Supersonic items: rocket boots and
+                // the bottle extra jumps are disabled here (after the equip pass that sets them); wings are grounded
+                // with Torn Wings/Crippled in PostUpdateMiscEffects.
                 Player.canRocket = false;
                 Player.rocketTime = 0;
 
@@ -1568,6 +1560,15 @@ namespace tsorcRevamp
                 Player.GetJumpState(ExtraJump.FartInAJar).Disable();
                 Player.GetJumpState(ExtraJump.TsunamiInABottle).Disable();
                 Player.GetJumpState(ExtraJump.UnicornMount).Disable();
+
+                // No mounts at all, minecarts included. Mount items are refused in tsorcGlobalItem.CanUseItem; this
+                // throws off anything already ridden (or a cart boarded from a track). Owner-only: Dismount clears
+                // the mount buff and syncs the player itself, so remote copies follow.
+                bool ownsThisPlayer = Player.whoAmI == Main.myPlayer;
+                if (Player.mount.Active && ownsThisPlayer)
+                {
+                    Player.mount.Dismount(Player);
+                }
             }
 
             if (ShadowWeight)
@@ -2162,7 +2163,7 @@ namespace tsorcRevamp
 
                     // Vertical nerf to match the horizontal one. jumpSpeed/jumpHeight were already resolved from
                     // jumpBoost/jumpSpeedBoost earlier this tick (UpdateJumpHeight), so clamp the final values.
-                    // Mounts own their jump stats. Wing ascent is clamped in tsorcGlobalItem.VerticalWingSpeeds.
+                    // Mounts own their jump stats. Wings don't fly at all while Suppressed (PostUpdateMiscEffects).
                     // The Triad's Faster Than Sight jump boost is exempt so a Suppressed zone can't cancel it mid-fight.
                     bool hasTriadFlight = Player.HasBuff<FasterThanSight>();
                     if (!Player.mount.Active && !hasTriadFlight)
@@ -2180,34 +2181,7 @@ namespace tsorcRevamp
                         Player.jumpHeight = Math.Min(Player.jumpHeight, suppressedJumpHeight);
                     }
 
-                    bool hasSuppressedWings = supersonicLevel == SoulsModeMobility.SupersonicWingsLevel
-                        || supersonicLevel == SoulsModeMobility.SupersonicWings2Level
-                        || isSeath;
-                    if (hasSuppressedWings)
-                    {
-                        int suppressedWingTime = isSeath ? SoulsModeMobility.WingsOfSeathSuppressedFlightTime : 90; // 1.5s, or 3s for Wings of Seath
-                        Player.wingTimeMax = Math.Min(Player.wingTimeMax, suppressedWingTime);
-                        if (Player.wingTime > Player.wingTimeMax)
-                        {
-                            Player.wingTime = Player.wingTimeMax;
-                        }
-                    }
                 }
-            }
-
-            // Suppressed also slows mounts (the block above is gated on Supersonic gear and skips them). Scale the
-            // mount's run speed/acceleration, then clamp velocity.X to the new max so flying mounts and dashes can't
-            // carry past it. Runs after the mount set maxRunSpeed this tick.
-            if (Suppressed && Player.mount.Active)
-            {
-                float mountSpeedMultiplier = SoulsModeMobility.SuppressedMountSpeedMultiplier;
-
-                Player.maxRunSpeed *= mountSpeedMultiplier;
-                Player.accRunSpeed *= mountSpeedMultiplier;
-                Player.runAcceleration *= mountSpeedMultiplier;
-
-                float mountSpeedCap = Player.maxRunSpeed;
-                Player.velocity.X = MathHelper.Clamp(Player.velocity.X, -mountSpeedCap, mountSpeedCap);
             }
 
             if (Player.HasBuff<MarilithHold>() || Player.HasBuff<MarilithWind>())
@@ -2821,6 +2795,16 @@ namespace tsorcRevamp
                 Player.statManaMax2 = (int)(Player.statManaMax2 * (1f + MaxManaAmplifier / 100f));
             }
 
+            // Torn Wings / Crippled / Suppressed: no wing flight AND no wing glide. Vanilla's hold-jump glide only
+            // checks wingsLogic > 0 (not wingTime), so zeroing wingTime alone left it working. Here rather than
+            // PostUpdateEquips for the same hook-order reason as above: CursedDragonArmorPlayer.PostUpdateEquips
+            // grants its own wings. Runs before vanilla's wing air speed, flight and glide code.
+            if (WingsDisabled)
+            {
+                Player.wingsLogic = 0;
+                Player.wingTime = 0;
+            }
+
             AbyssTransitionEffects();
             ReduceGraveyardDesaturation();
             SpawnAbyssMist();
@@ -2903,7 +2887,8 @@ namespace tsorcRevamp
             }
 
             // Original Adventure map only (Remix has its own Seath ice-biome block below): the SHM ice biome tears
-            // the player's wings until Seath is slain (permanent, read from NewSlain), and is lifted while any boss is alive.
+            // the player's wings and suppresses them until Seath is slain (permanent, read from NewSlain). Lifted while
+            // any boss is alive, and Suppressed is skipped at a lit bonfire so it can't re-add right after Suppressed deletes itself.
             bool seathSlain = tsorcRevampWorld.BossDefeated(ModContent.NPCType<SeathTheScalelessHead>());
 
             if (Player.ZoneSnow && (Player.ZoneDirtLayerHeight || Player.ZoneRockLayerHeight)
@@ -2911,6 +2896,11 @@ namespace tsorcRevamp
                 && tsorcRevampWorld.SuperHardMode && !seathSlain && !tsorcRevampWorld.BossAlive)
             {
                 Player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
+
+                if (!Player.HasBuff(ModContent.BuffType<Bonfire>()))
+                {
+                    Player.AddBuff(ModContent.BuffType<Suppressed>(), 1 * 60, false);
+                }
             }
 
             if (tsorcRevampWorld.RemixMap)

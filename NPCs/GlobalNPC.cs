@@ -746,6 +746,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.QuaraHydromancer>(0.35f, 30f);
             Add<Enemies.QuaraPincher>(0.3f, 60f); // brood-leader bruiser: Brood Call is the interruptible window
             Add<Enemies.QuaraClutchCrab>(0.5f, 18f); // summoned support kiter: fragile, easily staggered
+            Add<Enemies.SuperHardMode.CorruptedHornet>(0.5f, 15f); // small SHM flyer: a few hits break the volley tell or the dive rear
             Add<Enemies.SuperHardMode.Mantassin>(0.3f, 20f); // finger sorcerer: 3-4 hits break any cast; every tell is interruptible
             Add<Enemies.SuperHardMode.OolacileDemon>(0.25f, 40f); // flying curse-caster: breaking a windup (ember / orb charge / swoop rear) cancels it
             // Human / skilled

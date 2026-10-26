@@ -94,6 +94,14 @@ namespace tsorcRevamp.Content.Projectiles
         public int SourceNPCType = -1;
         public AttackDefenseTraits DefenseTraits;
 
+        // MP hit-kill sync. A server-owned hostile projectile that kills itself on hitting a player (Kill(), timeLeft = 2,
+        // penetrate hitting 0) only dies on the victim's machine: vanilla broadcasts a kill only from the owner. The victim
+        // notes the hit tick here; if the projectile dies within HitKillWindowTicks, OnKill asks the server to kill it too.
+        // Projectiles that pierce players never die in that window, so they keep flying everywhere, as designed.
+        const uint HitKillWindowTicks = 5;
+        bool hitLocalPlayer;
+        uint localHitTick;
+
         // Per-projectile poise-damage lever, mirrors tsorcInstancedGlobalItem.WeaponPoiseMultiplier for melee weapons.
         // Multiplies the knockback-derived poise damage THIS projectile deals (see project_poise_stagger_system). Does
         // NOT affect the projectile's actual knockback/flinch — only the stagger meter. Set it from the ModProjectile's
@@ -779,6 +787,15 @@ namespace tsorcRevamp.Content.Projectiles
 
         public override void OnHitPlayer(Projectile projectile, Player target, Player.HurtInfo info)
         {
+            // Runs on the victim's machine. Only a server-owned projectile needs the kill relayed (see HitKillWindowTicks).
+            bool victimIsMe = target.whoAmI == Main.myPlayer;
+            bool ownedByServer = projectile.owner != Main.myPlayer;
+            if (Main.netMode == NetmodeID.MultiplayerClient && projectile.hostile && victimIsMe && ownedByServer)
+            {
+                hitLocalPlayer = true;
+                localHitTick = Main.GameUpdateCount;
+            }
+
             if (IsReflectedRiposte)
             {
                 projectile.penetrate = 1;
@@ -910,6 +927,19 @@ namespace tsorcRevamp.Content.Projectiles
 
         public override void OnKill(Projectile projectile, int timeLeft)
         {
+            // Died just after hitting me: ask the server to kill its copy so nobody else sees it keep flying. A redundant request
+            // (the server already killed it, e.g. both hit the same tile) finds nothing and is ignored.
+            bool diedFromLocalHit = hitLocalPlayer && Main.GameUpdateCount - localHitTick <= HitKillWindowTicks;
+            if (Main.netMode == NetmodeID.MultiplayerClient && diedFromLocalHit)
+            {
+                ModPacket packet = Mod.GetPacket();
+                packet.Write(tsorcPacketID.RequestKillHitProjectile);
+                packet.Write((byte)projectile.owner);
+                packet.Write((short)projectile.identity);
+                packet.Write(projectile.type);
+                packet.Send();
+            }
+
             if (projectile.type == ProjectileID.Fireball && NPC.AnyNPCs(NPCID.Golem))
             {
                 int Difficulty = 1 + (Main.expertMode ? 1 : 0) + (Main.masterMode ? 1 : 0);

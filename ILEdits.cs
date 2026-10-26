@@ -1,8 +1,11 @@
+using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
 using System.Reflection;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp
@@ -17,6 +20,10 @@ namespace tsorcRevamp
 
             Terraria.IL_Player.Update += Player_Update;
             Terraria.IL_Player.Update += WingFallDamage_Patch;
+
+            //Stop Rainbow Brick cycling through colours; it draws as its white sprite under normal lighting
+            Terraria.GameContent.Drawing.IL_TileDrawing.DrawSingleTile += RainbowBrick_NoColorCycle;
+            Terraria.GameContent.Drawing.IL_WallDrawing.DrawWalls += RainbowBrickWall_NoColorCycle;
 
             // NOTE: the SoulsMode crystal system deliberately does NOT raise vanilla's 15/9 consumed-crystal
             // clamps. Those clamps are exactly what keeps the saved player file well-formed — see
@@ -352,6 +359,58 @@ namespace tsorcRevamp
             {
                 c.Remove();
                 c.EmitDelegate<Func<int>>(() => ModContent.GetInstance<tsorcRevampConfig>().UseCustomResourceBars ? 90 : 22);
+            }
+        }
+
+        internal static void RainbowBrick_NoColorCycle(ILContext il)
+        {
+            var cursor = new ILCursor(il);
+
+            // DrawSingleTile's type switch sets Rainbow Brick (160) and tile 692 to Color(Main.DiscoR, DiscoG, DiscoB),
+            // AFTER TileLoader.DrawEffects has run, so a GlobalTile can't override it. The first DiscoR load in the
+            // method is that case; the next finalColor store is "drawData.finalColor = discoColor".
+            if (!cursor.TryGotoNext(MoveType.Before, instr => instr.MatchLdsfld<Main>("DiscoR")))
+            {
+                throw new Exception("Could not find instruction to patch (RainbowBrick_NoColorCycle) (1)");
+            }
+
+            if (!cursor.TryGotoNext(MoveType.Before, instr => instr.MatchStfld<TileDrawInfo>("finalColor")))
+            {
+                throw new Exception("Could not find instruction to patch (RainbowBrick_NoColorCycle) (2)");
+            }
+
+            // Eval stack here is [&drawData, discoColor]. Arg 1 is drawData (arg 0 is the TileDrawing instance).
+            // For Rainbow Brick swap the disco colour for the tile's ordinary world light; 692 keeps vanilla behaviour.
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.EmitDelegate<Func<Color, TileDrawInfo, Color>>((discoColor, drawData) =>
+            {
+                if (drawData.typeCache == TileID.RainbowBrick)
+                {
+                    return drawData.tileLight;
+                }
+
+                return discoColor;
+            });
+        }
+
+        internal static void RainbowBrickWall_NoColorCycle(ILContext il)
+        {
+            var cursor = new ILCursor(il);
+            int patchedCount = 0;
+
+            // DrawWalls compares against Rainbow Brick Wall (44) in exactly two places: the vertex-colour branch
+            // ("tile.wall == 44" -> disco corners) and the retro branch ("wall == 44 || wall == 346" -> disco colour).
+            // Swap the 44 for -1, which no wall type can equal, so it falls through to ordinary world lighting.
+            while (cursor.TryGotoNext(MoveType.Before, instr => instr.MatchLdcI4(WallID.RainbowBrick)))
+            {
+                cursor.Next.OpCode = OpCodes.Ldc_I4;
+                cursor.Next.Operand = -1;
+                patchedCount++;
+            }
+
+            if (patchedCount != 2)
+            {
+                throw new Exception("Expected 2 Rainbow Brick Wall checks to patch (RainbowBrickWall_NoColorCycle), found " + patchedCount);
             }
         }
     }

@@ -57,6 +57,14 @@ namespace tsorcRevamp.Content.Items
                 return false;
             }
 
+            // Suppressed blocks mounts outright. mountType is -1 on every non-mount item; QuickMount goes through
+            // this hook too. Anything already ridden is thrown off in tsorcRevampPlayer.PostUpdateEquips.
+            bool isMountItem = item.mountType != -1;
+            if (isMountItem && player.GetModPlayer<tsorcRevampPlayer>().Suppressed)
+            {
+                return false;
+            }
+
             // Cursed permanently: the Pumpkin Moon can never be started with the Medallion.
             if (item.type == ItemID.PumpkinMoonMedallion)
             {
@@ -198,37 +206,6 @@ namespace tsorcRevamp.Content.Items
                 }
             }
             return base.CanEquipAccessory(item, player, slot, modded);
-        }
-
-        // Suppressed vertical nerf: runs after the wing's own VerticalWingSpeeds (ModItem hook first, then globals),
-        // so it can only lower the values. Gated on supersonicLevel like the run-speed clamp, so a harness paired with
-        // a vanilla wing is capped too and un-suppressed players are untouched.
-        public override void VerticalWingSpeeds(Item item, Player player, ref float ascentWhenFalling, ref float ascentWhenRising, ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)
-        {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
-            if (!modPlayer.Suppressed || modPlayer.supersonicLevel == 0)
-            {
-                return;
-            }
-
-            float fallingCap = SoulsModeMobility.SuppressedAscentWhenFalling;
-            float risingCap = SoulsModeMobility.SuppressedAscentWhenRising;
-            float maxAscentCap = SoulsModeMobility.SuppressedMaxAscentMultiplier;
-            float constantCap = SoulsModeMobility.SuppressedConstantAscend;
-
-            if (modPlayer.supersonicLevel == SoulsModeMobility.WingsOfSeathLevel)
-            {
-                fallingCap = SoulsModeMobility.SuppressedAscentWhenFallingSeath;
-                risingCap = SoulsModeMobility.SuppressedAscentWhenRisingSeath;
-                maxAscentCap = SoulsModeMobility.SuppressedMaxAscentMultiplierSeath;
-                constantCap = SoulsModeMobility.SuppressedConstantAscendSeath;
-            }
-
-            ascentWhenFalling = System.Math.Min(ascentWhenFalling, fallingCap);
-            ascentWhenRising = System.Math.Min(ascentWhenRising, risingCap);
-            maxAscentMultiplier = System.Math.Min(maxAscentMultiplier, maxAscentCap);
-            constantAscend = System.Math.Min(constantAscend, constantCap);
         }
 
         public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)

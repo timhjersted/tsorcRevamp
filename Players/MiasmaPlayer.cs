@@ -28,9 +28,12 @@ namespace tsorcRevamp
         private int procSequence;
         private int lastResolvedProc;
 
-        public void RequestBuildup(int buildup)
+        // procDurationTicks: drain length if this hit fills the meter; 0 = the standard Miasma.DurationTicks.
+        // Sent as a ushort (max 65535 ticks ≈ 18 min).
+        public void RequestBuildup(int buildup, int procDurationTicks = 0)
         {
             buildup = Math.Clamp(buildup, 1, MiasmaBuildup.MaximumBuildup);
+            procDurationTicks = Math.Clamp(procDurationTicks, 0, ushort.MaxValue);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
@@ -46,14 +49,15 @@ namespace tsorcRevamp
                 ModPacket packet = Mod.GetPacket();
                 packet.Write(tsorcPacketID.ReportMiasmaBuildup);
                 packet.Write((byte)buildup);
+                packet.Write((ushort)procDurationTicks);
                 packet.Send();
                 return;
             }
 
-            ApplyBuildupAuthoritative(buildup);
+            ApplyBuildupAuthoritative(buildup, procDurationTicks);
         }
 
-        internal void ApplyBuildupAuthoritative(int buildup)
+        internal void ApplyBuildupAuthoritative(int buildup, int procDurationTicks)
         {
             int buildupType = ModContent.BuffType<MiasmaBuildup>();
 
@@ -71,6 +75,12 @@ namespace tsorcRevamp
                 PlayHitBurst(Player);
             }
 
+            int drainTicks = Miasma.DurationTicks;
+            if (procDurationTicks > 0)
+            {
+                drainTicks = procDurationTicks;
+            }
+
             bool triggered = MiasmaLevel >= MiasmaBuildup.MaximumBuildup;
             if (triggered)
             {
@@ -79,7 +89,7 @@ namespace tsorcRevamp
                 decayTimer = 0;
                 procSequence++;
                 Player.ClearBuff(buildupType);
-                Player.AddBuff(ModContent.BuffType<Miasma>(), Miasma.DurationTicks);
+                Player.AddBuff(ModContent.BuffType<Miasma>(), drainTicks);
 
                 if (!Main.dedServ)
                 {
@@ -91,10 +101,11 @@ namespace tsorcRevamp
                 Player.AddBuff(buildupType, MiasmaBuildup.MarkerDurationTicks);
             }
 
-            SyncState(triggered, true);
+            SyncState(triggered, true, drainTicks);
         }
 
-        private void SyncState(bool triggered = false, bool hitBurst = false, int toWho = -1, int fromWho = -1)
+        // drainTicks only matters when triggered: clients apply the proc's Miasma for that long.
+        private void SyncState(bool triggered = false, bool hitBurst = false, int drainTicks = Miasma.DurationTicks, int toWho = -1, int fromWho = -1)
         {
             if (Main.netMode != NetmodeID.Server)
             {
@@ -109,10 +120,11 @@ namespace tsorcRevamp
             packet.Write(procSequence);
             packet.Write(triggered);
             packet.Write(hitBurst);
+            packet.Write((ushort)drainTicks);
             packet.Send(toWho, fromWho);
         }
 
-        internal void ReceiveState(int buildup, int decayPhase, int sequence, bool triggered, bool hitBurst)
+        internal void ReceiveState(int buildup, int decayPhase, int sequence, bool triggered, bool hitBurst, int drainTicks)
         {
             // The victim already played its own burst when it reported the hit.
             if (hitBurst && Player.whoAmI != Main.myPlayer && !Player.dead)
@@ -137,7 +149,7 @@ namespace tsorcRevamp
             bool isNewProc = triggered && sequence > lastResolvedProc;
             if (isNewProc && !Player.dead)
             {
-                Player.AddBuff(ModContent.BuffType<Miasma>(), Miasma.DurationTicks);
+                Player.AddBuff(ModContent.BuffType<Miasma>(), drainTicks);
                 PlayTriggerEffects(Player);
             }
 
@@ -146,7 +158,7 @@ namespace tsorcRevamp
 
         public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
         {
-            SyncState(false, false, toWho, fromWho);
+            SyncState(false, false, Miasma.DurationTicks, toWho, fromWho);
         }
 
         public override void PostUpdateBuffs()

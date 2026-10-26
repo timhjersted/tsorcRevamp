@@ -94,9 +94,12 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
 
                 tooltips.Add(new TooltipLine(Mod, "FrostburnFireBlocksImmunity", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.FrostburnAndFireBlocksImmunity")));
 
-                int flightTime = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().Suppressed
-                    ? SoulsModeMobility.WingsOfSeathSuppressedFlightTime
-                    : SoulsModeMobility.WingsOfSeathFlightTime;
+                // Grounded wings (Torn Wings / Crippled / Suppressed) can't fly at all.
+                int flightTime = SoulsModeMobility.WingsOfSeathFlightTime;
+                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().WingsDisabled)
+                {
+                    flightTime = 0;
+                }
                 // px/tick -> tiles/s (60 ticks per second, 16 px per tile), same unit as the shift-for-details wing stats.
                 float minFlightTilesPerSecond = SoulsModeMobility.WingsOfSeathFlightSpeed * 60f / 16f;
                 string ascentMultiplierText = SoulsModeMobility.WingsOfSeathAscentMultiplier.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);

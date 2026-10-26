@@ -7,8 +7,9 @@ namespace tsorcRevamp.Buffs.Debuffs
     // lesser degree, Wings of Seath) down to roughly early-hardmode boot territory, and blocks the vanilla
     // Gravitation and Featherfall buffs (removed, along with permanent-potion effects). The actual stat clamping happens in tsorcRevampPlayer.PostUpdateRunSpeeds()
     // (keyed off supersonicLevel, which is already set by whichever of these items is equipped) and in each
-    // item's UpdateEquip/UpdateAccessory for the noKnockback/waterWalk/iceSkate perks; the Gravitation/Featherfall block is
-    // in PostUpdateEquips(). This class just flips the flag those places check.
+    // item's UpdateEquip/UpdateAccessory for the noKnockback/waterWalk/iceSkate perks; the Gravitation/Featherfall block and
+    // the mount ban are in PostUpdateEquips(), and wings are grounded (no flight, no glide, wings stay folded) like Torn Wings via
+    // tsorcRevampPlayer.WingsDisabled. This class just flips the flag those places check.
     public class Suppressed : ModBuff
     {
         public override void SetStaticDefaults()

@@ -2874,11 +2874,12 @@ namespace tsorcRevamp
                 case tsorcPacketID.ReportMiasmaBuildup:
                     {
                         int buildup = reader.ReadByte();
+                        int procDurationTicks = reader.ReadUInt16();
 
                         if (Main.netMode == NetmodeID.Server && whoAmI >= 0 && whoAmI < Main.maxPlayers
                             && Main.player[whoAmI].active && !Main.player[whoAmI].dead)
                         {
-                            Main.player[whoAmI].GetModPlayer<MiasmaPlayer>().ApplyBuildupAuthoritative(buildup);
+                            Main.player[whoAmI].GetModPlayer<MiasmaPlayer>().ApplyBuildupAuthoritative(buildup, procDurationTicks);
                         }
                         break;
                     }
@@ -2890,11 +2891,12 @@ namespace tsorcRevamp
                         int procSequence = reader.ReadInt32();
                         bool triggered = reader.ReadBoolean();
                         bool hitBurst = reader.ReadBoolean();
+                        int drainTicks = reader.ReadUInt16();
 
                         if (Main.netMode == NetmodeID.MultiplayerClient && playerIndex >= 0 && playerIndex < Main.maxPlayers)
                         {
                             Main.player[playerIndex].GetModPlayer<MiasmaPlayer>()
-                                .ReceiveState(buildup, decayTimer, procSequence, triggered, hitBurst);
+                                .ReceiveState(buildup, decayTimer, procSequence, triggered, hitBurst, drainTicks);
                         }
                         break;
                     }
@@ -2931,6 +2933,42 @@ namespace tsorcRevamp
                         if (playerIndex >= 0 && playerIndex < Main.maxPlayers)
                         {
                             Main.player[playerIndex].GetModPlayer<AcidVenomPlayer>().ReceiveLevel(level, whoAmI);
+                        }
+                        break;
+                    }
+                case tsorcPacketID.RequestKillHitProjectile:
+                    {
+                        int projectileOwner = reader.ReadByte();
+                        int projectileIdentity = reader.ReadInt16();
+                        int projectileType = reader.ReadInt32();
+
+                        bool validSender = whoAmI >= 0 && whoAmI < Main.maxPlayers && Main.player[whoAmI].active;
+                        if (Main.netMode != NetmodeID.Server || !validSender)
+                        {
+                            break;
+                        }
+
+                        // Kill the server's copy; a server-side Kill broadcasts it, so every other client removes it too.
+                        // Only hostile projectiles near the reporting player (800px allows for ping lag), so a client can't
+                        // delete arbitrary projectiles.
+                        Player sender = Main.player[whoAmI];
+                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        {
+                            Projectile candidate = Main.projectile[i];
+                            bool sameProjectile = candidate.active && candidate.owner == projectileOwner && candidate.identity == projectileIdentity && candidate.type == projectileType;
+
+                            if (!sameProjectile)
+                            {
+                                continue;
+                            }
+
+                            bool nearSender = candidate.Distance(sender.Center) < 800f;
+                            if (candidate.hostile && nearSender)
+                            {
+                                candidate.Kill();
+                            }
+
+                            break;
                         }
                         break;
                     }
@@ -5322,6 +5360,9 @@ namespace tsorcRevamp
         public const byte SyncPoisonLevel = 45;
         /// <summary>Owner client → server → other clients: the owner-authoritative acid venom meter value, display only.</summary>
         public const byte SyncAcidVenomLevel = 46;
+        /// <summary>Victim client → server: a server-owned hostile projectile died on my machine right after hitting me. Vanilla only
+        /// broadcasts a kill from the owner, so without this the server and other players keep it flying. tsorcGlobalProjectile.</summary>
+        public const byte RequestKillHitProjectile = 47;
     }
 
     //config moved to separate file

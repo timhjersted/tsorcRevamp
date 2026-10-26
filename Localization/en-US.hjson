@@ -416,6 +416,7 @@ Mods: {
 			FrostDeathReason: "{0} shattered from frost"
 			BlightDeathReason: "{0} was consumed by blight"
 			MiasmaDeathReason: "{0} could not survive the miasma"
+			VoidDeathReason: "{0} was swallowed by the Void"
 			BotC1: Bearer of the Curse mode can be disabled at any time...
 			BotC2: Bearer of the Curse mode is intended for experienced players
 			BotC3: Try reading the Darksign's description
@@ -9640,7 +9641,7 @@ Mods: {
 				Description:
 					'''
 					A dark force is dampening your speed
-					and ability to float or defy gravity here.
+					and ability to fly, ride or defy gravity here.
 					'''
 			}
 
@@ -13625,6 +13626,7 @@ Mods: {
 			BonfireCheckpoint.MapEntry: Bonfire Checkpoint
 			FlameJet.MapEntry: Flame Jet
 			SoapstoneTile.MapEntry: Soapstone Message
+			VoidLavaMapTile.MapEntry: Void
 			SoulSkellyL.MapEntry: Soul Skelly
 			SoulSkellyR.MapEntry: Soul Skelly
 			SoulSkellyWall1.MapEntry: Soul Skelly
