@@ -286,14 +286,14 @@ namespace tsorcRevamp.Systems.EstusFlask
             }
         }
 
-
-
-
-
-
-
-
-
-
+        public override void OnHurt(Player.HurtInfo info)
+        {
+            if (IsDrinking)
+            {
+                IsDrinking = false;
+                EstusDrinkTimer = 0f;
+                IsEstusHealing  = false;
+            }
+        }
     }
 }
