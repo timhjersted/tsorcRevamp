@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Armor.Melee.AbyssalNinjaSet;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Weapons.Melee;
 using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;

@@ -19,6 +19,7 @@ public class CrystalSightedSetPlayer : ModPlayer
     {
         Player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage = true;
         Player.GetAttackSpeed(DamageClass.Melee) += CrystalSightedHelmet.AtkSpeed / 100f;
+        Player.endurance += CrystalSightedHelmet.Resistance / 100f;
         if (currentHealth <= threshold)
         {
             Player.GetAttackSpeed(DamageClass.Melee) += CrystalSightedHelmet.AtkSpeed / 100f;

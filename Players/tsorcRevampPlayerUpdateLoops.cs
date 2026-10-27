@@ -181,8 +181,6 @@ namespace tsorcRevamp
 
         public bool MeleeArmorVamp10 = false;
 
-        public bool MagmaArmor;
-        public bool PortlyPlateArmor;
 
         public bool OldWeapon = false;
 
@@ -568,8 +566,6 @@ namespace tsorcRevamp
             DragoonBoots = false;
             OldWeapon = false;
             Miakoda = false;
-            MagmaArmor = false;
-            PortlyPlateArmor = false;
 
             WaspPower = false;
 

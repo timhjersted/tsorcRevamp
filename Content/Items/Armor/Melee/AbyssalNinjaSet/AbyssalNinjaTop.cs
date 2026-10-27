@@ -1,0 +1,41 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Armor.Melee.ShadowNinjaSet;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+
+namespace tsorcRevamp.Content.Items.Armor.Melee.AbyssalNinjaSet
+{
+    [AutoloadEquip(EquipType.Body)]
+    class AbyssalNinjaTop : ModItem
+    {
+        public const float MeleeDmg = 35f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg);
+        public override void SetDefaults()
+        {
+            Item.width = 18;
+            Item.height = 18;
+            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.value = PriceByRarity.Purple_11;
+            Item.defense = 14;
+        }
+        public override void UpdateEquip(Player player)
+        {
+            player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<ShadowNinjaTop>());
+            recipe.AddIngredient(ModContent.ItemType<SoulOfOccultist>());
+            recipe.AddIngredient(ModContent.ItemType<AbyssalFabric>());
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 25000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
+        }
+    }
+}

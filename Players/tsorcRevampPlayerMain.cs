@@ -33,6 +33,7 @@ using tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker;
 using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.Armor.Melee.ArtoriasSet;
 using tsorcRevamp.Content.Items.Armor.Ranged;
 using tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet;
 using tsorcRevamp.Content.Items.Armor.Summon;
@@ -1260,7 +1261,7 @@ namespace tsorcRevamp
             }
             if (CanUseItemsWhileDodging && !ArtoriasAbysswalker && isDodging && (modifiers.DamageType == DamageClass.Melee || modifiers.DamageType == DamageClass.MeleeNoSpeed))
             {
-                modifiers.FinalDamage += ArtoriasArmor.DmgMultWhileRolling;
+                modifiers.FinalDamage += ArtoriasHelmet.DmgMultWhileRolling;
             }
             if (CanSpendArtoriasAbysswalkerPoise(modifiers.DamageType))
             {
@@ -1346,7 +1347,7 @@ namespace tsorcRevamp
             }
             if (CanUseItemsWhileDodging && !ArtoriasAbysswalker && isDodging && (proj.type == ProjectileID.NebulaBlaze2) && Player.HeldItem.type == ModContent.ItemType<YianBlade>())
             {
-                modifiers.FinalDamage -= ArtoriasArmor.DmgMultWhileRolling;
+                modifiers.FinalDamage -= ArtoriasHelmet.DmgMultWhileRolling;
             }
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<CernosPrime>())
             {
@@ -1375,10 +1376,6 @@ namespace tsorcRevamp
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (MagmaArmor && (target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3)))
-            {
-                target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
-            }
             SpendArtoriasAbysswalkerPoise(target, hit);
             if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Content.Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
             {
@@ -1584,19 +1581,6 @@ namespace tsorcRevamp
         {
         }
 
-        public void ShunpoTooltip(List<TooltipLine> tooltips)
-        {
-            var ShunpoKeybind = tsorcRevamp.Shunpo.GetAssignedKeys();
-            string ShunpoString = ShunpoKeybind.Count > 0 ? ShunpoKeybind[0] : LangUtils.GetTextValue("Keybinds.Shunpo.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
-            string ArmorSetBonusKeybind = LangUtils.GetTextValue(Main.ReversedUpDownArmorSetBonuses ? "CommonItemTooltip.UpKeybind" : "CommonItemTooltip.DownKeybind") ;
-            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
-            if (ttindex1 != -1)
-            {
-                tooltips.RemoveAt(ttindex1);
-                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", ArmorSetBonusKeybind 
-                    + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ShunpoKeybind1") + ShunpoString + LangUtils.GetTextValue("CommonItemTooltip.ShunpoKeybind2")));
-            }
-        }
 
 
         public override void ProcessTriggers(TriggersSet triggersSet)

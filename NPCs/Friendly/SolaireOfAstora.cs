@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.Armor.Melee.AncientGoldenSet;
 using tsorcRevamp.Content.Items.ItemCrates;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;

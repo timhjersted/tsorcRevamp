@@ -29,6 +29,7 @@ using tsorcRevamp.Content.Items.Accessories.Damage;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
 using tsorcRevamp.Content.Items.Accessories.Runeterra.LiandrysTorment;
 using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.Armor.Melee.MagmaSet;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.ItemCrates;
 using tsorcRevamp.Content.Items.Materials;
@@ -250,7 +251,6 @@ namespace tsorcRevamp.NPCs
         public bool WitchkingCurse;
         public bool AbyssalSinking;
         public bool CCShocked;
-        public bool Ignited;
         public bool CrimsonBurn;
         public bool ToxicCatDrain;
         public bool ResetToxicCatBlobs;
@@ -1741,7 +1741,6 @@ namespace tsorcRevamp.NPCs
             WitchkingCurse = false;
             AbyssalSinking = false;
             CCShocked = false;
-            Ignited = false;
             CrimsonBurn = false;
             ToxicCatDrain = false;
             ResetToxicCatBlobs = false;
@@ -3370,10 +3369,6 @@ namespace tsorcRevamp.NPCs
             {
                 modifiers.FinalDamage *= 1.09f;
             }
-            if (Ignited)
-            {
-                modifiers.FlatBonusDamage += MagmaBreastplate.OnHitDmg;
-            }
             if (PlaguesmithBuff)
             {
                 modifiers.FinalDamage *= 0.65f; 
@@ -4528,9 +4523,9 @@ namespace tsorcRevamp.NPCs
                 DoTPerS += DoDamageOverTime(npc, dotBase, true, true, true);
             }
             
-            if (Ignited)
+            if (npc.GetGlobalNPC<MagmaSetNPC>().Ignited)
             {
-                dotBase = MagmaBreastplate.BaseDoT;
+                dotBase = MagmaHelmet.BaseDoT;
                 DoTPerS += DoDamageOverTime(npc, dotBase, false, true);
             }
             if (Venomized)
