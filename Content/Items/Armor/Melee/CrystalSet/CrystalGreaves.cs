@@ -9,12 +9,8 @@ namespace tsorcRevamp.Content.Items.Armor.Melee.CrystalSet
     [AutoloadEquip(EquipType.Legs)]
     public class CrystalGreaves : ModItem
     {
-        public static float MoveSpeed = 21f;
+        public const float MoveSpeed = 21f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
-        public override void SetStaticDefaults()
-        {
-        }
-
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += MoveSpeed / 100f;

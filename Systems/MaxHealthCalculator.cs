@@ -12,6 +12,7 @@ using tsorcRevamp.Content.Items.Armor.Magic.DragonScaleSet;
 using tsorcRevamp.Content.Items.Armor.Magic.MimeticSet;
 using tsorcRevamp.Content.Items.Armor.Magic.RTQ2Set;
 using tsorcRevamp.Content.Items.Armor.Melee.CrystalSet;
+using tsorcRevamp.Content.Items.Armor.Melee.PortlyPlateSet;
 using tsorcRevamp.Content.Items.Armor.Ranged.ShellSet;
 using tsorcRevamp.Content.Items.Armor.ShadowCloakSet;
 using tsorcRevamp.Content.Items.Armor.Summon.AncientDemon;
@@ -76,6 +77,8 @@ public class MaxHealthCalculator : ModPlayer
         var crystalEnchantedSetPlayer = Player.GetModPlayer<CrystalEnchantedSetPlayer>();
         
         var crystalSightedSetPlayer = Player.GetModPlayer<CrystalSightedSetPlayer>();
+
+        var portlyPlateSetPlayer = Player.GetModPlayer<PortlyPlateSetPlayer>();
         
         #endregion
 
@@ -164,6 +167,10 @@ public class MaxHealthCalculator : ModPlayer
         if (crystalSightedSetPlayer.Equipped)
         {
             crystalSightedSetPlayer.ApplyCrystalSightedSetBonus(currentHealth, (int)(maxHealth * CrystalSightedHelmet.LifeThreshold / 100f));
+        }
+        if (portlyPlateSetPlayer.Equipped)
+        {
+            portlyPlateSetPlayer.ApplyPortlyPlateSetBonus(currentHealth, (int)(maxHealth * PortlyPlateHelmet.LifeThreshold / 100f));
         }
     }
 

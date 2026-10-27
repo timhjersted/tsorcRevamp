@@ -18,10 +18,10 @@ public class CrystalEnchantedSetPlayer : ModPlayer
     public void ApplyCrystalEnchantedSetBonus(in int currentHealth, in int threshold)
     {
         Player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage = true;
-        Player.endurance += CrystalEnchantedHelmet.DR / 100f;
+        Player.endurance += CrystalEnchantedHelmet.Resistance / 100f;
         if (currentHealth <= threshold)
         {
-            Player.endurance += CrystalEnchantedHelmet.DR / 100f;
+            Player.endurance += CrystalEnchantedHelmet.Resistance / 100f;
 
             if (Visual)
             {

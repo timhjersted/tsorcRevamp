@@ -9,11 +9,8 @@ namespace tsorcRevamp.Content.Items.Armor.Melee.CrystalSet
     [AutoloadEquip(EquipType.Body)]
     public class CrystalArmor : ModItem
     {
-        public static float CritChance = 28f;
+        public const float CritChance = 28f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
-        public override void SetStaticDefaults()
-        {
-        }
         public override void UpdateEquip(Player player)
         {
             player.GetCritChance(DamageClass.Melee) += CritChance;

@@ -15,6 +15,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.WolfRing;
 using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.Armor.Melee.ArtoriasSet;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;

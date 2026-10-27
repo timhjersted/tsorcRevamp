@@ -415,6 +415,7 @@ Mods: {
 			// FrostDeathReason: "{0} shattered from frost"
 			// BlightDeathReason: "{0} was consumed by blight"
 			// MiasmaDeathReason: "{0} could not survive the miasma"
+			// VoidDeathReason: "{0} was swallowed by the Void"
 			BotC1: 被诅咒者模式可以随时关闭...
 			BotC2: 被诅咒者模式是为有通关经验的玩家设计的...
 			BotC3: 请查看暗符获取关于被诅咒者模式的详细信息
@@ -2382,6 +2383,22 @@ Mods: {
 					'''
 			}
 
+			ArtoriasHelmet: {
+				DisplayName: 亚尔特留斯之盔
+				Tooltip:
+					'''
+					亚尔特留斯的附魔头盔
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
+					'''
+				/* TooltipSetBonus:
+					'''
+					Allows you to use items while dodgerolling
+					Increase additional {0}x melee damage while dodgerolling
+					{$CommonItemTooltip.DRStat@1}
+					{$CommonItemTooltip.AggroBoost}
+					''' */
+			}
+
 			ArtoriasArmor: {
 				DisplayName: 亚尔特留斯盔甲
 				Tooltip:
@@ -2400,15 +2417,6 @@ Mods: {
 					亚尔特留斯的附魔腿甲
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
-					'''
-			}
-
-			ArtoriasHelmet: {
-				DisplayName: 亚尔特留斯之盔
-				Tooltip:
-					'''
-					亚尔特留斯的附魔头盔
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
 			}
 
@@ -2895,6 +2903,28 @@ Mods: {
 					这就是著名的星之头盔
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.Melee.FlatDmg@1}
+					A Gi will also proc this set bonus
+					''' */
+			}
+
+			BlackBeltHairStyle: {
+				DisplayName: 黑带假发
+				Tooltip:
+					'''
+					你是禅宗艺术大师！与道合一
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
+					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
+					{$CommonItemTooltip.LifeRegen@1}
+					{$CommonItemTooltip.DefenseCap@2}
+					Resistance is converted into movement speed(1 : {3})
+					''' */
 			}
 
 			BlackBeltGiPants: {
@@ -2911,15 +2941,6 @@ Mods: {
 					{$CommonItemTooltip.LifeRegen@3}
 					{$CommonItemTooltip.DefenseCap@2}
 					抵抗力以（1 : {4}）的比例转化为移动速度
-					'''
-			}
-
-			BlackBeltHairStyle: {
-				DisplayName: 黑带假发
-				Tooltip:
-					'''
-					你是禅宗艺术大师！与道合一
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
 			}
 
@@ -2942,15 +2963,12 @@ Mods: {
 					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.LifeThreshold@2}由该套装提供的抵抗力翻倍
 					'''
-			}
-
-			CrystalGreaves: {
-				DisplayName: 水晶护腿
-				Tooltip:
+				/* TooltipSetBonus:
 					'''
-					由水晶切割而成的炫目盔甲
-					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					'''
+					{$CommonItemTooltip.CritDmg}
+					{$CommonItemTooltip.DRStat@1}
+					{$CommonItemTooltip.LifeThreshold@2}Resistance provided by the set is doubled
+					''' */
 			}
 
 			CrystalSightedHelmet: {
@@ -2962,6 +2980,22 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					{$CommonItemTooltip.LifeThreshold@2}由该套装提供的近战速度翻倍
+					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.CritDmg}
+					{$CommonItemTooltip.DRStat@3}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
+					{$CommonItemTooltip.LifeThreshold@2}Melee Speed provided by the set is doubled
+					''' */
+			}
+
+			CrystalGreaves: {
+				DisplayName: 水晶护腿
+				Tooltip:
+					'''
+					由水晶切割而成的炫目盔甲
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					'''
 			}
 
@@ -2990,6 +3024,13 @@ Mods: {
 			DarkKnightHelmet: {
 				DisplayName: 黑暗骑士头盔
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.HolyDodge}
+					Defense and Resistance are not affected by this
+					Small chance to regain life from melee strikes while Holy Dodge is active
+					''' */
 			}
 
 			ArtoriasOfTheAbyssArmor: {
@@ -3066,6 +3107,21 @@ Mods: {
 				// Tooltip: ""
 			}
 
+			FighterHairStyle: {
+				DisplayName: 斗士假发
+				Tooltip:
+					'''
+					擅长近战
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat}
+
+					''' */
+			}
+
 			FighterBreastplate: {
 				DisplayName: 斗士胸甲
 				Tooltip:
@@ -3087,14 +3143,16 @@ Mods: {
 					'''
 			}
 
-			FighterHairStyle: {
-				DisplayName: 斗士假发
-				Tooltip:
+			MagmaHelmet: {
+				DisplayName: 岩浆头盔
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				/* TooltipSetBonus:
 					'''
-					擅长近战
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
-					'''
+					{$CommonItemTooltip.DRStat@1}
+					Hitting burning enemies ignites them
+					Ignited enemies take {0} more damage each hit and burn horribly
+					Cannot be set on fire
+					''' */
 			}
 
 			MagmaBreastplate: {
@@ -3115,11 +3173,6 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					'''
-			}
-
-			MagmaHelmet: {
-				DisplayName: 岩浆头盔
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
 			}
 
 			ShadowCloakGreaves: {
@@ -3147,11 +3200,6 @@ Mods: {
 					'''
 			}
 
-			ShadowNinjaBottoms: {
-				DisplayName: 暗影忍者裤
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
-			}
-
 			ShadowNinjaMask: {
 				DisplayName: 暗影忍者面具
 				Tooltip:
@@ -3162,6 +3210,13 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					{$CommonItemTooltip.LifeRegen@3}
 					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DefenseCap}
+					Resistance is converted into movement speed(1 : {1})
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					{$CommonItemTooltip.LifeRegen@3}
+					''' */
 			}
 
 			ShadowNinjaTop: {
@@ -3169,9 +3224,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
-			AbyssalNinjaTop: {
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
-				DisplayName: 深渊忍者上衣
+			ShadowNinjaBottoms: {
+				DisplayName: 暗影忍者裤
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			AbyssalNinjaMask: {
@@ -3185,6 +3240,18 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
 					{$CommonItemTooltip.LifeRegen@4}
 					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DefenseCap}
+					Resistance is converted into movement speed(1 : {1})
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					{$CommonItemTooltip.LifeRegen@3}
+					''' */
+			}
+
+			AbyssalNinjaTop: {
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
+				DisplayName: 深渊忍者上衣
 			}
 
 			AbyssalNinjaBottoms: {
@@ -8371,6 +8438,17 @@ Mods: {
 			PortlyPlateHelmet: {
 				DisplayName: 臃肿板甲的头盔
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat@5}
+					{$CommonItemTooltip.LifeRegen}
+					{$CommonItemTooltip.NoKnockback}
+					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.LifeRegen@2}
+					Allows you to damage enemies by rolling through them
+					{3} melee damage
+					{4}% critical strike chance
+					Insane knockback
+					''' */
 			}
 
 			PortlyPlateChestplate: {
@@ -8381,13 +8459,6 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeRegen@1}
 					{$CommonItemTooltip.NoKnockback}
 					{$CommonItemTooltip.LifeThreshold@2}{$CommonItemTooltip.LifeRegen@3}
-					'''
-				SetBonus:
-					'''
-					允许你在翻滚经过敌人时对它们造成伤害
-					{0} 近战伤害
-					{1}% 暴击率
-					免疫击退
 					'''
 			}
 
@@ -9623,7 +9694,7 @@ Mods: {
 				/* Description:
 					'''
 					A dark force is dampening your speed
-					and ability to float or defy gravity here.
+					and ability to fly, ride or defy gravity here.
 					''' */
 			}
 
@@ -11785,6 +11856,7 @@ Mods: {
 			// OolacileDemonAcid.DisplayName: Oolacile Demon Acid
 			// OolacileDemonAcidPool.DisplayName: Oolacile Demon Acid Pool
 			// OolacileDemonBreath.DisplayName: Oolacile Demon Breath
+			// PinwheelBallOfFire.DisplayName: Pinwheel Ball Of Fire
 		}
 
 		NPCs: {
@@ -13613,6 +13685,7 @@ Mods: {
 			BonfireCheckpoint.MapEntry: 篝火检查点
 			FlameJet.MapEntry: 喷火陷阱
 			SoapstoneTile.MapEntry: 箴言文字泡
+			// VoidLavaMapTile.MapEntry: Void
 			SoulSkellyL.MapEntry: 灵魂骷髅
 			SoulSkellyR.MapEntry: 灵魂骷髅
 			SoulSkellyWall1.MapEntry: 灵魂骷髅

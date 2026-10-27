@@ -10,14 +10,11 @@ namespace tsorcRevamp.Content.Items.Armor.Melee.CrystalSet
     [AutoloadEquip(EquipType.Head)]
     public class CrystalSightedHelmet : ModItem
     {
-        public static float Dmg = 19f;
-        public static float AtkSpeed = 11f;
-        public static float LifeThreshold = 40f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, AtkSpeed, LifeThreshold, tsorcRevampPlayer.MythrilOcrichalcumCritDmg);
-        public override void SetStaticDefaults()
-        {
-        }
-
+        public const float Dmg = 19f;
+        public const float AtkSpeed = 11f;
+        public const float LifeThreshold = 40f;
+        public const float Resistance = 9f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetDefaults()
         {
             Item.width = 26;
@@ -39,6 +36,8 @@ namespace tsorcRevamp.Content.Items.Armor.Melee.CrystalSet
 
         public override void UpdateArmorSet(Player player)
         {
+            player.setBonus = Language.GetTextValue(Tooltip.Key + "SetBonus",
+                tsorcRevampPlayer.MythrilOcrichalcumCritDmg, AtkSpeed, LifeThreshold, Resistance);
             var modPlayer = player.GetModPlayer<CrystalSightedSetPlayer>();
             modPlayer.Equipped = true;
             bool isVisible = player.armor[10].IsAir && player.armor[11].IsAir && player.armor[12].IsAir;

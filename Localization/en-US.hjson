@@ -2380,15 +2380,28 @@ Mods: {
 					'''
 			}
 
+			ArtoriasHelmet: {
+				DisplayName: Artorias Helmet
+				Tooltip:
+					'''
+					Enchanted helmet of Artorias.
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
+					'''
+				TooltipSetBonus:
+					'''
+					Allows you to use items while dodgerolling
+					Increase additional {0}x melee damage while dodgerolling
+					{$CommonItemTooltip.DRStat@1}
+					{$CommonItemTooltip.AggroBoost}
+					'''
+			}
+
 			ArtoriasArmor: {
 				DisplayName: Artorias Armor
 				Tooltip:
 					'''
 					Enchanted armor of Artorias of the Abyss.
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}Allows you to use items while dodgerolling
-					Increase additional {1}x melee damage while dodgerolling
-					{$CommonItemTooltip.AggroBoost}
 					'''
 			}
 
@@ -2399,15 +2412,6 @@ Mods: {
 					Enchanted armor of Artorias.
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
-					'''
-			}
-
-			ArtoriasHelmet: {
-				DisplayName: Artorias Helmet
-				Tooltip:
-					'''
-					Enchanted helmet of Artorias.
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
 			}
 
@@ -2873,8 +2877,6 @@ Mods: {
 					'''
 					A lost prince's armor.
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Melee.FlatDmg@1}
-					A Gi will also proc this set bonus
 					'''
 			}
 
@@ -2894,22 +2896,11 @@ Mods: {
 					It is the famous Helmet of the Stars.
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
-			}
-
-			BlackBeltGiPants: {
-				DisplayName: Black Belt Gi Pants
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
-			}
-
-			BlackBeltGiTop: {
-				DisplayName: Black Belt Gi Top
-				Tooltip:
+				TooltipSetBonus:
 					'''
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
-					{$CommonItemTooltip.LifeRegen@3}
-					{$CommonItemTooltip.DefenseCap@2}
-					Resistance is converted into movement speed(1 : {4})
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.Melee.FlatDmg@1}
+					A Gi will also proc this set bonus
 					'''
 			}
 
@@ -2920,6 +2911,23 @@ Mods: {
 					You are a master of the zen arts, at one with the Tao
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
+					{$CommonItemTooltip.LifeRegen@1}
+					{$CommonItemTooltip.DefenseCap@2}
+					Resistance is converted into movement speed(1 : {3})
+					'''
+			}
+
+			BlackBeltGiPants: {
+				DisplayName: Black Belt Gi Pants
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
+			}
+
+			BlackBeltGiTop: {
+				DisplayName: Black Belt Gi Top
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
 			CrystalArmor: {
@@ -2937,9 +2945,28 @@ Mods: {
 					'''
 					Dazzling armor cut from crystal
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
+					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.CritDmg}
 					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.LifeThreshold@2}Resistance provided by the set is doubled
+					'''
+			}
+
+			CrystalSightedHelmet: {
+				DisplayName: Crystal Sighted Helmet
+				Tooltip:
+					'''
+					Dazzling armor cut from crystal
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.CritDmg}
+					{$CommonItemTooltip.DRStat@3}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
+					{$CommonItemTooltip.LifeThreshold@2}Melee Speed provided by the set is doubled
 					'''
 			}
 
@@ -2952,27 +2979,12 @@ Mods: {
 					'''
 			}
 
-			CrystalSightedHelmet: {
-				DisplayName: Crystal Sighted Helmet
-				Tooltip:
-					'''
-					Dazzling armor cut from crystal
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
-					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
-					{$CommonItemTooltip.LifeThreshold@2}Melee Speed provided by the set is doubled
-					'''
-			}
-
 			DarkKnightArmor: {
 				DisplayName: Dark Knight Armor
 				Tooltip:
 					'''
 					One of the fiercest armors for melee warriors
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
-					Defense is not affected by this
-					Small chance to regain life from melee strikes while Holy Dodge is active
 					'''
 			}
 
@@ -2989,6 +3001,13 @@ Mods: {
 			DarkKnightHelmet: {
 				DisplayName: Dark Knight Helmet
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.HolyDodge}
+					Defense and Resistance are not affected by this
+					Small chance to regain life from melee strikes while Holy Dodge is active
+					'''
 			}
 
 			ArtoriasOfTheAbyssArmor: {
@@ -3065,15 +3084,27 @@ Mods: {
 				Tooltip: ""
 			}
 
+			FighterHairStyle: {
+				DisplayName: Fighter Hair Style
+				Tooltip:
+					'''
+					Adept at close combat
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat}
+
+					'''
+			}
+
 			FighterBreastplate: {
 				DisplayName: Fighter Breastplate
 				Tooltip:
 					'''
 					Adept at close combat
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
-					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
-					{$CommonItemTooltip.ShunpoCD@1}
 					'''
 			}
 
@@ -3086,25 +3117,21 @@ Mods: {
 					'''
 			}
 
-			FighterHairStyle: {
-				DisplayName: Fighter Hair Style
-				Tooltip:
+			MagmaHelmet: {
+				DisplayName: Magma Helmet
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				TooltipSetBonus:
 					'''
-					Adept at close combat
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					{$CommonItemTooltip.DRStat@1}
+					Hitting burning enemies ignites them
+					Ignited enemies take {0} more damage each hit and burn horribly
+					Cannot be set on fire
 					'''
 			}
 
 			MagmaBreastplate: {
 				DisplayName: Magma Breastplate
-				Tooltip:
-					'''
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					Set bonus: Hitting burning enemies ignites them
-					Ignited enemies take {1} more damage each hit and burn horribly
-					Cannot be set on fire
-					'''
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
 			MagmaGreaves: {
@@ -3114,11 +3141,6 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					'''
-			}
-
-			MagmaHelmet: {
-				DisplayName: Magma Helmet
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
 			}
 
 			ShadowCloakGreaves: {
@@ -3146,19 +3168,14 @@ Mods: {
 					'''
 			}
 
-			ShadowNinjaBottoms: {
-				DisplayName: Shadow Ninja Bottoms
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
-			}
-
 			ShadowNinjaMask: {
 				DisplayName: Shadow Ninja Mask
-				Tooltip:
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				TooltipSetBonus:
 					'''
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@2}
-					Resistance is converted into movement speed(1 : {4})
-					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
+					{$CommonItemTooltip.DefenseCap}
+					Resistance is converted into movement speed(1 : {1})
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
 					{$CommonItemTooltip.LifeRegen@3}
 					'''
 			}
@@ -3168,9 +3185,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
-			AbyssalNinjaTop: {
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
-				DisplayName: Abyssal Ninja Top
+			ShadowNinjaBottoms: {
+				DisplayName: Shadow Ninja Bottoms
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			AbyssalNinjaMask: {
@@ -3179,11 +3196,19 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage@1}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@3}
-					Resistance is converted into movement speed(1 : {5})
-					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
-					{$CommonItemTooltip.LifeRegen@4}
 					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DefenseCap}
+					Resistance is converted into movement speed(1 : {1})
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					{$CommonItemTooltip.LifeRegen@3}
+					'''
+			}
+
+			AbyssalNinjaTop: {
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
+				DisplayName: Abyssal Ninja Top
 			}
 
 			AbyssalNinjaBottoms: {
@@ -8376,24 +8401,22 @@ Mods: {
 			PortlyPlateHelmet: {
 				DisplayName: Portly Plate Helmet
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat@5}
+					{$CommonItemTooltip.LifeRegen}
+					{$CommonItemTooltip.NoKnockback}
+					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.LifeRegen@2}
+					Allows you to damage enemies by rolling through them
+					{3} melee damage
+					{4}% critical strike chance
+					Insane knockback
+					'''
 			}
 
 			PortlyPlateChestplate: {
 				DisplayName: Portly Plate Chestplate
-				Tooltip:
-					'''
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeRegen@1}
-					{$CommonItemTooltip.NoKnockback}
-					{$CommonItemTooltip.LifeThreshold@2}{$CommonItemTooltip.LifeRegen@3}
-					'''
-				SetBonus:
-					'''
-					Allows you to damage enemies by rolling through them
-					{0} melee damage
-					{1}% critical strike chance
-					Insane knockback
-					'''
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
 			PortlyPlateGreaves: {
@@ -11799,6 +11822,7 @@ Mods: {
 			OolacileDemonAcid.DisplayName: Oolacile Demon Acid
 			OolacileDemonAcidPool.DisplayName: Oolacile Demon Acid Pool
 			OolacileDemonBreath.DisplayName: Oolacile Demon Breath
+			PinwheelBallOfFire.DisplayName: Pinwheel Ball Of Fire
 		}
 
 		NPCs: {
