@@ -9377,6 +9377,36 @@ Mods: {
 				// DisplayName: Enemy Poison Bow
 				// Tooltip: ""
 			}
+
+			CaiusPyreItem: {
+				// DisplayName: Caius Pyre Item
+				// Tooltip: ""
+			}
+
+			GaleforceItem: {
+				// DisplayName: Galeforce Item
+				// Tooltip: ""
+			}
+
+			TyphoonItem: {
+				// DisplayName: Typhoon Item
+				// Tooltip: ""
+			}
+
+			XBowItem: {
+				// DisplayName: X Bow Item
+				// Tooltip: ""
+			}
+
+			ShadowSickleItem: {
+				// DisplayName: Shadow Sickle Item
+				// Tooltip: ""
+			}
+
+			BeetleIdolItem: {
+				// DisplayName: Beetle Idol Item
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -11820,6 +11850,8 @@ Mods: {
 			// OolacileDemonAcidPool.DisplayName: Oolacile Demon Acid Pool
 			// OolacileDemonBreath.DisplayName: Oolacile Demon Breath
 			// PinwheelBallOfFire.DisplayName: Pinwheel Ball Of Fire
+			// AshenLordDragon.DisplayName: Ashen Lord Dragon
+			// ASOL13Dragon.DisplayName: A S O L13 Dragon
 		}
 
 		NPCs: {

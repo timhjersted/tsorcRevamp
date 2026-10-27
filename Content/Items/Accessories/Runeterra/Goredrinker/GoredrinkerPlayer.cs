@@ -3,7 +3,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra.Summon;
 
 namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker
 {
@@ -28,7 +27,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker
                             Player.statLifeMax2 / Player.statLife), 20) / (int)((float)Hits * 1.5f + 1), 1);
                 Player.statLife += heal;
                 Player.HealEffect(heal);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerHit") with { Volume = 0.25f }, target.Center);
+                SoundEngine.PlaySound(new SoundStyle( UsefulFunctions.RefactorableFilepath(typeof(GoredrinkerItem)) + "_Hit") with { Volume = 0.25f }, target.Center);
                 Hits++;
             }
             else if (Equipped && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()))

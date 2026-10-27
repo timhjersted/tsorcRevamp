@@ -3,11 +3,9 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
 
-namespace tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker
+namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker
 {
     public class GoredrinkerProjectile : GlobalProjectile
     {
@@ -22,7 +20,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker
                     && ProjectileID.Sets.IsAWhip[projectile.type] && !modGlobalProjectile.IsModded) //Modded whips have this in their code itself because some of them can be charged
                 {
                     modPlayer.Swung = true;
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = .3f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(GoredrinkerItem)) + "_Swing") with { Volume = .3f }, player.Center);
                 }
             }
         }

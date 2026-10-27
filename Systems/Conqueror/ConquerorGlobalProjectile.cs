@@ -2,7 +2,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker;
 
 namespace tsorcRevamp.Systems.Conqueror;
 
@@ -19,22 +18,22 @@ public class ConquerorGlobalProjectile : GlobalProjectile
             {
                 if (modPlayer.Stacks < ConquerorPlayer.MaxStacks - 1 && !whipTipHitPlayer.Check(projectile, projectile.WhipPointsForCollision, target.Hitbox))
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with 
+                    SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(Conqueror)) + "_Stack") with 
                         { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, player.Center);
                 }
                 else if (modPlayer.Stacks < ConquerorPlayer.MaxStacks - 2 && !whipTipHitPlayer.Check(projectile, projectile.WhipPointsForCollision, target.Hitbox))
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with 
+                    SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(Conqueror)) + "_Stack") with 
                         { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.008f }, player.Center);
                 }
                 else if (modPlayer.Stacks == ConquerorPlayer.MaxStacks - 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with 
+                    SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(Conqueror)) + "_FullyStacked") with 
                         { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
                 }
                 else if (modPlayer.Stacks == ConquerorPlayer.MaxStacks - 2 && whipTipHitPlayer.Check(projectile, projectile.WhipPointsForCollision, target.Hitbox))
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with 
+                    SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(Conqueror)) + "_FullyStacked") with 
                         { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
                 }
                 player.AddBuff(ModContent.BuffType<Conqueror>(), ConquerorPlayer.Duration * 60);
@@ -48,12 +47,12 @@ public class ConquerorGlobalProjectile : GlobalProjectile
             {
                 if (modPlayer.Stacks < ConquerorPlayer.MaxStacks - 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with 
+                    SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(Conqueror)) + "_Stack") with 
                         { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, player.Center);
                 }
                 else if (modPlayer.Stacks == ConquerorPlayer.MaxStacks - 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with 
+                    SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(Conqueror)) + "_FullyStacked") with 
                         { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, player.Center);
                 }
                 player.AddBuff(ModContent.BuffType<Conqueror>(), ConquerorPlayer.Duration * 60);

@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.ShadowSickle;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
@@ -55,7 +56,7 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int BodyArmorItemType => ModContent.ItemType<ShadowNinjaTop>();
         protected override int LegsArmorItemType => ModContent.ItemType<ShadowNinjaBottoms>();
 
-        protected override int MeleeWeaponItemType => ModContent.ItemType<ShadowSickle>();
+        protected override int MeleeWeaponItemType => ModContent.ItemType<ShadowSickleItem>();
         protected override int RangedWeaponItemType => ModContent.ItemType<EnemyNinjaStar>();
         protected override int SecondaryRangedWeaponItemType => ModContent.ItemType<EnemyPoisonBow>();
         protected override int MagicWeaponItemType => ModContent.ItemType<EnemyCaltrop>();

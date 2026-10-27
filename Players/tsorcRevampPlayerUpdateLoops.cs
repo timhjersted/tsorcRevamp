@@ -190,14 +190,6 @@ namespace tsorcRevamp
         public bool MythrilOrichalcumCritDamage = false;
         public bool PilgrimSpontoonBuff = false;
 
-        public int RuneterraMinionHitSoundCooldown = 0;
-        public bool Turboboost = false;
-        public int TurboboostControlsCooldown = 0; //so you don't accidentally active it while trying to adjust radius
-        public int MinimumMinionCircleRadius = 150;
-        public int MaximumMinionCircleRadius = 500;
-        public float MinionCircleRadius = 150;
-        public int CenterOfTheUniverseStardustCount = 0;
-
         public float CrystalNunchakuDefenseDamage;
 
         public float DragoonLashFireBreathTimer = 0f;

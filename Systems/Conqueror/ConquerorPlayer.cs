@@ -58,12 +58,12 @@ public class ConquerorPlayer : ModPlayer
         {
             if (Stacks < MaxStacks - 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with 
+                SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(Conqueror)) + "_Stack") with 
                     { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, Player.Center);
             }
             else if (Stacks == MaxStacks - 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with 
+                SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(Conqueror)) + "_FullyStacked") with 
                     { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, Player.Center);
             }
             Player.AddBuff(ModContent.BuffType<Conqueror>(), Duration * 60);
@@ -73,12 +73,12 @@ public class ConquerorPlayer : ModPlayer
         {
             if (Stacks < MaxStacks - 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with 
+                SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(Conqueror)) + "_Stack") with 
                     { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, Player.Center);
             }
             else if (Stacks == MaxStacks - 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with 
+                SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(Conqueror)) + "_FullyStacked") with 
                     { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.007f }, Player.Center);
             }
             Player.AddBuff(ModContent.BuffType<Conqueror>(), Duration * 60);

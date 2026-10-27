@@ -316,6 +316,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
         {
             Player player = Main.player[projectile.owner];
             var modPlayer = player.GetModPlayer<RuneterraDartsPlayer>();
+            var globalNPC = target.GetGlobalNPC<RuneterraDartsNPC>();
             bool isPoisonDart = projectile.type == ProjectileID.PoisonDartBlowgun;
             if (isPoisonDart)
             {
@@ -328,8 +329,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
                     else
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/ShotHit") with { Volume = 0.5f }, target.Center);
-                    }
-                    target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
+                    } 
+                    globalNPC.LastHitter = Main.player[projectile.owner];
                     target.AddBuff(ModContent.BuffType<VenomDebuff>(), 2 * 60);
                 } 
                 else if (modPlayer.AlienScoutsHeldItem)
@@ -342,7 +343,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/ShotHit") with { Volume = 0.5f }, target.Center);
                     }
-                    target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
+                    globalNPC.LastHitter = Main.player[projectile.owner];
                     target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 2 * 60);
                 }
                 else if (modPlayer.OmegaScoutsHeldItem)
@@ -355,7 +356,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShotHit") with { Volume = 0.5f }, target.Center);
                     }
-                    target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
+                    globalNPC.LastHitter = Main.player[projectile.owner];
                     target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 2 * 60);
                 }
             }

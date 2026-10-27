@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Summon.BeetleIdol.Projectiles;
 using tsorcRevamp.Content.Projectiles.Summon.SamuraiBeetle;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon

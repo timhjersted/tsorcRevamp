@@ -47,7 +47,7 @@ namespace tsorcRevamp.Content.Projectiles.Ranged.Runeterra
             {
                 SoundEngine.PlaySound(new SoundStyle(SoundPath + "ShotHit") with { Volume = 0.5f });
             }
-            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
+            target.GetGlobalNPC<RuneterraDartsNPC>().LastHitter = Main.player[Projectile.owner];
             target.AddBuff(DebuffType, ToxicShot.DebuffDuration * 60);
         }
     }

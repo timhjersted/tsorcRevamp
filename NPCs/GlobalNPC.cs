@@ -16,7 +16,6 @@ using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
@@ -47,7 +46,11 @@ using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Ahri;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon.BeetleIdol;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Buffs;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
 using tsorcRevamp.Content.Projectiles;
@@ -168,9 +171,6 @@ namespace tsorcRevamp.NPCs
         /// <summary>True for a temporary combat duplicate left behind by a MagicIllusion teleport.</summary>
         public bool IsTeleportIllusion;
         public int TeleportIllusionTimeLeft;
-        public Player lastHitPlayerSummoner = Main.LocalPlayer;
-        public Player lastHitPlayerRanger = Main.LocalPlayer;
-        public Player lastHitPlayerShadowSickle = Main.LocalPlayer;
 
         public float SummonTagFlatDamage;
         public float SummonTagCriticalStrikeChance;
@@ -212,16 +212,6 @@ namespace tsorcRevamp.NPCs
         public int NightsCrackerStacks = 0;
         public int TerraFallStacks = 0;
 
-        public bool Scorched;
-        public int ScorchMarks = 0;
-        public float SuperScorchDuration = 0f;
-        public bool Shocked;
-        public int ShockMarks = 0;
-        public float SuperShockDuration = 0f;
-        public bool Sunburnt;
-        public bool Awestruck;
-        public int SunburnMarks = 0;
-        public float SuperSunburnDuration = 0f;
 
         //Stores the event this NPC belongs to
         public ScriptedEvent ScriptedEventOwner;
@@ -250,7 +240,6 @@ namespace tsorcRevamp.NPCs
         public bool MorgulPoisoning;
         public bool WitchkingCurse;
         public bool AbyssalSinking;
-        public bool CCShocked;
         public bool CrimsonBurn;
         public bool ToxicCatDrain;
         public bool ResetToxicCatBlobs;
@@ -271,7 +260,6 @@ namespace tsorcRevamp.NPCs
 
         public int LionheartMarks = 0;
 
-        public bool Sundered;
 
         public bool Venomized;
         public bool Electrified;
@@ -1740,7 +1728,6 @@ namespace tsorcRevamp.NPCs
             MorgulPoisoning = false;
             WitchkingCurse = false;
             AbyssalSinking = false;
-            CCShocked = false;
             CrimsonBurn = false;
             ToxicCatDrain = false;
             ResetToxicCatBlobs = false;
@@ -1783,10 +1770,6 @@ namespace tsorcRevamp.NPCs
             markedByMorningStar = false;
             markedByDarkHarvest = false;
             markedByKaleidoscope = false;
-            Sundered = false;
-            Scorched = false;
-            Shocked = false;
-            Sunburnt = false;
             Insane = false;
         }
 
@@ -3361,10 +3344,6 @@ namespace tsorcRevamp.NPCs
             {
                 modifiers.Defense.Flat -= CrimsonPotion.DefenseReduction;
             }
-            if (Sundered && modifiers.DamageType == DamageClass.Magic)
-            {
-                modifiers.FinalDamage *= 1f + OrbOfFlame.MagicSunder / 100f;
-            }
             if (AbyssalSinking)
             {
                 modifiers.FinalDamage *= 1.09f;
@@ -4166,9 +4145,6 @@ namespace tsorcRevamp.NPCs
             return base.CanBeHitByProjectile(npc, projectile);
         }
         Texture2D LionheartMarksSprite;
-        Texture2D ScorchMarksSprite;
-        Texture2D ShockMarksSprite;
-        Texture2D SunburnMarksSprite;
         public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
         {
             if (!ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyHealthBars)
@@ -4219,123 +4195,6 @@ namespace tsorcRevamp.NPCs
                         }
                 }
                 Main.EntitySpriteDraw(LionheartMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, npc.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks * LionheartMarksSprite.Height / 5 - 100), LionheartSourceRectangle, Color.White, 0, LionheartSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
-            }
-            if (npc.HasBuff(ModContent.BuffType<ScorchingDebuff>()) && npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks > 0)
-            {
-                ScorchMarksSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Buffs/Runeterra/Summon/ScorchingMarkVisual");
-                Rectangle ScorchingMarkSourceRectangle = new Rectangle(0, 0 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                switch (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks)
-                {
-                    case 1:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 5 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 2:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 4 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 3:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 3 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 4:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 2 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 5:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 1 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 6:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 0 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                }
-                Main.EntitySpriteDraw(ScorchMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, ScorchMarksSprite.Height / 6 * ScorchMarks - 100), ScorchingMarkSourceRectangle, Color.White, 0, ScorchingMarkSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
-            }
-            if (npc.HasBuff(ModContent.BuffType<ShockedDebuff>()) && npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks > 0)
-            {
-                ShockMarksSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Buffs/Runeterra/Summon/ShockedMarkVisual");
-                Rectangle ShockedMarkSourceRectangle = new Rectangle(0, 0 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                switch (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks)
-                {
-                    case 1:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 5 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 2:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 4 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 3:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 3 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 4:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 2 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 5:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 1 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 6:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 0 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                }
-                Main.EntitySpriteDraw(ShockMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, ShockMarksSprite.Height / 6 * ShockMarks - 100), ShockedMarkSourceRectangle, Color.White, 0, ShockedMarkSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
-            }
-            if (npc.HasBuff(ModContent.BuffType<SunburnDebuff>()) && npc.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks > 0)
-            {
-                SunburnMarksSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Buffs/Runeterra/Summon/SunburntMarkVisual");
-                Rectangle SunburnMarkSourceRectangle = new Rectangle(0, 0 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                switch (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks)
-                {
-                    case 1:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 5 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 2:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 4 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 3:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 3 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 4:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 2 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 5:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 1 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 6:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 0 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6); 
-                            break;
-                        }
-                }
-                Main.EntitySpriteDraw(SunburnMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, SunburnMarksSprite.Height / 6 * SunburnMarks - 100), SunburnMarkSourceRectangle, Color.White, 0, SunburnMarkSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
             }
 
             if (DodgeTimer > 0 && !SuppressDodgeBlink && Main.GameUpdateCount % 10 < 5)
@@ -4528,53 +4387,29 @@ namespace tsorcRevamp.NPCs
                 dotBase = MagmaHelmet.BaseDoT;
                 DoTPerS += DoDamageOverTime(npc, dotBase, false, true);
             }
-            if (Venomized)
-            {
-                dotBase = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)ToxicShot.BaseDamage * 1.5f) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)ToxicShot.BaseDamage * 1.5f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, false, false);
-            }
 
-            if (Electrified)
-            {
-                dotBase = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)AlienGun.BaseDamage * 1.5f) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)AlienGun.BaseDamage * 1.5f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, false, false);
-            }
+            var runeterraDartsNPC = npc.GetGlobalNPC<RuneterraDartsNPC>();
 
-            if (Irradiated)
-            {
-                dotBase = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)OmegaSquadRifle.BaseDamage * 1.5f) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)OmegaSquadRifle.BaseDamage * 1.5f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, true, false);
-            }
+            DoTPerS += runeterraDartsNPC.DoDOT(npc, Venomized, ToxicShot.BaseDamage);
 
-            if (IrradiatedByShroom)
-            {
-                dotBase = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)OmegaSquadRifle.BaseDamage * 2.28f) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)OmegaSquadRifle.BaseDamage * 2.28f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, true, false);
-            }
+            DoTPerS += runeterraDartsNPC.DoDOT(npc, Electrified, AlienGun.BaseDamage);
 
-            if (Scorched && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
-            {
-                dotBase = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)ScorchingPoint.BaseDmg / 3f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, false, true);
-            }
+            DoTPerS += runeterraDartsNPC.DoDOT(npc, Irradiated, OmegaSquadRifle.BaseDamage, true);
 
-            if (Shocked && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
-            {
-                dotBase = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)InterstellarVesselGauntlet.BaseDmg / 3f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, false, false);
-            }
+            DoTPerS += runeterraDartsNPC.DoDOT(npc, IrradiatedByShroom, OmegaSquadRifle.BaseDamage * 1.5f);
 
-            if (Sunburnt && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
-            {
-                dotBase = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)CenterOfTheUniverse.BaseDmg / 3f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, true, true);
-            }
+            var runeterraGauntletNPC = npc.GetGlobalNPC<RuneterraGauntletNPC>();
+            
+            DoTPerS += runeterraGauntletNPC.DoDOT(npc, runeterraGauntletNPC.Scorched, ScorchingPoint.BaseDmg, false);
 
-            if (Awestruck && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
-            {
-                dotBase = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)CenterOfTheUniverse.BaseDmg);
-                DoTPerS += DoDamageOverTime(npc, dotBase, true, false);
-            }
+            DoTPerS += runeterraGauntletNPC.DoDOT(npc, runeterraGauntletNPC.Shocked, InterstellarVesselGauntlet.BaseDmg,
+                false, false);
+
+            DoTPerS += runeterraGauntletNPC.DoDOT(npc, runeterraGauntletNPC.Sunburnt, CenterOfTheUniverse.BaseDmg, true,
+                true);
+
+            DoTPerS += runeterraGauntletNPC.DoDOT(npc, runeterraGauntletNPC.Awestruck, CenterOfTheUniverse.BaseDmg * 3,
+                true, true);
 
             if (DarkInferno)
             {
@@ -4637,11 +4472,8 @@ namespace tsorcRevamp.NPCs
                 npc.velocity *= 0.98f;
             }
 
-            if (CCShocked)
-            {
-                dotBase = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(BeetleIdol.BaseDoT);
-                DoTPerS += DoDamageOverTime(npc, dotBase, true, false);
-            }
+            var beetleIdolNPC = npc.GetGlobalNPC<BeetleIdolNPC>();
+            beetleIdolNPC.DoDOT(npc, beetleIdolNPC.CCShocked, BeetleIdolItem.BaseDoT, true);
 
             if (PhazonCorruption)
             {

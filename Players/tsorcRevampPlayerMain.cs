@@ -22,14 +22,12 @@ using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
-using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.WolfRing;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Accessories.Other;
-using tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker;
 using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Armor.Melee;
@@ -58,6 +56,9 @@ using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Buffs;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
@@ -1651,81 +1652,6 @@ namespace tsorcRevamp
                 }
                 #endregion
 
-
-                #region Turboboost
-                bool holdingControlsAndOrSummonWeapon = (player.HasItem(ModContent.ItemType<InterstellarVesselGauntlet>()) || player.HasItem(ModContent.ItemType<CenterOfTheUniverse>())) 
-                                                        && (player.HeldItem.DamageType == DamageClass.SummonMeleeSpeed || player.HeldItem.DamageType == DamageClass.Summon);
-                bool hasBuff = player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                bool hasBoost = player.HasBuff(ModContent.BuffType<Turboboost>())
-                                          || player.HasBuff(ModContent.BuffType<TurboboostUniversal>());
-                bool hasCooldown = player.HasBuff(ModContent.BuffType<TurboboostCooldown>())
-                                   || player.HasBuff(ModContent.BuffType<TurboboostUniversalCooldown>());
-                
-                if (holdingControlsAndOrSummonWeapon && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) 
-                    && !hasBoost && !hasCooldown && TurboboostControlsCooldown < 0)
-                {
-                    bool hasCenterOfTheUniverse = player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                    
-                    if (!hasCenterOfTheUniverse)
-                    {
-                        player.AddBuff(ModContent.BuffType<Turboboost>(), RuneterraGauntlets.BoostDuration * 60);
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });
-                    }
-
-                    if (hasCenterOfTheUniverse)
-                    {
-                        player.AddBuff(ModContent.BuffType<TurboboostUniversal>(), RuneterraGauntlets.BoostDuration * 60);
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation") with { Volume = CenterOfTheUniverse.SoundVolume });
-                    }
-                }
-                else if (holdingControlsAndOrSummonWeapon && hasBuff 
-                         && !(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && hasBoost)
-                {
-                    bool hasCenterOfTheUniverse = player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                    
-                    if (!hasCenterOfTheUniverse)
-                    {
-                        int buffIndex = player.FindBuffIndex(ModContent.BuffType<Turboboost>());
-                        Buffs.Runeterra.Summon.Turboboost.OnRemoval(buffIndex, player);
-                        player.DelBuff(buffIndex);
-                    }
-
-                    if (hasCenterOfTheUniverse)
-                    {
-                        int buffIndex = player.FindBuffIndex(ModContent.BuffType<TurboboostUniversal>());
-                        Buffs.Runeterra.Summon.TurboboostUniversal.OnRemoval(buffIndex, player);
-                        player.DelBuff(buffIndex);
-                    }
-                }
-                #endregion
-
-            }
-
-
-
-            if (tsorcRevamp.specialAbility.Current && (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) 
-                                                   && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() 
-                                                       || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() 
-                                                       || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()))
-            {
-                if (player.direction == 1)
-                {
-                    MinionCircleRadius -= 1.5f;
-                    if (MinionCircleRadius < MinimumMinionCircleRadius)
-                    {
-                        MinionCircleRadius = MinimumMinionCircleRadius;
-                    }
-                }
-                else
-                {
-                    MinionCircleRadius += 1.5f;
-                    if (MinionCircleRadius > MaximumMinionCircleRadius)
-                    {
-                        MinionCircleRadius = MaximumMinionCircleRadius;
-                    }
-                }
-                Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
-                TurboboostControlsCooldown = 61; //so you don't accidentally activate Interstellar Boost when you jsut wanted to adjust the circle radius
             }
         }
 

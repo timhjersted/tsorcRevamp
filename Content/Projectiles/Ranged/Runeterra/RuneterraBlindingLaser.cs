@@ -45,7 +45,7 @@ namespace tsorcRevamp.Content.Projectiles.Ranged.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             SoundEngine.PlaySound(new SoundStyle(SoundPath + "BlindingLaserHit") with { Volume = 1f });
-            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
+            target.GetGlobalNPC<RuneterraDartsNPC>().LastHitter = Main.player[Projectile.owner];
             target.AddBuff(DebuffType, ToxicShot.DebuffDuration * 60);
             target.AddBuff(BuffID.Confused, ToxicShot.DebuffDuration * 60);
         }

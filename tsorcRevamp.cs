@@ -27,7 +27,6 @@ using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
 using tsorcRevamp.Banners;
-using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.NPCs.Bosses.Death;
@@ -98,8 +97,14 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Hammers;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon.BeetleIdol;
+using tsorcRevamp.Content.Items.Weapons.Summon.BeetleIdol.Projectiles;
 using tsorcRevamp.Content.Items.Weapons.Summon.NullSpriteStaff;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Buffs;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Projectiles.CirclingProjectiles;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.DarkCloud;
@@ -116,7 +121,6 @@ using tsorcRevamp.Content.Projectiles.Summon.Archer;
 using tsorcRevamp.Content.Projectiles.Summon.EtherianWyvern;
 using tsorcRevamp.Content.Projectiles.Summon.Phoenix;
 using tsorcRevamp.Content.Projectiles.Summon.PhotonicDownpour;
-using tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles;
 using tsorcRevamp.Content.Projectiles.Summon.SamuraiBeetle;
 using tsorcRevamp.Content.Projectiles.Summon.ShatteredReflection;
 using tsorcRevamp.Content.Projectiles.Summon.SunsetQuasar;
@@ -2517,7 +2521,7 @@ namespace tsorcRevamp
                 case tsorcPacketID.SyncMinionRadius:
                     {
                         byte player = reader.ReadByte(); //player.whoAmI
-                        tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
+                        var modPlayer = Main.player[player].GetModPlayer<RuneterraGauntletPlayer>();
                         modPlayer.MinionCircleRadius = reader.ReadSingle();
                         modPlayer.Turboboost = reader.ReadBoolean();
                         //modPlayer.CursorPosition = reader.ReadVector2();
@@ -3252,7 +3256,7 @@ namespace tsorcRevamp
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
-                    ModContent.ItemType<BeetleIdol>(),
+                    ModContent.ItemType<BeetleIdolItem>(),
                     ModContent.BuffType<SamuraiBeetleBuff>(),
                     new Dictionary<string, object>()
                     {

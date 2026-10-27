@@ -55,7 +55,7 @@ namespace tsorcRevamp.Content.Projectiles.Ranged.Runeterra
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
+            target.GetGlobalNPC<RuneterraDartsNPC>().LastHitter = Main.player[Projectile.owner];
             target.AddBuff(ModContent.BuffType<IrradiatedByShroomDebuff>(), OmegaSquadRifle.ShroomIrradiationDuration * 60);
         }
     }
