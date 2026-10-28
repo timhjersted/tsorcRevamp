@@ -1,570 +1,198 @@
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
-using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.Accessories.Other;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Potions;
-using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.DemonFamily;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
+    // Defiled Demon — late pre-HM boss near the Fire Temple, tier 2 of the demon family (shared AI in DemonBase.cs).
+    // Element: black flame with curse-pink accents; every hit builds Curse (breath +10, lob/fountain +15, punisher +20,
+    // contact +25 — a full curse at ~4–7 hits). Phase 2 adds the base's reversed second breath sweep.
+    // Signature: Fire Fountain — eight shells thrown up off its shoulders that hang overhead, glint, and dive at the player
+    // one by one, while it walks again underneath them.
     [AutoloadBossHead]
-    class DefiledDemon : ModNPC, IHitReactor
+    class DefiledDemon : DemonBase
     {
-        int meteorDamage = 16;
-        int cultistFireDamage = 36;
-        int cultistMagicDamage = 50;
-        int betsyFireballDamage = 43;
-        int fireBreathDamage = 21;
-        int lostSoulDamage = 32;
+        // Fire Fountain: 45t tell → burst of 4 shells at tick 46 and 4 more at 66 → 40t recovery (ends at 106; the shells
+        // keep falling after it walks off). Each shell rises at -8 px/t (apex ≈ 40t, 10 tiles up), hangs, and shell i dives
+        // at FountainFirstDropDelay + i·FountainDropInterval after the first burst: drops 116..200, 12t apart.
+        const int FountainTellTicks = 45;
+        const int FountainBurstGap = 20;
+        const int FountainShellsPerBurst = 4;
+        const int FountainRecoveryTicks = 40;
+        const int FountainFirstDropDelay = 70; // 40t rise + 30t hang
+        const int FountainDropInterval = 12;
+        const float FountainLaunchSpeed = 8f;
+        const float FountainSpreadSpeed = 1.2f; // vx per shell slot: -1.8 .. +1.8 px/t across the four
+        const int FountainHeadroomTiles = 12;
+        const float FountainMaxRange = 640f;
 
-        int greatFireballDamage = 33;
-        int blackFireDamage = 24;
-        int greatAttackDamage = 31;
-        public override void SetStaticDefaults()
-        {
-            Main.npcFrameCount[NPC.type] = 16;
-            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
-            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
-            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
-        }
+        int fountainDamage;
+
+        protected override DemonTier Tier => DemonTier.Defiled;
 
         public override void SetDefaults()
         {
-            AnimationType = 28;
-            NPC.height = 120;
             NPC.width = 50;
-            NPC.damage = 27;
+            NPC.height = 120;
+            NPC.damage = 55;
             NPC.defense = 15;
             NPC.lifeMax = 10000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 76000;
-            NPC.knockBackResist = 0;
-            NPC.lavaImmune = true;
             NPC.boss = true;
-            NPC.rarity =14;
-            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.DefiledDemon.DespawnHandler"), Color.Gold, DustID.GoldFlame);
-            // Step 6 boss lever: blink aggressively the moment it loses LOS (keeps arena pressure).
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportStyle = NPCs.TeleportStyle.Aggressive;
+            NPC.rarity = 14;
+            SetSharedDefaults();
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.DefiledDemon.DespawnHandler"), Color.HotPink, DustID.PinkTorch);
         }
 
-        NPCDespawnHandler despawnHandler;
-
-        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
-            target.AddBuff(BuffID.Poisoned, 10 * 60, false);
-            target.AddBuff(BuffID.Bleeding, 10 * 60, false);
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false); //reduced defense on hit
-            CurseBuildup.ApplyExplicit(target, 20, 300 * 60); //-20 HP after several hits
+        }
 
-            if (Main.rand.NextBool(2))
+        protected override void InitializeStats()
+        {
+            breathDamage = 21;
+            lobDamage = 22;
+            punisherDamage = 26;
+            fountainDamage = 22;
+        }
+
+        protected override void AddSignatureCards(List<DemonAttack> cards, bool isPhaseTwo)
+        {
+            cards.Add(DemonAttack.FireFountain);
+        }
+
+        protected override bool IsSignatureOpen(DemonAttack attack, float distance, bool lineOfSight)
+        {
+            if (attack == DemonAttack.FireFountain)
             {
-                target.AddBuff(BuffID.Weak, 10 * 60, false);
+                return distance <= FountainMaxRange && HasHeadroom(FountainHeadroomTiles);
             }
+
+            return false;
         }
 
-
-        public Player player
+        protected override void TickSignature(Player target)
         {
-            get => Main.player[NPC.target];
-        }
-        //PROJECTILE HIT LOGIC
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            tsorcRevampAIs.FighterOnHit(NPC, true);
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, true);
-        }
-
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, false);
-        }
-
-        /// <summary>Punished for standing still: in melee it may blink out, and inside the "risk zone" (300px) it
-        /// shoves itself backwards; from range it blinks more rarely and hops back instead. localAI[1] is its own
-        /// post-hit lockout, so the reactions can't chain every frame of a combo. Server/singleplayer only (see
-        /// IHitReactor) — the rolls and QueueTeleport belong on the machine that owns this NPC, and distance is
-        /// measured to its current target rather than to whoever landed this particular hit.</summary>
-        void IHitReactor.OnServerHit(NPC npc, bool melee)
-        {
-            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
-
-            if (melee)
+            if (State == DemonAttack.FireFountain)
             {
-                //MELEE RANGE
-                if (npc.Distance(player.Center) < 100 && npc.localAI[1] < 70f)
-                {
-                    npc.localAI[1] = 50f;
+                TickFireFountain(target);
+                return;
+            }
 
-                    //TELEPORT MELEE
-                    if (Main.rand.NextBool(5) && globalNPC.TeleportCountdown == 0)
-                    {
-                        tsorcRevampAIs.QueueTeleport(npc, 25, true);
-                    }
+            EndAttack();
+        }
+
+        void TickFireFountain(Player target)
+        {
+            int firstBurstTick = FountainTellTicks + 1;
+            int secondBurstTick = firstBurstTick + FountainBurstGap;
+
+            // Tell: black smoke boils up off its shoulders with curse-pink sparks, the body flushing pink; growl at tick 1.
+            if (AttackTimer <= FountainTellTicks)
+            {
+                Poise.AttackCommitted = true;
+                NPC.velocity.X *= 0.85f;
+                FaceTowards(target.Center.X);
+
+                if (AttackTimer == 1)
+                {
+                    PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/low-dragon-growl") with { Volume = 0.6f, Pitch = 0.2f });
                 }
 
-                //RISK ZONE
-                if (npc.Distance(player.Center) < 300 && npc.localAI[1] < 70f && Main.rand.NextBool(5))
+                float progress = AttackTimer / (float)FountainTellTicks;
+                bodyFlash = progress * 0.5f;
+
+                // Wraith (black) columns rising from a 60px-wide band across the shoulders, 1 in 3 with a pink accent.
+                if (!Main.dedServ)
                 {
-                    npc.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
-                    npc.velocity.X += npc.direction * Main.rand.NextFloat(-10f, -7f);
-                    npc.netUpdate = true;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Vector2 spot = Horns + new Vector2(Main.rand.NextFloat(-30f, 30f), Main.rand.NextFloat(0f, 20f));
+                        Vector2 riseVelocity = new Vector2(Main.rand.NextFloat(-0.4f, 0.4f), -Main.rand.NextFloat(2f, 4f) * (0.5f + progress));
+                        Dust smoke = Dust.NewDustPerfect(spot, DemonElement.FlameDust(Tier), riseVelocity, 60, default, MathHelper.Lerp(1.2f, 2f, progress));
+                        smoke.noGravity = true;
+                    }
+
+                    if (Main.rand.NextBool(3))
+                    {
+                        DemonElement.SpawnAccent(Tier, Horns - new Vector2(30f, 0f), 60, 16, new Vector2(0f, -3f), 1.3f);
+                    }
+
+                    Lighting.AddLight(Horns, DemonElement.LightColor(Tier) * (0.4f + progress));
                 }
 
                 return;
             }
 
-            //TELEPORT RANGED
-            if (Main.rand.NextBool(12) && globalNPC.TeleportCountdown == 0)
+            bool firstBurst = AttackTimer == firstBurstTick;
+            bool secondBurst = AttackTimer == secondBurstTick;
+
+            if (firstBurst || secondBurst)
             {
-                tsorcRevampAIs.QueueTeleport(npc, 20, true);
-                npc.localAI[1] = 70f;
+                PlaySound(SoundID.Item45 with { Volume = 0.7f, Pitch = -0.4f });
+                EmitBurst(Horns, 18, 4f);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int firstShell = 0;
+                    if (secondBurst)
+                    {
+                        firstShell = FountainShellsPerBurst;
+                    }
+
+                    // Shell i's drop tick is measured from its own spawn, so the second burst's shells subtract the gap.
+                    int burstOffset = AttackTimer - firstBurstTick;
+
+                    for (int slot = 0; slot < FountainShellsPerBurst; slot++)
+                    {
+                        int shellIndex = firstShell + slot;
+                        float spreadX = (slot - 1.5f) * FountainSpreadSpeed;
+                        Vector2 velocity = new Vector2(spreadX, -FountainLaunchSpeed + Main.rand.NextFloat(-0.4f, 0.4f));
+                        float dropTick = FountainFirstDropDelay + shellIndex * FountainDropInterval - burstOffset;
+                        Vector2 spawn = Horns + new Vector2(spreadX * 8f, 0f);
+
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), spawn, velocity, ModContent.ProjectileType<DemonFireball>(), fountainDamage, 0f, Main.myPlayer, (float)Tier, DemonFireball.ModeFountain, dropTick);
+                    }
+                }
+
+                return;
             }
 
-            //RANGED
-            if (npc.Distance(player.Center) > 201 && npc.velocity.Y == 0f && Main.rand.NextBool(3))
+            // Between the bursts it stays armored; after the second, the recovery has none.
+            if (AttackTimer < secondBurstTick)
             {
-                npc.velocity.Y = Main.rand.NextFloat(-9f, -3f);
-                npc.velocity.X += npc.direction * Main.rand.NextFloat(11f, 8f);
-                npc.netUpdate = true;
+                Poise.AttackCommitted = true;
+                NPC.velocity.X *= 0.85f;
+                return;
+            }
+
+            NPC.velocity.X *= 0.9f;
+
+            if (AttackTimer >= secondBurstTick + FountainRecoveryTicks)
+            {
+                EndAttack();
             }
         }
 
-
-
-        //int breathTimer gives weird cool arrow shape, float does the circle
-        float breathTimer = 0;
-        int spawnedDemons = 0;
-        public override void AI()
-        {
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            int choice = Main.rand.Next(6);
-
-            //CHANCE TO JUMP BEFORE ATTACK  
-            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(40) && NPC.life >= NPC.lifeMax / 3)
-            {
-                NPC.velocity.Y = Main.rand.NextFloat(-9f, -6f);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
-                NPC.netUpdate = true;
-            }
-
-            if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(33) && NPC.life <= NPC.lifeMax / 3)
-            {
-                NPC.velocity.Y = Main.rand.NextFloat(-7f, -4f);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 1f);
-                NPC.netUpdate = true;
-
-            }
-
-            //play creature sounds
-            if (Main.rand.NextBool(1700))
-            {
-                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/low-dragon-growl") with { Volume = 0.5f }, NPC.Center);
-                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
-            }
-
-            NPC.localAI[1]++;
-            tsorcRevampAIs.FighterAI(NPC, 1, 0.1f, canTeleport: true, lavaJumping: true, canDodgeroll: false);
-
-            if (NPC.localAI[1] >= 179)
-            {
-                if (Main.rand.NextBool(220))
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 1f), ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17);
-                    NPC.localAI[1] = 0;
-                }
-                if (Main.rand.NextBool(20))
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 1f), ProjectileID.CultistBossFireBall, cultistFireDamage, 0.1f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit34);
-                    NPC.localAI[1] = 0;
-                }
-            }
-
-            //EARLY TELEGRAPH
-            if (NPC.localAI[1] >= 60)
-            {
-                Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(6))
-                {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 174, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 174, NPC.velocity.X, NPC.velocity.Y); 
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 174, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 174, NPC.velocity.X, NPC.velocity.Y); 
-
-
-                }
-            }
-            //LAST SECOND TELEGRAPH
-            if (NPC.localAI[1] >= 110)
-            {
-                Lighting.AddLight(NPC.Center, Color.Red.ToVector3() * 5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(2))
-                {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemRuby, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemRuby, NPC.velocity.X, NPC.velocity.Y); 
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemRuby, NPC.velocity.X, NPC.velocity.Y);
-                }
-            }
-
-            if (breathTimer == 350 && Main.rand.NextBool(3))
-            {
-                breathTimer = 1;
-            }
-            // NEW BREATH ATTACK 
-            breathTimer++;
-            if (breathTimer > 480)
-            {
-                NPC.localAI[1] = -50;
-                if (NPC.life >= NPC.lifeMax / 3)
-                { breathTimer = -60; }
-                if (NPC.life <= NPC.lifeMax / 3)
-                { breathTimer = -90; }
-
-            }
-
-            if (breathTimer == 470)
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.6f }, NPC.Center); //shadowflame hex (little beasty)
-            }
-
-            if (breathTimer < 0)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    //npc.velocity.Y = -1.1f;
-                    NPC.velocity.Y = Main.rand.NextFloat(-4f, -1.1f);
-                    NPC.velocity.X = 0f;
-
-                    //play breath sound
-                    if (Main.rand.NextBool(3))
-                    {
-
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //flame thrower
-                    }
-
-                    Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].OldPos(9), 9);
-                    breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-
-
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y - 40f, breathVel.X, breathVel.Y, ModContent.ProjectileType<FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
-                    NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
-                    NPC.localAI[1] = -50;
-                }
-            }
-
-            if (breathTimer == 361)
-            {
-                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/breath1") with { Volume = 0.5f }, NPC.Center);
-            }
-            if (breathTimer > 360)
-            {
-                NPC.localAI[1] = -50;
-                UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 120)), DustID.Torch, 48, 4);
-                Lighting.AddLight(NPC.Center * 2, Color.Red.ToVector3() * 5);
-            }
-
-            if (breathTimer == 0)
-            {
-                NPC.localAI[1] = -150;
-
-                NPC.velocity.X = 0f;
-
-            }
-
-            //PLAYER RUNNING AWAY? SPAWN DesertDjinnCurse, 
-            Player player3 = Main.player[NPC.target];
-            if (Main.rand.NextBool(60) && NPC.Distance(player3.Center) > 700)
-            {
-                Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true); 
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.FlamingWood, lostSoulDamage, 7f, Main.myPlayer);
-                }
-
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center); //wobble
-                NPC.localAI[1] = 1f;
-
-                NPC.netUpdate = true;
-            }
-
-
-            //SPAWN FIRE LURKER
-            if ((spawnedDemons < 6) && NPC.life >= NPC.lifeMax / 3 && Main.rand.NextBool(3500))
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.FireLurker>(), 0);
-                    Main.npc[Spawned].velocity.Y = -8;
-                    spawnedDemons++;
-                    if (Main.netMode == NetmodeID.Server)
-                    {
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                    }
-                }
-            }
-
-
-
-
-
-
-            //CHOICES
-            if (NPC.localAI[1] >= 160f && (choice == 0 || choice == 4) && NPC.life >= NPC.lifeMax / 3)
-            {
-                bool clearSpace = true;
-                for (int i = 0; i < 15; i++)
-                {
-                    if (UsefulFunctions.IsTileReallySolid((int)NPC.Center.X / 16, ((int)NPC.Center.Y / 16) - i))
-                    {
-                        clearSpace = false;
-                    }
-                }
-                //LOB ATTACK PURPLE; 
-                if (NPC.life >= NPC.lifeMax / 3 && NPC.life <= NPC.lifeMax / 3 * 2 && clearSpace)
-                {
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
-
-                    speed.Y += Main.rand.NextFloat(-2f, -6f);
-                    //speed += Main.rand.NextVector2Circular(-10, -8);
-                    if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int lob2 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, fireBreathDamage, 0f, Main.myPlayer);
-                        }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -.5f }, NPC.Center);
-
-                    }
-                    if (NPC.localAI[1] >= 195f)
-                    { NPC.localAI[1] = 1f; }
-                }
-                //LOB ATTACK >> BOUNCING FIRE
-                if (NPC.life >= NPC.lifeMax / 3 && clearSpace)
-
-                {
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
-                    speed.Y += Main.rand.NextFloat(2f, -2f);
-                    //speed += Main.rand.NextVector2Circular(-10, -8);
-                    if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, fireBreathDamage, 0f, Main.myPlayer);
-                        }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-
-                        if (NPC.localAI[1] >= 186f)
-                        { NPC.localAI[1] = 1f; }
-                    }
-
-                }
-
-            }
-
-
-            //MULTI-FIRE 1 ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life >= NPC.lifeMax / 3 && choice == 1)
-            {
-
-                Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(4), 7);
-                //speed.Y += Main.rand.NextFloat(2f, -2f); //just added
-                if (Main.rand.NextBool(3) && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<FireBreath>(), fireBreathDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-                }
-
-                if (NPC.localAI[1] >= 175f)
-                {
-                    NPC.localAI[1] = 1f;
-                }
-            }
-            //MULTI-BOUNCING DESPERATE FIRE ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life <= NPC.lifeMax / 3 && (choice == 1 || choice == 2))
-            {
-                Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 3);
-                speed.Y += Main.rand.NextFloat(2f, -2f);
-                if (Main.rand.NextBool(2) && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, cultistFireDamage, 3f, Main.myPlayer); //5f was 0f in the example that works
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center); //fire
-                }
-
-                if (NPC.localAI[1] >= 190f) //was 126
-                {
-                    NPC.localAI[1] = 1f;
-                }
-            }
-            // BETSY FIREBALL ATTACK
-            if (NPC.localAI[1] == 160f && NPC.life >= NPC.lifeMax / 6 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4))
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    float spawnOffsetY = -40f;
-                    float spawnOffsetX = 35f;
-
-                    for (int i = 0; i < 4; i++)
-                    {
-                        float posX = NPC.Center.X + (i - 1.5f) * spawnOffsetX;
-                        float posY = NPC.Center.Y + spawnOffsetY;
-
-                        Vector2 speed = new Vector2(0f, -7f);
-                        if (i < 2)
-                            speed.X = -2f - Main.rand.NextFloat(0f, 1f);
-                        else
-                            speed.X = 2f + Main.rand.NextFloat(0f, 1f);
-                        speed += Main.rand.NextVector2Circular(1.5f, 1.5f);
-
-                        int proj = Projectile.NewProjectile(
-                            NPC.GetSource_FromThis(),
-                            posX, posY,
-                            speed.X, speed.Y,
-                            ProjectileID.DD2BetsyFireball,
-                            betsyFireballDamage,
-                            0f,
-                            Main.myPlayer
-                        );
-
-                        Main.projectile[proj].timeLeft = 180;
-                    }
-
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-
-                    NPC.localAI[2] = 20f;
-                }
-
-                NPC.localAI[1] = -5f;
-            }
-
-            // Second
-            if (NPC.localAI[2] > 0)
-            {
-                NPC.localAI[2]--;
-                if (NPC.localAI[2] == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    float spawnOffsetY = -40f;
-                    float spawnOffsetX = 35f;
-
-                    for (int i = 0; i < 4; i++)
-                    {
-                        float posX = NPC.Center.X + (i - 1.5f) * spawnOffsetX;
-                        float posY = NPC.Center.Y + spawnOffsetY;
-
-                        Vector2 speed = new Vector2(0f, -7f);
-                        if (i < 2)
-                            speed.X = -2f - Main.rand.NextFloat(0f, 1f);
-                        else
-                            speed.X = 2f + Main.rand.NextFloat(0f, 1f);
-                        speed += Main.rand.NextVector2Circular(1.5f, 1.5f);
-
-                        int proj = Projectile.NewProjectile(
-                            NPC.GetSource_FromThis(),
-                            posX, posY,
-                            speed.X, speed.Y,
-                            ProjectileID.DD2BetsyFireball,
-                            betsyFireballDamage,
-                            0f,
-                            Main.myPlayer
-                        );
-
-                        Main.projectile[proj].timeLeft = 180;
-                    }
-
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-                }
-            }
-
-            /*JUMP DASH FOR FINAL
-			if (npc.localAI[1] == 140 && npc.velocity.Y == 0f && Main.rand.NextBool(20) && npc.life <= 1000)
-			{
-				int dust2 = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Blue, 1f);
-				Main.dust[dust2].noGravity = true;
-				npc.velocity.Y = Main.rand.NextFloat(-9f, -6f);
-				npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(2f, 1f);
-				npc.netUpdate = true;
-			}
-			*/
-            //FINAL JUNGLE FLAMES DESPERATE ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life <= NPC.lifeMax / 3 && (choice == 0 || choice == 3))
-            //if (Main.rand.NextBool(40))
-            {
-                Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(2))
-                {
-                    int dust3 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.OrangeRed, 1f);
-                    Main.dust[dust3].noGravity = true;
-                }
-                NPC.velocity.Y = Main.rand.NextFloat(-3f, -1f);
-
-                Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5); //last # is speed
-                speed += Main.rand.NextVector2Circular(-3, 3);
-                speed.Y += Main.rand.NextFloat(3f, -3f); //just added
-                if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<JungleWyvernFire>(), fireBreathDamage, 0f, Main.myPlayer); //5f was 0f in the example that works
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = 0.2f }, NPC.Center);
-                }
-
-                if (NPC.localAI[1] >= 185f) //was 206
-                {
-                    NPC.localAI[1] = -90f;
-                }
-
-
-                NPC.netUpdate = true;
-            }
-        }
-
-
-
-        public override void HitEffect(NPC.HitInfo hit)
-        {
-            if (NPC.life <= 0)
-            {
-                if (!Main.dedServ)
-                {
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 1").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 2").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 3").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 2").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Ancient Demon Gore 3").Type, 1f);
-                }
-            }
-        }
-        public override void OnKill()
-        {
-        }
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;
         }
+
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<AncientDemonBag>()));
@@ -576,7 +204,18 @@ namespace tsorcRevamp.NPCs.Bosses
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 1, 1, 2));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 1, 1, 2));
             npcLoot.Add(notExpertCondition);
-            //npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NoExpertFirstKillRule, ModContent.ItemType<DarkSoul>(), 1, 4000, 4000));
+        }
+
+        protected override void SpawnDeathGores()
+        {
+            int[] gores = { 1, 2, 3, 2, 3 };
+
+            for (int i = 0; i < gores.Length; i++)
+            {
+                Vector2 velocity = new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f);
+                int goreType = Mod.Find<ModGore>("Ancient Demon Gore " + gores[i]).Type;
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, velocity, goreType, 1f);
+            }
         }
     }
 }

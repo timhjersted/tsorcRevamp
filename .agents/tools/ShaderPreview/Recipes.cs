@@ -125,6 +125,15 @@ namespace ShaderPreview
                 Madness("MadnessThreadSky", "MadnessThreadPreview", new Vector2(400f, 12f), SkyBlue, new Vector4(0f, 1f, 33f, 0f)),
                 Madness("MadnessThreadCave", "MadnessThreadPreview", new Vector2(400f, 12f), CaveDark, new Vector4(0f, 1f, 33f, 0f)),
 
+                // Demon family fireball (Effects/DemonFireball.fx), palettes from DemonElement.FireballPalette. 22x34 = the lob
+                // quad DemonFireball.PreDraw draws (heavy shot is 38x58, same look); nose rotated to fly right.
+                DemonFireball("DemonFireOolacileSky", new Vector3(0.78f, 0.12f, 0.00f), new Vector3(0.30f, 0.35f, 0.02f), new Vector3(0.35f, 0.32f, 0.12f), SkyBlue),
+                DemonFireball("DemonFireOolacileCave", new Vector3(0.78f, 0.12f, 0.00f), new Vector3(0.30f, 0.35f, 0.02f), new Vector3(0.35f, 0.32f, 0.12f), CaveDark),
+                DemonFireball("DemonFireDefiledSky", new Vector3(0.05f, 0.01f, 0.04f), new Vector3(0.80f, 0.10f, 0.50f), new Vector3(0.45f, 0.30f, 0.40f), SkyBlue),
+                DemonFireball("DemonFireDefiledCave", new Vector3(0.05f, 0.01f, 0.04f), new Vector3(0.80f, 0.10f, 0.50f), new Vector3(0.45f, 0.30f, 0.40f), CaveDark),
+                DemonFireball("DemonFireAncientSky", new Vector3(0.06f, 0.00f, 0.00f), new Vector3(1.00f, 0.06f, 0.02f), new Vector3(0.50f, 0.25f, 0.12f), SkyBlue),
+                DemonFireball("DemonFireAncientCave", new Vector3(0.06f, 0.00f, 0.00f), new Vector3(1.00f, 0.06f, 0.02f), new Vector3(0.50f, 0.25f, 0.12f), CaveDark),
+
                 OwlFatherSolarArmor("OwlSolarArmorSky", SkyBlue),
                 OwlFatherSolarArmor("OwlSolarArmorCave", CaveDark),
                 OwlFatherSolarAxe("OwlSolarAxeSky", SkyBlue),
@@ -865,6 +874,35 @@ namespace ShaderPreview
                 PixelBlockSize = 2f,
                 Clear = clear,
                 Configure = (effect, progress, scale) => effect.Parameters["Extra"]?.SetValue(extra),
+            };
+        }
+
+        // DemonFireball.PreDraw call site: SmoothNoise quad, null source (full texture), premultiplied AlphaBlend, PixelGrid =
+        // drawSize / 2. Colours are passed as raw Vector3s (the call site's values exceed byte precision only trivially).
+        // The three Progress tiles stand in for three animation moments: Time advances 1.5s per tile.
+        private static Recipe DemonFireball(string name, Vector3 dark, Vector3 mid, Vector3 core, Color clear)
+        {
+            return new Recipe
+            {
+                Name = name,
+                Effect = "DemonFireball",
+                Technique = "DemonFireball",
+                Primary = "SmoothNoise",
+                Detail = "SmoothNoise",
+                DrawSize = new Vector2(22f, 34f),
+                Rotation = -MathHelper.PiOver2,
+                FullTexture = true,
+                Blend = BlendState.AlphaBlend,
+                PixelBlockSize = 2f,
+                Clear = clear,
+                Configure = (effect, progress, scale) =>
+                {
+                    effect.Parameters["DarkColor"].SetValue(dark);
+                    effect.Parameters["MidColor"].SetValue(mid);
+                    effect.Parameters["CoreColor"].SetValue(core);
+                    effect.Parameters["Seed"].SetValue(0.37f);
+                    effect.Parameters["Time"].SetValue(12.5f + progress * 3f);
+                },
             };
         }
 
