@@ -448,8 +448,8 @@ Mods: {
 			LichKing: 大地恶魔巫妖王已苏醒！
 			Hunter: 狩猎开始了...
 			Rage: 愤怒已苏醒！
-			AncientDemon: 你期望在这里找到什么，人类？...你 的 傲 慢 将 是 你 的 死 因...
-			AncientOolacileDemon: 你这个愚蠢的人类...可悲的傲慢...
+			DefiledDemon: 你期望在这里找到什么，人类？...你 的 傲 慢 将 是 你 的 死 因...
+			OolacileDemon: 你这个愚蠢的人类...可悲的傲慢...
 			GoblinSummoner1: 你太大意了，瑞德。你来这里是个傻瓜...
 			GoblinSummoner2: 你觉得你很聪明吗，瑞德？
 			BloodBossEvent1: 一只血鳗鱼前来将你吞噬...
@@ -705,7 +705,7 @@ Mods: {
 			LeonhardDesc: 探索双峰之间的吊桥...
 			VesselOfSoulsDesc: 寻找大地神庙令人不寒而栗的深处，找到喷泉汇集成一汪水塘的地方...
 			PinwheelDesc: 深入村庄入口附近的溺亡者地下墓穴...
-			AncientOolacileDemonDesc: 有传言提到了失落的乌拉席露森林...
+			OolacileDemonDesc: 有传言提到了失落的乌拉席露森林...
 			SlograAndGaibonName: 斯洛格拉和盖波
 			SlograAndGaibonDesc: 在黑曜石神庙深处找到它们...
 			// GravelordNitoDesc: A lord of the grave stirs beneath the dungeon.
@@ -1011,8 +1011,8 @@ Mods: {
 			}
 
 			AncientDemonOfTheAbyssBanner: {
-				DisplayName: "{$NPCs.AncientDemonOfTheAbyss.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AncientDemonOfTheAbyss.DisplayName}"
+				DisplayName: "{$NPCs.AncientDemon.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AncientDemon.DisplayName}"
 			}
 
 			ArchdeaconBanner: {
@@ -4329,14 +4329,14 @@ Mods: {
 				//    4  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded, optional major
 				//    5  [PHM] Brain of Cthulhu       (VanillaChanges.cs)                  — vanilla
 				//    6  [PHM] Eater of Worlds        (VanillaChanges.cs)                  — vanilla
-				//    7  [PHM] Ancient Oolacile Demon (Bosses/AncientOolacileDemon)        — modded
+				//    7  [PHM] Oolacile Demon        (Bosses/OolacileDemon)               — modded
 				//    8  [PHM] King Slime             (VanillaChanges.cs)                  — vanilla
 				//    9  [PHM] Slogra (+ Gaibon)      (Bosses/Slogra)                      — modded
 				//   10  [PHM] Queen Bee              (VanillaChanges.cs)                  — vanilla
 				//   11  [PHM] Skeletron             (VanillaChanges.cs)                   — vanilla
 				//   12  [PHM] Deerclops              (VanillaChanges.cs)                  — vanilla
 				//   13  [PHM] Jungle Wyvern          (Bosses/JungleWyvern/JungleWyvernHead) — modded
-				//   14  [PHM] Ancient Demon          (Bosses/AncientDemon)                — modded
+				//   14  [PHM] Defiled Demon          (Bosses/DefiledDemon)                — modded
 				//   15  [PHM] Wall of Flesh          (VanillaChanges.cs)                  — vanilla
 				//   16  [HM]  Queen Slime            (VanillaChanges.cs)                  — vanilla
 				//   17  [HM]  The Rage               (Bosses/TheRage)                     — modded
@@ -4382,7 +4382,7 @@ Mods: {
 				4: "{$BossChecklist.PinwheelDesc}"
 				5: 探索腐化神殿，还有传言说猩红正在地表蔓延...
 				6: 阿拉齐姆双峰裂谷的东边...
-				7: "{$BossChecklist.AncientOolacileDemonDesc}"
+				7: "{$BossChecklist.OolacileDemonDesc}"
 				8: 探索被烧毁家园东边的奥里德部落雨林...
 				9: "{$BossChecklist.SlograAndGaibonDesc}"
 				10: 自丛林遗迹到失落之城，蜂蛹随处可见...
@@ -11959,12 +11959,12 @@ Mods: {
 			LunaticCultist.DespawnHandler: 拜月教邪教徒无往不克...
 			MoonLord.DespawnHandler: 没有人能阻挡月亮领主的怒火...
 
-			AncientDemon: {
+			DefiledDemon: {
 				DisplayName: 渎遗恶魔
 				DespawnHandler: 渎遗恶魔打算放你一马...
 			}
 
-			AncientOolacileDemon: {
+			OolacileDemon: {
 				DisplayName: 乌拉席露恶魔
 				DespawnHandler: 乌拉席露恶魔打算放你一马...
 			}
@@ -12444,7 +12444,7 @@ Mods: {
 			StoneGolem.DisplayName: 戈仑石人
 			DworcAbysswalker.DisplayName: 德沃克深渊行者
 
-			AncientDemonOfTheAbyss: {
+			AncientDemon: {
 				DisplayName: 渊古恶魔
 				DespawnHandler: 渊古恶魔将你融进了血肉...
 			}

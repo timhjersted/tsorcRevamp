@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs
             // Humanoids, grounded undead, and living creatures.
             [ModContent.NPCType<AbandonedStump>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<AbyssLurker>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<AncientDemonOfTheAbyss>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<AncientDemon>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Archdeacon>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Assassin>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<BasiliskHunter>()] = EnemyImpactMaterial.Blood,

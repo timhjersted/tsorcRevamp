@@ -29,14 +29,14 @@ namespace tsorcRevamp.Content.Items.BossItems
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Special.LeonhardPhase1>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.EaterofWorldsHead);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.BrainofCthulhu);
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.OolacileDemon>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.QueenBee);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Slogra>());
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Gaibon>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.SkeletronHead);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.Deerclops);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>());
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.AncientDemon>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.DefiledDemon>());
             NPC.SpawnWOF(player.position);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.QueenSlimeBoss);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.TheRage>());

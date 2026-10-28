@@ -2791,14 +2791,14 @@ namespace tsorcRevamp
             { NPCID.EyeofCthulhu, new Vector2(3900, 1140) },
             { NPCID.BrainofCthulhu, new Vector2(3044, 904) },
             { NPCID.EaterofWorldsHead, new Vector2(3633, 1010) },
-            { ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>(), new Vector2(5634, 990) },
+            { ModContent.NPCType<NPCs.Bosses.OolacileDemon>(), new Vector2(5634, 990) },
             { NPCID.KingSlime, new Vector2(6011, 1128) },
             { ModContent.NPCType<NPCs.Bosses.Slogra>(), new Vector2(6227, 1281) },
             { NPCID.QueenBee, new Vector2(5084, 1479) },
             { NPCID.SkeletronHead, new Vector2(4979, 1404) },
             { NPCID.Deerclops, new Vector2(4049, 166) },
             { ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), new Vector2(4330, 1740) },
-            { ModContent.NPCType<NPCs.Bosses.AncientDemon>(), new Vector2(5313, 1819) },
+            { ModContent.NPCType<NPCs.Bosses.DefiledDemon>(), new Vector2(5313, 1819) },
             { NPCID.WallofFlesh, new Vector2(3398, 1827) },
         };
 

@@ -483,7 +483,7 @@ namespace tsorcRevamp.Banners
     {
         public override int PlaceStyle => 62;
 
-        public override int NPCType => ModContent.NPCType<AncientDemonOfTheAbyss>();
+        public override int NPCType => ModContent.NPCType<AncientDemon>();
     }
 
     public class BarrowWightNemesisBanner : EnemyBanner

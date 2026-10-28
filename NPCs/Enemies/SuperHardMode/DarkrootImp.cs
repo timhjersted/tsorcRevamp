@@ -25,8 +25,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     // The sprite only flaps, so every tell is dust + sound + doubled flap tempo. Art faces LEFT (spriteDirection -1 = unflipped).
     // MP: the server picks attacks and locks every aim (sweep angle/side, dive velocity/length); those + state/timers are synced
     // in SendExtraAI and both sides then run the same timeline. Projectiles spawn on the server only; dust/sound on clients only.
-    // Was "Ephemeral Oolacile Demon" (OolacileDemon) until 2026-10; LegacyName keeps old saves' kill counts mapped to it.
-    [LegacyName("OolacileDemon")]
+    // Was "Ephemeral Oolacile Demon" (OolacileDemon) until 2026-10. No LegacyName: the class name OolacileDemon now belongs
+    // to the pre-HM boss (Bosses/OolacileDemon), and a legacy alias would collide with it at load.
     class DarkrootImp : ModNPC, IStaggerable, IDebugAttackLabel
     {
         enum DemonAttack : byte

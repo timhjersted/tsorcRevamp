@@ -351,11 +351,11 @@ namespace tsorcRevamp.Systems
             RegisterMod("Slogra", 4000, 6000);
             Register(NPCID.SkeletronHead, 8000, 9000);
             RegisterMod("GravelordNito", 4000, 12000);
-            RegisterMod("AncientOolacileDemon", 4800, 10000);
+            RegisterMod("OolacileDemon", 4800, 10000);
             RegisterMod("BlackNinja", 6000, 6000); // base raised in BlackNinja.cs (was 1800 -> 6000); registry now keeps it there (was 8000)
             RegisterMod("AncestralSpirit", 11900, 12000);
             RegisterMod("JungleWyvernHead", 22000, 25000);
-            RegisterMod("AncientDemon", 10000, 18000);
+            RegisterMod("DefiledDemon", 10000, 18000);
             RegisterMod("StuddedLeatherWarrior", 4000, 4000); // base raised in StuddedLeatherWarrior.cs (was 2600), so no multiplier
 
             // ---- Hardmode ----
@@ -545,7 +545,7 @@ namespace tsorcRevamp.Systems
             Enemy("OolacileKnight", shm: 18000); // strong; authored 5400
             Enemy("TaurusKnight", shm: 20000); // strong; authored 5400
             Enemy("Plaguesmith", shm: 50000); // elite; authored 8250
-            Enemy("AncientDemonOfTheAbyss", shm: 35000); // elite; authored 15000
+            Enemy("AncientDemon", shm: 35000); // elite; authored 15000
             Enemy("Massacre", shm: 90000); // elite; authored 20000
             Enemy("SerpentOfTheAbyssHead", shm: 50000); // elite; authored 24000
             Enemy("GreatBlackKnight", shm: 80000); // mini-boss; authored 50000; caster, contact damage 0

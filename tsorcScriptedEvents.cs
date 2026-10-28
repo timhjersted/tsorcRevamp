@@ -157,7 +157,7 @@ namespace tsorcRevamp
             AlienAmbush,
             EoC,
             EoW1,
-            AncientDemon,
+            DefiledDemon,
             LichKing,
             LichKingRemix,
             TheHunter,
@@ -371,11 +371,11 @@ namespace tsorcRevamp
             ScriptedEvent TheRage = new ScriptedEvent(new Vector2(7000, 1845), 30, ModContent.NPCType<NPCs.Bosses.TheRage>(), DustID.Torch, true, true, true, LangUtils.GetTextValue("Events.Rage"), Color.Red, false);
 
             //DEFILED DEMON (FORGOTTEN CITY, CLOSE TO FIRE TEMPLE)
-            ScriptedEvent AncientDemon = new ScriptedEvent(new Vector2(5317, 1800), 25, ModContent.NPCType<NPCs.Bosses.AncientDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.AncientDemon"), Color.MediumPurple, false);
-            AncientDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoulItem>() }, new List<int>() { 1, 5000 });
+            ScriptedEvent DefiledDemon = new ScriptedEvent(new Vector2(5317, 1800), 25, ModContent.NPCType<NPCs.Bosses.DefiledDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.DefiledDemon"), Color.MediumPurple, false);
+            DefiledDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoulItem>() }, new List<int>() { 1, 5000 });
 
             //ANCIENT OOLACILE DEMON (EARLY-GAME)
-            ScriptedEvent AODE = new ScriptedEvent(new Vector2(5652, 971), 27, ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.AncientOolacileDemon"), Color.MediumPurple, false);
+            ScriptedEvent AODE = new ScriptedEvent(new Vector2(5652, 971), 27, ModContent.NPCType<NPCs.Bosses.OolacileDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.OolacileDemon"), Color.MediumPurple, false);
             AODE.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoulItem>() }, new List<int>() { 1, 1500 });
 
             //GOBLIN SUMMONER IN WMF
@@ -645,7 +645,7 @@ namespace tsorcRevamp
             ScriptedEvent MushroomCavern = new ScriptedEvent(new Vector2(3690, 1535), 30, MushroomCavernEnemyTypeList, MushroomCavernEnemyLocations, DustID.Water, true, true, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
 
             //Ashen Cavern Leftside - Great Demon Of The Abyss
-            ScriptedEvent AshCavernLeftside = new ScriptedEvent(new Vector2(1578, 1895), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemonOfTheAbyss>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, OnlyAdventureMapConditionSHM);
+            ScriptedEvent AshCavernLeftside = new ScriptedEvent(new Vector2(1578, 1895), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemon>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, OnlyAdventureMapConditionSHM);
 
             //Ashen Cavern Rightside - Oolacile Knight
             ScriptedEvent AshCavernRightside = new ScriptedEvent(new Vector2(2382, 1882), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, OnlyAdventureMapConditionSHM);
@@ -654,10 +654,10 @@ namespace tsorcRevamp
             ScriptedEvent MorgulFelegLeftside = new ScriptedEvent(new Vector2(1578, 1895), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
 
             //Morgul Feleg Rightside - Great Demon Of The Abyss
-            ScriptedEvent MorgulFelegRightside = new ScriptedEvent(new Vector2(2382, 1882), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemonOfTheAbyss>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
+            ScriptedEvent MorgulFelegRightside = new ScriptedEvent(new Vector2(2382, 1882), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemon>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
 
             //Great Demon Of The Abyss on the Abandonned Hallowed Village (Remix Map)
-            ScriptedEvent HallowDemonEvent = new ScriptedEvent(new Vector2(6761, 1081), 30, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemonOfTheAbyss>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
+            ScriptedEvent HallowDemonEvent = new ScriptedEvent(new Vector2(6761, 1081), 30, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemon>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
 
             //Sunken Sky Temple
             ScriptedEvent MoltenSkyTempleEvent = new ScriptedEvent(new Vector2(1040, 1865), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss.SerpentOfTheAbyssHead>(), 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange);
@@ -783,7 +783,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.AlienAmbush, AlienAmbush},
                 {ScriptedEventType.EoC, EoCEvent},
                 {ScriptedEventType.EoW1, EoW1Event},
-                {ScriptedEventType.AncientDemon, AncientDemon},
+                {ScriptedEventType.DefiledDemon, DefiledDemon},
                 {ScriptedEventType.LichKing, LichKing},
                 {ScriptedEventType.LichKingRemix, LichKingRemix},
                 {ScriptedEventType.TheHunter, TheHunter},

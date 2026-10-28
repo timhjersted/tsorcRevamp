@@ -529,7 +529,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/AncientDemon",
+        "NpcName": "tsorcRevamp/DefiledDemon",
         "SpawnX": 5317.0,
         "SpawnY": 1800.0,
         "CustomHealth": null,
@@ -672,7 +672,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/AncientOolacileDemon",
+        "NpcName": "tsorcRevamp/OolacileDemon",
         "SpawnX": 5652.0,
         "SpawnY": 971.0,
         "CustomHealth": null,
@@ -2517,7 +2517,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/AncientDemonOfTheAbyss",
+        "NpcName": "tsorcRevamp/AncientDemon",
         "SpawnX": 1578.0,
         "SpawnY": 1895.0,
         "CustomHealth": null,
@@ -2571,7 +2571,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/AncientDemonOfTheAbyss",
+        "NpcName": "tsorcRevamp/AncientDemon",
         "SpawnX": 6761.0,
         "SpawnY": 1081.0,
         "CustomHealth": null,

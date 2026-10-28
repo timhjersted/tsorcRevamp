@@ -2912,7 +2912,7 @@ namespace tsorcRevamp
                     foreach (NPC npc in Main.npc)
                     {
                         if (npc.active && 
-                            (npc.type == ModContent.NPCType<Witchking>() || npc.type == ModContent.NPCType<AncientDemonOfTheAbyss>())) 
+                            (npc.type == ModContent.NPCType<Witchking>() || npc.type == ModContent.NPCType<AncientDemon>())) 
                         {
                             BossIsAlive = true;
                             break;

@@ -704,9 +704,9 @@ namespace tsorcRevamp.NPCs
             Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
             Add<Bosses.HeroofLumelia>(0.15f, 120f);
             // Heavy giants / demons
-            Add<Bosses.AncientDemon>(0.15f, 80f);
-            Add<Bosses.AncientOolacileDemon>(0.15f, 80f);
-            Add<Enemies.SuperHardMode.AncientDemonOfTheAbyss>(0.15f, 80f);
+            Add<Bosses.DefiledDemon>(0.15f, 80f);
+            Add<Bosses.OolacileDemon>(0.15f, 80f);
+            Add<Enemies.SuperHardMode.AncientDemon>(0.15f, 80f);
             Add<Enemies.Gigas>(0.15f, 120f); // caster-giant mini-boss: boss-tier poise; its long Wrath of Gold telegraph is the stagger window
             Add<Enemies.IceGigas>(0.15f, 120f); // frost terrain-controller mini-boss: boss-tier poise; Absolute Zero's channel is the stagger window
             Add<Bosses.GravelordNito.GravelordNito>(0.15f, 120f); // Skeletron-tier boss: harmless contact body, sword/projectile damage, Death Nova channel is the stagger window

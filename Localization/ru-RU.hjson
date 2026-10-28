@@ -448,8 +448,8 @@ Mods: {
 			LichKing: Король-лич пробуждается!
 			Hunter: Охота начинается...
 			Rage: Ярость пробуждается!
-			AncientDemon: Что ты ожидал найти здесь, человек?... Твоя гордыня тебя погубит...
-			AncientOolacileDemon: Ты глупый человек... жалкое высокомерие...
+			DefiledDemon: Что ты ожидал найти здесь, человек?... Твоя гордыня тебя погубит...
+			OolacileDemon: Ты глупый человек... жалкое высокомерие...
 			GoblinSummoner1: Ты самонадеян, Рэд. Как же ты глуп, раз пришёл сюда...
 			GoblinSummoner2: Думаешь, ты умный, Рэд?
 			BloodBossEvent1: Кровавый угорь приближается, чтобы сожрать тебя...
@@ -705,7 +705,7 @@ Mods: {
 			LeonhardDesc: Исследуйте подвесной мост между заснеженными вершинами гор.
 			VesselOfSoulsDesc: Отправляйтесь в леденящие душу глубины Храма Земли, где бьют фонтаны.
 			PinwheelDesc: Найдите Катакомбы Утопленников под входом в деревню.
-			AncientOolacileDemonDesc: В легендах упоминается лес Олачиль...
+			OolacileDemonDesc: В легендах упоминается лес Олачиль...
 			SlograAndGaibonName: Слогра и Гайбон
 			SlograAndGaibonDesc: Найден в глубинах Храма Метеора.
 			// GravelordNitoDesc: A lord of the grave stirs beneath the dungeon.
@@ -976,7 +976,7 @@ Mods: {
 
 			AncientDemonOfTheAbyssBanner: {
 				DisplayName: Знамя древнего демона бездны
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AncientDemonOfTheAbyss.DisplayName}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AncientDemon.DisplayName}"
 			}
 
 			ArchdeaconBanner: {
@@ -4288,14 +4288,14 @@ Mods: {
 				//    4  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded, optional major
 				//    5  [PHM] Brain of Cthulhu       (VanillaChanges.cs)                  — vanilla
 				//    6  [PHM] Eater of Worlds        (VanillaChanges.cs)                  — vanilla
-				//    7  [PHM] Ancient Oolacile Demon (Bosses/AncientOolacileDemon)        — modded
+				//    7  [PHM] Oolacile Demon        (Bosses/OolacileDemon)               — modded
 				//    8  [PHM] King Slime             (VanillaChanges.cs)                  — vanilla
 				//    9  [PHM] Slogra (+ Gaibon)      (Bosses/Slogra)                      — modded
 				//   10  [PHM] Queen Bee              (VanillaChanges.cs)                  — vanilla
 				//   11  [PHM] Skeletron             (VanillaChanges.cs)                   — vanilla
 				//   12  [PHM] Deerclops              (VanillaChanges.cs)                  — vanilla
 				//   13  [PHM] Jungle Wyvern          (Bosses/JungleWyvern/JungleWyvernHead) — modded
-				//   14  [PHM] Ancient Demon          (Bosses/AncientDemon)                — modded
+				//   14  [PHM] Defiled Demon          (Bosses/DefiledDemon)                — modded
 				//   15  [PHM] Wall of Flesh          (VanillaChanges.cs)                  — vanilla
 				//   16  [HM]  Queen Slime            (VanillaChanges.cs)                  — vanilla
 				//   17  [HM]  The Rage               (Bosses/TheRage)                     — modded
@@ -4341,7 +4341,7 @@ Mods: {
 				4: "{$BossChecklist.PinwheelDesc}"
 				5: Загляните поглубже в Храм Порчи или исследуйте слухи о багровом цвете на поверхности.
 				6: Где-то к востоку от пропасти горы Аразиум.
-				7: "{$BossChecklist.AncientOolacileDemonDesc}"
+				7: "{$BossChecklist.OolacileDemonDesc}"
 				8: Исследуйте тропический лес племени Орид, к востоку от вашего сгоревшего дома.
 				9: "{$BossChecklist.SlograAndGaibonDesc}"
 				10: Личинки есть повсюду - от руин в джунглях до Забытых городов.
@@ -11922,12 +11922,12 @@ Mods: {
 			LunaticCultist.DespawnHandler: Культист получил ещё одну жертву...
 			MoonLord.DespawnHandler: Не осталось никого, кто мог бы воспрепятствовать гневу Лунного Лорда...
 
-			AncientDemon: {
+			DefiledDemon: {
 				DisplayName: Древний демон
 				DespawnHandler: Древний демон решает проявить к вам милосердие...
 			}
 
-			AncientOolacileDemon: {
+			OolacileDemon: {
 				DisplayName: Древний демон Олачиля
 				DespawnHandler: Древний демон Олачиля решает проявить милосердие...
 			}
@@ -12407,7 +12407,7 @@ Mods: {
 			StoneGolem.DisplayName: Каменный голем
 			DworcAbysswalker.DisplayName: Дворк-Странник бездны
 
-			AncientDemonOfTheAbyss: {
+			AncientDemon: {
 				DisplayName: Древний демон Бездны
 				DespawnHandler: Демон бездны поглотил тебя своей плотью...
 			}

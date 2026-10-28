@@ -852,12 +852,12 @@ namespace tsorcRevamp.Systems
             // Super Hardmode only. The old tests compared the player's pixel position with tile counts, so the "deep cavern" and
             // "outer map" checks matched almost everywhere; the tile bands they were written for are used here: rows from 60% of
             // the map down to the underworld, and the outer 30% on each side. A blood moon doubles every weight.
-            Spawn("AncientDemonOfTheAbyss", Depth.Underworld, shm: 0.001f);
-            Spawn("AncientDemonOfTheAbyss", Depth.Underworld & Region.OutsideSpan(0.3f, 0.7f), shm: 0.002f);
-            Spawn("AncientDemonOfTheAbyss", Depth.Rows(0.6f, 1f) & !Depth.Underworld, shm: 0.0005f);
-            Spawn("AncientDemonOfTheAbyss", Depth.Underworld & Time.BloodMoon, shm: 0.002f);
-            Spawn("AncientDemonOfTheAbyss", Depth.Underworld & Region.OutsideSpan(0.3f, 0.7f) & Time.BloodMoon, shm: 0.004f);
-            Spawn("AncientDemonOfTheAbyss", Depth.Rows(0.6f, 1f) & !Depth.Underworld & Time.BloodMoon, shm: 0.001f);
+            Spawn("AncientDemon", Depth.Underworld, shm: 0.001f);
+            Spawn("AncientDemon", Depth.Underworld & Region.OutsideSpan(0.3f, 0.7f), shm: 0.002f);
+            Spawn("AncientDemon", Depth.Rows(0.6f, 1f) & !Depth.Underworld, shm: 0.0005f);
+            Spawn("AncientDemon", Depth.Underworld & Time.BloodMoon, shm: 0.002f);
+            Spawn("AncientDemon", Depth.Underworld & Region.OutsideSpan(0.3f, 0.7f) & Time.BloodMoon, shm: 0.004f);
+            Spawn("AncientDemon", Depth.Rows(0.6f, 1f) & !Depth.Underworld & Time.BloodMoon, shm: 0.001f);
 
             // Wyvern Fortress: common while the Wyvern Mage lives, rare after it falls, and back in Super Hardmode until the Shadow falls.
             Spawn("Archdeacon", WyvernFortress & !Slain.WyvernMage, hm: 0.3f);

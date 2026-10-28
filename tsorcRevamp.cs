@@ -1253,12 +1253,12 @@ namespace tsorcRevamp
                 #region tsorc
                 {   ModContent.ItemType<PinwheelBag>()              , ModContent.NPCType<Pinwheel>()                                                    },
                 {   ModContent.ItemType<VesselOfSoulsBag>()         , ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>()                    },
-                {   ModContent.ItemType<OolacileDemonBag>()         , ModContent.NPCType<AncientOolacileDemon>()                                        },
+                {   ModContent.ItemType<OolacileDemonBag>()         , ModContent.NPCType<OolacileDemon>()                                        },
                 {   ModContent.ItemType<SlograBag>()                , ModContent.NPCType<Slogra>()                                                      },
                 {   ModContent.ItemType<GaibonBag>()                , ModContent.NPCType<Gaibon>()                                                      },
                 {   ModContent.ItemType<JungleWyvernBag>()          , ModContent.NPCType<JungleWyvernHead>()                                            },
                 {   ModContent.ItemType<AncestralSpiritBag>()       , ModContent.NPCType<AncestralSpirit>()                                             },
-                {   ModContent.ItemType<AncientDemonBag>()          , ModContent.NPCType<AncientDemon>()                                                },
+                {   ModContent.ItemType<AncientDemonBag>()          , ModContent.NPCType<DefiledDemon>()                                                },
                 {   ModContent.ItemType<HeroOfLumeliaBag>()         , ModContent.NPCType<HeroofLumelia>()                                               },
                 {   ModContent.ItemType<TheRageBag>()               , ModContent.NPCType<TheRage>()                                                     },
                 {   ModContent.ItemType<TheSorrowBag>()             , ModContent.NPCType<TheSorrow>()                                                   },
@@ -3443,15 +3443,15 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss",
                     this,
-                    nameof(AncientOolacileDemon),
+                    nameof(OolacileDemon),
                     3.9f, // Tier (look above, for determining where it will display)
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientOolacileDemon>())),
-                    ModContent.NPCType<AncientOolacileDemon>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileDemon>())),
+                    ModContent.NPCType<OolacileDemon>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<AncientOolacileDemon>(), Language.GetText("Mods.tsorcRevamp.NPCs.AncientOolacileDemon.DisplayName")),
-                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AncientOolacileDemonDesc"),
-                        ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/AncientOolacileDemon_Head_Boss"
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<OolacileDemon>(), Language.GetText("Mods.tsorcRevamp.NPCs.OolacileDemon.DisplayName")),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OolacileDemonDesc"),
+                        ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/OolacileDemon_Head_Boss"
                     }
                     );
 
@@ -3516,13 +3516,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss",
                     this,
-                    nameof(AncientDemon),
+                    nameof(DefiledDemon),
                     6.51f, // Tier (look above, for determining where it will display)
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientDemon>())),
-                    ModContent.NPCType<AncientDemon>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<DefiledDemon>())),
+                    ModContent.NPCType<DefiledDemon>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<AncientDemon>(), Language.GetText("Mods.tsorcRevamp.NPCs.AncientDemon.DisplayName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<DefiledDemon>(), Language.GetText("Mods.tsorcRevamp.NPCs.DefiledDemon.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AncientDemonDesc"),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/AncientDemon_Head_Boss"
                     }
